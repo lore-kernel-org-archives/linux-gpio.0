@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 7/7] gpio: mockup: rework debugfs interface
-Date: Tue, 12 Feb 2019 14:16:00 +0100
-Message-ID: <20190212131600.18960-8-brgl@bgdev.pl>
+Subject: [PATCH v3 1/7] irq/irq_sim: provide irq_sim_get_type()
+Date: Tue, 12 Feb 2019 14:15:54 +0100
+Message-ID: <20190212131600.18960-2-brgl@bgdev.pl>
 References: <20190212131600.18960-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,202 +14,81 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Modify the way the debugfs interface works in gpio-mockup. Introduce
-the concept of dummy pull config which will keep the mockup lines in
-known state. The pull values can be modified by writing to the debugfs
-files corresponding to lines. Lines in input mode always report the
-current pull value, lines in output mode change the line value but
-it will revert back to the one specified by current pull when released.
+Provide a helper that allows users to retrieve the current irq type
+of dummy interrupts.
+
+Internally: store the type in the line context when the irq_set_type()
+callback is called.
+
+This is required by the gpio-mockup module which wants to track the
+state of GPIO lines and simulate rising and falling edge interrupts.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 116 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 102 insertions(+), 14 deletions(-)
+ include/linux/irq_sim.h |  2 ++
+ kernel/irq/irq_sim.c    | 23 +++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index c498b0fbbec8..6424bd710de5 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -47,6 +47,7 @@ enum {
- struct gpio_mockup_line_status {
- 	int dir;
- 	int value;
-+	int pull;
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index 4500d453a63e..c73be0a2c15c 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -22,6 +22,7 @@ struct irq_sim_work_ctx {
+ struct irq_sim_irq_ctx {
+ 	int			irqnum;
+ 	bool			enabled;
++	int			type;
  };
  
- struct gpio_mockup_chip {
-@@ -188,15 +189,57 @@ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
- 	return irq_sim_irqnum(&chip->irqsim, offset);
+ struct irq_sim {
+@@ -37,5 +38,6 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+ void irq_sim_fini(struct irq_sim *sim);
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
++unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset);
+ 
+ #endif /* _LINUX_IRQ_SIM_H */
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index 98a20e1594ce..74561a0dca65 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -25,10 +25,20 @@ static void irq_sim_irqunmask(struct irq_data *data)
+ 	irq_ctx->enabled = true;
  }
  
--static ssize_t gpio_mockup_event_write(struct file *file,
--				       const char __user *usr_buf,
--				       size_t size, loff_t *ppos)
-+static void gpio_mockup_free(struct gpio_chip *gc, unsigned int offset)
++static int irq_sim_set_type(struct irq_data *data, unsigned int type)
 +{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
 +
-+	__gpio_mockup_set(chip, offset, chip->lines[offset].pull);
++	irq_ctx->type = type;
++
++	return 0;
 +}
 +
-+static ssize_t gpio_mockup_debugfs_read(struct file *file,
-+					char __user *usr_buf,
-+					size_t size, loff_t *ppos)
-+{
-+	struct gpio_mockup_dbgfs_private *priv;
-+	struct gpio_mockup_chip *chip;
-+	struct seq_file *sfile;
-+	struct gpio_chip *gc;
-+	char buf[3];
-+	int val, rv;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	sfile = file->private_data;
-+	priv = sfile->private;
-+	chip = priv->chip;
-+	gc = &chip->gc;
-+
-+	val = gpio_mockup_get(gc, priv->offset);
-+	snprintf(buf, sizeof(buf), "%d\n", val);
-+
-+	rv = copy_to_user(usr_buf, buf, sizeof(buf));
-+	if (rv)
-+		return rv;
-+
-+	return sizeof(buf) - 1;
-+}
-+
-+static ssize_t gpio_mockup_debugfs_write(struct file *file,
-+					 const char __user *usr_buf,
-+					 size_t size, loff_t *ppos)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
- 	struct gpio_mockup_chip *chip;
- 	struct seq_file *sfile;
- 	struct gpio_desc *desc;
--	int rv, val;
-+	unsigned int irq_type;
-+	struct gpio_chip *gc;
-+	struct irq_sim *sim;
-+	int rv, val, curr;
-+
-+	if (*ppos != 0)
-+		return -EINVAL;
+ static struct irq_chip irq_sim_irqchip = {
+ 	.name		= "irq_sim",
+ 	.irq_mask	= irq_sim_irqmask,
+ 	.irq_unmask	= irq_sim_irqunmask,
++	.irq_set_type	= irq_sim_set_type,
+ };
  
- 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
- 	if (rv)
-@@ -206,24 +249,68 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 
- 	sfile = file->private_data;
- 	priv = sfile->private;
--	desc = priv->desc;
- 	chip = priv->chip;
-+	gc = &chip->gc;
-+	desc = &gc->gpiodev->descs[priv->offset];
-+	sim = &chip->irqsim;
-+
-+	mutex_lock(&chip->lock);
- 
--	gpiod_set_value_cansleep(desc, val);
--	irq_sim_fire(&chip->irqsim, priv->offset);
-+	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
-+	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
-+		curr = __gpio_mockup_get(chip, priv->offset);
-+		if (curr == val)
-+			goto out;
-+
-+		irq_type = irq_sim_get_type(sim, priv->offset);
-+		if ((val == 1 && (irq_type & IRQ_TYPE_EDGE_RISING)) ||
-+		    (val == 0 && (irq_type & IRQ_TYPE_EDGE_FALLING)))
-+			irq_sim_fire(&chip->irqsim, priv->offset);
-+	}
-+
-+	/* Change the value unless we're actively driving the line. */
-+	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
-+	    !test_bit(FLAG_IS_OUT, &desc->flags))
-+		__gpio_mockup_set(chip, priv->offset, val);
-+
-+out:
-+	chip->lines[priv->offset].pull = val;
-+	mutex_unlock(&chip->lock);
- 
- 	return size;
+ static void irq_sim_handle_irq(struct irq_work *work)
+@@ -180,3 +190,16 @@ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+ 	return sim->irqs[offset].irqnum;
  }
- 
--static int gpio_mockup_event_open(struct inode *inode, struct file *file)
-+static int gpio_mockup_debugfs_open(struct inode *inode, struct file *file)
- {
- 	return single_open(file, NULL, inode->i_private);
- }
- 
--static const struct file_operations gpio_mockup_event_ops = {
-+/*
-+ * Each mockup chip is represented by a directory named after the chip's device
-+ * name under /sys/kernel/debug/gpio-mockup/. Each line is represented by
-+ * a file using the line's offset as the name under the chip's directory.
+ EXPORT_SYMBOL_GPL(irq_sim_irqnum);
++
++/**
++ * irq_sim_get_type - Get the type configuration for a dummy interrupt.
 + *
-+ * Reading from the line's file yields the current *value*, writing to the
-+ * line's file changes the current *pull*. Default pull for mockup lines is
-+ * down.
-+ *
-+ * Examples:
-+ * - when a line pulled down is requested in output mode and driven high, its
-+ *   value will return to 0 once it's released
-+ * - when the line is requested in output mode and driven high, writing 0 to
-+ *   the corresponding debugfs file will change the pull to down but the
-+ *   reported value will still be 1 until the line is released
-+ * - line requested in input mode always reports the same value as its pull
-+ *   configuration
-+ * - when the line is requested in input mode and monitored for events, writing
-+ *   the same value to the debugfs file will be a noop, while writing the
-+ *   opposite value will generate a dummy interrupt with an appropriate edge
++ * @sim:        The interrupt simulator object.
++ * @offset:     Offset of the simulated interrupt for which to retrieve
++ *              the type.
 + */
-+static const struct file_operations gpio_mockup_debugfs_ops = {
- 	.owner = THIS_MODULE,
--	.open = gpio_mockup_event_open,
--	.write = gpio_mockup_event_write,
-+	.open = gpio_mockup_debugfs_open,
-+	.read = gpio_mockup_debugfs_read,
-+	.write = gpio_mockup_debugfs_write,
- 	.llseek = no_llseek,
- };
- 
-@@ -258,7 +345,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 		priv->desc = &gc->gpiodev->descs[i];
- 
- 		evfile = debugfs_create_file(name, 0200, chip->dbg_dir, priv,
--					     &gpio_mockup_event_ops);
-+					     &gpio_mockup_debugfs_ops);
- 		if (IS_ERR_OR_NULL(evfile))
- 			goto err;
- 	}
-@@ -266,7 +353,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	return;
- 
- err:
--	dev_err(dev, "error creating debugfs event files\n");
-+	dev_err(dev, "error creating debugfs files\n");
- }
- 
- static int gpio_mockup_name_lines(struct device *dev,
-@@ -342,6 +429,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 	gc->direction_input = gpio_mockup_dirin;
- 	gc->get_direction = gpio_mockup_get_direction;
- 	gc->to_irq = gpio_mockup_to_irq;
-+	gc->free = gpio_mockup_free;
- 
- 	chip->lines = devm_kcalloc(dev, gc->ngpio,
- 				   sizeof(*chip->lines), GFP_KERNEL);
-@@ -415,7 +503,7 @@ static int __init gpio_mockup_init(void)
- 			return -EINVAL;
- 	}
- 
--	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup-event", NULL);
-+	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup", NULL);
- 	if (IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
- 		gpio_mockup_err("error creating debugfs directory\n");
- 
++unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset)
++{
++	return sim->irqs[offset].type;
++}
++EXPORT_SYMBOL_GPL(irq_sim_get_type);
 -- 
 2.20.1
