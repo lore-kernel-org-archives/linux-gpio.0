@@ -1,139 +1,24 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-Date: Tue, 12 Feb 2019 11:06:07 +0100
-Message-ID: <20190212100607.4etnqytsrtxtcqvc@pengutronix.de>
-References: <20190129084411.30495-1-brgl@bgdev.pl>
- <20190129084411.30495-4-brgl@bgdev.pl>
- <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
- <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: Re: [PATCH] qcom: spmi-gpio: Fix boundary conditions IRQ domain
+ translate
+Date: Tue, 12 Feb 2019 05:08:10 -0500
+Message-ID: <20190212100810.GA12517@basecamp>
+References: <20190212035205.23477-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
+In-Reply-To: <20190212035205.23477-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:19:20AM +0100, Bartosz Golaszewski wrote:
-> wt., 12 lut 2019 o 10:10 Marc Zyngier <marc.zyngier@arm.com> napisał(a):
-> >
-> > On 29/01/2019 08:44, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Provide a more specialized variant of irq_sim_fire() that allows to
-> > > specify the type of the fired interrupt. The type is stored in the
-> > > dummy irq context struct via the set_type callback.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  include/linux/irq_sim.h |  9 ++++++++-
-> > >  kernel/irq/irq_sim.c    | 26 ++++++++++++++++++++++----
-> > >  2 files changed, 30 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> > > index b96c2f752320..647a6c8ffb31 100644
-> > > --- a/include/linux/irq_sim.h
-> > > +++ b/include/linux/irq_sim.h
-> > > @@ -23,6 +23,7 @@ struct irq_sim_work_ctx {
-> > >
-> > >  struct irq_sim_irq_ctx {
-> > >       bool                    enabled;
-> > > +     unsigned int            type;
-> > >  };
-> > >
-> > >  struct irq_sim {
-> > > @@ -37,7 +38,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-> > >  int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
-> > >                     unsigned int num_irqs);
-> > >  void irq_sim_fini(struct irq_sim *sim);
-> > > -void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
-> > > +void irq_sim_fire_type(struct irq_sim *sim,
-> > > +                    unsigned int offset, unsigned int type);
-> > >  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
-> > >
-> > > +static inline void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> > > +{
-> > > +     irq_sim_fire_type(sim, offset, IRQ_TYPE_DEFAULT);
-> > > +}
-> > > +
-> > >  #endif /* _LINUX_IRQ_SIM_H */
-> > > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> > > index 2bcdbab1bc5a..e3160b5e59b8 100644
-> > > --- a/kernel/irq/irq_sim.c
-> > > +++ b/kernel/irq/irq_sim.c
-> > > @@ -25,6 +25,15 @@ static void irq_sim_irqunmask(struct irq_data *data)
-> > >       irq_ctx->enabled = true;
-> > >  }
-> > >
-> > > +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
-> > > +{
-> > > +     struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-> > > +
-> > > +     irq_ctx->type = type;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  static void irq_sim_handle_irq(struct irq_work *work)
-> > >  {
-> > >       struct irq_sim_work_ctx *work_ctx;
-> > > @@ -107,6 +116,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
-> > >       sim->chip.name = "irq_sim";
-> > >       sim->chip.irq_mask = irq_sim_irqmask;
-> > >       sim->chip.irq_unmask = irq_sim_irqunmask;
-> > > +     sim->chip.irq_set_type = irq_sim_set_type;
-> > >
-> > >       sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
-> > >       if (!sim->work_ctx.pending) {
-> > > @@ -192,21 +202,29 @@ irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
-> > >  }
-> > >
-> > >  /**
-> > > - * irq_sim_fire - Enqueue an interrupt.
-> > > + * irq_sim_fire_type - Enqueue an interrupt.
-> > >   *
-> > >   * @sim:        The interrupt simulator object.
-> > >   * @offset:     Offset of the simulated interrupt which should be fired.
-> > > + * @type:    Type of the fired interrupt. Must be one of the following:
-> > > + *           IRQ_TYPE_EDGE_RISING, IRQ_TYPE_EDGE_FALLING,
-> > > + *           IRQ_TYPE_EDGE_BOTH, IRQ_TYPE_LEVEL_HIGH,
-> > > + *           IRQ_TYPE_LEVEL_LOW, IRQ_TYPE_DEFAULT
-> > >   */
-> > > -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> > > +void irq_sim_fire_type(struct irq_sim *sim,
-> > > +                    unsigned int offset, unsigned int type)
-> > >  {
-> > >       struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
-> > >
-> > > -     if (ctx->enabled) {
-> > > +     /* Only care about relevant flags. */
-> > > +     type &= IRQ_TYPE_SENSE_MASK;
-> > > +
-> > > +     if (ctx->enabled && (ctx->type & type)) {
-> >
-> > I wonder how realistic this is, given that you do not track the release
-> > of a level. In short, mo matter what the type is, you treat everything
-> > as edge.
-> >
-> > What is the point of this?
-> >
+On Mon, Feb 11, 2019 at 07:52:05PM -0800, Bjorn Andersson wrote:
+> GPIOs on the SPMI PMIC are numbered 1..ngpio, so the boundary check in
+> pmic_gpio_domain_translate() is off by one, correct this.
 > 
-> When userspace wants to monitor GPIO line interrupts, the GPIO
-> framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
-> IRQF_TRIGGER_RISING or both.
+> Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-I think the background of the question was: Why is there no support for
-level sensitive irqs?
-
-The userspace API has this limitation (also for no good reason I think).
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Reviewed-by: Brian Masney <masneyb@onstation.org>
