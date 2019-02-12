@@ -1,45 +1,84 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-Date: Tue, 12 Feb 2019 11:35:06 +0000
-Message-ID: <fd5d4df5-c27c-8328-2d9b-f56c0a8a4d32@arm.com>
-References: <20190129084411.30495-1-brgl@bgdev.pl>
- <20190129084411.30495-4-brgl@bgdev.pl>
- <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
- <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
- <c562c67d-d6e3-15c3-b10b-315e8fb181a5@arm.com>
- <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 02/11] dt-bindings: power: supply: add DT bindings for
+ max77650
+Date: Tue, 12 Feb 2019 12:54:20 +0100
+Message-ID: <20190212115420.GA24296@amd>
+References: <20190201094736.32057-1-brgl@bgdev.pl>
+ <20190201094736.32057-3-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190201094736.32057-3-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/02/2019 11:05, Uwe Kleine-König wrote:
-> On Tue, Feb 12, 2019 at 10:27:54AM +0000, Marc Zyngier wrote:
->> On 12/02/2019 09:19, Bartosz Golaszewski wrote:
->>> When userspace wants to monitor GPIO line interrupts, the GPIO
->>> framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
->>> IRQF_TRIGGER_RISING or both. The testing module tries to act like real
->>> hardware and so if we pass only one of the *_TRIGGER_* flags, we want
->>> the simulated interrupt of corresponding type to be fired.
->>
->> Well, that's not how HW works.
-> 
-> I cannot follow. I agree with Bartosz here. If you configure your SoC's
-> irq-controller to only fire on a raising edge, you don't get an event
-> when the line falls.
 
-I was a bit quick here. It is more the fact that level gets treated as
-"just another type of edge" that really irritated me (yes, I've wasted
-way too much time implementing interrupt controllers).
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+Hi!
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-char=
+ger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.t=
+xt
+> new file mode 100644
+> index 000000000000..f3e00d41e299
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+> @@ -0,0 +1,27 @@
+> +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
+> +
+> +This module is part of the MAX77650 MFD device. For more details
+> +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> +
+> +The charger is represented as a sub-node of the PMIC node on the device =
+tree.
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be "maxim,max77650-charger"
+> +
+> +Optional properties:
+> +--------------------
+> +- maxim,vchgin-min:	Minimum CHGIN regulation voltage (in microvolts). Mu=
+st be
+> +			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
+> +			4500000, 4600000, 4700000.
+> +- maxim,ichgin-lim:	CHGIN input current limit (in microamps). Must be on=
+e of:
+> +			95000, 190000, 285000, 380000, 475000.
+
+We already have richtek,min-input-voltage-regulation and
+ti,minimum-sys-voltage and ti,in-dpm-voltage.
+
+This is not too consistent with with the rest.. and perhaps common
+name should be used for those?
+
+See also ti,current-limit. That seems to be direct match.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxis+wACgkQMOfwapXb+vKIhACeIPSWDImPg0l/iknWEe1ACf1K
+vXQAoL3d0cJ0+UOQ1AuSYm/A8jYVz8XN
+=gprt
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
