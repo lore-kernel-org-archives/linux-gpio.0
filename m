@@ -1,292 +1,133 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 2/9] irq/irq_sim: use irq domain
-Date: Tue, 12 Feb 2019 09:56:46 +0100
-Message-ID: <CAMRc=Md8SvX8a-NBE7PrdZ+enZkn+LR1+XOmOZ6oyJUPp1T0cw@mail.gmail.com>
-References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-3-brgl@bgdev.pl>
- <20190211222610.42e9189b@why.wild-wind.fr.eu.org> <CAMpxmJXN0g10BMd1Mj1yx2_F6HuoKEyjHPoW+jS9pgmk-uNs8g@mail.gmail.com>
- <867ee5tmkz.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
+Date: Tue, 12 Feb 2019 09:10:15 +0000
+Message-ID: <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
+References: <20190129084411.30495-1-brgl@bgdev.pl>
+ <20190129084411.30495-4-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <867ee5tmkz.wl-marc.zyngier@arm.com>
+In-Reply-To: <20190129084411.30495-4-brgl@bgdev.pl>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-wt., 12 lut 2019 o 09:53 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(a=
-):
->
-> Bartosz,
->
-> On Tue, 12 Feb 2019 08:30:32 +0000,
-> Bartosz Golaszewski <bgolaszewski@baylibre.com> wrote:
-> >
-> > pon., 11 lut 2019 o 23:26 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=
-=82(a):
-> > >
-> > > On Tue, 29 Jan 2019 09:44:04 +0100
-> > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > Delegate the offset to virq number mapping to the provided framewor=
-k
-> > > > instead of handling it locally. Use the legacy domain as we want to
-> > > > preallocate the irq descriptors.
-> > >
-> > > Why?
-> > >
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > > ---
-> > > >  include/linux/irq_sim.h |  6 +--
-> > > >  kernel/irq/irq_sim.c    | 94 +++++++++++++++++++++++++++++--------=
-----
-> > > >  2 files changed, 71 insertions(+), 29 deletions(-)
-> > > >
-> > > > diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> > > > index eda132c22b57..b96c2f752320 100644
-> > > > --- a/include/linux/irq_sim.h
-> > > > +++ b/include/linux/irq_sim.h
-> > > > @@ -8,6 +8,7 @@
-> > > >
-> > > >  #include <linux/irq.h>
-> > > >  #include <linux/irq_work.h>
-> > > > +#include <linux/irqdomain.h>
-> > > >  #include <linux/device.h>
-> > > >
-> > > >  /*
-> > > > @@ -21,16 +22,15 @@ struct irq_sim_work_ctx {
-> > > >  };
-> > > >
-> > > >  struct irq_sim_irq_ctx {
-> > > > -     int                     irqnum;
-> > > >       bool                    enabled;
-> > > >  };
-> > > >
-> > > >  struct irq_sim {
-> > > >       struct irq_chip         chip;
-> > > > +     struct irq_domain       *domain;
-> > > >       struct irq_sim_work_ctx work_ctx;
-> > > > -     int                     irq_base;
-> > > > +     int                     virq_base;
-> > > >       unsigned int            irq_count;
-> > > > -     struct irq_sim_irq_ctx  *irqs;
-> > > >  };
-> > > >
-> > > >  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-> > > > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> > > > index b732e4e2e45b..2bcdbab1bc5a 100644
-> > > > --- a/kernel/irq/irq_sim.c
-> > > > +++ b/kernel/irq/irq_sim.c
-> > > > @@ -44,6 +44,43 @@ static void irq_sim_handle_irq(struct irq_work *=
-work)
-> > > >       }
-> > > >  }
-> > > >
-> > > > +static int irq_sim_domain_map(struct irq_domain *domain,
-> > > > +                           unsigned int virq, irq_hw_number_t hw)
-> > > > +{
-> > > > +     struct irq_sim *sim =3D domain->host_data;
-> > > > +     struct irq_sim_irq_ctx *ctx;
-> > > > +
-> > > > +     ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
-> > > > +     if (!ctx)
-> > > > +             return -ENOMEM;
-> > > > +
-> > > > +     irq_set_chip(virq, &sim->chip);
-> > > > +     irq_set_chip_data(virq, ctx);
-> > > > +     irq_set_handler(virq, handle_simple_irq);
-> > >
-> > > Consider using modern APIs such as irq_domain_set_info().
-> > >
-> > > > +     irq_modify_status(virq, IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOP=
-ROBE);
-> > >
-> > > Where is this requirement coming from?
-> > >
-> > > > +
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +static void irq_sim_domain_free(struct irq_domain *domain,
-> > > > +                             unsigned int virq, unsigned int num_i=
-rqs)
-> > > > +{
-> > > > +     struct irq_sim_irq_ctx *ctx;
-> > > > +     struct irq_data *irq;
-> > > > +     int i;
-> > > > +
-> > > > +     for (i =3D 0; i < num_irqs; i++) {
-> > > > +             irq =3D irq_domain_get_irq_data(domain, virq + i);
-> > > > +             ctx =3D irq_data_get_irq_chip_data(irq);
-> > > > +             kfree(ctx);
-> > > > +     }
-> > > > +}
-> > > > +
-> > > > +static const struct irq_domain_ops irq_sim_domain_ops =3D {
-> > > > +     .map =3D irq_sim_domain_map,
-> > > > +     .free =3D irq_sim_domain_free,
-> > >
-> > > The intended use of the v2 API is to have alloc and free as a pair, a=
-nd
-> > > no map. So please choose which version of the API you're using here.
-> > > The safest bet would be to move what you do on map into alloc.
-> > >
-> > > > +};
-> > > > +
-> > > >  /**
-> > > >   * irq_sim_init - Initialize the interrupt simulator: allocate a r=
-ange of
-> > > >   *                dummy interrupts.
-> > > > @@ -56,16 +93,15 @@ static void irq_sim_handle_irq(struct irq_work =
-*work)
-> > > >   */
-> > > >  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
-> > > >  {
-> > > > -     int i;
-> > > > -
-> > > > -     sim->irqs =3D kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP=
-_KERNEL);
-> > > > -     if (!sim->irqs)
-> > > > +     sim->virq_base =3D irq_alloc_descs(-1, 0, num_irqs, 0);
-> > > > +     if (sim->virq_base < 0)
-> > > > +             return sim->virq_base;
-> > > > +
-> > > > +     sim->domain =3D irq_domain_add_legacy(NULL, num_irqs, sim->vi=
-rq_base,
-> > > > +                                         0, &irq_sim_domain_ops, s=
-im);
-> > >
-> > > Why do you need a legacy domain? As far as I can tell, this is new
-> > > code, hence it has no legacy.
-> > >
-> > > > +     if (!sim->domain) {
-> > > > +             irq_free_descs(sim->virq_base, num_irqs);
-> > > >               return -ENOMEM;
-> > > > -
-> > > > -     sim->irq_base =3D irq_alloc_descs(-1, 0, num_irqs, 0);
-> > > > -     if (sim->irq_base < 0) {
-> > > > -             kfree(sim->irqs);
-> > > > -             return sim->irq_base;
-> > > >       }
-> > > >
-> > > >       sim->chip.name =3D "irq_sim";
-> > > > @@ -74,25 +110,15 @@ int irq_sim_init(struct irq_sim *sim, unsigned=
- int num_irqs)
-> > > >
-> > > >       sim->work_ctx.pending =3D bitmap_zalloc(num_irqs, GFP_KERNEL)=
-;
-> > > >       if (!sim->work_ctx.pending) {
-> > > > -             kfree(sim->irqs);
-> > > > -             irq_free_descs(sim->irq_base, num_irqs);
-> > > > +             irq_domain_remove(sim->domain);
-> > > > +             irq_free_descs(sim->virq_base, num_irqs);
-> > > >               return -ENOMEM;
-> > > >       }
-> > > >
-> > > > -     for (i =3D 0; i < num_irqs; i++) {
-> > > > -             sim->irqs[i].irqnum =3D sim->irq_base + i;
-> > > > -             sim->irqs[i].enabled =3D false;
-> > > > -             irq_set_chip(sim->irq_base + i, &sim->chip);
-> > > > -             irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
-> > > > -             irq_set_handler(sim->irq_base + i, &handle_simple_irq=
-);
-> > > > -             irq_modify_status(sim->irq_base + i,
-> > > > -                               IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_N=
-OPROBE);
-> > > > -     }
-> > > > -
-> > > >       init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
-> > > >       sim->irq_count =3D num_irqs;
-> > > >
-> > > > -     return sim->irq_base;
-> > > > +     return sim->virq_base;
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(irq_sim_init);
-> > > >
-> > > > @@ -106,8 +132,8 @@ void irq_sim_fini(struct irq_sim *sim)
-> > > >  {
-> > > >       irq_work_sync(&sim->work_ctx.work);
-> > > >       bitmap_free(sim->work_ctx.pending);
-> > > > -     irq_free_descs(sim->irq_base, sim->irq_count);
-> > > > -     kfree(sim->irqs);
-> > > > +     irq_domain_free_irqs(sim->virq_base, sim->irq_count);
-> > > > +     irq_domain_remove(sim->domain);
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(irq_sim_fini);
-> > > >
-> > > > @@ -151,6 +177,20 @@ int devm_irq_sim_init(struct device *dev, stru=
-ct irq_sim *sim,
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(devm_irq_sim_init);
-> > > >
-> > > > +static struct irq_sim_irq_ctx *
-> > > > +irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
-> > > > +{
-> > > > +     struct irq_sim_irq_ctx *ctx;
-> > > > +     struct irq_data *irq;
-> > > > +     int virq;
-> > > > +
-> > > > +     virq =3D irq_find_mapping(sim->domain, offset);
-> > > > +     irq =3D irq_domain_get_irq_data(sim->domain, virq);
-> > > > +     ctx =3D irq_data_get_irq_chip_data(irq);
-> > > > +
-> > > > +     return ctx;
-> > > > +}
-> > > > +
-> > > >  /**
-> > > >   * irq_sim_fire - Enqueue an interrupt.
-> > > >   *
-> > > > @@ -159,7 +199,9 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
-> > > >   */
-> > > >  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> > > >  {
-> > > > -     if (sim->irqs[offset].enabled) {
-> > > > +     struct irq_sim_irq_ctx *ctx =3D irq_sim_get_ctx(sim, offset);
-> > > > +
-> > > > +     if (ctx->enabled) {
-> > > >               set_bit(offset, sim->work_ctx.pending);
-> > > >               irq_work_queue(&sim->work_ctx.work);
-> > > >       }
-> > > > @@ -175,6 +217,6 @@ EXPORT_SYMBOL_GPL(irq_sim_fire);
-> > > >   */
-> > > >  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
-> > > >  {
-> > > > -     return sim->irqs[offset].irqnum;
-> > > > +     return irq_find_mapping(sim->domain, offset);
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(irq_sim_irqnum);
-> > >
-> > >
-> > > Thanks,
-> > >
-> > >         M.
-> > > --
-> > > Without deviation from the norm, progress is not possible.
-> >
-> > Hi Marc,
-> >
-> > since we're so late in the release cycle and I really only need patch
-> > 3/9 from this series - I'll drop this patch and 1/9 as well in v3. We
-> > can come back to this in the next cycle.
->
-> Then this series doesn't even compile once you remove these two
-> patches (just removing patch #1 breaks everything). Please repost a
-> fixed series that can be reviewed in the light of your new, reduced
-> requirements.
->
+On 29/01/2019 08:44, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Provide a more specialized variant of irq_sim_fire() that allows to
+> specify the type of the fired interrupt. The type is stored in the
+> dummy irq context struct via the set_type callback.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  include/linux/irq_sim.h |  9 ++++++++-
+>  kernel/irq/irq_sim.c    | 26 ++++++++++++++++++++++----
+>  2 files changed, 30 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> index b96c2f752320..647a6c8ffb31 100644
+> --- a/include/linux/irq_sim.h
+> +++ b/include/linux/irq_sim.h
+> @@ -23,6 +23,7 @@ struct irq_sim_work_ctx {
+>  
+>  struct irq_sim_irq_ctx {
+>  	bool			enabled;
+> +	unsigned int		type;
+>  };
+>  
+>  struct irq_sim {
+> @@ -37,7 +38,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+>  int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+>  		      unsigned int num_irqs);
+>  void irq_sim_fini(struct irq_sim *sim);
+> -void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+> +void irq_sim_fire_type(struct irq_sim *sim,
+> +		       unsigned int offset, unsigned int type);
+>  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
+>  
+> +static inline void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+> +{
+> +	irq_sim_fire_type(sim, offset, IRQ_TYPE_DEFAULT);
+> +}
+> +
+>  #endif /* _LINUX_IRQ_SIM_H */
+> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> index 2bcdbab1bc5a..e3160b5e59b8 100644
+> --- a/kernel/irq/irq_sim.c
+> +++ b/kernel/irq/irq_sim.c
+> @@ -25,6 +25,15 @@ static void irq_sim_irqunmask(struct irq_data *data)
+>  	irq_ctx->enabled = true;
+>  }
+>  
+> +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
+> +
+> +	irq_ctx->type = type;
+> +
+> +	return 0;
+> +}
+> +
+>  static void irq_sim_handle_irq(struct irq_work *work)
+>  {
+>  	struct irq_sim_work_ctx *work_ctx;
+> @@ -107,6 +116,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+>  	sim->chip.name = "irq_sim";
+>  	sim->chip.irq_mask = irq_sim_irqmask;
+>  	sim->chip.irq_unmask = irq_sim_irqunmask;
+> +	sim->chip.irq_set_type = irq_sim_set_type;
+>  
+>  	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
+>  	if (!sim->work_ctx.pending) {
+> @@ -192,21 +202,29 @@ irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
+>  }
+>  
+>  /**
+> - * irq_sim_fire - Enqueue an interrupt.
+> + * irq_sim_fire_type - Enqueue an interrupt.
+>   *
+>   * @sim:        The interrupt simulator object.
+>   * @offset:     Offset of the simulated interrupt which should be fired.
+> + * @type:	Type of the fired interrupt. Must be one of the following:
+> + *		IRQ_TYPE_EDGE_RISING, IRQ_TYPE_EDGE_FALLING,
+> + *		IRQ_TYPE_EDGE_BOTH, IRQ_TYPE_LEVEL_HIGH,
+> + *		IRQ_TYPE_LEVEL_LOW, IRQ_TYPE_DEFAULT
+>   */
+> -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+> +void irq_sim_fire_type(struct irq_sim *sim,
+> +		       unsigned int offset, unsigned int type)
+>  {
+>  	struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
+>  
+> -	if (ctx->enabled) {
+> +	/* Only care about relevant flags. */
+> +	type &= IRQ_TYPE_SENSE_MASK;
+> +
+> +	if (ctx->enabled && (ctx->type & type)) {
 
-Yes, this is what I meant by "I'll drop this patch and 1/9 as well in
-v3" - I meant I'll repost a new version without the first two and with
-patch 3/9 fixed.
+I wonder how realistic this is, given that you do not track the release
+of a level. In short, mo matter what the type is, you treat everything
+as edge.
 
-> I'd also appreciate if you could answer the questions I have above, as
-> it appears that you intend to bring this patch back in the future.
->
+What is the point of this?
 
-Sure, will do.
+>  		set_bit(offset, sim->work_ctx.pending);
+>  		irq_work_queue(&sim->work_ctx.work);
+>  	}
+>  }
+> -EXPORT_SYMBOL_GPL(irq_sim_fire);
+> +EXPORT_SYMBOL_GPL(irq_sim_fire_type);
+>  
+>  /**
+>   * irq_sim_irqnum - Get the allocated number of a dummy interrupt.
+> 
 
-Bart
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
