@@ -1,433 +1,114 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 06/10] power: supply: max77650: add support for
- battery charger
-Date: Tue, 12 Feb 2019 08:23:45 +0000
-Message-ID: <20190212082344.GS20638@dell>
-References: <20190205091237.6448-1-brgl@bgdev.pl>
- <20190205091237.6448-7-brgl@bgdev.pl>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 1/9] irq/irq_sim: don't share the irq_chip structure
+ between simulators
+Date: Tue, 12 Feb 2019 09:29:01 +0100
+Message-ID: <CAMpxmJUVHNU8mvOiKOvk6rkqjVOtxy_j+LVm0rjjV7ys0+DHPw@mail.gmail.com>
+References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-2-brgl@bgdev.pl>
+ <20190211222839.7a7ad87f@why.wild-wind.fr.eu.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190205091237.6448-7-brgl@bgdev.pl>
+In-Reply-To: <20190211222839.7a7ad87f@why.wild-wind.fr.eu.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Sebastian,
+pon., 11 lut 2019 o 23:28 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(=
+a):
+>
+> On Tue, 29 Jan 2019 09:44:03 +0100
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > We want to support multiple instances of irq_sim. Make struct irq_chip
+> > part of the irq_sim structure.
+>
+> Why? There is nothing dynamic in an irqchip structure. It is all code
+> that is set in stone for the lifetime of the irqchip.
+>
+> I've sure you have a use for such indirection, so why don't you explain
+> what you have in mind?
+>
 
-Just waiting on your Ack for the set.
+No you're right, this can be dropped.
 
-Could you review this please?
+Bart
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add basic support for the battery charger for max77650 PMIC.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/power/supply/Kconfig            |   7 +
->  drivers/power/supply/Makefile           |   1 +
->  drivers/power/supply/max77650-charger.c | 355 ++++++++++++++++++++++++
->  3 files changed, 363 insertions(+)
->  create mode 100644 drivers/power/supply/max77650-charger.c
-> 
-> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-> index e901b9879e7e..0230c96fa94d 100644
-> --- a/drivers/power/supply/Kconfig
-> +++ b/drivers/power/supply/Kconfig
-> @@ -499,6 +499,13 @@ config CHARGER_DETECTOR_MAX14656
->  	  Revision 1.2 and can be found e.g. in Kindle 4/5th generation
->  	  readers and certain LG devices.
->  
-> +config CHARGER_MAX77650
-> +	tristate "Maxim MAX77650 battery charger driver"
-> +	depends on MFD_MAX77650
-> +	help
-> +	  Say Y to enable support for the battery charger control of MAX77650
-> +	  PMICs.
-> +
->  config CHARGER_MAX77693
->  	tristate "Maxim MAX77693 battery charger driver"
->  	depends on MFD_MAX77693
-> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-> index b731c2a9b695..b73eb8c5c1a9 100644
-> --- a/drivers/power/supply/Makefile
-> +++ b/drivers/power/supply/Makefile
-> @@ -70,6 +70,7 @@ obj-$(CONFIG_CHARGER_MANAGER)	+= charger-manager.o
->  obj-$(CONFIG_CHARGER_LTC3651)	+= ltc3651-charger.o
->  obj-$(CONFIG_CHARGER_MAX14577)	+= max14577_charger.o
->  obj-$(CONFIG_CHARGER_DETECTOR_MAX14656)	+= max14656_charger_detector.o
-> +obj-$(CONFIG_CHARGER_MAX77650)	+= max77650-charger.o
->  obj-$(CONFIG_CHARGER_MAX77693)	+= max77693_charger.o
->  obj-$(CONFIG_CHARGER_MAX8997)	+= max8997_charger.o
->  obj-$(CONFIG_CHARGER_MAX8998)	+= max8998_charger.o
-> diff --git a/drivers/power/supply/max77650-charger.c b/drivers/power/supply/max77650-charger.c
-> new file mode 100644
-> index 000000000000..7055c9b5ee24
-> --- /dev/null
-> +++ b/drivers/power/supply/max77650-charger.c
-> @@ -0,0 +1,355 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (C) 2018 BayLibre SAS
-> +// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> +//
-> +// Battery charger driver for MAXIM 77650/77651 charger/power-supply.
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/max77650.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/power_supply.h>
-> +#include <linux/regmap.h>
-> +
-> +#define MAX77650_CHARGER_ENABLED		BIT(0)
-> +#define MAX77650_CHARGER_DISABLED		0x00
-> +#define MAX77650_CHARGER_CHG_EN_MASK		BIT(0)
-> +
-> +#define MAX77650_CHARGER_CHG_DTLS_MASK		GENMASK(7, 4)
-> +#define MAX77650_CHARGER_CHG_DTLS_BITS(_reg) \
-> +		(((_reg) & MAX77650_CHARGER_CHG_DTLS_MASK) >> 4)
-> +
-> +#define MAX77650_CHARGER_CHG_OFF		0x00
-> +#define MAX77650_CHARGER_CHG_PREQ		0x01
-> +#define MAX77650_CHARGER_CHG_ON_CURR		0x02
-> +#define MAX77650_CHARGER_CHG_ON_JCURR		0x03
-> +#define MAX77650_CHARGER_CHG_ON_VOLT		0x04
-> +#define MAX77650_CHARGER_CHG_ON_JVOLT		0x05
-> +#define MAX77650_CHARGER_CHG_ON_TOPOFF		0x06
-> +#define MAX77650_CHARGER_CHG_ON_JTOPOFF		0x07
-> +#define MAX77650_CHARGER_CHG_DONE		0x08
-> +#define MAX77650_CHARGER_CHG_JDONE		0x09
-> +#define MAX77650_CHARGER_CHG_SUSP_PF		0x0a
-> +#define MAX77650_CHARGER_CHG_SUSP_FCF		0x0b
-> +#define MAX77650_CHARGER_CHG_SUSP_BTF		0x0c
-> +
-> +#define MAX77650_CHARGER_CHGIN_DTLS_MASK	GENMASK(3, 2)
-> +#define MAX77650_CHARGER_CHGIN_DTLS_BITS(_reg) \
-> +		(((_reg) & MAX77650_CHARGER_CHGIN_DTLS_MASK) >> 2)
-> +
-> +#define MAX77650_CHARGER_CHGIN_UVL		0x00
-> +#define MAX77650_CHARGER_CHGIN_OVL		0x01
-> +#define MAX77650_CHARGER_CHGIN_OKAY		0x11
-> +
-> +#define MAX77650_CHARGER_CHG_MASK	BIT(1)
-> +#define MAX77650_CHARGER_CHG_CHARGING(_reg) \
-> +		(((_reg) & MAX77650_CHARGER_CHG_MASK) > 1)
-> +
-> +#define MAX77650_CHARGER_VCHGIN_MIN_MASK	0xc0
-> +#define MAX77650_CHARGER_VCHGIN_MIN_SHIFT(_val)	((_val) << 5)
-> +
-> +#define MAX77650_CHARGER_ICHGIN_LIM_MASK	0x1c
-> +#define MAX77650_CHARGER_ICHGIN_LIM_SHIFT(_val)	((_val) << 2)
-> +
-> +struct max77650_charger_data {
-> +	struct regmap *map;
-> +	struct device *dev;
-> +};
-> +
-> +static enum power_supply_property max77650_charger_properties[] = {
-> +	POWER_SUPPLY_PROP_STATUS,
-> +	POWER_SUPPLY_PROP_ONLINE,
-> +	POWER_SUPPLY_PROP_CHARGE_TYPE
-> +};
-> +
-> +static const unsigned int max77650_charger_vchgin_min_table[] = {
-> +	4000000, 4100000, 4200000, 4300000, 4400000, 4500000, 4600000, 4700000
-> +};
-> +
-> +static const unsigned int max77650_charger_ichgin_lim_table[] = {
-> +	95000, 190000, 285000, 380000, 475000
-> +};
-> +
-> +static int max77650_charger_set_vchgin_min(struct max77650_charger_data *chg,
-> +					   unsigned int val)
-> +{
-> +	int i, rv;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(max77650_charger_vchgin_min_table); i++) {
-> +		if (val == max77650_charger_vchgin_min_table[i]) {
-> +			rv = regmap_update_bits(chg->map,
-> +					MAX77650_REG_CNFG_CHG_B,
-> +					MAX77650_CHARGER_VCHGIN_MIN_MASK,
-> +					MAX77650_CHARGER_VCHGIN_MIN_SHIFT(i));
-> +			if (rv)
-> +				return rv;
-> +
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int max77650_charger_set_ichgin_lim(struct max77650_charger_data *chg,
-> +					   unsigned int val)
-> +{
-> +	int i, rv;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(max77650_charger_ichgin_lim_table); i++) {
-> +		if (val == max77650_charger_ichgin_lim_table[i]) {
-> +			rv = regmap_update_bits(chg->map,
-> +					MAX77650_REG_CNFG_CHG_B,
-> +					MAX77650_CHARGER_ICHGIN_LIM_MASK,
-> +					MAX77650_CHARGER_ICHGIN_LIM_SHIFT(i));
-> +			if (rv)
-> +				return rv;
-> +
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static void max77650_charger_enable(struct max77650_charger_data *chg)
-> +{
-> +	int rv;
-> +
-> +	rv = regmap_update_bits(chg->map,
-> +				MAX77650_REG_CNFG_CHG_B,
-> +				MAX77650_CHARGER_CHG_EN_MASK,
-> +				MAX77650_CHARGER_ENABLED);
-> +	if (rv)
-> +		dev_err(chg->dev, "unable to enable the charger: %d\n", rv);
-> +}
-> +
-> +static void max77650_charger_disable(struct max77650_charger_data *chg)
-> +{
-> +	int rv;
-> +
-> +	rv = regmap_update_bits(chg->map,
-> +				MAX77650_REG_CNFG_CHG_B,
-> +				MAX77650_CHARGER_CHG_EN_MASK,
-> +				MAX77650_CHARGER_DISABLED);
-> +	if (rv)
-> +		dev_err(chg->dev, "unable to disable the charger: %d\n", rv);
-> +}
-> +
-> +static irqreturn_t max77650_charger_check_status(int irq, void *data)
-> +{
-> +	struct max77650_charger_data *chg = data;
-> +	int rv, reg;
-> +
-> +	rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-> +	if (rv) {
-> +		dev_err(chg->dev,
-> +			"unable to read the charger status: %d\n", rv);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	switch (MAX77650_CHARGER_CHGIN_DTLS_BITS(reg)) {
-> +	case MAX77650_CHARGER_CHGIN_UVL:
-> +		dev_err(chg->dev, "undervoltage lockout detected, disabling charger\n");
-> +		max77650_charger_disable(chg);
-> +		break;
-> +	case MAX77650_CHARGER_CHGIN_OVL:
-> +		dev_err(chg->dev, "overvoltage lockout detected, disabling charger\n");
-> +		max77650_charger_disable(chg);
-> +		break;
-> +	case MAX77650_CHARGER_CHGIN_OKAY:
-> +		max77650_charger_enable(chg);
-> +		break;
-> +	default:
-> +		/* May be 0x10 - debouncing */
-> +		break;
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int max77650_charger_get_property(struct power_supply *psy,
-> +					 enum power_supply_property psp,
-> +					 union power_supply_propval *val)
-> +{
-> +	struct max77650_charger_data *chg = power_supply_get_drvdata(psy);
-> +	int rv, reg;
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_STATUS:
-> +		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-> +		if (rv)
-> +			return rv;
-> +
-> +		if (MAX77650_CHARGER_CHG_CHARGING(reg)) {
-> +			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-> +			break;
-> +		}
-> +
-> +		switch (MAX77650_CHARGER_CHG_DTLS_BITS(reg)) {
-> +		case MAX77650_CHARGER_CHG_OFF:
-> +		case MAX77650_CHARGER_CHG_SUSP_PF:
-> +		case MAX77650_CHARGER_CHG_SUSP_FCF:
-> +		case MAX77650_CHARGER_CHG_SUSP_BTF:
-> +			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-> +			break;
-> +		case MAX77650_CHARGER_CHG_PREQ:
-> +		case MAX77650_CHARGER_CHG_ON_CURR:
-> +		case MAX77650_CHARGER_CHG_ON_JCURR:
-> +		case MAX77650_CHARGER_CHG_ON_VOLT:
-> +		case MAX77650_CHARGER_CHG_ON_JVOLT:
-> +		case MAX77650_CHARGER_CHG_ON_TOPOFF:
-> +		case MAX77650_CHARGER_CHG_ON_JTOPOFF:
-> +			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-> +			break;
-> +		case MAX77650_CHARGER_CHG_DONE:
-> +			val->intval = POWER_SUPPLY_STATUS_FULL;
-> +			break;
-> +		default:
-> +			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-> +		}
-> +		break;
-> +	case POWER_SUPPLY_PROP_ONLINE:
-> +		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-> +		if (rv)
-> +			return rv;
-> +
-> +		val->intval = MAX77650_CHARGER_CHG_CHARGING(reg);
-> +		break;
-> +	case POWER_SUPPLY_PROP_CHARGE_TYPE:
-> +		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-> +		if (rv)
-> +			return rv;
-> +
-> +		if (!MAX77650_CHARGER_CHG_CHARGING(reg)) {
-> +			val->intval = POWER_SUPPLY_CHARGE_TYPE_NONE;
-> +			break;
-> +		}
-> +
-> +		switch (MAX77650_CHARGER_CHG_DTLS_BITS(reg)) {
-> +		case MAX77650_CHARGER_CHG_PREQ:
-> +		case MAX77650_CHARGER_CHG_ON_CURR:
-> +		case MAX77650_CHARGER_CHG_ON_JCURR:
-> +		case MAX77650_CHARGER_CHG_ON_VOLT:
-> +		case MAX77650_CHARGER_CHG_ON_JVOLT:
-> +			val->intval = POWER_SUPPLY_CHARGE_TYPE_FAST;
-> +			break;
-> +		case MAX77650_CHARGER_CHG_ON_TOPOFF:
-> +		case MAX77650_CHARGER_CHG_ON_JTOPOFF:
-> +			val->intval = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
-> +			break;
-> +		default:
-> +			val->intval = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
-> +		}
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct power_supply_desc max77650_battery_desc = {
-> +	.name		= "max77650",
-> +	.type		= POWER_SUPPLY_TYPE_USB,
-> +	.get_property	= max77650_charger_get_property,
-> +	.properties	= max77650_charger_properties,
-> +	.num_properties	= ARRAY_SIZE(max77650_charger_properties),
-> +};
-> +
-> +static int max77650_charger_probe(struct platform_device *pdev)
-> +{
-> +	struct power_supply_config pscfg = {};
-> +	struct max77650_charger_data *chg;
-> +	struct power_supply *battery;
-> +	struct device *dev, *parent;
-> +	int rv, chg_irq, chgin_irq;
-> +	unsigned int prop;
-> +
-> +	dev = &pdev->dev;
-> +	parent = dev->parent;
-> +
-> +	chg = devm_kzalloc(dev, sizeof(*chg), GFP_KERNEL);
-> +	if (!chg)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, chg);
-> +
-> +	chg->map = dev_get_regmap(parent, NULL);
-> +	if (!chg->map)
-> +		return -ENODEV;
-> +
-> +	chg->dev = dev;
-> +
-> +	pscfg.of_node = dev->of_node;
-> +	pscfg.drv_data = chg;
-> +
-> +	chg_irq = platform_get_irq_byname(pdev, "CHG");
-> +	if (chg_irq < 0)
-> +		return chg_irq;
-> +
-> +	chgin_irq = platform_get_irq_byname(pdev, "CHGIN");
-> +	if (chgin_irq < 0)
-> +		return chgin_irq;
-> +
-> +	rv = devm_request_any_context_irq(dev, chg_irq,
-> +					  max77650_charger_check_status,
-> +					  IRQF_ONESHOT, "chg", chg);
-> +	if (rv < 0)
-> +		return rv;
-> +
-> +	rv = devm_request_any_context_irq(dev, chgin_irq,
-> +					  max77650_charger_check_status,
-> +					  IRQF_ONESHOT, "chgin", chg);
-> +	if (rv < 0)
-> +		return rv;
-> +
-> +	battery = devm_power_supply_register(dev,
-> +					     &max77650_battery_desc, &pscfg);
-> +	if (IS_ERR(battery))
-> +		return PTR_ERR(battery);
-> +
-> +	rv = of_property_read_u32(dev->of_node, "maxim,vchgin-min", &prop);
-> +	if (rv == 0) {
-> +		rv = max77650_charger_set_vchgin_min(chg, prop);
-> +		if (rv)
-> +			return rv;
-> +	}
-> +
-> +	rv = of_property_read_u32(dev->of_node, "maxim,ichgin-lim", &prop);
-> +	if (rv == 0) {
-> +		rv = max77650_charger_set_ichgin_lim(chg, prop);
-> +		if (rv)
-> +			return rv;
-> +	}
-> +
-> +	return regmap_update_bits(chg->map,
-> +				  MAX77650_REG_CNFG_CHG_B,
-> +				  MAX77650_CHARGER_CHG_EN_MASK,
-> +				  MAX77650_CHARGER_ENABLED);
-> +}
-> +
-> +static int max77650_charger_remove(struct platform_device *pdev)
-> +{
-> +	struct max77650_charger_data *chg = platform_get_drvdata(pdev);
-> +
-> +	return regmap_update_bits(chg->map,
-> +				  MAX77650_REG_CNFG_CHG_B,
-> +				  MAX77650_CHARGER_CHG_EN_MASK,
-> +				  MAX77650_CHARGER_DISABLED);
-> +}
-> +
-> +static struct platform_driver max77650_charger_driver = {
-> +	.driver = {
-> +		.name = "max77650-charger",
-> +	},
-> +	.probe = max77650_charger_probe,
-> +	.remove = max77650_charger_remove,
-> +};
-> +module_platform_driver(max77650_charger_driver);
-> +
-> +MODULE_DESCRIPTION("MAXIM 77650/77651 charger driver");
-> +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-> +MODULE_LICENSE("GPL v2");
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> Thanks,
+>
+>         M.
+>
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  include/linux/irq_sim.h |  2 ++
+> >  kernel/irq/irq_sim.c    | 12 +++++-------
+> >  2 files changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> > index 4500d453a63e..eda132c22b57 100644
+> > --- a/include/linux/irq_sim.h
+> > +++ b/include/linux/irq_sim.h
+> > @@ -6,6 +6,7 @@
+> >  #ifndef _LINUX_IRQ_SIM_H
+> >  #define _LINUX_IRQ_SIM_H
+> >
+> > +#include <linux/irq.h>
+> >  #include <linux/irq_work.h>
+> >  #include <linux/device.h>
+> >
+> > @@ -25,6 +26,7 @@ struct irq_sim_irq_ctx {
+> >  };
+> >
+> >  struct irq_sim {
+> > +     struct irq_chip         chip;
+> >       struct irq_sim_work_ctx work_ctx;
+> >       int                     irq_base;
+> >       unsigned int            irq_count;
+> > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> > index 98a20e1594ce..b732e4e2e45b 100644
+> > --- a/kernel/irq/irq_sim.c
+> > +++ b/kernel/irq/irq_sim.c
+> > @@ -25,12 +25,6 @@ static void irq_sim_irqunmask(struct irq_data *data)
+> >       irq_ctx->enabled =3D true;
+> >  }
+> >
+> > -static struct irq_chip irq_sim_irqchip =3D {
+> > -     .name           =3D "irq_sim",
+> > -     .irq_mask       =3D irq_sim_irqmask,
+> > -     .irq_unmask     =3D irq_sim_irqunmask,
+> > -};
+> > -
+> >  static void irq_sim_handle_irq(struct irq_work *work)
+> >  {
+> >       struct irq_sim_work_ctx *work_ctx;
+> > @@ -74,6 +68,10 @@ int irq_sim_init(struct irq_sim *sim, unsigned int n=
+um_irqs)
+> >               return sim->irq_base;
+> >       }
+> >
+> > +     sim->chip.name =3D "irq_sim";
+> > +     sim->chip.irq_mask =3D irq_sim_irqmask;
+> > +     sim->chip.irq_unmask =3D irq_sim_irqunmask;
+> > +
+> >       sim->work_ctx.pending =3D bitmap_zalloc(num_irqs, GFP_KERNEL);
+> >       if (!sim->work_ctx.pending) {
+> >               kfree(sim->irqs);
+> > @@ -84,7 +82,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int nu=
+m_irqs)
+> >       for (i =3D 0; i < num_irqs; i++) {
+> >               sim->irqs[i].irqnum =3D sim->irq_base + i;
+> >               sim->irqs[i].enabled =3D false;
+> > -             irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
+> > +             irq_set_chip(sim->irq_base + i, &sim->chip);
+> >               irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
+> >               irq_set_handler(sim->irq_base + i, &handle_simple_irq);
+> >               irq_modify_status(sim->irq_base + i,
+>
+>
+>
+> --
+> Without deviation from the norm, progress is not possible.
