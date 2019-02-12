@@ -1,110 +1,281 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Date: Tue, 12 Feb 2019 11:37:59 +0200
-Message-ID: <20190212093759.GA12247@localhost.localdomain>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140053.GG20638@dell>
- <20190207162807.GB1920@localhost.localdomain>
- <20190208105743.GI20638@dell>
- <20190208124111.GB3012@localhost.localdomain>
- <20190212091723.GZ20638@dell>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Date: Tue, 12 Feb 2019 09:54:57 +0000
+Message-ID: <20190212095457.GA20638@dell>
+References: <20190205091237.6448-1-brgl@bgdev.pl>
+ <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell>
+ <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190212091723.GZ20638@dell>
+In-Reply-To: <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Thanks Again Lee,
+On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
 
-On Tue, Feb 12, 2019 at 09:17:23AM +0000, Lee Jones wrote:
-> On Fri, 08 Feb 2019, Matti Vaittinen wrote:
-> 
-> > > I think an exported function with comments would be better.
-> > So do you mean you would prefer exported function over the pointer from
-> Yes please.  Call-back pointers for non-subsystem level actions are a
-> bit messy IMHO.
+> wt., 12 lut 2019 o 09:36 Lee Jones <lee.jones@linaro.org> napisał(a):
+> >
+> > On Tue, 05 Feb 2019, Bartosz Golaszewski wrote:
+> >
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > >
+> > > Add the core mfd driver for max77650 PMIC. We define five sub-devices
+> > > for which the drivers will be added in subsequent patches.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > ---
+> > >  drivers/mfd/Kconfig          |  11 ++
+> > >  drivers/mfd/Makefile         |   1 +
+> > >  drivers/mfd/max77650.c       | 342 +++++++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/max77650.h |  59 ++++++
+> > >  4 files changed, 413 insertions(+)
+> > >  create mode 100644 drivers/mfd/max77650.c
+> > >  create mode 100644 include/linux/mfd/max77650.h
 
-That's fine. I'll go with exported function then =)
+[...]
 
-> > case it just hides the meaning of values we are passing as arguments.
-> > With raw assignment we at least have some idea what the 0x40 or 0x20 are
-> > referring to =)
+> > > +static const struct max77650_irq_mapping max77650_irq_mapping_table[] = {
+> > > +     {
+> > > +             .cell_num       = MAX77650_CELL_CHARGER,
+> > > +             .irqs           = max77650_charger_irqs,
+> > > +             .irq_names      = max77650_charger_irq_names,
+> > > +             .num_irqs       = ARRAY_SIZE(max77650_charger_irqs),
+> > > +     },
+> > > +     {
+> > > +             .cell_num       = MAX77650_CELL_GPIO,
+> > > +             .irqs           = max77650_gpio_irqs,
+> > > +             .irq_names      = max77650_gpio_irq_names,
+> > > +             .num_irqs       = ARRAY_SIZE(max77650_gpio_irqs),
+> > > +     },
+> > > +     {
+> > > +             .cell_num       = MAX77650_CELL_ONKEY,
+> > > +             .irqs           = max77650_onkey_irqs,
+> > > +             .irq_names      = max77650_onkey_irq_names,
+> > > +             .num_irqs       = ARRAY_SIZE(max77650_onkey_irqs),
+> > > +     },
+> > > +};
+> >
+> > This is all a bit convoluted and nasty TBH.
+> >
+> > > +static const struct mfd_cell max77650_cells[] = {
+> > > +     [MAX77650_CELL_REGULATOR] = {
+> > > +             .name           = "max77650-regulator",
+> > > +             .of_compatible  = "maxim,max77650-regulator",
+> > > +     },
+> > > +     [MAX77650_CELL_CHARGER] = {
+> > > +             .name           = "max77650-charger",
+> > > +             .of_compatible  = "maxim,max77650-charger",
+> > > +     },
+> > > +     [MAX77650_CELL_GPIO] = {
+> > > +             .name           = "max77650-gpio",
+> > > +             .of_compatible  = "maxim,max77650-gpio",
+> > > +     },
+> > > +     [MAX77650_CELL_LED] = {
+> > > +             .name           = "max77650-led",
+> > > +             .of_compatible  = "maxim,max77650-led",
+> > > +     },
+> > > +     [MAX77650_CELL_ONKEY] = {
+> > > +             .name           = "max77650-onkey",
+> > > +             .of_compatible  = "maxim,max77650-onkey",
+> > > +     },
+> > > +};
+> >
+> > Why are you numbering the cells?  There is no need to do this.
+> >
 > 
-> Well I do agree with your last comment.
-> 
-> Maybe doing the following would help with the ugliness (i.e. the shear
-> number of chars):
-> 
->  unsigned int type_reg_offset_inc = 0;
->  for (i = BD70528_INT_GPIO0; i <=  BD70528_INT_GPIO3; i++) {
->         <blar> *t = irqs[i].type;
->         t->type_reg_offset     = type_reg_offset_inc;
->  	t->type_rising_val     = 0x20;
->  	t->type_falling_val    = 0x10;
->  	t->type_level_high_val = 0x40;
->  	t->type_level_low_val  = 0x50;
->  	t->types_supported =
->  		(IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
->  	type_reg_offset_inc += 2;
->  }
+> Just for better readability. It makes sense to me coupled with
+> MAX77650_NUM_CELLS.
 
-I'll go with this for next version.
+You have it the wrong way around.  You define the cell data, then
+provide the number of them using ARRAY_SIZE().  The enum containing
+MAX77650_NUM_CELLS should not exist.
 
-> > > > > > +	/* wdt_set must be called rtc_timer_lock held */
-> > > > > 
-> > > > > This doesn't make sense.
-> > > > 
-> > > > Umm.. The comment does not make sense? Maybe I can explain it further.
-> > > 
-> > > "wdt_set must be called when the rtc_timer_lock is held"
-> > 
-> > Yes. I wanted to say that who-ever is calling the wdt_set function
-> > below, should have locked the rtc_timer_lock mutex (last in this
-> > struct). The function does not do locking inside because we want the RTC
-> > to be able to perform:
-> > 
-> > lock
-> > disable wdt (store original state)
-> > set RTC
-> > return wdt original state
-> > unlock
-> > 
-> > Locking is needed so that we can exclude the watchdog enabling or
-> > disabling the WDT timer between moments when RTC is getting the original
-> > WDT state and re-turning back the old state. Without the lock we have a
-> > risk that WDT-driver enables or disables the timer when RTC is being
-> > set, and RTC overwrites the watchdog driver changes when writing back
-> > the old state. I hope this makes sense now... Any suggestions how to
-> > explain this nicely in english?
+> > > +static const struct regmap_irq max77650_irqs[] = {
+> > > +     [MAX77650_INT_GPI] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_GPI_MSK,
+> > > +             .type = {
+> > > +                     .type_falling_val       = MAX77650_INT_GPI_F_MSK,
+> > > +                     .type_rising_val        = MAX77650_INT_GPI_R_MSK,
+> > > +                     .types_supported        = IRQ_TYPE_EDGE_BOTH,
+> > > +             },
+> > > +     },
+> > > +     [MAX77650_INT_nEN_F] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_nEN_F_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_nEN_R] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_nEN_R_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_TJAL1_R] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_TJAL1_R_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_TJAL2_R] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_TJAL2_R_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_DOD_R] = {
+> > > +             .reg_offset             = MAX77650_INT_GLBL_OFFSET,
+> > > +             .mask                   = MAX77650_INT_DOD_R_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_THM] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_THM_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_CHG] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_CHG_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_CHGIN] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_CHGIN_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_TJ_REG] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_TJ_REG_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_CHGIN_CTRL] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_CHGIN_CTRL_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_SYS_CTRL] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_SYS_CTRL_MSK,
+> > > +     },
+> > > +     [MAX77650_INT_SYS_CNFG] = {
+> > > +             .reg_offset             = MAX77650_INT_CHG_OFFSET,
+> > > +             .mask                   = MAX77650_INT_SYS_CNFG_MSK,
+> > > +     },
+> > > +};
+> >
+> > If you get rid of all of the horrible hoop jumping in *_setup_irqs(),
+> > you can use REGMAP_IRQ_REG() like everyone else does.
+> >
 > 
-> I think I did already:
-> 
->  "wdt_set must be called when the rtc_timer_lock is held"
-> 
-> Actually, this is a little ambiguous.  A better sentence could read:
-> 
->  "rtc_timer_lock must be taken before calling wdt_set()"
+> I could even use it now - except for the first interrupt. I decided to
+> not use it everywhere as it looks much better that way than having
+> REGMAP_IRQ_REG() for all definitions and then the first one sticking
+> out like that. It just looks better.
 
-Sure. I'll ruthlessy plagiarize that sentence. (And as I am not at all
-sure if "ruthlessy plagiarize" actually means what I think it does -
-I tried to say that I'll take your suggestion and use it :]�)
+The way it's done at the moment looks terrible.
 
-Once again, thanks for the help =)
+Please use the MACROs to simplify as much of the code as possible.
 
-Br,
-	Matti
+> > > +static const struct regmap_irq_chip max77650_irq_chip = {
+> > > +     .name                   = "max77650-irq",
+> > > +     .irqs                   = max77650_irqs,
+> > > +     .num_irqs               = ARRAY_SIZE(max77650_irqs),
+> > > +     .num_regs               = 2,
+> > > +     .status_base            = MAX77650_REG_INT_GLBL,
+> > > +     .mask_base              = MAX77650_REG_INTM_GLBL,
+> > > +     .type_in_mask           = true,
+> > > +     .type_invert            = true,
+> > > +     .init_ack_masked        = true,
+> > > +     .clear_on_unmask        = true,
+> > > +};
+> > > +
+> > > +static const struct regmap_config max77650_regmap_config = {
+> > > +     .name           = "max77650",
+> > > +     .reg_bits       = 8,
+> > > +     .val_bits       = 8,
+> > > +};
+> > > +
+> > > +static int max77650_setup_irqs(struct device *dev, struct mfd_cell *cells)
+> > > +{
+> > > +     const struct max77650_irq_mapping *mapping;
+> > > +     struct regmap_irq_chip_data *irq_data;
+> > > +     struct i2c_client *i2c;
+> > > +     struct mfd_cell *cell;
+> > > +     struct resource *res;
+> > > +     struct regmap *map;
+> > > +     int i, j, irq, rv;
+> > > +
+> > > +     i2c = to_i2c_client(dev);
+> > > +
+> > > +     map = dev_get_regmap(dev, NULL);
+> > > +     if (!map)
+> > > +             return -ENODEV;
+> > > +
+> > > +     rv = devm_regmap_add_irq_chip(dev, map, i2c->irq,
+> > > +                                   IRQF_ONESHOT | IRQF_SHARED, -1,
+> >
+> > What is -1?  Are you sure this isn't defined somewhere?
+> >
+> 
+> I don't see any define for negative irq_base argument. I can add that
+> in a separate series and convert the users, but for now I'd stick with
+> -1.
+
+IMO it should be defined.  You can define it locally for now.
+
+> > > +                                   &max77650_irq_chip, &irq_data);
+> > > +     if (rv)
+> > > +             return rv;
+> > > +
+> > > +     for (i = 0; i < ARRAY_SIZE(max77650_irq_mapping_table); i++) {
+> > > +             mapping = &max77650_irq_mapping_table[i];
+> > > +             cell = &cells[mapping->cell_num];
+> > > +
+> > > +             res = devm_kcalloc(dev, sizeof(*res),
+> > > +                                mapping->num_irqs, GFP_KERNEL);
+> > > +             if (!res)
+> > > +                     return -ENOMEM;
+> > > +
+> > > +             cell->resources = res;
+> > > +             cell->num_resources = mapping->num_irqs;
+> > > +
+> > > +             for (j = 0; j < mapping->num_irqs; j++) {
+> > > +                     irq = regmap_irq_get_virq(irq_data, mapping->irqs[j]);
+> > > +                     if (irq < 0)
+> > > +                             return irq;
+> > > +
+> > > +                     res[j].start = res[j].end = irq;
+> > > +                     res[j].flags = IORESOURCE_IRQ;
+> > > +                     res[j].name = mapping->irq_names[j];
+> > > +             }
+> > > +     }
+> >
+> > This is the first time I've seen it done like this (and I hate it).
+> >
+> > Why are you storing the virqs in resources?
+> >
+> > I think this is highly irregular.
+> >
+> 
+> I initially just passed the regmap_irq_chip_data over i2c clientdata
+> and sub-drivers would look up virq numbers from it but was advised by
+> Dmitry Torokhov to use resources instead. After implementing it this
+> way I too think it's more elegant in sub-drivers who can simply do
+> platform_get_irq_byname(). Do you have a different idea?
+
+> What exactly don't you like about this?
+
+ * The declaration of a superfluous struct
+ * 100 lines of additional/avoidable code
+ * Hacky hoop jumping trying to fudge VIRQs into resources
+ * Resources were designed for HWIRQs (unless a domain is present)
+ * Loads of additional/avoidable CPU cycles setting all this up
+
+Need I go on? :)
+
+Surely the fact that you are using both sides of an API
+(devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+set some alarm bells ringing?
+
+This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+
+And for what?  To avoid passing IRQ data to a child driver?
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
