@@ -1,68 +1,45 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
-Date: Tue, 12 Feb 2019 11:14:03 +0000
-Message-ID: <20190212111403.GC20638@dell>
-References: <20190205091237.6448-1-brgl@bgdev.pl>
- <20190205091237.6448-6-brgl@bgdev.pl>
- <20190212083642.GT20638@dell>
- <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
- <20190212095457.GA20638@dell>
- <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
- <20190212101835.GB20638@dell>
- <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
+Date: Tue, 12 Feb 2019 11:35:06 +0000
+Message-ID: <fd5d4df5-c27c-8328-2d9b-f56c0a8a4d32@arm.com>
+References: <20190129084411.30495-1-brgl@bgdev.pl>
+ <20190129084411.30495-4-brgl@bgdev.pl>
+ <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com>
+ <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
+ <c562c67d-d6e3-15c3-b10b-315e8fb181a5@arm.com>
+ <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+In-Reply-To: <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-
-> wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
-> >
-> > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
-> >
-> > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
-> > > >
-> > > >  * The declaration of a superfluous struct
-> > > >  * 100 lines of additional/avoidable code
-> > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
-> > > >  * Resources were designed for HWIRQs (unless a domain is present)
-> > > >  * Loads of additional/avoidable CPU cycles setting all this up
-> > >
-> > > While the above may be right, this one is negligible and you know it. :)
-> >
-> > You have nested for() loops.  You *are* wasting lots of cycles.
-> >
-> > > > Need I go on? :)
-> > > >
-> > > > Surely the fact that you are using both sides of an API
-> > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
-> > > > set some alarm bells ringing?
-> > > >
-> > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
-> > > >
-> > > > And for what?  To avoid passing IRQ data to a child driver?
-> > >
-> > > What do you propose? Should I go back to the approach in v1 and pass
-> > > the regmap_irq_chip_data to child drivers?
-> >
-> > I'm saying you should remove all of this hackery and pass IRQs as they
-> > are supposed to be passed (like everyone else does).
+On 12/02/2019 11:05, Uwe Kleine-König wrote:
+> On Tue, Feb 12, 2019 at 10:27:54AM +0000, Marc Zyngier wrote:
+>> On 12/02/2019 09:19, Bartosz Golaszewski wrote:
+>>> When userspace wants to monitor GPIO line interrupts, the GPIO
+>>> framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
+>>> IRQF_TRIGGER_RISING or both. The testing module tries to act like real
+>>> hardware and so if we pass only one of the *_TRIGGER_* flags, we want
+>>> the simulated interrupt of corresponding type to be fired.
+>>
+>> Well, that's not how HW works.
 > 
-> I'm not sure what you mean by "like everyone else does" - different
-> mfd drivers seem to be doing different things. Is a simple struct
-> containing virtual irq numbers passed to sub-drivers fine?
+> I cannot follow. I agree with Bartosz here. If you configure your SoC's
+> irq-controller to only fire on a raising edge, you don't get an event
+> when the line falls.
 
-How do you plan on deriving the VIRQs to place into the struct?
+I was a bit quick here. It is more the fact that level gets treated as
+"just another type of edge" that really irritated me (yes, I've wasted
+way too much time implementing interrupt controllers).
 
+Thanks,
+
+	M.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jazz is not dead. It just smells funny...
