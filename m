@@ -1,69 +1,68 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-Date: Tue, 12 Feb 2019 12:09:59 +0100
-Message-ID: <CAMRc=MdqhHZPoemkr8XL2vmUQELzgJrUW0y=RVD4kH11k2iQhQ@mail.gmail.com>
-References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-4-brgl@bgdev.pl>
- <656763ec-41b9-cdee-22bd-1f32d74473a0@arm.com> <CAMpxmJXdyiSLyx7O5G41GzfJQktOS1JeuRUoHejVB3ZOmCFMLQ@mail.gmail.com>
- <c562c67d-d6e3-15c3-b10b-315e8fb181a5@arm.com> <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Date: Tue, 12 Feb 2019 11:14:03 +0000
+Message-ID: <20190212111403.GC20638@dell>
+References: <20190205091237.6448-1-brgl@bgdev.pl>
+ <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell>
+ <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+ <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell>
+ <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212110501.wd7ks7vms7pi63dk@pengutronix.de>
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-wt., 12 lut 2019 o 12:05 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> On Tue, Feb 12, 2019 at 10:27:54AM +0000, Marc Zyngier wrote:
-> > On 12/02/2019 09:19, Bartosz Golaszewski wrote:
-> > > When userspace wants to monitor GPIO line interrupts, the GPIO
-> > > framework requests a threaded interrupt with IRQF_TRIGGER_FALLING,
-> > > IRQF_TRIGGER_RISING or both. The testing module tries to act like rea=
-l
-> > > hardware and so if we pass only one of the *_TRIGGER_* flags, we want
-> > > the simulated interrupt of corresponding type to be fired.
-> >
-> > Well, that's not how HW works.
->
-> I cannot follow. I agree with Bartosz here. If you configure your SoC's
-> irq-controller to only fire on a raising edge, you don't get an event
-> when the line falls.
->
-> > > Another solution - if you don't like this one -  would be to have mor=
-e
-> > > specialized functions: irq_sim_fire_rising() and
-> > > irq_sim_fire_falling(). How about that?
-> >
-> > I think you're missing the point. So far, your API has been "an
-> > interrupt has fired", no matter what the trigger is, and that's fine.
-> > That's just modeling the output of an abstract interrupt controller int=
-o
-> > whatever the irqsim is simulating.
-> >
-> > Now, what you're exposing is "this is how the line changed". Which is a=
-n
-> > entirely different business, as you're now exposing the device output
-> > line. Yes, you can model it with raising/falling, but you need at least
-> > resampling for level interrupts, and actual edge detection (raising
-> > followed by raising only generates a single interrupt, while
-> > raising-falling-raising generates two).
->
-> This matches my concern and that's why I suggested somewhere else in
-> this thread to put the configuration of the sensitiveness and the actual
-> tracking of the line in the same component (either irqsim or
-> gpio-mockup). Given that there are only two irqsim users and the other
-> one (something in iio) doesn't need that sensitiveness stuff (and I
-> cannot imagine another user of irqsim with the sensitiveness support) I
-> think it is best to move this to the mockup driver. That's how "normal"
-> hardware drivers have to do it, too.
->
+On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
 
-This is what v1 of this series did - it provided a function to
-retrieve the type and the logic lived in gpio-mockup. Maybe we need to
-get back to that solution.
+> wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
+> >
+> > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> >
+> > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > >
+> > > >  * The declaration of a superfluous struct
+> > > >  * 100 lines of additional/avoidable code
+> > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
+> > > >  * Resources were designed for HWIRQs (unless a domain is present)
+> > > >  * Loads of additional/avoidable CPU cycles setting all this up
+> > >
+> > > While the above may be right, this one is negligible and you know it. :)
+> >
+> > You have nested for() loops.  You *are* wasting lots of cycles.
+> >
+> > > > Need I go on? :)
+> > > >
+> > > > Surely the fact that you are using both sides of an API
+> > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> > > > set some alarm bells ringing?
+> > > >
+> > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+> > > >
+> > > > And for what?  To avoid passing IRQ data to a child driver?
+> > >
+> > > What do you propose? Should I go back to the approach in v1 and pass
+> > > the regmap_irq_chip_data to child drivers?
+> >
+> > I'm saying you should remove all of this hackery and pass IRQs as they
+> > are supposed to be passed (like everyone else does).
+> 
+> I'm not sure what you mean by "like everyone else does" - different
+> mfd drivers seem to be doing different things. Is a simple struct
+> containing virtual irq numbers passed to sub-drivers fine?
 
-Bart
+How do you plan on deriving the VIRQs to place into the struct?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
