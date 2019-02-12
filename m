@@ -1,89 +1,74 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Date: Tue, 12 Feb 2019 20:34:08 +0000
-Message-ID: <20190212203408.GA1863@dell>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH] iio: adc: ti-ads7950: add GPIO support
+Date: Tue, 12 Feb 2019 20:35:43 +0000
+Message-ID: <20190212203544.181b8c19@archlinux>
+References: <1549653856-47409-1-git-send-email-justinpopo6@gmail.com>
+        <20190209170042.69a78684@archlinux>
+        <2e692086-4be5-10ea-34b0-4444995c4275@lechnology.com>
+        <20190211200557.7648d447@archlinux>
+        <CAJx26kXdap3oSBREDfakwaWMz4oKxy=oaagP1jo4grD=kqJ2hA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190119090318.GB187380@dtor-ws>
+In-Reply-To: <CAJx26kXdap3oSBREDfakwaWMz4oKxy=oaagP1jo4grD=kqJ2hA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Justin Chen <justinpopo6@gmail.com>
+Cc: David Lechner <david@lechnology.com>, linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, bgolaszewski@baylibre.com, Linus Walleij <linus.walleij@linaro.org>, knaack.h@gmx.de, lars@metafoo.de, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > 
-> > Add support for the push- and slide-button events for max77650.
-> > 
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/input/misc/Kconfig          |   9 ++
-> >  drivers/input/misc/Makefile         |   1 +
-> >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
-> >  3 files changed, 145 insertions(+)
-> >  create mode 100644 drivers/input/misc/max77650-onkey.c
+On Mon, 11 Feb 2019 12:17:37 -0800
+Justin Chen <justinpopo6@gmail.com> wrote:
 
-[...]
+> On Mon, Feb 11, 2019 at 12:06 PM Jonathan Cameron <jic23@kernel.org> wrote:
+> >
+> > On Sat, 9 Feb 2019 12:56:11 -0600
+> > David Lechner <david@lechnology.com> wrote:
+> >  
+> > > On 2/9/19 11:00 AM, Jonathan Cameron wrote:  
+> > > > Nope.  This is a state lock used to protect against transitions between
+> > > > different modes of the IIO device (buffered vs polled), it
+> > > > isn't suitable for general use.
+> > > >
+> > > > The driver should be modified to handle that correctly.
+> > > > We have iio_claim_direct_mode etc that deal with the case
+> > > > where a device can't do certain operations whilst in buffered
+> > > > mode.  Note it can fail and should.
+> > > >
+> > > > Seems there are more drivers still doing this than I thought.
+> > > > If anyone is bored and wants to clean them out, that would be
+> > > > most appreciated!
+> > > >
+> > > > If you need locking to protect a local buffer or the device
+> > > > state, define a new lock to do it with clearly documented
+> > > > scope.  
+> > >
+> > > Just as a reminder, there is a use case for this particular
+> > > chip that requires buffered mode and direct mode at the same
+> > > time.
+> > >
+> > > https://patchwork.kernel.org/patch/10539021/
+> > > https://patchwork.kernel.org/patch/10527757/  
+> >
+> > Thanks, I had indeed forgotten that entirely.
+> > So it should have a local lock and not take mlock explicitly at all.
+> >  
+> Thanks for all the feedback.
+> So If I am understanding this correctly. I should create a local lock
+> to synchronize three different type of transactions (buffered, direct,
+> gpio).
+> I do not want to use iio_claim_direct_mode because that doesn't allow
+> simultaneous use of buffered mode and direct mode, which is necessary
+> for this driver because of the above mentioned patch.
+No, you should create a local lock to do just one thing. Protect
+the buffers used in those transactions.  There is no need
+to protect anything else explicitly.
 
-Moving things around a bit:
+On some devices there are multiple transaction writes, but I don't recall
+that being the case here.
 
-> > +static int max77650_onkey_probe(struct platform_device *pdev)
-> > +{
+Jonathan
 
-> > +	irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
-> > +	if (irq_f <= 0)
-> > +		return -EINVAL;
-> > +
-> > +	irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
-> > +	if (irq_r <= 0)
-> > +		return -EINVAL;
 > 
-> Ugh, it would be better if you handled IRQ mapping in the MFD piece and
-> passed it as resources of platform device. Then you'd simply call
-> platform_get_irq() here and did not have to reach into parent device for
-> "irq_dara".
-
-These device IRQs were defined and registered with the Regmap *set*
-(actually init()) APIs and thus should be pulled out using the
-appropriate reverse Regmap *get* APIs here in the device.
-
-Registering them with Regmap *and* pulling them back out again in the
-same (MFD in this case) driver, only to register them as platform data
-is certainly not how I see the API being designed/used.
-
-> > +	struct regmap_irq_chip_data *irq_data;
-> > +	struct device *dev, *parent;
-
-> > +	dev = &pdev->dev;
-> > +	parent = dev->parent;
-> > +	i2c = to_i2c_client(parent);
-> > +	irq_data = i2c_get_clientdata(i2c);
-> > +
-> > +	map = dev_get_regmap(parent, NULL);
-> > +	if (!map)
-> > +		return -ENODEV;
-
-However, this hoop jumping is a bit crazy and for the most part
-superfluous.  Instead, create a struct of attributes you wish to share
-with the child devices (containing both regmap (which you should call
-regmap and not map by the way) and irq_data) and pass it as either
-platform data (preferred) or as device data.
-
-If you choose the latter, you do not need to convert from 'device' to
-'i2c' to do the look-up.  Since this function (probe()) is provided
-with a platform_device, you can just use platform_get_drvdata() to
-achieve the same as above.
-
-If you go the preferred (platform data) route, then you should use
-dev_get_platdata() instead.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> Justin
+> > Jonathan  
