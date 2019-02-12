@@ -1,146 +1,104 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 2/7] gpio: mockup: add locking
-Date: Tue, 12 Feb 2019 14:15:55 +0100
-Message-ID: <20190212131600.18960-3-brgl@bgdev.pl>
-References: <20190212131600.18960-1-brgl@bgdev.pl>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Date: Tue, 12 Feb 2019 13:20:16 +0000
+Message-ID: <20190212132016.GA4781@dell>
+References: <20190205091237.6448-1-brgl@bgdev.pl>
+ <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell>
+ <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+ <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell>
+ <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+ <20190212111403.GC20638@dell>
+ <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212131600.18960-1-brgl@bgdev.pl>
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
 
-While no user reported any race condition problems with gpio-mockup,
-let's be on the safe side and use a mutex when performing any changes
-on the dummy chip structures.
+> wt., 12 lut 2019 o 12:14 Lee Jones <lee.jones@linaro.org> napisał(a):
+> >
+> > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> >
+> > > wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > >
+> > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > > >
+> > > > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > > > >
+> > > > > >  * The declaration of a superfluous struct
+> > > > > >  * 100 lines of additional/avoidable code
+> > > > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
+> > > > > >  * Resources were designed for HWIRQs (unless a domain is present)
+> > > > > >  * Loads of additional/avoidable CPU cycles setting all this up
+> > > > >
+> > > > > While the above may be right, this one is negligible and you know it. :)
+> > > >
+> > > > You have nested for() loops.  You *are* wasting lots of cycles.
+> > > >
+> > > > > > Need I go on? :)
+> > > > > >
+> > > > > > Surely the fact that you are using both sides of an API
+> > > > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> > > > > > set some alarm bells ringing?
+> > > > > >
+> > > > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+> > > > > >
+> > > > > > And for what?  To avoid passing IRQ data to a child driver?
+> > > > >
+> > > > > What do you propose? Should I go back to the approach in v1 and pass
+> > > > > the regmap_irq_chip_data to child drivers?
+> > > >
+> > > > I'm saying you should remove all of this hackery and pass IRQs as they
+> > > > are supposed to be passed (like everyone else does).
+> > >
+> > > I'm not sure what you mean by "like everyone else does" - different
+> > > mfd drivers seem to be doing different things. Is a simple struct
+> > > containing virtual irq numbers passed to sub-drivers fine?
+> >
+> > How do you plan on deriving the VIRQs to place into the struct?
+> 
+> Exampe:
+> 
+> struct max77650_gpio_pdata {
+>     int gpi_irq;
+> };
+> 
+> In MFD driver:
+> 
+> struct max77650_gpio_pdata *gpio_data = devm_kmalloc(dev, sizeof(*gpio_data));
+> 
+> gpio_data->gpi_irq = regmap_irq_get_virq(irqchip_data, GPI_NUM);
+> 
+> gpio_cell.platform_data = gpio_data;
+> 
+> In GPIO driver:
+> 
+> struct max77650_gpio_pdata *gpio_data = pdev->dev.platform_data;
+> 
+> int irq = gpio_data->gpi_irq;
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 7 deletions(-)
+Definitely not.  What you're trying to do is a hack.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6a50f9f59c90..b4c1de6acf74 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
- 	struct gpio_mockup_line_status *lines;
- 	struct irq_sim irqsim;
- 	struct dentry *dbg_dir;
-+	struct mutex lock;
- };
- 
- struct gpio_mockup_dbgfs_private {
-@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
- 	return gpio_mockup_ranges[index * 2 + 1];
- }
- 
--static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	return chip->lines[offset].value;
- }
- 
--static void gpio_mockup_set(struct gpio_chip *gc,
--			    unsigned int offset, int value)
-+static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int val;
-+
-+	mutex_lock(&chip->lock);
-+	val = __gpio_mockup_get(gc, offset);
-+	mutex_unlock(&chip->lock);
-+
-+	return val;
-+}
-+
-+static void __gpio_mockup_set(struct gpio_chip *gc,
-+			      unsigned int offset, int value)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	chip->lines[offset].value = !!value;
- }
- 
-+static void gpio_mockup_set(struct gpio_chip *gc,
-+			   unsigned int offset, int value)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
-+}
-+
- static void gpio_mockup_set_multiple(struct gpio_chip *gc,
- 				     unsigned long *mask, unsigned long *bits)
- {
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 	unsigned int bit;
- 
-+	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio)
--		gpio_mockup_set(gc, bit, test_bit(bit, bits));
--
-+		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
-+	mutex_unlock(&chip->lock);
- }
- 
- static int gpio_mockup_dirout(struct gpio_chip *gc,
-@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	gpio_mockup_set(gc, offset, value);
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int direction;
- 
--	return !chip->lines[offset].dir;
-+	mutex_lock(&chip->lock);
-+	direction = !chip->lines[offset].dir;
-+	mutex_unlock(&chip->lock);
-+
-+	return direction;
- }
- 
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
-@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&chip->lock);
-+
- 	gc = &chip->gc;
- 	gc->base = base;
- 	gc->ngpio = ngpio;
+If you're using Regmap to handle your IRQs, then you should use Regmap
+in the client to pull them out.  Setting them via Regmap, then pulling
+them out again in the *same driver*, only to store them in platform
+data to be passed to a child device is bonkers.
+
+*Either* use the MFD provided platform-data helpers *or* pass and
+handle them via the Regmap APIs, *not* both.
+
 -- 
-2.20.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
