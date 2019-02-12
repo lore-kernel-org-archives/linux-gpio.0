@@ -1,105 +1,89 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 07/11] power: supply: max77650: add support for
- battery charger
-Date: Tue, 12 Feb 2019 14:54:26 +0100
-Message-ID: <20190212135426.GA2723@amd>
-References: <20190201094736.32057-1-brgl@bgdev.pl>
- <20190201094736.32057-8-brgl@bgdev.pl>
- <20190212120742.GA25613@amd>
- <CAMRc=Mf4Mx2ojbpxvF+Qej3oMHdB8hBwtZ85A5+pTj_ZhBij3A@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 12/13] input: max77650: add onkey support
+Date: Tue, 12 Feb 2019 20:34:08 +0000
+Message-ID: <20190212203408.GA1863@dell>
+References: <20190118134244.22253-1-brgl@bgdev.pl>
+ <20190118134244.22253-13-brgl@bgdev.pl>
+ <20190119090318.GB187380@dtor-ws>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=Mf4Mx2ojbpxvF+Qej3oMHdB8hBwtZ85A5+pTj_ZhBij3A@mail.gmail.com>
+In-Reply-To: <20190119090318.GB187380@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > 
+> > Add support for the push- and slide-button events for max77650.
+> > 
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  drivers/input/misc/Kconfig          |   9 ++
+> >  drivers/input/misc/Makefile         |   1 +
+> >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
+> >  3 files changed, 145 insertions(+)
+> >  create mode 100644 drivers/input/misc/max77650-onkey.c
 
---NzB8fVQJ5HfG6fxh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-On Tue 2019-02-12 14:31:52, Bartosz Golaszewski wrote:
-> wt., 12 lut 2019 o 13:07 Pavel Machek <pavel@ucw.cz> napisa=C5=82(a):
-> >
-> > Hi!
-> >
-> > > +#define MAX77650_CHARGER_ENABLED             BIT(0)
-> > > +#define MAX77650_CHARGER_DISABLED            0x00
-> > > +#define MAX77650_CHARGER_CHG_EN_MASK         BIT(0)
-> > > +
-> > > +#define MAX77650_CHARGER_CHG_DTLS_MASK               GENMASK(7, 4)
-> > > +#define MAX77650_CHARGER_CHG_DTLS_BITS(_reg) \
-> > > +             (((_reg) & MAX77650_CHARGER_CHG_DTLS_MASK) >> 4)
-> > > +
-> > > +#define MAX77650_CHARGER_CHG_OFF             0x00
-> > > +#define MAX77650_CHARGER_CHG_PREQ            0x01
-> > > +#define MAX77650_CHARGER_CHG_ON_CURR         0x02
-> > > +#define MAX77650_CHARGER_CHG_ON_JCURR                0x03
-> > > +#define MAX77650_CHARGER_CHG_ON_VOLT         0x04
-> > > +#define MAX77650_CHARGER_CHG_ON_JVOLT                0x05
-> > > +#define MAX77650_CHARGER_CHG_ON_TOPOFF               0x06
-> > > +#define MAX77650_CHARGER_CHG_ON_JTOPOFF              0x07
-> > > +#define MAX77650_CHARGER_CHG_DONE            0x08
-> > > +#define MAX77650_CHARGER_CHG_JDONE           0x09
-> > > +#define MAX77650_CHARGER_CHG_SUSP_PF         0x0a
-> > > +#define MAX77650_CHARGER_CHG_SUSP_FCF                0x0b
-> > > +#define MAX77650_CHARGER_CHG_SUSP_BTF                0x0c
-> >
-> > These are really bad define names. We are in charger driver, so
-> > MAX77650_CHARGER_ really should be shortened/ommited. OTOH
-> > more space should be given to "CHG_SUSP_BTF" as it is impossible to dec=
-ipher.
-> >
->=20
-> I disagree about the prefix bit. I prefer to use common prefixes for
-> all symbols in a driver. I would rather add comments to every
-> definition here.
+Moving things around a bit:
 
-So what about shortened? (And what about UVL/OVL below?)
+> > +static int max77650_onkey_probe(struct platform_device *pdev)
+> > +{
 
-And... what you prefer is not quite important. It is important that
-other people can read your code. And what "PF" is is
-important... unlike MAX77650_CHARGER_ which is long but unimportant.
+> > +	irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
+> > +	if (irq_f <= 0)
+> > +		return -EINVAL;
+> > +
+> > +	irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
+> > +	if (irq_r <= 0)
+> > +		return -EINVAL;
+> 
+> Ugh, it would be better if you handled IRQ mapping in the MFD piece and
+> passed it as resources of platform device. Then you'd simply call
+> platform_get_irq() here and did not have to reach into parent device for
+> "irq_dara".
 
+These device IRQs were defined and registered with the Regmap *set*
+(actually init()) APIs and thus should be pulled out using the
+appropriate reverse Regmap *get* APIs here in the device.
 
+Registering them with Regmap *and* pulling them back out again in the
+same (MFD in this case) driver, only to register them as platform data
+is certainly not how I see the API being designed/used.
 
-> > > +#define MAX77650_CHARGER_CHGIN_DTLS_MASK     GENMASK(3, 2)
-> > > +#define MAX77650_CHARGER_CHGIN_DTLS_BITS(_reg) \
-> > > +             (((_reg) & MAX77650_CHARGER_CHGIN_DTLS_MASK) >> 2)
-> > > +
-> > > +#define MAX77650_CHARGER_CHGIN_UVL           0x00
-> > > +#define MAX77650_CHARGER_CHGIN_OVL           0x01
-> > > +#define MAX77650_CHARGER_CHGIN_OKAY          0x11
-> >
-> > UVL -> UNDERVOLTAGE, OVL -> OVERVOLTAGE?
-> >
-> >
-> > --
-> > (english) http://www.livejournal.com/~pavelmachek
-> > (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
-/blog.html
+> > +	struct regmap_irq_chip_data *irq_data;
+> > +	struct device *dev, *parent;
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> > +	dev = &pdev->dev;
+> > +	parent = dev->parent;
+> > +	i2c = to_i2c_client(parent);
+> > +	irq_data = i2c_get_clientdata(i2c);
+> > +
+> > +	map = dev_get_regmap(parent, NULL);
+> > +	if (!map)
+> > +		return -ENODEV;
 
---NzB8fVQJ5HfG6fxh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+However, this hoop jumping is a bit crazy and for the most part
+superfluous.  Instead, create a struct of attributes you wish to share
+with the child devices (containing both regmap (which you should call
+regmap and not map by the way) and irq_data) and pass it as either
+platform data (preferred) or as device data.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+If you choose the latter, you do not need to convert from 'device' to
+'i2c' to do the look-up.  Since this function (probe()) is provided
+with a platform_device, you can just use platform_get_drvdata() to
+achieve the same as above.
 
-iEYEARECAAYFAlxi0BIACgkQMOfwapXb+vIaagCgk6DlnW3/xbOCbPYyCrnh2T7N
-1bIAoJVMj262FTNdBE3Hoc3T17lu2iCz
-=Csmp
------END PGP SIGNATURE-----
+If you go the preferred (platform data) route, then you should use
+dev_get_platdata() instead.
 
---NzB8fVQJ5HfG6fxh--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
