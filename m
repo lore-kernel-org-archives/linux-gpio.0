@@ -1,37 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/5] gpio: add support for pull-up/pull-down configuration
-Date: Wed, 13 Feb 2019 09:15:49 +0100
-Message-ID: <CACRpkdbcuERqOvR-5gknTKcq0BeQU2r2U12zFyVXZXWwDMAWAA@mail.gmail.com>
-References: <20190207162859.26252-1-thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] qcom: spmi-gpio: Fix boundary conditions IRQ domain translate
+Date: Wed, 13 Feb 2019 09:19:30 +0100
+Message-ID: <CACRpkdYOeQh5LZS1U_Wa+1uSLr4EU9+tY4KY4MFW1yvZLA3zOg@mail.gmail.com>
+References: <20190212035205.23477-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207162859.26252-1-thomas.petazzoni@bootlin.com>
+In-Reply-To: <20190212035205.23477-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Brian Masney <masneyb@onstation.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 5:29 PM Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
+On Tue, Feb 12, 2019 at 4:52 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-> As we started discussing in [1], it would be useful to have a way to
-> configure pull-up/pull-down resistors for simple GPIO controllers that
-> don't have any pinmuxing capability, and therefore no interaction with
-> the pinctrl subsystem.
+> GPIOs on the SPMI PMIC are numbered 1..ngpio, so the boundary check in
+> pmic_gpio_domain_translate() is off by one, correct this.
 >
-> This is a second iteration of the patches (the v1 was posted at
-> https://patchwork.ozlabs.org/cover/1020392/).
+> Fixes: ca69e2d165eb ("qcom: spmi-gpio: add support for hierarchical IRQ chip")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-I don't see any problem with this patch set so I have merged it
-into an immutable branch in my GPIO tree, and if it builds fine
-I will merge it for devel (for-v5.1).
-
-Notably we do not add a userspace ABI in this patch series.
-
-I guess that is fine for now, but I think we might see userspace
-support requests soon. But that can be a different patch
-and should be driven by actual need for that.
+Good catch! Patch applied with Brian's review tag.
 
 Yours,
 Linus Walleij
