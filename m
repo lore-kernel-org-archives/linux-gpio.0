@@ -1,70 +1,127 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
-Date: Wed, 13 Feb 2019 10:02:10 +0100
-Message-ID: <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
-References: <1549588593-4856-1-git-send-email-lkml@metux.net>
- <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com> <f751539b-d844-9ab1-169b-ce6aa0056de6@metux.net>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 05/10] mfd: max77650: new core mfd driver
+Date: Wed, 13 Feb 2019 09:25:53 +0000
+Message-ID: <20190213092553.GE1863@dell>
+References: <20190205091237.6448-6-brgl@bgdev.pl>
+ <20190212083642.GT20638@dell>
+ <CAMRc=MderQf20_8aG4-otBkCv60FSNSSqV3NVALPkFL-MqmJbg@mail.gmail.com>
+ <20190212095457.GA20638@dell>
+ <CAMRc=MdyT7nMJ7dUTf6M3PvRdynaCurb_TftMyA4eCwzpR9fVA@mail.gmail.com>
+ <20190212101835.GB20638@dell>
+ <CAMRc=MfYeVbvY6O03xq4eLN9TVpAKWCAXPk0eP5LSBCU7VU9fA@mail.gmail.com>
+ <20190212111403.GC20638@dell>
+ <CAMpxmJWXOb1HW4QiEn8gMp3Nh05ahE0CMLXkac+hEKRjtGxTHQ@mail.gmail.com>
+ <20190212132016.GA4781@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f751539b-d844-9ab1-169b-ce6aa0056de6@metux.net>
+Content-Disposition: inline
+In-Reply-To: <20190212132016.GA4781@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, broonie@kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:46 AM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
-> On 08.02.19 15:25, Linus Walleij wrote:
+On Tue, 12 Feb 2019, Lee Jones wrote:
 
-> >> +/*>> + * struct amd_fch_gpio_reg - GPIO register definition>> + * @reg:
-> register index>> + * @name: signal name>> + */>> +struct
-> amd_fch_gpio_reg {>> +    int         reg;>> +    const char* name;>>
-> +};> > Can't you put this in the driver file?
->
-> I'm afraid, I can't. Because the board driver needs to tell the
-> gpio driver which gpio's we actually have. This seems to be really
-> board specific, and the register layout of the FCHs gpio bank seems
-> to be not actually linear (or maybe the pin naming is just weird)
->
-> What I really don't want is undocumented registers or lines being
-> exposed as gpio somewhere (not knowing what they actually do).
-> Therefore, I'd like to add only those gpio registers that I can
-> confirm being safe - at least until I've managed to get more
-> information.
+> On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> 
+> > wt., 12 lut 2019 o 12:14 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > >
+> > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > >
+> > > > wt., 12 lut 2019 o 11:18 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > > >
+> > > > > On Tue, 12 Feb 2019, Bartosz Golaszewski wrote:
+> > > > >
+> > > > > > wt., 12 lut 2019 o 10:55 Lee Jones <lee.jones@linaro.org> napisał(a):
+> > > > > > >
+> > > > > > >  * The declaration of a superfluous struct
+> > > > > > >  * 100 lines of additional/avoidable code
+> > > > > > >  * Hacky hoop jumping trying to fudge VIRQs into resources
+> > > > > > >  * Resources were designed for HWIRQs (unless a domain is present)
+> > > > > > >  * Loads of additional/avoidable CPU cycles setting all this up
+> > > > > >
+> > > > > > While the above may be right, this one is negligible and you know it. :)
+> > > > >
+> > > > > You have nested for() loops.  You *are* wasting lots of cycles.
+> > > > >
+> > > > > > > Need I go on? :)
+> > > > > > >
+> > > > > > > Surely the fact that you are using both sides of an API
+> > > > > > > (devm_regmap_init_i2c and regmap_irq_get_*) in the same driver, must
+> > > > > > > set some alarm bells ringing?
+> > > > > > >
+> > > > > > > This whole HWIRQ setting, VIRQ getting, resource hacking is a mess.
+> > > > > > >
+> > > > > > > And for what?  To avoid passing IRQ data to a child driver?
+> > > > > >
+> > > > > > What do you propose? Should I go back to the approach in v1 and pass
+> > > > > > the regmap_irq_chip_data to child drivers?
+> > > > >
+> > > > > I'm saying you should remove all of this hackery and pass IRQs as they
+> > > > > are supposed to be passed (like everyone else does).
+> > > >
+> > > > I'm not sure what you mean by "like everyone else does" - different
+> > > > mfd drivers seem to be doing different things. Is a simple struct
+> > > > containing virtual irq numbers passed to sub-drivers fine?
+> > >
+> > > How do you plan on deriving the VIRQs to place into the struct?
+> > 
+> > Exampe:
+> > 
+> > struct max77650_gpio_pdata {
+> >     int gpi_irq;
+> > };
+> > 
+> > In MFD driver:
+> > 
+> > struct max77650_gpio_pdata *gpio_data = devm_kmalloc(dev, sizeof(*gpio_data));
+> > 
+> > gpio_data->gpi_irq = regmap_irq_get_virq(irqchip_data, GPI_NUM);
+> > 
+> > gpio_cell.platform_data = gpio_data;
+> > 
+> > In GPIO driver:
+> > 
+> > struct max77650_gpio_pdata *gpio_data = pdev->dev.platform_data;
+> > 
+> > int irq = gpio_data->gpi_irq;
+> 
+> Definitely not.  What you're trying to do is a hack.
+> 
+> If you're using Regmap to handle your IRQs, then you should use Regmap
+> in the client to pull them out.  Setting them via Regmap, then pulling
+> them out again in the *same driver*, only to store them in platform
+> data to be passed to a child device is bonkers.
+> 
+> *Either* use the MFD provided platform-data helpers *or* pass and
+> handle them via the Regmap APIs, *not* both.
 
-What we normally do is expose all the lines from a gpio chip
-as kernel abstraction.
+Right, a plan has been formed.
 
-This is because at least in theory this chip can be used by
-several boards.
+Hopefully this works and you can avoid all this dancing around.
 
-The chip abstraction does have facilities for masking off
-unavailable lines: in struct gpio_chip there is .valid_mask
-and even a callback .init_valid_mask() to set it up.
+Firstly, you need to make a small change to:
 
-This is currently used on ACPI systems to mask off an
-make unavailable lines that are handled by firmware/BIOS.
+  drivers/base/regmap/regmap-irq.c
 
-So this is what you should use to make existing lines
-unavailable, do not try to hide them by not exposing
-registers or line offsets. The abstraction should model
-the hardware, not the usecase.
+Add the following function:
 
-Imposing a restriction from a board is a new thing,
-and would involve setting these masks somehow using
-machine data from <linux/gpio/machine.h>,
-I am sure we can figure something out if you absolutely
-need this.
+  struct irq_domain *regmap_irq_get_domain(struct regmap *map)
 
-FYI there are tons of systems out there that expose a
-whole range of GPIOs that the developer have no clue
-where they are connected on the PCB, the most common
-case is that they are not connected (sometimes not
-even leaving the chip die) or go to test points. They are
-very seldom dangerous, in fact I've never seen dangerous
-GPIOs, just dangerous set-ups of pins already known
-to be in use for something.
+As you can see, it will return the IRQ Domain for the chip.
 
-Yours,
-Linus Walleij
+You can then pass this IRQ domain to mfd_add_devices() and it will do
+the HWIRQ => VIRQ mapping for you on the fly.  Meaning that you can
+remove all the nastiness in max77650_setup_irqs() and have the Input
+device use the standard (e.g. platform_get_irq()) APIs.
+
+How does that Sound?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
