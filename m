@@ -1,37 +1,57 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: APUv2/v3 board support V2
-Date: Thu, 14 Feb 2019 14:33:02 +0200
-Message-ID: <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
-References: <1550091448-28578-1-git-send-email-info@metux.net>
- <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com> <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v9 5/8] gpio: Initial support for ROHM bd70528 GPIO block
+Date: Thu, 14 Feb 2019 14:38:06 +0200
+Message-ID: <20190214123806.GH12247@localhost.localdomain>
+References: <cover.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
+ <8334d6064575249e871e88aa6057b134795232e3.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdYqSyWGSy6OKukE_SQWi1r0uOQD91JwpqUgrbJq28gbUQ@mail.gmail.com>
+ <20190214082901.GG12247@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
+Content-Disposition: inline
+In-Reply-To: <20190214082901.GG12247@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: "Enrico Weigelt, metux IT consult" <info@metux.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 1:37 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
-> On 14.02.19 03:17, Andy Shevchenko wrote:
+Hello Linus,
 
-> > I dunno how you created this message, I hope you used --cover-letter
-> > parameter to git-format-patch.
->
-> I'm using: git send-email --compose <...>
->
-> > Just don't forget to add -v<N>, where <N> is version.
->
-> hmm, git send-email doesn't seem to have a corresponding flag :(
+On Thu, Feb 14, 2019 at 10:29:01AM +0200, Matti Vaittinen wrote:
+> Thanks a bunch Linus,
+> 
+> On Thu, Feb 14, 2019 at 09:00:33AM +0100, Linus Walleij wrote:
+> > On Wed, Feb 13, 2019 at 2:34 PM Matti Vaittinen
+> > <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > 
+> > Just spotted this:
+> > 
+> > > +#include <linux/gpio/driver.h>
+> > > +#include <linux/gpio.h>
+> > 
+> > A driver should only need <linux/gpio/driver.h>
+> > the <linux/gpio.h> should not be used at all in new code,
+> > it is a legacy header.
+> 
+> Allright. I'll do v10 and drop the header. Thanks for pointing this out
 
-It's there from several releases. But it's not a send-email option,
-it's format-patch one.
-send-email passes those commands to format-patch.
+It seems to me the GPIOF_DIR_XXX are defined in linux/gpio.h. It would
+be nice to refer to these flags when interpreting the return value
+from the bd70528_get_direction (used in bd70528_gpio_get) - and actually
+it might be nice to use those as a return value from bd70528_get_direction.
 
-Perhaps time to update your ancient version of git tools? :-)
+But I'll go with raw values for now and leave possible definition
+moving/header refactoring to you who know the direction of code better :)
+
+Br,
+	Matti Vaittinen
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
