@@ -1,35 +1,38 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: APUv2/v3 board support V2
-Date: Thu, 14 Feb 2019 16:04:55 +0100
-Message-ID: <0f952b25-9ba9-b2cb-381b-d51e195e8378@metux.net>
-References: <1550091448-28578-1-git-send-email-info@metux.net>
- <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com>
- <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
- <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 0/2] pinctrl STM32 updates
+Date: Thu, 14 Feb 2019 17:54:23 +0100
+Message-ID: <1550163266-19975-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Enrico Weigelt, metux IT consult" <info@metux.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: linux-gpio@vger.kernel.org, alexandre.torgue@st.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 14.02.19 13:33, Andy Shevchenko wrote:
+Please find 2 updates for STM32 pinctrl driver:
 
-> It's there from several releases. But it's not a send-email option,
-> it's format-patch one.
-> send-email passes those commands to format-patch.
+ -Fix a memory leak issue present since the beginning of the driver.
+ -Handle error case when a hwspinlock can't get locked.
 
-oh, wasn't aware of that.
-thx.
+regards
+Alex
 
+Alexandre Torgue (2):
+  pinctrl: stm32: fix memory leak issue
+  pinctrl: stm32: return error upon hwspinlock failure
 
---mtx
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 70 ++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 30 deletions(-)
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.7.4
