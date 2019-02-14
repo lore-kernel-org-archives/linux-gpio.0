@@ -1,32 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next 3/3] qcom: ssbi-gpio: correct boundary conditions in pm8xxx_domain_translate
-Date: Thu, 14 Feb 2019 09:18:26 +0100
-Message-ID: <CACRpkdYSMjyQ07TKaeoC1WbWk=6WomJOkd0Hm_8ho_yDqj6wQA@mail.gmail.com>
-References: <20190214013641.9740-1-masneyb@onstation.org> <20190214013641.9740-3-masneyb@onstation.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v9 8/8] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Date: Thu, 14 Feb 2019 08:18:49 +0000
+Message-ID: <20190214081849.GI1863@dell>
+References: <cover.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
+ <5aab97a1d68d131d0c5d37e0a78d3c8147a52e9e.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
+ <f11554b9-1842-13bc-7ceb-ca7589eb4518@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214013641.9740-3-masneyb@onstation.org>
+Content-Disposition: inline
+In-Reply-To: <f11554b9-1842-13bc-7ceb-ca7589eb4518@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee.jones@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 2:36 AM Brian Masney <masneyb@onstation.org> wrote:
+On Wed, 13 Feb 2019, Guenter Roeck wrote:
 
-> SSBI GPIOs are numbered 1..ngpio, so the boundary check in
-> pm8xxx_domain_translate() is off by one. This patch corrects that check.
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Originally found by Bjorn Andersson in spmi-gpio.
->
-> Linus: For your ib-qcom-ssbi branch.
+> On 2/13/19 5:37 AM, Matti Vaittinen wrote:
+> > Initial support for watchdog block included in ROHM BD70528
+> > power management IC.
+> > 
+> > Configurations for low power states are still to be checked.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > Acked-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> > 
+> > I maintained the ack from Guenter as only change is to use function
+> > exported by MFD instead of pointer to function provided by MFD. Please
+> > let me know if this is not Ok.
+> > 
+> 
+> NP. With functions exported by MFD, my choice would have been to handle
+> locking there as well with respective locking/unlocking functions exported.
+> But that is your call to make, not mine.
 
-Thanks applied it there!
+FWIW, I agree.
 
-This small bug stuff is sorting itself out nicely :)
-Less stuff to deal with in the -rc phase.
+[...]
 
-Yours,
-Linus Walleij
+Lots of superfluous quoting here mate.  Better to snip it off IMHO.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
