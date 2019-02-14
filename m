@@ -1,347 +1,350 @@
-From: Shravan Kumar Ramani <sramani@mellanox.com>
-Subject: [PATCH v1 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-Date: Thu, 14 Feb 2019 16:29:50 -0500
-Message-ID: <db046221591c037713a7e6994798c3b01e1fca20.1550178875.git.sramani@mellanox.com>
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH v3 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
+Date: Thu, 14 Feb 2019 23:04:57 +0100
+Message-ID: <1550181897-2596-3-git-send-email-info@metux.net>
+References: <1550091448-28578-1-git-send-email-info@metux.net>
+ <1550181897-2596-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550181897-2596-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Shravan Kumar Ramani <sramani@mellanox.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andy@infradead.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds support for the GPIO controller used by Mellanox
-BlueField SOCs.
+Driver for PCengines APUv2 board's front LEDs and Button,
+which are attached to AMD PCH GPIOs. Due to lack of dedicated
+ACPI entry, detecting the board via DMI.
 
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org
+Cc: bgolaszewski@baylibre.com
+Cc: dvhart@infradead.org
+Cc: andy@infradead.org
+Cc: platform-driver-x86@vger.kernel.org
+
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/gpio/Kconfig      |   7 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-mlxbf.c | 287 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 295 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf.c
+ MAINTAINERS                            |   5 +
+ drivers/platform/x86/Kconfig           |  12 ++
+ drivers/platform/x86/Makefile          |   1 +
+ drivers/platform/x86/pcengines-apuv2.c | 261 +++++++++++++++++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+ create mode 100644 drivers/platform/x86/pcengines-apuv2.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845..2bebe92 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1292,6 +1292,13 @@ config GPIO_MERRIFIELD
- 	help
- 	  Say Y here to support Intel Merrifield GPIO.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d286e7d..d39e029 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11522,6 +11522,11 @@ F:	lib/parman.c
+ F:	lib/test_parman.c
+ F:	include/linux/parman.h
  
-+config GPIO_MLXBF
-+	tristate "Mellanox BlueField SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-+	select GPIO_GENERIC
++PC ENGINES APU BOARD DRIVER
++M:	Enrico Weigelt, metux IT consult <info@metux.net>
++S:	Maintained
++F:	drivers/platform/x86/pcengines-apuv2.c
++
+ PC87360 HARDWARE MONITORING DRIVER
+ M:	Jim Cromie <jim.cromie@gmail.com>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b5e9db8..851ea92 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1303,6 +1303,18 @@ config HUAWEI_WMI
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called huawei-wmi.
+ 
++config PCENGINES_APU2
++	tristate "PC Engines APUv2/3 front button and LEDs driver"
++	select GPIO_AMD_FCH
++	select KEYBOARD_GPIO_POLLED
++	select LEDS_GPIO
 +	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
++	  This driver provides support for the front button and LEDs on
++	  PC Engines APUv2/APUv3 board.
 +
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8..8d54279 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
-+obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
++	  To compile this driver as a module, choose M here: the module
++	  will be called pcengines-apuv2.
++
+ endif # X86_PLATFORM_DEVICES
+ 
+ config PMC_ATOM
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index ce8da26..86cb766 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+ obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
+ obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
+ obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
++obj-$(CONFIG_PCENGINES_APU2)	+= pcengines-apuv2.o
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
 new file mode 100644
-index 0000000..e5c50db
+index 0000000..dcb084f
 --- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -0,0 +1,287 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -0,0 +1,261 @@
++// SPDX-License-Identifier: GPL-2.0+
 +
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
++/*
++ * PC-Engines APUv2/APUv3 board platform driver
++ * for gpio buttons and LEDs
++ *
++ * Copyright (C) 2018 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ */
++
++#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
++
++#include <linux/dmi.h>
++#include <linux/err.h>
 +#include <linux/kernel.h>
++#include <linux/leds.h>
 +#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/pinctrl/consumer.h>
 +#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
++#include <linux/gpio_keys.h>
++#include <linux/gpio/machine.h>
++#include <linux/input.h>
++#include <linux/platform_data/gpio/gpio-amd-fch.h>
 +
-+/* Number of pins on BlueField */
-+#define MLXBF_GPIO_NR 54
++/*
++ * NOTE: this driver only supports APUv2/3 - not APUv1, as this one
++ * has completely different register layouts
++ */
 +
-+/* Pad Electrical Controls. */
-+#define GPIO_PAD_CONTROL__FIRST_WORD 0x0700
-+#define GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
-+#define GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
-+#define GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
++/* register mappings */
++#define APU2_GPIO_REG_LED1		AMD_FCH_GPIO_REG_GPIO57
++#define APU2_GPIO_REG_LED2		AMD_FCH_GPIO_REG_GPIO58
++#define APU2_GPIO_REG_LED3		AMD_FCH_GPIO_REG_GPIO59_DEVSLP1
++#define APU2_GPIO_REG_MODESW		AMD_FCH_GPIO_REG_GPIO32_GE1
++#define APU2_GPIO_REG_SIMSWAP		AMD_FCH_GPIO_REG_GPIO33_GE2
 +
-+#define GPIO_PIN_DIR_I 0x1040
-+#define GPIO_PIN_DIR_O 0x1048
-+#define GPIO_PIN_STATE 0x1000
-+#define GPIO_SCRATCHPAD 0x20
++/* order in which the gpio lines are defined in the register list */
++#define APU2_GPIO_LINE_LED1		0
++#define APU2_GPIO_LINE_LED2		1
++#define APU2_GPIO_LINE_LED3		2
++#define APU2_GPIO_LINE_MODESW		3
++#define APU2_GPIO_LINE_SIMSWAP		4
 +
-+#ifdef CONFIG_PM
-+struct bluefield_context_save_regs {
-+	u64 gpio_scratchpad;
-+	u64 gpio_pad_control[MLXBF_GPIO_NR];
-+	u64 gpio_pin_dir_i;
-+	u64 gpio_pin_dir_o;
-+};
-+#endif
++/* gpio device */
 +
-+/* Device state structure. */
-+struct gpio_state {
-+	struct list_head node;
-+	struct platform_device *pdev;
-+
-+	struct gpio_chip gc;
-+
-+	/* Must hold this lock to modify shared data. */
-+	spinlock_t lock;
-+
-+	/* Memory Address */
-+	void __iomem *dc_base;
-+
-+#ifdef CONFIG_PM
-+	struct bluefield_context_save_regs csave_regs;
-+#endif
++static int apu2_gpio_regs[] = {
++	[APU2_GPIO_LINE_LED1]		= APU2_GPIO_REG_LED1,
++	[APU2_GPIO_LINE_LED2]		= APU2_GPIO_REG_LED2,
++	[APU2_GPIO_LINE_LED3]		= APU2_GPIO_REG_LED3,
++	[APU2_GPIO_LINE_MODESW]		= APU2_GPIO_REG_MODESW,
++	[APU2_GPIO_LINE_SIMSWAP]	= APU2_GPIO_REG_SIMSWAP,
 +};
 +
-+/* GPIO driver set input pins */
-+static int gpio_bf_set_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
++static const char * const apu2_gpio_names[] = {
++	[APU2_GPIO_LINE_LED1]		= "front-led1",
++	[APU2_GPIO_LINE_LED2]		= "front-led2",
++	[APU2_GPIO_LINE_LED3]		= "front-led3",
++	[APU2_GPIO_LINE_MODESW]		= "front-button",
++	[APU2_GPIO_LINE_SIMSWAP]	= "simswap",
++};
 +
-+	if (offset > MLXBF_GPIO_NR - 1) {
-+		dev_err(chip->parent, "gpio input pins: Invalid offset %d\n",
-+			offset);
-+		return -EINVAL;
++static const struct amd_fch_gpio_pdata board_apu2 = {
++	.gpio_num	= ARRAY_SIZE(apu2_gpio_regs),
++	.gpio_reg	= apu2_gpio_regs,
++	.gpio_names	= apu2_gpio_names,
++};
++
++/* gpio leds device */
++
++static const struct gpio_led apu2_leds[] = {
++	{ .name = "apu:green:1" },
++	{ .name = "apu:green:2" },
++	{ .name = "apu:green:3" }
++};
++
++static const struct gpio_led_platform_data apu2_leds_pdata = {
++	.num_leds	= ARRAY_SIZE(apu2_leds),
++	.leds		= apu2_leds,
++};
++
++struct gpiod_lookup_table gpios_led_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED1,
++				NULL, 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED2,
++				NULL, 1, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED3,
++				NULL, 2, GPIO_ACTIVE_LOW),
 +	}
++};
 +
-+	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
++/* gpio keyboard device */
 +
-+	writeq(out & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
-+	writeq(in | BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
++static struct gpio_keys_button apu2_keys_buttons[] = {
++	{
++		.code			= KEY_SETUP,
++		.active_low		= 1,
++		.desc			= "front button",
++		.type			= EV_KEY,
++		.debounce_interval	= 10,
++		.value			= 1,
++	},
++};
 +
-+	return 0;
-+}
++static const struct gpio_keys_platform_data apu2_keys_pdata = {
++	.buttons	= apu2_keys_buttons,
++	.nbuttons	= ARRAY_SIZE(apu2_keys_buttons),
++	.poll_interval	= 100,
++	.rep		= 0,
++	.name		= "apu2-keys",
++};
 +
-+/* GPIO driver set output pins */
-+static int gpio_bf_set_output(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
-+
-+	if (offset > MLXBF_GPIO_NR - 1) {
-+		dev_err(chip->parent, "gpio output pins: Invalid offset %d\n",
-+			offset);
-+		return -EINVAL;
++struct gpiod_lookup_table gpios_key_table = {
++	.dev_id = "gpio-keys-polled",
++	.table = {
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_MODESW,
++				NULL, 0, GPIO_ACTIVE_LOW),
 +	}
++};
 +
-+	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
++/* board setup */
 +
-+	writeq(out | BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
-+	writeq(in & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
++/* note: matching works on string prefix, so "apu2" must come before "apu" */
++static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
 +
-+	return 0;
-+}
++	/* APU2 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
++	/* APU2 w/ legacy bios >= 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
++	/* APU2 w/ maainline bios */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
 +
-+/* GPIO driver output direction */
-+static int gpio_bf_set_output_lock(struct gpio_chip *chip,
-+				   unsigned int offset, int value)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	gpio_bf_set_output(chip, offset);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+/* GPIO driver input direction */
-+static int gpio_bf_set_input_lock(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	gpio_bf_set_input(chip, offset);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+/* GPIO driver read routine. */
-+static int gpio_bf_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u64 value;
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	value = readq(gs->dc_base + GPIO_PIN_STATE);
-+
-+	return (value >> offset) & 1;
-+}
-+
-+/* GPIO driver write routine. */
-+static void gpio_bf_set(struct gpio_chip *chip, unsigned int offset, int value)
-+{
-+	u64 data;
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	data = readq(gs->dc_base + GPIO_PIN_STATE);
-+
-+	if (value)
-+		data |= BIT(offset);
-+	else
-+		data &= ~BIT(offset);
-+	writeq(data, gs->dc_base + GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+}
-+
-+/* GPIO driver initialization routine. */
-+static int gpiodrv_probe(struct platform_device *pdev)
-+{
-+	struct gpio_state *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	struct resource *dc_res;
-+	int ret;
-+
-+	dc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!dc_res)
-+		return -EINVAL;
-+
-+	if (devm_request_mem_region(&pdev->dev, dc_res->start,
-+				    resource_size(dc_res), "gpiodrv") == NULL)
-+		return -EBUSY;
-+
-+	gs = devm_kzalloc(&pdev->dev, sizeof(struct gpio_state), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	gs->dc_base = devm_ioremap(&pdev->dev, dc_res->start,
-+				   resource_size(dc_res));
-+	if (!gs->dc_base)
-+		return -ENOMEM;
-+
-+	gc = &gs->gc;
-+	gc->direction_input = gpio_bf_set_input_lock;
-+	gc->get = gpio_bf_get;
-+	gc->direction_output = gpio_bf_set_output_lock;
-+	gc->set = gpio_bf_set;
-+	gc->label = dev_name(dev);
-+	gc->parent = &pdev->dev;
-+	gc->owner = THIS_MODULE;
-+	gc->base = 0;
-+	gc->ngpio = MLXBF_GPIO_NR;
-+
-+	ret = gpiochip_add_data(&gs->gc, gs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-+		goto err;
-+	}
-+
-+	spin_lock_init(&gs->lock);
-+	platform_set_drvdata(pdev, gs);
-+	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-+	return 0;
-+
-+err:
-+	dev_err(&pdev->dev, "Probe, Failed\n");
-+	return ret;
-+}
-+
-+#ifdef CONFIG_PM
-+/* GPIO driver suspend routine. */
-+static int gpiodrv_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs.gpio_scratchpad = readq(gs->dc_base + GPIO_SCRATCHPAD);
-+	gs->csave_regs.gpio_pad_control[0] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[1] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[2] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[3] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	gs->csave_regs.gpio_pin_dir_i = readq(gs->dc_base + GPIO_PIN_DIR_I);
-+	gs->csave_regs.gpio_pin_dir_o = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+
-+/* GPIO driver resume routine. */
-+static int gpiodrv_resume(struct platform_device *pdev)
-+{
-+	struct gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	writeq(gs->csave_regs.gpio_scratchpad, gs->dc_base + GPIO_SCRATCHPAD);
-+	writeq(gs->csave_regs.gpio_pad_control[0], gs->dc_base +
-+	       GPIO_PAD_CONTROL__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[1], gs->dc_base +
-+	       GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[2], gs->dc_base +
-+	       GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[3], gs->dc_base +
-+	       GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pin_dir_i, gs->dc_base + GPIO_PIN_DIR_I);
-+	writeq(gs->csave_regs.gpio_pin_dir_o, gs->dc_base + GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+#endif
-+
-+/* GPIO driver exit routine. */
-+static int gpiodrv_remove(struct platform_device *pdev)
-+{
-+	struct gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gpiochip_remove(&gs->gc);
-+	iounmap(gs->dc_base);
-+
-+	return 0;
-+}
-+
-+static const struct acpi_device_id gpiodrv_acpi_match[] = {
-+	{ "MLNXBF02", 0 },
++	/* APU3 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu3",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU3 w/ legacy bios >= 4.0.8 */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU3 w/ mainline bios */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
 +	{}
 +};
-+MODULE_DEVICE_TABLE(acpi, gpiodrv_acpi_match);
 +
-+static struct platform_driver gpiodrv_gpio_driver = {
-+	.driver = {
-+		.name = "gpiodrv",
-+		.acpi_match_table = ACPI_PTR(gpiodrv_acpi_match),
-+	},
-+	.probe    = gpiodrv_probe,
-+	.remove   = gpiodrv_remove,
-+#ifdef CONFIG_PM
-+	.suspend  = gpiodrv_suspend,
-+	.resume   = gpiodrv_resume,
-+#endif
-+};
++static struct platform_device *apu_gpio_pdev;
++static struct platform_device *apu_leds_pdev;
++static struct platform_device *apu_keys_pdev;
 +
-+module_platform_driver(gpiodrv_gpio_driver);
++static struct platform_device * __init apu_create_pdev(
++	const char *name,
++	const void *pdata,
++	size_t sz)
++{
++	struct platform_device *pdev;
 +
-+MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
++	pdev = platform_device_register_resndata(NULL,
++		name,
++		PLATFORM_DEVID_NONE,
++		NULL,
++		0,
++		pdata,
++		sz);
++
++	if (IS_ERR(pdev))
++		pr_err("failed registering %s: %ld\n", name, PTR_ERR(pdev));
++
++	return pdev;
++}
++
++static int __init apu_board_init(void)
++{
++	int rc;
++	const struct dmi_system_id *id;
++
++	id = dmi_first_match(apu_gpio_dmi_table);
++	if (!id) {
++		pr_err("failed to detect apu board via dmi\n");
++		return -ENODEV;
++	}
++
++	gpiod_add_lookup_table(&gpios_led_table);
++	gpiod_add_lookup_table(&gpios_key_table);
++
++	apu_gpio_pdev = apu_create_pdev(
++		AMD_FCH_GPIO_DRIVER_NAME,
++		id->driver_data,
++		sizeof(struct amd_fch_gpio_pdata));
++
++	apu_leds_pdev = apu_create_pdev(
++		"leds-gpio",
++		&apu2_leds_pdata,
++		sizeof(apu2_leds_pdata));
++
++	apu_keys_pdev = apu_create_pdev(
++		"gpio-keys-polled",
++		&apu2_keys_pdata,
++		sizeof(apu2_keys_pdata));
++
++	return 0;
++}
++
++static void __exit apu_board_exit(void)
++{
++	gpiod_remove_lookup_table(&gpios_led_table);
++	gpiod_remove_lookup_table(&gpios_key_table);
++
++	platform_device_unregister(apu_keys_pdev);
++	platform_device_unregister(apu_leds_pdev);
++	platform_device_unregister(apu_gpio_pdev);
++}
++
++module_init(apu_board_init);
++module_exit(apu_board_exit);
++
++MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
++MODULE_DESCRIPTION("PC Engines APUv2/APUv3 board GPIO/LED/keys driver");
 +MODULE_LICENSE("GPL");
++MODULE_DEVICE_TABLE(dmi, apu_gpio_dmi_table);
++MODULE_ALIAS("platform:pcengines-apuv2");
++MODULE_SOFTDEP("pre: platform:" AMD_FCH_GPIO_DRIVER_NAME);
++MODULE_SOFTDEP("pre: platform:leds-gpio");
++MODULE_SOFTDEP("pre: platform:gpio_keys_polled");
 -- 
-2.1.2
+1.9.1
