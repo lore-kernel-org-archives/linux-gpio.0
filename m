@@ -1,42 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next 2/3] mfd: pm8xxx: select IRQ_DOMAIN_HIERARCHY in Kconfig
-Date: Thu, 14 Feb 2019 10:02:24 +0100
-Message-ID: <CACRpkda3HxVqNdmk7iRrhvafvkCX=JtxqVyNGO5kmo05MSDN+g@mail.gmail.com>
-References: <20190214013641.9740-1-masneyb@onstation.org> <20190214013641.9740-2-masneyb@onstation.org>
- <CACRpkdbYiwu6Bbd6uMaWUc2AzDZPve5_bq=_9RwRhadaMBf+dQ@mail.gmail.com> <20190214085106.GJ1863@dell>
+Subject: Re: [PATCH] gpio: pxa: avoid attempting to set pin direction via
+ pinctrl on MMP2
+Date: Thu, 14 Feb 2019 10:05:34 +0100
+Message-ID: <CACRpkdbuoxZ+dyoAtUGmEjeh1XjjpLz9OHe=GgnKXO3ZK4uKQg@mail.gmail.com>
+References: <20190213230618.1907-1-lkundrak@v3.sk> <CACRpkdYyT20Um+5bDAiZAfB-A3M+q5DpUQS31+CkLUSb+qpQOw@mail.gmail.com>
+ <50fa8c81950e8bb2583a65bfd920bdf574c9abc1.camel@v3.sk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214085106.GJ1863@dell>
+In-Reply-To: <50fa8c81950e8bb2583a65bfd920bdf574c9abc1.camel@v3.sk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Brian Masney <masneyb@onstation.org>, Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 9:51 AM Lee Jones <lee.jones@linaro.org> wrote:
-> On Thu, 14 Feb 2019, Linus Walleij wrote:
-> > On Thu, Feb 14, 2019 at 2:36 AM Brian Masney <masneyb@onstation.org> wrote:
+On Thu, Feb 14, 2019 at 9:52 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> On Thu, 2019-02-14 at 09:13 +0100, Linus Walleij wrote:
+> > On Thu, Feb 14, 2019 at 12:06 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
 > >
-> > > Select IRQ_DOMAIN_HIERARCHY for pm8xxx in Kconfig since this driver uses
-> > > the version 2 IRQ interfaces. IRQ_DOMAIN_HIERARCHY selects IRQ_DOMAIN,
-> > > so it can be removed from here.
+> > > Similarly to PXA3xx, pinctrl-single can't set pin direction on MMP2 either.
+> > > See also: commit 9dabfdd84bdfa ("gpio: pxa: disable pinctrl calls for
+> > > PXA3xx")
 > > >
-> > > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > > ---
-> > > Linus: For your ib-qcom-ssbi branch.
+> > > Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
 > >
-> > OK applied it there (might fold it in with the original patch, let's see).
+> > Patch applied for fixes.
+> >
+> > Should this even go into stable?
 >
-> Ah, we're applying patches from different SS without Acks now? ;)
+> I would tend to think it should.
 
-Yeah when fixing onelined bugs I tend to do that sometimes,
-usually better to ask forgiveness than permission if -next is broken.
+OK I tag it for stable.
 
-> FWIW:
+> This caused a regression for MMP2 platforms that don't use a pinctrl
+> driver, and none of them do.
 >
->   Acked-by: Lee Jones <lee.jones@linaro.org>
+> On the other hand it went unnoticed since v4.5.
+>
+> I've seen stable maintainers pick up fixes even when stable@ wasn't
+> Cc'd. I guess they apply some heuristics and perhaps look at Fixes:
+> tags to identify bugfixes?
 
-OK folding it in!
+Yes Sasha Levin has an some machine-learning AI that looks at patches
+to see if they are elegible for stable, and sometimes people tell
+Greg directly to pick a patch, and sometimes Greg just picks a patch
+he likes.
+
+But to make things easier for the stable maintainers, it's best to CC stable.
 
 Yours,
 Linus Walleij
