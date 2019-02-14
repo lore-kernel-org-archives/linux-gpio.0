@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 4/7] gpio: mockup: don't create the debugfs link named after the label
-Date: Thu, 14 Feb 2019 14:42:29 +0100
-Message-ID: <20190214134232.3821-5-brgl@bgdev.pl>
+Subject: [PATCH v4 6/7] gpio: mockup: change the signature of unlocked get/set helpers
+Date: Thu, 14 Feb 2019 14:42:31 +0100
+Message-ID: <20190214134232.3821-7-brgl@bgdev.pl>
 References: <20190214134232.3821-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,37 +14,89 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-User-space tests no longer use it and we're breaking the interface
-anyway.
+The unlocked variants only get called from places where we already have
+the pointer to the underlying gpio_mockup_chip structure, so take it
+as parameter instead of struct gpio_chip.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpio/gpio-mockup.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6deed33dbbef..9d279d641374 100644
+index 4e7688348c0e..f1807afd44ba 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -234,7 +234,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 				      struct gpio_mockup_chip *chip)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
--	struct dentry *evfile, *link;
-+	struct dentry *evfile;
- 	struct gpio_chip *gc;
- 	const char *devname;
- 	char *name;
-@@ -247,10 +247,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	if (IS_ERR_OR_NULL(chip->dbg_dir))
- 		goto err;
+@@ -83,10 +83,9 @@ static int gpio_mockup_range_ngpio(unsigned int index)
+ 	return gpio_mockup_ranges[index * 2 + 1];
+ }
  
--	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
--	if (IS_ERR_OR_NULL(link))
--		goto err;
+-static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
++static int __gpio_mockup_get(struct gpio_mockup_chip *chip,
++			     unsigned int offset)
+ {
+-	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
 -
- 	for (i = 0; i < gc->ngpio; i++) {
- 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
- 		if (!name)
+ 	return chip->lines[offset].value;
+ }
+ 
+@@ -96,7 +95,7 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	int val;
+ 
+ 	spin_lock(&chip->lock);
+-	val = __gpio_mockup_get(gc, offset);
++	val = __gpio_mockup_get(chip, offset);
+ 	spin_unlock(&chip->lock);
+ 
+ 	return val;
+@@ -110,7 +109,7 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+ 
+ 	spin_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio) {
+-		val = __gpio_mockup_get(gc, bit);
++		val = __gpio_mockup_get(chip, bit);
+ 		__assign_bit(bit, bits, val);
+ 	}
+ 	spin_unlock(&chip->lock);
+@@ -118,11 +117,9 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+ 	return 0;
+ }
+ 
+-static void __gpio_mockup_set(struct gpio_chip *gc,
++static void __gpio_mockup_set(struct gpio_mockup_chip *chip,
+ 			      unsigned int offset, int value)
+ {
+-	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+-
+ 	chip->lines[offset].value = !!value;
+ }
+ 
+@@ -132,7 +129,7 @@ static void gpio_mockup_set(struct gpio_chip *gc,
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	spin_lock(&chip->lock);
+-	__gpio_mockup_set(gc, offset, value);
++	__gpio_mockup_set(chip, offset, value);
+ 	spin_unlock(&chip->lock);
+ }
+ 
+@@ -144,7 +141,7 @@ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+ 
+ 	spin_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio)
+-		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
++		__gpio_mockup_set(chip, bit, test_bit(bit, bits));
+ 	spin_unlock(&chip->lock);
+ }
+ 
+@@ -155,7 +152,7 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ 
+ 	spin_lock(&chip->lock);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
+-	__gpio_mockup_set(gc, offset, value);
++	__gpio_mockup_set(chip, offset, value);
+ 	spin_unlock(&chip->lock);
+ 
+ 	return 0;
 -- 
 2.20.1
