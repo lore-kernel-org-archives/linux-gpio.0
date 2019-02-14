@@ -1,64 +1,160 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: [PATCH v10 9/9] regulator: bd70528: drop struct bd70528
-Date: Thu, 14 Feb 2019 15:15:50 +0200
-Message-ID: <540fde29249cb6417fb484d0f0f6ebf8a4ac4dd2.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v4 1/7] irq/irq_sim: add a notifier chain
+Date: Thu, 14 Feb 2019 14:42:26 +0100
+Message-ID: <20190214134232.3821-2-brgl@bgdev.pl>
+References: <20190214134232.3821-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20190214134232.3821-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc: Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-As a result of exporting the bd70528 specific locking functions
-we no longer need struct bd70528. Remove references to
-struct bd70528 from bd70528 regulator.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Provide a helper allowing users to register a notifier block with
+a simulator. For now the only event we're notifying about is a change
+in type configuration.
+
+This is required by the gpio-mockup module which wants to track the
+state of GPIO lines and simulate rising and falling edge interrupts.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
+ include/linux/irq_sim.h | 22 ++++++++++++++++++----
+ kernel/irq/irq_sim.c    | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+), 4 deletions(-)
 
-Mark, I proposed to hide the struct bd70528 from sub drivers
-as the RTC lock no longer needs to be visible for sub drivers. So
-please consider applying this to your tree in order to avoid breaking
-it when (if) this series goes via MFD.
-
- drivers/regulator/bd70528-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
-index 72c7f9aa84f3..30e3ed430a8a 100644
---- a/drivers/regulator/bd70528-regulator.c
-+++ b/drivers/regulator/bd70528-regulator.c
-@@ -246,7 +246,7 @@ static const struct regulator_desc bd70528_desc[] = {
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index 4500d453a63e..e076693d0af7 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -8,12 +8,21 @@
  
- static int bd70528_probe(struct platform_device *pdev)
- {
--	struct bd70528 *bd70528;
-+	struct rohm_regmap_dev *bd70528;
- 	int i;
- 	struct regulator_config config = {
- 		.dev = pdev->dev.parent,
-@@ -258,7 +258,7 @@ static int bd70528_probe(struct platform_device *pdev)
- 		return -EINVAL;
+ #include <linux/irq_work.h>
+ #include <linux/device.h>
++#include <linux/notifier.h>
+ 
+ /*
+  * Provides a framework for allocating simulated interrupts which can be
+  * requested like normal irqs and enqueued from process context.
+  */
+ 
++#define IRQ_SIM_TYPE_CHANGED	1
++
++/* Passed to notifier callbacks when type changes. */
++struct irq_sim_irq_type {
++	unsigned int		offset;
++	unsigned int		type;
++};
++
+ struct irq_sim_work_ctx {
+ 	struct irq_work		work;
+ 	unsigned long		*pending;
+@@ -22,13 +31,16 @@ struct irq_sim_work_ctx {
+ struct irq_sim_irq_ctx {
+ 	int			irqnum;
+ 	bool			enabled;
++	struct irq_sim		*parent;
++	struct irq_sim_irq_type	type;
+ };
+ 
+ struct irq_sim {
+-	struct irq_sim_work_ctx	work_ctx;
+-	int			irq_base;
+-	unsigned int		irq_count;
+-	struct irq_sim_irq_ctx	*irqs;
++	struct irq_sim_work_ctx		work_ctx;
++	int				irq_base;
++	unsigned int			irq_count;
++	struct irq_sim_irq_ctx		*irqs;
++	struct atomic_notifier_head	notifier;
+ };
+ 
+ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+@@ -37,5 +49,7 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+ void irq_sim_fini(struct irq_sim *sim);
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
++int irq_sim_notifier_register(struct irq_sim *sim,
++			      struct notifier_block *nb);
+ 
+ #endif /* _LINUX_IRQ_SIM_H */
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index 98a20e1594ce..a55641e78125 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -25,10 +25,34 @@ static void irq_sim_irqunmask(struct irq_data *data)
+ 	irq_ctx->enabled = true;
+ }
+ 
++static int irq_sim_set_type(struct irq_data *data, unsigned int type)
++{
++	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
++	struct irq_sim *sim = irq_ctx->parent;
++	int rv;
++
++	/* Only support rising and falling edge types. */
++	if (type & ~IRQ_TYPE_EDGE_BOTH)
++		return -EINVAL;
++
++	irq_ctx->type.type = type;
++
++	rv = atomic_notifier_call_chain(&sim->notifier,
++					IRQ_SIM_TYPE_CHANGED,
++					&irq_ctx->type);
++	if (rv < 0) {
++		pr_err("%s: error calling the type notifier chain\n", __func__);
++		return rv;
++	}
++
++	return 0;
++}
++
+ static struct irq_chip irq_sim_irqchip = {
+ 	.name		= "irq_sim",
+ 	.irq_mask	= irq_sim_irqmask,
+ 	.irq_unmask	= irq_sim_irqunmask,
++	.irq_set_type	= irq_sim_set_type,
+ };
+ 
+ static void irq_sim_handle_irq(struct irq_work *work)
+@@ -83,7 +107,9 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ 
+ 	for (i = 0; i < num_irqs; i++) {
+ 		sim->irqs[i].irqnum = sim->irq_base + i;
++		sim->irqs[i].parent = sim;
+ 		sim->irqs[i].enabled = false;
++		sim->irqs[i].type.offset = i;
+ 		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
+ 		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
+ 		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
+@@ -91,6 +117,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ 				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
  	}
  
--	config.regmap = bd70528->chip.regmap;
-+	config.regmap = bd70528->regmap;
++	ATOMIC_INIT_NOTIFIER_HEAD(&sim->notifier);
+ 	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
+ 	sim->irq_count = num_irqs;
  
- 	for (i = 0; i < ARRAY_SIZE(bd70528_desc); i++) {
- 		struct regulator_dev *rdev;
+@@ -180,3 +207,16 @@ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+ 	return sim->irqs[offset].irqnum;
+ }
+ EXPORT_SYMBOL_GPL(irq_sim_irqnum);
++
++/**
++ * irq_sim_notifier_register - Subscribe for interrupt simulator events.
++ *
++ * @sim:       The interrupt simulator object.
++ * @nb:        Notifier block.
++ */
++int irq_sim_notifier_register(struct irq_sim *sim,
++			      struct notifier_block *nb)
++{
++	return atomic_notifier_chain_register(&sim->notifier, nb);
++}
++EXPORT_SYMBOL_GPL(irq_sim_notifier_register);
 -- 
-2.14.3
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+2.20.1
