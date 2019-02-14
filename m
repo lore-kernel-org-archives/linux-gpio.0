@@ -1,73 +1,116 @@
 From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
 Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
-Date: Thu, 14 Feb 2019 10:53:04 +0100
-Message-ID: <6f723c65-be90-132d-e714-616a21149fe0@metux.net>
+Date: Thu, 14 Feb 2019 10:56:25 +0100
+Message-ID: <55cfbefe-5ff7-9f8d-4507-a5a2f9c78d13@metux.net>
 References: <1549588593-4856-1-git-send-email-lkml@metux.net>
  <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
- <f751539b-d844-9ab1-169b-ce6aa0056de6@metux.net>
- <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
+In-Reply-To: <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 13.02.19 10:02, Linus Walleij wrote:
+On 08.02.19 15:25, Linus Walleij wrote:
 
 Hi,
 
-> What we normally do is expose all the lines from a gpio chip> as kernel abstraction.> > This is because at least in theory this chip
-can be used by> several boards.
-I'm afraid it's a bit more complicated. The register set doesn't
-seem to be linear. I have absolutely no idea what the undocumented
-registers do. For the sake of security, I would hate to see them
-accessible from userland.
+>> +config GPIO_AMD_FCH
+>> +       tristate "GPIO support for AMD Fusion Controller Hub (G-series SOCs)"
+>> +       select GPIO_GENERIC
+> 
+> You are selecting GPIO_GENERIC, is this necessary? I thought
+> X86 was already selecting this.
 
-> The chip abstraction does have facilities for masking off
-> unavailable lines: in struct gpio_chip there is .valid_mask
-> and even a callback .init_valid_mask() to set it up.
+Doesn't look so - at least haven't found anything where it's
+automatically selected on x86. OTOH, that wouldn't make much
+sense to me  - I somewhat doubt that x86 can't run w/o that.
 
-Okay, but then again I'd need to pass this from the board
-driver into the gpio driver. Feels much easier and safer to
-just pass the registers.
+Maybe ACPI selects it (haven't checked yet), but my driver is
+completely independent from ACPI (the board's BIOS doesn't
+provide any useful entries here), ACPI isn't x86 specific
+(anymore), and I'd guess x86 boards can run w/o ACPI.
+(actually, I'm considering hacking up a completely oftree
+based bootup on x86 ;-)).
 
-What I perhaps could do: add all documented registers as gpio's
-in the gpio driver and make the board driver a dummy consumer
-for the unused ones.
+IMHO, dependencies should always be direct - indirect ones could
+suddenly change in subtle ways.
 
-> So this is what you should use to make existing lines
-> unavailable, do not try to hide them by not exposing
-> registers or line offsets. The abstraction should model
-> the hardware, not the usecase.
+> I think checkpatch will complain on that SPDX thing.
+> Copy something from one of the other drivers, it should be
+> on the first line of the file.
 
-According to my information, it is the hardware who dictates that
-non-linear layout. Even the PIN naming is non-linear. And I don't
-like to see this passed to upper layers, or even userland. So,
-at least the gpio driver should only serve the documented gpios
-and present them lineary.
+Yeah, that's a really helpful tool. Maybe I should do some more
+automatisation on handling/editing whole patch queues ...
+(unless somebody else already did it).
 
-Maybe the holes in the register set are technically also gpios,
-but used by some internal logic and not properly masked out in
-hw - really weird things (possibly damage) could happen.
+> Cut down the excessive newlines.
 
-> FYI there are tons of systems out there that expose a
-> whole range of GPIOs that the developer have no clue
-> where they are connected on the PCB, the most common
-> case is that they are not connected (sometimes not
-> even leaving the chip die) or go to test points. They are
-> very seldom dangerous, in fact I've never seen dangerous
-> GPIOs, just dangerous set-ups of pins already known
-> to be in use for something.
+Is there some standard rule on this ? Maybe something that checkpatch.pl
+could automatically catch ?
 
-Can't speak about standard ICs/SoCs, but i've seen such things
-in some of my client's fpga designs. For example incomplete
-decoders, gpios attached to internal state machines, etc, etc
-So, I've learned to be *very* cautious with undocumented registers.
+>> +static void amd_fch_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+>> +{
+>> +       struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
+>> +       (void)priv;
+>> +
+>> +       seq_printf(s, "debug info not implemented yet\n");
+>> +}
+> 
+> I think you can just skip implementing this then.
+
+Yep, forgot to clean that up.
+
+>> +static int amd_fch_gpio_request(struct gpio_chip *chip, unsigned gpio_pin)
+>> +{
+>> +       if (gpio_pin < chip->ngpio)
+>> +               return 0;
+>> +
+>> +       return -EINVAL;
+>> +}
+> 
+> You can probably skip this too. The core already does this check.
+
+Okay, wasn't sure about that, so I preferred defensive programming.
+
+>> +       priv->gc.owner                  = THIS_MODULE;
+>> +       priv->gc.parent                 = &pdev->dev;
+>> +       priv->gc.label                  = dev_name(&pdev->dev);
+>> +       priv->gc.base                   = priv->pdata->gpio_base;
+> 
+> No please, use priv->gc.base = -1;
+
+Could I also leave that field untouched (IOW: =0) ?
+
+>> +/*
+>> + * struct amd_fch_gpio_reg - GPIO register definition
+>> + * @reg: register index
+>> + * @name: signal name
+>> + */
+>> +struct amd_fch_gpio_reg {
+>> +    int         reg;
+>> +    const char* name;
+>> +};
+> 
+> Can't you put this in the driver file?
+
+See other mails.
+Need to pass in the board specific register assignments.
+
+>> +struct amd_fch_gpio_pdata {
+>> +    struct resource          res;
+>> +    int                      gpio_num;
+>> +    struct amd_fch_gpio_reg *gpio_reg;
+>> +    int                      gpio_base;
+>> +};
+> 
+> Drop gpio_base. We don't hardcode the GPIO base anymore.
+
+Done. I had to patch gpio-keys-polled driver first.
 
 
 --mtx
