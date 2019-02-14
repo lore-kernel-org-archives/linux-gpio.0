@@ -1,37 +1,40 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH -next 1/3] spmi: pmic-arb: select IRQ_DOMAIN_HIERARCHY in Kconfig
-Date: Wed, 13 Feb 2019 20:36:39 -0500
-Message-ID: <20190214013641.9740-1-masneyb@onstation.org>
+Subject: [PATCH -next 3/3] qcom: ssbi-gpio: correct boundary conditions in pm8xxx_domain_translate
+Date: Wed, 13 Feb 2019 20:36:41 -0500
+Message-ID: <20190214013641.9740-3-masneyb@onstation.org>
+References: <20190214013641.9740-1-masneyb@onstation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190214013641.9740-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: sboyd@kernel.org, lee.jones@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Select IRQ_DOMAIN_HIERARCHY for pmic-arb in Kconfig since this driver
-uses the version 2 IRQ interfaces. IRQ_DOMAIN_HIERARCHY selects
-IRQ_DOMAIN, so it can be removed from here.
+SSBI GPIOs are numbered 1..ngpio, so the boundary check in
+pm8xxx_domain_translate() is off by one. This patch corrects that check.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
-This addresses a build failure found by make randconfig in linux-next:
-https://lore.kernel.org/lkml/fb0508f1-131d-ff17-9b5d-123ec75275dd@infradead.org/
+Originally found by Bjorn Andersson in spmi-gpio.
 
- drivers/spmi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Linus: For your ib-qcom-ssbi branch.
 
-diff --git a/drivers/spmi/Kconfig b/drivers/spmi/Kconfig
-index 0d3b70b3bda8..d48ed7c2c6c4 100644
---- a/drivers/spmi/Kconfig
-+++ b/drivers/spmi/Kconfig
-@@ -12,7 +12,7 @@ if SPMI
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index 84a232450000..10575d6e2ba5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -710,7 +710,8 @@ static int pm8xxx_domain_translate(struct irq_domain *domain,
+ 	struct pm8xxx_gpio *pctrl = container_of(domain->host_data,
+ 						 struct pm8xxx_gpio, chip);
  
- config SPMI_MSM_PMIC_ARB
- 	tristate "Qualcomm MSM SPMI Controller (PMIC Arbiter)"
--	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	default ARCH_QCOM
+-	if (fwspec->param_count != 2 || fwspec->param[0] >= pctrl->chip.ngpio)
++	if (fwspec->param_count != 2 || fwspec->param[0] < 1 ||
++	    fwspec->param[0] > pctrl->chip.ngpio)
+ 		return -EINVAL;
+ 
+ 	*hwirq = fwspec->param[0] - PM8XXX_GPIO_PHYSICAL_OFFSET;
 -- 
 2.17.2
