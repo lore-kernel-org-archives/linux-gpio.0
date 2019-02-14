@@ -1,54 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pxa: avoid attempting to set pin direction via
- pinctrl on MMP2
-Date: Thu, 14 Feb 2019 10:05:34 +0100
-Message-ID: <CACRpkdbuoxZ+dyoAtUGmEjeh1XjjpLz9OHe=GgnKXO3ZK4uKQg@mail.gmail.com>
-References: <20190213230618.1907-1-lkundrak@v3.sk> <CACRpkdYyT20Um+5bDAiZAfB-A3M+q5DpUQS31+CkLUSb+qpQOw@mail.gmail.com>
- <50fa8c81950e8bb2583a65bfd920bdf574c9abc1.camel@v3.sk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v5 02/11] dt-bindings: power: supply: add DT bindings for max77650
+Date: Thu, 14 Feb 2019 10:29:22 +0100
+Message-ID: <CAMRc=MeyMnRMzmexgNBF5PkP-Hs2G2sS4hCP4mTZR5jxC=ej1w@mail.gmail.com>
+References: <20190213134335.10838-1-brgl@bgdev.pl> <20190213134335.10838-3-brgl@bgdev.pl>
+ <20190213204834.GA31342@bogus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50fa8c81950e8bb2583a65bfd920bdf574c9abc1.camel@v3.sk>
+In-Reply-To: <20190213204834.GA31342@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lubomir Rintel <lkundrak@v3.sk>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 9:52 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> On Thu, 2019-02-14 at 09:13 +0100, Linus Walleij wrote:
-> > On Thu, Feb 14, 2019 at 12:06 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> >
-> > > Similarly to PXA3xx, pinctrl-single can't set pin direction on MMP2 either.
-> > > See also: commit 9dabfdd84bdfa ("gpio: pxa: disable pinctrl calls for
-> > > PXA3xx")
-> > >
-> > > Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
-> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> >
-> > Patch applied for fixes.
-> >
-> > Should this even go into stable?
+=C5=9Br., 13 lut 2019 o 21:48 Rob Herring <robh@kernel.org> napisa=C5=82(a)=
+:
 >
-> I would tend to think it should.
-
-OK I tag it for stable.
-
-> This caused a regression for MMP2 platforms that don't use a pinctrl
-> driver, and none of them do.
+> On Wed, Feb 13, 2019 at 02:43:26PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Add the DT binding document for the battery charger module of max77650.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/power/supply/max7=
+7650-charger.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/power/supply/max77650-ch=
+arger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger=
+.txt
+> > new file mode 100644
+> > index 000000000000..16e24173c80e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.t=
+xt
+> > @@ -0,0 +1,27 @@
+> > +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
+> > +
+> > +This module is part of the MAX77650 MFD device. For more details
+> > +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> > +
+> > +The charger is represented as a sub-node of the PMIC node on the devic=
+e tree.
+> > +
+> > +Required properties:
+> > +--------------------
+> > +- compatible:                Must be "maxim,max77650-charger"
+> > +
+> > +Optional properties:
+> > +--------------------
+> > +- min-input-voltage: Minimum CHGIN regulation voltage (in microvolts).=
+ Must be
+> > +                     one of: 4000000, 4100000, 4200000, 4300000, 44000=
+00,
+> > +                     4500000, 4600000, 4700000.
+> > +- current-limit:     CHGIN input current limit (in microamps). Must be=
+ one of:
+> > +                     95000, 190000, 285000, 380000, 475000.
 >
-> On the other hand it went unnoticed since v4.5.
+> Unit suffix? Really, these should be common properties. We have
+> some I think. Charger bindings are a mess though...
 >
-> I've seen stable maintainers pick up fixes even when stable@ wasn't
-> Cc'd. I guess they apply some heuristics and perhaps look at Fixes:
-> tags to identify bugfixes?
 
-Yes Sasha Levin has an some machine-learning AI that looks at patches
-to see if they are elegible for stable, and sometimes people tell
-Greg directly to pick a patch, and sometimes Greg just picks a patch
-he likes.
+Do you mean a suffix like: ua for microamps and uv for microvolts? I'm
+not seeing any other such properties.
 
-But to make things easier for the stable maintainers, it's best to CC stable.
+Bart
 
-Yours,
-Linus Walleij
+> > +
+> > +Example:
+> > +--------
+> > +
+> > +     charger {
+> > +             compatible =3D "maxim,max77650-charger";
+> > +             maxim,vchgin-min =3D <4200000>;
+> > +             maxim,ichgin-lim =3D <285000>;
+>
+> Doesn't match above.
+>
+> > +     };
+> > --
+> > 2.20.1
+> >
