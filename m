@@ -1,12 +1,12 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
-Date: Thu, 14 Feb 2019 04:13:54 +0200
-Message-ID: <CAHp75Vex6dhhaUFA+5SaC45HCNVpx3gzRYJ8CQA7kz+K_NQ-cg@mail.gmail.com>
-References: <1550091448-28578-1-git-send-email-info@metux.net> <1550091448-28578-3-git-send-email-info@metux.net>
+Subject: Re: APUv2/v3 board support V2
+Date: Thu, 14 Feb 2019 04:17:07 +0200
+Message-ID: <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com>
+References: <1550091448-28578-1-git-send-email-info@metux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550091448-28578-3-git-send-email-info@metux.net>
+In-Reply-To: <1550091448-28578-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Enrico Weigelt, metux IT consult" <info@metux.net>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
@@ -15,71 +15,53 @@ List-Id: linux-gpio@vger.kernel.org
 On Wed, Feb 13, 2019 at 10:57 PM Enrico Weigelt, metux IT consult
 <info@metux.net> wrote:
 >
-> Driver for PCengines APUv2 board's front LEDs and Button,
-> which are attached to AMD PCH GPIOs. Due to lack of dedicated
-> ACPI entry, detecting the board via DMI.
+> Hi folks,
+>
+>
+> this is version 2 of my APUv2/APUv3 series. Heavily reworked,
+> hope I've now addressed all issues of the last one.
 
-> +#include <linux/init.h>
+Thanks!
+It looks indeed better.
 
-> +#include <linux/module.h>
+I dunno how you created this message, I hope you used --cover-letter
+parameter to git-format-patch.
+Just don't forget to add -v<N>, where <N> is version.
 
-One of them is not needed.
+Also makes sense to do --thread to put proper references to emails.
 
-> +static struct platform_device * __init apu_create_pdev(
-> +       const char* name,
-> +       const void *pdata,
-> +       size_t sz)
-> +{
-> +       struct platform_device *pdev;
-> +
+> Major changes are:
+>  * using gpiod_lookup_table instead of hardcoded gpio numbers
+>  * moved the PCHs gpio register definitions to the gpio drivers'
+>    header (but keeping the actual assignments in the board driver,
+>    as they're board speficic)
+>  * moved IO resource definition from board to gpio driver
+>    (the FCHs mmio base address could be changed, but nobody
+>    seems to ever do it)
+>  * added gpio line names
+>  * moved the gpio driver's pdata definitions to::
+>    include/linux/platform_data/gpio/gpio-amd-fch.h
+>  * reduced some code redundancies and various cleanups
+>
+> Possibly debatable:
+>  * does is the assigned key code fit well ? (KEY_SETUP seemed the
+>    best candidate to me, but I'm open to suggestions)
+>  * should the pch gpio become a sub-device of some toplevel PCH
+>    device ? (which then could also maintain the base address, etc)
+>
+> Note: the keyboard device needs separate patch for gpiod_lookup_table
+> support in gpio-keys-polled driver. I'll sent it separately.
+>
+>
+> --mtx
+>
+>
+> --
+> Enrico Weigelt, metux IT consult
+> Free software and Linux embedded engineering
+> info@metux.net -- +49-151-27565287
 
-> +       pdev = platform_device_register_resndata(
-> +               NULL,                   /* parent */
-> +               name,                   /* name */
-> +               PLATFORM_DEVID_NONE,    /* id */
-> +               NULL,                   /* res */
-> +               0,                      /* res_num */
-> +               pdata,                  /* platform_data */
-> +               sz);
 
-No need to comment the obvious.
-
-> +
-> +       if (IS_ERR(pdev))
-
-> +               pr_err(KBUILD_MODNAME ": failed registering %s: %ld\n", name, PTR_ERR(pdev));
-
-Better to set pr_fmt() macro at the top of source.
-
-> +
-> +       return pdev;
-> +}
-> +
-> +static int __init apu_board_init(void)
-> +{
-> +       int rc;
-> +       const struct dmi_system_id *id;
-> +
-> +       id = dmi_first_match(apu_gpio_dmi_table);
-
-> +
-
-Redundant blank line.
-
-> +       if (!id) {
-> +               pr_err(KBUILD_MODNAME ": failed to detect apu board via dmi\n");
-
-pr_fmt()
-
-> +               return -ENODEV;
-> +       }
-
-> +       pr_info(KBUILD_MODNAME ": initialized: gpio, leds, keys\n");
-
-Noise.
-
-> +       return 0;
-> +}
 
 -- 
 With Best Regards,
