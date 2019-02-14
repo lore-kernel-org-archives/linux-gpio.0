@@ -1,68 +1,97 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: APUv2/v3 board support V2
-Date: Thu, 14 Feb 2019 04:17:07 +0200
-Message-ID: <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com>
-References: <1550091448-28578-1-git-send-email-info@metux.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: sprd: Change to use SoC compatible string
+Date: Thu, 14 Feb 2019 08:56:26 +0100
+Message-ID: <CACRpkdZ8vrNjju=Lmqu5x7VqKB7C2GU-oiryCRpcpCf2rBo4UA@mail.gmail.com>
+References: <b8101fd6d303c1993ee294eeee8bce4d24b9547f.1550061925.git.baolin.wang@linaro.org>
+ <0438b78c7f9f9bc3f0e7bcbcef3873fd2dd7e259.1550061925.git.baolin.wang@linaro.org>
+ <CAMpxmJWuMWBSPjoJWkfagAAopYjohA0rhxUacNPXhhiTFZJorA@mail.gmail.com>
+ <CAMz4kuJRvYo699J5SiG9mhjy5pt1hke8yXwoj9KfmZBTKkkKzw@mail.gmail.com> <CAMpxmJXbuOuMvxe+bXqjaCrVU5WXxQ=fZTU9iA8Opnqrx25eMQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550091448-28578-1-git-send-email-info@metux.net>
+In-Reply-To: <CAMpxmJXbuOuMvxe+bXqjaCrVU5WXxQ=fZTU9iA8Opnqrx25eMQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Orson Zhai <orsonzhai@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, Mark Brown <broonie@kernel.org>, linux-devicetree <devicetree@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:57 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+On Wed, Feb 13, 2019 at 5:10 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> =C5=9Br., 13 lut 2019 o 14:15 Baolin Wang <baolin.wang@linaro.org> napisa=
+=C5=82(a):
+> >
+> > On Wed, 13 Feb 2019 at 20:59, Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> > >
+> > > =C5=9Br., 13 lut 2019 o 13:49 Baolin Wang <baolin.wang@linaro.org> na=
+pisa=C5=82(a):
+> > > >
+> > > > Change to use SoC compatible string instead of wildcard string.
+> > > >
+> > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > > ---
+> > > >  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-=
+pmic-eic-sprd.c
+> > > > index ac573da..24228cf 100644
+> > > > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+> > > > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+> > > > @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_=
+device *pdev)
+> > > >  }
+> > > >
+> > > >  static const struct of_device_id sprd_pmic_eic_of_match[] =3D {
+> > > > -       { .compatible =3D "sprd,sc27xx-eic", },
+> > > > +       { .compatible =3D "sprd,sc2731-eic", },
+> > > >         { /* end of list */ }
+> > > >  };
+> > > >  MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+> > > > --
+> > > > 1.7.9.5
+> > > >
+> > >
+> > > We guarantee to make older device-trees to work with new kernel so yo=
+u
+> > > can add the new compatible, but you can't remove the old one.
+> >
+> > But the old one is incorrect, and we still keep it?
+> >
 >
-> Hi folks,
+> Well in theory the device-tree is supposed to be a stable ABI so once
+> it's released, it should work with any following kernel version.
 >
+> In practice changes are sometimes allowed and there are also bugs in DT f=
+iles.
 >
-> this is version 2 of my APUv2/APUv3 series. Heavily reworked,
-> hope I've now addressed all issues of the last one.
+> Linus: what do you think?
 
-Thanks!
-It looks indeed better.
+In this specific case I'd keep both strings, it doesn't hurt does it?
 
-I dunno how you created this message, I hope you used --cover-letter
-parameter to git-format-patch.
-Just don't forget to add -v<N>, where <N> is version.
+You could add a comment to the wildcard string saying it is only there
+for compatibility with elder device trees.
 
-Also makes sense to do --thread to put proper references to emails.
+In general as long as there are not (a lot of) products shipped with
+a certain device tree, I don't care much whether we change the bindings
+or contents.
 
-> Major changes are:
->  * using gpiod_lookup_table instead of hardcoded gpio numbers
->  * moved the PCHs gpio register definitions to the gpio drivers'
->    header (but keeping the actual assignments in the board driver,
->    as they're board speficic)
->  * moved IO resource definition from board to gpio driver
->    (the FCHs mmio base address could be changed, but nobody
->    seems to ever do it)
->  * added gpio line names
->  * moved the gpio driver's pdata definitions to::
->    include/linux/platform_data/gpio/gpio-amd-fch.h
->  * reduced some code redundancies and various cleanups
->
-> Possibly debatable:
->  * does is the assigned key code fit well ? (KEY_SETUP seemed the
->    best candidate to me, but I'm open to suggestions)
->  * should the pch gpio become a sub-device of some toplevel PCH
->    device ? (which then could also maintain the base address, etc)
->
-> Note: the keyboard device needs separate patch for gpiod_lookup_table
-> support in gpio-keys-polled driver. I'll sent it separately.
->
->
-> --mtx
->
->
-> --
-> Enrico Weigelt, metux IT consult
-> Free software and Linux embedded engineering
-> info@metux.net -- +49-151-27565287
+The hard rule to keep the device trees backward-compatible comes
+from SPARC SunOS where the DTB was burned into a BIOS ROM
+that was hard or impossible to update, Linux just had to handle
+whatever was in there. If the situation with the device tree we change
+is not similiar, we should not care either.
 
+In practice there are companies and developers that always
+recompile and ship their device trees at the same time as they
+compile and ship their kernel, and in that case we need not care
+about backward compatibility.
 
+While the device tree enablement on ARM started out with the
+former (strict) assumption, the practice of using DTs has shown
+that it is an unrealistic and inappropriate stance to have for all
+device trees. (IMO!) So I don't mind if you break compatibility here.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
