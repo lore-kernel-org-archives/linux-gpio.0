@@ -1,109 +1,78 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Date: Thu, 14 Feb 2019 09:42:48 +0000
-Message-ID: <20190214094248.GI13737@dell>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
- <20190212203408.GA1863@dell>
- <CAKdAkRQZ+ug7tpkE4x_8iTbUm9JnyF5wWrUnPRASi98t25LTbA@mail.gmail.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
+Date: Thu, 14 Feb 2019 10:53:04 +0100
+Message-ID: <6f723c65-be90-132d-e714-616a21149fe0@metux.net>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net>
+ <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
+ <f751539b-d844-9ab1-169b-ce6aa0056de6@metux.net>
+ <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRQZ+ug7tpkE4x_8iTbUm9JnyF5wWrUnPRASi98t25LTbA@mail.gmail.com>
+In-Reply-To: <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lkml <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 12 Feb 2019, Dmitry Torokhov wrote:
+On 13.02.19 10:02, Linus Walleij wrote:
 
-> Hi Lee,
-> 
-> On Tue, Feb 12, 2019 at 12:34 PM Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > Add support for the push- and slide-button events for max77650.
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > > ---
-> > > >  drivers/input/misc/Kconfig          |   9 ++
-> > > >  drivers/input/misc/Makefile         |   1 +
-> > > >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
-> > > >  3 files changed, 145 insertions(+)
-> > > >  create mode 100644 drivers/input/misc/max77650-onkey.c
-> >
-> > [...]
-> >
-> > Moving things around a bit:
-> >
-> > > > +static int max77650_onkey_probe(struct platform_device *pdev)
-> > > > +{
-> >
-> > > > +   irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
-> > > > +   if (irq_f <= 0)
-> > > > +           return -EINVAL;
-> > > > +
-> > > > +   irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
-> > > > +   if (irq_r <= 0)
-> > > > +           return -EINVAL;
-> > >
-> > > Ugh, it would be better if you handled IRQ mapping in the MFD piece and
-> > > passed it as resources of platform device. Then you'd simply call
-> > > platform_get_irq() here and did not have to reach into parent device for
-> > > "irq_dara".
-> >
-> > These device IRQs were defined and registered with the Regmap *set*
-> > (actually init()) APIs and thus should be pulled out using the
-> > appropriate reverse Regmap *get* APIs here in the device.
-> >
-> > Registering them with Regmap *and* pulling them back out again in the
-> > same (MFD in this case) driver, only to register them as platform data
-> > is certainly not how I see the API being designed/used.
-> >
-> > > > +   struct regmap_irq_chip_data *irq_data;
-> > > > +   struct device *dev, *parent;
-> >
-> > > > +   dev = &pdev->dev;
-> > > > +   parent = dev->parent;
-> > > > +   i2c = to_i2c_client(parent);
-> > > > +   irq_data = i2c_get_clientdata(i2c);
-> > > > +
-> > > > +   map = dev_get_regmap(parent, NULL);
-> > > > +   if (!map)
-> > > > +           return -ENODEV;
-> >
-> > However, this hoop jumping is a bit crazy and for the most part
-> > superfluous.  Instead, create a struct of attributes you wish to share
-> > with the child devices (containing both regmap (which you should call
-> > regmap and not map by the way) and irq_data) and pass it as either
-> > platform data (preferred) or as device data.
-> >
-> > If you choose the latter, you do not need to convert from 'device' to
-> > 'i2c' to do the look-up.  Since this function (probe()) is provided
-> > with a platform_device, you can just use platform_get_drvdata() to
-> > achieve the same as above.
-> >
-> > If you go the preferred (platform data) route, then you should use
-> > dev_get_platdata() instead.
-> 
-> By doing what you are suggesting (introducing platform data) you
-> introducing strong dependency between MFD and input piece for no
-> different reason. With the current implementation the parent can be
-> reworked completely without involving onkey driver.
-> 
-> I find such clean separation desirable. We are trying to move away
-> form platform data where it makes sense.
+Hi,
 
-Never mind.  We found a way forward where everyone wins!
+> What we normally do is expose all the lines from a gpio chip> as kernel abstraction.> > This is because at least in theory this chip
+can be used by> several boards.
+I'm afraid it's a bit more complicated. The register set doesn't
+seem to be linear. I have absolutely no idea what the undocumented
+registers do. For the sake of security, I would hate to see them
+accessible from userland.
 
-Thanks for your time.
+> The chip abstraction does have facilities for masking off
+> unavailable lines: in struct gpio_chip there is .valid_mask
+> and even a callback .init_valid_mask() to set it up.
+
+Okay, but then again I'd need to pass this from the board
+driver into the gpio driver. Feels much easier and safer to
+just pass the registers.
+
+What I perhaps could do: add all documented registers as gpio's
+in the gpio driver and make the board driver a dummy consumer
+for the unused ones.
+
+> So this is what you should use to make existing lines
+> unavailable, do not try to hide them by not exposing
+> registers or line offsets. The abstraction should model
+> the hardware, not the usecase.
+
+According to my information, it is the hardware who dictates that
+non-linear layout. Even the PIN naming is non-linear. And I don't
+like to see this passed to upper layers, or even userland. So,
+at least the gpio driver should only serve the documented gpios
+and present them lineary.
+
+Maybe the holes in the register set are technically also gpios,
+but used by some internal logic and not properly masked out in
+hw - really weird things (possibly damage) could happen.
+
+> FYI there are tons of systems out there that expose a
+> whole range of GPIOs that the developer have no clue
+> where they are connected on the PCB, the most common
+> case is that they are not connected (sometimes not
+> even leaving the chip die) or go to test points. They are
+> very seldom dangerous, in fact I've never seen dangerous
+> GPIOs, just dangerous set-ups of pins already known
+> to be in use for something.
+
+Can't speak about standard ICs/SoCs, but i've seen such things
+in some of my client's fpga designs. For example incomplete
+decoders, gpios attached to internal state machines, etc, etc
+So, I've learned to be *very* cautious with undocumented registers.
+
+
+--mtx
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
