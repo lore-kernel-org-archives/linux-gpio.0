@@ -1,77 +1,35 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 02/11] dt-bindings: power: supply: add DT bindings for max77650
-Date: Thu, 14 Feb 2019 08:18:11 -0600
-Message-ID: <CAL_JsqKokJhAXyOV1y-TNYfNAsd236vz0kLQkg+rpTKPZynWPw@mail.gmail.com>
-References: <20190213134335.10838-1-brgl@bgdev.pl> <20190213134335.10838-3-brgl@bgdev.pl>
- <20190213204834.GA31342@bogus> <CAMRc=MeyMnRMzmexgNBF5PkP-Hs2G2sS4hCP4mTZR5jxC=ej1w@mail.gmail.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: APUv2/v3 board support V2
+Date: Thu, 14 Feb 2019 16:04:55 +0100
+Message-ID: <0f952b25-9ba9-b2cb-381b-d51e195e8378@metux.net>
+References: <1550091448-28578-1-git-send-email-info@metux.net>
+ <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com>
+ <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
+ <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=MeyMnRMzmexgNBF5PkP-Hs2G2sS4hCP4mTZR5jxC=ej1w@mail.gmail.com>
+In-Reply-To: <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Enrico Weigelt, metux IT consult" <info@metux.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 3:29 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> =C5=9Br., 13 lut 2019 o 21:48 Rob Herring <robh@kernel.org> napisa=C5=82(=
-a):
-> >
-> > On Wed, Feb 13, 2019 at 02:43:26PM +0100, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Add the DT binding document for the battery charger module of max7765=
-0.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++=
-++
-> > >  1 file changed, 27 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/power/supply/ma=
-x77650-charger.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/power/supply/max77650-=
-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charg=
-er.txt
-> > > new file mode 100644
-> > > index 000000000000..16e24173c80e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger=
-.txt
-> > > @@ -0,0 +1,27 @@
-> > > +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> > > +
-> > > +This module is part of the MAX77650 MFD device. For more details
-> > > +see Documentation/devicetree/bindings/mfd/max77650.txt.
-> > > +
-> > > +The charger is represented as a sub-node of the PMIC node on the dev=
-ice tree.
-> > > +
-> > > +Required properties:
-> > > +--------------------
-> > > +- compatible:                Must be "maxim,max77650-charger"
-> > > +
-> > > +Optional properties:
-> > > +--------------------
-> > > +- min-input-voltage: Minimum CHGIN regulation voltage (in microvolts=
-). Must be
-> > > +                     one of: 4000000, 4100000, 4200000, 4300000, 440=
-0000,
-> > > +                     4500000, 4600000, 4700000.
-> > > +- current-limit:     CHGIN input current limit (in microamps). Must =
-be one of:
-> > > +                     95000, 190000, 285000, 380000, 475000.
-> >
-> > Unit suffix? Really, these should be common properties. We have
-> > some I think. Charger bindings are a mess though...
-> >
->
-> Do you mean a suffix like: ua for microamps and uv for microvolts? I'm
-> not seeing any other such properties.
+On 14.02.19 13:33, Andy Shevchenko wrote:
 
-See bindings/property-units.txt
+> It's there from several releases. But it's not a send-email option,
+> it's format-patch one.
+> send-email passes those commands to format-patch.
 
-Rob
+oh, wasn't aware of that.
+thx.
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
