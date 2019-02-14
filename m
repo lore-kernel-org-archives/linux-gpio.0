@@ -1,11 +1,12 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 0/7] gpio: mockup: improve the user-space testing interface
-Date: Thu, 14 Feb 2019 14:42:25 +0100
-Message-ID: <20190214134232.3821-1-brgl@bgdev.pl>
+Subject: [PATCH v4 4/7] gpio: mockup: don't create the debugfs link named after the label
+Date: Thu, 14 Feb 2019 14:42:29 +0100
+Message-ID: <20190214134232.3821-5-brgl@bgdev.pl>
+References: <20190214134232.3821-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190214134232.3821-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
@@ -13,42 +14,37 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hi Marc,
+User-space tests no longer use it and we're breaking the interface
+anyway.
 
-another try at the irq_sim stuff. This time I added a notifier chain to
-irq_sim and made gpio-mockup register a notifier block. This way interested
-users will get notified about a type config change.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-mockup.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-v1 -> v2:
-- instead of providing the irq_sim_get_type() helper, move the irq type
-  logic into the simulator and provide a helper that allows users to specify
-  the type of the fired interrupt
-
-v2 -> v3:
-- switch back to having irq_sim_type() and put the line state logic into the
-  GPIO testing module
-
-v3- > v4:
-- drop irq_sim_get_type() and use a notifier chain instead so that any change
-  in type configuration can be pushed out to interested users
-- change the locking mechanism in gpio-mockup to a spinlock as we can't take
-  a mutex when a hardirq-safe spinlock in irq_desc is being held when the
-  irq_set_type() callback is called
-- refuse to set any other type than falling or rising edge in irq_set_config
-
-Bartosz Golaszewski (7):
-  irq/irq_sim: add a notifier chain
-  gpio: mockup: add locking
-  gpio: mockup: implement get_multiple()
-  gpio: mockup: don't create the debugfs link named after the label
-  gpio: mockup: change the type of 'offset' to unsigned int
-  gpio: mockup: change the signature of unlocked get/set helpers
-  gpio: mockup: rework debugfs interface
-
- drivers/gpio/gpio-mockup.c | 215 ++++++++++++++++++++++++++++++++-----
- include/linux/irq_sim.h    |  22 +++-
- kernel/irq/irq_sim.c       |  40 +++++++
- 3 files changed, 246 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 6deed33dbbef..9d279d641374 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -234,7 +234,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 				      struct gpio_mockup_chip *chip)
+ {
+ 	struct gpio_mockup_dbgfs_private *priv;
+-	struct dentry *evfile, *link;
++	struct dentry *evfile;
+ 	struct gpio_chip *gc;
+ 	const char *devname;
+ 	char *name;
+@@ -247,10 +247,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 	if (IS_ERR_OR_NULL(chip->dbg_dir))
+ 		goto err;
+ 
+-	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
+-	if (IS_ERR_OR_NULL(link))
+-		goto err;
+-
+ 	for (i = 0; i < gc->ngpio; i++) {
+ 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
+ 		if (!name)
 -- 
 2.20.1
