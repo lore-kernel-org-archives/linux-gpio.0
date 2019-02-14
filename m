@@ -1,54 +1,147 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH -next 1/3] spmi: pmic-arb: select IRQ_DOMAIN_HIERARCHY in
- Kconfig
-Date: Wed, 13 Feb 2019 17:54:54 -0800
-Message-ID: <3959e53e-d711-8115-4562-c8352a5e3ce8@infradead.org>
-References: <20190214013641.9740-1-masneyb@onstation.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: AMD G-Series PCH gpio driver
+Date: Thu, 14 Feb 2019 04:08:44 +0200
+Message-ID: <CAHp75VeUEtRnRyJfpRC9Pdjy4ji=EMk=QQJ8gk7RpX6SsLg9Qg@mail.gmail.com>
+References: <1550091448-28578-1-git-send-email-info@metux.net> <1550091448-28578-2-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214013641.9740-1-masneyb@onstation.org>
-Content-Language: en-US
+In-Reply-To: <1550091448-28578-2-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>, linus.walleij@linaro.org
-Cc: sboyd@kernel.org, lee.jones@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2/13/19 5:36 PM, Brian Masney wrote:
-> Select IRQ_DOMAIN_HIERARCHY for pmic-arb in Kconfig since this driver
-> uses the version 2 IRQ interfaces. IRQ_DOMAIN_HIERARCHY selects
-> IRQ_DOMAIN, so it can be removed from here.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Wed, Feb 13, 2019 at 10:57 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Thanks for this version, my comments below.
 
-Thanks.
+>
+> GPIO platform driver for the AMD G-series PCH (eg. on GX-412TC)
+>
+> This driver doesn't registers itself automatically, as it needs to
+> be provided with platform specific configuration, provided by some
+> board driver setup code.
+>
+> Didn't implement oftree probing yet, as it's rarely found on x86.
 
-> ---
-> This addresses a build failure found by make randconfig in linux-next:
-> https://lore.kernel.org/lkml/fb0508f1-131d-ff17-9b5d-123ec75275dd@infradead.org/
-> 
->  drivers/spmi/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spmi/Kconfig b/drivers/spmi/Kconfig
-> index 0d3b70b3bda8..d48ed7c2c6c4 100644
-> --- a/drivers/spmi/Kconfig
-> +++ b/drivers/spmi/Kconfig
-> @@ -12,7 +12,7 @@ if SPMI
->  
->  config SPMI_MSM_PMIC_ARB
->  	tristate "Qualcomm MSM SPMI Controller (PMIC Arbiter)"
-> -	select IRQ_DOMAIN
-> +	select IRQ_DOMAIN_HIERARCHY
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	depends on HAS_IOMEM
->  	default ARCH_QCOM
-> 
+Since I don't see neither changelog nor version of the series, it's
+hard to say what had been changed and addressed.
+
+> +static void *amd_fch_gpio_addr(struct amd_fch_gpio_priv *priv,
+> +                              unsigned int gpio)
+> +{
+
+> +       if (unlikely(gpio > priv->pdata->gpio_num)) {
+> +               dev_err(&priv->pdev->dev,
+> +                       "gpio number %d out of range\n", gpio);
+> +               return NULL;
+> +       }
+
+I'm pretty sure this wouldn't be the case.
+
+> +
+> +       return priv->base + priv->pdata->gpio_reg[gpio]*sizeof(u32);
+> +}
+
+> +       if (unlikely(!ptr))
+> +               return -EINVAL;
+
+Neither those ones.
+
+> +       spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
+> +
+> +       if (value)
+> +               writel_relaxed(readl_relaxed(ptr) | AMD_FCH_GPIO_FLAG_WRITE,
+> +                              ptr);
+> +       else
+> +               writel_relaxed(readl_relaxed(ptr) & ~AMD_FCH_GPIO_FLAG_WRITE,
+> +                              ptr);
+
+This will look better in usual pattern, i.e.
+
+u32 value;
+
+...
+value = readl...
+if (...)
+ ...
+else
+ ...
+writel...
+
+> +static int amd_fch_gpio_request(struct gpio_chip *chip,
+> +                               unsigned int gpio_pin)
+> +{
+> +       if (likely(gpio_pin < chip->ngpio))
+> +               return 0;
+> +
+> +       return -EINVAL;
+> +}
+
+Can't be generic request routine used?
+
+> +
+> +static int amd_fch_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct amd_fch_gpio_priv *priv;
+> +       struct amd_fch_gpio_pdata *pdata;
+
+> +       struct resource res = DEFINE_RES_MEM_NAMED(
+> +                               AMD_FCH_MMIO_BASE + AMD_FCH_GPIO_BANK0_BASE,
+> +                               AMD_FCH_GPIO_SIZE,
+> +                               "amd-fch-gpio-iomem");
+
+Define this outside the function as static variable.
+
+> +
+> +       pdata = dev_get_platdata(&pdev->dev);
+
+> +
+
+Redundant blank line.
+
+> +       if (unlikely(pdata == NULL)) {
+
+Simple if (!pdata)
+
+> +               dev_err(&pdev->dev, "no platform_data\n");
+> +               return -ENOENT;
+> +       }
+> +
+> +       priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+
+> +
+
+Redundant blank line.
+
+> +       if (unlikely(priv == NULL))
+
+This check is simple
+
+if (!priv)
+
+> +               return -ENOMEM;
+> +
+
+> +       spin_lock_init(&priv->gc.bgpio_lock);
+> +
+> +       priv->base = devm_ioremap_resource(&pdev->dev, &res);
+> +       if (IS_ERR(priv->base))
+
+> +               return -ENXIO;
+
+Do not shadow error code.
+
+> +
+> +       platform_set_drvdata(pdev, priv);
+> +
+> +       return devm_gpiochip_add_data(&pdev->dev, &priv->gc, priv);
+> +}
+
 
 
 -- 
-~Randy
+With Best Regards,
+Andy Shevchenko
