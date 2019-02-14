@@ -1,53 +1,37 @@
-From: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: Re: [PATCH -next 3/3] qcom: ssbi-gpio: correct boundary conditions in
- pm8xxx_domain_translate
-Date: Thu, 14 Feb 2019 13:22:08 +0100
-Message-ID: <82660bd6-200f-ec3a-cf78-9b6aec34f2a3@free.fr>
-References: <20190214013641.9740-1-masneyb@onstation.org>
- <20190214013641.9740-3-masneyb@onstation.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: APUv2/v3 board support V2
+Date: Thu, 14 Feb 2019 14:33:02 +0200
+Message-ID: <CAHp75VeL8Z1EE=vh6VG18ecDxp9Zq4XKmnxc=PHZnNxKqc_BMg@mail.gmail.com>
+References: <1550091448-28578-1-git-send-email-info@metux.net>
+ <CAHp75VeZSrxoxd298eFiJj-N_MRsCXa2GEAXry5jCUi6twt_Xg@mail.gmail.com> <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214013641.9740-3-masneyb@onstation.org>
-Content-Language: en-US
+In-Reply-To: <fadb3559-d397-04c9-1bdd-e4d625cce278@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>, linus.walleij@linaro.org
-Cc: sboyd@kernel.org, lee.jones@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc: "Enrico Weigelt, metux IT consult" <info@metux.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 14/02/2019 02:36, Brian Masney wrote:
+On Thu, Feb 14, 2019 at 1:37 PM Enrico Weigelt, metux IT consult
+<lkml@metux.net> wrote:
+> On 14.02.19 03:17, Andy Shevchenko wrote:
 
-> SSBI GPIOs are numbered 1..ngpio, so the boundary check in
-> pm8xxx_domain_translate() is off by one. This patch corrects that check.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Originally found by Bjorn Andersson in spmi-gpio.
-> 
-> Linus: For your ib-qcom-ssbi branch.
-> 
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> index 84a232450000..10575d6e2ba5 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -710,7 +710,8 @@ static int pm8xxx_domain_translate(struct irq_domain *domain,
->  	struct pm8xxx_gpio *pctrl = container_of(domain->host_data,
->  						 struct pm8xxx_gpio, chip);
->  
-> -	if (fwspec->param_count != 2 || fwspec->param[0] >= pctrl->chip.ngpio)
-> +	if (fwspec->param_count != 2 || fwspec->param[0] < 1 ||
-> +	    fwspec->param[0] > pctrl->chip.ngpio)
->  		return -EINVAL;
->  
->  	*hwirq = fwspec->param[0] - PM8XXX_GPIO_PHYSICAL_OFFSET;
+> > I dunno how you created this message, I hope you used --cover-letter
+> > parameter to git-format-patch.
+>
+> I'm using: git send-email --compose <...>
+>
+> > Just don't forget to add -v<N>, where <N> is version.
+>
+> hmm, git send-email doesn't seem to have a corresponding flag :(
 
-I would write (using the wrap-around behavior for unsigned int)
+It's there from several releases. But it's not a send-email option,
+it's format-patch one.
+send-email passes those commands to format-patch.
 
-	if (fwspec->param_count != 2 || fwspec->param[0] - 1 >= pctrl->chip.ngpio)
-		return -EINVAL;
+Perhaps time to update your ancient version of git tools? :-)
 
-Regards.
+-- 
+With Best Regards,
+Andy Shevchenko
