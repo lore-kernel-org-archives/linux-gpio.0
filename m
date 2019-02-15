@@ -1,32 +1,64 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: APUv2/v3 board support V3
-Date: Thu, 14 Feb 2019 23:04:55 +0100
-Message-ID: <1550181897-2596-1-git-send-email-info@metux.net>
-References: <1550091448-28578-1-git-send-email-info@metux.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550091448-28578-1-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andy@infradead.org, platform-driver-x86@vger.kernel.org
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 14/40] selftests: gpio-mockup-chardev: Check asprintf() for error
+Date: Thu, 14 Feb 2019 21:12:47 -0500
+Message-ID: <20190215021313.178476-14-sashal@kernel.org>
+References: <20190215021313.178476-1-sashal@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi folks,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+[ Upstream commit 508cacd7da6659ae7b7bdd0a335f675422277758 ]
 
-this is version 3 of my APUv2/APUv3 series.
+With gcc 7.3.0:
 
-change in V3:
+    gpio-mockup-chardev.c: In function ‘get_debugfs’:
+    gpio-mockup-chardev.c:62:3: warning: ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
+       asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- * gpio driver
-   * drop unncessary gpio id checks
-   * cleanup amd_fch_gpio_set()
-   * move iores outside probe()
-   * shorter NULL checks and correct error in probe()
- * apu board driver
-   * drop unneeded init.h
-   * drop unnecessary comments
-   * clean up logging
-   * dont need to depend on KEYBOARD_GPIO
+Handle asprintf() failures to fix this.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/gpio/gpio-mockup-chardev.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---mtx
+diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+index 667e916fa7cc..6ceeeed4eeb9 100644
+--- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
++++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+@@ -37,7 +37,7 @@ static int get_debugfs(char **path)
+ 	struct libmnt_table *tb;
+ 	struct libmnt_iter *itr = NULL;
+ 	struct libmnt_fs *fs;
+-	int found = 0;
++	int found = 0, ret;
+ 
+ 	cxt = mnt_new_context();
+ 	if (!cxt)
+@@ -58,8 +58,11 @@ static int get_debugfs(char **path)
+ 			break;
+ 		}
+ 	}
+-	if (found)
+-		asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
++	if (found) {
++		ret = asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
++		if (ret < 0)
++			err(EXIT_FAILURE, "failed to format string");
++	}
+ 
+ 	mnt_free_iter(itr);
+ 	mnt_free_context(cxt);
+-- 
+2.19.1
