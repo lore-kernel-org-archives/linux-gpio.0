@@ -1,43 +1,34 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v2 05/11] mfd: pm8xxx: disassociate old virq if hwirq
- mapping already exists
-Date: Fri, 15 Feb 2019 08:47:33 -0500
-Message-ID: <20190215134733.GA21208@basecamp>
-References: <20190208021631.30252-1-masneyb@onstation.org>
- <20190208021631.30252-6-masneyb@onstation.org>
- <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] drivers: new helper for ioremapping memory resources
+Date: Fri, 15 Feb 2019 16:25:05 +0100
+Message-ID: <20190215152507.31066-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: andy.gross@linaro.org, bjorn.andersson@linaro.org, lee.jones@linaro.org, linus.walleij@linaro.org, marc.zyngier@arm.com, tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 09:51:26PM -0800, Stephen Boyd wrote:
-> > diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-> > index 8eb2528793f9..2f99a98ccee5 100644
-> > --- a/drivers/mfd/qcom-pm8xxx.c
-> > +++ b/drivers/mfd/qcom-pm8xxx.c
-> > @@ -380,6 +380,12 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip *chip,
-> >                                   struct irq_domain *domain, unsigned int irq,
-> >                                   irq_hw_number_t hwirq, unsigned int type)
-> >  {
-> > +       unsigned int old_virq;
-> > +
-> > +       old_virq = irq_find_mapping(domain, hwirq);
-> > +       if (old_virq)
-> > +               irq_domain_disassociate(domain, old_virq);
-> 
-> Is it possible to pass 'true' for the 'realloc' argument to
-> __irq_domain_alloc_irqs() and then this disassociate change isn't
-> needed?
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The kernel doc for __irq_domain_alloc_irqs() says that the realloc
-parameter is mainly to support legacy IRQs. I don't think its a good
-idea to add new code that'll stay past the end of this patch series
-on top of that legacy interface.
+There are currently 1200+ instances of using platform_get_resource()
+and devm_ioremap_resource() together in the kernel tree. It's a minor
+redundancy, but consolidation is always good.
 
-Brian
+The first patch in this series adds a wrapper for these two calls and
+the second uses it in a driver I could test.
+
+If accepted I can prepare a script that'll apply this tree-wide.
+
+Bartosz Golaszewski (2):
+  drivers: provide devm_platform_ioremap_resource()
+  gpio: davinci: use devm_platform_ioremap_resource()
+
+ drivers/base/platform.c         | 18 ++++++++++++++++++
+ drivers/gpio/gpio-davinci.c     |  4 +---
+ include/linux/platform_device.h |  3 +++
+ 3 files changed, 22 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
