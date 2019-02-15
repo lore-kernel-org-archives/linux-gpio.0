@@ -1,64 +1,44 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 30/77] selftests: gpio-mockup-chardev: Check asprintf() for error
-Date: Thu, 14 Feb 2019 21:08:08 -0500
-Message-ID: <20190215020855.176727-30-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: gpio: sprd: Use SoC compatible string instead of wildcard string
+Date: Fri, 15 Feb 2019 12:55:18 +0800
+Message-ID: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org, broonie@kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use SoC compatible string instead of wildcard string.
 
-[ Upstream commit 508cacd7da6659ae7b7bdd0a335f675422277758 ]
-
-With gcc 7.3.0:
-
-    gpio-mockup-chardev.c: In function ‘get_debugfs’:
-    gpio-mockup-chardev.c:62:3: warning: ignoring return value of ‘asprintf’, declared with attribute warn_unused_result [-Wunused-result]
-       asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Handle asprintf() failures to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- tools/testing/selftests/gpio/gpio-mockup-chardev.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Changes from v1:
+ - Add 'sprd' to indicate the module in subject line.
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index f8d468f54e98..aaa1e9f083c3 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -37,7 +37,7 @@ static int get_debugfs(char **path)
- 	struct libmnt_table *tb;
- 	struct libmnt_iter *itr = NULL;
- 	struct libmnt_fs *fs;
--	int found = 0;
-+	int found = 0, ret;
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+index 93d98d0..54040a2 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -33,7 +33,7 @@ Required properties:
+   "sprd,sc9860-eic-latch",
+   "sprd,sc9860-eic-async",
+   "sprd,sc9860-eic-sync",
+-  "sprd,sc27xx-eic".
++  "sprd,sc2731-eic".
+ - reg: Define the base and range of the I/O address space containing
+   the GPIO controller registers.
+ - gpio-controller: Marks the device node as a GPIO controller.
+@@ -86,7 +86,7 @@ Example:
+ 	};
  
- 	cxt = mnt_new_context();
- 	if (!cxt)
-@@ -58,8 +58,11 @@ static int get_debugfs(char **path)
- 			break;
- 		}
- 	}
--	if (found)
--		asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
-+	if (found) {
-+		ret = asprintf(path, "%s/gpio", mnt_fs_get_target(fs));
-+		if (ret < 0)
-+			err(EXIT_FAILURE, "failed to format string");
-+	}
- 
- 	mnt_free_iter(itr);
- 	mnt_free_context(cxt);
+ 	pmic_eic: gpio@300 {
+-		compatible = "sprd,sc27xx-eic";
++		compatible = "sprd,sc2731-eic";
+ 		reg = <0x300>;
+ 		interrupt-parent = <&sc2731_pmic>;
+ 		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.19.1
+1.7.9.5
