@@ -1,72 +1,69 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 05/11] mfd: pm8xxx: disassociate old virq if hwirq mapping already exists
-Date: Thu, 14 Feb 2019 21:51:26 -0800
-Message-ID: <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com>
-References: <20190208021631.30252-1-masneyb@onstation.org> <20190208021631.30252-6-masneyb@onstation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: WangBo <wdjjwb@163.com>
+Subject: [PATCH] pinctrl: nomadik: fix possible object reference leak
+Date: Fri, 15 Feb 2019 16:01:36 +0800
+Message-ID: <1550217696-3006-1-git-send-email-wdjjwb@163.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208021631.30252-6-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, lee.jones@linaro.org, linus.walleij@linaro.org, marc.zyngier@arm.com
-Cc: tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, wang.bo116@zte.com.cn
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Brian Masney (2019-02-07 18:16:25)
-> Check to see if the hwirq is already associated with another virq on
-> this IRQ domain. If so, then disassociate it before associating the
-> hwirq with the new virq.
->=20
-> This is a temporary hack that is needed in order to not break git
-> bisect for existing boards. The next patch in this series converts
-> ssbi-gpio to be a hierarchical IRQ chip, then there are several patches
-> to update all of the device tree files, and finally this patch will be
-> reverted within the same patch series.
->=20
-> IRQs for ssbi-gpio are all initially setup without an IRQ hierarchy
-> this driver is probed due to the interrupts property in device tree.
-> Once ssbi-gpio is converted to be a hierarchical IRQ chip in the next
-> patch, existing users of gpio[d]_to_irq() will call pmic_gpio_to_irq(),
-> and that will use the new IRQ chip code in ssbi-gpio that sets up the
-> IRQ in an IRQ hierarchy. The hwirq is now associated with two Linux
-> virqs and interrupts will not work as expected. This patch corrects
-> that issue.
->=20
-> This change was tested on an APQ8060 DragonBoard.
->=20
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Tested-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Changes since v1:
-> - None
->=20
->  drivers/mfd/qcom-pm8xxx.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-> index 8eb2528793f9..2f99a98ccee5 100644
-> --- a/drivers/mfd/qcom-pm8xxx.c
-> +++ b/drivers/mfd/qcom-pm8xxx.c
-> @@ -380,6 +380,12 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip=
- *chip,
->                                   struct irq_domain *domain, unsigned int=
- irq,
->                                   irq_hw_number_t hwirq, unsigned int typ=
-e)
->  {
-> +       unsigned int old_virq;
-> +
-> +       old_virq =3D irq_find_mapping(domain, hwirq);
-> +       if (old_virq)
-> +               irq_domain_disassociate(domain, old_virq);
+The of_find_device_by_node takes a reference to the struct device
+when find the match device ,we should release it when fail.
 
-Is it possible to pass 'true' for the 'realloc' argument to
-__irq_domain_alloc_irqs() and then this disassociate change isn't
-needed?
+Signed-off-by: WangBo <wang.bo116@zte.com.cn>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-> +
->         irq_domain_set_info(domain, irq, hwirq, chip->pm_irq_data->irq_ch=
-ip,
->                             chip, handle_level_irq, NULL, NULL);
->         irq_set_noprobe(irq);
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 4cc2c47f8778..ec02739bd21b 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1056,17 +1056,22 @@ static struct nmk_gpio_chip *nmk_gpio_populate_chip(struct device_node *np,
+ 	}
+ 	if (of_property_read_u32(np, "gpio-bank", &id)) {
+ 		dev_err(&pdev->dev, "populate: gpio-bank property not found\n");
++		platform_device_put(gpio_pdev);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	/* Already populated? */
+ 	nmk_chip = nmk_gpio_chips[id];
+-	if (nmk_chip)
++	if (nmk_chip) {
++		platform_device_put(gpio_pdev);
+ 		return nmk_chip;
++	}
+ 
+ 	nmk_chip = devm_kzalloc(&pdev->dev, sizeof(*nmk_chip), GFP_KERNEL);
+-	if (!nmk_chip)
++	if (!nmk_chip) {
++		platform_device_put(gpio_pdev);
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	nmk_chip->bank = id;
+ 	chip = &nmk_chip->chip;
+@@ -1077,13 +1082,17 @@ static struct nmk_gpio_chip *nmk_gpio_populate_chip(struct device_node *np,
+ 
+ 	res = platform_get_resource(gpio_pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
++	if (IS_ERR(base)) {
++		platform_device_put(gpio_pdev);
+ 		return ERR_CAST(base);
++	}
+ 	nmk_chip->addr = base;
+ 
+ 	clk = clk_get(&gpio_pdev->dev, NULL);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		platform_device_put(gpio_pdev);
+ 		return (void *) clk;
++	}
+ 	clk_prepare(clk);
+ 	nmk_chip->clk = clk;
+ 
+-- 
+2.15.2
