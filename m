@@ -1,14 +1,14 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 14/40] selftests: gpio-mockup-chardev: Check asprintf() for error
-Date: Thu, 14 Feb 2019 21:12:47 -0500
-Message-ID: <20190215021313.178476-14-sashal@kernel.org>
-References: <20190215021313.178476-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/65] selftests: gpio-mockup-chardev: Check asprintf() for error
+Date: Thu, 14 Feb 2019 21:10:39 -0500
+Message-ID: <20190215021121.177674-23-sashal@kernel.org>
+References: <20190215021121.177674-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -34,7 +34,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index 667e916fa7cc..6ceeeed4eeb9 100644
+index f8d468f54e98..aaa1e9f083c3 100644
 --- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
 +++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
 @@ -37,7 +37,7 @@ static int get_debugfs(char **path)
