@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 5/7] gpio: mockup: change the type of 'offset' to unsigned int
-Date: Mon, 18 Feb 2019 17:41:36 +0100
-Message-ID: <20190218164138.24921-6-brgl@bgdev.pl>
+Subject: [PATCH v5 4/7] gpio: mockup: don't create the debugfs link named after the label
+Date: Mon, 18 Feb 2019 17:41:35 +0100
+Message-ID: <20190218164138.24921-5-brgl@bgdev.pl>
 References: <20190218164138.24921-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,25 +14,37 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This field can never be negative.
+User-space tests no longer use it and we're breaking the interface
+anyway.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-mockup.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 0317917a3678..433adb3b4617 100644
+index 1c945c967f60..0317917a3678 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -60,7 +60,7 @@ struct gpio_mockup_chip {
- struct gpio_mockup_dbgfs_private {
- 	struct gpio_mockup_chip *chip;
- 	struct gpio_desc *desc;
--	int offset;
-+	unsigned int offset;
- };
+@@ -234,7 +234,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 				      struct gpio_mockup_chip *chip)
+ {
+ 	struct gpio_mockup_dbgfs_private *priv;
+-	struct dentry *evfile, *link;
++	struct dentry *evfile;
+ 	struct gpio_chip *gc;
+ 	const char *devname;
+ 	char *name;
+@@ -247,10 +247,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 	if (IS_ERR_OR_NULL(chip->dbg_dir))
+ 		goto err;
  
- static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
+-	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
+-	if (IS_ERR_OR_NULL(link))
+-		goto err;
+-
+ 	for (i = 0; i < gc->ngpio; i++) {
+ 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
+ 		if (!name)
 -- 
 2.20.1
