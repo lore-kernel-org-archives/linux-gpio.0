@@ -1,50 +1,74 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 3/6] gpio: mockup: don't create the debugfs link named after the label
-Date: Mon, 18 Feb 2019 10:47:56 +0100
-Message-ID: <20190218094759.14545-4-brgl@bgdev.pl>
-References: <20190218094759.14545-1-brgl@bgdev.pl>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V SoC
+Date: Mon, 18 Feb 2019 13:20:42 +0100
+Message-ID: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190218094759.14545-1-brgl@bgdev.pl>
+In-Reply-To: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc: DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Russell King <linux@armlinux.org.uk>, Jiri Slaby <jslaby@suse.com>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
+>
+> Hi,
+>
+> Here is the series of patches the initial support for SC2000(M10V) of
+> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
+> source code.
+>
+> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
+> computer vision. It also features advanced functionalities such as 360-degree,
+> real-time spherical stitching with multi cameras, image stabilization for
+> without mechanical gimbals, and rolling shutter correction. More detail is
+> below:
+> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
+>
+> Specifications for developers are below:
+>  - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
+>  - NEON support
+>  - DSP
+>  - GPU
+>  - MAX 3GB DDR3
+>  - Cortex-M0 for power control
+>  - NAND Flash Interface
+>  - SD UHS-I
+>  - SD UHS-II
+>  - SDIO
+>  - USB2.0 HOST / Device
+>  - USB3.0 HOST / Device
+>  - PCI express Gen2
+>  - Ethernet Engine
+>  - I2C
+>  - UART
+>  - SPI
+>  - PWM
+>
+> Support is quite minimal for now, since it only includes timer, clock,
+> pictrl and serial controller drivers, so we can only boot to userspace
+> through initramfs. Support for the other peripherals  will come eventually.
 
-User-space tests no longer use it and we're breaking the interface
-anyway.
+I've looked over the platform once more. Overall, it looks very good, and
+I'd still like to merge this for linux-5.1, but we are running out of time
+there. If you send the patches to soc@kernel.org quickly, we can try to
+still merge them in, but if anything goes wrong, it will have to wait until
+we start merging patches for 5.2, directly after 5.1 is out.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-mockup.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
+in much detail. If you have an Ack from the maintainers, feel free to
+include them in the series, otherwise let's merge the rest now and then
+you can send the updated patches for inclusion through the subsystem
+trees in 5.2.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 1c945c967f60..0317917a3678 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -234,7 +234,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 				      struct gpio_mockup_chip *chip)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
--	struct dentry *evfile, *link;
-+	struct dentry *evfile;
- 	struct gpio_chip *gc;
- 	const char *devname;
- 	char *name;
-@@ -247,10 +247,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	if (IS_ERR_OR_NULL(chip->dbg_dir))
- 		goto err;
- 
--	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
--	if (IS_ERR_OR_NULL(link))
--		goto err;
--
- 	for (i = 0; i < gc->ngpio; i++) {
- 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
- 		if (!name)
--- 
-2.20.1
+I have sent a few comments. The only one that is really important
+here is the missing platform check in the suspend options. Please
+try to address most of the other commentsm, either by changing the
+code, or by explaining why your version is correct.
+
+
+
+     Arnd
