@@ -1,91 +1,30 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V
- SoC
-Date: Mon, 18 Feb 2019 13:29:26 +0100
-Message-ID: <10a0375b-0814-6b7d-97d5-ed2c2838c4b4@linaro.org>
-References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
- <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 01/11] dt-bindings: mfd: add DT bindings for max77650
+Date: Mon, 18 Feb 2019 10:35:07 -0600
+Message-ID: <20190218163507.GA16551@bogus>
+References: <20190214140022.19201-1-brgl@bgdev.pl>
+ <20190214140022.19201-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190214140022.19201-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Sugaya Taichi <sugaya.taichi@socionext.com>
-Cc: DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Russell King <linux@armlinux.org.uk>, Jiri Slaby <jslaby@suse.com>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji Kanematsu <kanematsu.shinji@socionext.com>, Jassi
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 18/02/2019 13:20, Arnd Bergmann wrote:
-> On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi,
->>
->> Here is the series of patches the initial support for SC2000(M10V) of
->> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
->> source code.
->>
->> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
->> computer vision. It also features advanced functionalities such as 360-degree,
->> real-time spherical stitching with multi cameras, image stabilization for
->> without mechanical gimbals, and rolling shutter correction. More detail is
->> below:
->> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
->>
->> Specifications for developers are below:
->>  - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
->>  - NEON support
->>  - DSP
->>  - GPU
->>  - MAX 3GB DDR3
->>  - Cortex-M0 for power control
->>  - NAND Flash Interface
->>  - SD UHS-I
->>  - SD UHS-II
->>  - SDIO
->>  - USB2.0 HOST / Device
->>  - USB3.0 HOST / Device
->>  - PCI express Gen2
->>  - Ethernet Engine
->>  - I2C
->>  - UART
->>  - SPI
->>  - PWM
->>
->> Support is quite minimal for now, since it only includes timer, clock,
->> pictrl and serial controller drivers, so we can only boot to userspace
->> through initramfs. Support for the other peripherals  will come eventually.
+On Thu, 14 Feb 2019 15:00:12 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> I've looked over the platform once more. Overall, it looks very good, and
-> I'd still like to merge this for linux-5.1, but we are running out of time
-> there. If you send the patches to soc@kernel.org quickly, we can try to
-> still merge them in, but if anything goes wrong, it will have to wait until
-> we start merging patches for 5.2, directly after 5.1 is out.
+> Add a DT binding document for max77650 ultra-low power PMIC. This
+> describes the core mfd device and the GPIO module.
 > 
-> I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
-> in much detail. If you have an Ack from the maintainers, feel free to
-> include them in the series, otherwise let's merge the rest now and then
-> you can send the updated patches for inclusion through the subsystem
-> trees in 5.2.
-
-I'm not in copy of the clocksource patch but I acked it for the initial
-post.
-
-> I have sent a few comments. The only one that is really important
-> here is the missing platform check in the suspend options. Please
-> try to address most of the other commentsm, either by changing the
-> code, or by explaining why your version is correct.
-> 
-> 
-> 
->      Arnd
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
 > 
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reviewed-by: Rob Herring <robh@kernel.org>
