@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 1/7] irq/irq_sim: add irq_set_type() callback
-Date: Mon, 18 Feb 2019 17:41:32 +0100
-Message-ID: <20190218164138.24921-2-brgl@bgdev.pl>
+Subject: [PATCH v5 3/7] gpio: mockup: implement get_multiple()
+Date: Mon, 18 Feb 2019 17:41:34 +0100
+Message-ID: <20190218164138.24921-4-brgl@bgdev.pl>
 References: <20190218164138.24921-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,37 +14,47 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Implement the irq_set_type() callback and call irqd_set_trigger_type()
-internally so that users interested in the configured trigger type can
-later retrieve it using irqd_get_trigger_type().
+We already support set_multiple(). Implement get_multiple() as well.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- kernel/irq/irq_sim.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpio/gpio-mockup.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 98a20e1594ce..83ecc65d8be2 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -25,10 +25,18 @@ static void irq_sim_irqunmask(struct irq_data *data)
- 	irq_ctx->enabled = true;
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index b4c1de6acf74..1c945c967f60 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -102,6 +102,22 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	return val;
  }
  
-+static int irq_sim_set_type(struct irq_data *data, unsigned int type)
++static int gpio_mockup_get_multiple(struct gpio_chip *gc,
++				    unsigned long *mask, unsigned long *bits)
 +{
-+	irqd_set_trigger_type(data, type);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	unsigned int bit, val;
++
++	mutex_lock(&chip->lock);
++	for_each_set_bit(bit, mask, gc->ngpio) {
++		val = __gpio_mockup_get(gc, bit);
++		__assign_bit(bit, bits, val);
++	}
++	mutex_unlock(&chip->lock);
 +
 +	return 0;
 +}
 +
- static struct irq_chip irq_sim_irqchip = {
- 	.name		= "irq_sim",
- 	.irq_mask	= irq_sim_irqmask,
- 	.irq_unmask	= irq_sim_irqunmask,
-+	.irq_set_type	= irq_sim_set_type,
- };
- 
- static void irq_sim_handle_irq(struct irq_work *work)
+ static void __gpio_mockup_set(struct gpio_chip *gc,
+ 			      unsigned int offset, int value)
+ {
+@@ -327,6 +343,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->parent = dev;
+ 	gc->get = gpio_mockup_get;
+ 	gc->set = gpio_mockup_set;
++	gc->get_multiple = gpio_mockup_get_multiple;
+ 	gc->set_multiple = gpio_mockup_set_multiple;
+ 	gc->direction_output = gpio_mockup_dirout;
+ 	gc->direction_input = gpio_mockup_dirin;
 -- 
 2.20.1
