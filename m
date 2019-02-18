@@ -1,73 +1,47 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v4 0/7] gpio: mockup: improve the user-space testing interface
-Date: Mon, 18 Feb 2019 17:44:17 +0100
-Message-ID: <CAMRc=Md-fXCFYtwPdZN5nxL4cecia5QN9aV5=pAG3rpZ9OHi+A@mail.gmail.com>
-References: <20190214134232.3821-1-brgl@bgdev.pl>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/2] gpio: sprd: Change to use SoC compatible string
+Date: Mon, 18 Feb 2019 14:07:38 -0600
+Message-ID: <20190218200737.GA7091@bogus>
+References: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
+ <ad2fbe222ad715b3f7e6e093a7f822743e465f9a.1550201284.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190214134232.3821-1-brgl@bgdev.pl>
+Content-Disposition: inline
+In-Reply-To: <ad2fbe222ad715b3f7e6e093a7f822743e465f9a.1550201284.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: mark.rutland@arm.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, orsonzhai@gmail.com, zhang.lyra@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-czw., 14 lut 2019 o 14:42 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
-a):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Hi Marc,
->
-> another try at the irq_sim stuff. This time I added a notifier chain to
-> irq_sim and made gpio-mockup register a notifier block. This way interest=
-ed
-> users will get notified about a type config change.
->
-> v1 -> v2:
-> - instead of providing the irq_sim_get_type() helper, move the irq type
->   logic into the simulator and provide a helper that allows users to spec=
-ify
->   the type of the fired interrupt
->
-> v2 -> v3:
-> - switch back to having irq_sim_type() and put the line state logic into =
-the
->   GPIO testing module
->
-> v3- > v4:
-> - drop irq_sim_get_type() and use a notifier chain instead so that any ch=
-ange
->   in type configuration can be pushed out to interested users
-> - change the locking mechanism in gpio-mockup to a spinlock as we can't t=
-ake
->   a mutex when a hardirq-safe spinlock in irq_desc is being held when the
->   irq_set_type() callback is called
-> - refuse to set any other type than falling or rising edge in irq_set_con=
-fig
->
-> Bartosz Golaszewski (7):
->   irq/irq_sim: add a notifier chain
->   gpio: mockup: add locking
->   gpio: mockup: implement get_multiple()
->   gpio: mockup: don't create the debugfs link named after the label
->   gpio: mockup: change the type of 'offset' to unsigned int
->   gpio: mockup: change the signature of unlocked get/set helpers
->   gpio: mockup: rework debugfs interface
->
->  drivers/gpio/gpio-mockup.c | 215 ++++++++++++++++++++++++++++++++-----
->  include/linux/irq_sim.h    |  22 +++-
->  kernel/irq/irq_sim.c       |  40 +++++++
->  3 files changed, 246 insertions(+), 31 deletions(-)
->
-> --
-> 2.20.1
->
+On Fri, Feb 15, 2019 at 12:55:19PM +0800, Baolin Wang wrote:
+> Change to use SoC compatible string instead of wildcard string.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v1:
+>  - None.
+> ---
+>  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+> index ac573da..24228cf 100644
+> --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+> +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+> @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id sprd_pmic_eic_of_match[] = {
+> -	{ .compatible = "sprd,sc27xx-eic", },
+> +	{ .compatible = "sprd,sc2731-eic", },
 
-Since this really is overkill, I sent v5 in which I simple store the
-trigger type by calling irqd_set_trigger_type().
+You need to keep the old one if you care about backwards compatibility. 
+If you don't then state why in the commit message.
 
-Superseded by v5.
-
-Bartosz
+>  	{ /* end of list */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+> -- 
+> 1.7.9.5
+> 
