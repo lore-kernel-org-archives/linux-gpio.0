@@ -1,146 +1,64 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 2/7] gpio: mockup: add locking
-Date: Tue, 19 Feb 2019 17:06:45 +0100
-Message-ID: <20190219160650.9614-3-brgl@bgdev.pl>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v6 1/7] irq/irq_sim: add irq_set_type() callback
+Date: Tue, 19 Feb 2019 16:14:49 +0000
+Message-ID: <20190219161449.26e99a2b@why.wild-wind.fr.eu.org>
 References: <20190219160650.9614-1-brgl@bgdev.pl>
+        <20190219160650.9614-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190219160650.9614-1-brgl@bgdev.pl>
+In-Reply-To: <20190219160650.9614-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, 19 Feb 2019 17:06:44 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-While no user reported any race condition problems with gpio-mockup,
-let's be on the safe side and use a mutex when performing any changes
-on the dummy chip structures.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Implement the irq_set_type() callback and call irqd_set_trigger_type()
+> internally so that users interested in the configured trigger type can
+> later retrieve it using irqd_get_trigger_type(). We only support edge
+> trigger types.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  kernel/irq/irq_sim.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> index 98a20e1594ce..b992f88c5613 100644
+> --- a/kernel/irq/irq_sim.c
+> +++ b/kernel/irq/irq_sim.c
+> @@ -25,10 +25,22 @@ static void irq_sim_irqunmask(struct irq_data *data)
+>  	irq_ctx->enabled = true;
+>  }
+>  
+> +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +	/* We only support rising and falling edge trigger types. */
+> +	if (type & ~IRQ_TYPE_EDGE_BOTH)
+> +		return -EINVAL;
+> +
+> +	irqd_set_trigger_type(data, type);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct irq_chip irq_sim_irqchip = {
+>  	.name		= "irq_sim",
+>  	.irq_mask	= irq_sim_irqmask,
+>  	.irq_unmask	= irq_sim_irqunmask,
+> +	.irq_set_type	= irq_sim_set_type,
+>  };
+>  
+>  static void irq_sim_handle_irq(struct irq_work *work)
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 7 deletions(-)
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6a50f9f59c90..b4c1de6acf74 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
- 	struct gpio_mockup_line_status *lines;
- 	struct irq_sim irqsim;
- 	struct dentry *dbg_dir;
-+	struct mutex lock;
- };
- 
- struct gpio_mockup_dbgfs_private {
-@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
- 	return gpio_mockup_ranges[index * 2 + 1];
- }
- 
--static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	return chip->lines[offset].value;
- }
- 
--static void gpio_mockup_set(struct gpio_chip *gc,
--			    unsigned int offset, int value)
-+static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int val;
-+
-+	mutex_lock(&chip->lock);
-+	val = __gpio_mockup_get(gc, offset);
-+	mutex_unlock(&chip->lock);
-+
-+	return val;
-+}
-+
-+static void __gpio_mockup_set(struct gpio_chip *gc,
-+			      unsigned int offset, int value)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	chip->lines[offset].value = !!value;
- }
- 
-+static void gpio_mockup_set(struct gpio_chip *gc,
-+			   unsigned int offset, int value)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
-+}
-+
- static void gpio_mockup_set_multiple(struct gpio_chip *gc,
- 				     unsigned long *mask, unsigned long *bits)
- {
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 	unsigned int bit;
- 
-+	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio)
--		gpio_mockup_set(gc, bit, test_bit(bit, bits));
--
-+		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
-+	mutex_unlock(&chip->lock);
- }
- 
- static int gpio_mockup_dirout(struct gpio_chip *gc,
-@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	gpio_mockup_set(gc, offset, value);
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int direction;
- 
--	return !chip->lines[offset].dir;
-+	mutex_lock(&chip->lock);
-+	direction = !chip->lines[offset].dir;
-+	mutex_unlock(&chip->lock);
-+
-+	return direction;
- }
- 
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
-@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&chip->lock);
-+
- 	gc = &chip->gc;
- 	gc->base = base;
- 	gc->ngpio = ngpio;
+	M.
 -- 
-2.20.1
+Without deviation from the norm, progress is not possible.
