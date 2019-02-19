@@ -1,98 +1,122 @@
-From: "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V
- SoC
-Date: Tue, 19 Feb 2019 16:38:15 +0900
-Message-ID: <26959ef6-bca0-fe51-fc24-9969913e9af4@socionext.com>
-References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
- <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+From: Leonard Crestez <cdleonard@gmail.com>
+Subject: [RFC] pinctrl/amd: Clear interrupt enable bits on probe
+Date: Tue, 19 Feb 2019 12:59:15 +0200
+Message-ID: <2155095e66a8b6329fa6b316b0e9ecd4b6d0c9bb.1550573871.git.cdleonard@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: DTML <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Russell King <linux@armlinux.org.uk>, Jiri Slaby <jslaby@suse.com>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji
+To: Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Daniel Drake <drake@endlessm.com>, Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+My Acer Nitro 5 AN515-42 laptop with a Ryzen 2700U hangs on boot because
+of spurious interrupts from pinctrl-amd.
 
-Thank you for your comments.
+This seems to happen because the touchpad interrupt is enabled on boot
+in "level" mode and there is no way to clear it until a touchpad driver
+probes.
 
-On 2019/02/18 21:20, Arnd Bergmann wrote:
-> On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi,
->>
->> Here is the series of patches the initial support for SC2000(M10V) of
->> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
->> source code.
->>
->> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
->> computer vision. It also features advanced functionalities such as 360-degree,
->> real-time spherical stitching with multi cameras, image stabilization for
->> without mechanical gimbals, and rolling shutter correction. More detail is
->> below:
->> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
->>
->> Specifications for developers are below:
->>   - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
->>   - NEON support
->>   - DSP
->>   - GPU
->>   - MAX 3GB DDR3
->>   - Cortex-M0 for power control
->>   - NAND Flash Interface
->>   - SD UHS-I
->>   - SD UHS-II
->>   - SDIO
->>   - USB2.0 HOST / Device
->>   - USB3.0 HOST / Device
->>   - PCI express Gen2
->>   - Ethernet Engine
->>   - I2C
->>   - UART
->>   - SPI
->>   - PWM
->>
->> Support is quite minimal for now, since it only includes timer, clock,
->> pictrl and serial controller drivers, so we can only boot to userspace
->> through initramfs. Support for the other peripherals  will come eventually.
-> 
-> I've looked over the platform once more. Overall, it looks very good, and
-> I'd still like to merge this for linux-5.1, but we are running out of time
-> there. If you send the patches to soc@kernel.org quickly, we can try to
-> still merge them in, but if anything goes wrong, it will have to wait until
-> we start merging patches for 5.2, directly after 5.1 is out.
-> 
+Fix by disabling all gpio interrupts at probe time until they are
+explicitly requested by drivers.
 
-I see.
-I do my best to make it.
+Signed-off-by: Leonard Crestez <cdleonard@gmail.com>
 
-> I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
-> in much detail. If you have an Ack from the maintainers, feel free to
-> include them in the series, otherwise let's merge the rest now and then
-> you can send the updated patches for inclusion through the subsystem
-> trees in 5.2.
-> 
+---
 
-OK, I'll add the patches with "Acked" or "Reviewed" tag.
+It's strange that nobody else has run into this problem, AMD hardware is
+relatively common. Maybe firmware generally disables GPIO interrupts
+itself?
 
-> I have sent a few comments. The only one that is really important
-> here is the missing platform check in the suspend options. Please
-> try to address most of the other commentsm, either by changing the
-> code, or by explaining why your version is correct.
-> 
+This patch fixes boot but this same laptop has other issues:
 
-Okay, try to address them.
-I send the next version as soon as possible.
+ * Suspend is broken
+ * Ethernet is broken (only sometimes)
+ * The CPU freq gets stuck at 400 Mhz (sometimes)
 
-Thanks.
-Sugaya Taichi
+Those issues happen on maybe 80% of boots without a clear pattern. It
+seems that inserting/removing the ethernet jack during boot helps
+cpufreq? It's possible that these problems are also caused by pin
+misconfiguration so this fix might be incomplete.
 
-> 
-> 
->       Arnd
-> 
+When the cpufreq issue happens `rdmsr 0xc0010061 -a` shows 0x22 for all
+cpus; maybe this is some broken thermal throttling?
+
+Also, perhaps amd_gpio_irq_disable_all should enumerate in a nicer less
+verbose way?
+
+Previously: https://lore.kernel.org/patchwork/patch/1028047/
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 2a7d638978d8..3cb7ea46f32c 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -592,10 +592,53 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 
+ 	return ret;
+ }
+ 
++static void amd_gpio_irq_disable_all(struct amd_gpio *gpio_dev)
++{
++	unsigned int bank, i, pin_num;
++	u32 regval;
++
++	for (bank = 0; bank < gpio_dev->hwbank_num; bank++) {
++		switch (bank) {
++		case 0:
++			i = 0;
++			pin_num = AMD_GPIO_PINS_BANK0;
++			break;
++		case 1:
++			i = 64;
++			pin_num = AMD_GPIO_PINS_BANK1 + i;
++			break;
++		case 2:
++			i = 128;
++			pin_num = AMD_GPIO_PINS_BANK2 + i;
++			break;
++		case 3:
++			i = 192;
++			pin_num = AMD_GPIO_PINS_BANK3 + i;
++			break;
++		default:
++			/* Illegal bank number, ignore */
++			continue;
++		}
++
++		for (; i < pin_num; i++) {
++			unsigned long flags;
++			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
++			regval = readl(gpio_dev->base + i * 4);
++			if (regval & BIT(INTERRUPT_ENABLE_OFF)) {
++				dev_info(&gpio_dev->pdev->dev,
++						"Pin %d interrupt enabled on boot: disable\n", i);
++				regval &= ~BIT(INTERRUPT_ENABLE_OFF);
++				writel(regval, gpio_dev->base + i * 4);
++			}
++			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
++		}
++	}
++}
++
+ static int amd_get_groups_count(struct pinctrl_dev *pctldev)
+ {
+ 	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
+ 
+ 	return gpio_dev->ngroups;
+@@ -910,10 +953,12 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = gpiochip_add_data(&gpio_dev->gc, gpio_dev);
+ 	if (ret)
+ 		return ret;
+ 
++	amd_gpio_irq_disable_all(gpio_dev);
++
+ 	ret = gpiochip_add_pin_range(&gpio_dev->gc, dev_name(&pdev->dev),
+ 				0, 0, gpio_dev->gc.ngpio);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to add pin range\n");
+ 		goto out2;
+-- 
+2.20.1
