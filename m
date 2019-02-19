@@ -1,54 +1,48 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v2 2/2] gpio: sprd: Change to use SoC compatible string
-Date: Tue, 19 Feb 2019 10:02:08 +0800
-Message-ID: <CAMz4ku+YUfOzWf4gAvicEq6hONK9m54oRxrYX_L6PtDcoV2-ow@mail.gmail.com>
-References: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
- <ad2fbe222ad715b3f7e6e093a7f822743e465f9a.1550201284.git.baolin.wang@linaro.org>
- <20190218200737.GA7091@bogus>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 1/2] dt-bindings: gpio: sprd: Use SoC compatible string instead of wildcard string
+Date: Tue, 19 Feb 2019 10:29:57 +0800
+Message-ID: <70f5476004b2f4e4b444bf8425f21a3c993edf47.1550543288.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190218200737.GA7091@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Mark Brown <broonie@kernel.org>, DTML <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org, broonie@kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 19 Feb 2019 at 04:07, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Feb 15, 2019 at 12:55:19PM +0800, Baolin Wang wrote:
-> > Change to use SoC compatible string instead of wildcard string.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> > Changes from v1:
-> >  - None.
-> > ---
-> >  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > index ac573da..24228cf 100644
-> > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
-> > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
-> >  }
-> >
-> >  static const struct of_device_id sprd_pmic_eic_of_match[] = {
-> > -     { .compatible = "sprd,sc27xx-eic", },
-> > +     { .compatible = "sprd,sc2731-eic", },
->
-> You need to keep the old one if you care about backwards compatibility.
-> If you don't then state why in the commit message.
->
+Use SoC compatible string instead of wildcard string.
 
-As we discussed before, our dts and drivers development are still in
-progress, and we always recompile and ship device trees at the same
-time as we compile and ship the kernel, so we do not need care about
-backwards compatibility.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v2:
+ - Add reviewed tag from Rob.
 
-Yes, I will add the explanation in the commit message. Thanks.
+Changes from v1:
+ - Add 'sprd' to indicate the module in subject line.
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+index 93d98d0..54040a2 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -33,7 +33,7 @@ Required properties:
+   "sprd,sc9860-eic-latch",
+   "sprd,sc9860-eic-async",
+   "sprd,sc9860-eic-sync",
+-  "sprd,sc27xx-eic".
++  "sprd,sc2731-eic".
+ - reg: Define the base and range of the I/O address space containing
+   the GPIO controller registers.
+ - gpio-controller: Marks the device node as a GPIO controller.
+@@ -86,7 +86,7 @@ Example:
+ 	};
+ 
+ 	pmic_eic: gpio@300 {
+-		compatible = "sprd,sc27xx-eic";
++		compatible = "sprd,sc2731-eic";
+ 		reg = <0x300>;
+ 		interrupt-parent = <&sc2731_pmic>;
+ 		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-Baolin Wang
-Best Regards
+1.7.9.5
