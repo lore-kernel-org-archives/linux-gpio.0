@@ -1,70 +1,44 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v6 1/7] irq/irq_sim: add irq_set_type() callback
-Date: Tue, 19 Feb 2019 17:36:23 +0100
-Message-ID: <CAMRc=Md4UAYD-emar9yGnJCEnFDXkP2CR7HgjGedPoTPtYH5OQ@mail.gmail.com>
-References: <20190219160650.9614-1-brgl@bgdev.pl> <20190219160650.9614-2-brgl@bgdev.pl>
- <20190219161449.26e99a2b@why.wild-wind.fr.eu.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] pinctrl: qcom: spmi-gpio: Reorder debug print
+Date: Tue, 19 Feb 2019 11:12:53 -0800
+Message-ID: <20190219191253.21712-1-bjorn.andersson@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190219161449.26e99a2b@why.wild-wind.fr.eu.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-wt., 19 lut 2019 o 17:14 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(a=
-):
->
-> On Tue, 19 Feb 2019 17:06:44 +0100
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Implement the irq_set_type() callback and call irqd_set_trigger_type()
-> > internally so that users interested in the configured trigger type can
-> > later retrieve it using irqd_get_trigger_type(). We only support edge
-> > trigger types.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  kernel/irq/irq_sim.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >
-> > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> > index 98a20e1594ce..b992f88c5613 100644
-> > --- a/kernel/irq/irq_sim.c
-> > +++ b/kernel/irq/irq_sim.c
-> > @@ -25,10 +25,22 @@ static void irq_sim_irqunmask(struct irq_data *data=
-)
-> >       irq_ctx->enabled =3D true;
-> >  }
-> >
-> > +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
-> > +{
-> > +     /* We only support rising and falling edge trigger types. */
-> > +     if (type & ~IRQ_TYPE_EDGE_BOTH)
-> > +             return -EINVAL;
-> > +
-> > +     irqd_set_trigger_type(data, type);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static struct irq_chip irq_sim_irqchip =3D {
-> >       .name           =3D "irq_sim",
-> >       .irq_mask       =3D irq_sim_irqmask,
-> >       .irq_unmask     =3D irq_sim_irqunmask,
-> > +     .irq_set_type   =3D irq_sim_set_type,
-> >  };
-> >
-> >  static void irq_sim_handle_irq(struct irq_work *work)
->
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
->
+It's reasonable to expect that people turn to the "gpio" debugfs file to
+first and foremost learn about the direction and value of a gpio, and
+second to that about it's pinconf. So reorder the value so each line
+reads:
 
-Thanks you! If you don't mind, I'll send this together with other
-patches directly to Linus Walleij.
+gpioN: direction value ...
 
-Bartosz
+This also makes it consistent with the TLMM pinctrl driver's output in
+the same dump.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index cb512c7a5251..76e57ae2f6e8 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -675,11 +675,11 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ 		else
+ 			seq_printf(s, " %-4s",
+ 					pad->output_enabled ? "out" : "in");
++		seq_printf(s, " %-4s", pad->out_value ? "high" : "low");
+ 		seq_printf(s, " %-7s", pmic_gpio_functions[function]);
+ 		seq_printf(s, " vin-%d", pad->power_source);
+ 		seq_printf(s, " %-27s", biases[pad->pullup]);
+ 		seq_printf(s, " %-10s", buffer_types[pad->buffer_type]);
+-		seq_printf(s, " %-4s", pad->out_value ? "high" : "low");
+ 		seq_printf(s, " %-7s", strengths[pad->strength]);
+ 		seq_printf(s, " atest-%d", pad->atest);
+ 		seq_printf(s, " dtest-%d", pad->dtest_buffer);
+-- 
+2.18.0
