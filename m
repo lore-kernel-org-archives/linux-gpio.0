@@ -1,48 +1,38 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/2] drivers: provide devm_platform_ioremap_resource()
-Date: Wed, 20 Feb 2019 12:05:12 +0100
-Message-ID: <CAMRc=Mdd2QXYjxJGp22OqBeyB+vm1Oe+OKgcB4OgYx3NS+yMEQ@mail.gmail.com>
-References: <20190215152507.31066-1-brgl@bgdev.pl> <20190215152507.31066-2-brgl@bgdev.pl>
- <CACRpkdY43ojBZ1NUyvc0X8+3tc3=jhv4S2oJX2v-88TgrKxQqg@mail.gmail.com>
+Subject: [PATCH v2 0/2] drivers: new helper for ioremapping memory resources
+Date: Wed, 20 Feb 2019 12:12:38 +0100
+Message-ID: <20190220111240.10041-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY43ojBZ1NUyvc0X8+3tc3=jhv4S2oJX2v-88TgrKxQqg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 20 lut 2019 o 10:57 Linus Walleij <linus.walleij@linaro.org> napi=
-sa=C5=82(a):
->
-> On Fri, Feb 15, 2019 at 4:25 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > There are currently 1200+ instances of using platform_get_resource()
-> > and devm_ioremap_resource() together in the kernel tree.
-> >
-> > This patch wraps these two calls in a single helper. Thanks to that
-> > we don't have to declare a local variable for struct resource * and can
-> > omit the redundant argument for resource type. We also have one
-> > function call less.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> This makes a lot of sense. I think Andy can confirm the value, he
-> knows a lot about good helpers.
->
-> I'd need Greg's ACK on this before merging through GPIO.
->
-> Can we make a script or coccinelle thing to fix them all when this
-> is applied?
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Yes, it's on my list (and also a chance to learn first hand how to
-work with coccinelle), but we first need this function upstream. I'll
-resend a v2 with the EXPORT_SYMBOL fixed.
+There are currently 1200+ instances of using platform_get_resource()
+and devm_ioremap_resource() together in the kernel tree. It's a minor
+redundancy, but consolidation is always good.
 
-Bart
+The first patch in this series adds a wrapper for these two calls and
+the second uses it in a driver I could test.
+
+If accepted I'll prepare a coccinelle script that'll make it easier
+to convert all users.
+
+v1 -> v2:
+- EXPORT_SYMBOL() -> EXPORT_SYMBOL_GPL()
+
+Bartosz Golaszewski (2):
+  drivers: provide devm_platform_ioremap_resource()
+  gpio: davinci: use devm_platform_ioremap_resource()
+
+ drivers/base/platform.c         | 18 ++++++++++++++++++
+ drivers/gpio/gpio-davinci.c     |  4 +---
+ include/linux/platform_device.h |  3 +++
+ 3 files changed, 22 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
