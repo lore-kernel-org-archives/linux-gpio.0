@@ -1,21 +1,21 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v5.0 series
-Date: Wed, 20 Feb 2019 09:03:22 +0100
-Message-ID: <CACRpkdYq5tVpFNC7sjdSATOMKCOeMxrjKK-pP6HNzgHt2bbVgQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v5.0
+Date: Wed, 20 Feb 2019 09:08:25 +0100
+Message-ID: <CACRpkdYMDh-VLBcKsfrCV5wV0vUqGPujztkqTjyZPznJ2APhEQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, =?UTF-8?Q?Ren=C3=A9_van_Dorst?= <opensource@vdorst.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-some final polish for GPIO for v5.0.
+some final pin control fixes (I hope) to round off the v5.0 pin control
+development cycle.
 
-Both patches are also tagged for stable.
+Only driver fixes, one for stable.
 
 Please pull them in!
 
@@ -23,33 +23,32 @@ Yours,
 Linus Walleij
 
 
-The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5=
-:
+The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
 
-  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v5.0-4
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.0-3
 
-for you to fetch changes up to af14b2c98adb85e9517390bb88309338b9075350:
+for you to fetch changes up to c17abcfa93bf0be5e48bb011607d237ac2bfc839:
 
-  gpio: pxa: avoid attempting to set pin direction via pinctrl on MMP2
-(2019-02-14 10:06:03 +0100)
-
-----------------------------------------------------------------
-Two GPIO fixes for the v5.0 series:
-- Per-instance irqchip on the MT7621
-- Avoid direction setting using pin control on MMP2
+  pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins (2019-02-17
+22:24:32 +0100)
 
 ----------------------------------------------------------------
-Lubomir Rintel (1):
-      gpio: pxa: avoid attempting to set pin direction via pinctrl on MMP2
+Pin control fixes for the v5.0 series:
+- Meson8B fixup for the sdc pins
+- Fix SDC tile position for Qualcomm QCS404
 
-Ren=C3=A9 van Dorst (1):
-      gpio: MT7621: use a per instance irq_chip structure
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      pinctrl: qcom: qcs404: Correct SDC tile
 
- drivers/gpio/gpio-mt7621.c | 20 ++++++++++----------
- drivers/gpio/gpio-pxa.c    |  1 +
- 2 files changed, 11 insertions(+), 10 deletions(-)
+Martin Blumenstingl (1):
+      pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 2 +-
+ drivers/pinctrl/qcom/pinctrl-qcs404.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
