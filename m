@@ -1,305 +1,55 @@
-From: Shravan Kumar Ramani <sramani@mellanox.com>
-Subject: [PATCH v2 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-Date: Tue, 19 Feb 2019 15:55:29 -0500
-Message-ID: <ca55f568da9a5be30700623697f7d398c149cda3.1550608440.git.sramani@mellanox.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v5.0 series
+Date: Wed, 20 Feb 2019 09:03:22 +0100
+Message-ID: <CACRpkdYq5tVpFNC7sjdSATOMKCOeMxrjKK-pP6HNzgHt2bbVgQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Shravan Kumar Ramani <sramani@mellanox.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, =?UTF-8?Q?Ren=C3=A9_van_Dorst?= <opensource@vdorst.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds support for the GPIO controller used by Mellanox
-BlueField SOCs.
+Hi Linus,
 
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
----
- drivers/gpio/Kconfig      |   6 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-mlxbf.c | 246 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 253 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf.c
+some final polish for GPIO for v5.0.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845..c950fe8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
- 	help
- 	  Say Y here to support Intel Merrifield GPIO.
- 
-+config GPIO_MLXBF
-+	tristate "Mellanox BlueField SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-+	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
-+
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8..8d54279 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
-+obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-new file mode 100644
-index 0000000..bf197aa
---- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -0,0 +1,246 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
-+
-+/* Number of pins on BlueField */
-+#define MLXBF_GPIO_NR 54
-+
-+/* Pad Electrical Controls. */
-+#define GPIO_PAD_CONTROL__FIRST_WORD 0x0700
-+#define GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
-+#define GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
-+#define GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
-+
-+#define GPIO_PIN_DIR_I 0x1040
-+#define GPIO_PIN_DIR_O 0x1048
-+#define GPIO_PIN_STATE 0x1000
-+#define GPIO_SCRATCHPAD 0x20
-+
-+#ifdef CONFIG_PM
-+struct bluefield_context_save_regs {
-+	u64 gpio_scratchpad;
-+	u64 gpio_pad_control[MLXBF_GPIO_NR];
-+	u64 gpio_pin_dir_i;
-+	u64 gpio_pin_dir_o;
-+};
-+#endif
-+
-+/* Device state structure. */
-+struct gpio_state {
-+	struct gpio_chip gc;
-+
-+	/* Must hold this lock to modify shared data. */
-+	spinlock_t lock;
-+
-+	/* Memory Address */
-+	void __iomem *dc_base;
-+
-+#ifdef CONFIG_PM
-+	struct bluefield_context_save_regs csave_regs;
-+#endif
-+};
-+
-+static int gpio_bf_set_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
-+
-+	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
-+
-+	writeq(out & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
-+	writeq(in | BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
-+
-+	return 0;
-+}
-+
-+static int gpio_bf_set_output(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
-+
-+	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
-+
-+	writeq(out | BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
-+	writeq(in & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
-+
-+	return 0;
-+}
-+
-+static int gpio_bf_set_output_lock(struct gpio_chip *chip,
-+				   unsigned int offset, int value)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	gpio_bf_set_output(chip, offset);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+static int gpio_bf_set_input_lock(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	gpio_bf_set_input(chip, offset);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+static int gpio_bf_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u64 value;
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	value = readq(gs->dc_base + GPIO_PIN_STATE);
-+
-+	return (value >> offset) & 1;
-+}
-+
-+static void gpio_bf_set(struct gpio_chip *chip, unsigned int offset, int value)
-+{
-+	u64 data;
-+	struct gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	data = readq(gs->dc_base + GPIO_PIN_STATE);
-+
-+	if (value)
-+		data |= BIT(offset);
-+	else
-+		data &= ~BIT(offset);
-+	writeq(data, gs->dc_base + GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+}
-+
-+static int gpiodrv_probe(struct platform_device *pdev)
-+{
-+	struct gpio_state *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	struct resource *dc_res;
-+	int ret;
-+
-+	dc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!dc_res)
-+		return -EINVAL;
-+
-+	gs = devm_kzalloc(&pdev->dev, sizeof(struct gpio_state), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	gs->dc_base = devm_ioremap_resource(&pdev->dev, dc_res);
-+	if (!gs->dc_base)
-+		return -ENOMEM;
-+
-+	gc = &gs->gc;
-+	gc->direction_input = gpio_bf_set_input_lock;
-+	gc->get = gpio_bf_get;
-+	gc->direction_output = gpio_bf_set_output_lock;
-+	gc->set = gpio_bf_set;
-+	gc->label = dev_name(dev);
-+	gc->parent = &pdev->dev;
-+	gc->owner = THIS_MODULE;
-+	gc->base = 0;
-+	gc->ngpio = MLXBF_GPIO_NR;
-+
-+	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-+		goto err;
-+	}
-+
-+	spin_lock_init(&gs->lock);
-+	platform_set_drvdata(pdev, gs);
-+	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-+	return 0;
-+
-+err:
-+	dev_err(&pdev->dev, "Probe, Failed\n");
-+	return ret;
-+}
-+
-+#ifdef CONFIG_PM
-+static int gpiodrv_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs.gpio_scratchpad = readq(gs->dc_base + GPIO_SCRATCHPAD);
-+	gs->csave_regs.gpio_pad_control[0] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[1] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[2] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	gs->csave_regs.gpio_pad_control[3] =
-+		readq(gs->dc_base + GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	gs->csave_regs.gpio_pin_dir_i = readq(gs->dc_base + GPIO_PIN_DIR_I);
-+	gs->csave_regs.gpio_pin_dir_o = readq(gs->dc_base + GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+
-+static int gpiodrv_resume(struct platform_device *pdev)
-+{
-+	struct gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	writeq(gs->csave_regs.gpio_scratchpad, gs->dc_base + GPIO_SCRATCHPAD);
-+	writeq(gs->csave_regs.gpio_pad_control[0], gs->dc_base +
-+	       GPIO_PAD_CONTROL__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[1], gs->dc_base +
-+	       GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[2], gs->dc_base +
-+	       GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pad_control[3], gs->dc_base +
-+	       GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	writeq(gs->csave_regs.gpio_pin_dir_i, gs->dc_base + GPIO_PIN_DIR_I);
-+	writeq(gs->csave_regs.gpio_pin_dir_o, gs->dc_base + GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct acpi_device_id gpiodrv_acpi_match[] = {
-+	{ "MLNXBF02", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, gpiodrv_acpi_match);
-+
-+static struct platform_driver gpiodrv_gpio_driver = {
-+	.driver = {
-+		.name = "gpiodrv",
-+		.acpi_match_table = ACPI_PTR(gpiodrv_acpi_match),
-+	},
-+	.probe    = gpiodrv_probe,
-+#ifdef CONFIG_PM
-+	.suspend  = gpiodrv_suspend,
-+	.resume   = gpiodrv_resume,
-+#endif
-+};
-+
-+module_platform_driver(gpiodrv_gpio_driver);
-+
-+MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL");
--- 
-2.1.2
+Both patches are also tagged for stable.
+
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5=
+:
+
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.0-4
+
+for you to fetch changes up to af14b2c98adb85e9517390bb88309338b9075350:
+
+  gpio: pxa: avoid attempting to set pin direction via pinctrl on MMP2
+(2019-02-14 10:06:03 +0100)
+
+----------------------------------------------------------------
+Two GPIO fixes for the v5.0 series:
+- Per-instance irqchip on the MT7621
+- Avoid direction setting using pin control on MMP2
+
+----------------------------------------------------------------
+Lubomir Rintel (1):
+      gpio: pxa: avoid attempting to set pin direction via pinctrl on MMP2
+
+Ren=C3=A9 van Dorst (1):
+      gpio: MT7621: use a per instance irq_chip structure
+
+ drivers/gpio/gpio-mt7621.c | 20 ++++++++++----------
+ drivers/gpio/gpio-pxa.c    |  1 +
+ 2 files changed, 11 insertions(+), 10 deletions(-)
