@@ -1,64 +1,59 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/2] drivers: provide devm_platform_ioremap_resource()
-Date: Wed, 20 Feb 2019 11:34:59 +0100
-Message-ID: <20190220103459.GA12108@kroah.com>
-References: <20190215152507.31066-1-brgl@bgdev.pl>
- <20190215152507.31066-2-brgl@bgdev.pl>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date: Wed, 20 Feb 2019 11:52:14 +0100
+Message-ID: <20190220105214.26618-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190215152507.31066-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 04:25:06PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> There are currently 1200+ instances of using platform_get_resource()
-> and devm_ioremap_resource() together in the kernel tree.
-> 
-> This patch wraps these two calls in a single helper. Thanks to that
-> we don't have to declare a local variable for struct resource * and can
-> omit the redundant argument for resource type. We also have one
-> function call less.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/base/platform.c         | 18 ++++++++++++++++++
->  include/linux/platform_device.h |  3 +++
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 1c958eb33ef4..14400a63cc81 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -79,6 +79,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
->  }
->  EXPORT_SYMBOL_GPL(platform_get_resource);
->  
-> +/**
-> + * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
-> + *				    device
-> + *
-> + * @pdev: platform device to use both for memory resource lookup as well as
-> + *        resource managemend
-> + * @index: resource index
-> + */
-> +void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-> +					     unsigned int index)
-> +{
-> +	struct resource *res;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-> +	return devm_ioremap_resource(&pdev->dev, res);
-> +}
-> +EXPORT_SYMBOL(devm_platform_ioremap_resource);
+From: Thierry Reding <treding@nvidia.com>
 
-functions in drivers/base/* should be EXPORT_SYMBOL_GPL() please.
+Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+enable-gpios") breaks the device tree ABI specified in the device tree
+bindings for fixed regulators (compatible "regulator-fixed"). According
+to these bindings the polarity of the GPIO is exclusively controlled by
+the presence or absence of the enable-active-high property. As such the
+polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+the GPIO specified for fixed regulators.
 
-thanks,
+However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+to enable-gpios") restricted the quirk to the enable-gpios property for
+fixed regulators as well, whereas according to the commit message itself
+it should only apply to "regulator-gpio" compatible device tree nodes.
 
-greg k-h
+Fix this by actually implementing what the offending commit intended,
+which is to ensure that the quirk is applied to the GPIO specified by
+the "enable-gpio" property for the "regulator-gpio" bindings only.
+
+This fixes a regression on Jetson TX1 where the fixed regulator for the
+HDMI +5V pin relies on the flags quirk for the proper polarity.
+
+Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpiolib-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 1b4c741e0635..bddfc6102a50 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
+-	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+-	     of_device_is_compatible(np, "regulator-gpio"))) {
++	     (of_device_is_compatible(np, "regulator-gpio") &&
++	      strcmp(propname, "enable-gpio") == 0))) {
+ 		/*
+ 		 * The regulator GPIO handles are specified such that the
+ 		 * presence or absence of "enable-active-high" solely controls
+-- 
+2.20.1
