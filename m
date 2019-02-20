@@ -1,75 +1,69 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 1/2] drivers: provide devm_platform_ioremap_resource()
-Date: Wed, 20 Feb 2019 12:12:39 +0100
-Message-ID: <20190220111240.10041-2-brgl@bgdev.pl>
-References: <20190220111240.10041-1-brgl@bgdev.pl>
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date: Wed, 20 Feb 2019 12:15:54 +0100
+Message-ID: <9f6eed1d-0c7f-f3e6-f091-3faf8fcc966a@gmail.com>
+References: <20190220105214.26618-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220111240.10041-1-brgl@bgdev.pl>
+In-Reply-To: <20190220105214.26618-1-thierry.reding@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 2/20/19 11:52 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+> enable-gpios") breaks the device tree ABI specified in the device tree
+> bindings for fixed regulators (compatible "regulator-fixed"). According
+> to these bindings the polarity of the GPIO is exclusively controlled by
+> the presence or absence of the enable-active-high property. As such the
+> polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+> the GPIO specified for fixed regulators.
+> 
+> However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+> to enable-gpios") restricted the quirk to the enable-gpios property for
+> fixed regulators as well, whereas according to the commit message itself
+> it should only apply to "regulator-gpio" compatible device tree nodes.
+> 
+> Fix this by actually implementing what the offending commit intended,
+> which is to ensure that the quirk is applied to the GPIO specified by
+> the "enable-gpio" property for the "regulator-gpio" bindings only.
+> 
+> This fixes a regression on Jetson TX1 where the fixed regulator for the
+> HDMI +5V pin relies on the flags quirk for the proper polarity.
+> 
+> Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/gpio/gpiolib-of.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 1b4c741e0635..bddfc6102a50 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
+>  	 * Note that active low is the default.
+>  	 */
+>  	if (IS_ENABLED(CONFIG_REGULATOR) &&
+> -	    !strcmp(propname, "enable-gpio") &&
+>  	    (of_device_is_compatible(np, "regulator-fixed") ||
+>  	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+> -	     of_device_is_compatible(np, "regulator-gpio"))) {
+> +	     (of_device_is_compatible(np, "regulator-gpio") &&
+> +	      strcmp(propname, "enable-gpio") == 0))) {
+>  		/*
+>  		 * The regulator GPIO handles are specified such that the
+>  		 * presence or absence of "enable-active-high" solely controls
 
-There are currently 1200+ instances of using platform_get_resource()
-and devm_ioremap_resource() together in the kernel tree.
+On R8A7795 Salvator-XS
+Tested-by: Marek Vasut <marek.vasut@gmail.com>
 
-This patch wraps these two calls in a single helper. Thanks to that
-we don't have to declare a local variable for struct resource * and can
-omit the redundant argument for resource type. We also have one
-function call less.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/base/platform.c         | 18 ++++++++++++++++++
- include/linux/platform_device.h |  3 +++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1c958eb33ef4..f82691e1c26c 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -79,6 +79,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
- }
- EXPORT_SYMBOL_GPL(platform_get_resource);
- 
-+/**
-+ * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
-+ *				    device
-+ *
-+ * @pdev: platform device to use both for memory resource lookup as well as
-+ *        resource managemend
-+ * @index: resource index
-+ */
-+void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-+					     unsigned int index)
-+{
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	return devm_ioremap_resource(&pdev->dev, res);
-+}
-+EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
-+
- /**
-  * platform_get_irq - get an IRQ for a device
-  * @dev: platform device
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index c7c081dc6034..b126b73ed8ef 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -52,6 +52,9 @@ extern struct device platform_bus;
- extern void arch_setup_pdev_archdata(struct platform_device *);
- extern struct resource *platform_get_resource(struct platform_device *,
- 					      unsigned int, unsigned int);
-+extern void __iomem *
-+devm_platform_ioremap_resource(struct platform_device *pdev,
-+			       unsigned int index);
- extern int platform_get_irq(struct platform_device *, unsigned int);
- extern int platform_irq_count(struct platform_device *);
- extern struct resource *platform_get_resource_byname(struct platform_device *,
 -- 
-2.20.1
+Best regards,
+Marek Vasut
