@@ -1,55 +1,134 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 1/2] drivers: provide devm_platform_ioremap_resource()
-Date: Thu, 21 Feb 2019 10:53:29 +0100
-Message-ID: <CAMRc=Md0sqouS+p2RvW+fwM41eN5=P9Nd7V=gYuqxunfa3j-nA@mail.gmail.com>
-References: <20190220111240.10041-1-brgl@bgdev.pl> <20190220111240.10041-2-brgl@bgdev.pl>
- <20190220111650.GA13077@kroah.com> <CAMRc=MeXPsJCsKAnzUD7Cvhj2gy3pyd6X79e602awv3_Ys6mYA@mail.gmail.com>
- <20190220121506.GA23933@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/1] gpio: add driver for Mellanox BlueField GPIO controller
+Date: Thu, 21 Feb 2019 11:44:26 +0100
+Message-ID: <CACRpkdbNvjELQ_9bJSmD5oqhv+uHhSwBErGcKsZayCntDbTwPA@mail.gmail.com>
+References: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220121506.GA23933@kroah.com>
+In-Reply-To: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shravan Kumar Ramani <sramani@mellanox.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 20 lut 2019 o 13:15 Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> napisa=C5=82(a):
->
-> On Wed, Feb 20, 2019 at 12:21:26PM +0100, Bartosz Golaszewski wrote:
-> > =C5=9Br., 20 lut 2019 o 12:16 Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> napisa=C5=82(a):
-> > >
-> > > On Wed, Feb 20, 2019 at 12:12:39PM +0100, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > There are currently 1200+ instances of using platform_get_resource(=
-)
-> > > > and devm_ioremap_resource() together in the kernel tree.
-> > > >
-> > > > This patch wraps these two calls in a single helper. Thanks to that
-> > > > we don't have to declare a local variable for struct resource * and=
- can
-> > > > omit the redundant argument for resource type. We also have one
-> > > > function call less.
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > >
-> >
-> > Should this go through the driver-core tree?
->
-> No need, put it through the tree for patch 2/2.
->
-> thanks,
->
-> greg k-h
+Hi Shravan,
 
-Linus,
+thank you for your patch!
 
-can you take the two patches for v5.1?
+On Wed, Feb 20, 2019 at 11:07 PM Shravan Kumar Ramani
+<sramani@mellanox.com> wrote:
 
-Bart
+> This patch adds support for the GPIO controller used by Mellanox
+> BlueField SOCs.
+>
+> Reviewed-by: David Woods <dwoods@mellanox.com>
+> Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+(...)
+> +config GPIO_MLXBF
+> +       tristate "Mellanox BlueField SoC GPIO"
+> +       depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
+
+Add
+select GPIO_GENERIC
+
+Becaus I think you can use it.
+
+> +static int mlxbf_gpio_set_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
+> +       u64 in;
+> +       u64 out;
+> +
+> +       out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
+> +       in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
+> +
+> +       spin_lock(&gs->lock);
+> +       writeq(out & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
+> +       writeq(in | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
+> +       spin_unlock(&gs->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mlxbf_gpio_set_output(struct gpio_chip *chip, unsigned int offset,
+> +                                int value)
+> +{
+> +       struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
+> +       u64 in;
+> +       u64 out;
+> +
+> +       out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
+> +       in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
+> +
+> +       spin_lock(&gs->lock);
+> +       writeq(out | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
+> +       writeq(in & ~BIT(offset), gs->gs->dc_base + MLXBF_GPIO_PIN_DIR_Idc_base + MLXBF_GPIO_PIN_DIR_I);
+> +       spin_unlock(&gs->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mlxbf_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       u64 value;
+> +       struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
+> +
+> +       spin_lock(&gs->lock);
+> +       value = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
+> +       spin_unlock(&gs->lock);
+> +
+> +       return (value >> offset) & 1;
+> +}
+> +
+> +static void mlxbf_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +                          int value)
+> +{
+> +       u64 data;
+> +       struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
+> +
+> +       spin_lock(&gs->lock);
+> +       data = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
+> +
+> +       if (value)
+> +               data |= BIT(offset);
+> +       else
+> +               data &= ~BIT(offset);
+> +       writeq(data, gs->dc_base + MLXBF_GPIO_PIN_STATE);
+> +       spin_unlock(&gs->lock);
+> +}
+
+This looks like it can use the generic MMIO library.
+
+Look at other drivers calling bgpio_init() to set up set/get/direction
+helpers for inspiration. The MMIO library should be able to deal with
+64bit registers IIUC. With this approach you get get/set_multiple
+for free.
+
+There is very detailed documenttion above the function bgpio_init()
+in drivers/gpio/gpio-mmio.c.
+
+I think something like this in probe():
+
+ret = bgpio_init(gc, dev, 8,
+                gs->dc_base + MLXBF_GPIO_PIN_STATE,
+                NULL,
+                NULL,
+                gs->dc_base + MLXBF_GPIO_PIN_DIR_O,
+                gs->dc_base + MLXBF_GPIO_PIN_DIR_I,
+                0);
+if (ret)
+   return -ENODEV;
+gc->label = dev_name(dev);
+gc->parent = &pdev->dev;
+gc->owner = THIS_MODULE;
+gc->base = -1;
+gc->ngpio = MLXBF_GPIO_NR;
+(...)
+
+This makes the driver short and efficient and reuse the MMIO library
+in a nice way. It also implements the spinlock for you so you don't
+need that anymore.
+
+Yours,
+Linus Walleij
