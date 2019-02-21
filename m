@@ -1,34 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] drivers: provide devm_platform_ioremap_resource()
-Date: Thu, 21 Feb 2019 13:06:54 +0100
-Message-ID: <CACRpkdauvLkMs6HQiuuBy9ACVB+zmYY6W8FqmdUUQFrYZcHjaQ@mail.gmail.com>
-References: <20190220111240.10041-1-brgl@bgdev.pl> <20190220111240.10041-2-brgl@bgdev.pl>
- <20190220111650.GA13077@kroah.com> <CAMRc=MeXPsJCsKAnzUD7Cvhj2gy3pyd6X79e602awv3_Ys6mYA@mail.gmail.com>
- <20190220121506.GA23933@kroah.com> <CAMRc=Md0sqouS+p2RvW+fwM41eN5=P9Nd7V=gYuqxunfa3j-nA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date: Thu, 21 Feb 2019 13:09:57 +0100
+Message-ID: <CACRpkdbf4d3MMfZZh39ka9JVX57zNuVoX9xAqE7SKJ-u27QYqA@mail.gmail.com>
+References: <20190220105214.26618-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Md0sqouS+p2RvW+fwM41eN5=P9Nd7V=gYuqxunfa3j-nA@mail.gmail.com>
+In-Reply-To: <20190220105214.26618-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Marek Vasut <marek.vasut@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:53 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Wed, Feb 20, 2019 at 11:52 AM Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-> > > Should this go through the driver-core tree?
-> >
-> > No need, put it through the tree for patch 2/2.
-> >
-> > thanks,
-> >
-> > greg k-h
+> From: Thierry Reding <treding@nvidia.com>
 >
-> Linus,
+> Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+> enable-gpios") breaks the device tree ABI specified in the device tree
+> bindings for fixed regulators (compatible "regulator-fixed"). According
+> to these bindings the polarity of the GPIO is exclusively controlled by
+> the presence or absence of the enable-active-high property. As such the
+> polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+> the GPIO specified for fixed regulators.
 >
-> can you take the two patches for v5.1?
+> However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+> to enable-gpios") restricted the quirk to the enable-gpios property for
+> fixed regulators as well, whereas according to the commit message itself
+> it should only apply to "regulator-gpio" compatible device tree nodes.
+>
+> Fix this by actually implementing what the offending commit intended,
+> which is to ensure that the quirk is applied to the GPIO specified by
+> the "enable-gpio" property for the "regulator-gpio" bindings only.
+>
+> This fixes a regression on Jetson TX1 where the fixed regulator for the
+> HDMI +5V pin relies on the flags quirk for the proper polarity.
+>
+> Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Yup both merged to the GPIO tree, thanks!
+Patch applied with Marek's tested-by, thanks for thorough commit
+message and helping out in sorting out this mess we've built
+up over the years.
 
 Yours,
 Linus Walleij
