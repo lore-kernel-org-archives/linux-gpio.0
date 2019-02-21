@@ -1,30 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
-Date: Thu, 21 Feb 2019 13:38:07 +0100
-Message-ID: <CACRpkdbPiVvaY4W6_UMd20PG8mnQCyPHq9W+7x=ZR8+vwy=Oow@mail.gmail.com>
-References: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] drivers: depend on HAS_IOMEM for devm_platform_ioremap_resource()
+Date: Thu, 21 Feb 2019 17:26:27 +0100
+Message-ID: <20190221162627.3476-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129165530.7606-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Dong Aisheng <dong.aisheng@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 5:55 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
-> same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
-> the text to imx50.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> Cc: Dong Aisheng <dong.aisheng@linaro.org>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
+We only build devm_ioremap_resource() if HAS_IOMEM is selected, so this
+dependency must cascade down to devm_platform_ioremap_resource().
 
-Patch applied with Fabio's review tag.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/base/platform.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index f82691e1c26c..5f837f2e4f41 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -87,6 +87,7 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
+  *        resource managemend
+  * @index: resource index
+  */
++#ifdef CONFIG_HAS_IOMEM
+ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+ 					     unsigned int index)
+ {
+@@ -96,6 +97,7 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+ 	return devm_ioremap_resource(&pdev->dev, res);
+ }
+ EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
++#endif /* CONFIG_HAS_IOMEM */
+ 
+ /**
+  * platform_get_irq - get an IRQ for a device
+-- 
+2.20.1
