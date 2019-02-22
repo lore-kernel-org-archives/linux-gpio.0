@@ -1,285 +1,133 @@
-From: Shravan Kumar Ramani <sramani@mellanox.com>
-Subject: [PATCH v4 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-Date: Thu, 21 Feb 2019 16:32:55 -0500
-Message-ID: <ba76dad90860160a9b25add3aba902d2710a6647.1550783880.git.sramani@mellanox.com>
-References: <cover.1550783880.git.sramani@mellanox.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 05/11] mfd: pm8xxx: disassociate old virq if hwirq
+ mapping already exists
+Date: Fri, 22 Feb 2019 08:57:13 +0000
+Message-ID: <20190222085713.16f7822d@why.wild-wind.fr.eu.org>
+References: <20190208021631.30252-1-masneyb@onstation.org>
+        <20190208021631.30252-6-masneyb@onstation.org>
+        <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com>
+        <20190215134733.GA21208@basecamp>
+        <155026608236.115909.9007817366859489104@swboyd.mtv.corp.google.com>
+        <20190216002359.GA24752@basecamp>
+        <155077482380.77512.11109337732610217265@swboyd.mtv.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1550783880.git.sramani@mellanox.com>
-In-Reply-To: <cover.1550783880.git.sramani@mellanox.com>
-References: <cover.1550783880.git.sramani@mellanox.com>
+In-Reply-To: <155077482380.77512.11109337732610217265@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Shravan Kumar Ramani <sramani@mellanox.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, lee.jones@linaro.org, linus.walleij@linaro.org, tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds support for the GPIO controller used by Mellanox
-BlueField SOCs.
+On Thu, 21 Feb 2019 10:47:03 -0800
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
----
- drivers/gpio/Kconfig      |   6 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-mlxbf.c | 222 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 229 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf.c
+> Quoting Brian Masney (2019-02-15 16:23:59)
+> > On Fri, Feb 15, 2019 at 01:28:02PM -0800, Stephen Boyd wrote:  
+> > > Quoting Brian Masney (2019-02-15 05:47:33)  
+> > > > On Thu, Feb 14, 2019 at 09:51:26PM -0800, Stephen Boyd wrote:  
+> > > > > > diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
+> > > > > > index 8eb2528793f9..2f99a98ccee5 100644
+> > > > > > --- a/drivers/mfd/qcom-pm8xxx.c
+> > > > > > +++ b/drivers/mfd/qcom-pm8xxx.c
+> > > > > > @@ -380,6 +380,12 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip *chip,
+> > > > > >                                   struct irq_domain *domain, unsigned int irq,
+> > > > > >                                   irq_hw_number_t hwirq, unsigned int type)
+> > > > > >  {
+> > > > > > +       unsigned int old_virq;
+> > > > > > +
+> > > > > > +       old_virq = irq_find_mapping(domain, hwirq);
+> > > > > > +       if (old_virq)
+> > > > > > +               irq_domain_disassociate(domain, old_virq);  
+> > > > > 
+> > > > > Is it possible to pass 'true' for the 'realloc' argument to
+> > > > > __irq_domain_alloc_irqs() and then this disassociate change isn't
+> > > > > needed?  
+> > > > 
+> > > > The kernel doc for __irq_domain_alloc_irqs() says that the realloc
+> > > > parameter is mainly to support legacy IRQs. I don't think its a good
+> > > > idea to add new code that'll stay past the end of this patch series
+> > > > on top of that legacy interface.
+> > > >   
+> > > 
+> > > Ok. The other side of the argument is that this is the only user of
+> > > irq_domain_disassociate(), which may also be some sort of legacy
+> > > interface that isn't supposed to be used. Looking at the commit that
+> > > exposed it, it seems to be that it's there for legacy reasons.
+> > > 
+> > > commit 43a775916d63d1c822107b39987192ca5ced445c
+> > > Author: Jiang Liu <jiang.liu@linux.intel.com>
+> > > Date:   Mon Jun 9 16:20:05 2014 +0800
+> > > 
+> > >     genirq: Export irq_domain_disassociate() to architecture interrupt drivers
+> > >     
+> > >     Export irq_domain_disassociate() to architecture interrupt drivers,
+> > >     so it could be used to handle legacy IRQ descriptors on x86.
+> > > 
+> > > So maybe we should just use the realloc argument and bury the
+> > > disassociate API in irqdomain.c because it's not supposed to be used?
+> > > Or does the realloc path not work for some reason?  
+> > 
+> > I haven't tried the realloc path yet. Let's back up further so that we
+> > are both starting with the same assumptions. Do you want to keep either
+> > your proposed change (realloc argument) or the existing
+> > irq_domain_disassociate change in mainline past the end of this patch
+> > series? If it is going to continue to be a temporary shim that will be
+> > reverted at the end of the patch series (like I did here), then I don't
+> > see the point in this extra work since this patch is only here to keep
+> > it bisectable and works. We're not using any legacy interfaces by the
+> > end of this patch series.  
+> 
+> The main concern I have is that we're changing the binding to avoid a
+> larger discussion we could have about whether or not the binding is
+> wrong to list out the hierarchical irqs as part of an 'interrupts'
+> property. We have one case where hardware irq numbers are remapped to
+> other hardware irq number spaces and it seems perfectly valid to use the
+> 'interrupts' property to indicate this, i.e. chained interrupt
+> controllers.
+> 
+> Those controllers typically have a single 'interrupts' specifier for the
+> chained irq of the parent interrupt controller, but when it comes to
+> hierarchical interrupts we seem to have various different ways of
+> expressing the mapping from one number space to another. I've seen
+> approaches varying between hardcoding everything in the kernel to
+> hardcoding everything in DT.
+> 
+> I'm mostly wondering if having an interrupts property listing all the
+> parent interrupts in corresponding specifier slots for the interrupt
+> controller's hardware irq space is wrong. It seems to describe the
+> mapping between the two number spaces already, so maybe it would make
+> sense to use the realloc argument and keep listing them as interrupts in
+> DT. Obviously things are already moving forward with the new DT binding,
+> so maybe I just need to be told that having an interrupts property there
+> is wrong. If it is wrong, then nothing needs to be kept around and the
+> binding can easily be changed.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845..c950fe8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
- 	help
- 	  Say Y here to support Intel Merrifield GPIO.
- 
-+config GPIO_MLXBF
-+	tristate "Mellanox BlueField SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-+	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
-+
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8..8d54279 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
-+obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-new file mode 100644
-index 0000000..e2d23c2
---- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
-+
-+/* Number of pins on BlueField */
-+#define MLXBF_GPIO_NR 54
-+
-+/* Pad Electrical Controls. */
-+#define MLXBF_GPIO_PAD_CONTROL_FIRST_WORD 0x0700
-+#define MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD 0x0708
-+#define MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD 0x0710
-+#define MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD 0x0718
-+
-+#define MLXBF_GPIO_PIN_DIR_I 0x1040
-+#define MLXBF_GPIO_PIN_DIR_O 0x1048
-+#define MLXBF_GPIO_PIN_STATE 0x1000
-+#define MLXBF_GPIO_SCRATCHPAD 0x20
-+
-+#ifdef CONFIG_PM
-+struct mlxbf_gpio_context_save_regs {
-+	u64 scratchpad;
-+	u64 pad_control[MLXBF_GPIO_NR];
-+	u64 pin_dir_i;
-+	u64 pin_dir_o;
-+};
-+#endif
-+
-+/* Device state structure. */
-+struct mlxbf_gpio_state {
-+	struct gpio_chip gc;
-+
-+	/* Must hold this lock to modify shared data. */
-+	spinlock_t lock;
-+
-+	/* Memory Address */
-+	void __iomem *base;
-+
-+#ifdef CONFIG_PM
-+	struct mlxbf_gpio_context_save_regs csave_regs;
-+#endif
-+};
-+
-+static int mlxbf_gpio_set_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
-+
-+	spin_lock(&gs->lock);
-+	out = readq(gs->base + MLXBF_GPIO_PIN_DIR_O);
-+	in = readq(gs->base + MLXBF_GPIO_PIN_DIR_I);
-+
-+	writeq(out & ~BIT(offset), gs->base + MLXBF_GPIO_PIN_DIR_O);
-+	writeq(in | BIT(offset), gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+static int mlxbf_gpio_set_output(struct gpio_chip *chip, unsigned int offset,
-+				 int value)
-+{
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
-+
-+	spin_lock(&gs->lock);
-+	out = readq(gs->base + MLXBF_GPIO_PIN_DIR_O);
-+	in = readq(gs->base + MLXBF_GPIO_PIN_DIR_I);
-+
-+	writeq(out | BIT(offset), gs->base + MLXBF_GPIO_PIN_DIR_O);
-+	writeq(in & ~BIT(offset), gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
-+}
-+
-+static int mlxbf_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u64 value;
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	value = readq(gs->base + MLXBF_GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+
-+	return (value >> offset) & 1;
-+}
-+
-+static void mlxbf_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			   int value)
-+{
-+	u64 data;
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	data = readq(gs->base + MLXBF_GPIO_PIN_STATE);
-+
-+	if (value)
-+		data |= BIT(offset);
-+	else
-+		data &= ~BIT(offset);
-+	writeq(data, gs->base + MLXBF_GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+}
-+
-+static int mlxbf_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	struct resource *res;
-+	int ret;
-+
-+	gs = devm_kzalloc(&pdev->dev, sizeof(*gs), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	gs->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(gs->base))
-+		return PTR_ERR(gs->base);
-+
-+	gc = &gs->gc;
-+	gc->direction_input = mlxbf_gpio_set_input;
-+	gc->direction_output = mlxbf_gpio_set_output;
-+	gc->get = mlxbf_gpio_get;
-+	gc->set = mlxbf_gpio_set;
-+	gc->label = dev_name(dev);
-+	gc->parent = &pdev->dev;
-+	gc->owner = THIS_MODULE;
-+	gc->base = -1;
-+	gc->ngpio = MLXBF_GPIO_NR;
-+
-+	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-+		return ret;
-+	}
-+
-+	spin_lock_init(&gs->lock);
-+	platform_set_drvdata(pdev, gs);
-+	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int mlxbf_gpio_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs.scratchpad = readq(gs->base + MLXBF_GPIO_SCRATCHPAD);
-+	gs->csave_regs.pad_control[0] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_FIRST_WORD);
-+	gs->csave_regs.pad_control[1] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD);
-+	gs->csave_regs.pad_control[2] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD);
-+	gs->csave_regs.pad_control[3] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD);
-+	gs->csave_regs.pin_dir_i = readq(gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	gs->csave_regs.pin_dir_o = readq(gs->base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+
-+static int mlxbf_gpio_resume(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	writeq(gs->csave_regs.scratchpad, gs->base + MLXBF_GPIO_SCRATCHPAD);
-+	writeq(gs->csave_regs.pad_control[0],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[1],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[2],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[3],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD);
-+	writeq(gs->csave_regs.pin_dir_i, gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	writeq(gs->csave_regs.pin_dir_o, gs->base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct acpi_device_id mlxbf_gpio_acpi_match[] = {
-+	{ "MLNXBF02", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
-+
-+static struct platform_driver mlxbf_gpio_driver = {
-+	.driver = {
-+		.name = "mlxbf_gpio",
-+		.acpi_match_table = ACPI_PTR(mlxbf_gpio_acpi_match),
-+	},
-+	.probe    = mlxbf_gpio_probe,
-+#ifdef CONFIG_PM
-+	.suspend  = mlxbf_gpio_suspend,
-+	.resume   = mlxbf_gpio_resume,
-+#endif
-+};
-+
-+module_platform_driver(mlxbf_gpio_driver);
-+
-+MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL");
+The issue I've had in the past about the use of 'proper' interrupt
+specifiers in DT for stuff that is represented as a hierarchy comes
+mainly from the way Linux deals with those (unsurprisingly).
+
+The DT parsing code will create a Linux interrupt each time it probes
+an device that has these descriptors. That's all fine, except that for
+a hierarchy, these output lines are not independent IRQs. We end-up
+with double the interrupt descriptors at each level of the hierarchy,
+which is both a waste of memory and a pain to debug. It also creates
+all kind of bad problems as the interrupt is now registered in the
+irqdomain, and I think this is what this patch is trying to work around.
+
+Short of being able to tell the DT parser "don't map interrupts for this
+device", we have two options: undo the mess when mapping a hierarchy,
+or sidestep the issue altogether, which is what I've recommended in the
+past (though Rob did disagree with me on that, and he has good
+arguments too).
+
+To be honest, I'd like to make progress on that too, if only to put
+something in core code so that individual drivers don't have to play
+that kind of game.
+
+Thanks,
+
+	M.
 -- 
-2.1.2
+Without deviation from the norm, progress is not possible.
