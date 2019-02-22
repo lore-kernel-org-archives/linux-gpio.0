@@ -1,29 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drivers: depend on HAS_IOMEM for devm_platform_ioremap_resource()
-Date: Fri, 22 Feb 2019 17:22:18 +0100
-Message-ID: <CACRpkdbeyoQbVFDFq1Z3NXoWgu5F2a2pNQd9XJ4KkOws7_gUVw@mail.gmail.com>
-References: <20190221162627.3476-1-brgl@bgdev.pl> <CAHp75VfKq5rkLUzW3HL8+a0wmaqGz7nz09Ki0nc0TxQDJb=9DA@mail.gmail.com>
- <CABGGiswPUe2PEmi_7a7SsB6vK7WVHysOoNkueoG+3h4RdfmB8Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] gpio: AMD G-Series PCH gpio driver
+Date: Fri, 22 Feb 2019 17:27:29 +0100
+Message-ID: <CACRpkdbseJatwvK1BAwRpmGP6ZsabufvVwETPmD3RpuTBKg9Sg@mail.gmail.com>
+References: <1550181897-2596-1-git-send-email-info@metux.net>
+ <1550829256-8831-1-git-send-email-info@metux.net> <1550829256-8831-2-git-send-email-info@metux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABGGiswPUe2PEmi_7a7SsB6vK7WVHysOoNkueoG+3h4RdfmB8Q@mail.gmail.com>
+In-Reply-To: <1550829256-8831-2-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <rob.herring@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Keerthy <j-keerthy@ti.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Arnd Bergmann <arnd@arndb.de>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 3:22 PM Rob Herring <rob.herring@linaro.org> wrote:
+On Fri, Feb 22, 2019 at 10:54 AM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-> Just a drive by comment, but IMO we should just get rid of HAS_IOMEM
-> altogether. It is really just a !UML option as I think every other
-> arch enables it. If folks really want to disable drivers on UML, just
-> disable the subsystems.
+> GPIO platform driver for the AMD G-series PCH (eg. on GX-412TC)
+>
+> This driver doesn't registers itself automatically, as it needs to
+> be provided with platform specific configuration, provided by some
+> board driver setup code.
+>
+> Didn't implement oftree probing yet, as it's rarely found on x86.
+>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linus.walleij@linaro.org
+> Cc: bgolaszewski@baylibre.com
+> Cc: dvhart@infradead.org
+> Cc: andy@infradead.org
+> Cc: platform-driver-x86@vger.kernel.org
+>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-I just got a build failure from S390 for the same thing so apparently
-there is S390 Linux without IOMEM. I have no idea how that works
-but whenever Arnd start talking to me about how S390 works
-my head start spinning.
+Patch applied.
 
 Yours,
 Linus Walleij
