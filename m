@@ -1,39 +1,351 @@
 From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: APUv2/v3 board support v4
-Date: Fri, 22 Feb 2019 10:54:14 +0100
-Message-ID: <1550829256-8831-1-git-send-email-info@metux.net>
+Subject: [PATCH v4 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
+Date: Fri, 22 Feb 2019 10:54:16 +0100
+Message-ID: <1550829256-8831-3-git-send-email-info@metux.net>
 References: <1550181897-2596-1-git-send-email-info@metux.net>
+ <1550829256-8831-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550181897-2596-1-git-send-email-info@metux.net>
+In-Reply-To: <1550829256-8831-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, dvhart@infradead.org, andy@infradead.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi folks,
+Driver for PCengines APUv2 board's front LEDs and Button,
+which are attached to AMD PCH GPIOs. Due to lack of dedicated
+ACPI entry, detecting the board via DMI.
 
+Cc: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org
+Cc: bgolaszewski@baylibre.com
+Cc: dvhart@infradead.org
+Cc: andy@infradead.org
+Cc: platform-driver-x86@vger.kernel.org
 
-this is version 4 of my APUv2/APUv3 series.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ MAINTAINERS                            |   5 +
+ drivers/platform/x86/Kconfig           |  12 ++
+ drivers/platform/x86/Makefile          |   1 +
+ drivers/platform/x86/pcengines-apuv2.c | 261 +++++++++++++++++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+ create mode 100644 drivers/platform/x86/pcengines-apuv2.c
 
-changes in v4:
-
- * fixed spinlocks (using own field instead of gc.bgpio_lock)
- * dropped superflous dependency on GPIO_GENERIC
- * initialize gc.base = -1
- * added Reviewed-By tags
-
-changes in v3:
-
- * gpio driver
-   * drop unncessary gpio id checks
-   * cleanup amd_fch_gpio_set()
-   * move iores outside probe()
-   * shorter NULL checks and correct error in probe()
- * apu board driver
-   * drop unneeded init.h
-   * drop unnecessary comments
-   * clean up logging
-   * dont need to depend on KEYBOARD_GPIO
-
-
---mtx
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d286e7d..d39e029 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11522,6 +11522,11 @@ F:	lib/parman.c
+ F:	lib/test_parman.c
+ F:	include/linux/parman.h
+ 
++PC ENGINES APU BOARD DRIVER
++M:	Enrico Weigelt, metux IT consult <info@metux.net>
++S:	Maintained
++F:	drivers/platform/x86/pcengines-apuv2.c
++
+ PC87360 HARDWARE MONITORING DRIVER
+ M:	Jim Cromie <jim.cromie@gmail.com>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b5e9db8..851ea92 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1303,6 +1303,18 @@ config HUAWEI_WMI
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called huawei-wmi.
+ 
++config PCENGINES_APU2
++	tristate "PC Engines APUv2/3 front button and LEDs driver"
++	select GPIO_AMD_FCH
++	select KEYBOARD_GPIO_POLLED
++	select LEDS_GPIO
++	help
++	  This driver provides support for the front button and LEDs on
++	  PC Engines APUv2/APUv3 board.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called pcengines-apuv2.
++
+ endif # X86_PLATFORM_DEVICES
+ 
+ config PMC_ATOM
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index ce8da26..86cb766 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+ obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
+ obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
+ obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
++obj-$(CONFIG_PCENGINES_APU2)	+= pcengines-apuv2.o
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+new file mode 100644
+index 0000000..dcb084f
+--- /dev/null
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -0,0 +1,261 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * PC-Engines APUv2/APUv3 board platform driver
++ * for gpio buttons and LEDs
++ *
++ * Copyright (C) 2018 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ */
++
++#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
++
++#include <linux/dmi.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/gpio_keys.h>
++#include <linux/gpio/machine.h>
++#include <linux/input.h>
++#include <linux/platform_data/gpio/gpio-amd-fch.h>
++
++/*
++ * NOTE: this driver only supports APUv2/3 - not APUv1, as this one
++ * has completely different register layouts
++ */
++
++/* register mappings */
++#define APU2_GPIO_REG_LED1		AMD_FCH_GPIO_REG_GPIO57
++#define APU2_GPIO_REG_LED2		AMD_FCH_GPIO_REG_GPIO58
++#define APU2_GPIO_REG_LED3		AMD_FCH_GPIO_REG_GPIO59_DEVSLP1
++#define APU2_GPIO_REG_MODESW		AMD_FCH_GPIO_REG_GPIO32_GE1
++#define APU2_GPIO_REG_SIMSWAP		AMD_FCH_GPIO_REG_GPIO33_GE2
++
++/* order in which the gpio lines are defined in the register list */
++#define APU2_GPIO_LINE_LED1		0
++#define APU2_GPIO_LINE_LED2		1
++#define APU2_GPIO_LINE_LED3		2
++#define APU2_GPIO_LINE_MODESW		3
++#define APU2_GPIO_LINE_SIMSWAP		4
++
++/* gpio device */
++
++static int apu2_gpio_regs[] = {
++	[APU2_GPIO_LINE_LED1]		= APU2_GPIO_REG_LED1,
++	[APU2_GPIO_LINE_LED2]		= APU2_GPIO_REG_LED2,
++	[APU2_GPIO_LINE_LED3]		= APU2_GPIO_REG_LED3,
++	[APU2_GPIO_LINE_MODESW]		= APU2_GPIO_REG_MODESW,
++	[APU2_GPIO_LINE_SIMSWAP]	= APU2_GPIO_REG_SIMSWAP,
++};
++
++static const char * const apu2_gpio_names[] = {
++	[APU2_GPIO_LINE_LED1]		= "front-led1",
++	[APU2_GPIO_LINE_LED2]		= "front-led2",
++	[APU2_GPIO_LINE_LED3]		= "front-led3",
++	[APU2_GPIO_LINE_MODESW]		= "front-button",
++	[APU2_GPIO_LINE_SIMSWAP]	= "simswap",
++};
++
++static const struct amd_fch_gpio_pdata board_apu2 = {
++	.gpio_num	= ARRAY_SIZE(apu2_gpio_regs),
++	.gpio_reg	= apu2_gpio_regs,
++	.gpio_names	= apu2_gpio_names,
++};
++
++/* gpio leds device */
++
++static const struct gpio_led apu2_leds[] = {
++	{ .name = "apu:green:1" },
++	{ .name = "apu:green:2" },
++	{ .name = "apu:green:3" }
++};
++
++static const struct gpio_led_platform_data apu2_leds_pdata = {
++	.num_leds	= ARRAY_SIZE(apu2_leds),
++	.leds		= apu2_leds,
++};
++
++struct gpiod_lookup_table gpios_led_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED1,
++				NULL, 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED2,
++				NULL, 1, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED3,
++				NULL, 2, GPIO_ACTIVE_LOW),
++	}
++};
++
++/* gpio keyboard device */
++
++static struct gpio_keys_button apu2_keys_buttons[] = {
++	{
++		.code			= KEY_SETUP,
++		.active_low		= 1,
++		.desc			= "front button",
++		.type			= EV_KEY,
++		.debounce_interval	= 10,
++		.value			= 1,
++	},
++};
++
++static const struct gpio_keys_platform_data apu2_keys_pdata = {
++	.buttons	= apu2_keys_buttons,
++	.nbuttons	= ARRAY_SIZE(apu2_keys_buttons),
++	.poll_interval	= 100,
++	.rep		= 0,
++	.name		= "apu2-keys",
++};
++
++struct gpiod_lookup_table gpios_key_table = {
++	.dev_id = "gpio-keys-polled",
++	.table = {
++		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_MODESW,
++				NULL, 0, GPIO_ACTIVE_LOW),
++	}
++};
++
++/* board setup */
++
++/* note: matching works on string prefix, so "apu2" must come before "apu" */
++static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
++
++	/* APU2 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
++	/* APU2 w/ legacy bios >= 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
++	/* APU2 w/ maainline bios */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
++		},
++		.driver_data	= (void *)&board_apu2,
++	},
++
++	/* APU3 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu3",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU3 w/ legacy bios >= 4.0.8 */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	/* APU3 w/ mainline bios */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
++		},
++		.driver_data = (void *)&board_apu2,
++	},
++	{}
++};
++
++static struct platform_device *apu_gpio_pdev;
++static struct platform_device *apu_leds_pdev;
++static struct platform_device *apu_keys_pdev;
++
++static struct platform_device * __init apu_create_pdev(
++	const char *name,
++	const void *pdata,
++	size_t sz)
++{
++	struct platform_device *pdev;
++
++	pdev = platform_device_register_resndata(NULL,
++		name,
++		PLATFORM_DEVID_NONE,
++		NULL,
++		0,
++		pdata,
++		sz);
++
++	if (IS_ERR(pdev))
++		pr_err("failed registering %s: %ld\n", name, PTR_ERR(pdev));
++
++	return pdev;
++}
++
++static int __init apu_board_init(void)
++{
++	int rc;
++	const struct dmi_system_id *id;
++
++	id = dmi_first_match(apu_gpio_dmi_table);
++	if (!id) {
++		pr_err("failed to detect apu board via dmi\n");
++		return -ENODEV;
++	}
++
++	gpiod_add_lookup_table(&gpios_led_table);
++	gpiod_add_lookup_table(&gpios_key_table);
++
++	apu_gpio_pdev = apu_create_pdev(
++		AMD_FCH_GPIO_DRIVER_NAME,
++		id->driver_data,
++		sizeof(struct amd_fch_gpio_pdata));
++
++	apu_leds_pdev = apu_create_pdev(
++		"leds-gpio",
++		&apu2_leds_pdata,
++		sizeof(apu2_leds_pdata));
++
++	apu_keys_pdev = apu_create_pdev(
++		"gpio-keys-polled",
++		&apu2_keys_pdata,
++		sizeof(apu2_keys_pdata));
++
++	return 0;
++}
++
++static void __exit apu_board_exit(void)
++{
++	gpiod_remove_lookup_table(&gpios_led_table);
++	gpiod_remove_lookup_table(&gpios_key_table);
++
++	platform_device_unregister(apu_keys_pdev);
++	platform_device_unregister(apu_leds_pdev);
++	platform_device_unregister(apu_gpio_pdev);
++}
++
++module_init(apu_board_init);
++module_exit(apu_board_exit);
++
++MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
++MODULE_DESCRIPTION("PC Engines APUv2/APUv3 board GPIO/LED/keys driver");
++MODULE_LICENSE("GPL");
++MODULE_DEVICE_TABLE(dmi, apu_gpio_dmi_table);
++MODULE_ALIAS("platform:pcengines-apuv2");
++MODULE_SOFTDEP("pre: platform:" AMD_FCH_GPIO_DRIVER_NAME);
++MODULE_SOFTDEP("pre: platform:leds-gpio");
++MODULE_SOFTDEP("pre: platform:gpio_keys_polled");
+-- 
+1.9.1
