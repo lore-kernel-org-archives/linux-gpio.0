@@ -1,115 +1,62 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] tools: testing: selftests: Remove duplicate headers
-Date: Sat, 23 Feb 2019 12:39:02 +0530
-Message-ID: <20190223070901.GA10274@jordon-HP-15-Notebook-PC>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 19/32] gpio: vf610: Mask all GPIO interrupts
+Date: Sat, 23 Feb 2019 16:09:38 -0500
+Message-ID: <20190223210951.202268-19-sashal@kernel.org>
+References: <20190223210951.202268-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: bamv2005@gmail.com, shuah@kernel.org, davem@davemloft.net, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, adobriyan@gmail.com, mathieu.desnoyers@efficios.com, peterz@infradead.org, paulmck@linux.ibm.com, boqun.feng@gmail.com, john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org, akpm@linux-foundation.org
-Cc: linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, sabyasachi.linux@gmail.com
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Remove duplicate headers which are included twice.
+From: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+[ Upstream commit 7ae710f9f8b2cf95297e7bbfe1c09789a7dc43d4 ]
+
+On SoC reset all GPIO interrupts are disable. However, if kexec is
+used to boot into a new kernel, the SoC does not experience a
+reset. Hence GPIO interrupts can be left enabled from the previous
+kernel. It is then possible for the interrupt to fire before an
+interrupt handler is registered, resulting in the kernel complaining
+of an "unexpected IRQ trap", the interrupt is never cleared, and so
+fires again, resulting in an interrupt storm.
+
+Disable all GPIO interrupts before registering the GPIO IRQ chip.
+
+Fixes: 7f2691a19627 ("gpio: vf610: add gpiolib/IRQ chip driver for Vybrid")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/gpio/gpio-mockup-chardev.c          | 1 -
- tools/testing/selftests/net/udpgso.c                        | 1 -
- tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
- tools/testing/selftests/proc/proc-self-syscall.c            | 1 -
- tools/testing/selftests/rseq/rseq.h                         | 1 -
- tools/testing/selftests/timers/skew_consistency.c           | 1 -
- tools/testing/selftests/x86/mpx-dig.c                       | 2 --
- 7 files changed, 8 deletions(-)
+ drivers/gpio/gpio-vf610.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index aaa1e9f..d587c81 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <stdio.h>
- #include <errno.h>
- #include <string.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/udpgso.c b/tools/testing/selftests/net/udpgso.c
-index e279051..b8265ee 100644
---- a/tools/testing/selftests/net/udpgso.c
-+++ b/tools/testing/selftests/net/udpgso.c
-@@ -17,7 +17,6 @@
- #include <stdbool.h>
- #include <stdlib.h>
- #include <stdio.h>
--#include <stdlib.h>
- #include <string.h>
- #include <sys/ioctl.h>
- #include <sys/socket.h>
-diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-index 167135b..af1b802 100644
---- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-+++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-@@ -11,7 +11,6 @@
- #include <sys/wait.h>
- #include <unistd.h>
- #include <setjmp.h>
--#include <signal.h>
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 3edb09cb9ee08..1f599bc082374 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -221,6 +221,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct vf610_gpio_port *port;
+ 	struct resource *iores;
+ 	struct gpio_chip *gc;
++	int i;
+ 	int ret;
  
- #include "ebb.h"
+ 	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+@@ -259,6 +260,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
  
-diff --git a/tools/testing/selftests/proc/proc-self-syscall.c b/tools/testing/selftests/proc/proc-self-syscall.c
-index 5ab5f48..3a4fec3 100644
---- a/tools/testing/selftests/proc/proc-self-syscall.c
-+++ b/tools/testing/selftests/proc/proc-self-syscall.c
-@@ -20,7 +20,6 @@
- #include <sys/stat.h>
- #include <fcntl.h>
- #include <errno.h>
--#include <unistd.h>
- #include <string.h>
- #include <stdio.h>
++	/* Mask all GPIO interrupts */
++	for (i = 0; i < gc->ngpio; i++)
++		vf610_gpio_writel(0, port->base + PORT_PCR(i));
++
+ 	/* Clear the interrupt status register for all GPIO's */
+ 	vf610_gpio_writel(~0, port->base + PORT_ISFR);
  
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index c72eb70..6c1126e7 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -16,7 +16,6 @@
- #include <errno.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <sched.h>
- #include <linux/rseq.h>
- 
- /*
-diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
-index 022b711..8066be9 100644
---- a/tools/testing/selftests/timers/skew_consistency.c
-+++ b/tools/testing/selftests/timers/skew_consistency.c
-@@ -32,7 +32,6 @@
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
--#include <stdlib.h>
- #include <string.h>
- #include <sys/wait.h>
- #include "../kselftest.h"
-diff --git a/tools/testing/selftests/x86/mpx-dig.c b/tools/testing/selftests/x86/mpx-dig.c
-index c13607e..880fbf6 100644
---- a/tools/testing/selftests/x86/mpx-dig.c
-+++ b/tools/testing/selftests/x86/mpx-dig.c
-@@ -8,9 +8,7 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <errno.h>
--#include <sys/types.h>
- #include <sys/stat.h>
--#include <unistd.h>
- #include <sys/mman.h>
- #include <string.h>
- #include <fcntl.h>
 -- 
-1.9.1
+2.19.1
