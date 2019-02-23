@@ -1,47 +1,115 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: [PATCH] gpio: mxc: add check to return defer probe if clock tree NOT
- ready
-Date: Sat, 23 Feb 2019 03:18:25 +0000
-Message-ID: <1550891629-29004-1-git-send-email-Anson.Huang@nxp.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] tools: testing: selftests: Remove duplicate headers
+Date: Sat, 23 Feb 2019 12:39:02 +0530
+Message-ID: <20190223070901.GA10274@jordon-HP-15-Notebook-PC>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: dl-linux-imx <linux-imx@nxp.com>
+To: bamv2005@gmail.com, shuah@kernel.org, davem@davemloft.net, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, adobriyan@gmail.com, mathieu.desnoyers@efficios.com, peterz@infradead.org, paulmck@linux.ibm.com, boqun.feng@gmail.com, john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org, akpm@linux-foundation.org
+Cc: linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, sabyasachi.linux@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On i.MX8MQ platform, clock driver uses platform driver
-model and it is probed after GPIO driver, so when GPIO
-driver fails to get clock, it should check the error type
-to decide whether to return defer probe or just ignore
-the clock operation.
+Remove duplicate headers which are included twice.
 
-Fixes: 2808801aab8a ("gpio: mxc: add clock operation")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- drivers/gpio/gpio-mxc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/testing/selftests/gpio/gpio-mockup-chardev.c          | 1 -
+ tools/testing/selftests/net/udpgso.c                        | 1 -
+ tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
+ tools/testing/selftests/proc/proc-self-syscall.c            | 1 -
+ tools/testing/selftests/rseq/rseq.h                         | 1 -
+ tools/testing/selftests/timers/skew_consistency.c           | 1 -
+ tools/testing/selftests/x86/mpx-dig.c                       | 2 --
+ 7 files changed, 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 2d1dfa1..e86e61d 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -438,8 +438,11 @@ static int mxc_gpio_probe(struct platform_device *pdev=
-)
-=20
- 	/* the controller clock is optional */
- 	port->clk =3D devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(port->clk))
-+	if (IS_ERR(port->clk)) {
-+		if (PTR_ERR(port->clk) =3D=3D -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
- 		port->clk =3D NULL;
-+	}
-=20
- 	err =3D clk_prepare_enable(port->clk);
- 	if (err) {
---=20
-2.7.4
+diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+index aaa1e9f..d587c81 100644
+--- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
++++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+@@ -12,7 +12,6 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <stdio.h>
+ #include <errno.h>
+ #include <string.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/net/udpgso.c b/tools/testing/selftests/net/udpgso.c
+index e279051..b8265ee 100644
+--- a/tools/testing/selftests/net/udpgso.c
++++ b/tools/testing/selftests/net/udpgso.c
+@@ -17,7 +17,6 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <stdlib.h>
+ #include <string.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
+diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+index 167135b..af1b802 100644
+--- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
++++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+@@ -11,7 +11,6 @@
+ #include <sys/wait.h>
+ #include <unistd.h>
+ #include <setjmp.h>
+-#include <signal.h>
+ 
+ #include "ebb.h"
+ 
+diff --git a/tools/testing/selftests/proc/proc-self-syscall.c b/tools/testing/selftests/proc/proc-self-syscall.c
+index 5ab5f48..3a4fec3 100644
+--- a/tools/testing/selftests/proc/proc-self-syscall.c
++++ b/tools/testing/selftests/proc/proc-self-syscall.c
+@@ -20,7 +20,6 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <errno.h>
+-#include <unistd.h>
+ #include <string.h>
+ #include <stdio.h>
+ 
+diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
+index c72eb70..6c1126e7 100644
+--- a/tools/testing/selftests/rseq/rseq.h
++++ b/tools/testing/selftests/rseq/rseq.h
+@@ -16,7 +16,6 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <sched.h>
+ #include <linux/rseq.h>
+ 
+ /*
+diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
+index 022b711..8066be9 100644
+--- a/tools/testing/selftests/timers/skew_consistency.c
++++ b/tools/testing/selftests/timers/skew_consistency.c
+@@ -32,7 +32,6 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+-#include <stdlib.h>
+ #include <string.h>
+ #include <sys/wait.h>
+ #include "../kselftest.h"
+diff --git a/tools/testing/selftests/x86/mpx-dig.c b/tools/testing/selftests/x86/mpx-dig.c
+index c13607e..880fbf6 100644
+--- a/tools/testing/selftests/x86/mpx-dig.c
++++ b/tools/testing/selftests/x86/mpx-dig.c
+@@ -8,9 +8,7 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#include <sys/types.h>
+ #include <sys/stat.h>
+-#include <unistd.h>
+ #include <sys/mman.h>
+ #include <string.h>
+ #include <fcntl.h>
+-- 
+1.9.1
