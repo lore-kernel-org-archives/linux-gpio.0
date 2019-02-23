@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 35/65] gpio: vf610: Mask all GPIO interrupts
-Date: Sat, 23 Feb 2019 16:06:10 -0500
-Message-ID: <20190223210640.200911-35-sashal@kernel.org>
-References: <20190223210640.200911-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 39/72] gpio: vf610: Mask all GPIO interrupts
+Date: Sat, 23 Feb 2019 16:03:49 -0500
+Message-ID: <20190223210422.199966-39-sashal@kernel.org>
+References: <20190223210422.199966-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -36,10 +36,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index d4ad6d0e02a25..7e09ce75ffb2a 100644
+index 5960396c8d9a2..222170a1715f5 100644
 --- a/drivers/gpio/gpio-vf610.c
 +++ b/drivers/gpio/gpio-vf610.c
-@@ -259,6 +259,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+@@ -250,6 +250,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
  	struct vf610_gpio_port *port;
  	struct resource *iores;
  	struct gpio_chip *gc;
@@ -47,7 +47,7 @@ index d4ad6d0e02a25..7e09ce75ffb2a 100644
  	int ret;
  
  	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
-@@ -298,6 +299,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+@@ -289,6 +290,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
  	if (ret < 0)
  		return ret;
  
