@@ -1,62 +1,30 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 39/72] gpio: vf610: Mask all GPIO interrupts
-Date: Sat, 23 Feb 2019 16:03:49 -0500
-Message-ID: <20190223210422.199966-39-sashal@kernel.org>
-References: <20190223210422.199966-1-sashal@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: mxc: add check to return defer probe if clock tree
+ NOT ready
+Date: Mon, 25 Feb 2019 13:43:32 +0100
+Message-ID: <CACRpkdYWB2FVN3YPZmvVnOexbmNsq-Oz59ps5RyNq3PWe6j38A@mail.gmail.com>
+References: <1550891629-29004-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550891629-29004-1-git-send-email-Anson.Huang@nxp.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anson Huang <anson.huang@nxp.com>
+Cc: "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+On Sat, Feb 23, 2019 at 4:18 AM Anson Huang <anson.huang@nxp.com> wrote:
 
-[ Upstream commit 7ae710f9f8b2cf95297e7bbfe1c09789a7dc43d4 ]
+> On i.MX8MQ platform, clock driver uses platform driver
+> model and it is probed after GPIO driver, so when GPIO
+> driver fails to get clock, it should check the error type
+> to decide whether to return defer probe or just ignore
+> the clock operation.
+>
+> Fixes: 2808801aab8a ("gpio: mxc: add clock operation")
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-On SoC reset all GPIO interrupts are disable. However, if kexec is
-used to boot into a new kernel, the SoC does not experience a
-reset. Hence GPIO interrupts can be left enabled from the previous
-kernel. It is then possible for the interrupt to fire before an
-interrupt handler is registered, resulting in the kernel complaining
-of an "unexpected IRQ trap", the interrupt is never cleared, and so
-fires again, resulting in an interrupt storm.
+Patch applied.
 
-Disable all GPIO interrupts before registering the GPIO IRQ chip.
-
-Fixes: 7f2691a19627 ("gpio: vf610: add gpiolib/IRQ chip driver for Vybrid")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Acked-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-vf610.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 5960396c8d9a2..222170a1715f5 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -250,6 +250,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	struct vf610_gpio_port *port;
- 	struct resource *iores;
- 	struct gpio_chip *gc;
-+	int i;
- 	int ret;
- 
- 	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
-@@ -289,6 +290,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	/* Mask all GPIO interrupts */
-+	for (i = 0; i < gc->ngpio; i++)
-+		vf610_gpio_writel(0, port->base + PORT_PCR(i));
-+
- 	/* Clear the interrupt status register for all GPIO's */
- 	vf610_gpio_writel(~0, port->base + PORT_ISFR);
- 
--- 
-2.19.1
+Yours,
+Linus Walleij
