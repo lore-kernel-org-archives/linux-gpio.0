@@ -1,105 +1,78 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.19 004/152] gpio: MT7621: use a per instance irq_chip structure
-Date: Mon, 25 Feb 2019 22:09:56 +0100
-Message-ID: <20190225195043.950408230@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: [PATCH 4.20 006/183] gpio: MT7621: use a per instance irq_chip
+ structure
+Date: Mon, 25 Feb 2019 22:09:39 +0100
+Message-ID: <20190225195055.726471743@linuxfoundation.org>
+References: <20190225195054.748060397@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource@vdorst.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Greg Ungerer <gerg@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190225195054.748060397-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource-91nzXlUTePbQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Ungerer <gerg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: René van Dorst <opensource@vdorst.com>
-
-commit fa84667b98fd1a191b2465d66b440bda6714b3bf upstream.
-
-This fixes the kernel complains:
-gpio gpiochip1: (1e000600.gpio-bank1): detected irqchip that is shared
-	    with multiple gpiochips: please fix the driver.
-gpio gpiochip2: (1e000600.gpio-bank2): detected irqchip that is shared
-	    with multiple gpiochips: please fix the driver.
-
-Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-Cc: stable@vger.kernel.org
-Signed-off-by: René van Dorst <opensource@vdorst.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Tested-by: Greg Ungerer <gerg@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/gpio/gpio-mt7621.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -30,6 +30,7 @@
- #define GPIO_REG_EDGE		0xA0
- 
- struct mtk_gc {
-+	struct irq_chip irq_chip;
- 	struct gpio_chip chip;
- 	spinlock_t lock;
- 	int bank;
-@@ -189,13 +190,6 @@ mediatek_gpio_irq_type(struct irq_data *
- 	return 0;
- }
- 
--static struct irq_chip mediatek_gpio_irq_chip = {
--	.irq_unmask		= mediatek_gpio_irq_unmask,
--	.irq_mask		= mediatek_gpio_irq_mask,
--	.irq_mask_ack		= mediatek_gpio_irq_mask,
--	.irq_set_type		= mediatek_gpio_irq_type,
--};
--
- static int
- mediatek_gpio_xlate(struct gpio_chip *chip,
- 		    const struct of_phandle_args *spec, u32 *flags)
-@@ -254,6 +248,13 @@ mediatek_gpio_bank_probe(struct device *
- 		return ret;
- 	}
- 
-+	rg->irq_chip.name = dev_name(dev);
-+	rg->irq_chip.parent_device = dev;
-+	rg->irq_chip.irq_unmask = mediatek_gpio_irq_unmask;
-+	rg->irq_chip.irq_mask = mediatek_gpio_irq_mask;
-+	rg->irq_chip.irq_mask_ack = mediatek_gpio_irq_mask;
-+	rg->irq_chip.irq_set_type = mediatek_gpio_irq_type;
-+
- 	if (mtk->gpio_irq) {
- 		/*
- 		 * Manually request the irq here instead of passing
-@@ -270,14 +271,14 @@ mediatek_gpio_bank_probe(struct device *
- 			return ret;
- 		}
- 
--		ret = gpiochip_irqchip_add(&rg->chip, &mediatek_gpio_irq_chip,
-+		ret = gpiochip_irqchip_add(&rg->chip, &rg->irq_chip,
- 					   0, handle_simple_irq, IRQ_TYPE_NONE);
- 		if (ret) {
- 			dev_err(dev, "failed to add gpiochip_irqchip\n");
- 			return ret;
- 		}
- 
--		gpiochip_set_chained_irqchip(&rg->chip, &mediatek_gpio_irq_chip,
-+		gpiochip_set_chained_irqchip(&rg->chip, &rg->irq_chip,
- 					     mtk->gpio_irq, NULL);
- 	}
- 
-@@ -310,7 +311,6 @@ mediatek_gpio_probe(struct platform_devi
- 	mtk->gpio_irq = irq_of_parse_and_map(np, 0);
- 	mtk->dev = dev;
- 	platform_set_drvdata(pdev, mtk);
--	mediatek_gpio_irq_chip.name = dev_name(dev);
- 
- 	for (i = 0; i < MTK_BANK_CNT; i++) {
- 		ret = mediatek_gpio_bank_probe(dev, np, i);
+NC4yMC1zdGFibGUgcmV2aWV3IHBhdGNoLiAgSWYgYW55b25lIGhhcyBhbnkgb2JqZWN0aW9ucywg
+cGxlYXNlIGxldCBtZSBrbm93LgoKLS0tLS0tLS0tLS0tLS0tLS0tCgpGcm9tOiBSZW7DqSB2YW4g
+RG9yc3QgPG9wZW5zb3VyY2VAdmRvcnN0LmNvbT4KCmNvbW1pdCBmYTg0NjY3Yjk4ZmQxYTE5MWIy
+NDY1ZDY2YjQ0MGJkYTY3MTRiM2JmIHVwc3RyZWFtLgoKVGhpcyBmaXhlcyB0aGUga2VybmVsIGNv
+bXBsYWluczoKZ3BpbyBncGlvY2hpcDE6ICgxZTAwMDYwMC5ncGlvLWJhbmsxKTogZGV0ZWN0ZWQg
+aXJxY2hpcCB0aGF0IGlzIHNoYXJlZAoJICAgIHdpdGggbXVsdGlwbGUgZ3Bpb2NoaXBzOiBwbGVh
+c2UgZml4IHRoZSBkcml2ZXIuCmdwaW8gZ3Bpb2NoaXAyOiAoMWUwMDA2MDAuZ3Bpby1iYW5rMik6
+IGRldGVjdGVkIGlycWNoaXAgdGhhdCBpcyBzaGFyZWQKCSAgICB3aXRoIG11bHRpcGxlIGdwaW9j
+aGlwczogcGxlYXNlIGZpeCB0aGUgZHJpdmVyLgoKRml4ZXM6IDRiYTljM2FmZGE0MSAoImdwaW86
+IG10NzYyMTogQWRkIGEgZHJpdmVyIGZvciBNVDc2MjEiKQpDYzogc3RhYmxlQHZnZXIua2VybmVs
+Lm9yZwpTaWduZWQtb2ZmLWJ5OiBSZW7DqSB2YW4gRG9yc3QgPG9wZW5zb3VyY2VAdmRvcnN0LmNv
+bT4KQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnCkNjOiBsaW51eC1tZWRpYXRla0BsaXN0
+cy5pbmZyYWRlYWQub3JnClRlc3RlZC1ieTogR3JlZyBVbmdlcmVyIDxnZXJnQGtlcm5lbC5vcmc+
+ClNpZ25lZC1vZmYtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4K
+U2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9u
+Lm9yZz4KCi0tLQogZHJpdmVycy9ncGlvL2dwaW8tbXQ3NjIxLmMgfCAgIDIwICsrKysrKysrKyst
+LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25z
+KC0pCgotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1tdDc2MjEuYworKysgYi9kcml2ZXJzL2dwaW8v
+Z3Bpby1tdDc2MjEuYwpAQCAtMzAsNiArMzAsNyBAQAogI2RlZmluZSBHUElPX1JFR19FREdFCQkw
+eEEwCiAKIHN0cnVjdCBtdGtfZ2MgeworCXN0cnVjdCBpcnFfY2hpcCBpcnFfY2hpcDsKIAlzdHJ1
+Y3QgZ3Bpb19jaGlwIGNoaXA7CiAJc3BpbmxvY2tfdCBsb2NrOwogCWludCBiYW5rOwpAQCAtMTg5
+LDEzICsxOTAsNiBAQCBtZWRpYXRla19ncGlvX2lycV90eXBlKHN0cnVjdCBpcnFfZGF0YSAqCiAJ
+cmV0dXJuIDA7CiB9CiAKLXN0YXRpYyBzdHJ1Y3QgaXJxX2NoaXAgbWVkaWF0ZWtfZ3Bpb19pcnFf
+Y2hpcCA9IHsKLQkuaXJxX3VubWFzawkJPSBtZWRpYXRla19ncGlvX2lycV91bm1hc2ssCi0JLmly
+cV9tYXNrCQk9IG1lZGlhdGVrX2dwaW9faXJxX21hc2ssCi0JLmlycV9tYXNrX2FjawkJPSBtZWRp
+YXRla19ncGlvX2lycV9tYXNrLAotCS5pcnFfc2V0X3R5cGUJCT0gbWVkaWF0ZWtfZ3Bpb19pcnFf
+dHlwZSwKLX07Ci0KIHN0YXRpYyBpbnQKIG1lZGlhdGVrX2dwaW9feGxhdGUoc3RydWN0IGdwaW9f
+Y2hpcCAqY2hpcCwKIAkJICAgIGNvbnN0IHN0cnVjdCBvZl9waGFuZGxlX2FyZ3MgKnNwZWMsIHUz
+MiAqZmxhZ3MpCkBAIC0yNTQsNiArMjQ4LDEzIEBAIG1lZGlhdGVrX2dwaW9fYmFua19wcm9iZShz
+dHJ1Y3QgZGV2aWNlICoKIAkJcmV0dXJuIHJldDsKIAl9CiAKKwlyZy0+aXJxX2NoaXAubmFtZSA9
+IGRldl9uYW1lKGRldik7CisJcmctPmlycV9jaGlwLnBhcmVudF9kZXZpY2UgPSBkZXY7CisJcmct
+PmlycV9jaGlwLmlycV91bm1hc2sgPSBtZWRpYXRla19ncGlvX2lycV91bm1hc2s7CisJcmctPmly
+cV9jaGlwLmlycV9tYXNrID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzazsKKwlyZy0+aXJxX2NoaXAu
+aXJxX21hc2tfYWNrID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzazsKKwlyZy0+aXJxX2NoaXAuaXJx
+X3NldF90eXBlID0gbWVkaWF0ZWtfZ3Bpb19pcnFfdHlwZTsKKwogCWlmIChtdGstPmdwaW9faXJx
+KSB7CiAJCS8qCiAJCSAqIE1hbnVhbGx5IHJlcXVlc3QgdGhlIGlycSBoZXJlIGluc3RlYWQgb2Yg
+cGFzc2luZwpAQCAtMjcwLDE0ICsyNzEsMTQgQEAgbWVkaWF0ZWtfZ3Bpb19iYW5rX3Byb2JlKHN0
+cnVjdCBkZXZpY2UgKgogCQkJcmV0dXJuIHJldDsKIAkJfQogCi0JCXJldCA9IGdwaW9jaGlwX2ly
+cWNoaXBfYWRkKCZyZy0+Y2hpcCwgJm1lZGlhdGVrX2dwaW9faXJxX2NoaXAsCisJCXJldCA9IGdw
+aW9jaGlwX2lycWNoaXBfYWRkKCZyZy0+Y2hpcCwgJnJnLT5pcnFfY2hpcCwKIAkJCQkJICAgMCwg
+aGFuZGxlX3NpbXBsZV9pcnEsIElSUV9UWVBFX05PTkUpOwogCQlpZiAocmV0KSB7CiAJCQlkZXZf
+ZXJyKGRldiwgImZhaWxlZCB0byBhZGQgZ3Bpb2NoaXBfaXJxY2hpcFxuIik7CiAJCQlyZXR1cm4g
+cmV0OwogCQl9CiAKLQkJZ3Bpb2NoaXBfc2V0X2NoYWluZWRfaXJxY2hpcCgmcmctPmNoaXAsICZt
+ZWRpYXRla19ncGlvX2lycV9jaGlwLAorCQlncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCZy
+Zy0+Y2hpcCwgJnJnLT5pcnFfY2hpcCwKIAkJCQkJICAgICBtdGstPmdwaW9faXJxLCBOVUxMKTsK
+IAl9CiAKQEAgLTMxMCw3ICszMTEsNiBAQCBtZWRpYXRla19ncGlvX3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpCiAJbXRrLT5ncGlvX2lycSA9IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5wLCAwKTsK
+IAltdGstPmRldiA9IGRldjsKIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBtdGspOwotCW1l
+ZGlhdGVrX2dwaW9faXJxX2NoaXAubmFtZSA9IGRldl9uYW1lKGRldik7CiAKIAlmb3IgKGkgPSAw
+OyBpIDwgTVRLX0JBTktfQ05UOyBpKyspIHsKIAkJcmV0ID0gbWVkaWF0ZWtfZ3Bpb19iYW5rX3By
+b2JlKGRldiwgbnAsIGkpOwoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpMaW51eC1tZWRpYXRlayBtYWlsaW5nIGxpc3QKTGludXgtbWVkaWF0ZWtAbGlz
+dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2xpbnV4LW1lZGlhdGVrCg==
