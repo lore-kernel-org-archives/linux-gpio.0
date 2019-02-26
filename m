@@ -1,45 +1,85 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: Re: [PATCH] tools: testing: selftests: Remove duplicate headers
-Date: Tue, 26 Feb 2019 10:59:50 +0530
-Message-ID: <CAFqt6zY0HV7E+_6_s5A3eG+jEj+4hgQnAgJQm-Pc1gyX4Vnbpg@mail.gmail.com>
-References: <20190223070901.GA10274@jordon-HP-15-Notebook-PC> <87tvgr1fr4.fsf@concordia.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/2] arm64: dts: bitmain: Add GPIO support for BM1880 SoC
+Date: Tue, 26 Feb 2019 17:20:21 +0530
+Message-ID: <20190226115022.19022-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87tvgr1fr4.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Bamvor Zhang <bamv2005@gmail.com>, shuah@kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Alexey Dobriyan <adobriyan@gmail.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, Paul McKenney <paulmck@linux.ibm.com>, boqun.feng@gmail.com, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, sboyd@kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, haitao.suo@bitmain.com, darren.tsao@bitmain.com, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 7:18 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Souptick Joarder <jrdr.linux@gmail.com> writes:
-> > Remove duplicate headers which are included twice.
-> >
-> > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > ---
-> ...
-> >  tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
->
-> I took this hunk via the powerpc tree.
+Add GPIO support for Bitmain BM1880 SoC based on Designware APB GPIO
+controller IP. IP exposes 3 GPIO controllers with a total of 72 pins.
 
-How about taking this entirely through a single tree ?
-or Shall I send these changes in different patches ?
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi | 54 +++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
->
-> > diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-> > index 167135b..af1b802 100644
-> > --- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-> > +++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-> > @@ -11,7 +11,6 @@
-> >  #include <sys/wait.h>
-> >  #include <unistd.h>
-> >  #include <setjmp.h>
-> > -#include <signal.h>
-> >
-> >  #include "ebb.h"
->
->
-> cheers
+diff --git a/arch/arm64/boot/dts/bitmain/bm1880.dtsi b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+index 55a4769e0de2..e4da4ec6a5ee 100644
+--- a/arch/arm64/boot/dts/bitmain/bm1880.dtsi
++++ b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+@@ -80,6 +80,60 @@
+ 			#interrupt-cells = <3>;
+ 		};
+ 
++		gpio0: gpio@50027000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "snps,dw-apb-gpio";
++			reg = <0x0 0x50027000 0x0 0x400>;
++
++			porta: gpio-controller@0 {
++				compatible = "snps,dw-apb-gpio-port";
++				gpio-controller;
++				#gpio-cells = <2>;
++				snps,nr-gpios = <32>;
++				reg = <0>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
++		gpio1: gpio@50027400 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "snps,dw-apb-gpio";
++			reg = <0x0 0x50027400 0x0 0x400>;
++
++			portb: gpio-controller@0 {
++				compatible = "snps,dw-apb-gpio-port";
++				gpio-controller;
++				#gpio-cells = <2>;
++				snps,nr-gpios = <32>;
++				reg = <0>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
++		gpio2: gpio@50027800 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "snps,dw-apb-gpio";
++			reg = <0x0 0x50027800 0x0 0x400>;
++
++			portc: gpio-controller@0 {
++				compatible = "snps,dw-apb-gpio-port";
++				gpio-controller;
++				#gpio-cells = <2>;
++				snps,nr-gpios = <8>;
++				reg = <0>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
+ 		uart0: serial@58018000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x0 0x58018000 0x0 0x2000>;
+-- 
+2.17.1
