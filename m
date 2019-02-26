@@ -1,78 +1,39 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: [PATCH 4.20 006/183] gpio: MT7621: use a per instance irq_chip
- structure
-Date: Mon, 25 Feb 2019 22:09:39 +0100
-Message-ID: <20190225195055.726471743@linuxfoundation.org>
-References: <20190225195054.748060397@linuxfoundation.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] tools: testing: selftests: Remove duplicate headers
+Date: Tue, 26 Feb 2019 12:48:47 +1100
+Message-ID: <87tvgr1fr4.fsf@concordia.ellerman.id.au>
+References: <20190223070901.GA10274@jordon-HP-15-Notebook-PC>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190225195054.748060397-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource-91nzXlUTePbQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Ungerer <gerg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190223070901.GA10274@jordon-HP-15-Notebook-PC>
+Sender: netdev-owner@vger.kernel.org
+To: Souptick Joarder <jrdr.linux@gmail.com>, bamv2005@gmail.com, shuah@kernel.org, davem@davemloft.net, benh@kernel.crashing.org, paulus@samba.org, adobriyan@gmail.com, mathieu.desnoyers@efficios.com, peterz@infradead.org, paulmck@linux.ibm.com, boqun.feng@gmail.com, john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org, akpm@linux-foundation.org
+Cc: linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, sabyasachi.linux@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-NC4yMC1zdGFibGUgcmV2aWV3IHBhdGNoLiAgSWYgYW55b25lIGhhcyBhbnkgb2JqZWN0aW9ucywg
-cGxlYXNlIGxldCBtZSBrbm93LgoKLS0tLS0tLS0tLS0tLS0tLS0tCgpGcm9tOiBSZW7DqSB2YW4g
-RG9yc3QgPG9wZW5zb3VyY2VAdmRvcnN0LmNvbT4KCmNvbW1pdCBmYTg0NjY3Yjk4ZmQxYTE5MWIy
-NDY1ZDY2YjQ0MGJkYTY3MTRiM2JmIHVwc3RyZWFtLgoKVGhpcyBmaXhlcyB0aGUga2VybmVsIGNv
-bXBsYWluczoKZ3BpbyBncGlvY2hpcDE6ICgxZTAwMDYwMC5ncGlvLWJhbmsxKTogZGV0ZWN0ZWQg
-aXJxY2hpcCB0aGF0IGlzIHNoYXJlZAoJICAgIHdpdGggbXVsdGlwbGUgZ3Bpb2NoaXBzOiBwbGVh
-c2UgZml4IHRoZSBkcml2ZXIuCmdwaW8gZ3Bpb2NoaXAyOiAoMWUwMDA2MDAuZ3Bpby1iYW5rMik6
-IGRldGVjdGVkIGlycWNoaXAgdGhhdCBpcyBzaGFyZWQKCSAgICB3aXRoIG11bHRpcGxlIGdwaW9j
-aGlwczogcGxlYXNlIGZpeCB0aGUgZHJpdmVyLgoKRml4ZXM6IDRiYTljM2FmZGE0MSAoImdwaW86
-IG10NzYyMTogQWRkIGEgZHJpdmVyIGZvciBNVDc2MjEiKQpDYzogc3RhYmxlQHZnZXIua2VybmVs
-Lm9yZwpTaWduZWQtb2ZmLWJ5OiBSZW7DqSB2YW4gRG9yc3QgPG9wZW5zb3VyY2VAdmRvcnN0LmNv
-bT4KQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnCkNjOiBsaW51eC1tZWRpYXRla0BsaXN0
-cy5pbmZyYWRlYWQub3JnClRlc3RlZC1ieTogR3JlZyBVbmdlcmVyIDxnZXJnQGtlcm5lbC5vcmc+
-ClNpZ25lZC1vZmYtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4K
-U2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9u
-Lm9yZz4KCi0tLQogZHJpdmVycy9ncGlvL2dwaW8tbXQ3NjIxLmMgfCAgIDIwICsrKysrKysrKyst
-LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25z
-KC0pCgotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1tdDc2MjEuYworKysgYi9kcml2ZXJzL2dwaW8v
-Z3Bpby1tdDc2MjEuYwpAQCAtMzAsNiArMzAsNyBAQAogI2RlZmluZSBHUElPX1JFR19FREdFCQkw
-eEEwCiAKIHN0cnVjdCBtdGtfZ2MgeworCXN0cnVjdCBpcnFfY2hpcCBpcnFfY2hpcDsKIAlzdHJ1
-Y3QgZ3Bpb19jaGlwIGNoaXA7CiAJc3BpbmxvY2tfdCBsb2NrOwogCWludCBiYW5rOwpAQCAtMTg5
-LDEzICsxOTAsNiBAQCBtZWRpYXRla19ncGlvX2lycV90eXBlKHN0cnVjdCBpcnFfZGF0YSAqCiAJ
-cmV0dXJuIDA7CiB9CiAKLXN0YXRpYyBzdHJ1Y3QgaXJxX2NoaXAgbWVkaWF0ZWtfZ3Bpb19pcnFf
-Y2hpcCA9IHsKLQkuaXJxX3VubWFzawkJPSBtZWRpYXRla19ncGlvX2lycV91bm1hc2ssCi0JLmly
-cV9tYXNrCQk9IG1lZGlhdGVrX2dwaW9faXJxX21hc2ssCi0JLmlycV9tYXNrX2FjawkJPSBtZWRp
-YXRla19ncGlvX2lycV9tYXNrLAotCS5pcnFfc2V0X3R5cGUJCT0gbWVkaWF0ZWtfZ3Bpb19pcnFf
-dHlwZSwKLX07Ci0KIHN0YXRpYyBpbnQKIG1lZGlhdGVrX2dwaW9feGxhdGUoc3RydWN0IGdwaW9f
-Y2hpcCAqY2hpcCwKIAkJICAgIGNvbnN0IHN0cnVjdCBvZl9waGFuZGxlX2FyZ3MgKnNwZWMsIHUz
-MiAqZmxhZ3MpCkBAIC0yNTQsNiArMjQ4LDEzIEBAIG1lZGlhdGVrX2dwaW9fYmFua19wcm9iZShz
-dHJ1Y3QgZGV2aWNlICoKIAkJcmV0dXJuIHJldDsKIAl9CiAKKwlyZy0+aXJxX2NoaXAubmFtZSA9
-IGRldl9uYW1lKGRldik7CisJcmctPmlycV9jaGlwLnBhcmVudF9kZXZpY2UgPSBkZXY7CisJcmct
-PmlycV9jaGlwLmlycV91bm1hc2sgPSBtZWRpYXRla19ncGlvX2lycV91bm1hc2s7CisJcmctPmly
-cV9jaGlwLmlycV9tYXNrID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzazsKKwlyZy0+aXJxX2NoaXAu
-aXJxX21hc2tfYWNrID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzazsKKwlyZy0+aXJxX2NoaXAuaXJx
-X3NldF90eXBlID0gbWVkaWF0ZWtfZ3Bpb19pcnFfdHlwZTsKKwogCWlmIChtdGstPmdwaW9faXJx
-KSB7CiAJCS8qCiAJCSAqIE1hbnVhbGx5IHJlcXVlc3QgdGhlIGlycSBoZXJlIGluc3RlYWQgb2Yg
-cGFzc2luZwpAQCAtMjcwLDE0ICsyNzEsMTQgQEAgbWVkaWF0ZWtfZ3Bpb19iYW5rX3Byb2JlKHN0
-cnVjdCBkZXZpY2UgKgogCQkJcmV0dXJuIHJldDsKIAkJfQogCi0JCXJldCA9IGdwaW9jaGlwX2ly
-cWNoaXBfYWRkKCZyZy0+Y2hpcCwgJm1lZGlhdGVrX2dwaW9faXJxX2NoaXAsCisJCXJldCA9IGdw
-aW9jaGlwX2lycWNoaXBfYWRkKCZyZy0+Y2hpcCwgJnJnLT5pcnFfY2hpcCwKIAkJCQkJICAgMCwg
-aGFuZGxlX3NpbXBsZV9pcnEsIElSUV9UWVBFX05PTkUpOwogCQlpZiAocmV0KSB7CiAJCQlkZXZf
-ZXJyKGRldiwgImZhaWxlZCB0byBhZGQgZ3Bpb2NoaXBfaXJxY2hpcFxuIik7CiAJCQlyZXR1cm4g
-cmV0OwogCQl9CiAKLQkJZ3Bpb2NoaXBfc2V0X2NoYWluZWRfaXJxY2hpcCgmcmctPmNoaXAsICZt
-ZWRpYXRla19ncGlvX2lycV9jaGlwLAorCQlncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCZy
-Zy0+Y2hpcCwgJnJnLT5pcnFfY2hpcCwKIAkJCQkJICAgICBtdGstPmdwaW9faXJxLCBOVUxMKTsK
-IAl9CiAKQEAgLTMxMCw3ICszMTEsNiBAQCBtZWRpYXRla19ncGlvX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpCiAJbXRrLT5ncGlvX2lycSA9IGlycV9vZl9wYXJzZV9hbmRfbWFwKG5wLCAwKTsK
-IAltdGstPmRldiA9IGRldjsKIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBtdGspOwotCW1l
-ZGlhdGVrX2dwaW9faXJxX2NoaXAubmFtZSA9IGRldl9uYW1lKGRldik7CiAKIAlmb3IgKGkgPSAw
-OyBpIDwgTVRLX0JBTktfQ05UOyBpKyspIHsKIAkJcmV0ID0gbWVkaWF0ZWtfZ3Bpb19iYW5rX3By
-b2JlKGRldiwgbnAsIGkpOwoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpMaW51eC1tZWRpYXRlayBtYWlsaW5nIGxpc3QKTGludXgtbWVkaWF0ZWtAbGlz
-dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2xpbnV4LW1lZGlhdGVrCg==
+Souptick Joarder <jrdr.linux@gmail.com> writes:
+> Remove duplicate headers which are included twice.
+>
+> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+...
+>  tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
+
+I took this hunk via the powerpc tree.
+
+> diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+> index 167135b..af1b802 100644
+> --- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+> +++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+> @@ -11,7 +11,6 @@
+>  #include <sys/wait.h>
+>  #include <unistd.h>
+>  #include <setjmp.h>
+> -#include <signal.h>
+>  
+>  #include "ebb.h"
+
+
+cheers
