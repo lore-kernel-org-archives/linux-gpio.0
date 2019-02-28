@@ -1,57 +1,56 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH v4 1/9] dt-bindings: mfd: Add ST Multi-Function eXpander
- (STMFX) core bindings
-Date: Thu, 28 Feb 2019 08:53:42 +0000
-Message-ID: <c54c4fd8-b97f-a70b-4805-fd3d217f5050@st.com>
-References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
- <1551260094-32570-2-git-send-email-amelie.delaunay@st.com>
- <20190227235535.GA24395@bogus>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
+Date: Thu, 28 Feb 2019 11:40:26 +0000
+Message-ID: <20190228114026.GA6802@sirena.org.uk>
+References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190228070450.GB3773@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190227235535.GA24395@bogus>
-Content-Language: en-US
-Content-ID: <57CB0BFA4FFC6546A2026BD7801F867B@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190228070450.GB3773@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 2/28/19 12:55 AM, Rob Herring wrote:
-> On Wed, 27 Feb 2019 10:34:46 +0100, Amelie Delaunay wrote:
->> This patch adds documentation of device tree bindings for the
->> STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
->>
->> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->> ---
->>   Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
->>
-> 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
 
-I'm sorry Rob, I forgot to add your Reviewed-by on this patch, which is 
-identical to v3.
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I reposted the whole series, due to changes in MFD driver with side 
-effect in pinctrl driver, but bindings (MFD and pinctrl) didn't change 
-between the two versions. I stated the changes in cover letter.
+On Thu, Feb 28, 2019 at 09:04:50AM +0200, Matti Vaittinen wrote:
+> On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
 
-Should I have removed the bindings patches from the series ?
+>> Patch series introducing support for ROHM BD70528 PMIC
+>=20
+> I was wondering if there is anything that could be done to allow the MFD
+> part of this series to end up in upstream without having to wait the
+> regmap-irq changes
+> (https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/commi=
+t/?h=3Dtopic/irq)
+>  to be merged from Linus' tree to MFD tree? If I see it correctly, the
+> regmap-irq (main-irq-reg support) changes are not targeted to linux 5.1.
+> To me it looks like getting them to MFD via Linus' tree will take a while.
+
+They're targeted for v5.1 and I sent a pull request to Lee for that
+branch IIRC.
+
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx3yKcACgkQJNaLcl1U
+h9D7LQgAgBAtFp4ti3bwtZh4iVfn9N4nYX2Sy8YynfGs/Nfwxm+m+KAl+IiOOo6C
+S1kWALtElOcido6myPacabi0EAyre1Q+Ne7tqUITOb4HQL0dGDpi/a1llthziX7d
+ZG6Slh0JGjOlPVZ8dMyxqXzySEjtwbKUMY4FqMd9LpkQ64FCmo5WdI9R6dnu0BZn
+DJjdUbHmqAbgNoxJ9M/U6mqDTXEviO2eqPhUCAnISc6GvabHA7UdRUxIzi770HjM
+Zi+AFlBE8mWAGvzn3C5u0h+4dnZxCMxMpSpyGokXkL25v5MzHB7lXOpi7a37Zpvo
+VBkTW0n5LezH7ejhsiqf90PtqfUptQ==
+=/nOu
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
