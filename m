@@ -1,72 +1,55 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH v4 1/9] dt-bindings: mfd: Add ST Multi-Function eXpander
- (STMFX) core bindings
-Date: Thu, 28 Feb 2019 14:59:26 +0000
-Message-ID: <8a5cdf64-343c-1a91-00ef-11af8d81b549@st.com>
-References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
- <1551260094-32570-2-git-send-email-amelie.delaunay@st.com>
- <20190227235535.GA24395@bogus> <c54c4fd8-b97f-a70b-4805-fd3d217f5050@st.com>
- <CAL_JsqJ+orZUitUvMtKJ8ww4hnn9eacy5Xak+oTO_MGrgSGJpw@mail.gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 13/81] pinctrl: mcp23s08: spi: Fix regmap allocation for mcp23s18
+Date: Thu, 28 Feb 2019 10:07:05 -0500
+Message-ID: <20190228150813.10256-13-sashal@kernel.org>
+References: <20190228150813.10256-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAL_JsqJ+orZUitUvMtKJ8ww4hnn9eacy5Xak+oTO_MGrgSGJpw@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <48665CFC00064F4BBEF2936F11C9F455@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190228150813.10256-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Jason Kridner <jkridner@gmail.com>, Jason Kridner <jdk@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 2/28/19 3:41 PM, Rob Herring wrote:
-> On Thu, Feb 28, 2019 at 2:54 AM Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
->>
->> On 2/28/19 12:55 AM, Rob Herring wrote:
->>> On Wed, 27 Feb 2019 10:34:46 +0100, Amelie Delaunay wrote:
->>>> This patch adds documentation of device tree bindings for the
->>>> STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
->>>>
->>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>>> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->>>> ---
->>>>    Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
->>>>    1 file changed, 28 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
->>>>
->>>
->>> Please add Acked-by/Reviewed-by tags when posting new versions. However,
->>> there's no need to repost patches *only* to add the tags. The upstream
->>> maintainer will do that for acks received on the version they apply.
->>>
->>> If a tag was not added on purpose, please state why and what changed.
->>>
->>
->> I'm sorry Rob, I forgot to add your Reviewed-by on this patch, which is
->> identical to v3.
->>
->> I reposted the whole series, due to changes in MFD driver with side
->> effect in pinctrl driver, but bindings (MFD and pinctrl) didn't change
->> between the two versions. I stated the changes in cover letter.
->>
->> Should I have removed the bindings patches from the series ?
-> 
-> No, as the series should be applied together. You just need to add the
-> Reviewed-by so I can ignore it.
-> 
-> Rob
-> 
+From: Jason Kridner <jkridner@gmail.com>
 
-Noted. I will ensure not to forget any tag next time.
+[ Upstream commit f165988b77ef849eb0c1aebd94fe778024f88314 ]
 
-Regards,
-Amelie
+Fixes issue created by 9b3e4207661e67f04c72af15e29f74cd944f5964.
+
+It wasn't possible for one_regmap_config to be non-NULL at the point
+it was tested for mcp23s18 devices.
+
+Applied the same pattern of allocating one_regmap_config using
+devm_kmemdump() and then initializing the local regmap structure
+from that.
+
+Signed-off-by: Jason Kridner <jdk@ti.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index b03481ef99a13..98905d4a79ca9 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -832,8 +832,13 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 		break;
+ 
+ 	case MCP_TYPE_S18:
++		one_regmap_config =
++			devm_kmemdup(dev, &mcp23x17_regmap,
++				sizeof(struct regmap_config), GFP_KERNEL);
++		if (!one_regmap_config)
++			return -ENOMEM;
+ 		mcp->regmap = devm_regmap_init(dev, &mcp23sxx_spi_regmap, mcp,
+-					       &mcp23x17_regmap);
++					       one_regmap_config);
+ 		mcp->reg_shift = 1;
+ 		mcp->chip.ngpio = 16;
+ 		mcp->chip.label = "mcp23s18";
+-- 
+2.19.1
