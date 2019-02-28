@@ -1,56 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
-Date: Thu, 28 Feb 2019 11:40:26 +0000
-Message-ID: <20190228114026.GA6802@sirena.org.uk>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
- <20190228070450.GB3773@localhost.localdomain>
+From: Mark Walton <mark.walton@serialtek.com>
+Subject: [PATCH v2] gpio: pca953x: Fix dereference of irq data in shutdown
+Date: Thu, 28 Feb 2019 14:27:33 +0000
+Message-ID: <20190228142539.GA7744@mark-devvm>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190228070450.GB3773@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+Content-Language: en-US
+Content-ID: <3F40215C3148F64CA2CCC29C55F9F8CD@namprd19.prod.outlook.com>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Marek Vasut <marek.vasut@gmail.com>
+Cc: Mark Walton <mark.walton@serialtek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+If a PCA953x gpio was used as an interrupt and then released,
+the shutdown function was trying to extract the pca953x_chip
+pointer directly from the irq_data, but in reality was getting
+the gpio_chip structure.
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The net effect was that the subsequent writes to the data
+structure corrupted data in the gpio_chip structure, which wasn't
+immediately obvious until attempting to use the GPIO again in the
+future, at which point the kernel panics.
 
-On Thu, Feb 28, 2019 at 09:04:50AM +0200, Matti Vaittinen wrote:
-> On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
+This fix correctly extracts the pca953x_chip structure via the
+gpio_chip structure, as is correctly done in the other irq
+functions.
 
->> Patch series introducing support for ROHM BD70528 PMIC
->=20
-> I was wondering if there is anything that could be done to allow the MFD
-> part of this series to end up in upstream without having to wait the
-> regmap-irq changes
-> (https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/commi=
-t/?h=3Dtopic/irq)
->  to be merged from Linus' tree to MFD tree? If I see it correctly, the
-> regmap-irq (main-irq-reg support) changes are not targeted to linux 5.1.
-> To me it looks like getting them to MFD via Linus' tree will take a while.
+Fixes: 0a70fe00efea ("gpio: pca953x: Clear irq trigger type on irq shutdown=
+")
+Signed-off-by: Mark Walton <mark.walton@serialtek.com>
+---
+ drivers/gpio/gpio-pca953x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-They're targeted for v5.1 and I sent a pull request to Lee for that
-branch IIRC.
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx3yKcACgkQJNaLcl1U
-h9D7LQgAgBAtFp4ti3bwtZh4iVfn9N4nYX2Sy8YynfGs/Nfwxm+m+KAl+IiOOo6C
-S1kWALtElOcido6myPacabi0EAyre1Q+Ne7tqUITOb4HQL0dGDpi/a1llthziX7d
-ZG6Slh0JGjOlPVZ8dMyxqXzySEjtwbKUMY4FqMd9LpkQ64FCmo5WdI9R6dnu0BZn
-DJjdUbHmqAbgNoxJ9M/U6mqDTXEviO2eqPhUCAnISc6GvabHA7UdRUxIzi770HjM
-Zi+AFlBE8mWAGvzn3C5u0h+4dnZxCMxMpSpyGokXkL25v5MzHB7lXOpi7a37Zpvo
-VBkTW0n5LezH7ejhsiqf90PtqfUptQ==
-=/nOu
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index caf7dd1..6bd55a4 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -659,7 +659,8 @@ static int pca953x_irq_set_type(struct irq_data *d, uns=
+igned int type)
+=20
+ static void pca953x_irq_shutdown(struct irq_data *d)
+ {
+-	struct pca953x_chip *chip =3D irq_data_get_irq_chip_data(d);
++	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
++	struct pca953x_chip *chip =3D gpiochip_get_data(gc);
+ 	u8 mask =3D 1 << (d->hwirq % BANK_SZ);
+=20
+ 	chip->irq_trig_raise[d->hwirq / BANK_SZ] &=3D ~mask;
+--=20
+2.7.4
