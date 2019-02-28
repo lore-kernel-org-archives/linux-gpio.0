@@ -1,74 +1,47 @@
-From: Mark Walton <mark.walton@serialtek.com>
-Subject: RE: [PATCH v2] gpio: pca953x: Fix dereference of irq data in shutdown
-Date: Thu, 28 Feb 2019 15:33:47 +0000
-Message-ID: <DM6PR19MB2602EA71E878FFAD339CAB94FB750@DM6PR19MB2602.namprd19.prod.outlook.com>
-References: <20190228142539.GA7744@mark-devvm>
- <20190228151543.GC1360@kroah.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v1 07/13] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Date: Thu, 28 Feb 2019 09:37:43 -0600
+Message-ID: <CAL_JsqKBUyygGu9FRb+hye+1DyRgdATm_64+XfsvwEa8AvZhJg@mail.gmail.com>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <80de7a2b537ae3f414b0281736652256f38cf94c.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190223003041.GA16670@bogus> <20190228064923.GA3773@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190228151543.GC1360@kroah.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Marek Vasut <marek.vasut@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190228064923.GA3773@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-c>
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Feb 28, 2019 at 12:49 AM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+>
+> Hello Rob, All
+>
+> Sorry for long delay - I was ill for a few days. Back at the business
+> now =)
+>
+> Rob, maybe dropping the RFC tag has messed your book keeping? This
+> is the latest version:
+> https://lore.kernel.org/lkml/90c3b820baf072a7cc3a21aa50c661774a045158.1550148989.git.matti.vaittinen@fi.rohmeurope.com/
+> and I thought it already had the Reviewed-by tag from you :)
 
+I thought I ignored RFC tag, but could be that. My script (and memory)
+aren't perfect.
 
-> -----Original Message-----
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: 28 February 2019 15:16
-> To: Mark Walton <mark.walton@serialtek.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski
-> <bgolaszewski@baylibre.com>; Marek Vasut <marek.vasut@gmail.com>;
-> linux-gpio@vger.kernel.org; stable@vger.kernel.org
-> Subject: Re: [PATCH v2] gpio: pca953x: Fix dereference of irq data in
-> shutdown
->=20
-> On Thu, Feb 28, 2019 at 02:27:33PM +0000, Mark Walton wrote:
-> > If a PCA953x gpio was used as an interrupt and then released, the
-> > shutdown function was trying to extract the pca953x_chip pointer
-> > directly from the irq_data, but in reality was getting the gpio_chip
-> > structure.
+> On Fri, Feb 22, 2019 at 06:30:41PM -0600, Rob Herring wrote:
+> > On Tue, Jan 22, 2019 at 11:45:38AM +0200, Matti Vaittinen wrote:
+> > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > > drivers) and 4 GPIO pins which can be configured for I/O or
+> > > as interrupt sources withe configurable trigger levels.
 > >
-> > The net effect was that the subsequent writes to the data structure
-> > corrupted data in the gpio_chip structure, which wasn't immediately
-> > obvious until attempting to use the GPIO again in the future, at which
-> > point the kernel panics.
-> >
-> > This fix correctly extracts the pca953x_chip structure via the
-> > gpio_chip structure, as is correctly done in the other irq functions.
-> >
-> > Fixes: 0a70fe00efea ("gpio: pca953x: Clear irq trigger type on irq
-> > shutdown")
-> > Signed-off-by: Mark Walton <mark.walton@serialtek.com>
-> > ---
-> >  drivers/gpio/gpio-pca953x.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> <formletter>
->=20
-> This is not the correct way to submit patches for inclusion in the stable=
- kernel
-> tree.  Please read:
->     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.ht=
-ml
-> for how to do this properly.
->=20
-> </formletter>
+> > 'dt-bindings: mfd: ...' for the subject.
+>
+> I see at least the patch subject comment is still valid though. Do you
+> want me to change it and resubmit the series?
 
-Hi Greg,
+No, if that's the only thing, it's not important.
 
-Apologies, I'm pretty new to submitting patches to the kernel.
-
-Is it just a case of needing to move the CC: stable@vger.kernel.org line to=
- the sign-off area?
-
-As far as I can tell it meets all of the other requirements (with the excep=
-tion of not being in the upstream).
-
-Thanks,
-
-Mark
+Rob
