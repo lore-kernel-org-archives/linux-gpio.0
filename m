@@ -1,59 +1,53 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Fix dereference of irq data in shutdown
-Date: Thu, 28 Feb 2019 15:36:55 +0100
-Message-ID: <CAMpxmJX=S6bEjX6se3=txgz5Q=b3JWsp7E3y2OqV8crSZ6gkHQ@mail.gmail.com>
-References: <20190228142539.GA7744@mark-devvm>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/9] dt-bindings: mfd: Add ST Multi-Function eXpander
+ (STMFX) core bindings
+Date: Thu, 28 Feb 2019 08:41:49 -0600
+Message-ID: <CAL_JsqJ+orZUitUvMtKJ8ww4hnn9eacy5Xak+oTO_MGrgSGJpw@mail.gmail.com>
+References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+ <1551260094-32570-2-git-send-email-amelie.delaunay@st.com>
+ <20190227235535.GA24395@bogus> <c54c4fd8-b97f-a70b-4805-fd3d217f5050@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190228142539.GA7744@mark-devvm>
-Sender: stable-owner@vger.kernel.org
-To: Mark Walton <mark.walton@serialtek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c54c4fd8-b97f-a70b-4805-fd3d217f5050@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>
 List-Id: linux-gpio@vger.kernel.org
 
-czw., 28 lut 2019 o 15:27 Mark Walton <mark.walton@serialtek.com> napisa=C5=
-=82(a):
+On Thu, Feb 28, 2019 at 2:54 AM Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
 >
-> If a PCA953x gpio was used as an interrupt and then released,
-> the shutdown function was trying to extract the pca953x_chip
-> pointer directly from the irq_data, but in reality was getting
-> the gpio_chip structure.
+> On 2/28/19 12:55 AM, Rob Herring wrote:
+> > On Wed, 27 Feb 2019 10:34:46 +0100, Amelie Delaunay wrote:
+> >> This patch adds documentation of device tree bindings for the
+> >> STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
+> >>
+> >> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> >> ---
+> >>   Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
+> >>   1 file changed, 28 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+> >>
+> >
+> > Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> > there's no need to repost patches *only* to add the tags. The upstream
+> > maintainer will do that for acks received on the version they apply.
+> >
+> > If a tag was not added on purpose, please state why and what changed.
+> >
 >
-> The net effect was that the subsequent writes to the data
-> structure corrupted data in the gpio_chip structure, which wasn't
-> immediately obvious until attempting to use the GPIO again in the
-> future, at which point the kernel panics.
+> I'm sorry Rob, I forgot to add your Reviewed-by on this patch, which is
+> identical to v3.
 >
-> This fix correctly extracts the pca953x_chip structure via the
-> gpio_chip structure, as is correctly done in the other irq
-> functions.
+> I reposted the whole series, due to changes in MFD driver with side
+> effect in pinctrl driver, but bindings (MFD and pinctrl) didn't change
+> between the two versions. I stated the changes in cover letter.
 >
-> Fixes: 0a70fe00efea ("gpio: pca953x: Clear irq trigger type on irq shutdo=
-wn")
-> Signed-off-by: Mark Walton <mark.walton@serialtek.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index caf7dd1..6bd55a4 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -659,7 +659,8 @@ static int pca953x_irq_set_type(struct irq_data *d, u=
-nsigned int type)
->
->  static void pca953x_irq_shutdown(struct irq_data *d)
->  {
-> -       struct pca953x_chip *chip =3D irq_data_get_irq_chip_data(d);
-> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +       struct pca953x_chip *chip =3D gpiochip_get_data(gc);
->         u8 mask =3D 1 << (d->hwirq % BANK_SZ);
->
->         chip->irq_trig_raise[d->hwirq / BANK_SZ] &=3D ~mask;
-> --
-> 2.7.4
->
+> Should I have removed the bindings patches from the series ?
 
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+No, as the series should be applied together. You just need to add the
+Reviewed-by so I can ignore it.
+
+Rob
