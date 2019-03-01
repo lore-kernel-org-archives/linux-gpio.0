@@ -1,57 +1,28 @@
-From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v3 bus+gpio 3/5] bus: moxtet: Add sysfs documentation
-Date: Fri,  1 Mar 2019 04:58:50 +0100
-Message-ID: <20190301035852.26780-4-marek.behun@nic.cz>
-References: <20190301035852.26780-1-marek.behun@nic.cz>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/2] iio: adc: ti-ads7950: add GPIO support
+Date: Fri, 1 Mar 2019 14:25:37 +0100
+Message-ID: <CACRpkdaDVvOQnYUGPLFEjqWOnLS=sw=mAn4WkJPHrLtp0gtCdQ@mail.gmail.com>
+References: <1551392209-20004-1-git-send-email-justinpopo6@gmail.com> <1551392209-20004-3-git-send-email-justinpopo6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190301035852.26780-1-marek.behun@nic.cz>
+In-Reply-To: <1551392209-20004-3-git-send-email-justinpopo6@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+To: Justin Chen <justinpopo6@gmail.com>
+Cc: linux-iio@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add sysfs ABI documentation for the attribute files module_id,
-module_name, input_value and output_value of Moxtet devices.
+On Thu, Feb 28, 2019 at 11:17 PM <justinpopo6@gmail.com> wrote:
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
----
- .../ABI/testing/sysfs-bus-moxtet-devices      | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-moxtet-devices
+> From: Justin Chen <justinpopo6@gmail.com>
+>
+> The ADS79XX has GPIO pins that can be used. Add support for the GPIO
+> pins using the GPIO chip framework.
+>
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-moxtet-devices b/Documentation/ABI/testing/sysfs-bus-moxtet-devices
-new file mode 100644
-index 000000000000..80bae358a90c
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-moxtet-devices
-@@ -0,0 +1,25 @@
-+What:		/sys/bus/moxtet/devices/moxtet-<name>.<addr>/module_id
-+Date:		March 2019
-+KernelVersion:	5.2
-+Contact:	Marek Behún <marek.behun@nic.cz>
-+Description:	(R) Moxtet module ID. Format: %x
-+
-+What:		/sys/bus/moxtet/devices/moxtet-<name>.<addr>/module_name
-+Date:		March 2019
-+KernelVersion:	5.2
-+Contact:	Marek Behún <marek.behun@nic.cz>
-+Description:	(R) Moxtet module name. Format: string
-+
-+What:		/sys/bus/moxtet/devices/moxtet-<name>.<addr>/input_value
-+Date:		March 2019
-+KernelVersion:	5.2
-+Contact:	Marek Behún <marek.behun@nic.cz>
-+Description:	(R) Read input value from module at this Moxtet address.
-+		Format: %x
-+
-+What:		/sys/bus/moxtet/devices/moxtet-<name>.<addr>/output_value
-+Date:		March 2019
-+KernelVersion:	5.2
-+Contact:	Marek Behún <marek.behun@nic.cz>
-+Description:	(RW) Read last written value or write value to the module on
-+		this Moxtet address. Format: %x
--- 
-2.19.2
+This looks good from a GPIO point of view.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
