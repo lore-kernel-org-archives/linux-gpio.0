@@ -1,113 +1,55 @@
-From: justinpopo6@gmail.com
-Subject: [PATCH v4 1/2] iio: adc: ti-ads7950: Fix improper use of mlock
-Date: Thu, 28 Feb 2019 14:16:48 -0800
-Message-ID: <1551392209-20004-2-git-send-email-justinpopo6@gmail.com>
-References: <1551392209-20004-1-git-send-email-justinpopo6@gmail.com>
+From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+Subject: [PATCH v3 bus+gpio 0/5] Add Moxtet bus and GPIO over Moxtet bus
+Date: Fri,  1 Mar 2019 04:58:47 +0100
+Message-ID: <20190301035852.26780-1-marek.behun@nic.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551392209-20004-1-git-send-email-justinpopo6@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, bgolaszewski@baylibre.com, linus.walleij@linaro.org, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Justin Chen <justinpopo6@gmail.com>
+Hello,
 
-Indio->mlock is used for protecting the different iio device modes.
-It is currently not being used in this way. Replace the lock with
-an internal lock specifically used for protecting the SPI transfer
-buffer.
+this is the third version of my patches to support the Moxtet bus and
+GPIOs over it. Moxtet is a Turris Mox specific tiny bus over SPI.
 
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
----
- drivers/iio/adc/ti-ads7950.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Patches are rebased to current linux-gpio (branch devel and/or for-next).
 
-diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
-index 0ad6359..1e47bef 100644
---- a/drivers/iio/adc/ti-ads7950.c
-+++ b/drivers/iio/adc/ti-ads7950.c
-@@ -56,6 +56,9 @@ struct ti_ads7950_state {
- 	struct spi_message	ring_msg;
- 	struct spi_message	scan_single_msg;
- 
-+	/* Lock to protect the spi xfer buffers */
-+	struct mutex		slock;
-+
- 	struct regulator	*reg;
- 	unsigned int		vref_mv;
- 
-@@ -268,6 +271,7 @@ static irqreturn_t ti_ads7950_trigger_handler(int irq, void *p)
- 	struct ti_ads7950_state *st = iio_priv(indio_dev);
- 	int ret;
- 
-+	mutex_lock(&st->slock);
- 	ret = spi_sync(st->spi, &st->ring_msg);
- 	if (ret < 0)
- 		goto out;
-@@ -276,6 +280,7 @@ static irqreturn_t ti_ads7950_trigger_handler(int irq, void *p)
- 					   iio_get_time_ns(indio_dev));
- 
- out:
-+	mutex_unlock(&st->slock);
- 	iio_trigger_notify_done(indio_dev->trig);
- 
- 	return IRQ_HANDLED;
-@@ -286,7 +291,7 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
- 	struct ti_ads7950_state *st = iio_priv(indio_dev);
- 	int ret, cmd;
- 
--	mutex_lock(&indio_dev->mlock);
-+	mutex_lock(&st->slock);
- 
- 	cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(ch) | st->settings;
- 	st->single_tx = cmd;
-@@ -298,7 +303,7 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
- 	ret = st->single_rx;
- 
- out:
--	mutex_unlock(&indio_dev->mlock);
-+	mutex_unlock(&st->slock);
- 
- 	return ret;
- }
-@@ -432,16 +437,19 @@ static int ti_ads7950_probe(struct spi_device *spi)
- 	if (ACPI_COMPANION(&spi->dev))
- 		st->vref_mv = TI_ADS7950_VA_MV_ACPI_DEFAULT;
- 
-+	mutex_init(&st->slock);
-+
- 	st->reg = devm_regulator_get(&spi->dev, "vref");
- 	if (IS_ERR(st->reg)) {
- 		dev_err(&spi->dev, "Failed get get regulator \"vref\"\n");
--		return PTR_ERR(st->reg);
-+		ret = PTR_ERR(st->reg);
-+		goto error_destroy_mutex;
- 	}
- 
- 	ret = regulator_enable(st->reg);
- 	if (ret) {
- 		dev_err(&spi->dev, "Failed to enable regulator \"vref\"\n");
--		return ret;
-+		goto error_destroy_mutex;
- 	}
- 
- 	ret = iio_triggered_buffer_setup(indio_dev, NULL,
-@@ -463,6 +471,8 @@ static int ti_ads7950_probe(struct spi_device *spi)
- 	iio_triggered_buffer_cleanup(indio_dev);
- error_disable_reg:
- 	regulator_disable(st->reg);
-+error_destroy_mutex:
-+	mutex_destroy(&st->slock);
- 
- 	return ret;
- }
-@@ -475,6 +485,7 @@ static int ti_ads7950_remove(struct spi_device *spi)
- 	iio_device_unregister(indio_dev);
- 	iio_triggered_buffer_cleanup(indio_dev);
- 	regulator_disable(st->reg);
-+	mutex_destroy(&st->slock);
- 
- 	return 0;
- }
+Changes since last version:
+  - addressed the issues in device tree documentation pointed by Rob Herring
+  - cosmetic changes suggested by Linus Walleij
+  - added sysfs ABI documentation for /sys/bus/moxtet/devices attribute files as suggested by Linus Walleij
+
+Marek
+
+Marek Behún (5):
+  bus: Add support for Moxtet bus
+  dt-bindings: bus: Document moxtet bus binding
+  bus: moxtet: Add sysfs documentation
+  drivers: gpio: Add support for GPIOs over Moxtet bus
+  dt-bindings: gpio: Document GPIOs via Moxtet bus
+
+ .../ABI/testing/sysfs-bus-moxtet-devices      |  25 +
+ .../devicetree/bindings/bus/moxtet.txt        |  36 ++
+ .../devicetree/bindings/gpio/gpio-moxtet.txt  |  18 +
+ MAINTAINERS                                   |   8 +
+ drivers/bus/Kconfig                           |  10 +
+ drivers/bus/Makefile                          |   1 +
+ drivers/bus/moxtet.c                          | 533 ++++++++++++++++++
+ drivers/gpio/Kconfig                          |   9 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-moxtet.c                    | 179 ++++++
+ include/linux/moxtet.h                        | 109 ++++
+ 11 files changed, 929 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-moxtet-devices
+ create mode 100644 Documentation/devicetree/bindings/bus/moxtet.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+ create mode 100644 drivers/bus/moxtet.c
+ create mode 100644 drivers/gpio/gpio-moxtet.c
+ create mode 100644 include/linux/moxtet.h
+
 -- 
-2.7.4
+2.19.2
