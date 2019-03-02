@@ -1,104 +1,335 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH] gpio: gpio-omap: fix level interrupt idling
-Date: Fri,  1 Mar 2019 11:02:52 -0800
-Message-ID: <20190301190252.20615-1-tony@atomide.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v4 2/2] iio: adc: ti-ads7950: add GPIO support
+Date: Sat, 2 Mar 2019 18:53:10 +0000
+Message-ID: <20190302185310.6d155df7@archlinux>
+References: <1551392209-20004-1-git-send-email-justinpopo6@gmail.com>
+        <1551392209-20004-3-git-send-email-justinpopo6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1551392209-20004-3-git-send-email-justinpopo6@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: justinpopo6@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, bgolaszewski@baylibre.com, linus.walleij@linaro.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+On Thu, 28 Feb 2019 14:16:49 -0800
+justinpopo6@gmail.com wrote:
 
-Tony notes that the GPIO module does not idle when level interrupts are
-in use, as the wakeup appears to get stuck.
+> From: Justin Chen <justinpopo6@gmail.com>
+> 
+> The ADS79XX has GPIO pins that can be used. Add support for the GPIO
+> pins using the GPIO chip framework.
+> 
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
-After extensive investigation, it appears that the wakeup will only be
-cleared if the interrupt status register is cleared while the interrupt
-is enabled. However, we are currently clearing it with the interrupt
-disabled for level-based interrupts.
+Hi Justin
 
-It is acknowledged that this observed behaviour conflicts with a
-statement in the TRM:
+A few minor things below, particularly around the ordering in probe and
+possible missing cleanup in the case of errors.
 
-CAUTION
-  After servicing the interrupt, the status bit in the interrupt status
-  register (GPIOi.GPIO_IRQSTATUS_0 or GPIOi.GPIO_IRQSTATUS_1) must be
-  reset and the interrupt line released (by setting the corresponding
-  bit of the interrupt status register to 1) before enabling an
-  interrupt for the GPIO channel in the interrupt-enable register
-  (GPIOi.GPIO_IRQSTATUS_SET_0 or GPIOi.GPIO_IRQSTATUS_SET_1) to prevent
-  the occurrence of unexpected interrupts when enabling an interrupt
-  for the GPIO channel.
+Thanks,
 
-However, this does not appear to be a practical problem.
+Jonathan
 
-Further, as reported by Grygorii Strashko <grygorii.strashko@ti.com>,
-the TI Android kernel tree has an earlier similar patch as "GPIO: OMAP:
-Fix the sequence to clear the IRQ status" saying:
+> ---
+>  drivers/iio/adc/ti-ads7950.c | 200 +++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 194 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+> index 1e47bef..0964053 100644
+> --- a/drivers/iio/adc/ti-ads7950.c
+> +++ b/drivers/iio/adc/ti-ads7950.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/device.h>
+>  #include <linux/err.h>
+> +#include <linux/gpio/driver.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -36,12 +37,15 @@
+>   */
+>  #define TI_ADS7950_VA_MV_ACPI_DEFAULT	5000
+>  
+> +#define TI_ADS7950_CR_GPIO	BIT(14)
+>  #define TI_ADS7950_CR_MANUAL	BIT(12)
+>  #define TI_ADS7950_CR_WRITE	BIT(11)
+>  #define TI_ADS7950_CR_CHAN(ch)	((ch) << 7)
+>  #define TI_ADS7950_CR_RANGE_5V	BIT(6)
+> +#define TI_ADS7950_CR_GPIO_DATA	BIT(4)
+>  
+>  #define TI_ADS7950_MAX_CHAN	16
+> +#define TI_ADS7950_NUM_GPIOS	4
+>  
+>  #define TI_ADS7950_TIMESTAMP_SIZE (sizeof(int64_t) / sizeof(__be16))
+>  
+> @@ -49,6 +53,16 @@
+>  #define TI_ADS7950_EXTRACT(val, dec, bits) \
+>  	(((val) >> (dec)) & ((1 << (bits)) - 1))
+>  
+> +#define TI_ADS7950_MAN_CMD(cmd)         (TI_ADS7950_CR_MANUAL | (cmd))
+> +#define TI_ADS7950_GPIO_CMD(cmd)        (TI_ADS7950_CR_GPIO | (cmd))
+> +
+> +/* Manual mode configuration */
+> +#define TI_ADS7950_MAN_CMD_SETTINGS(st) \
+> +	(TI_ADS7950_MAN_CMD(TI_ADS7950_CR_WRITE | st->cmd_settings_bitmask))
+> +/* GPIO mode configuration */
+> +#define TI_ADS7950_GPIO_CMD_SETTINGS(st) \
+> +	(TI_ADS7950_GPIO_CMD(st->gpio_cmd_settings_bitmask))
+> +
+>  struct ti_ads7950_state {
+>  	struct spi_device	*spi;
+>  	struct spi_transfer	ring_xfer;
+> @@ -58,11 +72,34 @@ struct ti_ads7950_state {
+>  
+>  	/* Lock to protect the spi xfer buffers */
+>  	struct mutex		slock;
+> +	struct gpio_chip	chip;
+>  
+>  	struct regulator	*reg;
+>  	unsigned int		vref_mv;
+>  
+> -	unsigned int		settings;
+> +	/*
+> +	 * Bitmask of lower 7 bits used for configuration
+> +	 * These bits only can be written when TI_ADS7950_CR_WRITE
+> +	 * is set, otherwise it retains its original state.
+> +	 * [0-3] GPIO signal
+> +	 * [4]   Set following frame to return GPIO signal values
+> +	 * [5]   Powers down device
+> +	 * [6]   Sets Vref range1(2.5v) or range2(5v)
+> +	 *
+> +	 * Bits present on Manual/Auto1/Auto2 commands
+> +	 */
+> +	unsigned int		cmd_settings_bitmask;
+> +
+> +	/*
+> +	 * Bitmask of GPIO command
+> +	 * [0-3] GPIO direction
+> +	 * [4-6] Different GPIO alarm mode configurations
+> +	 * [7]   GPIO 2 as device range input
+> +	 * [8]   GPIO 3 as device power down input
+> +	 * [9]   Reset all registers
+> +	 * [10-11] N/A
+> +	 */
+> +	unsigned int		gpio_cmd_settings_bitmask;
+>  
+>  	/*
+>  	 * DMA (thus cache coherency maintenance) requires the
+> @@ -251,7 +288,7 @@ static int ti_ads7950_update_scan_mode(struct iio_dev *indio_dev,
+>  
+>  	len = 0;
+>  	for_each_set_bit(i, active_scan_mask, indio_dev->num_channels) {
+> -		cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(i) | st->settings;
+> +		cmd = TI_ADS7950_MAN_CMD(TI_ADS7950_CR_CHAN(i));
+>  		st->tx_buf[len++] = cmd;
+>  	}
+>  
+> @@ -292,8 +329,7 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
+>  	int ret, cmd;
+>  
+>  	mutex_lock(&st->slock);
+> -
+> -	cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(ch) | st->settings;
+> +	cmd = TI_ADS7950_MAN_CMD(TI_ADS7950_CR_CHAN(ch));
+>  	st->single_tx = cmd;
+>  
+>  	ret = spi_sync(st->spi, &st->scan_single_msg);
+> @@ -322,7 +358,7 @@ static int ti_ads7950_get_range(struct ti_ads7950_state *st)
+>  		vref /= 1000;
+>  	}
+>  
+> -	if (st->settings & TI_ADS7950_CR_RANGE_5V)
+> +	if (st->cmd_settings_bitmask & TI_ADS7950_CR_RANGE_5V)
+>  		vref *= 2;
+>  
+>  	return vref;
+> @@ -367,6 +403,135 @@ static const struct iio_info ti_ads7950_info = {
+>  	.update_scan_mode	= ti_ads7950_update_scan_mode,
+>  };
+>  
+> +static void ti_ads7950_set(struct gpio_chip *chip, unsigned int offset,
+> +			   int value)
+> +{
+> +	struct ti_ads7950_state *st = gpiochip_get_data(chip);
+> +
+> +	mutex_lock(&st->slock);
+> +
+> +	if (value)
+> +		st->cmd_settings_bitmask |= BIT(offset);
+> +	else
+> +		st->cmd_settings_bitmask &= ~BIT(offset);
+> +
+> +	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);
+> +	spi_sync(st->spi, &st->scan_single_msg);
+> +
+> +	mutex_unlock(&st->slock);
+> +}
+> +
+> +static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct ti_ads7950_state *st = gpiochip_get_data(chip);
+> +	int ret;
+> +
+> +	mutex_lock(&st->slock);
+> +
+> +	/* If set as output, return the output */
+> +	if (st->gpio_cmd_settings_bitmask & BIT(offset)) {
+> +		ret = st->cmd_settings_bitmask & BIT(offset);
+> +		goto out;
+> +	}
+> +
+> +	/* GPIO data bit sets SDO bits 12-15 to GPIO input */
+> +	st->cmd_settings_bitmask |= TI_ADS7950_CR_GPIO_DATA;
+> +	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);
+> +	ret = spi_sync(st->spi, &st->scan_single_msg);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = ((st->single_rx >> 12) & BIT(offset)) ? 1 : 0;
+> +
+> +	/* Revert back to original settings */
+> +	st->cmd_settings_bitmask &= ~TI_ADS7950_CR_GPIO_DATA;
+> +	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);
+> +	ret = spi_sync(st->spi, &st->scan_single_msg);
+> +	if (ret)
+> +		goto out;
+> +
+> +out:
+> +	mutex_unlock(&st->slock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ti_ads7950_get_direction(struct gpio_chip *chip,
+> +				    unsigned int offset)
+> +{
+> +	struct ti_ads7950_state *st = gpiochip_get_data(chip);
+> +
+> +	/* Bitmask is inverted from GPIO framework 0=input/1=output */
+> +	return !(st->gpio_cmd_settings_bitmask & BIT(offset));
+> +}
+> +
+> +static int _ti_ads7950_set_direction(struct gpio_chip *chip, int offset,
+> +				     int input)
+> +{
+> +	struct ti_ads7950_state *st = gpiochip_get_data(chip);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&st->slock);
+> +
+> +	/* Only change direction if needed */
+> +	if (input && (st->gpio_cmd_settings_bitmask & BIT(offset)))
+> +		st->gpio_cmd_settings_bitmask &= ~BIT(offset);
+> +	else if (!input && !(st->gpio_cmd_settings_bitmask & BIT(offset)))
+> +		st->gpio_cmd_settings_bitmask |= BIT(offset);
+> +	else
+> +		goto out;
+> +
+> +	st->single_tx = TI_ADS7950_GPIO_CMD_SETTINGS(st);
+> +	ret = spi_sync(st->spi, &st->scan_single_msg);
+> +
+> +out:
+> +	mutex_unlock(&st->slock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ti_ads7950_direction_input(struct gpio_chip *chip,
+> +				      unsigned int offset)
+> +{
+> +	return _ti_ads7950_set_direction(chip, offset, 1);
+> +}
+> +
+> +static int ti_ads7950_direction_output(struct gpio_chip *chip,
+> +				       unsigned int offset, int value)
+> +{
+> +	ti_ads7950_set(chip, offset, value);
+> +
+> +	return _ti_ads7950_set_direction(chip, offset, 0);
+> +}
+> +
+> +static int ti_ads7950_init_hw(struct ti_ads7950_state *st)
+> +{
+> +	int ret = 0;
+> +
+> +	mutex_lock(&st->slock);
+> +
+> +	/* Settings for Manual/Auto1/Auto2 commands */
+> +	/* Default to 5v ref */
+> +	st->cmd_settings_bitmask = TI_ADS7950_CR_RANGE_5V;
+> +	st->single_tx = TI_ADS7950_MAN_CMD_SETTINGS(st);
+> +	ret = spi_sync(st->spi, &st->scan_single_msg);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/* Settings for GPIO command */
+> +	st->gpio_cmd_settings_bitmask = 0x0;
+> +	st->single_tx = TI_ADS7950_GPIO_CMD_SETTINGS(st);
+> +	ret = spi_sync(st->spi, &st->scan_single_msg);
+> +	mutex_unlock(&st->slock);
+> +	if (ret)
+> +		goto out;
 
- if the status is cleared after disabling the IRQ then sWAKEUP will not
- be cleared and gates the module transition
+This path doesn't actually differently than if you
+drop the two lines above.  Hence just drop them.
 
-When we unmask the level interrupt after the interrupt has been handled,
-enable the interrupt and only then clear the interrupt. If the interrupt
-is still pending, the hardware will re-assert the interrupt status.
+> +
+> +out:
+> +	mutex_unlock(&st->slock);
+> +
+> +	return ret;
+> +}
+> +
+>  static int ti_ads7950_probe(struct spi_device *spi)
+>  {
+>  	struct ti_ads7950_state *st;
+> @@ -391,7 +556,6 @@ static int ti_ads7950_probe(struct spi_device *spi)
+>  	spi_set_drvdata(spi, indio_dev);
+>  
+>  	st->spi = spi;
+> -	st->settings = TI_ADS7950_CR_MANUAL | TI_ADS7950_CR_RANGE_5V;
+>  
+>  	info = &ti_ads7950_chip_info[spi_get_device_id(spi)->driver_data];
+>  
+> @@ -465,6 +629,30 @@ static int ti_ads7950_probe(struct spi_device *spi)
+>  		goto error_cleanup_ring;
+>  	}
+>  
+> +	ret = ti_ads7950_init_hw(st);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to init adc chip\n");
+> +		goto error_cleanup_ring;
+> +	}
 
-Should the caution note in the TRM prove to be a problem, we could
-use a clear-enable-clear sequence instead.
+At this point the IIO userspace interface is exposed.  Seems likely that
+we should have called this earlier.  Also if it fails, you want to unregister
+the iio_device.
 
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-[tony@atomide.com: updated comments based on an earlier TI patch]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
+> +
+> +	/* Add GPIO chip */
+> +	st->chip.label = dev_name(&st->spi->dev);
+> +	st->chip.parent = &st->spi->dev;
+> +	st->chip.owner = THIS_MODULE;
+> +	st->chip.base = -1;
+> +	st->chip.ngpio = TI_ADS7950_NUM_GPIOS;
+> +	st->chip.get_direction = ti_ads7950_get_direction;
+> +	st->chip.direction_input = ti_ads7950_direction_input;
+> +	st->chip.direction_output = ti_ads7950_direction_output;
+> +	st->chip.get = ti_ads7950_get;
+> +	st->chip.set = ti_ads7950_set;
+> +
+> +	ret = gpiochip_add_data(&st->chip, st);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to init GPIOs\n");
+> +		goto error_cleanup_ring;
 
-Obviously no rush to get this into v5.0-rc cycle, but this should be
-tagged with Cc stable after people have reviewed and tested this.
+What about unregistering the iio_device?
 
----
- drivers/gpio/gpio-omap.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -883,14 +883,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	if (trigger)
- 		omap_set_gpio_triggering(bank, offset, trigger);
- 
--	/* For level-triggered GPIOs, the clearing must be done after
--	 * the HW source is cleared, thus after the handler has run */
--	if (bank->level_mask & BIT(offset)) {
--		omap_set_gpio_irqenable(bank, offset, 0);
-+	omap_set_gpio_irqenable(bank, offset, 1);
-+
-+	/*
-+	 * For level-triggered GPIOs, clearing must be done after the source
-+	 * is cleared, thus after the handler has run. OMAP4 needs this done
-+	 * after enabing the interrupt to clear the wakeup status.
-+	 */
-+	if (bank->level_mask & BIT(offset))
- 		omap_clear_gpio_irqstatus(bank, offset);
--	}
- 
--	omap_set_gpio_irqenable(bank, offset, 1);
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
--- 
-2.21.0
+> +	}
+> +
+>  	return 0;
+>  
+>  error_cleanup_ring:
