@@ -1,256 +1,92 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH] pinctrl: add drive for I2C related pins on MT8183
-Date: Sun, 3 Mar 2019 09:53:41 +0800
-Message-ID: <20190303015341.986-2-zhiyong.tao@mediatek.com>
-References: <20190303015341.986-1-zhiyong.tao@mediatek.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v9 0/9] Introduce the for_each_set_clump8 macro
+Date: Sun,  3 Mar 2019 16:44:39 +0900
+Message-ID: <cover.1551598603.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190303015341.986-1-zhiyong.tao@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, sean.wang@kernel.org
-Cc: devicetree@vger.kernel.org, hongkun.cao@mediatek.com, srv_heupstream@mediatek.com, chuanjia.liu@mediatek.com, biao.huang@mediatek.com, zhiyong.tao@mediatek.com, erin.lo@mediatek.com, sean.wang@mediatek.com, liguo.zhang@mediatek.com, linux-kernel@vger.kernel.org, hongzhou.yang@mediatek.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, eddie.huang@mediatek.com, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, bgolaszewski@baylibre.com, linux-arm-kernel@lists.infradead.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch provides the advanced drive for I2C used pins on MT8183.
-The detail strength specification description of the I2C pin is as follows.
-When E1=0/E0=0, the strength is 0.125mA.
-When E1=0/E0=1, the strength is 0.25mA.
-When E1=1/E0=0, the strength is 0.5mA.
-When E1=1/E0=1, the strength is 1mA.
+Changes in v9:
+  - Return unsigned long for bitmap_get_value8 for consistency
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8183.c        | 50 ++++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 45 +++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 13 ++++++
- drivers/pinctrl/mediatek/pinctrl-paris.c         | 20 ++++++++++
- 4 files changed, 128 insertions(+)
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-index 6262fd3678ea..f034574fc593 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-@@ -472,6 +472,51 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
- 	PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
- };
- 
-+static const struct mtk_pin_field_calc mt8183_pin_e1e0en_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 15, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 7, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 19, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 27, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 17, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_e0_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 23, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 25, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 15, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 28, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 18, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_e1_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 17, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 11, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 26, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 29, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 19, 1),
-+};
-+
- static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
- 	[PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
- 	[PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
-@@ -485,6 +530,9 @@ static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
- 	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
- 	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
- 	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
-+	[PINCTRL_PIN_REG_DRV_EN_DIS] = MTK_RANGE(mt8183_pin_e1e0en_range),
-+	[PINCTRL_PIN_REG_DRV_E0] = MTK_RANGE(mt8183_pin_e0_range),
-+	[PINCTRL_PIN_REG_DRV_E1] = MTK_RANGE(mt8183_pin_e1_range),
- };
- 
- static const char * const mt8183_pinctrl_register_base_names[] = {
-@@ -517,6 +565,8 @@ static const struct mtk_pin_soc mt8183_data = {
- 	.drive_get = mtk_pinconf_drive_get_rev1,
- 	.adv_pull_get = mtk_pinconf_adv_pull_get,
- 	.adv_pull_set = mtk_pinconf_adv_pull_set,
-+	.adv_drive_get = mtk_pinconf_adv_drive_get,
-+	.adv_drive_set = mtk_pinconf_adv_drive_set,
- };
- 
- static const struct of_device_id mt8183_pinctrl_of_match[] = {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4a9e0d4c2bbc..da024279ec59 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -668,3 +668,48 @@ int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
- 
- 	return 0;
- }
-+
-+int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, bool enable,
-+			      u32 arg)
-+{
-+	int err;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, arg & 1);
-+	if (err)
-+		return 0;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E1,
-+			       !!(arg & 2));
-+	if (err)
-+		return 0;
-+
-+	arg = enable ? 1 : 0;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, arg);
-+
-+	return err;
-+}
-+
-+int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, u32 *val)
-+{
-+	u32 en, e0, e1;
-+	int err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, &en);
-+	if (err)
-+		return err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, &e0);
-+	if (err)
-+		return err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E1, &e1);
-+	if (err)
-+		return err;
-+
-+	*val = (e0 | e1 << 1 | en << 2) & 0x7;
-+
-+	return 0;
-+}
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 6d24522739d9..795a3b10d54e 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -63,6 +63,9 @@ enum {
- 	PINCTRL_PIN_REG_IES,
- 	PINCTRL_PIN_REG_PULLEN,
- 	PINCTRL_PIN_REG_PULLSEL,
-+	PINCTRL_PIN_REG_DRV_EN_DIS,
-+	PINCTRL_PIN_REG_DRV_E0,
-+	PINCTRL_PIN_REG_DRV_E1,
- 	PINCTRL_PIN_REG_MAX,
- };
- 
-@@ -224,6 +227,11 @@ struct mtk_pin_soc {
- 	int (*adv_pull_get)(struct mtk_pinctrl *hw,
- 			    const struct mtk_pin_desc *desc, bool pullup,
- 			    u32 *val);
-+	int (*adv_drive_set)(struct mtk_pinctrl *hw,
-+			     const struct mtk_pin_desc *desc, bool enable,
-+			     u32 arg);
-+	int (*adv_drive_get)(struct mtk_pinctrl *hw,
-+			     const struct mtk_pin_desc *desc, u32 *val);
- 
- 	/* Specific driver data */
- 	void				*driver_data;
-@@ -287,5 +295,10 @@ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
- int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
- 			     const struct mtk_pin_desc *desc, bool pullup,
- 			     u32 *val);
-+int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, bool enable,
-+			     u32 arg);
-+int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, u32 *val);
- 
- #endif /* __PINCTRL_MTK_COMMON_V2_H */
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index b59e10852bfb..8c473d48cd5f 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -20,12 +20,16 @@
- #define MTK_PIN_CONFIG_RDSEL	(PIN_CONFIG_END + 2)
- #define MTK_PIN_CONFIG_PU_ADV	(PIN_CONFIG_END + 3)
- #define MTK_PIN_CONFIG_PD_ADV	(PIN_CONFIG_END + 4)
-+#define MTK_PIN_CONFIG_DRV_EN_ADV	(PIN_CONFIG_END + 5)
-+#define MTK_PIN_CONFIG_DRV_DIS_ADV	(PIN_CONFIG_END + 6)
- 
- static const struct pinconf_generic_params mtk_custom_bindings[] = {
- 	{"mediatek,tdsel",	MTK_PIN_CONFIG_TDSEL,		0},
- 	{"mediatek,rdsel",	MTK_PIN_CONFIG_RDSEL,		0},
- 	{"mediatek,pull-up-adv", MTK_PIN_CONFIG_PU_ADV,		1},
- 	{"mediatek,pull-down-adv", MTK_PIN_CONFIG_PD_ADV,	1},
-+	{"mediatek,drive-enable-adv", MTK_PIN_CONFIG_DRV_EN_ADV,	2},
-+	{"mediatek,drive-disable-adv", MTK_PIN_CONFIG_DRV_DIS_ADV,	2},
- };
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -34,6 +38,8 @@ static const struct pin_config_item mtk_conf_items[] = {
- 	PCONFDUMP(MTK_PIN_CONFIG_RDSEL, "rdsel", NULL, true),
- 	PCONFDUMP(MTK_PIN_CONFIG_PU_ADV, "pu-adv", NULL, true),
- 	PCONFDUMP(MTK_PIN_CONFIG_PD_ADV, "pd-adv", NULL, true),
-+	PCONFDUMP(MTK_PIN_CONFIG_DRV_EN_ADV, "drive-enable-adv", NULL, true),
-+	PCONFDUMP(MTK_PIN_CONFIG_DRV_DIS_ADV, "drive-disable-adv", NULL, true),
- };
- #endif
- 
-@@ -311,6 +317,20 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			return -ENOTSUPP;
- 		}
- 		break;
-+	case MTK_PIN_CONFIG_DRV_EN_ADV:
-+	case MTK_PIN_CONFIG_DRV_DIS_ADV:
-+		if (hw->soc->adv_drive_set) {
-+			bool enable;
-+
-+			enable = param == MTK_PIN_CONFIG_DRV_EN_ADV;
-+			err = hw->soc->adv_drive_set(hw, desc, enable,
-+						    arg);
-+			if (err)
-+				return err;
-+		} else {
-+			return -ENOTSUPP;
-+		}
-+		break;
- 	default:
- 		err = -ENOTSUPP;
- 	}
+This patchset introduces the for_each_set_clump8 macro and utilizes it
+in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
+
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
+
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
+
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
+
+The for_each_set_clump8 macro has four parameters:
+
+    * start: set to the bit offset of the current clump
+    * clump: set to the current clump value
+    * bits: bitmap to search within
+    * size: bitmap size in number of bits
+
+In this version of the patchset, the for_each_set_clump macro has been
+reimplemented and simplified based on the suggestions provided by Rasmus
+Villemoes and Andy Shevchenko in the version 4 submission.
+
+In particular, the function of the for_each_set_clump macro has been
+restricted to handle only 8-bit clumps; the drivers that use the
+for_each_set_clump macro only handle 8-bit ports so a generic
+for_each_set_clump implementation is not necessary. Thus, a solution for
+large clumps (i.e. those larger than the width of a bitmap word) can be
+postponed until a driver appears that actually requires such a generic
+for_each_set_clump implementation.
+
+For what it's worth, a semi-generic for_each_set_clump (i.e. for clumps
+smaller than the width of a bitmap word) can be implemented by simply
+replacing the hardcoded '8' and '0xFF' instances with respective
+variables. I have not yet had a need for such an implementation, and
+since it falls short of a true generic for_each_set_clump function, I
+have decided to forgo such an implementation for now.
+
+In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+introduced to get and set 8-bit values respectively. Their use is based
+on the behavior suggested in the patchset version 4 review.
+
+William Breathitt Gray (9):
+  bitops: Introduce the for_each_set_clump8 macro
+  lib/test_bitmap.c: Add for_each_set_clump8 test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+  gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+  gpio: gpio-mm: Utilize for_each_set_clump8 macro
+  gpio: ws16c48: Utilize for_each_set_clump8 macro
+  gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
+  gpio: uniphier: Utilize for_each_set_clump8 macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  73 ++++++--------------
+ drivers/gpio/gpio-104-idi-48.c    |  37 +++-------
+ drivers/gpio/gpio-gpio-mm.c       |  73 ++++++--------------
+ drivers/gpio/gpio-pci-idio-16.c   |  75 ++++++++------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 111 +++++++++++-------------------
+ drivers/gpio/gpio-uniphier.c      |  16 ++---
+ drivers/gpio/gpio-ws16c48.c       |  72 ++++++-------------
+ include/asm-generic/bitops/find.h |  14 ++++
+ include/linux/bitops.h            |   5 ++
+ lib/find_bit.c                    |  81 ++++++++++++++++++++++
+ lib/test_bitmap.c                 |  65 +++++++++++++++++
+ 11 files changed, 313 insertions(+), 309 deletions(-)
+
 -- 
-2.12.5
+2.21.0
