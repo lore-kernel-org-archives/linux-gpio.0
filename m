@@ -1,35 +1,40 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] selftest/gpio: Remove duplicate header
-Date: Mon, 4 Mar 2019 23:45:29 +0530
-Message-ID: <20190304181529.GA6500@jordon-HP-15-Notebook-PC>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/3] x86: apuv2: remove unused variable
+Date: Mon,  4 Mar 2019 21:19:19 +0100
+Message-ID: <20190304201930.1622839-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: bamv2005@gmail.com, shuah@kernel.org
-Cc: linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>
+Cc: Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Remove duplicate header which are included twice.
+The driver was newly introduced but the version that got merged
+produces a harmless compiler warning:
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+drivers/platform/x86/pcengines-apuv2.c: In function 'apu_board_init':
+drivers/platform/x86/pcengines-apuv2.c:211:6: error: unused variable 'rc' [-Werror=unused-variable]
+
+Remove the evidently useless variable.
+
+Fixes: f8eb0235f659 ("x86: pcengines apuv2 gpio/leds/keys platform driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/testing/selftests/gpio/gpio-mockup-chardev.c | 1 -
+ drivers/platform/x86/pcengines-apuv2.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index aaa1e9f..d587c81 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <stdio.h>
- #include <errno.h>
- #include <string.h>
- #include <fcntl.h>
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+index dcb084f6b892..c1ca931e1fab 100644
+--- a/drivers/platform/x86/pcengines-apuv2.c
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -208,7 +208,6 @@ static struct platform_device * __init apu_create_pdev(
+ 
+ static int __init apu_board_init(void)
+ {
+-	int rc;
+ 	const struct dmi_system_id *id;
+ 
+ 	id = dmi_first_match(apu_gpio_dmi_table);
 -- 
-1.9.1
+2.20.0
