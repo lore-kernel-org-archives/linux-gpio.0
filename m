@@ -1,41 +1,42 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/3] x86: apuv2: select LEDS_CLASS
-Date: Mon,  4 Mar 2019 21:19:21 +0100
-Message-ID: <20190304201930.1622839-3-arnd@arndb.de>
-References: <20190304201930.1622839-1-arnd@arndb.de>
+Subject: [PATCH] pinctrl: freescale: fix link errors
+Date: Mon,  4 Mar 2019 21:26:25 +0100
+Message-ID: <20190304202640.1765847-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190304201930.1622839-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>
-Cc: Linus Walleij <linusw@kernel.org>, Enrico Weigelt <info@metux.net>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Bai Ping <ping.bai@nxp.com>, =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>, Abel Vesa <abel.vesa@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-LEDS_GPIO can only be selected when LEDS_CLASS is already enabled:
+Submitted by Anders Roxell already
 
-WARNING: unmet direct dependencies detected for LEDS_GPIO
-  Depends on [m]: NEW_LEDS [=y] && LEDS_CLASS [=m] && (GPIOLIB [=y] || COMPILE_TEST [=y])
-  Selected by [y]:
-  - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT_KEYBOARD [=y]
-
-Fixes: f8eb0235f659 ("x86: pcengines apuv2 gpio/leds/keys platform driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/freescale/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 4d65d37b0c86..d64529352a9c 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1308,6 +1308,7 @@ config PCENGINES_APU2
- 	depends on INPUT && INPUT_KEYBOARD
- 	select GPIO_AMD_FCH
- 	select KEYBOARD_GPIO_POLLED
-+	select LEDS_CLASS
- 	select LEDS_GPIO
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index e6dff3167a67..e447b996e79f 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -138,14 +138,14 @@ config PINCTRL_IMX8MQ
+ 
+ config PINCTRL_IMX8QM
+ 	bool "IMX8QM pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on ARCH_MXC && ARM64 && IMX_SCU
+ 	select PINCTRL_IMX_SCU
  	help
- 	  This driver provides support for the front button and LEDs on
+ 	  Say Y here to enable the imx8qm pinctrl driver
+ 
+ config PINCTRL_IMX8QXP
+ 	bool "IMX8QXP pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on ARCH_MXC && ARM64 && IMX_SCU
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qxp pinctrl driver
 -- 
 2.20.0
