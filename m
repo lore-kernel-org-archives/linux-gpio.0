@@ -1,36 +1,44 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH 2/3] x86: apuv2: fix input dependencies
-Date: Tue, 5 Mar 2019 01:18:53 +0100
-Message-ID: <a94c3c6a-481e-96a5-74e1-8c3299c74129@metux.net>
-References: <20190304201930.1622839-1-arnd@arndb.de>
- <20190304201930.1622839-2-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH] drivers: x86: pcengines-apuv2: fix dependencies
+Date: Tue,  5 Mar 2019 01:24:59 +0100
+Message-ID: <1551745499-6687-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190304201930.1622839-2-arnd@arndb.de>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>
-Cc: Linus Walleij <linusw@kernel.org>, Enrico Weigelt <info@metux.net>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, andy.shevchenko@gmail.com, arnd@arndb.de, rdunlap@infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 04.03.19 21:19, Arnd Bergmann wrote:
+pcengines-apuv2 board driver needs to explicitly select LEDS_CLASS,
+INPUT, INPUT_KEYBOARD, so these are automatically defined correctly
+(eg. LEDS_CLASS=y if PCENGINES_APU2=y)
 
-> This could be fixed using either a dependency or a 'select' statement.
-> I'm chosen 'depends on' here since it is simpler has a lower risk of
-> introducing circular dependencies.
+Cc: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com
+Cc: arnd@arndb.de
+Cc: rdunlap@infradead.org
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: arnd@arndb.de
+Reported-by: rdunlap@infradead.org
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/platform/x86/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I'd rather prefer using 'select'.
-
-Otherwise the driver won't appear at all if INPUT or INPUT_KEYBOARD
-aren't enabled (eg. when you start w/ minimal config - which I do
-frequently), and people have a hard time actually finding/enabling it.
-
-
---mtx
-
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 851ea92..7d53380 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1307,7 +1307,10 @@ config PCENGINES_APU2
+ 	tristate "PC Engines APUv2/3 front button and LEDs driver"
+ 	select GPIO_AMD_FCH
+ 	select KEYBOARD_GPIO_POLLED
++	select LEDS_CLASS
+ 	select LEDS_GPIO
++	select INPUT
++	select INPUT_KEYBOARD
+ 	help
+ 	  This driver provides support for the front button and LEDs on
+ 	  PC Engines APUv2/APUv3 board.
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+1.9.1
