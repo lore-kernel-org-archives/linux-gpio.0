@@ -1,136 +1,276 @@
-From: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Subject: [PATCH] drivers: gpio: Kconfig: pedantic formatting cleanups
-Date: Tue,  5 Mar 2019 01:35:31 +0100
-Message-ID: <1551746131-10232-1-git-send-email-info@metux.net>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH] pinctrl: add drive for I2C related pins on MT8183
+Date: Mon, 4 Mar 2019 17:15:55 -0800
+Message-ID: <CAGp9LzpzdpUMHPC5_98EKxj5+z6QQ--KjpG6eAGMkNQjvZ7+Mw@mail.gmail.com>
+References: <20190303015341.986-1-zhiyong.tao@mediatek.com> <20190303015341.986-2-zhiyong.tao@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190303015341.986-2-zhiyong.tao@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
+To: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, srv_heupstream <srv_heupstream@mediatek.com>, Liguo Zhang <liguo.zhang@mediatek.com>, =?UTF-8?B?RWRkaWUgSHVhbmcgKOm7g+aZuuWCkSk=?= <eddie.huang@mediatek.com>, =?UTF-8?B?SG9uZ2t1biBDYW8gKOabuea0quWdpCk=?= <hongkun.cao@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, =?UTF-8?B?Q2h1YW5qaWEgTGl1ICjmn7PkvKDlmIkp?= <chuanjia.liu@mediatek.com>, =?UTF-8?B?RXJpbiBMbyAo576F6ZuF6b2hKQ==?= <erin.lo@mediatek.com>, =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradea
 List-Id: linux-gpio@vger.kernel.org
 
-Align the Kconfig formatting with the vast majority of the Kconfig
-files, to make it a bit easier / more pleasant to read ;-)
+On Sat, Mar 2, 2019 at 5:53 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
+>
+> This patch provides the advanced drive for I2C used pins on MT8183.
+> The detail strength specification description of the I2C pin is as follows.
+> When E1=0/E0=0, the strength is 0.125mA.
+> When E1=0/E0=1, the strength is 0.25mA.
+> When E1=1/E0=0, the strength is 0.5mA.
+> When E1=1/E0=1, the strength is 1mA.
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/gpio/Kconfig | 50 +++++++++++++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+Three things are needed to be added
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3f50526..c5420e6 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -27,12 +27,12 @@ config GPIOLIB_FASTPATH_LIMIT
- 	range 32 512
- 	default 512
- 	help
--	   This adjusts the point at which certain APIs will switch from
--	   using a stack allocated buffer to a dynamically allocated buffer.
-+	  This adjusts the point at which certain APIs will switch from
-+	  using a stack allocated buffer to a dynamically allocated buffer.
- 
--	   You shouldn't need to change this unless you really need to
--	   optimize either stack space or performance. Change this carefully
--	   since setting an incorrect value could cause stack corruption.
-+	  You shouldn't need to change this unless you really need to
-+	  optimize either stack space or performance. Change this carefully
-+	  since setting an incorrect value could cause stack corruption.
- 
- config OF_GPIO
- 	def_bool y
-@@ -320,7 +320,7 @@ config GPIO_MENZ127
- 	depends on MCB
- 	select GPIO_GENERIC
- 	help
--	 Say yes here to support the MEN 16Z127 GPIO Controller
-+	  Say yes here to support the MEN 16Z127 GPIO Controller
- 
- config GPIO_MM_LANTIQ
- 	bool "Lantiq Memory mapped GPIOs"
-@@ -862,11 +862,11 @@ config GPIO_MAX732X
- 	  Input and Output (designed by 'P'). The combinations are listed
- 	  below:
- 
--	  8 bits:	max7319 (8I), max7320 (8O), max7321 (8P),
--		  	max7322 (4I4O), max7323 (4P4O)
-+	  8 bits:       max7319 (8I), max7320 (8O), max7321 (8P),
-+	                max7322 (4I4O), max7323 (4P4O)
- 
--	  16 bits:	max7324 (8I8O), max7325 (8P8O),
--		  	max7326 (4I12O), max7327 (4P12O)
-+	  16 bits:      max7324 (8I8O), max7325 (8P8O),
-+	                max7326 (4I12O), max7327 (4P12O)
- 
- 	  Board setup code must specify the model to use, and the start
- 	  number for these GPIOs.
-@@ -893,17 +893,17 @@ config GPIO_PCA953X
- 	  SMBus I/O expanders, made mostly by NXP or TI.  Compatible
- 	  models include:
- 
--	  4 bits:	pca9536, pca9537
-+	  4 bits:       pca9536, pca9537
- 
--	  8 bits:	max7310, max7315, pca6107, pca9534, pca9538, pca9554,
--			pca9556, pca9557, pca9574, tca6408, tca9554, xra1202
-+	  8 bits:       max7310, max7315, pca6107, pca9534, pca9538, pca9554,
-+	                pca9556, pca9557, pca9574, tca6408, tca9554, xra1202
- 
--	  16 bits:	max7312, max7313, pca9535, pca9539, pca9555, pca9575,
--			tca6416
-+	  16 bits:      max7312, max7313, pca9535, pca9539, pca9555, pca9575,
-+	                tca6416
- 
--	  24 bits:	tca6424
-+	  24 bits:      tca6424
- 
--	  40 bits:	pca9505, pca9698
-+	  40 bits:      pca9505, pca9698
- 
- config GPIO_PCA953X_IRQ
- 	bool "Interrupt controller support for PCA953x"
-@@ -925,7 +925,7 @@ config GPIO_PCF857X
- 
- 	  8 bits:   pcf8574, pcf8574a, pca8574, pca8574a,
- 	            pca9670, pca9672, pca9674, pca9674a,
--	  	    max7328, max7329
-+	            max7328, max7329
- 
- 	  16 bits:  pcf8575, pcf8575c, pca8575,
- 	            pca9671, pca9673, pca9675
-@@ -1047,9 +1047,9 @@ config HTC_EGPIO
- 	bool "HTC EGPIO support"
- 	depends on GPIOLIB && ARM
- 	help
--	    This driver supports the CPLD egpio chip present on
--	    several HTC phones.  It provides basic support for input
--	    pins, output pins, and irqs.
-+	  This driver supports the CPLD egpio chip present on
-+	  several HTC phones.  It provides basic support for input
-+	  pins, output pins, and irqs.
- 
- config GPIO_JANZ_TTL
- 	tristate "Janz VMOD-TTL Digital IO Module"
-@@ -1085,7 +1085,7 @@ config GPIO_LP873X
- 	  on LP873X PMICs.
- 
- 	  This driver can also be built as a module. If so, the module will be
--          called gpio-lp873x.
-+	  called gpio-lp873x.
- 
- config GPIO_LP87565
- 	tristate "TI LP87565 GPIO"
-@@ -1436,9 +1436,9 @@ config GPIO_VIPERBOARD
- 	  Say yes here to access the GPIO signals of Nano River
- 	  Technologies Viperboard. There are two GPIO chips on the
- 	  board: gpioa and gpiob.
--          See viperboard API specification and Nano
--          River Tech's viperboard.h for detailed meaning
--          of the module parameters.
-+	  See viperboard API specification and Nano
-+	  River Tech's viperboard.h for detailed meaning
-+	  of the module parameters.
- 
- endmenu
- 
--- 
-1.9.1
+The first is we need to add more words in the git message about what
+relationship between the specific driving setup and existing generic
+driving setup.
+
+The second is stating why we need to add extra vendor driving property
+in the patch is, instead of using the generic driving property.
+
+The third is we need to add the dt-binding document prior to the change.
+
+>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt8183.c        | 50 ++++++++++++++++++++++++
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 45 +++++++++++++++++++++
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 13 ++++++
+>  drivers/pinctrl/mediatek/pinctrl-paris.c         | 20 ++++++++++
+>  4 files changed, 128 insertions(+)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> index 6262fd3678ea..f034574fc593 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> @@ -472,6 +472,51 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
+>         PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
+>  };
+>
+> +static const struct mtk_pin_field_calc mt8183_pin_e1e0en_range[] = {
+> +       PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 20, 1),
+> +       PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 15, 1),
+> +       PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 12, 1),
+> +       PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 7, 1),
+> +       PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 12, 1),
+> +       PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 9, 1),
+> +       PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 19, 1),
+> +       PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 22, 1),
+> +       PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 24, 1),
+> +       PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 14, 1),
+> +       PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 27, 1),
+> +       PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 17, 1),
+> +};
+> +
+> +static const struct mtk_pin_field_calc mt8183_pin_e0_range[] = {
+> +       PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 21, 1),
+> +       PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 16, 1),
+> +       PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 13, 1),
+> +       PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 8, 1),
+> +       PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 13, 1),
+> +       PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 10, 1),
+> +       PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 20, 1),
+> +       PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 23, 1),
+> +       PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 25, 1),
+> +       PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 15, 1),
+> +       PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 28, 1),
+> +       PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 18, 1),
+> +};
+> +
+> +static const struct mtk_pin_field_calc mt8183_pin_e1_range[] = {
+> +       PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 22, 1),
+> +       PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 17, 1),
+> +       PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 14, 1),
+> +       PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 9, 1),
+> +       PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 14, 1),
+> +       PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 11, 1),
+> +       PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 21, 1),
+> +       PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 24, 1),
+> +       PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 26, 1),
+> +       PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 16, 1),
+> +       PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 29, 1),
+> +       PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 19, 1),
+> +};
+> +
+>  static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
+>         [PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
+>         [PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
+> @@ -485,6 +530,9 @@ static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
+>         [PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
+>         [PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
+>         [PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
+> +       [PINCTRL_PIN_REG_DRV_EN_DIS] = MTK_RANGE(mt8183_pin_e1e0en_range),
+> +       [PINCTRL_PIN_REG_DRV_E0] = MTK_RANGE(mt8183_pin_e0_range),
+> +       [PINCTRL_PIN_REG_DRV_E1] = MTK_RANGE(mt8183_pin_e1_range),
+>  };
+>
+>  static const char * const mt8183_pinctrl_register_base_names[] = {
+> @@ -517,6 +565,8 @@ static const struct mtk_pin_soc mt8183_data = {
+>         .drive_get = mtk_pinconf_drive_get_rev1,
+>         .adv_pull_get = mtk_pinconf_adv_pull_get,
+>         .adv_pull_set = mtk_pinconf_adv_pull_set,
+> +       .adv_drive_get = mtk_pinconf_adv_drive_get,
+> +       .adv_drive_set = mtk_pinconf_adv_drive_set,
+>  };
+>
+>  static const struct of_device_id mt8183_pinctrl_of_match[] = {
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> index 4a9e0d4c2bbc..da024279ec59 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> @@ -668,3 +668,48 @@ int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
+>
+>         return 0;
+>  }
+> +
+> +int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
+> +                             const struct mtk_pin_desc *desc, bool enable,
+> +                             u32 arg)
+> +{
+> +       int err;
+> +
+> +       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, arg & 1);
+> +       if (err)
+> +               return 0;
+
+return err;
+
+> +
+> +       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E1,
+> +                              !!(arg & 2));
+> +       if (err)
+> +               return 0;
+
+return err;
+
+> +
+> +       arg = enable ? 1 : 0;
+> +
+> +       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, arg);
+> +
+
+it looks like it is redundant operation to set e0 and e1 when we want
+to disable the advanced driving.
+
+> +       return err;
+> +}
+> +
+> +int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+> +                             const struct mtk_pin_desc *desc, u32 *val)
+> +{
+> +       u32 en, e0, e1;
+> +       int err;
+> +
+> +       err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, &en);
+> +       if (err)
+> +               return err;
+> +
+> +       err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, &e0);
+> +       if (err)
+> +               return err;
+> +
+> +       err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E1, &e1);
+> +       if (err)
+> +               return err;
+> +
+> +       *val = (e0 | e1 << 1 | en << 2) & 0x7;
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> index 6d24522739d9..795a3b10d54e 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> @@ -63,6 +63,9 @@ enum {
+>         PINCTRL_PIN_REG_IES,
+>         PINCTRL_PIN_REG_PULLEN,
+>         PINCTRL_PIN_REG_PULLSEL,
+> +       PINCTRL_PIN_REG_DRV_EN_DIS,
+> +       PINCTRL_PIN_REG_DRV_E0,
+> +       PINCTRL_PIN_REG_DRV_E1,
+>         PINCTRL_PIN_REG_MAX,
+>  };
+>
+> @@ -224,6 +227,11 @@ struct mtk_pin_soc {
+>         int (*adv_pull_get)(struct mtk_pinctrl *hw,
+>                             const struct mtk_pin_desc *desc, bool pullup,
+>                             u32 *val);
+> +       int (*adv_drive_set)(struct mtk_pinctrl *hw,
+> +                            const struct mtk_pin_desc *desc, bool enable,
+> +                            u32 arg);
+> +       int (*adv_drive_get)(struct mtk_pinctrl *hw,
+> +                            const struct mtk_pin_desc *desc, u32 *val);
+>
+>         /* Specific driver data */
+>         void                            *driver_data;
+> @@ -287,5 +295,10 @@ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+>  int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
+>                              const struct mtk_pin_desc *desc, bool pullup,
+>                              u32 *val);
+> +int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
+> +                             const struct mtk_pin_desc *desc, bool enable,
+> +                            u32 arg);
+> +int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+> +                             const struct mtk_pin_desc *desc, u32 *val);
+>
+>  #endif /* __PINCTRL_MTK_COMMON_V2_H */
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index b59e10852bfb..8c473d48cd5f 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -20,12 +20,16 @@
+>  #define MTK_PIN_CONFIG_RDSEL   (PIN_CONFIG_END + 2)
+>  #define MTK_PIN_CONFIG_PU_ADV  (PIN_CONFIG_END + 3)
+>  #define MTK_PIN_CONFIG_PD_ADV  (PIN_CONFIG_END + 4)
+> +#define MTK_PIN_CONFIG_DRV_EN_ADV      (PIN_CONFIG_END + 5)
+> +#define MTK_PIN_CONFIG_DRV_DIS_ADV     (PIN_CONFIG_END + 6)
+>
+>  static const struct pinconf_generic_params mtk_custom_bindings[] = {
+>         {"mediatek,tdsel",      MTK_PIN_CONFIG_TDSEL,           0},
+>         {"mediatek,rdsel",      MTK_PIN_CONFIG_RDSEL,           0},
+>         {"mediatek,pull-up-adv", MTK_PIN_CONFIG_PU_ADV,         1},
+>         {"mediatek,pull-down-adv", MTK_PIN_CONFIG_PD_ADV,       1},
+> +       {"mediatek,drive-enable-adv", MTK_PIN_CONFIG_DRV_EN_ADV,        2},
+> +       {"mediatek,drive-disable-adv", MTK_PIN_CONFIG_DRV_DIS_ADV,      2},
+
+adding a  "mediatek,drive-strength-adv"  is enough as the generic
+driving strength property doing.
+
+>  };
+>
+>  #ifdef CONFIG_DEBUG_FS
+> @@ -34,6 +38,8 @@ static const struct pin_config_item mtk_conf_items[] = {
+>         PCONFDUMP(MTK_PIN_CONFIG_RDSEL, "rdsel", NULL, true),
+>         PCONFDUMP(MTK_PIN_CONFIG_PU_ADV, "pu-adv", NULL, true),
+>         PCONFDUMP(MTK_PIN_CONFIG_PD_ADV, "pd-adv", NULL, true),
+> +       PCONFDUMP(MTK_PIN_CONFIG_DRV_EN_ADV, "drive-enable-adv", NULL, true),
+> +       PCONFDUMP(MTK_PIN_CONFIG_DRV_DIS_ADV, "drive-disable-adv", NULL, true),
+>  };
+>  #endif
+>
+> @@ -311,6 +317,20 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>                         return -ENOTSUPP;
+>                 }
+>                 break;
+> +       case MTK_PIN_CONFIG_DRV_EN_ADV:
+> +       case MTK_PIN_CONFIG_DRV_DIS_ADV:
+> +               if (hw->soc->adv_drive_set) {
+> +                       bool enable;
+> +
+> +                       enable = param == MTK_PIN_CONFIG_DRV_EN_ADV;
+> +                       err = hw->soc->adv_drive_set(hw, desc, enable,
+> +                                                   arg);
+> +                       if (err)
+> +                               return err;
+> +               } else {
+> +                       return -ENOTSUPP;
+> +               }
+> +               break;
+>         default:
+>                 err = -ENOTSUPP;
+>         }
+> --
+> 2.12.5
+>
