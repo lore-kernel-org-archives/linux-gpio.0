@@ -1,391 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] Bulk GPIO changes for the v5.1 kernel cycle
-Date: Tue, 5 Mar 2019 10:35:57 +0100
-Message-ID: <CACRpkdYcT3zkSUo74i=WXS4AhHtKEDF2K8o1wttsZeGMK9cvCQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 bus+gpio 3/5] bus: moxtet: Add sysfs documentation
+Date: Tue, 5 Mar 2019 12:11:41 +0100
+Message-ID: <CAK8P3a2V-rxF4-oWiRGkFafgDuCVTS3ObZ==LD3nAw08s831rw@mail.gmail.com>
+References: <20190301035852.26780-1-marek.behun@nic.cz> <20190301035852.26780-4-marek.behun@nic.cz>
+ <CACRpkdam_CYGtph16McpQQ_WwohpZr+Rzi1B=re4UrGxXmSEqg@mail.gmail.com>
+ <20190301161510.20b15183@nic.cz> <CACRpkdb0Bv1iwtd61GUQLU25nAKrfk-VS0PGKTYh_LoyjYWHFg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb0Bv1iwtd61GUQLU25nAKrfk-VS0PGKTYh_LoyjYWHFg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Brian Masney <masneyb@onstation.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Behun <marek.behun@nic.cz>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Mar 4, 2019 at 1:08 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Fri, Mar 1, 2019 at 4:15 PM Marek Behun <marek.behun@nic.cz> wrote:
+>
+> > On Fri, 1 Mar 2019 15:34:26 +0100
+> > Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > > > +What:          /sys/bus/moxtet/devices/moxtet-<name>.<addr>/output_value
+> > > > +Date:          March 2019
+> > > > +KernelVersion: 5.2
+> > > > +Contact:       Marek Behún <marek.behun@nic.cz>
+> > > > +Description:   (RW) Read last written value or write value to the
+> > > > module on
+> > > > +               this Moxtet address. Format: %x
+> > >
+> > > What is the usecase for these?
+> > >
+> > > If this is for debugging it should be in debugfs rather than in sysfs.
+> > >
+> > > If it is here for random userspace drivers, we need some good
+> > > explanation as to why they can't just be kernel drivers.
 
-here is the bulk of the GPIO changes for the v5.1 kernel cycle.
-I'm very happy to get this merged now because the development
-has been all over the place, all is properly ACKed as far as possible
-and has been merging and compiling nicely in linux-next but it
-still makes me nervous to have it lying around on different immutable
-branches and what not.
+I had the same thought, and then saw you already commented.
 
-The signed tag describes what the changes are about. We have
-some hunks hitting x86 platform code, generic irqchip, ARM device
-trees and machines, pin control and even device core. The respective
-subsystem maintainers have been involved and ACKed the patches.
+> > Hmm, it was for debugging purposes but the ability to write there is
+> > not needed anymore... Shall I make it read/only? Or completely remove
+> > it?
+>
+> I would either remove it or move it to debugfs.
 
-Please pull it in for v5.1!
+How about removing it for the initial submission? Then we
+can see if it's still needed later and discuss how it should be
+done when we need it.
 
-Yours,
-Linus Walleij
-
-
-The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9=
-:
-
-  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v5.1-1
-
-for you to fetch changes up to c378b3aa015931a46c91d6ccc2fe04d97801d060:
-
-  gpio: pca953x: Fix dereference of irq data in shutdown (2019-03-01
-11:55:32 +0100)
-
-----------------------------------------------------------------
-This is the bulk of GPIO changes for the v5.1 cycle:
-
-Core changes:
-
-- The big change this time around is the irqchip handling in
-  the qualcomm pin controllers, closely coupled with the
-  gpiochip. This rework, in a classic fall-between-the-chairs
-  fashion has been sidestepped for too long. The Qualcomm
-  IRQchips using the SPMI and SSBI transport mechanisms have
-  been rewritten to use hierarchical irqchip. This creates
-  the base from which I intend to gradually pull support for
-  hierarchical irqchips into the gpiolib irqchip helpers to
-  cut down on duplicate code. We have too many hacks in the
-  kernel because people have been working around the missing
-  hierarchical irqchip for years, and once it was there,
-  noone understood it for a while. We are now slowly adapting
-  to using it. This is why this pull requests include changes
-  to MFD, SPMI, IRQchip core and some ARM Device Trees
-  pertaining to the Qualcomm chip family. Since Qualcomm have
-  so many chips and such large deployments it is paramount
-  that this platform gets this right, and now it (hopefully)
-  does.
-
-- Core support for pull-up and pull-down configuration, also
-  from the device tree. When a simple GPIO chip support a
-  "off or on" pull-up or pull-down resistor, we provide a
-  way to set this up using machine descriptors or device tree.
-  If more elaborate control of pull up/down (such as
-  resistance shunt setting) is required, drivers should be
-  phased over to use pin control. We do not yet provide a
-  userspace ABI for this pull up-down setting but I suspect
-  the makers are going to ask for it soon enough. PCA953x
-  is the first user of this new API.
-
-- The GPIO mockup driver has been revamped after some
-  discussion improving the IRQ simulator in the process.
-  The idea is to make it possible to use the mockup for
-  both testing and virtual prototyping, e.g. when you do
-  not yet have a GPIO expander to play with but really
-  want to get something to develop code around before
-  hardware is available. It's neat. The blackbox testing
-  usecase is currently making its way into kernelci.
-
-- ACPI GPIO core preserves non direction flags when updating
-  flags.
-
-- A new device core helper for devm_platform_ioremap_resource()
-  is funneled through the GPIO tree with Greg's ACK.
-
-New drivers:
-
-- TQ-Systems QTMX86 GPIO controllers (using port-mapped
-  I/O)
-
-- Gateworks PLD GPIO driver (vaccumed up from OpenWrt)
-
-- AMD G-Series PCH (Platform Controller Hub) GPIO driver.
-
-- Fintek F81804 & F81966 subvariants.
-
-- PCA953x now supports NXP PCAL6416.
-
-Driver improvements:
-
-- IRQ support on the Nintendo Wii (Hollywood) GPIO.
-
-- get_direction() support for the MVEBU driver.
-
-- Set the right output level on SAMA5D2.
-
-- Drop the unused irq trigger setting on the Spreadtrum
-  driver.
-
-- Wakeup support for PCA953x.
-
-- A slew of cleanups in the various Intel drivers.
-
-----------------------------------------------------------------
-Andrew Lunn (1):
-      gpio: tqmx86: Add GPIO from for this IO controller
-
-Andy Shevchenko (11):
-      gpiolib: acpi: Correct kernel doc of struct acpi_gpio_event
-      gpio: crystalcove: Use for_each_set_bit() in IRQ handler
-      gpio: wcove: Allow return negative error code from to_reg()
-      gpio: msic: Remove duplicate check in IRQ handler
-      gpio: crystalcove: Sort headers alphabetically
-      gpio: msic: Sort headers alphabetically
-      gpio: wcove: Sort headers alphabetically
-      gpio: wcove: Fix indentation
-      gpio: crystalcove: Convert to use SPDX identifier
-      gpio: msic: Convert to use SPDX identifier
-      gpio: wcove: Convert to use SPDX identifier
-
-Anson Huang (1):
-      gpio: mxc: add check to return defer probe if clock tree NOT ready
-
-Axel Lin (3):
-      gpio: sama5d2-piobu: Set proper output level for direction_output
-      gpio: altera-a10sr: Trivial coding style fix
-      gpio: tqmx86: Set proper output level for direction_output
-
-Baolin Wang (3):
-      gpio: sprd: Remove unused irq trigger setting
-      gpio: sprd: Use SoC compatible string instead of wildcard string
-      gpio: sprd: Change to use SoC compatible string
-
-Bartosz Golaszewski (10):
-      irq/irq_sim: add irq_set_type() callback
-      gpio: mockup: add locking
-      gpio: mockup: implement get_multiple()
-      gpio: mockup: don't create the debugfs link named after the label
-      gpio: mockup: change the type of 'offset' to unsigned int
-      gpio: mockup: change the signature of unlocked get/set helpers
-      gpio: mockup: rework debugfs interface
-      drivers: provide devm_platform_ioremap_resource()
-      gpio: davinci: use devm_platform_ioremap_resource()
-      drivers: depend on HAS_IOMEM for devm_platform_ioremap_resource()
-
-Baruch Siach (1):
-      gpio: mvebu: implement get_direction
-
-Bjorn Andersson (1):
-      qcom: spmi-gpio: Fix boundary conditions IRQ domain translate
-
-Brian Masney (30):
-      dt-bindings: pinctrl: qcom-pmic-gpio: add qcom,pmi8998-gpio binding
-      pinctrl: qcom: spmi-gpio: add support for three new variants
-      pinctrl: qcom: spmi-gpio: hardcode IRQ counts
-      spmi: pmic-arb: convert to v2 irq interfaces to support
-hierarchical IRQ chips
-      gpio: add irq domain activate/deactivate functions
-      spmi: pmic-arb: disassociate old virq if hwirq mapping already exists
-      qcom: spmi-gpio: add support for hierarchical IRQ chip
-      ARM: dts: qcom: pm8941: add interrupt controller properties
-      ARM: dts: qcom: pma8084: add interrupt controller properties
-      arm64: dts: qcom: pm8005: add interrupt controller properties
-      arm64: dts: qcom: pm8998: add interrupt controller properties
-      arm64: dts: qcom: pmi8994: add interrupt controller properties
-      arm64: dts: qcom: pmi8998: add interrupt controller properties
-      spmi: pmic-arb: validate type when mapping IRQ
-      spmi: pmic-arb: revert "disassociate old virq if hwirq mapping
-already exists"
-      genirq: export irq_chip_set_wake_parent symbol
-      pinctrl: qcom: spmi-gpio: select IRQ_DOMAIN_HIERARCHY in Kconfig
-      spmi: pmic-arb: revert "validate type when mapping IRQ"
-      pinctrl: qcom: ssbi-gpio: hardcode IRQ counts
-      genirq: introduce irq_domain_translate_twocell
-      mfd: pm8xxx: convert to v2 irq interfaces to support
-hierarchical IRQ chips
-      mfd: pm8xxx: disassociate old virq if hwirq mapping already exists
-      qcom: ssbi-gpio: add support for hierarchical IRQ chip
-      arm: dts: qcom: apq8064: add interrupt controller properties
-      arm: dts: qcom: msm8660: add interrupt controller properties
-      arm: dts: qcom: mdm9615: add interrupt controller properties
-      mfd: pm8xxx: revert "disassociate old virq if hwirq mapping
-already exists"
-      spmi: pmic-arb: select IRQ_DOMAIN_HIERARCHY in Kconfig
-      mfd: pm8xxx: select IRQ_DOMAIN_HIERARCHY in Kconfig
-      qcom: ssbi-gpio: correct boundary conditions in pm8xxx_domain_transla=
-te
-
-Charles Keepax (1):
-      gpio: madera: Add missing const
-
-Enrico Weigelt, metux IT consult (2):
-      gpio: AMD G-Series PCH gpio driver
-      x86: pcengines apuv2 gpio/leds/keys platform driver
-
-Geert Uytterhoeven (2):
-      gpio: pcf857x: Simpify wake-up handling
-      gpio: pca953x: Add wake-up support
-
-Gustavo A. R. Silva (1):
-      gpio: sprd: Add missing break in switch statement
-
-Hans de Goede (1):
-      gpiolib-acpi: Preserve non direction flags when updating gpiod_flags
-
-Jonathan Neusch=C3=A4fer (2):
-      gpio: hlwd: Add basic IRQ support
-      gpio: hlwd: Implement edge trigger emulation
-
-Linus Walleij (16):
-      Merge branch 'ib-qcom-spmi' into devel
-      dt-bindings: Add a prefix for Gateworks Corporation
-      gpio: Add DT bindings for Gateworks PLD GPIO
-      gpio: Add a Gateworks PLD GPIO driver
-      genirq: introduce irq_chip_mask_ack_parent()
-      ARM: dts: qcom-apq8060: Fix up interrupt parents
-      Merge branch 'ib-pca953x-config' into devel
-      Merge tag 'gpio-v5.1-updates-for-linus' of
-git://git.kernel.org/.../brgl/linux into devel
-      Merge tag 'intel-gpio-v5.1-1' of
-git://git.kernel.org/.../andy/linux-gpio-intel into devel
-      gpio: tegra: Fix offset of pinctrl calls
-      Merge tag 'gpio-v5.1-updates-for-linus-part-2' of
-git://git.kernel.org/.../brgl/linux into devel
-      Merge branch 'ib-qcom-ssbi' into devel
-      gpio: ixp4xx: Add DT bindings
-      gpio: ftgpio: Register per-instance irqchip
-      gpio: amd-fch: Drop const from resource
-      gpio: amd-fch: Fix type error found by sparse
-
-Marek Vasut (2):
-      gpio: of: Apply regulator-gpio quirk only to enable-gpios
-      gpio: of: Handle both enable-gpio{,s}
-
-Mark Walton (1):
-      gpio: pca953x: Fix dereference of irq data in shutdown
-
-Nikolaus Voss (2):
-      gpio: adp5588: Add device tree support
-      gpio: adp5588.c: Switch to events system
-
-Phil Reid (1):
-      gpio: altera: Fixup block comment style
-
-Randy Dunlap (1):
-      Documenation: driver-api: fix gpio/board.rst warning
-
-Souptick Joarder (1):
-      arm/mach-sa1100/simpad.c: Remove duplicate header
-
-Steffen Kothe (1):
-      gpio-f7188x: add support Fintek F81804 & F81966
-
-Thierry Reding (2):
-      gpio: tegra186: Use TEGRA186_ prefix for GPIO names
-      gpio: of: Restrict enable-gpio quirk to regulator-gpio
-
-Thomas Petazzoni (10):
-      gpio: pca953x: reduce indentation level in pca953x_irq_setup()
-      gpio: pca953x: use a per instance irq_chip structure
-      dt-bindings: gpio: document the new pull-up/pull-down flags
-      gpio: rename gpio_set_drive_single_ended() to gpio_set_config()
-      gpio: use new gpio_set_config() helper in more places
-      gpio: add core support for pull-up/pull-down configuration
-      gpio: pca953x: add ->set_config implementation
-      gpio: zynq: properly support runtime PM for GPIO used as interrupts
-      dt-bindings: gpio: pca953x: document the nxp,pcal6416
-      gpio: pca953x: add support for pcal6416 type
-
-Uwe Kleine-K=C3=B6nig (1):
-      Documentation: gpio: legacy: Don't use POLLERR for poll(2)
-
-Vladimir Zapolskiy (1):
-      gpio: rcar: select General Output Register to set output states
-
-Wei Yongjun (1):
-      gpio: tqmx86: Drop unnecessary gpiochip_remove in tqmx86_gpio_probe()
-
-Wolfram Sang (1):
-      Documentation: gpio: driver: fix wire name for I2C
-
- .../bindings/gpio/gateworks,pld-gpio.txt           |  20 ++
- .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   4 +-
- .../devicetree/bindings/gpio/gpio-pca953x.txt      |   1 +
- Documentation/devicetree/bindings/gpio/gpio.txt    |  12 +
- .../devicetree/bindings/gpio/intel,ixp4xx-gpio.txt |  38 +++
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |   1 +
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- Documentation/driver-api/gpio/board.rst            |   1 +
- Documentation/driver-api/gpio/driver.rst           |   2 +-
- Documentation/driver-api/gpio/legacy.rst           |   9 +-
- MAINTAINERS                                        |  12 +
- arch/arm/boot/dts/qcom-apq8060-dragonboard.dts     |  21 +-
- arch/arm/boot/dts/qcom-apq8064.dtsi                |  46 +--
- arch/arm/boot/dts/qcom-mdm9615.dtsi                |   9 +-
- arch/arm/boot/dts/qcom-msm8660.dtsi                |  47 +--
- arch/arm/boot/dts/qcom-pm8941.dtsi                 |  38 +--
- arch/arm/boot/dts/qcom-pma8084.dtsi                |  24 +-
- arch/arm/mach-sa1100/simpad.c                      |   1 -
- arch/arm64/boot/dts/qcom/pm8005.dtsi               |   6 +-
- arch/arm64/boot/dts/qcom/pm8998.dtsi               |  28 +-
- arch/arm64/boot/dts/qcom/pmi8994.dtsi              |  12 +-
- arch/arm64/boot/dts/qcom/pmi8998.dtsi              |  16 +-
- drivers/base/platform.c                            |  20 ++
- drivers/gpio/Kconfig                               |  24 ++
- drivers/gpio/Makefile                              |   3 +
- drivers/gpio/gpio-adp5588.c                        | 234 ++++++---------
- drivers/gpio/gpio-altera-a10sr.c                   |  17 +-
- drivers/gpio/gpio-altera.c                         |   4 +-
- drivers/gpio/gpio-amd-fch.c                        | 185 ++++++++++++
- drivers/gpio/gpio-crystalcove.c                    |  30 +-
- drivers/gpio/gpio-davinci.c                        |   4 +-
- drivers/gpio/gpio-eic-sprd.c                       |   1 +
- drivers/gpio/gpio-f7188x.c                         |  24 +-
- drivers/gpio/gpio-ftgpio010.c                      |  20 +-
- drivers/gpio/gpio-gw-pld.c                         | 137 +++++++++
- drivers/gpio/gpio-hlwd.c                           | 192 +++++++++++-
- drivers/gpio/gpio-madera.c                         |   2 +-
- drivers/gpio/gpio-mockup.c                         | 189 ++++++++++--
- drivers/gpio/gpio-msic.c                           |  34 +--
- drivers/gpio/gpio-mvebu.c                          |  11 +
- drivers/gpio/gpio-mxc.c                            |   5 +-
- drivers/gpio/gpio-pca953x.c                        | 182 +++++++----
- drivers/gpio/gpio-pcf857x.c                        |  15 +-
- drivers/gpio/gpio-pmic-eic-sprd.c                  |   3 +-
- drivers/gpio/gpio-rcar.c                           |  12 +-
- drivers/gpio/gpio-sama5d2-piobu.c                  |  20 +-
- drivers/gpio/gpio-tegra.c                          |  25 +-
- drivers/gpio/gpio-tegra186.c                       |  70 ++---
- drivers/gpio/gpio-tqmx86.c                         | 332 +++++++++++++++++=
-++++
- drivers/gpio/gpio-wcove.c                          |  29 +-
- drivers/gpio/gpio-zynq.c                           |  24 ++
- drivers/gpio/gpiolib-acpi.c                        |   7 +-
- drivers/gpio/gpiolib-of.c                          |   9 +-
- drivers/gpio/gpiolib.c                             |  87 +++++-
- drivers/gpio/gpiolib.h                             |   2 +
- drivers/mfd/Kconfig                                |   2 +-
- drivers/mfd/qcom-pm8xxx.c                          |  75 ++---
- drivers/pinctrl/qcom/Kconfig                       |   2 +
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 141 +++++++--
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           | 157 ++++++++--
- drivers/platform/x86/Kconfig                       |  12 +
- drivers/platform/x86/Makefile                      |   1 +
- drivers/platform/x86/pcengines-apuv2.c             | 261 ++++++++++++++++
- drivers/spmi/Kconfig                               |   2 +-
- drivers/spmi/spmi-pmic-arb.c                       |  67 +++--
- include/dt-bindings/gpio/gpio.h                    |   6 +
- include/linux/gpio/driver.h                        |   5 +
- include/linux/gpio/machine.h                       |   2 +
- include/linux/irq.h                                |   1 +
- include/linux/irqdomain.h                          |   5 +
- include/linux/of_gpio.h                            |   2 +
- include/linux/platform_data/gpio/gpio-amd-fch.h    |  46 +++
- include/linux/platform_device.h                    |   3 +
- kernel/irq/chip.c                                  |  12 +
- kernel/irq/irq_sim.c                               |  12 +
- kernel/irq/irqdomain.c                             |  45 ++-
- 76 files changed, 2416 insertions(+), 745 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/gpio/gateworks,pld-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/intel,ixp4xx-gpi=
-o.txt
- create mode 100644 drivers/gpio/gpio-amd-fch.c
- create mode 100644 drivers/gpio/gpio-gw-pld.c
- create mode 100644 drivers/gpio/gpio-tqmx86.c
- create mode 100644 drivers/platform/x86/pcengines-apuv2.c
- create mode 100644 include/linux/platform_data/gpio/gpio-amd-fch.h
+     Arnd
