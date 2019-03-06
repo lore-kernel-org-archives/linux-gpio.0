@@ -1,34 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/3] x86: apuv2: fix input dependencies
-Date: Tue, 5 Mar 2019 17:46:17 +0100
-Message-ID: <CAK8P3a1-AYWtNEqwb4ZMpXKDwGB_ZGLj==uBakh0+L=5g=BQQw@mail.gmail.com>
-References: <20190304201930.1622839-1-arnd@arndb.de> <20190304201930.1622839-2-arnd@arndb.de>
- <a94c3c6a-481e-96a5-74e1-8c3299c74129@metux.net> <CAK8P3a0vdhCTNTF-K0mXjRWkPvv0qr3nf_52=8n6zTa7p3ELLw@mail.gmail.com>
- <54a7d035-155f-c47b-1db1-acb851b3aec6@metux.net>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH 0/8] qcom: spmi/ssbi gpio: correct gpio hogging
+Date: Tue,  5 Mar 2019 19:53:08 -0500
+Message-ID: <20190306005316.12232-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54a7d035-155f-c47b-1db1-acb851b3aec6@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linus Walleij <linusw@kernel.org>, Enrico Weigelt <info@metux.net>, Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+To: andy.gross@linaro.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 2:50 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
->
-> On 05.03.19 09:23, Arnd Bergmann wrote:
->
-> hmm, if circular deps happen, wouldn't that mean we've got some deeper
-> problems in here ? IMHO, dependencies should always form a DAG (except
-> for some really rare cases).
->
-> Do you recall any actual problem w/ input vs gpio vs. drivers ?
-> I'd like to have a closer look at it.
+Here are some patches that fix gpio hogging for all boards that use
+spmi-gpio and ssbi-gpio. These depend on the following two patches
+that were merged in 4.20-rc1:
 
-Not with gpio. Most of the circular dependencies I've seen tend to
-revolve around drivers/gpu/drm, which uses more 'select' statements
-than most other subsystems. Those dependencies often touch
-backlight, acpi, fbdev and other things then.
+commit 149a96047237 ("pinctrl: qcom: spmi-gpio: fix gpio-hog related
+boot issues")
 
-       Arnd
+commit 7ed078557738 ("pinctrl: qcom: ssbi-gpio: fix gpio-hog related
+boot issues")
+
+I've already fixed pm8941 for the Nexus 5 and that fix is queued to go
+into v5.1 during this merge window:
+
+https://lore.kernel.org/lkml/20181101001149.13453-7-masneyb@onstation.org/
+
+Andy: You may want to consider submitting these post rc1 as a fix for
+v5.1 and possibly marking these for stable.
+
+Brian Masney (8):
+  ARM: dts: qcom: apq8064: add gpio-ranges
+  ARM: dts: qcom: mdm9615: add gpio-ranges
+  ARM: dts: qcom: msm8660: add gpio-ranges
+  ARM: dts: qcom: pma8084: add gpio-ranges
+  arm64: dts: qcom: pm8005: add gpio-ranges
+  arm64: dts: qcom: pm8998: add gpio-ranges
+  arm64: dts: qcom: pmi8994: add gpio-ranges
+  arm64: dts: qcom: pmi8998: add gpio-ranges
+
+ arch/arm/boot/dts/qcom-apq8064.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-mdm9615.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-msm8660.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-pma8084.dtsi   | 1 +
+ arch/arm64/boot/dts/qcom/pm8005.dtsi  | 1 +
+ arch/arm64/boot/dts/qcom/pm8998.dtsi  | 1 +
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 1 +
+ arch/arm64/boot/dts/qcom/pmi8998.dtsi | 1 +
+ 8 files changed, 8 insertions(+)
+
+-- 
+2.20.1
