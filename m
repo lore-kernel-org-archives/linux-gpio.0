@@ -1,40 +1,26 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH 2/8] ARM: dts: qcom: mdm9615: add gpio-ranges
-Date: Tue,  5 Mar 2019 19:53:10 -0500
-Message-ID: <20190306005316.12232-3-masneyb@onstation.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/8] qcom: spmi/ssbi gpio: correct gpio hogging
+Date: Wed, 6 Mar 2019 08:14:16 +0100
+Message-ID: <CACRpkdbTLazcBUpw+g3imFuhS+pxB-WRNhvNn-_isscVS7_7bg@mail.gmail.com>
 References: <20190306005316.12232-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190306005316.12232-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: andy.gross@linaro.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This adds the gpio-ranges property so that the GPIO pins are initialized
-by the GPIO framework and not pinctrl. This fixes a circular dependency
-between these two frameworks so GPIO hogging can be used on this board.
+On Wed, Mar 6, 2019 at 1:53 AM Brian Masney <masneyb@onstation.org> wrote:
 
-This was not tested on this particular hardware, however this same
-change was tested on qcom-pm8941 using a LG Nexus 5 (hammerhead) phone.
+> Here are some patches that fix gpio hogging for all boards that use
+> spmi-gpio and ssbi-gpio.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
- arch/arm/boot/dts/qcom-mdm9615.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+This series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-index 02afc6a42005..356e9535f7a6 100644
---- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
-+++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-@@ -326,6 +326,7 @@
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
- 					gpio-controller;
-+					gpio-ranges = <&pmicgpio 0 0 6>;
- 					#gpio-cells = <2>;
- 				};
- 			};
--- 
-2.20.1
+Thanks for your perseverance!
+
+Yours,
+Linus Walleij
