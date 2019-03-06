@@ -1,56 +1,89 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH] Document: dt: binding: imx: Fix PAD_CTL_DSE_X*
-Date: Wed, 6 Mar 2019 13:36:42 +0000
-Message-ID: <AM0PR04MB42118ED0DB09896BB860AF7C80730@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190222170038.9669-1-cquast@hanoverdisplays.com>
- <VI1PR04MB42227AA158BA1FCBF314AA27807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
- <db6c2755e80e41f7c169406c213a40e8@agner.ch>
- <AM0PR04MB4211737BF7A85E15090636BD80720@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <VI1PR04MB504036C9FA56673680279BB190730@VI1PR04MB5040.eurprd04.prod.outlook.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: gpio-omap: fix level interrupt idling
+Date: Wed, 6 Mar 2019 17:26:01 +0200
+Message-ID: <67b445e2-bfbe-f3be-15e2-b47bbb6cf4e7@ti.com>
+References: <20190301190252.20615-1-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR04MB504036C9FA56673680279BB190730@VI1PR04MB5040.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190301190252.20615-1-tony@atomide.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: BOUGH CHEN <haibo.chen@nxp.com>, Stefan Agner <stefan@agner.ch>
-Cc: Christina Quast <cquast@hanoverdisplays.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-[...]
 
-> > > Btw, I saw that imx7d-sdb.dts (and probably other i.MX 7 boards too)
-> > > use three different settings for usdhc pinctrl: 0x59, 0x5a and 0x5b
-> > > (for default, 100MHz and 200MHz respectively). One would expect that
-> > > higher frequency use higher driver strength (and this is the case for=
- i.MX 6).
-> > > But with this new/corrected pad values this means we use x4, x2 and
-> > > x6 for default, 100MHz and 200MHz respectively. This hardly seems rig=
-ht..?
-> > > Probably needs fixing too?
-> > >
-> >
-> > Yes, that's true.
-> > Especially 100Mhz setting should be updated.
-> >
-> > Haibo,
-> > Can you please help double check if X2 for 50Mhz and X4 for 100Mhz can
-> > work stably on MX7D SDB?
-> > If yes, we'd like to update the pad setting according to new RM version=
-.
-> >
->=20
-> X2 for high speed and x4 for ddr50/ddr52 can work stable on MX7D SDB.
-> I think all the 7D related dts need to fix this. Not sure whether 7S need=
- this fix,
-> can you confirm?
->=20
 
-Yes, please make a patch to test board maintainer.
+On 01.03.19 21:02, Tony Lindgren wrote:
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+> 
+> Tony notes that the GPIO module does not idle when level interrupts are
+> in use, as the wakeup appears to get stuck.
+> 
+> After extensive investigation, it appears that the wakeup will only be
+> cleared if the interrupt status register is cleared while the interrupt
+> is enabled. However, we are currently clearing it with the interrupt
+> disabled for level-based interrupts.
+> 
+> It is acknowledged that this observed behaviour conflicts with a
+> statement in the TRM:
+> 
+> CAUTION
+>   After servicing the interrupt, the status bit in the interrupt status
+>   register (GPIOi.GPIO_IRQSTATUS_0 or GPIOi.GPIO_IRQSTATUS_1) must be
+>   reset and the interrupt line released (by setting the corresponding
+>   bit of the interrupt status register to 1) before enabling an
+>   interrupt for the GPIO channel in the interrupt-enable register
+>   (GPIOi.GPIO_IRQSTATUS_SET_0 or GPIOi.GPIO_IRQSTATUS_SET_1) to prevent
+>   the occurrence of unexpected interrupts when enabling an interrupt
+>   for the GPIO channel.
+> 
+> However, this does not appear to be a practical problem.
+> 
+> Further, as reported by Grygorii Strashko <grygorii.strashko@ti.com>,
+> the TI Android kernel tree has an earlier similar patch as "GPIO: OMAP:
+> Fix the sequence to clear the IRQ status" saying:
+> 
+>  if the status is cleared after disabling the IRQ then sWAKEUP will not
+>  be cleared and gates the module transition
+> 
+> When we unmask the level interrupt after the interrupt has been handled,
+> enable the interrupt and only then clear the interrupt. If the interrupt
+> is still pending, the hardware will re-assert the interrupt status.
+> 
+> Should the caution note in the TRM prove to be a problem, we could
+> use a clear-enable-clear sequence instead.
+> 
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> [tony@atomide.com: updated comments based on an earlier TI patch]
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> 
+> Obviously no rush to get this into v5.0-rc cycle, but this should be
+> tagged with Cc stable after people have reviewed and tested this.
+> 
+> ---
+>  drivers/gpio/gpio-omap.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
 
-Regards
-Dong Aisheng
+Thank you.
+Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-> Best Regards
-> Haibo Chen
+-- 
+Best regards,
+grygorii
