@@ -1,65 +1,98 @@
-From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v4 armsoc/drivers/bus+gpio 5/5] dt-bindings: gpio: Document GPIOs via Moxtet bus
-Date: Thu,  7 Mar 2019 13:52:51 +0100
-Message-ID: <20190307125251.724-6-marek.behun@nic.cz>
-References: <20190307125251.724-1-marek.behun@nic.cz>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: dts: bitmain: Add GPIO support for BM1880 SoC
+Date: Thu, 7 Mar 2019 22:54:26 +0530
+Message-ID: <20190307172426.GA9268@Mani-XPS-13-9360>
+References: <20190226115022.19022-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190307125251.724-1-marek.behun@nic.cz>
+Content-Disposition: inline
+In-Reply-To: <20190226115022.19022-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, haitao.suo@bitmain.com, darren.tsao@bitmain.com, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds documentation of the device tree bindings for GPIOs
-on the devices connected via Moxtet bus.
+On Tue, Feb 26, 2019 at 05:20:21PM +0530, Manivannan Sadhasivam wrote:
+> Add GPIO support for Bitmain BM1880 SoC based on Designware APB GPIO
+> controller IP. IP exposes 3 GPIO controllers with a total of 72 pins.
+> 
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
----
- .../devicetree/bindings/gpio/gpio-moxtet.txt   | 18 ++++++++++++++++++
- MAINTAINERS                                    |  1 +
- 2 files changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+Applied for v5.2 with Linus's Reviewed-by tag.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
-new file mode 100644
-index 000000000000..410759de9f09
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
-@@ -0,0 +1,18 @@
-+Turris Mox Moxtet GPIO expander via Moxtet bus
-+
-+Required properties:
-+ - compatible		: Should be "cznic,moxtet-gpio".
-+ - gpio-controller	: Marks the device node as a GPIO controller.
-+ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
-+
-+Other properties are required for a Moxtet bus device, please refer to
-+Documentation/devicetree/bindings/bus/moxtet.txt.
-+
-+Example:
-+
-+	moxtet_sfp: gpio@0 {
-+		compatible = "cznic,moxtet-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0>;
-+	}
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6af384154ce5..ccb979f64431 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1505,6 +1505,7 @@ S:	Maintained
- F:	Documentation/ABI/testing/debugfs-moxtet
- F:	Documentation/ABI/testing/sysfs-bus-moxtet-devices
- F:	Documentation/devicetree/bindings/bus/moxtet.txt
-+F:	Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
- F:	include/linux/moxtet.h
- F:	drivers/bus/moxtet.c
- F:	drivers/gpio/gpio-moxtet.c
--- 
-2.19.2
+Thanks,
+Mani
+
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/bitmain/bm1880.dtsi | 54 +++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/bitmain/bm1880.dtsi b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+> index 55a4769e0de2..e4da4ec6a5ee 100644
+> --- a/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+> +++ b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
+> @@ -80,6 +80,60 @@
+>  			#interrupt-cells = <3>;
+>  		};
+>  
+> +		gpio0: gpio@50027000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "snps,dw-apb-gpio";
+> +			reg = <0x0 0x50027000 0x0 0x400>;
+> +
+> +			porta: gpio-controller@0 {
+> +				compatible = "snps,dw-apb-gpio-port";
+> +				gpio-controller;
+> +				#gpio-cells = <2>;
+> +				snps,nr-gpios = <32>;
+> +				reg = <0>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +		};
+> +
+> +		gpio1: gpio@50027400 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "snps,dw-apb-gpio";
+> +			reg = <0x0 0x50027400 0x0 0x400>;
+> +
+> +			portb: gpio-controller@0 {
+> +				compatible = "snps,dw-apb-gpio-port";
+> +				gpio-controller;
+> +				#gpio-cells = <2>;
+> +				snps,nr-gpios = <32>;
+> +				reg = <0>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +		};
+> +
+> +		gpio2: gpio@50027800 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "snps,dw-apb-gpio";
+> +			reg = <0x0 0x50027800 0x0 0x400>;
+> +
+> +			portc: gpio-controller@0 {
+> +				compatible = "snps,dw-apb-gpio-port";
+> +				gpio-controller;
+> +				#gpio-cells = <2>;
+> +				snps,nr-gpios = <8>;
+> +				reg = <0>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +		};
+> +
+>  		uart0: serial@58018000 {
+>  			compatible = "snps,dw-apb-uart";
+>  			reg = <0x0 0x58018000 0x0 0x2000>;
+> -- 
+> 2.17.1
+> 
