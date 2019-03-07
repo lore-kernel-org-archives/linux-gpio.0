@@ -1,55 +1,73 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH 2/3] x86: apuv2: fix input dependencies
-Date: Thu, 7 Mar 2019 01:10:13 +0100
-Message-ID: <82c978b2-e9c4-e178-e4b7-621729c2cee4@metux.net>
-References: <20190304201930.1622839-1-arnd@arndb.de>
- <20190304201930.1622839-2-arnd@arndb.de>
- <a94c3c6a-481e-96a5-74e1-8c3299c74129@metux.net>
- <CAK8P3a0vdhCTNTF-K0mXjRWkPvv0qr3nf_52=8n6zTa7p3ELLw@mail.gmail.com>
- <54a7d035-155f-c47b-1db1-acb851b3aec6@metux.net>
- <CAHp75Vcd0eNCBtxb1huMBGFF9JXmropHv2YA1eh-yK3iMFfuFQ@mail.gmail.com>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH 1/1] pinctrl: imx: fix scu link errors
+Date: Thu, 7 Mar 2019 03:05:30 +0000
+Message-ID: <1551927501-14527-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vcd0eNCBtxb1huMBGFF9JXmropHv2YA1eh-yK3iMFfuFQ@mail.gmail.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linus Walleij <linusw@kernel.org>, Enrico Weigelt <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kbuild@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Aisheng Dong <aisheng.dong@nxp.com>, Anders Roxell <anders.roxell@linaro.org>, "dongas86@gmail.com" <dongas86@gmail.com>, "arnd@arndb.de" <arnd@arndb.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05.03.19 14:56, Andy Shevchenko wrote:
-> 
-> Darren gave a talk about merging kernel configs to get something like
-> you want to.
-> This tool is quite long already lying around. merge_config.sh in your
-> kernel source tree.
+From: Anders Roxell <anders.roxell@linaro.org>
 
-Yes, that's similar to how some distros (eg. yocto) do it.
+Currently PINCTRL_IMX8QM and PINCTRL_IMX8QXP will select PINCTRL_IMX_SCU.
+However, PINCTRL_IMX_SCU may not be valid due to it depends on IMX_MBOX.
+Then we may meet the following link errors:
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_ipc_init':
+pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
+ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_get_handle'
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get_scu':
+pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
+ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set_scu':
+pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
+ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function `imx8qxp_pinctrl_probe':
+pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe'
+ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
 
-But my requirements are a bit more complex:
+Rework so that PINCTRL_IMX8QM and PINCTRL_IMX8QXP depends on IMX_SCU
+as well in case they're wrongly enabled.
 
-In my final meta-config, I just wanna say:
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/pinctrl/freescale/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-* i have board A (possibly multiple boards)
-* i need features X, Y, Z (eg. eth, display, can, ext4, acl, ...)
-
-And that shall be all to generate a minimal config for exactly those
-requirements.
-
-Doing that by just putting config snippets together, quickly turns into
-a maintenance hell. At least you'd need recursive dependencies and some
-if/else logic.
-
-That's why I've written kmct:
-
-https://github.com/metux/kmct
-
-
---mtx
-
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index e6dff31..0d83878 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -138,14 +138,14 @@ config PINCTRL_IMX8MQ
+ 
+ config PINCTRL_IMX8QM
+ 	bool "IMX8QM pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on IMX_SCU && ARCH_MXC && ARM64
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qm pinctrl driver
+ 
+ config PINCTRL_IMX8QXP
+ 	bool "IMX8QXP pinctrl driver"
+-	depends on ARCH_MXC && ARM64
++	depends on IMX_SCU && ARCH_MXC && ARM64
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qxp pinctrl driver
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.7.4
