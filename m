@@ -1,168 +1,50 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 2/2] arm64: dts: bitmain: Add GPIO Line names for Sophon
- Edge board
-Date: Thu, 7 Mar 2019 22:55:01 +0530
-Message-ID: <20190307172501.GB9268@Mani-XPS-13-9360>
-References: <20190226115022.19022-1-manivannan.sadhasivam@linaro.org>
- <20190226115022.19022-2-manivannan.sadhasivam@linaro.org>
+From: Adam Ford <aford173@gmail.com>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+Date: Thu, 7 Mar 2019 14:13:29 -0600
+Message-ID: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com> <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+ <20180430092947.GC2270@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190226115022.19022-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180430092947.GC2270@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, haitao.suo@bitmain.com, darren.tsao@bitmain.com, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 05:20:22PM +0530, Manivannan Sadhasivam wrote:
-> Add GPIO line names for Sophon Edge board based on BM1880 SoC from
-> Bitmain. Line names are based on the board schematics as well as the
-> 96Boards Consumer Edition specification v1.0.
-> 
+On Mon, Apr 30, 2018 at 4:30 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
+> > On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+> > <grygorii.strashko@ti.com> wrote:
+> > > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
+> > >>
+> > >> We should get drvdata from struct device directly. Going via
+> > >> platform_device is an unneeded step back and forth.
+> > >>
+> > >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > >> ---
+> > >>
+> > >> Build tested only. buildbot is happy. Please apply individually.
+> > >
+> > >
+> > > for gpio-omap.c:
+> > > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> >
+> > Hm I only see the responses not the actual patch, I guess I will find it
+> > sooner or later.
+> >
+> > Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
+>
+> I had the same problem, turned out this got classified as spam by Google
+> for some reason. Maybe try your spam folder?
 
-Applied for v5.2 with Linus's Reviewed-by tag.
+It's been almost a year later, and several Linux revisions, and this
+still seems stuck somewhere/somehow.
 
-Thanks,
-Mani
-
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../boot/dts/bitmain/bm1880-sophon-edge.dts   | 114 ++++++++++++++++++
->  1 file changed, 114 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/bitmain/bm1880-sophon-edge.dts b/arch/arm64/boot/dts/bitmain/bm1880-sophon-edge.dts
-> index 6a3255597138..6bdf4c101c61 100644
-> --- a/arch/arm64/boot/dts/bitmain/bm1880-sophon-edge.dts
-> +++ b/arch/arm64/boot/dts/bitmain/bm1880-sophon-edge.dts
-> @@ -8,6 +8,28 @@
->  
->  #include "bm1880.dtsi"
->  
-> +/*
-> + * GPIO name legend: proper name = the GPIO line is used as GPIO
-> + *         NC = not connected (pin out but not routed from the chip to
-> + *              anything the board)
-> + *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-> + *         LSEC = Low Speed External Connector
-> + *         HSEC = High Speed External Connector
-> + *
-> + * Line names are taken from the schematic "sophon-edge-schematics"
-> + * version, 1.0210.
-> + *
-> + * For the lines routed to the external connectors the
-> + * lines are named after the 96Boards CE Specification 1.0,
-> + * Appendix "Expansion Connector Signal Description".
-> + *
-> + * When the 96Board naming of a line and the schematic name of
-> + * the same line are in conflict, the 96Board specification
-> + * takes precedence. This is only for the informational
-> + * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
-> + * are the only ones actually used for GPIO.
-> + */
-> +
->  / {
->  	compatible = "bitmain,sophon-edge", "bitmain,bm1880";
->  	model = "Sophon Edge";
-> @@ -32,6 +54,98 @@
->  		clock-frequency = <500000000>;
->  		#clock-cells = <0>;
->  	};
-> +
-> +	soc {
-> +		gpio0: gpio@50027000 {
-> +			porta: gpio-controller@0 {
-> +				gpio-line-names =
-> +					"GPIO-A", /* GPIO0, LSEC pin 23 */
-> +					"GPIO-C", /* GPIO1, LSEC pin 25 */
-> +					"[GPIO2_PHY0_RST]", /* GPIO2 */
-> +					"GPIO-E", /* GPIO3, LSEC pin 27 */
-> +					"[USB_DET]", /* GPIO4 */
-> +					"[EN_P5V]", /* GPIO5 */
-> +					"[VDDIO_MS1_SEL]", /* GPIO6 */
-> +					"GPIO-G", /* GPIO7, LSEC pin 29 */
-> +					"[BM_TUSB_RST_L]", /* GPIO8 */
-> +					"[EN_P5V_USBHUB]", /* GPIO9 */
-> +					"NC",
-> +					"LED_WIFI", /* GPIO11 */
-> +					"LED_BT", /* GPIO12 */
-> +					"[BM_BLM8221_EN_L]", /* GPIO13 */
-> +					"NC", /* GPIO14 */
-> +					"NC", /* GPIO15 */
-> +					"NC", /* GPIO16 */
-> +					"NC", /* GPIO17 */
-> +					"NC", /* GPIO18 */
-> +					"NC", /* GPIO19 */
-> +					"NC", /* GPIO20 */
-> +					"NC", /* GPIO21 */
-> +					"NC", /* GPIO22 */
-> +					"NC", /* GPIO23 */
-> +					"NC", /* GPIO24 */
-> +					"NC", /* GPIO25 */
-> +					"NC", /* GPIO26 */
-> +					"NC", /* GPIO27 */
-> +					"NC", /* GPIO28 */
-> +					"NC", /* GPIO29 */
-> +					"NC", /* GPIO30 */
-> +					"NC"; /* GPIO31 */
-> +			};
-> +		};
-> +
-> +		gpio1: gpio@50027400 {
-> +			portb: gpio-controller@0 {
-> +				gpio-line-names =
-> +					"NC", /* GPIO32 */
-> +					"NC", /* GPIO33 */
-> +					"[I2C0_SDA]", /* GPIO34, LSEC pin 17 */
-> +					"[I2C0_SCL]", /* GPIO35, LSEC pin 15 */
-> +					"[JTAG0_TDO]", /* GPIO36 */
-> +					"[JTAG0_TCK]", /* GPIO37 */
-> +					"[JTAG0_TDI]", /* GPIO38 */
-> +					"[JTAG0_TMS]", /* GPIO39 */
-> +					"[JTAG0_TRST_X]", /* GPIO40 */
-> +					"[JTAG1_TDO]", /* GPIO41 */
-> +					"[JTAG1_TCK]", /* GPIO42 */
-> +					"[JTAG1_TDI]", /* GPIO43 */
-> +					"[CPU_TX]", /* GPIO44 */
-> +					"[CPU_RX]", /* GPIO45 */
-> +					"[UART1_TXD]", /* GPIO46 */
-> +					"[UART1_RXD]", /* GPIO47 */
-> +					"[UART0_TXD]", /* GPIO48 */
-> +					"[UART0_RXD]", /* GPIO49 */
-> +					"GPIO-I", /* GPIO50, LSEC pin 31 */
-> +					"GPIO-K", /* GPIO51, LSEC pin 33 */
-> +					"USER_LED2", /* GPIO52 */
-> +					"USER_LED1", /* GPIO53 */
-> +					"[UART0_RTS]", /* GPIO54 */
-> +					"[UART0_CTS]", /* GPIO55 */
-> +					"USER_LED4", /* GPIO56, JTAG1_TRST_X */
-> +					"USER_LED3", /* GPIO57, JTAG1_TMS */
-> +					"[I2S0_SCLK]", /* GPIO58 */
-> +					"[I2S0_FS]", /* GPIO59 */
-> +					"[I2S0_SDI]", /* GPIO60 */
-> +					"[I2S0_SDO]", /* GPIO61 */
-> +					"GPIO-B", /* GPIO62, LSEC pin 24 */
-> +					"GPIO-F"; /* GPIO63, I2S1_SCLK, LSEC pin 28 */
-> +			};
-> +		};
-> +
-> +		gpio2: gpio@50027800 {
-> +			portc: gpio-controller@0 {
-> +				gpio-line-names =
-> +					"GPIO-D", /* GPIO64, I2S1_FS, LSEC pin 26 */
-> +					"GPIO-J", /* GPIO65, I2S1_SDI, LSEC pin 32 */
-> +					"GPIO-H", /* GPIO66, I2S1_SDO, LSEC pin 30 */
-> +					"GPIO-L", /* GPIO67, LSEC pin 34 */
-> +					"[SPI0_CS]", /* GPIO68, SPI1_CS, LSEC pin 12 */
-> +					"[SPI0_DIN]", /* GPIO69, SPI1_SDI, LSEC pin 10 */
-> +					"[SPI0_DOUT]", /* GPIO70, SPI1_SDO, LSEC pin 14 */
-> +					"[SPI0_SCLK]"; /* GPIO71, SPI1_SCK, LSEC pin 8 */
-> +			};
-> +		};
-> +	};
->  };
->  
->  &uart0 {
-> -- 
-> 2.17.1
-> 
+adam
+>
+> Thierry
