@@ -1,65 +1,62 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Thu, 7 Mar 2019 21:58:14 +0100
-Message-ID: <20190307205814.GB950@kunai>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
- <20190307201807.GA950@kunai>
- <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+From: Nicolas Boichat <drinkcat@chromium.org>
+Subject: Re: [PATCH] pinctrl: add drive for I2C related pins on MT8183
+Date: Fri, 8 Mar 2019 13:59:58 +0800
+Message-ID: <CANMq1KAyvBLzGKOp=LXy3Ft3khs=QsUgTLXMq1mTd7o2_phcsg@mail.gmail.com>
+References: <20190303015341.986-1-zhiyong.tao@mediatek.com> <20190303015341.986-2-zhiyong.tao@mediatek.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+In-Reply-To: <20190303015341.986-2-zhiyong.tao@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Adam Ford <aford173@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>, liguo.zhang@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>, hongkun.cao@mediatek.com, biao.huang@mediatek.com, hongzhou.yang@mediatek.com, chuanjia.liu@mediatek.com, Erin Lo <erin.lo@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+This is a v3, I think, please make sure the update the email title,
+and add a changelog below ---.
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 3, 2019 at 9:54 AM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
+>
+> This patch provides the advanced drive for I2C used pins on MT8183.
+> The detail strength specification description of the I2C pin is as follows.
+> When E1=0/E0=0, the strength is 0.125mA.
+> When E1=0/E0=1, the strength is 0.25mA.
+> When E1=1/E0=0, the strength is 0.5mA.
+> When E1=1/E0=1, the strength is 1mA.
+>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt8183.c        | 50 ++++++++++++++++++++++++
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 45 +++++++++++++++++++++
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 13 ++++++
+>  drivers/pinctrl/mediatek/pinctrl-paris.c         | 20 ++++++++++
+>  4 files changed, 128 insertions(+)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> index 6262fd3678ea..f034574fc593 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+> @@ -472,6 +472,51 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
+>         PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
+>  };
+[snip]
+>  static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
+>         [PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
+>         [PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
+> @@ -485,6 +530,9 @@ static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
+>         [PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
+>         [PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
+>         [PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
+> +       [PINCTRL_PIN_REG_DRV_EN_DIS] = MTK_RANGE(mt8183_pin_e1e0en_range),
 
-On Thu, Mar 07, 2019 at 09:53:50PM +0100, Enrico Weigelt, metux IT consult =
-wrote:
-> On 07.03.19 21:18, Wolfram Sang wrote:
-> >=20
-> >> It's been almost a year later, and several Linux revisions, and this
-> >> still seems stuck somewhere/somehow.
-> >=20
-> > I wanted to respin this series once rc1 is released.
-> >=20
-> Maybe just rebase and repost ?
+I find the name EN_DIS confusing: I think it means ENable_DISable, but
+when I read the code, I see stuff like (MANY_WORDS)_DIS = enable ? 1 :
+0, which make me think that the polarity is wrong.
 
-Then I'd miss all the new drivers which may need this fixed. Coccinelle
-makes respinning a breeze, so no problem with that.
+Can we just call this PINCTRL_PIN_REG_DRV_EN?
 
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyBheIACgkQFA3kzBSg
-KbZj9Q/7BfZMRib+CTRXwFZJ3DHfp+wLWcSFipubqzbJkW8tAqgjyYR4X56NSUOo
-lwaQ5ymhPZuHGYSPYWBhxLKZSVzVyR1XeTyn7+LLctnA2rtfPS5VxXkbYRdAOsdW
-gqRCUiyz5FCuskho/7JwO82N2UBPyH+aOnhkA7nD7Xk2GoFcJXzG7nA/ECqvYOrm
-s6PXZb3tYdTmeT1n5t2AA7GrD3z0U6501rulyi+fTfC5L0cE9vX/vWWZe4H1Pi6S
-rGKl555Oa4tvXGYcJ2GJQXcbk9Mc2Csgch/jWR3d9mg9L5dVmVrkh1meZA/6VEgT
-H/2qvV03XFyCpr9wCOghH/d7LE72MTjWRSlmEKHG52fgYV1+HQrMFGc3OPn+GU6Q
-NN9IYpmVGHe0joajA638iPn+EGE+twimvV8vBDvNNXKubt7nxuFxfMNhdnQ7ZmnJ
-XTeG4jMiWZx2zOnZc5J2CjKib1mPTtvViI7lLF29t3A19gTst37bsWhZJ31lyh3M
-rH6qMapWa9hbkbZikW1EmP1aFRgQAv0xbzq7FnHRppqKkFNNAvQZ+tL8Gm33nUww
-1wkTzDJjJljc4/kkkViSKTX+F8TGW6eUcI3upBktCvdI6j/A47wi5c5oZZ8x+dDs
-uEIWFWfOkZxPnUGhly24Sd1y4O1sHBnbTwkW+793MERzqD4LwYk=
-=4j4A
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
+> +       [PINCTRL_PIN_REG_DRV_E0] = MTK_RANGE(mt8183_pin_e0_range),
+> +       [PINCTRL_PIN_REG_DRV_E1] = MTK_RANGE(mt8183_pin_e1_range),
+>  };
+>
+[snip]
