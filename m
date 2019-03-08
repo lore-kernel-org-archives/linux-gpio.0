@@ -1,24 +1,32 @@
-From: pr-tracker-bot@kernel.org
-Subject: Re: [GIT PULL] Bulk GPIO changes for the v5.1 kernel cycle
-Date: Fri, 08 Mar 2019 18:35:18 +0000
-Message-ID: <155207011820.7904.6803497707115628424.pr-tracker-bot@kernel.org>
-References: <CACRpkdYcT3zkSUo74i=WXS4AhHtKEDF2K8o1wttsZeGMK9cvCQ@mail.gmail.com>
+From: justinpopo6@gmail.com
+Subject: [PATCH v5 0/2] iio: adc: ads7950: add gpio support
+Date: Fri,  8 Mar 2019 14:03:26 -0800
+Message-ID: <1552082608-42603-1-git-send-email-justinpopo6@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYcT3zkSUo74i=WXS4AhHtKEDF2K8o1wttsZeGMK9cvCQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Brian Masney <masneyb@onstation.org>
+To: linux-iio@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, bgolaszewski@baylibre.com, linus.walleij@linaro.org, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue, 5 Mar 2019 10:35:57 +0100:
+From: Justin Chen <justinpopo6@gmail.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.1-1
+v5
+Fixed ordering of how things are initalized.
+Fixed incomplete cleanup on error.
+Fixed double mutex_unlock.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a422bf11bdb4b95fc78e175339e8eed501e9c13c
+v4
+Split patch into two commits.
+Refractored code to capture the state of the adc instead of only the GPIOs.
+Added comments to clarify the intend of the code.
+Fix improper use of mlock.
 
-Thank you!
+Justin Chen (2):
+  iio: adc: ti-ads7950: Fix improper use of mlock
+  iio: adc: ti-ads7950: add GPIO support
+
+ drivers/iio/adc/ti-ads7950.c | 219 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 209 insertions(+), 10 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.7.4
