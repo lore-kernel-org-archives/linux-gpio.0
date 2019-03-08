@@ -1,42 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mcp23s08: Allocate irq_chip dynamic
-Date: Fri, 8 Mar 2019 10:15:50 +0100
-Message-ID: <CACRpkdYJHyj+TMOde=veQsj8m+xFf0XGEnT0DS0qgMXCSA5iOA@mail.gmail.com>
-References: <20190111162516.28197-1-poeschel@lemonage.de> <CACRpkdZFFu=wgHw0BqXUHiC5euGwWuYbr5bH60zDvFr+q394=w@mail.gmail.com>
- <7ce47f34-ed9f-44ac-b966-68e3bbf3b052@cesnet.cz>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Fri, 8 Mar 2019 11:19:16 +0200
+Message-ID: <CAHp75VdaHYoXCqmnt=F_mnaTnCedLqs6CL1aC-oPFRdNJCAUCA@mail.gmail.com>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com> <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
+ <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com> <20190308085733.GA3903@icarus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7ce47f34-ed9f-44ac-b966-68e3bbf3b052@cesnet.cz>
+In-Reply-To: <20190308085733.GA3903@icarus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
-Cc: Lars Poeschel <poeschel@lemonage.de>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 5, 2019 at 4:19 PM Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz> wro=
-te:
+On Fri, Mar 8, 2019 at 10:56 AM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> On Fri, Mar 08, 2019 at 09:31:00AM +0100, Linus Walleij wrote:
+> > On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
+> > <vilhelm.gray@gmail.com> wrote:
+> >
+> > > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > > within a bitmap memory region. For each iteration, "start" is set to the
+> > > bit offset of the found clump, while the respective clump value is
+> > > stored to the location pointed by "clump". Additionally, the
+> > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > > respectively get and set an 8-bit value in a bitmap memory region.
 
-> This commit should probably go to 5.0-stable and 4.20-stable as well
-
-I doubt that this commit is fixing a regression, but who knows...
-> If I cherry-pick the following two commits to my 5.0, my board boots once
-> again:
+> > Andrew: would you be OK with this being merged in v5.1?
+> >
+> > If we need to move the code to drivers/gpio that's OK (though
+> > I think it's generally useful) but I need to know to proceed with
+> > the William's nice optimization of these drivers.
+> >
+> > Yours,
+> > Linus Walleij
 >
-> 16f4372fd7a5 pinctrl: mcp23s08: use struct_size() in devm_kzalloc()
-> 19ab5ca9b77d pinctrl: mcp23s08: Allocate irq_chip dynamic
+> I was waiting on Andy to suggest some examples out of the GPIO realm,
+> but he may be under a heavy workload right
 
-Hm weird.
+Yeah, sorry for that. I will use your helpers in the future for sure
+in the suitable parts of the code inside and outside of GPIO, just not
+in a highest priority to me.
 
-> As on "why am I hitting this while nobody else did", my board has a share=
-d
-> IRQ line which is active during bootup, perhaps that might have something
-> to do with this -- I don't know.
+> so I decided to do a quick
+> Consider this, if I am able to find a use for this macro outside of the
+> GPIO subsystem within a matter minutes, then there must be some benefit
+> in allowing the rest of the kernel to use the for_each_set_clump8 macro.
+> So let's put it in bitops.h rather than restrict it to just the GPIO
+> subsystem.
 
-Sounds like the code in mcp23s08 .probe() should write to all
-registers clearing and disabling interrupts before proceeding to
-request interrupts or register the irqchip, else it will fire immediately
-and cause oopses.
+As I mentioned earlier I'm pretty sure I found as well opportunity to
+use this new API
+outside of GPIO realm. I just want to be sure (means of testing on real HW).
 
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
