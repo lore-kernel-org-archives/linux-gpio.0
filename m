@@ -1,58 +1,54 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
-Date: Fri, 8 Mar 2019 11:19:16 +0200
-Message-ID: <CAHp75VdaHYoXCqmnt=F_mnaTnCedLqs6CL1aC-oPFRdNJCAUCA@mail.gmail.com>
-References: <cover.1551598603.git.vilhelm.gray@gmail.com> <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
- <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com> <20190308085733.GA3903@icarus>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] pinctrl: imx: fix scu link errors
+Date: Fri, 8 Mar 2019 13:17:46 +0100
+Message-ID: <CACRpkdYSd82Pm76OpSQ2ic4HRVxOdwy5KmtwfsGOpb44vwzJVA@mail.gmail.com>
+References: <1551927501-14527-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190308085733.GA3903@icarus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1551927501-14527-1-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Aisheng Dong <aisheng.dong@nxp.com>
+Cc: Anders Roxell <anders.roxell@linaro.org>, "dongas86@gmail.com" <dongas86@gmail.com>, "arnd@arndb.de" <arnd@arndb.de>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 8, 2019 at 10:56 AM William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On Fri, Mar 08, 2019 at 09:31:00AM +0100, Linus Walleij wrote:
-> > On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
-> > <vilhelm.gray@gmail.com> wrote:
-> >
-> > > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > > within a bitmap memory region. For each iteration, "start" is set to the
-> > > bit offset of the found clump, while the respective clump value is
-> > > stored to the location pointed by "clump". Additionally, the
-> > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > > respectively get and set an 8-bit value in a bitmap memory region.
+On Thu, Mar 7, 2019 at 4:05 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
 
-> > Andrew: would you be OK with this being merged in v5.1?
-> >
-> > If we need to move the code to drivers/gpio that's OK (though
-> > I think it's generally useful) but I need to know to proceed with
-> > the William's nice optimization of these drivers.
-> >
-> > Yours,
-> > Linus Walleij
+> From: Anders Roxell <anders.roxell@linaro.org>
 >
-> I was waiting on Andy to suggest some examples out of the GPIO realm,
-> but he may be under a heavy workload right
+> Currently PINCTRL_IMX8QM and PINCTRL_IMX8QXP will select PINCTRL_IMX_SCU.
+> However, PINCTRL_IMX_SCU may not be valid due to it depends on IMX_MBOX.
+> Then we may meet the following link errors:
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_ipc_init':
+> pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
+> ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_get_handle'
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get_scu':
+> pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
+> ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set_scu':
+> pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
+> ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+> ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function `imx8qxp_pinctrl_probe':
+> pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe'
+> ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
+>
+> Rework so that PINCTRL_IMX8QM and PINCTRL_IMX8QXP depends on IMX_SCU
+> as well in case they're wrongly enabled.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Yeah, sorry for that. I will use your helpers in the future for sure
-in the suitable parts of the code inside and outside of GPIO, just not
-in a highest priority to me.
+Patch applied.
 
-> so I decided to do a quick
-> Consider this, if I am able to find a use for this macro outside of the
-> GPIO subsystem within a matter minutes, then there must be some benefit
-> in allowing the rest of the kernel to use the for_each_set_clump8 macro.
-> So let's put it in bitops.h rather than restrict it to just the GPIO
-> subsystem.
-
-As I mentioned earlier I'm pretty sure I found as well opportunity to
-use this new API
-outside of GPIO realm. I just want to be sure (means of testing on real HW).
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
