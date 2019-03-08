@@ -1,76 +1,58 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
-Date: Fri, 8 Mar 2019 17:57:33 +0900
-Message-ID: <20190308085733.GA3903@icarus>
-References: <cover.1551598603.git.vilhelm.gray@gmail.com>
- <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
- <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] x86: apuv2: select LEDS_CLASS
+Date: Fri, 8 Mar 2019 10:05:00 +0100
+Message-ID: <CACRpkdad_HeZ9oKGZXmX2Yn2NcD8V+sAje=ELxSXeFeMGGjr8w@mail.gmail.com>
+References: <20190304201930.1622839-1-arnd@arndb.de> <20190304201930.1622839-3-arnd@arndb.de>
+ <24c191e1-f607-1320-2474-3db92383e383@metux.net> <e5f1511e-c750-8fb2-0bfe-c73bc7905b22@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
+In-Reply-To: <e5f1511e-c750-8fb2-0bfe-c73bc7905b22@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Enrico Weigelt, metux IT consult" <lkml@metux.net>, Arnd Bergmann <arnd@arndb.de>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linus Walleij <linusw@kernel.org>, Enrico Weigelt <info@metux.net>, Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 08, 2019 at 09:31:00AM +0100, Linus Walleij wrote:
-> On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> 
-> > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > within a bitmap memory region. For each iteration, "start" is set to the
-> > bit offset of the found clump, while the respective clump value is
-> > stored to the location pointed by "clump". Additionally, the
-> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > respectively get and set an 8-bit value in a bitmap memory region.
+On Tue, Mar 5, 2019 at 1:09 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 3/4/19 4:03 PM, Enrico Weigelt, metux IT consult wrote:
+> > On 04.03.19 21:19, Arnd Bergmann wrote:
+> >> LEDS_GPIO can only be selected when LEDS_CLASS is already enabled:
+> >>
+> >> WARNING: unmet direct dependencies detected for LEDS_GPIO
+> >>   Depends on [m]: NEW_LEDS [=y] && LEDS_CLASS [=m] && (GPIOLIB [=y] || COMPILE_TEST [=y])
+> >>   Selected by [y]:
+> >>   - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT_KEYBOARD [=y]
+> >>
+> >> Fixes: f8eb0235f659 ("x86: pcengines apuv2 gpio/leds/keys platform driver")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> ---
+> >>  drivers/platform/x86/Kconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> >> index 4d65d37b0c86..d64529352a9c 100644
+> >> --- a/drivers/platform/x86/Kconfig
+> >> +++ b/drivers/platform/x86/Kconfig
+> >> @@ -1308,6 +1308,7 @@ config PCENGINES_APU2
+> >>      depends on INPUT && INPUT_KEYBOARD
+> >>      select GPIO_AMD_FCH
+> >>      select KEYBOARD_GPIO_POLLED
+> >> +    select LEDS_CLASS
+> >>      select LEDS_GPIO
+> >>      help
+> >>        This driver provides support for the front button and LEDs on
+> >>
 > >
-> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> 
-> Andrew: would you be OK with this being merged in v5.1?
-> 
-> If we need to move the code to drivers/gpio that's OK (though
-> I think it's generally useful) but I need to know to proceed with
-> the William's nice optimization of these drivers.
-> 
-> Yours,
-> Linus Walleij
+> > ACK. Just was about to post the same :)
+> >
+> > Reviewed-by: Enrico Weigelt, metux It consult <info@metux.net>
+> >
+>
+> Enrico, you were also cc-ed on this patch on Feb.25, 2019:
+>
+> https://marc.info/?l=linux-kernel&m=155113875310485&w=2
 
-I was waiting on Andy to suggest some examples out of the GPIO realm,
-but he may be under a heavy workload right so I decided to do a quick
-search for one.
+I applied Randy's more extensive patch.
 
-In drivers/of/unittest.c, there is loop across a bitmap in the
-of_unittest_destroy_tracked_overlays function:
-
-	for (id = MAX_UNITTEST_OVERLAYS - 1; id >= 0; id--) {
-		if (!(overlay_id_bits[BIT_WORD(id)] & BIT_MASK(id)))
-			continue;
-
-This section of code is checking each bit individually, and skipping if
-that bit is not set. This looping can be optimized by using the
-for_each_set_clump8 macro to skip clumps of nonset bits (not to mention
-make the logic of the code much simpler and easier to follow by reducing
-the code to a single line):
-
-	for_each_set_clump8(id, clump, overlay_id_bits, MAX_UNITTEST_OVERLAYS-1)
-
-The for_each_set_clump8 macro is not specific to the GPIO subsystem; I
-just happen to use it in these GPIO drivers simply because I am most
-familar with this section of the kernel (it's where most of my
-contributions occur afterall).
-
-Consider this, if I am able to find a use for this macro outside of the
-GPIO subsystem within a matter minutes, then there must be some benefit
-in allowing the rest of the kernel to use the for_each_set_clump8 macro.
-So let's put it in bitops.h rather than restrict it to just the GPIO
-subsystem.
-
-William Breathitt Gray
+Yours,
+Linus Walleij
