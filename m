@@ -1,62 +1,40 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH] pinctrl: add drive for I2C related pins on MT8183
-Date: Fri, 8 Mar 2019 13:59:58 +0800
-Message-ID: <CANMq1KAyvBLzGKOp=LXy3Ft3khs=QsUgTLXMq1mTd7o2_phcsg@mail.gmail.com>
-References: <20190303015341.986-1-zhiyong.tao@mediatek.com> <20190303015341.986-2-zhiyong.tao@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Fri, 8 Mar 2019 09:31:00 +0100
+Message-ID: <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com> <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190303015341.986-2-zhiyong.tao@mediatek.com>
+In-Reply-To: <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>, liguo.zhang@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>, hongkun.cao@mediatek.com, biao.huang@mediatek.com, hongzhou.yang@mediatek.com, chuanjia.liu@mediatek.com, Erin Lo <erin.lo@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-This is a v3, I think, please make sure the update the email title,
-and add a changelog below ---.
+On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-On Sun, Mar 3, 2019 at 9:54 AM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
+> This macro iterates for each 8-bit group of bits (clump) with set bits,
+> within a bitmap memory region. For each iteration, "start" is set to the
+> bit offset of the found clump, while the respective clump value is
+> stored to the location pointed by "clump". Additionally, the
+> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> respectively get and set an 8-bit value in a bitmap memory region.
 >
-> This patch provides the advanced drive for I2C used pins on MT8183.
-> The detail strength specification description of the I2C pin is as follows.
-> When E1=0/E0=0, the strength is 0.125mA.
-> When E1=0/E0=1, the strength is 0.25mA.
-> When E1=1/E0=0, the strength is 0.5mA.
-> When E1=1/E0=1, the strength is 1mA.
->
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/pinctrl-mt8183.c        | 50 ++++++++++++++++++++++++
->  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 45 +++++++++++++++++++++
->  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 13 ++++++
->  drivers/pinctrl/mediatek/pinctrl-paris.c         | 20 ++++++++++
->  4 files changed, 128 insertions(+)
->
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> index 6262fd3678ea..f034574fc593 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> @@ -472,6 +472,51 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
->         PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
->  };
-[snip]
->  static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
->         [PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
->         [PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
-> @@ -485,6 +530,9 @@ static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
->         [PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
->         [PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
->         [PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
-> +       [PINCTRL_PIN_REG_DRV_EN_DIS] = MTK_RANGE(mt8183_pin_e1e0en_range),
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-I find the name EN_DIS confusing: I think it means ENable_DISable, but
-when I read the code, I see stuff like (MANY_WORDS)_DIS = enable ? 1 :
-0, which make me think that the polarity is wrong.
+Andrew: would you be OK with this being merged in v5.1?
 
-Can we just call this PINCTRL_PIN_REG_DRV_EN?
+If we need to move the code to drivers/gpio that's OK (though
+I think it's generally useful) but I need to know to proceed with
+the William's nice optimization of these drivers.
 
-> +       [PINCTRL_PIN_REG_DRV_E0] = MTK_RANGE(mt8183_pin_e0_range),
-> +       [PINCTRL_PIN_REG_DRV_E1] = MTK_RANGE(mt8183_pin_e1_range),
->  };
->
-[snip]
+Yours,
+Linus Walleij
