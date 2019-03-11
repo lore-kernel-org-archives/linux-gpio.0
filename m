@@ -1,7 +1,7 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 6/7] gpio: vf610: Use devres to remove gpiochip
-Date: Sun, 10 Mar 2019 23:27:36 -0700
-Message-ID: <20190311062737.6652-7-andrew.smirnov@gmail.com>
+Subject: [PATCH 7/7] gpio: vf610: Don't use explicit &pdev->dev in vf610_gpio_probe()
+Date: Sun, 10 Mar 2019 23:27:37 -0700
+Message-ID: <20190311062737.6652-8-andrew.smirnov@gmail.com>
 References: <20190311062737.6652-1-andrew.smirnov@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,9 +12,8 @@ To: linux-gpio@vger.kernel.org
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, linux-imx@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-Now that the driver's custom remove hook contains only a single
-action, replace it by converting the code to use
-devm_gpiochip_add_data() to simplify things.
+The code already defines "dev" variable to help with that, so make
+sure all of the code uses it.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -27,61 +26,39 @@ Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-imx@nxp.com
 ---
- drivers/gpio/gpio-vf610.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/gpio/gpio-vf610.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index f7445468677d..7db2fa229035 100644
+index 7db2fa229035..6f6558715b88 100644
 --- a/drivers/gpio/gpio-vf610.c
 +++ b/drivers/gpio/gpio-vf610.c
-@@ -297,8 +297,6 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(port->clk_gpio);
+@@ -248,7 +248,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	int i;
+ 	int ret;
+ 
+-	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
++	port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+ 	if (!port)
+ 		return -ENOMEM;
+ 
+@@ -267,7 +267,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	if (port->irq < 0)
+ 		return port->irq;
+ 
+-	port->clk_port = devm_clk_get(&pdev->dev, "port");
++	port->clk_port = devm_clk_get(dev, "port");
+ 	if (!IS_ERR(port->clk_port)) {
+ 		ret = clk_prepare_enable(port->clk_port);
+ 		if (ret)
+@@ -284,7 +284,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(port->clk_port);
  	}
  
--	platform_set_drvdata(pdev, port);
--
- 	gc = &port->gc;
- 	gc->of_node = np;
- 	gc->parent = dev;
-@@ -321,7 +319,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	ic->irq_set_type = vf610_gpio_irq_set_type;
- 	ic->irq_set_wake = vf610_gpio_irq_set_wake;
- 
--	ret = gpiochip_add_data(gc, port);
-+	ret = devm_gpiochip_add_data(dev, gc, port);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -335,7 +333,6 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	ret = gpiochip_irqchip_add(gc, ic, 0, handle_edge_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(dev, "failed to add irqchip\n");
--		gpiochip_remove(gc);
- 		return ret;
- 	}
- 	gpiochip_set_chained_irqchip(gc, ic, port->irq,
-@@ -344,22 +341,12 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int vf610_gpio_remove(struct platform_device *pdev)
--{
--	struct vf610_gpio_port *port = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&port->gc);
--
--	return 0;
--}
--
- static struct platform_driver vf610_gpio_driver = {
- 	.driver		= {
- 		.name	= "gpio-vf610",
- 		.of_match_table = vf610_gpio_dt_ids,
- 	},
- 	.probe		= vf610_gpio_probe,
--	.remove		= vf610_gpio_remove,
- };
- 
- builtin_platform_driver(vf610_gpio_driver);
+-	port->clk_gpio = devm_clk_get(&pdev->dev, "gpio");
++	port->clk_gpio = devm_clk_get(dev, "gpio");
+ 	if (!IS_ERR(port->clk_gpio)) {
+ 		ret = clk_prepare_enable(port->clk_gpio);
+ 		if (ret)
 -- 
 2.20.1
