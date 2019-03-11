@@ -1,307 +1,690 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control bulk changes for v5.1
-Date: Mon, 11 Mar 2019 10:32:41 +0100
-Message-ID: <CACRpkda_4oHv103MWt+D-cuKsXmu0ctSpZTjpKX3wAAVVwRSMA@mail.gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] gpio: omap: avoid clang warning
+Date: Mon, 11 Mar 2019 10:39:48 +0100
+Message-ID: <CAMpxmJXpYtJp5eZfz1uCQfE8yg_uLzQxWNt9wKZ4uMzfckU2TQ@mail.gmail.com>
+References: <20190307103348.1591457-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190307103348.1591457-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Nick Desaulniers <ndesaulniers@google.com>, Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+czw., 7 mar 2019 o 11:39 Arnd Bergmann <arnd@arndb.de> napisa=C5=82(a):
+>
+> clang warns about a tentative array definition in the gpio-omap driver:
+>
+> drivers/gpio/gpio-omap.c:1282:34: error: tentative array definition assum=
+ed to have one element [-Werror]
+> static const struct of_device_id omap_gpio_match[];
+>
+> It's best to just reorder the entire file to avoid forward declarations,
+> which lets us use the regular declaration. To do this, the unnecessary
+> CONFIG_OF check must also be removed.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpio/gpio-omap.c | 549 +++++++++++++++++++--------------------
+>  1 file changed, 267 insertions(+), 282 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index f4e9921fa966..9d743563f4c1 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1249,196 +1249,63 @@ static int omap_gpio_chip_init(struct gpio_bank =
+*bank, struct irq_chip *irqc)
+>         return ret;
+>  }
+>
+> -static void omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context=
+);
+> -static void omap_gpio_unidle(struct gpio_bank *bank);
+> -
+> -static int gpio_omap_cpu_notifier(struct notifier_block *nb,
+> -                                 unsigned long cmd, void *v)
+> +static void omap_gpio_init_context(struct gpio_bank *p)
+>  {
+> -       struct gpio_bank *bank;
+> -       unsigned long flags;
+> +       struct omap_gpio_reg_offs *regs =3D p->regs;
+> +       void __iomem *base =3D p->base;
+>
+> -       bank =3D container_of(nb, struct gpio_bank, nb);
+> +       p->context.ctrl         =3D readl_relaxed(base + regs->ctrl);
+> +       p->context.oe           =3D readl_relaxed(base + regs->direction)=
+;
+> +       p->context.wake_en      =3D readl_relaxed(base + regs->wkup_en);
+> +       p->context.leveldetect0 =3D readl_relaxed(base + regs->leveldetec=
+t0);
+> +       p->context.leveldetect1 =3D readl_relaxed(base + regs->leveldetec=
+t1);
+> +       p->context.risingdetect =3D readl_relaxed(base + regs->risingdete=
+ct);
+> +       p->context.fallingdetect =3D readl_relaxed(base + regs->fallingde=
+tect);
+> +       p->context.irqenable1   =3D readl_relaxed(base + regs->irqenable)=
+;
+> +       p->context.irqenable2   =3D readl_relaxed(base + regs->irqenable2=
+);
+>
+> -       raw_spin_lock_irqsave(&bank->lock, flags);
+> -       switch (cmd) {
+> -       case CPU_CLUSTER_PM_ENTER:
+> -               if (bank->is_suspended)
+> -                       break;
+> -               omap_gpio_idle(bank, true);
+> -               break;
+> -       case CPU_CLUSTER_PM_ENTER_FAILED:
+> -       case CPU_CLUSTER_PM_EXIT:
+> -               if (bank->is_suspended)
+> -                       break;
+> -               omap_gpio_unidle(bank);
+> -               break;
+> -       }
+> -       raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +       if (regs->set_dataout && p->regs->clr_dataout)
+> +               p->context.dataout =3D readl_relaxed(base + regs->set_dat=
+aout);
+> +       else
+> +               p->context.dataout =3D readl_relaxed(base + regs->dataout=
+);
+>
+> -       return NOTIFY_OK;
+> +       p->context_valid =3D true;
+>  }
+>
+> -static const struct of_device_id omap_gpio_match[];
+> -
+> -static int omap_gpio_probe(struct platform_device *pdev)
+> +static void omap_gpio_restore_context(struct gpio_bank *bank)
+>  {
+> -       struct device *dev =3D &pdev->dev;
+> -       struct device_node *node =3D dev->of_node;
+> -       const struct of_device_id *match;
+> -       const struct omap_gpio_platform_data *pdata;
+> -       struct resource *res;
+> -       struct gpio_bank *bank;
+> -       struct irq_chip *irqc;
+> -       int ret;
+> -
+> -       match =3D of_match_device(of_match_ptr(omap_gpio_match), dev);
+> -
+> -       pdata =3D match ? match->data : dev_get_platdata(dev);
+> -       if (!pdata)
+> -               return -EINVAL;
+> -
+> -       bank =3D devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+> -       if (!bank)
+> -               return -ENOMEM;
+> -
+> -       irqc =3D devm_kzalloc(dev, sizeof(*irqc), GFP_KERNEL);
+> -       if (!irqc)
+> -               return -ENOMEM;
+> -
+> -       irqc->irq_startup =3D omap_gpio_irq_startup,
+> -       irqc->irq_shutdown =3D omap_gpio_irq_shutdown,
+> -       irqc->irq_ack =3D omap_gpio_ack_irq,
+> -       irqc->irq_mask =3D omap_gpio_mask_irq,
+> -       irqc->irq_unmask =3D omap_gpio_unmask_irq,
+> -       irqc->irq_set_type =3D omap_gpio_irq_type,
+> -       irqc->irq_set_wake =3D omap_gpio_wake_enable,
+> -       irqc->irq_bus_lock =3D omap_gpio_irq_bus_lock,
+> -       irqc->irq_bus_sync_unlock =3D gpio_irq_bus_sync_unlock,
+> -       irqc->name =3D dev_name(&pdev->dev);
+> -       irqc->flags =3D IRQCHIP_MASK_ON_SUSPEND;
+> -       irqc->parent_device =3D dev;
+> -
+> -       bank->irq =3D platform_get_irq(pdev, 0);
+> -       if (bank->irq <=3D 0) {
+> -               if (!bank->irq)
+> -                       bank->irq =3D -ENXIO;
+> -               if (bank->irq !=3D -EPROBE_DEFER)
+> -                       dev_err(dev,
+> -                               "can't get irq resource ret=3D%d\n", bank=
+->irq);
+> -               return bank->irq;
+> -       }
+> -
+> -       bank->chip.parent =3D dev;
+> -       bank->chip.owner =3D THIS_MODULE;
+> -       bank->dbck_flag =3D pdata->dbck_flag;
+> -       bank->quirks =3D pdata->quirks;
+> -       bank->stride =3D pdata->bank_stride;
+> -       bank->width =3D pdata->bank_width;
+> -       bank->is_mpuio =3D pdata->is_mpuio;
+> -       bank->non_wakeup_gpios =3D pdata->non_wakeup_gpios;
+> -       bank->regs =3D pdata->regs;
+> -#ifdef CONFIG_OF_GPIO
+> -       bank->chip.of_node =3D of_node_get(node);
+> -#endif
+> -
+> -       if (node) {
+> -               if (!of_property_read_bool(node, "ti,gpio-always-on"))
+> -                       bank->loses_context =3D true;
+> -       } else {
+> -               bank->loses_context =3D pdata->loses_context;
+> -
+> -               if (bank->loses_context)
+> -                       bank->get_context_loss_count =3D
+> -                               pdata->get_context_loss_count;
+> -       }
+> -
+> -       if (bank->regs->set_dataout && bank->regs->clr_dataout) {
+> -               bank->set_dataout =3D omap_set_gpio_dataout_reg;
+> -               bank->set_dataout_multiple =3D omap_set_gpio_dataout_reg_=
+multiple;
+> -       } else {
+> -               bank->set_dataout =3D omap_set_gpio_dataout_mask;
+> -               bank->set_dataout_multiple =3D
+> -                               omap_set_gpio_dataout_mask_multiple;
+> -       }
+> -
+> -       if (bank->quirks & OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER) {
+> -               bank->funcs.idle_enable_level_quirk =3D
+> -                       omap2_gpio_enable_level_quirk;
+> -               bank->funcs.idle_disable_level_quirk =3D
+> -                       omap2_gpio_disable_level_quirk;
+> -       }
+> -
+> -       raw_spin_lock_init(&bank->lock);
+> -       raw_spin_lock_init(&bank->wa_lock);
+> -
+> -       /* Static mapping, never released */
+> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       bank->base =3D devm_ioremap_resource(dev, res);
+> -       if (IS_ERR(bank->base)) {
+> -               return PTR_ERR(bank->base);
+> -       }
+> -
+> -       if (bank->dbck_flag) {
+> -               bank->dbck =3D devm_clk_get(dev, "dbclk");
+> -               if (IS_ERR(bank->dbck)) {
+> -                       dev_err(dev,
+> -                               "Could not get gpio dbck. Disable debounc=
+e\n");
+> -                       bank->dbck_flag =3D false;
+> -               } else {
+> -                       clk_prepare(bank->dbck);
+> -               }
+> -       }
+> -
+> -       platform_set_drvdata(pdev, bank);
+> -
+> -       pm_runtime_enable(dev);
+> -       pm_runtime_get_sync(dev);
+> -
+> -       if (bank->is_mpuio)
+> -               omap_mpuio_init(bank);
+> -
+> -       omap_gpio_mod_init(bank);
+> -
+> -       ret =3D omap_gpio_chip_init(bank, irqc);
+> -       if (ret) {
+> -               pm_runtime_put_sync(dev);
+> -               pm_runtime_disable(dev);
+> -               if (bank->dbck_flag)
+> -                       clk_unprepare(bank->dbck);
+> -               return ret;
+> -       }
+> -
+> -       omap_gpio_show_rev(bank);
+> +       writel_relaxed(bank->context.wake_en,
+> +                               bank->base + bank->regs->wkup_en);
+> +       writel_relaxed(bank->context.ctrl, bank->base + bank->regs->ctrl)=
+;
+> +       writel_relaxed(bank->context.leveldetect0,
+> +                               bank->base + bank->regs->leveldetect0);
+> +       writel_relaxed(bank->context.leveldetect1,
+> +                               bank->base + bank->regs->leveldetect1);
+> +       writel_relaxed(bank->context.risingdetect,
+> +                               bank->base + bank->regs->risingdetect);
+> +       writel_relaxed(bank->context.fallingdetect,
+> +                               bank->base + bank->regs->fallingdetect);
+> +       if (bank->regs->set_dataout && bank->regs->clr_dataout)
+> +               writel_relaxed(bank->context.dataout,
+> +                               bank->base + bank->regs->set_dataout);
+> +       else
+> +               writel_relaxed(bank->context.dataout,
+> +                               bank->base + bank->regs->dataout);
+> +       writel_relaxed(bank->context.oe, bank->base + bank->regs->directi=
+on);
+>
+> -       if (bank->funcs.idle_enable_level_quirk &&
+> -           bank->funcs.idle_disable_level_quirk) {
+> -               bank->nb.notifier_call =3D gpio_omap_cpu_notifier;
+> -               cpu_pm_register_notifier(&bank->nb);
+> +       if (bank->dbck_enable_mask) {
+> +               writel_relaxed(bank->context.debounce, bank->base +
+> +                                       bank->regs->debounce);
+> +               writel_relaxed(bank->context.debounce_en,
+> +                                       bank->base + bank->regs->debounce=
+_en);
+>         }
+>
+> -       pm_runtime_put(dev);
+> -
+> -       return 0;
+> -}
+> -
+> -static int omap_gpio_remove(struct platform_device *pdev)
+> -{
+> -       struct gpio_bank *bank =3D platform_get_drvdata(pdev);
+> -
+> -       if (bank->nb.notifier_call)
+> -               cpu_pm_unregister_notifier(&bank->nb);
+> -       list_del(&bank->node);
+> -       gpiochip_remove(&bank->chip);
+> -       pm_runtime_disable(&pdev->dev);
+> -       if (bank->dbck_flag)
+> -               clk_unprepare(bank->dbck);
+> -
+> -       return 0;
+> +       writel_relaxed(bank->context.irqenable1,
+> +                               bank->base + bank->regs->irqenable);
+> +       writel_relaxed(bank->context.irqenable2,
+> +                               bank->base + bank->regs->irqenable2);
+>  }
+>
+> -static void omap_gpio_restore_context(struct gpio_bank *bank);
+> -
+>  static void omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context=
+)
+>  {
+>         struct device *dev =3D bank->chip.parent;
+> @@ -1479,8 +1346,6 @@ static void omap_gpio_idle(struct gpio_bank *bank, =
+bool may_lose_context)
+>         omap_gpio_dbck_disable(bank);
+>  }
+>
+> -static void omap_gpio_init_context(struct gpio_bank *p);
+> -
+>  static void omap_gpio_unidle(struct gpio_bank *bank)
+>  {
+>         struct device *dev =3D bank->chip.parent;
+> @@ -1574,113 +1439,33 @@ static void omap_gpio_unidle(struct gpio_bank *b=
+ank)
+>         bank->workaround_enabled =3D false;
+>  }
+>
+> -static void omap_gpio_init_context(struct gpio_bank *p)
+> +static int gpio_omap_cpu_notifier(struct notifier_block *nb,
+> +                                 unsigned long cmd, void *v)
+>  {
+> -       struct omap_gpio_reg_offs *regs =3D p->regs;
+> -       void __iomem *base =3D p->base;
+> +       struct gpio_bank *bank;
+> +       unsigned long flags;
+>
+> -       p->context.ctrl         =3D readl_relaxed(base + regs->ctrl);
+> -       p->context.oe           =3D readl_relaxed(base + regs->direction)=
+;
+> -       p->context.wake_en      =3D readl_relaxed(base + regs->wkup_en);
+> -       p->context.leveldetect0 =3D readl_relaxed(base + regs->leveldetec=
+t0);
+> -       p->context.leveldetect1 =3D readl_relaxed(base + regs->leveldetec=
+t1);
+> -       p->context.risingdetect =3D readl_relaxed(base + regs->risingdete=
+ct);
+> -       p->context.fallingdetect =3D readl_relaxed(base + regs->fallingde=
+tect);
+> -       p->context.irqenable1   =3D readl_relaxed(base + regs->irqenable)=
+;
+> -       p->context.irqenable2   =3D readl_relaxed(base + regs->irqenable2=
+);
+> +       bank =3D container_of(nb, struct gpio_bank, nb);
+>
+> -       if (regs->set_dataout && p->regs->clr_dataout)
+> -               p->context.dataout =3D readl_relaxed(base + regs->set_dat=
+aout);
+> -       else
+> -               p->context.dataout =3D readl_relaxed(base + regs->dataout=
+);
+> +       raw_spin_lock_irqsave(&bank->lock, flags);
+> +       switch (cmd) {
+> +       case CPU_CLUSTER_PM_ENTER:
+> +               if (bank->is_suspended)
+> +                       break;
+> +               omap_gpio_idle(bank, true);
+> +               break;
+> +       case CPU_CLUSTER_PM_ENTER_FAILED:
+> +       case CPU_CLUSTER_PM_EXIT:
+> +               if (bank->is_suspended)
+> +                       break;
+> +               omap_gpio_unidle(bank);
+> +               break;
+> +       }
+> +       raw_spin_unlock_irqrestore(&bank->lock, flags);
+>
+> -       p->context_valid =3D true;
+> -}
+> -
+> -static void omap_gpio_restore_context(struct gpio_bank *bank)
+> -{
+> -       writel_relaxed(bank->context.wake_en,
+> -                               bank->base + bank->regs->wkup_en);
+> -       writel_relaxed(bank->context.ctrl, bank->base + bank->regs->ctrl)=
+;
+> -       writel_relaxed(bank->context.leveldetect0,
+> -                               bank->base + bank->regs->leveldetect0);
+> -       writel_relaxed(bank->context.leveldetect1,
+> -                               bank->base + bank->regs->leveldetect1);
+> -       writel_relaxed(bank->context.risingdetect,
+> -                               bank->base + bank->regs->risingdetect);
+> -       writel_relaxed(bank->context.fallingdetect,
+> -                               bank->base + bank->regs->fallingdetect);
+> -       if (bank->regs->set_dataout && bank->regs->clr_dataout)
+> -               writel_relaxed(bank->context.dataout,
+> -                               bank->base + bank->regs->set_dataout);
+> -       else
+> -               writel_relaxed(bank->context.dataout,
+> -                               bank->base + bank->regs->dataout);
+> -       writel_relaxed(bank->context.oe, bank->base + bank->regs->directi=
+on);
+> -
+> -       if (bank->dbck_enable_mask) {
+> -               writel_relaxed(bank->context.debounce, bank->base +
+> -                                       bank->regs->debounce);
+> -               writel_relaxed(bank->context.debounce_en,
+> -                                       bank->base + bank->regs->debounce=
+_en);
+> -       }
+> -
+> -       writel_relaxed(bank->context.irqenable1,
+> -                               bank->base + bank->regs->irqenable);
+> -       writel_relaxed(bank->context.irqenable2,
+> -                               bank->base + bank->regs->irqenable2);
+> -}
+> -
+> -static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+> -{
+> -       struct gpio_bank *bank =3D dev_get_drvdata(dev);
+> -       unsigned long flags;
+> -       int error =3D 0;
+> -
+> -       raw_spin_lock_irqsave(&bank->lock, flags);
+> -       /* Must be idled only by CPU_CLUSTER_PM_ENTER? */
+> -       if (bank->irq_usage) {
+> -               error =3D -EBUSY;
+> -               goto unlock;
+> -       }
+> -       omap_gpio_idle(bank, true);
+> -       bank->is_suspended =3D true;
+> -unlock:
+> -       raw_spin_unlock_irqrestore(&bank->lock, flags);
+> -
+> -       return error;
+> -}
+> -
+> -static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+> -{
+> -       struct gpio_bank *bank =3D dev_get_drvdata(dev);
+> -       unsigned long flags;
+> -       int error =3D 0;
+> -
+> -       raw_spin_lock_irqsave(&bank->lock, flags);
+> -       /* Must be unidled only by CPU_CLUSTER_PM_ENTER? */
+> -       if (bank->irq_usage) {
+> -               error =3D -EBUSY;
+> -               goto unlock;
+> -       }
+> -       omap_gpio_unidle(bank);
+> -       bank->is_suspended =3D false;
+> -unlock:
+> -       raw_spin_unlock_irqrestore(&bank->lock, flags);
+> -
+> -       return error;
+> +       return NOTIFY_OK;
+>  }
+>
+> -#ifdef CONFIG_ARCH_OMAP2PLUS
+> -static const struct dev_pm_ops gpio_pm_ops =3D {
+> -       SET_RUNTIME_PM_OPS(omap_gpio_runtime_suspend, omap_gpio_runtime_r=
+esume,
+> -                                                                       N=
+ULL)
+> -};
+> -#else
+> -static const struct dev_pm_ops gpio_pm_ops;
+> -#endif /* CONFIG_ARCH_OMAP2PLUS */
+> -
+> -#if defined(CONFIG_OF)
+>  static struct omap_gpio_reg_offs omap2_gpio_regs =3D {
+>         .revision =3D             OMAP24XX_GPIO_REVISION,
+>         .direction =3D            OMAP24XX_GPIO_OE,
+> @@ -1768,15 +1553,215 @@ static const struct of_device_id omap_gpio_match=
+[] =3D {
+>         { },
+>  };
+>  MODULE_DEVICE_TABLE(of, omap_gpio_match);
+> +
+> +static int omap_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct device_node *node =3D dev->of_node;
+> +       const struct of_device_id *match;
+> +       const struct omap_gpio_platform_data *pdata;
+> +       struct resource *res;
+> +       struct gpio_bank *bank;
+> +       struct irq_chip *irqc;
+> +       int ret;
+> +
+> +       match =3D of_match_device(of_match_ptr(omap_gpio_match), dev);
+> +
+> +       pdata =3D match ? match->data : dev_get_platdata(dev);
+> +       if (!pdata)
+> +               return -EINVAL;
+> +
+> +       bank =3D devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+> +       if (!bank)
+> +               return -ENOMEM;
+> +
+> +       irqc =3D devm_kzalloc(dev, sizeof(*irqc), GFP_KERNEL);
+> +       if (!irqc)
+> +               return -ENOMEM;
+> +
+> +       irqc->irq_startup =3D omap_gpio_irq_startup,
+> +       irqc->irq_shutdown =3D omap_gpio_irq_shutdown,
+> +       irqc->irq_ack =3D omap_gpio_ack_irq,
+> +       irqc->irq_mask =3D omap_gpio_mask_irq,
+> +       irqc->irq_unmask =3D omap_gpio_unmask_irq,
+> +       irqc->irq_set_type =3D omap_gpio_irq_type,
+> +       irqc->irq_set_wake =3D omap_gpio_wake_enable,
+> +       irqc->irq_bus_lock =3D omap_gpio_irq_bus_lock,
+> +       irqc->irq_bus_sync_unlock =3D gpio_irq_bus_sync_unlock,
+> +       irqc->name =3D dev_name(&pdev->dev);
+> +       irqc->flags =3D IRQCHIP_MASK_ON_SUSPEND;
+> +       irqc->parent_device =3D dev;
+> +
+> +       bank->irq =3D platform_get_irq(pdev, 0);
+> +       if (bank->irq <=3D 0) {
+> +               if (!bank->irq)
+> +                       bank->irq =3D -ENXIO;
+> +               if (bank->irq !=3D -EPROBE_DEFER)
+> +                       dev_err(dev,
+> +                               "can't get irq resource ret=3D%d\n", bank=
+->irq);
+> +               return bank->irq;
+> +       }
+> +
+> +       bank->chip.parent =3D dev;
+> +       bank->chip.owner =3D THIS_MODULE;
+> +       bank->dbck_flag =3D pdata->dbck_flag;
+> +       bank->quirks =3D pdata->quirks;
+> +       bank->stride =3D pdata->bank_stride;
+> +       bank->width =3D pdata->bank_width;
+> +       bank->is_mpuio =3D pdata->is_mpuio;
+> +       bank->non_wakeup_gpios =3D pdata->non_wakeup_gpios;
+> +       bank->regs =3D pdata->regs;
+> +#ifdef CONFIG_OF_GPIO
+> +       bank->chip.of_node =3D of_node_get(node);
+>  #endif
+>
+> +       if (node) {
+> +               if (!of_property_read_bool(node, "ti,gpio-always-on"))
+> +                       bank->loses_context =3D true;
+> +       } else {
+> +               bank->loses_context =3D pdata->loses_context;
+> +
+> +               if (bank->loses_context)
+> +                       bank->get_context_loss_count =3D
+> +                               pdata->get_context_loss_count;
+> +       }
+> +
+> +       if (bank->regs->set_dataout && bank->regs->clr_dataout) {
+> +               bank->set_dataout =3D omap_set_gpio_dataout_reg;
+> +               bank->set_dataout_multiple =3D omap_set_gpio_dataout_reg_=
+multiple;
+> +       } else {
+> +               bank->set_dataout =3D omap_set_gpio_dataout_mask;
+> +               bank->set_dataout_multiple =3D
+> +                               omap_set_gpio_dataout_mask_multiple;
+> +       }
+> +
+> +       if (bank->quirks & OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER) {
+> +               bank->funcs.idle_enable_level_quirk =3D
+> +                       omap2_gpio_enable_level_quirk;
+> +               bank->funcs.idle_disable_level_quirk =3D
+> +                       omap2_gpio_disable_level_quirk;
+> +       }
+> +
+> +       raw_spin_lock_init(&bank->lock);
+> +       raw_spin_lock_init(&bank->wa_lock);
+> +
+> +       /* Static mapping, never released */
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       bank->base =3D devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(bank->base)) {
+> +               return PTR_ERR(bank->base);
+> +       }
+> +
+> +       if (bank->dbck_flag) {
+> +               bank->dbck =3D devm_clk_get(dev, "dbclk");
+> +               if (IS_ERR(bank->dbck)) {
+> +                       dev_err(dev,
+> +                               "Could not get gpio dbck. Disable debounc=
+e\n");
+> +                       bank->dbck_flag =3D false;
+> +               } else {
+> +                       clk_prepare(bank->dbck);
+> +               }
+> +       }
+> +
+> +       platform_set_drvdata(pdev, bank);
+> +
+> +       pm_runtime_enable(dev);
+> +       pm_runtime_get_sync(dev);
+> +
+> +       if (bank->is_mpuio)
+> +               omap_mpuio_init(bank);
+> +
+> +       omap_gpio_mod_init(bank);
+> +
+> +       ret =3D omap_gpio_chip_init(bank, irqc);
+> +       if (ret) {
+> +               pm_runtime_put_sync(dev);
+> +               pm_runtime_disable(dev);
+> +               if (bank->dbck_flag)
+> +                       clk_unprepare(bank->dbck);
+> +               return ret;
+> +       }
+> +
+> +       omap_gpio_show_rev(bank);
+> +
+> +       if (bank->funcs.idle_enable_level_quirk &&
+> +           bank->funcs.idle_disable_level_quirk) {
+> +               bank->nb.notifier_call =3D gpio_omap_cpu_notifier;
+> +               cpu_pm_register_notifier(&bank->nb);
+> +       }
+> +
+> +       pm_runtime_put(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int omap_gpio_remove(struct platform_device *pdev)
+> +{
+> +       struct gpio_bank *bank =3D platform_get_drvdata(pdev);
+> +
+> +       if (bank->nb.notifier_call)
+> +               cpu_pm_unregister_notifier(&bank->nb);
+> +       list_del(&bank->node);
+> +       gpiochip_remove(&bank->chip);
+> +       pm_runtime_disable(&pdev->dev);
+> +       if (bank->dbck_flag)
+> +               clk_unprepare(bank->dbck);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+> +{
+> +       struct gpio_bank *bank =3D dev_get_drvdata(dev);
+> +       unsigned long flags;
+> +       int error =3D 0;
+> +
+> +       raw_spin_lock_irqsave(&bank->lock, flags);
+> +       /* Must be idled only by CPU_CLUSTER_PM_ENTER? */
+> +       if (bank->irq_usage) {
+> +               error =3D -EBUSY;
+> +               goto unlock;
+> +       }
+> +       omap_gpio_idle(bank, true);
+> +       bank->is_suspended =3D true;
+> +unlock:
+> +       raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +
+> +       return error;
+> +}
+> +
+> +static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+> +{
+> +       struct gpio_bank *bank =3D dev_get_drvdata(dev);
+> +       unsigned long flags;
+> +       int error =3D 0;
+> +
+> +       raw_spin_lock_irqsave(&bank->lock, flags);
+> +       /* Must be unidled only by CPU_CLUSTER_PM_ENTER? */
+> +       if (bank->irq_usage) {
+> +               error =3D -EBUSY;
+> +               goto unlock;
+> +       }
+> +       omap_gpio_unidle(bank);
+> +       bank->is_suspended =3D false;
+> +unlock:
+> +       raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +
+> +       return error;
+> +}
+> +
+> +static const struct dev_pm_ops gpio_pm_ops =3D {
+> +       SET_RUNTIME_PM_OPS(omap_gpio_runtime_suspend, omap_gpio_runtime_r=
+esume,
+> +                                                                       N=
+ULL)
+> +};
+> +
+>  static struct platform_driver omap_gpio_driver =3D {
+>         .probe          =3D omap_gpio_probe,
+>         .remove         =3D omap_gpio_remove,
+>         .driver         =3D {
+>                 .name   =3D "omap_gpio",
+>                 .pm     =3D &gpio_pm_ops,
+> -               .of_match_table =3D of_match_ptr(omap_gpio_match),
+> +               .of_match_table =3D omap_gpio_match,
 
-here is the big pull request for the pin control subsystem updates
-for the v5.1 kernel cycle.
+This doesn't seem like a logical part of this commit. Can you send a
+separate patch?
 
-Note that this had pulled in an immutable branch for Qualcomm
-hierarchical IRQ domains, affecting a bunch of subsystems such
-as SPMI, MFD and the ARM architecture. You already have this
-in your tree from the GPIO pull request, and these commits are
-all ACKed, it was pulled into the pin control tree to avoid
-conflicts.
+Other than that, looks good to me.
 
-Other than that this is a calm cycle, not much happened this
-time around: not even much incremental development. Some
-three new drivers, that is all.
+Bart
 
-Please pull it it!
-
-Yours,
-Linus Walleij
-
-The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9=
-:
-
-  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v5.1-1
-
-for you to fetch changes up to 9bc8fee96e9a4b8f17ba1544bf323f1ae6ded81d:
-
-  pinctrl: imx: fix scu link errors (2019-03-08 13:17:24 +0100)
-
-----------------------------------------------------------------
-This is the bulk of pin control changes for the v5.1 kernel cycle.
-
-No core changes.
-
-New drivers:
-
-- NXP (ex Freescale) i.MX 8QM driver.
-
-- NXP (ex Freescale) i.MX 8MM driver.
-
-- AT91 SAM9X60 subdriver.
-
-Improvements:
-
-- Support for external interrups (EINT) on Mediatek virtual GPIOs.
-
-- Make BCM2835 pin config fully generic.
-
-- Lots of Renesas SH-PFC incremental improvements.
-
-----------------------------------------------------------------
-Aisheng Dong (1):
-      pinctrl: imx: add imx8qm driver
-
-Alexandre Torgue (2):
-      pinctrl: stm32: fix memory leak issue
-      pinctrl: stm32: return error upon hwspinlock failure
-
-Anders Roxell (1):
-      pinctrl: imx: fix scu link errors
-
-Bai Ping (2):
-      dt-bindings: imx: Add pinctrl binding doc for imx8mm
-      pinctrl: freescale: Add imx8mm pinctrl driver support
-
-Bjorn Andersson (2):
-      pinctrl: qcom: qcs404: Drop unused UFS_RESET macro
-      pinctrl: qcom: spmi-gpio: Reorder debug print
-
-Brian Masney (15):
-      dt-bindings: pinctrl: qcom-pmic-gpio: add qcom,pmi8998-gpio binding
-      pinctrl: qcom: spmi-gpio: add support for three new variants
-      pinctrl: qcom: spmi-gpio: hardcode IRQ counts
-      spmi: pmic-arb: convert to v2 irq interfaces to support
-hierarchical IRQ chips
-      gpio: add irq domain activate/deactivate functions
-      spmi: pmic-arb: disassociate old virq if hwirq mapping already exists
-      qcom: spmi-gpio: add support for hierarchical IRQ chip
-      ARM: dts: qcom: pm8941: add interrupt controller properties
-      ARM: dts: qcom: pma8084: add interrupt controller properties
-      arm64: dts: qcom: pm8005: add interrupt controller properties
-      arm64: dts: qcom: pm8998: add interrupt controller properties
-      arm64: dts: qcom: pmi8994: add interrupt controller properties
-      arm64: dts: qcom: pmi8998: add interrupt controller properties
-      spmi: pmic-arb: validate type when mapping IRQ
-      spmi: pmic-arb: revert "disassociate old virq if hwirq mapping
-already exists"
-
-Chen-Yu Tsai (1):
-      pinctrl: sunxi: Support I/O bias voltage setting on A80
-
-Claudiu Beznea (7):
-      pinctrl: at91: add option to use drive strength bits
-      pinctrl: at91: add drive strength support for SAM9X60
-      pinctrl: at91: add compatibles for SAM9X60 pin controller
-      dt-bindings: add documentation for banks
-      dt-bindings: add bindings for SAM9X60
-      pinctrl: at91: add slewrate support for SAM9X60
-      dt-bindings: add documentation for slew rate
-
-Geert Uytterhoeven (15):
-      pinctrl: sh-pfc: r8a77990: GP6_9 does not have pull-down capability
-      Revert "pinctrl: sh-pfc: r8a77990: Add support for pull-up only pins"
-      pinctrl: sh-pfc: Print pin group when debugging
-      pinctrl: sh-pfc: r8a7795: Deduplicate VIN5 pin definitions
-      pinctrl: sh-pfc: r8a7796: Deduplicate VIN5 pin definitions
-      pinctrl: sh-pfc: r8a77970: Deduplicate VIN[01] pin definitions
-      pinctrl: sh-pfc: r8a77980: Deduplicate VIN1 pin definitions
-      pinctrl: sh-pfc: r8a7791: Fix VIN1 versioned groups
-      pinctrl: sh-pfc: r8a77965: Replace DU_DOTCLKIN2 by DU_DOTCLKIN3
-      pinctrl: sh-pfc: r8a7778: Fix HSPI pin numbers and names
-      pinctrl: sh-pfc: emev2: Add missing pinmux functions
-      pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
-      pinctrl: sh-pfc: r8a7792: Fix vin1_data18_b pin group
-      pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
-      pinctrl: sh-pfc: Validate fixed-size field widths at build time
-
-Gregory CLEMENT (2):
-      pinctrl: armada-37xx: add missing pin: PCIe1 Wakeup
-      pinctrl: dt-bindings: Fix the armada-37xx documentation
-
-Gustavo A. R. Silva (2):
-      pinctrl: mcp23s08: use struct_size() in devm_kzalloc()
-      pinctrl: sirf: atlas7: use struct_size() in devm_kzalloc()
-
-Jerome Brunet (2):
-      dt-bindings: pinctrl: meson: update register descriptions
-      pinctrl: meson: add optional region for drive strength
-
-Jisheng Zhang (1):
-      pinctrl: berlin: as370: use generic "pwm" as pwm function name
-
-Jonathan Neusch=C3=A4fer (1):
-      dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
-
-Krzysztof Kozlowski (1):
-      pinctrl: samsung: Remove legacy API for handling external wakeup
-interrupts mask
-
-Lars Poeschel (1):
-      pinctrl: mcp23s08: Allocate irq_chip dynamic
-
-Linus Walleij (5):
-      Merge branch 'ib-meson-fixes' into devel
-      Merge branch 'ib-qcom-spmi' of /home/linus/linux-gpio into devel
-      Merge tag 'sh-pfc-for-v5.1-tag1' of
-git://git.kernel.org/.../geert/renesas-drivers into devel
-      Merge tag 'v5.0-rc6' into devel
-      Merge tag 'sh-pfc-for-v5.1-tag2' of
-git://git.kernel.org/.../geert/renesas-drivers into devel
-
-Marek Beh=C3=BAn (1):
-      pinctrl: armada-37xx: Correct mpp definitions
-
-Martin Blumenstingl (1):
-      pinctrl: meson: meson8b: add the eth_rxd2 and eth_rxd3 pins
-
-Matteo Croce (1):
-      pinctrl/amd: fix typo
-
-Miquel Raynal (1):
-      pinctrl: armada-37xx: change suspend/resume time
-
-Nishanth Menon (1):
-      pinctrl: ti: iodelay: Lower the priority of prints
-
-Paul Cercueil (1):
-      pinctrl: ingenic: Add LCD pins for the JZ4725B SoC
-
-Ramon Fried (1):
-      pinctrl.txt: Remove outdated information
-
-Stefan Wahren (2):
-      pinctrl: bcm2835: declare pin config as generic
-      pinctrl: bcm2835: Direct GPIO config changes to generic pinctrl
-
-Takeshi Kihara (8):
-      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit3 when using TX0
-      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit2 when using RX2, TX2 and =
-SCK2
-      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL bit numbering
-      pinctrl: sh-pfc: r8a77995: Fix MOD_SEL bit numbering
-      pinctrl: sh-pfc: r8a77990: Add TMU pins, groups and functions
-      pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add TMU pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add DRIF pins, groups and functions
-
-Vladimir Zapolskiy (2):
-      pinctrl: remove pinctrl/machine.h inclusion from pinctrl/pinconf.h
-      pinctrl: remove unused 'pinconf-config' debugfs interface
-
-WangBo (1):
-      pinctrl: nomadik: fix possible object reference leak
-
-Wolfram Sang (2):
-      pinctrl: sh-pfc: r8a7790: Initialize TDSEL register for ES1.0
-      pinctrl: sh-pfc: r8a7794: Initialize TDSEL register for ES1.0
-
-Xingyu Chen (1):
-      pinctrl: meson: fix G12A ao pull registers base address
-
-YueHaibing (2):
-      pinctrl: ti-iodelay: Fix platform_no_drv_owner.cocci warnings
-      pinctrl: sirf: drop pointless static qualifier in sirfsoc_gpio_probe
-
-Zhou Yanjie (3):
-      Pinctrl: Ingenic: Fix bugs caused by differences between JZ4770
-and JZ4780.
-      Pinctrl: Ingenic: Add missing parts for JZ4770 and JZ4780.
-      Pinctrl: Ingenic: Unify the function name prefix to "ingenic_gpio_".
-
-chuanjia.liu (1):
-      pinctrl: mediatek: add EINT support to virtual GPIOs
-
- .../bindings/pinctrl/atmel,at91-pinctrl.txt        |  27 +-
- .../bindings/pinctrl/fsl,imx50-pinctrl.txt         |  32 ++
- .../bindings/pinctrl/fsl,imx8mm-pinctrl.txt        |  36 ++
- .../pinctrl/marvell,armada-37xx-pinctrl.txt        |  24 +-
- .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |  10 +-
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |   1 +
- Documentation/driver-api/pinctl.rst                |   9 -
- arch/arm/boot/dts/qcom-pm8941.dtsi                 |  38 +-
- arch/arm/boot/dts/qcom-pma8084.dtsi                |  24 +-
- arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h     | 629 +++++++++++++++++=
-++++
- arch/arm64/boot/dts/qcom/pm8005.dtsi               |   6 +-
- arch/arm64/boot/dts/qcom/pm8998.dtsi               |  28 +-
- arch/arm64/boot/dts/qcom/pmi8994.dtsi              |  12 +-
- arch/arm64/boot/dts/qcom/pmi8998.dtsi              |  16 +-
- drivers/gpio/gpiolib.c                             |  37 ++
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              |   4 +-
- drivers/pinctrl/berlin/pinctrl-as370.c             |  58 +-
- drivers/pinctrl/cirrus/pinctrl-madera-core.c       |   1 +
- drivers/pinctrl/freescale/Kconfig                  |  16 +-
- drivers/pinctrl/freescale/Makefile                 |   2 +
- drivers/pinctrl/freescale/pinctrl-imx8mm.c         | 348 ++++++++++++
- drivers/pinctrl/freescale/pinctrl-imx8qm.c         | 326 +++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c   |   8 +-
- drivers/pinctrl/meson/pinctrl-meson.c              |  24 +-
- drivers/pinctrl/meson/pinctrl-meson.h              |   1 +
- drivers/pinctrl/meson/pinctrl-meson8b.c            |   6 +-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c        |  15 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  17 +-
- drivers/pinctrl/pinconf.c                          | 222 --------
- drivers/pinctrl/pinctrl-amd.c                      |   2 +-
- drivers/pinctrl/pinctrl-at91.c                     | 134 ++++-
- drivers/pinctrl/pinctrl-at91.h                     |   3 +
- drivers/pinctrl/pinctrl-ingenic.c                  | 367 +++++++++---
- drivers/pinctrl/pinctrl-mcp23s08.c                 |  31 +-
- drivers/pinctrl/qcom/pinctrl-qcs404.c              |  25 -
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 142 ++++-
- drivers/pinctrl/samsung/pinctrl-exynos.c           |  12 +-
- drivers/pinctrl/sh-pfc/pfc-emev2.c                 |  20 +
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |   6 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  17 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  70 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c               |   1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |  16 +
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  90 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  90 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 404 ++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c              | 128 ++---
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c              |  64 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c              | 388 +++++++++++--
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              |  11 +-
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c                |   3 +-
- drivers/pinctrl/sh-pfc/pinctrl.c                   |   2 +
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   3 +-
- drivers/pinctrl/sirf/pinctrl-atlas7.c              |   4 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c                |   2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c              |  70 ++-
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c        |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c          |   1 +
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  41 ++
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |  12 +
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c            |   7 +-
- drivers/spmi/spmi-pmic-arb.c                       |  74 ++-
- include/dt-bindings/pinctrl/at91.h                 |   4 +
- include/linux/gpio/driver.h                        |   5 +
- include/linux/pinctrl/pinconf.h                    |   6 -
- 65 files changed, 3249 insertions(+), 984 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mm.c
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8qm.c
+>         },
+>  };
+>
+> --
+> 2.20.0
+>
