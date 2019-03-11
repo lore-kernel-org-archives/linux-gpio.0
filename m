@@ -1,7 +1,7 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 5/7] gpio: vf610: Use devres to disable clk_gpio
-Date: Sun, 10 Mar 2019 23:27:35 -0700
-Message-ID: <20190311062737.6652-6-andrew.smirnov@gmail.com>
+Subject: [PATCH 3/7] gpio: vf610: Simplify vf610_gpio_get()
+Date: Sun, 10 Mar 2019 23:27:33 -0700
+Message-ID: <20190311062737.6652-4-andrew.smirnov@gmail.com>
 References: <20190311062737.6652-1-andrew.smirnov@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,11 +12,9 @@ To: linux-gpio@vger.kernel.org
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, linux-imx@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-Clk_gpio should be disabled in all error paths in the code that
-follws, including the case when either gpiochip_add_data() or
-gpiochip_irqchip_add() fail. To simplify things fix this by using
-devm_add_action() to disable corresponding clock in case of any erros
-as well as driver/device removal.
+Both branches of the if statement do exactly the same thing, just at
+different offsets. Simplify the code a bit by moving shared action
+code outside of the if statement. No functional change intended.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -29,32 +27,35 @@ Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-imx@nxp.com
 ---
- drivers/gpio/gpio-vf610.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-vf610.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 78c1f8ebbe8f..f7445468677d 100644
+index 2ea17870e9da..bb35cedd05e3 100644
 --- a/drivers/gpio/gpio-vf610.c
 +++ b/drivers/gpio/gpio-vf610.c
-@@ -289,6 +289,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 		ret = clk_prepare_enable(port->clk_gpio);
- 		if (ret)
- 			return ret;
-+		ret = devm_add_action_or_reset(dev, vf610_gpio_disable_clk,
-+					       port->clk_gpio);
-+		if (ret)
-+			return ret;
- 	} else if (port->clk_gpio == ERR_PTR(-EPROBE_DEFER)) {
- 		return PTR_ERR(port->clk_gpio);
+@@ -85,17 +85,15 @@ static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct vf610_gpio_port *port = gpiochip_get_data(gc);
+ 	unsigned long mask = BIT(gpio);
+-	void __iomem *addr;
++	unsigned long offset = GPIO_PDIR;
+ 
+ 	if (port->sdata && port->sdata->have_paddr) {
+ 		mask &= vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
+-		addr = mask ? port->gpio_base + GPIO_PDOR :
+-			      port->gpio_base + GPIO_PDIR;
+-		return !!(vf610_gpio_readl(addr) & BIT(gpio));
+-	} else {
+-		return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR)
+-					   & BIT(gpio));
++		if (mask)
++			offset = GPIO_PDOR;
  	}
-@@ -345,8 +349,6 @@ static int vf610_gpio_remove(struct platform_device *pdev)
- 	struct vf610_gpio_port *port = platform_get_drvdata(pdev);
- 
- 	gpiochip_remove(&port->gc);
--	if (!IS_ERR(port->clk_gpio))
--		clk_disable_unprepare(port->clk_gpio);
- 
- 	return 0;
++
++	return !!(vf610_gpio_readl(port->gpio_base + offset) & BIT(gpio));
  }
+ 
+ static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
 -- 
 2.20.1
