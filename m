@@ -1,47 +1,50 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: general protection fault in __bfs (2)
-Date: Mon, 11 Mar 2019 15:49:52 +0200
-Message-ID: <CAHp75VcBAxcB8G1Dr2-nPF6N9W27O=BY4buORs_nqTM=md1=oQ@mail.gmail.com>
-References: <00000000000086d87305801011c4@google.com> <0000000000001d3a060583d187dd@google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH 09/42] drivers: gpio: sprd: use devm_platform_ioremap_resource()
+Date: Mon, 11 Mar 2019 19:54:48 +0100
+Message-ID: <1552330521-4276-9-git-send-email-info@metux.net>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0000000000001d3a060583d187dd@google.com>
+In-Reply-To: <1552330521-4276-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: syzbot <syzbot+c58fa3b1231d2ea0c4d3@syzkaller.appspotmail.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Borislav Petkov <bp@alien8.de>, "David S. Miller" <davem@davemloft.net>, Dou Liyang <douly.fnst@cn.fujitsu.com>, "H. Peter Anvin" <hpa@zytor.com>, jon.maloy@ericsson.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "Brown, Len" <len.brown@intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, netdev <netdev@vger.kernel.org>, puwen@hygon.cn, Mike Rapoport <rppt@linux.vnet.ibm.com>, syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>, tipc-discussion@lists.sourceforge.net, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 3:27 PM syzbot
-<syzbot+c58fa3b1231d2ea0c4d3@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this bug to:
->
-> commit 2646b90de5c3492db2ead71337fd4c7d7f549ebe
-> Author: Linus Walleij <linus.walleij@linaro.org>
-> Date:   Fri Oct 26 08:41:22 2018 +0000
->
->      gpio: Add global TODO file for GPIO
->
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together.
 
-AI is not ready to conqueror the world!
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/gpio/gpio-eic-sprd.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12589f8d200000
-> start commit:   2646b90d gpio: Add global TODO file for GPIO
-> git tree:       upstream
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=11589f8d200000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16589f8d200000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f00801d7b7c4fe6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c58fa3b1231d2ea0c4d3
-> userspace arch: amd64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15bab650c00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a331df400000
->
-> Reported-by: syzbot+c58fa3b1231d2ea0c4d3@syzkaller.appspotmail.com
-> Fixes: 2646b90d ("gpio: Add global TODO file for GPIO")
-
-
-
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index f0223ce..c12de87 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -567,7 +567,6 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 	const struct sprd_eic_variant_data *pdata;
+ 	struct gpio_irq_chip *irq;
+ 	struct sprd_eic *sprd_eic;
+-	struct resource *res;
+ 	int ret, i;
+ 
+ 	pdata = of_device_get_match_data(&pdev->dev);
+@@ -596,13 +595,9 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 		 * have one bank EIC, thus base[1] and base[2] can be
+ 		 * optional.
+ 		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			continue;
+-
+-		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
++		sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(sprd_eic->base[i]))
+-			return PTR_ERR(sprd_eic->base[i]);
++			continue;
+ 	}
+ 
+ 	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
