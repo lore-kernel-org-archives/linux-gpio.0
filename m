@@ -1,62 +1,34 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] drivers: gpio: octeon: use devm_platform_ioremap_resource()
-Date: Tue, 12 Mar 2019 14:45:01 +0100
-Message-ID: <CAMpxmJWCpfm0E15k0vAcxOKFTGdaFkmqK-VXD+orVE65H1Uk2g@mail.gmail.com>
-References: <1552330521-4276-23-git-send-email-info@metux.net> <1552333701-22712-1-git-send-email-info@metux.net>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Tue, 12 Mar 2019 16:54:12 +0200
+Message-ID: <20190312145412.GD9224@smile.fi.intel.com>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com>
+ <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
+ <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
+ <20190308085733.GA3903@icarus>
+ <CAK7LNARvv3Z-eJooj7Htv7xWzD_Ow1whxcPrpqn84JHyqUnEJA@mail.gmail.com>
+ <20190312072222.GA2898@icarus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552333701-22712-1-git-send-email-info@metux.net>
+Content-Disposition: inline
+In-Reply-To: <20190312072222.GA2898@icarus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-pon., 11 mar 2019 o 20:48 Enrico Weigelt, metux IT consult
-<info@metux.net> napisa=C5=82(a):
->
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
->  drivers/gpio/gpio-octeon.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
-> index 1b19c88..afb0e8a 100644
-> --- a/drivers/gpio/gpio-octeon.c
-> +++ b/drivers/gpio/gpio-octeon.c
-> @@ -82,7 +82,6 @@ static int octeon_gpio_probe(struct platform_device *pd=
-ev)
->  {
->         struct octeon_gpio *gpio;
->         struct gpio_chip *chip;
-> -       struct resource *res_mem;
->         void __iomem *reg_base;
->         int err =3D 0;
->
-> @@ -91,8 +90,7 @@ static int octeon_gpio_probe(struct platform_device *pd=
-ev)
->                 return -ENOMEM;
->         chip =3D &gpio->chip;
->
-> -       res_mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       reg_base =3D devm_ioremap_resource(&pdev->dev, res_mem);
-> +       reg_base =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(reg_base))
->                 return PTR_ERR(reg_base);
->
-> --
-> 1.9.1
->
+On Tue, Mar 12, 2019 at 04:22:22PM +0900, William Breathitt Gray wrote:
 
-Can you make this a part of the bigger series and resend together with
-subject line fixes?
+> Since Andy appears to have hardware outside of the GPIO subsystem he's
+> testing, let's wait for that and see how it turns out.
 
-Also: maybe consider adding a coccinelle script for that. When I added
-that function I noticed there are 1200+ instances in the kernel that
-need fixing. I think we'll be better off automating it.
+Since I have still not much time, here is the driver I'm talking about
+drivers/thermal/intel/intel_soc_dts_iosf.c
 
-Bart
+If you have a chance to look at it (add_dts_thermal_zone(), for example) and
+prepare a patch, I will be able to test it on real hardware.
+
+-- 
+With Best Regards,
+Andy Shevchenko
