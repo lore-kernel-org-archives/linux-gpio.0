@@ -1,61 +1,75 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v9 9/9] gpio: uniphier: Utilize for_each_set_clump8 macro
-Date: Tue, 12 Mar 2019 11:09:06 +0200
-Message-ID: <CAHp75VfMvReunZgtBbA42Xw6GtzTO8Xfr2V9nZyV8xYjPnBm4w@mail.gmail.com>
-References: <cover.1551598603.git.vilhelm.gray@gmail.com> <0840d55707dacd1121659723246fa9f55737f426.1551598603.git.vilhelm.gray@gmail.com>
- <CAK7LNARRqYb_ovO_ccQ8xTLTzNYyTEK8whT2r0cq_AqpWqeNXg@mail.gmail.com>
- <CAHp75Vcbi+VeD8xzaB0hSNVhMuiVcwjD8Q9Tt6-H8L9CD32N8Q@mail.gmail.com> <CAK7LNATQN5TJkmOq0r1BzxQCk1T4AmsUmhR1zU+gq8e_f5-FQw@mail.gmail.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 16/42] drivers: gpio: janz-ttl: drop unneccessary temp
+ variable dev
+Date: Tue, 12 Mar 2019 09:17:48 +0000
+Message-ID: <539b3cd4-8af3-d6d8-f5a9-2c426a1f0faa@codethink.co.uk>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-16-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNATQN5TJkmOq0r1BzxQCk1T4AmsUmhR1zU+gq8e_f5-FQw@mail.gmail.com>
+In-Reply-To: <1552330521-4276-16-git-send-email-info@metux.net>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 10:58 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> On Tue, Mar 12, 2019 at 4:19 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Mar 12, 2019 at 6:40 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> > > On Sun, Mar 3, 2019 at 4:51 PM William Breathitt Gray
-> > > <vilhelm.gray@gmail.com> wrote:
-> > > >
-> > > > Replace verbose implementation in set_multiple callback with
-> > > > for_each_set_clump8 macro to simplify code and improve clarity. An
-> > > > improvement in this case is that banks that are not masked will now be
-> > > > skipped.
-> >
-> > > Please do not do this.
-> > >
-> > > Nothing in this driver says the GPIO width is 8-bit.
-> >
-> > Huh?
-> >
-> > https://elixir.bootlin.com/linux/latest/source/include/dt-bindings/gpio/uniphier-gpio.h#L9
-> >
-> > Isn't a hardcoding?
->
->
-> Semi-hardcoding.
->
-> I needed to factor out some magic numbers
-> shared between DT and drivers.
+On 11/03/2019 18:54, Enrico Weigelt, metux IT consult wrote:
+> don't need the temporary variable "dev", directly use &pdev->dev
+> 
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-Effectively means you introduced an ABI, which we are not supposed to
-change, where the number is carved in stone for all hardware covered
-by this driver + DT pair.
-If you would ever need another one it would require extending existing
-bindings without dropping them away.
+This is quite usual to do, and I like it as it saves typing.
+Personally I would say don't bother with this change.
 
-> Then, dt-bindings is out of realm of operating system.
+> ---
+>   drivers/gpio/gpio-janz-ttl.c | 9 ++++-----
+>   1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-janz-ttl.c b/drivers/gpio/gpio-janz-ttl.c
+> index b97a911..91f91f6 100644
+> --- a/drivers/gpio/gpio-janz-ttl.c
+> +++ b/drivers/gpio/gpio-janz-ttl.c
+> @@ -144,18 +144,17 @@ static void ttl_setup_device(struct ttl_module *mod)
+>   static int ttl_probe(struct platform_device *pdev)
+>   {
+>   	struct janz_platform_data *pdata;
+> -	struct device *dev = &pdev->dev;
+>   	struct ttl_module *mod;
+>   	struct gpio_chip *gpio;
+>   	int ret;
+>   
+>   	pdata = dev_get_platdata(&pdev->dev);
+>   	if (!pdata) {
+> -		dev_err(dev, "no platform data\n");
+> +		dev_err(&pdev->dev, "no platform data\n");
+>   		return -ENXIO;
+>   	}
+>   
+> -	mod = devm_kzalloc(dev, sizeof(*mod), GFP_KERNEL);
+> +	mod = devm_kzalloc(&pdev->dev, sizeof(*mod), GFP_KERNEL);
+>   	if (!mod)
+>   		return -ENOMEM;
+>   
+> @@ -181,9 +180,9 @@ static int ttl_probe(struct platform_device *pdev)
+>   	gpio->base = -1;
+>   	gpio->ngpio = 20;
+>   
+> -	ret = devm_gpiochip_add_data(dev, gpio, NULL);
+> +	ret = devm_gpiochip_add_data(&pdev->dev, gpio, NULL);
+>   	if (ret) {
+> -		dev_err(dev, "unable to add GPIO chip\n");
+> +		dev_err(&pdev->dev, "unable to add GPIO chip\n");
+>   		return ret;
+>   	}
+>   
+> 
 
-Exactly!
-
-> If I am doing wrong, I take back my comments, though.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
