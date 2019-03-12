@@ -1,60 +1,54 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 36/42] drivers: gpio: uniphier: use devm_platform_ioremap_resource()
-Date: Tue, 12 Mar 2019 18:37:02 +0900
-Message-ID: <CAK7LNASPyZVpN2JVT8v6qzXUNfu-dLqcwwSc-eZL+yMyMEFXCg@mail.gmail.com>
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-36-git-send-email-info@metux.net>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Tue, 12 Mar 2019 19:43:22 +0900
+Message-ID: <20190312104322.GA3425@icarus>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com>
+ <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
+ <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
+ <20190311180113.c283fdbcba3df10db2c815aa@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-36-git-send-email-info@metux.net>
+Content-Disposition: inline
+In-Reply-To: <20190311180113.c283fdbcba3df10db2c815aa@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, andrew@aj.id.au, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shaw>
+To: linus.walleij@linaro.org
+Cc: akpm@linux-foundation.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 3:57 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
->
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
+On Mon, Mar 11, 2019 at 06:01:13PM -0700, Andrew Morton wrote:
+> On Fri, 8 Mar 2019 09:31:00 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> > On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
+> > <vilhelm.gray@gmail.com> wrote:
+> > 
+> > > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > > within a bitmap memory region. For each iteration, "start" is set to the
+> > > bit offset of the found clump, while the respective clump value is
+> > > stored to the location pointed by "clump". Additionally, the
+> > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > > respectively get and set an 8-bit value in a bitmap memory region.
+> > >
+> > > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> > 
+> > Andrew: would you be OK with this being merged in v5.1?
+> 
+> Yup.  We have quite a few users there.  I assume this will go via the
+> gpio tree?
+> 
+> Feel free to add Acked-by: Andrew Morton <akpm@linux-foundation.org>,
+> although it probably isn't worth churning the git tree to do so at this
+> late stage - your cvall.
 
+Linus,
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+I discovered a bug in this version of the patchset. I'll release a
+version 10 once I've resolved the issue.
 
-
->  drivers/gpio/gpio-uniphier.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-> index 0f662b2..93cdcc4 100644
-> --- a/drivers/gpio/gpio-uniphier.c
-> +++ b/drivers/gpio/gpio-uniphier.c
-> @@ -346,7 +346,6 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
->         struct uniphier_gpio_priv *priv;
->         struct gpio_chip *chip;
->         struct irq_chip *irq_chip;
-> -       struct resource *regs;
->         unsigned int nregs;
->         u32 ngpios;
->         int ret;
-> @@ -370,8 +369,7 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
->         if (!priv)
->                 return -ENOMEM;
->
-> -       regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       priv->regs = devm_ioremap_resource(dev, regs);
-> +       priv->regs = devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(priv->regs))
->                 return PTR_ERR(priv->regs);
->
-> --
-> 1.9.1
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+William Breathitt Gray
