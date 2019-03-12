@@ -1,103 +1,66 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v9 9/9] gpio: uniphier: Utilize for_each_set_clump8 macro
-Date: Tue, 12 Mar 2019 16:29:23 +0900
-Message-ID: <20190312072923.GB2898@icarus>
-References: <cover.1551598603.git.vilhelm.gray@gmail.com>
- <0840d55707dacd1121659723246fa9f55737f426.1551598603.git.vilhelm.gray@gmail.com>
- <CAK7LNARRqYb_ovO_ccQ8xTLTzNYyTEK8whT2r0cq_AqpWqeNXg@mail.gmail.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 09/42] drivers: gpio: sprd: use
+ devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 09:08:12 +0100
+Message-ID: <38a0ea2f-2324-ab21-b43f-bb3b883c1422@metux.net>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-9-git-send-email-info@metux.net>
+ <CAMz4kuKC5haGbhyVJ4gQ6nMRzdaxJnd3SmeCSM-096p7TAp8cA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARRqYb_ovO_ccQ8xTLTzNYyTEK8whT2r0cq_AqpWqeNXg@mail.gmail.com>
+In-Reply-To: <CAMz4kuKC5haGbhyVJ4gQ6nMRzdaxJnd3SmeCSM-096p7TAp8cA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, bgolaszewski@baylibre.com, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Baolin Wang <baolin.wang@linaro.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, ssantosh@kernel.org, khilman@kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, Masahiro Yamada <yamada.masahiro@socionext.com>, jun.nie@linaro.org, shawnguo@kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.orgli
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 01:36:57PM +0900, Masahiro Yamada wrote:
-> On Sun, Mar 3, 2019 at 4:51 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> >
-> > Replace verbose implementation in set_multiple callback with
-> > for_each_set_clump8 macro to simplify code and improve clarity. An
-> > improvement in this case is that banks that are not masked will now be
-> > skipped.
-> >
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> > ---
-> >  drivers/gpio/gpio-uniphier.c | 16 ++++++----------
-> >  1 file changed, 6 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-> > index 0f662b297a95..df640cb29b9c 100644
-> > --- a/drivers/gpio/gpio-uniphier.c
-> > +++ b/drivers/gpio/gpio-uniphier.c
-> > @@ -15,9 +15,6 @@
-> >  #include <linux/spinlock.h>
-> >  #include <dt-bindings/gpio/uniphier-gpio.h>
-> >
-> > -#define UNIPHIER_GPIO_BANK_MASK                \
-> > -                               GENMASK((UNIPHIER_GPIO_LINES_PER_BANK) - 1, 0)
-> > -
-> >  #define UNIPHIER_GPIO_IRQ_MAX_NUM      24
-> >
-> >  #define UNIPHIER_GPIO_PORT_DATA                0x0     /* data */
-> > @@ -147,15 +144,14 @@ static void uniphier_gpio_set(struct gpio_chip *chip,
-> >  static void uniphier_gpio_set_multiple(struct gpio_chip *chip,
-> >                                        unsigned long *mask, unsigned long *bits)
-> >  {
-> > -       unsigned int bank, shift, bank_mask, bank_bits;
-> > -       int i;
-> > +       unsigned int i;
-> > +       unsigned long bank_mask;
-> > +       unsigned int bank;
-> > +       unsigned int bank_bits;
-> >
-> > -       for (i = 0; i < chip->ngpio; i += UNIPHIER_GPIO_LINES_PER_BANK) {
-> > +       for_each_set_clump8(i, bank_mask, mask, chip->ngpio) {
-> >                 bank = i / UNIPHIER_GPIO_LINES_PER_BANK;
-> > -               shift = i % BITS_PER_LONG;
-> > -               bank_mask = (mask[BIT_WORD(i)] >> shift) &
-> > -                                               UNIPHIER_GPIO_BANK_MASK;
-> > -               bank_bits = bits[BIT_WORD(i)] >> shift;
-> > +               bank_bits = bitmap_get_value8(bits, chip->ngpio, i);
-> >
-> >                 uniphier_gpio_bank_write(chip, bank, UNIPHIER_GPIO_PORT_DATA,
-> >                                          bank_mask, bank_bits);
+On 12.03.19 03:38, Baolin Wang wrote:
+> On Tue, 12 Mar 2019 at 02:55, Enrico Weigelt, metux IT consult
+> <info@metux.net> wrote:
+>>
+>> Use the new helper that wraps the calls to platform_get_resource()
+>> and devm_ioremap_resource() together.
+>>
+>> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+>> ---
+>>  drivers/gpio/gpio-eic-sprd.c | 9 ++-------
+>>  1 file changed, 2 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+>> index f0223ce..c12de87 100644
+>> --- a/drivers/gpio/gpio-eic-sprd.c
+>> +++ b/drivers/gpio/gpio-eic-sprd.c
+>> @@ -567,7 +567,6 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>>         const struct sprd_eic_variant_data *pdata;
+>>         struct gpio_irq_chip *irq;
+>>         struct sprd_eic *sprd_eic;
+>> -       struct resource *res;
+>>         int ret, i;
+>>
+>>         pdata = of_device_get_match_data(&pdev->dev);
+>> @@ -596,13 +595,9 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>>                  * have one bank EIC, thus base[1] and base[2] can be
+>>                  * optional.
+>>                  */
+>> -               res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>> -               if (!res)
+>> -                       continue;
+>> -
+>> -               sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
+>> +               sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, 0);
 > 
-> 
-> Please do not do this.
-> 
-> Nothing in this driver says the GPIO width is 8-bit.
-> 
-> You are hard-coding '8-bit'.
+> This is incorrect, since we can have multiple IO resources, but you
+> only get index 0.
 
-The for_each_set_clump8 macro is hardcoded to 8-bit clumps because the
-current drivers utilizing this functionality are only updating their
-GPIO ports 8-bits at a time.
+ah, right, it has to be i instead of 0. thanks for pointing that out.
 
-However, if this driver updates more or less GPIO at a time, we can
-easily update the macro by replacing the hardcoded '8' value with a
-variable, thus giving us the generic for_each_set_clump macro.
 
-How many GPIO can be updated at a time for this device?
+--mtx
 
-William Breathitt Gray
-
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> > --
-> > 2.21.0
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
