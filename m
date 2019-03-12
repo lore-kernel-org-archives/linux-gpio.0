@@ -1,34 +1,33 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
-Date: Tue, 12 Mar 2019 16:54:12 +0200
-Message-ID: <20190312145412.GD9224@smile.fi.intel.com>
-References: <cover.1551598603.git.vilhelm.gray@gmail.com>
- <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
- <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
- <20190308085733.GA3903@icarus>
- <CAK7LNARvv3Z-eJooj7Htv7xWzD_Ow1whxcPrpqn84JHyqUnEJA@mail.gmail.com>
- <20190312072222.GA2898@icarus>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 16/42] drivers: gpio: janz-ttl: drop unneccessary temp
+ variable dev
+Date: Tue, 12 Mar 2019 16:00:01 +0100
+Message-ID: <a3a56d82-ef94-9c71-2395-ed1a78dc9c26@metux.net>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-16-git-send-email-info@metux.net>
+ <539b3cd4-8af3-d6d8-f5a9-2c426a1f0faa@codethink.co.uk>
+ <93ae13c0-da78-0e6a-358f-97e358c11f16@metux.net>
+ <20190312112607.GD31026@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190312072222.GA2898@icarus>
+In-Reply-To: <20190312112607.GD31026@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, "Enrico Weigelt, metux IT consult" <info@metux.net>, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 04:22:22PM +0900, William Breathitt Gray wrote:
+On 12.03.19 12:26, Thierry Reding wrote:
+> You're not consistent within the series itself. In patch 3 you went the
+> other way and dropped usage of pdev->dev in favour of the local dev
+> variable.
 
-> Since Andy appears to have hardware outside of the GPIO subsystem he's
-> testing, let's wait for that and see how it turns out.
+ups, you got me :O
 
-Since I have still not much time, here is the driver I'm talking about
-drivers/thermal/intel/intel_soc_dts_iosf.c
-
-If you have a chance to look at it (add_dts_thermal_zone(), for example) and
-prepare a patch, I will be able to test it on real hardware.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
