@@ -1,35 +1,63 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH 38/42] drivers: gpio: vr41xx: use
- devm_platform_ioremap_resource()
-Date: Tue, 12 Mar 2019 16:42:06 +0100
-Message-ID: <e224f52a-a92b-63cd-a9ed-67672a2c7337@metux.net>
-References: <1552330521-4276-1-git-send-email-info@metux.net>
- <1552330521-4276-38-git-send-email-info@metux.net>
- <20190312113732.GG31026@ulmo>
+From: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 04/14] pinctrl: sunxi: v3: really introduce support for V3
+Date: Tue, 12 Mar 2019 23:45:06 +0800
+Message-ID: <7B6C1341-BAB5-48C5-9E60-11BCEAC3D0CD@aosc.io>
+References: <20190312152256.35574-1-icenowy@aosc.io> <20190312152256.35574-5-icenowy@aosc.io> <20190312153654.25r5orlw7qjtlhbt@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190312113732.GG31026@ulmo>
-Content-Language: en-US
+In-Reply-To: <20190312153654.25r5orlw7qjtlhbt@flea>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jagan Teki <jagan@amarulasolutions.com>, linux-clk@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 12.03.19 12:37, Thierry Reding wrote:
-
-> The driver currently doesn't request the memory described in the
-> resource, so technically you're changing behaviour here and with your
-> change the driver could now fail if somebody else has already claimed
-> the memory.
-
-hmm, using w/o requesting/claiming - isn't that a bug ?
 
 
---mtx
+于 2019年3月12日 GMT+08:00 下午11:36:54, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Tue, Mar 12, 2019 at 11:22:46PM +0800, Icenowy Zheng wrote:
+>> Introduce the GPIO pins that is only available on V3 (not on V3s) to
+>the
+>> V3 pinctrl driver.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291
+>+++++++++++++++++++++--
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
+>>  2 files changed, 275 insertions(+), 18 deletions(-)
+>> 
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+>b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+>> index 6704ce8e5e3d..54c210871a95 100644
+>> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
+>> @@ -1,5 +1,5 @@
+>>  /*
+>> - * Allwinner V3s SoCs pinctrl driver.
+>> + * Allwinner V3/V3s SoCs pinctrl driver.
+>>   *
+>>   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+>>   *
+>> @@ -23,7 +23,7 @@
+>>  
+>>  #include "pinctrl-sunxi.h"
+>>  
+>> -static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+>> +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] = {
+>
+>I'm not sure all that remaining is worth it to be honest. It adds a
+>lot of noise for no particular reason (and the same goes for renaming
+>the file itself)
+
+Maybe keeping names is okay "for historial reasons".
+
+In fact I want to keep them.
+
+>
+>Maxime
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+使用 K-9 Mail 发送自我的Android设备。
