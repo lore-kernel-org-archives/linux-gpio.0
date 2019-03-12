@@ -1,49 +1,35 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: Fix potential NULL pointer dereference
-Date: Tue, 12 Mar 2019 17:37:02 +0200
-Message-ID: <20190312153702.GH9224@smile.fi.intel.com>
-References: <20190312150552.1429-1-pakki001@umn.edu>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 38/42] drivers: gpio: vr41xx: use
+ devm_platform_ioremap_resource()
+Date: Tue, 12 Mar 2019 16:42:06 +0100
+Message-ID: <e224f52a-a92b-63cd-a9ed-67672a2c7337@metux.net>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
+ <1552330521-4276-38-git-send-email-info@metux.net>
+ <20190312113732.GG31026@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190312150552.1429-1-pakki001@umn.edu>
+In-Reply-To: <20190312113732.GG31026@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aditya Pakki <pakki001@umn.edu>
-Cc: kjlu@umn.edu, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 10:05:52AM -0500, Aditya Pakki wrote:
-> saved-context in byt_gpio_probe is allocated via devm_kcalloc and is
-> used without checking for NULL in later functions. This patch avoids
-> such a scenario.
-> 
+On 12.03.19 12:37, Thierry Reding wrote:
 
-Thanks.
-I take it to our branch after merge window will be finished.
+> The driver currently doesn't request the memory described in the
+> resource, so technically you're changing behaviour here and with your
+> change the driver could now fail if somebody else has already claimed
+> the memory.
 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 241384ead4ed..18d9ad504194 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -1710,6 +1710,8 @@ static int byt_gpio_probe(struct byt_gpio *vg)
->  #ifdef CONFIG_PM_SLEEP
->  	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
->  				       sizeof(*vg->saved_context), GFP_KERNEL);
-> +	if (!vg->saved_context)
-> +		return -ENOMEM;
->  #endif
->  	ret = devm_gpiochip_add_data(&vg->pdev->dev, gc, vg);
->  	if (ret) {
-> -- 
-> 2.17.1
-> 
+hmm, using w/o requesting/claiming - isn't that a bug ?
+
+
+--mtx
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
