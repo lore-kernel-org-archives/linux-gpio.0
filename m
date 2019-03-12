@@ -1,41 +1,34 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH] drivers: gpio: octeon: use
- devm_platform_ioremap_resource()
-Date: Tue, 12 Mar 2019 16:11:33 +0100
-Message-ID: <5f55101d-ae12-0908-fff1-934f0e8d0d54@metux.net>
-References: <1552330521-4276-23-git-send-email-info@metux.net>
- <1552333701-22712-1-git-send-email-info@metux.net>
- <CAMpxmJWCpfm0E15k0vAcxOKFTGdaFkmqK-VXD+orVE65H1Uk2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Aditya Pakki <pakki001@umn.edu>
+Subject: [PATCH] pinctrl: axp209: Fix NULL pointer dereference after allocation
+Date: Tue, 12 Mar 2019 10:19:10 -0500
+Message-ID: <20190312151911.2207-1-pakki001@umn.edu>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMpxmJWCpfm0E15k0vAcxOKFTGdaFkmqK-VXD+orVE65H1Uk2g@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>
+To: pakki001@umn.edu
+Cc: kjlu@umn.edu, Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 12.03.19 14:45, Bartosz Golaszewski wrote:
+axp20x_build_funcs_groups allocates groups via devm_kcalloc and tries to
+dereference without checking for NULL. This patch avoids such a
+scenario.
 
-> Can you make this a part of the bigger series and resend together with
-> subject line fixes?
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/pinctrl/pinctrl-axp209.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-tried to resend it as reply on the prev version. but somehow this
-didn't seem to work as intented.
-
-> Also: maybe consider adding a coccinelle script for that. When I added
-> that function I noticed there are 1200+ instances in the kernel that
-> need fixing. I think we'll be better off automating it.
-
-haven't coped w/ this yet ... I'll first need to have a deeper look
-at it. advices welcomed.
-
-
---mtx
-
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index afd0b533c40a..4fcf7262bed9 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -366,6 +366,8 @@ static int axp20x_build_funcs_groups(struct platform_device *pdev)
+ 		pctl->funcs[i].groups = devm_kcalloc(&pdev->dev,
+ 						     npins, sizeof(char *),
+ 						     GFP_KERNEL);
++		if (!pctl->funcs[i].groups)
++			return -ENOMEM;
+ 		for (pin = 0; pin < npins; pin++)
+ 			pctl->funcs[i].groups[pin] = pctl->desc->pins[pin].name;
+ 	}
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.17.1
