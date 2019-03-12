@@ -1,69 +1,49 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 04/14] pinctrl: sunxi: v3: really introduce
- support for V3
-Date: Tue, 12 Mar 2019 16:36:54 +0100
-Message-ID: <20190312153654.25r5orlw7qjtlhbt@flea>
-References: <20190312152256.35574-1-icenowy@aosc.io>
- <20190312152256.35574-5-icenowy@aosc.io>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: baytrail: Fix potential NULL pointer dereference
+Date: Tue, 12 Mar 2019 17:37:02 +0200
+Message-ID: <20190312153702.GH9224@smile.fi.intel.com>
+References: <20190312150552.1429-1-pakki001@umn.edu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="s44e46kj3dzvjmpr"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBGNET7SAKGQEQ34NB6Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190312152256.35574-5-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jagan Teki <jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20190312150552.1429-1-pakki001@umn.edu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aditya Pakki <pakki001@umn.edu>
+Cc: kjlu@umn.edu, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-
---s44e46kj3dzvjmpr
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-
-On Tue, Mar 12, 2019 at 11:22:46PM +0800, Icenowy Zheng wrote:
-> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
-> V3 pinctrl driver.
+On Tue, Mar 12, 2019 at 10:05:52AM -0500, Aditya Pakki wrote:
+> saved-context in byt_gpio_probe is allocated via devm_kcalloc and is
+> used without checking for NULL in later functions. This patch avoids
+> such a scenario.
 > 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+
+Thanks.
+I take it to our branch after merge window will be finished.
+
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 > ---
->  drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c | 291 +++++++++++++++++++++--
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |   2 +
->  2 files changed, 275 insertions(+), 18 deletions(-)
+>  drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> index 6704ce8e5e3d..54c210871a95 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Allwinner V3s SoCs pinctrl driver.
-> + * Allwinner V3/V3s SoCs pinctrl driver.
->   *
->   * Copyright (C) 2016 Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
->   *
-> @@ -23,7 +23,7 @@
->  
->  #include "pinctrl-sunxi.h"
->  
-> -static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
-> +static const struct sunxi_desc_pin sun8i_v3_v3s_pins[] = {
-
-I'm not sure all that remaining is worth it to be honest. It adds a
-lot of noise for no particular reason (and the same goes for renaming
-the file itself).
-
-Maxime
+> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> index 241384ead4ed..18d9ad504194 100644
+> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
+> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> @@ -1710,6 +1710,8 @@ static int byt_gpio_probe(struct byt_gpio *vg)
+>  #ifdef CONFIG_PM_SLEEP
+>  	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
+>  				       sizeof(*vg->saved_context), GFP_KERNEL);
+> +	if (!vg->saved_context)
+> +		return -ENOMEM;
+>  #endif
+>  	ret = devm_gpiochip_add_data(&vg->pdev->dev, gc, vg);
+>  	if (ret) {
+> -- 
+> 2.17.1
+> 
 
 -- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---s44e46kj3dzvjmpr--
+With Best Regards,
+Andy Shevchenko
