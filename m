@@ -1,103 +1,45 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 armsoc/drivers/bus+gpio 2/5] dt-bindings: bus:
- Document moxtet bus binding
-Date: Mon, 11 Mar 2019 17:59:06 -0500
-Message-ID: <20190311225906.GA9056@bogus>
-References: <20190307125251.724-1-marek.behun@nic.cz>
- <20190307125251.724-3-marek.behun@nic.cz>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Mon, 11 Mar 2019 18:01:13 -0700
+Message-ID: <20190311180113.c283fdbcba3df10db2c815aa@linux-foundation.org>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com>
+        <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
+        <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190307125251.724-3-marek.behun@nic.cz>
+In-Reply-To: <CACRpkdbvCGRjB1sZWqN3wm660cP8S4-j0ub1j1iYpitDK_eXcQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 07, 2019 at 01:52:48PM +0100, Marek Behún wrote:
-> This adds device tree binding documentation for the Moxtet bus, a bus
-> via which the different modules connected to the Turris Mox router can
-> be configured.
+On Fri, 8 Mar 2019 09:31:00 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> On Sun, Mar 3, 2019 at 8:47 AM William Breathitt Gray
+> <vilhelm.gray@gmail.com> wrote:
 > 
-> Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> ---
->  .../devicetree/bindings/bus/moxtet.txt        | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/moxtet.txt
+> > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > within a bitmap memory region. For each iteration, "start" is set to the
+> > bit offset of the found clump, while the respective clump value is
+> > stored to the location pointed by "clump". Additionally, the
+> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > respectively get and set an 8-bit value in a bitmap memory region.
+> >
+> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/bus/moxtet.txt b/Documentation/devicetree/bindings/bus/moxtet.txt
-> new file mode 100644
-> index 000000000000..7be9d00c1767
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/moxtet.txt
-> @@ -0,0 +1,44 @@
-> +Turris Mox module status and configuration bus (over SPI)
-> +
-> +Required properties:
-> + - compatible		: Should be "cznic,moxtet"
-> + - #address-cells	: Has to be 1
-> + - #size-cells		: Has to be 0
-> + - spi-cpol		: Required inverted clock polarity
-> + - spi-cpha		: Required shifted clock phase
-> + - interrupts		: Must contain reference to the shared interrupt line
-> + - interrupt-controller	: Required
-> + - #interrupt-cells	: Has to be 1
-> +
-> +For other required and optional properties of SPI slave nodes please refer to
-> +../spi/spi-bus.txt.
-> +
-> +Required properties of subnodes:
-> + - reg			: Should be position on the Moxtet bus
+> Andrew: would you be OK with this being merged in v5.1?
 
-'position' is a little vague.
+Yup.  We have quite a few users there.  I assume this will go via the
+gpio tree?
 
-> +
-> +The driver finds the devices connected to the bus by itself, but it may be
-> +needed to reference some of them from other parts of the device tree. In that
-> +case the devices can be defined as subnodes of the moxtet node.
-> +
-> +Example:
-> +
-> +	moxtet@1 {
-> +		compatible = "cznic,moxtet";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <1>;
-> +		spi-max-frequency = <10000000>;
-> +		spi-cpol;
-> +		spi-cpha;
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		moxtet_sfp: gpio@0 {
-> +			compatible = "cznic,moxtet-sfp";
-
-cznic,moxtet-gpio according to the next patch.
-
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			reg = <0>;
-> +		}
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d96d36c83bc3..3f461a2d776a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1502,6 +1502,7 @@ ARM/CZ.NIC TURRIS MOX SUPPORT
->  M:	Marek Behun <marek.behun@nic.cz>
->  W:	http://mox.turris.cz
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/bus/moxtet.txt
->  F:	include/linux/moxtet.h
->  F:	drivers/bus/moxtet.c
->  
-> -- 
-> 2.19.2
-> 
+Feel free to add Acked-by: Andrew Morton <akpm@linux-foundation.org>,
+although it probably isn't worth churning the git tree to do so at this
+late stage - your cvall.
