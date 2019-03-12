@@ -1,101 +1,125 @@
-From: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Fwd: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add
- Allwinner sun8i.
-Date: Tue, 12 Mar 2019 13:03:19 +0800
-Message-ID: <CAJeuY7_gx=PBhF4t40nCCWia-aq1G3t9D9nKS7ejOh56t2RkHQ@mail.gmail.com>
-References: <20181125161859.GA5277@arx-s1> <20181220175009.GF9408@ulmo> <CAJeuY7-StNNDpBPyw1JH5Jmc-NhDw67F6Veh0S2tBTmENCTY8Q@mail.gmail.com>
-Reply-To: hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v9 1/9] bitops: Introduce the for_each_set_clump8 macro
+Date: Tue, 12 Mar 2019 14:03:24 +0900
+Message-ID: <CAK7LNATW7uKB2-wMytLSpb8dPLkWbirptCgU=LAq3PYRtgOuXg@mail.gmail.com>
+References: <cover.1551598603.git.vilhelm.gray@gmail.com> <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDKITZOARQMBBJH3TTSAKGQEIIUPXGA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <CAJeuY7-StNNDpBPyw1JH5Jmc-NhDw67F6Veh0S2tBTmENCTY8Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <12b3a364ac7fc32194fa6f55911dd800aca92a56.1551598603.git.vilhelm.gray@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, bgolaszewski@baylibre.com, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
----------- Forwarded message ---------
-From: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Date: 2019=E5=B9=B43=E6=9C=8812=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=
-=8812:59
-Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner s=
-un8i.
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Sun, Mar 3, 2019 at 4:48 PM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+>
+> This macro iterates for each 8-bit group of bits (clump) with set bits,
+> within a bitmap memory region. For each iteration, "start" is set to the
+> bit offset of the found clump, while the respective clump value is
+> stored to the location pointed by "clump". Additionally, the
+> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> respectively get and set an 8-bit value in a bitmap memory region.
+>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> ---
+>  include/asm-generic/bitops/find.h | 14 ++++++
+>  include/linux/bitops.h            |  5 ++
+>  lib/find_bit.c                    | 81 +++++++++++++++++++++++++++++++
+>  3 files changed, 100 insertions(+)
+>
+> diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
+> index 8a1ee10014de..9a76adff59c6 100644
+> --- a/include/asm-generic/bitops/find.h
+> +++ b/include/asm-generic/bitops/find.h
+> @@ -80,4 +80,18 @@ extern unsigned long find_first_zero_bit(const unsigned long *addr,
+>
+>  #endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
+>
+> +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
+> +                               const unsigned int size,
+> +                               const unsigned int start);
+> +
+> +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
+> +                      const unsigned long value, const unsigned int start);
+> +
+> +unsigned int find_next_clump8(unsigned long *const clump,
+> +                             const unsigned long *const addr,
+> +                             unsigned int offset, const unsigned int size);
+> +
+> +#define find_first_clump8(clump, bits, size) \
+> +       find_next_clump8((clump), (bits), 0, (size))
+> +
+>  #endif /*_ASM_GENERIC_BITOPS_FIND_H_ */
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 705f7c442691..61c10f20079e 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -40,6 +40,11 @@ extern unsigned long __sw_hweight64(__u64 w);
+>              (bit) < (size);                                    \
+>              (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
+>
+> +#define for_each_set_clump8(start, clump, bits, size) \
+> +       for ((start) = find_first_clump8(&(clump), (bits), (size)); \
+> +            (start) < (size); \
+> +            (start) = find_next_clump8(&(clump), (bits), (start) + 8, (size)))
+> +
+>  static inline int get_bitmask_order(unsigned int count)
+>  {
+>         int order;
+> diff --git a/lib/find_bit.c b/lib/find_bit.c
+> index ee3df93ba69a..c2af1f013ea2 100644
+> --- a/lib/find_bit.c
+> +++ b/lib/find_bit.c
+> @@ -218,3 +218,84 @@ EXPORT_SYMBOL(find_next_bit_le);
+>  #endif
+>
+>  #endif /* __BIG_ENDIAN */
+> +
+> +/**
+> + * bitmap_get_value8 - get an 8-bit value within a memory region
+> + * @bitmap: address to the bitmap memory region
+> + * @size: bitmap size in number of bits
+> + * @start: bit offset of the 8-bit value
+> + *
+> + * Returns the 8-bit value located at the @start bit offset within the @bitmap
+> + * memory region.
+> + */
+> +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
+> +                               const unsigned int size,
+> +                               const unsigned int start)
 
 
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =E4=BA=8E2018=E5=B9=B412=E6=9C=88=
-21=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8A=E5=8D=881:50=E5=86=99=E9=81=93=EF=
-=BC=9A
->
-> On Mon, Nov 26, 2018 at 12:18:59AM +0800, Hao Zhang wrote:
-> > This patch adds Allwinner sun8i pwm binding document.
-> >
-> > Signed-off-by: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++=
-++++++++
-> >  1 file changed, 24 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Docu=
-mentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> > new file mode 100644
-> > index 0000000..7531d85
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> > @@ -0,0 +1,24 @@
-> > +Allwinner sun8i R40/V40/T3 SoC PWM controller
-> > +
-> > +Required properties:
-> > +  - compatible: Should be one of:
-> > +    - "allwinner,sun8i-r40-pwm"
-> > +  - reg: Physical base address and length of the controller's register=
-s
-> > +  - interrupts: Should contain interrupt.
-> > +  - clocks: From common clock binding, handle to the parent clock.
-> > +  - clock-names: Must contain the clock names described just above.
-> > +  - pwm-channels: PWM channels of the controller.
->
-> Why do you need this? In the cover letter you say:
->
->         "The sun8i R40/T3/V40 PWM has 8 PWM channals ..."
->
-> Why does this need to be specified in the DT?
+The comment says this function returns '8-bit value'.
 
-T3 PWM has 8 channals, i think it is necessary to tell user how to
-specify it Instead of
-hardcode the channal myself :)
+The return type should be 'u8' instead of 'unsigned long', then.
 
-Thanks for review :)
+Same for other helpers.
 
->
-> Thierry
-> -----BEGIN PGP SIGNATURE-----
->
-> iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwb1k4ACgkQ3SOs138+
-> s6EOyA//auHjqjKwvjCLwWgHXdVr26cFUnFn/Ml6ZHHRe+oLCiYsatv4AZfGFvZ7
-> CIGWN3zUu9c5YoDOd1isauQYgRtTsShWYC4gPxFFK9hWfb8f3o/wG60whkNDuvLL
-> 1SAQ/KJTC01LQIEXfHlb60EPvKCtt4YUQG4PkTGBGOHSO+MhWQHRLy5aLaq+d3yH
-> KHaDZ0PuZvYNnFWi7W/ggraiIlRToPH8HanFzGew+gUfPjClrczjrGqgn8u0bAL6
-> MuKDMHLgjI/D8cs7XIaXc/OCPsp69B4JGrRJsxYh0KGKthaYDeKAUERpvsltDhGT
-> oTB55mJPZlriaiEOSwPrj+M0JQe9AnUIBVEiSIP2dSn8+rcSlWd10ysEjnCH/Ea7
-> ARkamiRCk2hgOhZlDZcm+hjh7VxnJinaYahGFXMszpVgCScHT/fjZKexGqX8NJa8
-> EWRJjeJaS1jLpLb7ZhM0iZrhzSC638G/5z3+1CWmyxwOvICb0FXzQDCTNSm1t8DO
-> NicV26tAWMIvDEW5PcTqrJaSvQmNrr4MiBiqocKs4N+ZA7Ey8JQW0oUFzwiwD6Ew
-> HaOuVXDlha1SZNK2tEnTDsTctXefl+eB7xeQ8MOHPp3yeKrpQlj4gHSyNOboEaXR
-> 8el/ZC1gGYHPeFGPSgXTbRNFwNY8/9GKPfP5cUgLc+e1B7oWAHg=3D
-> =3D9v1O
-> -----END PGP SIGNATURE-----
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+
+> +{
+> +       const size_t index = BIT_WORD(start);
+> +       const unsigned int offset = start % BITS_PER_LONG;
+> +       const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
+> +                                      BITS_PER_LONG - offset : 8;
+> +       const unsigned long low = bitmap[index] >> offset;
+> +       const unsigned long high = (low_width < 8 && start + 8 <= size) ?
+> +                                  bitmap[index + 1] << low_width : 0;
+
+
+I do not know if we have a usecase
+where the 'start' is not multiple of 8, though.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
