@@ -1,42 +1,46 @@
-From: Christina Quast <cquast@hanoverdisplays.com>
-Subject: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
-Date: Wed, 13 Mar 2019 15:20:40 +0100
-Message-ID: <20190313142040.26694-1-cquast@hanoverdisplays.com>
-Reply-To: VI1PR04MB42227AA158BA1FCBF314AA27807B0@VI1PR04MB4222.eurprd04.prod.outlook.com
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 06/15] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+Date: Wed, 13 Mar 2019 15:17:52 -0400
+Message-ID: <20190313191806.160547-6-sashal@kernel.org>
+References: <20190313191806.160547-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Christina Quast <cquast@hanoverdisplays.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190313191806.160547-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from
-the documentation.
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Changes since v2:
-* Changed patch title to 'dt-bindings: pinctrl: imx7d:'
+[ Upstream commit c17abcfa93bf0be5e48bb011607d237ac2bfc839 ]
 
-Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
+Fix the mismatch between the "sdxc_d13_1_a" pin group definition from
+meson8b_cbus_groups and the entry in sdxc_a_groups ("sdxc_d0_13_1_a").
+This makes it possible to use "sdxc_d13_1_a" in device-tree files to
+route the MMC data 1..3 pins to GPIOX_1..3.
+
+Fixes: 0fefcb6876d0d6 ("pinctrl: Add support for Meson8b")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-index 6666277c3acb..8ac1d0851a0f 100644
---- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-@@ -48,9 +48,9 @@ PAD_CTL_HYS                     (1 << 3)
- PAD_CTL_SRE_SLOW                (1 << 2)
- PAD_CTL_SRE_FAST                (0 << 2)
- PAD_CTL_DSE_X1                  (0 << 0)
--PAD_CTL_DSE_X2                  (1 << 0)
--PAD_CTL_DSE_X3                  (2 << 0)
--PAD_CTL_DSE_X4                  (3 << 0)
-+PAD_CTL_DSE_X4                  (1 << 0)
-+PAD_CTL_DSE_X2                  (2 << 0)
-+PAD_CTL_DSE_X6                  (3 << 0)
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index b505b87661f8..07c4153e6f3d 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -656,7 +656,7 @@ static const char * const sd_a_groups[] = {
  
- Examples:
- While iomuxc-lpsr is intended to be used by dedicated peripherals to take
+ static const char * const sdxc_a_groups[] = {
+ 	"sdxc_d0_0_a", "sdxc_d13_0_a", "sdxc_d47_a", "sdxc_clk_a",
+-	"sdxc_cmd_a", "sdxc_d0_1_a", "sdxc_d0_13_1_a"
++	"sdxc_cmd_a", "sdxc_d0_1_a", "sdxc_d13_1_a"
+ };
+ 
+ static const char * const pcm_a_groups[] = {
 -- 
-2.20.1
+2.19.1
