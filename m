@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 06/24] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
-Date: Wed, 13 Mar 2019 15:16:29 -0400
-Message-ID: <20190313191647.160171-6-sashal@kernel.org>
-References: <20190313191647.160171-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 11/33] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+Date: Wed, 13 Mar 2019 15:14:44 -0400
+Message-ID: <20190313191506.159677-11-sashal@kernel.org>
+References: <20190313191506.159677-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313191647.160171-1-sashal@kernel.org>
+In-Reply-To: <20190313191506.159677-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
@@ -30,10 +30,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index cbe5f5cbddb8..e1b689f840ab 100644
+index a6fff215e60f..aafd39eba64f 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson8b.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -662,7 +662,7 @@ static const char * const sd_a_groups[] = {
+@@ -668,7 +668,7 @@ static const char * const sd_a_groups[] = {
  
  static const char * const sdxc_a_groups[] = {
  	"sdxc_d0_0_a", "sdxc_d13_0_a", "sdxc_d47_a", "sdxc_clk_a",
