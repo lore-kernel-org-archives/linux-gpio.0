@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 15/48] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
-Date: Wed, 13 Mar 2019 15:12:17 -0400
-Message-ID: <20190313191250.158955-15-sashal@kernel.org>
-References: <20190313191250.158955-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 17/60] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+Date: Wed, 13 Mar 2019 15:09:38 -0400
+Message-ID: <20190313191021.158171-17-sashal@kernel.org>
+References: <20190313191021.158171-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313191250.158955-1-sashal@kernel.org>
+In-Reply-To: <20190313191021.158171-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
