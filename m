@@ -1,47 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 26/42] drivers: gpio: rcar: pendantic formatting
-Date: Tue, 12 Mar 2019 20:03:42 +0100
-Message-ID: <CAMuHMdX7HCHJiKYXVMzYrHmjjDy6YbLntZbep_AKsLY3bxpZWA@mail.gmail.com>
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-26-git-send-email-info@metux.net>
+From: Christina Quast <cquast@hanoverdisplays.com>
+Subject: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
+Date: Wed, 13 Mar 2019 15:20:40 +0100
+Message-ID: <20190313142040.26694-1-cquast@hanoverdisplays.com>
+Reply-To: VI1PR04MB42227AA158BA1FCBF314AA27807B0@VI1PR04MB4222.eurprd04.prod.outlook.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1552330521-4276-26-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, keguang.zhang@gmail.com, vz@mleia.com, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Masahiro Yamada <yamada.masahiro@socionext>
+Cc: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Christina Quast <cquast@hanoverdisplays.com>
 List-Id: linux-gpio@vger.kernel.org
 
-CC linux-renesas-soc
+In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from
+the documentation.
 
-On Mon, Mar 11, 2019 at 7:57 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
-> a tab sneaked in, where it shouldn't be.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Changes since v2:
+* Changed patch title to 'dt-bindings: pinctrl: imx7d:'
 
-With Thierry's comments addressed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
+---
+ .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -490,7 +490,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
->         irq_chip->irq_unmask = gpio_rcar_irq_enable;
->         irq_chip->irq_set_type = gpio_rcar_irq_set_type;
->         irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
-> -       irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
-> +       irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
->
->         ret = gpiochip_add_data(gpio_chip, p);
->         if (ret) {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+index 6666277c3acb..8ac1d0851a0f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+@@ -48,9 +48,9 @@ PAD_CTL_HYS                     (1 << 3)
+ PAD_CTL_SRE_SLOW                (1 << 2)
+ PAD_CTL_SRE_FAST                (0 << 2)
+ PAD_CTL_DSE_X1                  (0 << 0)
+-PAD_CTL_DSE_X2                  (1 << 0)
+-PAD_CTL_DSE_X3                  (2 << 0)
+-PAD_CTL_DSE_X4                  (3 << 0)
++PAD_CTL_DSE_X4                  (1 << 0)
++PAD_CTL_DSE_X2                  (2 << 0)
++PAD_CTL_DSE_X6                  (3 << 0)
+ 
+ Examples:
+ While iomuxc-lpsr is intended to be used by dedicated peripherals to take
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.20.1
