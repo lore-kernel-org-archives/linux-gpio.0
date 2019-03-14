@@ -1,347 +1,77 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 2/2] pinctrl: meson: add support of drive-strength
-Date: Thu, 14 Mar 2019 17:37:25 +0100
-Message-ID: <20190314163725.7918-3-jbrunet@baylibre.com>
-References: <20190314163725.7918-1-jbrunet@baylibre.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 2/6] pinctrl: sunxi: implement pin_config_set
+Date: Thu, 14 Mar 2019 20:32:51 +0100
+Message-ID: <c04ebab6910f2d4fd7d6bfff3a8957e1a3dbcdde.1552591798.git-series.maxime.ripard@bootlin.com>
+References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314163725.7918-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Guillaume La Roque <glaroque@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Guillaume La Roque <glaroque@baylibre.com>
+The sunxi pinctrl only implements the pin_config_group_set callback at the
+moment, whereas the gpiochip_generic_config function relies on
+pin_config_set. Rework the functions a little to support pin_config_set,
+and rely on it for pin_config_group_set.
 
-drive-strength is a new feature needed for G12A SoC.
-the default DS setting after boot is usually 0.5mA and it is not enough for
-many functions. We need to be able to set the drive strength to reliably
-enable things like MMC, I2C, etc ...
-
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-g12a.c |  36 ++---
- drivers/pinctrl/meson/pinctrl-meson.c      | 166 ++++++++++++++++-----
- drivers/pinctrl/meson/pinctrl-meson.h      |  20 ++-
- 3 files changed, 162 insertions(+), 60 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index d494492e98e9..3475cd7bd2af 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -1304,28 +1304,28 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- };
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 8dd25caea2cf..78a30f713180 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -530,14 +530,10 @@ static int sunxi_pconf_group_get(struct pinctrl_dev *pctldev,
+ 	return sunxi_pconf_get(pctldev, g->pin, config);
+ }
  
- static struct meson_bank meson_g12a_periphs_banks[] = {
--	/* name  first  last  irq  pullen  pull  dir  out  in */
--	BANK("Z",    GPIOZ_0,    GPIOZ_15, 12, 27,
--	     4,  0,  4,  0,  12,  0,  13, 0,  14, 0),
--	BANK("H",    GPIOH_0,    GPIOH_8, 28, 36,
--	     3,  0,  3,  0,  9,  0,  10,  0,  11,  0),
--	BANK("BOOT", BOOT_0,     BOOT_15,  37, 52,
--	     0,  0,  0,  0,  0, 0,  1, 0,  2, 0),
--	BANK("C",    GPIOC_0,    GPIOC_7,  53, 60,
--	     1,  0,  1,  0,  3, 0,  4, 0,  5, 0),
--	BANK("A",    GPIOA_0,    GPIOA_15,  61, 76,
--	     5,  0,  5,  0,  16,  0,  17,  0,  18,  0),
--	BANK("X",    GPIOX_0,    GPIOX_19,   77, 96,
--	     2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
-+	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
-+	BANK_DS("Z",    GPIOZ_0,    GPIOZ_15, 12, 27,
-+		4,  0,  4,  0,  12,  0,  13, 0,  14, 0, 5, 0),
-+	BANK_DS("H",    GPIOH_0,    GPIOH_8, 28, 36,
-+		3,  0,  3,  0,  9,  0,  10,  0,  11,  0, 4, 0),
-+	BANK_DS("BOOT", BOOT_0,     BOOT_15,  37, 52,
-+		0,  0,  0,  0,  0, 0,  1, 0,  2, 0, 0, 0),
-+	BANK_DS("C",    GPIOC_0,    GPIOC_7,  53, 60,
-+		1,  0,  1,  0,  3, 0,  4, 0,  5, 0, 1, 0),
-+	BANK_DS("A",    GPIOA_0,    GPIOA_15,  61, 76,
-+		5,  0,  5,  0,  16,  0,  17,  0,  18,  0, 6, 0),
-+	BANK_DS("X",    GPIOX_0,    GPIOX_19,   77, 96,
-+		2,  0,  2,  0,  6,  0,  7,  0,  8,  0, 2, 0),
- };
+-static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+-				 unsigned group,
+-				 unsigned long *configs,
+-				 unsigned num_configs)
++static int sunxi_pconf_set(struct pinctrl_dev *pctldev, unsigned pin,
++			   unsigned long *configs, unsigned num_configs)
+ {
+ 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+-	struct sunxi_pinctrl_group *g = &pctl->groups[group];
+-	unsigned pin = g->pin - pctl->desc->pin_base;
+ 	int i;
  
- static struct meson_bank meson_g12a_aobus_banks[] = {
--	/* name  first  last  irq  pullen  pull  dir  out  in  */
--	BANK("AO",   GPIOAO_0,  GPIOAO_11,  0, 11,
--	     3,  0,  2, 0,  0,  0,  4, 0,  1,  0),
-+	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
-+	BANK_DS("AO", GPIOAO_0, GPIOAO_11, 0, 11, 3, 0, 2, 0, 0, 0, 4, 0, 1, 0,
-+		0, 0),
- 	/* GPIOE actually located in the AO bank */
--	BANK("E",   GPIOE_0,  GPIOE_2,   97, 99,
--	     3,  16,  2, 16,  0,  16,  4, 16,  1,  16),
-+	BANK_DS("E", GPIOE_0, GPIOE_2, 97, 99, 3, 16, 2, 16, 0, 16, 4, 16, 1,
-+		16, 1, 0),
- };
- 
- static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 96a4a72708e4..786640f98f83 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -174,65 +174,108 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev, unsigned selector,
+ 	for (i = 0; i < num_configs; i++) {
+@@ -596,9 +592,20 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
  	return 0;
  }
  
--static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
--			     unsigned long *configs, unsigned num_configs)
-+static int meson_pinconf_set_bias(struct meson_pinctrl *pc, unsigned int pin,
-+				  enum pin_config_param conf)
++static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
++				 unsigned long *configs, unsigned num_configs)
 +{
-+	struct meson_bank *bank;
-+	unsigned int reg, bit, val = 0;
-+	int ret;
++	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
++	struct sunxi_pinctrl_group *g = &pctl->groups[group];
 +
-+	ret = meson_get_bank(pc, pin, &bank);
-+	if (ret)
-+		return ret;
-+
-+	meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg, &bit);
-+
-+	if (conf == PIN_CONFIG_BIAS_DISABLE) {
-+		ret = regmap_update_bits(pc->reg_pullen, reg, BIT(bit),	0);
-+		if (ret)
-+			return ret;
-+	} else {
-+		meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-+		if (conf == PIN_CONFIG_BIAS_PULL_UP)
-+			val = BIT(bit);
-+
-+		ret = regmap_update_bits(pc->reg_pull, reg, BIT(bit), val);
-+		if (ret)
-+			return ret;
-+
-+		meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg, &bit);
-+		ret = regmap_update_bits(pc->reg_pullen, reg, BIT(bit),
-+					 BIT(bit));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
++	/* We only support 1 pin per group. Chain it to the pin callback */
++	return sunxi_pconf_set(pctldev, g->pin, configs, num_configs);
 +}
 +
-+static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
-+					    unsigned int pin, u16 arg)
- {
--	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
- 	struct meson_bank *bank;
--	enum pin_config_param param;
- 	unsigned int reg, bit;
--	int i, ret;
-+	unsigned int ds_val;
-+	int ret;
-+
-+	if (!pc->reg_ds) {
-+		dev_err(pc->dev, "drive-strength not supported\n");
-+		return -ENOTSUPP;
-+	}
- 
- 	ret = meson_get_bank(pc, pin, &bank);
- 	if (ret)
- 		return ret;
- 
-+	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
-+	bit = bit << 1;
-+
-+	if (arg <= 500) {
-+		ds_val = MESON_PINCONF_DRV_500UA;
-+	} else if (arg <= 2500) {
-+		ds_val = MESON_PINCONF_DRV_2500UA;
-+	} else if (arg <= 3000) {
-+		ds_val = MESON_PINCONF_DRV_3000UA;
-+	} else if (arg <= 4000) {
-+		ds_val = MESON_PINCONF_DRV_4000UA;
-+	} else {
-+		dev_warn_once(pc->dev,
-+			      "pin %u: invalid drive-strength : %d , default to 4mA\n",
-+			      pin, arg);
-+		ds_val = MESON_PINCONF_DRV_4000UA;
-+	}
-+
-+	ret = regmap_update_bits(pc->reg_ds, reg, 0x3 << bit, ds_val << bit);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
-+			     unsigned long *configs, unsigned num_configs)
-+{
-+	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
-+	enum pin_config_param param;
-+	unsigned int arg;
-+	int i, ret;
-+
- 	for (i = 0; i < num_configs; i++) {
- 		param = pinconf_to_config_param(configs[i]);
- 
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_DISABLE:
--			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
--
--			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
--					       &bit);
--			ret = regmap_update_bits(pc->reg_pullen, reg,
--						 BIT(bit), 0);
--			if (ret)
--				return ret;
--			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			dev_dbg(pc->dev, "pin %u: enable pull-up\n", pin);
--
--			meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
--					       &reg, &bit);
--			ret = regmap_update_bits(pc->reg_pullen, reg,
--						 BIT(bit), BIT(bit));
--			if (ret)
--				return ret;
--
--			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
--			ret = regmap_update_bits(pc->reg_pull, reg,
--						 BIT(bit), BIT(bit));
--			if (ret)
--				return ret;
--			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
--			dev_dbg(pc->dev, "pin %u: enable pull-down\n", pin);
--
--			meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
--					       &reg, &bit);
--			ret = regmap_update_bits(pc->reg_pullen, reg,
--						 BIT(bit), BIT(bit));
-+			ret = meson_pinconf_set_bias(pc, pin, param);
- 			if (ret)
- 				return ret;
--
--			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
--			ret = regmap_update_bits(pc->reg_pull, reg,
--						 BIT(bit), 0);
-+			break;
-+		case PIN_CONFIG_DRIVE_STRENGTH:
-+			arg = pinconf_to_config_argument(configs[i]);
-+			ret = meson_pinconf_set_drive_strength(pc, pin, arg);
- 			if (ret)
- 				return ret;
--			break;
- 		default:
- 			return -ENOTSUPP;
- 		}
-@@ -275,12 +318,51 @@ static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
- 	return conf;
- }
- 
-+static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
-+					    unsigned int pin, u16 *arg)
-+{
-+	struct meson_bank *bank;
-+	unsigned int reg, bit;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = meson_get_bank(pc, pin, &bank);
-+	if (ret)
-+		return ret;
-+
-+	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
-+
-+	ret = regmap_read(pc->reg_ds, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	switch ((val >> bit) & 0x3) {
-+	case MESON_PINCONF_DRV_500UA:
-+		*arg = 500;
-+		break;
-+	case MESON_PINCONF_DRV_2500UA:
-+		*arg = 2500;
-+		break;
-+	case MESON_PINCONF_DRV_3000UA:
-+		*arg = 3000;
-+		break;
-+	case MESON_PINCONF_DRV_4000UA:
-+		*arg = 4000;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int meson_pinconf_get(struct pinctrl_dev *pcdev, unsigned int pin,
- 			     unsigned long *config)
- {
- 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	u16 arg;
-+	int ret;
- 
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
-@@ -291,6 +373,10 @@ static int meson_pinconf_get(struct pinctrl_dev *pcdev, unsigned int pin,
- 		else
- 			return -EINVAL;
- 		break;
-+	case PIN_CONFIG_DRIVE_STRENGTH:
-+		ret = meson_pinconf_get_drive_strength(pc, pin, &arg);
-+		if (ret)
-+			return ret;
- 	default:
- 		return -ENOTSUPP;
- 	}
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 5eaab925f427..1a88103dcb9b 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -71,9 +71,20 @@ enum meson_reg_type {
- 	REG_DIR,
- 	REG_OUT,
- 	REG_IN,
-+	REG_DS,
- 	NUM_REG,
+ static const struct pinconf_ops sunxi_pconf_ops = {
+ 	.is_generic		= true,
+ 	.pin_config_get		= sunxi_pconf_get,
++	.pin_config_set		= sunxi_pconf_set,
+ 	.pin_config_group_get	= sunxi_pconf_group_get,
+ 	.pin_config_group_set	= sunxi_pconf_group_set,
  };
- 
-+/**
-+ * enum meson_pinconf_drv - value of drive-strength supported
-+ */
-+enum meson_pinconf_drv {
-+	MESON_PINCONF_DRV_500UA,
-+	MESON_PINCONF_DRV_2500UA,
-+	MESON_PINCONF_DRV_3000UA,
-+	MESON_PINCONF_DRV_4000UA,
-+};
-+
- /**
-  * struct meson bank
-  *
-@@ -132,7 +143,8 @@ struct meson_pinctrl {
- 		.num_groups = ARRAY_SIZE(fn ## _groups),		\
- 	}
- 
--#define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)	\
-+#define BANK_DS(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib,     \
-+		dsr, dsb)                                                      \
- 	{								\
- 		.name		= n,					\
- 		.first		= f,					\
-@@ -145,8 +157,12 @@ struct meson_pinctrl {
- 			[REG_DIR]	= { dr, db },			\
- 			[REG_OUT]	= { or, ob },			\
- 			[REG_IN]	= { ir, ib },			\
-+			[REG_DS]	= { dsr, dsb },			\
- 		},							\
--	 }
-+	}
-+
-+#define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib) \
-+	BANK_DS(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib, 0, 0)
- 
- #define MESON_PIN(x) PINCTRL_PIN(x, #x)
- 
 -- 
-2.20.1
+git-series 0.9.1
