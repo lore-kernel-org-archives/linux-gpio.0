@@ -1,68 +1,57 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/2] gpio: mockup: move the driver out of the IOMEM drivers section
-Date: Thu, 14 Mar 2019 16:07:50 +0100
-Message-ID: <20190314150750.9371-2-brgl@bgdev.pl>
-References: <20190314150750.9371-1-brgl@bgdev.pl>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/2] pinctrl: meson: add g12a drive strength support
+Date: Thu, 14 Mar 2019 17:37:23 +0100
+Message-ID: <20190314163725.7918-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314150750.9371-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Guillaume La Roque <glaroque@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The purpose of this patchset is to add drive-strength support in meson pinconf
+driver. This is a new feature that was added on the g12a. It is critical for us
+to support this since many functions are failing with default pad drive-strength.
 
-The testing driver doesn't really depend on HAS_IOMEM. We may want to
-build it for testing purposes on architectures not supporting IOMEM,
-for example: on user-mode linux. Move it out of the "Memory Mapped GPIO
-drivers" section.
+Now the slightly annoying part :(
+The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
+'drive-strength' is expressed in mA.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/Kconfig | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+1) Rounding down the value, we could be requesting a 0mA drive strength.
+   That would look weird.
+2) Rounding up, we can't distinguish between 2.5mA and 3mA
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e9473e968d9a..474ab3f7f9ce 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -330,18 +330,6 @@ config GPIO_MM_LANTIQ
- 	  (EBU) found on Lantiq SoCs. The gpios are output only as they are
- 	  created by attaching a 16bit latch to the bus.
- 
--config GPIO_MOCKUP
--	tristate "GPIO Testing Driver"
--	depends on GPIOLIB
--	select IRQ_SIM
--	help
--	  This enables GPIO Testing driver, which provides a way to test GPIO
--	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
--	  must be selected for this test.
--	  User could use it through the script in
--	  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
--	  it.
--
- config GPIO_MPC5200
- 	def_bool y
- 	depends on PPC_MPC52xx
-@@ -1440,4 +1428,16 @@ config GPIO_VIPERBOARD
- 
- endmenu
- 
-+config GPIO_MOCKUP
-+	tristate "GPIO Testing Driver"
-+	depends on GPIOLIB
-+	select IRQ_SIM
-+	help
-+	  This enables GPIO Testing driver, which provides a way to test GPIO
-+	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
-+	  must be selected for this test.
-+	  User could use it through the script in
-+	  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
-+	  it.
-+
- endif
+To solve this issue in this in this v1, we chose to document that, on Amlogic,
+drive-strength is expressed in uA instead of mA.
+It works well and there is no impact on the other platforms but I'm not sure this
+is really OK with the DT rules ?
+
+Linus, if this is not OK with you, here are 2 other options we are
+considering. We would be very interested to get your opinion on the matter:
+
+1) instead the generic 'drive-strength' property, we could add an amlogic
+specific property, 'amlogic,drive-strength'. It would be expressed in uA
+and parsed in amlogic specific code.
+I think this option is kind of overkill. Expressing drive strength in uA is
+not really amlogic specific so it does not make much sense, but it would
+work ...
+
+2) Add another generic property "drive-strength-uA". The change to do so
+would be minimal and could be benefit to other platforms later on.
+
+Cheers
+Jerome
+
+Guillaume La Roque (2):
+  dt-bindings: pinctrl: meson: Add drive-strength property
+  pinctrl: meson: add support of drive-strength
+
+ .../bindings/pinctrl/meson,pinctrl.txt        |   3 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  36 ++--
+ drivers/pinctrl/meson/pinctrl-meson.c         | 166 +++++++++++++-----
+ drivers/pinctrl/meson/pinctrl-meson.h         |  20 ++-
+ 4 files changed, 165 insertions(+), 60 deletions(-)
+
 -- 
 2.20.1
