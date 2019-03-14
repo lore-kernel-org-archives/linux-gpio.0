@@ -1,12 +1,13 @@
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 0/6] pinctrl: sunxi: Allow to configure pull-up / pull-down
- from GPIO flags
-Date: Thu, 14 Mar 2019 20:32:49 +0100
-Message-ID: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH 4/6] pinctrl: sunxi: Declare set_config on the GPIO chip
+Date: Thu, 14 Mar 2019 20:32:53 +0100
+Message-ID: <b83a81feebb87c8314581648f8d01fb5f04eb4d6.1552591798.git-series.maxime.ripard@bootlin.com>
+References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,78 +21,28 @@ To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lin
 Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Our pin controller can configure the pins no matter how they are muxed, so
+it makes sense to allow this for GPIOs as well.
 
-Here is a series that addresses one of the issues we've had for some time
-with our pinctrl driver, which is that while we should have had the strict
-mode enabled, we didn't and now we have to deal with all the DT having GPIO
-and pinctrl nodes for the same pins.
+Add the generic set_config function so that we can rely on the existing
+pinctrl code we have.
 
-This was partially due to cargo cult (which has been addressed since), but
-also due to technical limitations of the GPIO DT bindings at the time which
-didn't allow to specify the pull-up and pull-down resistors, and the drive
-strength of the pins.
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Now that the former are supported, we can remove those users, and we will
-deal with the latter eventually.
-
-Let me know what you think,
-Maxime
-
-Maxime Ripard (6):
-  gpio: Set proper argument value to set_config
-  pinctrl: sunxi: implement pin_config_set
-  pinctrl: sunxi: Fix variable assignment syntax
-  pinctrl: sunxi: Declare set_config on the GPIO chip
-  ARM: dts: sunxi: Remove pinctrl groups setting bias
-  ARM: dts: sunxi: Remove useless pinctrl nodes
-
- arch/arm/boot/dts/sun4i-a10-chuwi-v7-cw0825.dts        | 20 +---
- arch/arm/boot/dts/sun4i-a10-cubieboard.dts             | 10 +--
- arch/arm/boot/dts/sun4i-a10-dserve-dsrv9703c.dts       | 20 +---
- arch/arm/boot/dts/sun4i-a10-hyundai-a7hd.dts           | 20 +---
- arch/arm/boot/dts/sun4i-a10-inet1.dts                  | 20 +---
- arch/arm/boot/dts/sun4i-a10-inet97fv2.dts              | 20 +---
- arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts           | 72 +++--------
- arch/arm/boot/dts/sun4i-a10-marsboard.dts              | 12 +--
- arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts         | 18 +---
- arch/arm/boot/dts/sun4i-a10-pcduino.dts                | 12 +--
- arch/arm/boot/dts/sun4i-a10-pov-protab2-ips9.dts       | 19 +---
- arch/arm/boot/dts/sun5i-a10s-auxtek-t004.dts           | 10 +--
- arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts       | 10 +--
- arch/arm/boot/dts/sun5i-a13-empire-electronix-d709.dts | 20 +---
- arch/arm/boot/dts/sun5i-a13-hsg-h702.dts               | 12 +--
- arch/arm/boot/dts/sun5i-a13-olinuxino-micro.dts        | 18 +---
- arch/arm/boot/dts/sun5i-a13-olinuxino.dts              | 18 +---
- arch/arm/boot/dts/sun5i-a13-utoo-p66.dts               | 14 +--
- arch/arm/boot/dts/sun5i-r8-chip.dts                    | 12 +--
- arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi   | 20 +---
- arch/arm/boot/dts/sun6i-a31-colombus.dts               | 14 +--
- arch/arm/boot/dts/sun6i-reference-design-tablet.dtsi   | 12 +--
- arch/arm/boot/dts/sun7i-a20-bananapi.dts               | 10 +--
- arch/arm/boot/dts/sun7i-a20-cubieboard2.dts            | 12 +--
- arch/arm/boot/dts/sun7i-a20-lamobo-r1.dts              | 12 +--
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime.dts         | 18 +---
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts        | 18 +---
- arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts        | 18 +---
- arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts          | 12 +--
- arch/arm/boot/dts/sun7i-a20-orangepi.dts               | 12 +--
- arch/arm/boot/dts/sun7i-a20-pcduino3-nano.dts          | 12 +--
- arch/arm/boot/dts/sun7i-a20-pcduino3.dts               | 12 +--
- arch/arm/boot/dts/sun7i-a20-wexler-tab7200.dts         | 12 +--
- arch/arm/boot/dts/sun7i-a20-wits-pro-a20-dkt.dts       | 12 +--
- arch/arm/boot/dts/sun8i-h3-nanopi.dtsi                 | 23 +----
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts              | 30 +-----
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts           | 23 +----
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts            | 23 +----
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts             | 23 +----
- arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts           |  9 +-
- arch/arm/boot/dts/sun8i-r16-parrot.dts                 | 12 +--
- arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi   | 12 +--
- drivers/gpio/gpiolib.c                                 | 14 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c                  | 40 +++---
- 44 files changed, 110 insertions(+), 662 deletions(-)
-
-base-commit: cf08baa29613dd899954089e7cc7dba1d478b365
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 96490dee62be..be04223591d4 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1452,6 +1452,7 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 	pctl->chip->owner = THIS_MODULE;
+ 	pctl->chip->request = gpiochip_generic_request;
+ 	pctl->chip->free = gpiochip_generic_free;
++	pctl->chip->set_config = gpiochip_generic_config;
+ 	pctl->chip->direction_input = sunxi_pinctrl_gpio_direction_input;
+ 	pctl->chip->direction_output = sunxi_pinctrl_gpio_direction_output;
+ 	pctl->chip->get = sunxi_pinctrl_gpio_get;
 -- 
 git-series 0.9.1
