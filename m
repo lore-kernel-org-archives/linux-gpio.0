@@ -1,7 +1,7 @@
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 3/6] pinctrl: sunxi: Fix variable assignment syntax
-Date: Thu, 14 Mar 2019 20:32:52 +0100
-Message-ID: <d2307f2648901d1950a1516ad5ffd70f6d595898.1552591798.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH 1/6] gpio: Set proper argument value to set_config
+Date: Thu, 14 Mar 2019 20:32:50 +0100
+Message-ID: <b9ed544722175ea00b1f6ecb29ca5c3e1322239f.1552591798.git-series.maxime.ripard@bootlin.com>
 References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,46 +21,47 @@ To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lin
 Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Lines are usually ended with a semi-column in C, yet this was copied from a
-structure declaration to the init variant while keeping the comma at the
-end. Make sure we have a normal syntax, instead of multiple assignments.
+The gpio_set_config function creates a pinconf configuration for a given
+pinc_config_param.
 
-Fixes: d83c82ce7ccd ("pinctrl: sunxi: support multiple pin controller")
+However, it always uses an arg of 0, which might not be a valid argument
+for a given param. A good example of that would be the bias parameters,
+where 0 means that the pull up or down resistor is null, and the pin is
+directly connected to VCC/GND.
+
+The framework uses in some other places the value 1 as a default argument
+to enable the pull resistor, so let's use the same one here.
+
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/gpio/gpiolib.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 78a30f713180..96490dee62be 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1450,16 +1450,16 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 144af0733581..27cb5783ef52 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2565,8 +2565,20 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+ static int gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 			   enum pin_config_param mode)
+ {
+-	unsigned long config = { PIN_CONF_PACKED(mode, 0) };
++	unsigned long config;
++	unsigned arg;
  
- 	last_pin = pctl->desc->pins[pctl->desc->npins - 1].pin.number;
- 	pctl->chip->owner = THIS_MODULE;
--	pctl->chip->request = gpiochip_generic_request,
--	pctl->chip->free = gpiochip_generic_free,
--	pctl->chip->direction_input = sunxi_pinctrl_gpio_direction_input,
--	pctl->chip->direction_output = sunxi_pinctrl_gpio_direction_output,
--	pctl->chip->get = sunxi_pinctrl_gpio_get,
--	pctl->chip->set = sunxi_pinctrl_gpio_set,
--	pctl->chip->of_xlate = sunxi_pinctrl_gpio_of_xlate,
--	pctl->chip->to_irq = sunxi_pinctrl_gpio_to_irq,
--	pctl->chip->of_gpio_n_cells = 3,
--	pctl->chip->can_sleep = false,
-+	pctl->chip->request = gpiochip_generic_request;
-+	pctl->chip->free = gpiochip_generic_free;
-+	pctl->chip->direction_input = sunxi_pinctrl_gpio_direction_input;
-+	pctl->chip->direction_output = sunxi_pinctrl_gpio_direction_output;
-+	pctl->chip->get = sunxi_pinctrl_gpio_get;
-+	pctl->chip->set = sunxi_pinctrl_gpio_set;
-+	pctl->chip->of_xlate = sunxi_pinctrl_gpio_of_xlate;
-+	pctl->chip->to_irq = sunxi_pinctrl_gpio_to_irq;
-+	pctl->chip->of_gpio_n_cells = 3;
-+	pctl->chip->can_sleep = false;
- 	pctl->chip->ngpio = round_up(last_pin, PINS_PER_BANK) -
- 			    pctl->desc->pin_base;
- 	pctl->chip->label = dev_name(&pdev->dev);
++	switch (mode) {
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = 1;
++		break;
++
++	default:
++		arg = 0;
++	}
++
++	config = PIN_CONF_PACKED(mode, arg);
+ 	return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
+ }
+ 
 -- 
 git-series 0.9.1
