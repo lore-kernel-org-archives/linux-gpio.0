@@ -1,7 +1,8 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 1/6] gpio: Set proper argument value to set_config
-Date: Thu, 14 Mar 2019 20:32:50 +0100
-Message-ID: <b9ed544722175ea00b1f6ecb29ca5c3e1322239f.1552591798.git-series.maxime.ripard@bootlin.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 0/6] pinctrl: sunxi: Allow to configure pull-up /
+ pull-down from GPIO flags
+Date: Fri, 15 Mar 2019 10:57:06 +0800
+Message-ID: <CAGb2v641LTWh+9b2A56YxWJ3=KX26tcbgtf+Wqq1mz6qhBSv+w@mail.gmail.com>
 References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,51 +18,36 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The gpio_set_config function creates a pinconf configuration for a given
-pinc_config_param.
+On Fri, Mar 15, 2019 at 3:33 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> Hi,
+>
+> Here is a series that addresses one of the issues we've had for some time
+> with our pinctrl driver, which is that while we should have had the strict
+> mode enabled, we didn't and now we have to deal with all the DT having GPIO
+> and pinctrl nodes for the same pins.
+>
+> This was partially due to cargo cult (which has been addressed since), but
+> also due to technical limitations of the GPIO DT bindings at the time which
+> didn't allow to specify the pull-up and pull-down resistors, and the drive
+> strength of the pins.
+>
+> Now that the former are supported, we can remove those users, and we will
+> deal with the latter eventually.
+>
+> Let me know what you think,
+> Maxime
+>
+> Maxime Ripard (6):
+>   gpio: Set proper argument value to set_config
+>   pinctrl: sunxi: implement pin_config_set
+>   pinctrl: sunxi: Fix variable assignment syntax
+>   pinctrl: sunxi: Declare set_config on the GPIO chip
+>   ARM: dts: sunxi: Remove pinctrl groups setting bias
+>   ARM: dts: sunxi: Remove useless pinctrl nodes
 
-However, it always uses an arg of 0, which might not be a valid argument
-for a given param. A good example of that would be the bias parameters,
-where 0 means that the pull up or down resistor is null, and the pin is
-directly connected to VCC/GND.
-
-The framework uses in some other places the value 1 as a default argument
-to enable the pull resistor, so let's use the same one here.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- drivers/gpio/gpiolib.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 144af0733581..27cb5783ef52 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2565,8 +2565,20 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
- static int gpio_set_config(struct gpio_chip *gc, unsigned offset,
- 			   enum pin_config_param mode)
- {
--	unsigned long config = { PIN_CONF_PACKED(mode, 0) };
-+	unsigned long config;
-+	unsigned arg;
- 
-+	switch (mode) {
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		arg = 1;
-+		break;
-+
-+	default:
-+		arg = 0;
-+	}
-+
-+	config = PIN_CONF_PACKED(mode, arg);
- 	return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
- }
- 
--- 
-git-series 0.9.1
+Acked-by: Chen-Yu Tsai <wens@csie.org>
