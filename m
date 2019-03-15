@@ -1,65 +1,56 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 05/42] drivers: gpio: bcm-kona: use
- devm_platform_ioremap_resource()
-Date: Fri, 15 Mar 2019 09:19:39 +0100
-Message-ID: <20190315081939.zr3vv3a7a6wf7byw@pengutronix.de>
-References: <1552330521-4276-1-git-send-email-info@metux.net>
- <1552330521-4276-5-git-send-email-info@metux.net>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
+Date: Fri, 15 Mar 2019 13:07:59 -0700
+Message-ID: <20190315200759.139479-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1552330521-4276-5-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, andrew@aj.id.au, f.fainelli@gmail.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com, orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, keguang.zhang@gmail.com, vz@mleia.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, robert.jarzmik@free.fr, yamada.masahiro@socionext.com, jun.nie@linaro.org, shawnguo@kernel.org, linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org, linux-pwm@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, kernel@pengutronix.de, Julia Lawall <Julia.Lawall@lip6.fr>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>, Marc Zyngier <marc.zyngier@arm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 11, 2019 at 07:54:44PM +0100, Enrico Weigelt, metux IT consult wrote:
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
-> 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
->  drivers/gpio/gpio-bcm-kona.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index c5536a5..9fa6d3a 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -568,7 +568,6 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	const struct of_device_id *match;
-> -	struct resource *res;
->  	struct bcm_kona_gpio_bank *bank;
->  	struct bcm_kona_gpio *kona_gpio;
->  	struct gpio_chip *chip;
-> @@ -618,8 +617,7 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
->  		return -ENXIO;
->  	}
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	kona_gpio->reg_base = devm_ioremap_resource(dev, res);
-> +	kona_gpio->reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(kona_gpio->reg_base)) {
->  		ret = -ENXIO;
+This function returns an error if a child interrupt controller calls
+irq_chip_set_wake_parent() but that parent interrupt controller has the
+IRQCHIP_SKIP_SET_WAKE flag. Let's return 0 for success instead because
+there isn't anything to do.
 
-This should be
+There's also the possibility that a parent indicates that we should skip
+it, but the grandparent has an .irq_set_wake callback. Let's iterate
+through the parent chain as long as the IRQCHIP_SKIP_SET_WAKE flag isn't
+set so we can find the first parent that needs to handle the wake
+configuration. This fixes a problem on my Qualcomm sdm845 device where
+I'm trying to enable wake on an irq from the gpio controller that's a
+child of the qcom pdc interrupt controller. The qcom pdc interrupt
+controller has the IRQCHIP_SKIP_SET_WAKE flag set, and so does the
+grandparent (ARM GIC), causing this function to return a failure because
+the parent controller doesn't have the .irq_set_wake callback set.
 
-	ret = PTR_ERR(kona_gpio->reg_base)
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ kernel/irq/chip.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-, shouldn't it? (If yes, this is orthogonal to this patch, but still
-worth fixing.)
-
-@Julia: Is this something that coccinelle could catch?
-
-Best regards
-Uwe
-
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 3faef4a77f71..280d612ba71b 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1448,7 +1448,13 @@ int irq_chip_set_vcpu_affinity_parent(struct irq_data *data, void *vcpu_info)
+  */
+ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
+ {
+-	data = data->parent_data;
++	for (data = data->parent_data; data; data = data->parent_data)
++		if (!(data->chip->flags & IRQCHIP_SKIP_SET_WAKE))
++			break;
++
++	if (!data)
++		return 0;
++
+ 	if (data->chip->irq_set_wake)
+ 		return data->chip->irq_set_wake(data, on);
+ 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Sent by a computer through tubes
