@@ -1,48 +1,166 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: Fix potential NULL pointer dereference
-Date: Mon, 18 Mar 2019 11:57:41 +0200
-Message-ID: <20190318095741.GO9224@smile.fi.intel.com>
-References: <20190312150552.1429-1-pakki001@umn.edu>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH] pinctrl: sunxi: Allow to disable pinctrl drivers
+Date: Mon, 18 Mar 2019 11:27:28 +0100
+Message-ID: <20190318102728.9753-1-maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190312150552.1429-1-pakki001@umn.edu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aditya Pakki <pakki001@umn.edu>
-Cc: kjlu@umn.edu, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 10:05:52AM -0500, Aditya Pakki wrote:
-> saved-context in byt_gpio_probe is allocated via devm_kcalloc and is
-> used without checking for NULL in later functions. This patch avoids
-> such a scenario.
+Our pinctrl drivers are consisting of some common code, and big pin tables
+that are SoC-specific. This is fine in most cases, but when you want to
+reduce the size of the particular kernel image, those big tables are, well,
+quite big.
 
-Pushed to my review and testing queue, thanks!
+We haven't had the option to disable them in the past since they were
+hidden Kconfig options based on the SoC support. However, that granularity
+isn't great since we don't have one Kconfig option per-SoC, but rather one
+by family.
 
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 241384ead4ed..18d9ad504194 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -1710,6 +1710,8 @@ static int byt_gpio_probe(struct byt_gpio *vg)
->  #ifdef CONFIG_PM_SLEEP
->  	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
->  				       sizeof(*vg->saved_context), GFP_KERNEL);
-> +	if (!vg->saved_context)
-> +		return -ENOMEM;
->  #endif
->  	ret = devm_gpiochip_add_data(&vg->pdev->dev, gc, vg);
->  	if (ret) {
-> -- 
-> 2.17.1
-> 
+Make those options selectable by the user so that they can disable it if
+needed, while keeping the current default to not change the standard case.
 
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ drivers/pinctrl/sunxi/Kconfig | 57 +++++++++++++++++++++++------------
+ 1 file changed, 38 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index a731fc966b63..68df7aa56478 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -11,82 +11,101 @@ config PINCTRL_SUNIV_F1C100S
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN4I_A10
+-	def_bool MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
++	bool "Support for the Allwinner A10 PIO"
++	default MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN5I
+-	def_bool MACH_SUN5I
++	bool "Support for the Allwinner sun5i family PIO"
++	default MACH_SUN5I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN6I_A31
+-	def_bool MACH_SUN6I
++	bool "Support for the Allwinner A31 PIO"
++	default MACH_SUN6I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN6I_A31_R
+-	def_bool MACH_SUN6I
++	bool "Support for the Allwinner A31 R-PIO"
++	default MACH_SUN6I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A23
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A23 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A33
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A33 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A83T
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A83T PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A83T_R
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A83T R-PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A23_R
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A23 R-PIO"
++	default MACH_SUN8I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_H3
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner H3 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_H3_R
+-	def_bool MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	bool "Support for the Allwinner H3 R-PIO"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_V3S
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner V3s PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN9I_A80
+-	def_bool MACH_SUN9I
++	bool "Support for the Allwinner A80 PIO"
++	default MACH_SUN9I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN9I_A80_R
+-	def_bool MACH_SUN9I
++	bool "Support for the Allwinner A80 R-PIO"
++	default MACH_SUN9I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_A64
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner A64 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_A64_R
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner A64 R-PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H5
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H5 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H6
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H6 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H6_R
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H6 R-PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ endif
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
