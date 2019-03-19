@@ -1,78 +1,171 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Tue, 19 Mar 2019 15:31:09 +0100
-Message-ID: <20190319143109.djd5z4pw5twom3og@ninjato>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
- <20190307201807.GA950@kunai>
- <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
- <20190307205814.GB950@kunai>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH v2] pinctrl: sunxi: Allow to disable pinctrl drivers
+Date: Tue, 19 Mar 2019 15:42:03 +0100
+Message-ID: <20190319144203.23467-1-maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kg3zuuvvtizrfheo"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190307205814.GB950@kunai>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Adam Ford <aford173@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+Our pinctrl drivers are consisting of some common code, and big pin tables
+that are SoC-specific. This is fine in most cases, but when you want to
+reduce the size of the particular kernel image, those big tables are, well,
+quite big.
 
---kg3zuuvvtizrfheo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We haven't had the option to disable them in the past since they were
+hidden Kconfig options based on the SoC support. However, that granularity
+isn't great since we don't have one Kconfig option per-SoC, but rather one
+by family.
 
-On Thu, Mar 07, 2019 at 09:58:14PM +0100, Wolfram Sang wrote:
-> On Thu, Mar 07, 2019 at 09:53:50PM +0100, Enrico Weigelt, metux IT consul=
-t wrote:
-> > On 07.03.19 21:18, Wolfram Sang wrote:
-> > >=20
-> > >> It's been almost a year later, and several Linux revisions, and this
-> > >> still seems stuck somewhere/somehow.
-> > >=20
-> > > I wanted to respin this series once rc1 is released.
-> > >=20
-> > Maybe just rebase and repost ?
->=20
-> Then I'd miss all the new drivers which may need this fixed. Coccinelle
-> makes respinning a breeze, so no problem with that.
+Make those options selectable by the user so that they can disable it if
+needed, while keeping the current default to not change the standard case.
 
-Because coccinelle didn't find anything in drivers/gpio, I wondered what
-case you are referring to? Invoking this (as of v5.1-rc1) gives:
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-$ git log --oneline --grep "simplify getting" drivers/gpio
-7ddb7dce0ab6 gpio: gpio-tegra: simplify getting .driver_data
-38ccad0243f9 gpio: gpio-zynq: simplify getting .driver_data
-a3f4f728d3bb gpio: gpio-omap: simplify getting .driver_data
-11868645c5b5 gpio: gpio-mxc: simplify getting .driver_data
-ea5ec5e3aeab gpio: gpio-lynxpoint: simplify getting .driver_data
-deb19ac533ac gpio: gpio-dwapb: simplify getting .driver_data
+---
+Changes from v1:
+  - Be more explicit about the SoCs supported
+---
+ drivers/pinctrl/sunxi/Kconfig | 57 +++++++++++++++++++++++------------
+ 1 file changed, 38 insertions(+), 19 deletions(-)
 
-
---kg3zuuvvtizrfheo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyQ/SgACgkQFA3kzBSg
-Kbad6w/8DIvvd6HUXyP6xnHWqariF69h83z8gzbiUlkDkSFgIjTJ5f3SadnJfyOX
-6Q0F6rpp6rRSObAf5hkqej0mH5sAb9qynPGfnvmNr9bLQACtVv2CoKKncHR0BCGr
-6IMGySJSZjE3rgQVA1BB0Q4Dx+DJV4t2IRWEfOdSB75ZCbkSeoivaPpoHiiHEhMT
-DTJzP+qPF1hBE2vqjrjUrWCddubCd5S8iWOCSmdqz0OCKaChHvAlVzqWwjR0W4rF
-uk/cU0VKvgFJicf/kaWo1g20KQvmOAajfqKUYA3nhVBdON9JsqIB8lAGAG+rTeUV
-VaDNwUBMyTQYIGAO13dqGB9lGzs7Hm6lFJn/I9aT4Wt+Mdt25GflU02+oZzmA37m
-et1CARlq+dl9J7DV0iNTAdfqx6egH/pXSYoHDghGLNjbIaLLSQB8VBTnuUWee51/
-FmshV6qcg0qiM06+Q+CXvhvINzL/6YqCg73f3KKqtYYZ6MRL0h7sGguykbsTj3Z1
-bTgDsDe8EsjdigRUoY7PB1+db79MMDLP9TcnPx1s5WAZaQogOxWt3kxbUII2eqss
-ZfQL+of3tntrs2n/CGuN+ic9H+BRsavpr3oAsib2ZUZDNZlmTd0jgCG8mj1XXCmY
-+dUsy643lIPeKzgaYV+T3nLvHTv2oH3iMTpmBq994pM8Bysn6s4=
-=AXa/
------END PGP SIGNATURE-----
-
---kg3zuuvvtizrfheo--
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index a731fc966b63..9093a420d310 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -11,82 +11,101 @@ config PINCTRL_SUNIV_F1C100S
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN4I_A10
+-	def_bool MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
++	bool "Support for the Allwinner A10, A20 and R40 PIO"
++	default MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN5I
+-	def_bool MACH_SUN5I
++	bool "Support for the Allwinner A10s, A13, R8 and NextThing GR8 PIO"
++	default MACH_SUN5I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN6I_A31
+-	def_bool MACH_SUN6I
++	bool "Support for the Allwinner A31 PIO"
++	default MACH_SUN6I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN6I_A31_R
+-	def_bool MACH_SUN6I
++	bool "Support for the Allwinner A31 R-PIO"
++	default MACH_SUN6I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A23
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A23 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A33
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A33 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A83T
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A83T PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A83T_R
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A83T R-PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_A23_R
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner A23 and A33 R-PIO"
++	default MACH_SUN8I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_H3
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner H3 PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_H3_R
+-	def_bool MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	bool "Support for the Allwinner H3 and H5 R-PIO"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN8I_V3S
+-	def_bool MACH_SUN8I
++	bool "Support for the Allwinner V3s PIO"
++	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN9I_A80
+-	def_bool MACH_SUN9I
++	bool "Support for the Allwinner A80 PIO"
++	default MACH_SUN9I
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN9I_A80_R
+-	def_bool MACH_SUN9I
++	bool "Support for the Allwinner A80 R-PIO"
++	default MACH_SUN9I
+ 	depends on RESET_CONTROLLER
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_A64
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner A64 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_A64_R
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner A64 R-PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H5
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H5 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H6
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H6 PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ config PINCTRL_SUN50I_H6_R
+-	def_bool ARM64 && ARCH_SUNXI
++	bool "Support for the Allwinner H6 R-PIO"
++	default ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
+ 
+ endif
+-- 
+2.20.1
