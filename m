@@ -1,83 +1,120 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] genirq: Respect IRQCHIP_SKIP_SET_WAKE in
- irq_chip_set_wake_parent()
-Date: Thu, 21 Mar 2019 10:26:26 +0100 (CET)
-Message-ID: <alpine.DEB.2.21.1903211007310.1777@nanos.tec.linutronix.de>
-References: <20190315200759.139479-1-swboyd@chromium.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up
+ is enabled
+Date: Thu, 21 Mar 2019 12:25:37 +0200
+Message-ID: <20190321102537.GR4615@pendragon.ideasonboard.com>
+References: <20190320103927.21227-1-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190315200759.139479-1-swboyd@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>, Marc Zyngier <marc.zyngier@arm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 15 Mar 2019, Stephen Boyd wrote:
+Hi Geert,
 
-> This function returns an error if a child interrupt controller calls
-> irq_chip_set_wake_parent() but that parent interrupt controller has the
-> IRQCHIP_SKIP_SET_WAKE flag. Let's return 0 for success instead because
-> there isn't anything to do.
+Thank you for the patch.
+
+On Wed, Mar 20, 2019 at 11:39:27AM +0100, Geert Uytterhoeven wrote:
+> If a device is part of the wake-up path, it should indicate this by
+> setting its power.wakeup_path field.  This allows the genpd core code to
+> keep the device enabled during system suspend when needed.
 > 
-> There's also the possibility that a parent indicates that we should skip
-> it, but the grandparent has an .irq_set_wake callback. Let's iterate
-> through the parent chain as long as the IRQCHIP_SKIP_SET_WAKE flag isn't
-> set so we can find the first parent that needs to handle the wake
-> configuration. This fixes a problem on my Qualcomm sdm845 device where
-> I'm trying to enable wake on an irq from the gpio controller that's a
-> child of the qcom pdc interrupt controller. The qcom pdc interrupt
-> controller has the IRQCHIP_SKIP_SET_WAKE flag set, and so does the
-> grandparent (ARM GIC), causing this function to return a failure because
-> the parent controller doesn't have the .irq_set_wake callback set.
+> As regulators powering devices are not handled by genpd, the driver
+> handles these itself, and thus must skip regulator control when the
+> device is part of the wake-up path.
 
-It took me some time to distangle that changelog.... and I don't think that
-this is the right thing to do.
+It would be nice for this to be handled automatically...
 
-set_irq_wake_real() returns 0 when the topmost chip has SKIP_SET_WAKE set.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note that I don't really need this on the Renesas Ebisu-4D board, as
+> there is no regulator or PM Domain controlling power to the GPIO
+> expander on that board.  I did want to have all wake-up path processing
+> implemented in the driver for completeness, and did test its behavior
+> with gpio-keys configured as a wake-up source.
+> 
+> However, while this approach is known to work fine on other boards, with
+> other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> device suspend ordering.
+> 
+> The proper ordering is:
+>   1. When gpio-keys is suspended, its suspend handler calls
+>      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+>      pca953x_chip.wakeup_path to be incremented,
+>   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+>      and marks the device to be part of the wake-up path.
+> 
+> However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> scheme :-(
+> 
+> So depending on topology, this may work, or not...
 
-So let's assume we have the following chains:
+Could device links help there ?
 
-  chip A -> chip B 
+> ---
+>  drivers/gpio/gpio-pca953x.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 88c94d155e218535..349d0ccb5285a6c4 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -153,6 +153,7 @@ struct pca953x_chip {
+>  	u8 irq_trig_fall[MAX_BANK];
+>  	struct irq_chip irq_chip;
+>  #endif
+> +	atomic_t wakeup_path;
+>  
+>  	struct i2c_client *client;
+>  	struct gpio_chip gpio_chip;
+> @@ -581,6 +582,11 @@ static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
+>  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>  	struct pca953x_chip *chip = gpiochip_get_data(gc);
+>  
+> +	if (on)
+> +		atomic_inc(&chip->wakeup_path);
+> +	else
+> +		atomic_dec(&chip->wakeup_path);
+> +
+>  	return irq_set_irq_wake(chip->client->irq, on);
+>  }
+>  
+> @@ -1100,7 +1106,10 @@ static int pca953x_suspend(struct device *dev)
+>  
+>  	regcache_cache_only(chip->regmap, true);
+>  
+> -	regulator_disable(chip->regulator);
+> +	if (atomic_read(&chip->wakeup_path))
+> +		device_set_wakeup_path(dev);
+> +	else
+> +		regulator_disable(chip->regulator);
+>  
+>  	return 0;
+>  }
+> @@ -1110,10 +1119,12 @@ static int pca953x_resume(struct device *dev)
+>  	struct pca953x_chip *chip = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> -	ret = regulator_enable(chip->regulator);
+> -	if (ret != 0) {
+> -		dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> -		return 0;
+> +	if (!atomic_read(&chip->wakeup_path)) {
+> +		ret = regulator_enable(chip->regulator);
+> +		if (ret != 0) {
+> +			dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> +			return 0;
+> +		}
+>  	}
+>  
+>  	regcache_cache_only(chip->regmap, false);
 
-  chip A -> chip B -> chip C
+-- 
+Regards,
 
-chip A has SKIP_SET_WAKE not set
-chip B has SKIP_SET_WAKE set
-chip C has SKIP_SET_WAKE not set and invokes irq_chip_set_wake_parent()
-
-Now assume we have interrupt X connected to chip B and interrupt Y
-connected to chip C.
-
-If irq_set_wake() is called for interrupt X, then the function returns
-without trying to invoke the set_wake() callback of chip A.
-
-If irq_set_wake() is called for interrupt Y, irq_chip_set_wake_parent() is
-invoked from chip C which then skips chip B, but tries to invoke the
-callback on chip A.
-
-That's inconsistent and changes the existing behaviour. So IMO, the right
-thing to do is to return 0 from irq_chip_set_wake_parent() when the parent
-has SKIP_SET_WAKE set and not to try to follow the whole chain. That should
-fix your problem nicely w/o changing behaviour.
-
-Thanks,
-
-	tglx
-
-----
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 3faef4a77f71..51128bea3846 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1449,6 +1449,10 @@ int irq_chip_set_vcpu_affinity_parent(struct irq_data *data, void *vcpu_info)
- int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
- {
- 	data = data->parent_data;
-+
-+	if (data->chip->flags & IRQCHIP_SKIP_SET_WAKE)
-+		return 0;
-+
- 	if (data->chip->irq_set_wake)
- 		return data->chip->irq_set_wake(data, on);
- 
+Laurent Pinchart
