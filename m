@@ -1,62 +1,56 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Thu, 21 Mar 2019 15:56:42 +0200
-Message-ID: <20190321135642.GK3622@lahna.fi.intel.com>
-References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com>
- <2019032119195575582546@cvte.com>
- <20190321120324.GI3622@lahna.fi.intel.com>
- <2019032120213955866649@cvte.com>
- <20190321123637.GJ3622@lahna.fi.intel.com>
- <2019032121342663125658@cvte.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] pinctrl: artpec6: Make two functions static
+Date: Thu, 21 Mar 2019 23:09:09 +0800
+Message-ID: <20190321150909.3576-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2019032121342663125658@cvte.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "zhuchangchun@cvte.com" <zhuchangchun@cvte.com>
-Cc: "andriy.shevchenko" <andriy.shevchenko@linux.intel.com>, "linus.walleij" <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, hendychu <hendychu@aliyun.com>
+To: jesper.nilsson@axis.com, lars.persson@axis.com, linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 21, 2019 at 09:35:26PM +0800, zhuchangchun@cvte.com wrote:
->    --> I know your meaning, even though I've did following actions
->    instead of unexport,
-> 
->    # echo 0 > /sys/class/gpio/gpioXX/value
->      # echo in > /sys/class/gpio/gpioXX/direction
-> 
->    the padcfg0 value still can not roll back,because after export the
->    gpio,the following
-> 
->    action as padcfg0 settings was done.
-> 
->    Exactly  TX and RX register have been set as below in GPIO request:
-> 
->    /* Disable TX buffer and enable RX (this will be input) */
-> 
->    value &= ~PADCFG0_GPIORXDIS;
-> 
->    value |= PADCFG0_GPIOTXDIS;
-> 
->    this will infruence next reboot gpio signal.
-> 
->    And could you pls see my ->free function implementation?
+From: YueHaibing <yuehaibing@huawei.com>
 
-I checked it and you do this:
+Fix sparse warnings:
 
-+       value |= PADCFG0_GPIORXDIS;
-+       value &= ~PADCFG0_GPIOTXDIS;
+drivers/pinctrl/pinctrl-artpec6.c:691:5: warning:
+ symbol 'artpec6_pmx_enable' was not declared. Should it be static?
+drivers/pinctrl/pinctrl-artpec6.c:705:6: warning:
+ symbol 'artpec6_pmx_disable' was not declared. Should it be static?
 
-which pretty much turns the pin GPIO output unconditionally. I don't
-really think it is good idea. May work in your case but may cause
-problems with others.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pinctrl/pinctrl-artpec6.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-If you want to keep it as output and leave the value 1 (high) before you
-issue reboot, I don't think you need to do anything via sysfs (as the
-pin is already in that state and issuing reboot command should not
-change anything because the driver does not have ->shutdown callback.
-
-In other words, your peripheral expects reset GPIO to be asserted (high)
-during reboot so unless the boot firmware resets the pin I don't see why
-leaving it as is does not work for you.
+diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+index d89dc43..e836850 100644
+--- a/drivers/pinctrl/pinctrl-artpec6.c
++++ b/drivers/pinctrl/pinctrl-artpec6.c
+@@ -688,8 +688,9 @@ static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
+ 	}
+ }
+ 
+-int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
+-		       unsigned int group)
++static int artpec6_pmx_enable(struct pinctrl_dev *pctldev,
++			      unsigned int function,
++			      unsigned int group)
+ {
+ 	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -702,8 +703,9 @@ int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
+ 	return 0;
+ }
+ 
+-void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
+-			 unsigned int group)
++static void artpec6_pmx_disable(struct pinctrl_dev *pctldev,
++				unsigned int function,
++				unsigned int group)
+ {
+ 	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 
+-- 
+2.7.0
