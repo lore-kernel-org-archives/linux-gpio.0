@@ -1,32 +1,28 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Fri, 22 Mar 2019 21:06:10 +0200
-Message-ID: <20190322190610.GB9224@smile.fi.intel.com>
-References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com>
- <20190321092330.GK9224@smile.fi.intel.com>
- <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+Subject: Re: [PATCH v10 00/10] Introduce the for_each_set_clump8 macro
+Date: Fri, 22 Mar 2019 21:12:02 +0200
+Message-ID: <20190322191202.GC9224@smile.fi.intel.com>
+References: <cover.1552566113.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+In-Reply-To: <cover.1552566113.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, zhuchangchun <zhuchangchun@cvte.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hendychu@aliyun.com
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, bgolaszewski@baylibre.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 07:32:28PM +0100, Enrico Weigelt, metux IT consult wrote:
-> On 21.03.19 10:23, Andy Shevchenko wrote:
-> 
-> > ...and on top of that GPIO sysfs interface is deprecated.
-> 
-> I don't like the idea of deprecating this. It might not be enough for
-> all usecases, but for a lot of usecases, it's a very easy and simple
-> interfaces.
+On Thu, Mar 14, 2019 at 09:29:32PM +0900, William Breathitt Gray wrote:
+> Changes in v10:
+>   - Fix off-by-one error in bitmap initialization in the
+>     test_for_each_set_clump8 function
+>   - Fix typos in clump_exp array definition in test_bitmap.c ("0x28"
+>     should have been "0x38")
+>   - Utilize for_each_set_clump8 macro in intel_soc_dts_iosf.c
 
-So, you probably late for more than year. Linus W. and others discussed that
-a lot and the points of the choice are listed in documentation IIRC.
+One more, can you look at gen_74x164_set_multiple() ? It seems a candidate as
+well, if I'm not mistaken.
 
 
 -- 
