@@ -1,51 +1,60 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/2] gpio: mockup: drop unneeded dependencies from Kconfig
-Date: Fri, 22 Mar 2019 16:55:32 +0100
-Message-ID: <CAMRc=MfeJSN9Nza4rMmaA6eARUzUvq46YEmq4+GhVxjYSiuorQ@mail.gmail.com>
-References: <20190314150750.9371-1-brgl@bgdev.pl>
+Subject: [PATCH] gpio: mockup: fix debugfs read
+Date: Fri, 22 Mar 2019 18:30:52 +0100
+Message-ID: <20190322173052.23763-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314150750.9371-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-czw., 14 mar 2019 o 16:08 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
-a):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> The testing module doesn't need GPIO irqchip nor does it depend on
-> sysfs. Remove unnecessary dependencies from Kconfig.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/gpio/Kconfig | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 3f50526a771f..e9473e968d9a 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -332,9 +332,7 @@ config GPIO_MM_LANTIQ
->
->  config GPIO_MOCKUP
->         tristate "GPIO Testing Driver"
-> -       depends on GPIOLIB && SYSFS
-> -       select GPIO_SYSFS
-> -       select GPIOLIB_IRQCHIP
-> +       depends on GPIOLIB
->         select IRQ_SIM
->         help
->           This enables GPIO Testing driver, which provides a way to test =
-GPIO
-> --
-> 2.20.1
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Both applied to for-next.
+The debugfs read callback must advance ppos or users using read() on
+the file descriptor will never get the EOL. This wasn't spotted before
+as I was using busybox cat for testing which uses sendfile() internally
+and only noticed it now when switched to cat from coreutils.
 
-Bart
+Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-mockup.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 154d959e8993..74ba8b1d71d8 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -204,8 +204,9 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
+ 	struct gpio_mockup_chip *chip;
+ 	struct seq_file *sfile;
+ 	struct gpio_chip *gc;
++	int val, rv, cnt;
+ 	char buf[3];
+-	int val, rv;
++
+ 
+ 	if (*ppos != 0)
+ 		return 0;
+@@ -216,13 +217,14 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
+ 	gc = &chip->gc;
+ 
+ 	val = gpio_mockup_get(gc, priv->offset);
+-	snprintf(buf, sizeof(buf), "%d\n", val);
++	cnt = snprintf(buf, sizeof(buf), "%d\n", val);
+ 
+-	rv = copy_to_user(usr_buf, buf, sizeof(buf));
++	rv = copy_to_user(usr_buf, buf, cnt);
+ 	if (rv)
+ 		return rv;
+ 
+-	return sizeof(buf) - 1;
++	*ppos += cnt;
++	return cnt;
+ }
+ 
+ static ssize_t gpio_mockup_debugfs_write(struct file *file,
+-- 
+2.20.1
