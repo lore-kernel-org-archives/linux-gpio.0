@@ -1,28 +1,34 @@
 From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
 Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Fri, 22 Mar 2019 19:32:28 +0100
-Message-ID: <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+Date: Fri, 22 Mar 2019 19:35:42 +0100
+Message-ID: <d752cd9b-59f2-4524-e989-92bd0dba6b4f@metux.net>
 References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com>
- <20190321092330.GK9224@smile.fi.intel.com>
+ <20190321084420.GG3622@lahna.fi.intel.com> <2019032119195575582546@cvte.com>
+ <20190321120324.GI3622@lahna.fi.intel.com> <2019032120213955866649@cvte.com>
+ <20190321123637.GJ3622@lahna.fi.intel.com> <2019032121342663125658@cvte.com>
+ <20190321135642.GK3622@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190321092330.GK9224@smile.fi.intel.com>
+In-Reply-To: <20190321135642.GK3622@lahna.fi.intel.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: zhuchangchun <zhuchangchun@cvte.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hendychu@aliyun.com
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, "zhuchangchun@cvte.com" <zhuchangchun@cvte.com>
+Cc: "andriy.shevchenko" <andriy.shevchenko@linux.intel.com>, "linus.walleij" <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, hendychu <hendychu@aliyun.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 21.03.19 10:23, Andy Shevchenko wrote:
+On 21.03.19 14:56, Mika Westerberg wrote:
+> I checked it and you do this:> > +       value |= PADCFG0_GPIORXDIS;> +       value &=
+~PADCFG0_GPIOTXDIS;> > which pretty much turns the pin GPIO output
+unconditionally. I don't> really think it is good idea. May work in your
+case but may cause> problems with others.
+Uh, please don't do this. In some cases it could be even dangerous.
 
-> ...and on top of that GPIO sysfs interface is deprecated.
+In general, I'd question whether such an gpio should be userland-
+controlled in the first place. Better write a driver for it, which
+also handles the reset properly.
 
-I don't like the idea of deprecating this. It might not be enough for
-all usecases, but for a lot of usecases, it's a very easy and simple
-interfaces.
 
 --mtx
 
