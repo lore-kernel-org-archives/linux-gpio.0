@@ -1,60 +1,58 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] gpio: mockup: fix debugfs read
-Date: Fri, 22 Mar 2019 18:30:52 +0100
-Message-ID: <20190322173052.23763-1-brgl@bgdev.pl>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v10 01/10] bitops: Introduce the for_each_set_clump8 macro
+Date: Fri, 22 Mar 2019 20:22:44 +0200
+Message-ID: <20190322182244.GZ9224@smile.fi.intel.com>
+References: <cover.1552566113.git.vilhelm.gray@gmail.com>
+ <0e4d352418252d480dfc7d529604819f8ff88d9c.1552566113.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0e4d352418252d480dfc7d529604819f8ff88d9c.1552566113.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, bgolaszewski@baylibre.com, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Thu, Mar 14, 2019 at 09:30:02PM +0900, William Breathitt Gray wrote:
+> This macro iterates for each 8-bit group of bits (clump) with set bits,
+> within a bitmap memory region. For each iteration, "start" is set to the
+> bit offset of the found clump, while the respective clump value is
+> stored to the location pointed by "clump". Additionally, the
+> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> respectively get and set an 8-bit value in a bitmap memory region.
 
-The debugfs read callback must advance ppos or users using read() on
-the file descriptor will never get the EOL. This wasn't spotted before
-as I was using busybox cat for testing which uses sendfile() internally
-and only noticed it now when switched to cat from coreutils.
+> +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
+> +		       const unsigned long value, const unsigned int start)
+> +{
+> +	const size_t index = BIT_WORD(start);
+> +	const unsigned int offset = start % BITS_PER_LONG;
+> +	const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
+> +				       BITS_PER_LONG - offset : 8;
 
-Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-mockup.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> +	const unsigned long low_mask = GENMASK(offset + low_width - 1, offset);
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 154d959e8993..74ba8b1d71d8 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -204,8 +204,9 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
- 	struct gpio_mockup_chip *chip;
- 	struct seq_file *sfile;
- 	struct gpio_chip *gc;
-+	int val, rv, cnt;
- 	char buf[3];
--	int val, rv;
-+
- 
- 	if (*ppos != 0)
- 		return 0;
-@@ -216,13 +217,14 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
- 	gc = &chip->gc;
- 
- 	val = gpio_mockup_get(gc, priv->offset);
--	snprintf(buf, sizeof(buf), "%d\n", val);
-+	cnt = snprintf(buf, sizeof(buf), "%d\n", val);
- 
--	rv = copy_to_user(usr_buf, buf, sizeof(buf));
-+	rv = copy_to_user(usr_buf, buf, cnt);
- 	if (rv)
- 		return rv;
- 
--	return sizeof(buf) - 1;
-+	*ppos += cnt;
-+	return cnt;
- }
- 
- static ssize_t gpio_mockup_debugfs_write(struct file *file,
+I think
+
+	unsigned long low_mask = GENMASK(low_width - 1, 0) << offset;
+
+will generate better code.
+
+> +	const unsigned int high_width = 8 - low_width;
+> +	const unsigned long high_mask = GENMASK(high_width - 1, 0);
+> +
+> +	/* set lower portion */
+> +	bitmap[index] &= ~low_mask;
+> +	bitmap[index] |= value << offset;
+> +
+> +	/* set higher portion if space available in bitmap */
+> +	if (high_width && start + 8 <= size) {
+> +		bitmap[index + 1] &= ~high_mask;
+> +		bitmap[index + 1] |= value >> low_width;
+> +	}
+> +}
+> +EXPORT_SYMBOL(bitmap_set_value8);
+
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
