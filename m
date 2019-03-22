@@ -1,67 +1,53 @@
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-Subject: Re: [PATCH -next] pinctrl: artpec6: Make two functions static
-Date: Thu, 21 Mar 2019 16:59:23 +0100
-Message-ID: <20190321155923.z4jbelggbqp2vjio@axis.com>
-References: <20190321150909.3576-1-yuehaibing@huawei.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RESEND PATCH v6 01/11] dt-bindings: mfd: add DT bindings for
+ max77650
+Date: Fri, 22 Mar 2019 09:57:48 +0100
+Message-ID: <20190322085748.GD27015@amd>
+References: <20190318174040.17899-1-brgl@bgdev.pl>
+ <20190318174040.17899-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oj4kGyHlBMXGt3Le"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190321150909.3576-1-yuehaibing@huawei.com>
+In-Reply-To: <20190318174040.17899-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: jespern@axis.com, larper@axis.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 21, 2019 at 11:09:09PM +0800, Yue Haibing wrote:
-> From: YueHaibing <yuehaibing@huawei.com>
-> 
-> Fix sparse warnings:
-> 
-> drivers/pinctrl/pinctrl-artpec6.c:691:5: warning:
->  symbol 'artpec6_pmx_enable' was not declared. Should it be static?
-> drivers/pinctrl/pinctrl-artpec6.c:705:6: warning:
->  symbol 'artpec6_pmx_disable' was not declared. Should it be static?
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+--oj4kGyHlBMXGt3Le
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/pinctrl/pinctrl-artpec6.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
-> index d89dc43..e836850 100644
-> --- a/drivers/pinctrl/pinctrl-artpec6.c
-> +++ b/drivers/pinctrl/pinctrl-artpec6.c
-> @@ -688,8 +688,9 @@ static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
->  	}
->  }
->  
-> -int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
-> -		       unsigned int group)
-> +static int artpec6_pmx_enable(struct pinctrl_dev *pctldev,
-> +			      unsigned int function,
-> +			      unsigned int group)
->  {
->  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->  
-> @@ -702,8 +703,9 @@ int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
->  	return 0;
->  }
->  
-> -void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
-> -			 unsigned int group)
-> +static void artpec6_pmx_disable(struct pinctrl_dev *pctldev,
-> +				unsigned int function,
-> +				unsigned int group)
->  {
->  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->  
-> -- 
-> 2.7.0
+On Mon 2019-03-18 18:40:30, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>=20
+> Add a DT binding document for max77650 ultra-low power PMIC. This
+> describes the core mfd device and the GPIO module.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-/^JN - Jesper Nilsson
--- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--oj4kGyHlBMXGt3Le
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyUo4wACgkQMOfwapXb+vILvQCfX9xF7DmG5Ki/cBwwwmkdu+Ty
+0wgAoKBVJq7fzsfgCulS3ORdhn9ugNZ+
+=kXai
+-----END PGP SIGNATURE-----
+
+--oj4kGyHlBMXGt3Le--
