@@ -1,101 +1,51 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] Skip deferred request irqs for devices known to fail
-Date: Fri, 22 Mar 2019 15:45:23 +0100
-Message-ID: <b5a7b895-e08d-f432-8606-4d8c776d4a8a@redhat.com>
-References: <20190322110515.21499-1-ianwmorrison@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 1/2] gpio: mockup: drop unneeded dependencies from Kconfig
+Date: Fri, 22 Mar 2019 16:55:32 +0100
+Message-ID: <CAMRc=MfeJSN9Nza4rMmaA6eARUzUvq46YEmq4+GhVxjYSiuorQ@mail.gmail.com>
+References: <20190314150750.9371-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190322110515.21499-1-ianwmorrison@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190314150750.9371-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ian W MORRISON <ianwmorrison@gmail.com>, benjamin.tissoires@redhat.com, mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On 3/22/19 12:05 PM, Ian W MORRISON wrote:
-> Patch ca876c7483b6 "gpiolib-acpi: make sure we trigger edge events at
-> least once on boot" causes the MINIX family of mini PCs to fail to boot
-> resulting in a "black screen".
-> 
-> This patch excludes MINIX devices from executing this trigger in order
-> to successfully boot.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ian W MORRISON <ianwmorrison@gmail.com>
-
-IMHO we need to root-cause this problem a bit more before applying this
-kludge.
-
-Can you provide an ACPI dump of one of the affected machines ?
-
-Regards,
-
-Hans
-
-
-
+czw., 14 mar 2019 o 16:08 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
+a):
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> The testing module doesn't need GPIO irqchip nor does it depend on
+> sysfs. Remove unnecessary dependencies from Kconfig.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
->   drivers/gpio/gpiolib-acpi.c | 28 +++++++++++++++++++++++-----
->   1 file changed, 23 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 259cf6ab969b..8d855dc9b020 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -16,9 +16,21 @@
->   #include <linux/interrupt.h>
->   #include <linux/mutex.h>
->   #include <linux/pinctrl/pinctrl.h>
-> +#include <linux/dmi.h>
->   
->   #include "gpiolib.h"
->   
-> +static const struct dmi_system_id skip_deferred_request_irqs_table[] = {
-> +	{
-> +		.ident = "MINIX Z83-4",
-> +		.matches = {
-> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "MINIX"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
-> +		},
-> +	},
-> +	{}
-> +};
-> +
->   /**
->    * struct acpi_gpio_event - ACPI GPIO event handler data
->    *
-> @@ -1219,18 +1231,24 @@ bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
->   }
->   
->   /* Run deferred acpi_gpiochip_request_irqs() */
-> +/* but exclude devices known to fail */
->   static int acpi_gpio_handle_deferred_request_irqs(void)
->   {
->   	struct acpi_gpio_chip *acpi_gpio, *tmp;
-> +	const struct dmi_system_id *dmi_id;
->   
-> -	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
-> -	list_for_each_entry_safe(acpi_gpio, tmp,
-> +	dmi_id = dmi_first_match(skip_deferred_request_irqs_table);
-> +
-> +	if (! dmi_id) {
-> +		mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
-> +		list_for_each_entry_safe(acpi_gpio, tmp,
->   				 &acpi_gpio_deferred_req_irqs_list,
->   				 deferred_req_irqs_list_entry)
-> -		acpi_gpiochip_request_irqs(acpi_gpio);
-> +			acpi_gpiochip_request_irqs(acpi_gpio);
->   
-> -	acpi_gpio_deferred_req_irqs_done = true;
-> -	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-> +		acpi_gpio_deferred_req_irqs_done = true;
-> +		mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-> +	}
->   
->   	return 0;
->   }
-> 
+>  drivers/gpio/Kconfig | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 3f50526a771f..e9473e968d9a 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -332,9 +332,7 @@ config GPIO_MM_LANTIQ
+>
+>  config GPIO_MOCKUP
+>         tristate "GPIO Testing Driver"
+> -       depends on GPIOLIB && SYSFS
+> -       select GPIO_SYSFS
+> -       select GPIOLIB_IRQCHIP
+> +       depends on GPIOLIB
+>         select IRQ_SIM
+>         help
+>           This enables GPIO Testing driver, which provides a way to test =
+GPIO
+> --
+> 2.20.1
+>
+
+Both applied to for-next.
+
+Bart
