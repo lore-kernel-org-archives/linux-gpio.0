@@ -1,93 +1,114 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] genirq: Respect IRQCHIP_SKIP_SET_WAKE in
- irq_chip_set_wake_parent()
-Date: Sat, 23 Mar 2019 10:42:58 +0100 (CET)
-Message-ID: <alpine.DEB.2.21.1903231035140.2157@nanos.tec.linutronix.de>
-References: <20190315200759.139479-1-swboyd@chromium.org>
- <alpine.DEB.2.21.1903211007310.1777@nanos.tec.linutronix.de>
- <155329862018.20095.14024385652448015564@swboyd.mtv.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <155329862018.20095.14024385652448015564@swboyd.mtv.corp.google.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lina Iyer <ilina@codeaurora.org>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [BUG] gpiolib: spi chip select legacy support breaks modern chip select and whitens the GTA04 LCD panel
+Date: Sat, 23 Mar 2019 15:40:29 +0100
+Message-ID: <5488EF42-08DB-4273-95FF-49ED31E27472@goldelico.com>
+References: <7509BFB6-36E4-441A-9F16-7A4FEE7F7CF3@goldelico.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7509BFB6-36E4-441A-9F16-7A4FEE7F7CF3@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-spi@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Stephen,
+Hi Linus,
+I am sorry to report that your patch
 
-On Fri, 22 Mar 2019, Stephen Boyd wrote:
-> Quoting Thomas Gleixner (2019-03-21 02:26:26)
-> > 
-> > set_irq_wake_real() returns 0 when the topmost chip has SKIP_SET_WAKE set.
-> 
-> Just to confirm, the topmost chip would be chip B or chip C below?
+(1) c1c04cea13dc gpio: of: Fix logic inversion
 
-Yes. A is the parent of B, resp. the grandparent of C
+together with the basic patch
 
-> > 
-> > So let's assume we have the following chains:
-> > 
-> >   chip A -> chip B 
-> > 
-> >   chip A -> chip B -> chip C
-> > 
-> > chip A has SKIP_SET_WAKE not set
-> > chip B has SKIP_SET_WAKE set
-> > chip C has SKIP_SET_WAKE not set and invokes irq_chip_set_wake_parent()
-> > 
-> > Now assume we have interrupt X connected to chip B and interrupt Y
-> > connected to chip C.
-> > 
-> > If irq_set_wake() is called for interrupt X, then the function returns
-> > without trying to invoke the set_wake() callback of chip A.
-> 
-> It's not clear to me that having SKIP_SET_WAKE set means "completely
-> ignore set wake for irqs from this domain" vs. "skip setting wake here
-> because the .irq_set_wake() is intentionally omitted for this chip".
+(2) 6953c57ab172 gpio: of: Handle SPI chipselect legacy bindings
 
-That's a really good question, but I'd say that if one part of the
-hierarchy does not require set wake, then this means no further action
-required.
+leads to a severe regression for our GTA04 board. The symptom was easy =
+to see but really difficult
+to understand: the LCD panel stopped working (did only show white =
+pixels) after upgrading from
+v5.0 to v5.1-rc1.
 
-> Reading Santosh's reasoning in commit 60f96b41f71d ("genirq: Add
-> IRQCHIP_SKIP_SET_WAKE flag") just further confuses me because it sounds
-> like the latter.
+In a long bisect session, I was able to identify patch (1) as the first =
+bad commit and started
+to analyse what the code is supposed to do and then found the older =
+patch (2).
 
-That preceeds hierarchical irq domains. So back then a hierarchy was
-expressed by weird callbacks, hardcoded dependencies, etc. That means if
-the top level chip had SKIP_SET_WAKE set, the whole hierarchy was excluded.
+I learned that it tries to handle a legacy "spi-cs-high" property of SPI =
+slaves, but was stopped
+from doing so by a bug (1). So only with both patches, the legacy =
+handler becomes active which
+explains why it was not noticed earlier.
 
-> > If irq_set_wake() is called for interrupt Y, irq_chip_set_wake_parent() is
-> > invoked from chip C which then skips chip B, but tries to invoke the
-> > callback on chip A.
-> > 
-> > That's inconsistent and changes the existing behaviour. So IMO, the right
-> > thing to do is to return 0 from irq_chip_set_wake_parent() when the parent
-> > has SKIP_SET_WAKE set and not to try to follow the whole chain. That should
-> > fix your problem nicely w/o changing behaviour.
-> 
-> Ok. I understand that with hierarchical chips you want it to be explicit
-> in the code that a parent chip needs to be called or not. This works for
+Now, our GTA04 device tree from 2014 (v3.16-rc1) was already written =
+without any legacy spi properties
+in mind
 
-I think so.
+(3) c2e138bc8ed80 ARM: dts: omap3-gta04: Add display support
 
-> me, and it's actually how I had originally solved this problem. Will you
-> merge your patch or do you want me to resend it with some updated commit
-> text?
+So it has no spi-cs-high property and just defines constant 0 for the =
+flags (GPIO_ACTIVE_HIGH after
+some fix from 2015) assuming that this is sufficient. And it was until =
+before v5.1-rc1.
 
-Please send a new version.
+This is now wrongly turned into an GPIO_ACTIVE_LOW by your legacy fix =
+which makes the panel
+stop feeling responsible to receive any initialization data over SPI.
 
-Thanks,
+Yes, there is a new message in the boot log for this case, but to be =
+honest, nobody did see it
+before I found the code that does print it. A non-working LCD panel was =
+a too distracting indicator
+and could have been everything (most likely drm or the panel driver or =
+clock or regulator or
+dma setup or whatever)...
 
-	tglx
+So your assumption that this case is the exception as stated in commit =
+message of (2) seems not
+to be true. IMHO it should be standard (at least since 2015) that there =
+is GPIO_ACTIVE_HIGH and
+no spi-cs-high. So your patch (2) gives a legacy property a new priority =
+over modern style.
+
+BTW: the spi-cs-high is described as optional and indicative in the =
+bindings document. But it
+now appears to be required to get a cs-high.
+
+By the way, the detection of spi-cs-high still seems to be wrong as of =
+v5.1-rc1. Shouldn't it
+look at the child node for "spi-cs-high" and not the controller node =
+pointer? As far as I understand
+the current code, all such legacy flags are therefore ignored and should =
+break all boards that
+use spi-cs-high and GPIO_ACTIVE_HIGH.
+
+Of course, adding spi-cs-high; (at the controller node!) of our device =
+tree can make it work,
+but I do not like to be forced to introduce a legacy property to our DTS =
+file, just because
+gpio-lib tries to fix a legacy problem in the SPI subsystem (quite =
+mind-twisting cross-subsystem
+dependencies, aren't they?).
+
+The real problem seems to be that the legacy spi-cs-high property itself =
+still exists although
+it should not be needed for ca. 5 years. =46rom all this I conclude that =
+nobody really needs this
+legacy support or does test it. And if he/she does, they should better =
+fix the cs-gpios entries
+in the DTS and remove spi-cs-high completely.
+
+Therefore I would suggest:
+* revert both patches as soon as possible (v5.1-rc series) to remove the =
+unexpected spi legacy
+  code handler from the gpio subsystem.
+* replace all uses of spi-cs-high by correct cs-gpios flags - unless =
+they already are there.
+  fgrep spi-cs-high arch/*/boot/dts/*.dts* shows only a handful of DTS =
+candidates.
+* fix spi-bus.txt documentation to describe this potential pitfall.
+
+Then we can leave our GTA04 display and device tree untouched as from =
+v3.16-rc1 up to v5.0.x.
+
+BR and thanks,
+Nikolaus
