@@ -1,114 +1,54 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [BUG] gpiolib: spi chip select legacy support breaks modern chip select and whitens the GTA04 LCD panel
-Date: Sat, 23 Mar 2019 15:40:29 +0100
-Message-ID: <5488EF42-08DB-4273-95FF-49ED31E27472@goldelico.com>
-References: <7509BFB6-36E4-441A-9F16-7A4FEE7F7CF3@goldelico.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+From: "andriy.shevchenko" <andriy.shevchenko@linux.intel.com>
+Subject: Re: Re: [PATCH] pinctrl: intel: Implements gpio free function
+Date: Sat, 23 Mar 2019 18:48:10 +0200
+Message-ID: <20190323164810.GE9224@smile.fi.intel.com>
+References: <20190321084420.GG3622@lahna.fi.intel.com>
+ <2019032119195575582546@cvte.com>
+ <20190321120324.GI3622@lahna.fi.intel.com>
+ <2019032120213955866649@cvte.com>
+ <20190321123637.GJ3622@lahna.fi.intel.com>
+ <2019032121342663125658@cvte.com>
+ <20190321135642.GK3622@lahna.fi.intel.com>
+ <2019032211131426883268@cvte.com>
+ <20190322104242.GV3622@lahna.fi.intel.com>
+ <2019032314505202825175@cvte.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7509BFB6-36E4-441A-9F16-7A4FEE7F7CF3@goldelico.com>
+Content-Disposition: inline
+In-Reply-To: <2019032314505202825175@cvte.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-spi@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>
+To: "zhuchangchun@cvte.com" <zhuchangchun@cvte.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linus.walleij" <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, hendychu <hendychu@aliyun.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-I am sorry to report that your patch
+On Sat, Mar 23, 2019 at 02:51:52PM +0800, zhuchangchun@cvte.com wrote:
+> On Fri, Mar 22, 2019 at 11:14:14AM +0800, zhuchangchun@cvte.com wrote:
 
-(1) c1c04cea13dc gpio: of: Fix logic inversion
+> >    From above,you can kown when you export a GPIO ,it will do request,
+> >
+> >    and there will set TX and RX register at the time same time.
+> >
+> >    when you try to set direction in and set value, TX register value can
+> >    roll back
+> >
+> >    the value,but RX register was not set, so who will set RX value back??
+>  
+> I think you are looking at some older code. There is now function
+> __intel_gpio_set_direction() that is supposed to set both buffers
+> depending on the direction. It was introduced with commit 17fab473693e
+> ("pinctrl: intel: Set pin direction properly").
+> 
+> 
+> --> Yes ,I see the latest master branch, the __intel_gpio_set_direction will
+> set RX and TX, but I still think we need to implement free function,cause
+> it will help many other engineers,especailly for some manufactories use some
+> module,and this modules embeded its own driver but not can be modified,
+> if they want use the gpio control the module, they may meet the same problem.
 
-together with the basic patch
+What problem?
+Is it reproducible on latest vanilla kernel?
 
-(2) 6953c57ab172 gpio: of: Handle SPI chipselect legacy bindings
-
-leads to a severe regression for our GTA04 board. The symptom was easy =
-to see but really difficult
-to understand: the LCD panel stopped working (did only show white =
-pixels) after upgrading from
-v5.0 to v5.1-rc1.
-
-In a long bisect session, I was able to identify patch (1) as the first =
-bad commit and started
-to analyse what the code is supposed to do and then found the older =
-patch (2).
-
-I learned that it tries to handle a legacy "spi-cs-high" property of SPI =
-slaves, but was stopped
-from doing so by a bug (1). So only with both patches, the legacy =
-handler becomes active which
-explains why it was not noticed earlier.
-
-Now, our GTA04 device tree from 2014 (v3.16-rc1) was already written =
-without any legacy spi properties
-in mind
-
-(3) c2e138bc8ed80 ARM: dts: omap3-gta04: Add display support
-
-So it has no spi-cs-high property and just defines constant 0 for the =
-flags (GPIO_ACTIVE_HIGH after
-some fix from 2015) assuming that this is sufficient. And it was until =
-before v5.1-rc1.
-
-This is now wrongly turned into an GPIO_ACTIVE_LOW by your legacy fix =
-which makes the panel
-stop feeling responsible to receive any initialization data over SPI.
-
-Yes, there is a new message in the boot log for this case, but to be =
-honest, nobody did see it
-before I found the code that does print it. A non-working LCD panel was =
-a too distracting indicator
-and could have been everything (most likely drm or the panel driver or =
-clock or regulator or
-dma setup or whatever)...
-
-So your assumption that this case is the exception as stated in commit =
-message of (2) seems not
-to be true. IMHO it should be standard (at least since 2015) that there =
-is GPIO_ACTIVE_HIGH and
-no spi-cs-high. So your patch (2) gives a legacy property a new priority =
-over modern style.
-
-BTW: the spi-cs-high is described as optional and indicative in the =
-bindings document. But it
-now appears to be required to get a cs-high.
-
-By the way, the detection of spi-cs-high still seems to be wrong as of =
-v5.1-rc1. Shouldn't it
-look at the child node for "spi-cs-high" and not the controller node =
-pointer? As far as I understand
-the current code, all such legacy flags are therefore ignored and should =
-break all boards that
-use spi-cs-high and GPIO_ACTIVE_HIGH.
-
-Of course, adding spi-cs-high; (at the controller node!) of our device =
-tree can make it work,
-but I do not like to be forced to introduce a legacy property to our DTS =
-file, just because
-gpio-lib tries to fix a legacy problem in the SPI subsystem (quite =
-mind-twisting cross-subsystem
-dependencies, aren't they?).
-
-The real problem seems to be that the legacy spi-cs-high property itself =
-still exists although
-it should not be needed for ca. 5 years. =46rom all this I conclude that =
-nobody really needs this
-legacy support or does test it. And if he/she does, they should better =
-fix the cs-gpios entries
-in the DTS and remove spi-cs-high completely.
-
-Therefore I would suggest:
-* revert both patches as soon as possible (v5.1-rc series) to remove the =
-unexpected spi legacy
-  code handler from the gpio subsystem.
-* replace all uses of spi-cs-high by correct cs-gpios flags - unless =
-they already are there.
-  fgrep spi-cs-high arch/*/boot/dts/*.dts* shows only a handful of DTS =
-candidates.
-* fix spi-bus.txt documentation to describe this potential pitfall.
-
-Then we can leave our GTA04 display and device tree untouched as from =
-v3.16-rc1 up to v5.0.x.
-
-BR and thanks,
-Nikolaus
+-- 
+With Best Regards,
+Andy Shevchenko
