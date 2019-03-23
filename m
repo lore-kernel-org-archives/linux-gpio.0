@@ -1,61 +1,42 @@
-From: Fabien Parent <fparent-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 10/24] mmc: mtk-sd: add support for MT8516
-Date: Sat, 23 Mar 2019 22:15:58 +0100
-Message-ID: <20190323211612.860-11-fparent@baylibre.com>
-References: <20190323211612.860-1-fparent@baylibre.com>
+From: Aditya Pakki <pakki001@umn.edu>
+Subject: Re: [PATCH] pinctrl: axp209: Fix NULL pointer dereference after
+ allocation
+Date: Sat, 23 Mar 2019 17:09:11 -0500
+Message-ID: <94966a29-9c51-df66-552b-5a047499e229@umn.edu>
+References: <20190312151911.2207-1-pakki001@umn.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190323211612.860-1-fparent-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jjian.zhou-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, wenzhen.yu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, stephane.leprovost-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, sean.wang-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yong.mao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, hsin-hsiung.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fabien Parent <fparent-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190312151911.2207-1-pakki001@umn.edu>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: kjlu@umn.edu, Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add the MSDC configuration for the MT8516 SoC.
+Gentle reminder, Can someone review this patch.
 
-Signed-off-by: Fabien Parent <fparent-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
----
- drivers/mmc/host/mtk-sd.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 573aa127d00b..51139275b1b2 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -507,6 +507,16 @@ static const struct mtk_mmc_compatible mt7622_compat = {
- 	.support_64g = false,
- };
- 
-+static const struct mtk_mmc_compatible mt8516_compat = {
-+	.clk_div_bits = 12,
-+	.hs400_tune = false,
-+	.pad_tune_reg = MSDC_PAD_TUNE0,
-+	.async_fifo = true,
-+	.data_tune = true,
-+	.busy_check = true,
-+	.stop_clk_fix = true,
-+};
-+
- static const struct of_device_id msdc_of_ids[] = {
- 	{ .compatible = "mediatek,mt8135-mmc", .data = &mt8135_compat},
- 	{ .compatible = "mediatek,mt8173-mmc", .data = &mt8173_compat},
-@@ -514,6 +524,7 @@ static const struct of_device_id msdc_of_ids[] = {
- 	{ .compatible = "mediatek,mt2701-mmc", .data = &mt2701_compat},
- 	{ .compatible = "mediatek,mt2712-mmc", .data = &mt2712_compat},
- 	{ .compatible = "mediatek,mt7622-mmc", .data = &mt7622_compat},
-+	{ .compatible = "mediatek,mt8516-mmc", .data = &mt8516_compat},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, msdc_of_ids);
--- 
-2.20.1
+On 3/12/19 10:19 AM, Aditya Pakki wrote:
+> axp20x_build_funcs_groups allocates groups via devm_kcalloc and tries to
+> dereference without checking for NULL. This patch avoids such a
+> scenario.
+>
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>  drivers/pinctrl/pinctrl-axp209.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+> index afd0b533c40a..4fcf7262bed9 100644
+> --- a/drivers/pinctrl/pinctrl-axp209.c
+> +++ b/drivers/pinctrl/pinctrl-axp209.c
+> @@ -366,6 +366,8 @@ static int axp20x_build_funcs_groups(struct platform_device *pdev)
+>  		pctl->funcs[i].groups = devm_kcalloc(&pdev->dev,
+>  						     npins, sizeof(char *),
+>  						     GFP_KERNEL);
+> +		if (!pctl->funcs[i].groups)
+> +			return -ENOMEM;
+>  		for (pin = 0; pin < npins; pin++)
+>  			pctl->funcs[i].groups[pin] = pctl->desc->pins[pin].name;
+>  	}
