@@ -1,55 +1,72 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v10 00/10] Introduce the for_each_set_clump8 macro
-Date: Sun, 24 Mar 2019 13:08:09 +0900
-Message-ID: <20190324040704.GA8285@icarus>
-References: <cover.1552566113.git.vilhelm.gray@gmail.com>
- <20190322191202.GC9224@smile.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [BUG] gpiolib: spi chip select legacy support breaks modern chip
+ select and whitens the GTA04 LCD panel
+Date: Sun, 24 Mar 2019 05:15:03 +0100
+Message-ID: <CACRpkdb4URKcdZ-=3aG_np86Bp=1ahs+qztM-7yQkSP18ZkE6A@mail.gmail.com>
+References: <7509BFB6-36E4-441A-9F16-7A4FEE7F7CF3@goldelico.com> <5488EF42-08DB-4273-95FF-49ED31E27472@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190322191202.GC9224@smile.fi.intel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>
-Cc: linux-arch@vger.kernel.org, yamada.masahiro@socionext.com, linus.walleij@linaro.org, linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5488EF42-08DB-4273-95FF-49ED31E27472@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>, Jan Kotas <jank@cadence.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 09:12:02PM +0200, Andy Shevchenko wrote:
-> On Thu, Mar 14, 2019 at 09:29:32PM +0900, William Breathitt Gray wrote:
-> > Changes in v10:
-> >   - Fix off-by-one error in bitmap initialization in the
-> >     test_for_each_set_clump8 function
-> >   - Fix typos in clump_exp array definition in test_bitmap.c ("0x28"
-> >     should have been "0x38")
-> >   - Utilize for_each_set_clump8 macro in intel_soc_dts_iosf.c
-> 
-> One more, can you look at gen_74x164_set_multiple() ? It seems a candidate as
-> well, if I'm not mistaken.
+On Sat, Mar 23, 2019 at 3:40 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-We can utilize the for_each_set_clump8 macro in the
-gen_74x164_set_multiple function, but I skipped over it earlier since I
-noticed it used the BITS_PER_BYTE define rather than a hardcoded 8. If
-it always loops 8 bits at a time, then we can use the
-for_each_set_clump8 macro; otherwise we would need the more generic
-for_each_set_clump macro to handle the non-8-bit looping cases.
+> (1) c1c04cea13dc gpio: of: Fix logic inversion
+>
+> together with the basic patch
+>
+> (2) 6953c57ab172 gpio: of: Handle SPI chipselect legacy bindings
+>
+> leads to a severe regression for our GTA04 board.
 
-Will BITS_PER_BYTE always be defined as 8 bits?
+Sorry! :(
 
-William Breathitt Gray
+I found the same problem on my Nomadik board.
 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+But I fixed it in that case by introducing a spi-cs-high into the DTS file:
+https://marc.info/?l=linux-arm-kernel&m=155292310015309&w=2
+
+> I learned that it tries to handle a legacy "spi-cs-high" property of SPI slaves, but was stopped
+> from doing so by a bug (1). So only with both patches, the legacy handler becomes active which
+> explains why it was not noticed earlier.
+>
+> Now, our GTA04 device tree from 2014 (v3.16-rc1) was already written without any legacy spi properties
+> in mind
+
+I'm sorry about that, however if you look at the DT binding document:
+Documentation/devicetree/bindings/spi/spi-bus.txt
+
+You will see that spi-cs-high is mandatory. So these DTS files are
+incorrect.
+
+> Therefore I would suggest:
+> * revert both patches as soon as possible (v5.1-rc series) to remove the unexpected spi legacy
+>   code handler from the gpio subsystem.
+> * replace all uses of spi-cs-high by correct cs-gpios flags - unless they already are there.
+>   fgrep spi-cs-high arch/*/boot/dts/*.dts* shows only a handful of DTS candidates.
+> * fix spi-bus.txt documentation to describe this potential pitfall.
+
+This does not work because there are devices that requires spi-cs-high to be
+respected and the DTS second cell GPIO flag to be ignored.
+
+Jan Kotas reported this problem.
+
+They might have deployed DTB binaries that need to keep working, so we
+cannot change it to ignore spi-cs-high like this. (I might give in if it can be
+proven that all of them just recompile the DTS all the time and no
+DTBs are in flash.)
+
+I think in this case the oldest binding wins. The spi-cs-high was there before
+we came up with the scheme to use the flags cell with GPIO phandles.
+
+I think you simply have to patch these GTA04 DTS files to use
+spi-cs-high.
+
+But I'm open to other ideas, let's discuss this.
+
+Yours,
+Linus Walleij
