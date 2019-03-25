@@ -1,56 +1,44 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RESEND PATCH v6 02/11] dt-bindings: power: supply: add DT
- bindings for max77650
-Date: Mon, 25 Mar 2019 15:46:09 -0500
-Message-ID: <20190325204609.GA29935@bogus>
-References: <20190318174228.18194-1-brgl@bgdev.pl>
- <20190318174228.18194-3-brgl@bgdev.pl>
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 0/3] simplify idle gpio handling for omaps
+Date: Mon, 25 Mar 2019 15:43:15 -0700
+Message-ID: <20190325224318.15076-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190318174228.18194-3-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 18, 2019 at 06:42:19PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add the DT binding document for the battery charger module of max77650.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> new file mode 100644
-> index 000000000000..d25c95369616
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> @@ -0,0 +1,27 @@
-> +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> +
-> +This module is part of the MAX77650 MFD device. For more details
-> +see Documentation/devicetree/bindings/mfd/max77650.txt.
-> +
-> +The charger is represented as a sub-node of the PMIC node on the device tree.
-> +
-> +Required properties:
-> +--------------------
-> +- compatible:		Must be "maxim,max77650-charger"
-> +
-> +Optional properties:
-> +--------------------
-> +- min-microvolt:	Minimum CHGIN regulation voltage (in microvolts). Must be
-> +			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
-> +			4500000, 4600000, 4700000.
-> +- curr-lim-microamp:	CHGIN input current limit (in microamps). Must be one of:
-> +			95000, 190000, 285000, 380000, 475000.
+Hi all,
 
-These should be common charger properties IMO.
+Based on some comments from Grygorii I noticed that parts of old 24xx
+errata 1.101 handling has become part of the GPIO idle handling over
+the years. Here are few patches to clarify and simplify the handling
+a bit.
 
-Rob
+Regards,
+
+Tony
+
+
+Tony Lindgren (3):
+  gpio: gpio-omap: limit errata 1.101 handling to wkup domain gpios only
+  gpio: gpio-omap: always scan for triggered non-wakeup capable
+    interrupts
+  gpio: gpio-omap: add check for off wake capable gpios
+
+ drivers/gpio/gpio-omap.c | 61 ++++++++++++++++++++++------------------
+ 1 file changed, 33 insertions(+), 28 deletions(-)
+
+-- 
+2.21.0
