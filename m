@@ -1,68 +1,53 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v10 0/9] support ROHM BD70528 PMIC
-Date: Mon, 25 Mar 2019 10:20:13 +0200
-Message-ID: <20190325082013.GC6208@localhost.localdomain>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
- <20190228070450.GB3773@localhost.localdomain>
- <20190228081055.GL4118@dell>
- <20190228082248.GC3773@localhost.localdomain>
- <20190325073640.GB6208@localhost.localdomain>
- <20190325080206.GZ4731@dell>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] gpio: fix a potential NULL pointer dereference
+Date: Mon, 25 Mar 2019 09:28:43 +0100
+Message-ID: <CAMpxmJU+Uh_oBqmCWmdpVQv52Duu6A3c+RGiL=tOYkqFUoX0ag@mail.gmail.com>
+References: <20190324231002.2106-1-kjlu@umn.edu> <f4d27985-376a-42bb-b781-bdc96c0cef21@www.fastmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190325080206.GZ4731@dell>
+In-Reply-To: <f4d27985-376a-42bb-b781-bdc96c0cef21@www.fastmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, linux-gpio <linux-gpio@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 08:02:06AM +0000, Lee Jones wrote:
-> On Mon, 25 Mar 2019, Matti Vaittinen wrote:
-> 
-> > Hello again Lee & all,
-> > 
-> > On Thu, Feb 28, 2019 at 10:22:48AM +0200, Matti Vaittinen wrote:
-> > > On Thu, Feb 28, 2019 at 08:10:55AM +0000, Lee Jones wrote:
-> > > > On Thu, 28 Feb 2019, Matti Vaittinen wrote:
-> > > > 
-> > > > > Hello Lee and Mark,
-> > > > > 
-> > > > > On Thu, Feb 14, 2019 at 03:02:37PM +0200, Matti Vaittinen wrote:
-> > > > > > Patch series introducing support for ROHM BD70528 PMIC
-> > 
-> > I see the 5.1-rc1 and 5.1-rc2 are out. Those contain the regmap-irq
-> > changes the BD70528 MFD driver depends on. Would you like me to rebase
-> > the series to some other tree (which tree/branch? I don't see updated
-> > for-mfd-next branch in kernel.org yet) and resend it? Original patch
-> > series was created on top of the regulator tree.
-> 
-> If you could rebase and resend, that would be great.
-> 
-> You should (very nearly) always base on an upstream tag, so v5.1-rc2
-> would be best in this case.
+pon., 25 mar 2019 o 00:12 Andrew Jeffery <andrew@aj.id.au> napisa=C5=82(a):
+>
+>
+>
+> On Mon, 25 Mar 2019, at 09:40, Kangjie Lu wrote:
+> > In case devm_kzalloc, the patch returns ENOMEM to avoid potential
+> > NULL pointer dereference.
+> >
+> > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+>
+> > ---
+> >  drivers/gpio/gpio-aspeed.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> > index 854bce4fb9e7..217507002dbc 100644
+> > --- a/drivers/gpio/gpio-aspeed.c
+> > +++ b/drivers/gpio/gpio-aspeed.c
+> > @@ -1224,6 +1224,8 @@ static int __init aspeed_gpio_probe(struct
+> > platform_device *pdev)
+> >
+> >       gpio->offset_timer =3D
+> >               devm_kzalloc(&pdev->dev, gpio->chip.ngpio, GFP_KERNEL);
+> > +     if (!gpio->offset_timer)
+> > +             return -ENOMEM;
+> >
+> >       return aspeed_gpio_setup_irqs(gpio, pdev);
+> >  }
+> > --
+> > 2.17.1
+> >
+> >
 
-So always use tag from "kernel/git/torvalds/linux.git" tree? Thanks for
-this guidance :) I'll try getting this rebased and resent today or
-tomorrow.
+Applied to fixes.
 
-Br,
-	Matti Vaittinen
-
-> 
-> -- 
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Bart
