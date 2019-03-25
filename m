@@ -1,50 +1,51 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Mon, 25 Mar 2019 10:36:26 +0100
-Message-ID: <ca34b30a-c989-d6df-8d6a-93ea1746e920@metux.net>
-References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com>
- <20190321092330.GK9224@smile.fi.intel.com>
- <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
- <20190322190610.GB9224@smile.fi.intel.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v12 01/11] bitops: Introduce the for_each_set_clump8 macro
+Date: Mon, 25 Mar 2019 10:38:54 +0100
+Message-ID: <20190325093854.jzkkwaksxi7zvtrg@wunner.de>
+References: <cover.1553494625.git.vilhelm.gray@gmail.com>
+ <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190322190610.GB9224@smile.fi.intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, zhuchangchun <zhuchangchun@cvte.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hendychu@aliyun.com
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On 22.03.19 20:06, Andy Shevchenko wrote:
-> On Fri, Mar 22, 2019 at 07:32:28PM +0100, Enrico Weigelt, metux IT consult wrote:
->> On 21.03.19 10:23, Andy Shevchenko wrote:
->>
->>> ...and on top of that GPIO sysfs interface is deprecated.
->>
->> I don't like the idea of deprecating this. It might not be enough for
->> all usecases, but for a lot of usecases, it's a very easy and simple
->> interfaces.
-> 
-> So, you probably late for more than year. Linus W. and others discussed that
-> a lot and the points of the choice are listed in documentation IIRC.
+On Mon, Mar 25, 2019 at 03:22:23PM +0900, William Breathitt Gray wrote:
+> +/**
+> + * find_next_clump8 - find next 8-bit clump with set bits in a memory region
+> + * @clump: location to store copy of found clump
+> + * @addr: address to base the search on
+> + * @offset: bit offset at which to start searching
+> + * @size: bitmap size in number of bits
+> + *
+> + * Returns the bit offset for the next set clump; the found clump value is
+> + * copied to the location pointed by @clump. If no bits are set, returns @size.
+> + */
+> +unsigned int find_next_clump8(unsigned long *const clump,
+> +			      const unsigned long *const addr,
+> +			      unsigned int offset, const unsigned int size)
+> +{
+> +	for (; offset < size; offset += 8) {
+> +		*clump = bitmap_get_value8(addr, size, offset);
+> +		if (!*clump)
+> +			continue;
+> +
+> +		return offset;
+> +	}
+> +
+> +	return size;
+> +}
+> +EXPORT_SYMBOL(find_next_clump8);
 
-If "deprecated" means there just won't be any new features, but
-everything remains as it is, I can live w/ that. But But having to
-rewrite lots of applications in the field for the new interface would
-be really bad.
+Just use find_first_bit() / find_next_bit() to use optimized arch-specific
+bitops instead of open-coding the iteration over the bitmap.
 
-Note that the dev interface is *much* more complex than the sysfs one.
-For example, it needs ioctl()s, so this can't be done just w/ a few
-lines of shellscript anymore. (which is very common in many embedded
-devices)
+See max3191x_get_multiple() for an example.
 
+Thanks,
 
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Lukas
