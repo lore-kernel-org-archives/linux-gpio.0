@@ -1,61 +1,42 @@
-From: Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 2/2] pinctrl: pinctrl-imx8mq: Add support PM operations
-Date: Mon, 25 Mar 2019 13:59:30 +0000
-Message-ID: <1553522352-20214-2-git-send-email-abel.vesa@nxp.com>
-References: <1553522352-20214-1-git-send-email-abel.vesa@nxp.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH v11 6/8] rtc: bd70528: Initial support for ROHM bd70528
+ RTC
+Date: Mon, 25 Mar 2019 18:04:51 +0100
+Message-ID: <20190325170451.GQ30105@piout.net>
+References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <901900e12e2a06865b3649ec94af511fcc6443a3.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1553522352-20214-1-git-send-email-abel.vesa@nxp.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <901900e12e2a06865b3649ec94af511fcc6443a3.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Gong <yibin.gong@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
-Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.muta
 List-Id: linux-gpio@vger.kernel.org
 
-Add suspend/resume pm ops to the pinctrl i.MX8MQ driver.
-Make the suspend late and the resume early since some of the
-pins might be needed active very late.
-These call the pinctrl-imx generic handlers.
+On 25/03/2019 14:06:42+0200, Matti Vaittinen wrote:
+> Support RTC block in ROHM bd70528 power management IC. Support
+> getting and setting the time and date as well as arming an alarm
+> which can also be used to wake the PMIC from standby state.
+> 
+> HW supports wake interrupt only for the next 24 hours (sec, minute
+> and hour information only) so we limit also the alarm interrupt to
+> this 24 hours for the sake of consistency.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/pinctrl/freescale/pinctrl-imx8mq.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> +	r->time.hour |= BD70528_MASK_RTC_HOUR_24H;
+> +	r->day |= bin2bcd(t->tm_mday);
+> +	r->week |= bin2bcd(t->tm_wday);
+> +	r->month |= bin2bcd(t->tm_mon + 1);
+> +	r->year = bin2bcd(t->tm_year-100);
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/f=
-reescale/pinctrl-imx8mq.c
-index 8d39af5..2a212bc 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-@@ -335,10 +335,26 @@ static int imx8mq_pinctrl_probe(struct platform_devic=
-e *pdev)
- 	return imx_pinctrl_probe(pdev, &imx8mq_pinctrl_info);
- }
-=20
-+static int imx8mq_pinctrl_suspend(struct device *dev)
-+{
-+	return imx_pinctrl_suspend(dev);
-+}
-+
-+static int imx8mq_pinctrl_resume(struct device *dev)
-+{
-+	return imx_pinctrl_resume(dev);
-+}
-+
-+static const struct dev_pm_ops imx8mq_pinctrl_pm_ops =3D {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx8mq_pinctrl_suspend,
-+					imx8mq_pinctrl_resume)
-+};
-+
- static struct platform_driver imx8mq_pinctrl_driver =3D {
- 	.driver =3D {
- 		.name =3D "imx8mq-pinctrl",
- 		.of_match_table =3D of_match_ptr(imx8mq_pinctrl_of_match),
-+		.pm =3D &imx8mq_pinctrl_pm_ops,
- 		.suppress_bind_attrs =3D true,
- 	},
- 	.probe =3D imx8mq_pinctrl_probe,
---=20
-2.7.4
+If you ever have to resend, please add spaces around that -
+
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
