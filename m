@@ -1,72 +1,56 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 0/2] pinctrl: meson: add g12a drive strength support
-Date: Mon, 25 Mar 2019 10:44:00 +0100
-Message-ID: <283b286671a65160ac8ae08b1e1889bc029db363.camel@baylibre.com>
-References: <20190314163725.7918-1-jbrunet@baylibre.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
+Date: Mon, 25 Mar 2019 13:45:22 +0200
+Message-ID: <20190325114522.GN9224@smile.fi.intel.com>
+References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
+ <20190321084420.GG3622@lahna.fi.intel.com>
+ <20190321092330.GK9224@smile.fi.intel.com>
+ <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+ <20190322190610.GB9224@smile.fi.intel.com>
+ <ca34b30a-c989-d6df-8d6a-93ea1746e920@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314163725.7918-1-jbrunet@baylibre.com>
+Content-Disposition: inline
+In-Reply-To: <ca34b30a-c989-d6df-8d6a-93ea1746e920@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, =?UTF-8?Q?Go=C5=82aszewski=2C?= Bartosz <bgolaszewski@baylibre.com>Kevin Hilman <khilman@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Guillaume La Roque <glaroque@baylibre.com>
+To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, zhuchangchun <zhuchangchun@cvte.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hendychu@aliyun.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2019-03-14 at 17:37 +0100, Jerome Brunet wrote:
-> The purpose of this patchset is to add drive-strength support in meson pinconf
-> driver. This is a new feature that was added on the g12a. It is critical for us
-> to support this since many functions are failing with default pad drive-strength.
+On Mon, Mar 25, 2019 at 10:36:26AM +0100, Enrico Weigelt, metux IT consult wrote:
+> On 22.03.19 20:06, Andy Shevchenko wrote:
+> > On Fri, Mar 22, 2019 at 07:32:28PM +0100, Enrico Weigelt, metux IT consult wrote:
+> >> On 21.03.19 10:23, Andy Shevchenko wrote:
+> >>
+> >>> ...and on top of that GPIO sysfs interface is deprecated.
+> >>
+> >> I don't like the idea of deprecating this. It might not be enough for
+> >> all usecases, but for a lot of usecases, it's a very easy and simple
+> >> interfaces.
+> > 
+> > So, you probably late for more than year. Linus W. and others discussed that
+> > a lot and the points of the choice are listed in documentation IIRC.
 > 
-> Now the slightly annoying part :(
-> The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
-> 'drive-strength' is expressed in mA.
-> 
-> 1) Rounding down the value, we could be requesting a 0mA drive strength.
->    That would look weird.
-> 2) Rounding up, we can't distinguish between 2.5mA and 3mA
-> 
-> To solve this issue in this in this v1, we chose to document that, on Amlogic,
-> drive-strength is expressed in uA instead of mA.
-> It works well and there is no impact on the other platforms but I'm not sure this
-> is really OK with the DT rules ?
-> 
-> Linus, if this is not OK with you, here are 2 other options we are
-> considering. We would be very interested to get your opinion on the matter:
-> 
-> 1) instead the generic 'drive-strength' property, we could add an amlogic
-> specific property, 'amlogic,drive-strength'. It would be expressed in uA
-> and parsed in amlogic specific code.
-> I think this option is kind of overkill. Expressing drive strength in uA is
-> not really amlogic specific so it does not make much sense, but it would
-> work ...
-> 
-> 2) Add another generic property "drive-strength-uA". The change to do so
-> would be minimal and could be benefit to other platforms later on.
+> If "deprecated" means there just won't be any new features, but
+> everything remains as it is, I can live w/ that. But But having to
+> rewrite lots of applications in the field for the new interface would
+> be really bad.
 
-Hi Linus,
+If you don't want to have new features and OK with broken behaviour, yes,
+that's fine.
 
-I know it has only been 10 days and you must be busy but I was wondering if we
-could get your view on the issue above ?
+> Note that the dev interface is *much* more complex than the sysfs one.
+> For example, it needs ioctl()s, so this can't be done just w/ a few
+> lines of shellscript anymore. (which is very common in many embedded
+> devices)
 
-Since the vast majority of SoC functions need a drive strength setting, DT
-patches are somehow blocked until we decide which binding to use for it.
+I do it with a shell script, hint: libgpiod is a part of almost all alive Linux
+distributions.
 
-Sorry for this early ping.
-Jerome
+P.S. I don't think I would continue wasting time on the topic, since there is
+nothing proposed how to improve the case.
 
-
-> 
-> Cheers
-> Jerome
-> 
-> Guillaume La Roque (2):
->   dt-bindings: pinctrl: meson: Add drive-strength property
->   pinctrl: meson: add support of drive-strength
-> 
->  .../bindings/pinctrl/meson,pinctrl.txt        |   3 +
->  drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  36 ++--
->  drivers/pinctrl/meson/pinctrl-meson.c         | 166 +++++++++++++-----
->  drivers/pinctrl/meson/pinctrl-meson.h         |  20 ++-
->  4 files changed, 165 insertions(+), 60 deletions(-)
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
