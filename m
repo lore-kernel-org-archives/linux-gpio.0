@@ -1,217 +1,69 @@
-From: Shravan Kumar Ramani <sramani@mellanox.com>
-Subject: [PATCH v6 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-Date: Tue, 26 Mar 2019 10:42:48 -0400
-Message-ID: <6f15dd02091f5b97ef76c22b425ba6575ffa1b1a.1553610690.git.sramani@mellanox.com>
-References: <cover.1553610690.git.sramani@mellanox.com>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v2] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
+Date: Tue, 26 Mar 2019 09:58:54 -0700
+Message-ID: <155361953432.20095.14563397546308928190@swboyd.mtv.corp.google.com>
+References: <20190325181026.247796-1-swboyd@chromium.org> <f53f4556-72f1-051b-0dbe-f1789521233e@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1553610690.git.sramani@mellanox.com>
-In-Reply-To: <cover.1553610690.git.sramani@mellanox.com>
-References: <cover.1553610690.git.sramani@mellanox.com>
+In-Reply-To: <f53f4556-72f1-051b-0dbe-f1789521233e@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Shravan Kumar Ramani <sramani@mellanox.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds support for the GPIO controller used by Mellanox
-BlueField SOCs.
+Quoting Marc Zyngier (2019-03-26 04:11:56)
+> Hi Stephen,
+>=20
+> On 25/03/2019 18:10, Stephen Boyd wrote:
+> > This function returns an error if a child irqchip calls
+> > irq_chip_set_wake_parent() but its parent irqchip has the
+> > IRQCHIP_SKIP_SET_WAKE flag set. Let's return 0 for success here instead
+> > because there isn't anything to do.
+> >=20
+> > This keeps the behavior consistent with how set_irq_wake_real() is
+> > implemented. That function returns 0 when the irqchip has the
+> > IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to walk the chain of
+> > parents and set irq wake on any chips that don't have the flag set
+> > either. If the intent is to call the .irq_set_wake() callback of the
+> > parent irqchip, then we expect irqchip implementations to omit the
+> > IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function
+> > that calls irq_chip_set_wake_parent().
+> >=20
+> > This fixes a problem on my Qualcomm sdm845 device where I can't set wake
+> > on any GPIO interrupts after I apply work in progress wakeup irq patches
+> > to the GPIO driver. The chain of chips looks like this:
+> >=20
+> >  ARM GIC (skip) -> QCOM PDC (skip) -> QCOM GPIO
+>=20
+> nit: the parenting chain is actually built the other way around (we
+> don't express the 'child' relationship). This doesn't change anything to
+> the patch, but would make the reasoning a but easier to understand.
 
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
----
- drivers/gpio/Kconfig      |   7 +++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-mlxbf.c | 153 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 161 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf.c
+I take it you want the sentence below to say 'parent' instead of 'child'
+then?
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3f50526..0d9ddff 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1316,6 +1316,13 @@ config GPIO_MERRIFIELD
- 	help
- 	  Say Y here to support Intel Merrifield GPIO.
- 
-+config GPIO_MLXBF
-+	tristate "Mellanox BlueField SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-+	select GPIO_GENERIC
-+	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
-+
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 54d5527..db8d854 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
-+obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-new file mode 100644
-index 0000000..d428f42
---- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
-+
-+/* Number of pins on BlueField */
-+#define MLXBF_GPIO_NR 54
-+
-+/* Pad Electrical Controls. */
-+#define MLXBF_GPIO_PAD_CONTROL_FIRST_WORD 0x0700
-+#define MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD 0x0708
-+#define MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD 0x0710
-+#define MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD 0x0718
-+
-+#define MLXBF_GPIO_PIN_DIR_I 0x1040
-+#define MLXBF_GPIO_PIN_DIR_O 0x1048
-+#define MLXBF_GPIO_PIN_STATE 0x1000
-+#define MLXBF_GPIO_SCRATCHPAD 0x20
-+
-+#ifdef CONFIG_PM
-+struct mlxbf_gpio_context_save_regs {
-+	u64 scratchpad;
-+	u64 pad_control[MLXBF_GPIO_NR];
-+	u64 pin_dir_i;
-+	u64 pin_dir_o;
-+};
-+#endif
-+
-+/* Device state structure. */
-+struct mlxbf_gpio_state {
-+	struct gpio_chip gc;
-+
-+	/* Memory Address */
-+	void __iomem *base;
-+
-+#ifdef CONFIG_PM
-+	struct mlxbf_gpio_context_save_regs csave_regs;
-+#endif
-+};
-+
-+static int mlxbf_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	int ret;
-+
-+	gs = devm_kzalloc(&pdev->dev, sizeof(*gs), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	gs->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(gs->base))
-+		return PTR_ERR(gs->base);
-+
-+	gc = &gs->gc;
-+	ret = bgpio_init(gc, dev, 8,
-+			 gs->base + MLXBF_GPIO_PIN_STATE,
-+			 NULL,
-+			 NULL,
-+			 gs->base + MLXBF_GPIO_PIN_DIR_O,
-+			 gs->base + MLXBF_GPIO_PIN_DIR_I,
-+			 0);
-+	if (ret)
-+		return -ENODEV;
-+
-+	gc->owner = THIS_MODULE;
-+	gc->ngpio = MLXBF_GPIO_NR;
-+
-+	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, gs);
-+	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int mlxbf_gpio_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs.scratchpad = readq(gs->base + MLXBF_GPIO_SCRATCHPAD);
-+	gs->csave_regs.pad_control[0] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_FIRST_WORD);
-+	gs->csave_regs.pad_control[1] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD);
-+	gs->csave_regs.pad_control[2] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD);
-+	gs->csave_regs.pad_control[3] =
-+		readq(gs->base + MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD);
-+	gs->csave_regs.pin_dir_i = readq(gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	gs->csave_regs.pin_dir_o = readq(gs->base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+
-+static int mlxbf_gpio_resume(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	writeq(gs->csave_regs.scratchpad, gs->base + MLXBF_GPIO_SCRATCHPAD);
-+	writeq(gs->csave_regs.pad_control[0],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[1],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_1_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[2],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_2_FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[3],
-+	       gs->base + MLXBF_GPIO_PAD_CONTROL_3_FIRST_WORD);
-+	writeq(gs->csave_regs.pin_dir_i, gs->base + MLXBF_GPIO_PIN_DIR_I);
-+	writeq(gs->csave_regs.pin_dir_o, gs->base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct acpi_device_id mlxbf_gpio_acpi_match[] = {
-+	{ "MLNXBF02", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
-+
-+static struct platform_driver mlxbf_gpio_driver = {
-+	.driver = {
-+		.name = "mlxbf_gpio",
-+		.acpi_match_table = ACPI_PTR(mlxbf_gpio_acpi_match),
-+	},
-+	.probe    = mlxbf_gpio_probe,
-+#ifdef CONFIG_PM
-+	.suspend  = mlxbf_gpio_suspend,
-+	.resume   = mlxbf_gpio_resume,
-+#endif
-+};
-+
-+module_platform_driver(mlxbf_gpio_driver);
-+
-+MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL");
--- 
-2.1.2
+>=20
+> >=20
+> > The GPIO controller is a child of the QCOM PDC irqchip which is a child
+> > of the ARM GIC irqchip. The QCOM PDC irqchip has the
+> > IRQCHIP_SKIP_SET_WAKE flag set, and so does the grandparent ARM GIC.
+> >=20
+> > The GPIO driver doesn't know if the parent needs to set wake or not, so
+> > it unconditionally calls irq_chip_set_wake_parent() causing this
+> > function to return a failure because the parent irqchip (PDC) doesn't
+> > have the .irq_set_wake() callback set. Returning 0 instead makes
+> > everything work and irqs from the GPIO controller can be configured for
+> > wakeup.
+> >=20
+> > Cc: Lina Iyer <ilina@codeaurora.org>
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>=20
+> Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
+> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+>=20
+
+I'm happy to resend with the commit text clarified more and the above
+tags added.
