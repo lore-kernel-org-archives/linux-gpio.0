@@ -1,204 +1,50 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v12 01/11] bitops: Introduce the for_each_set_clump8 macro
-Date: Tue, 26 Mar 2019 11:54:59 +0900
-Message-ID: <20190326025459.GA3356@icarus>
-References: <cover.1553494625.git.vilhelm.gray@gmail.com>
- <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
- <20190325131236.GW9224@smile.fi.intel.com>
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH 2/4] arm64: dts: mt8183: add pintcrl file
+Date: Tue, 26 Mar 2019 10:54:35 +0800
+Message-ID: <1553568875.21970.5.camel@mhfsdcap03>
+References: <20190325122302.5483-1-zhiyong.tao@mediatek.com>
+         <20190325122302.5483-3-zhiyong.tao@mediatek.com>
+         <20190325193005.GA18114@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190325131236.GW9224@smile.fi.intel.com>
+In-Reply-To: <20190325193005.GA18114@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Arnd Bergmann <arnd@arndb.de>
+To: Rob Herring <robh@kernel.org>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, sean.wang@kernel.org, srv_heupstream@mediatek.com, hui.liu@mediatek.com, eddie.huang@mediatek.com, chuanjia.liu@mediatek.com, biao.huang@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, sean.wang@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 03:12:36PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 25, 2019 at 03:22:23PM +0900, William Breathitt Gray wrote:
-> > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > within a bitmap memory region. For each iteration, "start" is set to the
-> > bit offset of the found clump, while the respective clump value is
-> > stored to the location pointed by "clump". Additionally, the
-> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > respectively get and set an 8-bit value in a bitmap memory region.
+On Mon, 2019-03-25 at 14:30 -0500, Rob Herring wrote:
+> On Mon, Mar 25, 2019 at 08:23:00PM +0800, Zhiyong Tao wrote:
+> > This patch adds pinctrl file for mt8183.
 > 
+> Still has a typo in the subject.
+
+==>we will change it in next version
 > 
-> This seems to miss Randy's (IIRC) comment about too many const specifiers.
-
-I disagree with removing the const qualifiers; I believe they are useful
-and do not significantly impact the clarity of the code (in fact, I'd
-argue the opposite). The const qualifiers make it clear these values are
-constant, allowing readers at a glace to know these values never change
-within this function. Although I believe GCC is smart enough in this
-case to deduce implicitly that these are constant values, generally
-speaking const qualifiers do make it easier for compilers to optimize
-sections of code (OoO execution, algorithm simplification, etc.), so I
-believe it's useful in a technical sense as well.
-
-I added the const qualifier to these variables because they really are
-constant, and I believe there is merit in making it explicit in the
-code. If the primary reason for removing the const qualifiers is for
-aesthetics, then I must dissent with that decision.
-
-However, it is difficult to read the definitions that wrap around to a
-second line. These definitions are long enough that even removing the
-const qualifiers would not help prevent the wrapping, so perhaps it
-would make to let these stay on a single line. Do you think it would
-help to ignore the 80-character maximum line width coding style rule for
-these cases here?
-
-William Breathitt Gray
-
-> 
-> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> > 
+> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 > > ---
-> >  include/asm-generic/bitops/find.h | 14 ++++++
-> >  include/linux/bitops.h            |  5 ++
-> >  lib/find_bit.c                    | 81 +++++++++++++++++++++++++++++++
-> >  3 files changed, 100 insertions(+)
-> > 
-> > diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
-> > index 8a1ee10014de..9a76adff59c6 100644
-> > --- a/include/asm-generic/bitops/find.h
-> > +++ b/include/asm-generic/bitops/find.h
-> > @@ -80,4 +80,18 @@ extern unsigned long find_first_zero_bit(const unsigned long *addr,
-> >  
-> >  #endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
-> >  
-> > +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
-> > +				const unsigned int size,
-> > +				const unsigned int start);
-> > +
-> > +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
-> > +		       const unsigned long value, const unsigned int start);
-> > +
-> > +unsigned int find_next_clump8(unsigned long *const clump,
-> > +			      const unsigned long *const addr,
-> > +			      unsigned int offset, const unsigned int size);
-> > +
-> > +#define find_first_clump8(clump, bits, size) \
-> > +	find_next_clump8((clump), (bits), 0, (size))
-> > +
-> >  #endif /*_ASM_GENERIC_BITOPS_FIND_H_ */
-> > diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> > index 602af23b98c7..f19a7bc8f559 100644
-> > --- a/include/linux/bitops.h
-> > +++ b/include/linux/bitops.h
-> > @@ -40,6 +40,11 @@ extern unsigned long __sw_hweight64(__u64 w);
-> >  	     (bit) < (size);					\
-> >  	     (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
-> >  
-> > +#define for_each_set_clump8(start, clump, bits, size) \
-> > +	for ((start) = find_first_clump8(&(clump), (bits), (size)); \
-> > +	     (start) < (size); \
-> > +	     (start) = find_next_clump8(&(clump), (bits), (start) + 8, (size)))
-> > +
-> >  static inline int get_bitmask_order(unsigned int count)
-> >  {
-> >  	int order;
-> > diff --git a/lib/find_bit.c b/lib/find_bit.c
-> > index ee3df93ba69a..1b6f8a6f1957 100644
-> > --- a/lib/find_bit.c
-> > +++ b/lib/find_bit.c
-> > @@ -218,3 +218,84 @@ EXPORT_SYMBOL(find_next_bit_le);
-> >  #endif
-> >  
-> >  #endif /* __BIG_ENDIAN */
-> > +
-> > +/**
-> > + * bitmap_get_value8 - get an 8-bit value within a memory region
-> > + * @bitmap: address to the bitmap memory region
-> > + * @size: bitmap size in number of bits
-> > + * @start: bit offset of the 8-bit value
-> > + *
-> > + * Returns the 8-bit value located at the @start bit offset within the @bitmap
-> > + * memory region.
-> > + */
-> > +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
-> > +				const unsigned int size,
-> > +				const unsigned int start)
-> > +{
-> > +	const size_t index = BIT_WORD(start);
-> > +	const unsigned int offset = start % BITS_PER_LONG;
-> > +	const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
-> > +				       BITS_PER_LONG - offset : 8;
-> > +	const unsigned long low = bitmap[index] >> offset;
-> > +	const unsigned long high = (low_width < 8 && start + 8 <= size) ?
-> > +				   bitmap[index + 1] << low_width : 0;
-> > +
-> > +	return (low | high) & 0xFF;
-> > +}
-> > +EXPORT_SYMBOL(bitmap_get_value8);
-> > +
-> > +/**
-> > + * bitmap_set_value8 - set an 8-bit value within a memory region
-> > + * @bitmap: address to the bitmap memory region
-> > + * @size: bitmap size in number of bits
-> > + * @value: the 8-bit value; values wider than 8 bits may clobber bitmap
-> > + * @start: bit offset of the 8-bit value
-> > + */
-> > +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
-> > +		       const unsigned long value, const unsigned int start)
-> > +{
-> > +	const size_t index = BIT_WORD(start);
-> > +	const unsigned int offset = start % BITS_PER_LONG;
-> > +	const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
-> > +				       BITS_PER_LONG - offset : 8;
-> > +	const unsigned long low_mask = GENMASK(low_width - 1, 0) << offset;
-> > +	const unsigned int high_width = 8 - low_width;
-> > +	const unsigned long high_mask = GENMASK(high_width - 1, 0);
-> > +
-> > +	/* set lower portion */
-> > +	bitmap[index] &= ~low_mask;
-> > +	bitmap[index] |= value << offset;
-> > +
-> > +	/* set higher portion if space available in bitmap */
-> > +	if (high_width && start + 8 <= size) {
-> > +		bitmap[index + 1] &= ~high_mask;
-> > +		bitmap[index + 1] |= value >> low_width;
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL(bitmap_set_value8);
-> > +
-> > +/**
-> > + * find_next_clump8 - find next 8-bit clump with set bits in a memory region
-> > + * @clump: location to store copy of found clump
-> > + * @addr: address to base the search on
-> > + * @offset: bit offset at which to start searching
-> > + * @size: bitmap size in number of bits
-> > + *
-> > + * Returns the bit offset for the next set clump; the found clump value is
-> > + * copied to the location pointed by @clump. If no bits are set, returns @size.
-> > + */
-> > +unsigned int find_next_clump8(unsigned long *const clump,
-> > +			      const unsigned long *const addr,
-> > +			      unsigned int offset, const unsigned int size)
-> > +{
-> > +	for (; offset < size; offset += 8) {
-> > +		*clump = bitmap_get_value8(addr, size, offset);
-> > +		if (!*clump)
-> > +			continue;
-> > +
-> > +		return offset;
-> > +	}
-> > +
-> > +	return size;
-> > +}
-> > +EXPORT_SYMBOL(find_next_clump8);
-> > -- 
-> > 2.21.0
-> > 
+> >  arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h | 1120 +++++++++++++++++++++++++
+> >  1 file changed, 1120 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> Add acks/reviewed-bys when posting new versions. This should also be 
+> called v8 even though a different person sent it.
+
+==>we will add acks/reviewed-bys when posting new versions in nxet
+version.
+This patch is based on "https://patchwork.kernel.org/patch/10814251/".
+If it is based on the patch
+"https://patchwork.kernel.org/patch/10814251/", it should called v8.
+But I send this patch, we call it v3. Because it it is based on the
+patch "https://patchwork.kernel.org/patch/10836969/".
+
+In these v3 patches, we send 4 patches. So we should call 1/4,2/4,3/4 as
+v9 in next patch, and call 4/4 patch as v5. is it right?
+
+Thanks.
 > 
+> Rob
 > 
