@@ -1,63 +1,76 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v12 01/11] bitops: Introduce the for_each_set_clump8 macro
-Date: Tue, 26 Mar 2019 19:28:43 +0900
-Message-ID: <20190326102843.GA10264@icarus>
-References: <cover.1553494625.git.vilhelm.gray@gmail.com>
- <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
- <20190325093854.jzkkwaksxi7zvtrg@wunner.de>
- <20190326031422.GB3356@icarus>
- <20190326094345.v7l7xjvfs2scbvbv@wunner.de>
- <20190326100743.GA10005@icarus>
- <20190326101933.GW9224@smile.fi.intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2] genirq: Respect IRQCHIP_SKIP_SET_WAKE in
+ irq_chip_set_wake_parent()
+Date: Tue, 26 Mar 2019 11:11:56 +0000
+Message-ID: <f53f4556-72f1-051b-0dbe-f1789521233e@arm.com>
+References: <20190325181026.247796-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190326101933.GW9224@smile.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Lukas Wunner <lukas@wunner.de>
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190325181026.247796-1-swboyd@chromium.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lina Iyer <ilina@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 26, 2019 at 12:19:33PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 26, 2019 at 07:08:18PM +0900, William Breathitt Gray wrote:
-> > On Tue, Mar 26, 2019 at 10:43:45AM +0100, Lukas Wunner wrote:
-> > > On Tue, Mar 26, 2019 at 12:14:22PM +0900, William Breathitt Gray wrote:
+Hi Stephen,
+
+On 25/03/2019 18:10, Stephen Boyd wrote:
+> This function returns an error if a child irqchip calls
+> irq_chip_set_wake_parent() but its parent irqchip has the
+> IRQCHIP_SKIP_SET_WAKE flag set. Let's return 0 for success here instead
+> because there isn't anything to do.
 > 
-> > > Why is it so complicated, does it allow passing in a start value
-> > > that's not a multiple of 8?  Do you really need that?  I imagine
-> > > a simplification is possible if that assumption can be made (and
-> > > is spelled out in the kerneldoc).
-> > 
-> > That's a good point. Originally, I had envisioned the possibility of
-> > calling bitmap_get_value8/bitmap_set_value8 at odd start offsets; this
-> > would open up the possibility of a clump landing as a split between 2
-> > words, thus requiring this complicated case handling code. However, I'm
-> > not sure how often users would need this case; none of the drivers right
-> > now require clumps at odd offsets.
-> > 
-> > Andy, would you have any objection to restricting the start offset
-> > values for bitmap_get_value8/bitmap_set_value8 to multiples of 8? That
-> > would prevent the split word case, and thus allow the implementation for
-> > those functions to be a lot simpler.
+> This keeps the behavior consistent with how set_irq_wake_real() is
+> implemented. That function returns 0 when the irqchip has the
+> IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to walk the chain of
+> parents and set irq wake on any chips that don't have the flag set
+> either. If the intent is to call the .irq_set_wake() callback of the
+> parent irqchip, then we expect irqchip implementations to omit the
+> IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function
+> that calls irq_chip_set_wake_parent().
 > 
-> No, I have no objection.
+> This fixes a problem on my Qualcomm sdm845 device where I can't set wake
+> on any GPIO interrupts after I apply work in progress wakeup irq patches
+> to the GPIO driver. The chain of chips looks like this:
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+>  ARM GIC (skip) -> QCOM PDC (skip) -> QCOM GPIO
 
-In this case, bitmap_get_value8 could be simplified to something like
-this:
+nit: the parenting chain is actually built the other way around (we
+don't express the 'child' relationship). This doesn't change anything to
+the patch, but would make the reasoning a but easier to understand.
 
-        index = BIT_WORD(start);
-        offset = start % BITS_PER_LONG;
-        return (bitmap[index] >> offset) & 0xFF;
+> 
+> The GPIO controller is a child of the QCOM PDC irqchip which is a child
+> of the ARM GIC irqchip. The QCOM PDC irqchip has the
+> IRQCHIP_SKIP_SET_WAKE flag set, and so does the grandparent ARM GIC.
+> 
+> The GPIO driver doesn't know if the parent needs to set wake or not, so
+> it unconditionally calls irq_chip_set_wake_parent() causing this
+> function to return a failure because the parent irqchip (PDC) doesn't
+> have the .irq_set_wake() callback set. Returning 0 instead makes
+> everything work and irqs from the GPIO controller can be configured for
+> wakeup.
+> 
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Or if you prefer a single line:
+Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-        (bitmap[BIT_WORD(start)] >> (start % BITS_PER_LONG)) & 0xFF;
+Thanks,
 
-Would it be better to define bitmap_get_value8 as a macro then?
-
-William Breathitt Gray
+	M.
+-- 
+Jazz is not dead. It just smells funny...
