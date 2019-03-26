@@ -1,94 +1,204 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 3/3] gpio: gpio-omap: add check for off wake capable gpios
-Date: Mon, 25 Mar 2019 15:43:18 -0700
-Message-ID: <20190325224318.15076-4-tony@atomide.com>
-References: <20190325224318.15076-1-tony@atomide.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v12 01/11] bitops: Introduce the for_each_set_clump8 macro
+Date: Tue, 26 Mar 2019 11:54:59 +0900
+Message-ID: <20190326025459.GA3356@icarus>
+References: <cover.1553494625.git.vilhelm.gray@gmail.com>
+ <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
+ <20190325131236.GW9224@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190325224318.15076-1-tony@atomide.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190325131236.GW9224@smile.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-We are currently assuming all GPIOs are non-wakeup capable GPIOs as we
-not configuring the bank->non_wakeup_gpios like we used to earlier with
-platform_data.
+On Mon, Mar 25, 2019 at 03:12:36PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 25, 2019 at 03:22:23PM +0900, William Breathitt Gray wrote:
+> > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > within a bitmap memory region. For each iteration, "start" is set to the
+> > bit offset of the found clump, while the respective clump value is
+> > stored to the location pointed by "clump". Additionally, the
+> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > respectively get and set an 8-bit value in a bitmap memory region.
+> 
+> 
+> This seems to miss Randy's (IIRC) comment about too many const specifiers.
 
-Let's add omap_gpio_is_off_wakeup_capable() to make the handling clearer
-while considering that later patches may want to configure SoC specific
-bank->non_wakeup_gpios for the GPIOs in wakeup domain.
+I disagree with removing the const qualifiers; I believe they are useful
+and do not significantly impact the clarity of the code (in fact, I'd
+argue the opposite). The const qualifiers make it clear these values are
+constant, allowing readers at a glace to know these values never change
+within this function. Although I believe GCC is smart enough in this
+case to deduce implicitly that these are constant values, generally
+speaking const qualifiers do make it easier for compilers to optimize
+sections of code (OoO execution, algorithm simplification, etc.), so I
+believe it's useful in a technical sense as well.
 
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Tero Kristo <t-kristo@ti.com>
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/gpio/gpio-omap.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+I added the const qualifier to these variables because they really are
+constant, and I believe there is merit in making it explicit in the
+code. If the primary reason for removing the const qualifiers is for
+aesthetics, then I must dissent with that decision.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -352,6 +352,22 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
- 	}
- }
- 
-+/*
-+ * Off mode wake-up capable GPIOs in bank(s) that are in the wakeup domain.
-+ * See TRM section for GPIO for "Wake-Up Generation" for the list of GPIOs
-+ * in wakeup domain. If bank->non_wakeup_gpios is not configured, assume none
-+ * are capable waking up the system from off mode.
-+ */
-+static bool omap_gpio_is_off_wakeup_capable(struct gpio_bank *bank, u32 gpio_mask)
-+{
-+	u32 no_wake = bank->non_wakeup_gpios;
-+
-+	if (no_wake)
-+		return !!(~no_wake & gpio_mask);
-+
-+	return false;
-+}
-+
- static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 						unsigned trigger)
- {
-@@ -383,13 +399,7 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 	}
- 
- 	/* This part needs to be executed always for OMAP{34xx, 44xx} */
--	if (!bank->regs->irqctrl) {
--		/* On omap24xx proceed only when valid GPIO bit is set */
--		if (bank->non_wakeup_gpios) {
--			if (!(bank->non_wakeup_gpios & gpio_bit))
--				goto exit;
--		}
--
-+	if (!bank->regs->irqctrl && !omap_gpio_is_off_wakeup_capable(bank, gpio)) {
- 		/*
- 		 * Log the edge gpio and manually trigger the IRQ
- 		 * after resume if the input level changes
-@@ -402,7 +412,6 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 			bank->enabled_non_wakeup_gpios &= ~gpio_bit;
- 	}
- 
--exit:
- 	bank->level_mask =
- 		readl_relaxed(bank->base + bank->regs->leveldetect0) |
- 		readl_relaxed(bank->base + bank->regs->leveldetect1);
--- 
-2.21.0
+However, it is difficult to read the definitions that wrap around to a
+second line. These definitions are long enough that even removing the
+const qualifiers would not help prevent the wrapping, so perhaps it
+would make to let these stay on a single line. Do you think it would
+help to ignore the 80-character maximum line width coding style rule for
+these cases here?
+
+William Breathitt Gray
+
+> 
+> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Acked-by: Andrew Morton <akpm@linux-foundation.org>
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> > ---
+> >  include/asm-generic/bitops/find.h | 14 ++++++
+> >  include/linux/bitops.h            |  5 ++
+> >  lib/find_bit.c                    | 81 +++++++++++++++++++++++++++++++
+> >  3 files changed, 100 insertions(+)
+> > 
+> > diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
+> > index 8a1ee10014de..9a76adff59c6 100644
+> > --- a/include/asm-generic/bitops/find.h
+> > +++ b/include/asm-generic/bitops/find.h
+> > @@ -80,4 +80,18 @@ extern unsigned long find_first_zero_bit(const unsigned long *addr,
+> >  
+> >  #endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
+> >  
+> > +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
+> > +				const unsigned int size,
+> > +				const unsigned int start);
+> > +
+> > +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
+> > +		       const unsigned long value, const unsigned int start);
+> > +
+> > +unsigned int find_next_clump8(unsigned long *const clump,
+> > +			      const unsigned long *const addr,
+> > +			      unsigned int offset, const unsigned int size);
+> > +
+> > +#define find_first_clump8(clump, bits, size) \
+> > +	find_next_clump8((clump), (bits), 0, (size))
+> > +
+> >  #endif /*_ASM_GENERIC_BITOPS_FIND_H_ */
+> > diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> > index 602af23b98c7..f19a7bc8f559 100644
+> > --- a/include/linux/bitops.h
+> > +++ b/include/linux/bitops.h
+> > @@ -40,6 +40,11 @@ extern unsigned long __sw_hweight64(__u64 w);
+> >  	     (bit) < (size);					\
+> >  	     (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
+> >  
+> > +#define for_each_set_clump8(start, clump, bits, size) \
+> > +	for ((start) = find_first_clump8(&(clump), (bits), (size)); \
+> > +	     (start) < (size); \
+> > +	     (start) = find_next_clump8(&(clump), (bits), (start) + 8, (size)))
+> > +
+> >  static inline int get_bitmask_order(unsigned int count)
+> >  {
+> >  	int order;
+> > diff --git a/lib/find_bit.c b/lib/find_bit.c
+> > index ee3df93ba69a..1b6f8a6f1957 100644
+> > --- a/lib/find_bit.c
+> > +++ b/lib/find_bit.c
+> > @@ -218,3 +218,84 @@ EXPORT_SYMBOL(find_next_bit_le);
+> >  #endif
+> >  
+> >  #endif /* __BIG_ENDIAN */
+> > +
+> > +/**
+> > + * bitmap_get_value8 - get an 8-bit value within a memory region
+> > + * @bitmap: address to the bitmap memory region
+> > + * @size: bitmap size in number of bits
+> > + * @start: bit offset of the 8-bit value
+> > + *
+> > + * Returns the 8-bit value located at the @start bit offset within the @bitmap
+> > + * memory region.
+> > + */
+> > +unsigned long bitmap_get_value8(const unsigned long *const bitmap,
+> > +				const unsigned int size,
+> > +				const unsigned int start)
+> > +{
+> > +	const size_t index = BIT_WORD(start);
+> > +	const unsigned int offset = start % BITS_PER_LONG;
+> > +	const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
+> > +				       BITS_PER_LONG - offset : 8;
+> > +	const unsigned long low = bitmap[index] >> offset;
+> > +	const unsigned long high = (low_width < 8 && start + 8 <= size) ?
+> > +				   bitmap[index + 1] << low_width : 0;
+> > +
+> > +	return (low | high) & 0xFF;
+> > +}
+> > +EXPORT_SYMBOL(bitmap_get_value8);
+> > +
+> > +/**
+> > + * bitmap_set_value8 - set an 8-bit value within a memory region
+> > + * @bitmap: address to the bitmap memory region
+> > + * @size: bitmap size in number of bits
+> > + * @value: the 8-bit value; values wider than 8 bits may clobber bitmap
+> > + * @start: bit offset of the 8-bit value
+> > + */
+> > +void bitmap_set_value8(unsigned long *const bitmap, const unsigned int size,
+> > +		       const unsigned long value, const unsigned int start)
+> > +{
+> > +	const size_t index = BIT_WORD(start);
+> > +	const unsigned int offset = start % BITS_PER_LONG;
+> > +	const unsigned int low_width = (offset + 8 > BITS_PER_LONG) ?
+> > +				       BITS_PER_LONG - offset : 8;
+> > +	const unsigned long low_mask = GENMASK(low_width - 1, 0) << offset;
+> > +	const unsigned int high_width = 8 - low_width;
+> > +	const unsigned long high_mask = GENMASK(high_width - 1, 0);
+> > +
+> > +	/* set lower portion */
+> > +	bitmap[index] &= ~low_mask;
+> > +	bitmap[index] |= value << offset;
+> > +
+> > +	/* set higher portion if space available in bitmap */
+> > +	if (high_width && start + 8 <= size) {
+> > +		bitmap[index + 1] &= ~high_mask;
+> > +		bitmap[index + 1] |= value >> low_width;
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL(bitmap_set_value8);
+> > +
+> > +/**
+> > + * find_next_clump8 - find next 8-bit clump with set bits in a memory region
+> > + * @clump: location to store copy of found clump
+> > + * @addr: address to base the search on
+> > + * @offset: bit offset at which to start searching
+> > + * @size: bitmap size in number of bits
+> > + *
+> > + * Returns the bit offset for the next set clump; the found clump value is
+> > + * copied to the location pointed by @clump. If no bits are set, returns @size.
+> > + */
+> > +unsigned int find_next_clump8(unsigned long *const clump,
+> > +			      const unsigned long *const addr,
+> > +			      unsigned int offset, const unsigned int size)
+> > +{
+> > +	for (; offset < size; offset += 8) {
+> > +		*clump = bitmap_get_value8(addr, size, offset);
+> > +		if (!*clump)
+> > +			continue;
+> > +
+> > +		return offset;
+> > +	}
+> > +
+> > +	return size;
+> > +}
+> > +EXPORT_SYMBOL(find_next_clump8);
+> > -- 
+> > 2.21.0
+> > 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
