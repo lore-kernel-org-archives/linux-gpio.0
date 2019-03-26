@@ -1,76 +1,74 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2] genirq: Respect IRQCHIP_SKIP_SET_WAKE in
- irq_chip_set_wake_parent()
-Date: Tue, 26 Mar 2019 11:11:56 +0000
-Message-ID: <f53f4556-72f1-051b-0dbe-f1789521233e@arm.com>
-References: <20190325181026.247796-1-swboyd@chromium.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v12 01/11] bitops: Introduce the for_each_set_clump8 macro
+Date: Tue, 26 Mar 2019 13:42:52 +0200
+Message-ID: <20190326114252.GX9224@smile.fi.intel.com>
+References: <cover.1553494625.git.vilhelm.gray@gmail.com>
+ <9afc30a574ce3e6a86b51dd522146a1d2156dedd.1553494625.git.vilhelm.gray@gmail.com>
+ <20190325131236.GW9224@smile.fi.intel.com>
+ <20190326025459.GA3356@icarus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190325181026.247796-1-swboyd@chromium.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lina Iyer <ilina@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190326025459.GA3356@icarus>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Stephen,
-
-On 25/03/2019 18:10, Stephen Boyd wrote:
-> This function returns an error if a child irqchip calls
-> irq_chip_set_wake_parent() but its parent irqchip has the
-> IRQCHIP_SKIP_SET_WAKE flag set. Let's return 0 for success here instead
-> because there isn't anything to do.
+On Tue, Mar 26, 2019 at 11:54:59AM +0900, William Breathitt Gray wrote:
+> On Mon, Mar 25, 2019 at 03:12:36PM +0200, Andy Shevchenko wrote:
+> > On Mon, Mar 25, 2019 at 03:22:23PM +0900, William Breathitt Gray wrote:
+> > > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > > within a bitmap memory region. For each iteration, "start" is set to the
+> > > bit offset of the found clump, while the respective clump value is
+> > > stored to the location pointed by "clump". Additionally, the
+> > > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > > respectively get and set an 8-bit value in a bitmap memory region.
+> > 
+> > 
+> > This seems to miss Randy's (IIRC) comment about too many const specifiers.
 > 
-> This keeps the behavior consistent with how set_irq_wake_real() is
-> implemented. That function returns 0 when the irqchip has the
-> IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to walk the chain of
-> parents and set irq wake on any chips that don't have the flag set
-> either. If the intent is to call the .irq_set_wake() callback of the
-> parent irqchip, then we expect irqchip implementations to omit the
-> IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function
-> that calls irq_chip_set_wake_parent().
-> 
-> This fixes a problem on my Qualcomm sdm845 device where I can't set wake
-> on any GPIO interrupts after I apply work in progress wakeup irq patches
-> to the GPIO driver. The chain of chips looks like this:
-> 
->  ARM GIC (skip) -> QCOM PDC (skip) -> QCOM GPIO
+> I disagree with removing the const qualifiers; I believe they are useful
+> and do not significantly impact the clarity of the code (in fact, I'd
+> argue the opposite). 
 
-nit: the parenting chain is actually built the other way around (we
-don't express the 'child' relationship). This doesn't change anything to
-the patch, but would make the reasoning a but easier to understand.
+Had you checked the assembly? I'm talking about const for values on the stack.
 
-> 
-> The GPIO controller is a child of the QCOM PDC irqchip which is a child
-> of the ARM GIC irqchip. The QCOM PDC irqchip has the
-> IRQCHIP_SKIP_SET_WAKE flag set, and so does the grandparent ARM GIC.
-> 
-> The GPIO driver doesn't know if the parent needs to set wake or not, so
-> it unconditionally calls irq_chip_set_wake_parent() causing this
-> function to return a failure because the parent irqchip (PDC) doesn't
-> have the .irq_set_wake() callback set. Returning 0 instead makes
-> everything work and irqs from the GPIO controller can be configured for
-> wakeup.
-> 
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+I think if you put less const there compiler can keep something in the
+registers instead of using direct constants or accessing stack.
 
-Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+I might be mistaken, so, I can't argue without evidence of either.
 
-Thanks,
+> The const qualifiers make it clear these values are
+> constant, allowing readers at a glace to know these values never change
+> within this function. Although I believe GCC is smart enough in this
+> case to deduce implicitly that these are constant values, generally
+> speaking const qualifiers do make it easier for compilers to optimize
+> sections of code (OoO execution, algorithm simplification, etc.), so I
+> believe it's useful in a technical sense as well.
 
-	M.
+Again, what the difference do you see in assembly if any?
+
+> I added the const qualifier to these variables because they really are
+> constant, and I believe there is merit in making it explicit in the
+> code. If the primary reason for removing the const qualifiers is for
+> aesthetics, then I must dissent with that decision.
+
+The point is, if there is no difference, I would prefer one which will be
+better to read, otherwise check the assembly.
+
+> However, it is difficult to read the definitions that wrap around to a
+> second line. These definitions are long enough that even removing the
+> const qualifiers would not help prevent the wrapping, so perhaps it
+> would make to let these stay on a single line. Do you think it would
+> help to ignore the 80-character maximum line width coding style rule for
+> these cases here?
+
+80-characters rule can be slightly bended depending on the context. Here, I
+think, we might continue discussing the matter after having an evidence how
+const qualifiers affect the code.
+
 -- 
-Jazz is not dead. It just smells funny...
+With Best Regards,
+Andy Shevchenko
