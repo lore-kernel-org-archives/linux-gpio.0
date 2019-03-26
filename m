@@ -1,81 +1,38 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [RESEND PATCH v6 02/11] dt-bindings: power: supply: add DT
- bindings for max77650
-Date: Tue, 26 Mar 2019 18:34:48 +0100
-Message-ID: <CAMRc=MdMqjZtQkWXaK3-5myXUZMd_tNirQGE5wKpA6uoCsGhaw@mail.gmail.com>
-References: <20190318174040.17899-1-brgl@bgdev.pl> <20190318174040.17899-3-brgl@bgdev.pl>
- <20190322090038.GE27015@amd>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v6 0/1] gpio: add driver for Mellanox BlueField GPIO
+Date: Tue, 26 Mar 2019 18:41:58 +0100
+Message-ID: <CAMpxmJX6y9aKD8=P+v+5db4_WsOna+5fvw5tGc6RvOE6PFWUnQ@mail.gmail.com>
+References: <cover.1553610690.git.sramani@mellanox.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190322090038.GE27015@amd>
+In-Reply-To: <cover.1553610690.git.sramani@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Shravan Kumar Ramani <sramani@mellanox.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-pt., 22 mar 2019 o 10:00 Pavel Machek <pavel@ucw.cz> napisa=C5=82(a):
+wt., 26 mar 2019 o 15:43 Shravan Kumar Ramani <sramani@mellanox.com> napisa=
+=C5=82(a):
 >
-> On Mon 2019-03-18 18:40:31, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Add the DT binding document for the battery charger module of max77650.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
-> >  1 file changed, 27 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/power/supply/max7=
-7650-charger.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/supply/max77650-ch=
-arger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger=
-.txt
-> > new file mode 100644
-> > index 000000000000..d25c95369616
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.t=
-xt
-> > @@ -0,0 +1,27 @@
-> > +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> > +
-> > +This module is part of the MAX77650 MFD device. For more details
-> > +see Documentation/devicetree/bindings/mfd/max77650.txt.
-> > +
-> > +The charger is represented as a sub-node of the PMIC node on the devic=
-e tree.
-> > +
-> > +Required properties:
-> > +--------------------
-> > +- compatible:                Must be "maxim,max77650-charger"
-> > +
-> > +Optional properties:
-> > +--------------------
-> > +- min-microvolt:     Minimum CHGIN regulation voltage (in microvolts).=
- Must be
-> > +                     one of: 4000000, 4100000, 4200000, 4300000, 44000=
-00,
-> > +                     4500000, 4600000, 4700000.
+> Changes since v5:
+> Use devm_platform_ioremap_resource().
 >
-> Probably needs "max," prefix. And .. what does this mean? Will charger
-> shutdown if input is less than this?
+> Shravan Kumar Ramani (1):
+>   gpio: add driver for Mellanox BlueField GPIO controller
 >
-
-The charger will enter the undervoltage lockout state and stop
-charging, this is explained in the manual, so I don't think the
-bindings are the right place to add this information.
-
-Bart
-
-> > +- curr-lim-microamp: CHGIN input current limit (in microamps). Must be=
- one of:
-> > +                     95000, 190000, 285000, 380000, 475000.
->
-> "current-limit-microamp", I guess. And probably "max,current-limit-microa=
-mp".
+>  drivers/gpio/Kconfig      |   7 +++
+>  drivers/gpio/Makefile     |   1 +
+>  drivers/gpio/gpio-mlxbf.c | 153 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 161 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-mlxbf.c
 >
 > --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
-log.html
+> 2.1.2
+>
+
+Applied, thanks!
+
+Bart
