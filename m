@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 129/262] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-Date: Wed, 27 Mar 2019 13:59:44 -0400
-Message-ID: <20190327180158.10245-129-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 240/262] pinctrl: meson: meson8b: add the eth_rxd2 and eth_rxd3 pins
+Date: Wed, 27 Mar 2019 14:01:35 -0400
+Message-ID: <20190327180158.10245-240-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,86 +9,82 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Jan Kotas <jank@cadence.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
+[ Upstream commit 6daae00243e622dd3feec7965bfe421ad6dd317e ]
 
-Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
-the GPIO regulator had inverted the polarity of the control GPIO. This
-problem manifested itself on systems with DT containing the following
-description (snippet from salvator-common.dtsi):
+Gigabit Ethernet requires the Ethernet TXD0..3 and RXD0..3 data lines.
+Add the missing eth_rxd2 and eth_rxd3 definitions so we don't have to
+rely on the bootloader to set them up correctly.
 
-	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-	gpios-states = <1>;
-	states = <3300000 1
-		  1800000 0>;
+The vendor u-boot sources for Odroid-C1 use the following Ethernet
+pinmux configuration:
+  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_6, 0x3f4f);
+  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_7, 0xf00000);
+This translates to the following pin groups in the mainline kernel:
+- register 6 bit  0: eth_rxd1 (DIF_0_P)
+- register 6 bit  1: eth_rxd0 (DIF_0_N)
+- register 6 bit  2: eth_rx_dv (DIF_1_P)
+- register 6 bit  3: eth_rx_clk (DIF_1_N)
+- register 6 bit  6: eth_tx_en (DIF_3_P)
+- register 6 bit  8: eth_ref_clk (DIF_3_N)
+- register 6 bit  9: eth_mdc (DIF_4_P)
+- register 6 bit 10: eth_mdio_en (DIF_4_N)
+- register 6 bit 11: eth_tx_clk (GPIOH_9)
+- register 6 bit 12: eth_txd2 (GPIOH_8)
+- register 6 bit 13: eth_txd3 (GPIOH_7)
+- register 7 bit 20: eth_txd0_0 (GPIOH_6)
+- register 7 bit 21: eth_txd1_0 (GPIOH_5)
+- register 7 bit 22: eth_rxd3 (DIF_2_P)
+- register 7 bit 23: eth_rxd2 (DIF_2_N)
 
-Prior to the aforementioned commit, the gpio-regulator code used
-gpio_request_array() to claim the GPIO(s) specified in the "gpios"
-DT node, while the commit changed that to devm_gpiod_get_index().
+All functions except eth_rxd2 and eth_rxd3 are already supported by the
+pinctrl-meson8b driver.
 
-The legacy gpio_request_array() calls gpio_request_one() and then
-gpiod_request(), which parses the DT flags of the "gpios" node and
-populates the GPIO descriptor flags field accordingly.
-
-The new devm_gpiod_get_index() calls gpiod_get_index(), then
-of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
-and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
-("gpio: of: Add special quirk to parse regulator flags"),
-of_gpio_flags_quirks() contains a quirk for regulator-gpio
-which was never triggered by the legacy gpio_request_array()
-code path, but is triggered by devm_gpiod_get_index() code
-path.
-
-This quirk checks whether a GPIO is associated with a fixed
-or gpio-regulator and if so, checks two additional conditions.
-First, whether such GPIO is active-low, and if so, ignores the
-active-low flag. Second, whether the regulator DT node does
-have an "enable-active-high" property and if the property is
-NOT present, sets the GPIO flags as active-low.
-
-The second check triggers a problem, since it is applied to all
-GPIOs associated with a gpio-regulator, rather than only on the
-"enable" GPIOs, as the old code did. This changes the way the
-gpio-regulator interprets the DT description of the control
-GPIOs.
-
-The old code using gpio_request_array() explicitly parsed the
-"enable-active-high" DT property and only applied it to the
-GPIOs described in the "enable-gpios" DT node, and only if
-those were present.
-
-This patch fixes the quirk code by only applying the quirk
-to "enable-gpios", thus restoring the old behavior.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jan Kotas <jank@cadence.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
+Reviewed-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6e1891217e2..30542a10014f 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * Note that active low is the default.
- 	 */
- 	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    !strcmp(propname, "enable-gpio") &&
- 	    (of_device_is_compatible(np, "regulator-fixed") ||
- 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
- 	     of_device_is_compatible(np, "regulator-gpio"))) {
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index 0f140a802137..7f76000cc12e 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -346,6 +346,8 @@ static const unsigned int eth_rx_dv_pins[]	= { DIF_1_P };
+ static const unsigned int eth_rx_clk_pins[]	= { DIF_1_N };
+ static const unsigned int eth_txd0_1_pins[]	= { DIF_2_P };
+ static const unsigned int eth_txd1_1_pins[]	= { DIF_2_N };
++static const unsigned int eth_rxd3_pins[]	= { DIF_2_P };
++static const unsigned int eth_rxd2_pins[]	= { DIF_2_N };
+ static const unsigned int eth_tx_en_pins[]	= { DIF_3_P };
+ static const unsigned int eth_ref_clk_pins[]	= { DIF_3_N };
+ static const unsigned int eth_mdc_pins[]	= { DIF_4_P };
+@@ -599,6 +601,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GROUP(eth_ref_clk,	6,	8),
+ 	GROUP(eth_mdc,		6,	9),
+ 	GROUP(eth_mdio_en,	6,	10),
++	GROUP(eth_rxd3,		7,	22),
++	GROUP(eth_rxd2,		7,	23),
+ };
+ 
+ static struct meson_pmx_group meson8b_aobus_groups[] = {
+@@ -748,7 +752,7 @@ static const char * const ethernet_groups[] = {
+ 	"eth_tx_clk", "eth_tx_en", "eth_txd1_0", "eth_txd1_1",
+ 	"eth_txd0_0", "eth_txd0_1", "eth_rx_clk", "eth_rx_dv",
+ 	"eth_rxd1", "eth_rxd0", "eth_mdio_en", "eth_mdc", "eth_ref_clk",
+-	"eth_txd2", "eth_txd3"
++	"eth_txd2", "eth_txd3", "eth_rxd3", "eth_rxd2"
+ };
+ 
+ static const char * const i2c_a_groups[] = {
 -- 
 2.19.1
