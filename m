@@ -1,97 +1,66 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 010/192] gpio: gpio-omap: fix level interrupt idling
-Date: Wed, 27 Mar 2019 14:07:22 -0400
-Message-ID: <20190327181025.13507-10-sashal@kernel.org>
-References: <20190327181025.13507-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 260/262] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date: Wed, 27 Mar 2019 14:01:55 -0400
+Message-ID: <20190327180158.10245-260-sashal@kernel.org>
+References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit d01849f7deba81f4959fd9e51bf20dbf46987d1c ]
+[ Upstream commit 692ef26e72fcce0c1e73c41683fd3512f3719d55 ]
 
-Tony notes that the GPIO module does not idle when level interrupts are
-in use, as the wakeup appears to get stuck.
+Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+enable-gpios") breaks the device tree ABI specified in the device tree
+bindings for fixed regulators (compatible "regulator-fixed"). According
+to these bindings the polarity of the GPIO is exclusively controlled by
+the presence or absence of the enable-active-high property. As such the
+polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+the GPIO specified for fixed regulators.
 
-After extensive investigation, it appears that the wakeup will only be
-cleared if the interrupt status register is cleared while the interrupt
-is enabled. However, we are currently clearing it with the interrupt
-disabled for level-based interrupts.
+However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+to enable-gpios") restricted the quirk to the enable-gpios property for
+fixed regulators as well, whereas according to the commit message itself
+it should only apply to "regulator-gpio" compatible device tree nodes.
 
-It is acknowledged that this observed behaviour conflicts with a
-statement in the TRM:
+Fix this by actually implementing what the offending commit intended,
+which is to ensure that the quirk is applied to the GPIO specified by
+the "enable-gpio" property for the "regulator-gpio" bindings only.
 
-CAUTION
-  After servicing the interrupt, the status bit in the interrupt status
-  register (GPIOi.GPIO_IRQSTATUS_0 or GPIOi.GPIO_IRQSTATUS_1) must be
-  reset and the interrupt line released (by setting the corresponding
-  bit of the interrupt status register to 1) before enabling an
-  interrupt for the GPIO channel in the interrupt-enable register
-  (GPIOi.GPIO_IRQSTATUS_SET_0 or GPIOi.GPIO_IRQSTATUS_SET_1) to prevent
-  the occurrence of unexpected interrupts when enabling an interrupt
-  for the GPIO channel.
+This fixes a regression on Jetson TX1 where the fixed regulator for the
+HDMI +5V pin relies on the flags quirk for the proper polarity.
 
-However, this does not appear to be a practical problem.
-
-Further, as reported by Grygorii Strashko <grygorii.strashko@ti.com>,
-the TI Android kernel tree has an earlier similar patch as "GPIO: OMAP:
-Fix the sequence to clear the IRQ status" saying:
-
- if the status is cleared after disabling the IRQ then sWAKEUP will not
- be cleared and gates the module transition
-
-When we unmask the level interrupt after the interrupt has been handled,
-enable the interrupt and only then clear the interrupt. If the interrupt
-is still pending, the hardware will re-assert the interrupt status.
-
-Should the caution note in the TRM prove to be a problem, we could
-use a clear-enable-clear sequence instead.
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-[tony@atomide.com: updated comments based on an earlier TI patch]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Tested-by: Marek Vasut <marek.vasut@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-omap.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpio/gpiolib-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e81008678a38..6c1acf642c8e 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -888,14 +888,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	if (trigger)
- 		omap_set_gpio_triggering(bank, offset, trigger);
- 
--	/* For level-triggered GPIOs, the clearing must be done after
--	 * the HW source is cleared, thus after the handler has run */
--	if (bank->level_mask & BIT(offset)) {
--		omap_set_gpio_irqenable(bank, offset, 0);
-+	omap_set_gpio_irqenable(bank, offset, 1);
-+
-+	/*
-+	 * For level-triggered GPIOs, clearing must be done after the source
-+	 * is cleared, thus after the handler has run. OMAP4 needs this done
-+	 * after enabing the interrupt to clear the wakeup status.
-+	 */
-+	if (bank->level_mask & BIT(offset))
- 		omap_clear_gpio_irqstatus(bank, offset);
--	}
- 
--	omap_set_gpio_irqenable(bank, offset, 1);
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 30542a10014f..a1dd2f1c0d02 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
+-	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+-	     of_device_is_compatible(np, "regulator-gpio"))) {
++	     (of_device_is_compatible(np, "regulator-gpio") &&
++	      strcmp(propname, "enable-gpio") == 0))) {
+ 		/*
+ 		 * The regulator GPIO handles are specified such that the
+ 		 * presence or absence of "enable-active-high" solely controls
 -- 
 2.19.1
