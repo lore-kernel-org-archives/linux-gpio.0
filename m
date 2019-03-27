@@ -1,98 +1,96 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 226/262] pinctrl: meson: fix G12A ao pull registers base address
-Date: Wed, 27 Mar 2019 14:01:21 -0400
-Message-ID: <20190327180158.10245-226-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 018/262] gpio: gpio-omap: fix level interrupt idling
+Date: Wed, 27 Mar 2019 13:57:53 -0400
+Message-ID: <20190327180158.10245-18-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Xingyu Chen <xingyu.chen@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc: Russell King <rmk+kernel@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit e66dd48e8b0dee104d16417d30361074b08baca8 ]
+[ Upstream commit d01849f7deba81f4959fd9e51bf20dbf46987d1c ]
 
-Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
-and AO_GPIO_O.
+Tony notes that the GPIO module does not idle when level interrupts are
+in use, as the wakeup appears to get stuck.
 
-These bits of controlling output level are remapped to the new register
-AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+After extensive investigation, it appears that the wakeup will only be
+cleared if the interrupt status register is cleared while the interrupt
+is enabled. However, we are currently clearing it with the interrupt
+disabled for level-based interrupts.
 
-These bits of controlling pull enable are remapped to the new register
-AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
-pull type(up/down).
+It is acknowledged that this observed behaviour conflicts with a
+statement in the TRM:
 
-The new layout of ao gpio/pull registers is as follows:
-- AO_GPIO_O_EN_N        [offset: 0x9 << 2]
-- AO_GPIO_I             [offset: 0xa << 2]
-- AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
-- AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
-- AO_GPIO_O             [offset: 0xd << 2]
+CAUTION
+  After servicing the interrupt, the status bit in the interrupt status
+  register (GPIOi.GPIO_IRQSTATUS_0 or GPIOi.GPIO_IRQSTATUS_1) must be
+  reset and the interrupt line released (by setting the corresponding
+  bit of the interrupt status register to 1) before enabling an
+  interrupt for the GPIO channel in the interrupt-enable register
+  (GPIOi.GPIO_IRQSTATUS_SET_0 or GPIOi.GPIO_IRQSTATUS_SET_1) to prevent
+  the occurrence of unexpected interrupts when enabling an interrupt
+  for the GPIO channel.
 
->From above, we can see ao GPIO registers region has been separated by the
-ao pull registers. In order to ensure the continuity of the region on
-software, the ao GPIO and ao pull registers use the same base address, but
-can be identified by the offset.
+However, this does not appear to be a practical problem.
 
-Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Further, as reported by Grygorii Strashko <grygorii.strashko@ti.com>,
+the TI Android kernel tree has an earlier similar patch as "GPIO: OMAP:
+Fix the sequence to clear the IRQ status" saying:
+
+ if the status is cleared after disabling the IRQ then sWAKEUP will not
+ be cleared and gates the module transition
+
+When we unmask the level interrupt after the interrupt has been handled,
+enable the interrupt and only then clear the interrupt. If the interrupt
+is still pending, the hardware will re-assert the interrupt status.
+
+Should the caution note in the TRM prove to be a problem, we could
+use a clear-enable-clear sequence instead.
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+[tony@atomide.com: updated comments based on an earlier TI patch]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/gpio/gpio-omap.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index ea87d739f534..a4ae1ac5369e 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -31,6 +31,9 @@
-  * In some cases the register ranges for pull enable and pull
-  * direction are the same and thus there are only 3 register ranges.
-  *
-+ * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
-+ * and pull direction are the same, so there are only 2 register ranges.
-+ *
-  * For the pull and GPIO configuration every bank uses a contiguous
-  * set of bits in the register sets described above; the same register
-  * can be shared by more banks with different offsets.
-@@ -488,23 +491,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 		return PTR_ERR(pc->reg_mux);
- 	}
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index f4e9921fa966..7f33024b6d83 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -883,14 +883,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	if (trigger)
+ 		omap_set_gpio_triggering(bank, offset, trigger);
  
--	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
--	if (IS_ERR(pc->reg_pull)) {
--		dev_err(pc->dev, "pull registers not found\n");
--		return PTR_ERR(pc->reg_pull);
-+	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
-+	if (IS_ERR(pc->reg_gpio)) {
-+		dev_err(pc->dev, "gpio registers not found\n");
-+		return PTR_ERR(pc->reg_gpio);
- 	}
- 
-+	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
-+	/* Use gpio region if pull one is not present */
-+	if (IS_ERR(pc->reg_pull))
-+		pc->reg_pull = pc->reg_gpio;
+-	/* For level-triggered GPIOs, the clearing must be done after
+-	 * the HW source is cleared, thus after the handler has run */
+-	if (bank->level_mask & BIT(offset)) {
+-		omap_set_gpio_irqenable(bank, offset, 0);
++	omap_set_gpio_irqenable(bank, offset, 1);
 +
- 	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
- 	/* Use pull region if pull-enable one is not present */
- 	if (IS_ERR(pc->reg_pullen))
- 		pc->reg_pullen = pc->reg_pull;
- 
--	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
--	if (IS_ERR(pc->reg_gpio)) {
--		dev_err(pc->dev, "gpio registers not found\n");
--		return PTR_ERR(pc->reg_gpio);
++	/*
++	 * For level-triggered GPIOs, clearing must be done after the source
++	 * is cleared, thus after the handler has run. OMAP4 needs this done
++	 * after enabing the interrupt to clear the wakeup status.
++	 */
++	if (bank->level_mask & BIT(offset))
+ 		omap_clear_gpio_irqstatus(bank, offset);
 -	}
--
- 	return 0;
+ 
+-	omap_set_gpio_irqenable(bank, offset, 1);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
  }
  
 -- 
