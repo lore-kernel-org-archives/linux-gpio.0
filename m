@@ -1,33 +1,67 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v13 01/11] bitops: Introduce the for_each_set_clump8 macro
-Date: Wed, 27 Mar 2019 07:42:54 +0100
-Message-ID: <20190327064254.lwj7ew37mxphieco@wunner.de>
-References: <cover.1553661964.git.vilhelm.gray@gmail.com>
- <497dc4b5b1f668b54e008e10a43d4108f4a41213.1553661964.git.vilhelm.gray@gmail.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
+Date: Wed, 27 Mar 2019 16:22:04 +0800
+Message-ID: <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
+References: <20171115080446.GY17200@lahna.fi.intel.com> <018180A5-B0D2-418E-9DBC-EF5F310F7295@endlessm.com>
+ <20171115101302.GA17200@lahna.fi.intel.com> <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
+ <20171116124431.GS17200@lahna.fi.intel.com> <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
+ <20171117064904.GZ17200@lahna.fi.intel.com> <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
+ <20171121105205.GP22431@lahna.fi.intel.com> <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
+ <20171121120422.GR22431@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <497dc4b5b1f668b54e008e10a43d4108f4a41213.1553661964.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20171121120422.GR22431@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Chris Chiu <chiu@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 01:58:45PM +0900, William Breathitt Gray wrote:
-> This macro iterates for each 8-bit group of bits (clump) with set bits,
-> within a bitmap memory region. For each iteration, "start" is set to the
-> bit offset of the found clump, while the respective clump value is
-> stored to the location pointed by "clump". Additionally, the
-> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> respectively get and set an 8-bit value in a bitmap memory region.
+Hi Mika,
 
-I would have preferred static inlines for bitmap_get_value8(),
-bitmap_set_value8() and find_next_clump8() to make this as fast
-as possible in the callers because I've personally worked with
-an industrial application where the GPIO pins of a 74x164 are
-written every 250 usec.
+Digging up this old thread again...
 
-But apart from that I like this series a lot, thanks for working on it.
+On Tue, Nov 21, 2017 at 8:13 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Tue, Nov 21, 2017 at 07:54:26PM +0800, Chris Chiu wrote:
+> > Yup, I checked the value of the corresponded pin. It shows following before
+> > suspend
+> > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
+> >
+> > Then after resume
+> > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075 [ACPI]
+>
+> OK, so ownership is changed to ACPI.
+>
+> > What else register do you suggest me to compare? The PADCFG2 is invalid
+>
+> It's fine APL does not have PADCFG2.
+>
+> Hmm, I don't understand how this can work in Windows either. The Windows
+> people told me that they don't save and restore anything else than
+> padcfg registers + ie. If the ownership is changed to ACPI it means you
+> don't get interrupts anymore (only GPEs) and that applies to Windows as
+> well.
 
-Lukas
+In the mails after the one quoted above, we reported back to you that
+the new BIOS from Asus solved the issue.
+
+However, during the time that has followed, we have had numerous user
+reports from Asus E403NA, X540NA, and X541NA laptops (basically the
+same models that we originally discussed) where the touchpad stops
+working after suspend/resume, even with the latest BIOS. We managed to
+get an affected E403NA unit in-hands again, and confirmed that
+HOSTSW_OWN was being lost like we had observed before.
+
+Unfortunately as this was a customer laptop we had to return it
+immediately, before we could investigate further. We don't have access
+to any more units since they are old models now.
+
+However I'm wondering if you have any other ideas or if you think
+something like our workaround patch might be acceptable under these
+circumstances:
+https://github.com/endlessm/linux/commit/f391452299f62a3d0cbe5333be90f69e9895d8ff
+
+Thanks
+Daniel
