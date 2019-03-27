@@ -1,36 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v13 10/11] gpio: 74x164: Utilize the for_each_set_clump8
- macro
-Date: Wed, 27 Mar 2019 14:33:14 +0200
-Message-ID: <20190327123314.GJ9224@smile.fi.intel.com>
-References: <cover.1553661964.git.vilhelm.gray@gmail.com>
- <645f16f1d1ad3f215e34a82f457e06725fcf8f56.1553661964.git.vilhelm.gray@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 0/3] simplify idle gpio handling for omaps
+Date: Wed, 27 Mar 2019 14:29:52 +0100
+Message-ID: <CAMpxmJXHMXmG7Og8acjyT_=WgQW9obPU0q=o5qnnka64ee055Q@mail.gmail.com>
+References: <20190325224318.15076-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <645f16f1d1ad3f215e34a82f457e06725fcf8f56.1553661964.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190325224318.15076-1-tony@atomide.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio <linux-gpio@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Linux-OMAP <linux-omap@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 02:02:39PM +0900, William Breathitt Gray wrote:
-> Replace verbose implementation in set_multiple callback with
-> for_each_set_clump8 macro to simplify code and improve clarity.
-
-> +	for_each_set_clump8(offset, bankmask, mask, chip->registers * 8) {
-
-> +		bank = (chip->registers - 1) - (offset / 8);
-
-Excessive parens, but it's minor.
-
-> +		bitmask = bitmap_get_value8(bits, offset) & bankmask;
->  
->  		chip->buffer[bank] &= ~bankmask;
-> +		chip->buffer[bank] |= bitmask;
->  	}
-
--- 
-With Best Regards,
-Andy Shevchenko
+cG9uLiwgMjUgbWFyIDIwMTkgbyAyMzo0MyBUb255IExpbmRncmVuIDx0b255QGF0b21pZGUuY29t
+PiBuYXBpc2HFgihhKToKPgo+IEhpIGFsbCwKPgo+IEJhc2VkIG9uIHNvbWUgY29tbWVudHMgZnJv
+bSBHcnlnb3JpaSBJIG5vdGljZWQgdGhhdCBwYXJ0cyBvZiBvbGQgMjR4eAo+IGVycmF0YSAxLjEw
+MSBoYW5kbGluZyBoYXMgYmVjb21lIHBhcnQgb2YgdGhlIEdQSU8gaWRsZSBoYW5kbGluZyBvdmVy
+Cj4gdGhlIHllYXJzLiBIZXJlIGFyZSBmZXcgcGF0Y2hlcyB0byBjbGFyaWZ5IGFuZCBzaW1wbGlm
+eSB0aGUgaGFuZGxpbmcKPiBhIGJpdC4KPgo+IFJlZ2FyZHMsCj4KPiBUb255Cj4KPgo+IFRvbnkg
+TGluZGdyZW4gKDMpOgo+ICAgZ3BpbzogZ3Bpby1vbWFwOiBsaW1pdCBlcnJhdGEgMS4xMDEgaGFu
+ZGxpbmcgdG8gd2t1cCBkb21haW4gZ3Bpb3Mgb25seQo+ICAgZ3BpbzogZ3Bpby1vbWFwOiBhbHdh
+eXMgc2NhbiBmb3IgdHJpZ2dlcmVkIG5vbi13YWtldXAgY2FwYWJsZQo+ICAgICBpbnRlcnJ1cHRz
+Cj4gICBncGlvOiBncGlvLW9tYXA6IGFkZCBjaGVjayBmb3Igb2ZmIHdha2UgY2FwYWJsZSBncGlv
+cwo+Cj4gIGRyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYyB8IDYxICsrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDMzIGluc2VydGlvbnMoKyks
+IDI4IGRlbGV0aW9ucygtKQo+Cj4gLS0KPiAyLjIxLjAKCkFsbCB0aHJlZSBhcHBsaWVkLgoKQmFy
+dAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
