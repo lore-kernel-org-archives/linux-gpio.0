@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 227/262] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL bit numbering
-Date: Wed, 27 Mar 2019 14:01:22 -0400
-Message-ID: <20190327180158.10245-227-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 226/262] pinctrl: meson: fix G12A ao pull registers base address
+Date: Wed, 27 Mar 2019 14:01:21 -0400
+Message-ID: <20190327180158.10245-226-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,123 +9,91 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Sasha Levin <sashal@kernel.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Xingyu Chen <xingyu.chen@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Xingyu Chen <xingyu.chen@amlogic.com>
 
-[ Upstream commit 3e3eebeacad79bda8a9664c86c04f5201e86fece ]
+[ Upstream commit e66dd48e8b0dee104d16417d30361074b08baca8 ]
 
-MOD_SEL register bit numbering was different from R-Car E3 SoC and
-R-Car H3/M3-[WN] SoCs.
+Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+and AO_GPIO_O.
 
-MOD_SEL 1-bit      H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'0         b'0
-Set Value = H'1    b'1         b'1
+These bits of controlling output level are remapped to the new register
+AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
 
-MOD_SEL 2-bits     H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'00        b'00
-Set Value = H'1    b'01        b'10
-Set Value = H'2    b'10        b'01
-Set Value = H'3    b'11        b'11
+These bits of controlling pull enable are remapped to the new register
+AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+pull type(up/down).
 
-MOD_SEL 3-bits     H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'000       b'000
-Set Value = H'1    b'001       b'100
-Set Value = H'2    b'010       b'010
-Set Value = H'3    b'011       b'110
-Set Value = H'4    b'100       b'001
-Set Value = H'5    b'101       b'101
-Set Value = H'6    b'110       b'011
-Set Value = H'7    b'111       b'111
+The new layout of ao gpio/pull registers is as follows:
+- AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+- AO_GPIO_I             [offset: 0xa << 2]
+- AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+- AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+- AO_GPIO_O             [offset: 0xd << 2]
 
-This patch replaces the #define name and value of MOD_SEL.
+>From above, we can see ao GPIO registers region has been separated by the
+ao pull registers. In order to ensure the continuity of the region on
+software, the ao GPIO and ao pull registers use the same base address, but
+can be identified by the offset.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Fixes: 6d4036a1e3b3 ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
-[shimoda: Split a patch per SoC and revise the commit log]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-[geert: Use macros to do the actual reordering]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 32 +++++++++++++++------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index e40908dc37e0..1ce286f7b286 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -391,29 +391,33 @@ FM(IP12_23_20)	IP12_23_20	FM(IP13_23_20)	IP13_23_20	FM(IP14_23_20)	IP14_23_20	FM
- FM(IP12_27_24)	IP12_27_24	FM(IP13_27_24)	IP13_27_24	FM(IP14_27_24)	IP14_27_24	FM(IP15_27_24)	IP15_27_24 \
- FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM(IP15_31_28)	IP15_31_28
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index ea87d739f534..a4ae1ac5369e 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -31,6 +31,9 @@
+  * In some cases the register ranges for pull enable and pull
+  * direction are the same and thus there are only 3 register ranges.
+  *
++ * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
++ * and pull direction are the same, so there are only 2 register ranges.
++ *
+  * For the pull and GPIO configuration every bank uses a contiguous
+  * set of bits in the register sets described above; the same register
+  * can be shared by more banks with different offsets.
+@@ -488,23 +491,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+ 		return PTR_ERR(pc->reg_mux);
+ 	}
  
-+/* The bit numbering in MOD_SEL fields is reversed */
-+#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
-+#define REV8(f0, f1, f2, f3, f4, f5, f6, f7)	f0 f4 f2 f6 f1 f5 f3 f7
+-	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+-	if (IS_ERR(pc->reg_pull)) {
+-		dev_err(pc->dev, "pull registers not found\n");
+-		return PTR_ERR(pc->reg_pull);
++	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
++	if (IS_ERR(pc->reg_gpio)) {
++		dev_err(pc->dev, "gpio registers not found\n");
++		return PTR_ERR(pc->reg_gpio);
+ 	}
+ 
++	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
++	/* Use gpio region if pull one is not present */
++	if (IS_ERR(pc->reg_pull))
++		pc->reg_pull = pc->reg_gpio;
 +
- /* MOD_SEL0 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
--#define MOD_SEL0_30_29		FM(SEL_ADGB_0)			FM(SEL_ADGB_1)			FM(SEL_ADGB_2)			F_(0, 0)
-+#define MOD_SEL0_30_29	   REV4(FM(SEL_ADGB_0),			FM(SEL_ADGB_1),			FM(SEL_ADGB_2),			F_(0, 0))
- #define MOD_SEL0_28		FM(SEL_DRIF0_0)			FM(SEL_DRIF0_1)
--#define MOD_SEL0_27_26		FM(SEL_FM_0)			FM(SEL_FM_1)			FM(SEL_FM_2)			F_(0, 0)
-+#define MOD_SEL0_27_26	   REV4(FM(SEL_FM_0),			FM(SEL_FM_1),			FM(SEL_FM_2),			F_(0, 0))
- #define MOD_SEL0_25		FM(SEL_FSO_0)			FM(SEL_FSO_1)
- #define MOD_SEL0_24		FM(SEL_HSCIF0_0)		FM(SEL_HSCIF0_1)
- #define MOD_SEL0_23		FM(SEL_HSCIF1_0)		FM(SEL_HSCIF1_1)
- #define MOD_SEL0_22		FM(SEL_HSCIF2_0)		FM(SEL_HSCIF2_1)
--#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)
--#define MOD_SEL0_19_18_17	FM(SEL_I2C2_0)			FM(SEL_I2C2_1)			FM(SEL_I2C2_2)			FM(SEL_I2C2_3)		FM(SEL_I2C2_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
-+#define MOD_SEL0_21_20	   REV4(FM(SEL_I2C1_0),			FM(SEL_I2C1_1),			FM(SEL_I2C1_2),			FM(SEL_I2C1_3))
-+#define MOD_SEL0_19_18_17  REV8(FM(SEL_I2C2_0),			FM(SEL_I2C2_1),			FM(SEL_I2C2_2),			FM(SEL_I2C2_3),		FM(SEL_I2C2_4),		F_(0, 0),	F_(0, 0),	F_(0, 0))
- #define MOD_SEL0_16		FM(SEL_NDFC_0)			FM(SEL_NDFC_1)
- #define MOD_SEL0_15		FM(SEL_PWM0_0)			FM(SEL_PWM0_1)
- #define MOD_SEL0_14		FM(SEL_PWM1_0)			FM(SEL_PWM1_1)
--#define MOD_SEL0_13_12		FM(SEL_PWM2_0)			FM(SEL_PWM2_1)			FM(SEL_PWM2_2)			F_(0, 0)
--#define MOD_SEL0_11_10		FM(SEL_PWM3_0)			FM(SEL_PWM3_1)			FM(SEL_PWM3_2)			F_(0, 0)
-+#define MOD_SEL0_13_12	   REV4(FM(SEL_PWM2_0),			FM(SEL_PWM2_1),			FM(SEL_PWM2_2),			F_(0, 0))
-+#define MOD_SEL0_11_10	   REV4(FM(SEL_PWM3_0),			FM(SEL_PWM3_1),			FM(SEL_PWM3_2),			F_(0, 0))
- #define MOD_SEL0_9		FM(SEL_PWM4_0)			FM(SEL_PWM4_1)
- #define MOD_SEL0_8		FM(SEL_PWM5_0)			FM(SEL_PWM5_1)
- #define MOD_SEL0_7		FM(SEL_PWM6_0)			FM(SEL_PWM6_1)
--#define MOD_SEL0_6_5		FM(SEL_REMOCON_0)		FM(SEL_REMOCON_1)		FM(SEL_REMOCON_2)		F_(0, 0)
-+#define MOD_SEL0_6_5	   REV4(FM(SEL_REMOCON_0),		FM(SEL_REMOCON_1),		FM(SEL_REMOCON_2),		F_(0, 0))
- #define MOD_SEL0_4		FM(SEL_SCIF_0)			FM(SEL_SCIF_1)
- #define MOD_SEL0_3		FM(SEL_SCIF0_0)			FM(SEL_SCIF0_1)
- #define MOD_SEL0_2		FM(SEL_SCIF2_0)			FM(SEL_SCIF2_1)
--#define MOD_SEL0_1_0		FM(SEL_SPEED_PULSE_IF_0)	FM(SEL_SPEED_PULSE_IF_1)	FM(SEL_SPEED_PULSE_IF_2)	F_(0, 0)
-+#define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
+ 	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+ 	/* Use pull region if pull-enable one is not present */
+ 	if (IS_ERR(pc->reg_pullen))
+ 		pc->reg_pullen = pc->reg_pull;
  
- /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
- #define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
-@@ -422,18 +426,18 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
- #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
- #define MOD_SEL1_25		FM(SEL_DRIF3_0)			FM(SEL_DRIF3_1)
--#define MOD_SEL1_24_23_22	FM(SEL_HSCIF3_0)		FM(SEL_HSCIF3_1)		FM(SEL_HSCIF3_2)		FM(SEL_HSCIF3_3)	FM(SEL_HSCIF3_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
--#define MOD_SEL1_21_20_19	FM(SEL_HSCIF4_0)		FM(SEL_HSCIF4_1)		FM(SEL_HSCIF4_2)		FM(SEL_HSCIF4_3)	FM(SEL_HSCIF4_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
-+#define MOD_SEL1_24_23_22  REV8(FM(SEL_HSCIF3_0),		FM(SEL_HSCIF3_1),		FM(SEL_HSCIF3_2),		FM(SEL_HSCIF3_3),	FM(SEL_HSCIF3_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
-+#define MOD_SEL1_21_20_19  REV8(FM(SEL_HSCIF4_0),		FM(SEL_HSCIF4_1),		FM(SEL_HSCIF4_2),		FM(SEL_HSCIF4_3),	FM(SEL_HSCIF4_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
- #define MOD_SEL1_18		FM(SEL_I2C6_0)			FM(SEL_I2C6_1)
- #define MOD_SEL1_17		FM(SEL_I2C7_0)			FM(SEL_I2C7_1)
- #define MOD_SEL1_16		FM(SEL_MSIOF2_0)		FM(SEL_MSIOF2_1)
- #define MOD_SEL1_15		FM(SEL_MSIOF3_0)		FM(SEL_MSIOF3_1)
--#define MOD_SEL1_14_13		FM(SEL_SCIF3_0)			FM(SEL_SCIF3_1)			FM(SEL_SCIF3_2)			F_(0, 0)
--#define MOD_SEL1_12_11		FM(SEL_SCIF4_0)			FM(SEL_SCIF4_1)			FM(SEL_SCIF4_2)			F_(0, 0)
--#define MOD_SEL1_10_9		FM(SEL_SCIF5_0)			FM(SEL_SCIF5_1)			FM(SEL_SCIF5_2)			F_(0, 0)
-+#define MOD_SEL1_14_13	   REV4(FM(SEL_SCIF3_0),		FM(SEL_SCIF3_1),		FM(SEL_SCIF3_2),		F_(0, 0))
-+#define MOD_SEL1_12_11	   REV4(FM(SEL_SCIF4_0),		FM(SEL_SCIF4_1),		FM(SEL_SCIF4_2),		F_(0, 0))
-+#define MOD_SEL1_10_9	   REV4(FM(SEL_SCIF5_0),		FM(SEL_SCIF5_1),		FM(SEL_SCIF5_2),		F_(0, 0))
- #define MOD_SEL1_8		FM(SEL_VIN4_0)			FM(SEL_VIN4_1)
- #define MOD_SEL1_7		FM(SEL_VIN5_0)			FM(SEL_VIN5_1)
--#define MOD_SEL1_6_5		FM(SEL_ADGC_0)			FM(SEL_ADGC_1)			FM(SEL_ADGC_2)			F_(0, 0)
-+#define MOD_SEL1_6_5	   REV4(FM(SEL_ADGC_0),			FM(SEL_ADGC_1),			FM(SEL_ADGC_2),			F_(0, 0))
- #define MOD_SEL1_4		FM(SEL_SSI9_0)			FM(SEL_SSI9_1)
+-	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+-	if (IS_ERR(pc->reg_gpio)) {
+-		dev_err(pc->dev, "gpio registers not found\n");
+-		return PTR_ERR(pc->reg_gpio);
+-	}
+-
+ 	return 0;
+ }
  
- #define PINMUX_MOD_SELS	\
 -- 
 2.19.1
