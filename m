@@ -1,96 +1,77 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [Patch v3 2/2] tracing: gpio: add Kconfig option for
- enabling/disabling trace events
-Date: Wed, 27 Mar 2019 17:12:03 +0100
-Message-ID: <20190327161158.GA26067@taurus.defre.kleine-koenig.org>
-References: <CAFDyS3Nuq8FPx4z5GW1Ht+NBGd+8O9rjPZ+DaMU1XU1QYgA=2g@mail.gmail.com>
- <1438432079-11704-1-git-send-email-tal.shorer@gmail.com>
- <1438432079-11704-4-git-send-email-tal.shorer@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
+ suspend/resume
+Date: Wed, 27 Mar 2019 19:29:40 +0200
+Message-ID: <20190327172940.GR3622@lahna.fi.intel.com>
+References: <20171115101302.GA17200@lahna.fi.intel.com>
+ <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
+ <20171116124431.GS17200@lahna.fi.intel.com>
+ <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
+ <20171117064904.GZ17200@lahna.fi.intel.com>
+ <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
+ <20171121105205.GP22431@lahna.fi.intel.com>
+ <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
+ <20171121120422.GR22431@lahna.fi.intel.com>
+ <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1438432079-11704-4-git-send-email-tal.shorer@gmail.com>
+In-Reply-To: <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tal Shorer <tal.shorer@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: rostedt@goodmis.org, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel@pengutronix.de, linux-gpio@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: Chris Chiu <chiu@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>, Andy Shevchenko <andriy.shevchenko@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
++Andy
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 27, 2019 at 04:22:04PM +0800, Daniel Drake wrote:
+> Hi Mika,
+> 
+> Digging up this old thread again...
+> 
+> On Tue, Nov 21, 2017 at 8:13 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> >
+> > On Tue, Nov 21, 2017 at 07:54:26PM +0800, Chris Chiu wrote:
+> > > Yup, I checked the value of the corresponded pin. It shows following before
+> > > suspend
+> > > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
+> > >
+> > > Then after resume
+> > > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075 [ACPI]
+> >
+> > OK, so ownership is changed to ACPI.
+> >
+> > > What else register do you suggest me to compare? The PADCFG2 is invalid
+> >
+> > It's fine APL does not have PADCFG2.
+> >
+> > Hmm, I don't understand how this can work in Windows either. The Windows
+> > people told me that they don't save and restore anything else than
+> > padcfg registers + ie. If the ownership is changed to ACPI it means you
+> > don't get interrupts anymore (only GPEs) and that applies to Windows as
+> > well.
+> 
+> In the mails after the one quoted above, we reported back to you that
+> the new BIOS from Asus solved the issue.
+> 
+> However, during the time that has followed, we have had numerous user
+> reports from Asus E403NA, X540NA, and X541NA laptops (basically the
+> same models that we originally discussed) where the touchpad stops
+> working after suspend/resume, even with the latest BIOS. We managed to
+> get an affected E403NA unit in-hands again, and confirmed that
+> HOSTSW_OWN was being lost like we had observed before.
+> 
+> Unfortunately as this was a customer laptop we had to return it
+> immediately, before we could investigate further. We don't have access
+> to any more units since they are old models now.
+> 
+> However I'm wondering if you have any other ideas or if you think
+> something like our workaround patch might be acceptable under these
+> circumstances:
+> https://github.com/endlessm/linux/commit/f391452299f62a3d0cbe5333be90f69e9895d8ff
 
-On Sat, Aug 01, 2015 at 03:27:58PM +0300, Tal Shorer wrote:
-> Add a new options to trace Kconfig, CONFIG_TRACING_EVENTS_GPIO, that is
-> used for enabling/disabling compilation of gpio function trace events.
->=20
-> Signed-off-by: Tal Shorer <tal.shorer@gmail.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  include/trace/events/gpio.h | 4 ++++
->  kernel/trace/Kconfig        | 7 +++++++
->  2 files changed, 11 insertions(+)
->=20
-> diff --git a/include/trace/events/gpio.h b/include/trace/events/gpio.h
-> index 927a8ad..2da73b9 100644
-> --- a/include/trace/events/gpio.h
-> +++ b/include/trace/events/gpio.h
-> @@ -1,6 +1,10 @@
->  #undef TRACE_SYSTEM
->  #define TRACE_SYSTEM gpio
-> =20
-> +#ifndef CONFIG_TRACING_EVENTS_GPIO
-> +#define NOTRACE
-> +#endif
-> +
->  #if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ)
->  #define _TRACE_GPIO_H
-> =20
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 3b9a48a..67a1731 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -635,6 +635,13 @@ config TRACE_ENUM_MAP_FILE
-> =20
->  	If unsure, say N
-> =20
-> +config TRACING_EVENTS_GPIO
-> +	bool "Trace gpio events"
-> +	depends on GPIOLIB
-> +	default y
-> +	help
-> +	  Enable tracing events for gpio subsystem
-> +
-
-It happened a few times to me since this patch was merged (in 4.4-rc1)
-that I worked on a system with tracing enabled but
-/sys/kernel/debug/tracing/events/gpio were missing because of
-CONFIG_TRACING_EVENTS_GPIO=3Dn. This is annoying and I wonder what is the
-motivating purpose of allowing to disable gpio events. There is no other
-event type that can be disabled with kconfig symbols. Theoretically the
-overhead should be so small, that having these events enabled
-unconditionally should be fine, shouldn't it?
-
-Best regards
-Uwe
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlyboMkACgkQwfwUeK3K
-7AmWjgf/fn7Is0y04lkAl6ET2ZTTC4yh7aLtitivQZ7q6GrULaPfhWO8GEj7lOxR
-Q7N9N3WZrqtR/TWAd4VuYsDPpQoLkWrFSgQS4qh1okV1evmTnRUuWkiAluLvizLS
-tU29YxSf4TPNgcn91hpFMNIGbPMBPolnWLF718VtaRXhowz4RvqNQMplGnUc0G53
-yZ+d3EganFx8pgVpG1NIBhgT5Pi/oRV/URDF1epZEOgHA+2VifrE04Um+dzugo3U
-xGBaP4rWCT8HSWPFQM6JgpMyjVzKQ0wsKzxIgQtgX6et11IrWtytMZxgaz0L1U1p
-w1Rp1uJCw0HagsV6zo4idA2auO5Kgw==
-=/vx7
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+I wonder if it would be simpler to save it always and then upon resume
+compare them and if changed, log this in dmesg and restore the saved
+one.
