@@ -1,66 +1,89 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 260/262] gpio: of: Restrict enable-gpio quirk to regulator-gpio
-Date: Wed, 27 Mar 2019 14:01:55 -0400
-Message-ID: <20190327180158.10245-260-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 228/262] pinctrl: sh-pfc: r8a77995: Fix MOD_SEL bit numbering
+Date: Wed, 27 Mar 2019 14:01:23 -0400
+Message-ID: <20190327180158.10245-228-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Sasha Levin <sashal@kernel.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-[ Upstream commit 692ef26e72fcce0c1e73c41683fd3512f3719d55 ]
+[ Upstream commit 5219aa33caec2f7b68eda2b7e4ab8e276f323254 ]
 
-Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
-enable-gpios") breaks the device tree ABI specified in the device tree
-bindings for fixed regulators (compatible "regulator-fixed"). According
-to these bindings the polarity of the GPIO is exclusively controlled by
-the presence or absence of the enable-active-high property. As such the
-polarity quirk implemented in of_gpio_flags_quirks() must be applied to
-the GPIO specified for fixed regulators.
+MOD_SEL register bit numbering was different from R-Car D3 SoC and
+R-Car H3/M3-[WN] SoCs.
 
-However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
-to enable-gpios") restricted the quirk to the enable-gpios property for
-fixed regulators as well, whereas according to the commit message itself
-it should only apply to "regulator-gpio" compatible device tree nodes.
+MOD_SEL 1-bit      H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'0         b'0
+Set Value = H'1    b'1         b'1
 
-Fix this by actually implementing what the offending commit intended,
-which is to ensure that the quirk is applied to the GPIO specified by
-the "enable-gpio" property for the "regulator-gpio" bindings only.
+MOD_SEL 2-bits     H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'00        b'00
+Set Value = H'1    b'01        b'10
+Set Value = H'2    b'10        b'01
+Set Value = H'3    b'11        b'11
 
-This fixes a regression on Jetson TX1 where the fixed regulator for the
-HDMI +5V pin relies on the flags quirk for the proper polarity.
+MOD_SEL 3-bits     H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'000       b'000
+Set Value = H'1    b'001       b'100
+Set Value = H'2    b'010       b'010
+Set Value = H'3    b'011       b'110
+Set Value = H'4    b'100       b'001
+Set Value = H'5    b'101       b'101
+Set Value = H'6    b'110       b'011
+Set Value = H'7    b'111       b'111
 
-Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This patch replaces the #define name and value of MOD_SEL.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 794a67117646 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
+[shimoda: split a patch per SoC and revise the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[geert: Use a macro to do the actual reordering]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 30542a10014f..a1dd2f1c0d02 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * Note that active low is the default.
- 	 */
- 	if (IS_ENABLED(CONFIG_REGULATOR) &&
--	    !strcmp(propname, "enable-gpio") &&
- 	    (of_device_is_compatible(np, "regulator-fixed") ||
- 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
--	     of_device_is_compatible(np, "regulator-gpio"))) {
-+	     (of_device_is_compatible(np, "regulator-gpio") &&
-+	      strcmp(propname, "enable-gpio") == 0))) {
- 		/*
- 		 * The regulator GPIO handles are specified such that the
- 		 * presence or absence of "enable-active-high" solely controls
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 84d78db381e3..9e377e3b9cb3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -381,6 +381,9 @@ FM(IP12_23_20)	IP12_23_20 \
+ FM(IP12_27_24)	IP12_27_24 \
+ FM(IP12_31_28)	IP12_31_28 \
+ 
++/* The bit numbering in MOD_SEL fields is reversed */
++#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
++
+ /* MOD_SEL0 */			/* 0 */			/* 1 */			/* 2 */			/* 3 */
+ #define MOD_SEL0_30		FM(SEL_MSIOF2_0)	FM(SEL_MSIOF2_1)
+ #define MOD_SEL0_29		FM(SEL_I2C3_0)		FM(SEL_I2C3_1)
+@@ -388,10 +391,10 @@ FM(IP12_31_28)	IP12_31_28 \
+ #define MOD_SEL0_27		FM(SEL_MSIOF3_0)	FM(SEL_MSIOF3_1)
+ #define MOD_SEL0_26		FM(SEL_HSCIF3_0)	FM(SEL_HSCIF3_1)
+ #define MOD_SEL0_25		FM(SEL_SCIF4_0)		FM(SEL_SCIF4_1)
+-#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		F_(0, 0)
+-#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		F_(0, 0)
+-#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		F_(0, 0)
+-#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		F_(0, 0)
++#define MOD_SEL0_24_23	   REV4(FM(SEL_PWM0_0),		FM(SEL_PWM0_1),		FM(SEL_PWM0_2),		F_(0, 0))
++#define MOD_SEL0_22_21	   REV4(FM(SEL_PWM1_0),		FM(SEL_PWM1_1),		FM(SEL_PWM1_2),		F_(0, 0))
++#define MOD_SEL0_20_19	   REV4(FM(SEL_PWM2_0),		FM(SEL_PWM2_1),		FM(SEL_PWM2_2),		F_(0, 0))
++#define MOD_SEL0_18_17	   REV4(FM(SEL_PWM3_0),		FM(SEL_PWM3_1),		FM(SEL_PWM3_2),		F_(0, 0))
+ #define MOD_SEL0_15		FM(SEL_IRQ_0_0)		FM(SEL_IRQ_0_1)
+ #define MOD_SEL0_14		FM(SEL_IRQ_1_0)		FM(SEL_IRQ_1_1)
+ #define MOD_SEL0_13		FM(SEL_IRQ_2_0)		FM(SEL_IRQ_2_1)
 -- 
 2.19.1
