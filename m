@@ -1,77 +1,94 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
- suspend/resume
-Date: Wed, 27 Mar 2019 19:29:40 +0200
-Message-ID: <20190327172940.GR3622@lahna.fi.intel.com>
-References: <20171115101302.GA17200@lahna.fi.intel.com>
- <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
- <20171116124431.GS17200@lahna.fi.intel.com>
- <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
- <20171117064904.GZ17200@lahna.fi.intel.com>
- <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
- <20171121105205.GP22431@lahna.fi.intel.com>
- <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
- <20171121120422.GR22431@lahna.fi.intel.com>
- <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 129/262] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+Date: Wed, 27 Mar 2019 13:59:44 -0400
+Message-ID: <20190327180158.10245-129-sashal@kernel.org>
+References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
+In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Chris Chiu <chiu@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>, Andy Shevchenko <andriy.shevchenko@intel.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Jan Kotas <jank@cadence.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-+Andy
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-On Wed, Mar 27, 2019 at 04:22:04PM +0800, Daniel Drake wrote:
-> Hi Mika,
-> 
-> Digging up this old thread again...
-> 
-> On Tue, Nov 21, 2017 at 8:13 PM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > On Tue, Nov 21, 2017 at 07:54:26PM +0800, Chris Chiu wrote:
-> > > Yup, I checked the value of the corresponded pin. It shows following before
-> > > suspend
-> > > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
-> > >
-> > > Then after resume
-> > > pin 18 (GPIO_18) GPIO 0x40800102 0x00024075 [ACPI]
-> >
-> > OK, so ownership is changed to ACPI.
-> >
-> > > What else register do you suggest me to compare? The PADCFG2 is invalid
-> >
-> > It's fine APL does not have PADCFG2.
-> >
-> > Hmm, I don't understand how this can work in Windows either. The Windows
-> > people told me that they don't save and restore anything else than
-> > padcfg registers + ie. If the ownership is changed to ACPI it means you
-> > don't get interrupts anymore (only GPEs) and that applies to Windows as
-> > well.
-> 
-> In the mails after the one quoted above, we reported back to you that
-> the new BIOS from Asus solved the issue.
-> 
-> However, during the time that has followed, we have had numerous user
-> reports from Asus E403NA, X540NA, and X541NA laptops (basically the
-> same models that we originally discussed) where the touchpad stops
-> working after suspend/resume, even with the latest BIOS. We managed to
-> get an affected E403NA unit in-hands again, and confirmed that
-> HOSTSW_OWN was being lost like we had observed before.
-> 
-> Unfortunately as this was a customer laptop we had to return it
-> immediately, before we could investigate further. We don't have access
-> to any more units since they are old models now.
-> 
-> However I'm wondering if you have any other ideas or if you think
-> something like our workaround patch might be acceptable under these
-> circumstances:
-> https://github.com/endlessm/linux/commit/f391452299f62a3d0cbe5333be90f69e9895d8ff
+[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
 
-I wonder if it would be simpler to save it always and then upon resume
-compare them and if changed, log this in dmesg and restore the saved
-one.
+Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
+the GPIO regulator had inverted the polarity of the control GPIO. This
+problem manifested itself on systems with DT containing the following
+description (snippet from salvator-common.dtsi):
+
+	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+	gpios-states = <1>;
+	states = <3300000 1
+		  1800000 0>;
+
+Prior to the aforementioned commit, the gpio-regulator code used
+gpio_request_array() to claim the GPIO(s) specified in the "gpios"
+DT node, while the commit changed that to devm_gpiod_get_index().
+
+The legacy gpio_request_array() calls gpio_request_one() and then
+gpiod_request(), which parses the DT flags of the "gpios" node and
+populates the GPIO descriptor flags field accordingly.
+
+The new devm_gpiod_get_index() calls gpiod_get_index(), then
+of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
+and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
+("gpio: of: Add special quirk to parse regulator flags"),
+of_gpio_flags_quirks() contains a quirk for regulator-gpio
+which was never triggered by the legacy gpio_request_array()
+code path, but is triggered by devm_gpiod_get_index() code
+path.
+
+This quirk checks whether a GPIO is associated with a fixed
+or gpio-regulator and if so, checks two additional conditions.
+First, whether such GPIO is active-low, and if so, ignores the
+active-low flag. Second, whether the regulator DT node does
+have an "enable-active-high" property and if the property is
+NOT present, sets the GPIO flags as active-low.
+
+The second check triggers a problem, since it is applied to all
+GPIOs associated with a gpio-regulator, rather than only on the
+"enable" GPIOs, as the old code did. This changes the way the
+gpio-regulator interprets the DT description of the control
+GPIOs.
+
+The old code using gpio_request_array() explicitly parsed the
+"enable-active-high" DT property and only applied it to the
+GPIOs described in the "enable-gpios" DT node, and only if
+those were present.
+
+This patch fixes the quirk code by only applying the quirk
+to "enable-gpios", thus restoring the old behavior.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jan Kotas <jank@cadence.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpiolib-of.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6e1891217e2..30542a10014f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+ 	     of_device_is_compatible(np, "regulator-gpio"))) {
+-- 
+2.19.1
