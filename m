@@ -1,97 +1,90 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 008/123] gpio: gpio-omap: fix level interrupt idling
-Date: Wed, 27 Mar 2019 14:14:32 -0400
-Message-ID: <20190327181628.15899-8-sashal@kernel.org>
-References: <20190327181628.15899-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 175/192] pinctrl: meson: meson8b: add the eth_rxd2 and eth_rxd3 pins
+Date: Wed, 27 Mar 2019 14:10:07 -0400
+Message-ID: <20190327181025.13507-175-sashal@kernel.org>
+References: <20190327181025.13507-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327181628.15899-1-sashal@kernel.org>
+In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit d01849f7deba81f4959fd9e51bf20dbf46987d1c ]
+[ Upstream commit 6daae00243e622dd3feec7965bfe421ad6dd317e ]
 
-Tony notes that the GPIO module does not idle when level interrupts are
-in use, as the wakeup appears to get stuck.
+Gigabit Ethernet requires the Ethernet TXD0..3 and RXD0..3 data lines.
+Add the missing eth_rxd2 and eth_rxd3 definitions so we don't have to
+rely on the bootloader to set them up correctly.
 
-After extensive investigation, it appears that the wakeup will only be
-cleared if the interrupt status register is cleared while the interrupt
-is enabled. However, we are currently clearing it with the interrupt
-disabled for level-based interrupts.
+The vendor u-boot sources for Odroid-C1 use the following Ethernet
+pinmux configuration:
+  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_6, 0x3f4f);
+  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_7, 0xf00000);
+This translates to the following pin groups in the mainline kernel:
+- register 6 bit  0: eth_rxd1 (DIF_0_P)
+- register 6 bit  1: eth_rxd0 (DIF_0_N)
+- register 6 bit  2: eth_rx_dv (DIF_1_P)
+- register 6 bit  3: eth_rx_clk (DIF_1_N)
+- register 6 bit  6: eth_tx_en (DIF_3_P)
+- register 6 bit  8: eth_ref_clk (DIF_3_N)
+- register 6 bit  9: eth_mdc (DIF_4_P)
+- register 6 bit 10: eth_mdio_en (DIF_4_N)
+- register 6 bit 11: eth_tx_clk (GPIOH_9)
+- register 6 bit 12: eth_txd2 (GPIOH_8)
+- register 6 bit 13: eth_txd3 (GPIOH_7)
+- register 7 bit 20: eth_txd0_0 (GPIOH_6)
+- register 7 bit 21: eth_txd1_0 (GPIOH_5)
+- register 7 bit 22: eth_rxd3 (DIF_2_P)
+- register 7 bit 23: eth_rxd2 (DIF_2_N)
 
-It is acknowledged that this observed behaviour conflicts with a
-statement in the TRM:
+All functions except eth_rxd2 and eth_rxd3 are already supported by the
+pinctrl-meson8b driver.
 
-CAUTION
-  After servicing the interrupt, the status bit in the interrupt status
-  register (GPIOi.GPIO_IRQSTATUS_0 or GPIOi.GPIO_IRQSTATUS_1) must be
-  reset and the interrupt line released (by setting the corresponding
-  bit of the interrupt status register to 1) before enabling an
-  interrupt for the GPIO channel in the interrupt-enable register
-  (GPIOi.GPIO_IRQSTATUS_SET_0 or GPIOi.GPIO_IRQSTATUS_SET_1) to prevent
-  the occurrence of unexpected interrupts when enabling an interrupt
-  for the GPIO channel.
-
-However, this does not appear to be a practical problem.
-
-Further, as reported by Grygorii Strashko <grygorii.strashko@ti.com>,
-the TI Android kernel tree has an earlier similar patch as "GPIO: OMAP:
-Fix the sequence to clear the IRQ status" saying:
-
- if the status is cleared after disabling the IRQ then sWAKEUP will not
- be cleared and gates the module transition
-
-When we unmask the level interrupt after the interrupt has been handled,
-enable the interrupt and only then clear the interrupt. If the interrupt
-is still pending, the hardware will re-assert the interrupt status.
-
-Should the caution note in the TRM prove to be a problem, we could
-use a clear-enable-clear sequence instead.
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-[tony@atomide.com: updated comments based on an earlier TI patch]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
+Reviewed-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-omap.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 3233b72b6828..148e81eea35a 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -841,14 +841,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	if (trigger)
- 		omap_set_gpio_triggering(bank, offset, trigger);
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index ead4beb5f55f..036124fd363c 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -346,6 +346,8 @@ static const unsigned int eth_rx_dv_pins[]	= { DIF_1_P };
+ static const unsigned int eth_rx_clk_pins[]	= { DIF_1_N };
+ static const unsigned int eth_txd0_1_pins[]	= { DIF_2_P };
+ static const unsigned int eth_txd1_1_pins[]	= { DIF_2_N };
++static const unsigned int eth_rxd3_pins[]	= { DIF_2_P };
++static const unsigned int eth_rxd2_pins[]	= { DIF_2_N };
+ static const unsigned int eth_tx_en_pins[]	= { DIF_3_P };
+ static const unsigned int eth_ref_clk_pins[]	= { DIF_3_N };
+ static const unsigned int eth_mdc_pins[]	= { DIF_4_P };
+@@ -571,6 +573,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GROUP(eth_ref_clk,	6,	8),
+ 	GROUP(eth_mdc,		6,	9),
+ 	GROUP(eth_mdio_en,	6,	10),
++	GROUP(eth_rxd3,		7,	22),
++	GROUP(eth_rxd2,		7,	23),
+ };
  
--	/* For level-triggered GPIOs, the clearing must be done after
--	 * the HW source is cleared, thus after the handler has run */
--	if (bank->level_mask & BIT(offset)) {
--		omap_set_gpio_irqenable(bank, offset, 0);
-+	omap_set_gpio_irqenable(bank, offset, 1);
-+
-+	/*
-+	 * For level-triggered GPIOs, clearing must be done after the source
-+	 * is cleared, thus after the handler has run. OMAP4 needs this done
-+	 * after enabing the interrupt to clear the wakeup status.
-+	 */
-+	if (bank->level_mask & BIT(offset))
- 		omap_clear_gpio_irqstatus(bank, offset);
--	}
+ static struct meson_pmx_group meson8b_aobus_groups[] = {
+@@ -720,7 +724,7 @@ static const char * const ethernet_groups[] = {
+ 	"eth_tx_clk", "eth_tx_en", "eth_txd1_0", "eth_txd1_1",
+ 	"eth_txd0_0", "eth_txd0_1", "eth_rx_clk", "eth_rx_dv",
+ 	"eth_rxd1", "eth_rxd0", "eth_mdio_en", "eth_mdc", "eth_ref_clk",
+-	"eth_txd2", "eth_txd3"
++	"eth_txd2", "eth_txd3", "eth_rxd3", "eth_rxd2"
+ };
  
--	omap_set_gpio_irqenable(bank, offset, 1);
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
+ static const char * const i2c_a_groups[] = {
 -- 
 2.19.1
