@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 05/63] gpio: gpio-omap: fix level interrupt idling
-Date: Wed, 27 Mar 2019 14:22:25 -0400
-Message-ID: <20190327182323.18577-5-sashal@kernel.org>
-References: <20190327182323.18577-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 05/87] gpio: gpio-omap: fix level interrupt idling
+Date: Wed, 27 Mar 2019 14:19:18 -0400
+Message-ID: <20190327182040.17444-5-sashal@kernel.org>
+References: <20190327182040.17444-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327182323.18577-1-sashal@kernel.org>
+In-Reply-To: <20190327182040.17444-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Russell King <rmk+kernel@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
@@ -67,10 +67,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index f7fbb46d5d79..9943273ec981 100644
+index 6f9c9ac6ee70..75f30a0c418a 100644
 --- a/drivers/gpio/gpio-omap.c
 +++ b/drivers/gpio/gpio-omap.c
-@@ -872,14 +872,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+@@ -837,14 +837,16 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
  	if (trigger)
  		omap_set_gpio_triggering(bank, offset, trigger);
  
