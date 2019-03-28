@@ -1,35 +1,41 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4.1 armsoc/drivers/bus+gpio 2/5] dt-bindings: bus:
- Document moxtet bus binding
-Date: Thu, 28 Mar 2019 11:42:26 -0500
-Message-ID: <20190328164226.GA8579@bogus>
-References: <20190307125251.724-1-marek.behun@nic.cz>
- <20190307125251.724-3-marek.behun@nic.cz>
- <20190311225906.GA9056@bogus>
- <20190314150135.4362-1-marek.behun@nic.cz>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: mockup: fix debugfs read
+Date: Thu, 28 Mar 2019 17:46:59 +0100
+Message-ID: <CAMRc=Mfd=cj7TcMOeaSJaAG_kfs8tg2UMGUR6iTwNhT3+q3n6A@mail.gmail.com>
+References: <20190322173052.23763-1-brgl@bgdev.pl> <CACRpkdbw7zvYx1s742HmYj8E=J0=SygEgBHVDyQ5c84N70V3fA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190314150135.4362-1-marek.behun@nic.cz>
+In-Reply-To: <CACRpkdbw7zvYx1s742HmYj8E=J0=SygEgBHVDyQ5c84N70V3fA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 14 Mar 2019 16:01:35 +0100, =?UTF-8?q?Marek=20Beh=C3=BAn?= wrote:
-> This adds device tree binding documentation for the Moxtet bus, a bus
-> via which the different modules connected to the Turris Mox router can
-> be configured.
-> 
-> Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> ---
->  .../devicetree/bindings/bus/moxtet.txt        | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/moxtet.txt
-> 
+czw., 28 mar 2019 o 17:38 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> On Fri, Mar 22, 2019 at 6:30 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > The debugfs read callback must advance ppos or users using read() on
+> > the file descriptor will never get the EOL. This wasn't spotted before
+> > as I was using busybox cat for testing which uses sendfile() internally
+> > and only noticed it now when switched to cat from coreutils.
+> >
+> > Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Patch applied for fixes.
+> Sorry for slow application, I was in no-wifi-land for some days.
+>
+> Yours,
+> Linus Walleij
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Ugh, I was thinking about sending you a pull-request with this and a
+subsequent fix this evening. Plus other fixes I have in my tree.
+
+Bart
