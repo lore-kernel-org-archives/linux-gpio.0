@@ -1,44 +1,43 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
-Date: Thu, 28 Mar 2019 17:38:01 +0800
-Message-ID: <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
-References: <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
- <20171116124431.GS17200@lahna.fi.intel.com> <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
- <20171117064904.GZ17200@lahna.fi.intel.com> <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
- <20171121105205.GP22431@lahna.fi.intel.com> <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
- <20171121120422.GR22431@lahna.fi.intel.com> <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
- <20190327172940.GR3622@lahna.fi.intel.com> <20190328091729.GV9224@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpio: mockup: use simple_read_from_buffer() in debugfs read callback
+Date: Thu, 28 Mar 2019 12:00:43 +0100
+Message-ID: <20190328110043.13391-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190328091729.GV9224@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Chris Chiu <chiu@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 5:17 PM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
-> Hmm... Can you confirm that laptop you declared as a fixed case and the
-> mentioned here is the same one?
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-They are definitely not the same exact unit - originally we had a
-pre-production sample, and now we briefly diagnosed a real production
-unit that was sold to a customer. There could be subtle motherboard
-variations as you mention.
+Calling read() for a single byte read will return 2 currently. Use
+simple_read_from_buffer() which correctly handles all sizes.
 
-> If it's the case, I recommend to ping Asus again and make them check and fix.
+Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-mockup.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-We'll keep an eye open for any opportunities to go deeper here.
-However further investigation on both our side and theirs is blocked
-by not having any of the affected hardware (since the models are now
-so old), so I'm not very optimistic that we'll be able to make
-progress there.
-
-> Meanwhile, Mika's proposal sounds feasible and not so intrusive. We may
-> implement this later on.
-
-Chris will work on implementing this for your consideration.
-
-Thanks for the quick feedback!
-Daniel
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 74ba8b1d71d8..859585dce5c9 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -219,12 +219,7 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
+ 	val = gpio_mockup_get(gc, priv->offset);
+ 	cnt = snprintf(buf, sizeof(buf), "%d\n", val);
+ 
+-	rv = copy_to_user(usr_buf, buf, cnt);
+-	if (rv)
+-		return rv;
+-
+-	*ppos += cnt;
+-	return cnt;
++	return simple_read_from_buffer(usr_buf, size, ppos, buf, cnt);
+ }
+ 
+ static ssize_t gpio_mockup_debugfs_write(struct file *file,
+-- 
+2.21.0
