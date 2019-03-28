@@ -1,57 +1,75 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] gpio: mockup: fix debugfs read
-Date: Thu, 28 Mar 2019 18:01:55 +0100
-Message-ID: <CAMpxmJUdW4bnc0YFVdSkyUpQ4c0XkAt8Ju7Qzt4sHYtiwc1R4Q@mail.gmail.com>
-References: <20190322173052.23763-1-brgl@bgdev.pl> <CACRpkdbw7zvYx1s742HmYj8E=J0=SygEgBHVDyQ5c84N70V3fA@mail.gmail.com>
- <CAMRc=Mfd=cj7TcMOeaSJaAG_kfs8tg2UMGUR6iTwNhT3+q3n6A@mail.gmail.com> <CACRpkdZvc2iMZO+9ACFWiyy496huu5R0A=d6OOD8C71kAD1C5g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] gpio: Fix gpiochip_add_data_with_key() error path
+Date: Thu, 28 Mar 2019 18:03:53 +0100
+Message-ID: <CACRpkdZrpmmWzodWuvwAYMbH9ttzStyX0gFiu6evPsMyU72Myw@mail.gmail.com>
+References: <20190328131349.18838-1-geert+renesas@glider.be> <20190328131349.18838-3-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZvc2iMZO+9ACFWiyy496huu5R0A=d6OOD8C71kAD1C5g@mail.gmail.com>
+In-Reply-To: <20190328131349.18838-3-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-czw., 28 mar 2019 o 17:56 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
->
-> On Thu, Mar 28, 2019 at 5:47 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
-> > czw., 28 mar 2019 o 17:38 Linus Walleij <linus.walleij@linaro.org> napi=
-sa=C5=82(a):
-> > > On Fri, Mar 22, 2019 at 6:30 PM Bartosz Golaszewski <brgl@bgdev.pl> w=
-rote:
-> > >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > The debugfs read callback must advance ppos or users using read() o=
-n
-> > > > the file descriptor will never get the EOL. This wasn't spotted bef=
-ore
-> > > > as I was using busybox cat for testing which uses sendfile() intern=
-ally
-> > > > and only noticed it now when switched to cat from coreutils.
-> > > >
-> > > > Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Patch applied for fixes.
-> > > Sorry for slow application, I was in no-wifi-land for some days.
-> > >
-> > > Yours,
-> > > Linus Walleij
-> >
-> > Ugh, I was thinking about sending you a pull-request with this and a
-> > subsequent fix this evening. Plus other fixes I have in my tree.
->
-> Oh if it is easier for you do that, and I will drop this patch and just
-> merge your PR as it arrives.
->
-> Yours,
-> Linus Walleij
+On Thu, Mar 28, 2019 at 2:13 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Yes, let's do it.
+> The err_remove_chip block is too coarse, and may perform cleanup that
+> must not be done.  E.g. if of_gpiochip_add() fails, of_gpiochip_remove()
+> is still called, causing:
+>
+>     OF: ERROR: Bad of_node_put() on /soc/gpio@e6050000
+>     CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted 5.1.0-rc2-koelsch+ #407
+>     Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>     Workqueue: events deferred_probe_work_func
+>     [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+>     [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+>     [<c07c1224>] (dump_stack) from [<c07c5a80>] (kobject_put+0x94/0xbc)
+>     [<c07c5a80>] (kobject_put) from [<c0470420>] (gpiochip_add_data_with_key+0x8d8/0xa3c)
+>     [<c0470420>] (gpiochip_add_data_with_key) from [<c0473738>] (gpio_rcar_probe+0x1d4/0x314)
+>     [<c0473738>] (gpio_rcar_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
+>
+> and later, if a GPIO consumer tries to use a GPIO from a failed
+> controller:
+>
+>     WARNING: CPU: 0 PID: 1 at lib/refcount.c:156 kobject_get+0x38/0x4c
+>     refcount_t: increment on 0; use-after-free.
+>     Modules linked in:
+>     CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.1.0-rc2-koelsch+ #407
+>     Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>     [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+>     [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+>     [<c07c1224>] (dump_stack) from [<c0221580>] (__warn+0xd0/0xec)
+>     [<c0221580>] (__warn) from [<c02215e0>] (warn_slowpath_fmt+0x44/0x6c)
+>     [<c02215e0>] (warn_slowpath_fmt) from [<c07c58fc>] (kobject_get+0x38/0x4c)
+>     [<c07c58fc>] (kobject_get) from [<c068b3ec>] (of_node_get+0x14/0x1c)
+>     [<c068b3ec>] (of_node_get) from [<c0686f24>] (of_find_node_by_phandle+0xc0/0xf0)
+>     [<c0686f24>] (of_find_node_by_phandle) from [<c0686fbc>] (of_phandle_iterator_next+0x68/0x154)
+>     [<c0686fbc>] (of_phandle_iterator_next) from [<c0687fe4>] (__of_parse_phandle_with_args+0x40/0xd0)
+>     [<c0687fe4>] (__of_parse_phandle_with_args) from [<c0688204>] (of_parse_phandle_with_args_map+0x100/0x3ac)
+>     [<c0688204>] (of_parse_phandle_with_args_map) from [<c0471240>] (of_get_named_gpiod_flags+0x38/0x380)
+>     [<c0471240>] (of_get_named_gpiod_flags) from [<c046f864>] (gpiod_get_from_of_node+0x24/0xd8)
+>     [<c046f864>] (gpiod_get_from_of_node) from [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child+0xa0/0x144)
+>     [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child) from [<c05f425c>] (gpio_keys_probe+0x418/0x7bc)
+>     [<c05f425c>] (gpio_keys_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
+>
+> Fix this by splitting the cleanup block, and adding a missing call to
+> gpiochip_irqchip_remove().
+>
+> Fixes: 28355f81969962cf ("gpio: defer probe if pinctrl cannot be found")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I'm not so sure about the need for the call to
+> gpiochip_irqchip_remove(), as add/remove are not really symmetrical.
+> Any comments?
 
-Bart
+I need to think about this.
+
+Also Mukesh had some comments on naming.
+
+I will try to read through the code closer for v2 and
+figure out if it is what we want to do. But I think we need it.
+
+Yours,
+Linus Walleij
