@@ -1,62 +1,64 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
- suspend/resume
-Date: Thu, 28 Mar 2019 14:34:44 +0200
-Message-ID: <20190328123444.GX3622@lahna.fi.intel.com>
-References: <20171117064904.GZ17200@lahna.fi.intel.com>
- <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
- <20171121105205.GP22431@lahna.fi.intel.com>
- <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
- <20171121120422.GR22431@lahna.fi.intel.com>
- <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
- <20190327172940.GR3622@lahna.fi.intel.com>
- <20190328091729.GV9224@smile.fi.intel.com>
- <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
- <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Subject: Re: [PATCH] gpio: mockup: use simple_read_from_buffer() in debugfs
+ read callback
+Date: Thu, 28 Mar 2019 18:41:50 +0530
+Message-ID: <c3ecb2d9-55eb-fc74-a08a-bbd5c5018cb8@codeaurora.org>
+References: <20190328110043.13391-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
+In-Reply-To: <20190328110043.13391-1-brgl@bgdev.pl>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>, Andy Shevchenko <andriy.shevchenko@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 08:19:59PM +0800, Chris Chiu wrote:
-> On Thu, Mar 28, 2019 at 5:38 PM Daniel Drake <drake@endlessm.com> wrote:
-> >
-> > On Thu, Mar 28, 2019 at 5:17 PM Andy Shevchenko
-> > <andriy.shevchenko@intel.com> wrote:
-> > > Hmm... Can you confirm that laptop you declared as a fixed case and the
-> > > mentioned here is the same one?
-> >
-> > They are definitely not the same exact unit - originally we had a
-> > pre-production sample, and now we briefly diagnosed a real production
-> > unit that was sold to a customer. There could be subtle motherboard
-> > variations as you mention.
-> >
-> > > If it's the case, I recommend to ping Asus again and make them check and fix.
-> >
-> > We'll keep an eye open for any opportunities to go deeper here.
-> > However further investigation on both our side and theirs is blocked
-> > by not having any of the affected hardware (since the models are now
-> > so old), so I'm not very optimistic that we'll be able to make
-> > progress there.
-> >
-> > > Meanwhile, Mika's proposal sounds feasible and not so intrusive. We may
-> > > implement this later on.
-> >
-> > Chris will work on implementing this for your consideration.
-> >
-> > Thanks for the quick feedback!
-> > Daniel
-> 
-> What if I modify the patch as follows? It doesn't save HOSTSW_OWN register.
-> It just toggles the bit specifically for the IRQ GPIO pin after resume when DMI
-> matches.
 
-I don't really like having quirks like this if we can avoid it and in
-this case I think we can. Just always save HOSTSW_OWN and then restore
-it if there is a GPIO requested and the value differs (and log a warning
-or something like that).
+On 3/28/2019 4:30 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Calling read() for a single byte read will return 2 currently. Use
+> simple_read_from_buffer() which correctly handles all sizes.
+>
+> Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/gpio/gpio-mockup.c | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index 74ba8b1d71d8..859585dce5c9 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -219,12 +219,7 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
+>   	val = gpio_mockup_get(gc, priv->offset);
+>   	cnt = snprintf(buf, sizeof(buf), "%d\n", val);
+
+
+why \n is inserted in the buf..
+
+rv variable is unused now.
+
+>   
+> -	rv = copy_to_user(usr_buf, buf, cnt);
+> -	if (rv)
+> -		return rv;
+> -
+> -	*ppos += cnt;
+> -	return cnt;
+> +	return simple_read_from_buffer(usr_buf, size, ppos, buf, cnt);
+
+
+
+Looks good to me.
+Remove the unused variable.
+
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+-Mukesh
+
+>   }
+>   
+>   static ssize_t gpio_mockup_debugfs_write(struct file *file,
