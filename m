@@ -1,38 +1,75 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/14] dt-bindings: arm: sunxi: add
- compatible string for V3/S3/S3L SoCs
-Date: Thu, 28 Mar 2019 08:29:39 -0500
-Message-ID: <20190328132939.GA13841@bogus>
-References: <20190312152256.35574-1-icenowy@aosc.io>
- <20190312152256.35574-11-icenowy@aosc.io>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: mockup: use simple_read_from_buffer() in debugfs
+ read callback
+Date: Thu, 28 Mar 2019 14:42:25 +0100
+Message-ID: <CAMRc=Md8EOBf-TjxELGx5PGnuvGF9kR8oe_qHxxQgaN_vKv+Vg@mail.gmail.com>
+References: <20190328110043.13391-1-brgl@bgdev.pl> <c3ecb2d9-55eb-fc74-a08a-bbd5c5018cb8@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDJIP47K7MERBRMY6PSAKGQEA3YP2DI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20190312152256.35574-11-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jagan Teki <jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c3ecb2d9-55eb-fc74-a08a-bbd5c5018cb8@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 12 Mar 2019 23:22:52 +0800, Icenowy Zheng wrote:
-> Allwinner V3/V3s/S3L and SoChip S3 SoCs share the same die, but with
-> different package (V3 is BGA, without co-packaged DRAM, V3s is QFP,
-> with co-packaged DDR2, S3 is BGA, with co-packaged DDR3, S3L is BGA
-> pin-compatible with S3, but with co-packaged DDR2).
-> 
-> Add compatible strings for Allwinner V3/S3L and SoChip S3 SoCs.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/arm/sunxi.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+czw., 28 mar 2019 o 14:11 Mukesh Ojha <mojha@codeaurora.org> napisa=C5=82(a=
+):
+>
+>
+> On 3/28/2019 4:30 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Calling read() for a single byte read will return 2 currently. Use
+> > simple_read_from_buffer() which correctly handles all sizes.
+> >
+> > Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >   drivers/gpio/gpio-mockup.c | 7 +------
+> >   1 file changed, 1 insertion(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> > index 74ba8b1d71d8..859585dce5c9 100644
+> > --- a/drivers/gpio/gpio-mockup.c
+> > +++ b/drivers/gpio/gpio-mockup.c
+> > @@ -219,12 +219,7 @@ static ssize_t gpio_mockup_debugfs_read(struct fil=
+e *file,
+> >       val =3D gpio_mockup_get(gc, priv->offset);
+> >       cnt =3D snprintf(buf, sizeof(buf), "%d\n", val);
+>
+>
+> why \n is inserted in the buf..
+>
 
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Because this is how all the attributes work - you read the value + '\n'.
+
+> rv variable is unused now.
+>
+> >
+> > -     rv =3D copy_to_user(usr_buf, buf, cnt);
+> > -     if (rv)
+> > -             return rv;
+> > -
+> > -     *ppos +=3D cnt;
+> > -     return cnt;
+> > +     return simple_read_from_buffer(usr_buf, size, ppos, buf, cnt);
+>
+>
+>
+> Looks good to me.
+> Remove the unused variable.
+>
+
+Thanks, removed that and a stray newline.
+
+Bart
+
+> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+>
+> -Mukesh
+>
+> >   }
+> >
+> >   static ssize_t gpio_mockup_debugfs_write(struct file *file,
