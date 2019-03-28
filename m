@@ -1,49 +1,36 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] gpio: of: Fix of_gpiochip_add() error path
-Date: Thu, 28 Mar 2019 14:13:47 +0100
-Message-ID: <20190328131349.18838-2-geert+renesas@glider.be>
-References: <20190328131349.18838-1-geert+renesas@glider.be>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190328131349.18838-1-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 01/14] dt-bindings: pinctrl: add missing
+ compatible string for  V3s
+Date: Thu, 28 Mar 2019 08:18:10 -0500
+Message-ID: <20190328131810.GA29469@bogus>
+References: <20190312152256.35574-1-icenowy@aosc.io>
+ <20190312152256.35574-2-icenowy@aosc.io>
+Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDJIP47K7MERBFMT6PSAKGQEF5Y26NY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20190312152256.35574-2-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jagan Teki <jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-If the call to of_gpiochip_scan_gpios() in of_gpiochip_add() fails, no
-error handling is performed.  This lead to the need of callers to call
-of_gpiochip_remove() on failure, which causes "BAD of_node_put() on ..."
-if the failure happened before the call to of_node_get().
+On Tue, 12 Mar 2019 23:22:43 +0800, Icenowy Zheng wrote:
+> The pinctrl driver of V3s is already available and used in the kernel,
+> but the compatible string of it is forgotten to be added.
+> 
+> Add the missing compatible string.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> ---
+>  .../devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt      | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Fix this by adding proper error handling.
-
-Note that calling gpiochip_remove_pin_ranges() multiple times causes no
-harm: subsequent calls are a no-op.
-
-Fixes: dfbd379ba9b7431e ("gpio: of: Return error if gpio hog configuration failed")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpiolib-of.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 8b9c3ab70f6eade4..257be7bac032a855 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -717,7 +717,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 
- 	of_node_get(chip->of_node);
- 
--	return of_gpiochip_scan_gpios(chip);
-+	status = of_gpiochip_scan_gpios(chip);
-+	if (status) {
-+		of_node_put(chip->of_node);
-+		gpiochip_remove_pin_ranges(chip);
-+	}
-+
-+	return status;
- }
- 
- void of_gpiochip_remove(struct gpio_chip *chip)
--- 
-2.17.1
+Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
