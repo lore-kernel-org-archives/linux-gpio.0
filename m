@@ -1,64 +1,50 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH] gpio: mockup: use simple_read_from_buffer() in debugfs
- read callback
-Date: Thu, 28 Mar 2019 18:41:50 +0530
-Message-ID: <c3ecb2d9-55eb-fc74-a08a-bbd5c5018cb8@codeaurora.org>
-References: <20190328110043.13391-1-brgl@bgdev.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] gpio: Failure path fixes
+Date: Thu, 28 Mar 2019 14:13:46 +0100
+Message-ID: <20190328131349.18838-1-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190328110043.13391-1-brgl@bgdev.pl>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
+	Hi Linus, Bartosz,
 
-On 3/28/2019 4:30 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Calling read() for a single byte read will return 2 currently. Use
-> simple_read_from_buffer() which correctly handles all sizes.
->
-> Fixes: 2a9e27408e12 ("gpio: mockup: rework debugfs interface")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/gpio/gpio-mockup.c | 7 +------
->   1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index 74ba8b1d71d8..859585dce5c9 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -219,12 +219,7 @@ static ssize_t gpio_mockup_debugfs_read(struct file *file,
->   	val = gpio_mockup_get(gc, priv->offset);
->   	cnt = snprintf(buf, sizeof(buf), "%d\n", val);
+After making a silly mistake in a pin control driver, pinctrl driver
+initialization failed, causing an avalanche of GPIO driver failures, and
+I was greeted by the following scary messages:
 
+    OF: ERROR: Bad of_node_put() on /soc/gpio@e6050000
+    ...
+    WARNING: CPU: 0 PID: 1 at lib/refcount.c:156 kobject_get+0x38/0x4c
+    ...
+    WARNING: CPU: 0 PID: 1 at lib/refcount.c:190 refcount_sub_and_test_checked+0x3c/0xa8
 
-why \n is inserted in the buf..
+The first two patches fix bugs in related error paths, after which the
+messages are gone.
+The third patch is a drive-by fix for function comment.
 
-rv variable is unused now.
+Thanks for your comments!
 
->   
-> -	rv = copy_to_user(usr_buf, buf, cnt);
-> -	if (rv)
-> -		return rv;
-> -
-> -	*ppos += cnt;
-> -	return cnt;
-> +	return simple_read_from_buffer(usr_buf, size, ppos, buf, cnt);
+Geert Uytterhoeven (3):
+  gpio: of: Fix of_gpiochip_add() error path
+  gpio: Fix gpiochip_add_data_with_key() error path
+  gpio: Remove obsolete comment about gpiochip_free_hogs() usage
 
+ drivers/gpio/gpiolib-of.c |  8 +++++++-
+ drivers/gpio/gpiolib.c    | 14 ++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
+-- 
+2.17.1
 
-Looks good to me.
-Remove the unused variable.
+Gr{oetje,eeting}s,
 
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+						Geert
 
--Mukesh
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->   }
->   
->   static ssize_t gpio_mockup_debugfs_write(struct file *file,
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
