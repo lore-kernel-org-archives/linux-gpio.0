@@ -1,50 +1,28 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH 3/3] gpio: Remove obsolete comment about
- gpiochip_free_hogs() usage
-Date: Thu, 28 Mar 2019 20:31:48 +0530
-Message-ID: <ff6d95d6-9022-4cab-bc53-bb9ffd14ed68@codeaurora.org>
-References: <20190328131349.18838-1-geert+renesas@glider.be>
- <20190328131349.18838-4-geert+renesas@glider.be>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
+Date: Thu, 28 Mar 2019 10:20:00 -0500
+Message-ID: <20190328152000.GA24629@bogus>
+References: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190328131349.18838-4-geert+renesas@glider.be>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Christina Quast <cquast@hanoverdisplays.com>
 List-Id: linux-gpio@vger.kernel.org
 
-
-On 3/28/2019 6:43 PM, Geert Uytterhoeven wrote:
-> gpiochip_free_hogs() was always called from gpiochip_remove(), not
-> of_gpiochip_remove().  It is now also called from the failure patch in
-> gpiochip_add_data_with_key().
->
-> Fixes: f625d4601759f1cf ("gpio: add GPIO hogging mechanism")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-
-Looks good to be removed.
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
--Mukesh
-
+On Wed, 13 Mar 2019 15:20:40 +0100, Christina Quast wrote:
+> In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from
+> the documentation.
+> 
+> Changes since v2:
+> * Changed patch title to 'dt-bindings: pinctrl: imx7d:'
+> 
+> Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
 > ---
->   drivers/gpio/gpiolib.c | 2 --
->   1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index ed4da07effe0ac40..ec326bd84b1f1c50 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4449,8 +4449,6 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
->   /**
->    * gpiochip_free_hogs - Scan gpio-controller chip and release GPIO hog
->    * @chip:	gpio chip to act on
-> - *
-> - * This is only used by of_gpiochip_remove to free hogged gpios
->    */
->   static void gpiochip_free_hogs(struct gpio_chip *chip)
->   {
+>  .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
