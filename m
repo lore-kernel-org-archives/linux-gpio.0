@@ -1,136 +1,75 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v14 11/11] thermal: intel: intel_soc_dts_iosf: Utilize for_each_set_clump8 macro
-Date: Fri, 29 Mar 2019 12:07:26 +0900
-Message-ID: <671029ab8c9f3a630e77b454b25d6697c8375f24.1553828158.git.vilhelm.gray@gmail.com>
-References: <cover.1553828158.git.vilhelm.gray@gmail.com>
+From: Chris Chiu <chiu@endlessm.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
+Date: Fri, 29 Mar 2019 16:38:20 +0800
+Message-ID: <CAB4CAwcQTH5BiDDbzfFXTDDuYQ_fuDd_1tKkecf6vwygGQmn5w@mail.gmail.com>
+References: <20171117064904.GZ17200@lahna.fi.intel.com> <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
+ <20171121105205.GP22431@lahna.fi.intel.com> <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
+ <20171121120422.GR22431@lahna.fi.intel.com> <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
+ <20190327172940.GR3622@lahna.fi.intel.com> <20190328091729.GV9224@smile.fi.intel.com>
+ <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
+ <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com> <20190328123444.GX3622@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1553828158.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20190328123444.GX3622@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Daniel Drake <drake@endlessm.com>, Andy Shevchenko <andriy.shevchenko@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Utilize for_each_set_clump8 macro, and the bitmap_set_value8 and
-bitmap_get_value8 functions, where appropriate. In addition, remove the
-now unnecessary temp_mask and temp_shift members of the
-intel_soc_dts_sensor_entry structure.
+On Thu, Mar 28, 2019 at 8:34 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Thu, Mar 28, 2019 at 08:19:59PM +0800, Chris Chiu wrote:
+> > On Thu, Mar 28, 2019 at 5:38 PM Daniel Drake <drake@endlessm.com> wrote:
+> > >
+> > > On Thu, Mar 28, 2019 at 5:17 PM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+> > > > Hmm... Can you confirm that laptop you declared as a fixed case and the
+> > > > mentioned here is the same one?
+> > >
+> > > They are definitely not the same exact unit - originally we had a
+> > > pre-production sample, and now we briefly diagnosed a real production
+> > > unit that was sold to a customer. There could be subtle motherboard
+> > > variations as you mention.
+> > >
+> > > > If it's the case, I recommend to ping Asus again and make them check and fix.
+> > >
+> > > We'll keep an eye open for any opportunities to go deeper here.
+> > > However further investigation on both our side and theirs is blocked
+> > > by not having any of the affected hardware (since the models are now
+> > > so old), so I'm not very optimistic that we'll be able to make
+> > > progress there.
+> > >
+> > > > Meanwhile, Mika's proposal sounds feasible and not so intrusive. We may
+> > > > implement this later on.
+> > >
+> > > Chris will work on implementing this for your consideration.
+> > >
+> > > Thanks for the quick feedback!
+> > > Daniel
+> >
+> > What if I modify the patch as follows? It doesn't save HOSTSW_OWN register.
+> > It just toggles the bit specifically for the IRQ GPIO pin after resume when DMI
+> > matches.
+>
+> I don't really like having quirks like this if we can avoid it and in
+> this case I think we can. Just always save HOSTSW_OWN and then restore
+> it if there is a GPIO requested and the value differs (and log a warning
+> or something like that).
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/thermal/intel/intel_soc_dts_iosf.c | 29 +++++++++++++---------
- drivers/thermal/intel/intel_soc_dts_iosf.h |  2 --
- 2 files changed, 17 insertions(+), 14 deletions(-)
+You mean save the content of hostsw_own register on padgroup based ex.
+    communities[i].hostown[gpp] = readl(base + gpp * 4);
 
-diff --git a/drivers/thermal/intel/intel_soc_dts_iosf.c b/drivers/thermal/intel/intel_soc_dts_iosf.c
-index e0813dfaa278..2aa16b5262e9 100644
---- a/drivers/thermal/intel/intel_soc_dts_iosf.c
-+++ b/drivers/thermal/intel/intel_soc_dts_iosf.c
-@@ -15,6 +15,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/bitops.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/interrupt.h>
-@@ -111,6 +112,7 @@ static int update_trip_temp(struct intel_soc_dts_sensor_entry *dts,
- {
- 	int status;
- 	u32 temp_out;
-+	unsigned long update_ptps;
- 	u32 out;
- 	u32 store_ptps;
- 	u32 store_ptmc;
-@@ -129,8 +131,9 @@ static int update_trip_temp(struct intel_soc_dts_sensor_entry *dts,
- 	if (status)
- 		return status;
- 
--	out = (store_ptps & ~(0xFF << (thres_index * 8)));
--	out |= (temp_out & 0xFF) << (thres_index * 8);
-+	update_ptps = store_ptps;
-+	bitmap_set_value8(&update_ptps, temp_out & 0xFF, thres_index * 8);
-+	out = update_ptps;
- 	status = iosf_mbi_write(BT_MBI_UNIT_PMC, MBI_REG_WRITE,
- 				SOC_DTS_OFFSET_PTPS, out);
- 	if (status)
-@@ -232,6 +235,7 @@ static int sys_get_curr_temp(struct thermal_zone_device *tzd,
- 	u32 out;
- 	struct intel_soc_dts_sensor_entry *dts;
- 	struct intel_soc_dts_sensors *sensors;
-+	unsigned long temp_raw;
- 
- 	dts = tzd->devdata;
- 	sensors = dts->sensors;
-@@ -240,7 +244,8 @@ static int sys_get_curr_temp(struct thermal_zone_device *tzd,
- 	if (status)
- 		return status;
- 
--	out = (out & dts->temp_mask) >> dts->temp_shift;
-+	temp_raw = out;
-+	out = bitmap_get_value8(&temp_raw, dts->id * 8);
- 	out -= SOC_DTS_TJMAX_ENCODING;
- 	*temp = sensors->tj_max - out * 1000;
- 
-@@ -290,10 +295,13 @@ static int add_dts_thermal_zone(int id, struct intel_soc_dts_sensor_entry *dts,
- {
- 	char name[10];
- 	int trip_count = 0;
-+	int writable_trip_count = 0;
- 	int trip_mask = 0;
- 	u32 store_ptps;
- 	int ret;
--	int i;
-+	unsigned long i;
-+	unsigned long trip;
-+	unsigned long ptps;
- 
- 	/* Store status to restor on exit */
- 	ret = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ,
-@@ -302,11 +310,10 @@ static int add_dts_thermal_zone(int id, struct intel_soc_dts_sensor_entry *dts,
- 		goto err_ret;
- 
- 	dts->id = id;
--	dts->temp_mask = 0x00FF << (id * 8);
--	dts->temp_shift = id * 8;
- 	if (notification_support) {
- 		trip_count = min(SOC_MAX_DTS_TRIPS, trip_cnt);
--		trip_mask = BIT(trip_count - read_only_trip_cnt) - 1;
-+		writable_trip_count = trip_count - read_only_trip_cnt;
-+		trip_mask = GENMASK(writable_trip_count - 1, 0);
- 	}
- 
- 	/* Check if the writable trip we provide is not used by BIOS */
-@@ -315,11 +322,9 @@ static int add_dts_thermal_zone(int id, struct intel_soc_dts_sensor_entry *dts,
- 	if (ret)
- 		trip_mask = 0;
- 	else {
--		for (i = 0; i < trip_count; ++i) {
--			if (trip_mask & BIT(i))
--				if (store_ptps & (0xff << (i * 8)))
--					trip_mask &= ~BIT(i);
--		}
-+		ptps = store_ptps;
-+		for_each_set_clump8(i, trip, &ptps, writable_trip_count * 8)
-+			trip_mask &= ~BIT(i / 8);
- 	}
- 	dts->trip_mask = trip_mask;
- 	dts->trip_count = trip_count;
-diff --git a/drivers/thermal/intel/intel_soc_dts_iosf.h b/drivers/thermal/intel/intel_soc_dts_iosf.h
-index 625e37bf93dc..d0362d7acdef 100644
---- a/drivers/thermal/intel/intel_soc_dts_iosf.h
-+++ b/drivers/thermal/intel/intel_soc_dts_iosf.h
-@@ -33,8 +33,6 @@ struct intel_soc_dts_sensors;
- 
- struct intel_soc_dts_sensor_entry {
- 	int id;
--	u32 temp_mask;
--	u32 temp_shift;
- 	u32 store_status;
- 	u32 trip_mask;
- 	u32 trip_count;
--- 
-2.21.0
+And then check the hostown bit for the GPIO requested pin in
+intel_pinctrl_resume(),
+differs the hostsw_own bit on pin base (like padcfg), then restore the
+hostsw_own
+value of the padgroug which the GPIO pin is belonging to?
+
+I think what you mean should be a much more straightforward solution
+for this. Could
+you implement this in your way and we can try to help verification. Thanks.
+
+
+Chris
