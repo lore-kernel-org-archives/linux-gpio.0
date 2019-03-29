@@ -1,66 +1,115 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH] gpio: of: Optimize quirk checks
-Date: Fri, 29 Mar 2019 15:32:20 +0530
-Message-ID: <2aa29620-13c9-e618-93e9-dedc464cfa74@codeaurora.org>
-References: <20190329084229.17018-1-geert+renesas@glider.be>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v14 00/11] Introduce the for_each_set_clump8 macro
+Date: Fri, 29 Mar 2019 13:38:19 +0200
+Message-ID: <20190329113819.GR9224@smile.fi.intel.com>
+References: <cover.1553828158.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190329084229.17018-1-geert+renesas@glider.be>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <cover.1553828158.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Mar 29, 2019 at 12:03:30PM +0900, William Breathitt Gray wrote:
+> Changes in v14:
+>   - Redefine bitmap_get_value8, bitmap_set_value8, and find_next_clump8
+>     as static inline functions
+>   - Rename 'idx' variable to 'index' in the bitmap_get_value8 and
+>     bitmap_set_value8 functions
+>   - Remove superfluous parens in gen_74x164_set_multiple
+> 
 
-On 3/29/2019 2:12 PM, Geert Uytterhoeven wrote:
-> Simple string comparisons are cheaper than DT lookups, as the latter
-> involve taking a spinlock and traversing properties.
-> Hence optimize quirk checks by postponing DT lookups after string
-> comparisons.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you!
 
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Looks good to me.
+> While adding GPIO get_multiple/set_multiple callback support for various
+> drivers, I noticed a pattern of looping manifesting that would be useful
+> standardized as a macro.
+> 
+> This patchset introduces the for_each_set_clump8 macro and utilizes it
+> in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+> for-loop syntax that iterates over a memory region entire groups of set
+> bits at a time.
+> 
+> For example, suppose you would like to iterate over a 32-bit integer 8
+> bits at a time, skipping over 8-bit groups with no set bit, where
+> XXXXXXXX represents the current 8-bit group:
+> 
+>     Example:        10111110 00000000 11111111 00110011
+>     First loop:     10111110 00000000 11111111 XXXXXXXX
+>     Second loop:    10111110 00000000 XXXXXXXX 00110011
+>     Third loop:     XXXXXXXX 00000000 11111111 00110011
+> 
+> Each iteration of the loop returns the next 8-bit group that has at
+> least one set bit.
+> 
+> The for_each_set_clump8 macro has four parameters:
+> 
+>     * start: set to the bit offset of the current clump
+>     * clump: set to the current clump value
+>     * bits: bitmap to search within
+>     * size: bitmap size in number of bits
+> 
+> In this version of the patchset, the for_each_set_clump macro has been
+> reimplemented and simplified based on the suggestions provided by Rasmus
+> Villemoes and Andy Shevchenko in the version 4 submission.
+> 
+> In particular, the function of the for_each_set_clump macro has been
+> restricted to handle only 8-bit clumps; the drivers that use the
+> for_each_set_clump macro only handle 8-bit ports so a generic
+> for_each_set_clump implementation is not necessary. Thus, a solution for
+> large clumps (i.e. those larger than the width of a bitmap word) can be
+> postponed until a driver appears that actually requires such a generic
+> for_each_set_clump implementation.
+> 
+> For what it's worth, a semi-generic for_each_set_clump (i.e. for clumps
+> smaller than the width of a bitmap word) can be implemented by simply
+> replacing the hardcoded '8' and '0xFF' instances with respective
+> variables. I have not yet had a need for such an implementation, and
+> since it falls short of a true generic for_each_set_clump function, I
+> have decided to forgo such an implementation for now.
+> 
+> In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+> introduced to get and set 8-bit values respectively. Their use is based
+> on the behavior suggested in the patchset version 4 review.
+> 
+> William Breathitt Gray (11):
+>   bitops: Introduce the for_each_set_clump8 macro
+>   lib/test_bitmap.c: Add for_each_set_clump8 test cases
+>   gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+>   gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+>   gpio: gpio-mm: Utilize for_each_set_clump8 macro
+>   gpio: ws16c48: Utilize for_each_set_clump8 macro
+>   gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+>   gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
+>   gpio: uniphier: Utilize for_each_set_clump8 macro
+>   gpio: 74x164: Utilize the for_each_set_clump8 macro
+>   thermal: intel: intel_soc_dts_iosf: Utilize for_each_set_clump8 macro
+> 
+>  drivers/gpio/gpio-104-dio-48e.c            |  73 ++++----------
+>  drivers/gpio/gpio-104-idi-48.c             |  36 ++-----
+>  drivers/gpio/gpio-74x164.c                 |  19 ++--
+>  drivers/gpio/gpio-gpio-mm.c                |  73 ++++----------
+>  drivers/gpio/gpio-pci-idio-16.c            |  75 +++++---------
+>  drivers/gpio/gpio-pcie-idio-24.c           | 109 ++++++++-------------
+>  drivers/gpio/gpio-uniphier.c               |  16 ++-
+>  drivers/gpio/gpio-ws16c48.c                |  73 ++++----------
+>  drivers/thermal/intel/intel_soc_dts_iosf.c |  29 +++---
+>  drivers/thermal/intel/intel_soc_dts_iosf.h |   2 -
+>  include/asm-generic/bitops/find.h          |  61 ++++++++++++
+>  include/linux/bitops.h                     |   5 +
+>  lib/test_bitmap.c                          |  65 ++++++++++++
+>  13 files changed, 299 insertions(+), 337 deletions(-)
+> 
+> -- 
+> 2.21.0
+> 
 
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-
-Cheers,
--Mukesh
-
-> ---
->   drivers/gpio/gpiolib-of.c | 11 +++++------
->   1 file changed, 5 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 6a3ec575a404ed9f..3a6bb53d89dfed32 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -86,9 +86,9 @@ static void of_gpio_flags_quirks(struct device_node *np,
->   	if (IS_ENABLED(CONFIG_REGULATOR) &&
->   	    (of_device_is_compatible(np, "regulator-fixed") ||
->   	     of_device_is_compatible(np, "reg-fixed-voltage") ||
-> -	     (of_device_is_compatible(np, "regulator-gpio") &&
-> -	      !(strcmp(propname, "enable-gpio") &&
-> -	        strcmp(propname, "enable-gpios"))))) {
-> +	     (!(strcmp(propname, "enable-gpio") &&
-> +		strcmp(propname, "enable-gpios")) &&
-> +	      of_device_is_compatible(np, "regulator-gpio")))) {
->   		/*
->   		 * The regulator GPIO handles are specified such that the
->   		 * presence or absence of "enable-active-high" solely controls
-> @@ -119,9 +119,8 @@ static void of_gpio_flags_quirks(struct device_node *np,
->   	 * property named "cs-gpios" we need to inspect the child node
->   	 * to determine if the flags should have inverted semantics.
->   	 */
-> -	if (IS_ENABLED(CONFIG_SPI_MASTER) &&
-> -	    of_property_read_bool(np, "cs-gpios") &&
-> -	    !strcmp(propname, "cs-gpios")) {
-> +	if (IS_ENABLED(CONFIG_SPI_MASTER) && !strcmp(propname, "cs-gpios") &&
-> +	    of_property_read_bool(np, "cs-gpios")) {
->   		struct device_node *child;
->   		u32 cs;
->   		int ret;
+-- 
+With Best Regards,
+Andy Shevchenko
