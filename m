@@ -1,58 +1,66 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
-Date: Fri, 29 Mar 2019 09:28:01 +0000
-Message-ID: <AM0PR04MB4211EBAB9D3DB1772FB51673805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190313142040.26694-1-cquast@hanoverdisplays.com>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Subject: Re: [PATCH] gpio: of: Optimize quirk checks
+Date: Fri, 29 Mar 2019 15:32:20 +0530
+Message-ID: <2aa29620-13c9-e618-93e9-dedc464cfa74@codeaurora.org>
+References: <20190329084229.17018-1-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313142040.26694-1-cquast@hanoverdisplays.com>
+In-Reply-To: <20190329084229.17018-1-geert+renesas@glider.be>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christina Quast <cquast@hanoverdisplays.com>
-Cc: "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-> From: Christina Quast [mailto:cquast@hanoverdisplays.com]
-> Sent: Wednesday, March 13, 2019 10:21 PM
->=20
-> In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from the
-> documentation.
->=20
-> Changes since v2:
-> * Changed patch title to 'dt-bindings: pinctrl: imx7d:'
->=20
-> Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+On 3/29/2019 2:12 PM, Geert Uytterhoeven wrote:
+> Simple string comparisons are cheaper than DT lookups, as the latter
+> involve taking a spinlock and traversing properties.
+> Hence optimize quirk checks by postponing DT lookups after string
+> comparisons.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Regards
-Dong Aisheng
+
+Looks good to me.
+
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+Cheers,
+-Mukesh
 
 > ---
->  .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.=
-txt
-> b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> index 6666277c3acb..8ac1d0851a0f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> @@ -48,9 +48,9 @@ PAD_CTL_HYS                     (1 << 3)
->  PAD_CTL_SRE_SLOW                (1 << 2)
->  PAD_CTL_SRE_FAST                (0 << 2)
->  PAD_CTL_DSE_X1                  (0 << 0)
-> -PAD_CTL_DSE_X2                  (1 << 0)
-> -PAD_CTL_DSE_X3                  (2 << 0)
-> -PAD_CTL_DSE_X4                  (3 << 0)
-> +PAD_CTL_DSE_X4                  (1 << 0)
-> +PAD_CTL_DSE_X2                  (2 << 0)
-> +PAD_CTL_DSE_X6                  (3 << 0)
->=20
->  Examples:
->  While iomuxc-lpsr is intended to be used by dedicated peripherals to tak=
-e
-> --
-> 2.20.1
+>   drivers/gpio/gpiolib-of.c | 11 +++++------
+>   1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 6a3ec575a404ed9f..3a6bb53d89dfed32 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -86,9 +86,9 @@ static void of_gpio_flags_quirks(struct device_node *np,
+>   	if (IS_ENABLED(CONFIG_REGULATOR) &&
+>   	    (of_device_is_compatible(np, "regulator-fixed") ||
+>   	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+> -	     (of_device_is_compatible(np, "regulator-gpio") &&
+> -	      !(strcmp(propname, "enable-gpio") &&
+> -	        strcmp(propname, "enable-gpios"))))) {
+> +	     (!(strcmp(propname, "enable-gpio") &&
+> +		strcmp(propname, "enable-gpios")) &&
+> +	      of_device_is_compatible(np, "regulator-gpio")))) {
+>   		/*
+>   		 * The regulator GPIO handles are specified such that the
+>   		 * presence or absence of "enable-active-high" solely controls
+> @@ -119,9 +119,8 @@ static void of_gpio_flags_quirks(struct device_node *np,
+>   	 * property named "cs-gpios" we need to inspect the child node
+>   	 * to determine if the flags should have inverted semantics.
+>   	 */
+> -	if (IS_ENABLED(CONFIG_SPI_MASTER) &&
+> -	    of_property_read_bool(np, "cs-gpios") &&
+> -	    !strcmp(propname, "cs-gpios")) {
+> +	if (IS_ENABLED(CONFIG_SPI_MASTER) && !strcmp(propname, "cs-gpios") &&
+> +	    of_property_read_bool(np, "cs-gpios")) {
+>   		struct device_node *child;
+>   		u32 cs;
+>   		int ret;
