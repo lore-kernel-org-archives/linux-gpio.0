@@ -1,72 +1,58 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH v4 0/9] Introduce STMFX I2C Multi-Function eXpander
-Date: Fri, 29 Mar 2019 08:48:59 +0000
-Message-ID: <b3cdddb0-8177-600c-7108-9a16e9067190@st.com>
-References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Subject: RE: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
+Date: Fri, 29 Mar 2019 09:28:01 +0000
+Message-ID: <AM0PR04MB4211EBAB9D3DB1772FB51673805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Content-Language: en-US
-Content-ID: <3D8CEF54348AF443B719CFC0712D73C2@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>
+To: Christina Quast <cquast@hanoverdisplays.com>
+Cc: "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGksDQoNCkEgZ2VudGxlIHBpbmcgb24gdGhpcyBzZXJpZXMgKG1mZCArIHBpbmN0cmwgcGF0Y2hl
-cywgRFQgcGF0Y2hlcyB3aWxsIGJlIA0KdGFrZW4gaW4gU1RNMzIgc29jIHRyZWUpLg0KDQpSZWdh
-cmRzLA0KQW1lbGllDQoNCk9uIDIvMjcvMTkgMTA6MzQgQU0sIEFtZWxpZSBEZWxhdW5heSB3cm90
-ZToNCj4gVGhpcyBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciBTVE1pY3JvZWxlY3Ryb25pY3MgTXVs
-dGktRnVuY3Rpb24gZVhwYW5kZXINCj4gKFNUTUZYKSwgdXNlZCBvbiBzb21lIFNUTTMyIGRpc2Nv
-dmVyeSBhbmQgZXZhbHVhdGlvbiBib2FyZHMuDQo+IA0KPiBTVE1GWCBpcyBhbiBTVE0zMkwxNTIg
-c2xhdmUgY29udHJvbGxlciB3aG9zZSBmaXJtd2FyZSBlbWJlZHMgdGhlIGZvbGxvd2luZw0KPiBm
-ZWF0dXJlczoNCj4gLSBJL08gZXhwYW5kZXIgKDE2IEdQSU9zICsgOCBleHRyYSBpZiB0aGUgb3Ro
-ZXIgZmVhdHVyZXMgYXJlIG5vdCBlbmFibGVkKSwNCj4gLSByZXNpc3RpdmUgdG91Y2hzY3JlZW4g
-Y29udHJvbGxlciwNCj4gLSBJREQgbWVhc3VyZW1lbnQuDQo+IA0KPiBJMkMgc3R1ZmYgYW5kIGNo
-aXAgaW5pdGlhbGl6YXRpb24gaXMgYmFzZWQgb24gYW4gTUZEIHBhcmVudCBkcml2ZXIsIHdoaWNo
-DQo+IHJlZ2lzdGVycyBTVE1GWCBmZWF0dXJlcyBNRkQgY2hpbGRyZW4uDQo+IA0KPiAtLS0NCj4g
-Q2hhbmdlcyBpbiB2NDoNCj4gLSBtZmQ6IG1vdmUgcmVnaXN0ZXJzICNkZWZpbmUgaW50byB0aGUg
-aGVhZGVyDQo+IC0gbWZkOiBtZXJnZSBzdG1meCBhbmQgc3RtZnhfZGRhdGEgc3RydWN0dXJlcyBp
-bnRvIG9uZSBzdG1meCBzdHJ1Y3R1cmUNCj4gLSBtZmQ6IGNoYW5nZSBzdG1meF9jaGlwX2luaXQv
-ZXhpdCBhbmQgc3RtZnhfaXJxX2luaXQvZXhpdCBhcmdzOiB1c2UNCj4gICAgaTJjX2NsaWVudCBz
-dHJ1Y3QgYW5kIGkyY19nZXRfY2xpZW50ZGF0YQ0KPiAtIG1mZDogZml4IHR5cG9zDQo+IC0gbWZk
-OiBhZGQgTUZEIGNlbGxzIGZvciBJREQgYW5kIFRTIGZlYXR1cmVzDQo+IC0gcGluY3RybDogcmV3
-b3JrIHJlZ2lzdGVycyAjZGVmaW5lDQo+IC0gZHRzOiBhZGQgU1RNRlggc3VwcG9ydCBvbiBzdG0z
-Mm1wMTU3Yy1ldjENCj4gQ2hhbmdlcyBpbiB2MzoNCj4gLSBmaXggTUZEIGludGVycnVwdCBiaW5k
-aW5ncw0KPiAtIGZpeCBkcml2ZXJzL21mZC9zdG1meC5jOjEwMzo4OiB3YXJuaW5nOiAnbWFzaycg
-bWF5IGJlIHVzZWQgdW5pbml0aWFsaXplZA0KPiAgICBpbiB0aGlzIGZ1bmN0aW9uDQo+IENoYW5n
-ZXMgaW4gdjI6DQo+IC0gbW92ZSB0byBNRkQgcGFyZW50IGRyaXZlciBmb3IgaTJjIHN0dWZmIGFu
-ZCBjaGlwIGluaXRpYWxpemF0aW9uDQo+IC0gaW1wcm92ZSByZWdtYXAgY29uZmlndXJhdGlvbg0K
-PiAtIHRha2UgYWR2YW50YWdlIG9mIHRoZSB1c2Ugb2YgZ3Bpby1yYW5nZXMNCj4gDQo+IEFtZWxp
-ZSBEZWxhdW5heSAoOSk6DQo+ICAgIGR0LWJpbmRpbmdzOiBtZmQ6IEFkZCBTVCBNdWx0aS1GdW5j
-dGlvbiBlWHBhbmRlciAoU1RNRlgpIGNvcmUgYmluZGluZ3MNCj4gICAgbWZkOiBBZGQgU1QgTXVs
-dGktRnVuY3Rpb24gZVhwYW5kZXIgKFNUTUZYKSBjb3JlIGRyaXZlcg0KPiAgICBkdC1iaW5kaW5n
-czogcGluY3RybDogZG9jdW1lbnQgdGhlIFNUTUZYIHBpbmN0cmwgYmluZGluZ3MNCj4gICAgcGlu
-Y3RybDogQWRkIFNUTUZYIEdQSU8gZXhwYW5kZXIgUGluY3RybC9HUElPIGRyaXZlcg0KPiAgICBB
-Uk06IGR0czogc3RtMzI6IGFkZCBTVE1GWCBzdXBwb3J0IG9uIHN0bTMyNzQ2Zy1ldmFsDQo+ICAg
-IEFSTTogZHRzOiBzdG0zMjogYWRkIGpveXN0aWNrIHN1cHBvcnQgb24gc3RtMzI3NDZnLWV2YWwN
-Cj4gICAgQVJNOiBkdHM6IHN0bTMyOiBhZGQgb3JhbmdlIGFuZCBibHVlIGxlZHMgb24gc3RtMzI3
-NDZnLWV2YWwNCj4gICAgQVJNOiBkdHM6IHN0bTMyOiBhZGQgU1RNRlggc3VwcG9ydCBvbiBzdG0z
-Mm1wMTU3Yy1ldjENCj4gICAgQVJNOiBkdHM6IHN0bTMyOiBhZGQgam95c3RpY2sgc3VwcG9ydCBv
-biBzdG0zMm1wMTU3Yy1ldjENCj4gDQo+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL21mZC9zdG1meC50eHQgICAgfCAgMjggKw0KPiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3BpbmN0cmwvcGluY3RybC1zdG1meC50eHQgIHwgMTE2ICsrKw0KPiAgIGFyY2gvYXJtL2Jvb3Qv
-ZHRzL3N0bTMyNzQ2Zy1ldmFsLmR0cyAgICAgICAgICAgICAgIHwgIDY2ICsrDQo+ICAgYXJjaC9h
-cm0vYm9vdC9kdHMvc3RtMzJtcDE1N2MtZXYxLmR0cyAgICAgICAgICAgICAgfCAgNjAgKysNCj4g
-ICBkcml2ZXJzL21mZC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAx
-MyArDQo+ICAgZHJpdmVycy9tZmQvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAgIDIgKy0NCj4gICBkcml2ZXJzL21mZC9zdG1meC5jICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB8IDU2OCArKysrKysrKysrKysrKw0KPiAgIGRyaXZlcnMvcGluY3RybC9LY29u
-ZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEyICsNCj4gICBkcml2ZXJzL3BpbmN0
-cmwvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ICAgZHJpdmVy
-cy9waW5jdHJsL3BpbmN0cmwtc3RtZnguYyAgICAgICAgICAgICAgICAgICAgfCA4MjAgKysrKysr
-KysrKysrKysrKysrKysrDQo+ICAgaW5jbHVkZS9saW51eC9tZmQvc3RtZnguaCAgICAgICAgICAg
-ICAgICAgICAgICAgICAgfCAxMjMgKysrKw0KPiAgIDExIGZpbGVzIGNoYW5nZWQsIDE4MDggaW5z
-ZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0bWZ4LnR4dA0KPiAgIGNyZWF0ZSBtb2Rl
-IDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9waW5jdHJs
-LXN0bWZ4LnR4dA0KPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21mZC9zdG1meC5jDQo+
-ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0bWZ4LmMNCj4g
-ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9tZmQvc3RtZnguaA0KPiA=
+> From: Christina Quast [mailto:cquast@hanoverdisplays.com]
+> Sent: Wednesday, March 13, 2019 10:21 PM
+>=20
+> In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from the
+> documentation.
+>=20
+> Changes since v2:
+> * Changed patch title to 'dt-bindings: pinctrl: imx7d:'
+>=20
+> Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
+
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+Regards
+Dong Aisheng
+
+> ---
+>  .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.=
+txt
+> b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+> index 6666277c3acb..8ac1d0851a0f 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+> @@ -48,9 +48,9 @@ PAD_CTL_HYS                     (1 << 3)
+>  PAD_CTL_SRE_SLOW                (1 << 2)
+>  PAD_CTL_SRE_FAST                (0 << 2)
+>  PAD_CTL_DSE_X1                  (0 << 0)
+> -PAD_CTL_DSE_X2                  (1 << 0)
+> -PAD_CTL_DSE_X3                  (2 << 0)
+> -PAD_CTL_DSE_X4                  (3 << 0)
+> +PAD_CTL_DSE_X4                  (1 << 0)
+> +PAD_CTL_DSE_X2                  (2 << 0)
+> +PAD_CTL_DSE_X6                  (3 << 0)
+>=20
+>  Examples:
+>  While iomuxc-lpsr is intended to be used by dedicated peripherals to tak=
+e
+> --
+> 2.20.1
