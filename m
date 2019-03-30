@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/21] gpio: pxa: handle corner case of unprobed device
-Date: Fri, 29 Mar 2019 21:30:52 -0400
-Message-ID: <20190330013112.784-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/37] gpio: pxa: handle corner case of unprobed device
+Date: Fri, 29 Mar 2019 21:29:44 -0400
+Message-ID: <20190330013020.379-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -34,10 +34,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 7a6305884f97..32d22bdf7164 100644
+index 2943dfc4c470..822ad220f0af 100644
 --- a/drivers/gpio/gpio-pxa.c
 +++ b/drivers/gpio/gpio-pxa.c
-@@ -774,6 +774,9 @@ static int pxa_gpio_suspend(void)
+@@ -776,6 +776,9 @@ static int pxa_gpio_suspend(void)
  	struct pxa_gpio_bank *c;
  	int gpio;
  
@@ -47,7 +47,7 @@ index 7a6305884f97..32d22bdf7164 100644
  	for_each_gpio_bank(gpio, c, pchip) {
  		c->saved_gplr = readl_relaxed(c->regbase + GPLR_OFFSET);
  		c->saved_gpdr = readl_relaxed(c->regbase + GPDR_OFFSET);
-@@ -792,6 +795,9 @@ static void pxa_gpio_resume(void)
+@@ -794,6 +797,9 @@ static void pxa_gpio_resume(void)
  	struct pxa_gpio_bank *c;
  	int gpio;
  
