@@ -1,81 +1,61 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 15/57] pinctrl: core: make sure strcmp() doesn't get a null parameter
-Date: Fri, 29 Mar 2019 21:28:08 -0400
-Message-ID: <20190330012854.32212-15-sashal@kernel.org>
-References: <20190330012854.32212-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/21] gpio: pxa: handle corner case of unprobed device
+Date: Fri, 29 Mar 2019 21:30:52 -0400
+Message-ID: <20190330013112.784-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190330012854.32212-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
-[ Upstream commit 54a58185bfafb5af5045fb8388c45daa373f90f3 ]
+[ Upstream commit 9ce3ebe973bf4073426f35f282c6b955ed802765 ]
 
-Some drivers, for example, QCOM's qdf2xxx, set groups[gpio].name only
-when gpio is valid, and leave invalid gpio names as null.
-If we want to access the sys node "pinconf-groups",
-pinctrl_get_group_selector() -> get_group_name() may return a null
-pointer if group_selector is invalid, then the below Kernel panic
-would happen since strcmp() uses this null pointer to do comparison.
+In the corner case where the gpio driver probe fails, for whatever
+reason, the suspend and resume handlers will still be called as they
+have to be registered as syscore operations. This applies as well when
+no probe was called while the driver has been built in the kernel.
 
- Unable to handle kernel NULL pointer dereference at ss 00000000
-el:Internal error: Oops: 9600000[ 143.080279]
-SMP
- CPU: 19 PID: 2493 Comm: read_all Tainted: G O
-.aarch64 #1
- Hardware name: HXT Semiconductor HXT REP-2 System
- PC is at strcmp+0x18/0x154
- LR is at pinctrl_get_group_selector+0x6c/0xe8
- Process read_all (pid: 2493, stack limit =
- Call trace:
- Exception stack
-  strcmp+0x18/0x154
-  pin_config_group_get+0x64/0xd8
-  pinconf_generic_dump_one+0xd8/0x1c0
-  pinconf_generic_dump_pins+0x94/0xc8
-  pinconf_groups_show+0xb4/0x104
-  seq_read+0x178/0x464
-  full_proxy_read+0x6c/0xac
-  __vfs_read+0x58/0x178
-  vfs_read+0x94/0x164
-  SyS_read+0x60/0xc0
-  __sys_trace_return+0x0/0x4
- --[ end trace]--
- Kernel panic - not syncing: Fatal exception
+Nicolas tracked this in :
+https://bugzilla.kernel.org/show_bug.cgi?id=200905
 
-Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+Therefore, add a failsafe in these function, and test if a proper probe
+succeeded and the driver is functional.
+
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reported-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pxa.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index a3dd777e3ce8..c6ff4d5fa482 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -627,7 +627,7 @@ static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
- 	while (selector < ngroups) {
- 		const char *gname = ops->get_group_name(pctldev, selector);
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 7a6305884f97..32d22bdf7164 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -774,6 +774,9 @@ static int pxa_gpio_suspend(void)
+ 	struct pxa_gpio_bank *c;
+ 	int gpio;
  
--		if (!strcmp(function, gname))
-+		if (gname && !strcmp(function, gname))
- 			return selector;
++	if (!pchip)
++		return 0;
++
+ 	for_each_gpio_bank(gpio, c, pchip) {
+ 		c->saved_gplr = readl_relaxed(c->regbase + GPLR_OFFSET);
+ 		c->saved_gpdr = readl_relaxed(c->regbase + GPDR_OFFSET);
+@@ -792,6 +795,9 @@ static void pxa_gpio_resume(void)
+ 	struct pxa_gpio_bank *c;
+ 	int gpio;
  
- 		selector++;
-@@ -743,7 +743,7 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
- 	while (group_selector < ngroups) {
- 		const char *gname = pctlops->get_group_name(pctldev,
- 							    group_selector);
--		if (!strcmp(gname, pin_group)) {
-+		if (gname && !strcmp(gname, pin_group)) {
- 			dev_dbg(pctldev->dev,
- 				"found group selector %u for %s\n",
- 				group_selector,
++	if (!pchip)
++		return;
++
+ 	for_each_gpio_bank(gpio, c, pchip) {
+ 		/* restore level with set/clear */
+ 		writel_relaxed(c->saved_gplr, c->regbase + GPSR_OFFSET);
 -- 
 2.19.1
