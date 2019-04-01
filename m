@@ -1,86 +1,95 @@
-From: Jan Kotas <jank@cadence.com>
-Subject: [PATCH 1/1] gpio: mmio: Fix bgpio_get_set & bgpio_get_set_multiple
-Date: Mon, 1 Apr 2019 10:09:42 +0100
-Message-ID: <20190401090942.12408-1-jank@cadence.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 0/9] Introduce STMFX I2C Multi-Function eXpander
+Date: Mon, 1 Apr 2019 11:19:34 +0100
+Message-ID: <20190401101934.GC4187@dell>
+References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+ <b3cdddb0-8177-600c-7108-9a16e9067190@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <b3cdddb0-8177-600c-7108-9a16e9067190@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kotas <jank@cadence.com>
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>
 List-Id: linux-gpio@vger.kernel.org
 
-During my regression testing I noticed the cadence GPIO driver
-fails on the latest gpio for-next tree.
+On Fri, 29 Mar 2019, Amelie DELAUNAY wrote:
 
-I think the reason is this patch:
-commit 96cd559817f2 ("Merge branch 'devel' into for-next")
+> Hi,
+> 
+> A gentle ping on this series (mfd + pinctrl patches, DT patches will be 
+> taken in STM32 soc tree).
 
-Here is a part of the test log:
+I currently have over 100 reviews in my backlog.
 
-Loopback 8 -> 24
-TESTING: gpio: 488: output direction PASSED
-TESTING: gpio: 504: input direction PASSED
-TESTING: gpio: 488: 0 PASSED
-TESTING: gpio: 488 -> 504: 0 PASSED
-TESTING: gpio: 488: 1 FAILED
-TESTING: gpio: 488 -> 504: 1 FAILED
-TESTING: gpio: 488: 0 PASSED
-TESTING: gpio: 488 -> 504: 0 PASSED
+Please be patient.  You are on the list.
 
-It looks like the issue is that gc->bgpio_dir has changed its meaning.
-It used to be set to the register value (so it was being inverted).
+> On 2/27/19 10:34 AM, Amelie Delaunay wrote:
+> > This series adds support for STMicroelectronics Multi-Function eXpander
+> > (STMFX), used on some STM32 discovery and evaluation boards.
+> > 
+> > STMFX is an STM32L152 slave controller whose firmware embeds the following
+> > features:
+> > - I/O expander (16 GPIOs + 8 extra if the other features are not enabled),
+> > - resistive touchscreen controller,
+> > - IDD measurement.
+> > 
+> > I2C stuff and chip initialization is based on an MFD parent driver, which
+> > registers STMFX features MFD children.
+> > 
+> > ---
+> > Changes in v4:
+> > - mfd: move registers #define into the header
+> > - mfd: merge stmfx and stmfx_ddata structures into one stmfx structure
+> > - mfd: change stmfx_chip_init/exit and stmfx_irq_init/exit args: use
+> >    i2c_client struct and i2c_get_clientdata
+> > - mfd: fix typos
+> > - mfd: add MFD cells for IDD and TS features
+> > - pinctrl: rework registers #define
+> > - dts: add STMFX support on stm32mp157c-ev1
+> > Changes in v3:
+> > - fix MFD interrupt bindings
+> > - fix drivers/mfd/stmfx.c:103:8: warning: 'mask' may be used uninitialized
+> >    in this function
+> > Changes in v2:
+> > - move to MFD parent driver for i2c stuff and chip initialization
+> > - improve regmap configuration
+> > - take advantage of the use of gpio-ranges
+> > 
+> > Amelie Delaunay (9):
+> >    dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
+> >    mfd: Add ST Multi-Function eXpander (STMFX) core driver
+> >    dt-bindings: pinctrl: document the STMFX pinctrl bindings
+> >    pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+> >    ARM: dts: stm32: add STMFX support on stm32746g-eval
+> >    ARM: dts: stm32: add joystick support on stm32746g-eval
+> >    ARM: dts: stm32: add orange and blue leds on stm32746g-eval
+> >    ARM: dts: stm32: add STMFX support on stm32mp157c-ev1
+> >    ARM: dts: stm32: add joystick support on stm32mp157c-ev1
+> > 
+> >   Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 +
+> >   .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++
+> >   arch/arm/boot/dts/stm32746g-eval.dts               |  66 ++
+> >   arch/arm/boot/dts/stm32mp157c-ev1.dts              |  60 ++
+> >   drivers/mfd/Kconfig                                |  13 +
+> >   drivers/mfd/Makefile                               |   2 +-
+> >   drivers/mfd/stmfx.c                                | 568 ++++++++++++++
+> >   drivers/pinctrl/Kconfig                            |  12 +
+> >   drivers/pinctrl/Makefile                           |   1 +
+> >   drivers/pinctrl/pinctrl-stmfx.c                    | 820 +++++++++++++++++++++
+> >   include/linux/mfd/stmfx.h                          | 123 ++++
+> >   11 files changed, 1808 insertions(+), 1 deletion(-)
+> >   create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+> >   create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+> >   create mode 100644 drivers/mfd/stmfx.c
+> >   create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
+> >   create mode 100644 include/linux/mfd/stmfx.h
+> > 
 
-Now it's always set to 1 for output and 0 for input.
-However the bgpio_get_set functions were not updated.
-So they invert the bit again, which means a wrong register
-is being accessed.
-
-This patch fixes that by removing the unnecessary inversion.
-
-Signed-off-by: Jan Kotas <jank@cadence.com>
----
- drivers/gpio/gpio-mmio.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index f172b4382d..04be18b954 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -134,17 +134,6 @@ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
- 	unsigned long pinmask = bgpio_line2mask(gc, gpio);
- 	bool dir = !!(gc->bgpio_dir & pinmask);
- 
--	/*
--	 * If the direction is OUT we read the value from the SET
--	 * register, and if the direction is IN we read the value
--	 * from the DAT register.
--	 *
--	 * If the direction bits are inverted, naturally this gets
--	 * inverted too.
--	 */
--	if (gc->bgpio_dir_inverted)
--		dir = !dir;
--
- 	if (dir)
- 		return !!(gc->read_reg(gc->reg_set) & pinmask);
- 	else
-@@ -164,14 +153,8 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
- 	/* Make sure we first clear any bits that are zero when we read the register */
- 	*bits &= ~*mask;
- 
--	/* Exploit the fact that we know which directions are set */
--	if (gc->bgpio_dir_inverted) {
--		set_mask = *mask & ~gc->bgpio_dir;
--		get_mask = *mask & gc->bgpio_dir;
--	} else {
--		set_mask = *mask & gc->bgpio_dir;
--		get_mask = *mask & ~gc->bgpio_dir;
--	}
-+	set_mask = *mask & gc->bgpio_dir;
-+	get_mask = *mask & ~gc->bgpio_dir;
- 
- 	if (set_mask)
- 		*bits |= gc->read_reg(gc->reg_set) & set_mask;
 -- 
-2.15.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
