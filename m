@@ -1,64 +1,63 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [BUG/PATCH 3/4] gpiolib: make legacy handling for spi-cs-high optional
-Date: Sun, 31 Mar 2019 12:07:22 +0200
-Message-ID: <83b5c3ddee26c6f5e4b3b21d8a4346da5956de11.1554026842.git.hns@goldelico.com>
-References: <cover.1554026842.git.hns@goldelico.com>
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: [PATCH v4 0/4] PINCTRL: Mediatek pinctrl patch on mt8183
+Date: Mon, 1 Apr 2019 11:35:31 +0800
+Message-ID: <20190401033535.16910-1-zhiyong.tao@mediatek.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1554026842.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org, "H. Nikolaus Schaller" <hns@goldelico.com>
+To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, sean.wang@kernel.org
+Cc: srv_heupstream@mediatek.com, zhiyong.tao@mediatek.com, hui.liu@mediatek.com, eddie.huang@mediatek.com, chuanjia.liu@mediatek.com, biao.huang@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, sean.wang@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-It is better to make legacy support a config option instead
-of requiring non-legacy device tree files to be updated.
+This series includes 4 patches:
+1.add pinctrl binding document on mt8183.
+2.add pinctrl file on mt8183.
+3.add pinctrl device node on mt8183.
+4.add drive for I2C related pins on MT8183.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/Kconfig      | 8 ++++++++
- drivers/gpio/gpiolib-of.c | 2 ++
- 2 files changed, 10 insertions(+)
+Changes in patch v4:
+1)patch [1/4] is based on patch "https://patchwork.kernel.org/patch/10778511/".
+2)patch [2/4] is based on patch "https://patchwork.kernel.org/patch/10814251/".
+3)patch [3/4] is based on patch "https://patchwork.kernel.org/patch/10814239/".
+4)modify correct title on patch [2/4] and patch [3/4].
+5)add Reviewed-by on patch [1/4] and [2/4].
+6)modify the function "mtk_pinconf_adv_pull_get" and "mtk_pinconf_adv_pull_set"
+7)change "drive-strengt-adv" to "drive-strength-adv".
+8)call "mtk_pinconf_adv_pull_get" in "mtk_pinconf_get".
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3f50526a771f..1a82619727c1 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -39,6 +39,14 @@ config OF_GPIO
- 	depends on OF
- 	depends on HAS_IOMEM
- 
-+config SPI_CS_HIGH_LEGACY_HANDLING
-+	def_bool n
-+	depends on OF_GPIO
-+	help
-+	   This enables a legacy handler which decodes the boolean spi-cs-high
-+	   property found in some DTS/DTB to correctly work with cs-gpios
-+	   with GPIO_ACTIVE_HIGH.
-+
- config GPIO_ACPI
- 	def_bool y
- 	depends on ACPI
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 8b9c3ab70f6e..a22d2233458b 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -114,6 +114,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 			of_node_full_name(np));
- 	}
- 
-+#if defined(CONFIG_SPI_CS_HIGH_LEGACY_HANDLING)
- 	/*
- 	 * Legacy handling of SPI active high chip select. If we have a
- 	 * property named "cs-gpios" we need to inspect the child node
-@@ -158,6 +159,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 			}
- 		}
- 	}
-+#endif
- }
- 
- /**
--- 
-2.19.1
+Changes in patch v3:
+1)add the patch "dt-bindings: pinctrl: mt8183: add binding document".
+2)add the patch "arm64: dts: mt8183: add pintcrl file".
+3)add the patch "arm64: dts: mt8183: add pintcrl device node".
+4)add more datail information for the specific driving setup in commit message.
+5)use "mediatek,drive-strength-adv" instead of
+  "mediatek,drive-enable-adv" and "mediatek,drive-enable-disable".
+6)change "PINCTRL_PIN_REG_DRV_EN_DIS" to "PINCTRL_PIN_REG_DRV_EN".
+7)change the function "mtk_pinconf_adv_drive_set".
+
+Changes in patch v2:
+1)add the details strength specification of the I2c pins.
+2)change "mt8183_pin_drv_en_dis_range" to "mt8183_pin_e1e0en_range".
+3)change "mt8183_pin_drv_e0_range" to "mt8183_pin_e0_range".
+4)change "mt8183_pin_drv_e1_range" to "mt8183_pin_e1_range".
+
+Zhiyong Tao (4):
+  dt-bindings: pinctrl: mt8183: add binding document
+  arm64: dts: mt8183: add pinctrl file
+  arm64: dts: mt8183: add pinctrl device node
+  pinctrl: add drive for I2C related pins on MT8183
+
+ .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt |  132 +++
+ arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h      | 1120 ++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |   26 +-
+ drivers/pinctrl/mediatek/pinctrl-mt8183.c          |   50 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c   |   49 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h   |   11 +
+ drivers/pinctrl/mediatek/pinctrl-paris.c           |   21 +
+ 7 files changed, 1408 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
+
+--
+2.12.5
