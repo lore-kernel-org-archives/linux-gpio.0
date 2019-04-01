@@ -1,55 +1,97 @@
-From: Mukesh Ojha <mojha@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: freescale: use devm_platform_ioremap_resource()
- to simplify code
-Date: Mon, 1 Apr 2019 13:41:55 +0530
-Message-ID: <f1acb40f-bc90-3241-0a6b-f26f6abe4f0c@codeaurora.org>
-References: <1554094986-14897-1-git-send-email-Anson.Huang@nxp.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 08/14] clk: sunxi-ng: v3s: add Allwinner V3 support
+Date: Mon, 1 Apr 2019 10:15:24 +0200
+Message-ID: <20190401081524.bickdv7kr4kcnsgm@flea>
+References: <20190312152256.35574-1-icenowy@aosc.io>
+ <20190312152256.35574-9-icenowy@aosc.io>
+ <20190328132721.GA32178@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jc3kve7lqqq7wqjx"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554094986-14897-1-git-send-email-Anson.Huang@nxp.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190328132721.GA32178@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <anson.huang@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: dl-linux-imx <linux-imx@nxp.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Jagan Teki <jagan@amarulasolutions.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
 
-On 4/1/2019 10:37 AM, Anson Huang wrote:
-> Use the new helper devm_platform_ioremap_resource() which wraps the
-> platform_get_resource() and devm_ioremap_resource() together, to
-> simplify the code.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+--jc3kve7lqqq7wqjx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cheers,
--Mukesh
-
-> ---
->   drivers/pinctrl/freescale/pinctrl-imx.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+On Thu, Mar 28, 2019 at 08:27:21AM -0500, Rob Herring wrote:
+> On Tue, Mar 12, 2019 at 11:22:50PM +0800, Icenowy Zheng wrote:
+> > Allwinner V3 has the same main die with V3s, but with more pins wired.
+> > There's a I2S bus on V3 that is not available on V3s.
+> >
+> > Add the V3-only peripheral's clocks and reset to the V3s CCU driver,
+> > bound to a new V3 compatible string. The driver name is not changed
+> > because it's part of the device tree binding (the header file name).
+> >
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c      | 225 +++++++++++++++++++++-
+> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.h      |   2 +-
+> >  include/dt-bindings/clock/sun8i-v3s-ccu.h |   4 +
+> >  include/dt-bindings/reset/sun8i-v3s-ccu.h |   3 +
+> >  4 files changed, 231 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> > index cbba04f5f761..81450ea8faa2 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> > @@ -242,6 +242,8 @@ static SUNXI_CCU_GATE(bus_codec_clk,	"bus-codec",	"apb1",
+> >  		      0x068, BIT(0), 0);
+> >  static SUNXI_CCU_GATE(bus_pio_clk,	"bus-pio",	"apb1",
+> >  		      0x068, BIT(5), 0);
+> > +static SUNXI_CCU_GATE(bus_i2s0_clk,	"bus-i2s0",	"apb1",
+> > +		      0x068, BIT(12), 0);
+> >
+> >  static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
+> >  		      0x06c, BIT(0), 0);
+> > @@ -313,6 +315,11 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", mod0_default_parents, 0x0a0,
+> >  				  BIT(31),	/* gate */
+> >  				  0);
+> >
+> > +static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+> > +					    "pll-audio-2x", "pll-audio" };
+> > +static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+> > +			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+> > +
+> >  static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+> >  		      0x0cc, BIT(8), 0);
+> >  static SUNXI_CCU_GATE(usb_ohci0_clk,	"usb-ohci0",	"osc24M",
+> > @@ -445,6 +452,80 @@ static struct ccu_common *sun8i_v3s_ccu_clks[] = {
+> >  	&mipi_csi_clk.common,
+> >  };
+> >
+> > +static struct ccu_common *sun8i_v3_ccu_clks[] = {
 >
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 188001b..cc6f5cc 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -785,7 +785,6 @@ int imx_pinctrl_probe(struct platform_device *pdev,
->   	struct pinctrl_desc *imx_pinctrl_desc;
->   	struct device_node *np;
->   	struct imx_pinctrl *ipctl;
-> -	struct resource *res;
->   	struct regmap *gpr;
->   	int ret, i;
->   
-> @@ -817,8 +816,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
->   			ipctl->pin_regs[i].conf_reg = -1;
->   		}
->   
-> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -		ipctl->base = devm_ioremap_resource(&pdev->dev, res);
-> +		ipctl->base = devm_platform_ioremap_resource(pdev, 0);
->   		if (IS_ERR(ipctl->base))
->   			return PTR_ERR(ipctl->base);
->   
+> Seems like a bunch of duplication for just 2 differences in clocks.
+> Can't you keep the definitions the same and just skip registering the
+> clocks not present?
+
+I'd rather not, this can lead to access to registers that might not be
+there when the CCF will read / write that clock
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--jc3kve7lqqq7wqjx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKHInAAKCRDj7w1vZxhR
+xZ+WAP92QhUeKofhCPBW2R6w+MmaHaURTZ1S7Q0dQwrc7GzGIwEAnITh/XSIMAU7
+l1W4aXbf1ct2/M9dDexttVTYemsRmwc=
+=QvxI
+-----END PGP SIGNATURE-----
+
+--jc3kve7lqqq7wqjx--
