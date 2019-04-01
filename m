@@ -1,70 +1,61 @@
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
- suspend/resume
-Date: Mon, 1 Apr 2019 15:22:56 +0300
-Message-ID: <20190401122256.GF9224@smile.fi.intel.com>
-References: <20171121120422.GR22431@lahna.fi.intel.com>
- <CAD8Lp444FNHZh6fLUfhfp1i_UBpMbS5QuvJ4FuZn7PKH1Ucy=A@mail.gmail.com>
- <20190327172940.GR3622@lahna.fi.intel.com>
- <20190328091729.GV9224@smile.fi.intel.com>
- <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
- <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
- <20190328123444.GX3622@lahna.fi.intel.com>
- <CAB4CAwcQTH5BiDDbzfFXTDDuYQ_fuDd_1tKkecf6vwygGQmn5w@mail.gmail.com>
- <20190401074953.GQ3622@lahna.fi.intel.com>
- <CAB4CAweW_3p4i_8ntscJyU9n55HwdLt3pxyT3Gf6SUSbZAJ8qA@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [BUG/PATCH 1/4] DTS: GTA04: SPI / gpiolib: work around a
+ regression that unhides a broken legacy handler, which makes the gta04
+ display inoperable
+Date: Mon, 1 Apr 2019 09:46:17 -0700
+Message-ID: <20190401164617.GH49658@atomide.com>
+References: <cover.1554026842.git.hns@goldelico.com>
+ <e8d784f7fb06fd3a6a92bc730f919352c4ad4411.1554026842.git.hns@goldelico.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAB4CAweW_3p4i_8ntscJyU9n55HwdLt3pxyT3Gf6SUSbZAJ8qA@mail.gmail.com>
+In-Reply-To: <e8d784f7fb06fd3a6a92bc730f919352c4ad4411.1554026842.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 01, 2019 at 06:41:57PM +0800, Chris Chiu wrote:
-> On Mon, Apr 1, 2019 at 3:49 PM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Fri, Mar 29, 2019 at 04:38:20PM +0800, Chris Chiu wrote:
+Hi,
 
-> > Sure I can but it probably does not happen until end of the week because
-> > I'm currently busy with something else.
+* H. Nikolaus Schaller <hns@goldelico.com> [190331 10:08]:
+> This is an ugly workaround for a regression introduced into v5.1-rc1 by
 > 
-> Thanks for your attention. I don't want to distract you so I'll try to
-> refine the
-> patch. It would be a great help if you can help review and give comments.
-> 
-> Don't know whether if the following patch still get the wrong idea about
-> your thought.  It saves the hostsw_own when GPIO requested, check
-> if the value differs in resume() and restore if necessary. Please kindly
-> correct me if any. Thanks
+> <c1c04cea13dc234ce9a4504879ddd36ea524d880>
 
-Thanks for the patch.
-My comments below.
+You should standardized commit references like this instead:
 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c
-> b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 8cda7b535b02..d1cfa5adef9b 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -77,6 +77,7 @@ struct intel_pad_context {
->         u32 padcfg0;
->         u32 padcfg1;
->         u32 padcfg2;
+c1c04cea13dc ("gpio: of: Fix logic inversion")
 
-> +       u32 hostown;
+Then please also include a proper Fixes tag.
 
-This is wrong. We have one register per entire (*) group of pins to keep host
-ownership. Basically it's a mask.
+You can configure an alias for it to make things easier:
 
-*) if it's <= 32, otherwise there are more registers. But in any case it's 1
-bit per pin, and not 32 bits.
+git log --abbrev=12 --pretty=format:"%h (\"%s\")"
 
->         for (i = 0; i < pctrl->soc->npins; i++)
+> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+> @@ -114,6 +114,7 @@
+>  		gpio-miso = <&gpio1 18 GPIO_ACTIVE_HIGH>;
+>  		gpio-mosi = <&gpio1 20 GPIO_ACTIVE_HIGH>;
+>  		cs-gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+> +		spi-cs-high;	/* make the legacy handler in gpiolib not intervene */
+>  		num-chipselects = <1>;
+>  
+>  		/* lcd panel */
+> @@ -123,6 +124,7 @@
+>  			spi-max-frequency = <100000>;
+>  			spi-cpol;
+>  			spi-cpha;
+> +			spi-cs-high;	/* here is where it should be but this is ignored by a bug in the gpiolib handler */
+>  
+>  			backlight= <&backlight>;
+>  			label = "lcd";
 
-Thus, the actual actions should mimic what we do for interrupt mask.
+So what's the plan with this fix? Add this for v5.2-rc cycle,
+then revert it later? I'd probably go directly for the proper
+fix if possible.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+
+Tony
