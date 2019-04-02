@@ -1,168 +1,85 @@
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
- suspend/resume
-Date: Tue, 2 Apr 2019 14:58:36 +0300
-Message-ID: <20190402115836.GL9224@smile.fi.intel.com>
-References: <20190327172940.GR3622@lahna.fi.intel.com>
- <20190328091729.GV9224@smile.fi.intel.com>
- <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
- <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
- <20190328123444.GX3622@lahna.fi.intel.com>
- <CAB4CAwcQTH5BiDDbzfFXTDDuYQ_fuDd_1tKkecf6vwygGQmn5w@mail.gmail.com>
- <20190401074953.GQ3622@lahna.fi.intel.com>
- <CAB4CAweW_3p4i_8ntscJyU9n55HwdLt3pxyT3Gf6SUSbZAJ8qA@mail.gmail.com>
- <20190401122256.GF9224@smile.fi.intel.com>
- <CAB4CAwd6+6+Qwb2wDFkVOc_auTNdrEw07tX2ha=XLvxfwFHRXw@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 0/6] pinctrl: sunxi: Allow to configure pull-up /
+ pull-down from GPIO flags
+Date: Tue, 2 Apr 2019 15:22:16 +0200
+Message-ID: <20190402132216.fvgb7vbqltmwazow@flea>
+References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAB4CAwd6+6+Qwb2wDFkVOc_auTNdrEw07tX2ha=XLvxfwFHRXw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: multipart/mixed; boundary="===============4524896782894925797=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 02:16:19PM +0800, Chris Chiu wrote:
-> On Mon, Apr 1, 2019 at 8:23 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Mon, Apr 01, 2019 at 06:41:57PM +0800, Chris Chiu wrote:
 
-> Thanks for the comment. My first version did mimic the logic of the interrupt
-> mask restore but it was based on the DMI quirk. It saves HOSTSW_OWN
-> for each padgroup and restores them all after resume if DMI info matched.
-> 
-> What really confused me is how to do this specifically for a requested GPIO
-> pin. So here's my new proposed patch. Please suggests if there's any better
-> idea. Thanks.
+--===============4524896782894925797==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="btodf4w36fv3p43l"
+Content-Disposition: inline
 
->  struct intel_community_context {
->         u32 *intmask;
-> +       u32 *hostown;
 
-This is okay.
+--btodf4w36fv3p43l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  };
+On Thu, Mar 14, 2019 at 08:32:49PM +0100, Maxime Ripard wrote:
+> Hi,
+>
+> Here is a series that addresses one of the issues we've had for some time
+> with our pinctrl driver, which is that while we should have had the strict
+> mode enabled, we didn't and now we have to deal with all the DT having GPIO
+> and pinctrl nodes for the same pins.
+>
+> This was partially due to cargo cult (which has been addressed since), but
+> also due to technical limitations of the GPIO DT bindings at the time which
+> didn't allow to specify the pull-up and pull-down resistors, and the drive
+> strength of the pins.
+>
+> Now that the former are supported, we can remove those users, and we will
+> deal with the latter eventually.
 
-> +#ifdef CONFIG_PM_SLEEP
-> +static void intel_save_hostown(struct intel_pinctrl *pctrl, unsigned int pin);
-> +#endif
-> +
+Ping?
 
-No need for this...
+Maxime
 
->         /* Disable TX buffer and enable RX (this will be input) */
->         __intel_gpio_set_direction(padcfg0, true);
-> +#ifdef CONFIG_PM_SLEEP
-> +       intel_save_hostown(pctrl, pin);
-> +#endif
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-...and for this.
-Just save all of them at ->suspend()
+--btodf4w36fv3p43l
+Content-Type: application/pgp-signature; name="signature.asc"
 
->         for (i = 0; i < pctrl->ncommunities; i++) {
->                 struct intel_community *community = &pctrl->communities[i];
-> -               u32 *intmask;
-> +               u32 *intmask, *hostown;
-> 
->                 intmask = devm_kcalloc(pctrl->dev, community->ngpps,
->                                        sizeof(*intmask), GFP_KERNEL);
-> @@ -1292,6 +1299,13 @@ static int intel_pinctrl_pm_init(struct
-> intel_pinctrl *pctrl)
->                         return -ENOMEM;
-> 
->                 communities[i].intmask = intmask;
-> +
-> +               hostown = devm_kcalloc(pctrl->dev, community->ngpps,
-> +                                      sizeof(*hostown), GFP_KERNEL);
-> +               if (!hostown)
-> +                       return -ENOMEM;
-> +
-> +               communities[i].hostown= hostown;
+-----BEGIN PGP SIGNATURE-----
 
-This is good.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKNiCAAKCRDj7w1vZxhR
+xU3PAQDKCPfgGlC+stzKmrggWBKUWXsyQAFYTri3pggvuN82fQEA1l16THV3915T
+GJleCja6AsKEXg+4Pf9VYH/3hYSwQA8=
+=V18p
+-----END PGP SIGNATURE-----
 
->         }
+--btodf4w36fv3p43l--
 
-> +static void intel_save_hostown(struct intel_pinctrl *pctrl, unsigned int pin)
-> +{
-> +       const struct intel_community *community;
-> +       const struct intel_padgroup *padgrp;
-> +       int i;
-> +
-> +       community = intel_get_community(pctrl, pin);
-> +       if (!community)
-> +               return;
-> +       if (!community->hostown_offset)
-> +               return;
-> +
-> +       padgrp = intel_community_get_padgroup(community, pin);
-> +       if (!padgrp)
-> +               return;
-> +
-> +       for (i = 0; i < pctrl->ncommunities; i++) {
-> +               const struct intel_community *comm = &pctrl->communities[i];
-> +               int j;
-> +
-> +               for (j = 0; j < comm->ngpps; j++) {
-> +                       const struct intel_padgroup *pgrp = &comm->gpps[j];
-> +
-> +                       if (padgrp == pgrp) {
-> +                               struct intel_community_context *communities;
-> +                               void __iomem *base;
-> +
-> +                               communities = pctrl->context.communities;
-> +                               base = community->regs +
-> community->hostown_offset;
-> +                               communities[i].hostown[j] = readl(base + j * 4);
-> +                               break;
-> +                       }
-> +               }
-> +       }
 
-> +       return;
+--===============4524896782894925797==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Useless.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> +}
-
-This is too complicated. Just add
-
-base = community->regs + community->hostown_offset;
-for (gpp = 0; gpp < community->ngpps; gpp++)
-	communities[i].hostown[gpp] = readl(base + gpp * 4);
-
-into ->suspend() loop.
-
-> +               base = community->regs + community->hostown_offset;
-> +               for (gpp = 0; gpp < community->ngpps; gpp++) {
-> +                       if (communities[i].hostown[gpp] &&
-> +                           communities[i].hostown[gpp] != readl(base
-> + gpp * 4)) {
-> +                               writel(communities[i].hostown[gpp],
-> base + gpp * 4);
-> +                               dev_warn(dev, "hostown changed after resume\n");
-> +                               dev_dbg(dev, "restored hostown %d/%u
-> %#08x\n", i, gpp,
-> +                                       readl(base + gpp * 4));
-> +                       }
-> +               }
-
-Instead you may need to loop over each pin in the part of the group related to
-one 32-bit HOSTSW_OWN register (i.e. 8, see PADOWN_*() macros in the driver),
-check if it's requested and break a loop. If loop index is off-by-one a limit,
-nothing to do, otherwise restore hostown register.
-
-More pedantic approach is to collect the mask inside the loop and apply it.
-
-The check function name is gpiochip_is_requested().
-
-(One of Intel's drivers which is using that at ->resume() is
- drivers/gpio/gpio-lynxpoint.c)
-
-P.S. I prefer pedantic approach. The simplification one is showed in order to
-give you an idea.
-
--- 
-With Best Regards,
-Andy Shevchenko
+--===============4524896782894925797==--
