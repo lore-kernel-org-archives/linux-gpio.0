@@ -1,82 +1,26 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v6 05/11] mfd: core: document mfd_add_devices()
-Date: Tue, 2 Apr 2019 08:41:03 +0100
-Message-ID: <20190402074103.GG4187@dell>
-References: <20190318174228.18194-1-brgl@bgdev.pl>
- <20190318174228.18194-6-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 01/42] drivers: gpio: 74xx-mmio: use devm_platform_ioremap_resource()
+Date: Tue, 2 Apr 2019 15:03:55 +0700
+Message-ID: <CACRpkdYB3eatPJQYv1HKvcqY0uA8xjiHWC-kGtmfqHRD8J=bXQ@mail.gmail.com>
+References: <1552330521-4276-1-git-send-email-info@metux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190318174228.18194-6-brgl@bgdev.pl>
+In-Reply-To: <1552330521-4276-1-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Hoan Tran <hoan@os.amperecomputing.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Lyra Zhang <zhang.lyra@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Matthias Brugger <matthias.bgg@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.j>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 18 Mar 2019, Bartosz Golaszewski wrote:
+On Tue, Mar 12, 2019 at 1:55 AM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add a kernel doc for mfd_add_devices().
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/mfd/mfd-core.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index 94e3f32ce935..0898a8db1747 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -269,6 +269,20 @@ static int mfd_add_device(struct device *parent, int id,
->  	return ret;
->  }
->  
-> +/**
-> + * mfd_add_devices - register a set of child devices
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-"register child devices"
+Patch applied.
 
-> + *
-> + * @parent: Parent device for all sub-nodes.
-> + * @id: Platform device id. If >= 0, each sub-device will have its cell_id
-> + *      added to this number and use it as the platform device id.
-> + * @cells: Array of mfd cells describing sub-devices.
-> + * @n_devs: Number of sub-devices to register.
-> + * @mem_base: Parent register range resource for sub-devices.
-> + * @irq_base: Base of the range of virtual interrupt numbers allocated for
-> + *            this MFD device. Unused if @domain is specified.
-> + * @domain: Interrupt domain used to create mappings for HW interrupt numbers
-> + *          specificed in sub-devices' IRQ resources.
-
-Spelling.
-
-> + */
->  int mfd_add_devices(struct device *parent, int id,
->  		    const struct mfd_cell *cells, int n_devs,
->  		    struct resource *mem_base,
-
-How about this:
-
-/**
- * mfd_add_devices - register child devices
- *
- * @parent:	Pointer to parent device.
- * @id:		Can be PLATFORM_DEVID_AUTO to let the Platform API take care
- * 		of device numbering, or will be added to a device's cell_id.
- * @cells:	Array of (struct mfd_cell)s describing child devices.
- * @n_devs:	Number of child devices to register.
- * @mem_base:	Parent register range resource for child devices.
- * @irq_base:	Base of the range of virtual interrupt numbers allocated for
- * 		this MFD device. Unused if @domain is specified.
- * @domain:	Interrupt domain to create mappings for hardware interrupts.
- */
-
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
