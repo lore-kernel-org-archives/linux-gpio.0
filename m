@@ -1,53 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Wed, 3 Apr 2019 11:13:55 +0700
-Message-ID: <CACRpkdZ1xPJ=NS=o=-PYqCO4d-VVZM1=f=xBZa5Dwx78LFPYtA@mail.gmail.com>
-References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com> <20190321092330.GK9224@smile.fi.intel.com>
- <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v11 1/8] mfd: regulator: clk: split rohm-bd718x7.h
+Date: Wed, 3 Apr 2019 07:19:16 +0100
+Message-ID: <20190403061916.GL4187@dell>
+References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+ <81d7136a77a2786c122a1cbf3289c96c51ded79f.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
+Content-Disposition: inline
+In-Reply-To: <81d7136a77a2786c122a1cbf3289c96c51ded79f.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, zhuchangchun <zhuchangchun@cvte.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hendychu@aliyun.com
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, heikki.haikola@fi.rohmeurop
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Mar 23, 2019 at 1:32 AM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
-> On 21.03.19 10:23, Andy Shevchenko wrote:
->
-> > ...and on top of that GPIO sysfs interface is deprecated.
->
-> I don't like the idea of deprecating this. It might not be enough for
-> all usecases, but for a lot of usecases, it's a very easy and simple
-> interfaces.
+On Mon, 25 Mar 2019, Matti Vaittinen wrote:
 
-Yeah it is deprecated for years.
+> Split the bd718x7.h to ROHM common and bd718x7 specific parts
+> so that we do not need to add same things in every new ROHM
+> PMIC header. Please note that this change requires changes also
+> in bd718x7 sub-device drivers for regulators and clk.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-bd718x7.c             |  6 +++---
+>  drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
+>  drivers/regulator/bd718x7-regulator.c | 25 +++++++++++++------------
+>  include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
+>  include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
+>  5 files changed, 56 insertions(+), 40 deletions(-)
+>  create mode 100644 include/linux/mfd/rohm-generic.h
 
-It is not like I don't see the simpleness and utility.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-The reason why it is not good for anyone is simple:
-
-Export some GPIOs in sysfs. You script crashes. Who is going
-to unexport them now? (Answer: noone. Restart machine?)
-
-Two scripts at the same time try to use the same GPIO. Such as happen
-to start the same script twice. What happens
-now? (Answer: both, with interesting results.)
-
-Sure you can make more elaborate scripts that check for stuff already
-being exported etc.
-
-But the chardev on the other hand will protect you from all this.
-
-If the program crashes, the lines will be free:ed.
-
-If two scripts try to access the same GPIO, they will be denied.
-
-And to spice things up, I only add new stuff like open drain and
-driving several lines at the same time only to the chardev.
-
-Yours,
-Linus Walleij
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
