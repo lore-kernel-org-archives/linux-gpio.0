@@ -1,44 +1,97 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v11 1/8] mfd: regulator: clk: split rohm-bd718x7.h
-Date: Wed, 3 Apr 2019 07:19:16 +0100
-Message-ID: <20190403061916.GL4187@dell>
-References: <cover.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
- <81d7136a77a2786c122a1cbf3289c96c51ded79f.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+From: Chris Chiu <chiu@endlessm.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
+Date: Wed, 3 Apr 2019 15:06:43 +0800
+Message-ID: <CAB4CAwe7n5XsRNS-ZoJL1K7dHLpRrwNReBCCMXjDWCtxYaqfdQ@mail.gmail.com>
+References: <20190327172940.GR3622@lahna.fi.intel.com> <20190328091729.GV9224@smile.fi.intel.com>
+ <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
+ <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
+ <20190328123444.GX3622@lahna.fi.intel.com> <CAB4CAwcQTH5BiDDbzfFXTDDuYQ_fuDd_1tKkecf6vwygGQmn5w@mail.gmail.com>
+ <20190401074953.GQ3622@lahna.fi.intel.com> <CAB4CAweW_3p4i_8ntscJyU9n55HwdLt3pxyT3Gf6SUSbZAJ8qA@mail.gmail.com>
+ <20190401122256.GF9224@smile.fi.intel.com> <CAB4CAwd6+6+Qwb2wDFkVOc_auTNdrEw07tX2ha=XLvxfwFHRXw@mail.gmail.com>
+ <20190402115836.GL9224@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <81d7136a77a2786c122a1cbf3289c96c51ded79f.1553515333.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20190402115836.GL9224@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, heikki.haikola@fi.rohmeurop
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 25 Mar 2019, Matti Vaittinen wrote:
+On Tue, Apr 2, 2019 at 7:58 PM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+> > +               base = community->regs + community->hostown_offset;
+> > +               for (gpp = 0; gpp < community->ngpps; gpp++) {
+> > +                       if (communities[i].hostown[gpp] &&
+> > +                           communities[i].hostown[gpp] != readl(base
+> > + gpp * 4)) {
+> > +                               writel(communities[i].hostown[gpp],
+> > base + gpp * 4);
+> > +                               dev_warn(dev, "hostown changed after resume\n");
+> > +                               dev_dbg(dev, "restored hostown %d/%u
+> > %#08x\n", i, gpp,
+> > +                                       readl(base + gpp * 4));
+> > +                       }
+> > +               }
+>
+> Instead you may need to loop over each pin in the part of the group related to
+> one 32-bit HOSTSW_OWN register (i.e. 8, see PADOWN_*() macros in the driver),
+> check if it's requested and break a loop. If loop index is off-by-one a limit,
+> nothing to do, otherwise restore hostown register.
+>
+> More pedantic approach is to collect the mask inside the loop and apply it.
+>
+> The check function name is gpiochip_is_requested().
+>
+> (One of Intel's drivers which is using that at ->resume() is
+>  drivers/gpio/gpio-lynxpoint.c)
+>
+> P.S. I prefer pedantic approach. The simplification one is showed in order to
+> give you an idea.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-> Split the bd718x7.h to ROHM common and bd718x7 specific parts
-> so that we do not need to add same things in every new ROHM
-> PMIC header. Please note that this change requires changes also
-> in bd718x7 sub-device drivers for regulators and clk.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk-bd718x7.c             |  6 +++---
->  drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
->  drivers/regulator/bd718x7-regulator.c | 25 +++++++++++++------------
->  include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
->  include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
->  5 files changed, 56 insertions(+), 40 deletions(-)
->  create mode 100644 include/linux/mfd/rohm-generic.h
+Thanks for your great comment. I remove the useless hostown save function
+and make the following change in ->resume() to detect and restore the abnormal
+HOSTSW_OWN. Please help comment if there're still problems. Thanks.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+@@ -1588,6 +1600,29 @@ int intel_pinctrl_resume(struct device *dev)
+                        dev_dbg(dev, "restored mask %d/%u %#08x\n", i, gpp,
+                                readl(base + gpp * 4));
+                }
++
++               base = community->regs + community->hostown_offset;
++               for (gpp = 0; gpp < community->ngpps; gpp++) {
++                       const struct intel_padgroup *padgrp =
+&community->gpps[i];
++                       unsigned int requested = 0;
++                       int j;
++
++                       if (padgrp->gpio_base < 0)
++                               continue;
++
++                       for (j = 0; j < padgrp->size; j++)
++                               if
+(gpiochip_is_requested(&pctrl->chip, padgrp->gpio_base + j))
++                                       requested |= BIT(j);
++
++                       if (requested) {
++                               if (communities[i].hostown[gpp] !=
+readl(base + gpp * 4)) {
++
+writel(communities[i].hostown[gpp], base + gpp * 4);
++                                       dev_warn(dev, "hostown been
+changed during resume\n");
++                                       dev_dbg(dev, "restored hostown
+%d/%u %#08x\n", i, gpp,
++                                               readl(base + gpp * 4));
++                               }
++                       }
++               }
+        }
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+        return 0;
