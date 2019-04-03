@@ -1,35 +1,371 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/14] Support for Allwinner V3/S3L and
- Sochip S3
-Date: Wed, 3 Apr 2019 16:34:04 +0700
-Message-ID: <CACRpkdY5m1vuJKGJxFhPKyi-h_7F4O32oWuobf51x+=gkSp2cA@mail.gmail.com>
-References: <20190312152256.35574-1-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 2/9] mfd: Add ST Multi-Function eXpander (STMFX) core
+ driver
+Date: Wed, 3 Apr 2019 11:01:01 +0100
+Message-ID: <20190403100101.GK11301@dell>
+References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+ <1551260094-32570-3-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBGX4SHSQKGQEW35D6TQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20190312152256.35574-1-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Jagan Teki <jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1551260094-32570-3-git-send-email-amelie.delaunay@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 10:24 PM Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+On Wed, 27 Feb 2019, Amelie Delaunay wrote:
 
-> This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
+> STMicroelectronics Multi-Function eXpander (STMFX) is a slave controller
+> using I2C for communication with the main MCU. Main features are:
+> - 16 fast GPIOs individually configurable in input/output
+> - 8 alternate GPIOs individually configurable in input/output when other
+> STMFX functions are not used
+> - Main MCU IDD measurement
+> - Resistive touchscreen controller
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>  drivers/mfd/Kconfig       |  13 ++
+>  drivers/mfd/Makefile      |   2 +-
+>  drivers/mfd/stmfx.c       | 568 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/stmfx.h | 123 ++++++++++
+>  4 files changed, 705 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mfd/stmfx.c
+>  create mode 100644 include/linux/mfd/stmfx.h
 
-I see there is some review comments on this patch set so I am waiting
-for v2.
+Very nice first attempt for what is a pretty complex driver.
 
-When we have something Maxime, Rob etc has ACKed, I suggest I merge
-the pinctrl stuff into an immutable branch in the pinctrl tree so that it can
-be pulled in to ARM SoC if need be (for DTS files to compile for example).
+Just a couple of nits below.
 
-Yours,
-Linus Walleij
+[...]
+
+> +static int stmfx_chip_init(struct i2c_client *client)
+> +{
+> +	struct stmfx *stmfx = i2c_get_clientdata(client);
+> +	u32 id;
+> +	u8 version[2];
+> +	int ret;
+> +
+> +	stmfx->vdd = devm_regulator_get_optional(&client->dev, "vdd");
+> +	if (IS_ERR(stmfx->vdd)) {
+> +		ret = PTR_ERR(stmfx->vdd);
+> +		if (ret != -ENODEV) {
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(&client->dev,
+> +					"No VDD regulator found:%d\n", ret);
+
+Actually -ENODEV means this, which is okay.
+
+In this case we failed to obtain a provided regulator.
+
+> +			return ret;
+> +		}
+> +	} else {
+
+	if (IS_ERR(stmfx->vdd) && PTR_ERR(stmfx->vdd) == -EPROBE_DEFER) {
+		return PTR_ERR(stmfx->vdd);
+	} else (IS_ERR(stmfx->vdd) && PTR_ERR(stmfx->vdd) == -ENODEV) {
+		stmfx->vdd = NULL;
+	} else (IS_ERR(stmfx->vdd))) {
+		dev_err(&client->dev, "Failed to get VDD regulator:%d\n", ret);
+		return PTR_ERR(stmfx->vdd);
+	}
+
+	if (stmfx->vdd) {
+
+> +		ret = regulator_enable(stmfx->vdd);
+> +		if (ret) {
+> +			dev_err(&client->dev, "VDD enable failed: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+
+[...]
+
+> +static const struct resource stmfx_ts_resources[] = {
+> +	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_TS_DET),
+> +	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_TS_NE),
+> +	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_TS_TH),
+> +	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_TS_FULL),
+> +	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_TS_OVF),
+> +};
+
+Please move everything from here --------------->
+
+> +static struct mfd_cell stmfx_cells[] = {
+> +	{
+> +		.of_compatible = "st,stmfx-0300-pinctrl",
+> +		.name = "stmfx-pinctrl",
+> +		.resources = stmfx_pinctrl_resources,
+> +		.num_resources = ARRAY_SIZE(stmfx_pinctrl_resources),
+> +	},
+> +	{
+> +		.of_compatible = "st,stmfx-0300-idd",
+> +		.name = "stmfx-idd",
+> +		.resources = stmfx_idd_resources,
+> +		.num_resources = ARRAY_SIZE(stmfx_idd_resources),
+> +	},
+> +	{
+> +		.of_compatible = "st,stmfx-0300-ts",
+> +		.name = "stmfx-ts",
+> +		.resources = stmfx_ts_resources,
+> +		.num_resources = ARRAY_SIZE(stmfx_ts_resources),
+> +	},
+> +};
+> +
+> +static bool stmfx_reg_volatile(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case STMFX_REG_SYS_CTRL:
+> +	case STMFX_REG_IRQ_SRC_EN:
+> +	case STMFX_REG_IRQ_PENDING:
+> +	case STMFX_REG_IRQ_GPI_PENDING1:
+> +	case STMFX_REG_IRQ_GPI_PENDING2:
+> +	case STMFX_REG_IRQ_GPI_PENDING3:
+> +	case STMFX_REG_GPIO_STATE1:
+> +	case STMFX_REG_GPIO_STATE2:
+> +	case STMFX_REG_GPIO_STATE3:
+> +	case STMFX_REG_IRQ_GPI_SRC1:
+> +	case STMFX_REG_IRQ_GPI_SRC2:
+> +	case STMFX_REG_IRQ_GPI_SRC3:
+> +	case STMFX_REG_GPO_SET1:
+> +	case STMFX_REG_GPO_SET2:
+> +	case STMFX_REG_GPO_SET3:
+> +	case STMFX_REG_GPO_CLR1:
+> +	case STMFX_REG_GPO_CLR2:
+> +	case STMFX_REG_GPO_CLR3:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static bool stmfx_reg_writeable(struct device *dev, unsigned int reg)
+> +{
+> +	return (reg >= STMFX_REG_SYS_CTRL);
+> +}
+> +
+> +static const struct regmap_config stmfx_regmap_config = {
+> +	.reg_bits	= 8,
+> +	.reg_stride	= 1,
+> +	.val_bits	= 8,
+> +	.max_register	= STMFX_REG_MAX,
+> +	.volatile_reg	= stmfx_reg_volatile,
+> +	.writeable_reg	= stmfx_reg_writeable,
+> +	.cache_type	= REGCACHE_RBTREE,
+> +};
+
+----------------------->
+
+... to here, up to the top, just below the includes.
+
+> +static int stmfx_probe(struct i2c_client *client,
+> +		       const struct i2c_device_id *id)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct stmfx *stmfx;
+> +	int i, ret;
+> +
+> +	stmfx = devm_kzalloc(dev, sizeof(*stmfx), GFP_KERNEL);
+> +	if (!stmfx)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, stmfx);
+> +
+> +	stmfx->dev = dev;
+> +
+> +	stmfx->map = devm_regmap_init_i2c(client, &stmfx_regmap_config);
+> +	if (IS_ERR(stmfx->map)) {
+> +		ret = PTR_ERR(stmfx->map);
+> +		dev_err(dev, "Failed to allocate register map: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	mutex_init(&stmfx->lock);
+> +
+> +	ret = stmfx_chip_init(client);
+> +	if (ret) {
+> +		if (ret == -ETIMEDOUT)
+> +			return -EPROBE_DEFER;
+> +		return ret;
+> +	}
+> +
+> +	if (client->irq < 0) {
+> +		dev_err(dev, "Failed to get IRQ: %d\n", client->irq);
+> +		ret = client->irq;
+> +		goto err_chip_exit;
+> +	}
+> +
+> +	ret = stmfx_irq_init(client);
+> +	if (ret)
+> +		goto err_chip_exit;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(stmfx_cells); i++) {
+> +		stmfx_cells[i].platform_data = stmfx;
+> +		stmfx_cells[i].pdata_size = sizeof(struct stmfx);
+> +	}
+
+Pass this though dev_get_drvdata() instead.
+
+...
+
+Actually, didn't you already set this with i2c_set_clientdata()?  That
+does exactly the same thing.  So you can get this back from the client
+via i2c_get_clientdata().  No need to send it though platform data.
+
+> +	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+> +				   stmfx_cells, ARRAY_SIZE(stmfx_cells), NULL,
+> +				   0, stmfx->irq_domain);
+> +	if (ret)
+> +		goto err_irq_exit;
+> +
+> +	return 0;
+> +
+> +err_irq_exit:
+> +	stmfx_irq_exit(client);
+> +err_chip_exit:
+> +	stmfx_chip_exit(client);
+> +
+> +	return ret;
+> +}
+> +
+> +static int stmfx_remove(struct i2c_client *client)
+> +{
+> +	stmfx_irq_exit(client);
+> +
+> +	return stmfx_chip_exit(client);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int stmfx_backup_regs(struct stmfx *stmfx)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_raw_read(stmfx->map, STMFX_REG_SYS_CTRL,
+> +			      &stmfx->bkp_sysctrl, sizeof(stmfx->bkp_sysctrl));
+> +	if (ret)
+> +		return ret;
+
+'\n' here.
+
+> +	ret = regmap_raw_read(stmfx->map, STMFX_REG_IRQ_OUT_PIN,
+> +			      &stmfx->bkp_irqoutpin,
+> +			      sizeof(stmfx->bkp_irqoutpin));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int stmfx_restore_regs(struct stmfx *stmfx)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_raw_write(stmfx->map, STMFX_REG_SYS_CTRL,
+> +			       &stmfx->bkp_sysctrl, sizeof(stmfx->bkp_sysctrl));
+> +	if (ret)
+> +		return ret;
+
+'\n' here.
+
+> +	ret = regmap_raw_write(stmfx->map, STMFX_REG_IRQ_OUT_PIN,
+> +			       &stmfx->bkp_irqoutpin,
+> +			       sizeof(stmfx->bkp_irqoutpin));
+> +	if (ret)
+> +		return ret;
+
+'\n' here.
+
+> +	ret = regmap_raw_write(stmfx->map, STMFX_REG_IRQ_SRC_EN,
+> +			       &stmfx->irq_src, sizeof(stmfx->irq_src));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int stmfx_suspend(struct device *dev)
+> +{
+> +	struct stmfx *stmfx = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = stmfx_backup_regs(stmfx);
+
+Don't think you need a separate function for this.  Just move the
+regmap_raw_write() commands here.
+
+> +	if (ret) {
+> +		dev_err(stmfx->dev, "Registers backup failure\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!IS_ERR(stmfx->vdd)) {
+> +		ret = regulator_disable(stmfx->vdd);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int stmfx_resume(struct device *dev)
+> +{
+> +	struct stmfx *stmfx = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	if (!IS_ERR(stmfx->vdd)) {
+> +		ret = regulator_enable(stmfx->vdd);
+> +		if (ret) {
+> +			dev_err(stmfx->dev,
+> +				"VDD enable failed: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = stmfx_restore_regs(stmfx);
+
+As above.
+
+> +	if (ret) {
+> +		dev_err(stmfx->dev, "Registers restoration failure\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(stmfx_dev_pm_ops, stmfx_suspend, stmfx_resume);
+> +
+> +static const struct of_device_id stmfx_of_match[] = {
+> +	{ .compatible = "st,stmfx-0300", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, stmfx_of_match);
+> +
+> +static struct i2c_driver stmfx_driver = {
+> +	.driver = {
+> +		.name = "stmfx-core",
+> +		.of_match_table = of_match_ptr(stmfx_of_match),
+> +		.pm = &stmfx_dev_pm_ops,
+> +	},
+> +	.probe = stmfx_probe,
+> +	.remove = stmfx_remove,
+> +};
+> +module_i2c_driver(stmfx_driver);
+> +
+> +MODULE_DESCRIPTION("STMFX core driver");
+> +MODULE_AUTHOR("Amelie Delaunay <amelie.delaunay@st.com>");
+> +MODULE_LICENSE("GPL v2");
+
+[...]
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
