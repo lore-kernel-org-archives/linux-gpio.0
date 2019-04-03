@@ -1,31 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: avoid clang warning
-Date: Wed, 3 Apr 2019 23:33:05 +0700
-Message-ID: <CACRpkdb-x0wja_k7r_Dj0VO8E-TEE2_iebswBnvEoA-Ghddiug@mail.gmail.com>
-References: <20190307103348.1591457-1-arnd@arndb.de>
+Subject: Re: [PATCH 1/6] gpio: Set proper argument value to set_config
+Date: Wed, 3 Apr 2019 23:41:02 +0700
+Message-ID: <CACRpkdaRofnaN5RMqRyyAakngyCWBKQX8+y32SESiwvVxbFyOA@mail.gmail.com>
+References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
+ <b9ed544722175ea00b1f6ecb29ca5c3e1322239f.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190307103348.1591457-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Nick Desaulniers <ndesaulniers@google.com>, Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <b9ed544722175ea00b1f6ecb29ca5c3e1322239f.1552591798.git-series.maxime.ripard@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chen-Yu Tsai <wens@csie.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 7, 2019 at 5:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Mar 15, 2019 at 2:33 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> clang warns about a tentative array definition in the gpio-omap driver:
+> The gpio_set_config function creates a pinconf configuration for a given
+> pinc_config_param.
 >
-> drivers/gpio/gpio-omap.c:1282:34: error: tentative array definition assumed to have one element [-Werror]
-> static const struct of_device_id omap_gpio_match[];
+> However, it always uses an arg of 0, which might not be a valid argument
+> for a given param. A good example of that would be the bias parameters,
+> where 0 means that the pull up or down resistor is null, and the pin is
+> directly connected to VCC/GND.
 >
-> It's best to just reorder the entire file to avoid forward declarations,
-> which lets us use the regular declaration. To do this, the unnecessary
-> CONFIG_OF check must also be removed.
+> The framework uses in some other places the value 1 as a default argument
+> to enable the pull resistor, so let's use the same one here.
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Patch applied.
+Patch applied to the GPIO tree, I suppose I can merge it there
+orthogonally to the other patches (the result will be fine).
 
 Yours,
 Linus Walleij
