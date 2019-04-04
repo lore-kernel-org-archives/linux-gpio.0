@@ -1,69 +1,138 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Implements gpio free function
-Date: Thu, 4 Apr 2019 14:52:08 +0300
-Message-ID: <20190404115208.GR9224@smile.fi.intel.com>
-References: <1553135724-38331-1-git-send-email-zhuchangchun@cvte.com>
- <20190321084420.GG3622@lahna.fi.intel.com>
- <20190321092330.GK9224@smile.fi.intel.com>
- <140c6ec0-7c11-6aa9-8434-f14d77be9a8c@metux.net>
- <CACRpkdZ1xPJ=NS=o=-PYqCO4d-VVZM1=f=xBZa5Dwx78LFPYtA@mail.gmail.com>
- <cb643914-2c3f-0c63-13e4-8171fa9a37e7@metux.net>
+From: Chris Chiu <chiu@endlessm.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
+Date: Thu, 4 Apr 2019 21:06:04 +0800
+Message-ID: <CAB4CAweo6uSbn2hY-YbnPqWPBShAYwfGhfOosHL+oL_EE=8L9A@mail.gmail.com>
+References: <CAD8Lp44xuzHj4uu3a-Y9wscSyEmuG6=nbww6T9-9FaYZT_qYsw@mail.gmail.com>
+ <CAB4CAwfH237-EUgfyR8-KWKo0HJOf=QkxiNjkBRg+gBpbKiM7g@mail.gmail.com>
+ <20190328123444.GX3622@lahna.fi.intel.com> <CAB4CAwcQTH5BiDDbzfFXTDDuYQ_fuDd_1tKkecf6vwygGQmn5w@mail.gmail.com>
+ <20190401074953.GQ3622@lahna.fi.intel.com> <CAB4CAweW_3p4i_8ntscJyU9n55HwdLt3pxyT3Gf6SUSbZAJ8qA@mail.gmail.com>
+ <20190401122256.GF9224@smile.fi.intel.com> <CAB4CAwd6+6+Qwb2wDFkVOc_auTNdrEw07tX2ha=XLvxfwFHRXw@mail.gmail.com>
+ <20190402115836.GL9224@smile.fi.intel.com> <CAB4CAwe7n5XsRNS-ZoJL1K7dHLpRrwNReBCCMXjDWCtxYaqfdQ@mail.gmail.com>
+ <20190403130640.GD9224@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <cb643914-2c3f-0c63-13e4-8171fa9a37e7@metux.net>
+In-Reply-To: <20190403130640.GD9224@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, zhuchangchun <zhuchangchun@cvte.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hendychu@aliyun.coma, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 04, 2019 at 12:51:35PM +0200, Enrico Weigelt, metux IT consult wrote:
-> On 03.04.19 06:13, Linus Walleij wrote:
-> 
-> > But the chardev on the other hand will protect you from all this.> > If the program crashes, the lines will be free:ed.> > If two scripts
-> try to access the same GPIO, they will be denied.
-> Right, when you want this concurrency protection and cleanup stiff
-> the chardev is the better choice. But I've already had several cases
-> where the simplicity of the sysfs interface is a big win - all you need
-> few trivial fs operations.
-> 
-> That's also nice for exporting in a grid, eg. via 9P (eg. nice for
-> quickly building up HIL environments)
-> 
-> ioctls have the bad side effect that they can't be exported via
-> network in a generic way - your remote fs protocol must support all of
-> them - even worse: it needs to cope with overlapping ioctl-nr's that
-> can have entirely different data structures depending on the actual
-> device. And now try to do that w/ reasonable effort and w/o creating
-> a shared memory between server and client :p
-> 
-> Another interesting usecase is permission handling:
-> 
-> a) some ioctls need special privileges (oh, how I hate all these "if
->    (!capable(CAP_SYS_ADMIN)) ..." lines in the drivers), but you wanna
->    give some unprivileged user access to them
-> b) you wanna give an unprivileged user access to specific gpio's,
->    but not to all at once.
-> 
-> With pure filesystem based approach, you can easly define permissions
-> for each filesystem object.
+On Wed, Apr 3, 2019 at 9:06 PM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Wed, Apr 03, 2019 at 03:06:43PM +0800, Chris Chiu wrote:
+> > On Tue, Apr 2, 2019 at 7:58 PM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+>
+> > > Instead you may need to loop over each pin in the part of the group related to
+> > > one 32-bit HOSTSW_OWN register (i.e. 8, see PADOWN_*() macros in the driver),
+> > > check if it's requested and break a loop. If loop index is off-by-one a limit,
+> > > nothing to do, otherwise restore hostown register.
+> > >
+> > > More pedantic approach is to collect the mask inside the loop and apply it.
+> > >
+> > > The check function name is gpiochip_is_requested().
+> > >
+> > > (One of Intel's drivers which is using that at ->resume() is
+> > >  drivers/gpio/gpio-lynxpoint.c)
+> > >
+> > > P.S. I prefer pedantic approach. The simplification one is showed in order to
+> > > give you an idea.
+>
+> > Thanks for your great comment. I remove the useless hostown save function
+> > and make the following change in ->resume() to detect and restore the abnormal
+> > HOSTSW_OWN. Please help comment if there're still problems. Thanks.
+>
+>
+> This better to make as a separate helper function
+>
+> static u32 intel_gpio_is_requested(chip, base, size)
+> {
+>         u32 requested = 0;
+>         unsigned int i;
+>
+>         for () {
+>                 if ()
+>                         requested |= BIT();
+>         }
+>         return requested;
+> }
+>
+> (Note u32 as a type)
+>
 
-Also you may consider gpiod daemon and it's socket interface, for example.
-Yes, complicated, but solves above problems AFAICT.
+Thanks. I made a minor modification for the check function. I think to
+pass a padgroup
+as the argument would be better instead of base, size which I may need
+to check if
+the size > 32 (of course it shouldn't happen) or not.
 
-I guess the best person, missed in Cc, Bartosz, can tell more about user space
-interaction.
++intel_padgroup_has_gpio_requested(struct gpio_chip *chip,  const
+struct intel_padgroup *gpp)
++{
++       u32 requested = 0;
++       int i;
++
++       if (gpp == NULL)
++               return 0;
++
++       if (gpp->gpio_base < 0)
++               return 0;
++
++       for (i = 0; i < gpp->size; i++)
++               if (gpiochip_is_requested(chip, gpp->gpio_base + i))
++                       requested |= BIT(i);
++
++       return requested;
++}
++
+ int intel_pinctrl_resume(struct device *dev)
+ {
+        struct platform_device *pdev = to_platform_device(dev);
 
-And btw gpiod still a good to have for other even local cases:
-https://github.com/brgl/libgpiod/issues/29
-https://github.com/brgl/libgpiod/issues/40
-...
+> > +                       if (requested) {
+> > +                               if (communities[i].hostown[gpp] !=
+> > readl(base + gpp * 4)) {
+> > +
+> > writel(communities[i].hostown[gpp], base + gpp * 4);
+>
+> The idea here not to check this at all, but rather apply a mask.
+>
+> u32 value;
+>
+> ...
+> value = readl();
+> value = (value & ~requested) | (hostown[gpp] & requested);
+> writel(value);
+>
 
-> Yes, these usecases aren't so common for average Jon Doe, but the gpio
-> subsystem is used that way, out there in the field, and it would be bad
-> if that functionality would go away someday.
+I made the following per your suggestion. So basically I don't need to show a
+warning for the abnormal HOSTSW_OWN value change? I will submit a formal
+patch for review if there's no big problem for these code logic. Please advise
+if any. Thanks.
 
--- 
-With Best Regards,
-Andy Shevchenko
+@@ -1588,6 +1619,22 @@ int intel_pinctrl_resume(struct device *dev)
+                        dev_dbg(dev, "restored mask %d/%u %#08x\n", i, gpp,
+                                readl(base + gpp * 4));
+                }
++
++               base = community->regs + community->hostown_offset;
++               for (gpp = 0; gpp < community->ngpps; gpp++) {
++                       const struct intel_padgroup *padgrp =
+&community->gpps[i];
++                       u32 requested =
+intel_padgroup_has_gpio_requested(&pctrl->chip, padgrp);
++
++                       if (requested) {
++                               u32 value = readl(base + gpp * 4);
++                               u32 saved = communities[i].hostown[gpp];
++
++                               value = (value & ~requested) | (saved
+& requested);
++                               writel(value, base + gpp * 4);
++                               dev_dbg(dev, "restored hostown %d/%u
+%#08x\n", i, gpp,
++                                       readl(base + gpp * 4));
++                       }
++               }
