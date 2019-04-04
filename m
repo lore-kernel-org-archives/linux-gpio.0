@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/6] ARM: dts: sunxi: Remove pinctrl groups setting bias
-Date: Thu, 4 Apr 2019 10:29:58 +0700
-Message-ID: <CACRpkdZ-C6uQfKFUT+8j+wU0DS=DO5k7fgMoFJ-dHwFHz6D4HA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] ARM: dts: sunxi: Remove useless pinctrl nodes
+Date: Thu, 4 Apr 2019 10:30:50 +0700
+Message-ID: <CACRpkdZwiyZ+NtKpCOuacTg8Tu6mRJs6bBoaJ4LvGf7avSRg9Q@mail.gmail.com>
 References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
- <ca64e5b42aca638075f0b23ee887b79619884814.1552591798.git-series.maxime.ripard@bootlin.com>
+ <b102448c00768e07b0c28771935f52639aa83ef4.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <ca64e5b42aca638075f0b23ee887b79619884814.1552591798.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <b102448c00768e07b0c28771935f52639aa83ef4.1552591798.git-series.maxime.ripard@bootlin.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,20 +24,14 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Fri, Mar 15, 2019 at 2:33 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> So far we've enabled pull-up and pull-down resistors on GPIOs using a
-> pinctrl node. Now that the GPIO binding allows for a flag to declare this,
-> let's switch to it.
+> We have for the H3 boards some kind of cargo cult apparently, where we
+> would have a pinctrl node even for GPIOs without any particular settings.
 >
-> This brings us closer to removing all the GPIO pinctrl nodes, which will in
-> turn allow us to switch the pinctrl strict mode on.
+> This is pretty much useless, so let's remove them.
 >
 > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Way simpler like this right? :D
-
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Please funnel this through ARM SoC.
 
 Yours,
 Linus Walleij
