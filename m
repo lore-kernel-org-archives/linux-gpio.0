@@ -1,37 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] ARM: dts: sunxi: Remove useless pinctrl nodes
-Date: Thu, 4 Apr 2019 10:30:50 +0700
-Message-ID: <CACRpkdZwiyZ+NtKpCOuacTg8Tu6mRJs6bBoaJ4LvGf7avSRg9Q@mail.gmail.com>
-References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
- <b102448c00768e07b0c28771935f52639aa83ef4.1552591798.git-series.maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 0/2] pinctrl: meson: add g12a drive strength support
+Date: Thu, 4 Apr 2019 10:41:04 +0700
+Message-ID: <CACRpkdYdRfm=OLmfzZeJEXpfOdnxg=YE+yAexHTh_-EePBtxaA@mail.gmail.com>
+References: <20190314163725.7918-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b102448c00768e07b0c28771935f52639aa83ef4.1552591798.git-series.maxime.ripard@bootlin.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chen-Yu Tsai <wens@csie.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190314163725.7918-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Guillaume La Roque <glaroque@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 15, 2019 at 2:33 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Thu, Mar 14, 2019 at 11:37 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-> We have for the H3 boards some kind of cargo cult apparently, where we
-> would have a pinctrl node even for GPIOs without any particular settings.
+> Now the slightly annoying part :(
+> The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
+> 'drive-strength' is expressed in mA.
 >
-> This is pretty much useless, so let's remove them.
+> 1) Rounding down the value, we could be requesting a 0mA drive strength.
+>    That would look weird.
+> 2) Rounding up, we can't distinguish between 2.5mA and 3mA
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> To solve this issue in this in this v1, we chose to document that, on Amlogic,
+> drive-strength is expressed in uA instead of mA.
+> It works well and there is no impact on the other platforms but I'm not sure this
+> is really OK with the DT rules ?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I want the DT people to say what they think about this.
+
+> Linus, if this is not OK with you, here are 2 other options we are
+> considering. We would be very interested to get your opinion on the matter:
+>
+> 1) instead the generic 'drive-strength' property, we could add an amlogic
+> specific property, 'amlogic,drive-strength'. It would be expressed in uA
+> and parsed in amlogic specific code.
+> I think this option is kind of overkill. Expressing drive strength in uA is
+> not really amlogic specific so it does not make much sense, but it would
+> work ...
+>
+> 2) Add another generic property "drive-strength-uA". The change to do so
+> would be minimal and could be benefit to other platforms later on.
+
+I would go for 2).
+
+But we really need input from bindings people on this.
 
 Yours,
 Linus Walleij
