@@ -1,28 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND PATCH v6 07/11] power: supply: max77650: add support for
- battery charger
-Date: Thu, 4 Apr 2019 10:45:02 +0700
-Message-ID: <CACRpkdaZ1M9DmAoHv_YdGxJKLPow9-kwuMR_mB4WeKfBvHrcSw@mail.gmail.com>
-References: <20190318174228.18194-1-brgl@bgdev.pl> <20190318174228.18194-8-brgl@bgdev.pl>
+Subject: Re: [PATCH v2] pinctrl: sunxi: Allow to disable pinctrl drivers
+Date: Thu, 4 Apr 2019 10:56:47 +0700
+Message-ID: <CACRpkdYOL=EiZH0eRyxbNQkBuPkqxCqqRyuGMD1NBpKGgZfUrA@mail.gmail.com>
+References: <20190319144203.23467-1-maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190318174228.18194-8-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190319144203.23467-1-maxime.ripard@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 12:42 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Tue, Mar 19, 2019 at 9:42 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Our pinctrl drivers are consisting of some common code, and big pin tables
+> that are SoC-specific. This is fine in most cases, but when you want to
+> reduce the size of the particular kernel image, those big tables are, well,
+> quite big.
 >
-> Add basic support for the battery charger for max77650 PMIC.
+> We haven't had the option to disable them in the past since they were
+> hidden Kconfig options based on the SoC support. However, that granularity
+> isn't great since we don't have one Kconfig option per-SoC, but rather one
+> by family.
 >
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Make those options selectable by the user so that they can disable it if
+> needed, while keeping the current default to not change the standard case.
+>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-This looks like a clean and good driver to me.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied!
 
 Yours,
 Linus Walleij
