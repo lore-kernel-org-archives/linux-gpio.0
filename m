@@ -1,97 +1,74 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.0 121/246] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-Date: Thu,  4 Apr 2019 10:47:01 +0200
-Message-ID: <20190404084623.392174120@linuxfoundation.org>
-References: <20190404084619.236418459@linuxfoundation.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
+Date: Thu, 4 Apr 2019 11:06:35 +0200
+Message-ID: <CAMuHMdVMOo2R2ehuU9XiVy0NS9J=mJkx0Mo-rsT=OBs-1kvH=Q@mail.gmail.com>
+References: <20190320103927.21227-1-geert+renesas@glider.be> <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404084619.236418459@linuxfoundation.org>
+In-Reply-To: <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Jan Kotas <jank@cadence.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-5.0-stable review patch.  If anyone has any objections, please let me know.
+Hi Ulf,
 
-------------------
+On Thu, Apr 4, 2019 at 10:55 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Wed, 20 Mar 2019 at 11:39, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > If a device is part of the wake-up path, it should indicate this by
+> > setting its power.wakeup_path field.  This allows the genpd core code to
+> > keep the device enabled during system suspend when needed.
+> >
+> > As regulators powering devices are not handled by genpd, the driver
+> > handles these itself, and thus must skip regulator control when the
+> > device is part of the wake-up path.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Note that I don't really need this on the Renesas Ebisu-4D board, as
+> > there is no regulator or PM Domain controlling power to the GPIO
+> > expander on that board.  I did want to have all wake-up path processing
+> > implemented in the driver for completeness, and did test its behavior
+> > with gpio-keys configured as a wake-up source.
+>
+> All above makes perfect sense to me.
 
-[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
-the GPIO regulator had inverted the polarity of the control GPIO. This
-problem manifested itself on systems with DT containing the following
-description (snippet from salvator-common.dtsi):
+Thanks!
 
-	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-	gpios-states = <1>;
-	states = <3300000 1
-		  1800000 0>;
+> > However, while this approach is known to work fine on other boards, with
+> > other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> > irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> > device suspend ordering.
+> >
+> > The proper ordering is:
+> >   1. When gpio-keys is suspended, its suspend handler calls
+> >      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+> >      pca953x_chip.wakeup_path to be incremented,
+> >   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+> >      and marks the device to be part of the wake-up path.
+>
+> Right.
+>
+> >
+> > However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> > scheme :-(
+>
+> Would it make sense to fixup the ordering issue via creating a
+> parent/child relationship or setting up a device link?
 
-Prior to the aforementioned commit, the gpio-regulator code used
-gpio_request_array() to claim the GPIO(s) specified in the "gpios"
-DT node, while the commit changed that to devm_gpiod_get_index().
+Could that be due to gpio_keys not having rudimentary Runtime PM support?
 
-The legacy gpio_request_array() calls gpio_request_one() and then
-gpiod_request(), which parses the DT flags of the "gpios" node and
-populates the GPIO descriptor flags field accordingly.
+Gr{oetje,eeting}s,
 
-The new devm_gpiod_get_index() calls gpiod_get_index(), then
-of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
-and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
-("gpio: of: Add special quirk to parse regulator flags"),
-of_gpio_flags_quirks() contains a quirk for regulator-gpio
-which was never triggered by the legacy gpio_request_array()
-code path, but is triggered by devm_gpiod_get_index() code
-path.
+                        Geert
 
-This quirk checks whether a GPIO is associated with a fixed
-or gpio-regulator and if so, checks two additional conditions.
-First, whether such GPIO is active-low, and if so, ignores the
-active-low flag. Second, whether the regulator DT node does
-have an "enable-active-high" property and if the property is
-NOT present, sets the GPIO flags as active-low.
-
-The second check triggers a problem, since it is applied to all
-GPIOs associated with a gpio-regulator, rather than only on the
-"enable" GPIOs, as the old code did. This changes the way the
-gpio-regulator interprets the DT description of the control
-GPIOs.
-
-The old code using gpio_request_array() explicitly parsed the
-"enable-active-high" DT property and only applied it to the
-GPIOs described in the "enable-gpios" DT node, and only if
-those were present.
-
-This patch fixes the quirk code by only applying the quirk
-to "enable-gpios", thus restoring the old behavior.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jan Kotas <jank@cadence.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib-of.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6e1891217e2..30542a10014f 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * Note that active low is the default.
- 	 */
- 	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    !strcmp(propname, "enable-gpio") &&
- 	    (of_device_is_compatible(np, "regulator-fixed") ||
- 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
- 	     of_device_is_compatible(np, "regulator-gpio"))) {
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
