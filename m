@@ -1,95 +1,97 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v11 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Date: Thu, 4 Apr 2019 09:21:53 +0100
-Message-ID: <20190404082153.GP6830@dell>
-References: <20190403093015.GJ11301@dell>
- <20190403101003.GC3493@localhost.localdomain>
- <20190403112559.GP11301@dell>
- <85b20828bb4fb51e6df1d5d9d1c1f667db3a7c48.camel@fi.rohmeurope.com>
- <20190404025234.GB6830@dell>
- <6775a75d1ee3ab96123d84b077881beedc358d12.camel@fi.rohmeurope.com>
- <20190404065452.GD6830@dell>
- <20190404072449.GE3493@localhost.localdomain>
- <20190404075640.GV22216@piout.net>
- <70a8a87a403eb2ab8f0aad2a26456de8a162f363.camel@fi.rohmeurope.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5.0 121/246] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+Date: Thu,  4 Apr 2019 10:47:01 +0200
+Message-ID: <20190404084623.392174120@linuxfoundation.org>
+References: <20190404084619.236418459@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <70a8a87a403eb2ab8f0aad2a26456de8a162f363.camel@fi.rohmeurope.com>
+In-Reply-To: <20190404084619.236418459@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "sre@kernel.org" <sre@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sboyd@kernel.org" <sboyd@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "mark.rutland@arm.com" <mark.rutland@arm.com>linux
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Jan Kotas <jank@cadence.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 04 Apr 2019, Vaittinen, Matti wrote:
+5.0-stable review patch.  If anyone has any objections, please let me know.
 
-> Hello Alexandre,
-> 
-> On Thu, 2019-04-04 at 09:56 +0200, Alexandre Belloni wrote:
-> > On 04/04/2019 10:24:49+0300, Matti Vaittinen wrote:
-> > > On Thu, Apr 04, 2019 at 07:54:52AM +0100, Lee Jones wrote:
-> > > > On Thu, 04 Apr 2019, Vaittinen, Matti wrote:
-> > > > 
-> > > > > Actually, now that I thik of it the right way to do this would
-> > > > > have
-> > > > > been the function pointer in parent data as was done in
-> > > > > original patch
-> > > > > set. HW-colleagues tend to re-use HW blocks, and we like to re-
-> > > > > use our
-> > > > > drivers. If the next PMIC from ROHM uses same RTC block but
-> > > > > does not
-> > > > > provide watchdog - then it is cleanest solution to fall back to
-> > > > > function pointer and leave it to NULL when there is no WDT or
-> > > > > when WDT
-> > > > > is unused. Another option is to export dummy function - which
-> > > > > is not so
-> > > > > nice.
-> > > > 
-> > > > I think the converse is true.
-> > > > 
-> > > > Pointers to functions outside of a subsystem API context are
-> > > > generally
-> > > > horrible.  It's much nicer to call a function which can be easily
-> > > > stubbed out in a header file based on a Kconfig option.  It's how
-> > > > most
-> > > > kernel APIs work.
-> > > 
-> > > I hate to admit but I see your point. This nicely solves any issues
-> > > in
-> > > syncronizing the startup for driver providing function pointer and
-> > > for
-> > > driver using it.
-> > > 
-> > 
-> > Wouldn't it be easier to register the watchdog driver as part of the
-> > RTC
-> > driver?
-> > 
-> > As I see it, the wdt is just a glorified RTC alarm.
-> 
-> Do you suggest me to put all the stuff now placed in
-> drivers/watchdog/bd70528_wdt.c into rtc driver? It would be doable -
-> but I'd rather kept the WDT independent module so that it can be left
-> out of config if WDT needs not to be used. And same with RTC. Also, re-
-> use of RTC driver in HW which does not include WDT is easier when WDT
-> is a separate module. To me it looks much cleaner to have the WDT as
-> own module than polluting the RTC driver with config ifdefs.
+------------------
 
-I haven't looked at the code, but I agree with this in principle.
+[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
 
-I'm a firm believer of having functionality in the most appropriate
-subsystem.  IMHO, if a device can be neatly split 9/10 it should be.
+Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
+the GPIO regulator had inverted the polarity of the control GPIO. This
+problem manifested itself on systems with DT containing the following
+description (snippet from salvator-common.dtsi):
 
-> But from HW perspective you are correct. The WDT in BD70528 seems to be
-> kind of RTC alarm which shuts of the PMIC if triggered.
-> 
-> Br,
-> 	Matti Vaittinen
+	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+	gpios-states = <1>;
+	states = <3300000 1
+		  1800000 0>;
 
+Prior to the aforementioned commit, the gpio-regulator code used
+gpio_request_array() to claim the GPIO(s) specified in the "gpios"
+DT node, while the commit changed that to devm_gpiod_get_index().
+
+The legacy gpio_request_array() calls gpio_request_one() and then
+gpiod_request(), which parses the DT flags of the "gpios" node and
+populates the GPIO descriptor flags field accordingly.
+
+The new devm_gpiod_get_index() calls gpiod_get_index(), then
+of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
+and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
+("gpio: of: Add special quirk to parse regulator flags"),
+of_gpio_flags_quirks() contains a quirk for regulator-gpio
+which was never triggered by the legacy gpio_request_array()
+code path, but is triggered by devm_gpiod_get_index() code
+path.
+
+This quirk checks whether a GPIO is associated with a fixed
+or gpio-regulator and if so, checks two additional conditions.
+First, whether such GPIO is active-low, and if so, ignores the
+active-low flag. Second, whether the regulator DT node does
+have an "enable-active-high" property and if the property is
+NOT present, sets the GPIO flags as active-low.
+
+The second check triggers a problem, since it is applied to all
+GPIOs associated with a gpio-regulator, rather than only on the
+"enable" GPIOs, as the old code did. This changes the way the
+gpio-regulator interprets the DT description of the control
+GPIOs.
+
+The old code using gpio_request_array() explicitly parsed the
+"enable-active-high" DT property and only applied it to the
+GPIOs described in the "enable-gpios" DT node, and only if
+those were present.
+
+This patch fixes the quirk code by only applying the quirk
+to "enable-gpios", thus restoring the old behavior.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jan Kotas <jank@cadence.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpiolib-of.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6e1891217e2..30542a10014f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+ 	     of_device_is_compatible(np, "regulator-gpio"))) {
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.1
