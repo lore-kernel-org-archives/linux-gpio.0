@@ -1,45 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/6] gpio: Set proper argument value to set_config
-Date: Thu, 4 Apr 2019 11:56:07 +0700
-Message-ID: <CACRpkdYzkz6wa9fzFGsYkCroVb9tSewQisCtDx51Fiz7VF6PBQ@mail.gmail.com>
-References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
- <b9ed544722175ea00b1f6ecb29ca5c3e1322239f.1552591798.git-series.maxime.ripard@bootlin.com>
- <CACRpkdaRofnaN5RMqRyyAakngyCWBKQX8+y32SESiwvVxbFyOA@mail.gmail.com>
- <20190403183644.b25rlkxgquw2aqny@flea>
+Subject: Re: [PATCH -next] pinctrl: fsl: Make pinctrl_ipc_handle static
+Date: Thu, 4 Apr 2019 12:17:10 +0700
+Message-ID: <CACRpkdZfAbAv6f3B77HfEjssfqSx0tKAbA_bTb-YWKvutRx3Qw@mail.gmail.com>
+References: <20190320141425.20920-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190403183644.b25rlkxgquw2aqny@flea>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chen-Yu Tsai <wens@csie.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190320141425.20920-1-yuehaibing@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 1:36 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Wed, Mar 20, 2019 at 9:15 PM Yue Haibing <yuehaibing@huawei.com> wrote:
 
-> > Patch applied to the GPIO tree, I suppose I can merge it there
-> > orthogonally to the other patches (the result will be fine).
+> From: YueHaibing <yuehaibing@huawei.com>
 >
-> Yeah, the only drawback I can see is that the configuration will be
-> rejected, but since it's going to be merged in fixes, the case where
-> we have the driver patches but not that one seems pretty unlikely.
+> Fix sparse warning:
+>
+> drivers/pinctrl/freescale/pinctrl-scu.c:38:19: warning:
+>  symbol 'pinctrl_ipc_handle' was not declared. Should it be static?
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Hm I merged it for devel (next, v5.2) as I don't think there are regressions.
-But if Thomas agrees we can put this into fixes instead.
-
-> We have a lot going through our tree for the next release though, so
-> ideally we should merge the DT patches through arm-soc.
-
-That should always be fine to do in parallel.
+Patch applied.
 
 Yours,
 Linus Walleij
