@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/6] pinctrl: sunxi: Declare set_config on the GPIO chip
-Date: Thu, 4 Apr 2019 10:27:50 +0700
-Message-ID: <CACRpkdbP91DoxbDj84ZteKqdjRUQqVXWN4nV52siYSkR4-1JCA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] ARM: dts: sunxi: Remove pinctrl groups setting bias
+Date: Thu, 4 Apr 2019 10:29:58 +0700
+Message-ID: <CACRpkdZ-C6uQfKFUT+8j+wU0DS=DO5k7fgMoFJ-dHwFHz6D4HA@mail.gmail.com>
 References: <cover.66d6a9a379de8ebf176e4c25a8542152dc09f366.1552591798.git-series.maxime.ripard@bootlin.com>
- <b83a81feebb87c8314581648f8d01fb5f04eb4d6.1552591798.git-series.maxime.ripard@bootlin.com>
+ <ca64e5b42aca638075f0b23ee887b79619884814.1552591798.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b83a81feebb87c8314581648f8d01fb5f04eb4d6.1552591798.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <ca64e5b42aca638075f0b23ee887b79619884814.1552591798.git-series.maxime.ripard@bootlin.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,17 +24,20 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Fri, Mar 15, 2019 at 2:33 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> Our pin controller can configure the pins no matter how they are muxed, so
-> it makes sense to allow this for GPIOs as well.
+> So far we've enabled pull-up and pull-down resistors on GPIOs using a
+> pinctrl node. Now that the GPIO binding allows for a flag to declare this,
+> let's switch to it.
 >
-> Add the generic set_config function so that we can rely on the existing
-> pinctrl code we have.
+> This brings us closer to removing all the GPIO pinctrl nodes, which will in
+> turn allow us to switch the pinctrl strict mode on.
 >
 > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Patch applied.
+Way simpler like this right? :D
 
-This looks really nice, proper GPIO with pin config backend!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please funnel this through ARM SoC.
 
 Yours,
 Linus Walleij
