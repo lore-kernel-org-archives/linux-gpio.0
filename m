@@ -1,42 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [Patch v3 2/2] tracing: gpio: add Kconfig option for
- enabling/disabling trace events
-Date: Sat, 6 Apr 2019 00:25:19 +0700
-Message-ID: <CACRpkdY62aXDOZm7cK4ND-RSnr9Ynz0DxS8-PHSF7i7diRG=WA@mail.gmail.com>
-References: <CAFDyS3Nuq8FPx4z5GW1Ht+NBGd+8O9rjPZ+DaMU1XU1QYgA=2g@mail.gmail.com>
- <1438432079-11704-1-git-send-email-tal.shorer@gmail.com> <1438432079-11704-4-git-send-email-tal.shorer@gmail.com>
- <20190327161158.GA26067@taurus.defre.kleine-koenig.org>
+From: megous via linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Subject: [PATCH 00/12] Add support for Orange Pi 3
+Date: Sat,  6 Apr 2019 01:45:02 +0200
+Message-ID: <20190405234514.6183-1-megous@megous.com>
+Reply-To: megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190327161158.GA26067@taurus.defre.kleine-koenig.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Tal Shorer <tal.shorer@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Return-path: <linux-sunxi+bncBDXLF6FR5INBBEWRT7SQKGQEW66UC4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Giuseppe Cavallaro <peppe.cavallaro-qxv4g6HH51o@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arend van Spriel <arend.vanspriel-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Franky Lin <franky.lin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Hante Meuleman <hante.meuleman-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Chi-Hsien Lin <chi-hsien.lin-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Wright Feng <wright.feng-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Naveen Gupta <naveen.gupta-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, brcm802
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 11:12 PM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+From: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 
-> It happened a few times to me since this patch was merged (in 4.4-rc1)
-> that I worked on a system with tracing enabled but
-> /sys/kernel/debug/tracing/events/gpio were missing because of
-> CONFIG_TRACING_EVENTS_GPIO=3Dn. This is annoying and I wonder what is the
-> motivating purpose of allowing to disable gpio events. There is no other
-> event type that can be disabled with kconfig symbols. Theoretically the
-> overhead should be so small, that having these events enabled
-> unconditionally should be fine, shouldn't it?
+This series implements support for Xunlong Orange Pi 3 board.
 
-You have a good point. We should not do anything special.
+Unfortunately, this board needs some small driver patches, so I have
+split the boards DT patch into chunks that require patches for drivers
+in various subsystems:
 
-I guess by the time this was merged I believed it was customary
-for trancepoints to live behind a Kconfig option.
+- Basic DT for the board  (patch 1)
+- HDMI support            (patches 2, 3, 4)
+- Ethernet support        (patches 5, 6, 7)
+- WiFi support            (patches 8, 9, 10, 11, 12)
 
-I guess it is not.
+This patch is also needed to not get segfault on boot: 
+  https://lkml.org/lkml/2019/4/5/856
 
-I happily merge  a patch removing this again if no case
-can be made for it.
+Please take a look.
 
-Yours,
-Linus Walleij
+regards,
+  Ondrej Jirman
+
+Icenowy Zheng (2):
+  net: stmmac: sun8i: add support for Allwinner H6 EMAC
+  net: stmmac: sun8i: force select external PHY when no internal one
+
+Ondrej Jirman (10):
+  arm64: dts: allwinner: h6: Add Orange Pi 3 DTS
+  drm: sun4i: Add support for enabling DDC I2C bus to dw_hdmi glue
+  dt-bindings: display: sun4i-drm: Add DDC power supply
+  arm64: dts: allwinner: orange-pi-3: Enable HDMI output
+  arm64: dts: allwinner: orange-pi-3: Enable ethernet
+  arm64: dts: allwinner: h6: Add MMC1 pins
+  pinctrl: sunxi: Prepare for alternative bias voltage setting methods
+  pinctrl: sunxi: Support I/O bias voltage setting on H6
+  brcmfmac: Loading the correct firmware for brcm43456
+  arm64: dts: allwinner: orange-pi-3: Enable WiFi
+
+ .../bindings/display/sunxi/sun4i-drm.txt      |   1 +
+ arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 339 ++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   9 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  17 +-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c |  22 ++
+ .../broadcom/brcm80211/brcmfmac/sdio.c        |   4 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c     |   2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c         |  50 ++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h         |   7 +-
+ 12 files changed, 433 insertions(+), 21 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+
+-- 
+2.21.0
