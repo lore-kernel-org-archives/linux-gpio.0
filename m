@@ -1,17 +1,18 @@
 From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 08/12] arm64: dts: allwinner: h6: Add MMC1 pins
-Date: Mon, 8 Apr 2019 09:43:27 +0200
-Message-ID: <20190408074327.vvubj2sbkvfkwscv@flea>
+Subject: Re: [PATCH 01/12] arm64: dts: allwinner: h6: Add Orange
+ Pi 3 DTS
+Date: Mon, 8 Apr 2019 09:46:28 +0200
+Message-ID: <20190408074628.e5ers4gzlqz4coyk@flea>
 References: <20190405234514.6183-1-megous@megous.com>
- <20190405234514.6183-9-megous@megous.com>
+ <20190405234514.6183-2-megous@megous.com>
 Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uu57uts7ricxgi6i"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBJHXVPSQKGQEGAIJB4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="whh3wfah2ikk53mj"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBWXYVPSQKGQEPRYUTGI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <20190405234514.6183-9-megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20190405234514.6183-2-megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -23,47 +24,308 @@ Cc: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy
 List-Id: linux-gpio@vger.kernel.org
 
 
---uu57uts7ricxgi6i
+--whh3wfah2ikk53mj
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 06, 2019 at 01:45:10AM +0200, megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org wrote:
+On Sat, Apr 06, 2019 at 01:45:03AM +0200, megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org wrote:
 > From: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 >
+> Orange Pi 3 is a H6 based SBC made by Xulong, released in
+> January 2019. It has the following features:
+>
+> - Allwinner H6 quad-core 64-bit ARM Cortex-A53
+> - GPU Mali-T720
+> - 1GB or 2GB LPDDR3 RAM
+> - AXP805 PMIC
+> - AP6256 Wifi/BT 5.0
+> - USB 2.0 host port (A)
+> - USB 2.0 micro usb, OTG
+> - USB 3.0 Host + 4 port USB hub (GL3510)
+> - Gigabit Ethernet (Realtek RTL8211E phy)
+> - HDMI 2.0 port
+> - soldered eMMC (optional)
+> - 3x LED (one is on the bottom)
+> - microphone
+> - audio jack
+> - PCIe
+>
+> Add basic support for the board.
+>
+> Signed-off-by: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+>  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 212 ++++++++++++++++++
+>  2 files changed, 213 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dt=
+s
 >
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> index 91fecab58836..dccad79da90c 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -238,6 +238,15 @@
->  				bias-pull-up;
->  			};
->
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts=
+/allwinner/Makefile
+> index e4dce2f6fa3a..285a7cb5135b 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-pc2.dt=
+b
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-prime.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-zero-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-zero-plus2.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-orangepi-3.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-orangepi-lite2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-orangepi-one-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-pine-h64.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arc=
+h/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> new file mode 100644
+> index 000000000000..7a2424fcaed7
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (C) 2019 Ond=C5=99ej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
+> + */
 > +
+> +/dts-v1/;
+> +
+> +#include "sun50i-h6.dtsi"
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +
+> +/ {
+> +	model =3D "OrangePi 3";
+> +	compatible =3D "xunlong,orangepi-3", "allwinner,sun50i-h6";
 
-Extra line
+As Clement pointed out, this should be documented in
+Documentation/devicetree/bindings/arm/sunxi.yaml
 
-> +			mmc1_pins: mmc1-pins {
-> +				pins = "PG0", "PG1", "PG2", "PG3",
-> +				       "PG4", "PG5";
-> +				function = "mmc1";
-> +				drive-strength = <30>;
-> +				bias-pull-up;
+It's part of sunxi/for-next only at this point, and it will go through
+a different branch than the H6 DTS, so it would be great to have it in
+a separate patch.
+
+> +	aliases {
+> +		serial0 =3D &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path =3D "serial0:115200n8";
+> +	};
+> +
+> +	leds {
+> +		compatible =3D "gpio-leds";
+> +
+> +		power {
+> +			label =3D "orangepi:red:power";
+> +			gpios =3D <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
+> +			default-state =3D "on";
+> +		};
+> +
+> +		status {
+> +			label =3D "orangepi:green:status";
+> +			gpios =3D <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
+> +		};
+> +	};
+> +
+> +	reg_vcc5v: vcc5v {
+> +		/* board wide 5V supply directly from the DC jack */
+> +		compatible =3D "regulator-fixed";
+> +		regulator-name =3D "vcc-5v";
+> +		regulator-min-microvolt =3D <5000000>;
+> +		regulator-max-microvolt =3D <5000000>;
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&cpu0 {
+> +	cpu-supply =3D <&reg_dcdca>;
+> +};
+> +
+> +&ehci0 {
+> +	status =3D "okay";
+> +};
+> +
+> +&ehci3 {
+> +	status =3D "okay";
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&mmc0_pins>;
+> +	vmmc-supply =3D <&reg_cldo1>;
+> +	cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+> +	bus-width =3D <4>;
+> +	status =3D "okay";
+> +};
+> +
+> +&ohci0 {
+> +	status =3D "okay";
+> +};
+> +
+> +&ohci3 {
+> +	status =3D "okay";
+> +};
+> +
+> +&pio {
+> +	vcc-pc-supply =3D <&reg_bldo2>;
+> +	vcc-pd-supply =3D <&reg_cldo1>;
+> +};
+> +
+> +&r_i2c {
+> +	status =3D "okay";
+> +
+> +	axp805: pmic@36 {
+> +		compatible =3D "x-powers,axp805", "x-powers,axp806";
+> +		reg =3D <0x36>;
+> +		interrupt-parent =3D <&r_intc>;
+> +		interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <1>;
+> +		x-powers,self-working-mode;
+> +		vina-supply =3D <&reg_vcc5v>;
+> +		vinb-supply =3D <&reg_vcc5v>;
+> +		vinc-supply =3D <&reg_vcc5v>;
+> +		vind-supply =3D <&reg_vcc5v>;
+> +		vine-supply =3D <&reg_vcc5v>;
+> +		aldoin-supply =3D <&reg_vcc5v>;
+> +		bldoin-supply =3D <&reg_vcc5v>;
+> +		cldoin-supply =3D <&reg_vcc5v>;
+> +
+> +		regulators {
+> +			reg_aldo1: aldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-pl-led-ir";
 > +			};
 > +
+> +			reg_aldo2: aldo2 {
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc33-audio-tv-ephy-mac";
+> +			};
+> +
+> +			/* ALDO3 is shorted to CLDO1 */
+> +			reg_aldo3: aldo3 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc33-io-pd-emmc-sd-usb-uart-1";
+> +			};
+> +
+> +			reg_bldo1: bldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <1800000>;
+> +				regulator-name =3D "vcc18-dram-bias-pll";
+> +			};
+> +
+> +			reg_bldo2: bldo2 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <1800000>;
+> +				regulator-name =3D "vcc-efuse-pcie-hdmi-pc";
+> +			};
+> +
+> +			bldo3 {
+> +				/* unused */
+> +			};
+> +
+> +			bldo4 {
+> +				/* unused */
+> +			};
+> +
+> +			reg_cldo1: cldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc33-io-pd-emmc-sd-usb-uart-2";
+> +			};
+> +
+> +			cldo2 {
+> +				/* unused */
+> +			};
+> +
+> +			cldo3 {
+> +				/* unused */
+> +			};
+> +
+> +			reg_dcdca: dcdca {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <800000>;
+> +				regulator-max-microvolt =3D <1160000>;
+> +				regulator-name =3D "vdd-cpu";
+> +			};
+> +
+> +			reg_dcdcc: dcdcc {
+> +				regulator-min-microvolt =3D <810000>;
+> +				regulator-max-microvolt =3D <1080000>;
+> +				regulator-name =3D "vdd-gpu";
+> +			};
+> +
+> +			reg_dcdcd: dcdcd {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <960000>;
+> +				regulator-max-microvolt =3D <960000>;
+> +				regulator-name =3D "vdd-sys";
+> +			};
+> +
+> +			reg_dcdce: dcdce {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1200000>;
+> +				regulator-max-microvolt =3D <1200000>;
+> +				regulator-name =3D "vcc-dram";
+> +			};
+> +
+> +			sw {
+> +				/* unused */
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&uart0_ph_pins>;
+> +	status =3D "okay";
+> +};
+> +
+> +&usb2otg {
+> +	dr_mode =3D "host";
+> +	status =3D "okay";
+> +};
+> +
+> +&usb2phy {
+> +	usb0_id_det-gpios =3D <&pio 2 15 GPIO_ACTIVE_HIGH>; /* PC15 */
+> +	usb0_vbus-supply =3D <&reg_vcc5v>;
+> +	usb3_vbus-supply =3D <&reg_vcc5v>;
+> +	status =3D "okay";
 
-Is that the only muxing option?
+If we have an ID pin, then why is the OTG controller set to host?
 
-If so, then it should be assigned by default to mmc1
-
-Thanks!
 Maxime
 
 --
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
---uu57uts7ricxgi6i--
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
+
+--whh3wfah2ikk53mj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKr8VAAKCRDj7w1vZxhR
+xSuDAQD5Wzy8cRaOqe3aeQQ2CVfL69KF96nL60hDcQFNYAMPvgEAmexKxfNT+yyJ
+zZocyxheq1948t3by+Q7ZcuekYVftQc=
+=+uSu
+-----END PGP SIGNATURE-----
+
+--whh3wfah2ikk53mj--
