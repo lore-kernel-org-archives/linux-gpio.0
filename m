@@ -1,36 +1,35 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-intel: move gpio suspend/resume to
- noirq phase
-Date: Mon, 8 Apr 2019 15:51:26 +0300
-Message-ID: <20190408125126.GR3622@lahna.fi.intel.com>
-References: <1554720566-29103-1-git-send-email-binbin.wu@intel.com>
- <20190408124348.GQ9224@smile.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 09/12] pinctrl: sunxi: Prepare for alternative bias
+ voltage setting methods
+Date: Mon, 8 Apr 2019 14:53:58 +0200
+Message-ID: <CACRpkdY=G0rpxVZL8TKJOQcf+Na8o5_FwG0EyBfb-ZCYXi=_oA@mail.gmail.com>
+References: <20190405234514.6183-1-megous@megous.com> <20190405234514.6183-10-megous@megous.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190408124348.GQ9224@smile.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Binbin Wu <binbin.wu@intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190405234514.6183-10-megous@megous.com>
+Sender: netdev-owner@vger.kernel.org
+To: megous@megous.com
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, Naveen Gupta <naveen.gupta@cypress.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 08, 2019 at 03:43:48PM +0300, Andy Shevchenko wrote:
-> On Mon, Apr 08, 2019 at 06:49:26PM +0800, Binbin Wu wrote:
-> > In current driver, SET_LATE_SYSTEM_SLEEP_PM_OPS is used to install the
-> > callbacks for suspend/resume.
-> > GPIO pin may be used as the interrupt pin by some device. However, using
-> > SET_LATE_SYSTEM_SLEEP_PM_OPS() to install the callbacks, the resume
-> > callback is called after resume_device_irqs(). Unintended interrupts may
-> > arrive due to resuming device irqs first, but the GPIO controller is not
-> > properly restored.
-> > 
-> > Normally, for a SMP system, there are multiple cores, so even when there are
-> > unintended interrupts, BSP gets the chance to init the gpio chip soon.
-> 
-> gpio -> GPIO.
-> (If Mika is okay with patch content, I may fix this when applying)
+On Sat, Apr 6, 2019 at 1:45 AM <megous@megous.com> wrote:
 
-Yup, this looks good to me.
+> From: Ondrej Jirman <megous@megous.com>
+>
+> H6 has a different I/O voltage bias setting method than A80. Prepare
+> existing code for using alternative bias voltage setting methods.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c |  2 +-
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c     | 38 ++++++++++++-----------
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h     |  4 ++-
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I need Maxime's ACK on these patches to merge.
+
+Can the pinctrl parts be applied independently of the rest
+of the changes when Maxime is happy with the patches?
+
+Yours,
+Linus Walleij
