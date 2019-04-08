@@ -1,46 +1,34 @@
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-Subject: Re: [PATCH 09/12] pinctrl: sunxi: Prepare for alternative bias
- voltage setting methods
-Date: Mon, 8 Apr 2019 15:08:21 +0200
-Message-ID: <20190408130821.minpds2ygqdv6yir@core.my.home>
-References: <20190405234514.6183-1-megous@megous.com>
- <20190405234514.6183-10-megous@megous.com>
- <CACRpkdY=G0rpxVZL8TKJOQcf+Na8o5_FwG0EyBfb-ZCYXi=_oA@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v2] pinctrl:intel: Retain HOSTSW_OWN for requested gpio
+ pin
+Date: Mon, 8 Apr 2019 20:23:37 +0300
+Message-ID: <20190408172337.GY9224@smile.fi.intel.com>
+References: <20190408095127.6197-1-chiu@endlessm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdY=G0rpxVZL8TKJOQcf+Na8o5_FwG0EyBfb-ZCYXi=_oA@mail.gmail.com>
+In-Reply-To: <20190408095127.6197-1-chiu@endlessm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, Naveen Gupta <naveen.gupta@cypress.com>
+To: Chris Chiu <chiu@endlessm.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, drake@endlessm.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux@endlessm.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-On Mon, Apr 08, 2019 at 02:53:58PM +0200, Linus Walleij wrote:
-> On Sat, Apr 6, 2019 at 1:45 AM <megous@megous.com> wrote:
+On Mon, Apr 08, 2019 at 05:51:27PM +0800, Chris Chiu wrote:
+> The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
+> responsive after suspend/resume. The following error message
+> shows after resume.
+>  i2c_hid i2c-ELAN1200:00: failed to reset device.
 > 
-> > From: Ondrej Jirman <megous@megous.com>
-> >
-> > H6 has a different I/O voltage bias setting method than A80. Prepare
-> > existing code for using alternative bias voltage setting methods.
-> >
-> > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > ---
-> >  drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c |  2 +-
-> >  drivers/pinctrl/sunxi/pinctrl-sunxi.c     | 38 ++++++++++++-----------
-> >  drivers/pinctrl/sunxi/pinctrl-sunxi.h     |  4 ++-
+> On these laptops, the touchpad interrupt is connected via a GPIO
+> pin which is controlled by Intel pinctrl. After system resumes,
+> the GPIO is in ACPI mode and no longer works as an IRQ.
 > 
-> I need Maxime's ACK on these patches to merge.
-> 
-> Can the pinctrl parts be applied independently of the rest
-> of the changes when Maxime is happy with the patches?
+> This commit saves the HOSTSW_OWN value during suspend, make sure
+> the HOSTSW_OWN mode remains the same after resume.
 
-Yes, the two pinctrl patches are independent of the rest of the series.
+Some comments as per v1 are still applicable to this version.
 
-thank you,
-	Ondrej
-
-> Yours,
-> Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
