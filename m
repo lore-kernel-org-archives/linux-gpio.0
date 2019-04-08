@@ -1,28 +1,115 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix
- PAD_CTL_DSE_X*
-Date: Mon, 8 Apr 2019 12:41:04 +0000
-Message-ID: <AM0PR04MB421197A4ADC0D726617EBF76802C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190313142040.26694-1-cquast@hanoverdisplays.com>
- <20190403084341.GA4636@X250>
- <CACRpkdbfSp0xANWU9Jc0=qrFUN9fJntADxH1J4jZpP=e0NbXaQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-intel: move gpio suspend/resume to
+ noirq phase
+Date: Mon, 8 Apr 2019 15:43:48 +0300
+Message-ID: <20190408124348.GQ9224@smile.fi.intel.com>
+References: <1554720566-29103-1-git-send-email-binbin.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbfSp0xANWU9Jc0=qrFUN9fJntADxH1J4jZpP=e0NbXaQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1554720566-29103-1-git-send-email-binbin.wu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: "VI1PR04MB42227AA158BA1FCBF314AA27807B0@vi1pr04mb4222.eurprd04.prod.outlook.com" <VI1PR04MB42227AA158BA1FCBF314AA27807B0@vi1pr04mb4222.eurprd04.prod.outlook.com>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christina Quast <cquast@hanoverdisplays.com>
+To: Binbin Wu <binbin.wu@intel.com>
+Cc: mika.westerberg@linux.intel.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-PiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0K
-PiBTZW50OiBNb25kYXksIEFwcmlsIDgsIDIwMTkgODoxMCBQTQ0KPiBPbiBXZWQsIEFwciAzLCAy
-MDE5IGF0IDEwOjQzIEFNIFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4gd3JvdGU6DQo+
-DQo+ID4gSSBhc3N1bWUgdGhpcyB3aWxsIGdvIHZpYSB5b3VyIHRyZWUuICBMZXQgbWUga25vdyBp
-ZiB5b3UgdGhpbmsNCj4gPiBkaWZmZXJlbnRseS4NCj4gDQo+IE9LIEkgYXBwbGllZCBpdCwgaWYg
-eW91J3JlIG5vdCBtZXJnaW5nIGFueSBkZXZpY2UgdHJlZXMgdXNpbmcgdGhlc2UgZGVmaW5lcyB0
-aGlzDQo+IGN5Y2xlIGl0J3MgZmluZSBJIHN1cHBvc2UuDQo+IA0KDQpJTVggZGV2aWNlIHRyZWUg
-ZG9lcyBub3QgdXNlIGl0Lg0KU28gaXQncyBzYWZlLg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcN
-Cg0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
+On Mon, Apr 08, 2019 at 06:49:26PM +0800, Binbin Wu wrote:
+> In current driver, SET_LATE_SYSTEM_SLEEP_PM_OPS is used to install the
+> callbacks for suspend/resume.
+> GPIO pin may be used as the interrupt pin by some device. However, using
+> SET_LATE_SYSTEM_SLEEP_PM_OPS() to install the callbacks, the resume
+> callback is called after resume_device_irqs(). Unintended interrupts may
+> arrive due to resuming device irqs first, but the GPIO controller is not
+> properly restored.
+> 
+> Normally, for a SMP system, there are multiple cores, so even when there are
+> unintended interrupts, BSP gets the chance to init the gpio chip soon.
+
+gpio -> GPIO.
+(If Mika is okay with patch content, I may fix this when applying)
+
+> But when there is only 1 core is active (other cores are offlined or
+> single core) during resume, it is more easily to observe the unintended
+> interrupts.
+> 
+> This patch renames the suspend/resume function by adding suffix "_noirq",
+> and installs the callbacks using SET_NOIRQ_SYSTEM_SLEEP_PM_OPS().
+> 
+> Signed-off-by: Binbin Wu <binbin.wu@intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-intel.c |  8 ++++----
+>  drivers/pinctrl/intel/pinctrl-intel.h | 11 ++++++-----
+>  2 files changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index 3b18181..70638b7 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -1466,7 +1466,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned int
+>  	return false;
+>  }
+>  
+> -int intel_pinctrl_suspend(struct device *dev)
+> +int intel_pinctrl_suspend_noirq(struct device *dev)
+>  {
+>  	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+>  	struct intel_community_context *communities;
+> @@ -1505,7 +1505,7 @@ int intel_pinctrl_suspend(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(intel_pinctrl_suspend);
+> +EXPORT_SYMBOL_GPL(intel_pinctrl_suspend_noirq);
+>  
+>  static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+>  {
+> @@ -1527,7 +1527,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+>  	}
+>  }
+>  
+> -int intel_pinctrl_resume(struct device *dev)
+> +int intel_pinctrl_resume_noirq(struct device *dev)
+>  {
+>  	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+>  	const struct intel_community_context *communities;
+> @@ -1589,7 +1589,7 @@ int intel_pinctrl_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(intel_pinctrl_resume);
+> +EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);
+>  #endif
+>  
+>  MODULE_AUTHOR("Mathias Nyman <mathias.nyman@linux.intel.com>");
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+> index b8a07d37..a8e958f 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.h
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.h
+> @@ -177,13 +177,14 @@ int intel_pinctrl_probe_by_hid(struct platform_device *pdev);
+>  int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> -int intel_pinctrl_suspend(struct device *dev);
+> -int intel_pinctrl_resume(struct device *dev);
+> +int intel_pinctrl_suspend_noirq(struct device *dev);
+> +int intel_pinctrl_resume_noirq(struct device *dev);
+>  #endif
+>  
+> -#define INTEL_PINCTRL_PM_OPS(_name)						  \
+> -const struct dev_pm_ops _name = {						  \
+> -	SET_LATE_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend, intel_pinctrl_resume) \
+> +#define INTEL_PINCTRL_PM_OPS(_name)					\
+> +const struct dev_pm_ops _name = {					\
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq,	\
+> +				      intel_pinctrl_resume_noirq)	\
+>  }
+>  
+>  #endif /* PINCTRL_INTEL_H */
+> -- 
+> 2.7.4
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
