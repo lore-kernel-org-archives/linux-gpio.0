@@ -1,57 +1,105 @@
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
-Date: Mon, 8 Apr 2019 13:09:47 +0300
-Message-ID: <20190408100947.GI9224@smile.fi.intel.com>
-References: <20190408042103.3804-1-chiu@endlessm.com>
- <20190408074106.GC3622@lahna.fi.intel.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2] pinctrl: pinctrl-imx8mq: Add suspend/resume ops
+Date: Mon, 8 Apr 2019 10:42:34 +0000
+Message-ID: <1554720120-6617-1-git-send-email-abel.vesa@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190408074106.GC3622@lahna.fi.intel.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Chris Chiu <chiu@endlessm.com>, heikki.krogerus@linux.intel.com, drake@endlessm.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux@endlessm.com
+To: Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
+Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>, Robin Gong <yibin.gong@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 08, 2019 at 10:41:06AM +0300, Mika Westerberg wrote:
-> On Mon, Apr 08, 2019 at 12:21:03PM +0800, Chris Chiu wrote:
-> > +static void
+To support pinctl hog restore after LPSR resume back,
+add the generic suspend/resume in pinctrl-imx along with the
+generic pm opsto be used by platform specific drivers. Then
+make use of the newly added ops in i.MX8MQ platform specific
+driver.
 
-static u32
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
 
-(see below why)
+Changes since v1:
+ - Replaced the imx8mq specific ops with generic ones.
 
-> > +intel_gpio_update_pad_mode(void __iomem *hostown, u32 mask, u32 value)
-> > +{
-> > +	u32 curr = readl(hostown);
-> > +	u32 updated = (curr & ~mask) | (value & mask);
-> 
-> I think here we should first complain if the expected ownership is not
-> correct. Warning or info level probably enough.
+ drivers/pinctrl/freescale/pinctrl-imx.c    | 25 +++++++++++++++++++++++++
+ drivers/pinctrl/freescale/pinctrl-imx.h    |  4 ++++
+ drivers/pinctrl/freescale/pinctrl-imx8mq.c |  1 +
+ 3 files changed, 30 insertions(+)
 
-It is easy to achieve, something like
-
-if ((value ^ saved) & requeted)
-	dev_warn(...);
-
-See also below.
-
-(I had mentioned this earlier)
-
-> > +	return writel(updated, hostown);
-
-writel() is a void function, this is wrong. We need to return curr instead to
-make above working to issue a warning message.
-
-> Also if the pin is not requested and not changed we should not touch the
-> register.
-
-I don't think it brings any value here, if mask is 0 we will write back the
-same value we read.
-
-> Otherwise this looks good to me.
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/free=
+scale/pinctrl-imx.c
+index 188001b..ee120ee 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -887,3 +887,28 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+=20
+ 	return ret;
+ }
++
++int imx_pinctrl_suspend(struct device *dev)
++{
++	struct imx_pinctrl *ipctl =3D dev_get_drvdata(dev);
++
++	if (!ipctl)
++		return -EINVAL;
++
++	return pinctrl_force_sleep(ipctl->pctl);
++}
++
++int imx_pinctrl_resume(struct device *dev)
++{
++	struct imx_pinctrl *ipctl =3D dev_get_drvdata(dev);
++
++	if (!ipctl)
++		return -EINVAL;
++
++	return pinctrl_force_default(ipctl->pctl);
++}
++
++const struct dev_pm_ops imx_pinctrl_pm_ops =3D {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
++					imx_pinctrl_resume)
++};
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/free=
+scale/pinctrl-imx.h
+index 98a4889..ae78314 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -17,6 +17,7 @@
+ struct platform_device;
+=20
+ extern struct pinmux_ops imx_pmx_ops;
++extern const struct dev_pm_ops imx_pinctrl_pm_ops;
+=20
+ /**
+  * struct imx_pin_mmio - MMIO pin configurations
+@@ -136,6 +137,9 @@ struct imx_pinctrl {
+ int imx_pinctrl_probe(struct platform_device *pdev,
+ 			const struct imx_pinctrl_soc_info *info);
+=20
++int imx_pinctrl_suspend(struct device *dev);
++int imx_pinctrl_resume(struct device *dev);
++
+ #ifdef CONFIG_PINCTRL_IMX_SCU
+ #define BM_PAD_CTL_GP_ENABLE		BIT(30)
+ #define BM_PAD_CTL_IFMUX_ENABLE		BIT(31)
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/f=
+reescale/pinctrl-imx8mq.c
+index 8d39af5..50aa1c0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8mq.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
+@@ -339,6 +339,7 @@ static struct platform_driver imx8mq_pinctrl_driver =3D=
+ {
+ 	.driver =3D {
+ 		.name =3D "imx8mq-pinctrl",
+ 		.of_match_table =3D of_match_ptr(imx8mq_pinctrl_of_match),
++		.pm =3D &imx_pinctrl_pm_ops,
+ 		.suppress_bind_attrs =3D true,
+ 	},
+ 	.probe =3D imx8mq_pinctrl_probe,
+--=20
+2.7.4
