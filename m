@@ -1,27 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: use devm_platform_ioremap_resource()
- to simplify code
-Date: Mon, 8 Apr 2019 13:41:58 +0200
-Message-ID: <CACRpkdb9-G+Zc4xrZh4qHFv8kA7F2Wm8G46w_YPvPb2kUUPQ_Q@mail.gmail.com>
-References: <1554094986-14897-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: imx7d: Fix PAD_CTL_DSE_X*
+Date: Mon, 8 Apr 2019 14:08:43 +0200
+Message-ID: <CACRpkdYqJxeFLJw+eG4YoA-MPrYFSwxkgPuq-3AAXiVRaiUsQg@mail.gmail.com>
+References: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554094986-14897-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20190313142040.26694-1-cquast@hanoverdisplays.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Aisheng Dong <aisheng.dong@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+To: VI1PR04MB42227AA158BA1FCBF314AA27807B0@vi1pr04mb4222.eurprd04.prod.outlook.com
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christina Quast <cquast@hanoverdisplays.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 1, 2019 at 7:07 AM Anson Huang <anson.huang@nxp.com> wrote:
+On Wed, Mar 13, 2019 at 3:20 PM Christina Quast
+<cquast@hanoverdisplays.com> wrote:
 
-> Use the new helper devm_platform_ioremap_resource() which wraps the
-> platform_get_resource() and devm_ioremap_resource() together, to
-> simplify the code.
+> In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from
+> the documentation.
 >
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Changes since v2:
+> * Changed patch title to 'dt-bindings: pinctrl: imx7d:'
+>
+> Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
 
-Patch applied.
+Patch applied with the ACKs.
 
 Yours,
 Linus Walleij
