@@ -1,105 +1,99 @@
-From: Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2] pinctrl: pinctrl-imx8mq: Add suspend/resume ops
-Date: Mon, 8 Apr 2019 10:42:34 +0000
-Message-ID: <1554720120-6617-1-git-send-email-abel.vesa@nxp.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+From: Binbin Wu <binbin.wu@intel.com>
+Subject: [PATCH] pinctrl: pinctrl-intel: move gpio suspend/resume to noirq phase
+Date: Mon,  8 Apr 2019 18:49:26 +0800
+Message-ID: <1554720566-29103-1-git-send-email-binbin.wu@intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
-Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@nxp.com>, Robin Gong <yibin.gong@nxp.com>
+To: mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: binbin.wu@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-To support pinctl hog restore after LPSR resume back,
-add the generic suspend/resume in pinctrl-imx along with the
-generic pm opsto be used by platform specific drivers. Then
-make use of the newly added ops in i.MX8MQ platform specific
-driver.
+In current driver, SET_LATE_SYSTEM_SLEEP_PM_OPS is used to install the
+callbacks for suspend/resume.
+GPIO pin may be used as the interrupt pin by some device. However, using
+SET_LATE_SYSTEM_SLEEP_PM_OPS() to install the callbacks, the resume
+callback is called after resume_device_irqs(). Unintended interrupts may
+arrive due to resuming device irqs first, but the GPIO controller is not
+properly restored.
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Normally, for a SMP system, there are multiple cores, so even when there are
+unintended interrupts, BSP gets the chance to init the gpio chip soon.
+But when there is only 1 core is active (other cores are offlined or
+single core) during resume, it is more easily to observe the unintended
+interrupts.
+
+This patch renames the suspend/resume function by adding suffix "_noirq",
+and installs the callbacks using SET_NOIRQ_SYSTEM_SLEEP_PM_OPS().
+
+Signed-off-by: Binbin Wu <binbin.wu@intel.com>
 ---
+ drivers/pinctrl/intel/pinctrl-intel.c |  8 ++++----
+ drivers/pinctrl/intel/pinctrl-intel.h | 11 ++++++-----
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-Changes since v1:
- - Replaced the imx8mq specific ops with generic ones.
-
- drivers/pinctrl/freescale/pinctrl-imx.c    | 25 +++++++++++++++++++++++++
- drivers/pinctrl/freescale/pinctrl-imx.h    |  4 ++++
- drivers/pinctrl/freescale/pinctrl-imx8mq.c |  1 +
- 3 files changed, 30 insertions(+)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/free=
-scale/pinctrl-imx.c
-index 188001b..ee120ee 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -887,3 +887,28 @@ int imx_pinctrl_probe(struct platform_device *pdev,
-=20
- 	return ret;
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 3b18181..70638b7 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1466,7 +1466,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned int
+ 	return false;
  }
-+
-+int imx_pinctrl_suspend(struct device *dev)
-+{
-+	struct imx_pinctrl *ipctl =3D dev_get_drvdata(dev);
-+
-+	if (!ipctl)
-+		return -EINVAL;
-+
-+	return pinctrl_force_sleep(ipctl->pctl);
-+}
-+
-+int imx_pinctrl_resume(struct device *dev)
-+{
-+	struct imx_pinctrl *ipctl =3D dev_get_drvdata(dev);
-+
-+	if (!ipctl)
-+		return -EINVAL;
-+
-+	return pinctrl_force_default(ipctl->pctl);
-+}
-+
-+const struct dev_pm_ops imx_pinctrl_pm_ops =3D {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
-+					imx_pinctrl_resume)
-+};
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/free=
-scale/pinctrl-imx.h
-index 98a4889..ae78314 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.h
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-@@ -17,6 +17,7 @@
- struct platform_device;
-=20
- extern struct pinmux_ops imx_pmx_ops;
-+extern const struct dev_pm_ops imx_pinctrl_pm_ops;
-=20
- /**
-  * struct imx_pin_mmio - MMIO pin configurations
-@@ -136,6 +137,9 @@ struct imx_pinctrl {
- int imx_pinctrl_probe(struct platform_device *pdev,
- 			const struct imx_pinctrl_soc_info *info);
-=20
-+int imx_pinctrl_suspend(struct device *dev);
-+int imx_pinctrl_resume(struct device *dev);
-+
- #ifdef CONFIG_PINCTRL_IMX_SCU
- #define BM_PAD_CTL_GP_ENABLE		BIT(30)
- #define BM_PAD_CTL_IFMUX_ENABLE		BIT(31)
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/f=
-reescale/pinctrl-imx8mq.c
-index 8d39af5..50aa1c0 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-@@ -339,6 +339,7 @@ static struct platform_driver imx8mq_pinctrl_driver =3D=
+ 
+-int intel_pinctrl_suspend(struct device *dev)
++int intel_pinctrl_suspend_noirq(struct device *dev)
  {
- 	.driver =3D {
- 		.name =3D "imx8mq-pinctrl",
- 		.of_match_table =3D of_match_ptr(imx8mq_pinctrl_of_match),
-+		.pm =3D &imx_pinctrl_pm_ops,
- 		.suppress_bind_attrs =3D true,
- 	},
- 	.probe =3D imx8mq_pinctrl_probe,
---=20
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	struct intel_community_context *communities;
+@@ -1505,7 +1505,7 @@ int intel_pinctrl_suspend(struct device *dev)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(intel_pinctrl_suspend);
++EXPORT_SYMBOL_GPL(intel_pinctrl_suspend_noirq);
+ 
+ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ {
+@@ -1527,7 +1527,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ 	}
+ }
+ 
+-int intel_pinctrl_resume(struct device *dev)
++int intel_pinctrl_resume_noirq(struct device *dev)
+ {
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	const struct intel_community_context *communities;
+@@ -1589,7 +1589,7 @@ int intel_pinctrl_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(intel_pinctrl_resume);
++EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);
+ #endif
+ 
+ MODULE_AUTHOR("Mathias Nyman <mathias.nyman@linux.intel.com>");
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index b8a07d37..a8e958f 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -177,13 +177,14 @@ int intel_pinctrl_probe_by_hid(struct platform_device *pdev);
+ int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
+ 
+ #ifdef CONFIG_PM_SLEEP
+-int intel_pinctrl_suspend(struct device *dev);
+-int intel_pinctrl_resume(struct device *dev);
++int intel_pinctrl_suspend_noirq(struct device *dev);
++int intel_pinctrl_resume_noirq(struct device *dev);
+ #endif
+ 
+-#define INTEL_PINCTRL_PM_OPS(_name)						  \
+-const struct dev_pm_ops _name = {						  \
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend, intel_pinctrl_resume) \
++#define INTEL_PINCTRL_PM_OPS(_name)					\
++const struct dev_pm_ops _name = {					\
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq,	\
++				      intel_pinctrl_resume_noirq)	\
+ }
+ 
+ #endif /* PINCTRL_INTEL_H */
+-- 
 2.7.4
