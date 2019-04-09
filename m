@@ -1,62 +1,51 @@
-From: Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v5 1/9] dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
-Date: Tue, 9 Apr 2019 09:24:03 +0200
-Message-ID: <1554794651-6874-2-git-send-email-amelie.delaunay@st.com>
-References: <1554794651-6874-1-git-send-email-amelie.delaunay@st.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2 01/13] dt-bindings: sunxi: Add compatible for OrangePi
+ 3 board
+Date: Tue, 9 Apr 2019 10:10:43 +0200
+Message-ID: <20190409081043.y4ycwgmggh2ddhnn@flea>
+References: <20190409002452.14551-1-megous@megous.com>
+ <20190409002452.14551-2-megous@megous.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cjubdewqvzhwumy4"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554794651-6874-1-git-send-email-amelie.delaunay@st.com>
+Content-Disposition: inline
+In-Reply-To: <20190409002452.14551-2-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, Amelie Delaunay <amelie.delaunay@st.com>
+To: megous@megous.com
+Cc: linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Arend van Spriel <arend.vanspriel@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, Hante Meuleman <hante.meuleman@broadcom.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, Wright Feng <wright.feng@cypress.com>, Kalle Valo <kvalo@codeaurora.org>, Naveen Gupta <naveen.gupta@cypress.com>, dri-devel@li
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the
-STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+--cjubdewqvzhwumy4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
-new file mode 100644
-index 0000000..f0c2f7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/stmfx.txt
-@@ -0,0 +1,28 @@
-+STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
-+
-+ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
-+communication with the main MCU. Its main features are GPIO expansion, main
-+MCU IDD measurement (IDD is the amount of current that flows through VDD) and
-+resistive touchscreen controller.
-+
-+Required properties:
-+- compatible: should be "st,stmfx-0300".
-+- reg: I2C slave address of the device.
-+- interrupts: interrupt specifier triggered by MFX_IRQ_OUT signal.
-+  Please refer to ../interrupt-controller/interrupt.txt
-+
-+Optional properties:
-+- drive-open-drain: configure MFX_IRQ_OUT as open drain.
-+- vdd-supply: phandle of the regulator supplying STMFX.
-+
-+Example:
-+
-+	stmfx: stmfx@42 {
-+		compatible = "st,stmfx-0300";
-+		reg = <0x42>;
-+		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpioi>;
-+		vdd-supply = <&v3v3>;
-+	};
-+
-+Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
--- 
-2.7.4
+On Tue, Apr 09, 2019 at 02:24:40AM +0200, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>
+> Add new Xunlong Orange Pi 3 board compatible string to the bindings
+> documentation.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+
+Applied, thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--cjubdewqvzhwumy4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXKxTgwAKCRDj7w1vZxhR
+xXgSAQCoqb4qgBAJZNDeNtei8C/V6WNMk9/gI9DGv9/PrXtXAAEApXs6Ao2WSPZ8
+FqWBovbAioutLJyHDO3dzSyxnx5Zhwo=
+=0ITx
+-----END PGP SIGNATURE-----
+
+--cjubdewqvzhwumy4--
