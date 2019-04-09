@@ -1,46 +1,44 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] gpio: pca953x: add support for pca6416
-Date: Tue,  9 Apr 2019 14:35:46 +0200
-Message-ID: <20190409123546.13960-2-alexandre.belloni@bootlin.com>
-References: <20190409123546.13960-1-alexandre.belloni@bootlin.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-intel: move gpio suspend/resume to
+ noirq phase
+Date: Tue, 9 Apr 2019 18:28:46 +0300
+Message-ID: <20190409152846.GT9224@smile.fi.intel.com>
+References: <1554720566-29103-1-git-send-email-binbin.wu@intel.com>
+ <20190408124348.GQ9224@smile.fi.intel.com>
+ <20190408125126.GR3622@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190409123546.13960-1-alexandre.belloni@bootlin.com>
+Content-Disposition: inline
+In-Reply-To: <20190408125126.GR3622@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Binbin Wu <binbin.wu@intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The NXP PCA6416, documented at [1], is a variant of the PCA GPIO
-expander with 16 GPIOs, and supporting an interrupt.
+On Mon, Apr 08, 2019 at 03:51:26PM +0300, Mika Westerberg wrote:
+> On Mon, Apr 08, 2019 at 03:43:48PM +0300, Andy Shevchenko wrote:
+> > On Mon, Apr 08, 2019 at 06:49:26PM +0800, Binbin Wu wrote:
+> > > In current driver, SET_LATE_SYSTEM_SLEEP_PM_OPS is used to install the
+> > > callbacks for suspend/resume.
+> > > GPIO pin may be used as the interrupt pin by some device. However, using
+> > > SET_LATE_SYSTEM_SLEEP_PM_OPS() to install the callbacks, the resume
+> > > callback is called after resume_device_irqs(). Unintended interrupts may
+> > > arrive due to resuming device irqs first, but the GPIO controller is not
+> > > properly restored.
+> > > 
+> > > Normally, for a SMP system, there are multiple cores, so even when there are
+> > > unintended interrupts, BSP gets the chance to init the gpio chip soon.
+> > 
+> > gpio -> GPIO.
+> > (If Mika is okay with patch content, I may fix this when applying)
+> 
+> Yup, this looks good to me.
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[1] https://www.nxp.com/docs/en/data-sheet/PCA6416A.pdf
+Pushed to my review and testing queue, thanks!
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/gpio/gpio-pca953x.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 7e76830b3368..7fb4d51277e4 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -73,6 +73,7 @@
- #define PCA_CHIP_TYPE(x)	((x) & PCA_TYPE_MASK)
- 
- static const struct i2c_device_id pca953x_id[] = {
-+	{ "pca6416", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9505", 40 | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9534", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "pca9535", 16 | PCA953X_TYPE | PCA_INT, },
-@@ -1137,6 +1138,7 @@ static int pca953x_resume(struct device *dev)
- #define OF_957X(__nrgpio, __int) (void *)(__nrgpio | PCA957X_TYPE | __int)
- 
- static const struct of_device_id pca953x_dt_ids[] = {
-+	{ .compatible = "nxp,pca6416", .data = OF_953X(16, PCA_INT), },
- 	{ .compatible = "nxp,pca9505", .data = OF_953X(40, PCA_INT), },
- 	{ .compatible = "nxp,pca9534", .data = OF_953X( 8, PCA_INT), },
- 	{ .compatible = "nxp,pca9535", .data = OF_953X(16, PCA_INT), },
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
