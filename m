@@ -1,146 +1,47 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH] gpio: gpio-omap: take pm_runtime usage while IRQs are
- claimed
-Date: Tue, 9 Apr 2019 10:06:12 +0530
-Message-ID: <f32435a8-7b1d-30f6-83d5-2d0ccec5c173@ti.com>
-References: <20190408194506.25821-1-tony@atomide.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: [PATCH -next] pinctrl: artpec6: Make two functions static
+Date: Tue, 9 Apr 2019 08:56:21 +0200
+Message-ID: <20190409065621.2yfx5nqzpuxyj46p@axis.com>
+References: <20190321150909.3576-1-yuehaibing@huawei.com>
+ <20190408180110.GA15199@archlinux-ryzen>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190408194506.25821-1-tony@atomide.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190408180110.GA15199@archlinux-ryzen>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Yue Haibing <yuehaibing@huawei.com>, jespern@axis.com, larper@axis.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon, Apr 08, 2019 at 11:01:10AM -0700, Nathan Chancellor wrote:
+> On Thu, Mar 21, 2019 at 11:09:09PM +0800, Yue Haibing wrote:
+> > From: YueHaibing <yuehaibing@huawei.com>
+> > -void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
+> > -			 unsigned int group)
+> > +static void artpec6_pmx_disable(struct pinctrl_dev *pctldev,
+> > +				unsigned int function,
+> > +				unsigned int group)
+> 
+> On arm32 allyesconfig:
+> 
+> drivers/pinctrl/pinctrl-artpec6.c:706:13: error: unused function
+> 'artpec6_pmx_disable' [-Werror,-Wunused-function]
+> 
+> This is the second time you've introduced an unused function warning by
+> making a function static[1], could you please be a little more vigilant
+> in your clean ups in the future?
+> 
+> [1]: https://lore.kernel.org/lkml/20190327050126.12064-1-natechancellor@gmail.com/
+> 
+> Linus/Jesper/Lars, should this function just be deleted? I'd be happy to
+> send a patch doing so if that's the right course of action.
 
+Yes, that function is unused and can be dropped.
 
-On 09/04/19 1:15 AM, Tony Lindgren wrote:
-> From: Russell King <rmk+kernel@armlinux.org.uk>
-> 
-> Commit b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm
-> instead") moved interrupt using GPIO banks to idle with cpu_pm in order
-> to drop the use of pm_runtime_irq_safe() in a later patch. The GPIO
-> banks with no interrupts claimed are still being idled based on PM
-> runtime calls. However this caused a regression for am437x suspend for
-> rtc+ddr idle mode as reported by Keerthy <j-keerthy@ti.com>. The fix
-> to this is:
-> 
-> Bump the pm_runtime usage count while interrupts are in use, rather
-> than failing the pm_runtime callbacks.  The logic here is a little
-> non-obvious - the calling order will be:
-> 
->    omap_gpio_irq_bus_lock()
-> (optionally) raw_spin_lock_irqsave(desc->lock)
->    omap_gpio_irq_startup()
-> (optionally) raw_spin_unlock_irqrestore(desc->lock)
->    gpio_irq_bus_sync_unlock()
-> 
-> As the irq_startup method may be called with interrupts disabled, we
-> must not use pm_runtime_get() here, so as the bus lock takes an initial
-> pm reference count us, use pm_runtime_get_if_in_use() which will merely
-> increment the use count.
+> Thanks,
+> Nathan
 
-Tony,
-
-Applied cleanly on linux-next. I had to manually apply this on your 
-for-next branch. Tested for AM4 RTC+DDR and DS0 back and forth.
-
-Regards,
-Keerthy
-> 
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Keerthy <j-keerthy@ti.com>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Fixes: b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm instead")
-> Reported-by: Keerthy <j-keerthy@ti.com>
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> [tony@atomide.com: updated patch description for regression fix]
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> AFAIK this is only needed with patches heading to v5.2, so this is based on
-> Linux next. We can always backport as needed.
-> 
-> ---
->   drivers/gpio/gpio-omap.c | 23 +++++++----------------
->   1 file changed, 7 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -811,6 +811,9 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
->   	unsigned long flags;
->   	unsigned offset = d->hwirq;
->   
-> +	/* Take a reference on the runtime PM to prevent RPM suspends */
-> +	WARN_ON(pm_runtime_get_if_in_use(bank->chip.parent) == 0);
-> +
->   	raw_spin_lock_irqsave(&bank->lock, flags);
->   
->   	if (!LINE_USED(bank->mod_usage, offset))
-> @@ -844,6 +847,8 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
->   		omap_clear_gpio_debounce(bank, offset);
->   	omap_disable_gpio_module(bank, offset);
->   	raw_spin_unlock_irqrestore(&bank->lock, flags);
-> +
-> +	pm_runtime_put(bank->chip.parent);
->   }
->   
->   static void omap_gpio_irq_bus_lock(struct irq_data *data)
-> @@ -1719,40 +1724,26 @@ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
->   {
->   	struct gpio_bank *bank = dev_get_drvdata(dev);
->   	unsigned long flags;
-> -	int error = 0;
->   
->   	raw_spin_lock_irqsave(&bank->lock, flags);
-> -	/* Must be idled only by CPU_CLUSTER_PM_ENTER? */
-> -	if (bank->irq_usage) {
-> -		error = -EBUSY;
-> -		goto unlock;
-> -	}
->   	omap_gpio_idle(bank, true);
->   	bank->is_suspended = true;
-> -unlock:
->   	raw_spin_unlock_irqrestore(&bank->lock, flags);
->   
-> -	return error;
-> +	return 0;
->   }
->   
->   static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
->   {
->   	struct gpio_bank *bank = dev_get_drvdata(dev);
->   	unsigned long flags;
-> -	int error = 0;
->   
->   	raw_spin_lock_irqsave(&bank->lock, flags);
-> -	/* Must be unidled only by CPU_CLUSTER_PM_ENTER? */
-> -	if (bank->irq_usage) {
-> -		error = -EBUSY;
-> -		goto unlock;
-> -	}
->   	omap_gpio_unidle(bank);
->   	bank->is_suspended = false;
-> -unlock:
->   	raw_spin_unlock_irqrestore(&bank->lock, flags);
->   
-> -	return error;
-> +	return 0;
->   }
->   
->   static const struct dev_pm_ops gpio_pm_ops = {
-> 
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
