@@ -1,89 +1,32 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] pinctrl: artpec6: Make two functions static
-Date: Tue, 9 Apr 2019 09:35:43 +0800
-Message-ID: <11f6a1e6-6c8b-8490-57bb-f15f5050e80c@huawei.com>
-References: <20190321150909.3576-1-yuehaibing@huawei.com>
- <20190408180110.GA15199@archlinux-ryzen>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Subject: RE: [PATCH v3] pinctrl: imx8mq: Add suspend/resume ops
+Date: Tue, 9 Apr 2019 03:30:19 +0000
+Message-ID: <AM0PR04MB42112C433296FE60C7FE5646802D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1554748702-2368-1-git-send-email-abel.vesa@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190408180110.GA15199@archlinux-ryzen>
+In-Reply-To: <1554748702-2368-1-git-send-email-abel.vesa@nxp.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: jesper.nilsson@axis.com, lars.persson@axis.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com
+To: Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
+Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Gong <yibin.gong@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
+> From: Abel Vesa
+> Sent: Tuesday, April 9, 2019 2:39 AM
+>=20
+> To support pinctl hog restore after LPSR resume back, add the generic
+> suspend/resume in pinctrl-imx along with the generic pm ops to be used by
+> platform specific drivers. Then make use of the newly added ops in i.MX8M=
+Q
+> platform specific driver.
+>=20
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-On 2019/4/9 2:01, Nathan Chancellor wrote:
-> On Thu, Mar 21, 2019 at 11:09:09PM +0800, Yue Haibing wrote:
->> From: YueHaibing <yuehaibing@huawei.com>
->>
->> Fix sparse warnings:
->>
->> drivers/pinctrl/pinctrl-artpec6.c:691:5: warning:
->>  symbol 'artpec6_pmx_enable' was not declared. Should it be static?
->> drivers/pinctrl/pinctrl-artpec6.c:705:6: warning:
->>  symbol 'artpec6_pmx_disable' was not declared. Should it be static?
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/pinctrl/pinctrl-artpec6.c | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
->> index d89dc43..e836850 100644
->> --- a/drivers/pinctrl/pinctrl-artpec6.c
->> +++ b/drivers/pinctrl/pinctrl-artpec6.c
->> @@ -688,8 +688,9 @@ static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
->>  	}
->>  }
->>  
->> -int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
->> -		       unsigned int group)
->> +static int artpec6_pmx_enable(struct pinctrl_dev *pctldev,
->> +			      unsigned int function,
->> +			      unsigned int group)
->>  {
->>  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->>  
->> @@ -702,8 +703,9 @@ int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
->>  	return 0;
->>  }
->>  
->> -void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
->> -			 unsigned int group)
->> +static void artpec6_pmx_disable(struct pinctrl_dev *pctldev,
->> +				unsigned int function,
->> +				unsigned int group)
-> 
-> On arm32 allyesconfig:
-> 
-> drivers/pinctrl/pinctrl-artpec6.c:706:13: error: unused function
-> 'artpec6_pmx_disable' [-Werror,-Wunused-function]
-> 
-> This is the second time you've introduced an unused function warning by
-> making a function static[1], could you please be a little more vigilant
-> in your clean ups in the future?
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Sorry for this.
-
-> 
-> [1]: https://lore.kernel.org/lkml/20190327050126.12064-1-natechancellor@gmail.com/
-> 
-> Linus/Jesper/Lars, should this function just be deleted? I'd be happy to
-> send a patch doing so if that's the right course of action.
-> 
-> Thanks,
-> Nathan
-> 
->>  {
->>  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->>  
->> -- 
->> 2.7.0
->>
->>
-> 
-> .
-> 
+Regards
+Dong Aisheng
