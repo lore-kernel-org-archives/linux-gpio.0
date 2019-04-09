@@ -1,77 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
-Date: Mon, 8 Apr 2019 20:10:30 -0500
-Message-ID: <CAL_JsqKHjppN2kXqVpv5LjTedykA-Q8vteQDipw=FAaoUZLGeg@mail.gmail.com>
-References: <20190403090108.24788-1-brgl@bgdev.pl> <20190403090108.24788-3-brgl@bgdev.pl>
- <20190406070746.GA29624@bogus> <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] pinctrl: artpec6: Make two functions static
+Date: Tue, 9 Apr 2019 09:35:43 +0800
+Message-ID: <11f6a1e6-6c8b-8490-57bb-f15f5050e80c@huawei.com>
+References: <20190321150909.3576-1-yuehaibing@huawei.com>
+ <20190408180110.GA15199@archlinux-ryzen>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
+In-Reply-To: <20190408180110.GA15199@archlinux-ryzen>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: jesper.nilsson@axis.com, lars.persson@axis.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 8, 2019 at 7:25 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> sob., 6 kwi 2019 o 09:07 Rob Herring <robh@kernel.org> napisa=C5=82(a):
-> >
-> > On Wed, Apr 03, 2019 at 11:00:59AM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Add the DT binding document for the battery charger module of max7765=
-0.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++=
-++
-> > >  1 file changed, 27 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/power/supply/ma=
-x77650-charger.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/power/supply/max77650-=
-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charg=
-er.txt
-> > > new file mode 100644
-> > > index 000000000000..fef188144386
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger=
-.txt
-> > > @@ -0,0 +1,27 @@
-> > > +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> > > +
-> > > +This module is part of the MAX77650 MFD device. For more details
-> > > +see Documentation/devicetree/bindings/mfd/max77650.txt.
-> > > +
-> > > +The charger is represented as a sub-node of the PMIC node on the dev=
-ice tree.
-> > > +
-> > > +Required properties:
-> > > +--------------------
-> > > +- compatible:                Must be "maxim,max77650-charger"
-> > > +
-> > > +Optional properties:
-> > > +--------------------
-> > > +- min-microvolt:     Minimum CHGIN regulation voltage (in microvolts=
-). Must be
-> > > +                     one of: 4000000, 4100000, 4200000, 4300000, 440=
-0000,
-> > > +                     4500000, 4600000, 4700000.
-> > > +- current-limit-microamp:    CHGIN input current limit (in microamps=
-). Must
-> > > +                             be one of: 95000, 190000, 285000, 38000=
-0, 475000.
-> >
-> > To repeat what I said on v6, these should be common properties IMO (and
-> > therefore documented as such).
-> >
->
-> Do you mean a separate "charger.txt" document in
-> Documentation/devicetree/bindings/power/supply/?
 
-Yes, though I thought we had something already.
+On 2019/4/9 2:01, Nathan Chancellor wrote:
+> On Thu, Mar 21, 2019 at 11:09:09PM +0800, Yue Haibing wrote:
+>> From: YueHaibing <yuehaibing@huawei.com>
+>>
+>> Fix sparse warnings:
+>>
+>> drivers/pinctrl/pinctrl-artpec6.c:691:5: warning:
+>>  symbol 'artpec6_pmx_enable' was not declared. Should it be static?
+>> drivers/pinctrl/pinctrl-artpec6.c:705:6: warning:
+>>  symbol 'artpec6_pmx_disable' was not declared. Should it be static?
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/pinctrl/pinctrl-artpec6.c | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+>> index d89dc43..e836850 100644
+>> --- a/drivers/pinctrl/pinctrl-artpec6.c
+>> +++ b/drivers/pinctrl/pinctrl-artpec6.c
+>> @@ -688,8 +688,9 @@ static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
+>>  	}
+>>  }
+>>  
+>> -int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
+>> -		       unsigned int group)
+>> +static int artpec6_pmx_enable(struct pinctrl_dev *pctldev,
+>> +			      unsigned int function,
+>> +			      unsigned int group)
+>>  {
+>>  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+>>  
+>> @@ -702,8 +703,9 @@ int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
+>>  	return 0;
+>>  }
+>>  
+>> -void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
+>> -			 unsigned int group)
+>> +static void artpec6_pmx_disable(struct pinctrl_dev *pctldev,
+>> +				unsigned int function,
+>> +				unsigned int group)
+> 
+> On arm32 allyesconfig:
+> 
+> drivers/pinctrl/pinctrl-artpec6.c:706:13: error: unused function
+> 'artpec6_pmx_disable' [-Werror,-Wunused-function]
+> 
+> This is the second time you've introduced an unused function warning by
+> making a function static[1], could you please be a little more vigilant
+> in your clean ups in the future?
 
-Rob
+Sorry for this.
+
+> 
+> [1]: https://lore.kernel.org/lkml/20190327050126.12064-1-natechancellor@gmail.com/
+> 
+> Linus/Jesper/Lars, should this function just be deleted? I'd be happy to
+> send a patch doing so if that's the right course of action.
+> 
+> Thanks,
+> Nathan
+> 
+>>  {
+>>  	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+>>  
+>> -- 
+>> 2.7.0
+>>
+>>
+> 
+> .
+> 
