@@ -1,95 +1,120 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH] PM / core: Propagate dev->power.wakeup_path when no
- callbacks
-Date: Wed, 10 Apr 2019 17:28:06 +0200
-Message-ID: <c0e5e074-b0e4-c554-ab50-b04b046a487e@st.com>
-References: <20190410095516.6170-1-ulf.hansson@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: gpio-omap: take pm_runtime usage while IRQs are
+ claimed
+Date: Wed, 10 Apr 2019 21:16:28 +0300
+Message-ID: <4915fcdd-fb07-28c4-e530-d2559b8518ad@ti.com>
+References: <20190408194506.25821-1-tony@atomide.com>
+ <f32435a8-7b1d-30f6-83d5-2d0ccec5c173@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190410095516.6170-1-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <f32435a8-7b1d-30f6-83d5-2d0ccec5c173@ti.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Loic Pallardy <loic.pallardy@st.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Ulf
-
-On 4/10/19 11:55 AM, Ulf Hansson wrote:
-> The dev->power.direct_complete flag may become set in device_prepare() in
-> case the device don't have any PM callbacks (dev->power.no_pm_callbacks is
-> set). This leads to a broken behaviour, when there is child having wakeup
-> enabled and relies on its parent to be used in the wakeup path.
-> 
-> More precisely, when the direct complete path becomes selected for the
-> child in __device_suspend(), the propagation of the dev->power.wakeup_path
-> becomes skipped as well.
-> 
-> Let's address this problem, by checking if the device is a part the wakeup
-> path or has wakeup enabled, then prevent the direct complete path from
-> being used.
-> 
-> Reported-by: Loic Pallardy <loic.pallardy@st.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-
-Thanks Ulf for this patch. It'll avoid to have dirty hack in serial 
-suspend callback (at least for stm32). I just tested it on stm32 kernel 
-v4.19 (which embeds all our genpd based power features). Replacing
-device_may_wakeup(dev) by
-device_may_wakeup(dev) || dev->power.wakeup_path) then dirty hack to 
-test ttydev wakeup flag in stm32 usart driver is no more needed.
-
-So you can add my Tested-by
-
-Regards
-Alex
-
-
-> More background:
-> 
-> This problem was reported by Loic Pallardy, offlist, while he was working
-> on enabling wakeup for a tty serial console driver.
-> 
-> When I looked more closely, I noticed that uart_suspend_port() calls
-> device_may_wakeup() for the tty child devices, and then also the used serial
-> driver check its device (parent) for device_may_wakeup(). To me this looks like
-> workarounds to fix a behaviour that really should be dealt with from the PM
-> core, no matter of whether the child have PM callbacks assigned or not.
-> 
-> In other words, it seems like the serial driver(s) should be checking the
-> wakeup_path flag for the parent, solely, instead.
-> 
-> I haven't digested further behaviours for other subsystem, but recently
-> reviewed a patch for a gpio driver [1], that seems to be suffering from the
-> similar problems.
-> 
-> Kind regards
-> Ulf Hansson
-> 
-> [1]
-> https://lkml.org/lkml/2019/4/4/1283
-> 
-> ---
->   drivers/base/power/main.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 41eba82ee7b9..f9cfdeee8288 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1747,6 +1747,10 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
->   	if (dev->power.syscore)
->   		goto Complete;
->   
-> +	/* Avoid direct_complete, to let wakeup_path being propagated. */
-> +	if (device_may_wakeup(dev) || dev->power.wakeup_path)
-> +		dev->power.direct_complete = false;
-> +
->   	if (dev->power.direct_complete) {
->   		if (pm_runtime_status_suspended(dev)) {
->   			pm_runtime_disable(dev);
-> 
+CgpPbiAwOS4wNC4xOSAwNzozNiwgS2VlcnRoeSB3cm90ZToKPiAKPiAKPiBPbiAwOS8wNC8xOSAx
+OjE1IEFNLCBUb255IExpbmRncmVuIHdyb3RlOgo+PiBGcm9tOiBSdXNzZWxsIEtpbmcgPHJtaytr
+ZXJuZWxAYXJtbGludXgub3JnLnVrPgo+Pgo+PiBDb21taXQgYjc2NGE1ODYzZmQ4ICgiZ3Bpbzog
+b21hcDogUmVtb3ZlIGN1c3RvbSBQTSBjYWxscyBhbmQgdXNlIGNwdV9wbQo+PiBpbnN0ZWFkIikg
+bW92ZWQgaW50ZXJydXB0IHVzaW5nIEdQSU8gYmFua3MgdG8gaWRsZSB3aXRoIGNwdV9wbSBpbiBv
+cmRlcgo+PiB0byBkcm9wIHRoZSB1c2Ugb2YgcG1fcnVudGltZV9pcnFfc2FmZSgpIGluIGEgbGF0
+ZXIgcGF0Y2guIFRoZSBHUElPCj4+IGJhbmtzIHdpdGggbm8gaW50ZXJydXB0cyBjbGFpbWVkIGFy
+ZSBzdGlsbCBiZWluZyBpZGxlZCBiYXNlZCBvbiBQTQo+PiBydW50aW1lIGNhbGxzLiBIb3dldmVy
+IHRoaXMgY2F1c2VkIGEgcmVncmVzc2lvbiBmb3IgYW00Mzd4IHN1c3BlbmQgZm9yCj4+IHJ0Yytk
+ZHIgaWRsZSBtb2RlIGFzIHJlcG9ydGVkIGJ5IEtlZXJ0aHkgPGota2VlcnRoeUB0aS5jb20+LiBU
+aGUgZml4Cj4+IHRvIHRoaXMgaXM6Cj4+Cj4+IEJ1bXAgdGhlIHBtX3J1bnRpbWUgdXNhZ2UgY291
+bnQgd2hpbGUgaW50ZXJydXB0cyBhcmUgaW4gdXNlLCByYXRoZXIKPj4gdGhhbiBmYWlsaW5nIHRo
+ZSBwbV9ydW50aW1lIGNhbGxiYWNrcy7CoCBUaGUgbG9naWMgaGVyZSBpcyBhIGxpdHRsZQo+PiBu
+b24tb2J2aW91cyAtIHRoZSBjYWxsaW5nIG9yZGVyIHdpbGwgYmU6Cj4+Cj4+IMKgwqAgb21hcF9n
+cGlvX2lycV9idXNfbG9jaygpCj4+IChvcHRpb25hbGx5KSByYXdfc3Bpbl9sb2NrX2lycXNhdmUo
+ZGVzYy0+bG9jaykKPj4gwqDCoCBvbWFwX2dwaW9faXJxX3N0YXJ0dXAoKQo+PiAob3B0aW9uYWxs
+eSkgcmF3X3NwaW5fdW5sb2NrX2lycXJlc3RvcmUoZGVzYy0+bG9jaykKPj4gwqDCoCBncGlvX2ly
+cV9idXNfc3luY191bmxvY2soKQo+Pgo+PiBBcyB0aGUgaXJxX3N0YXJ0dXAgbWV0aG9kIG1heSBi
+ZSBjYWxsZWQgd2l0aCBpbnRlcnJ1cHRzIGRpc2FibGVkLCB3ZQo+PiBtdXN0IG5vdCB1c2UgcG1f
+cnVudGltZV9nZXQoKSBoZXJlLCBzbyBhcyB0aGUgYnVzIGxvY2sgdGFrZXMgYW4gaW5pdGlhbAo+
+PiBwbSByZWZlcmVuY2UgY291bnQgdXMsIHVzZSBwbV9ydW50aW1lX2dldF9pZl9pbl91c2UoKSB3
+aGljaCB3aWxsIG1lcmVseQo+PiBpbmNyZW1lbnQgdGhlIHVzZSBjb3VudC4KPiAKPiBUb255LAo+
+IAo+IEFwcGxpZWQgY2xlYW5seSBvbiBsaW51eC1uZXh0LiBJIGhhZCB0byBtYW51YWxseSBhcHBs
+eSB0aGlzIG9uIHlvdXIgZm9yLW5leHQgYnJhbmNoLiBUZXN0ZWQgZm9yIEFNNCBSVEMrRERSIGFu
+ZCBEUzAgYmFjayBhbmQgZm9ydGguCgpJJ20gdmVyeSBzb3JyeSwgYnV0IHdoYXQgd2FzIHRoZSBy
+ZWdyZXNzaW9uIGV4YWN0bHk/CkNhbid0IGVudGVyIFJUQytERFIgc3RhdGU/IHNvbWUgY3Jhc2g/
+CgoKPiAKPiBSZWdhcmRzLAo+IEtlZXJ0aHkKPj4KPj4gQ2M6IEFhcm8gS29za2luZW4gPGFhcm8u
+a29za2luZW5AaWtpLmZpPgo+PiBDYzogR3J5Z29yaWkgU3RyYXNoa28gPGdyeWdvcmlpLnN0cmFz
+aGtvQHRpLmNvbT4KPj4gQ2M6IEtlZXJ0aHkgPGota2VlcnRoeUB0aS5jb20+Cj4+IENjOiBQZXRl
+ciBVamZhbHVzaSA8cGV0ZXIudWpmYWx1c2lAdGkuY29tPgo+PiBDYzogVGVybyBLcmlzdG8gPHQt
+a3Jpc3RvQHRpLmNvbT4KPj4gRml4ZXM6IGI3NjRhNTg2M2ZkOCAoImdwaW86IG9tYXA6IFJlbW92
+ZSBjdXN0b20gUE0gY2FsbHMgYW5kIHVzZSBjcHVfcG0gaW5zdGVhZCIpCj4+IFJlcG9ydGVkLWJ5
+OiBLZWVydGh5IDxqLWtlZXJ0aHlAdGkuY29tPgo+PiBTaWduZWQtb2ZmLWJ5OiBSdXNzZWxsIEtp
+bmcgPHJtaytrZXJuZWxAYXJtbGludXgub3JnLnVrPgo+PiBbdG9ueUBhdG9taWRlLmNvbTogdXBk
+YXRlZCBwYXRjaCBkZXNjcmlwdGlvbiBmb3IgcmVncmVzc2lvbiBmaXhdCj4+IFNpZ25lZC1vZmYt
+Ynk6IFRvbnkgTGluZGdyZW4gPHRvbnlAYXRvbWlkZS5jb20+Cj4+IC0tLQo+Pgo+PiBBRkFJSyB0
+aGlzIGlzIG9ubHkgbmVlZGVkIHdpdGggcGF0Y2hlcyBoZWFkaW5nIHRvIHY1LjIsIHNvIHRoaXMg
+aXMgYmFzZWQgb24KPj4gTGludXggbmV4dC4gV2UgY2FuIGFsd2F5cyBiYWNrcG9ydCBhcyBuZWVk
+ZWQuCj4+Cj4+IC0tLQo+PiDCoCBkcml2ZXJzL2dwaW8vZ3Bpby1vbWFwLmMgfCAyMyArKysrKysr
+LS0tLS0tLS0tLS0tLS0tLQo+PiDCoCAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAx
+NiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bpby9ncGlvLW9tYXAu
+YyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYwo+PiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1v
+bWFwLmMKPj4gKysrIGIvZHJpdmVycy9ncGlvL2dwaW8tb21hcC5jCj4+IEBAIC04MTEsNiArODEx
+LDkgQEAgc3RhdGljIHVuc2lnbmVkIGludCBvbWFwX2dwaW9faXJxX3N0YXJ0dXAoc3RydWN0IGly
+cV9kYXRhICpkKQo+PiDCoMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+IMKgwqDCoMKg
+wqAgdW5zaWduZWQgb2Zmc2V0ID0gZC0+aHdpcnE7Cj4+IMKgICvCoMKgwqAgLyogVGFrZSBhIHJl
+ZmVyZW5jZSBvbiB0aGUgcnVudGltZSBQTSB0byBwcmV2ZW50IFJQTSBzdXNwZW5kcyAqLwo+PiAr
+wqDCoMKgIFdBUk5fT04ocG1fcnVudGltZV9nZXRfaWZfaW5fdXNlKGJhbmstPmNoaXAucGFyZW50
+KSA9PSAwKTsKPj4gKwoKCgpXZSBoYXZlIGluIGRyaXZlcjoKIGlycWMtPnBhcmVudF9kZXZpY2Ug
+PSBkZXY7Cgp3aGljaCBtZWFuczoKIHJlcXVlc3RfdGhyZWFkZWRfaXJxKCkKICAgaXJxX2NoaXBf
+cG1fZ2V0KCkKCWlmIChJU19FTkFCTEVEKENPTkZJR19QTSkgJiYgZGF0YS0+Y2hpcC0+cGFyZW50
+X2RldmljZSkgewoJCXJldHZhbCA9IHBtX3J1bnRpbWVfZ2V0X3N5bmMoZGF0YS0+Y2hpcC0+cGFy
+ZW50X2RldmljZSk7CgphbmQgcG93ZXIudXNhZ2VfY291bnQgd2lsbCBiZSBpbmNyZW1lbnRlZCBl
+dmVyeSB0aW1lIEdQSU8gaXJxIGlzIHJlcXVlc3RlZC4KCm9ubHkgaW4gZnJlZV9pcnEoKSAob3Ig
+aW4gY2FzZSBvZiBlcnJvcikgcG93ZXIudXNhZ2VfY291bnQgaXMgZGVjcmVtZW50ZWQuCgpOb3cg
+YWJvdmUgY2hhbmdlIHdpbGwgaW50cm9kdWNlIGp1c3QgYW5vdGhlciBpbmNyZW1lbnRhdGlvbiBv
+ZiBwb3dlci51c2FnZV9jb3VudApIb3cgaXMgaXQgaGVscGluZz8KCj4+IMKgwqDCoMKgwqAgcmF3
+X3NwaW5fbG9ja19pcnFzYXZlKCZiYW5rLT5sb2NrLCBmbGFncyk7Cj4+IMKgIMKgwqDCoMKgwqAg
+aWYgKCFMSU5FX1VTRUQoYmFuay0+bW9kX3VzYWdlLCBvZmZzZXQpKQo+PiBAQCAtODQ0LDYgKzg0
+Nyw4IEBAIHN0YXRpYyB2b2lkIG9tYXBfZ3Bpb19pcnFfc2h1dGRvd24oc3RydWN0IGlycV9kYXRh
+ICpkKQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgb21hcF9jbGVhcl9ncGlvX2RlYm91bmNlKGJhbmss
+IG9mZnNldCk7Cj4+IMKgwqDCoMKgwqAgb21hcF9kaXNhYmxlX2dwaW9fbW9kdWxlKGJhbmssIG9m
+ZnNldCk7Cj4+IMKgwqDCoMKgwqAgcmF3X3NwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmJhbmstPmxv
+Y2ssIGZsYWdzKTsKPj4gKwo+PiArwqDCoMKgIHBtX3J1bnRpbWVfcHV0KGJhbmstPmNoaXAucGFy
+ZW50KTsKPj4gwqAgfQo+PiDCoCDCoCBzdGF0aWMgdm9pZCBvbWFwX2dwaW9faXJxX2J1c19sb2Nr
+KHN0cnVjdCBpcnFfZGF0YSAqZGF0YSkKPj4gQEAgLTE3MTksNDAgKzE3MjQsMjYgQEAgc3RhdGlj
+IGludCBfX21heWJlX3VudXNlZCBvbWFwX2dwaW9fcnVudGltZV9zdXNwZW5kKHN0cnVjdCBkZXZp
+Y2UgKmRldikKPj4gwqAgewo+PiDCoMKgwqDCoMKgIHN0cnVjdCBncGlvX2JhbmsgKmJhbmsgPSBk
+ZXZfZ2V0X2RydmRhdGEoZGV2KTsKPj4gwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIGZsYWdzOwo+
+PiAtwqDCoMKgIGludCBlcnJvciA9IDA7Cj4+IMKgIMKgwqDCoMKgwqAgcmF3X3NwaW5fbG9ja19p
+cnFzYXZlKCZiYW5rLT5sb2NrLCBmbGFncyk7Cj4+IC3CoMKgwqAgLyogTXVzdCBiZSBpZGxlZCBv
+bmx5IGJ5IENQVV9DTFVTVEVSX1BNX0VOVEVSPyAqLwo+PiAtwqDCoMKgIGlmIChiYW5rLT5pcnFf
+dXNhZ2UpIHsKPj4gLcKgwqDCoMKgwqDCoMKgIGVycm9yID0gLUVCVVNZOwo+PiAtwqDCoMKgwqDC
+oMKgwqAgZ290byB1bmxvY2s7Cj4+IC3CoMKgwqAgfQo+PiDCoMKgwqDCoMKgIG9tYXBfZ3Bpb19p
+ZGxlKGJhbmssIHRydWUpOwo+PiDCoMKgwqDCoMKgIGJhbmstPmlzX3N1c3BlbmRlZCA9IHRydWU7
+Cj4+IC11bmxvY2s6Cj4+IMKgwqDCoMKgwqAgcmF3X3NwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmJh
+bmstPmxvY2ssIGZsYWdzKTsKPj4gwqAgLcKgwqDCoCByZXR1cm4gZXJyb3I7Cj4+ICvCoMKgwqAg
+cmV0dXJuIDA7Cj4+IMKgIH0KPj4gwqAgwqAgc3RhdGljIGludCBfX21heWJlX3VudXNlZCBvbWFw
+X2dwaW9fcnVudGltZV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+PiDCoCB7Cj4+IMKgwqDC
+oMKgwqAgc3RydWN0IGdwaW9fYmFuayAqYmFuayA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+PiDC
+oMKgwqDCoMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+IC3CoMKgwqAgaW50IGVycm9yID0gMDsK
+Pj4gwqAgwqDCoMKgwqDCoCByYXdfc3Bpbl9sb2NrX2lycXNhdmUoJmJhbmstPmxvY2ssIGZsYWdz
+KTsKPj4gLcKgwqDCoCAvKiBNdXN0IGJlIHVuaWRsZWQgb25seSBieSBDUFVfQ0xVU1RFUl9QTV9F
+TlRFUj8gKi8KPj4gLcKgwqDCoCBpZiAoYmFuay0+aXJxX3VzYWdlKSB7Cj4+IC3CoMKgwqDCoMKg
+wqDCoCBlcnJvciA9IC1FQlVTWTsKPj4gLcKgwqDCoMKgwqDCoMKgIGdvdG8gdW5sb2NrOwo+PiAt
+wqDCoMKgIH0KPj4gwqDCoMKgwqDCoCBvbWFwX2dwaW9fdW5pZGxlKGJhbmspOwo+PiDCoMKgwqDC
+oMKgIGJhbmstPmlzX3N1c3BlbmRlZCA9IGZhbHNlOwo+PiAtdW5sb2NrOgo+PiDCoMKgwqDCoMKg
+IHJhd19zcGluX3VubG9ja19pcnFyZXN0b3JlKCZiYW5rLT5sb2NrLCBmbGFncyk7Cj4+IMKgIC3C
+oMKgwqAgcmV0dXJuIGVycm9yOwo+PiArwqDCoMKgIHJldHVybiAwOwo+PiDCoCB9Cj4+IMKgIMKg
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBncGlvX3BtX29wcyA9IHsKPj4KCi0tIApC
+ZXN0IHJlZ2FyZHMsCmdyeWdvcmlpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
