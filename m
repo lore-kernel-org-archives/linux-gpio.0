@@ -1,66 +1,63 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 3/3] ARM: dts: lpc32xx: add GPIO interrupts
-Date: Wed, 10 Apr 2019 12:53:52 +0200
-Message-ID: <20190410105352.20436-1-alexandre.belloni@bootlin.com>
-References: <20190410103926.8781-4-alexandre.belloni@bootlin.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 1/5] dt-bindings: pinctrl: stm32: add new entry for package
+ information
+Date: Wed, 10 Apr 2019 13:30:20 +0200
+Message-ID: <1554895824-25709-2-git-send-email-alexandre.torgue@st.com>
+References: <1554895824-25709-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190410103926.8781-4-alexandre.belloni@bootlin.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1554895824-25709-1-git-send-email-alexandre.torgue@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, arnd@arndb.de
+Cc: devicetree@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add the interrupts for the GPIO controller.
+Add "st,package" entry. Possibles values are:
+-STM32MP_PKG_AA for LFBGA448 (18*18) package
+-STM32MP_PKG_AB for LFBGA354 (16*16) package
+-STM32MP_PKG_AC for TFBGA361 (12*12) package
+-STM32MP_PKG_AD for TFBGA257 (10*10) package
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-the previous patch was missing a line, sorry about that.
-
-Changes in v2:
- - add missing interrupt for gpi19
-
- arch/arm/boot/dts/lpc32xx.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index 20b38f4ade37..a012f668ebd1 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -392,6 +392,32 @@
- 				reg = <0x40028000 0x1000>;
- 				gpio-controller;
- 				#gpio-cells = <3>; /* bank, pin, flags */
-+				interrupts-extended = <&sic2 8 IRQ_TYPE_NONE>,
-+						<&sic2 22 IRQ_TYPE_NONE>,
-+						<&sic2 23 IRQ_TYPE_NONE>,
-+						<&sic2 24 IRQ_TYPE_NONE>,
-+						<&sic2 25 IRQ_TYPE_NONE>,
-+						<&sic2 26 IRQ_TYPE_NONE>,
-+						<&sic2 27 IRQ_TYPE_NONE>,
-+						<&sic2 28 IRQ_TYPE_NONE>,
-+						<&sic2 15 IRQ_TYPE_NONE>,
-+						<&sic2 9 IRQ_TYPE_NONE>,
-+						<&sic2 10 IRQ_TYPE_NONE>,
-+						<&sic2 11 IRQ_TYPE_NONE>,
-+						<&sic1 4 IRQ_TYPE_NONE>,
-+						<&sic2 0 IRQ_TYPE_NONE>,
-+						<&sic2 1 IRQ_TYPE_NONE>,
-+						<&sic2 2 IRQ_TYPE_NONE>,
-+						<&sic2 3 IRQ_TYPE_NONE>,
-+						<&sic2 4 IRQ_TYPE_NONE>,
-+						<&sic2 5 IRQ_TYPE_NONE>;
-+				interrupt-names = "p01",
-+						"gpi00", "gpi01", "gpi02",
-+						"gpi03", "gpi04", "gpi05",
-+						"gpi06", "gpi07", "gpi08",
-+						"gpi09", "gpi19", "gpi28",
-+						"gpio00", "gpio01", "gpio02",
-+						"gpio03", "gpio04", "gpio05";
- 			};
+diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+index 48df30a..0016925 100644
+--- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+@@ -57,6 +57,8 @@ Optional properties:
+  - st,bank-ioport: should correspond to the EXTI IOport selection (EXTI line
+    used to select GPIOs as interrupts).
+  - hwlocks: reference to a phandle of a hardware spinlock provider node.
++ - st,package: Indicates the SOC package used.
++   More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
  
- 			timer4: timer@4002c000 {
+ Example 1:
+ #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
+diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+index b5a2174..e6fb8ad 100644
+--- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
++++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+@@ -32,5 +32,11 @@
+ 
+ #define STM32_PINMUX(port, line, mode) (((PIN_NO(port, line)) << 8) | (mode))
+ 
++/*  package information */
++#define STM32MP_PKG_AA	0x1
++#define STM32MP_PKG_AB	0x2
++#define STM32MP_PKG_AC	0x4
++#define STM32MP_PKG_AD	0x8
++
+ #endif /* _DT_BINDINGS_STM32_PINFUNC_H */
+ 
 -- 
-2.20.1
+2.7.4
