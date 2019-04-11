@@ -1,28 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: pca953x: add support for pca6416
-Date: Thu, 11 Apr 2019 15:35:28 +0200
-Message-ID: <CACRpkdY-KdH+Yk_6xqyiiaF1NRMofVsw8pSop0HOdJnnAKvSuQ@mail.gmail.com>
-References: <20190409123546.13960-1-alexandre.belloni@bootlin.com> <20190409123546.13960-2-alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH] gpio: eic: sprd: Fix incorrect irq type setting for the
+ sync EIC
+Date: Thu, 11 Apr 2019 15:40:16 +0200
+Message-ID: <CACRpkdY5kKRMkTV8-d_CgF75J3cOA+v2Hv2w4K7FqtDy+ABDmg@mail.gmail.com>
+References: <e7ca1df3b3159d6e1c65c6a2a9f01a7ecabcc821.1554882235.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190409123546.13960-2-alexandre.belloni@bootlin.com>
+In-Reply-To: <e7ca1df3b3159d6e1c65c6a2a9f01a7ecabcc821.1554882235.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, Mark Brown <broonie@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 9, 2019 at 2:35 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
+On Wed, Apr 10, 2019 at 9:48 AM Baolin Wang <baolin.wang@linaro.org> wrote:
 
-> The NXP PCA6416, documented at [1], is a variant of the PCA GPIO
-> expander with 16 GPIOs, and supporting an interrupt.
+> When setting sync EIC as IRQ_TYPE_EDGE_BOTH type, we missed to set the
+> SPRD_EIC_SYNC_INTMODE register to 0, which means detecting edge signals.
 >
-> [1] https://www.nxp.com/docs/en/data-sheet/PCA6416A.pdf
+> Thus this patch fixes the issue.
 >
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Patch applied.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
