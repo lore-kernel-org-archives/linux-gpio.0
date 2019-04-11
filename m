@@ -1,112 +1,53 @@
-From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH] pinctrl: Add kernel config PINCTRL_MTK_V2
-Date: Thu, 11 Apr 2019 15:04:05 -0700
-Message-ID: <CAGp9LzpExWGCHtiggQmPtCwBD6o4JUmGSGfm7VostCq+EK2egw@mail.gmail.com>
-References: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] gpio: merrifield: Fix build err without CONFIG_ACPI
+Date: Fri, 12 Apr 2019 01:09:17 +0200
+Message-ID: <2719325.nu6fPkO1U5@kreacher>
+References: <20190404103925.25652-1-yuehaibing@huawei.com> <20190405142112.26592-1-yuehaibing@huawei.com> <20190405145009.GD9224@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
+In-Reply-To: <20190405145009.GD9224@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Light Hsieh <light.hsieh@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, wsd_upstream@mediatek.com
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yue Haibing <yuehaibing@huawei.com>, linus.walleij@linaro.org, bgolaszewski@baylibre.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi, Light
+On Friday, April 5, 2019 4:50:09 PM CEST Andy Shevchenko wrote:
+> On Fri, Apr 05, 2019 at 10:21:12PM +0800, Yue Haibing wrote:
+> > From: YueHaibing <yuehaibing@huawei.com>
+> > 
+> > When building CONFIG_ACPI is not set
+> > gcc warn this:
+> > 
+> > drivers/gpio/gpio-merrifield.c: In function
+> > mrfld_gpio_get_pinctrl_dev_name: drivers/gpio/gpio-merrifield.c:388:19:
+> > error: dereferencing pointer to incomplete type struct acpi_device> 
+> >    put_device(&adev->dev);
+> >    
+> >                    ^
+> > 
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Fixes:d00d2109c367 ("gpio: merrifield: Convert to use
+> > acpi_dev_get_first_match_dev()") Signed-off-by: YueHaibing
+> > <yuehaibing@huawei.com>
+> 
+> Thank you for an update, I have a comment below, but before sending v3, let
+> Rafael to have a chance to look at it.
+> 
+> >  #ifdef CONFIG_ACPI
+> >  extern int acpi_platform_notify(struct device *dev, enum kobject_action
+> >  action);> 
+> > +
+> > +static inline void put_acpi_device(struct acpi_device *adev)
+> > +{
+> > +	put_device(&adev->dev);
+> > +}
+> 
+> This should probably go to acpi_bus.h under acpi_dev_get_first_match_dev().
+> And talking to Mika we agreed that naming would be better as acpi_dev_put().
 
-On Thu, Apr 11, 2019 at 2:32 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
->
-> Since no single Mediatek chip use code for PINCTRL_MTK and code for
-> PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS simultaneously, it is better to use
-> different config to determine if related code will be built or not on
-> building non-generic kernel.
->
-> Add kernel config PINCTRL_MTK_V2 selected by either PINCTRL_MTK_MOORE
-> or PINCTRL_MTK_PARIS.
-> Use PINCTRL_MTK and PINCTRL_MTK_V2 to control building of
-> drivers/pinctrl/medaitek/.
-> Remove selection of EINT_MTK from PINCTRL_MTK since code for EINT_MTK is
-> only related to PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS, i.e. PINCTL_MTK_V2.
->
+Agreed on both accounts.
 
-PINCTRL_MTK also depends on EINT_MTK such as the symbol
-mtk_eint_do_init, it is a common library for the two kinds of the
-pinctrl core.
-
-> ---
->  drivers/pinctrl/Makefile         |  3 ++-
->  drivers/pinctrl/mediatek/Kconfig | 15 ++++++++++++---
->  2 files changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> index 712184b..fcee0e0 100644
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_PINCTRL_SUNXI)   += sunxi/
->  obj-y                          += ti/
->  obj-$(CONFIG_PINCTRL_UNIPHIER) += uniphier/
->  obj-$(CONFIG_ARCH_VT8500)      += vt8500/
-> -obj-y                          += mediatek/
-> +obj-$(CONFIG_PINCTRL_MTK)      += mediatek/
-> +obj-$(CONFIG_PINCTRL_MTK_V2)   += mediatek/
-
-I would think it is good if deciding V1 or not should be done inside
-the vendor directory and the change also would cause COMPILE_TEST not
-be applied to
-
->  obj-$(CONFIG_PINCTRL_ZX)       += zte/
->  obj-y                          += cirrus/
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index a005cbc..5e26462 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -2,10 +2,15 @@ menu "MediaTek pinctrl drivers"
->         depends on ARCH_MEDIATEK || COMPILE_TEST
->
->  config EINT_MTK
-> -       bool "MediaTek External Interrupt Support"
-> -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
-> +       bool "MediaTek External Interrupt driver that is based on PINCTRL_MTK_V2"
-> +       depends on PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
->         select GPIOLIB
->         select IRQ_DOMAIN
-> +       help
-> +         Say yes here to enable support for MediaTek External Interrupt
-> +         (EINT) driver based on PINCTRL_MTK version 2.
-> +         This driver is combined with MediaTek Pinctrl driver version 2
-> +         so PINCTRL_MTK_V2 shall be set first.
->
->  config PINCTRL_MTK
->         bool
-> @@ -13,9 +18,11 @@ config PINCTRL_MTK
->         select PINMUX
->         select GENERIC_PINCONF
->         select GPIOLIB
-> -       select EINT_MTK
->         select OF_GPIO
->
-> +config PINCTRL_MTK_V2
-> +       bool "MediaTek Pinctrl Support V2"
-> +
->  config PINCTRL_MTK_MOORE
->         bool
->         depends on OF
-> @@ -24,6 +31,7 @@ config PINCTRL_MTK_MOORE
->         select GENERIC_PINMUX_FUNCTIONS
->         select GPIOLIB
->         select OF_GPIO
-> +       select PINCTRL_MTK_V2
->
->  config PINCTRL_MTK_PARIS
->         bool
-> @@ -33,6 +41,7 @@ config PINCTRL_MTK_PARIS
->         select GPIOLIB
->         select EINT_MTK
->         select OF_GPIO
-> +       select PINCTRL_MTK_V2
->
->  # For ARMv7 SoCs
->  config PINCTRL_MT2701
-> --
-> 1.8.1.1.dirty
->
+Thanks!
