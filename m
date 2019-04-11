@@ -1,67 +1,221 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 07/11] drm: sun4i: Add support for
- enabling DDC I2C bus power to dw_hdmi glue
-Date: Thu, 11 Apr 2019 14:25:08 +0200
-Message-ID: <20190411122508.k2pjuwmmdhiuouaf@flea>
-References: <20190411101951.30223-1-megous@megous.com>
- <20190411101951.30223-8-megous@megous.com>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v9 00/11] mfd: add support for max77650 PMIC
+Date: Thu, 11 Apr 2019 14:42:01 +0200
+Message-ID: <20190411124212.7612-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lpuusnskz5r7hduh"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBKXEXTSQKGQE5PKZGRI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20190411101951.30223-8-megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org
-Cc: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Giuseppe Cavallaro <peppe.cavallaro-qxv4g6HH51o@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arend van Spriel <arend.vanspriel-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Franky Lin <franky.lin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Hante Meuleman <hante.meuleman-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Chi-Hsien Lin <chi-hsien.lin-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Wright Feng <wright.feng-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Naveen Gupta <naveen.gupta-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev@v
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---lpuusnskz5r7hduh
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-On Thu, Apr 11, 2019 at 12:19:47PM +0200, megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org wrote:
-> From: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
->
-> Orange Pi 3 board requires enabling DDC I2C bus via some GPIO connected
-> transistors, before the bus can be used.
->
-> Model this as a power supply for DDC bus on the HDMI connector connected
-> to the output port (port 1) of the HDMI controller.
->
-> Signed-off-by: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 60 ++++++++++++++++++++++++++-
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 +
->  2 files changed, 60 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> index 39d8509d96a0..1b6ffba41177 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> @@ -98,6 +98,30 @@ static u32 sun8i_dw_hdmi_find_possible_crtcs(struct drm_device *drm,
->  	return crtcs;
->  }
->
-> +static int sun8i_dw_hdmi_find_connector_pdev(struct device *dev,
-> +					     struct platform_device **pdev_out)
-> +{
-> +	struct platform_device* pdev;
+Patches 1-4 add the DT binding documents. Patch 5 documents mfd_add_devices().
+Patches 6-10 add all drivers. Last patch adds a MAINTAINERS entry for this
+device.
 
-This doesn't respect the guidelines.
+The regulator part is already upstream.
 
-Maxime
+v1 -> v2:
+=========
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---lpuusnskz5r7hduh--
+General:
+- use C++ style comments for the SPDX license identifier and the
+  copyright header
+- s/MODULE_LICENSE("GPL")/MODULE_LICENSE("GPL v2")/
+- lookup the virtual interrupt numbers in the MFD driver, setup
+  resources for child devices and use platform_get_irq_byname()
+  in sub-drivers
+- picked up review tags
+- use devm_request_any_context_irq() for interrupt requests
+
+LEDs:
+- changed the max77650_leds_ prefix to max77650_led_
+- drop the max77650_leds structure as the only field it held was the
+  regmap pointer, move said pointer to struct max77650_led
+- change the driver name to "max77650-led"
+- drop the last return value check and return the result of
+  regmap_write() directly
+- change the labeling scheme to one consistent with other LED drivers
+
+ONKEY:
+- drop the key reporting helper and call the input functions directly
+  from interrupt handlers
+- rename the rv local variable to error
+- drop parent device asignment
+
+Regulator:
+- drop the unnecessary init_data lookup from the driver code
+- drop unnecessary include
+
+Charger:
+- disable the charger on driver remove
+- change the power supply type to POWER_SUPPLY_TYPE_USB
+
+GPIO:
+- drop interrupt support until we have correct implementation of hierarchical
+  irqs in gpiolib
+
+v2 -> v3:
+=========
+
+General:
+- dropped regulator patches as they're already in Mark Brown's branch
+
+LED:
+- fix the compatible string in the DT binding example
+- use the max_brightness property
+- use a common prefix ("MAX77650_LED") for all defines in the driver
+
+MFD:
+- add the MODULE_DEVICE_TABLE()
+- add a sentinel to the of_device_id array
+- constify the pointers to irq names
+- use an enum instead of defines for interrupt indexes
+
+v3 -> v4:
+=========
+
+GPIO:
+- as discussed with Linus Walleij: the gpio-controller is now part of
+  the core mfd module (we don't spawn a sub-node anymore), the binding
+  document for GPIO has been dropped, the GPIO properties have been
+  defined in the binding document for the mfd core, the interrupt
+  functionality has been reintroduced with the irq directly passed from
+  the mfd part
+- due to the above changes the Reviewed-by tag from Linus was dropped
+
+v4 -> v5:
+=========
+
+General:
+- add a patch documenting mfd_add_devices()
+
+MFD:
+- pass the regmap irq_chip irq domain to mfd over mfd_add_devices so that
+  the hw interrupts from resources can be correctly mapped to virtual irqs
+- remove the enum listing cell indexes
+- extend Kconfig help
+- add a link to the programming manual
+- use REGMAP_IRQ_REG() for regmap interrupts (except for GPI which has
+  is composed of two hw interrupts for rising and falling edge)
+- add error messages in probe
+- use PLATFORM_DEVID_NONE constant in devm_mfd_add_devices()
+- set irq_base to 0 in regmap_add_irq_chip() as other users to, it's only
+  relevant if it's > 0
+
+Charger:
+- use non-maxim specific property names for minimum input voltage and current
+  limit
+- code shrink by using the enable/disable charger helpers everywhere
+- use more descriptive names for constants
+
+Onkey:
+- use EV_SW event type for slide mode
+
+LED:
+- remove stray " from Kconfig help
+
+v5 -> v6:
+=========
+
+MFD:
+- remove stray spaces in the binding document
+- rename the example dt node
+- remove unnecessary interrupt-parent property from the bindings
+
+LED:
+- add a missing dependency on LEDS_CLASS to Kconfig
+
+Onkey:
+- use boolean for the slide button property
+
+Charger:
+- fix the property names in DT example
+- make constants even more readable
+
+v6 -> v7:
+=========
+
+Charger:
+- rename the current limit property to current-limit-microamp
+
+v7 -> v8:
+=========
+
+General:
+- collected acks from Lee
+- changed the documentation for mfd_add_devices() as suggested by Lee
+- rebased on top of v5.1-rc3
+
+v8 > v9:
+========
+
+General:
+- collected new tags
+- rebased on top of v5.1-rc4
+
+MFD:
+- various improvements in error messages
+- coding style tweaks
+
+Charger:
+- named the two optional properties in a more descriptive way, so that
+  we can make them generic for charger bindings if more potential users
+  appear
+
+Bartosz Golaszewski (11):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: core: document mfd_add_devices()
+  mfd: max77650: new core mfd driver
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/input/max77650-onkey.txt         |  26 ++
+ .../bindings/leds/leds-max77650.txt           |  57 +++
+ .../devicetree/bindings/mfd/max77650.txt      |  46 +++
+ .../power/supply/max77650-charger.txt         |  28 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 190 +++++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 121 ++++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 147 +++++++
+ drivers/mfd/Kconfig                           |  14 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 232 +++++++++++
+ drivers/mfd/mfd-core.c                        |  13 +
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 368 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  59 +++
+ 22 files changed, 1349 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 include/linux/mfd/max77650.h
+
+-- 
+2.21.0
