@@ -1,82 +1,122 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v9 01/11] dt-bindings: mfd: add DT bindings for max77650
-Date: Thu, 11 Apr 2019 14:42:02 +0200
-Message-ID: <20190411124212.7612-2-brgl@bgdev.pl>
-References: <20190411124212.7612-1-brgl@bgdev.pl>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2] gpio: gpio-omap: Remove conditional pm_runtime
+ handling for GPIO interrupts
+Date: Thu, 11 Apr 2019 18:24:13 +0530
+Message-ID: <7cffa824-8573-6aa2-f1c1-99ee2d41b3aa@ti.com>
+References: <20190410195113.65377-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190411124212.7612-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190410195113.65377-1-tony@atomide.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a DT binding document for max77650 ultra-low power PMIC. This
-describes the core mfd device and the GPIO module.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+On 11/04/19 1:21 AM, Tony Lindgren wrote:
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+> 
+> Commit b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm
+> instead") moved interrupt using GPIO banks to idle with cpu_pm in order
+> to drop the use of pm_runtime_irq_safe() in a later patch. The GPIO
+> banks with no interrupts claimed are still being idled based on PM
+> runtime calls. However this caused a regression for am437x suspend for
+> rtc+ddr idle mode where the device cannot enter idle state as reported
+> by Keerthy <j-keerthy@ti.com>.
+> 
+> To fix the issue, we must not fail the pm_runtime callbacks. For GPIO
+> interrupts, we already have irq_chip_pm_get increment the PM runtime
+> use count as pointed out by Grygorii Strashko <grygorii.strashko@ti.com>.
+> 
+> So all we need to do is remove the conditional handling in the
+> runtime_suspend and resume functions and let the CPU PM notifier idle
+> the GPIO banks.
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
-new file mode 100644
-index 000000000000..b529d8d19335
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77650.txt
-@@ -0,0 +1,46 @@
-+MAX77650 ultra low-power PMIC from Maxim Integrated.
-+
-+Required properties:
-+-------------------
-+- compatible:		Must be "maxim,max77650"
-+- reg:			I2C device address.
-+- interrupts:		The interrupt on the parent the controller is
-+			connected to.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells:	Must be <2>.
-+
-+- gpio-controller:	Marks the device node as a gpio controller.
-+- #gpio-cells:		Must be <2>. The first cell is the pin number and
-+			the second cell is used to specify the gpio active
-+			state.
-+
-+Optional properties:
-+--------------------
-+gpio-line-names:	Single string containing the name of the GPIO line.
-+
-+The GPIO-controller module is represented as part of the top-level PMIC
-+node. The device exposes a single GPIO line.
-+
-+For device-tree bindings of other sub-modules (regulator, power supply,
-+LEDs and onkey) refer to the binding documents under the respective
-+sub-system directories.
-+
-+For more details on GPIO bindings, please refer to the generic GPIO DT
-+binding document <devicetree/bindings/gpio/gpio.txt>.
-+
-+Example:
-+--------
-+
-+	pmic@48 {
-+		compatible = "maxim,max77650";
-+		reg = <0x48>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gpio2>;
-+		#interrupt-cells = <2>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "max77650-charger";
-+	};
--- 
-2.21.0
+On am437x-gp-evm Tested for rtc+ddr mode and DS0 back & forth
+On am335x-beaglebone-black tested for DS0
+
+Tested-by: Keerthy <j-keerthy@ti.com>
+Reviewed-by: Keerthy <j-keerthy@ti.com>
+
+> 
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Fixes: b764a5863fd8 ("gpio: omap: Remove custom PM calls and use cpu_pm instead")
+> Reported-by: Keerthy <j-keerthy@ti.com>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> [tony@atomide.com: updated patch description, dropped runtime count changes]
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> 
+> Changes since v1:
+> - Dropped PM runtime changes to increment count in omap_gpio_irq_startup
+>    as that's not needed based on comments from Grygorii
+> 
+> - Updated subject and description accordingly
+> 
+> ---
+>   drivers/gpio/gpio-omap.c | 18 ++----------------
+>   1 file changed, 2 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1719,40 +1719,26 @@ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+>   {
+>   	struct gpio_bank *bank = dev_get_drvdata(dev);
+>   	unsigned long flags;
+> -	int error = 0;
+>   
+>   	raw_spin_lock_irqsave(&bank->lock, flags);
+> -	/* Must be idled only by CPU_CLUSTER_PM_ENTER? */
+> -	if (bank->irq_usage) {
+> -		error = -EBUSY;
+> -		goto unlock;
+> -	}
+>   	omap_gpio_idle(bank, true);
+>   	bank->is_suspended = true;
+> -unlock:
+>   	raw_spin_unlock_irqrestore(&bank->lock, flags);
+>   
+> -	return error;
+> +	return 0;
+>   }
+>   
+>   static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+>   {
+>   	struct gpio_bank *bank = dev_get_drvdata(dev);
+>   	unsigned long flags;
+> -	int error = 0;
+>   
+>   	raw_spin_lock_irqsave(&bank->lock, flags);
+> -	/* Must be unidled only by CPU_CLUSTER_PM_ENTER? */
+> -	if (bank->irq_usage) {
+> -		error = -EBUSY;
+> -		goto unlock;
+> -	}
+>   	omap_gpio_unidle(bank);
+>   	bank->is_suspended = false;
+> -unlock:
+>   	raw_spin_unlock_irqrestore(&bank->lock, flags);
+>   
+> -	return error;
+> +	return 0;
+>   }
+>   
+>   static const struct dev_pm_ops gpio_pm_ops = {
+> 
