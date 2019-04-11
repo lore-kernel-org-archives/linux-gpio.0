@@ -1,56 +1,107 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: lpc32xx: enable interrupt lookup for port 3
-Date: Thu, 11 Apr 2019 15:55:29 +0200
-Message-ID: <CACRpkdY2Znvf0h5KiMqqq7J9r3uKU+Uss2Rteaw8a687BetV6A@mail.gmail.com>
-References: <20190410103926.8781-1-alexandre.belloni@bootlin.com> <20190410103926.8781-3-alexandre.belloni@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
+Date: Thu, 11 Apr 2019 11:50:19 -0500
+Message-ID: <CAL_JsqKHGczKAD3VjBsq6G=Ev0t8p_qWZ0YG6rRsqO8GuRAK7Q@mail.gmail.com>
+References: <20190403090108.24788-1-brgl@bgdev.pl> <20190403090108.24788-3-brgl@bgdev.pl>
+ <20190406070746.GA29624@bogus> <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
+ <CAL_JsqKHjppN2kXqVpv5LjTedykA-Q8vteQDipw=FAaoUZLGeg@mail.gmail.com>
+ <CAMRc=Mc4HOn+Pjwf+sD4fU7gNoksRKXz9Yq6zE233CCoNskPiQ@mail.gmail.com> <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190410103926.8781-3-alexandre.belloni@bootlin.com>
+In-Reply-To: <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Vladimir Zapolskiy <vz@mleia.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 10, 2019 at 12:39 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-
-> Interrupt support was disabled "temporarily" in commit 320a6480ef24 ("gpio:
-> lpc32xx: disable broken to_irq support").
+On Tue, Apr 9, 2019 at 10:38 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >
-> Reenable to_irq for port 3 as they are directly connected to an interrupt
-> controller and a simple lookup is working.
+> wt., 9 kwi 2019 o 13:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
+a):
+> >
+> > wt., 9 kwi 2019 o 03:10 Rob Herring <robh@kernel.org> napisa=C5=82(a):
+> > >
+> > > On Mon, Apr 8, 2019 at 7:25 AM Bartosz Golaszewski <brgl@bgdev.pl> wr=
+ote:
+> > > >
+> > > > sob., 6 kwi 2019 o 09:07 Rob Herring <robh@kernel.org> napisa=C5=82=
+(a):
+> > > > >
+> > > > > On Wed, Apr 03, 2019 at 11:00:59AM +0200, Bartosz Golaszewski wro=
+te:
+> > > > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > >
+> > > > > > Add the DT binding document for the battery charger module of m=
+ax77650.
+> > > > > >
+> > > > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > > ---
+> > > > > >  .../power/supply/max77650-charger.txt         | 27 +++++++++++=
+++++++++
+> > > > > >  1 file changed, 27 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/power/sup=
+ply/max77650-charger.txt
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/power/supply/max=
+77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650=
+-charger.txt
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..fef188144386
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/power/supply/max77650-c=
+harger.txt
+> > > > > > @@ -0,0 +1,27 @@
+> > > > > > +Battery charger driver for MAX77650 PMIC from Maxim Integrated=
+.
+> > > > > > +
+> > > > > > +This module is part of the MAX77650 MFD device. For more detai=
+ls
+> > > > > > +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> > > > > > +
+> > > > > > +The charger is represented as a sub-node of the PMIC node on t=
+he device tree.
+> > > > > > +
+> > > > > > +Required properties:
+> > > > > > +--------------------
+> > > > > > +- compatible:                Must be "maxim,max77650-charger"
+> > > > > > +
+> > > > > > +Optional properties:
+> > > > > > +--------------------
+> > > > > > +- min-microvolt:     Minimum CHGIN regulation voltage (in micr=
+ovolts). Must be
+> > > > > > +                     one of: 4000000, 4100000, 4200000, 430000=
+0, 4400000,
+> > > > > > +                     4500000, 4600000, 4700000.
+> > > > > > +- current-limit-microamp:    CHGIN input current limit (in mic=
+roamps). Must
+> > > > > > +                             be one of: 95000, 190000, 285000,=
+ 380000, 475000.
+> > > > >
+> > > > > To repeat what I said on v6, these should be common properties IM=
+O (and
+> > > > > therefore documented as such).
+> > > > >
+> > > >
+> > > > Do you mean a separate "charger.txt" document in
+> > > > Documentation/devicetree/bindings/power/supply/?
+> > >
+> > > Yes, though I thought we had something already.
+> > >
+> > > Rob
+> >
+> > We don't AFAICT. There's only a binding document for "simple-battery"
+> > in power supply.
+> >
+> > Bart
 >
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Can we have it locally for now but without the maxim prefix and then
+> reuse it if any other charger needs such functionality? To make it
+> even more generic we can name it: "input-voltage-min-microvolt" &
+> "input-current-limit-microamp".
 
-Unfortunately this seems to be one of these hacks for
-hierarchical interrupts that does not quite cut it.
+I guess. And defining these as 'input' is good because we do have
+similar property names already for battery current limit and voltages.
 
-> +static int lpc32xx_gpio_to_irq_p3(struct gpio_chip *chip, unsigned int offset)
-> +       return of_irq_get_byname(chip->of_node, chip->names[offset]);
-
-This works as long as consuming drivers pick a GPIO first
-using gpiod_get() (and variants) and then convert it to an
-IRQ using gpiod_to_irq().
-
-But it doesn't work when some consumer is just picking an
-IRQ off of the node without picking the GPIO first.
-And in DT that is OK, this DT node is definately an interrupt
-controller. (Leaving out the attribute for interrupt controller
-as is currently the case doesn't really fix the issue, it is
-just inconsistent.)
-
-Look at Brian Masney's series for the qualcomm pin controller
-chips for inspiration on how to do things right, see:
-commit 9d2b563bc23acfa93e7716b3396fd2f79fa8f0cd
-and down.
-
-Also:
-https://marc.info/?l=linux-gpio&m=154959228527643&w=2
-
-Especially note how he removes the kind of hack you are
-adding in e.g.
-commit a796fab2c605d6340512c51c6c3fa1c581357993
-
-Yours,
-Linus Walleij
+Rob
