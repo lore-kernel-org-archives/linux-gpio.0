@@ -1,95 +1,100 @@
-From: Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH] pinctrl: Add kernel config PINCTRL_MTK_V2
-Date: Thu, 11 Apr 2019 17:32:18 +0800
-Message-ID: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
+From: megous via linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Subject: [PATCH v3 08/11] arm64: dts: allwinner: orange-pi-3:
+ Enable HDMI output
+Date: Thu, 11 Apr 2019 12:19:48 +0200
+Message-ID: <20190411101951.30223-9-megous@megous.com>
+References: <20190411101951.30223-1-megous@megous.com>
+Reply-To: megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, sean.wang@kernel.org, wsd_upstream@mediatek.com, Light Hsieh <light.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDXLF6FR5INBBTVJXTSQKGQE3UL7AXI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20190411101951.30223-1-megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Giuseppe Cavallaro <peppe.cavallaro-qxv4g6HH51o@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arend van Spriel <arend.vanspriel-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Franky Lin <franky.lin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Hante Meuleman <hante.meuleman-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Chi-Hsien Lin <chi-hsien.lin-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Wright Feng <wright.feng-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Naveen Gupta <naveen.gupta-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, brcm802
 List-Id: linux-gpio@vger.kernel.org
 
-Since no single Mediatek chip use code for PINCTRL_MTK and code for
-PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS simultaneously, it is better to use
-different config to determine if related code will be built or not on
-building non-generic kernel.
+From: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 
-Add kernel config PINCTRL_MTK_V2 selected by either PINCTRL_MTK_MOORE
-or PINCTRL_MTK_PARIS.
-Use PINCTRL_MTK and PINCTRL_MTK_V2 to control building of
-drivers/pinctrl/medaitek/.
-Remove selection of EINT_MTK from PINCTRL_MTK since code for EINT_MTK is
-only related to PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS, i.e. PINCTL_MTK_V2.
+Orange Pi 3 has a DDC_CEC_EN signal connected to PH2, that enables the DDC
+I2C bus voltage shifter. Before EDID can be read, we need to pull PH2 high.
 
+Signed-off-by: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pinctrl/Makefile         |  3 ++-
- drivers/pinctrl/mediatek/Kconfig | 15 ++++++++++++---
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 712184b..fcee0e0 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_PINCTRL_SUNXI)	+= sunxi/
- obj-y				+= ti/
- obj-$(CONFIG_PINCTRL_UNIPHIER)	+= uniphier/
- obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
--obj-y				+= mediatek/
-+obj-$(CONFIG_PINCTRL_MTK)	+= mediatek/
-+obj-$(CONFIG_PINCTRL_MTK_V2)	+= mediatek/
- obj-$(CONFIG_PINCTRL_ZX)	+= zte/
- obj-y				+= cirrus/
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index a005cbc..5e26462 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -2,10 +2,15 @@ menu "MediaTek pinctrl drivers"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+index 6d6b1f66796d..58a6635c909e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+@@ -22,6 +22,18 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
- config EINT_MTK
--	bool "MediaTek External Interrupt Support"
--	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
-+	bool "MediaTek External Interrupt driver that is based on PINCTRL_MTK_V2"
-+	depends on PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
- 	select GPIOLIB
- 	select IRQ_DOMAIN
-+	help
-+	  Say yes here to enable support for MediaTek External Interrupt
-+	  (EINT) driver based on PINCTRL_MTK version 2.
-+	  This driver is combined with MediaTek Pinctrl driver version 2
-+	  so PINCTRL_MTK_V2 shall be set first.
- 
- config PINCTRL_MTK
- 	bool
-@@ -13,9 +18,11 @@ config PINCTRL_MTK
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB
--	select EINT_MTK
- 	select OF_GPIO
- 
-+config PINCTRL_MTK_V2
-+	bool "MediaTek Pinctrl Support V2"
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++		ddc-supply = <&reg_ddc>;
 +
- config PINCTRL_MTK_MOORE
- 	bool
- 	depends on OF
-@@ -24,6 +31,7 @@ config PINCTRL_MTK_MOORE
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GPIOLIB
- 	select OF_GPIO
-+	select PINCTRL_MTK_V2
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
  
- config PINCTRL_MTK_PARIS
- 	bool
-@@ -33,6 +41,7 @@ config PINCTRL_MTK_PARIS
- 	select GPIOLIB
- 	select EINT_MTK
- 	select OF_GPIO
-+	select PINCTRL_MTK_V2
+@@ -37,6 +49,15 @@
+ 		};
+ 	};
  
- # For ARMv7 SoCs
- config PINCTRL_MT2701
++	reg_ddc: ddc-io {
++		compatible = "regulator-fixed";
++		regulator-name = "ddc-io";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		enable-active-high;
++		gpio = <&pio 7 2 GPIO_ACTIVE_HIGH>; /* PH2 */
++	};
++
+ 	reg_vcc5v: vcc5v {
+ 		/* board wide 5V supply directly from the DC jack */
+ 		compatible = "regulator-fixed";
+@@ -72,6 +93,10 @@
+ 	cpu-supply = <&reg_dcdca>;
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -91,6 +116,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mdio {
+ 	ext_rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-1.8.1.1.dirty
+2.21.0
