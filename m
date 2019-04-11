@@ -1,107 +1,112 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
-Date: Thu, 11 Apr 2019 11:50:19 -0500
-Message-ID: <CAL_JsqKHGczKAD3VjBsq6G=Ev0t8p_qWZ0YG6rRsqO8GuRAK7Q@mail.gmail.com>
-References: <20190403090108.24788-1-brgl@bgdev.pl> <20190403090108.24788-3-brgl@bgdev.pl>
- <20190406070746.GA29624@bogus> <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
- <CAL_JsqKHjppN2kXqVpv5LjTedykA-Q8vteQDipw=FAaoUZLGeg@mail.gmail.com>
- <CAMRc=Mc4HOn+Pjwf+sD4fU7gNoksRKXz9Yq6zE233CCoNskPiQ@mail.gmail.com> <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH] pinctrl: Add kernel config PINCTRL_MTK_V2
+Date: Thu, 11 Apr 2019 15:04:05 -0700
+Message-ID: <CAGp9LzpExWGCHtiggQmPtCwBD6o4JUmGSGfm7VostCq+EK2egw@mail.gmail.com>
+References: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
+In-Reply-To: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Light Hsieh <light.hsieh@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, wsd_upstream@mediatek.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 9, 2019 at 10:38 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> wt., 9 kwi 2019 o 13:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
-a):
-> >
-> > wt., 9 kwi 2019 o 03:10 Rob Herring <robh@kernel.org> napisa=C5=82(a):
-> > >
-> > > On Mon, Apr 8, 2019 at 7:25 AM Bartosz Golaszewski <brgl@bgdev.pl> wr=
-ote:
-> > > >
-> > > > sob., 6 kwi 2019 o 09:07 Rob Herring <robh@kernel.org> napisa=C5=82=
-(a):
-> > > > >
-> > > > > On Wed, Apr 03, 2019 at 11:00:59AM +0200, Bartosz Golaszewski wro=
-te:
-> > > > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > > > >
-> > > > > > Add the DT binding document for the battery charger module of m=
-ax77650.
-> > > > > >
-> > > > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > > > > ---
-> > > > > >  .../power/supply/max77650-charger.txt         | 27 +++++++++++=
-++++++++
-> > > > > >  1 file changed, 27 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/power/sup=
-ply/max77650-charger.txt
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/power/supply/max=
-77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650=
--charger.txt
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..fef188144386
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/power/supply/max77650-c=
-harger.txt
-> > > > > > @@ -0,0 +1,27 @@
-> > > > > > +Battery charger driver for MAX77650 PMIC from Maxim Integrated=
-.
-> > > > > > +
-> > > > > > +This module is part of the MAX77650 MFD device. For more detai=
-ls
-> > > > > > +see Documentation/devicetree/bindings/mfd/max77650.txt.
-> > > > > > +
-> > > > > > +The charger is represented as a sub-node of the PMIC node on t=
-he device tree.
-> > > > > > +
-> > > > > > +Required properties:
-> > > > > > +--------------------
-> > > > > > +- compatible:                Must be "maxim,max77650-charger"
-> > > > > > +
-> > > > > > +Optional properties:
-> > > > > > +--------------------
-> > > > > > +- min-microvolt:     Minimum CHGIN regulation voltage (in micr=
-ovolts). Must be
-> > > > > > +                     one of: 4000000, 4100000, 4200000, 430000=
-0, 4400000,
-> > > > > > +                     4500000, 4600000, 4700000.
-> > > > > > +- current-limit-microamp:    CHGIN input current limit (in mic=
-roamps). Must
-> > > > > > +                             be one of: 95000, 190000, 285000,=
- 380000, 475000.
-> > > > >
-> > > > > To repeat what I said on v6, these should be common properties IM=
-O (and
-> > > > > therefore documented as such).
-> > > > >
-> > > >
-> > > > Do you mean a separate "charger.txt" document in
-> > > > Documentation/devicetree/bindings/power/supply/?
-> > >
-> > > Yes, though I thought we had something already.
-> > >
-> > > Rob
-> >
-> > We don't AFAICT. There's only a binding document for "simple-battery"
-> > in power supply.
-> >
-> > Bart
->
-> Can we have it locally for now but without the maxim prefix and then
-> reuse it if any other charger needs such functionality? To make it
-> even more generic we can name it: "input-voltage-min-microvolt" &
-> "input-current-limit-microamp".
+Hi, Light
 
-I guess. And defining these as 'input' is good because we do have
-similar property names already for battery current limit and voltages.
+On Thu, Apr 11, 2019 at 2:32 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
+>
+> Since no single Mediatek chip use code for PINCTRL_MTK and code for
+> PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS simultaneously, it is better to use
+> different config to determine if related code will be built or not on
+> building non-generic kernel.
+>
+> Add kernel config PINCTRL_MTK_V2 selected by either PINCTRL_MTK_MOORE
+> or PINCTRL_MTK_PARIS.
+> Use PINCTRL_MTK and PINCTRL_MTK_V2 to control building of
+> drivers/pinctrl/medaitek/.
+> Remove selection of EINT_MTK from PINCTRL_MTK since code for EINT_MTK is
+> only related to PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS, i.e. PINCTL_MTK_V2.
+>
 
-Rob
+PINCTRL_MTK also depends on EINT_MTK such as the symbol
+mtk_eint_do_init, it is a common library for the two kinds of the
+pinctrl core.
+
+> ---
+>  drivers/pinctrl/Makefile         |  3 ++-
+>  drivers/pinctrl/mediatek/Kconfig | 15 ++++++++++++---
+>  2 files changed, 14 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index 712184b..fcee0e0 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -65,6 +65,7 @@ obj-$(CONFIG_PINCTRL_SUNXI)   += sunxi/
+>  obj-y                          += ti/
+>  obj-$(CONFIG_PINCTRL_UNIPHIER) += uniphier/
+>  obj-$(CONFIG_ARCH_VT8500)      += vt8500/
+> -obj-y                          += mediatek/
+> +obj-$(CONFIG_PINCTRL_MTK)      += mediatek/
+> +obj-$(CONFIG_PINCTRL_MTK_V2)   += mediatek/
+
+I would think it is good if deciding V1 or not should be done inside
+the vendor directory and the change also would cause COMPILE_TEST not
+be applied to
+
+>  obj-$(CONFIG_PINCTRL_ZX)       += zte/
+>  obj-y                          += cirrus/
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index a005cbc..5e26462 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -2,10 +2,15 @@ menu "MediaTek pinctrl drivers"
+>         depends on ARCH_MEDIATEK || COMPILE_TEST
+>
+>  config EINT_MTK
+> -       bool "MediaTek External Interrupt Support"
+> -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
+> +       bool "MediaTek External Interrupt driver that is based on PINCTRL_MTK_V2"
+> +       depends on PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
+>         select GPIOLIB
+>         select IRQ_DOMAIN
+> +       help
+> +         Say yes here to enable support for MediaTek External Interrupt
+> +         (EINT) driver based on PINCTRL_MTK version 2.
+> +         This driver is combined with MediaTek Pinctrl driver version 2
+> +         so PINCTRL_MTK_V2 shall be set first.
+>
+>  config PINCTRL_MTK
+>         bool
+> @@ -13,9 +18,11 @@ config PINCTRL_MTK
+>         select PINMUX
+>         select GENERIC_PINCONF
+>         select GPIOLIB
+> -       select EINT_MTK
+>         select OF_GPIO
+>
+> +config PINCTRL_MTK_V2
+> +       bool "MediaTek Pinctrl Support V2"
+> +
+>  config PINCTRL_MTK_MOORE
+>         bool
+>         depends on OF
+> @@ -24,6 +31,7 @@ config PINCTRL_MTK_MOORE
+>         select GENERIC_PINMUX_FUNCTIONS
+>         select GPIOLIB
+>         select OF_GPIO
+> +       select PINCTRL_MTK_V2
+>
+>  config PINCTRL_MTK_PARIS
+>         bool
+> @@ -33,6 +41,7 @@ config PINCTRL_MTK_PARIS
+>         select GPIOLIB
+>         select EINT_MTK
+>         select OF_GPIO
+> +       select PINCTRL_MTK_V2
+>
+>  # For ARMv7 SoCs
+>  config PINCTRL_MT2701
+> --
+> 1.8.1.1.dirty
+>
