@@ -1,63 +1,79 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH v2] gpio: merrifield: Fix build err without CONFIG_ACPI
-Date: Fri, 12 Apr 2019 21:26:41 +0800
-Message-ID: <241a0251-3d2d-b304-c103-a6d240e89ce6@huawei.com>
-References: <20190404103925.25652-1-yuehaibing@huawei.com>
- <20190405142112.26592-1-yuehaibing@huawei.com>
- <20190405145009.GD9224@smile.fi.intel.com> <2719325.nu6fPkO1U5@kreacher>
- <CAHp75VccF9-ax8nJ9qOfAFMvLR19K6NqwyePEf-86r4ifMnJKA@mail.gmail.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+Subject: [PATCH v3] gpio: merrifield: Fix build err without CONFIG_ACPI
+Date: Fri, 12 Apr 2019 23:19:11 +0800
+Message-ID: <20190412151911.12084-1-yuehaibing@huawei.com>
+References: <20190405142112.26592-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VccF9-ax8nJ9qOfAFMvLR19K6NqwyePEf-86r4ifMnJKA@mail.gmail.com>
+In-Reply-To: <20190405142112.26592-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, rjw@rjwysocki.net
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2019/4/12 21:13, Andy Shevchenko wrote:
-> On Fri, Apr 12, 2019 at 3:55 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Friday, April 5, 2019 4:50:09 PM CEST Andy Shevchenko wrote:
->>> On Fri, Apr 05, 2019 at 10:21:12PM +0800, Yue Haibing wrote:
->>>> From: YueHaibing <yuehaibing@huawei.com>
->>>>
->>>> When building CONFIG_ACPI is not set
->>>> gcc warn this:
->>>>
->>>> drivers/gpio/gpio-merrifield.c: In function
->>>> mrfld_gpio_get_pinctrl_dev_name: drivers/gpio/gpio-merrifield.c:388:19:
->>>> error: dereferencing pointer to incomplete type struct acpi_device>
->>>>    put_device(&adev->dev);
->>>>
->>>>                    ^
->>>>
->>>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>>> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>>> Fixes:d00d2109c367 ("gpio: merrifield: Convert to use
->>>> acpi_dev_get_first_match_dev()") Signed-off-by: YueHaibing
->>>> <yuehaibing@huawei.com>
->>>
->>> Thank you for an update, I have a comment below, but before sending v3, let
->>> Rafael to have a chance to look at it.
->>>
->>>>  #ifdef CONFIG_ACPI
->>>>  extern int acpi_platform_notify(struct device *dev, enum kobject_action
->>>>  action);>
->>>> +
->>>> +static inline void put_acpi_device(struct acpi_device *adev)
->>>> +{
->>>> +   put_device(&adev->dev);
->>>> +}
->>>
->>> This should probably go to acpi_bus.h under acpi_dev_get_first_match_dev().
->>> And talking to Mika we agreed that naming would be better as acpi_dev_put().
->>
->> Agreed on both accounts.
-> 
-> Thanks!
-> YueHaibing, please, send v3 with suggested changes.
+From: YueHaibing <yuehaibing@huawei.com>
 
-Ok.
+When building CONFIG_ACPI is not set
+gcc warn this:
 
-> 
+drivers/gpio/gpio-merrifield.c: In function mrfld_gpio_get_pinctrl_dev_name:
+drivers/gpio/gpio-merrifield.c:388:19: error: dereferencing pointer to incomplete type struct acpi_device
+   put_device(&adev->dev);
+                   ^~
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes:d00d2109c367 ("gpio: merrifield: Convert to use acpi_dev_get_first_match_dev()")
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v3: move helper to acpi_bus.h, and change name to acpi_dev_put
+---
+ drivers/gpio/gpio-merrifield.c | 2 +-
+ include/acpi/acpi_bus.h        | 4 ++++
+ include/linux/acpi.h           | 2 ++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 2383dc7..3302125 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -385,7 +385,7 @@ static const char *mrfld_gpio_get_pinctrl_dev_name(struct mrfld_gpio *priv)
+ 	adev = acpi_dev_get_first_match_dev("INTC1002", NULL, -1);
+ 	if (adev) {
+ 		name = devm_kstrdup(priv->dev, acpi_dev_name(adev), GFP_KERNEL);
+-		put_device(&adev->dev);
++		acpi_dev_put(adev);
+ 	} else {
+ 		name = "pinctrl-merrifield";
+ 	}
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index f798175..2a462cf 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -687,6 +687,10 @@ static inline bool acpi_device_can_poweroff(struct acpi_device *adev)
+ 		adev->power.states[ACPI_STATE_D3_HOT].flags.explicit_set);
+ }
+ 
++static inline void acpi_dev_put(struct acpi_device *adev)
++{
++	put_device(&adev->dev);
++}
+ #else	/* CONFIG_ACPI */
+ 
+ static inline int register_acpi_bus_type(void *bus) { return 0; }
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index a1bd789..e22c237 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -679,6 +679,8 @@ acpi_dev_get_first_match_dev(const char *hid, const char *uid, s64 hrv)
+ 	return NULL;
+ }
+ 
++static inline void acpi_dev_put(struct acpi_device *adev) {}
++
+ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+ {
+ 	return false;
+-- 
+2.7.4
