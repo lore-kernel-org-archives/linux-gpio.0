@@ -1,79 +1,46 @@
-From: Yue Haibing <yuehaibing@huawei.com>
-Subject: [PATCH v3] gpio: merrifield: Fix build err without CONFIG_ACPI
-Date: Fri, 12 Apr 2019 23:19:11 +0800
-Message-ID: <20190412151911.12084-1-yuehaibing@huawei.com>
-References: <20190405142112.26592-1-yuehaibing@huawei.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 03/24] dt-bindings: pwrap: mediatek: add pwrap support for
+ MT8516
+Date: Fri, 12 Apr 2019 19:44:05 +0200
+Message-ID: <effcf905-92c9-0181-2518-5a8e943f36ac@gmail.com>
+References: <20190323211612.860-1-fparent@baylibre.com>
+ <20190323211612.860-4-fparent@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190405142112.26592-1-yuehaibing@huawei.com>
+In-Reply-To: <20190323211612.860-4-fparent@baylibre.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com, rjw@rjwysocki.net
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: Fabien Parent <fparent@baylibre.com>, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: sean.wang@kernel.org, ryder.lee@mediatek.com, hsin-hsiung.wang@mediatek.com, wenzhen.yu@mediatek.com, chaotian.jing@mediatek.com, yong.mao@mediatek.com, jjian.zhou@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
 
-When building CONFIG_ACPI is not set
-gcc warn this:
 
-drivers/gpio/gpio-merrifield.c: In function mrfld_gpio_get_pinctrl_dev_name:
-drivers/gpio/gpio-merrifield.c:388:19: error: dereferencing pointer to incomplete type struct acpi_device
-   put_device(&adev->dev);
-                   ^~
+On 23/03/2019 22:15, Fabien Parent wrote:
+> Add binding documentation of pwrap for MT8516 SoCs.
+> 
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes:d00d2109c367 ("gpio: merrifield: Convert to use acpi_dev_get_first_match_dev()")
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v3: move helper to acpi_bus.h, and change name to acpi_dev_put
----
- drivers/gpio/gpio-merrifield.c | 2 +-
- include/acpi/acpi_bus.h        | 4 ++++
- include/linux/acpi.h           | 2 ++
- 3 files changed, 7 insertions(+), 1 deletion(-)
+applied to v5.1-next/soc
 
-diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
-index 2383dc7..3302125 100644
---- a/drivers/gpio/gpio-merrifield.c
-+++ b/drivers/gpio/gpio-merrifield.c
-@@ -385,7 +385,7 @@ static const char *mrfld_gpio_get_pinctrl_dev_name(struct mrfld_gpio *priv)
- 	adev = acpi_dev_get_first_match_dev("INTC1002", NULL, -1);
- 	if (adev) {
- 		name = devm_kstrdup(priv->dev, acpi_dev_name(adev), GFP_KERNEL);
--		put_device(&adev->dev);
-+		acpi_dev_put(adev);
- 	} else {
- 		name = "pinctrl-merrifield";
- 	}
-diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-index f798175..2a462cf 100644
---- a/include/acpi/acpi_bus.h
-+++ b/include/acpi/acpi_bus.h
-@@ -687,6 +687,10 @@ static inline bool acpi_device_can_poweroff(struct acpi_device *adev)
- 		adev->power.states[ACPI_STATE_D3_HOT].flags.explicit_set);
- }
- 
-+static inline void acpi_dev_put(struct acpi_device *adev)
-+{
-+	put_device(&adev->dev);
-+}
- #else	/* CONFIG_ACPI */
- 
- static inline int register_acpi_bus_type(void *bus) { return 0; }
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index a1bd789..e22c237 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -679,6 +679,8 @@ acpi_dev_get_first_match_dev(const char *hid, const char *uid, s64 hrv)
- 	return NULL;
- }
- 
-+static inline void acpi_dev_put(struct acpi_device *adev) {}
-+
- static inline bool is_acpi_node(struct fwnode_handle *fwnode)
- {
- 	return false;
--- 
-2.7.4
+Thanks!
+
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> index 5a2ef1726e2a..7a32404c6114 100644
+> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> @@ -25,6 +25,7 @@ Required properties in pwrap device node.
+>  	"mediatek,mt8135-pwrap" for MT8135 SoCs
+>  	"mediatek,mt8173-pwrap" for MT8173 SoCs
+>  	"mediatek,mt8183-pwrap" for MT8183 SoCs
+> +	"mediatek,mt8516-pwrap" for MT8516 SoCs
+>  - interrupts: IRQ for pwrap in SOC
+>  - reg-names: Must include the following entries:
+>    "pwrap": Main registers base
+> 
