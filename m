@@ -1,128 +1,218 @@
 From: Light Hsieh <light.hsieh@mediatek.com>
-Subject: Re: [PATCH] pinctrl: Add kernel config PINCTRL_MTK_V2
-Date: Fri, 12 Apr 2019 09:58:13 +0800
-Message-ID: <1555034293.349.6.camel@mtkswgap22>
-References: <1554975138-801-1-git-send-email-light.hsieh@mediatek.com>
-         <CAGp9LzpExWGCHtiggQmPtCwBD6o4JUmGSGfm7VostCq+EK2egw@mail.gmail.com>
+Subject: [PATCH 1/1] pinctrl: Add alternative way for specifying register bases
+Date: Fri, 12 Apr 2019 11:15:45 +0800
+Message-ID: <1555038945-10245-1-git-send-email-light.hsieh@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGp9LzpExWGCHtiggQmPtCwBD6o4JUmGSGfm7VostCq+EK2egw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, wsd_upstream@mediatek.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, sean.wang@kernel.org, Light Hsieh <light.hsieh@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Dear reviewer,
+The orginal PINCTRL_MTK_PARIS/PINCTRL_MTK_MOORE need more effort for
+specifying register bases when porting platform driver:
+1. Write mtXXXX_pinctrl_register_base_name[] array in pinctrl-mtXXXX.c
+   to specify names of register bases, for exmaple:
 
-The points of  Sean are right. Please forget this patch proposal.
+   	static const char * const mt6765_pinctrl_register_base_names[] = {
+		"iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4", "iocfg5",
+		"iocfg6", "iocfg7",
+   	};
+2. Write reg = <...>, ..., <...>; in mtXXXX.dts to specify register
+   bases. Each member of reg contain address range cloned from
+   pre-generated devicetree node.
+3. Write reg-names = "...", ..., "..."; in mtXXXX.dts to specify
+   names of register bases. The sequence of names in reg-names shall match
+   sequence of names that specified in pinctrl-mtXXXX.c.
+   Besides, the seqeunce of names in reg-names shall also match sequence of
+   address range in reg, for exmaple:
 
+   	pio: pinctrl {
+		compatible = "mediatek,mt6765-pinctrl";
+		reg = <0 0x10005000 0 0x1000>,
+		      <0 0x10002C00 0 0x200>,
+		      <0 0x10002800 0 0x200>,
+		      <0 0x10002A00 0 0x200>,
+		      <0 0x10002000 0 0x200>,
+		      <0 0x10002200 0 0x200>,
+		      <0 0x10002400 0 0x200>,
+		      <0 0x10002600 0 0x200>,
+		      <0 0x1000b000 0 0x1000>;
+		reg-names = "iocfg0", "iocfg1", "iocfg2", "iocfg3",
+			    "iocfg4", "iocfg5", "iocfg6", "iocfg7",
+			    "eint";
 
-On Thu, 2019-04-11 at 15:04 -0700, Sean Wang wrote:
-> Hi, Light
-> 
-> On Thu, Apr 11, 2019 at 2:32 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
-> >
-> > Since no single Mediatek chip use code for PINCTRL_MTK and code for
-> > PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS simultaneously, it is better to use
-> > different config to determine if related code will be built or not on
-> > building non-generic kernel.
-> >
-> > Add kernel config PINCTRL_MTK_V2 selected by either PINCTRL_MTK_MOORE
-> > or PINCTRL_MTK_PARIS.
-> > Use PINCTRL_MTK and PINCTRL_MTK_V2 to control building of
-> > drivers/pinctrl/medaitek/.
-> > Remove selection of EINT_MTK from PINCTRL_MTK since code for EINT_MTK is
-> > only related to PINCTRL_MTK_MOORE/PINCTRL_MTK_PARIS, i.e. PINCTL_MTK_V2.
-> >
-> 
-> PINCTRL_MTK also depends on EINT_MTK such as the symbol
-> mtk_eint_do_init, it is a commonlibrary for the two kinds of the
-> pinctrl core.
-> 
+To reduce porting effort, this patch add an alternative way for specifying
+register bases:
+1. Write reg_bases = <...>, ..., <...>; and reg_base_eint = <&eint>;
+   in mtXXXX.dtsi where members in reg_bases and &eint are labels for
+   pre-generated devicetree nodes, for example:
+	pio: pinctrl {
+		compatible = "mediatek,mt6765-pinctrl";
+		reg_bases = <&gpio0>,
+			    <&iocfg0>,
+			    <&iocfg1>,
+			    <&iocfg2>,
+			    <&iocfg3>,
+			    <&iocfg4>,
+			    <&iocfg5>,
+			    <&iocfg6>,
+			    <&iocfg7>;
+		reg_base_eint = <&eint>;
 
-Yes, you are right. 
-It is my fault that I don't see some mtk_eint_* functions originally in
-pinctrl-mtk-common.c had been moved to mtk-eint.c since kernel-4.18 and
-now pinctrl-mtk-common.c depends on mtk-eint.c.
+   Since this pre-generated nodes had already specify address range,
+   it is not necessary to specify address range again in pinctrl node.
 
-> > ---
-> >  drivers/pinctrl/Makefile         |  3 ++-
-> >  drivers/pinctrl/mediatek/Kconfig | 15 ++++++++++++---
-> >  2 files changed, 14 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> > index 712184b..fcee0e0 100644
-> > --- a/drivers/pinctrl/Makefile
-> > +++ b/drivers/pinctrl/Makefile
-> > @@ -65,6 +65,7 @@ obj-$(CONFIG_PINCTRL_SUNXI)   += sunxi/
-> >  obj-y                          += ti/
-> >  obj-$(CONFIG_PINCTRL_UNIPHIER) += uniphier/
-> >  obj-$(CONFIG_ARCH_VT8500)      += vt8500/
-> > -obj-y                          += mediatek/
-> > +obj-$(CONFIG_PINCTRL_MTK)      += mediatek/
-> > +obj-$(CONFIG_PINCTRL_MTK_V2)   += mediatek/
-> 
-> I would think it is good if deciding V1 or not should be done inside
-> the vendor directory and the change also would cause COMPILE_TEST not
-> be applied to
+Using this way, porting effort is reduced and therefore typo can occur with
+less chance.
 
-Agree.
+Change-Id: I55f5e328919f4f736ca4b9f8d1593e069f179637
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 19 +++++---
+ drivers/pinctrl/mediatek/pinctrl-paris.c         | 62 ++++++++++++++++--------
+ 2 files changed, 54 insertions(+), 27 deletions(-)
 
-> >  obj-$(CONFIG_PINCTRL_ZX)       += zte/
-> >  obj-y                          += cirrus/
-> > diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> > index a005cbc..5e26462 100644
-> > --- a/drivers/pinctrl/mediatek/Kconfig
-> > +++ b/drivers/pinctrl/mediatek/Kconfig
-> > @@ -2,10 +2,15 @@ menu "MediaTek pinctrl drivers"
-> >         depends on ARCH_MEDIATEK || COMPILE_TEST
-> >
-> >  config EINT_MTK
-> > -       bool "MediaTek External Interrupt Support"
-> > -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
-> > +       bool "MediaTek External Interrupt driver that is based on PINCTRL_MTK_V2"
-> > +       depends on PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
-> >         select GPIOLIB
-> >         select IRQ_DOMAIN
-> > +       help
-> > +         Say yes here to enable support for MediaTek External Interrupt
-> > +         (EINT) driver based on PINCTRL_MTK version 2.
-> > +         This driver is combined with MediaTek Pinctrl driver version 2
-> > +         so PINCTRL_MTK_V2 shall be set first.
-> >
-> >  config PINCTRL_MTK
-> >         bool
-> > @@ -13,9 +18,11 @@ config PINCTRL_MTK
-> >         select PINMUX
-> >         select GENERIC_PINCONF
-> >         select GPIOLIB
-> > -       select EINT_MTK
-> >         select OF_GPIO
-> >
-> > +config PINCTRL_MTK_V2
-> > +       bool "MediaTek Pinctrl Support V2"
-> > +
-> >  config PINCTRL_MTK_MOORE
-> >         bool
-> >         depends on OF
-> > @@ -24,6 +31,7 @@ config PINCTRL_MTK_MOORE
-> >         select GENERIC_PINMUX_FUNCTIONS
-> >         select GPIOLIB
-> >         select OF_GPIO
-> > +       select PINCTRL_MTK_V2
-> >
-> >  config PINCTRL_MTK_PARIS
-> >         bool
-> > @@ -33,6 +41,7 @@ config PINCTRL_MTK_PARIS
-> >         select GPIOLIB
-> >         select EINT_MTK
-> >         select OF_GPIO
-> > +       select PINCTRL_MTK_V2
-> >
-> >  # For ARMv7 SoCs
-> >  config PINCTRL_MT2701
-> > --
-> > 1.8.1.1.dirty
-> >
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index b1c3684..16b4863 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -12,6 +12,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/of_irq.h>
++#include <linux/of_address.h>
+ 
+ #include "mtk-eint.h"
+ #include "pinctrl-mtk-common-v2.h"
+@@ -310,7 +311,7 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+ 
+ int mtk_build_eint(struct mtk_pinctrl *hw, struct platform_device *pdev)
+ {
+-	struct device_node *np = pdev->dev.of_node;
++	struct device_node *np = pdev->dev.of_node, *node;
+ 	struct resource *res;
+ 
+ 	if (!IS_ENABLED(CONFIG_EINT_MTK))
+@@ -323,13 +324,19 @@ int mtk_build_eint(struct mtk_pinctrl *hw, struct platform_device *pdev)
+ 	if (!hw->eint)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "eint");
+-	if (!res) {
+-		dev_err(&pdev->dev, "Unable to get eint resource\n");
+-		return -ENODEV;
++	node = of_parse_phandle(np, "reg_base_eint", 0);
++	if (node) {
++		hw->eint->base = of_iomap(node, 0);
++	} else {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++			"eint");
++		if (!res) {
++			dev_err(&pdev->dev, "Unable to get eint resource\n");
++			return -ENODEV;
++		}
++		hw->eint->base = devm_ioremap_resource(&pdev->dev, res);
+ 	}
+ 
+-	hw->eint->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(hw->eint->base))
+ 		return PTR_ERR(hw->eint->base);
+ 
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index b59e108..8ddb995 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -9,6 +9,7 @@
+  *	   Hongzhou.Yang <hongzhou.yang@mediatek.com>
+  */
+ 
++#include <linux/of_address.h>
+ #include <linux/gpio/driver.h>
+ #include <dt-bindings/pinctrl/mt65xx.h>
+ #include "pinctrl-paris.h"
+@@ -815,10 +816,11 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 			    const struct mtk_pin_soc *soc)
+ {
++	struct device_node *np = pdev->dev.of_node, *node;
+ 	struct pinctrl_pin_desc *pins;
+ 	struct mtk_pinctrl *hw;
+ 	struct resource *res;
+-	int err, i;
++	int err, i, get_base_pass;
+ 
+ 	hw = devm_kzalloc(&pdev->dev, sizeof(*hw), GFP_KERNEL);
+ 	if (!hw)
+@@ -828,31 +830,49 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 	hw->soc = soc;
+ 	hw->dev = &pdev->dev;
+ 
+-	if (!hw->soc->nbase_names) {
+-		dev_err(&pdev->dev,
+-			"SoC should be assigned at least one register base\n");
+-		return -EINVAL;
+-	}
+-
+-	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
++	if (hw->soc->nbase_names) {
++		hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+ 				      sizeof(*hw->base), GFP_KERNEL);
+-	if (!hw->base)
+-		return -ENOMEM;
++		if (!hw->base)
++			return -ENOMEM;
++
++		for (i = 0; i < hw->soc->nbase_names; i++) {
++			res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++							hw->soc->base_names[i]);
++			if (!res) {
++				dev_err(&pdev->dev, "missing IO resource\n");
++				return -ENXIO;
++			}
+ 
+-	for (i = 0; i < hw->soc->nbase_names; i++) {
+-		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-						   hw->soc->base_names[i]);
+-		if (!res) {
+-			dev_err(&pdev->dev, "missing IO resource\n");
+-			return -ENXIO;
++			hw->base[i] = devm_ioremap_resource(&pdev->dev, res);
++			if (IS_ERR(hw->base[i]))
++				return PTR_ERR(hw->base[i]);
+ 		}
+ 
+-		hw->base[i] = devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(hw->base[i]))
+-			return PTR_ERR(hw->base[i]);
+-	}
++		hw->nbase = hw->soc->nbase_names;
++	} else {
++		for (get_base_pass = 0; get_base_pass < 2; get_base_pass++) {
++			for (i = 0;; i++) {
++				node = of_parse_phandle(np, "reg_bases", i);
++				if (!node)
++					break;
++				if (get_base_pass == 1)
++					hw->base[i] = of_iomap(node, 0);
++				of_node_put(node);
++			}
+ 
+-	hw->nbase = hw->soc->nbase_names;
++			if (i == 0)
++				return -EINVAL;
++			if (get_base_pass == 0) {
++				hw->nbase = i;
++				hw->base = devm_kmalloc_array(&pdev->dev, i,
++					sizeof(*hw->base),
++					GFP_KERNEL | __GFP_ZERO);
++				if (IS_ERR(hw->base))
++					return PTR_ERR(hw->base);
++			}
++		}
++	}
+ 
+ 	err = mtk_pctrl_build_state(pdev);
+ 	if (err) {
+-- 
+1.8.1.1.dirty
