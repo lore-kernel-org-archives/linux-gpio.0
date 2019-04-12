@@ -1,50 +1,115 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [linux-sunxi] [PATCH v3 00/11] Add support for Orange Pi 3
-Date: Fri, 12 Apr 2019 19:05:05 +0800
-Message-ID: <CAGb2v64HgPePM=rk_kSdS7yFx4S4TR=tpGC2yQ6ruDCvBnosiA@mail.gmail.com>
-References: <20190411101951.30223-1-megous@megous.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 2/5] pinctrl: rockchip: fix leaked of_node references
+Date: Fri, 12 Apr 2019 13:20:06 +0200
+Message-ID: <1737000.EArop0DIDs@diego>
+References: <201904121645298604058@zte.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190411101951.30223-1-megous@megous.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>, linux-stm32@st-md-mailman.stormreply.com, brcm80211-dev-list@cypress.com, David Airlie <airlied@linux.ie>, Jose Abreu <joabreu@synopsys.com>, Naveen Gupta <naveen.gupta@cypress.com>, devicetree <devicetree@vger.kernel.org>, Arend van Spriel <arend.vanspriel@broadcom.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hante Meuleman <hante.meuleman@broadcom.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Wright Feng <wright.feng@cypress.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Franky Lin <franky.lin@broadcom.com>, Maxime Coquelin <mcoquelin.stm32@g>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201904121645298604058@zte.com.cn>
+Sender: linux-kernel-owner@vger.kernel.org
+To: wen.yang99@zte.com.cn
+Cc: linux-kernel@vger.kernel.org, wang.yi59@zte.com.cn, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVGh1LCBBcHIgMTEsIDIwMTkgYXQgNjoxOSBQTSBtZWdvdXMgdmlhIGxpbnV4LXN1bnhpCjxs
-aW51eC1zdW54aUBnb29nbGVncm91cHMuY29tPiB3cm90ZToKPgo+IEZyb206IE9uZHJlaiBKaXJt
-YW4gPG1lZ291c0BtZWdvdXMuY29tPgo+Cj4gVGhpcyBzZXJpZXMgaW1wbGVtZW50cyBzdXBwb3J0
-IGZvciBYdW5sb25nIE9yYW5nZSBQaSAzIGJvYXJkLgo+Cj4gVW5mb3J0dW5hdGVseSwgdGhpcyBi
-b2FyZCBuZWVkcyBzb21lIHNtYWxsIGRyaXZlciBwYXRjaGVzLCBzbyBJIGhhdmUKPiBzcGxpdCB0
-aGUgYm9hcmRzIERUIHBhdGNoIGludG8gY2h1bmtzIHRoYXQgcmVxdWlyZSBwYXRjaGVzIGZvciBk
-cml2ZXJzCj4gaW4gdmFyaW91cyBzdWJzeXN0ZW1zLgo+Cj4gU3VnZ2VzdGVkIG1lcmdpbmcgcGxh
-bi9kZXBlbmRlbmNpZXM6Cj4KPiAtIFBpbmN0cmwgYW5kIHN0bW1hYyBwYXRjaGVzIGFyZSBuZWVk
-ZWQgZm9yIGV0aGVybmV0IHN1cHBvcnQuCj4gICAocGF0Y2hlcyAxLTUpCj4gLSBIRE1JIHN1cHBv
-cnQgd2FzIGNoYW5nZWQsIHBsZWFzZSByZXZpZXcuIChwYXRjaGVzIDYtOCkKPiAtIGJyY21mbWFj
-IHBhdGNoIDksIGZpeGluZyBmaXJtd2FyZSBmaWxlIHNlbGVjdGlvbiwgY2FuIGJlIG1lcmdlZAo+
-ICAgbm93LCBhZnRlciByZXZpZXcsIGFzIGl0IGRvZXNuJ3QgZGVwZW5kIG9uIGFueXRoaW5nIChw
-bGVhc2UKPiAgIHJldmlldyA6KSkKPiAtIG1tYzEgcGluY29uZiAocGF0Y2ggMTApIGNhbiBwcm9i
-YWJseSBiZSBtZXJnZWQgbm93LCB0b28gKGl0IHdpbGwKPiAgIGNlcnRhaW5seSBiZSB1c2VkIHNv
-b24gYnkgYWxsIHRoZSBvdGhlciBXaUZpIGZlYXR1cmluZyBib2FyZHMKPiAgIGJhc2VkIG9uIEg2
-KQo+IC0gV2lGaSBkdHMgcGF0Y2ggd2lsbCBoYXZlIHRvIHdhaXQgZm9yIEg2IFJUQyBwYXRjaGVz
-LCB3aGljaCBpbiB0dXJuCj4gICBkZXBlbmQgb24gQ2hlbll1J3MgUlRDIHNlcmllcywgdG8gYmUg
-bWVyZ2VkLiBUaGF0IHdpbGwgdGFrZSBhCj4gICB3aGlsZSB5ZXQuIEknbSBqdXN0IGtlZXBpbmcg
-aXQgaW4gdGhlIHNlcmllcyBmb3IgY29tcGxldG5lc3MuCj4gICAocGF0Y2ggMTEpCgpVbmZvcnR1
-bmF0ZWx5IEkgd2lsbCBub3QgaGF2ZSB0aW1lIHRvIHRhY2tsZSB0aGlzIGZvciB0aGUgbmV4dCBy
-ZWxlYXNlLgpGdXJ0aGVybW9yZSwgSSdkIGxpa2UgdG8gZG8gdGhpcyBhZnRlciB0aGUgbmV3IGNs
-ayBwYXJlbnRpbmcgc3R1ZmYgbGFuZHMuCk90aGVyd2lzZSBpdCdzIGdvaW5nIHRvIGJlIGEgbWVz
-cywgYXMgdGhlIGNsb2NrIHRyZWUgaXMgYSBiaXQgY29udm9sdXRlZApjb21wYXJlZCB0byBwcmV2
-aW91cyBTb0NzLgoKQ2hlbll1Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbA==
+Hi,
+
+Am Freitag, 12. April 2019, 10:45:29 CEST schrieb wen.yang99@zte.com.cn:
+> > > The call to of_parse_phandle returns a node pointer with refcount
+> > > incremented thus it must be explicitly decremented after the last
+> > > usage.
+> > >
+> > > Detected by coccinelle with the following warnings:
+> > > ./drivers/pinctrl/pinctrl-rockchip.c:3221:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
+> > > ./drivers/pinctrl/pinctrl-rockchip.c:3223:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
+> > >
+> > > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Heiko Stuebner <heiko@sntech.de>
+> > > Cc: linux-gpio@vger.kernel.org
+> > > Cc: linux-arm-kernel@lists.infradead.org
+> > > Cc: linux-rockchip@lists.infradead.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > ---
+> > >  drivers/pinctrl/pinctrl-rockchip.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> > > index 16bf21b..e22d387 100644
+> > > --- a/drivers/pinctrl/pinctrl-rockchip.c
+> > > +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> > > @@ -3195,6 +3195,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+> > >
+> > >          node = of_parse_phandle(bank->of_node->parent,
+> > >                      "rockchip,pmu", 0);
+> > > +        of_node_put(node);
+> > >          if (!node) {
+> > >              if (of_address_to_resource(bank->of_node, 1, &res)) {
+> > >                  dev_err(info->dev, "cannot find IO resource for bank\n");
+> > >
+> > 
+> > hmm, the conditional does still use the node pointer, so the of_node_put
+> > should probably be below the whole if clause?
+> 
+> Thank you for your comments.
+> 
+> There may be two methods to fix this issue here.
+> Method 1, Add of_node_put after the conditional statement:
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 16bf21b..5f822e6 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -3198,12 +3198,15 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+>                 if (!node) {
+>                         if (of_address_to_resource(bank->of_node, 1, &res)) {
+>                                 dev_err(info->dev, "cannot find IO resource for bank\n");
+> +                               of_node_put(node);
+>                                 return -ENOENT;
+>                         }
+> 
+>                         base = devm_ioremap_resource(info->dev, &res);
+> -                       if (IS_ERR(base))
+> +                       if (IS_ERR(base)) {
+> +                               of_node_put(node);
+>                                 return PTR_ERR(base);
+> +                       }
+>                         rockchip_regmap_config.max_register =
+>                                                     resource_size(&res) - 4;
+>                         rockchip_regmap_config.name =
+> @@ -3212,6 +3215,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+>                                                     base,
+>                                                     &rockchip_regmap_config);
+>                 }
+> +               of_node_put(node);
+>         }
+> 
+>         bank->irq = irq_of_parse_and_map(bank->of_node, 0)
+> 
+> Method 2, Add of_node_put before conditional statement:
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 16bf21b..e22d387 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -3195,6 +3195,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+> 
+>                 node = of_parse_phandle(bank->of_node->parent,
+>                                         "rockchip,pmu", 0);
+> +               of_node_put(node);
+>                 if (!node) {
+>                         if (of_address_to_resource(bank->of_node, 1, &res)) {
+>                                 dev_err(info->dev, "cannot find IO resource for bank\n");
+> 
+> Since we're just determining whether the node pointer is null, and don't need to dereference the node pointer.
+> So if we use the Method 2, it might be a little bit simpler.
+> Thanks.
+
+personally I prefer to do it cleanly honoring the rules of using of_nodes.
+
+So while your method 2 may make it simpler people possibly editing the
+code later then need to remember that the node actually is already put
+when it is checked (or possibly even used in some later patch)
+
+
+Heiko
