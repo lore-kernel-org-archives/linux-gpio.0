@@ -1,46 +1,35 @@
-From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH v2] pinctrl: rockchip: fix leaked of_node references
-Date: Mon, 15 Apr 2019 14:24:02 +0800
-Message-ID: <1555309442-16039-1-git-send-email-wen.yang99@zte.com.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH 11/12] brcmfmac: Loading the correct firmware for brcm43456
+Date: Sat, 13 Apr 2019 11:06:20 +0000 (UTC)
+Message-ID: <20190413110621.ED2CA61834@smtp.codeaurora.org>
+References: <20190405234514.6183-12-megous@megous.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190405234514.6183-12-megous@megous.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Cc: Ondrej Jirman <megous@megous.com>, Mark Rutland <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chi-Hsien Lin <chi-hsien.lin@cypress.com>, dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, linux-stm32@st-md-mailman.stormreply.com, brcm80211-dev-list@cypress.com, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Jose Abreu <joabreu@synopsys.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Arend van Spriel <arend.vanspriel@broadcom.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hante Meuleman <hante.meuleman@broadcom.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Wright Feng <wright.feng@cypress.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Naveen Gupta <naveen.gupta@cypress.com>, Franky Lin <franky.lin@broadcom.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>brcm80211-dev-
 List-Id: linux-gpio@vger.kernel.org
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
-
-Detected by coccinelle with the following warnings:
-./drivers/pinctrl/pinctrl-rockchip.c:3221:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
-./drivers/pinctrl/pinctrl-rockchip.c:3223:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
-v2: 
- - put of_node_put below the whole if clause.
- - In the if clause, since node is NULL, there is no need to call of_node_put before return.
-
- drivers/pinctrl/pinctrl-rockchip.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 16bf21b..6436336 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3212,6 +3212,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
- 						    base,
- 						    &rockchip_regmap_config);
- 		}
-+		of_node_put(node);
- 	}
- 
- 	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
--- 
-2.9.5
+bWVnb3VzQG1lZ291cy5jb20gd3JvdGU6Cgo+IEZyb206IE9uZHJlaiBKaXJtYW4gPG1lZ291c0Bt
+ZWdvdXMuY29tPgo+IAo+IFNESU8gYmFzZWQgYnJjbTQzNDU2IGlzIGN1cnJlbnRseSBtaXNkZXRl
+Y3RlZCBhcyBicmNtNDM0NTUgYW5kIHRoZSB3cm9uZwo+IGZpcm13YXJlIG5hbWUgaXMgdXNlZC4g
+Q29ycmVjdCB0aGUgZGV0ZWN0aW9uIGFuZCBsb2FkIHRoZSBjb3JyZWN0Cj4gZmlybXdhcmUgZmls
+ZS4gQ2hpcHJldiBmb3IgYnJjbTQzNDU2IGlzICI5Ii4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBPbmRy
+ZWogSmlybWFuIDxtZWdvdXNAbWVnb3VzLmNvbT4KClBhdGNoIGFwcGxpZWQgdG8gd2lyZWxlc3Mt
+ZHJpdmVycy1uZXh0LmdpdCwgdGhhbmtzLgoKZTMwNjJlMDVlMWNmIGJyY21mbWFjOiBMb2FkaW5n
+IHRoZSBjb3JyZWN0IGZpcm13YXJlIGZvciBicmNtNDM0NTYKCi0tIApodHRwczovL3BhdGNod29y
+ay5rZXJuZWwub3JnL3BhdGNoLzEwODg4MDIzLwoKaHR0cHM6Ly93aXJlbGVzcy53aWtpLmtlcm5l
+bC5vcmcvZW4vZGV2ZWxvcGVycy9kb2N1bWVudGF0aW9uL3N1Ym1pdHRpbmdwYXRjaGVzCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
