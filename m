@@ -1,13 +1,13 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.19 073/101] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
-Date: Mon, 15 Apr 2019 20:59:11 +0200
-Message-ID: <20190415183744.324123019@linuxfoundation.org>
-References: <20190415183740.341577907@linuxfoundation.org>
+Subject: [PATCH 5.0 081/117] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
+Date: Mon, 15 Apr 2019 21:00:51 +0200
+Message-ID: <20190415183749.064704556@linuxfoundation.org>
+References: <20190415183744.887851196@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415183740.341577907@linuxfoundation.org>
+In-Reply-To: <20190415183744.887851196@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
