@@ -1,14 +1,14 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.14 51/69] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
-Date: Mon, 15 Apr 2019 20:59:09 +0200
-Message-ID: <20190415183734.224301875@linuxfoundation.org>
-References: <20190415183726.036654568@linuxfoundation.org>
+Subject: [PATCH 4.19 073/101] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
+Date: Mon, 15 Apr 2019 20:59:11 +0200
+Message-ID: <20190415183744.324123019@linuxfoundation.org>
+References: <20190415183740.341577907@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190415183726.036654568@linuxfoundation.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190415183740.341577907@linuxfoundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
@@ -66,7 +66,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/kernel/irq/chip.c
 +++ b/kernel/irq/chip.c
-@@ -1363,6 +1363,10 @@ int irq_chip_set_vcpu_affinity_parent(st
+@@ -1384,6 +1384,10 @@ int irq_chip_set_vcpu_affinity_parent(st
  int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
  {
  	data = data->parent_data;
