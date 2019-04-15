@@ -1,74 +1,79 @@
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: lpc32xx: enable interrupt lookup for port 3
-Date: Mon, 15 Apr 2019 09:12:00 -0400
-Message-ID: <CA+rxa6o9+MJBJy4hTkPukXhkCSvqnRokjT5FNsdm_hbdUjPJQw@mail.gmail.com>
-References: <20190410103926.8781-1-alexandre.belloni@bootlin.com>
- <20190410103926.8781-3-alexandre.belloni@bootlin.com> <CACRpkdY2Znvf0h5KiMqqq7J9r3uKU+Uss2Rteaw8a687BetV6A@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 4.9 69/76] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
+Date: Mon, 15 Apr 2019 20:44:33 +0200
+Message-ID: <20190415183728.383414729@linuxfoundation.org>
+References: <20190415183707.712011689@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY2Znvf0h5KiMqqq7J9r3uKU+Uss2Rteaw8a687BetV6A@mail.gmail.com>
+In-Reply-To: <20190415183707.712011689@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 11, 2019 at 9:55 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, Apr 10, 2019 at 12:39 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
->
-> > Interrupt support was disabled "temporarily" in commit 320a6480ef24 ("gpio:
-> > lpc32xx: disable broken to_irq support").
-> >
-> > Reenable to_irq for port 3 as they are directly connected to an interrupt
-> > controller and a simple lookup is working.
-> >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->
-> Unfortunately this seems to be one of these hacks for
-> hierarchical interrupts that does not quite cut it.
->
-> > +static int lpc32xx_gpio_to_irq_p3(struct gpio_chip *chip, unsigned int offset)
-> > +       return of_irq_get_byname(chip->of_node, chip->names[offset]);
->
-> This works as long as consuming drivers pick a GPIO first
-> using gpiod_get() (and variants) and then convert it to an
-> IRQ using gpiod_to_irq().
->
-> But it doesn't work when some consumer is just picking an
-> IRQ off of the node without picking the GPIO first.
-> And in DT that is OK, this DT node is definately an interrupt
-> controller. (Leaving out the attribute for interrupt controller
-> as is currently the case doesn't really fix the issue, it is
-> just inconsistent.)
->
-> Look at Brian Masney's series for the qualcomm pin controller
-> chips for inspiration on how to do things right, see:
-> commit 9d2b563bc23acfa93e7716b3396fd2f79fa8f0cd
-> and down.
->
-> Also:
-> https://marc.info/?l=linux-gpio&m=154959228527643&w=2
->
-> Especially note how he removes the kind of hack you are
-> adding in e.g.
-> commit a796fab2c605d6340512c51c6c3fa1c581357993
->
-> Yours,
-> Linus Walleij
->
+From: Stephen Boyd <swboyd@chromium.org>
 
-Hi Alexandre,
+commit 325aa19598e410672175ed50982f902d4e3f31c5 upstream.
 
-you can also look at the original attempt, in 2015, to replace
-this driver by a new version:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/386708.html
+If a child irqchip calls irq_chip_set_wake_parent() but its parent irqchip
+has the IRQCHIP_SKIP_SET_WAKE flag set an error is returned.
 
-Regards,
-Sylvain
+This is inconsistent behaviour vs. set_irq_wake_real() which returns 0 when
+the irqchip has the IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to
+walk the chain of parents and set irq wake on any chips that don't have the
+flag set either. If the intent is to call the .irq_set_wake() callback of
+the parent irqchip, then we expect irqchip implementations to omit the
+IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function that
+calls irq_chip_set_wake_parent().
 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The problem has been observed on a Qualcomm sdm845 device where set wake
+fails on any GPIO interrupts after applying work in progress wakeup irq
+patches to the GPIO driver. The chain of chips looks like this:
+
+     QCOM GPIO -> QCOM PDC (SKIP) -> ARM GIC (SKIP)
+
+The GPIO controllers parent is the QCOM PDC irqchip which in turn has ARM
+GIC as parent.  The QCOM PDC irqchip has the IRQCHIP_SKIP_SET_WAKE flag
+set, and so does the grandparent ARM GIC.
+
+The GPIO driver doesn't know if the parent needs to set wake or not, so it
+unconditionally calls irq_chip_set_wake_parent() causing this function to
+return a failure because the parent irqchip (PDC) doesn't have the
+.irq_set_wake() callback set. Returning 0 instead makes everything work and
+irqs from the GPIO controller can be configured for wakeup.
+
+Make it consistent by returning 0 (success) from irq_chip_set_wake_parent()
+when a parent chip has IRQCHIP_SKIP_SET_WAKE set.
+
+[ tglx: Massaged changelog ]
+
+Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190325181026.247796-1-swboyd@chromium.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/irq/chip.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1142,6 +1142,10 @@ int irq_chip_set_vcpu_affinity_parent(st
+ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
+ {
+ 	data = data->parent_data;
++
++	if (data->chip->flags & IRQCHIP_SKIP_SET_WAKE)
++		return 0;
++
+ 	if (data->chip->irq_set_wake)
+ 		return data->chip->irq_set_wake(data, on);
+ 
