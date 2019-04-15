@@ -1,79 +1,32 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.0 081/117] genirq: Respect IRQCHIP_SKIP_SET_WAKE in irq_chip_set_wake_parent()
-Date: Mon, 15 Apr 2019 21:00:51 +0200
-Message-ID: <20190415183749.064704556@linuxfoundation.org>
-References: <20190415183744.887851196@linuxfoundation.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio
+ pin
+Date: Mon, 15 Apr 2019 22:25:09 +0300
+Message-ID: <20190415192509.GH2654@lahna.fi.intel.com>
+References: <20190415055358.9269-1-chiu@endlessm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415183744.887851196@linuxfoundation.org>
+Content-Disposition: inline
+In-Reply-To: <20190415055358.9269-1-chiu@endlessm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+To: Chris Chiu <chiu@endlessm.com>
+Cc: andriy.shevchenko@intel.com, heikki.krogerus@linux.intel.com, drake@endlessm.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux@endlessm.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+On Mon, Apr 15, 2019 at 01:53:58PM +0800, Chris Chiu wrote:
+> The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
+> responsive after suspend/resume. The following error message
+> shows after resume.
+>  i2c_hid i2c-ELAN1200:00: failed to reset device.
+> 
+> On these laptops, the touchpad interrupt is connected via a GPIO
+> pin which is controlled by Intel pinctrl. After system resumes,
+> the GPIO is in ACPI mode and no longer works as an IRQ.
+> 
+> This commit saves the HOSTSW_OWN value during suspend, make sure
+> the HOSTSW_OWN mode remains the same after resume.
+> 
+> Signed-off-by: Chris Chiu <chiu@endlessm.com>
 
-commit 325aa19598e410672175ed50982f902d4e3f31c5 upstream.
-
-If a child irqchip calls irq_chip_set_wake_parent() but its parent irqchip
-has the IRQCHIP_SKIP_SET_WAKE flag set an error is returned.
-
-This is inconsistent behaviour vs. set_irq_wake_real() which returns 0 when
-the irqchip has the IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to
-walk the chain of parents and set irq wake on any chips that don't have the
-flag set either. If the intent is to call the .irq_set_wake() callback of
-the parent irqchip, then we expect irqchip implementations to omit the
-IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function that
-calls irq_chip_set_wake_parent().
-
-The problem has been observed on a Qualcomm sdm845 device where set wake
-fails on any GPIO interrupts after applying work in progress wakeup irq
-patches to the GPIO driver. The chain of chips looks like this:
-
-     QCOM GPIO -> QCOM PDC (SKIP) -> ARM GIC (SKIP)
-
-The GPIO controllers parent is the QCOM PDC irqchip which in turn has ARM
-GIC as parent.  The QCOM PDC irqchip has the IRQCHIP_SKIP_SET_WAKE flag
-set, and so does the grandparent ARM GIC.
-
-The GPIO driver doesn't know if the parent needs to set wake or not, so it
-unconditionally calls irq_chip_set_wake_parent() causing this function to
-return a failure because the parent irqchip (PDC) doesn't have the
-.irq_set_wake() callback set. Returning 0 instead makes everything work and
-irqs from the GPIO controller can be configured for wakeup.
-
-Make it consistent by returning 0 (success) from irq_chip_set_wake_parent()
-when a parent chip has IRQCHIP_SKIP_SET_WAKE set.
-
-[ tglx: Massaged changelog ]
-
-Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190325181026.247796-1-swboyd@chromium.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/irq/chip.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1384,6 +1384,10 @@ int irq_chip_set_vcpu_affinity_parent(st
- int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
- {
- 	data = data->parent_data;
-+
-+	if (data->chip->flags & IRQCHIP_SKIP_SET_WAKE)
-+		return 0;
-+
- 	if (data->chip->irq_set_wake)
- 		return data->chip->irq_set_wake(data, on);
- 
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
