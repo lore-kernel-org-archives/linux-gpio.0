@@ -1,69 +1,238 @@
-From: lei liu <leilk.liu@mediatek.com>
-Subject: Re: [PATCH 19/24] dt-bindings: spi: spi-mt65xx: add support for
- MT8516
-Date: Thu, 18 Apr 2019 16:18:07 +0800
-Message-ID: <1555575487.7441.6.camel@mhfsdcap03>
-References: <20190323211612.860-1-fparent@baylibre.com>
-         <20190323211612.860-20-fparent@baylibre.com>
-         <5bc3fbfa-6d7e-08d3-116c-a8f78bc680cd@gmail.com>
-         <1555403151.7441.4.camel@mhfsdcap03>
-         <CAOwMV_yKAm1zar6buhe25O56AkAX8e0nXnm4GmqhvHC-yagKfQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH 2/2] gpio: sch: Add interrupt support
+Date: Thu, 18 Apr 2019 11:23:49 +0200
+Message-ID: <c9f40465c6effc7b8efd6cbf8461d71d80c80033.1555579429.git.jan.kiszka@siemens.com>
+References: <cover.1555579429.git.jan.kiszka@siemens.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOwMV_yKAm1zar6buhe25O56AkAX8e0nXnm4GmqhvHC-yagKfQ@mail.gmail.com>
+In-Reply-To: <cover.1555579429.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1555579429.git.jan.kiszka@siemens.com>
+References: <cover.1555579429.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabien Parent <fparent@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, ryder.lee@mediatek.com, linux-watchdog@vger.kernel.org, jjian.zhou@mediatek.com, wenzhen.yu@mediatek.com, Stephane Le Provost <stephane.leprovost@mediatek.com>, sean.wang@kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, yong.mao@mediatek.com, linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, hsin-hsiung.wang@mediatek.com, linux-serial@vger.kernel.org, linux-clk@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>, linux-i2c@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2019-04-18 at 10:05 +0200, Fabien Parent wrote:
-> On Tue, Apr 16, 2019 at 10:25 AM lei liu <leilk.liu@mediatek.com> wrote:
-> >
-> > On Tue, 2019-04-16 at 09:55 +0200, Matthias Brugger wrote:
-> > >
-> > > On 23/03/2019 22:16, Fabien Parent wrote:
-> > > > Add binding documentation of spi-mt65xx for MT8516 SoC.
-> > > >
-> > > > Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/spi/spi-mt65xx.txt | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > >
-> > >
-> > > applied to v5.1-next/dts64
-> > >
-> > > Mark let me know if you want to take it through your tree and I drop the patch.
-> > >
-> > > > diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > index 69c356767cf8..69ac5976b952 100644
-> > > > --- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > +++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-> > > > @@ -10,6 +10,7 @@ Required properties:
-> > > >      - mediatek,mt8135-spi: for mt8135 platforms
-> > > >      - mediatek,mt8173-spi: for mt8173 platforms
-> > > >      - mediatek,mt8183-spi: for mt8183 platforms
-> > > > +    - "mediatek,mt8516-spi", "mediatek,mt2701-spi": for mt8516 platforms
-> > Hi Fabien,
-> > mt8516 SPI design comes from mt2712 and it's different from mt2701. Here
-> > it should compatible with mt2712.
-> 
-> Ok, thanks. I will retry with the mt2712 compatible.
-> 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Hi, I already send mt8516 spi patch and it's applied by Mark. Please
-don't do it again. Thanks.
+Validated on the Quark platform, this adds interrupt support on rising
+and/or falling edges.
 
-> > > >
-> > > >  - #address-cells: should be 1.
-> > > >
-> > > >
-> > >
-> > > _______________________________________________
-> > > Linux-mediatek mailing list
-> > > Linux-mediatek@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> >
-> >
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/gpio/gpio-sch.c | 142 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 135 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index fb143f28c386..9459f1920996 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -18,12 +18,17 @@
+ #define GEN	0x00
+ #define GIO	0x04
+ #define GLV	0x08
++#define GTPE	0x0c
++#define GTNE	0x10
++#define GGPE	0x14
++#define GTS	0x1c
+ 
+ struct sch_gpio {
+ 	struct gpio_chip chip;
+ 	spinlock_t lock;
+ 	unsigned short iobase;
+ 	unsigned short resume_base;
++	int irq_base;
+ };
+ 
+ static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
+@@ -79,10 +84,11 @@ static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned gpio, unsigned reg,
+ static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ 	return 0;
+ }
+ 
+@@ -95,20 +101,22 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GLV, val);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ }
+ 
+ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+ 				  int val)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ 
+ 	/*
+ 	 * according to the datasheet, writing to the level register has no
+@@ -130,6 +138,12 @@ static int sch_gpio_get_direction(struct gpio_chip *gc, unsigned gpio_num)
+ 	return sch_gpio_reg_get(sch, gpio_num, GIO);
+ }
+ 
++static int sch_gpio_to_irq(struct gpio_chip *gpio, unsigned int offset)
++{
++	struct sch_gpio *sch = gpiochip_get_data(gpio);
++	return sch->irq_base + offset;
++}
++
+ static const struct gpio_chip sch_gpio_chip = {
+ 	.label			= "sch_gpio",
+ 	.owner			= THIS_MODULE,
+@@ -138,12 +152,94 @@ static const struct gpio_chip sch_gpio_chip = {
+ 	.direction_output	= sch_gpio_direction_out,
+ 	.set			= sch_gpio_set,
+ 	.get_direction		= sch_gpio_get_direction,
++	.to_irq			= sch_gpio_to_irq,
+ };
+ 
++static u32 sch_sci_handler(void *context)
++{
++	struct sch_gpio *sch = context;
++	unsigned long core_status, resume_status;
++	unsigned int resume_gpios, offset;
++
++	core_status = inl(sch->iobase + GTS);
++	resume_status = inl(sch->iobase + GTS + 0x20);
++
++	if (core_status == 0 && resume_status == 0)
++		return ACPI_INTERRUPT_NOT_HANDLED;
++
++	for_each_set_bit(offset, &core_status, sch->resume_base)
++		generic_handle_irq(sch->irq_base + offset);
++
++	resume_gpios = sch->chip.ngpio - sch->resume_base;
++	for_each_set_bit(offset, &resume_status, resume_gpios)
++		generic_handle_irq(sch->irq_base + sch->resume_base + offset);
++
++	outl(core_status, sch->iobase + GTS);
++	outl(resume_status, sch->iobase + GTS + 0x20);
++
++	return ACPI_INTERRUPT_HANDLED;
++}
++
++static int sch_irq_type(struct irq_data *d, unsigned int type)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct sch_gpio *sch = gc->private;
++	unsigned int gpio_num = d->irq - sch->irq_base;
++	int rising = 0;
++	int falling = 0;
++
++	switch (type & IRQ_TYPE_SENSE_MASK) {
++	case IRQ_TYPE_EDGE_RISING:
++		rising = 1;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		falling = 1;
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		rising = 1;
++		falling = 1;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	spin_lock(&sch->lock);
++	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
++	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
++	spin_unlock(&sch->lock);
++
++	return 0;
++}
++
++static void sch_irq_set_enable(struct irq_data *d, int val)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct sch_gpio *sch = gc->private;
++	unsigned int gpio_num = d->irq - sch->irq_base;
++
++	spin_lock(&sch->lock);
++	sch_gpio_reg_set(sch, gpio_num, GGPE, val);
++	spin_unlock(&sch->lock);
++}
++
++static void sch_irq_mask(struct irq_data *d)
++{
++	sch_irq_set_enable(d, 0);
++}
++
++static void sch_irq_unmask(struct irq_data *d)
++{
++	sch_irq_set_enable(d, 1);
++}
++
+ static int sch_gpio_probe(struct platform_device *pdev)
+ {
++	struct irq_chip_generic *gc;
++	struct irq_chip_type *ct;
+ 	struct sch_gpio *sch;
+ 	struct resource *res;
++	acpi_status status;
++	int irq_base, ret;
+ 
+ 	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
+ 	if (!sch)
+@@ -203,7 +299,39 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, sch);
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
++	ret = devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
++	if (ret)
++		return ret;
++
++	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
++					NUMA_NO_NODE);
++	if (irq_base < 0)
++		return irq_base;
++	sch->irq_base = irq_base;
++
++	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
++					 NULL, handle_simple_irq);
++	if (!gc)
++		return -ENOMEM;
++
++	gc->private = sch;
++	ct = gc->chip_types;
++
++	ct->chip.irq_mask = sch_irq_mask;
++	ct->chip.irq_unmask = sch_irq_unmask;
++	ct->chip.irq_set_type = sch_irq_type;
++
++	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
++					  IRQ_MSK(sch->chip.ngpio),
++					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++	if (ret)
++		return ret;
++
++	status = acpi_install_sci_handler(sch_sci_handler, sch);
++	if (ACPI_FAILURE(status))
++		return -EINVAL;
++
++	return 0;
+ }
+ 
+ static struct platform_driver sch_gpio_driver = {
+-- 
+2.16.4
