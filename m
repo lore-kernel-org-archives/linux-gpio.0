@@ -1,63 +1,28 @@
-From: Guillaume La Roque <glaroque@baylibre.com>
-Subject: [PATCH v2 2/4] pinctrl: generic: add new 'drive-strength-uA' property support
-Date: Thu, 18 Apr 2019 14:47:56 +0200
-Message-ID: <20190418124758.24022-3-glaroque@baylibre.com>
-References: <20190418124758.24022-1-glaroque@baylibre.com>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: Avoiding merge conflicts while adding new docs - Was: Re:
+ [PATCH 00/57] Convert files to ReST
+Date: Fri, 19 Apr 2019 16:10:58 -0600
+Message-ID: <20190419161058.3628a29b@lwn.net>
+References: <cover.1555382110.git.mchehab+samsung@kernel.org>
+        <20190418091526.00e074d1@coco.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418124758.24022-1-glaroque@baylibre.com>
+In-Reply-To: <20190418091526.00e074d1@coco.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-s390@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-watchdog@vger.kernel.org, xdp-newbies@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-acpi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, bpf@vger.kernel.org, linux-ide@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-scsi@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org, dm-devel@redhat.com, target-devel@vger.kernel.org, netdev@vger.kernel.org, kexec@lists.infradead.org, linux-fpga@vger.kernel.org, linux-rdma@vger.ke
 List-Id: linux-gpio@vger.kernel.org
 
-Add drive-strength-uA property support to allow drive strength in uA
+On Thu, 18 Apr 2019 09:42:23 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- drivers/pinctrl/pinconf-generic.c       | 2 ++
- include/linux/pinctrl/pinconf-generic.h | 3 +++
- 2 files changed, 5 insertions(+)
+> After thinking a little bit and doing some tests, I think a good solution
+> would be to add ":orphan:" markup to the new .rst files that were not
+> added yet into the main body (e. g. something like the enclosed example).
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index b4f7f8a458ea..87393e9452b4 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -39,6 +39,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_DRIVE_OPEN_SOURCE, "output drive open source", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_DRIVE_PUSH_PULL, "output drive push pull", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH, "output drive strength", "mA", true),
-+	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH_UA, "output drive strength", "uA", true),
- 	PCONFDUMP(PIN_CONFIG_INPUT_DEBOUNCE, "input debounce", "usec", true),
- 	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
-@@ -167,6 +168,7 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
- 	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
- 	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
-+	{ "drive-strength-uA", PIN_CONFIG_DRIVE_STRENGTH_UA, 0 },
- 	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
- 	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
- 	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 6c0680641108..72d06d6a3099 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -55,6 +55,8 @@
-  *	push-pull mode, the argument is ignored.
-  * @PIN_CONFIG_DRIVE_STRENGTH: the pin will sink or source at most the current
-  *	passed as argument. The argument is in mA.
-+ * @PIN_CONFIG_DRIVE_STRENGTH_UA: the pin will sink or source at most the current
-+ *	passed as argument. The argument is in uA.
-  * @PIN_CONFIG_INPUT_DEBOUNCE: this will configure the pin to debounce mode,
-  *	which means it will wait for signals to settle when reading inputs. The
-  *	argument gives the debounce time in usecs. Setting the
-@@ -112,6 +114,7 @@ enum pin_config_param {
- 	PIN_CONFIG_DRIVE_OPEN_SOURCE,
- 	PIN_CONFIG_DRIVE_PUSH_PULL,
- 	PIN_CONFIG_DRIVE_STRENGTH,
-+	PIN_CONFIG_DRIVE_STRENGTH_UA,
- 	PIN_CONFIG_INPUT_DEBOUNCE,
- 	PIN_CONFIG_INPUT_ENABLE,
- 	PIN_CONFIG_INPUT_SCHMITT,
--- 
-2.17.1
+Interesting...I didn't know about that.  Yes, I think it makes sense to
+put that in...
+
+jon
