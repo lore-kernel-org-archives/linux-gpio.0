@@ -1,28 +1,74 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: Avoiding merge conflicts while adding new docs - Was: Re:
- [PATCH 00/57] Convert files to ReST
-Date: Fri, 19 Apr 2019 16:10:58 -0600
-Message-ID: <20190419161058.3628a29b@lwn.net>
-References: <cover.1555382110.git.mchehab+samsung@kernel.org>
-        <20190418091526.00e074d1@coco.lan>
+From: Lokesh Vutla <lokeshvutla@ti.com>
+Subject: [PATCH v7 07/14] gpio: thunderx: Use the default parent apis for {request,release}_resources
+Date: Sat, 20 Apr 2019 15:39:43 +0530
+Message-ID: <20190420100950.7997-8-lokeshvutla@ti.com>
+References: <20190420100950.7997-1-lokeshvutla@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418091526.00e074d1@coco.lan>
+In-Reply-To: <20190420100950.7997-1-lokeshvutla@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-s390@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-watchdog@vger.kernel.org, xdp-newbies@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-acpi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, bpf@vger.kernel.org, linux-ide@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-scsi@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org, dm-devel@redhat.com, target-devel@vger.kernel.org, netdev@vger.kernel.org, kexec@lists.infradead.org, linux-fpga@vger.kernel.org, linux-rdma@vger.ke
+To: Marc Zyngier <marc.zyngier@arm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>, tglx@linutronix.de, jason@lakedaemon.net
+Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, linus.walleij@linaro.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Device Tree Mailing List <devicetree@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 18 Apr 2019 09:42:23 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+thunderx_gpio_irq_{request,release}_resources apis are trying to
+{request,release} resources on parent interrupt. There are default
+apis doing the same. Use the default parent apis instead of writing
+the same code snippet.
 
-> After thinking a little bit and doing some tests, I think a good solution
-> would be to add ":orphan:" markup to the new .rst files that were not
-> added yet into the main body (e. g. something like the enclosed example).
+Cc: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+---
+Changes since v6:
+- new patch
 
-Interesting...I didn't know about that.  Yes, I think it makes sense to
-put that in...
+ drivers/gpio/gpio-thunderx.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-jon
+diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
+index 1306722faa5a..715371b5102a 100644
+--- a/drivers/gpio/gpio-thunderx.c
++++ b/drivers/gpio/gpio-thunderx.c
+@@ -363,22 +363,16 @@ static int thunderx_gpio_irq_request_resources(struct irq_data *data)
+ {
+ 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
+ 	struct thunderx_gpio *txgpio = txline->txgpio;
+-	struct irq_data *parent_data = data->parent_data;
+ 	int r;
+ 
+ 	r = gpiochip_lock_as_irq(&txgpio->chip, txline->line);
+ 	if (r)
+ 		return r;
+ 
+-	if (parent_data && parent_data->chip->irq_request_resources) {
+-		r = parent_data->chip->irq_request_resources(parent_data);
+-		if (r)
+-			goto error;
+-	}
++	r = irq_chip_request_resources_parent(data);
++	if (r)
++		gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ 
+-	return 0;
+-error:
+-	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ 	return r;
+ }
+ 
+@@ -386,10 +380,8 @@ static void thunderx_gpio_irq_release_resources(struct irq_data *data)
+ {
+ 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
+ 	struct thunderx_gpio *txgpio = txline->txgpio;
+-	struct irq_data *parent_data = data->parent_data;
+ 
+-	if (parent_data && parent_data->chip->irq_release_resources)
+-		parent_data->chip->irq_release_resources(parent_data);
++	irq_chip_release_resources_parent(data);
+ 
+ 	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
+ }
+-- 
+2.21.0
