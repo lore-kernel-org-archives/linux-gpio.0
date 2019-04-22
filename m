@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 77/98] gpio: of: Check propname before applying "cs-gpios" quirks
-Date: Mon, 22 Apr 2019 15:41:44 -0400
-Message-ID: <20190422194205.10404-77-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 87/98] gpio: of: Fix of_gpiochip_add() error path
+Date: Mon, 22 Apr 2019 15:41:54 -0400
+Message-ID: <20190422194205.10404-87-sashal@kernel.org>
 References: <20190422194205.10404-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,43 +9,50 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190422194205.10404-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit e5545c94e43b8f6599ffc01df8d1aedf18ee912a ]
+[ Upstream commit f7299d441a4da8a5088e651ea55023525a793a13 ]
 
-SPI GPIO device has more than just "cs-gpio" property in its node and
-would request those GPIOs as a part of its initialization. To avoid
-applying CS-specific quirk to all of them add a check to make sure
-that propname is "cs-gpios".
+If the call to of_gpiochip_scan_gpios() in of_gpiochip_add() fails, no
+error handling is performed.  This lead to the need of callers to call
+of_gpiochip_remove() on failure, which causes "BAD of_node_put() on ..."
+if the failure happened before the call to of_node_get().
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fix this by adding proper error handling.
+
+Note that calling gpiochip_remove_pin_ranges() multiple times causes no
+harm: subsequent calls are a no-op.
+
+Fixes: dfbd379ba9b7431e ("gpio: of: Return error if gpio hog configuration failed")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib-of.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a1dd2f1c0d02..9470563f2506 100644
+index f1ae28289a67..13a402ede07a 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -119,7 +119,8 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * to determine if the flags should have inverted semantics.
- 	 */
- 	if (IS_ENABLED(CONFIG_SPI_MASTER) &&
--	    of_property_read_bool(np, "cs-gpios")) {
-+	    of_property_read_bool(np, "cs-gpios") &&
-+	    !strcmp(propname, "cs-gpios")) {
- 		struct device_node *child;
- 		u32 cs;
- 		int ret;
+@@ -712,7 +712,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
+ 
+ 	of_node_get(chip->of_node);
+ 
+-	return of_gpiochip_scan_gpios(chip);
++	status = of_gpiochip_scan_gpios(chip);
++	if (status) {
++		of_node_put(chip->of_node);
++		gpiochip_remove_pin_ranges(chip);
++	}
++
++	return status;
+ }
+ 
+ void of_gpiochip_remove(struct gpio_chip *chip)
 -- 
 2.19.1
