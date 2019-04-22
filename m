@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 61/68] gpio: of: Fix of_gpiochip_add() error path
-Date: Mon, 22 Apr 2019 15:45:09 -0400
-Message-ID: <20190422194516.11634-61-sashal@kernel.org>
-References: <20190422194516.11634-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 39/43] gpio: of: Fix of_gpiochip_add() error path
+Date: Mon, 22 Apr 2019 15:47:23 -0400
+Message-ID: <20190422194727.12495-39-sashal@kernel.org>
+References: <20190422194727.12495-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190422194727.12495-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -36,10 +36,10 @@ Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index d4e7a09598fa..e0f149bdf98f 100644
+index ee8c046cab62..d6ed4e891b34 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -646,7 +646,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
+@@ -499,7 +499,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
  
  	of_node_get(chip->of_node);
  
