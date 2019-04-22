@@ -1,60 +1,44 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 78/98] gpio: of: Check for "spi-cs-high" in child instead of parent node
-Date: Mon, 22 Apr 2019 15:41:45 -0400
-Message-ID: <20190422194205.10404-78-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 55/98] gpio: aspeed: fix a potential NULL pointer dereference
+Date: Mon, 22 Apr 2019 15:41:22 -0400
+Message-ID: <20190422194205.10404-55-sashal@kernel.org>
 References: <20190422194205.10404-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20190422194205.10404-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Cc: Kangjie Lu <kjlu@umn.edu>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 7ce40277bf848391705011ba37eac2e377cbd9e6 ]
+[ Upstream commit 6cf4511e9729c00a7306cf94085f9cc3c52ee723 ]
 
-"spi-cs-high" is going to be specified in child node of an SPI
-controller's representing attached SPI device, so change the code to
-look for it there, instead of checking parent node.
+In case devm_kzalloc, the patch returns ENOMEM to avoid potential
+NULL pointer dereference.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-aspeed.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9470563f2506..f1ae28289a67 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -142,16 +142,16 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 				 * conflict and the "spi-cs-high" flag will
- 				 * take precedence.
- 				 */
--				if (of_property_read_bool(np, "spi-cs-high")) {
-+				if (of_property_read_bool(child, "spi-cs-high")) {
- 					if (*flags & OF_GPIO_ACTIVE_LOW) {
- 						pr_warn("%s GPIO handle specifies active low - ignored\n",
--							of_node_full_name(np));
-+							of_node_full_name(child));
- 						*flags &= ~OF_GPIO_ACTIVE_LOW;
- 					}
- 				} else {
- 					if (!(*flags & OF_GPIO_ACTIVE_LOW))
- 						pr_info("%s enforce active low on chipselect handle\n",
--							of_node_full_name(np));
-+							of_node_full_name(child));
- 					*flags |= OF_GPIO_ACTIVE_LOW;
- 				}
- 				break;
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index 854bce4fb9e7..217507002dbc 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -1224,6 +1224,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
+ 
+ 	gpio->offset_timer =
+ 		devm_kzalloc(&pdev->dev, gpio->chip.ngpio, GFP_KERNEL);
++	if (!gpio->offset_timer)
++		return -ENOMEM;
+ 
+ 	return aspeed_gpio_setup_irqs(gpio, pdev);
+ }
 -- 
 2.19.1
