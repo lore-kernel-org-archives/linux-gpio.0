@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 29/43] gpio: aspeed: fix a potential NULL pointer dereference
-Date: Mon, 22 Apr 2019 15:47:13 -0400
-Message-ID: <20190422194727.12495-29-sashal@kernel.org>
-References: <20190422194727.12495-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 44/68] gpio: aspeed: fix a potential NULL pointer dereference
+Date: Mon, 22 Apr 2019 15:44:52 -0400
+Message-ID: <20190422194516.11634-44-sashal@kernel.org>
+References: <20190422194516.11634-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422194727.12495-1-sashal@kernel.org>
+In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kangjie Lu <kjlu@umn.edu>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
@@ -28,10 +28,10 @@ Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index f03fe916eb9d..f6d1bda8a802 100644
+index 2342e154029b..b696ec35efb3 100644
 --- a/drivers/gpio/gpio-aspeed.c
 +++ b/drivers/gpio/gpio-aspeed.c
-@@ -861,6 +861,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
+@@ -1225,6 +1225,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
  
  	gpio->offset_timer =
  		devm_kzalloc(&pdev->dev, gpio->chip.ngpio, GFP_KERNEL);
