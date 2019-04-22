@@ -1,74 +1,84 @@
-From: Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH v7 07/14] gpio: thunderx: Use the default parent apis for {request,release}_resources
-Date: Sat, 20 Apr 2019 15:39:43 +0530
-Message-ID: <20190420100950.7997-8-lokeshvutla@ti.com>
-References: <20190420100950.7997-1-lokeshvutla@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
+Date: Mon, 22 Apr 2019 12:45:39 +0800
+Message-ID: <20190422044539.16085-1-kai.heng.feng@canonical.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190420100950.7997-1-lokeshvutla@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>, tglx@linutronix.de, jason@lakedaemon.net
-Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, linus.walleij@linaro.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Device Tree Mailing List <devicetree@vger.kernel.org>, linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com
+Cc: linus.walleij@linaro.org, hotwater438@tutanota.com, hdegoede@redhat.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
 List-Id: linux-gpio@vger.kernel.org
 
-thunderx_gpio_irq_{request,release}_resources apis are trying to
-{request,release} resources on parent interrupt. There are default
-apis doing the same. Use the default parent apis instead of writing
-the same code snippet.
+Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
+added because clearing interrupt status bit is required to avoid
+unexpected behavior.
 
-Cc: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Turns out the unmask callback also needs the fix, which can solve weird
+IRQ triggering issues on I2C touchpad ELAN1200.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
-Changes since v6:
-- new patch
+ drivers/pinctrl/intel/pinctrl-intel.c | 35 ++++-----------------------
+ 1 file changed, 5 insertions(+), 30 deletions(-)
 
- drivers/gpio/gpio-thunderx.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index 1306722faa5a..715371b5102a 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -363,22 +363,16 @@ static int thunderx_gpio_irq_request_resources(struct irq_data *data)
- {
- 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
- 	struct thunderx_gpio *txgpio = txline->txgpio;
--	struct irq_data *parent_data = data->parent_data;
- 	int r;
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 3b1818184207..53878604537e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -913,35 +913,6 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	}
+ }
  
- 	r = gpiochip_lock_as_irq(&txgpio->chip, txline->line);
- 	if (r)
- 		return r;
- 
--	if (parent_data && parent_data->chip->irq_request_resources) {
--		r = parent_data->chip->irq_request_resources(parent_data);
--		if (r)
--			goto error;
+-static void intel_gpio_irq_enable(struct irq_data *d)
+-{
+-	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
+-	const struct intel_community *community;
+-	const struct intel_padgroup *padgrp;
+-	int pin;
+-
+-	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
+-	if (pin >= 0) {
+-		unsigned int gpp, gpp_offset, is_offset;
+-		unsigned long flags;
+-		u32 value;
+-
+-		gpp = padgrp->reg_num;
+-		gpp_offset = padgroup_offset(padgrp, pin);
+-		is_offset = community->is_offset + gpp * 4;
+-
+-		raw_spin_lock_irqsave(&pctrl->lock, flags);
+-		/* Clear interrupt status first to avoid unexpected interrupt */
+-		writel(BIT(gpp_offset), community->regs + is_offset);
+-
+-		value = readl(community->regs + community->ie_offset + gpp * 4);
+-		value |= BIT(gpp_offset);
+-		writel(value, community->regs + community->ie_offset + gpp * 4);
+-		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
 -	}
-+	r = irq_chip_request_resources_parent(data);
-+	if (r)
-+		gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- 
--	return 0;
--error:
--	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- 	return r;
- }
- 
-@@ -386,10 +380,8 @@ static void thunderx_gpio_irq_release_resources(struct irq_data *data)
+-}
+-
+ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
  {
- 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
- 	struct thunderx_gpio *txgpio = txline->txgpio;
--	struct irq_data *parent_data = data->parent_data;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -963,6 +934,11 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 		reg = community->regs + community->ie_offset + gpp * 4;
  
--	if (parent_data && parent_data->chip->irq_release_resources)
--		parent_data->chip->irq_release_resources(parent_data);
-+	irq_chip_release_resources_parent(data);
+ 		raw_spin_lock_irqsave(&pctrl->lock, flags);
++
++		/* Clear interrupt status first to avoid unexpected interrupt */
++		if (!mask)
++			writel(BIT(gpp_offset), community->regs + community->is_offset + gpp * 4);
++
+ 		value = readl(reg);
+ 		if (mask)
+ 			value &= ~BIT(gpp_offset);
+@@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
  
- 	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- }
+ static struct irq_chip intel_gpio_irqchip = {
+ 	.name = "intel-gpio",
+-	.irq_enable = intel_gpio_irq_enable,
+ 	.irq_ack = intel_gpio_irq_ack,
+ 	.irq_mask = intel_gpio_irq_mask,
+ 	.irq_unmask = intel_gpio_irq_unmask,
 -- 
-2.21.0
+2.17.1
