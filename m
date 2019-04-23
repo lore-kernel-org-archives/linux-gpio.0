@@ -1,175 +1,36 @@
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH v4 16/63] Documentation: ACPI: move debug.txt to
- firmware-guide/acpi and convert to reST
-Date: Tue, 23 Apr 2019 18:21:08 -0300
-Message-ID: <20190423182108.2bf06960@coco.lan>
-References: <20190423162932.21428-1-changbin.du@gmail.com>
-        <20190423162932.21428-17-changbin.du@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 15/79] docs: gpio: convert docs to ReST and rename to *.rst
+Date: Tue, 23 Apr 2019 23:30:43 +0200
+Message-ID: <CACRpkdY_OHTU6dN-2BXYhPYyAVW62nSzqfNx66bAB++=epGMbg@mail.gmail.com>
+References: <cover.1555938375.git.mchehab+samsung@kernel.org> <03cdacc3db76c5ff984c1507ea6434650d36d822.1555938376.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190423162932.21428-17-changbin.du@gmail.com>
+In-Reply-To: <03cdacc3db76c5ff984c1507ea6434650d36d822.1555938376.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Changbin Du <changbin.du@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Em Wed, 24 Apr 2019 00:28:45 +0800
-Changbin Du <changbin.du@gmail.com> escreveu:
+On Mon, Apr 22, 2019 at 3:28 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
 
-> This converts the plain text documentation to reStructuredText format and
-> add it to Sphinx TOC tree. No essential content change.
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> ---
->  .../acpi/debug.rst}                           | 31 ++++++++++---------
->  Documentation/firmware-guide/acpi/index.rst   |  3 +-
->  2 files changed, 19 insertions(+), 15 deletions(-)
->  rename Documentation/{acpi/debug.txt => firmware-guide/acpi/debug.rst} (91%)
-> 
-> diff --git a/Documentation/acpi/debug.txt b/Documentation/firmware-guide/acpi/debug.rst
-> similarity index 91%
-> rename from Documentation/acpi/debug.txt
-> rename to Documentation/firmware-guide/acpi/debug.rst
-> index 65bf47c46b6d..1a152dd1d765 100644
-> --- a/Documentation/acpi/debug.txt
-> +++ b/Documentation/firmware-guide/acpi/debug.rst
-> @@ -1,18 +1,21 @@
-> -			ACPI Debug Output
-> +.. SPDX-License-Identifier: GPL-2.0
->  
-> +=================
-> +ACPI Debug Output
-> +=================
->  
->  The ACPI CA, the Linux ACPI core, and some ACPI drivers can generate debug
->  output.  This document describes how to use this facility.
->  
->  Compile-time configuration
-> ---------------------------
-> +==========================
->  
->  ACPI debug output is globally enabled by CONFIG_ACPI_DEBUG.  If this config
->  option is turned off, the debug messages are not even built into the
->  kernel.
->  
->  Boot- and run-time configuration
-> ---------------------------------
-> +================================
->  
->  When CONFIG_ACPI_DEBUG=y, you can select the component and level of messages
->  you're interested in.  At boot-time, use the acpi.debug_layer and
-> @@ -21,7 +24,7 @@ debug_layer and debug_level files in /sys/module/acpi/parameters/ to control
->  the debug messages.
->  
->  debug_layer (component)
-> ------------------------
-> +=======================
->  
->  The "debug_layer" is a mask that selects components of interest, e.g., a
->  specific driver or part of the ACPI interpreter.  To build the debug_layer
-> @@ -33,7 +36,7 @@ to /sys/module/acpi/parameters/debug_layer.
->  
->  The possible components are defined in include/acpi/acoutput.h and
->  include/acpi/acpi_drivers.h.  Reading /sys/module/acpi/parameters/debug_layer
-> -shows the supported mask values, currently these:
-> +shows the supported mask values, currently these::
->  
->      ACPI_UTILITIES                  0x00000001
->      ACPI_HARDWARE                   0x00000002
-> @@ -65,7 +68,7 @@ shows the supported mask values, currently these:
->      ACPI_PROCESSOR_COMPONENT        0x20000000
+> The API described at sysfs.txt is deprecated.
+>
+> Still, as it is still part of the Kernel (and will likely be
+> there for some time, as we don't simply remove APIs). So,
+> it makes sense to keep it there.
+>
+> The conversion of this file is trivial:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - mark a literal block as such.
+>
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-This is one way of doing. The other one, with would likely produce a
-better visual, would be to use tables, e. g.:
+Patch applied to the GPIO tree.
 
-     ==============                  ==========
-     ACPI_UTILITIES                  0x00000001
-     ACPI_HARDWARE                   0x00000002
-     ==============                  ==========
-
-Of course, if you use tables here, you need to be consistent along
-similar cases inside the document.
-
-while both works, I prefer using tables on such cases.
-
-Either way:
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
->  
->  debug_level
-> ------------
-> +===========
->  
->  The "debug_level" is a mask that selects different types of messages, e.g.,
->  those related to initialization, method execution, informational messages, etc.
-> @@ -81,7 +84,7 @@ to /sys/module/acpi/parameters/debug_level.
->  
->  The possible levels are defined in include/acpi/acoutput.h.  Reading
->  /sys/module/acpi/parameters/debug_level shows the supported mask values,
-> -currently these:
-> +currently these::
->  
->      ACPI_LV_INIT                    0x00000001
->      ACPI_LV_DEBUG_OBJECT            0x00000002
-> @@ -113,9 +116,9 @@ currently these:
->      ACPI_LV_EVENTS                  0x80000000
->  
->  Examples
-> ---------
-> +========
->  
-> -For example, drivers/acpi/bus.c contains this:
-> +For example, drivers/acpi/bus.c contains this::
->  
->      #define _COMPONENT              ACPI_BUS_COMPONENT
->      ...
-> @@ -127,22 +130,22 @@ statement uses ACPI_DB_INFO, which is macro based on the ACPI_LV_INFO
->  definition.)
->  
->  Enable all AML "Debug" output (stores to the Debug object while interpreting
-> -AML) during boot:
-> +AML) during boot::
->  
->      acpi.debug_layer=0xffffffff acpi.debug_level=0x2
->  
-> -Enable PCI and PCI interrupt routing debug messages:
-> +Enable PCI and PCI interrupt routing debug messages::
->  
->      acpi.debug_layer=0x400000 acpi.debug_level=0x4
->  
-> -Enable all ACPI hardware-related messages:
-> +Enable all ACPI hardware-related messages::
->  
->      acpi.debug_layer=0x2 acpi.debug_level=0xffffffff
->  
-> -Enable all ACPI_DB_INFO messages after boot:
-> +Enable all ACPI_DB_INFO messages after boot::
->  
->      # echo 0x4 > /sys/module/acpi/parameters/debug_level
->  
-> -Show all valid component values:
-> +Show all valid component values::
->   
->      # cat /sys/module/acpi/parameters/debug_layer
-> diff --git a/Documentation/firmware-guide/acpi/index.rst b/Documentation/firmware-guide/acpi/index.rst
-> index 6d4e0df4f063..a45fea11f998 100644
-> --- a/Documentation/firmware-guide/acpi/index.rst
-> +++ b/Documentation/firmware-guide/acpi/index.rst
-> @@ -14,6 +14,7 @@ ACPI Support
->     osi
->     method-customizing
->     DSD-properties-rules
-> +   debug
->     gpio-properties
->     i2c-muxes
-> -   acpi-lid
-> \ No newline at end of file
-> +   acpi-lid
-
-
-
-Thanks,
-Mauro
+Yours,
+Linus Walleij
