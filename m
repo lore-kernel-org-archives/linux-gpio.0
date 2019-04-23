@@ -1,215 +1,325 @@
-From: Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
-	files to *.rst
-Date: Tue, 23 Apr 2019 12:07:38 -0300
-Message-ID: <20190423120738.3be8337e@coco.lan>
-References: <cover.1555938375.git.mchehab+samsung@kernel.org>
-	<cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
-	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
-	<20190423125519.GA7104@redhat.com>
-	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
-	<20190423132100.GB7132@redhat.com>
+From: Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH v4 00/63] Include linux ACPI/PCI/X86 docs into Sphinx TOC tree
+Date: Wed, 24 Apr 2019 00:28:29 +0800
+Message-ID: <20190423162932.21428-1-changbin.du@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20190423132100.GB7132-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, kernel-hardening-ZwoEplunGu1jrUoiu81ncdBPR1lH4CV8@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel@vger.k
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, mchehab+samsung@kernel.org, Changbin Du <changbin.du@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Em Tue, 23 Apr 2019 09:21:00 -0400
-Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> escreveu:
+Hi Corbet and All,
+The kernel now uses Sphinx to generate intelligent and beautiful documentation
+from reStructuredText files. I converted all of the Linux ACPI/PCI/X86 docs to
+reST format in this serias.
 
-> On Tue, Apr 23 2019 at  9:01am -0400,
-> Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrote:
-> 
-> > On Tue, Apr 23, 2019 at 08:55:19AM -0400, Mike Snitzer wrote:  
-> > > On Tue, Apr 23 2019 at  4:31am -0400,
-> > > Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrote:
-> > >   
-> > > > On Mon, Apr 22, 2019 at 10:27:45AM -0300, Mauro Carvalho Chehab wrote:
-> > > >   
-> > > > >  .../{atomic_bitops.txt => atomic_bitops.rst}  |  2 +  
-> > > > 
-> > > > What's happend to atomic_t.txt, also NAK, I still occationally touch
-> > > > these files.  
-> > > 
-> > > Seems Mauro's point is in the future we need to touch these .rst files
-> > > in terms of ReST compatible changes.
-> > > 
-> > > I'm dreading DM documentation changes in the future.. despite Mauro and
-> > > Jon Corbet informing me that ReST is simple, etc.  
+In this version I combined ACPI and PCI docs, and added new x86 docs conversion.
 
-ReST is simple[1], and neither Jon or me wants to burden developers to
-use complex documents all over the Kernel tree. ReST is just a way to 
-make the documents with similar visual. The main advantage of ReST is
-that documents can be better organized, as they will be inside some
-index.rst file.
+The hieararchy of ACPI docs are based on Corbet's suggestion:
+https://lkml.org/lkml/2019/4/3/1047
+I did some adjustment according to the content and finally they are placed as:
+Documentation/firmware-guide/acpi/
+├── acpi-lid.rst
+├── aml-debugger.rst
+├── apei
+│   ├── einj.rst
+│   └── output_format.rst
+├── debug.rst
+├── dsd
+│   ├── data-node-references.rst
+│   └── graph.rst
+├── DSD-properties-rules.rst
+├── enumeration.rst
+├── gpio-properties.rst
+├── i2c-muxes.rst
+├── lpit.rst
+├── method-customizing.rst
+├── method-tracing.rst
+├── namespace.rst
+├── osi.rst
+└── video_extension.rst
+Documentation/driver-api/acpi/
+├── linuxized-acpica.rst
+└── scan_handlers.rst
+ocumentation/admin-guide/acpi/
+├── cppc_sysfs.rst
+├── dsdt-override.rst
+├── initrd_table_override.rst
+└── ssdt-overlays.rst
 
-[1] Ok, as any document, you could write an easy or hard to read stuff.
-The way we're using on most places is to be just a coding style with
-benefits. I wrote a quick 101 guide to ReST at the end, with all you
-probably need to know about it.
+The PCI docs are all put into driver API guide.
+The X86 docs are all put into Architecture-specific documentation.
 
-So, for example, in the specific case of atomic_bitops, all it takes for
-it to be parsed by Sphinx is to rename it to .rst. With that, it can be
-added into an index.rst file, like at Documentation/driver-api/index.rst.
+For you to preview, please visit below url:
+http://www.bytemem.com:8080/kernel-doc/index.html
 
-The document, as is, will be displayed like this:
-
-	https://www.infradead.org/~mchehab/rst_conversion/driver-api/atomic_bitops.html?highlight=atomic_t
-
-And the original text file can also be seen from the output data:
-
-	https://www.infradead.org/~mchehab/rst_conversion/_sources/driver-api/atomic_bitops.rst.txt
-
-> > 
-> > Well, it _can_ be simple, I've seen examples of rst that were not far
-> > from generated HTML contents. And I must give Jon credit for not
-> > accepting that atrocious crap.
-> > 
-> > But yes, I have 0 motivation to learn or abide by rst. It simply doesn't
-> > give me anything in return. There is no upside, only worse text files :/  
-> 
-> Right, but these changes aren't meant for our benefit.  They are for
-> users who get cleaner web accessible Linux kernel docs.  Seems the
-> decision has been made that the users' benefit, and broader
-> modernization of Linux docs, outweighs the inconvenience for engineers
-> who maintain the content of said documentation.
-
-> This kind of thing happens a lot these days: pile on engineers, they can
-> take it :/
-
-Yes, that's the main goal: ensure that more people will see the
-documents and write less crappy code. So, overall, reducing the
-time we spent with reviews of bad code.
+Thank you!
 
 
-----
+Changbin Du (63):
+  Documentation: add Linux ACPI to Sphinx TOC tree
+  Documentation: ACPI: move namespace.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move enumeration.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move osi.txt to firmware-guide/acpi and convert
+    to reST
+  Documentation: ACPI: move linuxized-acpica.txt to driver-api/acpi and
+    convert to  reST
+  Documentation: ACPI: move scan_handlers.txt to driver-api/acpi and
+    convert to reST
+  Documentation: ACPI: move DSD-properties-rules.txt to
+    firmware-guide/acpi and covert to reST
+  Documentation: ACPI: move gpio-properties.txt to firmware-guide/acpi
+    and convert to reST
+  Documentation: ACPI: move method-customizing.txt to
+    firmware-guide/acpi and convert to reST
+  Documentation: ACPI: move initrd_table_override.txt to
+    admin-guide/acpi and convert to reST
+  Documentation: ACPI: move dsdt-override.txt to admin-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move i2c-muxes.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move acpi-lid.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move dsd/graph.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move dsd/data-node-references.txt to
+    firmware-guide/acpi and convert to reST
+  Documentation: ACPI: move debug.txt to firmware-guide/acpi and convert
+    to reST
+  Documentation: ACPI: move method-tracing.txt to firmware-guide/acpi
+    and convert to rsST
+  Documentation: ACPI: move aml-debugger.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move apei/output_format.txt to
+    firmware-guide/acpi and convert to reST
+  Documentation: ACPI: move apei/einj.txt to firmware-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move cppc_sysfs.txt to admin-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move lpit.txt to firmware-guide/acpi and convert
+    to reST
+  Documentation: ACPI: move ssdt-overlays.txt to admin-guide/acpi and
+    convert to reST
+  Documentation: ACPI: move video_extension.txt to firmware-guide/acpi
+    and convert to reST
+  Documentation: add Linux PCI to Sphinx TOC tree
+  Documentation: PCI: convert pci.txt to reST
+  Documentation: PCI: convert PCIEBUS-HOWTO.txt to reST
+  Documentation: PCI: convert pci-iov-howto.txt to reST
+  Documentation: PCI: convert MSI-HOWTO.txt to reST
+  Documentation: PCI: convert acpi-info.txt to reST
+  Documentation: PCI: convert pci-error-recovery.txt to reST
+  Documentation: PCI: convert pcieaer-howto.txt to reST
+  Documentation: PCI: convert endpoint/pci-endpoint.txt to reST
+  Documentation: PCI: convert endpoint/pci-endpoint-cfs.txt to reST
+  Documentation: PCI: convert endpoint/pci-test-function.txt to reST
+  Documentation: PCI: convert endpoint/pci-test-howto.txt to reST
+  Documentation: add Linux x86 docs to Sphinx TOC tree
+  Documentation: x86: convert boot.txt to reST
+  Documentation: x86: convert topology.txt to reST
+  Documentation: x86: convert exception-tables.txt to reST
+  Documentation: x86: convert kernel-stacks to reST
+  Documentation: x86: convert entry_64.txt to reST
+  Documentation: x86: convert earlyprintk.txt to reST
+  Documentation: x86: convert zero-page.txt to reST
+  Documentation: x86: convert tlb.txt to reST
+  Documentation: x86: convert mtrr.txt to reST
+  Documentation: x86: convert pat.txt to reST
+  Documentation: x86: convert protection-keys.txt to reST
+  Documentation: x86: convert intel_mpx.txt to reST
+  Documentation: x86: convert amd-memory-encryption.txt to reST
+  Documentation: x86: convert pti.txt to reST
+  Documentation: x86: convert microcode.txt to reST
+  Documentation: x86: convert resctrl_ui.txt to reST
+  Documentation: x86: convert orc-unwinder.txt to reST
+  Documentation: x86: convert usb-legacy-support.txt to reST
+  Documentation: x86: convert i386/IO-APIC.txt to reST
+  Documentation: x86: convert x86_64/boot-options.txt to reST
+  Documentation: x86: convert x86_64/uefi.txt to reST
+  Documentation: x86: convert x86_64/mm.txt to reST
+  Documentation: x86: convert x86_64/5level-paging.txt to reST
+  Documentation: x86: convert x86_64/fake-numa-for-cpusets to reST
+  Documentation: x86: convert x86_64/cpu-hotplug-spec to reST
+  Documentation: x86: convert x86_64/machinecheck to reST
 
-=================================
-My 101 ReST quick reference guide
-=================================
+ .../PCI/{MSI-HOWTO.txt => MSI-HOWTO.rst}      |   83 +-
+ .../{PCIEBUS-HOWTO.txt => PCIEBUS-HOWTO.rst}  |  140 +-
+ .../PCI/{acpi-info.txt => acpi-info.rst}      |   11 +-
+ Documentation/PCI/endpoint/index.rst          |   13 +
+ ...-endpoint-cfs.txt => pci-endpoint-cfs.rst} |   99 +-
+ .../{pci-endpoint.txt => pci-endpoint.rst}    |   95 +-
+ ...est-function.txt => pci-test-function.rst} |   32 +-
+ ...{pci-test-howto.txt => pci-test-howto.rst} |   81 +-
+ Documentation/PCI/index.rst                   |   18 +
+ ...or-recovery.txt => pci-error-recovery.rst} |  178 +--
+ .../{pci-iov-howto.txt => pci-iov-howto.rst}  |  161 ++-
+ Documentation/PCI/{pci.txt => pci.rst}        |  267 ++--
+ .../{pcieaer-howto.txt => pcieaer-howto.rst}  |  110 +-
+ Documentation/acpi/aml-debugger.txt           |   66 -
+ Documentation/acpi/apei/output_format.txt     |  147 --
+ Documentation/acpi/i2c-muxes.txt              |   58 -
+ Documentation/acpi/initrd_table_override.txt  |  111 --
+ Documentation/acpi/method-customizing.txt     |   73 -
+ Documentation/acpi/method-tracing.txt         |  192 ---
+ Documentation/acpi/ssdt-overlays.txt          |  172 ---
+ .../acpi/cppc_sysfs.rst}                      |   71 +-
+ .../acpi/dsdt-override.rst}                   |    8 +-
+ Documentation/admin-guide/acpi/index.rst      |   14 +
+ .../acpi/initrd_table_override.rst            |  120 ++
+ .../admin-guide/acpi/ssdt-overlays.rst        |  180 +++
+ Documentation/admin-guide/index.rst           |    1 +
+ Documentation/driver-api/acpi/index.rst       |    9 +
+ .../acpi/linuxized-acpica.rst}                |  115 +-
+ .../acpi/scan_handlers.rst}                   |   24 +-
+ Documentation/driver-api/index.rst            |    1 +
+ .../acpi/DSD-properties-rules.rst}            |   21 +-
+ .../acpi/acpi-lid.rst}                        |   48 +-
+ .../firmware-guide/acpi/aml-debugger.rst      |   75 +
+ .../acpi/apei/einj.rst}                       |   98 +-
+ .../acpi/apei/output_format.rst               |  150 ++
+ .../acpi/debug.rst}                           |   31 +-
+ .../acpi/dsd/data-node-references.rst}        |   28 +-
+ .../acpi/dsd/graph.rst}                       |  157 +--
+ .../acpi/enumeration.rst}                     |  135 +-
+ .../acpi/gpio-properties.rst}                 |   78 +-
+ .../firmware-guide/acpi/i2c-muxes.rst         |   61 +
+ Documentation/firmware-guide/acpi/index.rst   |   26 +
+ .../lpit.txt => firmware-guide/acpi/lpit.rst} |   18 +-
+ .../acpi/method-customizing.rst               |   82 ++
+ .../firmware-guide/acpi/method-tracing.rst    |  225 +++
+ .../acpi/namespace.rst}                       |  310 +++--
+ .../osi.txt => firmware-guide/acpi/osi.rst}   |   15 +-
+ .../acpi/video_extension.rst}                 |   63 +-
+ Documentation/firmware-guide/index.rst        |   13 +
+ Documentation/index.rst                       |   12 +
+ ...cryption.txt => amd-memory-encryption.rst} |   13 +-
+ Documentation/x86/boot.rst                    | 1205 +++++++++++++++++
+ Documentation/x86/boot.txt                    | 1130 ----------------
+ Documentation/x86/earlyprintk.rst             |  148 ++
+ Documentation/x86/earlyprintk.txt             |  141 --
+ .../x86/{entry_64.txt => entry_64.rst}        |   12 +-
+ ...eption-tables.txt => exception-tables.rst} |  231 ++--
+ .../x86/i386/{IO-APIC.txt => IO-APIC.rst}     |   26 +-
+ Documentation/x86/i386/index.rst              |   10 +
+ Documentation/x86/index.rst                   |   30 +
+ .../x86/{intel_mpx.txt => intel_mpx.rst}      |  120 +-
+ .../x86/{kernel-stacks => kernel-stacks.rst}  |   20 +-
+ .../x86/{microcode.txt => microcode.rst}      |   62 +-
+ Documentation/x86/mtrr.rst                    |  350 +++++
+ Documentation/x86/mtrr.txt                    |  329 -----
+ .../{orc-unwinder.txt => orc-unwinder.rst}    |   27 +-
+ Documentation/x86/pat.rst                     |  235 ++++
+ Documentation/x86/pat.txt                     |  230 ----
+ ...rotection-keys.txt => protection-keys.rst} |   33 +-
+ Documentation/x86/{pti.txt => pti.rst}        |   19 +-
+ .../x86/{resctrl_ui.txt => resctrl_ui.rst}    |  913 +++++++------
+ Documentation/x86/{tlb.txt => tlb.rst}        |   30 +-
+ Documentation/x86/topology.rst                |  228 ++++
+ Documentation/x86/topology.txt                |  217 ---
+ ...acy-support.txt => usb-legacy-support.rst} |    8 +-
+ .../{5level-paging.txt => 5level-paging.rst}  |   16 +-
+ Documentation/x86/x86_64/boot-options.rst     |  327 +++++
+ Documentation/x86/x86_64/boot-options.txt     |  278 ----
+ ...{cpu-hotplug-spec => cpu-hotplug-spec.rst} |    5 +-
+ ...-for-cpusets => fake-numa-for-cpusets.rst} |   18 +-
+ Documentation/x86/x86_64/index.rst            |   16 +
+ .../x86_64/{machinecheck => machinecheck.rst} |   11 +-
+ Documentation/x86/x86_64/mm.rst               |  161 +++
+ Documentation/x86/x86_64/mm.txt               |  153 ---
+ .../x86/x86_64/{uefi.txt => uefi.rst}         |   30 +-
+ Documentation/x86/zero-page.rst               |   47 +
+ Documentation/x86/zero-page.txt               |   40 -
+ MAINTAINERS                                   |    4 +-
+ 88 files changed, 6041 insertions(+), 5128 deletions(-)
+ rename Documentation/PCI/{MSI-HOWTO.txt => MSI-HOWTO.rst} (88%)
+ rename Documentation/PCI/{PCIEBUS-HOWTO.txt => PCIEBUS-HOWTO.rst} (70%)
+ rename Documentation/PCI/{acpi-info.txt => acpi-info.rst} (97%)
+ create mode 100644 Documentation/PCI/endpoint/index.rst
+ rename Documentation/PCI/endpoint/{pci-endpoint-cfs.txt => pci-endpoint-cfs.rst} (64%)
+ rename Documentation/PCI/endpoint/{pci-endpoint.txt => pci-endpoint.rst} (82%)
+ rename Documentation/PCI/endpoint/{pci-test-function.txt => pci-test-function.rst} (84%)
+ rename Documentation/PCI/endpoint/{pci-test-howto.txt => pci-test-howto.rst} (78%)
+ create mode 100644 Documentation/PCI/index.rst
+ rename Documentation/PCI/{pci-error-recovery.txt => pci-error-recovery.rst} (80%)
+ rename Documentation/PCI/{pci-iov-howto.txt => pci-iov-howto.rst} (63%)
+ rename Documentation/PCI/{pci.txt => pci.rst} (78%)
+ rename Documentation/PCI/{pcieaer-howto.txt => pcieaer-howto.rst} (81%)
+ delete mode 100644 Documentation/acpi/aml-debugger.txt
+ delete mode 100644 Documentation/acpi/apei/output_format.txt
+ delete mode 100644 Documentation/acpi/i2c-muxes.txt
+ delete mode 100644 Documentation/acpi/initrd_table_override.txt
+ delete mode 100644 Documentation/acpi/method-customizing.txt
+ delete mode 100644 Documentation/acpi/method-tracing.txt
+ delete mode 100644 Documentation/acpi/ssdt-overlays.txt
+ rename Documentation/{acpi/cppc_sysfs.txt => admin-guide/acpi/cppc_sysfs.rst} (51%)
+ rename Documentation/{acpi/dsdt-override.txt => admin-guide/acpi/dsdt-override.rst} (56%)
+ create mode 100644 Documentation/admin-guide/acpi/index.rst
+ create mode 100644 Documentation/admin-guide/acpi/initrd_table_override.rst
+ create mode 100644 Documentation/admin-guide/acpi/ssdt-overlays.rst
+ create mode 100644 Documentation/driver-api/acpi/index.rst
+ rename Documentation/{acpi/linuxized-acpica.txt => driver-api/acpi/linuxized-acpica.rst} (78%)
+ rename Documentation/{acpi/scan_handlers.txt => driver-api/acpi/scan_handlers.rst} (90%)
+ rename Documentation/{acpi/DSD-properties-rules.txt => firmware-guide/acpi/DSD-properties-rules.rst} (88%)
+ rename Documentation/{acpi/acpi-lid.txt => firmware-guide/acpi/acpi-lid.rst} (77%)
+ create mode 100644 Documentation/firmware-guide/acpi/aml-debugger.rst
+ rename Documentation/{acpi/apei/einj.txt => firmware-guide/acpi/apei/einj.rst} (67%)
+ create mode 100644 Documentation/firmware-guide/acpi/apei/output_format.rst
+ rename Documentation/{acpi/debug.txt => firmware-guide/acpi/debug.rst} (91%)
+ rename Documentation/{acpi/dsd/data-node-references.txt => firmware-guide/acpi/dsd/data-node-references.rst} (79%)
+ rename Documentation/{acpi/dsd/graph.txt => firmware-guide/acpi/dsd/graph.rst} (56%)
+ rename Documentation/{acpi/enumeration.txt => firmware-guide/acpi/enumeration.rst} (87%)
+ rename Documentation/{acpi/gpio-properties.txt => firmware-guide/acpi/gpio-properties.rst} (81%)
+ create mode 100644 Documentation/firmware-guide/acpi/i2c-muxes.rst
+ create mode 100644 Documentation/firmware-guide/acpi/index.rst
+ rename Documentation/{acpi/lpit.txt => firmware-guide/acpi/lpit.rst} (68%)
+ create mode 100644 Documentation/firmware-guide/acpi/method-customizing.rst
+ create mode 100644 Documentation/firmware-guide/acpi/method-tracing.rst
+ rename Documentation/{acpi/namespace.txt => firmware-guide/acpi/namespace.rst} (54%)
+ rename Documentation/{acpi/osi.txt => firmware-guide/acpi/osi.rst} (97%)
+ rename Documentation/{acpi/video_extension.txt => firmware-guide/acpi/video_extension.rst} (79%)
+ create mode 100644 Documentation/firmware-guide/index.rst
+ rename Documentation/x86/{amd-memory-encryption.txt => amd-memory-encryption.rst} (94%)
+ create mode 100644 Documentation/x86/boot.rst
+ delete mode 100644 Documentation/x86/boot.txt
+ create mode 100644 Documentation/x86/earlyprintk.rst
+ delete mode 100644 Documentation/x86/earlyprintk.txt
+ rename Documentation/x86/{entry_64.txt => entry_64.rst} (95%)
+ rename Documentation/x86/{exception-tables.txt => exception-tables.rst} (67%)
+ rename Documentation/x86/i386/{IO-APIC.txt => IO-APIC.rst} (93%)
+ create mode 100644 Documentation/x86/i386/index.rst
+ create mode 100644 Documentation/x86/index.rst
+ rename Documentation/x86/{intel_mpx.txt => intel_mpx.rst} (75%)
+ rename Documentation/x86/{kernel-stacks => kernel-stacks.rst} (92%)
+ rename Documentation/x86/{microcode.txt => microcode.rst} (81%)
+ create mode 100644 Documentation/x86/mtrr.rst
+ delete mode 100644 Documentation/x86/mtrr.txt
+ rename Documentation/x86/{orc-unwinder.txt => orc-unwinder.rst} (93%)
+ create mode 100644 Documentation/x86/pat.rst
+ delete mode 100644 Documentation/x86/pat.txt
+ rename Documentation/x86/{protection-keys.txt => protection-keys.rst} (83%)
+ rename Documentation/x86/{pti.txt => pti.rst} (95%)
+ rename Documentation/x86/{resctrl_ui.txt => resctrl_ui.rst} (68%)
+ rename Documentation/x86/{tlb.txt => tlb.rst} (81%)
+ create mode 100644 Documentation/x86/topology.rst
+ delete mode 100644 Documentation/x86/topology.txt
+ rename Documentation/x86/{usb-legacy-support.txt => usb-legacy-support.rst} (92%)
+ rename Documentation/x86/x86_64/{5level-paging.txt => 5level-paging.rst} (91%)
+ create mode 100644 Documentation/x86/x86_64/boot-options.rst
+ delete mode 100644 Documentation/x86/x86_64/boot-options.txt
+ rename Documentation/x86/x86_64/{cpu-hotplug-spec => cpu-hotplug-spec.rst} (88%)
+ rename Documentation/x86/x86_64/{fake-numa-for-cpusets => fake-numa-for-cpusets.rst} (90%)
+ create mode 100644 Documentation/x86/x86_64/index.rst
+ rename Documentation/x86/x86_64/{machinecheck => machinecheck.rst} (92%)
+ create mode 100644 Documentation/x86/x86_64/mm.rst
+ delete mode 100644 Documentation/x86/x86_64/mm.txt
+ rename Documentation/x86/x86_64/{uefi.txt => uefi.rst} (79%)
+ create mode 100644 Documentation/x86/zero-page.rst
+ delete mode 100644 Documentation/x86/zero-page.txt
 
-Basically, a "quick" ReST guide for those that don't want to learn it
-and like to have an easy to read text document would be
-
-1) to format documents like:
-
-	=========
-	Doc Title
-	=========
-
-	foo chapter
-	===========
-
-	bar section
-	-----------
-
-	foobar sub-section
-	^^^^^^^^^^^^^^^^^^
-
-	foobarzeta sub-sub-section
-	..........................
-
-(the actual character used to mark the titles can be different,
-provided that you use the same character for the same title
-level - the above is just the way *I* use, as it makes easier for
-me to remember the title level).
-
-2) remember that ReST considers new lines with same indentation as
-   belonging to the same paragraph. So,
-
-	foo
-	bar
-
-is identical to:
-
-	foo bar
-
-while
-	foo
-	   bar
-
-will make "foo" bold, and write bar on the next line. So, if you
-want to have them on two separate lines on its output, it should
-be either write it as:
-
-	foo
-
-	bar
-
-or you could use a list:
-
-	- foo
-	- bar
-
-Btw, *a lot* of Kernel documents already have the above format.
-
-3) literal values should be either inside ``foo``, `foo` or on an
-   indented line after a ::, like:
-
-	example::
-
-		# some_command_to_be_typed
-
-If you follow those three simple rules, your document will be properly
-parsed. The above covers 90% of what we normally use.
-
-Tables are also easy to write there, as it recognizes two ways to write
-ascii tables, with are already popular ways to write them.
-
-So, those are valid tables:
-
-Without a title:
-
-	===   ===============
-	foo   foo description
-	bar   bar description
-	===   ===============
-
-
-	+-------+-----------------+
-	| foo   | foo description |
-	+-------+-----------------+
-	| bar   | bar description |
-	+-------+-----------------+
-
-(both will produce exactly the same output)
-
-With a title:
-
-	===== ===============
-	field description
-	===== ===============
-	foo   foo description
-	bar   bar description
-	===   ===============
-
-	+-------+-----------------+
-	| field | description     |
-	+=======+=================+
-	| foo   | foo description |
-	+-------+-----------------+
-	| bar   | bar description |
-	+-------+-----------------+
-
-(both will produce exactly the same output)
-
-This is not too different on what we usually do on documents - except that
-some documents sometimes use UTF8, or a different character set to mark the
-table lines. So the "conversion" is simply to follow one of the above
-styles.
-
-Thanks,
-Mauro
+-- 
+2.20.1
