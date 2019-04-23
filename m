@@ -1,32 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl: pistachio: fix leaked of_node references
-Date: Tue, 23 Apr 2019 12:34:37 +0200
-Message-ID: <CACRpkdaC8rK8CA9QPmmWwEu8UGrfAgxUw73TVUBsj69YKsj0xA@mail.gmail.com>
-References: <1555048943-39589-1-git-send-email-wen.yang99@zte.com.cn> <1555048943-39589-2-git-send-email-wen.yang99@zte.com.cn>
+Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
+Date: Tue, 23 Apr 2019 12:38:17 +0200
+Message-ID: <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
+References: <20190415055358.9269-1-chiu@endlessm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555048943-39589-2-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <20190415055358.9269-1-chiu@endlessm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, wang.yi59@zte.com.cn, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Chris Chiu <chiu@endlessm.com>
+Cc: Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux@endlessm.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 8:01 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
 
-> The call to of_get_child_by_name returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
+> The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
+> responsive after suspend/resume. The following error message
+> shows after resume.
+>  i2c_hid i2c-ELAN1200:00: failed to reset device.
 >
-> Detected by coccinelle with the following warnings:
-> ./drivers/pinctrl/pinctrl-pistachio.c:1422:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1360, but without a corresponding object release within this function.
+> On these laptops, the touchpad interrupt is connected via a GPIO
+> pin which is controlled by Intel pinctrl. After system resumes,
+> the GPIO is in ACPI mode and no longer works as an IRQ.
 >
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+> This commit saves the HOSTSW_OWN value during suspend, make sure
+> the HOSTSW_OWN mode remains the same after resume.
+>
+> Signed-off-by: Chris Chiu <chiu@endlessm.com>
 
-Patch applied.
+This v3 patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
