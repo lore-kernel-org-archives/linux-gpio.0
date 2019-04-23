@@ -1,31 +1,37 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
-Date: Tue, 23 Apr 2019 12:08:16 +0300
-Message-ID: <20190423090816.GN2654@lahna.fi.intel.com>
-References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
- <Ld5HCy5--3-1@tutanota.com>
- <EA207DE8-E89A-427B-B910-A36170A76031@canonical.com>
- <Ld8QGex--3-1@tutanota.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: merrifield: Fix build err without CONFIG_ACPI
+Date: Tue, 23 Apr 2019 11:17:32 +0200
+Message-ID: <CACRpkda_xw2rdzSLcreHnfdwsmUMTR=+BRHJWjrE31COaZhtZw@mail.gmail.com>
+References: <20190405142112.26592-1-yuehaibing@huawei.com> <20190412151911.12084-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Ld8QGex--3-1@tutanota.com>
+In-Reply-To: <20190412151911.12084-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: hotwater438@tutanota.com
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Hdegoede <hdegoede@redhat.com>, Linux Gpio <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 11:00:48AM +0200, hotwater438@tutanota.com wrote:
->    Hi.
-> 
->    Honestly, I can't find any information about my acpi suspend type.
->    There are no options in my BIOS to change it, and I can't determine
->    which exactly I have. But I suppose I have a S3 because I have suspend
->    issue.
-> 
->    Can I somehow determine it in Linux? I did a research but found nothing
->    on the internet.
+On Fri, Apr 12, 2019 at 5:20 PM Yue Haibing <yuehaibing@huawei.com> wrote:
 
-You can read the default mode from /sys/power/mem_sleep. "s2idle" means,
-well suspend-to-idle and "deep" means S3.
+> From: YueHaibing <yuehaibing@huawei.com>
+>
+> When building CONFIG_ACPI is not set
+> gcc warn this:
+>
+> drivers/gpio/gpio-merrifield.c: In function mrfld_gpio_get_pinctrl_dev_name:
+> drivers/gpio/gpio-merrifield.c:388:19: error: dereferencing pointer to incomplete type struct acpi_device
+>    put_device(&adev->dev);
+>                    ^~
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes:d00d2109c367 ("gpio: merrifield: Convert to use acpi_dev_get_first_match_dev()")
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+This doesn't apply cleanly to any GPIO branch (devel or fixes)
+so I assume it is supposed to be applied to the ACPI tree.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
