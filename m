@@ -1,36 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/5] pinctrl: st: fix leaked of_node references
-Date: Tue, 23 Apr 2019 11:02:03 +0200
-Message-ID: <CACRpkdY1Mjg8aL0i5rgrUBpnbhc5sMSsumgogRmSMgSWDvEkoA@mail.gmail.com>
-References: <1555048943-39589-1-git-send-email-wen.yang99@zte.com.cn> <1555048943-39589-4-git-send-email-wen.yang99@zte.com.cn>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 0/5] Add pin package management on STM32P157
+Date: Tue, 23 Apr 2019 11:02:21 +0200
+Message-ID: <096da7b7-4483-84e8-69fb-a6ececfa2296@st.com>
+References: <1554895824-25709-1-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdbRgyfVAZ8taoDAZo+QHYYvzOo3mZC4fosxyz0-X37y0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555048943-39589-4-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <CACRpkdbRgyfVAZ8taoDAZo+QHYYvzOo3mZC4fosxyz0-X37y0Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, wang.yi59@zte.com.cn, Patrice Chotard <patrice.chotard@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 12, 2019 at 8:01 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
 
-> The call to of_get_child_by_name returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
->
-> Detected by coccinelle with the following warnings:
-> ./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-> ./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-> ./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-> ./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
->
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org (open list)
 
-Patch applied with Patrice's review tag.
+On 4/23/19 10:47 AM, Linus Walleij wrote:
+> On Wed, Apr 10, 2019 at 1:31 PM Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+> 
+>> The series adds support of chip packages for STM32MP157 SOC.
+> 
+> Patches 1-4 applied to the pin control tree.
+> Sorry for slowness :(
 
-Yours,
-Linus Walleij
+No pb, thanks Linus. I'll take DT patch in my stm32 tree with your ack.
+
+regards
+Alex
+
+> 
+> Yours,
+> Linus Walleij
+> 
