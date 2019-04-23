@@ -1,32 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 07/14] gpio: thunderx: Use the default parent apis for {request,release}_resources
-Date: Tue, 23 Apr 2019 13:18:34 +0200
-Message-ID: <CACRpkdYB0dHrNe_k4AR+T_wd+jdNnLwhNsX0mQXUDtTNcTZ7MA@mail.gmail.com>
-References: <20190420100950.7997-1-lokeshvutla@ti.com> <20190420100950.7997-8-lokeshvutla@ti.com>
+Subject: Re: [PATCH v2 15/79] docs: gpio: convert docs to ReST and rename to *.rst
+Date: Tue, 23 Apr 2019 13:23:50 +0200
+Message-ID: <CACRpkdY=YurusedRbMDWstJUP4CLUosW0rLetvE=Hkov1Y9HGQ@mail.gmail.com>
+References: <cover.1555938375.git.mchehab+samsung@kernel.org> <03cdacc3db76c5ff984c1507ea6434650d36d822.1555938376.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190420100950.7997-8-lokeshvutla@ti.com>
+In-Reply-To: <03cdacc3db76c5ff984c1507ea6434650d36d822.1555938376.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lokesh Vutla <lokeshvutla@ti.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Device Tree Mailing List <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Apr 20, 2019 at 12:11 PM Lokesh Vutla <lokeshvutla@ti.com> wrote:
+On Mon, Apr 22, 2019 at 3:28 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
 
-> thunderx_gpio_irq_{request,release}_resources apis are trying to
-> {request,release} resources on parent interrupt. There are default
-> apis doing the same. Use the default parent apis instead of writing
-> the same code snippet.
+> The API described at sysfs.txt is deprecated.
 >
-> Cc: linux-gpio@vger.kernel.org
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> Still, as it is still part of the Kernel (and will likely be
+> there for some time, as we don't simply remove APIs). So,
+> it makes sense to keep it there.
+>
+> The conversion of this file is trivial:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - mark a literal block as such.
+>
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-It's fine to apply this to the irqchip tree once the irq maintainers
-are happy.
+Same question as the v1: should I apply it or will you :)
 
 Yours,
 Linus Walleij
