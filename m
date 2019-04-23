@@ -1,78 +1,36 @@
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
-Date: Tue, 23 Apr 2019 17:47:35 +0800
-Message-ID: <3BE5F007-CD9C-486A-90EE-326AAB807D5B@canonical.com>
-References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
- <Ld5HCy5--3-1@tutanota.com>
- <EA207DE8-E89A-427B-B910-A36170A76031@canonical.com>
- <Ld8QGex--3-1@tutanota.com> <20190423090816.GN2654@lahna.fi.intel.com>
- <Ld8ZLG1--3-1@tutanota.com>
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Ld8ZLG1--3-1@tutanota.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: hotwater438@tutanota.com
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Hdegoede <hdegoede@redhat.com>, Linux Gpio <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 3/9] pinctrl: sunxi: Prepare for
+ alternative bias voltage setting methods
+Date: Tue, 23 Apr 2019 12:31:08 +0200
+Message-ID: <CACRpkdaEptvNTQD+uNmX85kMsgSSiPBnkt3Kt-NzoWT_gioeMQ@mail.gmail.com>
+References: <20190413165418.27880-1-megous@megous.com> <20190413165418.27880-4-megous@megous.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDE6RCFOWIARB6OS7PSQKGQE37HGBCA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20190413165418.27880-4-megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org
+Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Giuseppe Cavallaro <peppe.cavallaro-qxv4g6HH51o@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Jose Abreu <joabreu-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-at 17:40, <hotwater438@tutanota.com> <hotwater438@tutanota.com> wrote:
+On Sat, Apr 13, 2019 at 6:54 PM <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org> wrote:
 
-> Hi. Thank's for a hint!
-> So catting this file gives me next content:
-> s2idle [deep]
-
-Which kernel version do you use?
-
-The default switches to s2idle based on FADT flag and _DSM on relative new  
-kernels.
-
-Most systems preload with Windows 8.1 should default to use s2idle.
-
+> From: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
 >
-> So I suppose I have s2idle with deep-mode available?
+> H6 has a different I/O voltage bias setting method than A80. Prepare
+> existing code for using alternative bias voltage setting methods.
 >
-> I've tried to select deep by creating mem_sleep_default file, but I can't  
-> (Permission error).
->
-> Could you explain how do I switch suspend mode in Linux, if you know?
+> Signed-off-by: Ondrej Jirman <megous-5qf/QAjKc83QT0dZR+AlfA@public.gmane.org>
+> Acked-by: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
 
-# echo s2idle > /sys/power/mem_sleep
+This patch applied to the pinctrl tree for v5.2.
 
-> And to be honest, I don't think that's a correct fix of touchpad problem.
-
-If the system defaults to use S2I, then it’s better to stick with it.
-
-Lots of ODM/OEM don’t really test S3.
-
->
-> Can we somehow cut off the power by hands or send a signal to a system to  
-> shut off a touchpad? Or there are no approaches like that?
-
-I don’t think it’s possible.
-
-Kai-Heng
-
->
-> Regards,
-> Vladislav.
->
->
-> Apr 23, 2019, 12:08 PM by mika.westerberg@linux.intel.com:
-> On Tue, Apr 23, 2019 at 11:00:48AM +0200, hotwater438@tutanota.com wrote:
-> Hi.
->
-> Honestly, I can't find any information about my acpi suspend type.
-> There are no options in my BIOS to change it, and I can't determine
-> which exactly I have. But I suppose I have a S3 because I have suspend
-> issue.
->
-> Can I somehow determine it in Linux? I did a research but found nothing
-> on the internet.
->
-> You can read the default mode from /sys/power/mem_sleep. "s2idle" means,
-> well suspend-to-idle and "deep" means S3.
+Yours,
+Linus Walleij
