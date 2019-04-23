@@ -1,37 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/6] ARM: ks8695: move gpio code back into platform
-Date: Tue, 23 Apr 2019 12:44:55 +0200
-Message-ID: <CACRpkdbU3=Jpt=41rfTV4OF6DU8kDLzjTJXqHcifA3A4B7XyKw@mail.gmail.com>
-References: <20190415202501.941196-1-arnd@arndb.de> <20190415202501.941196-4-arnd@arndb.de>
+Subject: Re: [PATCH 15/57] docs: gpio: convert it to ReST
+Date: Tue, 23 Apr 2019 12:52:04 +0200
+Message-ID: <CACRpkdYQeEoyE9sAAo2KZjurx9sH4w+bzM-_-_h6U4w7PeX7eg@mail.gmail.com>
+References: <cover.1555382110.git.mchehab+samsung@kernel.org> <0f2d522a80f96391d3f7b51389d08b4afaedb618.1555382110.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415202501.941196-4-arnd@arndb.de>
+In-Reply-To: <0f2d522a80f96391d3f7b51389d08b4afaedb618.1555382110.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Ungerer <gerg@uclinux.org>, arm-soc <arm@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 10:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Apr 16, 2019 at 4:56 AM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
 
-> Properly splitting this out into a portable driver is
-> hard, as the gpio code tightly interacts with the irqchip
-> code. Give up and move it back to its original location,
-> but make the headers private in the process.
+> The API described at sysfs.txt is deprecated.
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Still, as it is still part of the Kernel (and will likely be
+> there for some time, as we don't simply remove APIs). So,
+> it makes sense to keep it there.
+>
+> The conversion of this file is trivial.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-I bet a million to one it "just" needs to be reworked into a hierarchical
-interrupt controller with the GPIO at the level below the irqchip adding
-level semantics.
-
-I did provide an example of how to do this in the ixp4xx patchset, but
-if you don't have the hardware at hand I would not recommend trying
-it.
-
-With the goal of getting a better build for ARM32 maintenance I
-think this is a lesser evil, so:
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Mauro will you merge this or do you want me to merge it?
 
 Yours,
 Linus Walleij
