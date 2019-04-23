@@ -1,34 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
-Date: Tue, 23 Apr 2019 12:38:17 +0200
-Message-ID: <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
-References: <20190415055358.9269-1-chiu@endlessm.com>
+Subject: Re: [PATCH 4/6] ARM: ks8695: move gpio code back into platform
+Date: Tue, 23 Apr 2019 12:44:55 +0200
+Message-ID: <CACRpkdbU3=Jpt=41rfTV4OF6DU8kDLzjTJXqHcifA3A4B7XyKw@mail.gmail.com>
+References: <20190415202501.941196-1-arnd@arndb.de> <20190415202501.941196-4-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415055358.9269-1-chiu@endlessm.com>
+In-Reply-To: <20190415202501.941196-4-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Andriy Shevchenko <andriy.shevchenko@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux@endlessm.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Ungerer <gerg@uclinux.org>, arm-soc <arm@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
+On Mon, Apr 15, 2019 at 10:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-> The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
-> responsive after suspend/resume. The following error message
-> shows after resume.
->  i2c_hid i2c-ELAN1200:00: failed to reset device.
+> Properly splitting this out into a portable driver is
+> hard, as the gpio code tightly interacts with the irqchip
+> code. Give up and move it back to its original location,
+> but make the headers private in the process.
 >
-> On these laptops, the touchpad interrupt is connected via a GPIO
-> pin which is controlled by Intel pinctrl. After system resumes,
-> the GPIO is in ACPI mode and no longer works as an IRQ.
->
-> This commit saves the HOSTSW_OWN value during suspend, make sure
-> the HOSTSW_OWN mode remains the same after resume.
->
-> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This v3 patch applied with Mika's ACK.
+I bet a million to one it "just" needs to be reworked into a hierarchical
+interrupt controller with the GPIO at the level below the irqchip adding
+level semantics.
+
+I did provide an example of how to do this in the ixp4xx patchset, but
+if you don't have the hardware at hand I would not recommend trying
+it.
+
+With the goal of getting a better build for ARM32 maintenance I
+think this is a lesser evil, so:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
