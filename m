@@ -1,82 +1,31 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v10 01/11] dt-bindings: mfd: add DT bindings for max77650
-Date: Tue, 23 Apr 2019 11:04:41 +0200
-Message-ID: <20190423090451.23711-2-brgl@bgdev.pl>
-References: <20190423090451.23711-1-brgl@bgdev.pl>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
+Date: Tue, 23 Apr 2019 12:08:16 +0300
+Message-ID: <20190423090816.GN2654@lahna.fi.intel.com>
+References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
+ <Ld5HCy5--3-1@tutanota.com>
+ <EA207DE8-E89A-427B-B910-A36170A76031@canonical.com>
+ <Ld8QGex--3-1@tutanota.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190423090451.23711-1-brgl@bgdev.pl>
+Content-Disposition: inline
+In-Reply-To: <Ld8QGex--3-1@tutanota.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh@kernel.org>
+To: hotwater438@tutanota.com
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Hdegoede <hdegoede@redhat.com>, Linux Gpio <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Apr 23, 2019 at 11:00:48AM +0200, hotwater438@tutanota.com wrote:
+>    Hi.
+> 
+>    Honestly, I can't find any information about my acpi suspend type.
+>    There are no options in my BIOS to change it, and I can't determine
+>    which exactly I have. But I suppose I have a S3 because I have suspend
+>    issue.
+> 
+>    Can I somehow determine it in Linux? I did a research but found nothing
+>    on the internet.
 
-Add a DT binding document for max77650 ultra-low power PMIC. This
-describes the core mfd device and the GPIO module.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
-new file mode 100644
-index 000000000000..b529d8d19335
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77650.txt
-@@ -0,0 +1,46 @@
-+MAX77650 ultra low-power PMIC from Maxim Integrated.
-+
-+Required properties:
-+-------------------
-+- compatible:		Must be "maxim,max77650"
-+- reg:			I2C device address.
-+- interrupts:		The interrupt on the parent the controller is
-+			connected to.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells:	Must be <2>.
-+
-+- gpio-controller:	Marks the device node as a gpio controller.
-+- #gpio-cells:		Must be <2>. The first cell is the pin number and
-+			the second cell is used to specify the gpio active
-+			state.
-+
-+Optional properties:
-+--------------------
-+gpio-line-names:	Single string containing the name of the GPIO line.
-+
-+The GPIO-controller module is represented as part of the top-level PMIC
-+node. The device exposes a single GPIO line.
-+
-+For device-tree bindings of other sub-modules (regulator, power supply,
-+LEDs and onkey) refer to the binding documents under the respective
-+sub-system directories.
-+
-+For more details on GPIO bindings, please refer to the generic GPIO DT
-+binding document <devicetree/bindings/gpio/gpio.txt>.
-+
-+Example:
-+--------
-+
-+	pmic@48 {
-+		compatible = "maxim,max77650";
-+		reg = <0x48>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gpio2>;
-+		#interrupt-cells = <2>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "max77650-charger";
-+	};
--- 
-2.21.0
+You can read the default mode from /sys/power/mem_sleep. "s2idle" means,
+well suspend-to-idle and "deep" means S3.
