@@ -1,50 +1,42 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
-Date: Wed, 24 Apr 2019 11:42:59 +0300
-Message-ID: <20190424084259.GW2654@lahna.fi.intel.com>
-References: <cover.1555579429.git.jan.kiszka@siemens.com>
- <c9f40465c6effc7b8efd6cbf8461d71d80c80033.1555579429.git.jan.kiszka@siemens.com>
- <20190424075816.GU2654@lahna.fi.intel.com>
- <8999d3f8-d169-eb85-bd2f-08c99d184ea2@siemens.com>
- <20190424081802.GV2654@lahna.fi.intel.com>
- <5a28f22c-22f7-760a-d076-68ff19800d44@siemens.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v10 00/11] mfd: add support for max77650 PMIC
+Date: Wed, 24 Apr 2019 10:45:00 +0200
+Message-ID: <CAMRc=McN78_gJw_T4EPucM8veTC9XRUu7TGJ0J+zPsU=0Hu2GQ@mail.gmail.com>
+References: <20190423090451.23711-1-brgl@bgdev.pl> <20190424083127.GB6699@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5a28f22c-22f7-760a-d076-68ff19800d44@siemens.com>
+In-Reply-To: <20190424083127.GB6699@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Pavel Machek <pavel@denx.de>, Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 10:25:40AM +0200, Jan Kiszka wrote:
-> On 24.04.19 10:18, Mika Westerberg wrote:
-> > On Wed, Apr 24, 2019 at 10:12:42AM +0200, Jan Kiszka wrote:
-> > > On 24.04.19 09:58, Mika Westerberg wrote:
-> > > > +Rafael and linux-acpi.
-> > > > 
-> > > > On Thu, Apr 18, 2019 at 11:23:49AM +0200, Jan Kiszka wrote:
-> > > > > From: Jan Kiszka <jan.kiszka@siemens.com>
-> > > > > 
-> > > > > Validated on the Quark platform, this adds interrupt support on rising
-> > > > > and/or falling edges.
-> > > > 
-> > > > The irqchip parts look good to me but but the ACPI SCI handling seems
-> > > > weird. This is typically handled by ACPI core based on the values read
-> > > > from FADT ACPI table. What does it contain on this Quark platform?
-> > > 
-> > > There is no FADT on the original Quark firmware, nor did we add one. As we
-> > > are talking about existing devices, possibly not only Quarks, I was going
-> > > down the ACPI-independent way to hook into the interrupt. But I'm open to
-> > > learn about better alternatives.
-> > 
-> > Hmm, if it does not have FADT table why would you need SCI then? Is this
-> > implementing some real use case?
-> > 
-> 
-> Maybe I'm looking at the wrong place: Where would I find it? There is
-> definitely no separate entry under /sys/firmware/acpi/tables - but that's
-> also true for my workstation.
+=C5=9Br., 24 kwi 2019 o 10:31 Pavel Machek <pavel@denx.de> napisa=C5=82(a):
+>
+> On Tue 2019-04-23 11:04:40, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This series adds support for max77650 ultra low-power PMIC. It provides
+> > the core mfd driver and a set of five sub-drivers for the regulator,
+> > power supply, gpio, leds and input subsystems.
+> >
+> > Patches 1-4 add the DT binding documents. Patch 5 documents mfd_add_dev=
+ices().
+> > Patches 6-10 add all drivers. Last patch adds a MAINTAINERS entry for t=
+his
+> > device.
+> >
+> > The regulator part is already upstream.
+>
+> I see v10 in my inbox... and acks from all over the place, but patches
+> not going in. Who takes these? I don't think I need another 10
+> versions in my inbox...
+>                                                                 Pavel
 
-The table signature and name is FACP for historical reasons.
+I think Lee Jones should take them through the MFD tree. With the ack
+from Sebastian Reichel on the driver part and the example in the
+charger binding fixed I think they are ready to be picked up.
+
+Bart
