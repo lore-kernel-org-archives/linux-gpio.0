@@ -1,87 +1,215 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 091/168] genirq: Respect IRQCHIP_SKIP_SET_WAKE in
- irq_chip_set_wake_parent()
-Date: Wed, 24 Apr 2019 19:08:55 +0200
-Message-ID: <20190424170929.132107872@linuxfoundation.org>
-References: <20190424170923.452349382@linuxfoundation.org>
+From: Changbin Du <changbin.du@gmail.com>
+Subject: Re: [PATCH v4 21/63] Documentation: ACPI: move cppc_sysfs.txt to
+ admin-guide/acpi and convert to reST
+Date: Thu, 25 Apr 2019 01:22:34 +0800
+Message-ID: <20190424172232.qtzogm6sweaa4gva@mail.google.com>
+References: <20190423162932.21428-1-changbin.du@gmail.com>
+ <20190423162932.21428-22-changbin.du@gmail.com>
+ <20190424114844.5de4cfa5@coco.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190424170923.452349382@linuxfoundation.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+Content-Disposition: inline
+In-Reply-To: <20190424114844.5de4cfa5@coco.lan>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: fenghua.yu@intel.com, x86@kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, rjw@rjwysocki.net, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, mingo@redhat.com, Bjorn Helgaas <bhelgaas@google.com>, tglx@linutronix.de, linuxppc-dev@lists.ozlabs.org, Changbin Du <changbin.du@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+On Wed, Apr 24, 2019 at 11:48:44AM -0300, Mauro Carvalho Chehab wrote:
+> Em Wed, 24 Apr 2019 00:28:50 +0800
+> Changbin Du <changbin.du@gmail.com> escreveu:
+> 
+> > This converts the plain text documentation to reStructuredText format and
+> > add it to Sphinx TOC tree. No essential content change.
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > ---
+> >  .../acpi/cppc_sysfs.rst}                      | 71 ++++++++++---------
+> >  Documentation/admin-guide/acpi/index.rst      |  1 +
+> >  2 files changed, 40 insertions(+), 32 deletions(-)
+> >  rename Documentation/{acpi/cppc_sysfs.txt => admin-guide/acpi/cppc_sysfs.rst} (51%)
+> > 
+> > diff --git a/Documentation/acpi/cppc_sysfs.txt b/Documentation/admin-guide/acpi/cppc_sysfs.rst
+> > similarity index 51%
+> > rename from Documentation/acpi/cppc_sysfs.txt
+> > rename to Documentation/admin-guide/acpi/cppc_sysfs.rst
+> > index f20fb445135d..a4b99afbe331 100644
+> > --- a/Documentation/acpi/cppc_sysfs.txt
+> > +++ b/Documentation/admin-guide/acpi/cppc_sysfs.rst
+> > @@ -1,5 +1,11 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> >  
+> > -	Collaborative Processor Performance Control (CPPC)
+> > +==================================================
+> > +Collaborative Processor Performance Control (CPPC)
+> > +==================================================
+> > +
+> > +CPPC
+> > +====
+> >  
+> >  CPPC defined in the ACPI spec describes a mechanism for the OS to manage the
+> >  performance of a logical processor on a contigious and abstract performance
+> > @@ -10,31 +16,28 @@ For more details on CPPC please refer to the ACPI specification at:
+> >  
+> >  http://uefi.org/specifications
+> >  
+> > -Some of the CPPC registers are exposed via sysfs under:
+> > -
+> > -/sys/devices/system/cpu/cpuX/acpi_cppc/
+> > -
+> 
+> 
+> > -for each cpu X
+> 
+> Hmm... removed by mistake?
+>
+I comfirmed that no content removed.
 
-commit 325aa19598e410672175ed50982f902d4e3f31c5 upstream.
+> > +Some of the CPPC registers are exposed via sysfs under::
+> >  
+> > ---------------------------------------------------------------------------------
+> > +  /sys/devices/system/cpu/cpuX/acpi_cppc/
+> 
+> Did you parse this with Sphinx? It doesn't sound a valid ReST construction
+> to my eyes, as:
+> 
+> 1) I've seen some versions of Sphinx to abort with severe errors when 
+>    there's no blank line after the horizontal bar markup;
+> 
+> 2) It will very likely ignore the "::" (I didn't test it myself), as you're
+>    not indenting the horizontal bar. End of indentation will mean the end
+>    of an (empty) literal block.
+> 
+> So, I would stick with:
+> 
+> 
+> 	Some of the CPPC registers are exposed via sysfs under:
+> 
+> 	  /sys/devices/system/cpu/cpuX/acpi_cppc/
+> 
+> 	---------------------------------------------------------------------------------
+> 
+> 	for each cpu X::
+> 
+> 
+> or:
+> 
+> 	Some of the CPPC registers are exposed via sysfs under:
+> 
+> 		/sys/devices/system/cpu/cpuX/acpi_cppc/
+> 
+> 	for each cpu X
+> 
+> 	--------------------------------------------------------------------------------
+> 
+> 	::
+> 
+> (with is closer to the original author's intent)
+> 
+> Same applies to the other similar changes on this document.
+>
+I didn't seen any warning here and the generated html is good. So I think it is
+ok.
 
-If a child irqchip calls irq_chip_set_wake_parent() but its parent irqchip
-has the IRQCHIP_SKIP_SET_WAKE flag set an error is returned.
+> >  
+> > -$ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
+> > -/sys/devices/system/cpu/cpu0/acpi_cppc/:
+> > -total 0
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_perf
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 nominal_freq
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 nominal_perf
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 reference_perf
+> > --r--r--r-- 1 root root 65536 Mar  5 19:38 wraparound_time
+> > +for each cpu X::
+> >  
+> > ---------------------------------------------------------------------------------
+> > +  $ ls -lR  /sys/devices/system/cpu/cpu0/acpi_cppc/
+> > +  /sys/devices/system/cpu/cpu0/acpi_cppc/:
+> > +  total 0
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 feedback_ctrs
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 highest_perf
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_freq
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_nonlinear_perf
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 lowest_perf
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 nominal_freq
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 nominal_perf
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 reference_perf
+> > +  -r--r--r-- 1 root root 65536 Mar  5 19:38 wraparound_time
+> >  
+> >  * highest_perf : Highest performance of this processor (abstract scale).
+> > -* nominal_perf : Highest sustained performance of this processor (abstract scale).
+> > +* nominal_perf : Highest sustained performance of this processor
+> > +  (abstract scale).
+> >  * lowest_nonlinear_perf : Lowest performance of this processor with nonlinear
+> >    power savings (abstract scale).
+> >  * lowest_perf : Lowest performance of this processor (abstract scale).
+> > @@ -48,22 +51,26 @@ total 0
+> >  * feedback_ctrs : Includes both Reference and delivered performance counter.
+> >    Reference counter ticks up proportional to processor's reference performance.
+> >    Delivered counter ticks up proportional to processor's delivered performance.
+> > -* wraparound_time: Minimum time for the feedback counters to wraparound (seconds).
+> > +* wraparound_time: Minimum time for the feedback counters to wraparound
+> > +  (seconds).
+> >  * reference_perf : Performance level at which reference performance counter
+> >    accumulates (abstract scale).
+> >  
+> > ---------------------------------------------------------------------------------
+> >  
+> > -		Computing Average Delivered Performance
+> > +Computing Average Delivered Performance
+> > +=======================================
+> > +
+> > +Below describes the steps to compute the average performance delivered by
+> > +taking two different snapshots of feedback counters at time T1 and T2.
+> > +
+> > +  T1: Read feedback_ctrs as fbc_t1
+> > +      Wait or run some workload
+> >  
+> > -Below describes the steps to compute the average performance delivered by taking
+> > -two different snapshots of feedback counters at time T1 and T2.
+> > +  T2: Read feedback_ctrs as fbc_t2
+> >  
+> > -T1: Read feedback_ctrs as fbc_t1
+> > -    Wait or run some workload
+> > -T2: Read feedback_ctrs as fbc_t2
+> > +::
+> >  
+> > -delivered_counter_delta = fbc_t2[del] - fbc_t1[del]
+> > -reference_counter_delta = fbc_t2[ref] - fbc_t1[ref]
+> > +  delivered_counter_delta = fbc_t2[del] - fbc_t1[del]
+> > +  reference_counter_delta = fbc_t2[ref] - fbc_t1[ref]
+> >  
+> > -delivered_perf = (refernce_perf x delivered_counter_delta) / reference_counter_delta
+> > +  delivered_perf = (refernce_perf x delivered_counter_delta) / reference_counter_delta
+> > diff --git a/Documentation/admin-guide/acpi/index.rst b/Documentation/admin-guide/acpi/index.rst
+> > index d68e9914c5ff..9049a7b9f065 100644
+> > --- a/Documentation/admin-guide/acpi/index.rst
+> > +++ b/Documentation/admin-guide/acpi/index.rst
+> > @@ -10,3 +10,4 @@ the Linux ACPI support.
+> >  
+> >     initrd_table_override
+> >     dsdt-override
+> > +   cppc_sysfs
+> 
+> 
+> 
+> Thanks,
+> Mauro
 
-This is inconsistent behaviour vs. set_irq_wake_real() which returns 0 when
-the irqchip has the IRQCHIP_SKIP_SET_WAKE flag set. It doesn't attempt to
-walk the chain of parents and set irq wake on any chips that don't have the
-flag set either. If the intent is to call the .irq_set_wake() callback of
-the parent irqchip, then we expect irqchip implementations to omit the
-IRQCHIP_SKIP_SET_WAKE flag and implement an .irq_set_wake() function that
-calls irq_chip_set_wake_parent().
-
-The problem has been observed on a Qualcomm sdm845 device where set wake
-fails on any GPIO interrupts after applying work in progress wakeup irq
-patches to the GPIO driver. The chain of chips looks like this:
-
-     QCOM GPIO -> QCOM PDC (SKIP) -> ARM GIC (SKIP)
-
-The GPIO controllers parent is the QCOM PDC irqchip which in turn has ARM
-GIC as parent.  The QCOM PDC irqchip has the IRQCHIP_SKIP_SET_WAKE flag
-set, and so does the grandparent ARM GIC.
-
-The GPIO driver doesn't know if the parent needs to set wake or not, so it
-unconditionally calls irq_chip_set_wake_parent() causing this function to
-return a failure because the parent irqchip (PDC) doesn't have the
-.irq_set_wake() callback set. Returning 0 instead makes everything work and
-irqs from the GPIO controller can be configured for wakeup.
-
-Make it consistent by returning 0 (success) from irq_chip_set_wake_parent()
-when a parent chip has IRQCHIP_SKIP_SET_WAKE set.
-
-[ tglx: Massaged changelog ]
-
-Fixes: 08b55e2a9208e ("genirq: Add irqchip_set_wake_parent")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190325181026.247796-1-swboyd@chromium.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/irq/chip.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1056,6 +1056,10 @@ int irq_chip_set_vcpu_affinity_parent(st
- int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
- {
- 	data = data->parent_data;
-+
-+	if (data->chip->flags & IRQCHIP_SKIP_SET_WAKE)
-+		return 0;
-+
- 	if (data->chip->irq_set_wake)
- 		return data->chip->irq_set_wake(data, on);
+-- 
+Cheers,
+Changbin Du
