@@ -1,84 +1,109 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
-Date: Wed, 24 Apr 2019 16:13:57 +0300
-Message-ID: <20190424131357.GJ2654@lahna.fi.intel.com>
-References: <20190424084259.GW2654@lahna.fi.intel.com>
- <7e328b7e-f4f0-851a-4152-a9ffd058201c@siemens.com>
- <20190424094506.GA2654@lahna.fi.intel.com>
- <292e6eff-82cc-6e4d-925b-77a60399e2e0@siemens.com>
- <20190424100130.GB2654@lahna.fi.intel.com>
- <1200464b-f969-ebc2-ae82-1f8ca98aaca1@siemens.com>
- <20190424103306.GC2654@lahna.fi.intel.com>
- <9377620b-d74a-04d9-a51e-8590400b1c0f@siemens.com>
- <20190424104613.GD2654@lahna.fi.intel.com>
- <761ed823-58f4-d166-c415-6b100b1fe615@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] gpio: Fix gpiochip_add_data_with_key() error path
+Date: Wed, 24 Apr 2019 15:59:33 +0200
+Message-ID: <20190424135933.25545-1-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <761ed823-58f4-d166-c415-6b100b1fe615@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 02:41:02PM +0200, Jan Kiszka wrote:
-> On 24.04.19 12:46, Mika Westerberg wrote:
-> > On Wed, Apr 24, 2019 at 12:39:35PM +0200, Jan Kiszka wrote:
-> > > On 24.04.19 12:33, Mika Westerberg wrote:
-> > > > On Wed, Apr 24, 2019 at 12:19:02PM +0200, Jan Kiszka wrote:
-> > > > > > I think what you want is "GPIO signaled ACPI event". It works so that
-> > > > > > you declare _AEI method below the GPIO controller listing the GPIOs you
-> > > > > > want to trigger events for and then either _Lxx, _Exx or _EVT method for
-> > > > > > each of them under the same controller. GPIO core then handles it
-> > > > > > automatically when you register the GPIO chip. See also
-> > > > > > acpi_gpiochip_request_interrupts().
-> > > > > 
-> > > > > Right, that is was I read as well. Let's assume I would be able to patch the
-> > > > > tables: Would I describe all the logic of this patch in ACPI terms? Where to
-> > > > > enable interrupts, how to dispatch the SCI event, how to acknowledge it
-> > > > > etc.? Will it also take care of locking? (BTW, my locking seems to have some
-> > > > > remaining inconsistency, on second look.)
-> > > > 
-> > > > The GPIO core would then take care of it by requesting the GPIO in
-> > > > question and dispatching to the correct event handler. In this patch you
-> > > > just leave out the SCI part and only implement the irqchip like you did
-> > > > already.
-> > > 
-> > > Could you point me to a gpio driver that works like that already? Would be
-> > > easier to learn that from an example. That infrastructure with all its
-> > > different modes is seriously complex and not very well documented.
-> > 
-> > Pretty much all drivers under drivers/pinctrl/intel.
-> 
-> OK... that's a purely descriptive way. So, provided we had such ACPI table
-> entries, that plus some corresponding pinctrl driver would obsolete
-> gpio-sch.c? Or are there other reason than historical ones for having
-> gpio-*ch.c drivers around?
+The err_remove_chip block is too coarse, and may perform cleanup that
+must not be done.  E.g. if of_gpiochip_add() fails, of_gpiochip_remove()
+is still called, causing:
 
-No they are for different hardware. The GPIO core will parse necessary
-ACPI entires when any GPIO driver (with ACPI description) calls
-gpiochip_add_data() or any of the wrappers.
+    OF: ERROR: Bad of_node_put() on /soc/gpio@e6050000
+    CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted 5.1.0-rc2-koelsch+ #407
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    Workqueue: events deferred_probe_work_func
+    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+    [<c07c1224>] (dump_stack) from [<c07c5a80>] (kobject_put+0x94/0xbc)
+    [<c07c5a80>] (kobject_put) from [<c0470420>] (gpiochip_add_data_with_key+0x8d8/0xa3c)
+    [<c0470420>] (gpiochip_add_data_with_key) from [<c0473738>] (gpio_rcar_probe+0x1d4/0x314)
+    [<c0473738>] (gpio_rcar_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
 
-> > > > > And even if that were possible, we would be back to the square of existing
-> > > > > devices without those definitions. If this were a recent chipset, I would
-> > > > > say, "go, fix future firmware versions". But this one is legacy.
-> > > > 
-> > > > Is it fixing some real issue with these legacy platforms? I mean without
-> > > > the patch some GPE event is not handled properly? It was not clear to me
-> > > > from the commit message.
-> > > > 
-> > > Without that patch, you are forced to poll for event changes in your
-> > > application, timer-driven. There are application that cannot process these
-> > > GPIOs because they lack such logic (mraa with node-red-node-intel-gpio is a
-> > > public example).
-> > 
-> > But those are using the GPIOs via sysfs or the char device which should
-> > work without the SCI handling part of your patch, no?
-> 
-> They work via sysfs. How would the char dev compensate the missing interrupt
-> support?
+and later, if a GPIO consumer tries to use a GPIO from a failed
+controller:
 
-I'm trying to say that for the sysfs access (well or char dev) you
-should not need the sch_sci_handler() thing that is in your current
-patch.
+    WARNING: CPU: 0 PID: 1 at lib/refcount.c:156 kobject_get+0x38/0x4c
+    refcount_t: increment on 0; use-after-free.
+    Modules linked in:
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.1.0-rc2-koelsch+ #407
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+    [<c07c1224>] (dump_stack) from [<c0221580>] (__warn+0xd0/0xec)
+    [<c0221580>] (__warn) from [<c02215e0>] (warn_slowpath_fmt+0x44/0x6c)
+    [<c02215e0>] (warn_slowpath_fmt) from [<c07c58fc>] (kobject_get+0x38/0x4c)
+    [<c07c58fc>] (kobject_get) from [<c068b3ec>] (of_node_get+0x14/0x1c)
+    [<c068b3ec>] (of_node_get) from [<c0686f24>] (of_find_node_by_phandle+0xc0/0xf0)
+    [<c0686f24>] (of_find_node_by_phandle) from [<c0686fbc>] (of_phandle_iterator_next+0x68/0x154)
+    [<c0686fbc>] (of_phandle_iterator_next) from [<c0687fe4>] (__of_parse_phandle_with_args+0x40/0xd0)
+    [<c0687fe4>] (__of_parse_phandle_with_args) from [<c0688204>] (of_parse_phandle_with_args_map+0x100/0x3ac)
+    [<c0688204>] (of_parse_phandle_with_args_map) from [<c0471240>] (of_get_named_gpiod_flags+0x38/0x380)
+    [<c0471240>] (of_get_named_gpiod_flags) from [<c046f864>] (gpiod_get_from_of_node+0x24/0xd8)
+    [<c046f864>] (gpiod_get_from_of_node) from [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child+0xa0/0x144)
+    [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child) from [<c05f425c>] (gpio_keys_probe+0x418/0x7bc)
+    [<c05f425c>] (gpio_keys_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
+
+Fix this by splitting the cleanup block, and adding a missing call to
+gpiochip_irqchip_remove().
+
+Fixes: 28355f81969962cf ("gpio: defer probe if pinctrl cannot be found")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+---
+v2:
+  - s/err_free_irqchip_mask/err_free_gpiochip_mask/,
+  - Add Reviewed-by.
+
+---
+ drivers/gpio/gpiolib.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 982845e8212cc4e4..6e825258978f6074 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1379,7 +1379,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
+ 	if (status)
+-		goto err_remove_chip;
++		goto err_free_gpiochip_mask;
+ 
+ 	status = of_gpiochip_add(chip);
+ 	if (status)
+@@ -1387,7 +1387,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	status = gpiochip_init_valid_mask(chip);
+ 	if (status)
+-		goto err_remove_chip;
++		goto err_remove_of_chip;
+ 
+ 	for (i = 0; i < chip->ngpio; i++) {
+ 		struct gpio_desc *desc = &gdev->descs[i];
+@@ -1415,14 +1415,18 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (gpiolib_initialized) {
+ 		status = gpiochip_setup_dev(gdev);
+ 		if (status)
+-			goto err_remove_chip;
++			goto err_remove_acpi_chip;
+ 	}
+ 	return 0;
+ 
+-err_remove_chip:
++err_remove_acpi_chip:
+ 	acpi_gpiochip_remove(chip);
++err_remove_of_chip:
+ 	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
++err_remove_chip:
++	gpiochip_irqchip_remove(chip);
++err_free_gpiochip_mask:
+ 	gpiochip_free_valid_mask(chip);
+ err_remove_irqchip_mask:
+ 	gpiochip_irqchip_free_valid_mask(chip);
+-- 
+2.17.1
