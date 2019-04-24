@@ -1,27 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: stm32: check irq controller availability at probe
-Date: Wed, 24 Apr 2019 12:48:12 +0200
-Message-ID: <CACRpkdZcp5CPL_wX0o0Dreu23Ky11XxbEpkAgU9fRYSeEHO6-w@mail.gmail.com>
-References: <1556093324-1008-1-git-send-email-fabien.dessenne@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/5] Add pinctrl support for BM1880 SoC
+Date: Wed, 24 Apr 2019 17:32:19 +0530
+Message-ID: <20190424120224.22660-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556093324-1008-1-git-send-email-fabien.dessenne@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabien Dessenne <fabien.dessenne@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, haitao.suo@bitmain.com, darren.tsao@bitmain.com, linux-gpio@vger.kernel.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 10:09 AM Fabien Dessenne <fabien.dessenne@st.com> wrote:
+Hello,
 
-> It is not guaranteed that the IRQ controller driver is probed before
-> the pin controller driver gets probed.
-> Considering this, check for the irq domain availability during probe
-> and return EPROBE_DEFER if needed.
->
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+This patchset adds pinctrl support for Bitmain BM1880 SoC and
+Sophon Edge board. BM1880 SoC can only handle pinmux functionality,
+hence the driver has no pinconf support.
 
-Patch applied with Alexandre's ACK!
+This patchset has been tested on 96Boards Sophon Edge board.
 
-Yours,
-Linus Walleij
+Thanks,
+Mani
+
+Manivannan Sadhasivam (5):
+  dt-bindings: pinctrl: Add BM1880 pinctrl binding
+  arm64: dts: bitmain: Add pinctrl support for BM1880 SoC
+  arm64: dts: bitmain: Add UART pinctrl support for Sophon Edge
+  pinctrl: Add pinctrl support for BM1880 SoC
+  MAINTAINERS: Add entry for BM1880 pinctrl
+
+ .../pinctrl/bitmain,bm1880-pinctrl.txt        |  98 ++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/bitmain/bm1880-sophon-edge.dts   |  29 +
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  14 +
+ drivers/pinctrl/Kconfig                       |   7 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-bm1880.c              | 965 ++++++++++++++++++
+ 7 files changed, 1116 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/bitmain,bm1880-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-bm1880.c
+
+-- 
+2.17.1
