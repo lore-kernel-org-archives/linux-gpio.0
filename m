@@ -1,156 +1,247 @@
-From: Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
-	files to *.rst
-Date: Wed, 24 Apr 2019 08:52:09 +0200
-Message-ID: <20190424065209.GC4038@hirez.programming.kicks-ass.net>
-References: <cover.1555938375.git.mchehab+samsung@kernel.org>
-	<cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
-	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
-	<20190423125519.GA7104@redhat.com>
-	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
-	<20190423103053.07cf2149@lwn.net>
-	<20190423171158.GG12232@hirez.programming.kicks-ass.net>
-	<20190423172006.GD16353@zn.tnic> <20190423170409.7b1370ac@coco.lan>
-	<20190423213816.GE16353@zn.tnic>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
+Date: Wed, 24 Apr 2019 10:58:16 +0300
+Message-ID: <20190424075816.GU2654@lahna.fi.intel.com>
+References: <cover.1555579429.git.jan.kiszka@siemens.com>
+ <c9f40465c6effc7b8efd6cbf8461d71d80c80033.1555579429.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190423213816.GE16353-Jj63ApZU6fQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>
-Cc: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+In-Reply-To: <c9f40465c6effc7b8efd6cbf8461d71d80c80033.1555579429.git.jan.kiszka@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 11:38:16PM +0200, Borislav Petkov wrote:
-> If that is all the changes it would need, then I guess that's ok. Btw,
-> those rst-conversion patches don't really show what got changed. Dunno
-> if git can even show that properly. I diffed the two files by hand to
-> see what got changed, see end of mail.
++Rafael and linux-acpi.
 
-That is not a happy diff; that table has gotten waay worse to read due
-to all that extra table crap.
+On Thu, Apr 18, 2019 at 11:23:49AM +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> Validated on the Quark platform, this adds interrupt support on rising
+> and/or falling edges.
 
+The irqchip parts look good to me but but the ACPI SCI handling seems
+weird. This is typically handled by ACPI core based on the values read
+from FADT ACPI table. What does it contain on this Quark platform?
+
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
-> --- mm.old	2019-04-23 23:18:55.954335784 +0200
-> +++ mm.new	2019-04-23 23:18:48.122335821 +0200
-> @@ -18,51 +18,68 @@ Notes:
->     notation than "16 EB", which few will recognize at first sight as 16 exabytes.
->     It also shows it nicely how incredibly large 64-bit address space is.
+>  drivers/gpio/gpio-sch.c | 142 +++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 135 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+> index fb143f28c386..9459f1920996 100644
+> --- a/drivers/gpio/gpio-sch.c
+> +++ b/drivers/gpio/gpio-sch.c
+> @@ -18,12 +18,17 @@
+>  #define GEN	0x00
+>  #define GIO	0x04
+>  #define GLV	0x08
+> +#define GTPE	0x0c
+> +#define GTNE	0x10
+> +#define GGPE	0x14
+> +#define GTS	0x1c
 >  
-> -========================================================================================================================
-> -    Start addr    |   Offset   |     End addr     |  Size   | VM area description
-> -========================================================================================================================
-> -                  |            |                  |         |
-> - 0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm
-> -__________________|____________|__________________|_________|___________________________________________________________
-> -                  |            |                  |         |
-> - 0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical
-> -                  |            |                  |         |     virtual memory addresses up to the -128 TB
-> -                  |            |                  |         |     starting offset of kernel mappings.
-> -__________________|____________|__________________|_________|___________________________________________________________
-> -                                                            |
-> -                                                            | Kernel-space virtual memory, shared between all processes:
-> -____________________________________________________________|___________________________________________________________
-> -                  |            |                  |         |
-> - ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-> - ffff880000000000 | -120    TB | ffff887fffffffff |  0.5 TB | LDT remap for PTI
-> - ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-> - ffffc88000000000 |  -55.5  TB | ffffc8ffffffffff |  0.5 TB | ... unused hole
-> - ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
-> - ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-> - ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-> - ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
-> - ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-> -__________________|____________|__________________|_________|____________________________________________________________
-> -                                                            |
-> -                                                            | Identical layout to the 56-bit one from here on:
-> -____________________________________________________________|____________________________________________________________
-> -                  |            |                  |         |
-> - fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-> -                  |            |                  |         | vaddr_end for KASLR
-> - fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-> - fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-> - ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-> - ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
-> - ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
-> - ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
-> - ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0
-> - ffffffff80000000 |-2048    MB |                  |         |
-> - ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapping space
-> - ffffffffff000000 |  -16    MB |                  |         |
-> -    FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-internal fixmap range, variable size and offset
-> - ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsyscall ABI
-> - ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused hole
-> -__________________|____________|__________________|_________|___________________________________________________________
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|   Start addr    |   Offset   |     End addr     |  Size   | VM area description                                       |
-> ++=================+============+==================+=========+===========================================================+
-> +|                 |            |                  |         |                                                           |
-> +|0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm               |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|                 |            |                  |         |                                                           |
-> +|0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical       |
-> +|                 |            |                  |         | virtual memory addresses up to the -128 TB                |
-> +|                 |            |                  |         | starting offset of kernel mappings.                       |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|                      **Kernel-space virtual memory, shared between all processes:**                                   |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor              |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffff880000000000 | -120    TB | ffff887fffffffff |  0.5 TB | LDT remap for PTI                                         |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)  |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffc88000000000 |  -55.5  TB | ffffc8ffffffffff |  0.5 TB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)                      |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)                         |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory                                       |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|                         **Identical layout to the 56-bit one from here on:**                                          |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole                                           |
-> +|                 |            |                  |         | vaddr_end for KASLR                                       |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping                                    |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks                                         |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space                                  |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0         |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffff80000000 |-2048    MB |                  |         |                                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffffa0000000 |-1536    MB | fffffffffeffffff | 1520 MB | module mapping space                                      |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffffff000000 |  -16    MB |                  |         |                                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|   FIXADDR_START | ~-11    MB | ffffffffff5fffff | ~0.5 MB | kernel-internal fixmap range, variable size and offset    |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffffff600000 |  -10    MB | ffffffffff600fff |    4 kB | legacy vsyscall ABI                                       |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
-> +|ffffffffffe00000 |   -2    MB | ffffffffffffffff |    2 MB | ... unused hole                                           |
-> ++-----------------+------------+------------------+---------+-----------------------------------------------------------+
+>  struct sch_gpio {
+>  	struct gpio_chip chip;
+>  	spinlock_t lock;
+>  	unsigned short iobase;
+>  	unsigned short resume_base;
+> +	int irq_base;
+>  };
+>  
+>  static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
+> @@ -79,10 +84,11 @@ static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned gpio, unsigned reg,
+>  static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+>  {
+>  	struct sch_gpio *sch = gpiochip_get_data(gc);
+> +	unsigned long flags;
+>  
+> -	spin_lock(&sch->lock);
+> +	spin_lock_irqsave(&sch->lock, flags);
+>  	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
+> -	spin_unlock(&sch->lock);
+> +	spin_unlock_irqrestore(&sch->lock, flags);
+>  	return 0;
+>  }
+>  
+> @@ -95,20 +101,22 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+>  static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+>  {
+>  	struct sch_gpio *sch = gpiochip_get_data(gc);
+> +	unsigned long flags;
+>  
+> -	spin_lock(&sch->lock);
+> +	spin_lock_irqsave(&sch->lock, flags);
+>  	sch_gpio_reg_set(sch, gpio_num, GLV, val);
+> -	spin_unlock(&sch->lock);
+> +	spin_unlock_irqrestore(&sch->lock, flags);
+>  }
+>  
+>  static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+>  				  int val)
+>  {
+>  	struct sch_gpio *sch = gpiochip_get_data(gc);
+> +	unsigned long flags;
+>  
+> -	spin_lock(&sch->lock);
+> +	spin_lock_irqsave(&sch->lock, flags);
+>  	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+> -	spin_unlock(&sch->lock);
+> +	spin_unlock_irqrestore(&sch->lock, flags);
+>  
+>  	/*
+>  	 * according to the datasheet, writing to the level register has no
+> @@ -130,6 +138,12 @@ static int sch_gpio_get_direction(struct gpio_chip *gc, unsigned gpio_num)
+>  	return sch_gpio_reg_get(sch, gpio_num, GIO);
+>  }
+>  
+> +static int sch_gpio_to_irq(struct gpio_chip *gpio, unsigned int offset)
+> +{
+> +	struct sch_gpio *sch = gpiochip_get_data(gpio);
+> +	return sch->irq_base + offset;
+> +}
+> +
+>  static const struct gpio_chip sch_gpio_chip = {
+>  	.label			= "sch_gpio",
+>  	.owner			= THIS_MODULE,
+> @@ -138,12 +152,94 @@ static const struct gpio_chip sch_gpio_chip = {
+>  	.direction_output	= sch_gpio_direction_out,
+>  	.set			= sch_gpio_set,
+>  	.get_direction		= sch_gpio_get_direction,
+> +	.to_irq			= sch_gpio_to_irq,
+>  };
+>  
+> +static u32 sch_sci_handler(void *context)
+> +{
+> +	struct sch_gpio *sch = context;
+> +	unsigned long core_status, resume_status;
+> +	unsigned int resume_gpios, offset;
+> +
+> +	core_status = inl(sch->iobase + GTS);
+> +	resume_status = inl(sch->iobase + GTS + 0x20);
+> +
+> +	if (core_status == 0 && resume_status == 0)
+> +		return ACPI_INTERRUPT_NOT_HANDLED;
+> +
+> +	for_each_set_bit(offset, &core_status, sch->resume_base)
+> +		generic_handle_irq(sch->irq_base + offset);
+> +
+> +	resume_gpios = sch->chip.ngpio - sch->resume_base;
+> +	for_each_set_bit(offset, &resume_status, resume_gpios)
+> +		generic_handle_irq(sch->irq_base + sch->resume_base + offset);
+> +
+> +	outl(core_status, sch->iobase + GTS);
+> +	outl(resume_status, sch->iobase + GTS + 0x20);
+> +
+> +	return ACPI_INTERRUPT_HANDLED;
+> +}
+> +
+> +static int sch_irq_type(struct irq_data *d, unsigned int type)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct sch_gpio *sch = gc->private;
+> +	unsigned int gpio_num = d->irq - sch->irq_base;
+> +	int rising = 0;
+> +	int falling = 0;
+> +
+> +	switch (type & IRQ_TYPE_SENSE_MASK) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		rising = 1;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		falling = 1;
+> +		break;
+> +	case IRQ_TYPE_EDGE_BOTH:
+> +		rising = 1;
+> +		falling = 1;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock(&sch->lock);
+> +	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
+> +	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
+> +	spin_unlock(&sch->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static void sch_irq_set_enable(struct irq_data *d, int val)
+> +{
+> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct sch_gpio *sch = gc->private;
+> +	unsigned int gpio_num = d->irq - sch->irq_base;
+> +
+> +	spin_lock(&sch->lock);
+> +	sch_gpio_reg_set(sch, gpio_num, GGPE, val);
+> +	spin_unlock(&sch->lock);
+> +}
+> +
+> +static void sch_irq_mask(struct irq_data *d)
+> +{
+> +	sch_irq_set_enable(d, 0);
+> +}
+> +
+> +static void sch_irq_unmask(struct irq_data *d)
+> +{
+> +	sch_irq_set_enable(d, 1);
+> +}
+> +
+>  static int sch_gpio_probe(struct platform_device *pdev)
+>  {
+> +	struct irq_chip_generic *gc;
+> +	struct irq_chip_type *ct;
+>  	struct sch_gpio *sch;
+>  	struct resource *res;
+> +	acpi_status status;
+> +	int irq_base, ret;
+>  
+>  	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
+>  	if (!sch)
+> @@ -203,7 +299,39 @@ static int sch_gpio_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, sch);
+>  
+> -	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
+> +	ret = devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
+> +	if (ret)
+> +		return ret;
+> +
+> +	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
+> +					NUMA_NO_NODE);
+> +	if (irq_base < 0)
+> +		return irq_base;
+> +	sch->irq_base = irq_base;
+> +
+> +	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
+> +					 NULL, handle_simple_irq);
+> +	if (!gc)
+> +		return -ENOMEM;
+> +
+> +	gc->private = sch;
+> +	ct = gc->chip_types;
+> +
+> +	ct->chip.irq_mask = sch_irq_mask;
+> +	ct->chip.irq_unmask = sch_irq_unmask;
+> +	ct->chip.irq_set_type = sch_irq_type;
+> +
+> +	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
+> +					  IRQ_MSK(sch->chip.ngpio),
+> +					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	status = acpi_install_sci_handler(sch_sci_handler, sch);
+> +	if (ACPI_FAILURE(status))
+> +		return -EINVAL;
+> +
+> +	return 0;
+>  }
+>  
+>  static struct platform_driver sch_gpio_driver = {
+> -- 
+> 2.16.4
