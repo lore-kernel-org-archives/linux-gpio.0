@@ -1,318 +1,81 @@
-From: Changbin Du <changbin.du@gmail.com>
-Subject: Re: [PATCH v4 10/63] Documentation: ACPI: move
- initrd_table_override.txt to admin-guide/acpi and convert to reST
-Date: Thu, 25 Apr 2019 00:33:29 +0800
-Message-ID: <20190424163328.e3ux6opmr47d5ixg@mail.google.com>
-References: <20190423162932.21428-1-changbin.du@gmail.com>
- <20190423162932.21428-11-changbin.du@gmail.com>
- <20190423180734.67c6f470@coco.lan>
+From: Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
+	files to *.rst
+Date: Wed, 24 Apr 2019 13:36:27 -0300
+Message-ID: <20190424133627.63d7beed@coco.lan>
+References: <cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
+	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
+	<20190423125519.GA7104@redhat.com>
+	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
+	<20190423103053.07cf2149@lwn.net>
+	<20190423171158.GG12232@hirez.programming.kicks-ass.net>
+	<20190423172006.GD16353@zn.tnic> <20190423170409.7b1370ac@coco.lan>
+	<20190423213816.GE16353@zn.tnic> <20190423232325.679c100b@coco.lan>
+	<20190424145410.GE30142@zn.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190423180734.67c6f470@coco.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Changbin Du <changbin.du@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20190424145410.GE30142-Jj63ApZU6fQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>
+Cc: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, kernel-hardening-ZwoEplunGu1jrUoiu81ncdBPR1lH4CV8@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-wireless@v
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 06:07:34PM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 24 Apr 2019 00:28:39 +0800
-> Changbin Du <changbin.du@gmail.com> escreveu:
-> 
-> > This converts the plain text documentation to reStructuredText format and
-> > add it to Sphinx TOC tree. No essential content change.
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > ---
-> >  Documentation/acpi/initrd_table_override.txt  | 111 ----------------
-> >  Documentation/admin-guide/acpi/index.rst      |   1 +
-> >  .../acpi/initrd_table_override.rst            | 120 ++++++++++++++++++
-> >  3 files changed, 121 insertions(+), 111 deletions(-)
-> >  delete mode 100644 Documentation/acpi/initrd_table_override.txt
-> >  create mode 100644 Documentation/admin-guide/acpi/initrd_table_override.rst
-> > 
-> > diff --git a/Documentation/acpi/initrd_table_override.txt b/Documentation/acpi/initrd_table_override.txt
-> > deleted file mode 100644
-> > index 30437a6db373..000000000000
-> > --- a/Documentation/acpi/initrd_table_override.txt
-> > +++ /dev/null
-> > @@ -1,111 +0,0 @@
-> > -Upgrading ACPI tables via initrd
-> > -================================
-> > -
-> > -1) Introduction (What is this about)
-> > -2) What is this for
-> > -3) How does it work
-> > -4) References (Where to retrieve userspace tools)
-> > -
-> > -1) What is this about
-> > ----------------------
-> > -
-> > -If the ACPI_TABLE_UPGRADE compile option is true, it is possible to
-> > -upgrade the ACPI execution environment that is defined by the ACPI tables
-> > -via upgrading the ACPI tables provided by the BIOS with an instrumented,
-> > -modified, more recent version one, or installing brand new ACPI tables.
-> > -
-> > -When building initrd with kernel in a single image, option
-> > -ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD should also be true for this
-> > -feature to work.
-> > -
-> > -For a full list of ACPI tables that can be upgraded/installed, take a look
-> > -at the char *table_sigs[MAX_ACPI_SIGNATURE]; definition in
-> > -drivers/acpi/tables.c.
-> > -All ACPI tables iasl (Intel's ACPI compiler and disassembler) knows should
-> > -be overridable, except:
-> > -   - ACPI_SIG_RSDP (has a signature of 6 bytes)
-> > -   - ACPI_SIG_FACS (does not have an ordinary ACPI table header)
-> > -Both could get implemented as well.
-> > -
-> > -
-> > -2) What is this for
-> > --------------------
-> > -
-> > -Complain to your platform/BIOS vendor if you find a bug which is so severe
-> > -that a workaround is not accepted in the Linux kernel. And this facility
-> > -allows you to upgrade the buggy tables before your platform/BIOS vendor
-> > -releases an upgraded BIOS binary.
-> > -
-> > -This facility can be used by platform/BIOS vendors to provide a Linux
-> > -compatible environment without modifying the underlying platform firmware.
-> > -
-> > -This facility also provides a powerful feature to easily debug and test
-> > -ACPI BIOS table compatibility with the Linux kernel by modifying old
-> > -platform provided ACPI tables or inserting new ACPI tables.
-> > -
-> > -It can and should be enabled in any kernel because there is no functional
-> > -change with not instrumented initrds.
-> > -
-> > -
-> > -3) How does it work
-> > --------------------
-> > -
-> > -# Extract the machine's ACPI tables:
-> > -cd /tmp
-> > -acpidump >acpidump
-> > -acpixtract -a acpidump
-> > -# Disassemble, modify and recompile them:
-> > -iasl -d *.dat
-> > -# For example add this statement into a _PRT (PCI Routing Table) function
-> > -# of the DSDT:
-> > -Store("HELLO WORLD", debug)
-> > -# And increase the OEM Revision. For example, before modification:
-> > -DefinitionBlock ("DSDT.aml", "DSDT", 2, "INTEL ", "TEMPLATE", 0x00000000)
-> > -# After modification:
-> > -DefinitionBlock ("DSDT.aml", "DSDT", 2, "INTEL ", "TEMPLATE", 0x00000001)
-> > -iasl -sa dsdt.dsl
-> > -# Add the raw ACPI tables to an uncompressed cpio archive.
-> > -# They must be put into a /kernel/firmware/acpi directory inside the cpio
-> > -# archive. Note that if the table put here matches a platform table
-> > -# (similar Table Signature, and similar OEMID, and similar OEM Table ID)
-> > -# with a more recent OEM Revision, the platform table will be upgraded by
-> > -# this table. If the table put here doesn't match a platform table
-> > -# (dissimilar Table Signature, or dissimilar OEMID, or dissimilar OEM Table
-> > -# ID), this table will be appended.
-> > -mkdir -p kernel/firmware/acpi
-> > -cp dsdt.aml kernel/firmware/acpi
-> > -# A maximum of "NR_ACPI_INITRD_TABLES (64)" tables are currently allowed
-> > -# (see osl.c):
-> > -iasl -sa facp.dsl
-> > -iasl -sa ssdt1.dsl
-> > -cp facp.aml kernel/firmware/acpi
-> > -cp ssdt1.aml kernel/firmware/acpi
-> > -# The uncompressed cpio archive must be the first. Other, typically
-> > -# compressed cpio archives, must be concatenated on top of the uncompressed
-> > -# one. Following command creates the uncompressed cpio archive and
-> > -# concatenates the original initrd on top:
-> > -find kernel | cpio -H newc --create > /boot/instrumented_initrd
-> > -cat /boot/initrd >>/boot/instrumented_initrd
-> > -# reboot with increased acpi debug level, e.g. boot params:
-> > -acpi.debug_level=0x2 acpi.debug_layer=0xFFFFFFFF
-> > -# and check your syslog:
-> > -[    1.268089] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
-> > -[    1.272091] [ACPI Debug]  String [0x0B] "HELLO WORLD"
-> > -
-> > -iasl is able to disassemble and recompile quite a lot different,
-> > -also static ACPI tables.
-> > -
-> > -
-> > -4) Where to retrieve userspace tools
-> > -------------------------------------
-> > -
-> > -iasl and acpixtract are part of Intel's ACPICA project:
-> > -http://acpica.org/
-> > -and should be packaged by distributions (for example in the acpica package
-> > -on SUSE).
-> > -
-> > -acpidump can be found in Len Browns pmtools:
-> > -ftp://kernel.org/pub/linux/kernel/people/lenb/acpi/utils/pmtools/acpidump
-> > -This tool is also part of the acpica package on SUSE.
-> > -Alternatively, used ACPI tables can be retrieved via sysfs in latest kernels:
-> > -/sys/firmware/acpi/tables
-> > diff --git a/Documentation/admin-guide/acpi/index.rst b/Documentation/admin-guide/acpi/index.rst
-> > index 3e041206089d..09e4e81e4fb7 100644
-> > --- a/Documentation/admin-guide/acpi/index.rst
-> > +++ b/Documentation/admin-guide/acpi/index.rst
-> > @@ -8,3 +8,4 @@ the Linux ACPI support.
-> >  .. toctree::
-> >     :maxdepth: 1
-> >  
-> > +   initrd_table_override
-> > diff --git a/Documentation/admin-guide/acpi/initrd_table_override.rst b/Documentation/admin-guide/acpi/initrd_table_override.rst
-> > new file mode 100644
-> > index 000000000000..0787b2b91ded
-> > --- /dev/null
-> > +++ b/Documentation/admin-guide/acpi/initrd_table_override.rst
-> > @@ -0,0 +1,120 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +================================
-> > +Upgrading ACPI tables via initrd
-> > +================================
-> > +
-> > +1) Introduction (What is this about)
-> > +2) What is this for
-> > +3) How does it work
-> > +4) References (Where to retrieve userspace tools)
-> 
-> Hmm... I did the same on my conversion, but IMO, the best would be to
-> hide (or remove, if ACPI maintainers agree) the contents, as this may
-> conflict with the body as people may add new stuff and forget to
-> update it.
-> 
-> So, if ACPI maintainers insist on keeping it, I would code this as:
-> 
-> .. Contents
-> 
->    1) Introduction (What is this about)
->    2) What is this for
->    3) How does it work
->    4) References (Where to retrieve userspace tools)
-> 
-> as this will make this invisible on html/pdf/epub output.
->
-I just removed it. If anyone wants it back, please comment. Thanks.
+Em Wed, 24 Apr 2019 16:54:10 +0200
+Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org> escreveu:
 
-> Anyway, with or without the above change:
+> On Wed, Apr 24, 2019 at 07:40:07AM -0300, Mauro Carvalho Chehab wrote:
+> > Personally, I don't care much with monospaced fonts on this table. After
+> > all, if I want to see it monospaced, I can simply click at the
+> > "View page source" at the browser, and it will display the file as a
+> > plain old monospaced text file.  
 > 
-> Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> 
-> > +
-> > +1) What is this about
-> > +=====================
-> > +
-> > +If the ACPI_TABLE_UPGRADE compile option is true, it is possible to
-> > +upgrade the ACPI execution environment that is defined by the ACPI tables
-> > +via upgrading the ACPI tables provided by the BIOS with an instrumented,
-> > +modified, more recent version one, or installing brand new ACPI tables.
-> > +
-> > +When building initrd with kernel in a single image, option
-> > +ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD should also be true for this
-> > +feature to work.
-> > +
-> > +For a full list of ACPI tables that can be upgraded/installed, take a look
-> > +at the char `*table_sigs[MAX_ACPI_SIGNATURE];` definition in
-> > +drivers/acpi/tables.c.
-> > +
-> > +All ACPI tables iasl (Intel's ACPI compiler and disassembler) knows should
-> > +be overridable, except:
-> > +
-> > +  - ACPI_SIG_RSDP (has a signature of 6 bytes)
-> > +  - ACPI_SIG_FACS (does not have an ordinary ACPI table header)
-> > +
-> > +Both could get implemented as well.
-> > +
-> > +
-> > +2) What is this for
-> > +===================
-> > +
-> > +Complain to your platform/BIOS vendor if you find a bug which is so severe
-> > +that a workaround is not accepted in the Linux kernel. And this facility
-> > +allows you to upgrade the buggy tables before your platform/BIOS vendor
-> > +releases an upgraded BIOS binary.
-> > +
-> > +This facility can be used by platform/BIOS vendors to provide a Linux
-> > +compatible environment without modifying the underlying platform firmware.
-> > +
-> > +This facility also provides a powerful feature to easily debug and test
-> > +ACPI BIOS table compatibility with the Linux kernel by modifying old
-> > +platform provided ACPI tables or inserting new ACPI tables.
-> > +
-> > +It can and should be enabled in any kernel because there is no functional
-> > +change with not instrumented initrds.
-> > +
-> > +
-> > +3) How does it work
-> > +===================
-> > +::
-> > +
-> > +  # Extract the machine's ACPI tables:
-> > +  cd /tmp
-> > +  acpidump >acpidump
-> > +  acpixtract -a acpidump
-> > +  # Disassemble, modify and recompile them:
-> > +  iasl -d *.dat
-> > +  # For example add this statement into a _PRT (PCI Routing Table) function
-> > +  # of the DSDT:
-> > +  Store("HELLO WORLD", debug)
-> > +  # And increase the OEM Revision. For example, before modification:
-> > +  DefinitionBlock ("DSDT.aml", "DSDT", 2, "INTEL ", "TEMPLATE", 0x00000000)
-> > +  # After modification:
-> > +  DefinitionBlock ("DSDT.aml", "DSDT", 2, "INTEL ", "TEMPLATE", 0x00000001)
-> > +  iasl -sa dsdt.dsl
-> > +  # Add the raw ACPI tables to an uncompressed cpio archive.
-> > +  # They must be put into a /kernel/firmware/acpi directory inside the cpio
-> > +  # archive. Note that if the table put here matches a platform table
-> > +  # (similar Table Signature, and similar OEMID, and similar OEM Table ID)
-> > +  # with a more recent OEM Revision, the platform table will be upgraded by
-> > +  # this table. If the table put here doesn't match a platform table
-> > +  # (dissimilar Table Signature, or dissimilar OEMID, or dissimilar OEM Table
-> > +  # ID), this table will be appended.
-> > +  mkdir -p kernel/firmware/acpi
-> > +  cp dsdt.aml kernel/firmware/acpi
-> > +  # A maximum of "NR_ACPI_INITRD_TABLES (64)" tables are currently allowed
-> > +  # (see osl.c):
-> > +  iasl -sa facp.dsl
-> > +  iasl -sa ssdt1.dsl
-> > +  cp facp.aml kernel/firmware/acpi
-> > +  cp ssdt1.aml kernel/firmware/acpi
-> > +  # The uncompressed cpio archive must be the first. Other, typically
-> > +  # compressed cpio archives, must be concatenated on top of the uncompressed
-> > +  # one. Following command creates the uncompressed cpio archive and
-> > +  # concatenates the original initrd on top:
-> > +  find kernel | cpio -H newc --create > /boot/instrumented_initrd
-> > +  cat /boot/initrd >>/boot/instrumented_initrd
-> > +  # reboot with increased acpi debug level, e.g. boot params:
-> > +  acpi.debug_level=0x2 acpi.debug_layer=0xFFFFFFFF
-> > +  # and check your syslog:
-> > +  [    1.268089] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
-> > +  [    1.272091] [ACPI Debug]  String [0x0B] "HELLO WORLD"
-> > +
-> > +iasl is able to disassemble and recompile quite a lot different,
-> > +also static ACPI tables.
-> > +
-> > +
-> > +4) Where to retrieve userspace tools
-> > +====================================
-> > +
-> > +iasl and acpixtract are part of Intel's ACPICA project:
-> > +http://acpica.org/
-> > +
-> > +and should be packaged by distributions (for example in the acpica package
-> > +on SUSE).
-> > +
-> > +acpidump can be found in Len Browns pmtools:
-> > +ftp://kernel.org/pub/linux/kernel/people/lenb/acpi/utils/pmtools/acpidump
-> > +
-> > +This tool is also part of the acpica package on SUSE.
-> > +Alternatively, used ACPI tables can be retrieved via sysfs in latest kernels:
-> > +/sys/firmware/acpi/tables
-> 
-> 
-> 
-> Thanks,
-> Mauro
+> Goes to show why kernel people wouldn't want to look at that in
+> the browser. Long hex numbers are hard to read as it is - that's
+> why there's even the 4-digit separator in some docs, for example:
+> 0xffff_ffff_8100_0000.
 
--- 
-Cheers,
-Changbin Du
+IMHO, even the 0x and _ would make it harder to read. This is a way
+more easy for my eyes:
+
+	ffff ffff 8100 0000
+
+> Not having it monospaced makes the whole thing even less readable.
+
+Yeah, I see your point and agree with it.
+
+Just saying that, if all I want is to check if addresses that start
+with ffff80 belongs to the guard hole, or just to copy a value from 
+a table into some C code, the font doesn't matter much, and, if
+I care, a simple click would show it in monospaced fonts.
+
+Looking from your PoV, something like:
+
+
+|ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0         |
+
+
+is very hard to be parsed by a human eye, even with monospaced fonts.
+In order to make it easier, I would replace it by:
+
+|ffff ffff 8000 0000 |   -2    GB | ffff ffff 9fff ffff |  512 MB | kernel text mapping, mapped to physical address 0         |
+
+
+> 
+> That's why it is important for the markup not to get in the way of
+> people looking at those files in an editor.
+
+Fully agreed. the markups should make things easier and not
+harder for people to read its contents.
+
+Thanks,
+Mauro
