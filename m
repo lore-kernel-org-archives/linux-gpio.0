@@ -1,53 +1,414 @@
-From: Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
-	files to *.rst
-Date: Wed, 24 Apr 2019 16:54:10 +0200
-Message-ID: <20190424145410.GE30142@zn.tnic>
-References: <cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
-	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
-	<20190423125519.GA7104@redhat.com>
-	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
-	<20190423103053.07cf2149@lwn.net>
-	<20190423171158.GG12232@hirez.programming.kicks-ass.net>
-	<20190423172006.GD16353@zn.tnic> <20190423170409.7b1370ac@coco.lan>
-	<20190423213816.GE16353@zn.tnic> <20190423232325.679c100b@coco.lan>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH v4 23/63] Documentation: ACPI: move ssdt-overlays.txt to
+ admin-guide/acpi and convert to reST
+Date: Wed, 24 Apr 2019 11:51:03 -0300
+Message-ID: <20190424115103.554268cf@coco.lan>
+References: <20190423162932.21428-1-changbin.du@gmail.com>
+        <20190423162932.21428-24-changbin.du@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190423232325.679c100b-qA1ZUp+OV9c@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, kernel-hardening-ZwoEplunGu1jrUoiu81ncdBPR1lH4CV8@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-wireless@v
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190423162932.21428-24-changbin.du@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Changbin Du <changbin.du@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 07:40:07AM -0300, Mauro Carvalho Chehab wrote:
-> Personally, I don't care much with monospaced fonts on this table. After
-> all, if I want to see it monospaced, I can simply click at the
-> "View page source" at the browser, and it will display the file as a
-> plain old monospaced text file.
+Em Wed, 24 Apr 2019 00:28:52 +0800
+Changbin Du <changbin.du@gmail.com> escreveu:
 
-Goes to show why kernel people wouldn't want to look at that in
-the browser. Long hex numbers are hard to read as it is - that's
-why there's even the 4-digit separator in some docs, for example:
-0xffff_ffff_8100_0000.
+> This converts the plain text documentation to reStructuredText format and
+> add it to Sphinx TOC tree. No essential content change.
+> 
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
 
-Not having it monospaced makes the whole thing even less readable.
+Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-That's why it is important for the markup not to get in the way of
-people looking at those files in an editor.
+> ---
+>  Documentation/acpi/ssdt-overlays.txt          | 172 -----------------
+>  Documentation/admin-guide/acpi/index.rst      |   1 +
+>  .../admin-guide/acpi/ssdt-overlays.rst        | 180 ++++++++++++++++++
+>  3 files changed, 181 insertions(+), 172 deletions(-)
+>  delete mode 100644 Documentation/acpi/ssdt-overlays.txt
+>  create mode 100644 Documentation/admin-guide/acpi/ssdt-overlays.rst
+> 
+> diff --git a/Documentation/acpi/ssdt-overlays.txt b/Documentation/acpi/ssdt-overlays.txt
+> deleted file mode 100644
+> index 5ae13f161ea2..000000000000
+> --- a/Documentation/acpi/ssdt-overlays.txt
+> +++ /dev/null
+> @@ -1,172 +0,0 @@
+> -
+> -In order to support ACPI open-ended hardware configurations (e.g. development
+> -boards) we need a way to augment the ACPI configuration provided by the firmware
+> -image. A common example is connecting sensors on I2C / SPI buses on development
+> -boards.
+> -
+> -Although this can be accomplished by creating a kernel platform driver or
+> -recompiling the firmware image with updated ACPI tables, neither is practical:
+> -the former proliferates board specific kernel code while the latter requires
+> -access to firmware tools which are often not publicly available.
+> -
+> -Because ACPI supports external references in AML code a more practical
+> -way to augment firmware ACPI configuration is by dynamically loading
+> -user defined SSDT tables that contain the board specific information.
+> -
+> -For example, to enumerate a Bosch BMA222E accelerometer on the I2C bus of the
+> -Minnowboard MAX development board exposed via the LSE connector [1], the
+> -following ASL code can be used:
+> -
+> -DefinitionBlock ("minnowmax.aml", "SSDT", 1, "Vendor", "Accel", 0x00000003)
+> -{
+> -    External (\_SB.I2C6, DeviceObj)
+> -
+> -    Scope (\_SB.I2C6)
+> -    {
+> -        Device (STAC)
+> -        {
+> -            Name (_ADR, Zero)
+> -            Name (_HID, "BMA222E")
+> -
+> -            Method (_CRS, 0, Serialized)
+> -            {
+> -                Name (RBUF, ResourceTemplate ()
+> -                {
+> -                    I2cSerialBus (0x0018, ControllerInitiated, 0x00061A80,
+> -                                  AddressingMode7Bit, "\\_SB.I2C6", 0x00,
+> -                                  ResourceConsumer, ,)
+> -                    GpioInt (Edge, ActiveHigh, Exclusive, PullDown, 0x0000,
+> -                             "\\_SB.GPO2", 0x00, ResourceConsumer, , )
+> -                    { // Pin list
+> -                        0
+> -                    }
+> -                })
+> -                Return (RBUF)
+> -            }
+> -        }
+> -    }
+> -}
+> -
+> -which can then be compiled to AML binary format:
+> -
+> -$ iasl minnowmax.asl
+> -
+> -Intel ACPI Component Architecture
+> -ASL Optimizing Compiler version 20140214-64 [Mar 29 2014]
+> -Copyright (c) 2000 - 2014 Intel Corporation
+> -
+> -ASL Input:     minnomax.asl - 30 lines, 614 bytes, 7 keywords
+> -AML Output:    minnowmax.aml - 165 bytes, 6 named objects, 1 executable opcodes
+> -
+> -[1] http://wiki.minnowboard.org/MinnowBoard_MAX#Low_Speed_Expansion_Connector_.28Top.29
+> -
+> -The resulting AML code can then be loaded by the kernel using one of the methods
+> -below.
+> -
+> -== Loading ACPI SSDTs from initrd ==
+> -
+> -This option allows loading of user defined SSDTs from initrd and it is useful
+> -when the system does not support EFI or when there is not enough EFI storage.
+> -
+> -It works in a similar way with initrd based ACPI tables override/upgrade: SSDT
+> -aml code must be placed in the first, uncompressed, initrd under the
+> -"kernel/firmware/acpi" path. Multiple files can be used and this will translate
+> -in loading multiple tables. Only SSDT and OEM tables are allowed. See
+> -initrd_table_override.txt for more details.
+> -
+> -Here is an example:
+> -
+> -# Add the raw ACPI tables to an uncompressed cpio archive.
+> -# They must be put into a /kernel/firmware/acpi directory inside the
+> -# cpio archive.
+> -# The uncompressed cpio archive must be the first.
+> -# Other, typically compressed cpio archives, must be
+> -# concatenated on top of the uncompressed one.
+> -mkdir -p kernel/firmware/acpi
+> -cp ssdt.aml kernel/firmware/acpi
+> -
+> -# Create the uncompressed cpio archive and concatenate the original initrd
+> -# on top:
+> -find kernel | cpio -H newc --create > /boot/instrumented_initrd
+> -cat /boot/initrd >>/boot/instrumented_initrd
+> -
+> -== Loading ACPI SSDTs from EFI variables ==
+> -
+> -This is the preferred method, when EFI is supported on the platform, because it
+> -allows a persistent, OS independent way of storing the user defined SSDTs. There
+> -is also work underway to implement EFI support for loading user defined SSDTs
+> -and using this method will make it easier to convert to the EFI loading
+> -mechanism when that will arrive.
+> -
+> -In order to load SSDTs from an EFI variable the efivar_ssdt kernel command line
+> -parameter can be used. The argument for the option is the variable name to
+> -use. If there are multiple variables with the same name but with different
+> -vendor GUIDs, all of them will be loaded.
+> -
+> -In order to store the AML code in an EFI variable the efivarfs filesystem can be
+> -used. It is enabled and mounted by default in /sys/firmware/efi/efivars in all
+> -recent distribution.
+> -
+> -Creating a new file in /sys/firmware/efi/efivars will automatically create a new
+> -EFI variable. Updating a file in /sys/firmware/efi/efivars will update the EFI
+> -variable. Please note that the file name needs to be specially formatted as
+> -"Name-GUID" and that the first 4 bytes in the file (little-endian format)
+> -represent the attributes of the EFI variable (see EFI_VARIABLE_MASK in
+> -include/linux/efi.h). Writing to the file must also be done with one write
+> -operation.
+> -
+> -For example, you can use the following bash script to create/update an EFI
+> -variable with the content from a given file:
+> -
+> -#!/bin/sh -e
+> -
+> -while ! [ -z "$1" ]; do
+> -        case "$1" in
+> -        "-f") filename="$2"; shift;;
+> -        "-g") guid="$2"; shift;;
+> -        *) name="$1";;
+> -        esac
+> -        shift
+> -done
+> -
+> -usage()
+> -{
+> -        echo "Syntax: ${0##*/} -f filename [ -g guid ] name"
+> -        exit 1
+> -}
+> -
+> -[ -n "$name" -a -f "$filename" ] || usage
+> -
+> -EFIVARFS="/sys/firmware/efi/efivars"
+> -
+> -[ -d "$EFIVARFS" ] || exit 2
+> -
+> -if stat -tf $EFIVARFS | grep -q -v de5e81e4; then
+> -        mount -t efivarfs none $EFIVARFS
+> -fi
+> -
+> -# try to pick up an existing GUID
+> -[ -n "$guid" ] || guid=$(find "$EFIVARFS" -name "$name-*" | head -n1 | cut -f2- -d-)
+> -
+> -# use a randomly generated GUID
+> -[ -n "$guid" ] || guid="$(cat /proc/sys/kernel/random/uuid)"
+> -
+> -# efivarfs expects all of the data in one write
+> -tmp=$(mktemp)
+> -/bin/echo -ne "\007\000\000\000" | cat - $filename > $tmp
+> -dd if=$tmp of="$EFIVARFS/$name-$guid" bs=$(stat -c %s $tmp)
+> -rm $tmp
+> -
+> -== Loading ACPI SSDTs from configfs ==
+> -
+> -This option allows loading of user defined SSDTs from userspace via the configfs
+> -interface. The CONFIG_ACPI_CONFIGFS option must be select and configfs must be
+> -mounted. In the following examples, we assume that configfs has been mounted in
+> -/config.
+> -
+> -New tables can be loading by creating new directories in /config/acpi/table/ and
+> -writing the SSDT aml code in the aml attribute:
+> -
+> -cd /config/acpi/table
+> -mkdir my_ssdt
+> -cat ~/ssdt.aml > my_ssdt/aml
+> diff --git a/Documentation/admin-guide/acpi/index.rst b/Documentation/admin-guide/acpi/index.rst
+> index 9049a7b9f065..4d13eeea1eca 100644
+> --- a/Documentation/admin-guide/acpi/index.rst
+> +++ b/Documentation/admin-guide/acpi/index.rst
+> @@ -10,4 +10,5 @@ the Linux ACPI support.
+>  
+>     initrd_table_override
+>     dsdt-override
+> +   ssdt-overlays
+>     cppc_sysfs
+> diff --git a/Documentation/admin-guide/acpi/ssdt-overlays.rst b/Documentation/admin-guide/acpi/ssdt-overlays.rst
+> new file mode 100644
+> index 000000000000..da37455f96c9
+> --- /dev/null
+> +++ b/Documentation/admin-guide/acpi/ssdt-overlays.rst
+> @@ -0,0 +1,180 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=============
+> +SSDT Overlays
+> +=============
+> +
+> +In order to support ACPI open-ended hardware configurations (e.g. development
+> +boards) we need a way to augment the ACPI configuration provided by the firmware
+> +image. A common example is connecting sensors on I2C / SPI buses on development
+> +boards.
+> +
+> +Although this can be accomplished by creating a kernel platform driver or
+> +recompiling the firmware image with updated ACPI tables, neither is practical:
+> +the former proliferates board specific kernel code while the latter requires
+> +access to firmware tools which are often not publicly available.
+> +
+> +Because ACPI supports external references in AML code a more practical
+> +way to augment firmware ACPI configuration is by dynamically loading
+> +user defined SSDT tables that contain the board specific information.
+> +
+> +For example, to enumerate a Bosch BMA222E accelerometer on the I2C bus of the
+> +Minnowboard MAX development board exposed via the LSE connector [1], the
+> +following ASL code can be used::
+> +
+> +    DefinitionBlock ("minnowmax.aml", "SSDT", 1, "Vendor", "Accel", 0x00000003)
+> +    {
+> +        External (\_SB.I2C6, DeviceObj)
+> +
+> +        Scope (\_SB.I2C6)
+> +        {
+> +            Device (STAC)
+> +            {
+> +                Name (_ADR, Zero)
+> +                Name (_HID, "BMA222E")
+> +
+> +                Method (_CRS, 0, Serialized)
+> +                {
+> +                    Name (RBUF, ResourceTemplate ()
+> +                    {
+> +                        I2cSerialBus (0x0018, ControllerInitiated, 0x00061A80,
+> +                                    AddressingMode7Bit, "\\_SB.I2C6", 0x00,
+> +                                    ResourceConsumer, ,)
+> +                        GpioInt (Edge, ActiveHigh, Exclusive, PullDown, 0x0000,
+> +                                "\\_SB.GPO2", 0x00, ResourceConsumer, , )
+> +                        { // Pin list
+> +                            0
+> +                        }
+> +                    })
+> +                    Return (RBUF)
+> +                }
+> +            }
+> +        }
+> +    }
+> +
+> +which can then be compiled to AML binary format::
+> +
+> +    $ iasl minnowmax.asl
+> +
+> +    Intel ACPI Component Architecture
+> +    ASL Optimizing Compiler version 20140214-64 [Mar 29 2014]
+> +    Copyright (c) 2000 - 2014 Intel Corporation
+> +
+> +    ASL Input:     minnomax.asl - 30 lines, 614 bytes, 7 keywords
+> +    AML Output:    minnowmax.aml - 165 bytes, 6 named objects, 1 executable opcodes
+> +
+> +[1] http://wiki.minnowboard.org/MinnowBoard_MAX#Low_Speed_Expansion_Connector_.28Top.29
+> +
+> +The resulting AML code can then be loaded by the kernel using one of the methods
+> +below.
+> +
+> +Loading ACPI SSDTs from initrd
+> +==============================
+> +
+> +This option allows loading of user defined SSDTs from initrd and it is useful
+> +when the system does not support EFI or when there is not enough EFI storage.
+> +
+> +It works in a similar way with initrd based ACPI tables override/upgrade: SSDT
+> +aml code must be placed in the first, uncompressed, initrd under the
+> +"kernel/firmware/acpi" path. Multiple files can be used and this will translate
+> +in loading multiple tables. Only SSDT and OEM tables are allowed. See
+> +initrd_table_override.txt for more details.
+> +
+> +Here is an example::
+> +
+> +    # Add the raw ACPI tables to an uncompressed cpio archive.
+> +    # They must be put into a /kernel/firmware/acpi directory inside the
+> +    # cpio archive.
+> +    # The uncompressed cpio archive must be the first.
+> +    # Other, typically compressed cpio archives, must be
+> +    # concatenated on top of the uncompressed one.
+> +    mkdir -p kernel/firmware/acpi
+> +    cp ssdt.aml kernel/firmware/acpi
+> +
+> +    # Create the uncompressed cpio archive and concatenate the original initrd
+> +    # on top:
+> +    find kernel | cpio -H newc --create > /boot/instrumented_initrd
+> +    cat /boot/initrd >>/boot/instrumented_initrd
+> +
+> +Loading ACPI SSDTs from EFI variables
+> +=====================================
+> +
+> +This is the preferred method, when EFI is supported on the platform, because it
+> +allows a persistent, OS independent way of storing the user defined SSDTs. There
+> +is also work underway to implement EFI support for loading user defined SSDTs
+> +and using this method will make it easier to convert to the EFI loading
+> +mechanism when that will arrive.
+> +
+> +In order to load SSDTs from an EFI variable the efivar_ssdt kernel command line
+> +parameter can be used. The argument for the option is the variable name to
+> +use. If there are multiple variables with the same name but with different
+> +vendor GUIDs, all of them will be loaded.
+> +
+> +In order to store the AML code in an EFI variable the efivarfs filesystem can be
+> +used. It is enabled and mounted by default in /sys/firmware/efi/efivars in all
+> +recent distribution.
+> +
+> +Creating a new file in /sys/firmware/efi/efivars will automatically create a new
+> +EFI variable. Updating a file in /sys/firmware/efi/efivars will update the EFI
+> +variable. Please note that the file name needs to be specially formatted as
+> +"Name-GUID" and that the first 4 bytes in the file (little-endian format)
+> +represent the attributes of the EFI variable (see EFI_VARIABLE_MASK in
+> +include/linux/efi.h). Writing to the file must also be done with one write
+> +operation.
+> +
+> +For example, you can use the following bash script to create/update an EFI
+> +variable with the content from a given file::
+> +
+> +    #!/bin/sh -e
+> +
+> +    while ! [ -z "$1" ]; do
+> +            case "$1" in
+> +            "-f") filename="$2"; shift;;
+> +            "-g") guid="$2"; shift;;
+> +            *) name="$1";;
+> +            esac
+> +            shift
+> +    done
+> +
+> +    usage()
+> +    {
+> +            echo "Syntax: ${0##*/} -f filename [ -g guid ] name"
+> +            exit 1
+> +    }
+> +
+> +    [ -n "$name" -a -f "$filename" ] || usage
+> +
+> +    EFIVARFS="/sys/firmware/efi/efivars"
+> +
+> +    [ -d "$EFIVARFS" ] || exit 2
+> +
+> +    if stat -tf $EFIVARFS | grep -q -v de5e81e4; then
+> +            mount -t efivarfs none $EFIVARFS
+> +    fi
+> +
+> +    # try to pick up an existing GUID
+> +    [ -n "$guid" ] || guid=$(find "$EFIVARFS" -name "$name-*" | head -n1 | cut -f2- -d-)
+> +
+> +    # use a randomly generated GUID
+> +    [ -n "$guid" ] || guid="$(cat /proc/sys/kernel/random/uuid)"
+> +
+> +    # efivarfs expects all of the data in one write
+> +    tmp=$(mktemp)
+> +    /bin/echo -ne "\007\000\000\000" | cat - $filename > $tmp
+> +    dd if=$tmp of="$EFIVARFS/$name-$guid" bs=$(stat -c %s $tmp)
+> +    rm $tmp
+> +
+> +Loading ACPI SSDTs from configfs
+> +================================
+> +
+> +This option allows loading of user defined SSDTs from userspace via the configfs
+> +interface. The CONFIG_ACPI_CONFIGFS option must be select and configfs must be
+> +mounted. In the following examples, we assume that configfs has been mounted in
+> +/config.
+> +
+> +New tables can be loading by creating new directories in /config/acpi/table/ and
+> +writing the SSDT aml code in the aml attribute::
+> +
+> +    cd /config/acpi/table
+> +    mkdir my_ssdt
+> +    cat ~/ssdt.aml > my_ssdt/aml
 
--- 
-Regards/Gruss,
-    Boris.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+
+Thanks,
+Mauro
