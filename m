@@ -1,65 +1,104 @@
-From: Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
-	files to *.rst
-Date: Wed, 24 Apr 2019 11:19:06 +0200
-Message-ID: <20190424091906.GA30142@zn.tnic>
-References: <cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
-	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
-	<20190423125519.GA7104@redhat.com>
-	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
-	<20190423103053.07cf2149@lwn.net>
-	<20190423171158.GG12232@hirez.programming.kicks-ass.net>
-	<20190423172006.GD16353@zn.tnic> <20190423170409.7b1370ac@coco.lan>
-	<20190423213816.GE16353@zn.tnic> <20190423160640.70c9703f@lwn.net>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH] pinctrl: stm32: check irq controller availability at
+ probe
+Date: Wed, 24 Apr 2019 11:29:48 +0200
+Message-ID: <8d65f99f-0874-8012-5e44-3e579cb1f878@st.com>
+References: <1556093324-1008-1-git-send-email-fabien.dessenne@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190423160640.70c9703f-T1hC0tSOHrs@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>
-Cc: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1556093324-1008-1-git-send-email-fabien.dessenne@st.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabien Dessenne <fabien.dessenne@st.com>, Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 04:06:40PM -0600, Jonathan Corbet wrote:
-> Remember that most of our docs are 99% RST even though they were written
-> by people who had never even heard of RST.  I really don't think it's a
-> big deal - a far smaller cognitive load than trying to keep up with any
-> given subsystem's variable-declaration-ordering rules, for example :)
 
-Tztztz, this thing seems to have hit a nerve with people. Which means, I
-will enforce that even more now so that I annoy submitters more! :-P
 
-See, I can do my own "RST" too. :-P
+On 4/24/19 10:08 AM, Fabien Dessenne wrote:
+> It is not guaranteed that the IRQ controller driver is probed before
+> the pin controller driver gets probed.
+> Considering this, check for the irq domain availability during probe
+> and return EPROBE_DEFER if needed.
+> 
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
 
-Srsly: ok, good. Sounds like we're on the same page then.
 
->  I'm trying to do the same in Documentation/, with an attempt to be
-> sympathetic toward our readers, sort things by intended audience,
-> and create (someday) a coherent whole. I agree that moving docs is
-> a short-term annoyance, but I'm hoping that it brings a long-term
-> benefit.
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-Ok, that's fair. I've been moving files too, in the past.
-
-> Minimal markup is the policy (it's even documented :).  Automating stuff
-> that can be automated is an area that has definitely not received
-> enough attention; hopefully some things can be done there in the very
-> near future.
-
-Sounds nice, thanks Jon!
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+>   drivers/pinctrl/stm32/pinctrl-stm32.c | 37 +++++++++++++++++++++++++----------
+>   1 file changed, 27 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index 0aebc31..2317ccf 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -1122,23 +1122,35 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
+>   	return 0;
+>   }
+>   
+> +static struct irq_domain *stm32_pctrl_get_irq_domain(struct device_node *np)
+> +{
+> +	struct device_node *parent;
+> +	struct irq_domain *domain;
+> +
+> +	if (!of_find_property(np, "interrupt-parent", NULL))
+> +		return NULL;
+> +
+> +	parent = of_irq_find_parent(np);
+> +	if (!parent)
+> +		return ERR_PTR(-ENXIO);
+> +
+> +	domain = irq_find_host(parent);
+> +	if (!domain)
+> +		/* domain not registered yet */
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	return domain;
+> +}
+> +
+>   static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
+>   			   struct stm32_pinctrl *pctl)
+>   {
+> -	struct device_node *np = pdev->dev.of_node, *parent;
+> +	struct device_node *np = pdev->dev.of_node;
+>   	struct device *dev = &pdev->dev;
+>   	struct regmap *rm;
+>   	int offset, ret, i;
+>   	int mask, mask_width;
+>   
+> -	parent = of_irq_find_parent(np);
+> -	if (!parent)
+> -		return -ENXIO;
+> -
+> -	pctl->domain = irq_find_host(parent);
+> -	if (!pctl->domain)
+> -		return -ENXIO;
+> -
+>   	pctl->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
+>   	if (IS_ERR(pctl->regmap))
+>   		return PTR_ERR(pctl->regmap);
+> @@ -1264,6 +1276,11 @@ int stm32_pctl_probe(struct platform_device *pdev)
+>   
+>   	platform_set_drvdata(pdev, pctl);
+>   
+> +	/* check for IRQ controller (may require deferred probe) */
+> +	pctl->domain = stm32_pctrl_get_irq_domain(np);
+> +	if (IS_ERR(pctl->domain))
+> +		return PTR_ERR(pctl->domain);
+> +
+>   	/* hwspinlock is optional */
+>   	hwlock_id = of_hwspin_lock_get_id(pdev->dev.of_node, 0);
+>   	if (hwlock_id < 0) {
+> @@ -1294,7 +1311,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+>   		return -EINVAL;
+>   	}
+>   
+> -	if (of_find_property(np, "interrupt-parent", NULL)) {
+> +	if (pctl->domain) {
+>   		ret = stm32_pctrl_dt_setup_irq(pdev, pctl);
+>   		if (ret)
+>   			return ret;
+> 
