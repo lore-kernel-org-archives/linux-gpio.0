@@ -1,75 +1,92 @@
-From: Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v6 22/24] Documentation: ACPI: move lpit.txt to firmware-guide/acpi and convert to reST
-Date: Thu, 25 Apr 2019 23:31:15 +0800
-Message-ID: <20190425153117.16057-23-changbin.du@gmail.com>
-References: <20190425153117.16057-1-changbin.du@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [RFC PATCH 2/3] irqchip/exiu: implement ACPI gpiolib/irqchip
+ support
+Date: Thu, 25 Apr 2019 16:33:40 +0100
+Message-ID: <1fbbfc30-7389-5618-a046-ab8872882494@arm.com>
+References: <20190425102020.21533-1-ard.biesheuvel@linaro.org>
+ <20190425102020.21533-3-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190425153117.16057-1-changbin.du@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net, Jonathan Corbet <corbet@lwn.net>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, mchehab+samsung@kernel.org, Changbin Du <changbin.du@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190425102020.21533-3-ard.biesheuvel@linaro.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Graeme Gregory <graeme.gregory@linaro.org>, Masahisa Kojima <masahisa.kojima@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This converts the plain text documentation to reStructuredText format and
-add it to Sphinx TOC tree. No essential content change.
+Hi Ard,
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/firmware-guide/acpi/index.rst    |  1 +
- .../lpit.txt => firmware-guide/acpi/lpit.rst}  | 18 +++++++++++++-----
- 2 files changed, 14 insertions(+), 5 deletions(-)
- rename Documentation/{acpi/lpit.txt => firmware-guide/acpi/lpit.rst} (68%)
+On 25/04/2019 11:20, Ard Biesheuvel wrote:
+> Expose the existing EXIU hierarchical irqchip domain code to permit
+> the interrupt controller to be used as the irqchip component of a
+> GPIO controller on ACPI systems.
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/irqchip/irq-sni-exiu.c | 82 +++++++++++++++++---
+>  1 file changed, 73 insertions(+), 9 deletions(-)
+> 
 
-diff --git a/Documentation/firmware-guide/acpi/index.rst b/Documentation/firmware-guide/acpi/index.rst
-index fca854f017d8..0e60f4b7129a 100644
---- a/Documentation/firmware-guide/acpi/index.rst
-+++ b/Documentation/firmware-guide/acpi/index.rst
-@@ -22,3 +22,4 @@ ACPI Support
-    gpio-properties
-    i2c-muxes
-    acpi-lid
-+   lpit
-diff --git a/Documentation/acpi/lpit.txt b/Documentation/firmware-guide/acpi/lpit.rst
-similarity index 68%
-rename from Documentation/acpi/lpit.txt
-rename to Documentation/firmware-guide/acpi/lpit.rst
-index b426398d2e97..aca928fab027 100644
---- a/Documentation/acpi/lpit.txt
-+++ b/Documentation/firmware-guide/acpi/lpit.rst
-@@ -1,3 +1,9 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===========================
-+Low Power Idle Table (LPIT)
-+===========================
-+
- To enumerate platform Low Power Idle states, Intel platforms are using
- “Low Power Idle Table” (LPIT). More details about this table can be
- downloaded from:
-@@ -8,13 +14,15 @@ Residencies for each low power state can be read via FFH
- 
- On platforms supporting S0ix sleep states, there can be two types of
- residencies:
--- CPU PKG C10 (Read via FFH interface)
--- Platform Controller Hub (PCH) SLP_S0 (Read via memory mapped interface)
-+
-+  - CPU PKG C10 (Read via FFH interface)
-+  - Platform Controller Hub (PCH) SLP_S0 (Read via memory mapped interface)
- 
- The following attributes are added dynamically to the cpuidle
--sysfs attribute group:
--	/sys/devices/system/cpu/cpuidle/low_power_idle_cpu_residency_us
--	/sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us
-+sysfs attribute group::
-+
-+  /sys/devices/system/cpu/cpuidle/low_power_idle_cpu_residency_us
-+  /sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us
- 
- The "low_power_idle_cpu_residency_us" attribute shows time spent
- by the CPU package in PKG C10
+[...]
+
+> +int exiu_acpi_init(struct platform_device *pdev, struct gpio_chip *gc)
+> +{
+> +	struct irq_domain *parent_domain = NULL, *domain;
+> +	struct resource *res;
+> +	int irq;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq > 0)
+> +		parent_domain = irq_get_irq_data(irq)->domain;
+> +
+> +	if (!parent_domain) {
+> +		dev_err(&pdev->dev, "unable to obtain parent domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "failed to parse memory resource\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	domain = exiu_init(parent_domain, dev_fwnode(&pdev->dev), res);
+> +	if (IS_ERR(domain)) {
+> +		dev_err(&pdev->dev, "failed to create IRQ domain (%ld)\n",
+> +			PTR_ERR(domain));
+> +		return PTR_ERR(domain);
+> +	}
+> +
+> +	gc->irq.domain = domain;
+> +	gc->to_irq = exiu_acpi_gpio_to_irq;
+> +
+> +	dev_info(&pdev->dev, "%d interrupts forwarded\n", NUM_IRQS);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(exiu_acpi_init);
+> +#endif
+> 
+
+I must say I'm not overly keen on this function. Why can't this be
+probed as an ACPI device, creating the corresponding domain, and leaving
+to the GPIO driver the task of doing the GPIO stuff?
+
+I appreciate there is a dependency between the two, but that's something
+we should be able to solve (probe deferral?).
+
+Thanks,
+
+	M.
 -- 
-2.20.1
+Jazz is not dead. It just smells funny...
