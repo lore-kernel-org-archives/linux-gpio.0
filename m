@@ -1,30 +1,22 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v10 02/11] dt-bindings: power: supply: add DT bindings
- for max77650
-Date: Thu, 25 Apr 2019 13:34:26 -0500
-Message-ID: <20190425183426.GA30229@bogus>
-References: <20190423090451.23711-1-brgl@bgdev.pl>
- <20190423090451.23711-3-brgl@bgdev.pl>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 11/24] dt-bindings: mediatek: topckgen: add support for MT8516
+Date: Thu, 25 Apr 2019 14:34:02 -0700
+Message-ID: <155622804294.15276.9513683589761355567@swboyd.mtv.corp.google.com>
+References: <20190323211612.860-1-fparent@baylibre.com> <20190323211612.860-12-fparent@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190423090451.23711-3-brgl@bgdev.pl>
+In-Reply-To: <20190323211612.860-12-fparent@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: mark.rutland@arm.com, matthias.bgg@gmail.com, robh+dt@kernel.org
+Cc: sean.wang@kernel.org, ryder.lee@mediatek.com, hsin-hsiung.wang@mediatek.com, wenzhen.yu@mediatek.com, chaotian.jing@mediatek.com, yong.mao@mediatek.com, jjian.zhou@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, stephane.leprovost@mediatek.com, Fabien Parent <fparent@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 23 Apr 2019 11:04:42 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add the DT binding document for the battery charger module of max77650.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Fabien Parent (2019-03-23 14:15:59)
+> Add binding documentation of topckgen for MT8516 SoC.
+>=20
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
 > ---
->  .../power/supply/max77650-charger.txt         | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
