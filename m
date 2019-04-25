@@ -1,80 +1,101 @@
-From: Changbin Du <changbin.du@gmail.com>
-Subject: Re: [PATCH v5 20/23] Documentation: ACPI: move cppc_sysfs.txt to
- admin-guide/acpi and convert to reST
-Date: Thu, 25 Apr 2019 00:44:51 +0000
-Message-ID: <20190425004450.qdajhnzlanufxhx3@mail.google.com>
-References: <20190424175306.25880-1-changbin.du@gmail.com>
- <20190424175306.25880-21-changbin.du@gmail.com>
- <20190424151236.776d9678@coco.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
+Date: Thu, 25 Apr 2019 13:16:25 +0800
+Message-ID: <14E5638C-0C4C-4406-BF91-8DF48377F3DB@canonical.com>
+References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
+ <Ld5HCy5--3-1@tutanota.com>
+ <EA207DE8-E89A-427B-B910-A36170A76031@canonical.com>
+ <Ld8QGex--3-1@tutanota.com> <20190423090816.GN2654@lahna.fi.intel.com>
+ <Ld8ZLG1--3-1@tutanota.com>
+ <3BE5F007-CD9C-486A-90EE-326AAB807D5B@canonical.com>
+ <Ld9SLAo--3-1@tutanota.com>
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190424151236.776d9678@coco.lan>
+In-Reply-To: <Ld9SLAo--3-1@tutanota.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Changbin Du <changbin.du@gmail.com>, rjw@rjwysocki.net, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, fenghua.yu@intel.com, linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+To: hotwater438@tutanota.com
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Hdegoede <hdegoede@redhat.com>, Linux Gpio <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 03:12:36PM -0300, Mauro Carvalho Chehab wrote:
-> Em Thu, 25 Apr 2019 01:53:03 +0800
-> Changbin Du <changbin.du@gmail.com> escreveu:
-> 
-> > This converts the plain text documentation to reStructuredText format and
-> > add it to Sphinx TOC tree. No essential content change.
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > ---
-> >  .../acpi/cppc_sysfs.rst}                      | 71 ++++++++++---------
-> >  Documentation/admin-guide/acpi/index.rst      |  1 +
-> >  2 files changed, 40 insertions(+), 32 deletions(-)
-> >  rename Documentation/{acpi/cppc_sysfs.txt => admin-guide/acpi/cppc_sysfs.rst} (51%)
-> > 
-> > diff --git a/Documentation/acpi/cppc_sysfs.txt b/Documentation/admin-guide/acpi/cppc_sysfs.rst
-> > similarity index 51%
-> > rename from Documentation/acpi/cppc_sysfs.txt
-> > rename to Documentation/admin-guide/acpi/cppc_sysfs.rst
-> > index f20fb445135d..a4b99afbe331 100644
-> > --- a/Documentation/acpi/cppc_sysfs.txt
-> > +++ b/Documentation/admin-guide/acpi/cppc_sysfs.rst
-> > @@ -1,5 +1,11 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> >  
-> > -	Collaborative Processor Performance Control (CPPC)
-> > +==================================================
-> > +Collaborative Processor Performance Control (CPPC)
-> > +==================================================
-> > +
-> > +CPPC
-> > +====
-> >  
-> >  CPPC defined in the ACPI spec describes a mechanism for the OS to manage the
-> >  performance of a logical processor on a contigious and abstract performance
-> > @@ -10,31 +16,28 @@ For more details on CPPC please refer to the ACPI specification at:
-> >  
-> >  http://uefi.org/specifications
-> >  
-> > -Some of the CPPC registers are exposed via sysfs under:
-> > -
-> > -/sys/devices/system/cpu/cpuX/acpi_cppc/
-> 
-> 
-> > -
-> > -for each cpu X
-> 
-> Yeah, there it is: you're removing those two lines.
->
-They are indented, see below diffs. I did remove "-----...." two lines.
-> > +Some of the CPPC registers are exposed via sysfs under::
-> >  
-> > ---------------------------------------------------------------------------------
-> > +  /sys/devices/system/cpu/cpuX/acpi_cppc/
-> 
-> As per my reply to v4.
-> 
-> Thanks,
-> Mauro
+at 9:49 PM, <hotwater438@tutanota.com> <hotwater438@tutanota.com> wrote:
 
--- 
-Cheers,
-Changbin Du
+> Hi. I did the suggested echo and, if I clearly understood, switched to  
+> s2idle mode without deep-mode.
+> For tests I use 4.19.28 on Debian-like system (Parrot OS).
+>
+> If the system defaults to use S2I, then it’s better to stick with it.
+>
+> Lots of ODM/OEM don’t really test S3.
+> So S3 is the same as S2 but with deep mode enabled?
+> The default switches to s2idle based on FADT flag and _DSM on relative  
+> new kernels.
+> Are those some SSDT flags?
+> It actually sounds weird to me, why restarting touchpad after deep  
+> suspend affects it work. I mean, if it starts sucessfully at boot, why it  
+> doesn't after suspend? Can we debug it somehow?
+
+Can you see if i2c_hid_hwreset() helps? Refer to [1] as an example.
+
+Anyway, the resume issue is a different bug. If possible please merge this  
+patch.
+
+[1] https://lore.kernel.org/lkml/20190211070040.4569-1-jbroadus@gmail.com/
+
+Kai-Heng
+
+>
+> Regards,
+> Vladislav.
+> Apr 23, 2019, 12:47 PM by kai.heng.feng@canonical.com:
+> at 17:40, <hotwater438@tutanota.com> <hotwater438@tutanota.com> wrote:
+> Hi. Thank's for a hint!
+> So catting this file gives me next content:
+> s2idle [deep]
+>
+> Which kernel version do you use?
+>
+>
+> Most systems preload with Windows 8.1 should default to use s2idle.
+>
+> So I suppose I have s2idle with deep-mode available?
+>
+> I've tried to select deep by creating mem_sleep_default file, but I can't  
+> (Permission error).
+>
+> Could you explain how do I switch suspend mode in Linux, if you know?
+>
+> # echo s2idle > /sys/power/mem_sleep
+> And to be honest, I don't think that's a correct fix of touchpad problem.
+>
+>
+>
+> Can we somehow cut off the power by hands or send a signal to a system to  
+> shut off a touchpad? Or there are no approaches like that?
+>
+> I don’t think it’s possible.
+>
+> Kai-Heng
+>
+> Regards,
+> Vladislav.
+>
+>
+> Apr 23, 2019, 12:08 PM by mika.westerberg@linux.intel.com:
+> On Tue, Apr 23, 2019 at 11:00:48AM +0200, hotwater438@tutanota.com wrote:
+> Hi.
+>
+> Honestly, I can't find any information about my acpi suspend type.
+> There are no options in my BIOS to change it, and I can't determine
+> which exactly I have. But I suppose I have a S3 because I have suspend
+> issue.
+>
+> Can I somehow determine it in Linux? I did a research but found nothing
+> on the internet.
+>
+> You can read the default mode from /sys/power/mem_sleep. "s2idle" means,
+> well suspend-to-idle and "deep" means S3.
