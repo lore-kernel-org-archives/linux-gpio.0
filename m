@@ -1,25 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] MAINTAINERS: Add entry for BM1880 pinctrl
-Date: Thu, 25 Apr 2019 09:10:37 +0200
-Message-ID: <CACRpkdaM6HsBWNGikAG-KFWWJFOtejZV4n+KWVQngdg-U6rNUg@mail.gmail.com>
-References: <20190424120224.22660-1-manivannan.sadhasivam@linaro.org> <20190424120224.22660-6-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2] gpio: Fix gpiochip_add_data_with_key() error path
+Date: Thu, 25 Apr 2019 09:15:07 +0200
+Message-ID: <CACRpkdZ0s2uZMS4K9SN+xQonKXQytBGnFR7v9ieBAwOUwi-XKg@mail.gmail.com>
+References: <20190424135933.25545-1-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424120224.22660-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190424135933.25545-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, haitao.suo@bitmain.com, darren.tsao@bitmain.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Benoit Parrot <bparrot@ti.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 2:03 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Wed, Apr 24, 2019 at 3:59 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Add MAINTAINERS entry for Bitmain BM1880 SoC pinctrl.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> The err_remove_chip block is too coarse, and may perform cleanup that
+> must not be done.  E.g. if of_gpiochip_add() fails, of_gpiochip_remove()
+> is still called, causing:
 
-Patch applied.
+Good catch!
+
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
