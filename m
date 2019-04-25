@@ -1,30 +1,26 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v5 00/23] Include linux ACPI docs into Sphinx TOC tree
-Date: Thu, 25 Apr 2019 10:44:14 +0200
-Message-ID: <CAJZ5v0i3iEyn1vBjPkA0X=8h_UrSeTNV_JduJq9qfYpgCOAPjQ@mail.gmail.com>
-References: <20190424175306.25880-1-changbin.du@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/5] arm64: dts: bitmain: Add pinctrl support for BM1880 SoC
+Date: Thu, 25 Apr 2019 10:48:20 +0200
+Message-ID: <CACRpkdZW=3muxWNnDKDnBFroYD5ZQWGqmw23o8ZFkf4+Y6DjCA@mail.gmail.com>
+References: <20190424120224.22660-1-manivannan.sadhasivam@linaro.org> <20190424120224.22660-3-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424175306.25880-1-changbin.du@gmail.com>
+In-Reply-To: <20190424120224.22660-3-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Changbin Du <changbin.du@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-gpio@vger.kernel.org, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, haitao.suo@bitmain.com, darren.tsao@bitmain.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-.On Wed, Apr 24, 2019 at 7:54 PM Changbin Du <changbin.du@gmail.com> wrote:
->
-> Hi All,
-> The kernel now uses Sphinx to generate intelligent and beautiful documentation
-> from reStructuredText files. I converted all of the Linux ACPI/PCI/X86 docs to
-> reST format in this serias.
->
-> The hieararchy of ACPI docs are based on Corbet's suggestion:
-> https://lkml.org/lkml/2019/4/3/1047
-> I did some adjustment according to the content and finally they are placed as:
-> Documentation/firmware-guide/acpi/
+On Wed, Apr 24, 2019 at 2:03 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-I'd like to queue up this series, but it is missing a patch to create
-Documentation/firmware-guide/acpi/index.rst.
+> Add pinctrl support for Bitmain BM1880 SoC. This SoC only supports
+> pinmuxing and the pinctrl registers are part of the sctrl block.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Care to provide one?
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
