@@ -1,27 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Rework Kconfig dependency for BM1880 pinctrl driver
-Date: Thu, 25 Apr 2019 10:50:58 +0200
-Message-ID: <CACRpkdY8MCfS5McDAGBhFGUxb-eioW9+GAmEgOYKmrSZgkY4JA@mail.gmail.com>
-References: <20190425083224.9762-1-manivannan.sadhasivam@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
+Date: Thu, 25 Apr 2019 12:11:40 +0300
+Message-ID: <20190425091140.GS2654@lahna.fi.intel.com>
+References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190425083224.9762-1-manivannan.sadhasivam@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20190422044539.16085-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, haitao.suo@bitmain.com, darren.tsao@bitmain.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org, hotwater438@tutanota.com, hdegoede@redhat.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 10:32 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Mon, Apr 22, 2019 at 12:45:39PM +0800, Kai-Heng Feng wrote:
+> Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
+> added because clearing interrupt status bit is required to avoid
+> unexpected behavior.
+> 
+> Turns out the unmask callback also needs the fix, which can solve weird
+> IRQ triggering issues on I2C touchpad ELAN1200.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-> Make the BM1880 SoC pinctrl driver depend on COMPILE_TEST to get compiler
-> test coverage and also select this driver by default for ARCH_BITMAIN
-> platform.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
