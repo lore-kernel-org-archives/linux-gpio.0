@@ -1,15 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 2/3] irqchip/exiu: implement ACPI gpiolib/irqchip
- support
-Date: Thu, 25 Apr 2019 15:14:48 +0200
-Message-ID: <CACRpkdbTRi3U0rrcO=MJsTk9tBYhm7E5wyyqDaj-aiUy0JXgqw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] gpio: mb86s70: enable ACPI and irqchip support
+Date: Thu, 25 Apr 2019 15:23:53 +0200
+Message-ID: <CACRpkdacwYder5e0ik2T32heSBQhKvmbem8XMpUF0iShsw3D3w@mail.gmail.com>
 References: <20190425102020.21533-1-ard.biesheuvel@linaro.org>
- <20190425102020.21533-3-ard.biesheuvel@linaro.org>
+ <20190425102020.21533-4-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190425102020.21533-3-ard.biesheuvel@linaro.org>
+In-Reply-To: <20190425102020.21533-4-ard.biesheuvel@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,43 +22,76 @@ To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Mika Westerberg <mika.westerberg
 Cc: Marc Zyngier <marc.zyngier@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Graeme Gregory <graeme.gregory@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Masahisa Kojima <masahisa.kojima@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Ard!
+Hi Ard, thanks for your patch!
 
-Thanks for your patch!
-
-As it involves ACPI I suggest to include Mika Westerberg on review since
-he's doing the core gpiolib ACPI stuff.
+Including Mika here as well, he knows how ACPI is supposed to
+be wired up with GPIOs.
 
 On Thu, Apr 25, 2019 at 12:20 PM Ard Biesheuvel
 <ard.biesheuvel@linaro.org> wrote:
 
-> Expose the existing EXIU hierarchical irqchip domain code to permit
-> the interrupt controller to be used as the irqchip component of a
-> GPIO controller on ACPI systems.
+> In order to support this GPIO block in combination with an EXIU
+> interrupt controller on ACPI systems such as Socionext SynQuacer,
+> add the enumeration boilerplate, and add the EXIU irqchip handling
+> to the probe path. Also, make the clock handling conditonal on
+> non-ACPI enumeration, since ACPI handles this internally.
 >
 > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
 (...)
 
-> +#include <linux/gpio/driver.h>
+> +config GPIO_MB86S7X_ACPI
+> +       def_bool y
+> +       depends on ACPI && ARCH_SYNQUACER
 
-So now this is starting to go from being a pure irqchip driver
-to a combined irq+gpio driver.
+I would say
 
-> +       gc->irq.domain = domain;
-> +       gc->to_irq = exiu_acpi_gpio_to_irq;
+depends on ACPI
+depends on (ARCH_SYNQUACER || COMPILE_TEST)
 
-And there is some gpiochip involved.
+so we get some compiler coverage.
 
-> +EXPORT_SYMBOL(exiu_acpi_init);
+> +#include <linux/acpi.h>
+>  #include <linux/io.h>
+>  #include <linux/init.h>
+>  #include <linux/clk.h>
+> @@ -27,6 +28,8 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
+>
+> +#include "gpiolib.h"
 
-Including exporting functions.
+Normally not a good sign to dereference gpiolib internals,
+but there are some few exceptions. Why do you do this?
 
-What about we just move this driver over to drivers/gpio and
-start working out a combined GPIO+irqchip driver there? I am
-working on adding generic hierarchical irqchip helpers in the
-gpiolib core and then it's gonna be nice to have all combined
-drivers under the drivers/gpio folder.
+> +int exiu_acpi_init(struct platform_device *pdev, struct gpio_chip *gc);
+
+Just merge it all into one file instead of having these crisscrossy calls.
+I prefer some minor #ifdef or straight C if (IS_ENABLED()) around
+specific code.
+
+> -       return ret;
+> +       if (mb86s70_gpio_have_acpi(pdev))
+> +               acpi_gpiochip_request_interrupts(&gchip->gc);
+> +
+> +       return 0;
+
+I guess this is right...
+
+>         struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
+>
+> +       if (gchip->gc.irq.domain) {
+> +               acpi_gpiochip_free_interrupts(&gchip->gc);
+> +               irq_domain_remove(gchip->gc.irq.domain);
+> +       }
+
+Mika can possibly comment on the right way to do ACPI bring-up
+and take-down.
+
+Overall it looks pretty straightforward to me, but I'd prefer to just
+merge the irqchip driver over into the gpio driver, I can't see why
+not.
+
+Or is the irqchip used without the GPIO driver sometimes?
 
 Yours,
 Linus Walleij
