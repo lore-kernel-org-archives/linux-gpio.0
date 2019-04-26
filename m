@@ -1,75 +1,104 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 6/9] dt-bindings: display: hdmi-connector: Add DDC
- power supply
-Date: Fri, 26 Apr 2019 15:02:50 -0500
-Message-ID: <CAL_Jsq+o1j6AGL9UnhN1tV150DsFug6pg+UPEJ9EKqBc6rgq_w@mail.gmail.com>
-References: <20190413165418.27880-1-megous@megous.com> <20190413165418.27880-7-megous@megous.com>
- <20190426182337.GA22245@bogus> <20190426192031.wtoaxctjo2qxxquq@core.my.home>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Clear interrupt status in unmask callback
+Date: Sat, 27 Apr 2019 00:47:58 +0300
+Message-ID: <20190426214758.GC9224@smile.fi.intel.com>
+References: <20190422044539.16085-1-kai.heng.feng@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190426192031.wtoaxctjo2qxxquq@core.my.home>
+Content-Disposition: inline
+In-Reply-To: <20190422044539.16085-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-sunxi <linux-sunxi@googlegroups.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, linux-stm32@
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: mika.westerberg@linux.intel.com, linus.walleij@linaro.org, hotwater438@tutanota.com, hdegoede@redhat.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 2:20 PM Ond=C5=99ej Jirman <megous@megous.com> wrot=
-e:
->
-> On Fri, Apr 26, 2019 at 01:23:37PM -0500, Rob Herring wrote:
-> > On Sat, Apr 13, 2019 at 06:54:15PM +0200, megous@megous.com wrote:
-> > > From: Ondrej Jirman <megous@megous.com>
-> > >
-> > > Some Allwinner SoC using boards (Orange Pi 3 for example) need to ena=
-ble
-> > > on-board voltage shifting logic for the DDC bus to be usable. Use
-> > > ddc-supply on the hdmi-connector to model this.
-> > >
-> > > Add binding documentation for optional ddc-supply property.
-> > >
-> > > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > > ---
-> > >  .../devicetree/bindings/display/connector/hdmi-connector.txt     | 1=
- +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/connector/hdmi=
--connector.txt b/Documentation/devicetree/bindings/display/connector/hdmi-c=
-onnector.txt
-> > > index 508aee461e0d..33085aeb0bb9 100644
-> > > --- a/Documentation/devicetree/bindings/display/connector/hdmi-connec=
-tor.txt
-> > > +++ b/Documentation/devicetree/bindings/display/connector/hdmi-connec=
-tor.txt
-> > > @@ -9,6 +9,7 @@ Optional properties:
-> > >  - label: a symbolic name for the connector
-> > >  - hpd-gpios: HPD GPIO number
-> > >  - ddc-i2c-bus: phandle link to the I2C controller used for DDC EDID =
-probing
-> > > +- ddc-supply: the power supply for the DDC bus
-> >
-> > It's not just for DDC. It powers the chips in bridge dongles for
-> > example. Pretty much every diagram I find just calls it 5V or +5V.
-> >
-> > So how about '5V-supply' or 'v5V-supply'?
->
-> Just to be sure, the schematic that inspired this change looks like this:
->
-> https://megous.com/dl/tmp/33b2971de6943e9d.png
->
-> HDMI-5V is always on, and what is really being enabled here are mosfets
-> connected to DDC_CEC_EN and not the HDMI-5V power supply. So in this case=
- it
-> really is just for DDC. It is conceivable that some boards may need both =
-to
-> enable 5V for HDMI circuitry and some separate power shifting logic for
-> DDC bus.
+On Mon, Apr 22, 2019 at 12:45:39PM +0800, Kai-Heng Feng wrote:
+> Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
+> added because clearing interrupt status bit is required to avoid
+> unexpected behavior.
+> 
+> Turns out the unmask callback also needs the fix, which can solve weird
+> IRQ triggering issues on I2C touchpad ELAN1200.
 
-Okay, not what I thought you were defining. DDC_CEC_EN is a GPIO line?
-I wouldn't characterize this as a voltage rail, so I don't think it
-should be a supply. Perhaps 'ddc-en-gpios'?
+> -static void intel_gpio_irq_enable(struct irq_data *d)
+> -{
+> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
+> -	const struct intel_community *community;
+> -	const struct intel_padgroup *padgrp;
+> -	int pin;
+> -
+> -	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
+> -	if (pin >= 0) {
+> -		unsigned int gpp, gpp_offset, is_offset;
+> -		unsigned long flags;
+> -		u32 value;
+> -
+> -		gpp = padgrp->reg_num;
+> -		gpp_offset = padgroup_offset(padgrp, pin);
+> -		is_offset = community->is_offset + gpp * 4;
+> -
+> -		raw_spin_lock_irqsave(&pctrl->lock, flags);
+> -		/* Clear interrupt status first to avoid unexpected interrupt */
+> -		writel(BIT(gpp_offset), community->regs + is_offset);
+> -
+> -		value = readl(community->regs + community->ie_offset + gpp * 4);
+> -		value |= BIT(gpp_offset);
+> -		writel(value, community->regs + community->ie_offset + gpp * 4);
+> -		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> -	}
+> -}
+> -
+>  static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+>  {
+>  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> @@ -963,6 +934,11 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+>  		reg = community->regs + community->ie_offset + gpp * 4;
+>  
+>  		raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +		/* Clear interrupt status first to avoid unexpected interrupt */
 
-We certainly want to make it clear this is not the 5V supply.
+> +		if (!mask)
 
-Rob
+Can we do this unconditionally?
+
+> +			writel(BIT(gpp_offset), community->regs + community->is_offset + gpp * 4);
+
+I would rather prefer to follow the below pattern, like
+
+reg = ...;
+writel(..., reg);
+
+or, to decrease calculus under spin lock, something like
+
+reg = ->regs + gpp * 4;
+
+writel(..., reg + is_offset);
+
+readl(reg + ie_offset);
+
+etc.
+
+> +
+>  		value = readl(reg);
+>  		if (mask)
+>  			value &= ~BIT(gpp_offset);
+> @@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+>  
+>  static struct irq_chip intel_gpio_irqchip = {
+>  	.name = "intel-gpio",
+
+> -	.irq_enable = intel_gpio_irq_enable,
+
+Is it possible scenario when IRQ enable is called, but not masking callbacks?
+For _AEI or GPE?
+
+>  	.irq_ack = intel_gpio_irq_ack,
+>  	.irq_mask = intel_gpio_irq_mask,
+>  	.irq_unmask = intel_gpio_irq_unmask,
+
+-- 
+With Best Regards,
+Andy Shevchenko
