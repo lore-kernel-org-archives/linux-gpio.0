@@ -1,92 +1,47 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
-Date: Fri, 26 Apr 2019 23:26:17 +0530
-Message-ID: <20190426175617.GA31849@Mani-XPS-13-9360>
-References: <9377620b-d74a-04d9-a51e-8590400b1c0f@siemens.com>
- <20190426130615.GT9224@smile.fi.intel.com>
- <bd5453e1-0279-02ab-3304-edc6ebf509dc@siemens.com>
- <bc856e19-470d-7655-5680-a031831ab513@metux.net>
- <2f3da791-4a10-c2c4-dc5a-22ad16ed7be6@siemens.com>
- <CAHp75VfonL_f1GjRFFhp59R8U+bGzT9pcC7p8XDJ32-_cxT29g@mail.gmail.com>
- <20190426173329.GA31161@Mani-XPS-13-9360>
- <534a4812-e6d3-9b16-5142-ab214da3d661@siemens.com>
- <20190426174645.GB31161@Mani-XPS-13-9360>
- <0e9b6e72-d7d8-6dea-4efa-4eb7c1a8e0c9@siemens.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 6/9] dt-bindings: display: hdmi-connector: Add DDC
+ power supply
+Date: Fri, 26 Apr 2019 13:23:37 -0500
+Message-ID: <20190426182337.GA22245@bogus>
+References: <20190413165418.27880-1-megous@megous.com>
+ <20190413165418.27880-7-megous@megous.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <0e9b6e72-d7d8-6dea-4efa-4eb7c1a8e0c9@siemens.com>
+In-Reply-To: <20190413165418.27880-7-megous@megous.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "Enrico Weigelt, metux IT consult" <lkml@metux.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+To: megous@megous.com
+Cc: linux-sunxi@googlegroups.com, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 07:52:48PM +0200, Jan Kiszka wrote:
-> On 26.04.19 19:46, Manivannan Sadhasivam wrote:
-> > On Fri, Apr 26, 2019 at 07:39:56PM +0200, Jan Kiszka wrote:
-> > > On 26.04.19 19:33, Manivannan Sadhasivam wrote:
-> > > > On Fri, Apr 26, 2019 at 08:20:19PM +0300, Andy Shevchenko wrote:
-> > > > > On Fri, Apr 26, 2019 at 7:05 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> > > > > > 
-> > > > > > On 26.04.19 16:42, Enrico Weigelt, metux IT consult wrote:
-> > > > > > > On 26.04.19 15:36, Jan Kiszka wrote:
-> > > > > > > 
-> > > > > > > > At the same time, there are no real alternatives - to my> knowledge - for the value it brings (various bindings) to simply
-> > > > > > > switch> the engine.
-> > > > > > > Which value exactly does that collection of crude wrappers and broken
-> > > > > > > attempts to buypass the kernel (driving gpios via /dev/mem *facepalm*)
-> > > > > > > provide ?
-> > > > > > 
-> > > > > > Leaving that blunt hack aside:
-> > > > > > 
-> > > > > > import mraa
-> > > > > > 
-> > > > > > pin = mraa.Gpio(13)
-> > > > > > pin.dir(mraa.DIR_OUT)
-> > > > > > pin.write(1)
-> > > > > > 
-> > > > > > And the same goes for nodejs, java and c++.
-> > > > > > 
-> > > > > > Moreover, this allows you to abstract away where "Pin 13" actually came from on
-> > > > > > that board if the kernel changes (BSP -> upstream...) or the extension board or
-> > > > > > ...
-> > > > > 
-> > > > > The problem here is opaque number. This has to be chip + *relative* pin number/
-> > > > > See this:
-> > > > > https://stackoverflow.com/questions/55532410/how-do-linux-gpio-numbers-get-their-values/55579640#55579640
-> > > > > 
-> > > > 
-> > > > But for platform like 96Boards we don't need controller specific lookup, these
-> > > > are all handled by the platform code [1] so that the users can use the standard
-> > > > pinout number to access GPIOs. For instance, pin 23 on the Low Speed expansion
-> > > > header is the GPIO for all 96Boards platform, so the user can access that pin
-> > > > using 23 itself in the application and it will run across all supported
-> > > > 96Boards.
-> > > 
-> > > Can you ensure stable numbering when probing order changes, e.g. due to
-> > > adding an extension board?
-> > > 
-> > 
-> > Good point! For tackling this, I'm planning to introduce an API for accessing
-> > the GPIO by its line name. It will be tricky to implement but once done, it
-> > will serve.
+On Sat, Apr 13, 2019 at 06:54:15PM +0200, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
 > 
-> Whatever is stable and handy. As cited in the other thread, I played with
-> the device path as well, see [1][2]. Feel free to pick what what is useful,
-> I will likely not have time to work on that soon again.
+> Some Allwinner SoC using boards (Orange Pi 3 for example) need to enable
+> on-board voltage shifting logic for the DDC bus to be usable. Use
+> ddc-supply on the hdmi-connector to model this.
 > 
+> Add binding documentation for optional ddc-supply property.
+> 
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  .../devicetree/bindings/display/connector/hdmi-connector.txt     | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt b/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt
+> index 508aee461e0d..33085aeb0bb9 100644
+> --- a/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt
+> +++ b/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt
+> @@ -9,6 +9,7 @@ Optional properties:
+>  - label: a symbolic name for the connector
+>  - hpd-gpios: HPD GPIO number
+>  - ddc-i2c-bus: phandle link to the I2C controller used for DDC EDID probing
+> +- ddc-supply: the power supply for the DDC bus
 
-Cool, thanks for sharing :-)
+It's not just for DDC. It powers the chips in bridge dongles for 
+example. Pretty much every diagram I find just calls it 5V or +5V.
 
-Regards,
-Mani
+So how about '5V-supply' or 'v5V-supply'?
 
-> Jan
-> 
-> [1] https://github.com/siemens/mraa/commit/034d787eea1a5b201ea77a6549ffc0bdbc3b776d
-> [2] https://github.com/siemens/mraa/commit/6fd8a3c27764718c1e62a4938a6dc88819c3f65f
-> 
-> -- 
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
+Rob
