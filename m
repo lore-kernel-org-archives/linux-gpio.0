@@ -1,44 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3] gpio: merrifield: Fix build err without CONFIG_ACPI
-Date: Fri, 26 Apr 2019 15:23:17 +0300
-Message-ID: <20190426122317.GP9224@smile.fi.intel.com>
-References: <20190405142112.26592-1-yuehaibing@huawei.com>
- <20190412151911.12084-1-yuehaibing@huawei.com>
- <CACRpkda_xw2rdzSLcreHnfdwsmUMTR=+BRHJWjrE31COaZhtZw@mail.gmail.com>
+From: Andriy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio
+ pin
+Date: Fri, 26 Apr 2019 15:50:31 +0300
+Message-ID: <20190426125031.GQ9224@smile.fi.intel.com>
+References: <20190415055358.9269-1-chiu@endlessm.com>
+ <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkda_xw2rdzSLcreHnfdwsmUMTR=+BRHJWjrE31COaZhtZw@mail.gmail.com>
+In-Reply-To: <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Yue Haibing <yuehaibing@huawei.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Cc: Chris Chiu <chiu@endlessm.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux@endlessm.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 23, 2019 at 11:17:32AM +0200, Linus Walleij wrote:
-> On Fri, Apr 12, 2019 at 5:20 PM Yue Haibing <yuehaibing@huawei.com> wrote:
+On Tue, Apr 23, 2019 at 12:38:17PM +0200, Linus Walleij wrote:
+> On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
 > 
-> > From: YueHaibing <yuehaibing@huawei.com>
+> > The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
+> > responsive after suspend/resume. The following error message
+> > shows after resume.
+> >  i2c_hid i2c-ELAN1200:00: failed to reset device.
 > >
-> > When building CONFIG_ACPI is not set
-> > gcc warn this:
+> > On these laptops, the touchpad interrupt is connected via a GPIO
+> > pin which is controlled by Intel pinctrl. After system resumes,
+> > the GPIO is in ACPI mode and no longer works as an IRQ.
 > >
-> > drivers/gpio/gpio-merrifield.c: In function mrfld_gpio_get_pinctrl_dev_name:
-> > drivers/gpio/gpio-merrifield.c:388:19: error: dereferencing pointer to incomplete type struct acpi_device
-> >    put_device(&adev->dev);
-> >                    ^~
+> > This commit saves the HOSTSW_OWN value during suspend, make sure
+> > the HOSTSW_OWN mode remains the same after resume.
 > >
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Fixes:d00d2109c367 ("gpio: merrifield: Convert to use acpi_dev_get_first_match_dev()")
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > Signed-off-by: Chris Chiu <chiu@endlessm.com>
 > 
-> This doesn't apply cleanly to any GPIO branch (devel or fixes)
-> so I assume it is supposed to be applied to the ACPI tree.
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> This v3 patch applied with Mika's ACK.
 
-Thanks!
-Rafael, can this be applied to your tree?
+Hmm... It's supposed to go along with our PR.
 
 -- 
 With Best Regards,
