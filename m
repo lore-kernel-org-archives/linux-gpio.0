@@ -1,30 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add Tegra194 pinmux driver
-Date: Fri, 26 Apr 2019 09:11:00 +0200
-Message-ID: <CACRpkdbnzB690mPncGGe2fKMBx3kDN+RPBEbowBsvsXO23gOGw@mail.gmail.com>
-References: <1556247378-3335-1-git-send-email-kyarlagadda@nvidia.com> <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [RFC PATCH 3/3] gpio: mb86s70: enable ACPI and irqchip support
+Date: Fri, 26 Apr 2019 10:19:42 +0200
+Message-ID: <CAKv+Gu9+CjJT6Bmkq9dq3_kY28fZS-e8BWmjwxZNbd5XRKExZw@mail.gmail.com>
+References: <20190425102020.21533-1-ard.biesheuvel@linaro.org>
+ <20190425102020.21533-4-ard.biesheuvel@linaro.org>
+ <CACRpkdacwYder5e0ik2T32heSBQhKvmbem8XMpUF0iShsw3D3w@mail.gmail.com>
+ <20190425142726.GA2583@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556247378-3335-2-git-send-email-kyarlagadda@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, vidyas@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190425142726.GA2583@lahna.fi.intel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Graeme Gregory <graeme.gregory@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 4:56 AM Krishna Yarlagadda
-<kyarlagadda@nvidia.com> wrote:
-
-> Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
-> dynamically at runtime. This driver supports change pinmux for these
-> pins. Pinmux for rest of the pins is set statically by bootloader and
-> will not be changed by this driver
+On Thu, 25 Apr 2019 at 16:27, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
+> On Thu, Apr 25, 2019 at 03:23:53PM +0200, Linus Walleij wrote:
+> > > -       return ret;
+> > > +       if (mb86s70_gpio_have_acpi(pdev))
+> > > +               acpi_gpiochip_request_interrupts(&gchip->gc);
+> > > +
+> > > +       return 0;
+> >
+> > I guess this is right...
+> >
+> > >         struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
+> > >
+> > > +       if (gchip->gc.irq.domain) {
+> > > +               acpi_gpiochip_free_interrupts(&gchip->gc);
+> > > +               irq_domain_remove(gchip->gc.irq.domain);
+> > > +       }
+> >
+> > Mika can possibly comment on the right way to do ACPI bring-up
+> > and take-down.
+>
+> Only comment I have is that normally you don't need to call
+> acpi_gpiochip_request_interrupts() and acpi_gpiochip_free_interrupts()
+> in GPIO chip drivers itself. The core should take care of this if the
+> device ACPI description has an _AEI method.
 
-Paging Stephen Warren about this patch, an ACK from Thierry would
-be nice too.
+Thanks Mika.
 
-Yours,
-Linus Walleij
+The core only takes care of this for nested/cascaded domains. In this
+case, the calls are needed, or the ACPI event interrupt don't get
+registered.
