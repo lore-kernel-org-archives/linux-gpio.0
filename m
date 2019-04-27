@@ -1,44 +1,65 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v14 01/11] bitops: Introduce the for_each_set_clump8 macro
-Date: Sat, 27 Apr 2019 09:41:34 +0900
-Message-ID: <20190427004134.GB26000@icarus>
-References: <cover.1553828158.git.vilhelm.gray@gmail.com>
- <1cc8b30bb3954ca2a0961ffb0a2eed8a005ed670.1553828158.git.vilhelm.gray@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/8] qcom: spmi/ssbi gpio: correct gpio hogging
+Date: Fri, 26 Apr 2019 22:30:34 -0700
+Message-ID: <20190427053034.GH3137@builder>
+References: <20190306005316.12232-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1cc8b30bb3954ca2a0961ffb0a2eed8a005ed670.1553828158.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20190306005316.12232-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, bgolaszewski@baylibre.com, akpm@linux-foundation.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+To: Brian Masney <masneyb@onstation.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 29, 2019 at 12:04:08PM +0900, William Breathitt Gray wrote:
-> This macro iterates for each 8-bit group of bits (clump) with set bits,
-> within a bitmap memory region. For each iteration, "start" is set to the
-> bit offset of the found clump, while the respective clump value is
-> stored to the location pointed by "clump". Additionally, the
-> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> respectively get and set an 8-bit value in a bitmap memory region.
+On Tue 05 Mar 16:53 PST 2019, Brian Masney wrote:
+
+> Here are some patches that fix gpio hogging for all boards that use
+> spmi-gpio and ssbi-gpio. These depend on the following two patches
+> that were merged in 4.20-rc1:
 > 
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
->  include/asm-generic/bitops/find.h | 61 +++++++++++++++++++++++++++++++
->  include/linux/bitops.h            |  5 +++
->  2 files changed, 66 insertions(+)
+> commit 149a96047237 ("pinctrl: qcom: spmi-gpio: fix gpio-hog related
+> boot issues")
+> 
+> commit 7ed078557738 ("pinctrl: qcom: ssbi-gpio: fix gpio-hog related
+> boot issues")
+> 
+> I've already fixed pm8941 for the Nexus 5 and that fix is queued to go
+> into v5.1 during this merge window:
+> 
+> https://lore.kernel.org/lkml/20181101001149.13453-7-masneyb@onstation.org/
+> 
+> Andy: You may want to consider submitting these post rc1 as a fix for
+> v5.1 and possibly marking these for stable.
+> 
+> Brian Masney (8):
+>   ARM: dts: qcom: apq8064: add gpio-ranges
+>   ARM: dts: qcom: mdm9615: add gpio-ranges
+>   ARM: dts: qcom: msm8660: add gpio-ranges
+>   ARM: dts: qcom: pma8084: add gpio-ranges
 
-Andrew, Linus,
+Looks like I missed the ARM patches before. All 8 picked up now, with
+Linus' r-b.
 
-I reverted your Acked-by/Reviewed-by lines to Cc in this release because
-the code has significantly changed from the simplification effort. If
-you are satisfied with these changes, please ack to confirm.
+Thanks,
+Bjorn
 
-William Breathitt Gray
+>   arm64: dts: qcom: pm8005: add gpio-ranges
+>   arm64: dts: qcom: pm8998: add gpio-ranges
+>   arm64: dts: qcom: pmi8994: add gpio-ranges
+>   arm64: dts: qcom: pmi8998: add gpio-ranges
+> 
+>  arch/arm/boot/dts/qcom-apq8064.dtsi   | 1 +
+>  arch/arm/boot/dts/qcom-mdm9615.dtsi   | 1 +
+>  arch/arm/boot/dts/qcom-msm8660.dtsi   | 1 +
+>  arch/arm/boot/dts/qcom-pma8084.dtsi   | 1 +
+>  arch/arm64/boot/dts/qcom/pm8005.dtsi  | 1 +
+>  arch/arm64/boot/dts/qcom/pm8998.dtsi  | 1 +
+>  arch/arm64/boot/dts/qcom/pmi8994.dtsi | 1 +
+>  arch/arm64/boot/dts/qcom/pmi8998.dtsi | 1 +
+>  8 files changed, 8 insertions(+)
+> 
+> -- 
+> 2.20.1
+> 
