@@ -1,43 +1,112 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v2 0/4] Add drive-strength in Meson pinctrl driver
-Date: Sat, 27 Apr 2019 21:46:50 +0200
-Message-ID: <CAFBinCCgGbvN6nLywsGk3TXT7eDLD=2A=uD_W07QumyBJSCAuQ@mail.gmail.com>
-References: <20190418124758.24022-1-glaroque@baylibre.com> <CACRpkdbLJYgU5ZP5CkwX1FBv8eHp+7TsAMv3_H51C_EOA85X4A@mail.gmail.com>
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH] dt-bindings: pinctrl: Fix spelling of bias-pull-up
+Date: Sun, 28 Apr 2019 17:08:22 +0200
+Message-ID: <20190428150822.13935-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbLJYgU5ZP5CkwX1FBv8eHp+7TsAMv3_H51C_EOA85X4A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Guillaume La Roque <glaroque@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-arm-msm@vger.kernel.org
+Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The property is spelled 'bias-pull-up', as documented in
+pinctrl-bindings.txt.
 
-On Tue, Apr 23, 2019 at 1:13 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Thu, Apr 18, 2019 at 2:48 PM Guillaume La Roque
-> <glaroque@baylibre.com> wrote:
->
-> > The purpose of this patchset is to add drive-strength support in meson pinconf
-> > driver. This is a new feature that was added on the g12a. It is critical for us
-> > to support this since many functions are failing with default pad drive-strength.
-> >
-> > The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
-> > 'drive-strength' is expressed in mA.
-> > So this patch add another generic property "drive-strength-uA". The change to do so
-> > would be minimal and could be benefit to other platforms later on.
-> >
-> > Cheers
-> > Guillaume
->
-> This needs to be reviewed by Martin Blumenstigl, Martin can you have a look
-> at this patch set? If you don't have the patches I think Guillaume can
-> resend them.
-thank you for the reminder - I just sent my feedback.
-can you please also have a look at patch 4/4? there are two cases
-where I'm not sure what the best practice of the pinctrl subsystem is
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ .../devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt        | 2 +-
+ .../devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt        | 2 +-
+ .../devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt        | 2 +-
+ .../devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt        | 2 +-
+ .../devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt        | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+index c2dbb3e8d840..4e90ddd77784 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+@@ -42,7 +42,7 @@ information about e.g. the mux function.
+ The following generic properties as defined in pinctrl-bindings.txt are v=
+alid
+ to specify in a pin configuration subnode:
 
-Regards
-Martin
+- pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-streng=
+th,
++ pins, function, bias-disable, bias-pull-down, bias-pull-up, drive-streng=
+th,
+  output-low, output-high.
+
+ Non-empty subnodes must specify the 'pins' property.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+index 991be0cd0948..84be0f2c6f3b 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+@@ -44,7 +44,7 @@ information about e.g. the mux function.
+
+ The following generic properties as defined in pinctrl-bindings.txt are v=
+alid
+ to specify in a pin configuration subnode:
+- pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-streng=
+th.
++ pins, function, bias-disable, bias-pull-down, bias-pull-up, drive-streng=
+th.
+
+ Non-empty subnodes must specify the 'pins' property.
+ Note that not all properties are valid for all pins.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
+index 7ed56a1b70fc..a7aaaa7db83b 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
+@@ -42,7 +42,7 @@ information about e.g. the mux function.
+ The following generic properties as defined in pinctrl-bindings.txt are v=
+alid
+ to specify in a pin configuration subnode:
+
+- pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-streng=
+th,
++ pins, function, bias-disable, bias-pull-down, bias-pull-up, drive-streng=
+th,
+  output-low, output-high.
+
+ Non-empty subnodes must specify the 'pins' property.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
+index cdc4787e59d2..f095209848c8 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
+@@ -42,7 +42,7 @@ information about e.g. the mux function.
+ The following generic properties as defined in pinctrl-bindings.txt are v=
+alid
+ to specify in a pin configuration subnode:
+
+- pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-streng=
+th,
++ pins, function, bias-disable, bias-pull-down, bias-pull-up, drive-streng=
+th,
+  output-low, output-high.
+
+ Non-empty subnodes must specify the 'pins' property.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
+index c22e6c425d0b..004056506679 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
+@@ -41,7 +41,7 @@ information about e.g. the mux function.
+
+ The following generic properties as defined in pinctrl-bindings.txt are v=
+alid
+ to specify in a pin configuration subnode:
+- pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-streng=
+th.
++ pins, function, bias-disable, bias-pull-down, bias-pull-up, drive-streng=
+th.
+
+ Non-empty subnodes must specify the 'pins' property.
+ Note that not all properties are valid for all pins.
+=2D-
+2.20.1
