@@ -1,75 +1,242 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 2/2] gpio: vf610: Use PTR_ERR_OR_ZERO() in vf610_gpio_probe()
-Date: Sun, 28 Apr 2019 22:49:48 -0700
-Message-ID: <20190429054948.9185-2-andrew.smirnov@gmail.com>
-References: <20190429054948.9185-1-andrew.smirnov@gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH v2] gpio: sch: Add interrupt support
+Date: Mon, 29 Apr 2019 07:55:52 +0200
+Message-ID: <046793ee-ba51-6a1b-1aa5-14560d849df7@siemens.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190429054948.9185-1-andrew.smirnov@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J., Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Simplify error checking code by replacing multiple ERR macros with a
-call to PTR_ERR_OR_ZERO. No functional change intended.
+Validated on the Quark platform, this adds interrupt support on rising
+and/or falling edges.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/gpio/gpio-vf610.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 30aef41e3b7e..7ba668db171b 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -265,7 +265,8 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 		return port->irq;
+Changes in v2:
+ - consistently use spinlock irqsave
+
+ drivers/gpio/gpio-sch.c | 144 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 137 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index fb143f28c386..75c95da145d8 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -18,12 +18,17 @@
+ #define GEN	0x00
+ #define GIO	0x04
+ #define GLV	0x08
++#define GTPE	0x0c
++#define GTNE	0x10
++#define GGPE	0x14
++#define GTS	0x1c
  
- 	port->clk_port = devm_clk_get(dev, "port");
--	if (!IS_ERR(port->clk_port)) {
-+	ret = PTR_ERR_OR_ZERO(port->clk_port);
-+	if (!ret) {
- 		ret = clk_prepare_enable(port->clk_port);
- 		if (ret)
- 			return ret;
-@@ -273,16 +274,17 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 					       port->clk_port);
- 		if (ret)
- 			return ret;
--	} else if (port->clk_port == ERR_PTR(-EPROBE_DEFER)) {
-+	} else if (ret == -EPROBE_DEFER) {
- 		/*
- 		 * Percolate deferrals, for anything else,
- 		 * just live without the clocking.
- 		 */
--		return PTR_ERR(port->clk_port);
+ struct sch_gpio {
+ 	struct gpio_chip chip;
+ 	spinlock_t lock;
+ 	unsigned short iobase;
+ 	unsigned short resume_base;
++	int irq_base;
+ };
+ 
+ static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
+@@ -79,10 +84,11 @@ static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned gpio, unsigned reg,
+ static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ 	return 0;
+ }
+ 
+@@ -95,20 +101,22 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GLV, val);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ }
+ 
+ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+ 				  int val)
+ {
+ 	struct sch_gpio *sch = gpiochip_get_data(gc);
++	unsigned long flags;
+ 
+-	spin_lock(&sch->lock);
++	spin_lock_irqsave(&sch->lock, flags);
+ 	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
+-	spin_unlock(&sch->lock);
++	spin_unlock_irqrestore(&sch->lock, flags);
+ 
+ 	/*
+ 	 * according to the datasheet, writing to the level register has no
+@@ -130,6 +138,12 @@ static int sch_gpio_get_direction(struct gpio_chip *gc, unsigned gpio_num)
+ 	return sch_gpio_reg_get(sch, gpio_num, GIO);
+ }
+ 
++static int sch_gpio_to_irq(struct gpio_chip *gpio, unsigned int offset)
++{
++	struct sch_gpio *sch = gpiochip_get_data(gpio);
++	return sch->irq_base + offset;
++}
++
+ static const struct gpio_chip sch_gpio_chip = {
+ 	.label			= "sch_gpio",
+ 	.owner			= THIS_MODULE,
+@@ -138,12 +152,96 @@ static const struct gpio_chip sch_gpio_chip = {
+ 	.direction_output	= sch_gpio_direction_out,
+ 	.set			= sch_gpio_set,
+ 	.get_direction		= sch_gpio_get_direction,
++	.to_irq			= sch_gpio_to_irq,
+ };
+ 
++static u32 sch_sci_handler(void *context)
++{
++	struct sch_gpio *sch = context;
++	unsigned long core_status, resume_status;
++	unsigned int resume_gpios, offset;
++
++	core_status = inl(sch->iobase + GTS);
++	resume_status = inl(sch->iobase + GTS + 0x20);
++
++	if (core_status == 0 && resume_status == 0)
++		return ACPI_INTERRUPT_NOT_HANDLED;
++
++	for_each_set_bit(offset, &core_status, sch->resume_base)
++		generic_handle_irq(sch->irq_base + offset);
++
++	resume_gpios = sch->chip.ngpio - sch->resume_base;
++	for_each_set_bit(offset, &resume_status, resume_gpios)
++		generic_handle_irq(sch->irq_base + sch->resume_base + offset);
++
++	outl(core_status, sch->iobase + GTS);
++	outl(resume_status, sch->iobase + GTS + 0x20);
++
++	return ACPI_INTERRUPT_HANDLED;
++}
++
++static int sch_irq_type(struct irq_data *d, unsigned int type)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct sch_gpio *sch = gc->private;
++	unsigned int gpio_num = d->irq - sch->irq_base;
++	unsigned long flags;
++	int rising = 0;
++	int falling = 0;
++
++	switch (type & IRQ_TYPE_SENSE_MASK) {
++	case IRQ_TYPE_EDGE_RISING:
++		rising = 1;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		falling = 1;
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		rising = 1;
++		falling = 1;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	spin_lock_irqsave(&sch->lock, flags);
++	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
++	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
++	spin_unlock_irqrestore(&sch->lock, flags);
++
++	return 0;
++}
++
++static void sch_irq_set_enable(struct irq_data *d, int val)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct sch_gpio *sch = gc->private;
++	unsigned int gpio_num = d->irq - sch->irq_base;
++	unsigned long flags;
++
++	spin_lock_irqsave(&sch->lock, flags);
++	sch_gpio_reg_set(sch, gpio_num, GGPE, val);
++	spin_unlock_irqrestore(&sch->lock, flags);
++}
++
++static void sch_irq_mask(struct irq_data *d)
++{
++	sch_irq_set_enable(d, 0);
++}
++
++static void sch_irq_unmask(struct irq_data *d)
++{
++	sch_irq_set_enable(d, 1);
++}
++
+ static int sch_gpio_probe(struct platform_device *pdev)
+ {
++	struct irq_chip_generic *gc;
++	struct irq_chip_type *ct;
+ 	struct sch_gpio *sch;
+ 	struct resource *res;
++	acpi_status status;
++	int irq_base, ret;
+ 
+ 	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
+ 	if (!sch)
+@@ -203,7 +301,39 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, sch);
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
++	ret = devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
++	if (ret)
 +		return ret;
- 	}
- 
- 	port->clk_gpio = devm_clk_get(dev, "gpio");
--	if (!IS_ERR(port->clk_gpio)) {
-+	ret = PTR_ERR_OR_ZERO(port->clk_gpio);
-+	if (!ret) {
- 		ret = clk_prepare_enable(port->clk_gpio);
- 		if (ret)
- 			return ret;
-@@ -290,8 +292,8 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 					       port->clk_gpio);
- 		if (ret)
- 			return ret;
--	} else if (port->clk_gpio == ERR_PTR(-EPROBE_DEFER)) {
--		return PTR_ERR(port->clk_gpio);
-+	} else if (ret == -EPROBE_DEFER) {
++
++	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
++					NUMA_NO_NODE);
++	if (irq_base < 0)
++		return irq_base;
++	sch->irq_base = irq_base;
++
++	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
++					 NULL, handle_simple_irq);
++	if (!gc)
++		return -ENOMEM;
++
++	gc->private = sch;
++	ct = gc->chip_types;
++
++	ct->chip.irq_mask = sch_irq_mask;
++	ct->chip.irq_unmask = sch_irq_unmask;
++	ct->chip.irq_set_type = sch_irq_type;
++
++	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
++					  IRQ_MSK(sch->chip.ngpio),
++					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++	if (ret)
 +		return ret;
- 	}
++
++	status = acpi_install_sci_handler(sch_sci_handler, sch);
++	if (ACPI_FAILURE(status))
++		return -EINVAL;
++
++	return 0;
+ }
  
- 	gc = &port->gc;
+ static struct platform_driver sch_gpio_driver = {
 -- 
-2.20.1
+2.16.4
