@@ -1,30 +1,56 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: sch: Add interrupt support
-Date: Mon, 29 Apr 2019 16:19:00 +0300
-Message-ID: <20190429131900.GD9224@smile.fi.intel.com>
-References: <046793ee-ba51-6a1b-1aa5-14560d849df7@siemens.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: add a 'drive-strength-uA' property
+Date: Mon, 29 Apr 2019 12:19:48 -0700
+Message-ID: <7hk1fcr54b.fsf@baylibre.com>
+References: <20190418124758.24022-1-glaroque@baylibre.com> <20190418124758.24022-2-glaroque@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <046793ee-ba51-6a1b-1aa5-14560d849df7@siemens.com>
+In-Reply-To: <20190418124758.24022-2-glaroque@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "Rafael J., Wysocki" <rafael.j.wysocki@intel.com>
+To: Guillaume La Roque <glaroque@baylibre.com>, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 07:55:52AM +0200, Jan Kiszka wrote:
-> Validated on the Quark platform, this adds interrupt support on rising
-> and/or falling edges.
+Rob,
 
-Can we split it to two:
-- Add IRQ support on edge
-- Add ACPI handler (with explanation in the commit message why we do like this,
-  based on the thread from v1)
+Guillaume La Roque <glaroque@baylibre.com> writes:
 
-?
+> This property allow drive-strength parameter in uA instead of mA.
+>
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> index cef2b5855d60..fc7018459aa2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> @@ -258,6 +258,7 @@ drive-push-pull		- drive actively high and low
+>  drive-open-drain	- drive with open drain
+>  drive-open-source	- drive with open source
+>  drive-strength		- sink or source at most X mA
+> +drive-strength-uA	- sink or source at most X uA
+>  input-enable		- enable input on pin (no effect on output, such as
+>  			  enabling an input buffer)
+>  input-disable		- disable input on pin (no effect on output, such as
+> @@ -326,6 +327,8 @@ arguments are described below.
+>  
+>  - drive-strength takes as argument the target strength in mA.
+>  
+> +- drive-strength-uA takes as argument the target strength in uA.
+> +
+>  - input-debounce takes the debounce time in usec as argument
+>    or 0 to disable debouncing
 
+Can we get your input on this?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Linus W. is OK with this[1], but wants opinion/approval from DT
+maintainers first.
+
+Thanks,
+
+Kevin
+
+[1] https://lore.kernel.org/lkml/CACRpkdZ2dPzrtJQkxmN7V=f6+qYZAvrF+b0J77cN9hoRAgFqrw@mail.gmail.com/T/#u
