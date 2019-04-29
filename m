@@ -1,42 +1,238 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3] gpio: merrifield: Fix build err without CONFIG_ACPI
-Date: Mon, 29 Apr 2019 10:40:37 +0200
-Message-ID: <1693119.KP9SAZBlm1@kreacher>
-References: <20190405142112.26592-1-yuehaibing@huawei.com> <CACRpkda_xw2rdzSLcreHnfdwsmUMTR=+BRHJWjrE31COaZhtZw@mail.gmail.com> <20190426122317.GP9224@smile.fi.intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [RFC PATCH 2/3] irqchip/exiu: implement ACPI gpiolib/irqchip
+ support
+Date: Mon, 29 Apr 2019 11:09:48 +0200
+Message-ID: <CAKv+Gu-7BNe9Zk-zPe1_SZmGH=5P+PubUc2G+03+ZWt=eD==Bg@mail.gmail.com>
+References: <20190425102020.21533-1-ard.biesheuvel@linaro.org>
+ <20190425102020.21533-3-ard.biesheuvel@linaro.org>
+ <1fbbfc30-7389-5618-a046-ab8872882494@arm.com>
+ <CAKv+Gu99JXhNnUPpfN274qN7+TJXvFTAatn_31yDDAcrU7LpaQ@mail.gmail.com>
+ <eedc61f7-5c71-46eb-0f06-18daa9c5b5df@arm.com>
+ <CAKv+Gu-RnR5=RqW7=GTaUYSpQUSTLpCfaUQfASxha-KhcxY4_g@mail.gmail.com>
+ <CAKv+Gu_7tprJ7UOowQ+3fhoO2Sq2yJ8SKzcM5OiZE3eWm=o_Tw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190426122317.GP9224@smile.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Yue Haibing <yuehaibing@huawei.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAKv+Gu_7tprJ7UOowQ+3fhoO2Sq2yJ8SKzcM5OiZE3eWm=o_Tw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Graeme Gregory <graeme.gregory@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Masahisa Kojima <masahisa.kojima@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, April 26, 2019 2:23:17 PM CEST Andy Shevchenko wrote:
-> On Tue, Apr 23, 2019 at 11:17:32AM +0200, Linus Walleij wrote:
-> > On Fri, Apr 12, 2019 at 5:20 PM Yue Haibing <yuehaibing@huawei.com> wrote:
-> > 
-> > > From: YueHaibing <yuehaibing@huawei.com>
+On Sat, 27 Apr 2019 at 00:27, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> On Fri, 26 Apr 2019 at 13:45, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> > On Fri, 26 Apr 2019 at 10:44, Marc Zyngier <marc.zyngier@arm.com> wrote:
 > > >
-> > > When building CONFIG_ACPI is not set
-> > > gcc warn this:
+> > > On 26/04/2019 09:24, Ard Biesheuvel wrote:
+> > > > On Thu, 25 Apr 2019 at 17:33, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > > >>
+> > > >> Hi Ard,
+> > > >>
+> > > >> On 25/04/2019 11:20, Ard Biesheuvel wrote:
+> > > >>> Expose the existing EXIU hierarchical irqchip domain code to permit
+> > > >>> the interrupt controller to be used as the irqchip component of a
+> > > >>> GPIO controller on ACPI systems.
+> > > >>>
+> > > >>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > >>> ---
+> > > >>>  drivers/irqchip/irq-sni-exiu.c | 82 +++++++++++++++++---
+> > > >>>  1 file changed, 73 insertions(+), 9 deletions(-)
+> > > >>>
+> > > >>
+> > > >> [...]
+> > > >>
+> > > >>> +int exiu_acpi_init(struct platform_device *pdev, struct gpio_chip *gc)
+> > > >>> +{
+> > > >>> +     struct irq_domain *parent_domain = NULL, *domain;
+> > > >>> +     struct resource *res;
+> > > >>> +     int irq;
+> > > >>> +
+> > > >>> +     irq = platform_get_irq(pdev, 0);
+> > > >>> +     if (irq > 0)
+> > > >>> +             parent_domain = irq_get_irq_data(irq)->domain;
+> > > >>> +
+> > > >>> +     if (!parent_domain) {
+> > > >>> +             dev_err(&pdev->dev, "unable to obtain parent domain\n");
+> > > >>> +             return -ENODEV;
+> > > >>> +     }
+> > > >>> +
+> > > >>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > > >>> +     if (!res) {
+> > > >>> +             dev_err(&pdev->dev, "failed to parse memory resource\n");
+> > > >>> +             return -ENXIO;
+> > > >>> +     }
+> > > >>> +
+> > > >>> +     domain = exiu_init(parent_domain, dev_fwnode(&pdev->dev), res);
+> > > >>> +     if (IS_ERR(domain)) {
+> > > >>> +             dev_err(&pdev->dev, "failed to create IRQ domain (%ld)\n",
+> > > >>> +                     PTR_ERR(domain));
+> > > >>> +             return PTR_ERR(domain);
+> > > >>> +     }
+> > > >>> +
+> > > >>> +     gc->irq.domain = domain;
+> > > >>> +     gc->to_irq = exiu_acpi_gpio_to_irq;
+> > > >>> +
+> > > >>> +     dev_info(&pdev->dev, "%d interrupts forwarded\n", NUM_IRQS);
+> > > >>> +
+> > > >>> +     return 0;
+> > > >>> +}
+> > > >>> +EXPORT_SYMBOL(exiu_acpi_init);
+> > > >>> +#endif
+> > > >>>
+> > > >>
+> > > >> I must say I'm not overly keen on this function. Why can't this be
+> > > >> probed as an ACPI device, creating the corresponding domain, and leaving
+> > > >> to the GPIO driver the task of doing the GPIO stuff?
+> > > >>
+> > > >
+> > > > Because ACPI only permits 'system' interrupts or GPIO interrupts, it
+> > > > does not allow arbitrary device objects in the ACPI namespace to be
+> > > > targeted as interrupt controllers.
 > > >
-> > > drivers/gpio/gpio-merrifield.c: In function mrfld_gpio_get_pinctrl_dev_name:
-> > > drivers/gpio/gpio-merrifield.c:388:19: error: dereferencing pointer to incomplete type struct acpi_device
-> > >    put_device(&adev->dev);
-> > >                    ^~
+> > > Hmmm. We already have at least one driver (irq-mbigen.c) that does
+> > > exactly that. It uses interrupts from the GIC (it is notionally behind
+> > > the ITS), and offers a bunch of interrupt lines itself. Why is it different?
 > > >
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Fixes:d00d2109c367 ("gpio: merrifield: Convert to use acpi_dev_get_first_match_dev()")
-> > > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > 
-> > This doesn't apply cleanly to any GPIO branch (devel or fixes)
-> > so I assume it is supposed to be applied to the ACPI tree.
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Thanks!
-> Rafael, can this be applied to your tree?
+> >
+> > You are right, it isn't. It turns out that there is another way to
+> > signal ACPI events based on interrupts, and it involves the ACPI0013
+> > GED device. I will try to model it that way instead.
+> >
+>
+> Unfortunately, this doesn't work either. The GED device can respond to
+> GSIVs only, and so going via the EXIU doesn't work.
+>
+> I have attempted to hack it up via AML, but the GED driver uses a
+> threaded interrupt, and so the interrupt is re-enabled at the GIC
+> before the AML handler is executed (which clears it in the EXIU)
+>
+> For the RAS case, I guess we could let the firmware pick an arbitrary
+> unused SPI and signal that directly into the GIC, but for the power
+> button (which is physically wired to the EXIU), we have to model the
+> EXIU either has a separate pseudo-GPIO controller, or as part of the
+> real GPIO block.
 
-Done already, thanks!
+(+ Mika)
+
+I made some progress describing the EXIU and GPIO controllers as follow.
+
+    Device (EXIU) {
+      Name (_HID, "SCX0008")
+      Name (_UID, Zero)
+      Name (_CRS, ResourceTemplate () {
+        Memory32Fixed (ReadWrite, SYNQUACER_EXIU_BASE, SYNQUACER_EXIU_SIZE)
+        Interrupt (ResourceConsumer, Level, ActiveHigh, ExclusiveAndWake) {
+          144, 145, 146, 147, 148, 149, 150, 151,
+          152, 153, 154, 155, 156, 157, 158, 159,
+          160, 161, 162, 163, 164, 165, 166, 167,
+          168, 169, 170, 171, 172, 173, 174, 175,
+        }
+      })
+      Name (_DSD, Package () {
+        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package () {
+          Package () { "socionext,spi-base", 112 },
+        }
+      })
+    }
+
+and
+
+    Device (GPIO) {
+      Name (_HID, "SCX0007")
+      Name (_UID, Zero)
+      Name (_CRS, ResourceTemplate () {
+        Memory32Fixed (ReadWrite, SYNQUACER_GPIO_BASE, SYNQUACER_GPIO_SIZE)
+        Interrupt (ResourceConsumer, Edge, ActiveLow,
+ExclusiveAndWake, 0, "\\_SB.EXIU") {
+          7,
+        }
+      })
+      Name (_AEI, ResourceTemplate () {
+        GpioInt (Edge, ActiveHigh, ExclusiveAndWake, PullDefault, 0,
+"\\_SB.GPIO")
+        {
+          7
+        }
+      })
+      Method (_E07) {
+        Notify (\_SB.PWRB, 0x80)
+      }
+    }
+
+This is actually a fairly accurate depiction of reality: the EXIU is a
+separate unit, and only some of the GPIOs are routed through it.
+
+In the GPIO controller's to_irq() callback, I return the Linux IRQ
+number based on the platform IRQ resources claimed by the GPIO device,
+and I end up with something like
+
+ 46:          0 ... 0      EXIU   7 Edge      ACPI:Event
+
+which looks correct to me. debugfs tells me it is mapped as
+
+handler:  handle_fasteoi_irq
+device:   (null)
+status:   0x00000001
+istate:   0x00000020
+            IRQS_ONESHOT
+ddepth:   0
+wdepth:   1
+dstate:   0x03404201
+            IRQ_TYPE_EDGE_RISING
+            IRQD_ACTIVATED
+            IRQD_IRQ_STARTED
+            IRQD_SINGLE_TARGET
+            IRQD_WAKEUP_STATE
+node:     0
+affinity: 0-23
+effectiv: 0
+domain:  \_SB_.EXIU
+ hwirq:   0x7
+ chip:    EXIU
+  flags:   0x55
+             IRQCHIP_SET_TYPE_MASKED
+             IRQCHIP_MASK_ON_SUSPEND
+             IRQCHIP_SKIP_SET_WAKE
+             IRQCHIP_EOI_THREADED
+ parent:
+    domain:  irqchip@(____ptrval____)-1
+     hwirq:   0x97
+     chip:    GICv3
+      flags:   0x15
+                 IRQCHIP_SET_TYPE_MASKED
+                 IRQCHIP_MASK_ON_SUSPEND
+                 IRQCHIP_SKIP_SET_WAKE
+
+The EXIU domain is described as
+
+name:   \_SB_.EXIU
+ size:   32
+ mapped: 1
+ flags:  0x00000041
+ parent: irqchip@(____ptrval____)-1
+    name:   irqchip@(____ptrval____)-1
+     size:   0
+     mapped: 55
+     flags:  0x00000041
+
+Unfortunately, the system locks up entirely as soon as the interrupt
+is triggered (I use a DIP switch in this case). So while the
+description is accurate and the correct interrupt does get mapped,
+something is still not working entirely as expected.
+
+Any thoughts?
+
+Thanks,
+Ard.
