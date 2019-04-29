@@ -1,13 +1,13 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] gpio: vf610: Use devm_platform_ioremap_resource()
-Date: Mon, 29 Apr 2019 09:53:18 +0200
-Message-ID: <CAMpxmJVe2C1RSHq0xVDSdNEK0S06e2Q=tp5k5QJXdCTG2DzJbQ@mail.gmail.com>
-References: <20190429054948.9185-1-andrew.smirnov@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: vf610: Use PTR_ERR_OR_ZERO() in vf610_gpio_probe()
+Date: Mon, 29 Apr 2019 10:05:12 +0200
+Message-ID: <CAMpxmJUrVU6qGH9ZOaxABOuOopnHjyv+iqT908p1f-NuSk0r5w@mail.gmail.com>
+References: <20190429054948.9185-1-andrew.smirnov@gmail.com> <20190429054948.9185-2-andrew.smirnov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190429054948.9185-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20190429054948.9185-2-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Chris Healy <cphealy@gmail.com>, LKML <linux-kernel@vger.kernel.org>
@@ -16,9 +16,8 @@ List-Id: linux-gpio@vger.kernel.org
 pon., 29 kwi 2019 o 07:50 Andrey Smirnov <andrew.smirnov@gmail.com> napisa=
 =C5=82(a):
 >
-> Replace calls to platform_get_resource() and devm_ioremap_resource()
-> with newly added devm_platform_ioremap_resource() for brevity. No
-> functional change intended.
+> Simplify error checking code by replacing multiple ERR macros with a
+> call to PTR_ERR_OR_ZERO. No functional change intended.
 >
 > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -27,39 +26,58 @@ pon., 29 kwi 2019 o 07:50 Andrey Smirnov <andrew.smirnov@gmail.com> napisa=
 > Cc: linux-gpio@vger.kernel.org
 > Cc: linux-kernel@vger.kernel.org
 > ---
->  drivers/gpio/gpio-vf610.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>  drivers/gpio/gpio-vf610.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 >
 > diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> index 6f6558715b88..30aef41e3b7e 100644
+> index 30aef41e3b7e..7ba668db171b 100644
 > --- a/drivers/gpio/gpio-vf610.c
 > +++ b/drivers/gpio/gpio-vf610.c
-> @@ -242,7 +242,6 @@ static int vf610_gpio_probe(struct platform_device *p=
+> @@ -265,7 +265,8 @@ static int vf610_gpio_probe(struct platform_device *p=
 dev)
->         struct device *dev =3D &pdev->dev;
->         struct device_node *np =3D dev->of_node;
->         struct vf610_gpio_port *port;
-> -       struct resource *iores;
->         struct gpio_chip *gc;
->         struct irq_chip *ic;
->         int i;
-> @@ -253,13 +252,11 @@ static int vf610_gpio_probe(struct platform_device =
+>                 return port->irq;
+>
+>         port->clk_port =3D devm_clk_get(dev, "port");
+> -       if (!IS_ERR(port->clk_port)) {
+> +       ret =3D PTR_ERR_OR_ZERO(port->clk_port);
+> +       if (!ret) {
+>                 ret =3D clk_prepare_enable(port->clk_port);
+>                 if (ret)
+>                         return ret;
+> @@ -273,16 +274,17 @@ static int vf610_gpio_probe(struct platform_device =
 *pdev)
->                 return -ENOMEM;
+>                                                port->clk_port);
+>                 if (ret)
+>                         return ret;
+> -       } else if (port->clk_port =3D=3D ERR_PTR(-EPROBE_DEFER)) {
+> +       } else if (ret =3D=3D -EPROBE_DEFER) {
+>                 /*
+>                  * Percolate deferrals, for anything else,
+>                  * just live without the clocking.
+>                  */
+> -               return PTR_ERR(port->clk_port);
+> +               return ret;
+>         }
 >
->         port->sdata =3D of_device_get_match_data(dev);
-> -       iores =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       port->base =3D devm_ioremap_resource(dev, iores);
-> +       port->base =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(port->base))
->                 return PTR_ERR(port->base);
+>         port->clk_gpio =3D devm_clk_get(dev, "gpio");
+> -       if (!IS_ERR(port->clk_gpio)) {
+> +       ret =3D PTR_ERR_OR_ZERO(port->clk_gpio);
+> +       if (!ret) {
+>                 ret =3D clk_prepare_enable(port->clk_gpio);
+>                 if (ret)
+>                         return ret;
+> @@ -290,8 +292,8 @@ static int vf610_gpio_probe(struct platform_device *p=
+dev)
+>                                                port->clk_gpio);
+>                 if (ret)
+>                         return ret;
+> -       } else if (port->clk_gpio =3D=3D ERR_PTR(-EPROBE_DEFER)) {
+> -               return PTR_ERR(port->clk_gpio);
+> +       } else if (ret =3D=3D -EPROBE_DEFER) {
+> +               return ret;
+>         }
 >
-> -       iores =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -       port->gpio_base =3D devm_ioremap_resource(dev, iores);
-> +       port->gpio_base =3D devm_platform_ioremap_resource(pdev, 1);
->         if (IS_ERR(port->gpio_base))
->                 return PTR_ERR(port->gpio_base);
->
+>         gc =3D &port->gc;
 > --
 > 2.20.1
 >
