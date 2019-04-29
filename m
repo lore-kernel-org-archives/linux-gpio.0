@@ -1,86 +1,56 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: [PATCH 2/2] pinctrl: mediatek: Update cur_mask in mask/mask ops
-Date: Mon, 29 Apr 2019 11:55:15 +0800
-Message-ID: <20190429035515.73611-3-drinkcat@chromium.org>
-References: <20190429035515.73611-1-drinkcat@chromium.org>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH 1/2] gpio: vf610: Use devm_platform_ioremap_resource()
+Date: Sun, 28 Apr 2019 22:49:47 -0700
+Message-ID: <20190429054948.9185-1-andrew.smirnov@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190429035515.73611-1-drinkcat@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-mediatek@lists.infradead.org
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, evgreen@chromium.org, swboyd@chromium.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-During suspend/resume, mtk_eint_mask may be called while
-wake_mask is active. For example, this happens if a wake-source
-with an active interrupt handler wakes the system:
-irq/pm.c:irq_pm_check_wakeup would disable the interrupt, so
-that it can be handled later on in the resume flow.
+Replace calls to platform_get_resource() and devm_ioremap_resource()
+with newly added devm_platform_ioremap_resource() for brevity. No
+functional change intended.
 
-However, this may happen before mtk_eint_do_resume is called:
-in this case, wake_mask is loaded, and cur_mask is restored
-from an older copy, re-enabling the interrupt, and causing
-an interrupt storm (especially for level interrupts).
-
-Instead, we just record mask/unmask changes in cur_mask. This
-also avoids the need to read the current mask in eint_do_suspend,
-and we can remove mtk_eint_chip_read_mask function.
-
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/pinctrl/mediatek/mtk-eint.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-vf610.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-index 737385e86beb807..7e526bcf5e0b55c 100644
---- a/drivers/pinctrl/mediatek/mtk-eint.c
-+++ b/drivers/pinctrl/mediatek/mtk-eint.c
-@@ -113,6 +113,8 @@ static void mtk_eint_mask(struct irq_data *d)
- 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
- 						eint->regs->mask_set);
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 6f6558715b88..30aef41e3b7e 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -242,7 +242,6 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct vf610_gpio_port *port;
+-	struct resource *iores;
+ 	struct gpio_chip *gc;
+ 	struct irq_chip *ic;
+ 	int i;
+@@ -253,13 +252,11 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
-+	eint->cur_mask[d->hwirq >> 5] &= ~mask;
-+
- 	writel(mask, reg);
- }
+ 	port->sdata = of_device_get_match_data(dev);
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	port->base = devm_ioremap_resource(dev, iores);
++	port->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(port->base))
+ 		return PTR_ERR(port->base);
  
-@@ -123,6 +125,8 @@ static void mtk_eint_unmask(struct irq_data *d)
- 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
- 						eint->regs->mask_clr);
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	port->gpio_base = devm_ioremap_resource(dev, iores);
++	port->gpio_base = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(port->gpio_base))
+ 		return PTR_ERR(port->gpio_base);
  
-+	eint->cur_mask[d->hwirq >> 5] |= mask;
-+
- 	writel(mask, reg);
- 
- 	if (eint->dual_edge[d->hwirq])
-@@ -217,19 +221,6 @@ static void mtk_eint_chip_write_mask(const struct mtk_eint *eint,
- 	}
- }
- 
--static void mtk_eint_chip_read_mask(const struct mtk_eint *eint,
--				    void __iomem *base, u32 *buf)
--{
--	int port;
--	void __iomem *reg;
--
--	for (port = 0; port < eint->hw->ports; port++) {
--		reg = base + eint->regs->mask + (port << 2);
--		buf[port] = ~readl_relaxed(reg);
--		/* Mask is 0 when irq is enabled, and 1 when disabled. */
--	}
--}
--
- static int mtk_eint_irq_request_resources(struct irq_data *d)
- {
- 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
-@@ -384,7 +375,6 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
- 
- int mtk_eint_do_suspend(struct mtk_eint *eint)
- {
--	mtk_eint_chip_read_mask(eint, eint->base, eint->cur_mask);
- 	mtk_eint_chip_write_mask(eint, eint->base, eint->wake_mask);
- 
- 	return 0;
 -- 
-2.21.0.593.g511ec345e18-goog
+2.20.1
