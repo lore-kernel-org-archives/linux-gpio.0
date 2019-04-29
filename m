@@ -1,260 +1,123 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [RFC PATCH 2/3] irqchip/exiu: implement ACPI gpiolib/irqchip
- support
-Date: Mon, 29 Apr 2019 10:35:19 +0100
-Message-ID: <74beef02-64fe-5ca4-5f9e-daf230384446@arm.com>
-References: <20190425102020.21533-1-ard.biesheuvel@linaro.org>
- <20190425102020.21533-3-ard.biesheuvel@linaro.org>
- <1fbbfc30-7389-5618-a046-ab8872882494@arm.com>
- <CAKv+Gu99JXhNnUPpfN274qN7+TJXvFTAatn_31yDDAcrU7LpaQ@mail.gmail.com>
- <eedc61f7-5c71-46eb-0f06-18daa9c5b5df@arm.com>
- <CAKv+Gu-RnR5=RqW7=GTaUYSpQUSTLpCfaUQfASxha-KhcxY4_g@mail.gmail.com>
- <CAKv+Gu_7tprJ7UOowQ+3fhoO2Sq2yJ8SKzcM5OiZE3eWm=o_Tw@mail.gmail.com>
- <CAKv+Gu-7BNe9Zk-zPe1_SZmGH=5P+PubUc2G+03+ZWt=eD==Bg@mail.gmail.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH 2/2] gpio: sch: Add interrupt support
+Date: Mon, 29 Apr 2019 13:09:20 +0200
+Message-ID: <ea29ee73-705b-7d13-0084-11274db02394@metux.net>
+References: <20190424081802.GV2654@lahna.fi.intel.com>
+ <5a28f22c-22f7-760a-d076-68ff19800d44@siemens.com>
+ <20190424084259.GW2654@lahna.fi.intel.com>
+ <7e328b7e-f4f0-851a-4152-a9ffd058201c@siemens.com>
+ <20190424094506.GA2654@lahna.fi.intel.com>
+ <292e6eff-82cc-6e4d-925b-77a60399e2e0@siemens.com>
+ <20190424100130.GB2654@lahna.fi.intel.com>
+ <1200464b-f969-ebc2-ae82-1f8ca98aaca1@siemens.com>
+ <20190424103306.GC2654@lahna.fi.intel.com>
+ <9377620b-d74a-04d9-a51e-8590400b1c0f@siemens.com>
+ <20190426130615.GT9224@smile.fi.intel.com>
+ <bd5453e1-0279-02ab-3304-edc6ebf509dc@siemens.com>
+ <bc856e19-470d-7655-5680-a031831ab513@metux.net>
+ <2f3da791-4a10-c2c4-dc5a-22ad16ed7be6@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAKv+Gu-7BNe9Zk-zPe1_SZmGH=5P+PubUc2G+03+ZWt=eD==Bg@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2f3da791-4a10-c2c4-dc5a-22ad16ed7be6@siemens.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Graeme Gregory <graeme.gregory@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Masahisa Kojima <masahisa.kojima@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 29/04/2019 10:09, Ard Biesheuvel wrote:
-> On Sat, 27 Apr 2019 at 00:27, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->>
->> On Fri, 26 Apr 2019 at 13:45, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->>>
->>> On Fri, 26 Apr 2019 at 10:44, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>>>
->>>> On 26/04/2019 09:24, Ard Biesheuvel wrote:
->>>>> On Thu, 25 Apr 2019 at 17:33, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>>>>>
->>>>>> Hi Ard,
->>>>>>
->>>>>> On 25/04/2019 11:20, Ard Biesheuvel wrote:
->>>>>>> Expose the existing EXIU hierarchical irqchip domain code to permit
->>>>>>> the interrupt controller to be used as the irqchip component of a
->>>>>>> GPIO controller on ACPI systems.
->>>>>>>
->>>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>>>>> ---
->>>>>>>  drivers/irqchip/irq-sni-exiu.c | 82 +++++++++++++++++---
->>>>>>>  1 file changed, 73 insertions(+), 9 deletions(-)
->>>>>>>
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> +int exiu_acpi_init(struct platform_device *pdev, struct gpio_chip *gc)
->>>>>>> +{
->>>>>>> +     struct irq_domain *parent_domain = NULL, *domain;
->>>>>>> +     struct resource *res;
->>>>>>> +     int irq;
->>>>>>> +
->>>>>>> +     irq = platform_get_irq(pdev, 0);
->>>>>>> +     if (irq > 0)
->>>>>>> +             parent_domain = irq_get_irq_data(irq)->domain;
->>>>>>> +
->>>>>>> +     if (!parent_domain) {
->>>>>>> +             dev_err(&pdev->dev, "unable to obtain parent domain\n");
->>>>>>> +             return -ENODEV;
->>>>>>> +     }
->>>>>>> +
->>>>>>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->>>>>>> +     if (!res) {
->>>>>>> +             dev_err(&pdev->dev, "failed to parse memory resource\n");
->>>>>>> +             return -ENXIO;
->>>>>>> +     }
->>>>>>> +
->>>>>>> +     domain = exiu_init(parent_domain, dev_fwnode(&pdev->dev), res);
->>>>>>> +     if (IS_ERR(domain)) {
->>>>>>> +             dev_err(&pdev->dev, "failed to create IRQ domain (%ld)\n",
->>>>>>> +                     PTR_ERR(domain));
->>>>>>> +             return PTR_ERR(domain);
->>>>>>> +     }
->>>>>>> +
->>>>>>> +     gc->irq.domain = domain;
->>>>>>> +     gc->to_irq = exiu_acpi_gpio_to_irq;
->>>>>>> +
->>>>>>> +     dev_info(&pdev->dev, "%d interrupts forwarded\n", NUM_IRQS);
->>>>>>> +
->>>>>>> +     return 0;
->>>>>>> +}
->>>>>>> +EXPORT_SYMBOL(exiu_acpi_init);
->>>>>>> +#endif
->>>>>>>
->>>>>>
->>>>>> I must say I'm not overly keen on this function. Why can't this be
->>>>>> probed as an ACPI device, creating the corresponding domain, and leaving
->>>>>> to the GPIO driver the task of doing the GPIO stuff?
->>>>>>
->>>>>
->>>>> Because ACPI only permits 'system' interrupts or GPIO interrupts, it
->>>>> does not allow arbitrary device objects in the ACPI namespace to be
->>>>> targeted as interrupt controllers.
->>>>
->>>> Hmmm. We already have at least one driver (irq-mbigen.c) that does
->>>> exactly that. It uses interrupts from the GIC (it is notionally behind
->>>> the ITS), and offers a bunch of interrupt lines itself. Why is it different?
->>>>
->>>
->>> You are right, it isn't. It turns out that there is another way to
->>> signal ACPI events based on interrupts, and it involves the ACPI0013
->>> GED device. I will try to model it that way instead.
->>>
->>
->> Unfortunately, this doesn't work either. The GED device can respond to
->> GSIVs only, and so going via the EXIU doesn't work.
->>
->> I have attempted to hack it up via AML, but the GED driver uses a
->> threaded interrupt, and so the interrupt is re-enabled at the GIC
->> before the AML handler is executed (which clears it in the EXIU)
->>
->> For the RAS case, I guess we could let the firmware pick an arbitrary
->> unused SPI and signal that directly into the GIC, but for the power
->> button (which is physically wired to the EXIU), we have to model the
->> EXIU either has a separate pseudo-GPIO controller, or as part of the
->> real GPIO block.
-> 
-> (+ Mika)
-> 
-> I made some progress describing the EXIU and GPIO controllers as follow.
-> 
->     Device (EXIU) {
->       Name (_HID, "SCX0008")
->       Name (_UID, Zero)
->       Name (_CRS, ResourceTemplate () {
->         Memory32Fixed (ReadWrite, SYNQUACER_EXIU_BASE, SYNQUACER_EXIU_SIZE)
->         Interrupt (ResourceConsumer, Level, ActiveHigh, ExclusiveAndWake) {
->           144, 145, 146, 147, 148, 149, 150, 151,
->           152, 153, 154, 155, 156, 157, 158, 159,
->           160, 161, 162, 163, 164, 165, 166, 167,
->           168, 169, 170, 171, 172, 173, 174, 175,
->         }
->       })
->       Name (_DSD, Package () {
->         ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->         Package () {
->           Package () { "socionext,spi-base", 112 },
->         }
->       })
->     }
-> 
-> and
-> 
->     Device (GPIO) {
->       Name (_HID, "SCX0007")
->       Name (_UID, Zero)
->       Name (_CRS, ResourceTemplate () {
->         Memory32Fixed (ReadWrite, SYNQUACER_GPIO_BASE, SYNQUACER_GPIO_SIZE)
->         Interrupt (ResourceConsumer, Edge, ActiveLow,
-> ExclusiveAndWake, 0, "\\_SB.EXIU") {
->           7,
->         }
->       })
->       Name (_AEI, ResourceTemplate () {
->         GpioInt (Edge, ActiveHigh, ExclusiveAndWake, PullDefault, 0,
-> "\\_SB.GPIO")
->         {
->           7
->         }
->       })
->       Method (_E07) {
->         Notify (\_SB.PWRB, 0x80)
->       }
->     }
-> 
-> This is actually a fairly accurate depiction of reality: the EXIU is a
-> separate unit, and only some of the GPIOs are routed through it.
-> 
-> In the GPIO controller's to_irq() callback, I return the Linux IRQ
-> number based on the platform IRQ resources claimed by the GPIO device,
-> and I end up with something like
-> 
->  46:          0 ... 0      EXIU   7 Edge      ACPI:Event
-> 
-> which looks correct to me. debugfs tells me it is mapped as
-> 
-> handler:  handle_fasteoi_irq
-> device:   (null)
-> status:   0x00000001
-> istate:   0x00000020
->             IRQS_ONESHOT
-> ddepth:   0
-> wdepth:   1
-> dstate:   0x03404201
->             IRQ_TYPE_EDGE_RISING
->             IRQD_ACTIVATED
->             IRQD_IRQ_STARTED
->             IRQD_SINGLE_TARGET
->             IRQD_WAKEUP_STATE
-> node:     0
-> affinity: 0-23
-> effectiv: 0
-> domain:  \_SB_.EXIU
->  hwirq:   0x7
->  chip:    EXIU
->   flags:   0x55
->              IRQCHIP_SET_TYPE_MASKED
->              IRQCHIP_MASK_ON_SUSPEND
->              IRQCHIP_SKIP_SET_WAKE
->              IRQCHIP_EOI_THREADED
->  parent:
->     domain:  irqchip@(____ptrval____)-1
->      hwirq:   0x97
->      chip:    GICv3
->       flags:   0x15
->                  IRQCHIP_SET_TYPE_MASKED
->                  IRQCHIP_MASK_ON_SUSPEND
->                  IRQCHIP_SKIP_SET_WAKE
-> 
-> The EXIU domain is described as
-> 
-> name:   \_SB_.EXIU
->  size:   32
->  mapped: 1
->  flags:  0x00000041
->  parent: irqchip@(____ptrval____)-1
->     name:   irqchip@(____ptrval____)-1
->      size:   0
->      mapped: 55
->      flags:  0x00000041
-> 
-> Unfortunately, the system locks up entirely as soon as the interrupt
-> is triggered (I use a DIP switch in this case). So while the
-> description is accurate and the correct interrupt does get mapped,
-> something is still not working entirely as expected.
-> 
-> Any thoughts?
+On 26.04.19 18:03, Jan Kiszka wrote:
 
-It feels like an interrupt storm with an edge vs level misconfiguration.
-Can you check that the IRQ_TYPE_EDGE_RISING is correctly propagated
-across the hierarchy?
+> Leaving that blunt hack aside:
+> 
+> import mraa
+> 
+> pin = mraa.Gpio(13)
+> pin.dir(mraa.DIR_OUT)
+> pin.write(1)
+> 
+> And the same goes for nodejs, java and c++.
 
-The EXIU block has:
+Such trivial wrappers are easy write in the coffe break.
+For those usecases the good old sysfs interface is really sufficient.
 
-Interrupt (ResourceConsumer, Level, ActiveHigh, ExclusiveAndWake) {
+(I'm frequently replacing those kind of "abstraction layers" of sevaral
+10kLoC in various client projects by just a few lines of really tiny
+shim ...)
 
-while the GPIO block has:
+And relying on numeric gpio ids is generally a bad idea.
+(exactly one of the kind of problems why certain clients call me in
+great despair, when it broke again :p)
 
-Interrupt (ResourceConsumer, Edge, ActiveLow, ExclusiveAndWake, 0,
-"\\_SB.EXIU")
+> Moreover, this allows you to abstract away where "Pin 13" actually came
+> from on that board if the kernel changes (BSP -> upstream...) or the
+> extension board or ... 
 
-and the interrupt is configured for yet another trigger
-(IRQ_TYPE_EDGE_RISING).
+As said: numeric pin IDs are a *bad* idea.
+If it's a *name* (=string), then that seems to be a usecase for labels.
+For convenience, you could just pupulate the fs w/ proper symlinks that
+are named by the pin names from the schematics.
 
-Hope this helps,
+> We will exploit that when moving to a completely
+> different base hardware with the next revision or our IOT2000.
 
-	M.
+When doing that, you could also kick out Intel and move to ARM, as quite
+everybody else does ;-)
+
+<snip>
+
+> You also have to keep the class of "cool, I've just created my first
+> Node.RED node!" IoT newbies in mind.
+
+As said above: writing a small js wrapper for that is just a coffee
+break job.
+
+> These higher abstraction help to
+> keep them away from the wrong lower APIs - or enable them to do
+> something at all ("Cool, I've just connected my first two nodes!"). 
+
+gpio's are already very low-level. Highlevel would be things like keys,
+leds, etc.
+
+That's one of the things I frequently have to teach my clients: first
+make yourself clear about what you're *actually* doing with these pins
+and then pick the right drivers.
+
+Okay, we could talk about creating some nice oftree-overlay generators,
+to make it easier for newbies. Or create some small DSL, perhaps w/ some
+tiny GUI editor. But don't let them play w/ raw gpio's - this quickly
+goes horribly wrong (I've seen that in the field, many times).
+
+It's nice, that you folks (Siemens) are now doing your own controller,
+so you can finally throw out the ugly AMX+co crap. But please don't
+repeat their mistakes. We don't need yet another raspi for building
+automation - we need a different programming model than the old PLC-
+style spaghetti configuration :p
+
+(oh, and if you add ATEX and railways certification, I might have a new
+customer for you ;-))
+
+Okay, that's getting far OT, so maybe we should continue off-list ;-)
+
+> By far not all of them have consultants at hand.
+
+They better should :p
+
+> And while we only ship our IOT2000 image with mraa and all the fun as
+> reference image, it's way more for quite a few users. Even if you do not
+> want to look behind the curtains of certain software components (that we
+> primarily inherited and then started to clean up), they are working, or
+> we would have heard.
+
+Maybe because some field techs rather grab some beers and go to some
+friend who happens to be a linux hacker, instead of burning their time
+on the official channels those big corporate structures ;-)
+
+
+--mtx
+
 -- 
-Jazz is not dead. It just smells funny...
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
