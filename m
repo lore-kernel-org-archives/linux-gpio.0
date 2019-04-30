@@ -1,75 +1,35 @@
-From: Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH v8 07/14] gpio: thunderx: Use the default parent apis for {request,release}_resources
-Date: Tue, 30 Apr 2019 15:42:23 +0530
-Message-ID: <20190430101230.21794-8-lokeshvutla@ti.com>
-References: <20190430101230.21794-1-lokeshvutla@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
+Date: Tue, 30 Apr 2019 14:37:21 +0300
+Message-ID: <CAHp75VfXj=1Ef7aXWyETyiaUF3ftLEodTs3azoDHTq=yrj7adw@mail.gmail.com>
+References: <20190415055358.9269-1-chiu@endlessm.com> <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
+ <20190426125031.GQ9224@smile.fi.intel.com> <CAB4CAwfF7FoQK9OndOm_yHQe19j=E_cNLn3eTBfoggEacONiyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190430101230.21794-1-lokeshvutla@ti.com>
+In-Reply-To: <CAB4CAwfF7FoQK9OndOm_yHQe19j=E_cNLn3eTBfoggEacONiyg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>, tglx@linutronix.de, jason@lakedaemon.net
-Cc: Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, linus.walleij@linaro.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Device Tree Mailing List <devicetree@vger.kernel.org>, linux-gpio@vger.kernel.org
+To: Chris Chiu <chiu@endlessm.com>
+Cc: Andriy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-thunderx_gpio_irq_{request,release}_resources apis are trying to
-{request,release} resources on parent interrupt. There are default
-apis doing the same. Use the default parent apis instead of writing
-the same code snippet.
+On Tue, Apr 30, 2019 at 5:15 AM Chris Chiu <chiu@endlessm.com> wrote:
+> On Fri, Apr 26, 2019 at 8:50 PM Andriy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Tue, Apr 23, 2019 at 12:38:17PM +0200, Linus Walleij wrote:
+> > > On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
 
-Cc: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
----
-Changes since v7:
-- None
+> > > This v3 patch applied with Mika's ACK.
+> >
+> > Hmm... It's supposed to go along with our PR.
+>
+> Anything I can help with?
 
- drivers/gpio/gpio-thunderx.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+Not sure.
+I sent PR to Linus and asked at the same time to drop Intel specifics
+from devel queue. Fortunately, for-next doesn't have such issue.
+Linus?
 
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index 1306722faa5a..715371b5102a 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -363,22 +363,16 @@ static int thunderx_gpio_irq_request_resources(struct irq_data *data)
- {
- 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
- 	struct thunderx_gpio *txgpio = txline->txgpio;
--	struct irq_data *parent_data = data->parent_data;
- 	int r;
- 
- 	r = gpiochip_lock_as_irq(&txgpio->chip, txline->line);
- 	if (r)
- 		return r;
- 
--	if (parent_data && parent_data->chip->irq_request_resources) {
--		r = parent_data->chip->irq_request_resources(parent_data);
--		if (r)
--			goto error;
--	}
-+	r = irq_chip_request_resources_parent(data);
-+	if (r)
-+		gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- 
--	return 0;
--error:
--	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- 	return r;
- }
- 
-@@ -386,10 +380,8 @@ static void thunderx_gpio_irq_release_resources(struct irq_data *data)
- {
- 	struct thunderx_line *txline = irq_data_get_irq_chip_data(data);
- 	struct thunderx_gpio *txgpio = txline->txgpio;
--	struct irq_data *parent_data = data->parent_data;
- 
--	if (parent_data && parent_data->chip->irq_release_resources)
--		parent_data->chip->irq_release_resources(parent_data);
-+	irq_chip_release_resources_parent(data);
- 
- 	gpiochip_unlock_as_irq(&txgpio->chip, txline->line);
- }
 -- 
-2.21.0
+With Best Regards,
+Andy Shevchenko
