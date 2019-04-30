@@ -1,113 +1,61 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: intel: Clear interrupt status in mask/unmask
- callback
-Date: Tue, 30 Apr 2019 19:48:13 +0300
-Message-ID: <20190430164813.GP9224@smile.fi.intel.com>
-References: <20190430083753.18197-1-kai.heng.feng@canonical.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/8] qcom: spmi/ssbi gpio: correct gpio hogging
+Date: Tue, 30 Apr 2019 10:13:39 -0700
+Message-ID: <20190430171339.GE2867@tuxbook-pro>
+References: <20190306005316.12232-1-masneyb@onstation.org>
+ <20190427053034.GH3137@builder>
+ <20190427102206.GA296@basecamp>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190430083753.18197-1-kai.heng.feng@canonical.com>
+In-Reply-To: <20190427102206.GA296@basecamp>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: mika.westerberg@linux.intel.com, linus.walleij@linaro.org, hotwater438@tutanota.com, hdegoede@redhat.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 04:37:53PM +0800, Kai-Heng Feng wrote:
-> Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
-> added because clearing interrupt status bit is required to avoid
-> unexpected behavior.
-> 
-> Turns out the unmask callback also needs the fix, which can solve weird
-> IRQ triggering issues on I2C touchpad ELAN1200.
+On Sat 27 Apr 03:22 PDT 2019, Brian Masney wrote:
 
-Pushed to my review and testing queue, thanks!
-
+> Hi Bjorn,
 > 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v2:
-> - Clear interrupt status for both mask/umask cases.
-> - Reduce calculation under irq spinlock.
+> On Fri, Apr 26, 2019 at 10:30:34PM -0700, Bjorn Andersson wrote:
+> > On Tue 05 Mar 16:53 PST 2019, Brian Masney wrote:
+> > 
+> > > Here are some patches that fix gpio hogging for all boards that use
+> > > spmi-gpio and ssbi-gpio. These depend on the following two patches
+> > > that were merged in 4.20-rc1:
+> > > 
+> > > commit 149a96047237 ("pinctrl: qcom: spmi-gpio: fix gpio-hog related
+> > > boot issues")
+> > > 
+> > > commit 7ed078557738 ("pinctrl: qcom: ssbi-gpio: fix gpio-hog related
+> > > boot issues")
+> > > 
+> > > I've already fixed pm8941 for the Nexus 5 and that fix is queued to go
+> > > into v5.1 during this merge window:
+> > > 
+> > > https://lore.kernel.org/lkml/20181101001149.13453-7-masneyb@onstation.org/
+> > > 
+> > > Andy: You may want to consider submitting these post rc1 as a fix for
+> > > v5.1 and possibly marking these for stable.
+> > > 
+> > > Brian Masney (8):
+> > >   ARM: dts: qcom: apq8064: add gpio-ranges
+> > >   ARM: dts: qcom: mdm9615: add gpio-ranges
+> > >   ARM: dts: qcom: msm8660: add gpio-ranges
+> > >   ARM: dts: qcom: pma8084: add gpio-ranges
+> > 
+> > Looks like I missed the ARM patches before. All 8 picked up now, with
+> > Linus' r-b.
 > 
->  drivers/pinctrl/intel/pinctrl-intel.c | 37 +++++----------------------
->  1 file changed, 6 insertions(+), 31 deletions(-)
+> Andy already picked these 8 patches up in his tree.
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 3b1818184207..717148d2818c 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -913,35 +913,6 @@ static void intel_gpio_irq_ack(struct irq_data *d)
->  	}
->  }
->  
-> -static void intel_gpio_irq_enable(struct irq_data *d)
-> -{
-> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> -	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
-> -	const struct intel_community *community;
-> -	const struct intel_padgroup *padgrp;
-> -	int pin;
-> -
-> -	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
-> -	if (pin >= 0) {
-> -		unsigned int gpp, gpp_offset, is_offset;
-> -		unsigned long flags;
-> -		u32 value;
-> -
-> -		gpp = padgrp->reg_num;
-> -		gpp_offset = padgroup_offset(padgrp, pin);
-> -		is_offset = community->is_offset + gpp * 4;
-> -
-> -		raw_spin_lock_irqsave(&pctrl->lock, flags);
-> -		/* Clear interrupt status first to avoid unexpected interrupt */
-> -		writel(BIT(gpp_offset), community->regs + is_offset);
-> -
-> -		value = readl(community->regs + community->ie_offset + gpp * 4);
-> -		value |= BIT(gpp_offset);
-> -		writel(value, community->regs + community->ie_offset + gpp * 4);
-> -		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-> -	}
-> -}
-> -
->  static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
->  {
->  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> @@ -954,15 +925,20 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
->  	if (pin >= 0) {
->  		unsigned int gpp, gpp_offset;
->  		unsigned long flags;
-> -		void __iomem *reg;
-> +		void __iomem *reg, *is;
->  		u32 value;
->  
->  		gpp = padgrp->reg_num;
->  		gpp_offset = padgroup_offset(padgrp, pin);
->  
->  		reg = community->regs + community->ie_offset + gpp * 4;
-> +		is = community->regs + community->is_offset + gpp * 4;
->  
->  		raw_spin_lock_irqsave(&pctrl->lock, flags);
-> +
-> +		/* Clear interrupt status first to avoid unexpected interrupt */
-> +		writel(BIT(gpp_offset), is);
-> +
->  		value = readl(reg);
->  		if (mask)
->  			value &= ~BIT(gpp_offset);
-> @@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
->  
->  static struct irq_chip intel_gpio_irqchip = {
->  	.name = "intel-gpio",
-> -	.irq_enable = intel_gpio_irq_enable,
->  	.irq_ack = intel_gpio_irq_ack,
->  	.irq_mask = intel_gpio_irq_mask,
->  	.irq_unmask = intel_gpio_irq_unmask,
-> -- 
-> 2.17.1
+> https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
 > 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Perfect. And I see that all 8 are included in Andy's pull request for
+5.2
+
+Regards,
+Bjorn
