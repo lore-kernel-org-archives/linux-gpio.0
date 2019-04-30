@@ -1,48 +1,51 @@
-From: Chris Chiu <chiu@endlessm.com>
-Subject: Re: [PATCH v3] pinctrl:intel: Retain HOSTSW_OWN for requested gpio pin
-Date: Tue, 30 Apr 2019 02:12:29 +0800
-Message-ID: <CAB4CAwfF7FoQK9OndOm_yHQe19j=E_cNLn3eTBfoggEacONiyg@mail.gmail.com>
-References: <20190415055358.9269-1-chiu@endlessm.com> <CACRpkdanhW206AEj7m+2FQBhJ5epUzw60Y6v+k-eoJLLW_-SSQ@mail.gmail.com>
- <20190426125031.GQ9224@smile.fi.intel.com>
+From: guillaume La Roque <glaroque@baylibre.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: pinctrl: meson: Add drive-strength-uA
+ property
+Date: Tue, 30 Apr 2019 08:38:04 +0200
+Message-ID: <7608f385-d412-f8be-d11b-9023f9702ec3@baylibre.com>
+References: <20190418124758.24022-1-glaroque@baylibre.com>
+ <20190418124758.24022-4-glaroque@baylibre.com>
+ <CAFBinCD_qJw6-_zsnKFhsVHUHd2K2wJ3S9EsXGrPPxZ1SWn=uA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190426125031.GQ9224@smile.fi.intel.com>
+In-Reply-To: <CAFBinCD_qJw6-_zsnKFhsVHUHd2K2wJ3S9EsXGrPPxZ1SWn=uA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andriy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 8:50 PM Andriy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Tue, Apr 23, 2019 at 12:38:17PM +0200, Linus Walleij wrote:
-> > On Mon, Apr 15, 2019 at 7:54 AM Chris Chiu <chiu@endlessm.com> wrote:
-> >
-> > > The touchpad of the ASUS laptops E403NA, X540NA, X541NA are not
-> > > responsive after suspend/resume. The following error message
-> > > shows after resume.
-> > >  i2c_hid i2c-ELAN1200:00: failed to reset device.
-> > >
-> > > On these laptops, the touchpad interrupt is connected via a GPIO
-> > > pin which is controlled by Intel pinctrl. After system resumes,
-> > > the GPIO is in ACPI mode and no longer works as an IRQ.
-> > >
-> > > This commit saves the HOSTSW_OWN value during suspend, make sure
-> > > the HOSTSW_OWN mode remains the same after resume.
-> > >
-> > > Signed-off-by: Chris Chiu <chiu@endlessm.com>
-> >
-> > This v3 patch applied with Mika's ACK.
->
-> Hmm... It's supposed to go along with our PR.
+Hi Martin,
 
-Anything I can help with?
+On 4/27/19 9:21 PM, Martin Blumenstingl wrote:
+> Hi Guillaume,
+>
+> On Thu, Apr 18, 2019 at 2:48 PM Guillaume La Roque
+> <glaroque@baylibre.com> wrote:
+>> Add optional drive-strength-uA property
+>>
+>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+>> ---
+>>  Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+>> index a47dd990a8d3..b3e4be696ddc 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+>> @@ -51,6 +51,9 @@ Configuration nodes support the generic properties "bias-disable",
+>>  "bias-pull-up" and "bias-pull-down", described in file
+>>  pinctrl-bindings.txt
+>>
+>> +Optional properties :
+>> + - drive-strength-uA: Drive strength for the specified pins in uA.
+> if you have to re-send this series for whatever reason then please
+> mention that drive-strength-uA is only valid for G12A and newer
 
-Chris
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+thanks for your review, i will do if i send new series.
+
+
+> otherwise:
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
