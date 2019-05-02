@@ -1,59 +1,96 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.0 081/101] gpio: of: Check for "spi-cs-high" in child instead of parent node
-Date: Thu,  2 May 2019 17:21:23 +0200
-Message-ID: <20190502143345.297630995@linuxfoundation.org>
-References: <20190502143339.434882399@linuxfoundation.org>
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v14 7/8] power: supply: Initial support for ROHM BD70528
+ PMIC charger block
+Date: Thu, 2 May 2019 21:50:49 +0200
+Message-ID: <20190502195049.brysexbyyq7khtr4@earth.universe>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+ <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bhukgbujt2wxql42"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190502143339.434882399@linuxfoundation.org>
+Content-Disposition: inline
+In-Reply-To: <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, linux-gpio@vger.kernel.org, "Sasha Levin (Microsoft)" <sashal@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, heikki.haikola@fi.rohmeurope.
 List-Id: linux-gpio@vger.kernel.org
 
-[ Upstream commit 7ce40277bf848391705011ba37eac2e377cbd9e6 ]
 
-"spi-cs-high" is going to be specified in child node of an SPI
-controller's representing attached SPI device, so change the code to
-look for it there, instead of checking parent node.
+--bhukgbujt2wxql42
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
----
- drivers/gpio/gpiolib-of.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9470563f2506..f1ae28289a67 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -142,16 +142,16 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 				 * conflict and the "spi-cs-high" flag will
- 				 * take precedence.
- 				 */
--				if (of_property_read_bool(np, "spi-cs-high")) {
-+				if (of_property_read_bool(child, "spi-cs-high")) {
- 					if (*flags & OF_GPIO_ACTIVE_LOW) {
- 						pr_warn("%s GPIO handle specifies active low - ignored\n",
--							of_node_full_name(np));
-+							of_node_full_name(child));
- 						*flags &= ~OF_GPIO_ACTIVE_LOW;
- 					}
- 				} else {
- 					if (!(*flags & OF_GPIO_ACTIVE_LOW))
- 						pr_info("%s enforce active low on chipselect handle\n",
--							of_node_full_name(np));
-+							of_node_full_name(child));
- 					*flags |= OF_GPIO_ACTIVE_LOW;
- 				}
- 				break;
--- 
-2.19.1
+On Thu, May 02, 2019 at 12:17:12PM +0300, Matti Vaittinen wrote:
+> ROHM BD70528 PMIC includes battery charger block. Support charger
+> staus queries and doing few basic settings like input current limit
+> and charging current.
+>=20
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Please only add Acked-by when you receive one, especially when you
+do not implement all requested changes :)
+
+[...]
+
+> +static int bd70528_get_irqs(struct platform_device *pdev,
+> +			    struct bd70528_psy *bdpsy)
+> +{
+> +	int irq, i, ret;
+> +	unsigned int mask;
+> +	const struct irq_name_pair bd70528_chg_irqs[] =3D {
+> +		{ .n =3D "bd70528-bat-ov-res", .h =3D BD_IRQ_HND(BAT_OV_RES) },
+> +		{ .n =3D "bd70528-bat-ov-det", .h =3D BD_IRQ_HND(BAT_OV_DET) },
+> +		{ .n =3D "bd70528-bat-dead", .h =3D BD_IRQ_HND(DBAT_DET) },
+> +		{ .n =3D "bd70528-bat-warmed", .h =3D BD_IRQ_HND(COLD_RES) },
+> +		{ .n =3D "bd70528-bat-cold", .h =3D BD_IRQ_HND(COLD_DET) },
+> +		{ .n =3D "bd70528-bat-cooled", .h =3D BD_IRQ_HND(HOT_RES) },
+> +		{ .n =3D "bd70528-bat-hot", .h =3D BD_IRQ_HND(HOT_DET) },
+> +		{ .n =3D "bd70528-chg-tshd", .h =3D BD_IRQ_HND(CHG_TSD) },
+> +		{ .n =3D "bd70528-bat-removed", .h =3D BD_IRQ_HND(BAT_RMV) },
+> +		{ .n =3D "bd70528-bat-detected", .h =3D BD_IRQ_HND(BAT_DET) },
+> +		{ .n =3D "bd70528-dcin2-ov-res", .h =3D BD_IRQ_HND(DCIN2_OV_RES) },
+> +		{ .n =3D "bd70528-dcin2-ov-det", .h =3D BD_IRQ_HND(DCIN2_OV_DET) },
+> +		{ .n =3D "bd70528-dcin2-removed", .h =3D BD_IRQ_HND(DCIN2_RMV) },
+> +		{ .n =3D "bd70528-dcin2-detected", .h =3D BD_IRQ_HND(DCIN2_DET) },
+> +		{ .n =3D "bd70528-dcin1-removed", .h =3D BD_IRQ_HND(DCIN1_RMV) },
+> +		{ .n =3D "bd70528-dcin1-detected", .h =3D BD_IRQ_HND(DCIN1_DET) },
+> +	};
+
+Please also make it static. That will move the whole thing to
+read-only (because of const) data section. This improves the
+security and the required cpu time at the same time (no need
+to copy values to the stack).
+
+But this can be changed later, so no need to block the whole
+patchset just because of this. If Lee wants to merge this for
+5.2, that would be fine with me. But please add it directly in
+a new patch revision if the patch does not make it into 5.2.
+
+-- Sebastian
+
+--bhukgbujt2wxql42
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlzLShUACgkQ2O7X88g7
++pqErhAAgZNXEYhrDHkaaYDwxjL4Ch28ycvgjE9+HjCig5co2F2nW25/cQPj3IeQ
+KLwc3hAAy0RzDKTc72fMtg//7b8L21Dzj4Qz4pHmQ3vhOETyAvwt3mOK8kiCSh9F
+MlrJ7vtUSnOo3S/QGiBCQ6gjTzrkyYWYtJAK3UabGbwagf9t8bKAUquWNbwFbvuu
+0Q2L++Z8eX4O0b8sbLJ5YxCx9eib2j3W6C2CNHUFG+WLjLom4IskqYq3Y7KELQ4U
+1YQbFUI5p+WFnxZU0uklYPEBfMCRBXd4iG2XBc8c/KBMkeQKOlXkURqUl7lmNT9u
+jgdqBpp0qgOlmJE7YsJTFjgyuwWR/BWLpE9QMKxBR1Ua94G6HRnoNiveq2qty18b
+s6G53YnvJsjI2y0cnP0+wACEKBATa33dUCLDABsKlyXl1jSdeE8csDM3XZ/SMNxZ
+CWayrYggYz3nk9y1bnJK3bkyVNAKaDRlNOA+kezZGAPUdcojFJOWin45Vkm5CFma
+t9SNRSBFArbG/9x/iOcETTVE+Hb7w5czGr+D41vJd/OUM/oE+sCt4ylIi4PA6a/y
+IF5fC7XzuTspKeoLuUo7WWght3JjD5+aGZ5OF6GKOSn7sdn0N2D53CdXp482U+jv
+a3ojwbXAqujhOIZhw5WYMfXjMyfKvhoPjjSIbk+NNRt8ksWKMc8=
+=CJv+
+-----END PGP SIGNATURE-----
+
+--bhukgbujt2wxql42--
