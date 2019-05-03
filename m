@@ -1,76 +1,112 @@
-From: Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [linux-sunxi] [PATCH v4 5/9] arm64: dts: allwinner: orange-pi-3:
- Enable ethernet
-Date: Fri, 3 May 2019 17:28:53 +0530
-Message-ID: <CAMty3ZDx6NXyYhQehYT9geeGwAk2PZidiVMwVw1nnZJa3zwyOg@mail.gmail.com>
-References: <20190413165418.27880-1-megous@megous.com> <20190413165418.27880-6-megous@megous.com>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH 1/2] pinctrl: mediatek: Add mtk_eint_pm_ops to common-v2
+Date: Fri, 3 May 2019 10:08:50 -0700
+Message-ID: <CAGp9LzqdYapagHUH1uuuHRR+j5JcphN7hhM2SyZoXQFCP8_fSw@mail.gmail.com>
+References: <20190429032551.65975-1-drinkcat@chromium.org> <20190429032551.65975-2-drinkcat@chromium.org>
+ <1556804888.28808.6.camel@mtksdaap41> <CANMq1KAugRiL+-bAFijEM7NngLSoOUQtN=rNV5+YYdJ12u+jVQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190413165418.27880-6-megous@megous.com>
-Sender: netdev-owner@vger.kernel.org
-To: megous@megous.com
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Mark Rutland <mark.rutland@arm.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CANMq1KAugRiL+-bAFijEM7NngLSoOUQtN=rNV5+YYdJ12u+jVQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Apr 13, 2019 at 10:24 PM megous via linux-sunxi
-<linux-sunxi@googlegroups.com> wrote:
->
-> From: Ondrej Jirman <megous@megous.com>
->
-> Orange Pi 3 has two regulators that power the Realtek RTL8211E. According
-> to the phy datasheet, both regulators need to be enabled at the same time,
-> but we can only specify a single phy-supply in the DT.
->
-> This can be achieved by making one regulator depedning on the other via
-> vin-supply. While it's not a technically correct description of the
-> hardware, it achieves the purpose.
->
-> All values of RX/TX delay were tested exhaustively and a middle one of the
-> working values was chosen.
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> ---
->  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> index 17d496990108..6d6b1f66796d 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-> @@ -15,6 +15,7 @@
->
->         aliases {
->                 serial0 = &uart0;
-> +               ethernet0 = &emac;
->         };
->
->         chosen {
-> @@ -44,6 +45,27 @@
->                 regulator-max-microvolt = <5000000>;
->                 regulator-always-on;
->         };
-> +
-> +       /*
-> +        * The board uses 2.5V RGMII signalling. Power sequence to enable
-> +        * the phy is to enable GMAC-2V5 and GMAC-3V3 (aldo2) power rails
-> +        * at the same time and to wait 100ms.
-> +        */
-> +       reg_gmac_2v5: gmac-2v5 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "gmac-2v5";
-> +               regulator-min-microvolt = <2500000>;
-> +               regulator-max-microvolt = <2500000>;
-> +               startup-delay-us = <100000>;
-> +               enable-active-high;
-> +               gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
-> +
-> +               /* The real parent of gmac-2v5 is reg_vcc5v, but we need to
-> +                * enable two regulators to power the phy. This is one way
-> +                * to achieve that.
-> +                */
-> +               vin-supply = <&reg_aldo2>; /* GMAC-3V3 */
+Hi, Nicolas
 
-The actual output supply pin name is GMAC-3V which has an input of
-VCC3V3-MAC (ie aldo2), if we compatible to schematics better to use
-the same, IMHO.
+On Thu, May 2, 2019 at 5:53 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> On Thu, May 2, 2019 at 9:48 PM Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+> >
+> > On Mon, 2019-04-29 at 11:25 +0800, Nicolas Boichat wrote:
+> > > pinctrl variants that include pinctrl-mtk-common-v2.h (and not
+> > > pinctrl-mtk-common.h) also need to use mtk_eint_pm_ops to setup
+> > > wake mask properly, so copy over the pm_ops to v2.
+> > >
+> > > It is not easy to merge the 2 copies (or move
+> > > mtk_eint_suspend/resume to mtk-eint.c), as we need to
+> > > dereference pctrl->eint, and struct mtk_pinctrl *pctl has a
+> > > different structure definition for v1 and v2.
+> > >
+> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > > Reviewed-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+> > > ---
+> > >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 19 +++++++++++++++++++
+> > >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
+> > >  2 files changed, 20 insertions(+)
+> > >
+> > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > > index 20e1c890e73b30c..7e19b5a4748eafe 100644
+> > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > > @@ -723,3 +723,22 @@ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
+> > >
+> > >       return 0;
+> > >  }
+> > > +
+> > > +static int mtk_eint_suspend(struct device *device)
+> > > +{
+> > > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+> > > +
+> > > +     return mtk_eint_do_suspend(pctl->eint);
+> > > +}
+> > > +
+> > > +static int mtk_eint_resume(struct device *device)
+> > > +{
+> > > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+> > > +
+> > > +     return mtk_eint_do_resume(pctl->eint);
+> > > +}
+> > > +
+> > > +const struct dev_pm_ops mtk_eint_pm_ops = {
+> > > +     .suspend_noirq = mtk_eint_suspend,
+> > > +     .resume_noirq = mtk_eint_resume,
+> > > +};
+> >
+> > This is identical to the one in pinctrl-mtk-common.c and will have name
+> > clash if both pinctrl-mtk-common.c and pinctrl-mtk-common-v2.c are
+> > built.
+> >
+> > It would be better if we try to merge both version into mtk-eint.c, this
+> > way we could also remove some global functions.
+>
+> Argh, I didn't think about the name clash, you're right. I guess the
+> easy way is to rename this one mtk_eint_pm_ops_v2 ...
+>
+> As highlighted in the commit message, it's tricky to merge the 2 sets
+> of functions, they look identical, but they actually work on struct
+> mtk_pinctrl that are defined differently (in
+> pinctrl-mtk-common[-v2].h), so the ->eint member is at different
+> addresses...
+>
+> I don't really see a way around this... Unless we want to change
+> platform_set_drvdata(pdev, pctl); to pass another type of structure
+> that could be shared (but I think that'll make the code fairly
+> verbose, with another layer of indirection). Or just assign struct
+> mtk_eint to that, since that contains pctl so we could get back the
+> struct mtk_pinctrl from that, but that feels ugly as well...
+>
+
+I agree on renaming would make the thing simple. but I wouldn't like
+to rename to mtk_eint_pm_ops_v2 since this would make people
+misunderstand that is mtk_eint_v2.
+
+How about renaming to mtk_paris_pinctrl_pm_ops and then place related
+logic you added into pinctrl-paris.c? Because I prefer to keep pure
+pinctrl hardware operations in pinctrl-mtk-common-v2.c, and for
+relevant to other modules (mtk eint) or others subsystem (device tree
+binding, GPIO subsytem, PM something like that) they should be moved
+to pinctrl-paris.c or pinctrl-moore.c
+
+     Sean
+
+> >
+> > Joe.C
+> >
+> >
+> >
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
