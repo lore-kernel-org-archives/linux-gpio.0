@@ -1,94 +1,75 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH 1/2] pinctrl: mediatek: Add mtk_eint_pm_ops to common-v2
-Date: Fri, 3 May 2019 08:52:58 +0800
-Message-ID: <CANMq1KAugRiL+-bAFijEM7NngLSoOUQtN=rNV5+YYdJ12u+jVQ@mail.gmail.com>
-References: <20190429032551.65975-1-drinkcat@chromium.org> <20190429032551.65975-2-drinkcat@chromium.org>
- <1556804888.28808.6.camel@mtksdaap41>
+From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v14 7/8] power: supply: Initial support for ROHM BD70528
+ PMIC charger block
+Date: Fri, 3 May 2019 05:29:53 +0000
+Message-ID: <322fa765ddd72972aba931c706657661ca685afa.camel@fi.rohmeurope.com>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+         <eece016c86483d55befab1a06fb299c9d6d17134.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+         <20190502195049.brysexbyyq7khtr4@earth.universe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1556804888.28808.6.camel@mtksdaap41>
+In-Reply-To: <20190502195049.brysexbyyq7khtr4@earth.universe>
+Content-Language: de-DE
+Content-ID: <EECE8E2DA13B254A9D94FC7DADE8ADED@de.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Sean Wang <sean.wang@kernel.org>, lkml <linux-kernel@vger.kernel.org>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+To: "sebastian.reichel@collabora.com" <sebastian.reichel@collabora.com>
+Cc: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sboyd@kernel.org" <sboyd@kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "broonie@kernel.org" <broonie@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 2, 2019 at 9:48 PM Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
->
-> On Mon, 2019-04-29 at 11:25 +0800, Nicolas Boichat wrote:
-> > pinctrl variants that include pinctrl-mtk-common-v2.h (and not
-> > pinctrl-mtk-common.h) also need to use mtk_eint_pm_ops to setup
-> > wake mask properly, so copy over the pm_ops to v2.
-> >
-> > It is not easy to merge the 2 copies (or move
-> > mtk_eint_suspend/resume to mtk-eint.c), as we need to
-> > dereference pctrl->eint, and struct mtk_pinctrl *pctl has a
-> > different structure definition for v1 and v2.
-> >
-> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> > Reviewed-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> > ---
-> >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 19 +++++++++++++++++++
-> >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
-> >  2 files changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > index 20e1c890e73b30c..7e19b5a4748eafe 100644
-> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > @@ -723,3 +723,22 @@ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-> >
-> >       return 0;
-> >  }
-> > +
-> > +static int mtk_eint_suspend(struct device *device)
-> > +{
-> > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
-> > +
-> > +     return mtk_eint_do_suspend(pctl->eint);
-> > +}
-> > +
-> > +static int mtk_eint_resume(struct device *device)
-> > +{
-> > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
-> > +
-> > +     return mtk_eint_do_resume(pctl->eint);
-> > +}
-> > +
-> > +const struct dev_pm_ops mtk_eint_pm_ops = {
-> > +     .suspend_noirq = mtk_eint_suspend,
-> > +     .resume_noirq = mtk_eint_resume,
-> > +};
->
-> This is identical to the one in pinctrl-mtk-common.c and will have name
-> clash if both pinctrl-mtk-common.c and pinctrl-mtk-common-v2.c are
-> built.
->
-> It would be better if we try to merge both version into mtk-eint.c, this
-> way we could also remove some global functions.
-
-Argh, I didn't think about the name clash, you're right. I guess the
-easy way is to rename this one mtk_eint_pm_ops_v2 ...
-
-As highlighted in the commit message, it's tricky to merge the 2 sets
-of functions, they look identical, but they actually work on struct
-mtk_pinctrl that are defined differently (in
-pinctrl-mtk-common[-v2].h), so the ->eint member is at different
-addresses...
-
-I don't really see a way around this... Unless we want to change
-platform_set_drvdata(pdev, pctl); to pass another type of structure
-that could be shared (but I think that'll make the code fairly
-verbose, with another layer of indirection). Or just assign struct
-mtk_eint to that, since that contains pctl so we could get back the
-struct mtk_pinctrl from that, but that feels ugly as well...
-
->
-> Joe.C
->
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+SGVsbG8gU2ViYXN0aWFuLA0KDQpPbiBUaHUsIDIwMTktMDUtMDIgYXQgMjE6NTAgKzAyMDAsIFNl
+YmFzdGlhbiBSZWljaGVsIHdyb3RlOg0KPiBIaSwNCj4gDQo+IE9uIFRodSwgTWF5IDAyLCAyMDE5
+IGF0IDEyOjE3OjEyUE0gKzAzMDAsIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gPiBST0hNIEJE
+NzA1MjggUE1JQyBpbmNsdWRlcyBiYXR0ZXJ5IGNoYXJnZXIgYmxvY2suIFN1cHBvcnQgY2hhcmdl
+cg0KPiA+IHN0YXVzIHF1ZXJpZXMgYW5kIGRvaW5nIGZldyBiYXNpYyBzZXR0aW5ncyBsaWtlIGlu
+cHV0IGN1cnJlbnQgbGltaXQNCj4gPiBhbmQgY2hhcmdpbmcgY3VycmVudC4NCj4gPiANCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVy
+b3BlLmNvbT4NCj4gPiBBY2tlZC1ieTogU2ViYXN0aWFuIFJlaWNoZWwgPHNlYmFzdGlhbi5yZWlj
+aGVsQGNvbGxhYm9yYS5jb20+DQo+IA0KPiBQbGVhc2Ugb25seSBhZGQgQWNrZWQtYnkgd2hlbiB5
+b3UgcmVjZWl2ZSBvbmUsIGVzcGVjaWFsbHkgd2hlbiB5b3UNCj4gZG8gbm90IGltcGxlbWVudCBh
+bGwgcmVxdWVzdGVkIGNoYW5nZXMgOikNCg0KU29ycnkuIFRoaXMgaXMgbXkgYmFkLiBJIHRyYW5z
+bGF0ZWQgeW91cjogIk90aGVyd2lzZSBsb29rcyBvayB0byBtZS4iDQotIHRvIGFuIGFjay4gQW5k
+IEkgd2FzIHByZXR0eSBzdXJlIHlvdSBkaWRuJ3Qgd2FudCB0byBzdGF0aWNpemUgdGhlDQpsb2Nh
+bCBhcnJheS4gSSBzaG91bGQndmUga25vd24gYmV0dGVyLiBJIHNob3VsZCBoYXZlIHdhaXRlZCBm
+b3IgeW91ciBPaw0KdG8gbGVhdmluZyB0aGUgc3RhdGljIG91dCBiZWZvcmUgYWRkaW5nIGFuIGFj
+ay4NCg0KPiANCj4gPiArc3RhdGljIGludCBiZDcwNTI4X2dldF9pcnFzKHN0cnVjdCBwbGF0Zm9y
+bV9kZXZpY2UgKnBkZXYsDQo+ID4gKwkJCSAgICBzdHJ1Y3QgYmQ3MDUyOF9wc3kgKmJkcHN5KQ0K
+PiA+ICt7DQo+ID4gKwlpbnQgaXJxLCBpLCByZXQ7DQo+ID4gKwl1bnNpZ25lZCBpbnQgbWFzazsN
+Cj4gPiArCWNvbnN0IHN0cnVjdCBpcnFfbmFtZV9wYWlyIGJkNzA1MjhfY2hnX2lycXNbXSA9IHsN
+Cj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LW92LXJlcyIsIC5oID0NCj4gPiBCRF9JUlFfSE5E
+KEJBVF9PVl9SRVMpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWJhdC1vdi1kZXQiLCAuaCA9
+DQo+ID4gQkRfSVJRX0hORChCQVRfT1ZfREVUKSB9LA0KPiA+ICsJCXsgLm4gPSAiYmQ3MDUyOC1i
+YXQtZGVhZCIsIC5oID0gQkRfSVJRX0hORChEQkFUX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJk
+NzA1MjgtYmF0LXdhcm1lZCIsIC5oID0gQkRfSVJRX0hORChDT0xEX1JFUykNCj4gPiB9LA0KPiA+
+ICsJCXsgLm4gPSAiYmQ3MDUyOC1iYXQtY29sZCIsIC5oID0gQkRfSVJRX0hORChDT0xEX0RFVCkg
+fSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LWNvb2xlZCIsIC5oID0gQkRfSVJRX0hORChI
+T1RfUkVTKQ0KPiA+IH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWJhdC1ob3QiLCAuaCA9IEJE
+X0lSUV9ITkQoSE9UX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtY2hnLXRzaGQiLCAu
+aCA9IEJEX0lSUV9ITkQoQ0hHX1RTRCkgfSwNCj4gPiArCQl7IC5uID0gImJkNzA1MjgtYmF0LXJl
+bW92ZWQiLCAuaCA9IEJEX0lSUV9ITkQoQkFUX1JNVikNCj4gPiB9LA0KPiA+ICsJCXsgLm4gPSAi
+YmQ3MDUyOC1iYXQtZGV0ZWN0ZWQiLCAuaCA9IEJEX0lSUV9ITkQoQkFUX0RFVCkNCj4gPiB9LA0K
+PiA+ICsJCXsgLm4gPSAiYmQ3MDUyOC1kY2luMi1vdi1yZXMiLCAuaCA9DQo+ID4gQkRfSVJRX0hO
+RChEQ0lOMl9PVl9SRVMpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWRjaW4yLW92LWRldCIs
+IC5oID0NCj4gPiBCRF9JUlFfSE5EKERDSU4yX09WX0RFVCkgfSwNCj4gPiArCQl7IC5uID0gImJk
+NzA1MjgtZGNpbjItcmVtb3ZlZCIsIC5oID0NCj4gPiBCRF9JUlFfSE5EKERDSU4yX1JNVikgfSwN
+Cj4gPiArCQl7IC5uID0gImJkNzA1MjgtZGNpbjItZGV0ZWN0ZWQiLCAuaCA9DQo+ID4gQkRfSVJR
+X0hORChEQ0lOMl9ERVQpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcwNTI4LWRjaW4xLXJlbW92ZWQi
+LCAuaCA9DQo+ID4gQkRfSVJRX0hORChEQ0lOMV9STVYpIH0sDQo+ID4gKwkJeyAubiA9ICJiZDcw
+NTI4LWRjaW4xLWRldGVjdGVkIiwgLmggPQ0KPiA+IEJEX0lSUV9ITkQoRENJTjFfREVUKSB9LA0K
+PiA+ICsJfTsNCj4gDQo+IFBsZWFzZSBhbHNvIG1ha2UgaXQgc3RhdGljLiBUaGF0IHdpbGwgbW92
+ZSB0aGUgd2hvbGUgdGhpbmcgdG8NCj4gcmVhZC1vbmx5IChiZWNhdXNlIG9mIGNvbnN0KSBkYXRh
+IHNlY3Rpb24uIFRoaXMgaW1wcm92ZXMgdGhlDQo+IHNlY3VyaXR5IGFuZCB0aGUgcmVxdWlyZWQg
+Y3B1IHRpbWUgYXQgdGhlIHNhbWUgdGltZSAobm8gbmVlZA0KPiB0byBjb3B5IHZhbHVlcyB0byB0
+aGUgc3RhY2spLg0KDQpPay4gSSBzZWUgeW91ciBwb2ludCBhbmQgaXQgc291bmRzIHJlYXNvbmFi
+bGUuDQoNCj4gQnV0IHRoaXMgY2FuIGJlIGNoYW5nZWQgbGF0ZXIsIHNvIG5vIG5lZWQgdG8gYmxv
+Y2sgdGhlIHdob2xlDQo+IHBhdGNoc2V0IGp1c3QgYmVjYXVzZSBvZiB0aGlzLiBJZiBMZWUgd2Fu
+dHMgdG8gbWVyZ2UgdGhpcyBmb3INCj4gNS4yLCB0aGF0IHdvdWxkIGJlIGZpbmUgd2l0aCBtZS4g
+QnV0IHBsZWFzZSBhZGQgaXQgZGlyZWN0bHkgaW4NCj4gYSBuZXcgcGF0Y2ggcmV2aXNpb24gaWYg
+dGhlIHBhdGNoIGRvZXMgbm90IG1ha2UgaXQgaW50byA1LjIuDQoNCkl0IHdvdWxkIGJlIGdyZWF0
+IHRvIGdldCB0aGlzIGluLCBpdCBoYXMgYmVlbiByZXNwaW5uZWQgcXVpdGUgYSBmZXcNCnRpbWVz
+IGFscmVhZHkuLi4gSSBob3BlIExlZSB0YWtlcyB0aGUgc2VyaWVzIGluIHdoZW4gaGUncyBiYWNr
+IGZyb20gaGlzDQpsZWF2ZSAtIGJ1dCBpdCBpcyBub3QgYSBwcm9ibGVtIGZvciBtZSB0byBjaGFu
+Z2UgdGhpcyB3aXRoIGxhdGVyIHBhdGNoDQoob3IgY2hhbmdlIHRoaXMgaW4gdGhlIHNlcmllcyBp
+ZiBpdCBzdGlsbCBuZWVkcyB0byBiZSByZXdvcmtlZCkuDQoNCg0KQnIsDQoJTWF0dGkgVmFpdHRp
+bmVuDQo=
