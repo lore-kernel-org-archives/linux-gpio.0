@@ -1,112 +1,225 @@
-From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH 1/2] pinctrl: mediatek: Add mtk_eint_pm_ops to common-v2
-Date: Fri, 3 May 2019 10:08:50 -0700
-Message-ID: <CAGp9LzqdYapagHUH1uuuHRR+j5JcphN7hhM2SyZoXQFCP8_fSw@mail.gmail.com>
-References: <20190429032551.65975-1-drinkcat@chromium.org> <20190429032551.65975-2-drinkcat@chromium.org>
- <1556804888.28808.6.camel@mtksdaap41> <CANMq1KAugRiL+-bAFijEM7NngLSoOUQtN=rNV5+YYdJ12u+jVQ@mail.gmail.com>
+From: guillaume La Roque <glaroque@baylibre.com>
+Subject: Re: [PATCH v2 4/4] pinctrl: meson: add support of drive-strength-uA
+Date: Mon, 6 May 2019 15:16:12 +0200
+Message-ID: <d6fdc1aa-8ed2-4b97-ed63-d84a03575356@baylibre.com>
+References: <20190418124758.24022-1-glaroque@baylibre.com>
+ <20190418124758.24022-5-glaroque@baylibre.com>
+ <CAFBinCDNz1txJ7_aQU8MwjpeVFC6BgyG_gkg-jJRnnerSjbP9A@mail.gmail.com>
+ <163fa4df-1017-d230-b264-51ea71236df9@baylibre.com>
+ <CAFBinCBemJT5p7F0b3Qy+wwmaW4hTgs0jgKrLVd1ciugCGc48w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANMq1KAugRiL+-bAFijEM7NngLSoOUQtN=rNV5+YYdJ12u+jVQ@mail.gmail.com>
+In-Reply-To: <CAFBinCBemJT5p7F0b3Qy+wwmaW4hTgs0jgKrLVd1ciugCGc48w@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Boichat <drinkcat@chromium.org>
-Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi, Nicolas
+hi Martin,
 
-On Thu, May 2, 2019 at 5:53 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->
-> On Thu, May 2, 2019 at 9:48 PM Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
-> >
-> > On Mon, 2019-04-29 at 11:25 +0800, Nicolas Boichat wrote:
-> > > pinctrl variants that include pinctrl-mtk-common-v2.h (and not
-> > > pinctrl-mtk-common.h) also need to use mtk_eint_pm_ops to setup
-> > > wake mask properly, so copy over the pm_ops to v2.
-> > >
-> > > It is not easy to merge the 2 copies (or move
-> > > mtk_eint_suspend/resume to mtk-eint.c), as we need to
-> > > dereference pctrl->eint, and struct mtk_pinctrl *pctl has a
-> > > different structure definition for v1 and v2.
-> > >
-> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> > > Reviewed-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> > > ---
-> > >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 19 +++++++++++++++++++
-> > >  .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
-> > >  2 files changed, 20 insertions(+)
-> > >
-> > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > index 20e1c890e73b30c..7e19b5a4748eafe 100644
-> > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > @@ -723,3 +723,22 @@ int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-> > >
-> > >       return 0;
-> > >  }
-> > > +
-> > > +static int mtk_eint_suspend(struct device *device)
-> > > +{
-> > > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
-> > > +
-> > > +     return mtk_eint_do_suspend(pctl->eint);
-> > > +}
-> > > +
-> > > +static int mtk_eint_resume(struct device *device)
-> > > +{
-> > > +     struct mtk_pinctrl *pctl = dev_get_drvdata(device);
-> > > +
-> > > +     return mtk_eint_do_resume(pctl->eint);
-> > > +}
-> > > +
-> > > +const struct dev_pm_ops mtk_eint_pm_ops = {
-> > > +     .suspend_noirq = mtk_eint_suspend,
-> > > +     .resume_noirq = mtk_eint_resume,
-> > > +};
-> >
-> > This is identical to the one in pinctrl-mtk-common.c and will have name
-> > clash if both pinctrl-mtk-common.c and pinctrl-mtk-common-v2.c are
-> > built.
-> >
-> > It would be better if we try to merge both version into mtk-eint.c, this
-> > way we could also remove some global functions.
->
-> Argh, I didn't think about the name clash, you're right. I guess the
-> easy way is to rename this one mtk_eint_pm_ops_v2 ...
->
-> As highlighted in the commit message, it's tricky to merge the 2 sets
-> of functions, they look identical, but they actually work on struct
-> mtk_pinctrl that are defined differently (in
-> pinctrl-mtk-common[-v2].h), so the ->eint member is at different
-> addresses...
->
-> I don't really see a way around this... Unless we want to change
-> platform_set_drvdata(pdev, pctl); to pass another type of structure
-> that could be shared (but I think that'll make the code fairly
-> verbose, with another layer of indirection). Or just assign struct
-> mtk_eint to that, since that contains pctl so we could get back the
-> struct mtk_pinctrl from that, but that feels ugly as well...
->
 
-I agree on renaming would make the thing simple. but I wouldn't like
-to rename to mtk_eint_pm_ops_v2 since this would make people
-misunderstand that is mtk_eint_v2.
+On 4/30/19 10:28 PM, Martin Blumenstingl wrote:
+> Hi Guillaume,
+>
+> On Tue, Apr 30, 2019 at 9:20 AM guillaume La Roque
+> <glaroque@baylibre.com> wrote:
+>> Hi Martin,
+>>
+>>
+>> thanks for your feedback.
+>>
+>>
+>> On 4/27/19 9:44 PM, Martin Blumenstingl wrote:
+>>> Hi Guillaume,
+>>>
+>>> On Thu, Apr 18, 2019 at 2:48 PM Guillaume La Roque
+>>> <glaroque@baylibre.com> wrote:
+>>>> drive-strength-uA is a new feature needed for G12A SoC.
+>>>> the default DS setting after boot is usually 500uA and it is not enough for
+>>>> many functions. We need to be able to set the drive strength to reliably
+>>>> enable things like MMC, I2C, etc ...
+>>>>
+>>>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+>>> I gave this a go on Meson8m2 (meaning I applied all four patches from
+>>> this series and booted the result on my board):
+>>> [Meson8m2 doesn't support drive strength and still boots without any
+>>> crashes or obvious regressions]
+>>> Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>>
+>>>> ---
+>>>>  drivers/pinctrl/meson/pinctrl-meson-g12a.c |  36 ++---
+>>>>  drivers/pinctrl/meson/pinctrl-meson.c      | 166 ++++++++++++++++-----
+>>>>  drivers/pinctrl/meson/pinctrl-meson.h      |  20 ++-
+>>> personally I would have split this into two separate patches:
+>>> - one for the generic pinctrl-meson part which adds drive-strength-uA support
+>>> - another patch for enabling this on G12A
+>>>
+>>> if nobody else wants you to split this then it's fine for me as well
+>>
+>> why not if i send new series i will do.
+> great, thank you
+>
+> [...]
+>>> additionally the function arguments are not consistent with
+>>> meson_pinconf_get_drive_strength():
+>>> - here you pass the pinctrl subsystem specific parameters (enum
+>>> pin_config_param conf)
+>>> - in meson_pinconf_get_drive_strength the conversion for pinctrl
+>>> subsystem specific values (pinconf_to_config_argument) is part of
+>>> meson_pinconf_set
+>>
+>> for param i'm not sure i understand what you want, if you talk about difference between set_bias and set_drive arg , it's difficult to align it.
+>>
+>> if it's about diff between get_bias and get_drive i think i can return drive stength value instead of using an u16 arg input param.
+> let me use an example to better explain what I mean.
+>
+> meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+> unsigned long *configs, unsigned num_configs)
+> -> this uses parameters from the pinctrl subsystem only (struct
+> pinctrl_dev, configs/pinconf_to_config_argument)
+>
+> meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
+> meson_pinconf_set_drive_strength(struct meson_pinctrl *pc, unsigned
+> int pin, u16 drive_strength_ua)
+> -> these use hardware-specific parameters only (struct meson_pinctrl,
+> [drive strength in uA])
+>
+> meson_pinconf_set_bias(struct meson_pinctrl *pc, unsigned int pin,
+> enum pin_config_param conf)
+> -> this mixes hardware-specific parameters (struct meson_pinctrl) with
+> parameters from the pinctrl subsystem (enum pin_config_param conf)
 
-How about renaming to mtk_paris_pinctrl_pm_ops and then place related
-logic you added into pinctrl-paris.c? Because I prefer to keep pure
-pinctrl hardware operations in pinctrl-mtk-common-v2.c, and for
-relevant to other modules (mtk eint) or others subsystem (device tree
-binding, GPIO subsytem, PM something like that) they should be moved
-to pinctrl-paris.c or pinctrl-moore.c
 
-     Sean
+ok i see, it fix in next series.
 
-> >
-> > Joe.C
-> >
-> >
-> >
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>
+>>> I'm wondering whether two separate functions
+>>> (meson_pinconf_disable_bias and meson_pinconf_enable_bias) would make
+>>> things easier to read. I haven't tried whether this would really make
+>>> things better, so I'd like to hear your opinion on this Guillaume!
+>>
+>> no special opinion on this, if you think it's better for understanding i can separate  set_bias function.
+> this goes with the mixed parameters from my previous comment: if we
+> stick to the way these "private" functions are defined the "set bias"
+> function parameters should be hardware/driver specific (in other
+> words: don't use enum pin_config_param conf)
+> so my initial idea was to keep the switch/case for enum
+> pin_config_param in meson_pinconf_set and to have these function
+> declarations:
+> - meson_pinconf_disable_bias(struct meson_pinctrl *pc, unsigned int pin)
+> - meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int
+> pin, bool pull_up)
+>
+> and to make it clear: I haven't tested whether this *really* looks
+> better when fully implemented.
+> let me know what you think - I'm happy with anything that others will
+> understand in the end (to make easy to catch potential breakage in a
+> code-review ;))
+
+
+what i would like to say is it ok for me, it's better to review.
+
+i will do one patch for enable/disable bias function, one for adding drive-strength function and one for adding G12A part.
+
+
+>>> [...]
+>>>> +static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
+>>>> +                                           unsigned int pin, u16 arg)
+>>>>  {
+>>>> -       struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
+>>>>         struct meson_bank *bank;
+>>>> -       enum pin_config_param param;
+>>>>         unsigned int reg, bit;
+>>>> -       int i, ret;
+>>>> +       unsigned int ds_val;
+>>>> +       int ret;
+>>>> +
+>>>> +       if (!pc->reg_ds) {
+>>>> +               dev_err(pc->dev, "drive-strength not supported\n");
+>>>> +               return -ENOTSUPP;
+>>> in meson_pinconf_set() we don't complain (with a dev_err) for this case.
+>>> I'm not sure what the best-practice is for the pinctrl subsystem,
+>>> maybe Linus can comment on this
+>>>
+>> this check is to be sure it's possible to set drive stength,
+>>
+>> if no register bank is setting in DT but drive-stength properties are setting on pins i need to generate an error
+>>
+>> because something is wrong.
+> OK, I see, there are two different use-cases:
+> - meson_pinconf_set returns -ENOTSUPP in the "default" case if the
+> pin_config_param is not supported but no error message
+> - we don't differentiate between SoCs PIN_CONFIG_DRIVE_STRENGTH_UA is
+> always delegated from meson_pinconf_set() to
+> meson_pinconf_set_drive_strength(). you also return -ENOTSUPP and
+> print an error message
+>
+> what I meant with my original comment is that there are two different
+> "-ENOTSUPP" cases but only one prints an error.
+> I don't know if there are any rules in the pinctrl subsystem how these
+> cases should be implemented, maybe Linus W. can give his feedback on
+> this topic.
+
+
+i just add error message for drive strength because it's an optional feature, people can forget to set register part and just set pin part
+
+so they can see why it's not working.
+
+
+>>>> +       }
+>>>>
+>>>>         ret = meson_get_bank(pc, pin, &bank);
+>>>>         if (ret)
+>>>>                 return ret;
+>>>>
+>>>> +       meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
+>>>> +       bit = bit << 1;
+>>>> +
+>>>> +       if (arg <= 500) {
+>>>> +               ds_val = MESON_PINCONF_DRV_500UA;
+>>>> +       } else if (arg <= 2500) {
+>>>> +               ds_val = MESON_PINCONF_DRV_2500UA;
+>>>> +       } else if (arg <= 3000) {
+>>>> +               ds_val = MESON_PINCONF_DRV_3000UA;
+>>>> +       } else if (arg <= 4000) {
+>>>> +               ds_val = MESON_PINCONF_DRV_4000UA;
+>>>> +       } else {
+>>>> +               dev_warn_once(pc->dev,
+>>>> +                             "pin %u: invalid drive-strength : %d , default to 4mA\n",
+>>>> +                             pin, arg);
+>>>> +               ds_val = MESON_PINCONF_DRV_4000UA;
+>>> why not return -EINVAL here? (my assumption is that the pinctrl
+>>> subsystem would like to have -EINVAL instead of drivers doing
+>>> fallbacks if the values are out-of-range, but I'm not 100% sure about
+>>> this)
+>>>
+>>> [...]
+>>
+>> i choose to set a default value instead of generating an error,
+>>
+>> in this case it's only if you ask a value upper than 4000uA so it's not really a risk to set 4000uA by default.
+> in that case I'm fine with it if Linus W. is happy as well (I'm not
+> sure if there are any rules about "fallback values" in the pinctrl
+> subsystem)
+>
+>>>> +static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
+>>>> +                                           unsigned int pin, u16 *arg)
+>>>> +{
+>>>> +       struct meson_bank *bank;
+>>>> +       unsigned int reg, bit;
+>>>> +       unsigned int val;
+>>>> +       int ret;
+>>>> +
+>>> do you need to return -ENOTSUPP here if pc->reg_ds is NULL, similar to
+>>> what you already have in meson_pinconf_set_drive_strength()?
+>> depending of linux comment on your feedback on meson_pinconf_set_drive_strength
+> great, thank you!
+>
+>
+> Martin
+
+
+Guillaume
