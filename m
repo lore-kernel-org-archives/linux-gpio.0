@@ -1,123 +1,60 @@
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 4/6] pinctrl: meson: Rework enable/disable bias part
-Date: Tue, 7 May 2019 19:53:44 +0200
-Message-ID: <CAFBinCBQSE7wh367Aa25zwtDphsx8Z_KGDTn8dcSCir6bLvq_A@mail.gmail.com>
-References: <20190507115726.23714-1-glaroque@baylibre.com> <20190507115726.23714-5-glaroque@baylibre.com>
+Subject: Re: [PATCH v3 0/6] Add drive-strength in Meson pinctrl driver
+Date: Tue, 7 May 2019 20:03:15 +0200
+Message-ID: <CAFBinCBeqW7NLyFygB5vi5a+KGcez8q5Hy1e7MdHmaWLv7KmkA@mail.gmail.com>
+References: <20190507115726.23714-1-glaroque@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507115726.23714-5-glaroque@baylibre.com>
+In-Reply-To: <20190507115726.23714-1-glaroque@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Guillaume La Roque <glaroque@baylibre.com>
 Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Guillaume,
-
 On Tue, May 7, 2019 at 1:57 PM Guillaume La Roque <glaroque@baylibre.com> wrote:
 >
-> rework bias enable/disable part to prepare drive-strength integration
-if it was my patch I would add "no functional changes" at the end to
-make it explicit that this only changes the structure of the code.
-
+> The purpose of this patchset is to add drive-strength support in meson pinconf
+> driver. This is a new feature that was added on the g12a. It is critical for us
+> to support this since many functions are failing with default pad drive-strength.
 >
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-with the minor comments from below addressed:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-> ---
->  drivers/pinctrl/meson/pinctrl-meson.c | 79 ++++++++++++++++-----------
->  1 file changed, 48 insertions(+), 31 deletions(-)
+> The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
+> 'drive-strength' is expressed in mA.
+> So this patch add another generic property "drive-strength-uA". The change to do so
+> would be minimal and could be benefit to other platforms later on.
 >
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 96a4a72708e4..a216a7537564 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -174,13 +174,57 @@ int meson_pmx_get_groups(struct pinctrl_dev *pcdev, unsigned selector,
->         return 0;
->  }
+> Cheers
+> Guillaume
 >
-> +static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
-> +                                     unsigned int pin)
-> +{
-> +       struct meson_bank *bank;
-> +       unsigned int reg, bit = 0;
-> +       int ret;
-> +
-> +       ret = meson_get_bank(pc, pin, &bank);
-> +       if (ret)
-> +               return ret;
-add an empty line here to keep it consistent with the rest of the code
-
-[...]
->  static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
->                              unsigned long *configs, unsigned num_configs)
->  {
->         struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
->         struct meson_bank *bank;
-bank is not read anymore (it's passed to meson_get_bank to set it, but
-then it's not read, which is probably why my compiler doesn't
-complain)
-
->         enum pin_config_param param;
-> -       unsigned int reg, bit;
->         int i, ret;
+> Changes since v2:
+> - update driver-strength-uA property to be compliant with DT documentation
+> - rework patch series for better understanding
+> - rework set_bias function
 >
->         ret = meson_get_bank(pc, pin, &bank);
-> @@ -192,44 +236,17 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+> Changes since v1:
+> - fix missing break
+> - implement new pinctrl generic property "drive-strength-uA"
 >
->                 switch (param) {
->                 case PIN_CONFIG_BIAS_DISABLE:
-> -                       dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
-> -
-> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
-> -                                              &bit);
-> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
-> -                                                BIT(bit), 0);
-> +                       ret = meson_pinconf_disable_bias(pc, pin);
->                         if (ret)
->                                 return ret;
->                         break;
->                 case PIN_CONFIG_BIAS_PULL_UP:
-> -                       dev_dbg(pc->dev, "pin %u: enable pull-up\n", pin);
-> -
-> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
-> -                                              &reg, &bit);
-> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
-> -                                                BIT(bit), BIT(bit));
-> -                       if (ret)
-> -                               return ret;
-> -
-> -                       meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-> -                       ret = regmap_update_bits(pc->reg_pull, reg,
-> -                                                BIT(bit), BIT(bit));
-> +                       ret = meson_pinconf_enable_bias(pc, pin, 1);
-use "true" instead of "1"?
-
->                         if (ret)
->                                 return ret;
->                         break;
->                 case PIN_CONFIG_BIAS_PULL_DOWN:
-> -                       dev_dbg(pc->dev, "pin %u: enable pull-down\n", pin);
-> -
-> -                       meson_calc_reg_and_bit(bank, pin, REG_PULLEN,
-> -                                              &reg, &bit);
-> -                       ret = regmap_update_bits(pc->reg_pullen, reg,
-> -                                                BIT(bit), BIT(bit));
-> -                       if (ret)
-> -                               return ret;
-> -
-> -                       meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-> -                       ret = regmap_update_bits(pc->reg_pull, reg,
-> -                                                BIT(bit), 0);
-> +                       ret = meson_pinconf_enable_bias(pc, pin, 0);
-use "false" instead of "0"?
-
-one overall comment: thank you for working on this!
-in my opinion it's a good preparation step to ensure that
-meson_pinconf_set is easy to understand even if we add more
-functionality here
-
-
-Regards
-Martin
+> [1] https://lkml.kernel.org/r/20190314163725.7918-1-jbrunet@baylibre.com
+>
+>
+> Guillaume La Roque (6):
+>   dt-bindings: pinctrl: add a 'drive-strength-microamp' property
+>   pinctrl: generic: add new 'drive-strength-microamp' property support
+>   dt-bindings: pinctrl: meson: Add drive-strength-microamp property
+>   pinctrl: meson: Rework enable/disable bias part
+>   pinctrl: meson: add support of drive-strength-microamp
+>   pinctrl: meson: g12a: add DS bank value
+>
+>  .../bindings/pinctrl/meson,pinctrl.txt        |   4 +
+>  .../bindings/pinctrl/pinctrl-bindings.txt     |   3 +
+>  drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  36 ++--
+>  drivers/pinctrl/meson/pinctrl-meson.c         | 177 +++++++++++++++---
+>  drivers/pinctrl/meson/pinctrl-meson.h         |  18 +-
+>  drivers/pinctrl/pinconf-generic.c             |   2 +
+>  include/linux/pinctrl/pinconf-generic.h       |   3 +
+>  7 files changed, 195 insertions(+), 48 deletions(-)
+I gave this a go on one of my Meson8m2 boards:
+[Meson8m2 doesn't support drive strength and still boots without any
+crashes or obvious regressions]
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
