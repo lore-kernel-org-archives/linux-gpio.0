@@ -1,114 +1,53 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 91/99] gpio: Fix gpiochip_add_data_with_key() error path
-Date: Tue,  7 May 2019 01:32:25 -0400
-Message-ID: <20190507053235.29900-91-sashal@kernel.org>
-References: <20190507053235.29900-1-sashal@kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Guillaume La Roque <glaroque@baylibre.com>
+Subject: [PATCH v3 0/6]  Add drive-strength in Meson pinctrl driver
+Date: Tue,  7 May 2019 13:57:20 +0200
+Message-ID: <20190507115726.23714-1-glaroque@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507053235.29900-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Mukesh Ojha <mojha@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The purpose of this patchset is to add drive-strength support in meson pinconf
+driver. This is a new feature that was added on the g12a. It is critical for us
+to support this since many functions are failing with default pad drive-strength.
 
-[ Upstream commit 357798909164bf423eac6a78ff7da7e98d2d7f7f ]
+The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
+'drive-strength' is expressed in mA.
+So this patch add another generic property "drive-strength-uA". The change to do so
+would be minimal and could be benefit to other platforms later on.
 
-The err_remove_chip block is too coarse, and may perform cleanup that
-must not be done.  E.g. if of_gpiochip_add() fails, of_gpiochip_remove()
-is still called, causing:
+Cheers
+Guillaume
 
-    OF: ERROR: Bad of_node_put() on /soc/gpio@e6050000
-    CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted 5.1.0-rc2-koelsch+ #407
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    Workqueue: events deferred_probe_work_func
-    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
-    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
-    [<c07c1224>] (dump_stack) from [<c07c5a80>] (kobject_put+0x94/0xbc)
-    [<c07c5a80>] (kobject_put) from [<c0470420>] (gpiochip_add_data_with_key+0x8d8/0xa3c)
-    [<c0470420>] (gpiochip_add_data_with_key) from [<c0473738>] (gpio_rcar_probe+0x1d4/0x314)
-    [<c0473738>] (gpio_rcar_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
+Changes since v2:
+- update driver-strength-uA property to be compliant with DT documentation
+- rework patch series for better understanding
+- rework set_bias function
 
-and later, if a GPIO consumer tries to use a GPIO from a failed
-controller:
+Changes since v1:
+- fix missing break
+- implement new pinctrl generic property "drive-strength-uA"
 
-    WARNING: CPU: 0 PID: 1 at lib/refcount.c:156 kobject_get+0x38/0x4c
-    refcount_t: increment on 0; use-after-free.
-    Modules linked in:
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.1.0-rc2-koelsch+ #407
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
-    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
-    [<c07c1224>] (dump_stack) from [<c0221580>] (__warn+0xd0/0xec)
-    [<c0221580>] (__warn) from [<c02215e0>] (warn_slowpath_fmt+0x44/0x6c)
-    [<c02215e0>] (warn_slowpath_fmt) from [<c07c58fc>] (kobject_get+0x38/0x4c)
-    [<c07c58fc>] (kobject_get) from [<c068b3ec>] (of_node_get+0x14/0x1c)
-    [<c068b3ec>] (of_node_get) from [<c0686f24>] (of_find_node_by_phandle+0xc0/0xf0)
-    [<c0686f24>] (of_find_node_by_phandle) from [<c0686fbc>] (of_phandle_iterator_next+0x68/0x154)
-    [<c0686fbc>] (of_phandle_iterator_next) from [<c0687fe4>] (__of_parse_phandle_with_args+0x40/0xd0)
-    [<c0687fe4>] (__of_parse_phandle_with_args) from [<c0688204>] (of_parse_phandle_with_args_map+0x100/0x3ac)
-    [<c0688204>] (of_parse_phandle_with_args_map) from [<c0471240>] (of_get_named_gpiod_flags+0x38/0x380)
-    [<c0471240>] (of_get_named_gpiod_flags) from [<c046f864>] (gpiod_get_from_of_node+0x24/0xd8)
-    [<c046f864>] (gpiod_get_from_of_node) from [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child+0xa0/0x144)
-    [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child) from [<c05f425c>] (gpio_keys_probe+0x418/0x7bc)
-    [<c05f425c>] (gpio_keys_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
+[1] https://lkml.kernel.org/r/20190314163725.7918-1-jbrunet@baylibre.com
 
-Fix this by splitting the cleanup block, and adding a missing call to
-gpiochip_irqchip_remove().
 
-Fixes: 28355f81969962cf ("gpio: defer probe if pinctrl cannot be found")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Guillaume La Roque (6):
+  dt-bindings: pinctrl: add a 'drive-strength-microamp' property
+  pinctrl: generic: add new 'drive-strength-microamp' property support
+  dt-bindings: pinctrl: meson: Add drive-strength-microamp property
+  pinctrl: meson: Rework enable/disable bias part
+  pinctrl: meson: add support of drive-strength-microamp
+  pinctrl: meson: g12a: add DS bank value
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d1adfdf50fb3..34fbf879411f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1379,7 +1379,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
- 	if (status)
--		goto err_remove_chip;
-+		goto err_free_gpiochip_mask;
- 
- 	status = of_gpiochip_add(chip);
- 	if (status)
-@@ -1387,7 +1387,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	status = gpiochip_init_valid_mask(chip);
- 	if (status)
--		goto err_remove_chip;
-+		goto err_remove_of_chip;
- 
- 	for (i = 0; i < chip->ngpio; i++) {
- 		struct gpio_desc *desc = &gdev->descs[i];
-@@ -1415,14 +1415,18 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (gpiolib_initialized) {
- 		status = gpiochip_setup_dev(gdev);
- 		if (status)
--			goto err_remove_chip;
-+			goto err_remove_acpi_chip;
- 	}
- 	return 0;
- 
--err_remove_chip:
-+err_remove_acpi_chip:
- 	acpi_gpiochip_remove(chip);
-+err_remove_of_chip:
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
-+err_remove_chip:
-+	gpiochip_irqchip_remove(chip);
-+err_free_gpiochip_mask:
- 	gpiochip_free_valid_mask(chip);
- err_remove_irqchip_mask:
- 	gpiochip_irqchip_free_valid_mask(chip);
+ .../bindings/pinctrl/meson,pinctrl.txt        |   4 +
+ .../bindings/pinctrl/pinctrl-bindings.txt     |   3 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  36 ++--
+ drivers/pinctrl/meson/pinctrl-meson.c         | 177 +++++++++++++++---
+ drivers/pinctrl/meson/pinctrl-meson.h         |  18 +-
+ drivers/pinctrl/pinconf-generic.c             |   2 +
+ include/linux/pinctrl/pinconf-generic.h       |   3 +
+ 7 files changed, 195 insertions(+), 48 deletions(-)
+
 -- 
-2.20.1
+2.17.1
