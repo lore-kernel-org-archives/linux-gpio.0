@@ -1,115 +1,114 @@
-From: Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 56/79] docs: Documentation/*.txt: rename all ReST
-	files to *.rst
-Date: Mon, 6 May 2019 16:50:59 -0300
-Message-ID: <20190506165059.51eb2959@coco.lan>
-References: <cover.1555938375.git.mchehab+samsung@kernel.org>
-	<cda57849a6462ccc72dcd360b30068ab6a1021c4.1555938376.git.mchehab+samsung@kernel.org>
-	<20190423083135.GA11158@hirez.programming.kicks-ass.net>
-	<20190423125519.GA7104@redhat.com>
-	<20190423130132.GT4038@hirez.programming.kicks-ass.net>
-	<20190423103053.07cf2149@lwn.net>
-	<20190423171158.GG12232@hirez.programming.kicks-ass.net>
-	<20190423172006.GD16353@zn.tnic> <20190423170409.7b1370ac@coco.lan>
-	<20190423213816.GE16353@zn.tnic>
-	<20190424065209.GC4038@hirez.programming.kicks-ass.net>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 91/99] gpio: Fix gpiochip_add_data_with_key() error path
+Date: Tue,  7 May 2019 01:32:25 -0400
+Message-ID: <20190507053235.29900-91-sashal@kernel.org>
+References: <20190507053235.29900-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20190424065209.GC4038-Nxj+rRp3nVydTX5a5knrm8zTDFooKrT+cvkQGrU6aU0@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Linux Doc Mailing List <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Farhan Ali <alifm-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, kernel-hardening-ZwoEplunGu1jrUoiu81ncdBPR1lH4CV8@public.gmane.org, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Halil Pasic <pasic-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org>, tboot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Boqun Feng <boqun.feng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicholas Piggin <npiggin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matt Mackall <mpm-VDJrAJ4Gl5ZBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-wireless@v
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190507053235.29900-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Mukesh Ojha <mojha@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Em Wed, 24 Apr 2019 08:52:09 +0200
-Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> escreveu:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> On Tue, Apr 23, 2019 at 11:38:16PM +0200, Borislav Petkov wrote:
-> > If that is all the changes it would need, then I guess that's ok. Btw,
-> > those rst-conversion patches don't really show what got changed. Dunno
-> > if git can even show that properly. I diffed the two files by hand to
-> > see what got changed, see end of mail.  
-> 
-> That is not a happy diff; that table has gotten waay worse to read due
-> to all that extra table crap.
+[ Upstream commit 357798909164bf423eac6a78ff7da7e98d2d7f7f ]
 
-Not that I'm proposing such change, but, as a reference, I just discovered 
-today that there's a way to make it even lighter than it is while still
-showing it as a table:
+The err_remove_chip block is too coarse, and may perform cleanup that
+must not be done.  E.g. if of_gpiochip_add() fails, of_gpiochip_remove()
+is still called, causing:
 
-=================  ======== ==   ================  ===== ==  ===========================================================
-    Start addr        Offset        End addr         Size    VM area description
------------------  -----------   ----------------  --------  -----------------------------------------------------------
- 0000000000000000      0         00007fffffffffff    128 TB   user-space virtual memory, different per mm
+    OF: ERROR: Bad of_node_put() on /soc/gpio@e6050000
+    CPU: 1 PID: 20 Comm: kworker/1:1 Not tainted 5.1.0-rc2-koelsch+ #407
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    Workqueue: events deferred_probe_work_func
+    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+    [<c07c1224>] (dump_stack) from [<c07c5a80>] (kobject_put+0x94/0xbc)
+    [<c07c5a80>] (kobject_put) from [<c0470420>] (gpiochip_add_data_with_key+0x8d8/0xa3c)
+    [<c0470420>] (gpiochip_add_data_with_key) from [<c0473738>] (gpio_rcar_probe+0x1d4/0x314)
+    [<c0473738>] (gpio_rcar_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
 
- 0000800000000000   +128    TB   ffff7fffffffffff   ~16M TB   ... huge, almost 64 bits wide hole of non-canonical
-                                                                  virtual memory addresses up to the -128 TB
-                                                                  starting offset of kernel mappings.
+and later, if a GPIO consumer tries to use a GPIO from a failed
+controller:
 
------------------  -------- --   ----------------  ----- --  -----------------------------------------------------------
--                                                            Kernel-space virtual memory, shared between all processes:
------------------  -----------   ----------------  --------  -----------------------------------------------------------
+    WARNING: CPU: 0 PID: 1 at lib/refcount.c:156 kobject_get+0x38/0x4c
+    refcount_t: increment on 0; use-after-free.
+    Modules linked in:
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.1.0-rc2-koelsch+ #407
+    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+    [<c020ec74>] (unwind_backtrace) from [<c020ae58>] (show_stack+0x10/0x14)
+    [<c020ae58>] (show_stack) from [<c07c1224>] (dump_stack+0x7c/0x9c)
+    [<c07c1224>] (dump_stack) from [<c0221580>] (__warn+0xd0/0xec)
+    [<c0221580>] (__warn) from [<c02215e0>] (warn_slowpath_fmt+0x44/0x6c)
+    [<c02215e0>] (warn_slowpath_fmt) from [<c07c58fc>] (kobject_get+0x38/0x4c)
+    [<c07c58fc>] (kobject_get) from [<c068b3ec>] (of_node_get+0x14/0x1c)
+    [<c068b3ec>] (of_node_get) from [<c0686f24>] (of_find_node_by_phandle+0xc0/0xf0)
+    [<c0686f24>] (of_find_node_by_phandle) from [<c0686fbc>] (of_phandle_iterator_next+0x68/0x154)
+    [<c0686fbc>] (of_phandle_iterator_next) from [<c0687fe4>] (__of_parse_phandle_with_args+0x40/0xd0)
+    [<c0687fe4>] (__of_parse_phandle_with_args) from [<c0688204>] (of_parse_phandle_with_args_map+0x100/0x3ac)
+    [<c0688204>] (of_parse_phandle_with_args_map) from [<c0471240>] (of_get_named_gpiod_flags+0x38/0x380)
+    [<c0471240>] (of_get_named_gpiod_flags) from [<c046f864>] (gpiod_get_from_of_node+0x24/0xd8)
+    [<c046f864>] (gpiod_get_from_of_node) from [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child+0xa0/0x144)
+    [<c0470aa4>] (devm_fwnode_get_index_gpiod_from_child) from [<c05f425c>] (gpio_keys_probe+0x418/0x7bc)
+    [<c05f425c>] (gpio_keys_probe) from [<c052fca8>] (platform_drv_probe+0x48/0x94)
 
- ffff800000000000   -128    TB   ffff87ffffffffff      8 TB   ... guard hole, also reserved for hypervisor
- ffff880000000000   -120    TB   ffff887fffffffff    0.5 TB   LDT remap for PTI
- ffff888000000000   -119.5  TB   ffffc87fffffffff     64 TB   direct mapping of all physical memory (page_offset_base)
- ffffc88000000000    -55.5  TB   ffffc8ffffffffff    0.5 TB   ... unused hole
- ffffc90000000000    -55    TB   ffffe8ffffffffff     32 TB   vmalloc/ioremap space (vmalloc_base)
- ffffe90000000000    -23    TB   ffffe9ffffffffff      1 TB   ... unused hole
- ffffea0000000000    -22    TB   ffffeaffffffffff      1 TB   virtual memory map (vmemmap_base)
- ffffeb0000000000    -21    TB   ffffebffffffffff      1 TB   ... unused hole
- ffffec0000000000    -20    TB   fffffbffffffffff     16 TB   KASAN shadow memory
------------------  -------- --   ----------------  ----- --  -----------------------------------------------------------
--                                                            Identical layout to the 56-bit one from here on:
------------------  -----------   ----------------  --------  -----------------------------------------------------------
+Fix this by splitting the cleanup block, and adding a missing call to
+gpiochip_irqchip_remove().
 
- fffffc0000000000     -4    TB   fffffdffffffffff      2 TB   ... unused hole
-                                                              vaddr_end for KASLR
- fffffe0000000000     -2    TB   fffffe7fffffffff    0.5 TB   cpu_entry_area mapping
- fffffe8000000000     -1.5  TB   fffffeffffffffff    0.5 TB   ... unused hole
- ffffff0000000000     -1    TB   ffffff7fffffffff    0.5 TB   %esp fixup stacks
- ffffff8000000000   -512    GB   ffffffeeffffffff    444 GB   ... unused hole
- ffffffef00000000    -68    GB   fffffffeffffffff     64 GB   EFI region mapping space
- ffffffff00000000     -4    GB   ffffffff7fffffff      2 GB   ... unused hole
- ffffffff80000000     -2    GB   ffffffff9fffffff    512 MB   kernel text mapping, mapped to physical address 0
- ffffffff80000000  -2048    MB
- ffffffffa0000000  -1536    MB   fffffffffeffffff   1520 MB   module mapping space
- ffffffffff000000    -16    MB
-    FIXADDR_START   ~-11    MB   ffffffffff5fffff   ~0.5 MB   kernel-internal fixmap range, variable size and offset
- ffffffffff600000    -10    MB   ffffffffff600fff      4 kB   legacy vsyscall ABI
- ffffffffffe00000     -2    MB   ffffffffffffffff      2 MB   ... unused hole
-=================  ======== ==   ================  ===== ==  ===========================================================
+Fixes: 28355f81969962cf ("gpio: defer probe if pinctrl cannot be found")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpiolib.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-If one wants the table headers as such, an extra line is required:
-
-
-=================  ======== ==   ================  ===== ==  ===========================================================
-    Start addr        Offset        End addr         Size    VM area description
------------------  -----------   ----------------  --------  -----------------------------------------------------------
-=================  ======== ==   ================  ===== ==  ===========================================================
-
-<snip/>
-
-=================  ======== ==   ================  ===== ==  ===========================================================
-
-
-The output using this approach and a markup to use mono-spaced cells
-e. g. either using ..raw or using .. cssclass as commented before in
-this thread is at:
-
-	https://www.infradead.org/~mchehab/rst_conversion/x86/x86_64/mm_alternative.html
-
-Just converted the first table, keeping the other as a literal block.
-
-Thanks,
-Mauro
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d1adfdf50fb3..34fbf879411f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1379,7 +1379,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
+ 	if (status)
+-		goto err_remove_chip;
++		goto err_free_gpiochip_mask;
+ 
+ 	status = of_gpiochip_add(chip);
+ 	if (status)
+@@ -1387,7 +1387,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	status = gpiochip_init_valid_mask(chip);
+ 	if (status)
+-		goto err_remove_chip;
++		goto err_remove_of_chip;
+ 
+ 	for (i = 0; i < chip->ngpio; i++) {
+ 		struct gpio_desc *desc = &gdev->descs[i];
+@@ -1415,14 +1415,18 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (gpiolib_initialized) {
+ 		status = gpiochip_setup_dev(gdev);
+ 		if (status)
+-			goto err_remove_chip;
++			goto err_remove_acpi_chip;
+ 	}
+ 	return 0;
+ 
+-err_remove_chip:
++err_remove_acpi_chip:
+ 	acpi_gpiochip_remove(chip);
++err_remove_of_chip:
+ 	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
++err_remove_chip:
++	gpiochip_irqchip_remove(chip);
++err_free_gpiochip_mask:
+ 	gpiochip_free_valid_mask(chip);
+ err_remove_irqchip_mask:
+ 	gpiochip_irqchip_free_valid_mask(chip);
+-- 
+2.20.1
