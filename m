@@ -1,42 +1,37 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v4 1/6] dt-bindings: pinctrl: add a 'drive-strength-microamp' property
-Date: Thu, 09 May 2019 10:35:11 -0700
-Message-ID: <7hzhnvfs4w.fsf@baylibre.com>
-References: <20190509162920.7054-1-glaroque@baylibre.com> <20190509162920.7054-2-glaroque@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 0/3] pinctrl: bcm: Allow PINCTRL_BCM2835 for ARCH_BRCMSTB
+Date: Thu,  9 May 2019 13:59:52 -0700
+Message-ID: <20190509205955.27842-1-f.fainelli@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190509162920.7054-2-glaroque@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guillaume La Roque <glaroque@baylibre.com>, linus.walleij@linaro.org
-Cc: jbrunet@baylibre.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "maintainer:BROADCOM
+        BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Doug Berger <opendmb@gmail.com>, Matheus Castello <matheus@castello.eng.br>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, Lukas Wunner <lukas@wunner.de>, Nathan Chancellor <natechancellor@gmail.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Guillaume La Roque <glaroque@baylibre.com> writes:
+Hi Linus,
 
-> This property allow drive-strength parameter in uA instead of mA.
->
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> index cef2b5855d60..84adce9f2a75 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> @@ -258,6 +258,7 @@ drive-push-pull		- drive actively high and low
->  drive-open-drain	- drive with open drain
->  drive-open-source	- drive with open source
->  drive-strength		- sink or source at most X mA
-> +drive-strength-microamp	- sink or source at most X uA
->  input-enable		- enable input on pin (no effect on output, such as
->  			  enabling an input buffer)
->  input-disable		- disable input on pin (no effect on output, such as
-> @@ -326,6 +327,8 @@ arguments are described below.
->  
->  - drive-strength takes as argument the target strength in mA.
->  
-> +- drive-strength-uA takes as argument the target strength in uA.
+This patch series allows making use of the pinctrl-bcm2835 driver on
+ARCH_BRCMSTB where it is also used. Binding document is updated, and
+then the Kconfig language is updated to allow selecting this driver with
+ARCH_BRCMSTB, finally, Al updates the logic to account for the
+additional registers that were added on 7211.
 
-s/uA/microamp/
+Thanks!
+
+Al Cooper (1):
+  pinctrl: bcm2835: bcm7211: Add support for 7211 pull-up functionality
+
+Doug Berger (1):
+  pinctrl: bcm: Allow PINCTRL_BCM2835 for ARCH_BRCMSTB
+
+Florian Fainelli (1):
+  dt-bindings: pinctrl: bcm2835-gpio: Document BCM7211 compatible
+
+ .../bindings/pinctrl/brcm,bcm2835-gpio.txt    |  3 +
+ drivers/pinctrl/bcm/Kconfig                   |  6 +-
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 85 +++++++++++++++++--
+ 3 files changed, 88 insertions(+), 6 deletions(-)
+
+-- 
+2.17.1
