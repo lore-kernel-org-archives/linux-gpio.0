@@ -1,56 +1,62 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH 0/3] pinctrl: bcm: Allow PINCTRL_BCM2835 for ARCH_BRCMSTB
-Date: Thu, 09 May 2019 15:53:36 -0700
-Message-ID: <87woizqlxr.fsf@anholt.net>
-References: <20190509205955.27842-1-f.fainelli@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD and Pinctrl due for the v5.2
+ merge window
+Date: Fri, 10 May 2019 08:23:14 +0100
+Message-ID: <20190510072314.GC7321@dell>
+References: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190509205955.27842-1-f.fainelli@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1557392336-28239-1-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Doug Berger <opendmb@gmail.com>, Matheus Castello <matheus@castello.eng.br>, =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Lukas Wunner <lukas@wunner.de>, Nathan Chancellor <natechancellor@gmail.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Enjoy!
 
-Florian Fainelli <f.fainelli@gmail.com> writes:
+The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-> Hi Linus,
->
-> This patch series allows making use of the pinctrl-bcm2835 driver on
-> ARCH_BRCMSTB where it is also used. Binding document is updated, and
-> then the Kconfig language is updated to allow selecting this driver with
-> ARCH_BRCMSTB, finally, Al updates the logic to account for the
-> additional registers that were added on 7211.
+  Linux 5.1 (2019-05-05 17:42:58 -0700)
 
-As far as platform maintainer goes, patch 1-2 are:
+are available in the Git repository at:
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-pinctrl-v5.2
 
-and patch 3 is:
+for you to fetch changes up to 1490d9f841b186664f9d3ca213dcfa4464a60680:
 
-Acked-by: Eric Anholt <eric@anholt.net>
+  pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver (2019-05-10 08:21:31 +0100)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+Immutable branch between MFD and Pinctrl due for the v5.2 merge window
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Amelie Delaunay (4):
+      dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
+      mfd: Add ST Multi-Function eXpander (STMFX) core driver
+      dt-bindings: pinctrl: document the STMFX pinctrl bindings
+      pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlzUr3AACgkQtdYpNtH8
-nuhpHQ//dM7jTyPUB9eHCYdZerTKDtr+6aY7wKi3KTY3eTJVErru/9skG0qyV1Es
-ccQf6Zkj20wnXjucSP9f0zEHCaeybXgx3OKLALE063nuglnvfKhEzDGvzWUb2Xv6
-BBlCBf5o9xM5nIhdw1i2bITSNvUXYZy+JFRTVZH59x5h6OBYfaxLFwon7hxFajpQ
-1VxFDUEIpltkJuJNp7dXNvC+iIEAv7zWNS5JR05S8h5R7H23c4odUPfWEGkMTFdH
-w2+kPoNVT6aZ3u4DT+EFH/SGfhAWwkCX06KBa5/J8G026R/x6VG6lmsohe7sGyrh
-HRoozBamxxCixfHI2imHsjwkLWLlEijZeh+HV8iHmTlQcdZnLY6hQ0KxAsVr9dqW
-r03BFJ1uHKhFg86kPsVraAVlOhr8riqQnzsrmh/LkmG0eF6WppgLQ1Q2txFvA4/R
-WxFXNu0vRRd4X4ICCcllge77E50HM3bhxwmbdp/oouQfyJVMxwVJUzbbDGEKWQ5u
-JDYndEouNcbB8+vnRzli8bqu+tkif/wODaqp8THHB4IvpteGcgk2+yCBh0CrYV6f
-/WGNhOZFqWHshFL1uVYwPvnlW4VkJPTJ7O8w490kobjnU8CwCTn0rUoe2n45f8Oi
-iecWgOgVSl9mjzEL3d81+PmuomYdSwz9vz2LhOkD4oiATkGSbK4=
-=HgWt
------END PGP SIGNATURE-----
---=-=-=--
+ Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 +
+ .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   2 +-
+ drivers/mfd/stmfx.c                                | 545 ++++++++++++++
+ drivers/pinctrl/Kconfig                            |  12 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-stmfx.c                    | 820 +++++++++++++++++++++
+ include/linux/mfd/stmfx.h                          | 123 ++++
+ 9 files changed, 1659 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+ create mode 100644 drivers/mfd/stmfx.c
+ create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
+ create mode 100644 include/linux/mfd/stmfx.h
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
