@@ -1,42 +1,41 @@
 From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
-Date: Fri, 10 May 2019 09:42:28 +0200
-Message-ID: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
+Subject: [PATCH 2/2] pinctrl: stm32: Enable suspend/resume for stm32mp157c SoC
+Date: Fri, 10 May 2019 09:42:30 +0200
+Message-ID: <1557474150-19618-3-git-send-email-alexandre.torgue@st.com>
+References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: linux-gpio@vger.kernel.org, alexandre.torgue@st.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, alexandre.torgue@st.com
 List-Id: linux-gpio@vger.kernel.org
 
-During power sequence, GPIO hardware registers could be lost if the power
-supply is switched off. Each device using pinctrl API is in charge of
-managing pins during suspend/resume sequences. But for pins used as gpio or
-irq stm32 pinctrl driver has to save the hardware configuration.
-Each register will be saved at runtime and restored during resume sequence.
+Apply suspend/resume management for stm32mp157c MPU.
 
-Regards
-Alex
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-
-Alexandre Torgue (2):
-  pinctrl: stm32: add suspend/resume management
-  pinctrl: stm32: Enable suspend/resume for stm32mp157c SoC
-
- drivers/pinctrl/stm32/pinctrl-stm32.c      | 132 +++++++++++++++++++++++++++++
- drivers/pinctrl/stm32/pinctrl-stm32.h      |   2 +
- drivers/pinctrl/stm32/pinctrl-stm32mp157.c |   5 ++
- 3 files changed, 139 insertions(+)
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32mp157.c b/drivers/pinctrl/stm32/pinctrl-stm32mp157.c
+index 320544f..2ccb99d 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32mp157.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32mp157.c
+@@ -2342,11 +2342,16 @@ static const struct of_device_id stm32mp157_pctrl_match[] = {
+ 	{ }
+ };
+ 
++static const struct dev_pm_ops stm32_pinctrl_dev_pm_ops = {
++	 SET_LATE_SYSTEM_SLEEP_PM_OPS(NULL, stm32_pinctrl_resume)
++};
++
+ static struct platform_driver stm32mp157_pinctrl_driver = {
+ 	.probe = stm32_pctl_probe,
+ 	.driver = {
+ 		.name = "stm32mp157-pinctrl",
+ 		.of_match_table = stm32mp157_pctrl_match,
++		.pm = &stm32_pinctrl_dev_pm_ops,
+ 	},
+ };
+ 
 -- 
 2.7.4
