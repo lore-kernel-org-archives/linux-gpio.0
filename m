@@ -1,42 +1,48 @@
-From: "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Subject: Re: [PATCH 03/16] lib,treewide: add new match_string() helper/macro
-Date: Fri, 10 May 2019 09:15:27 +0000
-Message-ID: <4df165bc4247e60aa4952fd55cb0c77e60712767.camel@analog.com>
-References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
-         <20190508112842.11654-5-alexandru.ardelean@analog.com>
-         <20190508131128.GL9224@smile.fi.intel.com>
-         <20190508131856.GB10138@kroah.com>
-         <b2440bc9485456a7a90a488c528997587b22088b.camel@analog.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] Documentation: gpio: remove duplicated lines
+Date: Fri, 10 May 2019 12:15:38 +0200
+Message-ID: <CAMpxmJVL3KLqgu9oRQOFmdAHq1jDbCCXxxq=cE1XyxX83zNgzg@mail.gmail.com>
+References: <20190510090339.17211-1-luca@lucaceresoli.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <b2440bc9485456a7a90a488c528997587b22088b.camel@analog.com>
-Content-Language: en-US
-Content-ID: <BE5857B429D5854D8FB2F6D2ED721097@analog.com>
-Sender: netdev-owner@vger.kernel.org
-To: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, devel@driverdev.osu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190510090339.17211-1-luca@lucaceresoli.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>, linux-doc <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTA1LTA4IGF0IDE2OjIyICswMzAwLCBBbGV4YW5kcnUgQXJkZWxlYW4gd3Jv
-dGU6DQo+IE9uIFdlZCwgMjAxOS0wNS0wOCBhdCAxNToxOCArMDIwMCwgR3JlZyBLSCB3cm90ZToN
-Cj4gPiANCj4gPiANCj4gPiBPbiBXZWQsIE1heSAwOCwgMjAxOSBhdCAwNDoxMToyOFBNICswMzAw
-LCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+ID4gPiBPbiBXZWQsIE1heSAwOCwgMjAxOSBhdCAw
-MjoyODoyOVBNICswMzAwLCBBbGV4YW5kcnUgQXJkZWxlYW4gd3JvdGU6DQo+ID4gPiA+IFRoaXMg
-Y2hhbmdlIHJlLWludHJvZHVjZXMgYG1hdGNoX3N0cmluZygpYCBhcyBhIG1hY3JvIHRoYXQgdXNl
-cw0KPiA+ID4gPiBBUlJBWV9TSVpFKCkgdG8gY29tcHV0ZSB0aGUgc2l6ZSBvZiB0aGUgYXJyYXku
-DQo+ID4gPiA+IFRoZSBtYWNybyBpcyBhZGRlZCBpbiBhbGwgdGhlIHBsYWNlcyB0aGF0IGRvDQo+
-ID4gPiA+IGBtYXRjaF9zdHJpbmcoX2EsIEFSUkFZX1NJWkUoX2EpLCBzKWAsIHNpbmNlIHRoZSBj
-aGFuZ2UgaXMgcHJldHR5DQo+ID4gPiA+IHN0cmFpZ2h0Zm9yd2FyZC4NCj4gPiA+IA0KPiA+ID4g
-Q2FuIHlvdSBzcGxpdCBpbmNsdWRlL2xpbnV4LyBjaGFuZ2UgZnJvbSB0aGUgcmVzdD8NCj4gPiAN
-Cj4gPiBUaGF0IHdvdWxkIGJyZWFrIHRoZSBidWlsZCwgd2h5IGRvIHlvdSB3YW50IGl0IHNwbGl0
-IG91dD8gIFRoaXMgbWFrZXMNCj4gPiBzZW5zZSBhbGwgYXMgYSBzaW5nbGUgcGF0Y2ggdG8gbWUu
-DQo+ID4gDQo+IA0KPiBOb3QgcmVhbGx5Lg0KPiBJdCB3b3VsZCBiZSBqdXN0IGJlIHRoZSBuZXcg
-bWF0Y2hfc3RyaW5nKCkgaGVscGVyL21hY3JvIGluIGEgbmV3IGNvbW1pdC4NCj4gQW5kIHRoZSBj
-b252ZXJzaW9ucyBvZiB0aGUgc2ltcGxlIHVzZXJzIG9mIG1hdGNoX3N0cmluZygpICh0aGUgb25l
-cyB1c2luZw0KPiBBUlJBWV9TSVpFKCkpIGluIGFub3RoZXIgY29tbWl0Lg0KPiANCg0KSSBzaG91
-bGQgaGF2ZSBhc2tlZCBpbiBteSBwcmV2aW91cyByZXBseS4NCkxlYXZlIHRoaXMgYXMtaXMgb3Ig
-cmUtZm9ybXVsYXRlIGluIDIgcGF0Y2hlcyA/DQoNCk5vIHN0cm9uZyBwcmVmZXJlbmNlIGZyb20g
-bXkgc2lkZS4NCg0KVGhhbmtzDQpBbGV4DQoNCj4gVGhhbmtzDQo+IEFsZXgNCj4gDQo+ID4gdGhh
-bmtzLA0KPiA+IA0KPiA+IGdyZWcgay1oDQo=
+pt., 10 maj 2019 o 11:03 Luca Ceresoli <luca@lucaceresoli.net> napisa=C5=82=
+(a):
+>
+> The 'default (active high)' lines are repeated twice. Avoid people stare =
+at
+> their screens looking for differences.
+>
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  Documentation/driver-api/gpio/consumer.rst | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/d=
+river-api/gpio/consumer.rst
+> index 5e4d8aa68913..23d68c321c5c 100644
+> --- a/Documentation/driver-api/gpio/consumer.rst
+> +++ b/Documentation/driver-api/gpio/consumer.rst
+> @@ -283,8 +283,6 @@ To summarize::
+>    gpiod_set_value(desc, 1);          default (active high)  high
+>    gpiod_set_value(desc, 0);          active low             high
+>    gpiod_set_value(desc, 1);          active low             low
+> -  gpiod_set_value(desc, 0);          default (active high)  low
+> -  gpiod_set_value(desc, 1);          default (active high)  high
+>    gpiod_set_value(desc, 0);          open drain             low
+>    gpiod_set_value(desc, 1);          open drain             high impedan=
+ce
+>    gpiod_set_value(desc, 0);          open source            high impedan=
+ce
+> --
+> 2.21.0
+>
+
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
