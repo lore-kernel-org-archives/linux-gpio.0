@@ -1,63 +1,150 @@
-From: Guillaume La Roque <glaroque@baylibre.com>
-Subject: [PATCH v6 2/6] pinctrl: generic: add new 'drive-strength-microamp' property support
-Date: Tue, 14 May 2019 10:26:48 +0200
-Message-ID: <20190514082652.20686-3-glaroque@baylibre.com>
-References: <20190514082652.20686-1-glaroque@baylibre.com>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Update cur_mask in mask/mask ops
+Date: Tue, 14 May 2019 13:14:36 -0700
+Message-ID: <155786487644.14659.17142525593824613967@swboyd.mtv.corp.google.com>
+References: <20190429035515.73611-1-drinkcat@chromium.org> <20190429035515.73611-3-drinkcat@chromium.org> <155778659317.14659.136626364818483852@swboyd.mtv.corp.google.com> <CANMq1KBMd7eR3dP=V9gJ6G4OgE6DsXad_gzvuNJ25_pee4+6eg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190514082652.20686-1-glaroque@baylibre.com>
+In-Reply-To: <CANMq1KBMd7eR3dP=V9gJ6G4OgE6DsXad_gzvuNJ25_pee4+6eg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, khilman@baylibre.com
-Cc: jbrunet@baylibre.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Nicolas Boichat <drinkcat@chromium.org>
+Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Evan Green <evgreen@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Add drive-strength-microamp property support to allow drive strength in uA
+Quoting Nicolas Boichat (2019-05-13 18:37:58)
+> On Tue, May 14, 2019 at 6:29 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Quoting Nicolas Boichat (2019-04-28 20:55:15)
+> > > During suspend/resume, mtk_eint_mask may be called while
+> > > wake_mask is active. For example, this happens if a wake-source
+> > > with an active interrupt handler wakes the system:
+> > > irq/pm.c:irq_pm_check_wakeup would disable the interrupt, so
+> > > that it can be handled later on in the resume flow.
+> > >
+> > > However, this may happen before mtk_eint_do_resume is called:
+> > > in this case, wake_mask is loaded, and cur_mask is restored
+> > > from an older copy, re-enabling the interrupt, and causing
+> > > an interrupt storm (especially for level interrupts).
+> > >
+> > > Instead, we just record mask/unmask changes in cur_mask. This
+> > > also avoids the need to read the current mask in eint_do_suspend,
+> > > and we can remove mtk_eint_chip_read_mask function.
+> > >
+> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> >
+> > It looks an awful lot like you should just use IRQCHIP_MASK_ON_SUSPEND
+> > here. Isn't that what's happening? All non-wake irqs should be masked at
+> > the hardware level so they can't cause a wakeup during suspend and on
+> > resume they can be unmasked?
+>=20
+> No, this is for an line that has both wake and interrupt enabled. To
+> reword the commit message above:
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- drivers/pinctrl/pinconf-generic.c       | 2 ++
- include/linux/pinctrl/pinconf-generic.h | 3 +++
- 2 files changed, 5 insertions(+)
+Is my understanding correct that there isn't a different "wake up"
+register that can be written to cause a GPIO to be configured to wake
+the system from suspend? The only way to do so is to leave the GPIO
+unmasked in the hardware by having EINT_EN[irq] =3D 1? And thus any
+interrupts that we don't want to wake us up during suspend should be
+masked in the hardware?=20
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index b4f7f8a458ea..d0cbdb1ad76a 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -39,6 +39,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_DRIVE_OPEN_SOURCE, "output drive open source", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_DRIVE_PUSH_PULL, "output drive push pull", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH, "output drive strength", "mA", true),
-+	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH_UA, "output drive strength", "uA", true),
- 	PCONFDUMP(PIN_CONFIG_INPUT_DEBOUNCE, "input debounce", "usec", true),
- 	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
-@@ -167,6 +168,7 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
- 	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
- 	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
-+	{ "drive-strength-microamp", PIN_CONFIG_DRIVE_STRENGTH_UA, 0 },
- 	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
- 	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
- 	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 6c0680641108..72d06d6a3099 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -55,6 +55,8 @@
-  *	push-pull mode, the argument is ignored.
-  * @PIN_CONFIG_DRIVE_STRENGTH: the pin will sink or source at most the current
-  *	passed as argument. The argument is in mA.
-+ * @PIN_CONFIG_DRIVE_STRENGTH_UA: the pin will sink or source at most the current
-+ *	passed as argument. The argument is in uA.
-  * @PIN_CONFIG_INPUT_DEBOUNCE: this will configure the pin to debounce mode,
-  *	which means it will wait for signals to settle when reading inputs. The
-  *	argument gives the debounce time in usecs. Setting the
-@@ -112,6 +114,7 @@ enum pin_config_param {
- 	PIN_CONFIG_DRIVE_OPEN_SOURCE,
- 	PIN_CONFIG_DRIVE_PUSH_PULL,
- 	PIN_CONFIG_DRIVE_STRENGTH,
-+	PIN_CONFIG_DRIVE_STRENGTH_UA,
- 	PIN_CONFIG_INPUT_DEBOUNCE,
- 	PIN_CONFIG_INPUT_ENABLE,
- 	PIN_CONFIG_INPUT_SCHMITT,
--- 
-2.17.1
+If that's true, the code here that's trying to keep track of enabled
+irqs and wakeup enabled irqs can be replaced with the irqchip flag so
+that wakeup irqs are not masked while non-wakeups are masked.
+
+
+>  1. cur_mask[irq] =3D 1; wake_mask[irq] =3D 1; EINT_EN[irq] =3D 1 (interr=
+upt
+> enabled at hardware level)
+>  2. System suspends, resumes due to that line (at this stage EINT_HW
+> =3D=3D wake_mask)
+>  3. irq_pm_check_wakeup is called, and disables the interrupt =3D>
+> EINT_EN[irq] =3D 0, but we still have cur_mask[irq] =3D 1
+>  4. mtk_eint_do_resume is called, and restores EINT_EN =3D cur_mask, so
+> it reenables EINT_EN[irq] =3D 1 =3D> interrupt storm.
+>=20
+> This patch fixes the issue in step 3. So that the interrupt can be
+> re-enabled properly later on, sometimes after mtk_eint_do_resume, when
+> the driver is ready to handle it.
+
+Right, we'd rather not see irqchip drivers working around the genirq
+layer to do these things like tracking cur_mask and wake_mask. That
+leads to subtle bugs and makes the driver maintain state across the
+irqchip callbacks and system suspend/resume.
+
+>=20
+> Also, IRQCHIP_MASK_ON_SUSPEND does not handle lines that are enabled
+> as a wake source, but without interrupt enabled (e.g. cros_ec driver
+> does that), which we do want to support.
+
+Hmm. I thought that even if the irq is disabled by a driver, that would
+be a lazy disable so it isn't really masked in the hardware. Then if an
+interrupt comes in during suspend on a wake configured irq line, the
+hardware will have left it unmasked because IRQCHIP_MASK_ON_SUSPEND in
+combination with lazy disable would mean that the line is left unmasked
+(ignoring whatever this mediatek driver is doing to mask and unmask in
+PM hooks).
+
+Just reading Documentation/power/suspend-and-interrupts.txt I'm led to
+believe that the cros_ec driver shouldn't call disable_irq() on the
+interrupt if it wants to wakeup from it:
+
+"Calling enable_irq_wake() causes suspend_device_irqs() to treat the
+given IRQ in a special way.  Namely, the IRQ remains enabled, by on the
+first interrupt it will be disabled, marked as pending and "suspended"
+so that it will be re-enabled by resume_device_irqs() during the
+subsequent system resume.  Also the PM core is notified about the event
+which causes the system suspend in progress to be aborted (that doesn't
+have to happen immediately, but at one of the points where the suspend
+thread looks for pending wakeup events)."
+
+I suppose the problem is an irq line disabled in hardware that has
+wakeup armed on it? Is this even valid? Shouldn't an irq be enabled for
+wakeup to work?
+
+We could immediately unmask those lines in the hardware when the
+set_wake() callback is called. That way the genirq layer can use the
+driver to do what it wants with the hardware and the driver can make
+sure that set_wake() will always cause the wakeup interrupt to be
+delivered to genirq even when software has disabled it.
+
+But I think that there might be a problem with how genirq understands
+the masked state of a line when the wakeup implementation conflates
+masked state with wakeup armed state. Consider this call-flow:
+
+	irq masked in hardware, IRQD_IRQ_MASKED is set
+	enable_irq_wake()
+	  unmask_irq in hardware
+	IRQD_WAKEUP_ARMED is set
+	<suspend and wakeup from irq>
+	handle_level_irq()
+	  mask_ack_irq()
+	    mask_irq()
+	      if (irqd_irq_masked()) -> returns true and skips masking!
+	    if (desc->irq_data.chip->irq_ack)
+	      ...
+	  irq_may_run()
+	    irq_pm_check_wakeup()
+	      irq_disable()
+	        mask_irq() -> does nothing again
+
+In the above flow, we never mask the irq because we thought it was
+already masked when it was disabled, but the irqchip implementation
+unmasked it to make wakeup work. Maybe we should always mask the irq if
+wakeup is armed and we're trying to call mask_irq()? Looks hacky.
+
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 51128bea3846..20257d528880 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -411,7 +411,7 @@ static inline void mask_ack_irq(struct irq_desc *desc)
+=20
+ void mask_irq(struct irq_desc *desc)
+ {
+-	if (irqd_irq_masked(&desc->irq_data))
++	if (!irqd_is_wakeup_armed(&desc->irq_data) && irqd_irq_masked(&desc->irq_=
+data))
+ 		return;
+=20
+ 	if (desc->irq_data.chip->irq_mask) {
