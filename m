@@ -1,30 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: bcm: Allow PINCTRL_BCM2835 for ARCH_BRCMSTB
-Date: Thu, 16 May 2019 15:25:36 +0200
-Message-ID: <CACRpkdYXp3LMXrSQrndUWWNq0eYb=P22FC9V0__j2AZPGCq0Jw@mail.gmail.com>
-References: <20190509205955.27842-1-f.fainelli@gmail.com> <20190509205955.27842-3-f.fainelli@gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: bcm2835: bcm7211: Add support for 7211
+ pull-up functionality
+Date: Thu, 16 May 2019 15:27:40 +0200
+Message-ID: <CACRpkdY3-yARtO9KQnUUMNefygzLC_c2RRn+ROZUdYfBJkRASQ@mail.gmail.com>
+References: <20190509205955.27842-1-f.fainelli@gmail.com> <20190509205955.27842-4-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190509205955.27842-3-f.fainelli@gmail.com>
+In-Reply-To: <20190509205955.27842-4-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, Doug Berger <opendmb@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Matheus Castello <matheus@castello.eng.br>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Lukas Wunner <lukas@wunner.de>, Nathan Chancellor <natechancellor@gmail.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, Al Cooper <alcooperx@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Doug Berger <opendmb@gmail.com>, Matheus Castello <matheus@castello.eng.br>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Lukas Wunner <lukas@wunner.de>, Nathan Chancellor <natechancellor@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 On Thu, May 9, 2019 at 11:01 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> From: Doug Berger <opendmb@gmail.com>
+> From: Al Cooper <alcooperx@gmail.com>
 >
-> ARCH_BRCMSTB needs to use the BCM2835 pin controller for chips
-> like BCM7211 which adopted that pin controller for GPIO. This
-> commit makes the option menu configurable with default enabled
-> for ARCH_BRCMSTB and ARCH_BCM2835.
+> The 7211 has a new way of selecting the pull-up/pull-down setting
+> for a GPIO pin. The registers used for the bcm2837, GP_PUD and
+> GP_PUDCLKn0, are no longer connected. A new set of registers,
+> GP_GPIO_PUP_PDN_CNTRL_REGx must be used. This commit will add
+> a new compatible string "brcm,bcm7211-gpio" and the kernel
+> driver will use it to select which method is used to select
+> pull-up/pull-down.
 >
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Patch applied for v5.3 with the ACKs.
+Following the discussion with Stefan it appears this patch
+needs more work, but you will only need to resend this
+one patch.
 
 Yours,
 Linus Walleij
