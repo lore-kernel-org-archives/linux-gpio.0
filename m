@@ -1,54 +1,38 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH v2 0/2] pinctrl: mediatek: mt8183: Add support for wake sources
-Date: Thu, 16 May 2019 20:47:32 +0800
-Message-ID: <CANMq1KAOeuDCZEvV2A18nUts3WP2MbhUpY7gQ+vk0oTOz8TRQA@mail.gmail.com>
-References: <20190508073331.27475-1-drinkcat@chromium.org> <CACRpkdZb73vNyepcfjzEGAopc7BBxde_N1wxn7PSJ3aGC0=Gig@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 0/6] Add drive-strength in Meson pinctrl driver
+Date: Thu, 16 May 2019 14:52:03 +0200
+Message-ID: <CACRpkdZ+p-J5Em3rzZcUwpA-a+CVOY91CgLqoRm_QVZP6E4Osw@mail.gmail.com>
+References: <20190514082652.20686-1-glaroque@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZb73vNyepcfjzEGAopc7BBxde_N1wxn7PSJ3aGC0=Gig@mail.gmail.com>
+In-Reply-To: <20190514082652.20686-1-glaroque@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>
+To: Guillaume La Roque <glaroque@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 16, 2019 at 7:55 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, May 14, 2019 at 10:26 AM Guillaume La Roque
+<glaroque@baylibre.com> wrote:
+
+> The purpose of this patchset is to add drive-strength support in meson pinconf
+> driver. This is a new feature that was added on the g12a. It is critical for us
+> to support this since many functions are failing with default pad drive-strength.
 >
-> On Wed, May 8, 2019 at 9:33 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> The value achievable by the SoC are 0.5mA, 2.5mA, 3mA and 4mA and the DT property
+> 'drive-strength' is expressed in mA.
+> So this patch add another generic property "drive-strength-microamp". The change to do so
+> would be minimal and could be benefit to other platforms later on.
 >
-> > This adds support for wake sources in pinctrl-mtk-common-v2, and
-> > pinctrl-mt8183. Without this patch, all interrupts that are left
-> > enabled on suspend act as wake sources (and wake sources without
-> > interrupt enabled do not).
-> >
-> > Changes since v1:
-> >  - Move changes from mtk-common-v2 to mtk-pinctrl-paris, as
-> >    recommended by Sean, to keep better separation between eint
-> >    and pinctrl-common features.
-> >
-> > Nicolas Boichat (2):
-> >   pinctrl: mediatek: Add pm_ops to pinctrl-paris
-> >   pinctrl: mediatek: mt8183: Add mtk_pinctrl_paris_pm_ops
+> Cheers
+> Guillaume
 >
-> All seems to look fair to me, but I need some official ACK from
-> Sean on these.
->
-> I see there is some discussion on a related patch set which
-> also has two patches so I am a but confused how mature the
-> two patch sets are? Are they at all related?
+> Changes since v5:
+> - restore Tested-by/Reviewed-by/Ack-by tags
 
-They are somewhat related, but I don't think this depends on the other series.
+All 6 patches applied for v5.3.
 
-This series adds support for wake on mt8183, and makes it similar to,
-say, mt8173.
+They will appear in the tree once v5.2-rc1 is out.
 
-The other patch series fixes issues that affect all mtk pinctrl
-variants (i.e. I think mt8173 pinctrl on current mainline has similar
-issues). It's not impossible that the answer to the other series is
-that we need to refactor code, but in that case, if we merge this
-first, we'd just have to clean up one more pinctrl variant.
-
-Thanks,
-
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
