@@ -1,93 +1,144 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] ledtrig-gpio: 0 is a valid GPIO number
-Date: Fri, 17 May 2019 08:27:36 +0200
-Message-ID: <20190517062736.bh46ozfiux7xvnox@pengutronix.de>
-References: <20190516214209.139726-1-kunyi@google.com>
- <20190516214209.139726-3-kunyi@google.com>
+From: Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH V3 1/4] dt-binding: Tegra194 pinctrl support
+Date: Fri, 17 May 2019 17:03:56 +0530
+Message-ID: <83198211-5c66-6f41-5ec2-cb16eb96fc5f@nvidia.com>
+References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190516214209.139726-3-kunyi@google.com>
+In-Reply-To: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kun Yi <kunyi@google.com>
-Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 16, 2019 at 02:42:09PM -0700, Kun Yi wrote:
-> GPIO number 0 is a valid case to handle. Use -1 as initial value
-> and use gpio_is_valid() to determine validity of the GPIO
-> number.
-
-I think it's more sensible to convert to gpiod instead.
-
-Best regards
-Uwe
-
-> Signed-off-by: Kun Yi <kunyi@google.com>
-> Change-Id: I4a29f98b237fd0d8ba4dd2a28219d4429f2ccfff
+On 5/16/2019 5:23 PM, Krishna Yarlagadda wrote:
+> Add binding doc for Tegra 194 pinctrl driver
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 > ---
->  drivers/leds/trigger/ledtrig-gpio.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
+> Changes in V3:
+> remove optional fields not supported by pins published here
 > 
-> diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
-> index f6d50e031492..48d8ef8538bd 100644
-> --- a/drivers/leds/trigger/ledtrig-gpio.c
-> +++ b/drivers/leds/trigger/ledtrig-gpio.c
-> @@ -22,7 +22,7 @@ struct gpio_trig_data {
->  
->  	unsigned desired_brightness;	/* desired brightness when led is on */
->  	unsigned inverted;		/* true when gpio is inverted */
-> -	unsigned gpio;			/* gpio that triggers the leds */
-> +	int gpio;			/* gpio that triggers the leds */
->  };
->  
->  static irqreturn_t gpio_trig_irq(int irq, void *_led)
-> @@ -114,13 +114,12 @@ static ssize_t gpio_trig_gpio_show(struct device *dev,
->  {
->  	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
->  
-> -	return sprintf(buf, "%u\n", gpio_data->gpio);
-> +	return sprintf(buf, "%d\n", gpio_data->gpio);
->  }
->  
-> -static inline void free_used_gpio_if_valid(unsigned int gpio,
-> -					   struct led_classdev *led)
-> +static inline void free_used_gpio_if_valid(int gpio, struct led_classdev *led)
->  {
-> -	if (gpio == 0)
-> +	if (!gpio_is_valid(gpio))
->  		return;
->  
->  	free_irq(gpio_to_irq(gpio), led);
-> @@ -144,12 +143,6 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
->  	if (gpio_data->gpio == gpio)
->  		return n;
->  
-> -	if (!gpio) {
-> -		free_used_gpio_if_valid(gpio_data->gpio, led);
-> -		gpio_data->gpio = 0;
-> -		return n;
-> -	}
-> -
->  	ret = gpio_request(gpio, "ledtrig-gpio");
->  	if (ret) {
->  		dev_err(dev, "gpio_request failed with error %d\n", ret);
-> @@ -195,6 +188,7 @@ static int gpio_trig_activate(struct led_classdev *led)
->  		return -ENOMEM;
->  
->  	gpio_data->led = led;
-> +	gpio_data->gpio = -1;
->  	led_set_trigger_data(led, gpio_data);
->  
->  	return 0;
-> -- 
-> 2.21.0.1020.gf2820cf01a-goog
+>   .../bindings/pinctrl/nvidia,tegra194-pinmux.txt    | 107 +++++++++++++++++++++
+>   1 file changed, 107 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+> new file mode 100644
+> index 0000000..8763f44
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
+> @@ -0,0 +1,107 @@
+> +NVIDIA Tegra194 pinmux controller
+> +
+> +Required properties:
+> +- compatible: "nvidia,tegra194-pinmux"
+> +- reg: Should contain a list of base address and size pairs for:
+> +  - first entry: The APB_MISC_GP_*_PADCTRL registers (pad control)
+> +  - second entry: The PINMUX_AUX_* registers (pinmux)
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +Tegra's pin configuration nodes act as a container for an arbitrary number of
+> +subnodes. Each of these subnodes represents some desired configuration for a
+> +pin, a group, or a list of pins or groups. This configuration can include the
+> +mux function to select on those pin(s)/group(s), and various pin configuration
+> +parameters, such as pull-up, tristate, drive strength, etc.
+> +
+> +See the TRM to determine which properties and values apply to each pin/group.
+> +Macro values for property values are defined in
+> +include/dt-binding/pinctrl/pinctrl-tegra.h.
+> +
+> +Required subnode-properties:
+> +- nvidia,pins : An array of strings. Each string contains the name of a pin or
+> +    group. Valid values for these names are listed below.
+> +
+> +Optional subnode-properties:
+> +- nvidia,function: A string containing the name of the function to mux to the
+> +    pin or group.
+> +- nvidia,pull: Integer, representing the pull-down/up to apply to the pin.
+> +    0: none, 1: down, 2: up.
+> +- nvidia,tristate: Integer.
+> +    0: drive, 1: tristate.
+> +- nvidia,enable-input: Integer. Enable the pin's input path.
+> +    enable :TEGRA_PIN_ENABLE and
+> +    disable or output only: TEGRA_PIN_DISABLE.
+> +- nvidia,open-drain: Integer.
+> +    enable: TEGRA_PIN_ENABLE.
+> +    disable: TEGRA_PIN_DISABLE.
+> +- nvidia,lock: Integer. Lock the pin configuration against further changes
+> +    until reset.
+> +    enable: TEGRA_PIN_ENABLE.
+> +    disable: TEGRA_PIN_DISABLE.
+> +- nvidia,io-hv: Integer. Select high-voltage receivers.
+> +    normal: TEGRA_PIN_DISABLE
+> +    high: TEGRA_PIN_ENABLE
+> +- nvidia,schmitt: Integer. Enables Schmitt Trigger on the input.
+> +    normal: TEGRA_PIN_DISABLE
+> +    high: TEGRA_PIN_ENABLE
+> +- nvidia,drive-type: Integer. Valid range 0...3.
+> +- nvidia,pull-down-strength: Integer. Controls drive strength. 0 is weakest.
+> +    The range of valid values depends on the pingroup. See "CAL_DRVDN" in the
+> +    Tegra TRM.
+> +- nvidia,pull-up-strength: Integer. Controls drive strength. 0 is weakest.
+> +    The range of valid values depends on the pingroup. See "CAL_DRVUP" in the
+> +    Tegra TRM.
+> +
+> +Valid values for pin and group names (nvidia,pin) are:
+> +
+> +    These correspond to Tegra PADCTL_* (pinmux) registers.
+> +
+> +  Mux groups:
+> +
+> +    These correspond to Tegra PADCTL_* (pinmux) registers. Any property
+> +    that exists in those registers may be set for the following pin names.
+> +
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +
+> +  Drive groups:
+> +
+> +    These registers controls a single pin for which a mux group exists.
+> +    See the list above for the pin name to use when configuring the pinmux.
+> +
+> +    pex_l5_clkreq_n_pgg0, pex_l5_rst_n_pgg1
+> +
+> +Valid values for nvidia,functions are:
+> +
+> +    pe5
+> +
+> +Power Domain:
+> +    pex_l5_clkreq_n_pgg0 and pex_l5_rst_n_pgg1 are part of PCIE C5 power
+> +    partition. Client devices must enable this partition before accessing
+> +    these pins here.
+> +
+> +
+> +Example:
+> +
+> +		tegra_pinctrl: pinmux: pinmux@2430000 {
+> +			compatible = "nvidia,tegra194-pinmux";
+> +			reg = <0x2430000 0x17000
+> +			       0xc300000 0x4000>;
+> +
+> +			pinctrl-names = "pex_rst";
+> +			pinctrl-0 = <&pex_rst_c5_out_state>;
+> +
+> +			pex_rst_c5_out_state: pex_rst_c5_out {
+> +				pex_rst {
+> +					nvidia,pins = "pex_l5_rst_n_pgg1";
+> +					nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+> +					nvidia,lpdr = <TEGRA_PIN_ENABLE>;
+> +					nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+> +					nvidia,io-high-voltage = <TEGRA_PIN_ENABLE>;
+> +					nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> +					nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> +				};
+> +			};
+> +		};
 > 
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Tested-by: Vidya Sagar <vidyas@nvidia.com>
