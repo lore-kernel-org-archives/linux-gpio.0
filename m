@@ -1,42 +1,41 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 0/2] Fix LED GPIO trigger behavior
-Date: Fri, 17 May 2019 18:56:17 +0200
-Message-ID: <87d5d4a6-857b-b362-baaf-3a004ee51d49@gmail.com>
-References: <20190516214209.139726-1-kunyi@google.com>
+From: Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is not defined
+Date: Mon, 20 May 2019 09:52:15 +0200
+Message-ID: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190516214209.139726-1-kunyi@google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kun Yi <kunyi@google.com>, linux-leds@vger.kernel.org
-Cc: pavel@ucw.cz, dmurphy@ti.com, u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, kbuild-all@01.org, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Cc Linus Walleij and leds-gpio@vger.kernel.org.
+When CONFIG_GPIO_OF is not defined, struct gpio_chip 'of_node' member does
+not exist:
+drivers/pinctrl/pinctrl-stmfx.c: In function 'stmfx_pinctrl_probe':
+drivers/pinctrl/pinctrl-stmfx.c:652:17: error: 'struct gpio_chip' has no member named 'of_node'
+     pctl->gpio_chip.of_node = np;
 
-On 5/16/19 11:42 PM, Kun Yi wrote:
-> *** BLURB HERE ***
-> Hello there,
-> 
-> I recently tested ledtrig-gpio on an embedded controller and one of the
-> issues I had involve not requesting the user input pin as GPIO.
-> 
-> In many embedded systems, a pin could be muxed as several functions, and
-> requesting the pin as GPIO is necessary to let pinmux select the pin as
-> a GPIO instead of, say an I2C pin. I'd like to learn whether it is appropriate
-> to assume user of ledtrig-gpio really intends to use GPIOs and not some
-> weird pins that are used as other functions.
-> 
-> Kun Yi (2):
->    ledtrig-gpio: Request user input pin as GPIO
->    ledtrig-gpio: 0 is a valid GPIO number
-> 
->   drivers/leds/trigger/ledtrig-gpio.c | 35 ++++++++++++++++++++---------
->   1 file changed, 24 insertions(+), 11 deletions(-)
-> 
+Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/pinctrl/pinctrl-stmfx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index eba872c..bb64aa0 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -648,7 +648,9 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
+ 	pctl->gpio_chip.base = -1;
+ 	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
+ 	pctl->gpio_chip.can_sleep = true;
++#ifdef CONFIG_OF_GPIO
+ 	pctl->gpio_chip.of_node = np;
++#endif
+ 	pctl->gpio_chip.need_valid_mask = true;
+ 
+ 	ret = devm_gpiochip_add_data(pctl->dev, &pctl->gpio_chip, pctl);
 -- 
-Best regards,
-Jacek Anaszewski
+2.7.4
