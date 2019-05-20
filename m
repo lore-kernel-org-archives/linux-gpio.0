@@ -1,7 +1,7 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/5] dt-bindings: gpio: meson-gxl-gpio: update with SPDX Licence identifier
-Date: Mon, 20 May 2019 16:41:06 +0200
-Message-ID: <20190520144108.3787-4-narmstrong@baylibre.com>
+Subject: [PATCH 5/5] dt-bindings: gpio: meson8b-gpio: update with SPDX Licence identifier
+Date: Mon, 20 May 2019 16:41:08 +0200
+Message-ID: <20190520144108.3787-6-narmstrong@baylibre.com>
 References: <20190520144108.3787-1-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,19 +14,19 @@ List-Id: linux-gpio@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- include/dt-bindings/gpio/meson-gxl-gpio.h | 8 +-------
+ include/dt-bindings/gpio/meson8b-gpio.h | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/gpio/meson-gxl-gpio.h b/include/dt-bindings/gpio/meson-gxl-gpio.h
-index 01f2a2abd35e..62417358f55b 100644
---- a/include/dt-bindings/gpio/meson-gxl-gpio.h
-+++ b/include/dt-bindings/gpio/meson-gxl-gpio.h
+diff --git a/include/dt-bindings/gpio/meson8b-gpio.h b/include/dt-bindings/gpio/meson8b-gpio.h
+index bf0d76fa0e7b..e75d09b6087b 100644
+--- a/include/dt-bindings/gpio/meson8b-gpio.h
++++ b/include/dt-bindings/gpio/meson8b-gpio.h
 @@ -1,15 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * GPIO definitions for Amlogic Meson GXL SoCs
+  * GPIO definitions for Amlogic Meson8b SoCs
   *
-  * Copyright (C) 2016 Endless Mobile, Inc.
+  * Copyright (C) 2015 Endless Mobile, Inc.
   * Author: Carlo Caione <carlo@endlessm.com>
 - *
 - * This program is free software; you can redistribute it and/or
@@ -37,6 +37,6 @@ index 01f2a2abd35e..62417358f55b 100644
 - * along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
- #ifndef _DT_BINDINGS_MESON_GXL_GPIO_H
+ #ifndef _DT_BINDINGS_MESON8B_GPIO_H
 -- 
 2.21.0
