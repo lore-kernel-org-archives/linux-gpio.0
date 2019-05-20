@@ -1,45 +1,39 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] tools: gpio: Add include/linux/gpio.h to .gitignore
-Date: Mon, 20 May 2019 15:45:01 +0200
-Message-ID: <CAMpxmJWCD0yOTyEfQhU59BsvnUoGkwWC3cEnS8Dn9W7EupA2Wg@mail.gmail.com>
-References: <20190512053749.7508-1-skunberg.kelsey@gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/5] pinctrl: meson: gpio: update with SPDX Licence identifier
+Date: Mon, 20 May 2019 16:41:03 +0200
+Message-ID: <20190520144108.3787-1-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190512053749.7508-1-skunberg.kelsey@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-niedz., 12 maj 2019 o 07:38 Kelsey Skunberg
-<skunberg.kelsey@gmail.com> napisa=C5=82(a):
->
-> File include/linux/gpio.h is generated after building
-> tools/testing/selftests
->
-> Add gpio.h to .gitignore to help clean up working tree status.
->
-> Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> ---
->  tools/gpio/.gitignore | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
-> index 9e9dd4b681b2..a94c0e83b209 100644
-> --- a/tools/gpio/.gitignore
-> +++ b/tools/gpio/.gitignore
-> @@ -1,4 +1,4 @@
->  gpio-event-mon
->  gpio-hammer
->  lsgpio
-> -
-> +include/linux/gpio.h
-> --
-> 2.20.1
->
+Update the SPDX Licence identifier for the Amlogic Pinctrl drivers and
+the corresponding GPIO dt-bindings headers.
 
-Patch applied, thanks!
+Neil Armstrong (5):
+  pinctrl: meson: update with SPDX Licence identifier
+  dt-bindings: gpio: meson-gxbb-gpio: update with SPDX Licence
+    identifier
+  dt-bindings: gpio: meson-gxl-gpio: update with SPDX Licence identifier
+  dt-bindings: gpio: meson8-gpio: update with SPDX Licence identifier
+  dt-bindings: gpio: meson8b-gpio: update with SPDX Licence identifier
 
-Bartosz
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson.c      | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson.h      | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson8-pmx.c | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson8-pmx.h | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson8.c     | 8 +-------
+ drivers/pinctrl/meson/pinctrl-meson8b.c    | 8 +-------
+ include/dt-bindings/gpio/meson-gxbb-gpio.h | 8 +-------
+ include/dt-bindings/gpio/meson-gxl-gpio.h  | 8 +-------
+ include/dt-bindings/gpio/meson8-gpio.h     | 8 +-------
+ include/dt-bindings/gpio/meson8b-gpio.h    | 8 +-------
+ 12 files changed, 12 insertions(+), 84 deletions(-)
+
+-- 
+2.21.0
