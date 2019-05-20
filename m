@@ -1,32 +1,42 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 5/5] dt-bindings: gpio: meson8b-gpio: update with SPDX Licence identifier
-Date: Mon, 20 May 2019 16:41:08 +0200
-Message-ID: <20190520144108.3787-6-narmstrong@baylibre.com>
+Subject: [PATCH 2/5] dt-bindings: gpio: meson-gxbb-gpio: update with SPDX
+ Licence identifier
+Date: Mon, 20 May 2019 16:41:05 +0200
+Message-ID: <20190520144108.3787-3-narmstrong@baylibre.com>
 References: <20190520144108.3787-1-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190520144108.3787-1-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- include/dt-bindings/gpio/meson8b-gpio.h | 8 +-------
+ include/dt-bindings/gpio/meson-gxbb-gpio.h | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/gpio/meson8b-gpio.h b/include/dt-bindings/gpio/meson8b-gpio.h
-index bf0d76fa0e7b..e75d09b6087b 100644
---- a/include/dt-bindings/gpio/meson8b-gpio.h
-+++ b/include/dt-bindings/gpio/meson8b-gpio.h
+diff --git a/include/dt-bindings/gpio/meson-gxbb-gpio.h b/include/dt-bindings/gpio/meson-gxbb-gpio.h
+index 43a68a1110f0..c93274d7e108 100644
+--- a/include/dt-bindings/gpio/meson-gxbb-gpio.h
++++ b/include/dt-bindings/gpio/meson-gxbb-gpio.h
 @@ -1,15 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
  /*
-  * GPIO definitions for Amlogic Meson8b SoCs
+  * GPIO definitions for Amlogic Meson GXBB SoCs
   *
-  * Copyright (C) 2015 Endless Mobile, Inc.
+  * Copyright (C) 2016 Endless Mobile, Inc.
   * Author: Carlo Caione <carlo@endlessm.com>
 - *
 - * This program is free software; you can redistribute it and/or
@@ -37,6 +47,6 @@ index bf0d76fa0e7b..e75d09b6087b 100644
 - * along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
- #ifndef _DT_BINDINGS_MESON8B_GPIO_H
+ #ifndef _DT_BINDINGS_MESON_GXBB_GPIO_H
 -- 
 2.21.0
