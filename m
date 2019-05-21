@@ -1,46 +1,27 @@
-From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH v2 0/2] pinctrl: mediatek: mt8183: Add support for wake sources
-Date: Tue, 21 May 2019 03:13:17 -0700
-Message-ID: <CAGp9LzriFJTf_pqUDx3Tmp2dbJBy7Rv1y73Tq+Rw5WeXPT94aA@mail.gmail.com>
-References: <20190508073331.27475-1-drinkcat@chromium.org> <CACRpkdZb73vNyepcfjzEGAopc7BBxde_N1wxn7PSJ3aGC0=Gig@mail.gmail.com>
+From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v14 0/8] support ROHM BD70528 PMIC
+Date: Tue, 21 May 2019 11:01:53 +0000
+Message-ID: <3a78cc77499d5027f527be51a7c40f6c5d70338c.camel@fi.rohmeurope.com>
+References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZb73vNyepcfjzEGAopc7BBxde_N1wxn7PSJ3aGC0=Gig@mail.gmail.com>
+In-Reply-To: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Language: de-DE
+Content-ID: <431A5F4502DF11498E73A4ADCF92A350@de.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Nicolas Boichat <drinkcat@chromium.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>
+To: "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>
+Cc: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "sre@kernel.org" <sre@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sboyd@kernel.org" <sboyd@kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "broonie@kernel.org" <broonie@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>, linux@roe
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 16, 2019 at 4:56 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, May 8, 2019 at 9:33 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
->
-> > This adds support for wake sources in pinctrl-mtk-common-v2, and
-> > pinctrl-mt8183. Without this patch, all interrupts that are left
-> > enabled on suspend act as wake sources (and wake sources without
-> > interrupt enabled do not).
-> >
-> > Changes since v1:
-> >  - Move changes from mtk-common-v2 to mtk-pinctrl-paris, as
-> >    recommended by Sean, to keep better separation between eint
-> >    and pinctrl-common features.
-> >
-> > Nicolas Boichat (2):
-> >   pinctrl: mediatek: Add pm_ops to pinctrl-paris
-> >   pinctrl: mediatek: mt8183: Add mtk_pinctrl_paris_pm_ops
->
-> All seems to look fair to me, but I need some official ACK from
-> Sean on these.
->
-
-sure, it looks good to me and thanks for Nicolas' help
-
-Acked-by: Sean Wang <sean.wang@kernel.org>
-
-> I see there is some discussion on a related patch set which
-> also has two patches so I am a but confused how mature the
-> two patch sets are? Are they at all related?
->
-> Yours,
-> Linus Walleij
+SGVsbG8gQWxsLA0KDQpPbiBUaHUsIDIwMTktMDUtMDIgYXQgMTI6MTEgKzAzMDAsIE1hdHRpIFZh
+aXR0aW5lbiB3cm90ZToNCj4gUGF0Y2ggc2VyaWVzIGludHJvZHVjaW5nIHN1cHBvcnQgZm9yIFJP
+SE0gQkQ3MDUyOCBQTUlDDQo+IA0KSnVzdCB0aG91Z2h0IEknZCBhc2sgaWYgdGhlcmUncyBhbnkg
+Y2hhbmNlcyB0byBnZXQgdGhpcyBzZXJpZXMgaW4gNS4yPw0KSXQgc2VlbXMgdG8gbWUgdGhlIFdE
+VCBwYXJ0IChwYXRjaCA4KSB3YXMgYWxyZWFkeSBtZXJnZWQgaW4gYnV0IHJlc3Qgb2YNCnRoZSBw
+YXRjaGVzIHNlZW0gdG8gYmUgaW4gbGltYm8gc29tZXdoZXJlIDopDQoNCkkgZ3Vlc3MgbW9zdCBv
+ZiB0aGUgcGF0Y2hlcyBoYXZlIHJlbGV2YW50IGFja3MgLSBzbyB3b25kZXIgaWYgdGhlIHJlc3QN
+CmNhbiBnbyB0aHJvdWdoIExlZSdzIHRyZWU/IEkgYWRtaXQgSSBhbSBnZXR0aW5nIHNsaWdodGx5
+IGltcGF0aWVudCAtDQpzb3JyeSBmb3IgdGhhdCA6XQ0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4N
+Cg==
