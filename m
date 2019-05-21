@@ -1,35 +1,103 @@
-From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v14 0/8] support ROHM BD70528 PMIC
-Date: Tue, 21 May 2019 12:24:20 +0000
-Message-ID: <ee483dcc519f89ee5413832833bc61e9a32c315f.camel@fi.rohmeurope.com>
-References: <cover.1556787930.git.matti.vaittinen@fi.rohmeurope.com>
-         <3a78cc77499d5027f527be51a7c40f6c5d70338c.camel@fi.rohmeurope.com>
-         <20190521114149.GG3274@piout.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: houweitao <houweitaoo@gmail.com>
+Subject: [PATCH] tracing: fix typos in code and comments
+Date: Tue, 21 May 2019 22:47:40 +0800
+Message-ID: <20190521144740.22490-1-houweitao@xiaomi.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521114149.GG3274@piout.net>
-Content-Language: de-DE
-Content-ID: <AAC4464FFDE1E446A5B4B52FFE129B7F@de.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "sre@kernel.org" <sre@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "sboyd@kernel.org" <sboyd@kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "broonie@kernel.org" <broonie@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, Mutanen,
+To: linus.walleij@linaro.org, yamada.masahiro@socionext.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, baohua@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, davem@davemloft.net, rostedt@goodmis.org, mingo@redhat.com
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org, sparclinux@vger.kernel.org, houweitao <houweitao@xiaomi.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gQWxleGFuZHJlLA0KDQpPbiBUdWUsIDIwMTktMDUtMjEgYXQgMTM6NDEgKzAyMDAsIEFs
-ZXhhbmRyZSBCZWxsb25pIHdyb3RlOg0KPiBPbiAyMS8wNS8yMDE5IDExOjAxOjUzKzAwMDAsIFZh
-aXR0aW5lbiwgTWF0dGkgd3JvdGU6DQo+ID4gSGVsbG8gQWxsLA0KPiA+IA0KPiA+IE9uIFRodSwg
-MjAxOS0wNS0wMiBhdCAxMjoxMSArMDMwMCwgTWF0dGkgVmFpdHRpbmVuIHdyb3RlOg0KPiA+ID4g
-UGF0Y2ggc2VyaWVzIGludHJvZHVjaW5nIHN1cHBvcnQgZm9yIFJPSE0gQkQ3MDUyOCBQTUlDDQo+
-ID4gPiANCj4gPiANCj4gPiBKdXN0IHRob3VnaHQgSSdkIGFzayBpZiB0aGVyZSdzIGFueSBjaGFu
-Y2VzIHRvIGdldCB0aGlzIHNlcmllcyBpbg0KPiA+IDUuMj8NCj4gPiBJdCBzZWVtcyB0byBtZSB0
-aGUgV0RUIHBhcnQgKHBhdGNoIDgpIHdhcyBhbHJlYWR5IG1lcmdlZCBpbiBidXQNCj4gPiByZXN0
-IG9mDQo+ID4gdGhlIHBhdGNoZXMgc2VlbSB0byBiZSBpbiBsaW1ibyBzb21ld2hlcmUgOikNCj4g
-PiANCj4gPiBJIGd1ZXNzIG1vc3Qgb2YgdGhlIHBhdGNoZXMgaGF2ZSByZWxldmFudCBhY2tzIC0g
-c28gd29uZGVyIGlmIHRoZQ0KPiA+IHJlc3QNCj4gPiBjYW4gZ28gdGhyb3VnaCBMZWUncyB0cmVl
-PyBJIGFkbWl0IEkgYW0gZ2V0dGluZyBzbGlnaHRseSBpbXBhdGllbnQNCj4gPiAtDQo+ID4gc29y
-cnkgZm9yIHRoYXQgOl0NCj4gPiANCj4gDQo+IE5vcGUsIHRoZSA1LjIgbWVyZ2Ugd2luZG93cyBp
-cyBjbG9zZWQuIFRoaXMgd2lsbCBoYXZlIHRvIHdhaXQgZm9yDQo+IDUuMy4NCg0KT2gsIHRoYXQn
-cyB1bmZvcnR1bmF0ZSA6KCBUaGFua3MgZm9yIHRoZSByZXBseSB0aG91Z2guDQoNCkJlc3QgUmVn
-YXJkcw0KCU1hdHRpIFZhaXR0aW5lbg0KDQo=
+fix ingore to ignore in kernel; since there are other
+mistakes can be found with "git grep ",fix all
+
+Signed-off-by: houweitao <houweitao@xiaomi.com>
+---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 2 +-
+ drivers/rtc/rtc-sirfsoc.c                        | 2 +-
+ drivers/tty/serial/mxs-auart.c                   | 2 +-
+ drivers/tty/serial/serial_txx9.c                 | 2 +-
+ drivers/tty/serial/sunsab.c                      | 2 +-
+ kernel/trace/trace.c                             | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+index 57babf31e320..9f56863ed481 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+@@ -399,7 +399,7 @@ static int uniphier_conf_pin_bias_set(struct pinctrl_dev *pctldev,
+ 		}
+ 
+ 		if (arg == 0)
+-			return 0; /* configuration ingored */
++			return 0; /* configuration ignored */
+ 		break;
+ 	default:
+ 		BUG();
+diff --git a/drivers/rtc/rtc-sirfsoc.c b/drivers/rtc/rtc-sirfsoc.c
+index 9ba28d1ebd87..af1b7ba403fc 100644
+--- a/drivers/rtc/rtc-sirfsoc.c
++++ b/drivers/rtc/rtc-sirfsoc.c
+@@ -121,7 +121,7 @@ static int sirfsoc_rtc_set_alarm(struct device *dev,
+ 		rtc_status_reg = sirfsoc_rtc_readl(rtcdrv, RTC_STATUS);
+ 		if (rtc_status_reg & SIRFSOC_RTC_AL0E) {
+ 			/*
+-			 * An ongoing alarm in progress - ingore it and not
++			 * An ongoing alarm in progress - ignore it and not
+ 			 * to return EBUSY
+ 			 */
+ 			dev_info(dev, "An old alarm was set, will be replaced by a new one\n");
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 4c188f4079b3..9f83a387d6ed 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -667,7 +667,7 @@ static void mxs_auart_rx_char(struct mxs_auart_port *s)
+ 	}
+ 
+ 	/*
+-	 * Mask off conditions which should be ingored.
++	 * Mask off conditions which should be ignored.
+ 	 */
+ 	stat &= s->port.read_status_mask;
+ 
+diff --git a/drivers/tty/serial/serial_txx9.c b/drivers/tty/serial/serial_txx9.c
+index d22ccb32aa9b..372890e3b896 100644
+--- a/drivers/tty/serial/serial_txx9.c
++++ b/drivers/tty/serial/serial_txx9.c
+@@ -314,7 +314,7 @@ receive_chars(struct uart_txx9_port *up, unsigned int *status)
+ 			}
+ 
+ 			/*
+-			 * Mask off conditions which should be ingored.
++			 * Mask off conditions which should be ignored.
+ 			 */
+ 			disr &= up->port.read_status_mask;
+ 
+diff --git a/drivers/tty/serial/sunsab.c b/drivers/tty/serial/sunsab.c
+index 72131b5e132e..daae2b0dbe11 100644
+--- a/drivers/tty/serial/sunsab.c
++++ b/drivers/tty/serial/sunsab.c
+@@ -200,7 +200,7 @@ receive_chars(struct uart_sunsab_port *up,
+ 				up->port.icount.overrun++;
+ 
+ 			/*
+-			 * Mask off conditions which should be ingored.
++			 * Mask off conditions which should be ignored.
+ 			 */
+ 			stat->sreg.isr0 &= (up->port.read_status_mask & 0xff);
+ 			stat->sreg.isr1 &= ((up->port.read_status_mask >> 8) & 0xff);
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2c92b3d9ea30..bfa5ab0663e7 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8554,7 +8554,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	ftrace_init_tracefs(tr, d_tracer);
+ }
+ 
+-static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
++static struct vfsmount *trace_automount(struct dentry *mntpt, void *ignore)
+ {
+ 	struct vfsmount *mnt;
+ 	struct file_system_type *type;
+-- 
+2.18.0
