@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 102/317] pinctrl: samsung: fix leaked of_node references
-Date: Wed, 22 May 2019 15:20:03 -0400
-Message-ID: <20190522192338.23715-102-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 101/317] pinctrl: st: fix leaked of_node references
+Date: Wed, 22 May 2019 15:20:02 -0400
+Message-ID: <20190522192338.23715-101-sashal@kernel.org>
 References: <20190522192338.23715-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,47 +9,83 @@ Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sasha Levin <sashal@kernel.org>
+Cc: Wen Yang <wen.yang99@zte.com.cn>, Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 44b9f86cd41db6c522effa5aec251d664a52fbc0 ]
+[ Upstream commit 483d70d73beaecab55882fcd2a357af72674e24c ]
 
-The call to of_find_compatible_node returns a node pointer with refcount
+The call to of_get_child_by_name returns a node pointer with refcount
 incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:76:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:82:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Patrice Chotard <patrice.chotard@st.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org (open list)
+Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-st.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index 44c6b753f692a..85ddf49a51885 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -71,6 +71,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index e66af93f2cbf8..195b442a23434 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -1170,7 +1170,7 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 	struct property *pp;
+ 	struct st_pinconf *conf;
+ 	struct device_node *pins;
+-	int i = 0, npins = 0, nr_props;
++	int i = 0, npins = 0, nr_props, ret = 0;
+ 
+ 	pins = of_get_child_by_name(np, "st,pins");
+ 	if (!pins)
+@@ -1185,7 +1185,8 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 			npins++;
+ 		} else {
+ 			pr_warn("Invalid st,pins in %pOFn node\n", np);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_put_node;
+ 		}
  	}
  
- 	clk_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!clk_base) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
- 		return ERR_PTR(-EINVAL);
+@@ -1195,8 +1196,10 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 	grp->pin_conf = devm_kcalloc(info->dev,
+ 					npins, sizeof(*conf), GFP_KERNEL);
+ 
+-	if (!grp->pins || !grp->pin_conf)
+-		return -ENOMEM;
++	if (!grp->pins || !grp->pin_conf) {
++		ret = -ENOMEM;
++		goto out_put_node;
++	}
+ 
+ 	/* <bank offset mux direction rt_type rt_delay rt_clk> */
+ 	for_each_property_of_node(pins, pp) {
+@@ -1229,9 +1232,11 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 		}
+ 		i++;
+ 	}
++
++out_put_node:
+ 	of_node_put(pins);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int st_pctl_parse_functions(struct device_node *np,
 -- 
 2.20.1
