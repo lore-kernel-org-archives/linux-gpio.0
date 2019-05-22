@@ -1,91 +1,56 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 101/317] pinctrl: st: fix leaked of_node references
-Date: Wed, 22 May 2019 15:20:02 -0400
-Message-ID: <20190522192338.23715-101-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 027/375] pinctrl: zte: fix leaked of_node references
+Date: Wed, 22 May 2019 15:15:27 -0400
+Message-ID: <20190522192115.22666-27-sashal@kernel.org>
+References: <20190522192115.22666-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Wen Yang <wen.yang99@zte.com.cn>, Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Cc: Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Jun Nie <jun.nie@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 483d70d73beaecab55882fcd2a357af72674e24c ]
+[ Upstream commit 02d15f0d80720545f1f4922a1550ea4aaad4e152 ]
 
-The call to of_get_child_by_name returns a node pointer with refcount
+The call to of_parse_phandle returns a node pointer with refcount
 incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
-./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:415:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:422:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:436:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:444:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:448:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Patrice Chotard <patrice.chotard@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jun Nie <jun.nie@linaro.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org (open list)
-Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-st.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/pinctrl/zte/pinctrl-zx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index e66af93f2cbf8..195b442a23434 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -1170,7 +1170,7 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
- 	struct property *pp;
- 	struct st_pinconf *conf;
- 	struct device_node *pins;
--	int i = 0, npins = 0, nr_props;
-+	int i = 0, npins = 0, nr_props, ret = 0;
- 
- 	pins = of_get_child_by_name(np, "st,pins");
- 	if (!pins)
-@@ -1185,7 +1185,8 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
- 			npins++;
- 		} else {
- 			pr_warn("Invalid st,pins in %pOFn node\n", np);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto out_put_node;
- 		}
+diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
+index caa44dd2880a8..3cb69309912ba 100644
+--- a/drivers/pinctrl/zte/pinctrl-zx.c
++++ b/drivers/pinctrl/zte/pinctrl-zx.c
+@@ -411,6 +411,7 @@ int zx_pinctrl_init(struct platform_device *pdev,
  	}
  
-@@ -1195,8 +1196,10 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
- 	grp->pin_conf = devm_kcalloc(info->dev,
- 					npins, sizeof(*conf), GFP_KERNEL);
+ 	zpctl->aux_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!zpctl->aux_base)
+ 		return -ENOMEM;
  
--	if (!grp->pins || !grp->pin_conf)
--		return -ENOMEM;
-+	if (!grp->pins || !grp->pin_conf) {
-+		ret = -ENOMEM;
-+		goto out_put_node;
-+	}
- 
- 	/* <bank offset mux direction rt_type rt_delay rt_clk> */
- 	for_each_property_of_node(pins, pp) {
-@@ -1229,9 +1232,11 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
- 		}
- 		i++;
- 	}
-+
-+out_put_node:
- 	of_node_put(pins);
- 
--	return 0;
-+	return ret;
- }
- 
- static int st_pctl_parse_functions(struct device_node *np,
 -- 
 2.20.1
