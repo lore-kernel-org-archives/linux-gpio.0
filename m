@@ -1,82 +1,56 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH] pinctrl: ingenic: Handle PIN_CONFIG_OUTPUT config
-Date: Wed, 22 May 2019 18:12:24 +0200
-Message-ID: <20190522161224.6169-1-paul@crapouillou.net>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 022/317] pinctrl: zte: fix leaked of_node references
+Date: Wed, 22 May 2019 15:18:43 -0400
+Message-ID: <20190522192338.23715-22-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: od@zcrc.me, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Jun Nie <jun.nie@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This enables devicetree bindings to specify that a given GPIO should be
-driven low or high.
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+[ Upstream commit 02d15f0d80720545f1f4922a1550ea4aaad4e152 ]
+
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
+
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/zte/pinctrl-zx.c:415:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:422:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:436:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:444:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+./drivers/pinctrl/zte/pinctrl-zx.c:448:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jun Nie <jun.nie@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/pinctrl/zte/pinctrl-zx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index a83ddd52efdd..07342bc769d1 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -1154,19 +1154,30 @@ static void ingenic_set_bias(struct ingenic_pinctrl *jzpc,
- 		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_PULL_DIS, !enabled);
- }
- 
-+static void ingenic_set_output_level(struct ingenic_pinctrl *jzpc,
-+				     unsigned int pin, bool high)
-+{
-+	if (jzpc->version >= ID_JZ4770)
-+		ingenic_config_pin(jzpc, pin, JZ4770_GPIO_PAT0, high);
-+	else
-+		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_DATA, high);
-+}
-+
- static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		unsigned long *configs, unsigned int num_configs)
- {
- 	struct ingenic_pinctrl *jzpc = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int idx = pin % PINS_PER_GPIO_CHIP;
- 	unsigned int offt = pin / PINS_PER_GPIO_CHIP;
--	unsigned int cfg;
-+	unsigned int cfg, arg;
-+	int ret;
- 
- 	for (cfg = 0; cfg < num_configs; cfg++) {
- 		switch (pinconf_to_config_param(configs[cfg])) {
- 		case PIN_CONFIG_BIAS_DISABLE:
- 		case PIN_CONFIG_BIAS_PULL_UP:
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
-+		case PIN_CONFIG_OUTPUT:
- 			continue;
- 		default:
- 			return -ENOTSUPP;
-@@ -1174,6 +1185,8 @@ static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
+index caa44dd2880a8..3cb69309912ba 100644
+--- a/drivers/pinctrl/zte/pinctrl-zx.c
++++ b/drivers/pinctrl/zte/pinctrl-zx.c
+@@ -411,6 +411,7 @@ int zx_pinctrl_init(struct platform_device *pdev,
  	}
  
- 	for (cfg = 0; cfg < num_configs; cfg++) {
-+		arg = pinconf_to_config_argument(configs[cfg]);
-+
- 		switch (pinconf_to_config_param(configs[cfg])) {
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			dev_dbg(jzpc->dev, "disable pull-over for pin P%c%u\n",
-@@ -1197,6 +1210,14 @@ static int ingenic_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			ingenic_set_bias(jzpc, pin, true);
- 			break;
+ 	zpctl->aux_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!zpctl->aux_base)
+ 		return -ENOMEM;
  
-+		case PIN_CONFIG_OUTPUT:
-+			ret = pinctrl_gpio_direction_output(pin);
-+			if (ret)
-+				return ret;
-+
-+			ingenic_set_output_level(jzpc, pin, arg);
-+			break;
-+
- 		default:
- 			unreachable();
- 		}
 -- 
-2.21.0.593.g511ec345e18
+2.20.1
