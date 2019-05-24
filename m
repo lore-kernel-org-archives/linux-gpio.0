@@ -1,33 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3 3/4] pinctrl: tegra: Add Tegra194 pinmux driver
-Date: Fri, 24 May 2019 13:18:33 +0200
-Message-ID: <CACRpkdYqFn0sdLcQgiSJyOXH0nFrHNsOkMBjO9H2aD9Eedr-tw@mail.gmail.com>
-References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com> <1558007594-14824-3-git-send-email-kyarlagadda@nvidia.com>
+Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
+Date: Fri, 24 May 2019 13:24:37 +0200
+Message-ID: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1558007594-14824-3-git-send-email-kyarlagadda@nvidia.com>
+In-Reply-To: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, vidyas@nvidia.com
+To: Alexandre Torgue <alexandre.torgue@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 16, 2019 at 1:54 PM Krishna Yarlagadda
-<kyarlagadda@nvidia.com> wrote:
+On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
+<alexandre.torgue@st.com> wrote:
 
-> Tegra194 has PCIE L5 rst and clkreq pins which need to be controlled
-> dynamically at runtime. This driver supports change pinmux for these
-> pins. Pinmux for rest of the pins is set statically by bootloader and
-> will not be changed by this driver
->
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
-> ---
-> Changes in V3:
-> Fix build issue observed with previous version
+> During power sequence, GPIO hardware registers could be lost if the power
+> supply is switched off. Each device using pinctrl API is in charge of
+> managing pins during suspend/resume sequences. But for pins used as gpio or
+> irq stm32 pinctrl driver has to save the hardware configuration.
+> Each register will be saved at runtime and restored during resume sequence.
 
-All looks good to me but it would feel so much better if Thierry
-or Jonathan ACKed this patch set before I merge it.
+Both patches applied.
+
+On the same pinctrl devel branch is also Benjamin's patches to support
+the "link_consumers" property on the pin controller descriptor to
+enable links from pin control consumers back to their pin controller
+suppliers, especially important for STMFX.
+
+Would you please check if it work fine if you turn on this feature
+for the SoC STM32 pin controller?
+
+I am working a bit on refining the patches, so I want to enable testing
+with some SoC pin controllers as well and possibly make the
+behavior default.
 
 Yours,
 Linus Walleij
