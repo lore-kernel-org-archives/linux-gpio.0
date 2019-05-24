@@ -1,56 +1,40 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
- not defined
-Date: Fri, 24 May 2019 07:27:57 +0000
-Message-ID: <ce77d35a-806c-b7af-975d-1b24e98f8723@st.com>
-References: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
- <20190522054833.GB4574@dell> <eb8425ec-989a-9701-7fee-61bd1d2b93c1@st.com>
- <20190522084133.GF4574@dell> <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
- <CACRpkdYmdpwEvCBrL6i1V+Zxd0OSpZmD8BJPSZu9jYNeJkoimQ@mail.gmail.com>
- <08ea97544018430caf53af36677902b7@SFHDAG3NODE2.st.com>
- <CACRpkdZLbMJ5dKiL9J1x=PozBVH777kNNABZi-n0LxD0BOp8mw@mail.gmail.com>
+From: Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v2] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is not defined
+Date: Fri, 24 May 2019 09:32:05 +0200
+Message-ID: <1558683125-31882-1-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZLbMJ5dKiL9J1x=PozBVH777kNNABZi-n0LxD0BOp8mw@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <7391FCC94802684F9891B69CEC402F40@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "kbuild-all@01.org" <kbuild-all@01.org>, Randy Dunlap <rdunlap@infradead.org>
+To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, kbuild-all@01.org, Randy Dunlap <rdunlap@infradead.org>, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gNS8yMy8xOSA5OjE4IFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBPbiBUaHUsIE1heSAy
-MywgMjAxOSBhdCA0OjExIFBNIEFtZWxpZSBERUxBVU5BWSA8YW1lbGllLmRlbGF1bmF5QHN0LmNv
-bT4gd3JvdGU6DQo+PiBPbiA1LzIyLzE5IDExOjQ4IFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-Pj4+IE9uIFdlZCwgTWF5IDIyLCAyMDE5IGF0IDExOjIxIEFNIEFtZWxpZSBERUxBVU5BWSA8YW1l
-bGllLmRlbGF1bmF5QHN0LmNvbT4gd3JvdGU6DQo+Pj4NCj4+Pj4gLi4vZHJpdmVycy9waW5jdHJs
-L3BpbmN0cmwtc3RtZnguYzo0MDk6MjA6IGVycm9yOg0KPj4+PiDigJhwaW5jb25mX2dlbmVyaWNf
-ZHRfbm9kZV90b19tYXBfcGlu4oCZIHVuZGVjbGFyZWQgaGVyZSAobm90IGluIGEgZnVuY3Rpb24p
-DQo+Pj4+ICAgICAgLmR0X25vZGVfdG9fbWFwID0gcGluY29uZl9nZW5lcmljX2R0X25vZGVfdG9f
-bWFwX3BpbiwNCj4+Pj4NCj4+Pj4gT0ZfR1BJTyBkZXBlbmRzIG9uIE9GLg0KPj4+Pg0KPj4+PiBT
-byBlaXRoZXINCj4+Pj4gICAgICAgIGRlcGVuZHMgb24gT0YgfHwgKE9GICYmIENPTVBJTEVfVEVT
-VCkNCj4+Pj4gb3INCj4+Pj4gICAgICAgIGRlcGVuZHMgb24gT0YgfHwgKE9GX0dQSU8gJiYgQ09N
-UElMRV9URVNUKQ0KPj4+Pg0KPj4+PiBhbmQNCj4+Pj4NCj4+Pj4gICAgICAgIHNlbGVjdCBPRl9H
-UElPDQo+Pj4NCj4+PiBJIHdvdWxkIHVzZSBqdXN0Og0KPj4+DQo+Pj4gZGVwZW5kcyBvbiBPRl9H
-UElPDQo+Pj4NCj4+PiBCZWNhdXNlIE9GX0dQSU8gYWxyZWFkeSBkZXBlbmRzIG9uIE9GLCBhbmQN
-Cj4+PiBjb21waWxlIHRlc3RzIHdpbGwgbm90IHdvcmsgd2l0aG91dCBPRl9HUElPIHdoaWNoDQo+
-Pj4gcmVxdWlyZSBPRiBzby4uLg0KPj4+DQo+Pj4gQmVzaWRlcyBpdCBpcyB3aGF0IG1vc3Qgb3Ro
-ZXIgR1BJTyBkcml2ZXJzIGRvLg0KPj4+DQo+Pj4gU28ganVzdCBrZWVwIHRoYXQgb25lIGxpbmUg
-YW5kIGRyb3AgdGhlIHJlc3QuDQo+Pj4NCj4+PiBZb3VycywNCj4+PiBMaW51cyBXYWxsZWlqDQo+
-Pj4NCj4+DQo+PiBPayBzbyBJIGNhbiBnZXQgcmlkIG9mIENPTVBJTEVfVEVTVCA/DQo+PiAgICAg
-ICAgICBkZXBlbmRzIG9uIEkyQw0KPj4gICAgICAgICAgZGVwZW5kcyBvbiBPRl9HUElPDQo+PiAg
-ICAgICAgICBzZWxlY3QgR0VORVJJQ19QSU5DT05GDQo+PiAgICAgICAgICBzZWxlY3QgR1BJT0xJ
-Ql9JUlFDSElQDQo+PiAgICAgICAgICBzZWxlY3QgTUZEX1NUTUZYDQo+IA0KPiBZZXAganVzdCBs
-aWtlIHRoYXQuDQo+IA0KPj4gQmVjYXVzZSBJJ3ZlIG5vIGFyY2ggdG8gYmFsYW5jZSBDT01QSUxF
-X1RFU1QuIE9yIG1heWJlIHNvbWV0aGluZyBsaWtlDQo+PiAgICAgICAgICBkZXBlbmRzIG9uIE9G
-X0dQSU8gJiYgKE9GIHx8IENPTVBJTEVfVEVTVCkNCj4+IGV2ZW4gaWYgT0ZfR1BJTyAmJiBPRiBp
-cyByZWR1bmRhbnQgPw0KPiANCj4gQ09NUElMRV9URVNUIGlzIGp1c3QgdG8gbWFrZSBzb21ldGhp
-bmcgYXZhaWxhYmxlIGZvciB0ZXN0aW5nDQo+IG9uIG90aGVyIGFyY2hpdGVjdHVyZXMsIHN1Y2gg
-YXMgdGVzdGluZyBBUk0tc3BlY2lmaWMgZHJpdmVycw0KPiBvbiB4ODYuDQo+IA0KPiBXaXRoIGp1
-c3QgT0ZfR1BJTyBhcyBkZXBlbmRlbmN5LCBpdCB3aWxsIGJlIGNvbXBpbGUgdGVzdGVkIGFueXdh
-eXMNCj4gYmVjYXVzZSB4ODYgYWxseWVzY29uZmlnIHdpbGwgZW5hYmxlIE9GIGFuZCBPRl9HUElP
-LCBhbmQgYWxzbw0KPiBhbGwgdGhlIFNUTUZYIGRyaXZlcnMuDQo+IA0KPiBZb3VycywNCj4gTGlu
-dXMgV2FsbGVpag0KPiANCg0KVGhhbmtzIExpbnVzIGZvciB0aGlzIGNsYXJpZmljYXRpb24hDQoN
-ClJlZ2FyZHMsDQpBbWVsaWU=
+When CONFIG_GPIO_OF is not defined, struct gpio_chip 'of_node' member does
+not exist:
+drivers/pinctrl/pinctrl-stmfx.c: In function 'stmfx_pinctrl_probe':
+drivers/pinctrl/pinctrl-stmfx.c:652:17: error: 'struct gpio_chip' has no member named 'of_node'
+     pctl->gpio_chip.of_node = np;
+
+Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/pinctrl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 1f380ca..7a33207 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -268,7 +268,7 @@ config PINCTRL_ST
+ config PINCTRL_STMFX
+ 	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+ 	depends on I2C
+-	depends on OF || COMPILE_TEST
++	depends on OF_GPIO
+ 	select GENERIC_PINCONF
+ 	select GPIOLIB_IRQCHIP
+ 	select MFD_STMFX
+-- 
+2.7.4
