@@ -1,35 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: stm32: add lock mechanism for irqmux selection
-Date: Fri, 24 May 2019 17:22:09 +0200
-Message-ID: <CACRpkdbJKAGyeBU1tX77-wSYzGXDBqRYR1gQyzOZ_XT4RGFbsw@mail.gmail.com>
-References: <1557474183-19719-1-git-send-email-alexandre.torgue@st.com>
- <CACRpkdZ4P=PSCu86p48nBPeVk-h5T0Ytc1CYV3XZGd4fLuJLGw@mail.gmail.com> <ae00fd9c-d25e-c401-4d21-d526a63538f2@st.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V3 1/4] dt-binding: Tegra194 pinctrl support
+Date: Fri, 24 May 2019 15:19:08 -0500
+Message-ID: <20190524201908.GA13368@bogus>
+References: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ae00fd9c-d25e-c401-4d21-d526a63538f2@st.com>
+Content-Disposition: inline
+In-Reply-To: <1558007594-14824-1-git-send-email-kyarlagadda@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com, Lina Iyer <ilina@codeaurora.org>
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc: linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, josephl@nvidia.com, smangipudi@nvidia.com, ldewangan@nvidia.com, vidyas@nvidia.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 24, 2019 at 2:27 PM Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
-> On 5/24/19 1:26 PM, Linus Walleij wrote:
+On Thu, May 16, 2019 at 05:23:11PM +0530, Krishna Yarlagadda wrote:
+> Add binding doc for Tegra 194 pinctrl driver
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+> Changes in V3:
+> remove optional fields not supported by pins published here
+> 
+>  .../bindings/pinctrl/nvidia,tegra194-pinmux.txt    | 107 +++++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt
 
-> > Patch applied, can't say I fully understand it but you know what
-> > you're doing!
->
-> Thanks :). Do you need a better explanation ?
-
-What I need to understand for hierarchical interrupt controllers
-on GPIO is what I can pull into the gpio library. I am working
-to extract some code from drivers/gpio/gpio-ixp4xx.c
-to make generic simple hierarchical domain support available,
-and Lina is working on generalizing some stuff.
-
-But these complex domain operations in the STM32 seem
-to be some special beast.
-
-Yours,
-Linus Walleij
+Reviewed-by: Rob Herring <robh@kernel.org>
