@@ -1,43 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: gpio: Convert Arm PL061 to json-schema
-Date: Fri, 24 May 2019 13:38:17 +0200
-Message-ID: <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
-References: <20190514005033.15593-1-robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: Convert stm32 pinctrl bindings
+ to json-schema
+Date: Fri, 24 May 2019 13:41:09 +0200
+Message-ID: <CACRpkdazPrbzL-oo6rhfgDcLftjCE1hrgPQCMvtE2TOUUnorVg@mail.gmail.com>
+References: <1557503126-3025-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190514005033.15593-1-robh@kernel.org>
+In-Reply-To: <1557503126-3025-1-git-send-email-alexandre.torgue@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, viresh kumar <viresh.kumar@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 14, 2019 at 2:50 AM Rob Herring <robh@kernel.org> wrote:
+On Fri, May 10, 2019 at 5:45 PM Alexandre Torgue
+<alexandre.torgue@st.com> wrote:
 
-> Convert the Arm PL061 GPIO controller binding to json-schema format.
+> Convert the STM32 pinctrl binding to DT schema format using json-schema.
 >
-> As I'm the author for all but the gpio-ranges line, make the schema dual
-> GPL/BSD license.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-Patch applied. As you know I am already a big fan of this scheme.
-
-> This warns on a few platforms missing clocks, interrupt-controller
-> and/or #interrupt-cells. We could not make those required, but really
-> they should be IMO. OTOH, it's platforms like Spear and Calxeda which
-> aren't too active, so I don't know that we want to fix them.
-
-What works for you works for me.
-
-We could add dummy fixed clocks in the DTS files if
-we wanted I suppose. The #interrupt-cells and interrupt-controller
-things we can just fix, but I wonder what the maintainers of these
-platforms are up to? Isn't Calxeda yours, and could Viresh fix
-up the SPEAr?
+What a feat. Well done!
+Patch applied with Rob's Review tag.
 
 Yours,
 Linus Walleij
