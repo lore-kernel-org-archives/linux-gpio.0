@@ -1,53 +1,44 @@
 From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
-Date: Fri, 24 May 2019 14:26:19 +0200
-Message-ID: <4a35e070-b18a-e0f5-76b6-72054eb98b43@st.com>
-References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
- <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stm32: add lock mechanism for irqmux selection
+Date: Fri, 24 May 2019 14:27:35 +0200
+Message-ID: <ae00fd9c-d25e-c401-4d21-d526a63538f2@st.com>
+References: <1557474183-19719-1-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdZ4P=PSCu86p48nBPeVk-h5T0Ytc1CYV3XZGd4fLuJLGw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+In-Reply-To: <CACRpkdZ4P=PSCu86p48nBPeVk-h5T0Ytc1CYV3XZGd4fLuJLGw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
 
 
-On 5/24/19 1:24 PM, Linus Walleij wrote:
-> On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
+On 5/24/19 1:26 PM, Linus Walleij wrote:
+> On Fri, May 10, 2019 at 9:43 AM Alexandre Torgue
 > <alexandre.torgue@st.com> wrote:
 > 
->> During power sequence, GPIO hardware registers could be lost if the power
->> supply is switched off. Each device using pinctrl API is in charge of
->> managing pins during suspend/resume sequences. But for pins used as gpio or
->> irq stm32 pinctrl driver has to save the hardware configuration.
->> Each register will be saved at runtime and restored during resume sequence.
+>> GPIOs are split between several banks (A, B, ...) and each bank can have
+>> up to 16 lines. Those GPIOs could be used as interrupt lines thanks to
+>> exti lines. As there are only 16 exti lines, a mux is used to select which
+>> gpio line is connected to which exti line. Mapping is done as follow:
+>>
+>> -A0, B0, C0.. -->exti_line_0 (X0 selected by mux_0)
+>> -A1, B1, C1.. -->exti_line_1 (X1 selected by mux_1)
+>> ...
+>>
+>> This patch adds a protection to avoid overriding on mux_n for exti_line_n.
+>>
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 > 
-> Both patches applied.
-> 
-> On the same pinctrl devel branch is also Benjamin's patches to support
-> the "link_consumers" property on the pin controller descriptor to
-> enable links from pin control consumers back to their pin controller
-> suppliers, especially important for STMFX.
-> 
-> Would you please check if it work fine if you turn on this feature
-> for the SoC STM32 pin controller?
-> 
+> Patch applied, can't say I fully understand it but you know what
+> you're doing!
 
-Sure. Either today or next Monday.
+Thanks :). Do you need a better explanation ?
 
-I let you know.
-
-regards
-Alex
-
-> I am working a bit on refining the patches, so I want to enable testing
-> with some SoC pin controllers as well and possibly make the
-> behavior default.
 > 
 > Yours,
 > Linus Walleij
