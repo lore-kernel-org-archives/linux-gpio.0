@@ -1,70 +1,59 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] gpio: fix gpio-adp5588 build errors
-Date: Fri, 24 May 2019 09:03:14 +0200
-Message-ID: <CAMpxmJUVoaAq0-0ELpzmZjke7yjZN+n75WO9i=cWK-WbXw8gZw@mail.gmail.com>
+From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
+Subject: RE: [PATCH] gpio: fix gpio-adp5588 build errors
+Date: Fri, 24 May 2019 07:10:28 +0000
+Message-ID: <BY1PR0301MB090122CBC8CED2B6830425378E020@BY1PR0301MB0901.namprd03.prod.outlook.com>
 References: <8054bec0-ea24-8590-738b-bae58c0be3b4@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <8054bec0-ea24-8590-738b-bae58c0be3b4@infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild test robot <lkp@intel.com>, Michael Hennerich <michael.hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Randy Dunlap <rdunlap@infradead.org>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: kbuild test robot <lkp@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-pt., 24 maj 2019 o 00:00 Randy Dunlap <rdunlap@infradead.org> napisa=C5=82(=
-a):
->
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> The gpio-adp5588 driver uses interfaces that are provided by
-> GPIOLIB_IRQCHIP, so select that symbol in its Kconfig entry.
->
-> Fixes these build errors:
->
-> ../drivers/gpio/gpio-adp5588.c: In function =E2=80=98adp5588_irq_handler=
-=E2=80=99:
-> ../drivers/gpio/gpio-adp5588.c:266:26: error: =E2=80=98struct gpio_chip=
-=E2=80=99 has no member named =E2=80=98irq=E2=80=99
->             dev->gpio_chip.irq.domain, gpio));
->                           ^
-> ../drivers/gpio/gpio-adp5588.c: In function =E2=80=98adp5588_irq_setup=E2=
-=80=99:
-> ../drivers/gpio/gpio-adp5588.c:298:2: error: implicit declaration of func=
-tion =E2=80=98gpiochip_irqchip_add_nested=E2=80=99 [-Werror=3Dimplicit-func=
-tion-declaration]
->   ret =3D gpiochip_irqchip_add_nested(&dev->gpio_chip,
->   ^
-> ../drivers/gpio/gpio-adp5588.c:307:2: error: implicit declaration of func=
-tion =E2=80=98gpiochip_set_nested_irqchip=E2=80=99 [-Werror=3Dimplicit-func=
-tion-declaration]
->   gpiochip_set_nested_irqchip(&dev->gpio_chip,
->   ^
->
-> Fixes: 459773ae8dbb ("gpio: adp5588-gpio: support interrupt controller")
->
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: linux-gpio@vger.kernel.org
-> ---
->  drivers/gpio/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- lnx-52-rc1.orig/drivers/gpio/Kconfig
-> +++ lnx-52-rc1/drivers/gpio/Kconfig
-> @@ -822,6 +822,7 @@ config GPIO_ADP5588
->  config GPIO_ADP5588_IRQ
->         bool "Interrupt controller support for ADP5588"
->         depends on GPIO_ADP5588=3Dy
-> +       select GPIOLIB_IRQCHIP
->         help
->           Say yes here to enable the adp5588 to be used as an interrupt
->           controller. It requires the driver to be built in the kernel.
->
->
-
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYW5keSBEdW5sYXAgW21haWx0
+bzpyZHVubGFwQGluZnJhZGVhZC5vcmddDQo+IFNlbnQ6IEZyZWl0YWcsIDI0LiBNYWkgMjAxOSAw
+MDowMQ0KPiBUbzogTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWdw
+aW9Admdlci5rZXJuZWwub3JnDQo+IENjOiBrYnVpbGQgdGVzdCByb2JvdCA8bGtwQGludGVsLmNv
+bT47IEhlbm5lcmljaCwgTWljaGFlbCA8TWljaGFlbC5IZW5uZXJpY2hAYW5hbG9nLmNvbT47IExp
+bnVzIFdhbGxlaWoNCj4gPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz47IEJhcnRvc3ogR29sYXN6
+ZXdza2kgPGJnb2xhc3pld3NraUBiYXlsaWJyZS5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSF0gZ3Bp
+bzogZml4IGdwaW8tYWRwNTU4OCBidWlsZCBlcnJvcnMNCj4gDQo+IEZyb206IFJhbmR5IER1bmxh
+cCA8cmR1bmxhcEBpbmZyYWRlYWQub3JnPg0KPiANCj4gVGhlIGdwaW8tYWRwNTU4OCBkcml2ZXIg
+dXNlcyBpbnRlcmZhY2VzIHRoYXQgYXJlIHByb3ZpZGVkIGJ5DQo+IEdQSU9MSUJfSVJRQ0hJUCwg
+c28gc2VsZWN0IHRoYXQgc3ltYm9sIGluIGl0cyBLY29uZmlnIGVudHJ5Lg0KPiANCj4gRml4ZXMg
+dGhlc2UgYnVpbGQgZXJyb3JzOg0KPiANCj4gLi4vZHJpdmVycy9ncGlvL2dwaW8tYWRwNTU4OC5j
+OiBJbiBmdW5jdGlvbiDigJhhZHA1NTg4X2lycV9oYW5kbGVy4oCZOg0KPiAuLi9kcml2ZXJzL2dw
+aW8vZ3Bpby1hZHA1NTg4LmM6MjY2OjI2OiBlcnJvcjog4oCYc3RydWN0IGdwaW9fY2hpcOKAmSBo
+YXMgbm8gbWVtYmVyIG5hbWVkIOKAmGlyceKAmQ0KPiAgICAgICAgICAgICBkZXYtPmdwaW9fY2hp
+cC5pcnEuZG9tYWluLCBncGlvKSk7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiAu
+Li9kcml2ZXJzL2dwaW8vZ3Bpby1hZHA1NTg4LmM6IEluIGZ1bmN0aW9uIOKAmGFkcDU1ODhfaXJx
+X3NldHVw4oCZOg0KPiAuLi9kcml2ZXJzL2dwaW8vZ3Bpby1hZHA1NTg4LmM6Mjk4OjI6IGVycm9y
+OiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhncGlvY2hpcF9pcnFjaGlwX2Fk
+ZF9uZXN0ZWTigJkgWy1XZXJyb3I9aW1wbGljaXQtDQo+IGZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0K
+PiAgIHJldCA9IGdwaW9jaGlwX2lycWNoaXBfYWRkX25lc3RlZCgmZGV2LT5ncGlvX2NoaXAsDQo+
+ICAgXg0KPiAuLi9kcml2ZXJzL2dwaW8vZ3Bpby1hZHA1NTg4LmM6MzA3OjI6IGVycm9yOiBpbXBs
+aWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhncGlvY2hpcF9zZXRfbmVzdGVkX2lycWNo
+aXDigJkgWy1XZXJyb3I9aW1wbGljaXQtDQo+IGZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiAgIGdw
+aW9jaGlwX3NldF9uZXN0ZWRfaXJxY2hpcCgmZGV2LT5ncGlvX2NoaXAsDQo+ICAgXg0KPiANCj4g
+Rml4ZXM6IDQ1OTc3M2FlOGRiYiAoImdwaW86IGFkcDU1ODgtZ3Bpbzogc3VwcG9ydCBpbnRlcnJ1
+cHQgY29udHJvbGxlciIpDQo+IA0KPiBSZXBvcnRlZC1ieToga2J1aWxkIHRlc3Qgcm9ib3QgPGxr
+cEBpbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFJhbmR5IER1bmxhcCA8cmR1bmxhcEBpbmZy
+YWRlYWQub3JnPg0KDQpBY2tlZC1ieTogTWljaGFlbCBIZW5uZXJpY2ggPG1pY2hhZWwuaGVubmVy
+aWNoQGFuYWxvZy5jb20+DQoNCj4gQ2M6IE1pY2hhZWwgSGVubmVyaWNoIDxtaWNoYWVsLmhlbm5l
+cmljaEBhbmFsb2cuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5h
+cm8ub3JnPg0KPiBDYzogQmFydG9zeiBHb2xhc3pld3NraSA8YmdvbGFzemV3c2tpQGJheWxpYnJl
+LmNvbT4NCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnDQo+IC0tLQ0KPiAgZHJpdmVy
+cy9ncGlvL0tjb25maWcgfCAgICAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KQ0KPiANCj4gLS0tIGxueC01Mi1yYzEub3JpZy9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiArKysg
+bG54LTUyLXJjMS9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiBAQCAtODIyLDYgKzgyMiw3IEBAIGNv
+bmZpZyBHUElPX0FEUDU1ODgNCj4gIGNvbmZpZyBHUElPX0FEUDU1ODhfSVJRDQo+ICAgICAgICAg
+Ym9vbCAiSW50ZXJydXB0IGNvbnRyb2xsZXIgc3VwcG9ydCBmb3IgQURQNTU4OCINCj4gICAgICAg
+ICBkZXBlbmRzIG9uIEdQSU9fQURQNTU4OD15DQo+ICsgICAgICAgc2VsZWN0IEdQSU9MSUJfSVJR
+Q0hJUA0KPiAgICAgICAgIGhlbHANCj4gICAgICAgICAgIFNheSB5ZXMgaGVyZSB0byBlbmFibGUg
+dGhlIGFkcDU1ODggdG8gYmUgdXNlZCBhcyBhbiBpbnRlcnJ1cHQNCj4gICAgICAgICAgIGNvbnRy
+b2xsZXIuIEl0IHJlcXVpcmVzIHRoZSBkcml2ZXIgdG8gYmUgYnVpbHQgaW4gdGhlIGtlcm5lbC4N
+Cj4gDQoNCg==
