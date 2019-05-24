@@ -1,27 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] pinctrl: Add pinconf support for BM1880 SoC
-Date: Fri, 24 May 2019 13:54:27 +0200
-Message-ID: <CACRpkda1a_WSP5rWGHDZPsbU=5mLN+2TPVF05mEHm17R2fM0aQ@mail.gmail.com>
-References: <20190520083101.10229-1-manivannan.sadhasivam@linaro.org> <20190520083101.10229-6-manivannan.sadhasivam@linaro.org>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
+Date: Fri, 24 May 2019 14:26:19 +0200
+Message-ID: <4a35e070-b18a-e0f5-76b6-72054eb98b43@st.com>
+References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190520083101.10229-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, haitao.suo@bitmain.com, darren.tsao@bitmain.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, alec.lin@bitmain.com
+To: Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 20, 2019 at 10:31 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
 
-> Add pinconf support for Bitmain BM1880 SoC. Pinconf support includes
-> pin bias, slew rate and schmitt trigger. Drive strength support will
-> be added later.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Patch applied.
+On 5/24/19 1:24 PM, Linus Walleij wrote:
+> On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+> 
+>> During power sequence, GPIO hardware registers could be lost if the power
+>> supply is switched off. Each device using pinctrl API is in charge of
+>> managing pins during suspend/resume sequences. But for pins used as gpio or
+>> irq stm32 pinctrl driver has to save the hardware configuration.
+>> Each register will be saved at runtime and restored during resume sequence.
+> 
+> Both patches applied.
+> 
+> On the same pinctrl devel branch is also Benjamin's patches to support
+> the "link_consumers" property on the pin controller descriptor to
+> enable links from pin control consumers back to their pin controller
+> suppliers, especially important for STMFX.
+> 
+> Would you please check if it work fine if you turn on this feature
+> for the SoC STM32 pin controller?
+> 
 
-Yours,
-Linus Walleij
+Sure. Either today or next Monday.
+
+I let you know.
+
+regards
+Alex
+
+> I am working a bit on refining the patches, so I want to enable testing
+> with some SoC pin controllers as well and possibly make the
+> behavior default.
+> 
+> Yours,
+> Linus Walleij
+> 
