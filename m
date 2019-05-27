@@ -1,149 +1,54 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v3 4/4] gpio: mb86s7x: enable ACPI support
-Date: Mon, 27 May 2019 13:27:20 +0200
-Message-ID: <20190527112720.2266-5-ard.biesheuvel@linaro.org>
-References: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
+Date: Mon, 27 May 2019 18:17:20 +0200
+Message-ID: <7c83e2e1-d5bc-0190-4795-a324a000a5c3@st.com>
+References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Len Brown <lenb@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
-support for ACPI GPIO interrupts routed via platform interrupts, by
-wiring the two together via the to_irq() gpiochip callback.
+Hi Linus
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/gpio/gpio-mb86s7x.c | 51 +++++++++++++++++---
- 1 file changed, 44 insertions(+), 7 deletions(-)
+On 5/24/19 1:24 PM, Linus Walleij wrote:
+> On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+> 
+>> During power sequence, GPIO hardware registers could be lost if the power
+>> supply is switched off. Each device using pinctrl API is in charge of
+>> managing pins during suspend/resume sequences. But for pins used as gpio or
+>> irq stm32 pinctrl driver has to save the hardware configuration.
+>> Each register will be saved at runtime and restored during resume sequence.
+> 
+> Both patches applied.
+> 
+> On the same pinctrl devel branch is also Benjamin's patches to support
+> the "link_consumers" property on the pin controller descriptor to
+> enable links from pin control consumers back to their pin controller
+> suppliers, especially important for STMFX.
+> 
+> Would you please check if it work fine if you turn on this feature
+> for the SoC STM32 pin controller?
 
-diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
-index 9308081e0a4a..64027f57a8aa 100644
---- a/drivers/gpio/gpio-mb86s7x.c
-+++ b/drivers/gpio/gpio-mb86s7x.c
-@@ -14,6 +14,7 @@
-  *  GNU General Public License for more details.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/io.h>
- #include <linux/init.h>
- #include <linux/clk.h>
-@@ -27,6 +28,8 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+#include "gpiolib.h"
-+
- /*
-  * Only first 8bits of a register correspond to each pin,
-  * so there are 4 registers for 32 pins.
-@@ -143,6 +146,20 @@ static void mb86s70_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
- 	spin_unlock_irqrestore(&gchip->lock, flags);
- }
- 
-+static int mb86s70_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
-+{
-+	int irq, index;
-+
-+	for (index = 0;; index++) {
-+		irq = platform_get_irq(to_platform_device(gc->parent), index);
-+		if (irq <= 0)
-+			break;
-+		if (irq_get_irq_data(irq)->hwirq == offset)
-+			return irq;
-+	}
-+	return -EINVAL;
-+}
-+
- static int mb86s70_gpio_probe(struct platform_device *pdev)
- {
- 	struct mb86s70_gpio_chip *gchip;
-@@ -158,13 +175,15 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gchip->base))
- 		return PTR_ERR(gchip->base);
- 
--	gchip->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(gchip->clk))
--		return PTR_ERR(gchip->clk);
-+	if (!has_acpi_companion(&pdev->dev)) {
-+		gchip->clk = devm_clk_get(&pdev->dev, NULL);
-+		if (IS_ERR(gchip->clk))
-+			return PTR_ERR(gchip->clk);
- 
--	ret = clk_prepare_enable(gchip->clk);
--	if (ret)
--		return ret;
-+		ret = clk_prepare_enable(gchip->clk);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	spin_lock_init(&gchip->lock);
- 
-@@ -180,19 +199,28 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
- 	gchip->gc.parent = &pdev->dev;
- 	gchip->gc.base = -1;
- 
-+	if (has_acpi_companion(&pdev->dev))
-+		gchip->gc.to_irq = mb86s70_gpio_to_irq;
-+
- 	ret = gpiochip_add_data(&gchip->gc, gchip);
- 	if (ret) {
- 		dev_err(&pdev->dev, "couldn't register gpio driver\n");
- 		clk_disable_unprepare(gchip->clk);
-+		return ret;
- 	}
- 
--	return ret;
-+	if (has_acpi_companion(&pdev->dev))
-+		acpi_gpiochip_request_interrupts(&gchip->gc);
-+
-+	return 0;
- }
- 
- static int mb86s70_gpio_remove(struct platform_device *pdev)
- {
- 	struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
- 
-+	if (has_acpi_companion(&pdev->dev))
-+		acpi_gpiochip_free_interrupts(&gchip->gc);
- 	gpiochip_remove(&gchip->gc);
- 	clk_disable_unprepare(gchip->clk);
- 
-@@ -205,10 +233,19 @@ static const struct of_device_id mb86s70_gpio_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, mb86s70_gpio_dt_ids);
- 
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id mb86s70_gpio_acpi_ids[] = {
-+	{ "SCX0007" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(acpi, mb86s70_gpio_acpi_ids);
-+#endif
-+
- static struct platform_driver mb86s70_gpio_driver = {
- 	.driver = {
- 		.name = "mb86s70-gpio",
- 		.of_match_table = mb86s70_gpio_dt_ids,
-+		.acpi_match_table = ACPI_PTR(mb86s70_gpio_acpi_ids),
- 	},
- 	.probe = mb86s70_gpio_probe,
- 	.remove = mb86s70_gpio_remove,
--- 
-2.20.1
+I just tested with Benjamin's patches and set "link_consumers" property 
+for STM32 pinctrl. No changes on boot (except extra logs for each probe) 
+and no changes on power tests too.
+
+regards
+alex
+
+> 
+> I am working a bit on refining the patches, so I want to enable testing
+> with some SoC pin controllers as well and possibly make the
+> behavior default.
+> 
+> Yours,
+> Linus Walleij
+> 
