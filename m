@@ -1,321 +1,52 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: fix spelling mistakes in pinctl
- documentation
-Date: Sat, 25 May 2019 22:45:03 -0700
-Message-ID: <20190526054503.GJ2085@tuxbook-pro>
-References: <20190525204228.8546-1-colin.king@canonical.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] dt-bindings: gpio: Convert Arm PL061 to json-schema
+Date: Mon, 27 May 2019 12:11:46 +0530
+Message-ID: <20190527064146.5rlm2audk6uojdxn@vireshk-i7>
+References: <20190514005033.15593-1-robh@kernel.org>
+ <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190525204228.8546-1-colin.king@canonical.com>
+In-Reply-To: <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat 25 May 13:42 PDT 2019, Colin King wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On 24-05-19, 13:38, Linus Walleij wrote:
+> On Tue, May 14, 2019 at 2:50 AM Rob Herring <robh@kernel.org> wrote:
 > 
-> The spelling of configured is incorrect in the documentation. Fix it.
+> > Convert the Arm PL061 GPIO controller binding to json-schema format.
+> >
+> > As I'm the author for all but the gpio-ranges line, make the schema dual
+> > GPL/BSD license.
+> >
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > Cc: linux-gpio@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Thanks,
-Bjorn
-
-> ---
->  .../devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,msm8998-pinctrl.txt    | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.txt     | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt     | 6 +++---
->  .../devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt     | 6 +++---
->  11 files changed, 33 insertions(+), 33 deletions(-)
+> Patch applied. As you know I am already a big fan of this scheme.
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> index 68e93d5b7ede..c9782397ff14 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> @@ -122,17 +122,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-> index 6dd72f8599e9..7b151894f5a0 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-> @@ -118,17 +118,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-> index 86ecdcfc4fb8..d46973968873 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-> @@ -97,17 +97,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-> index 195a7a0ef0cc..3354a63296d9 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-> @@ -130,17 +130,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-> index 5034eb6653c7..a7dd213c77c6 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-> @@ -124,17 +124,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-> index f15443f6e78e..da52df6273bc 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-> @@ -128,17 +128,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-> index fa97f609fe45..a56cb882830c 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-> @@ -149,17 +149,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8998-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8998-pinctrl.txt
-> index e70c79bbbc5b..00174f08ba1d 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8998-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8998-pinctrl.txt
-> @@ -135,17 +135,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.txt
-> index 2b8f77762edc..a50e74684195 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.txt
-> @@ -150,17 +150,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> index 769ca83bb40d..be034d329e10 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> @@ -142,17 +142,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
-> index 665aadb5ea28..321bdb9be0d2 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
-> @@ -118,17 +118,17 @@ to specify in a pin configuration subnode:
->  - bias-disable:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as no pull.
-> +	Definition: The specified pins should be configured as no pull.
->  
->  - bias-pull-down:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull down.
-> +	Definition: The specified pins should be configured as pull down.
->  
->  - bias-pull-up:
->  	Usage: optional
->  	Value type: <none>
-> -	Definition: The specified pins should be configued as pull up.
-> +	Definition: The specified pins should be configured as pull up.
->  
->  - output-high:
->  	Usage: optional
-> -- 
-> 2.20.1
+> > This warns on a few platforms missing clocks, interrupt-controller
+> > and/or #interrupt-cells. We could not make those required, but really
+> > they should be IMO. OTOH, it's platforms like Spear and Calxeda which
+> > aren't too active, so I don't know that we want to fix them.
 > 
+> What works for you works for me.
+> 
+> We could add dummy fixed clocks in the DTS files if
+> we wanted I suppose. The #interrupt-cells and interrupt-controller
+> things we can just fix, but I wonder what the maintainers of these
+> platforms are up to? Isn't Calxeda yours, and could Viresh fix
+> up the SPEAr?
+
+I checked SPEAr and it is missing interrupt-controller at few places and clocks
+everywhere. Missing clocks should be fine as SPEAr doesn't get clocks from DT.
+
+And interrupt-controller can be just added, I don't think there would be any
+platform dependent side-affects ?
+
+-- 
+viresh
