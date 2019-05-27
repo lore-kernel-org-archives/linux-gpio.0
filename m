@@ -1,52 +1,25 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] dt-bindings: gpio: Convert Arm PL061 to json-schema
-Date: Mon, 27 May 2019 12:11:46 +0530
-Message-ID: <20190527064146.5rlm2audk6uojdxn@vireshk-i7>
-References: <20190514005033.15593-1-robh@kernel.org>
- <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 10/10] docs: fix broken documentation links
+Date: Mon, 27 May 2019 10:43:39 +0200
+Message-ID: <CAJZ5v0iiSo=yoyZTt6ddf5fBRGy1wSvzmA-ZaHH33nivkSp22Q@mail.gmail.com>
+References: <cover.1558362030.git.mchehab+samsung@kernel.org> <4fd1182b4a41feb2447c7ccde4d7f0a6b3c92686.1558362030.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZabT3_vjkv0PR+GLC0ZXWzpMxfwJU6O9Y+omKJ=6zCaA@mail.gmail.com>
+In-Reply-To: <4fd1182b4a41feb2447c7ccde4d7f0a6b3c92686.1558362030.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, the arch/x86 maintainers <x86@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:EDAC-CORE" <linux-edac@vger.kernel.org>, netdev <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-amlogic@lists.infradead.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-i2c <linux-i2c@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, xen-devel@lists.xenproject.org, Platform Driver <pl>
 List-Id: linux-gpio@vger.kernel.org
 
-On 24-05-19, 13:38, Linus Walleij wrote:
-> On Tue, May 14, 2019 at 2:50 AM Rob Herring <robh@kernel.org> wrote:
-> 
-> > Convert the Arm PL061 GPIO controller binding to json-schema format.
-> >
-> > As I'm the author for all but the gpio-ranges line, make the schema dual
-> > GPL/BSD license.
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > Cc: linux-gpio@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> 
-> Patch applied. As you know I am already a big fan of this scheme.
-> 
-> > This warns on a few platforms missing clocks, interrupt-controller
-> > and/or #interrupt-cells. We could not make those required, but really
-> > they should be IMO. OTOH, it's platforms like Spear and Calxeda which
-> > aren't too active, so I don't know that we want to fix them.
-> 
-> What works for you works for me.
-> 
-> We could add dummy fixed clocks in the DTS files if
-> we wanted I suppose. The #interrupt-cells and interrupt-controller
-> things we can just fix, but I wonder what the maintainers of these
-> platforms are up to? Isn't Calxeda yours, and could Viresh fix
-> up the SPEAr?
+On Mon, May 20, 2019 at 4:48 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> Mostly due to x86 and acpi conversion, several documentation
+> links are still pointing to the old file. Fix them.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-I checked SPEAr and it is missing interrupt-controller at few places and clocks
-everywhere. Missing clocks should be fine as SPEAr doesn't get clocks from DT.
+For the ACPI part:
 
-And interrupt-controller can be just added, I don't think there would be any
-platform dependent side-affects ?
-
--- 
-viresh
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
