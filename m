@@ -1,26 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: fix spelling mistakes in pinctl documentation
-Date: Mon, 27 May 2019 11:10:15 +0200
-Message-ID: <CACRpkdadikx9MPrVUQxXa6KYsmnuoakjYVTNEcv_HOoW0pCgZg@mail.gmail.com>
-References: <20190525204228.8546-1-colin.king@canonical.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v3 0/4] synquacer: implement ACPI gpio/interrupt support
+Date: Mon, 27 May 2019 13:27:16 +0200
+Message-ID: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190525204228.8546-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, May 25, 2019 at 10:42 PM Colin King <colin.king@canonical.com> wrote:
+Wire up the existing GPIO and interrupt controller drivers to the ACPI
+subsystem so they can be used on ACPI systems for ACPI event (power
+button, hardware error notification etc)
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The spelling of configured is incorrect in the documentation. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Changes since v2:
+- use helper to create hierarchical IRQ domains under ACPI instead of exposing
+  the GSI domain's irqdomain pointer directly (#1)
+- use has_acpi_companion() instead of ACPI_COMPANION() where possible (#4)
+- add Mika's ack to #4
 
-Patch applied with Bjorn's review tag.
+Changes since v1:
+- Describe the EXIU controller as a separate device, which is a more accurate
+  depiction of reality, and untangles the code a bit as well. Note that this
+  requires the GPIO AML device to describe the EXIU interrupts explicitly.
+- Add a patch to obtain the ACPI GSI irqdomain. The EXIU driver needs this
+  to obtain the default parent domain, since the GIC is not modeled as an
+  ACPI object in the namespace, and so the parent<->child link cannot be
+  expressed in AML.
+- Drop the Kconfig symbol for the GPIO controller. Just include the ACPI part
+  when CONFIG_ACPI is defined.
 
-Yours,
-Linus Walleij
+Cc: Masahisa Kojima <masahisa.kojima@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Graeme Gregory <graeme.gregory@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+
+Ard Biesheuvel (4):
+  acpi/irq: implement helper to create hierachical domains
+  irqchip/exiu: preparatory refactor for ACPI support
+  irqchip/exiu: implement ACPI support
+  gpio: mb86s7x: enable ACPI support
+
+ drivers/acpi/irq.c             |  20 +++
+ drivers/gpio/gpio-mb86s7x.c    |  51 ++++++-
+ drivers/irqchip/irq-sni-exiu.c | 142 +++++++++++++++-----
+ include/linux/acpi.h           |   7 +
+ 4 files changed, 182 insertions(+), 38 deletions(-)
+
+-- 
+2.20.1
