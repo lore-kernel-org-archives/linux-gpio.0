@@ -1,24 +1,36 @@
-From: pr-tracker-bot@kernel.org
+From: Randy Dunlap <rdunlap@infradead.org>
 Subject: Re: [GIT PULL] pin control fixes for v5.2
-Date: Tue, 28 May 2019 16:50:15 +0000
-Message-ID: <155906221546.16286.17261469406240264372.pr-tracker-bot@kernel.org>
+Date: Tue, 28 May 2019 09:55:22 -0700
+Message-ID: <26d4f415-4a99-05d4-3653-083991e49d97@infradead.org>
 References: <CACRpkdYFqcu=gz57H-+h5C3g_rvD-+XoRTw_A86PKDVA3=rfJg@mail.gmail.com>
+ <CAHk-=wgZBfGwnyRGjziYvPMssSf7XO+7L_FTGfkR9Gz031VAzw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYFqcu=gz57H-+h5C3g_rvD-+XoRTw_A86PKDVA3=rfJg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgZBfGwnyRGjziYvPMssSf7XO+7L_FTGfkR9Gz031VAzw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue, 28 May 2019 10:43:53 +0200:
+On 5/28/19 9:44 AM, Linus Torvalds wrote:
+> On Tue, May 28, 2019 at 1:44 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>> The outstanding commits are the Intel fixes [..]
+> 
+> Heh. Swedism? "Outstanding" in English means "exceptionally good". I
+> suspect you meant commits that "står ut", which translates to "stands
+> out".
+> 
+> Or maybe the commits really are _that_ good?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.2-2
+third definition:
+continuing in existence; remaining unsettled, unpaid, etc.:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9fb67d643f6f1892a08ee3a04ea54022d1060bb0
+i.e., missing.
 
-Thank you!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+~Randy
