@@ -1,44 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 4/4] gpio: mb86s7x: enable ACPI support
-Date: Tue, 28 May 2019 10:34:01 +0200
-Message-ID: <CACRpkdZt-AosWLPcwDQqi_2i4adDk-ioT3g3aTicyXiZpQOGGg@mail.gmail.com>
-References: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
- <20190527112720.2266-5-ard.biesheuvel@linaro.org>
+Subject: [GIT PULL] pin control fixes for v5.2
+Date: Tue, 28 May 2019 10:43:53 +0200
+Message-ID: <CACRpkdYFqcu=gz57H-+h5C3g_rvD-+XoRTw_A86PKDVA3=rfJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190527112720.2266-5-ard.biesheuvel@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 27, 2019 at 1:27 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
+Hi Linus,
 
-> Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
-> support for ACPI GPIO interrupts routed via platform interrupts, by
-> wiring the two together via the to_irq() gpiochip callback.
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+here are a bunch of pin control fixes for v5.2.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+The outstanding commits are the Intel fixes that arrived
+during the merge window and I got relayed by pull request
+from Andy. Apart from that a minor Kconfig noise.
 
-I assume you want to merge this through the IRQ tree or the ACPI
-tree, so go ahead.
-
-If you want me to queue the whole thing in the GPIO tree just tell
-me (once we have the ACKs in place).
+Please pull it in!
 
 Yours,
 Linus Walleij
+
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.2-2
+
+for you to fetch changes up to b1fa7d8592c730d1b44536b5cacadeb318d369fd:
+
+  Merge tag 'intel-pinctrl-v5.2-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into fixes
+(2019-05-27 11:07:31 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for v5.2:
+- Interrupt clearing fix for the Intel pin controllers affecting
+  touchpads on some laptops.
+- Compile Kconfig fix for the STMFX expander pin controller.
+
+----------------------------------------------------------------
+Amelie Delaunay (1):
+      pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is not defined
+
+Andy Shevchenko (1):
+      pinctrl: intel: Use GENMASK() consistently
+
+Kai-Heng Feng (1):
+      pinctrl: intel: Clear interrupt status in mask/unmask callback
+
+Linus Walleij (1):
+      Merge tag 'intel-pinctrl-v5.2-2' of
+git://git.kernel.org/.../pinctrl/intel into fixes
+
+ drivers/pinctrl/Kconfig               |  2 +-
+ drivers/pinctrl/intel/pinctrl-intel.c | 45 ++++++++---------------------------
+ 2 files changed, 11 insertions(+), 36 deletions(-)
