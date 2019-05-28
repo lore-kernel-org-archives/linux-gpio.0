@@ -1,7 +1,7 @@
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 3/4] irqchip/exiu: implement ACPI support
-Date: Tue, 28 May 2019 15:36:46 +0200
-Message-ID: <20190528133647.3362-4-ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 2/4] irqchip/exiu: preparatory refactor for ACPI support
+Date: Tue, 28 May 2019 15:36:45 +0200
+Message-ID: <20190528133647.3362-3-ard.biesheuvel@linaro.org>
 References: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,126 +21,126 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Expose the existing EXIU hierarchical irqchip domain code to permit
-the interrupt controller to be used as the irqchip component of a
-GPIO controller on ACPI systems, or as the target of ordinary
-interrupt resources.
+In preparation of adding support for EXIU controller devices described
+via ACPI, split the DT init function in a DT specific and a generic part,
+where the latter will be reused for ACPI support later.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/irqchip/irq-sni-exiu.c | 76 +++++++++++++++++---
- 1 file changed, 68 insertions(+), 8 deletions(-)
+ drivers/irqchip/irq-sni-exiu.c | 66 +++++++++++++-------
+ 1 file changed, 43 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/irqchip/irq-sni-exiu.c b/drivers/irqchip/irq-sni-exiu.c
-index fef7c2437dfb..30a323a2b332 100644
+index 1927b2f36ff6..fef7c2437dfb 100644
 --- a/drivers/irqchip/irq-sni-exiu.c
 +++ b/drivers/irqchip/irq-sni-exiu.c
-@@ -20,6 +20,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-+#include <linux/platform_device.h>
+@@ -1,7 +1,7 @@
+ /*
+  * Driver for Socionext External Interrupt Unit (EXIU)
+  *
+- * Copyright (c) 2017 Linaro, Ltd. <ard.biesheuvel@linaro.org>
++ * Copyright (c) 2017-2019 Linaro, Ltd. <ard.biesheuvel@linaro.org>
+  *
+  * Based on irq-tegra.c:
+  *   Copyright (C) 2011 Google, Inc.
+@@ -167,35 +167,23 @@ static const struct irq_domain_ops exiu_domain_ops = {
+ 	.free		= irq_domain_free_irqs_common,
+ };
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+-static int __init exiu_init(struct device_node *node,
+-			    struct device_node *parent)
++static struct exiu_irq_data *exiu_init(const struct fwnode_handle *fwnode,
++				       struct resource *res)
+ {
+-	struct irq_domain *parent_domain, *domain;
+ 	struct exiu_irq_data *data;
+ 	int err;
  
-@@ -134,9 +135,13 @@ static int exiu_domain_translate(struct irq_domain *domain,
+-	if (!parent) {
+-		pr_err("%pOF: no parent, giving up\n", node);
+-		return -ENODEV;
+-	}
+-
+-	parent_domain = irq_find_host(parent);
+-	if (!parent_domain) {
+-		pr_err("%pOF: unable to obtain parent domain\n", node);
+-		return -ENXIO;
+-	}
+-
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
  
- 		*hwirq = fwspec->param[1] - info->spi_base;
- 		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
--		return 0;
-+	} else {
-+		if (fwspec->param_count != 2)
-+			return -EINVAL;
-+		*hwirq = fwspec->param[0];
-+		*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+-	if (of_property_read_u32(node, "socionext,spi-base", &data->spi_base)) {
+-		pr_err("%pOF: failed to parse 'spi-base' property\n", node);
++	if (fwnode_property_read_u32_array(fwnode, "socionext,spi-base",
++					   &data->spi_base, 1)) {
+ 		err = -ENODEV;
+ 		goto out_free;
  	}
--	return -EINVAL;
-+	return 0;
- }
  
- static int exiu_domain_alloc(struct irq_domain *dom, unsigned int virq,
-@@ -147,16 +152,21 @@ static int exiu_domain_alloc(struct irq_domain *dom, unsigned int virq,
- 	struct exiu_irq_data *info = dom->host_data;
- 	irq_hw_number_t hwirq;
+-	data->base = of_iomap(node, 0);
++	data->base = ioremap(res->start, resource_size(res));
+ 	if (!data->base) {
+ 		err = -ENODEV;
+ 		goto out_free;
+@@ -205,11 +193,44 @@ static int __init exiu_init(struct device_node *node,
+ 	writel_relaxed(0xFFFFFFFF, data->base + EIREQCLR);
+ 	writel_relaxed(0xFFFFFFFF, data->base + EIMASK);
  
--	if (fwspec->param_count != 3)
--		return -EINVAL;	/* Not GIC compliant */
--	if (fwspec->param[0] != GIC_SPI)
--		return -EINVAL;	/* No PPI should point to this domain */
-+	parent_fwspec = *fwspec;
-+	if (is_of_node(dom->parent->fwnode)) {
-+		if (fwspec->param_count != 3)
-+			return -EINVAL;	/* Not GIC compliant */
-+		if (fwspec->param[0] != GIC_SPI)
-+			return -EINVAL;	/* No PPI should point to this domain */
- 
-+		hwirq = fwspec->param[1] - info->spi_base;
-+	} else {
-+		hwirq = fwspec->param[0];
-+		parent_fwspec.param[0] = hwirq + info->spi_base + 32;
-+	}
- 	WARN_ON(nr_irqs != 1);
--	hwirq = fwspec->param[1] - info->spi_base;
- 	irq_domain_set_hwirq_and_chip(dom, virq, hwirq, &exiu_irq_chip, info);
- 
--	parent_fwspec = *fwspec;
- 	parent_fwspec.fwnode = dom->parent->fwnode;
- 	return irq_domain_alloc_irqs_parent(dom, virq, nr_irqs, &parent_fwspec);
- }
-@@ -245,3 +255,53 @@ static int __init exiu_dt_init(struct device_node *node,
- 	return -ENOMEM;
- }
- IRQCHIP_DECLARE(exiu, "socionext,synquacer-exiu", exiu_dt_init);
++	return data;
 +
-+#ifdef CONFIG_ACPI
-+static int exiu_acpi_probe(struct platform_device *pdev)
++out_free:
++	kfree(data);
++	return ERR_PTR(err);
++}
++
++static int __init exiu_dt_init(struct device_node *node,
++			       struct device_node *parent)
 +{
-+	struct irq_domain *domain;
++	struct irq_domain *parent_domain, *domain;
 +	struct exiu_irq_data *data;
-+	struct resource *res;
++	struct resource res;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "failed to parse memory resource\n");
++	if (!parent) {
++		pr_err("%pOF: no parent, giving up\n", node);
++		return -ENODEV;
++	}
++
++	parent_domain = irq_find_host(parent);
++	if (!parent_domain) {
++		pr_err("%pOF: unable to obtain parent domain\n", node);
 +		return -ENXIO;
 +	}
 +
-+	data = exiu_init(dev_fwnode(&pdev->dev), res);
++	if (of_address_to_resource(node, 0, &res)) {
++		pr_err("%pOF: failed to parse memory resource\n", node);
++		return -ENXIO;
++	}
++
++	data = exiu_init(of_node_to_fwnode(node), &res);
 +	if (IS_ERR(data))
 +		return PTR_ERR(data);
 +
-+	domain = acpi_irq_create_hierarchy(0, NUM_IRQS, dev_fwnode(&pdev->dev),
-+					   &exiu_domain_ops, data);
-+	if (!domain) {
-+		dev_err(&pdev->dev, "failed to create IRQ domain\n");
-+		goto out_unmap;
-+	}
-+
-+	dev_info(&pdev->dev, "%d interrupts forwarded\n", NUM_IRQS);
-+
-+	return 0;
-+
-+out_unmap:
-+	iounmap(data->base);
-+	kfree(data);
+ 	domain = irq_domain_add_hierarchy(parent_domain, 0, NUM_IRQS, node,
+ 					  &exiu_domain_ops, data);
+ 	if (!domain) {
+ 		pr_err("%pOF: failed to allocate domain\n", node);
+-		err = -ENOMEM;
+ 		goto out_unmap;
+ 	}
+ 
+@@ -220,8 +241,7 @@ static int __init exiu_init(struct device_node *node,
+ 
+ out_unmap:
+ 	iounmap(data->base);
+-out_free:
+ 	kfree(data);
+-	return err;
 +	return -ENOMEM;
-+}
-+
-+static const struct acpi_device_id exiu_acpi_ids[] = {
-+	{ "SCX0008" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(acpi, exiu_acpi_ids);
-+
-+static struct platform_driver exiu_driver = {
-+	.driver = {
-+		.name = "exiu",
-+		.acpi_match_table = exiu_acpi_ids,
-+	},
-+	.probe = exiu_acpi_probe,
-+};
-+builtin_platform_driver(exiu_driver);
-+#endif
+ }
+-IRQCHIP_DECLARE(exiu, "socionext,synquacer-exiu", exiu_init);
++IRQCHIP_DECLARE(exiu, "socionext,synquacer-exiu", exiu_dt_init);
 -- 
 2.20.1
