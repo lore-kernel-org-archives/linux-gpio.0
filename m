@@ -1,7 +1,7 @@
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 2/4] irqchip/exiu: preparatory refactor for ACPI support
-Date: Tue, 28 May 2019 15:36:45 +0200
-Message-ID: <20190528133647.3362-3-ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 4/4] gpio: mb86s7x: enable ACPI support
+Date: Tue, 28 May 2019 15:36:47 +0200
+Message-ID: <20190528133647.3362-5-ard.biesheuvel@linaro.org>
 References: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,126 +21,129 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-In preparation of adding support for EXIU controller devices described
-via ACPI, split the DT init function in a DT specific and a generic part,
-where the latter will be reused for ACPI support later.
+Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
+support for ACPI GPIO interrupts routed via platform interrupts, by
+wiring the two together via the to_irq() gpiochip callback.
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/irqchip/irq-sni-exiu.c | 66 +++++++++++++-------
- 1 file changed, 43 insertions(+), 23 deletions(-)
+ drivers/gpio/gpio-mb86s7x.c | 51 +++++++++++++++++---
+ 1 file changed, 44 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sni-exiu.c b/drivers/irqchip/irq-sni-exiu.c
-index 1927b2f36ff6..fef7c2437dfb 100644
---- a/drivers/irqchip/irq-sni-exiu.c
-+++ b/drivers/irqchip/irq-sni-exiu.c
-@@ -1,7 +1,7 @@
- /*
-  * Driver for Socionext External Interrupt Unit (EXIU)
-  *
-- * Copyright (c) 2017 Linaro, Ltd. <ard.biesheuvel@linaro.org>
-+ * Copyright (c) 2017-2019 Linaro, Ltd. <ard.biesheuvel@linaro.org>
-  *
-  * Based on irq-tegra.c:
-  *   Copyright (C) 2011 Google, Inc.
-@@ -167,35 +167,23 @@ static const struct irq_domain_ops exiu_domain_ops = {
- 	.free		= irq_domain_free_irqs_common,
- };
+diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
+index 9308081e0a4a..64027f57a8aa 100644
+--- a/drivers/gpio/gpio-mb86s7x.c
++++ b/drivers/gpio/gpio-mb86s7x.c
+@@ -14,6 +14,7 @@
+  *  GNU General Public License for more details.
+  */
  
--static int __init exiu_init(struct device_node *node,
--			    struct device_node *parent)
-+static struct exiu_irq_data *exiu_init(const struct fwnode_handle *fwnode,
-+				       struct resource *res)
- {
--	struct irq_domain *parent_domain, *domain;
- 	struct exiu_irq_data *data;
- 	int err;
++#include <linux/acpi.h>
+ #include <linux/io.h>
+ #include <linux/init.h>
+ #include <linux/clk.h>
+@@ -27,6 +28,8 @@
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
  
--	if (!parent) {
--		pr_err("%pOF: no parent, giving up\n", node);
--		return -ENODEV;
--	}
--
--	parent_domain = irq_find_host(parent);
--	if (!parent_domain) {
--		pr_err("%pOF: unable to obtain parent domain\n", node);
--		return -ENXIO;
--	}
--
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
--	if (of_property_read_u32(node, "socionext,spi-base", &data->spi_base)) {
--		pr_err("%pOF: failed to parse 'spi-base' property\n", node);
-+	if (fwnode_property_read_u32_array(fwnode, "socionext,spi-base",
-+					   &data->spi_base, 1)) {
- 		err = -ENODEV;
- 		goto out_free;
- 	}
- 
--	data->base = of_iomap(node, 0);
-+	data->base = ioremap(res->start, resource_size(res));
- 	if (!data->base) {
- 		err = -ENODEV;
- 		goto out_free;
-@@ -205,11 +193,44 @@ static int __init exiu_init(struct device_node *node,
- 	writel_relaxed(0xFFFFFFFF, data->base + EIREQCLR);
- 	writel_relaxed(0xFFFFFFFF, data->base + EIMASK);
- 
-+	return data;
++#include "gpiolib.h"
 +
-+out_free:
-+	kfree(data);
-+	return ERR_PTR(err);
+ /*
+  * Only first 8bits of a register correspond to each pin,
+  * so there are 4 registers for 32 pins.
+@@ -143,6 +146,20 @@ static void mb86s70_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
+ 	spin_unlock_irqrestore(&gchip->lock, flags);
+ }
+ 
++static int mb86s70_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
++{
++	int irq, index;
++
++	for (index = 0;; index++) {
++		irq = platform_get_irq(to_platform_device(gc->parent), index);
++		if (irq <= 0)
++			break;
++		if (irq_get_irq_data(irq)->hwirq == offset)
++			return irq;
++	}
++	return -EINVAL;
 +}
 +
-+static int __init exiu_dt_init(struct device_node *node,
-+			       struct device_node *parent)
-+{
-+	struct irq_domain *parent_domain, *domain;
-+	struct exiu_irq_data *data;
-+	struct resource res;
-+
-+	if (!parent) {
-+		pr_err("%pOF: no parent, giving up\n", node);
-+		return -ENODEV;
+ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mb86s70_gpio_chip *gchip;
+@@ -158,13 +175,15 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gchip->base))
+ 		return PTR_ERR(gchip->base);
+ 
+-	gchip->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(gchip->clk))
+-		return PTR_ERR(gchip->clk);
++	if (!has_acpi_companion(&pdev->dev)) {
++		gchip->clk = devm_clk_get(&pdev->dev, NULL);
++		if (IS_ERR(gchip->clk))
++			return PTR_ERR(gchip->clk);
+ 
+-	ret = clk_prepare_enable(gchip->clk);
+-	if (ret)
+-		return ret;
++		ret = clk_prepare_enable(gchip->clk);
++		if (ret)
++			return ret;
 +	}
+ 
+ 	spin_lock_init(&gchip->lock);
+ 
+@@ -180,19 +199,28 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ 	gchip->gc.parent = &pdev->dev;
+ 	gchip->gc.base = -1;
+ 
++	if (has_acpi_companion(&pdev->dev))
++		gchip->gc.to_irq = mb86s70_gpio_to_irq;
 +
-+	parent_domain = irq_find_host(parent);
-+	if (!parent_domain) {
-+		pr_err("%pOF: unable to obtain parent domain\n", node);
-+		return -ENXIO;
-+	}
-+
-+	if (of_address_to_resource(node, 0, &res)) {
-+		pr_err("%pOF: failed to parse memory resource\n", node);
-+		return -ENXIO;
-+	}
-+
-+	data = exiu_init(of_node_to_fwnode(node), &res);
-+	if (IS_ERR(data))
-+		return PTR_ERR(data);
-+
- 	domain = irq_domain_add_hierarchy(parent_domain, 0, NUM_IRQS, node,
- 					  &exiu_domain_ops, data);
- 	if (!domain) {
- 		pr_err("%pOF: failed to allocate domain\n", node);
--		err = -ENOMEM;
- 		goto out_unmap;
+ 	ret = gpiochip_add_data(&gchip->gc, gchip);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "couldn't register gpio driver\n");
+ 		clk_disable_unprepare(gchip->clk);
++		return ret;
  	}
  
-@@ -220,8 +241,7 @@ static int __init exiu_init(struct device_node *node,
- 
- out_unmap:
- 	iounmap(data->base);
--out_free:
- 	kfree(data);
--	return err;
-+	return -ENOMEM;
+-	return ret;
++	if (has_acpi_companion(&pdev->dev))
++		acpi_gpiochip_request_interrupts(&gchip->gc);
++
++	return 0;
  }
--IRQCHIP_DECLARE(exiu, "socionext,synquacer-exiu", exiu_init);
-+IRQCHIP_DECLARE(exiu, "socionext,synquacer-exiu", exiu_dt_init);
+ 
+ static int mb86s70_gpio_remove(struct platform_device *pdev)
+ {
+ 	struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
+ 
++	if (has_acpi_companion(&pdev->dev))
++		acpi_gpiochip_free_interrupts(&gchip->gc);
+ 	gpiochip_remove(&gchip->gc);
+ 	clk_disable_unprepare(gchip->clk);
+ 
+@@ -205,10 +233,19 @@ static const struct of_device_id mb86s70_gpio_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mb86s70_gpio_dt_ids);
+ 
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id mb86s70_gpio_acpi_ids[] = {
++	{ "SCX0007" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(acpi, mb86s70_gpio_acpi_ids);
++#endif
++
+ static struct platform_driver mb86s70_gpio_driver = {
+ 	.driver = {
+ 		.name = "mb86s70-gpio",
+ 		.of_match_table = mb86s70_gpio_dt_ids,
++		.acpi_match_table = ACPI_PTR(mb86s70_gpio_acpi_ids),
+ 	},
+ 	.probe = mb86s70_gpio_probe,
+ 	.remove = mb86s70_gpio_remove,
 -- 
 2.20.1
