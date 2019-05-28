@@ -1,54 +1,62 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
-Date: Mon, 27 May 2019 18:17:20 +0200
-Message-ID: <7c83e2e1-d5bc-0190-4795-a324a000a5c3@st.com>
-References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
- <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/3][V2] lib: fix match_string() helper on -1 array size
+Date: Tue, 28 May 2019 10:39:30 +0300
+Message-ID: <20190528073932.25365-1-alexandru.ardelean@analog.com>
+References: <20190508112842.11654-1-alexandru.ardelean@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190508112842.11654-1-alexandru.ardelean@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-stm32@st-md-mailman.stormreply.com
+To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org, kvm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-mtd@lists.infradead.org, cgroups@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org
+Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, Alexandru Ardelean <alexandru.ardelean@analog.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus
+The documentation the `_match_string()` helper mentions that `n`
+should be:
+ * @n: number of strings in the array or -1 for NULL terminated arrays
 
-On 5/24/19 1:24 PM, Linus Walleij wrote:
-> On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
-> 
->> During power sequence, GPIO hardware registers could be lost if the power
->> supply is switched off. Each device using pinctrl API is in charge of
->> managing pins during suspend/resume sequences. But for pins used as gpio or
->> irq stm32 pinctrl driver has to save the hardware configuration.
->> Each register will be saved at runtime and restored during resume sequence.
-> 
-> Both patches applied.
-> 
-> On the same pinctrl devel branch is also Benjamin's patches to support
-> the "link_consumers" property on the pin controller descriptor to
-> enable links from pin control consumers back to their pin controller
-> suppliers, especially important for STMFX.
-> 
-> Would you please check if it work fine if you turn on this feature
-> for the SoC STM32 pin controller?
+The behavior of the function is different, in the sense that it exits on
+the first NULL element in the array, regardless of whether `n` is -1 or a
+positive number.
 
-I just tested with Benjamin's patches and set "link_consumers" property 
-for STM32 pinctrl. No changes on boot (except extra logs for each probe) 
-and no changes on power tests too.
+This patch changes the behavior, to exit the loop when a NULL element is
+found and n == -1. Essentially, this aligns the behavior with the
+doc-string.
 
-regards
-alex
+There are currently many users of `match_string()`, and so, in order to go
+through them, the next patches in the series will focus on doing some
+cosmetic changes, which are aimed at grouping the users of
+`match_string()`.
 
-> 
-> I am working a bit on refining the patches, so I want to enable testing
-> with some SoC pin controllers as well and possibly make the
-> behavior default.
-> 
-> Yours,
-> Linus Walleij
-> 
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+
+Changelog v1 -> v2:
+* split the initial series into just 3 patches that fix the
+  `match_string()` helper and start introducing a new version of this
+  helper, which computes array-size of static arrays
+
+ lib/string.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/string.c b/lib/string.c
+index 6016eb3ac73d..e2cf5acc83bd 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -681,8 +681,11 @@ int match_string(const char * const *array, size_t n, const char *string)
+ 
+ 	for (index = 0; index < n; index++) {
+ 		item = array[index];
+-		if (!item)
++		if (!item) {
++			if (n != (size_t)-1)
++				continue;
+ 			break;
++		}
+ 		if (!strcmp(item, string))
+ 			return index;
+ 	}
+-- 
+2.20.1
