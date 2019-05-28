@@ -1,16 +1,16 @@
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Subject: Re: [PATCH v3 1/4] acpi/irq: implement helper to create hierachical
  domains
-Date: Tue, 28 May 2019 15:12:34 +0200
-Message-ID: <CAKv+Gu8ci4ksq0ZHi1Ngdejjx1dKsdfL3ruYjTwu+hyXigOHYQ@mail.gmail.com>
+Date: Tue, 28 May 2019 15:12:42 +0200
+Message-ID: <CAKv+Gu898dbWjdE8a8_KrhcWfrDmOP81NxWwDpACMvER5LZ0=A@mail.gmail.com>
 References: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
  <20190527112720.2266-2-ard.biesheuvel@linaro.org>
- <20190528130247.GA25151@redmoon>
+ <1c3213ed-bdd6-755e-9cb9-693943410326@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190528130247.GA25151@redmoon>
+In-Reply-To: <1c3213ed-bdd6-755e-9cb9-693943410326@arm.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,14 +20,15 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Graeme Gregory <graeme.gregory@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Len Brown <lenb@kernel.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 28 May 2019 at 15:02, Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
+On Tue, 28 May 2019 at 14:54, Marc Zyngier <marc.zyngier@arm.com> wrote:
 >
-> On Mon, May 27, 2019 at 01:27:17PM +0200, Ard Biesheuvel wrote:
+> Hi Ard,
+>
+> On 27/05/2019 12:27, Ard Biesheuvel wrote:
 > > ACPI permits arbitrary producer->consumer interrupt links to be
 > > described in AML, which means a topology such as the following
 > > is perfectly legal:
@@ -67,23 +68,7 @@ On Tue, 28 May 2019 at 15:02, Lorenzo Pieralisi
 > > order to obtain the irqdomain reference when driving the EXIU in ACPI
 > > mode, we need a helper that implicitly grabs the default domain for
 > > unqualified interrupts as the parent of the hierarchy.
->
-> Nit: I do not think they are "unqualified".
->
-> ACPI 6.3, table 6-237, Extended Interrupt Descriptor Definition:
->
-> "Resource Source: (Optional) If present, the device that uses this
-> descriptor consumes its resources from the resources produces by the
-> named device object. If not present, the device consumes its resources
-> out of a global pool."
->
-> Where the global pool I _assume_ is the GSI domain, so it is the default
-> expected behaviour (for once :))
->
-
-By 'unqualified', I meant lacking an explicit description of the
-producer of the resource. But I can change the wording if you prefer.
-
+> >
 > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > > ---
 > >  drivers/acpi/irq.c   | 20 ++++++++++++++++++++
@@ -102,10 +87,7 @@ producer of the resource. But I can change the wording if you prefer.
 > > +/**
 > > + * acpi_irq_create_hierarchy - Create a hierarchical IRQ domain with the default
 > > + *                             GSI domain as its parent.
->
-> Yes please comment parameters even if it is just a wrapper around
-> the IRQ domain API.
->
+> > + */
 > > +struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
 > > +                                          unsigned int size,
 > > +                                          struct fwnode_handle *fwnode,
@@ -146,7 +128,18 @@ producer of the resource. But I can change the wording if you prefer.
 > >  #ifdef CONFIG_X86_IO_APIC
 > >  extern int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity);
 > >  #else
+> >
 >
-> Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Should we consider exporting this function to modules?
+>
 
-Thanks,
+Good point, we probably should.
+
+
+> Otherwise (and with Mika's comments addressed), looks good to me.
+>
+> Thanks,
+>
+>         M.
+> --
+> Jazz is not dead. It just smells funny...
