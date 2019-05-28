@@ -1,11 +1,14 @@
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 0/4] synquacer: implement ACPI gpio/interrupt support
-Date: Tue, 28 May 2019 15:36:43 +0200
-Message-ID: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 1/4] acpi/irq: implement helper to create hierachical
+ domains
+Date: Tue, 28 May 2019 15:36:44 +0200
+Message-ID: <20190528133647.3362-2-ard.biesheuvel@linaro.org>
+References: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,53 +22,113 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Wire up the existing GPIO and interrupt controller drivers to the ACPI
-subsystem so they can be used on ACPI systems for ACPI event (power
-button, hardware error notification etc)
+ACPI permits arbitrary producer->consumer interrupt links to be
+described in AML, which means a topology such as the following
+is perfectly legal:
 
-Changes since v3:
-- export ACPI irq domain helper to modules
-- documents its parameters
-- tweak commit log of #1
-- add acks to patches #1 , #3 and #4
+  Device (EXIU) {
+    Name (_HID, "SCX0008")
+    Name (_UID, Zero)
+    Name (_CRS, ResourceTemplate () {
+      ...
+    })
+  }
 
-Changes since v2:
-- use helper to create hierarchical IRQ domains under ACPI instead of exposing
-  the GSI domain's irqdomain pointer directly (#1)
-- use has_acpi_companion() instead of ACPI_COMPANION() where possible (#4)
-- add Mika's ack to #4
+  Device (GPIO) {
+    Name (_HID, "SCX0007")
+    Name (_UID, Zero)
+    Name (_CRS, ResourceTemplate () {
+      Memory32Fixed (ReadWrite, SYNQUACER_GPIO_BASE, SYNQUACER_GPIO_SIZE)
+      Interrupt (ResourceConsumer, Edge, ActiveHigh, ExclusiveAndWake, 0, "\\_SB.EXIU") {
+        7,
+      }
+    })
+    ...
+  }
 
-Changes since v1:
-- Describe the EXIU controller as a separate device, which is a more accurate
-  depiction of reality, and untangles the code a bit as well. Note that this
-  requires the GPIO AML device to describe the EXIU interrupts explicitly.
-- Add a patch to obtain the ACPI GSI irqdomain. The EXIU driver needs this
-  to obtain the default parent domain, since the GIC is not modeled as an
-  ACPI object in the namespace, and so the parent<->child link cannot be
-  expressed in AML.
-- Drop the Kconfig symbol for the GPIO controller. Just include the ACPI part
-  when CONFIG_ACPI is defined.
+The EXIU in this example is the external interrupt unit as can be found
+on Socionext SynQuacer based platforms, which converts a block of 32 SPIs
+from arbitrary polarity/trigger into level-high, with a separate set
+of config/mask/unmask/clear controls.
 
-Cc: Masahisa Kojima <masahisa.kojima@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Graeme Gregory <graeme.gregory@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
+The existing DT based driver in drivers/irqchip/irq-sni-exiu.c models
+this as a hierarchical domain stacked on top of the GIC's irqdomain.
+Since the GIC is modeled as a DT node as well, obtaining a reference
+to this irqdomain is easily done by going through the parent link.
 
-Ard Biesheuvel (4):
-  acpi/irq: implement helper to create hierachical domains
-  irqchip/exiu: preparatory refactor for ACPI support
-  irqchip/exiu: implement ACPI support
-  gpio: mb86s7x: enable ACPI support
+On ACPI systems, however, the GIC is not modeled as an object in the
+namespace, and so device objects cannot refer to it directly. So in
+order to obtain the irqdomain reference when driving the EXIU in ACPI
+mode, we need a helper that implicitly grabs the default domain as the
+parent of the hierarchy for interrupts allocated out of the global GSI
+pool.
 
- drivers/acpi/irq.c             |  26 ++++
- drivers/gpio/gpio-mb86s7x.c    |  51 ++++++-
- drivers/irqchip/irq-sni-exiu.c | 142 +++++++++++++++-----
- include/linux/acpi.h           |   7 +
- 4 files changed, 188 insertions(+), 38 deletions(-)
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/acpi/irq.c   | 26 ++++++++++++++++++++
+ include/linux/acpi.h |  7 ++++++
+ 2 files changed, 33 insertions(+)
 
+diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
+index c3b2222e2129..ce6b25a3b7a7 100644
+--- a/drivers/acpi/irq.c
++++ b/drivers/acpi/irq.c
+@@ -295,3 +295,29 @@ void __init acpi_set_irq_model(enum acpi_irq_model_id model,
+ 	acpi_irq_model = model;
+ 	acpi_gsi_domain_id = fwnode;
+ }
++
++/**
++ * acpi_irq_create_hierarchy - Create a hierarchical IRQ domain with the default
++ *                             GSI domain as its parent.
++ * @flags:      Irq domain flags associated with the domain
++ * @size:       Size of the domain.
++ * @fwnode:     Optional fwnode of the interrupt controller
++ * @ops:        Pointer to the interrupt domain callbacks
++ * @host_data:  Controller private data pointer
++ */
++struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
++					     unsigned int size,
++					     struct fwnode_handle *fwnode,
++					     const struct irq_domain_ops *ops,
++					     void *host_data)
++{
++	struct irq_domain *d = irq_find_matching_fwnode(acpi_gsi_domain_id,
++							DOMAIN_BUS_ANY);
++
++	if (!d)
++		return NULL;
++
++	return irq_domain_create_hierarchy(d, flags, size, fwnode, ops,
++					   host_data);
++}
++EXPORT_SYMBOL_GPL(acpi_irq_create_hierarchy);
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 98440df7fe42..70de4bc30cea 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -23,6 +23,7 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/ioport.h>	/* for struct resource */
++#include <linux/irqdomain.h>
+ #include <linux/resource_ext.h>
+ #include <linux/device.h>
+ #include <linux/property.h>
+@@ -327,6 +328,12 @@ int acpi_isa_irq_to_gsi (unsigned isa_irq, u32 *gsi);
+ void acpi_set_irq_model(enum acpi_irq_model_id model,
+ 			struct fwnode_handle *fwnode);
+ 
++struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
++					     unsigned int size,
++					     struct fwnode_handle *fwnode,
++					     const struct irq_domain_ops *ops,
++					     void *host_data);
++
+ #ifdef CONFIG_X86_IO_APIC
+ extern int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity);
+ #else
 -- 
 2.20.1
