@@ -1,40 +1,44 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] pinctrl: bcm2835: Fix build error without CONFIG_OF
-Date: Tue, 28 May 2019 17:13:04 +0800
-Message-ID: <20190528091304.9932-1-yuehaibing@huawei.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 1/4] acpi/irq: implement helper to create hierachical
+ domains
+Date: Tue, 28 May 2019 13:07:28 +0300
+Message-ID: <20190528100728.GV2781@lahna.fi.intel.com>
+References: <20190527112720.2266-1-ard.biesheuvel@linaro.org>
+ <20190527112720.2266-2-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, rafal@milecki.pl, gregkh@linuxfoundation.org, opendmb@gmail.com, eric@anholt.net, tglx@linutronix.de, matheus@castello.eng.br
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190527112720.2266-2-ard.biesheuvel@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, linux-gpio@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, linux-arm-kernel@lists.infradead.org, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pctl_dt_node_to_map:
-drivers/pinctrl/bcm/pinctrl-bcm2835.c:720:8: error: implicit declaration of function pinconf_generic_dt_node_to_map_all;
-drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pinctrl_probe:
-drivers/pinctrl/bcm/pinctrl-bcm2835.c:1022:15: error: struct gpio_chip has no member named of_node
-  pc->gpio_chip.of_node = np;
+On Mon, May 27, 2019 at 01:27:17PM +0200, Ard Biesheuvel wrote:
+> +
+> +/**
+> + * acpi_irq_create_hierarchy - Create a hierarchical IRQ domain with the default
+> + *                             GSI domain as its parent.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 0de704955ee4 ("pinctrl: bcm2835: Add support for generic pinctrl binding")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/bcm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please document the arguments as well.
 
-diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
-index 4b5842c..dcf7df7 100644
---- a/drivers/pinctrl/bcm/Kconfig
-+++ b/drivers/pinctrl/bcm/Kconfig
-@@ -19,7 +19,7 @@ config PINCTRL_BCM281XX
- 
- config PINCTRL_BCM2835
- 	bool "Broadcom BCM2835 GPIO (with PINCONF) driver"
--	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
-+	depends on OF && (ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST)
- 	select PINMUX
- 	select PINCONF
- 	select GENERIC_PINCONF
--- 
-2.7.4
+> + */
+> +struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
+> +					     unsigned int size,
+> +					     struct fwnode_handle *fwnode,
+> +					     const struct irq_domain_ops *ops,
+> +					     void *host_data)
+
+Otherwise looks good to me.
+
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
