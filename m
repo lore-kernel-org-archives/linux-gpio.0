@@ -1,142 +1,34 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V2 04/12] clk: tegra: add support for peripheral clock suspend and resume
-Date: Tue, 28 May 2019 16:08:48 -0700
-Message-ID: <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] pinctrl: ns2: Fix potential NULL dereference
+Date: Wed, 29 May 2019 10:43:58 +0800
+Message-ID: <1559097838-26070-1-git-send-email-92siuyang@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Young Xiao <92siuyang@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch implements peripheral clock context save and restore
-to support system suspend and resume operation.
+platform_get_resource() may fail and return NULL, so we should
+better check it's return value to avoid a NULL pointer dereference
+a bit later in the code.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
 ---
- drivers/clk/tegra/clk.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h |  3 ++
- 2 files changed, 76 insertions(+), 1 deletion(-)
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 6f2862eddad7..08b788766564 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -81,6 +81,10 @@ static struct clk **clks;
- static int clk_num;
- static struct clk_onecell_data clk_data;
+diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+index 4b5cf0e..2bf6af7 100644
+--- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+@@ -1048,6 +1048,8 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pinctrl->base0);
  
-+#ifdef CONFIG_PM_SLEEP
-+static u32 *periph_ctx;
-+#endif
-+
- /* Handlers for SoC-specific reset lines */
- static int (*special_reset_assert)(unsigned long);
- static int (*special_reset_deassert)(unsigned long);
-@@ -210,6 +214,65 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
- 	}
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+void tegra_clk_periph_suspend(void __iomem *clk_base)
-+{
-+	int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].rst_reg);
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		periph_ctx[idx] =
-+			readl_relaxed(clk_base + periph_regs[i].enb_reg);
-+}
-+
-+void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base)
-+{
-+	int i;
-+
-+	WARN_ON(count != periph_banks);
-+
-+	for (i = 0; i < count; i++)
-+		writel_relaxed(clks_on[i], clk_base + periph_regs[i].enb_reg);
-+}
-+
-+void tegra_clk_periph_resume(void __iomem *clk_base)
-+{
-+	int i, idx;
-+
-+	idx = 0;
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_ctx[idx],
-+			       clk_base + periph_regs[i].rst_reg);
-+
-+	/* ensure all resets have propagated */
-+	fence_udelay(2, clk_base);
-+	tegra_read_chipid();
-+
-+	for (i = 0; i < periph_banks; i++, idx++)
-+		writel_relaxed(periph_ctx[idx],
-+			       clk_base + periph_regs[i].enb_reg);
-+
-+	/* ensure all enables have propagated */
-+	fence_udelay(2, clk_base);
-+	tegra_read_chipid();
-+}
-+
-+static int tegra_clk_suspend_ctx_init(int banks)
-+{
-+	int err = 0;
-+
-+	periph_ctx = kzalloc(2 * banks * sizeof(*periph_ctx), GFP_KERNEL);
-+	if (!periph_ctx)
-+		err = -ENOMEM;
-+
-+	return err;
-+}
-+#endif
-+
- struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- {
- 	clk_base = regs;
-@@ -226,11 +289,20 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- 	periph_banks = banks;
- 
- 	clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
--	if (!clks)
-+	if (!clks) {
- 		kfree(periph_clk_enb_refcnt);
-+		return NULL;
-+	}
- 
- 	clk_num = num;
- 
-+#ifdef CONFIG_PM_SLEEP
-+	if (tegra_clk_suspend_ctx_init(banks)) {
-+		kfree(periph_clk_enb_refcnt);
-+		kfree(clks);
-+		return NULL;
-+	}
-+#endif
- 	return clks;
- }
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e4d124cc5657..ab238b2c3125 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -848,6 +848,9 @@ void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
- void tegra_clk_plle_tegra210_resume(struct clk *c);
- void tegra_clk_sync_state_pll(struct clk *c);
- void tegra_clk_sync_state_pll_out(struct clk *clk);
-+void tegra_clk_periph_suspend(void __iomem *clk_base);
-+void tegra_clk_periph_resume(void __iomem *clk_base);
-+void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base);
- #endif
- 
- 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	if (!res)
++		return -EINVAL;
+ 	pinctrl->base1 = devm_ioremap_nocache(&pdev->dev, res->start,
+ 					resource_size(res));
+ 	if (!pinctrl->base1) {
 -- 
 2.7.4
