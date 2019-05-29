@@ -1,43 +1,43 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH v4 4/4] gpio: mb86s7x: enable ACPI support
-Date: Wed, 29 May 2019 09:38:42 +0200
-Message-ID: <CAKv+Gu_BJO9AYDicyd4hC7uSWP47ac12wPzi4kgCETwjGZQZOA@mail.gmail.com>
-References: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
- <20190528133647.3362-5-ard.biesheuvel@linaro.org>
- <20190529073129.GP2781@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190529073129.GP2781@lahna.fi.intel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Len Brown <lenb@kernel.org>
+From: Chuanhua Han <chuanhua.han@nxp.com>
+Subject: [PATCH 1/3] gpio: mpc8xxx: Enable port input and interrupt
+Date: Wed, 29 May 2019 16:32:52 +0800
+Message-ID: <20190529083254.39581-1-chuanhua.han@nxp.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chuanhua Han <chuanhua.han@nxp.com>, Zhang Ying-22455 <ying.zhang22455@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 29 May 2019 at 09:31, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> On Tue, May 28, 2019 at 03:36:47PM +0200, Ard Biesheuvel wrote:
-> > Make the mb86s7x GPIO block discoverable via ACPI. In addition, add
-> > support for ACPI GPIO interrupts routed via platform interrupts, by
-> > wiring the two together via the to_irq() gpiochip callback.
-> >
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->
-> Hmm, I thought I reviewed this already? Well anyway,
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+The GPIO Input Buffer Enable register is used to control the input
+enable of each individual GPIO port. When an individual GPIO port's
+direction is set to input (GPIO_GPDIR[DRn=0]), the associated
+input enable must be set (GPIOxGPIE[IEn]=1) to propagate the port
+value to the GPIO Data Register.
 
-Yes, you did. Apologies.
+This patch enable port input and interrupt.
 
-Marc, can you still incorporate this? Or is it too late?
+Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+---
+ drivers/gpio/gpio-mpc8xxx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index c8673a5d9412..555e0e7957d9 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -373,9 +373,10 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	if (!mpc8xxx_gc->irq)
+ 		return 0;
+ 
+-	/* ack and mask all irqs */
++	/* ack and enable irqs */
+ 	gc->write_reg(mpc8xxx_gc->regs + GPIO_IER, 0xffffffff);
+-	gc->write_reg(mpc8xxx_gc->regs + GPIO_IMR, 0);
++	gc->write_reg(mpc8xxx_gc->regs + GPIO_IMR, 0xffffffff);
++	gc->write_reg(mpc8xxx_gc->regs + GPIO_ICR2, 0xffffffff);
+ 
+ 	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+ 					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
+-- 
+2.17.1
