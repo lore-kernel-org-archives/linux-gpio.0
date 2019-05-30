@@ -1,13 +1,13 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.19 116/276] pinctrl: pistachio: fix leaked of_node references
-Date: Wed, 29 May 2019 20:04:34 -0700
-Message-ID: <20190530030533.171172569@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+Subject: [PATCH 4.9 055/128] pinctrl: pistachio: fix leaked of_node references
+Date: Wed, 29 May 2019 20:06:27 -0700
+Message-ID: <20190530030444.827117887@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
@@ -33,7 +33,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
-index 302190d1558d9..0d7d379e9bb80 100644
+index 55375b1b3cc81..b2b7e238bda97 100644
 --- a/drivers/pinctrl/pinctrl-pistachio.c
 +++ b/drivers/pinctrl/pinctrl-pistachio.c
 @@ -1368,6 +1368,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
