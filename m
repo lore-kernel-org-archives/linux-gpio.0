@@ -1,45 +1,90 @@
-From: Anson.Huang@nxp.com
-Subject: [PATCH] dt-bindings: imx: Correct pinfunc head file path for i.MX8MM
-Date: Thu, 30 May 2019 11:13:57 +0800
-Message-ID: <20190530031357.17484-1-Anson.Huang@nxp.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5.0 133/346] pinctrl: st: fix leaked of_node references
+Date: Wed, 29 May 2019 20:03:26 -0700
+Message-ID: <20190530030547.853652402@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Linux-imx@nxp.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>, Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+[ Upstream commit 483d70d73beaecab55882fcd2a357af72674e24c ]
 
-The i.MX8MM pinfunc head file is located in DT folder, correct it.
+The call to of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1188:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-st.c:1199:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1175, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org (open list)
+Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-st.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
-index 524a16f..e4e01c0 100644
---- a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
-@@ -12,7 +12,7 @@ Required properties in sub-nodes:
- - fsl,pins: each entry consists of 6 integers and represents the mux and config
-   setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
-   input_val> are specified using a PIN_FUNC_ID macro, which can be found in
--  <dt-bindings/pinctrl/imx8mm-pinfunc.h>. The last integer CONFIG is
-+  <arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h>. The last integer CONFIG is
-   the pad setting value like pull-up on this pin.  Please refer to i.MX8M Mini
-   Reference Manual for detailed CONFIG settings.
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index e66af93f2cbf8..195b442a23434 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -1170,7 +1170,7 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 	struct property *pp;
+ 	struct st_pinconf *conf;
+ 	struct device_node *pins;
+-	int i = 0, npins = 0, nr_props;
++	int i = 0, npins = 0, nr_props, ret = 0;
  
+ 	pins = of_get_child_by_name(np, "st,pins");
+ 	if (!pins)
+@@ -1185,7 +1185,8 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 			npins++;
+ 		} else {
+ 			pr_warn("Invalid st,pins in %pOFn node\n", np);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_put_node;
+ 		}
+ 	}
+ 
+@@ -1195,8 +1196,10 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 	grp->pin_conf = devm_kcalloc(info->dev,
+ 					npins, sizeof(*conf), GFP_KERNEL);
+ 
+-	if (!grp->pins || !grp->pin_conf)
+-		return -ENOMEM;
++	if (!grp->pins || !grp->pin_conf) {
++		ret = -ENOMEM;
++		goto out_put_node;
++	}
+ 
+ 	/* <bank offset mux direction rt_type rt_delay rt_clk> */
+ 	for_each_property_of_node(pins, pp) {
+@@ -1229,9 +1232,11 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 		}
+ 		i++;
+ 	}
++
++out_put_node:
+ 	of_node_put(pins);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int st_pctl_parse_functions(struct device_node *np,
 -- 
-2.7.4
+2.20.1
