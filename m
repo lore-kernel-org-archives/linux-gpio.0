@@ -1,48 +1,47 @@
-From: Ray Jui <ray.jui@broadcom.com>
-Subject: Re: [PATCH] pinctrl: ns2: Fix potential NULL dereference
-Date: Thu, 30 May 2019 17:17:28 -0700
-Message-ID: <ace57d13-6194-df8e-d2e8-fbc85d9ce21a@broadcom.com>
-References: <1559097838-26070-1-git-send-email-92siuyang@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Tengfei Fan <tengfeif@codeaurora.org>
+Subject: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
+Date: Fri, 31 May 2019 14:51:52 +0800
+Message-ID: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559097838-26070-1-git-send-email-92siuyang@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Young Xiao <92siuyang@gmail.com>, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, linus.walleij@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Tengfei Fan <tengfeif@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
+The gpio interrupt status bit is getting set after the
+irq is disabled and causing an immediate interrupt after
+enablling the irq, so clear status bit on irq_unmask.
 
+Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On 5/28/2019 7:43 PM, Young Xiao wrote:
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> 
-> Signed-off-by: Young Xiao <92siuyang@gmail.com>
-> ---
->  drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-> index 4b5cf0e..2bf6af7 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-> @@ -1048,6 +1048,8 @@ static int ns2_pinmux_probe(struct platform_device *pdev)
->  		return PTR_ERR(pinctrl->base0);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!res)
-> +		return -EINVAL;
-
-Right, usually not needed if devm_ioremap_resource is used since it was
-checked there. But in this case, I do think it needs to be checked. This
-change looks good to me. Thanks.
-
->  	pinctrl->base1 = devm_ioremap_nocache(&pdev->dev, res->start,
->  					resource_size(res));
->  	if (!pinctrl->base1) {
-> 
-
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index ee81198..7283c50 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -740,6 +740,7 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ static void msm_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	uint32_t irqtype = irqd_get_trigger_type(d);
+ 	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+ 	unsigned long flags;
+@@ -749,6 +750,12 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
++	if (irqtype & (IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW)) {
++		val = readl_relaxed(pctrl->regs + g->intr_status_reg);
++		val &= ~BIT(g->intr_status_bit);
++		 writel_relaxed(val, pctrl->regs + g->intr_status_reg);
++	}
++
+ 	val = msm_readl_intr_cfg(pctrl, g);
+ 	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
