@@ -1,140 +1,64 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v4 1/4] acpi/irq: implement helper to create hierachical
- domains
-Date: Fri, 31 May 2019 10:45:57 +0200
-Message-ID: <1909675.6iIoxqmsXk@kreacher>
-References: <20190528133647.3362-1-ard.biesheuvel@linaro.org>
- <20190528133647.3362-2-ard.biesheuvel@linaro.org>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: [PATCH -next] x86: apuv2: Make two symbols static
+Date: Fri, 31 May 2019 14:27:28 +0200
+Message-ID: <abbb799c-07d1-1c8e-dac0-259678f53a20@metux.net>
+References: <20190529143844.23084-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190528133647.3362-2-ard.biesheuvel@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Graeme Gregory <graeme.gregory@linaro.org>, linux-gpio@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, Masahisa Kojima <masahisa.kojima@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-arm-kernel@lists.infradead.org, Len Brown <lenb@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190529143844.23084-1-yuehaibing@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: YueHaibing <yuehaibing@huawei.com>, info@metux.net, dvhart@infradead.org, andy@infradead.org, linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tuesday, May 28, 2019 3:36:44 PM CEST Ard Biesheuvel wrote:
-> ACPI permits arbitrary producer->consumer interrupt links to be
-> described in AML, which means a topology such as the following
-> is perfectly legal:
+On 29.05.19 16:38, YueHaibing wrote:
+> Fix sparse warnings:
 > 
->   Device (EXIU) {
->     Name (_HID, "SCX0008")
->     Name (_UID, Zero)
->     Name (_CRS, ResourceTemplate () {
->       ...
->     })
->   }
+> drivers/platform/x86/pcengines-apuv2.c:80:27: warning: symbol 'gpios_led_table' was not declared. Should it be static?
+> drivers/platform/x86/pcengines-apuv2.c:113:27: warning: symbol 'gpios_key_table' was not declared. Should it be static?
 > 
->   Device (GPIO) {
->     Name (_HID, "SCX0007")
->     Name (_UID, Zero)
->     Name (_CRS, ResourceTemplate () {
->       Memory32Fixed (ReadWrite, SYNQUACER_GPIO_BASE, SYNQUACER_GPIO_SIZE)
->       Interrupt (ResourceConsumer, Edge, ActiveHigh, ExclusiveAndWake, 0, "\\_SB.EXIU") {
->         7,
->       }
->     })
->     ...
->   }
-> 
-> The EXIU in this example is the external interrupt unit as can be found
-> on Socionext SynQuacer based platforms, which converts a block of 32 SPIs
-> from arbitrary polarity/trigger into level-high, with a separate set
-> of config/mask/unmask/clear controls.
-> 
-> The existing DT based driver in drivers/irqchip/irq-sni-exiu.c models
-> this as a hierarchical domain stacked on top of the GIC's irqdomain.
-> Since the GIC is modeled as a DT node as well, obtaining a reference
-> to this irqdomain is easily done by going through the parent link.
-> 
-> On ACPI systems, however, the GIC is not modeled as an object in the
-> namespace, and so device objects cannot refer to it directly. So in
-> order to obtain the irqdomain reference when driving the EXIU in ACPI
-> mode, we need a helper that implicitly grabs the default domain as the
-> parent of the hierarchy for interrupts allocated out of the global GSI
-> pool.
-> 
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-if that matters.
-
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/acpi/irq.c   | 26 ++++++++++++++++++++
->  include/linux/acpi.h |  7 ++++++
->  2 files changed, 33 insertions(+)
+>  drivers/platform/x86/pcengines-apuv2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
-> index c3b2222e2129..ce6b25a3b7a7 100644
-> --- a/drivers/acpi/irq.c
-> +++ b/drivers/acpi/irq.c
-> @@ -295,3 +295,29 @@ void __init acpi_set_irq_model(enum acpi_irq_model_id model,
->  	acpi_irq_model = model;
->  	acpi_gsi_domain_id = fwnode;
->  }
-> +
-> +/**
-> + * acpi_irq_create_hierarchy - Create a hierarchical IRQ domain with the default
-> + *                             GSI domain as its parent.
-> + * @flags:      Irq domain flags associated with the domain
-> + * @size:       Size of the domain.
-> + * @fwnode:     Optional fwnode of the interrupt controller
-> + * @ops:        Pointer to the interrupt domain callbacks
-> + * @host_data:  Controller private data pointer
-> + */
-> +struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
-> +					     unsigned int size,
-> +					     struct fwnode_handle *fwnode,
-> +					     const struct irq_domain_ops *ops,
-> +					     void *host_data)
-> +{
-> +	struct irq_domain *d = irq_find_matching_fwnode(acpi_gsi_domain_id,
-> +							DOMAIN_BUS_ANY);
-> +
-> +	if (!d)
-> +		return NULL;
-> +
-> +	return irq_domain_create_hierarchy(d, flags, size, fwnode, ops,
-> +					   host_data);
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_irq_create_hierarchy);
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 98440df7fe42..70de4bc30cea 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -23,6 +23,7 @@
+> diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+> index c1ca931e1fab..b0d3110ae378 100644
+> --- a/drivers/platform/x86/pcengines-apuv2.c
+> +++ b/drivers/platform/x86/pcengines-apuv2.c
+> @@ -77,7 +77,7 @@ static const struct gpio_led_platform_data apu2_leds_pdata = {
+>  	.leds		= apu2_leds,
+>  };
 >  
->  #include <linux/errno.h>
->  #include <linux/ioport.h>	/* for struct resource */
-> +#include <linux/irqdomain.h>
->  #include <linux/resource_ext.h>
->  #include <linux/device.h>
->  #include <linux/property.h>
-> @@ -327,6 +328,12 @@ int acpi_isa_irq_to_gsi (unsigned isa_irq, u32 *gsi);
->  void acpi_set_irq_model(enum acpi_irq_model_id model,
->  			struct fwnode_handle *fwnode);
+> -struct gpiod_lookup_table gpios_led_table = {
+> +static struct gpiod_lookup_table gpios_led_table = {
+>  	.dev_id = "leds-gpio",
+>  	.table = {
+>  		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED1,
+> @@ -110,7 +110,7 @@ static const struct gpio_keys_platform_data apu2_keys_pdata = {
+>  	.name		= "apu2-keys",
+>  };
 >  
-> +struct irq_domain *acpi_irq_create_hierarchy(unsigned int flags,
-> +					     unsigned int size,
-> +					     struct fwnode_handle *fwnode,
-> +					     const struct irq_domain_ops *ops,
-> +					     void *host_data);
-> +
->  #ifdef CONFIG_X86_IO_APIC
->  extern int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity);
->  #else
+> -struct gpiod_lookup_table gpios_key_table = {
+> +static struct gpiod_lookup_table gpios_key_table = {
+>  	.dev_id = "gpio-keys-polled",
+>  	.table = {
+>  		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_MODESW,
 > 
+
+thanks.
+
+
+Acked-By: Enrico Weigelt, metux IT consult <info@metux.net>
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
