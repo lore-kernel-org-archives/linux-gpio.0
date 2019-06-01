@@ -1,114 +1,129 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] treewide: fix typos of SPDX-License-Identifier
-Date: Sat,  1 Jun 2019 12:22:42 +0900
-Message-ID: <20190601032242.10405-1-yamada.masahiro@socionext.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V2 10/12] gpio: tegra: implement wake event support for
+ Tegra210 and prior GPIO
+Date: Sat, 1 Jun 2019 01:28:44 -0700
+Message-ID: <9f9633e0-5f45-d2ba-9758-d2a85a41ede9@nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-11-git-send-email-skomatineni@nvidia.com>
+ <20190529140318.GB17679@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: alsa-devel@alsa-project.org, Kees Cook <keescook@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-renesas-soc@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>, linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Kishon Vijay Abraham I <kishon@ti.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alexandre Torgue <alexandre.torgue@st.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190529140318.GB17679@ulmo>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Prior to the adoption of SPDX, it was difficult for tools to determine
-the correct license due to incomplete or badly formatted license text.
-The SPDX solves this issue, assuming people can correctly spell
-"SPDX-License-Identifier" although this assumption is broken in some
-places.
 
-Since scripts/spdxcheck.py parses only lines that exactly matches to
-the correct tag, it cannot (should not) detect this kind of error.
+On 5/29/19 7:03 AM, Thierry Reding wrote:
+> On Tue, May 28, 2019 at 04:08:54PM -0700, Sowjanya Komatineni wrote:
+>> The GPIO controller doesn't have any controls to enable the system to
+>> wake up from low power states based on activity on GPIO pins. An extra
+>> hardware block that is part of the power management controller (PMC)
+>> contains these controls. In order for the GPIO controller to be able
+>> to cooperate with the PMC, obtain a reference to the PMC's IRQ domain
+>> and make it a parent to the GPIO controller's IRQ domain. This way the
+>> PMC gets an opportunity to program the additional registers required
+>> to enable wakeup sources on suspend.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/gpio/gpio-tegra.c | 116 +++++++++++++++++++++++++++++++++++++++++++---
+>>   1 file changed, 110 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+>> index 6d9b6906b9d0..5190129668d3 100644
+>> --- a/drivers/gpio/gpio-tegra.c
+>> +++ b/drivers/gpio/gpio-tegra.c
+>> @@ -32,6 +32,8 @@
+>>   #include <linux/pinctrl/consumer.h>
+>>   #include <linux/pm.h>
+>>   
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>>   #define GPIO_BANK(x)		((x) >> 5)
+>>   #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
+>>   #define GPIO_BIT(x)		((x) & 0x7)
+>> @@ -275,8 +277,22 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+>>   static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+>>   {
+>>   	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+>> +	struct irq_domain *domain = tgi->irq_domain;
+>> +
+>> +	if (!gpiochip_irqchip_irq_valid(chip, offset))
+>> +		return -ENXIO;
+>> +
+>> +	if (irq_domain_is_hierarchy(domain)) {
+>> +		struct irq_fwspec spec;
+>> +
+>> +		spec.fwnode = domain->fwnode;
+>> +		spec.param_count = 2;
+>> +		spec.param[0] = offset;
+>> +		spec.param[1] = IRQ_TYPE_NONE;
+>> +		return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
+> This looks like it was copied from the equivalent Tegra186 patch. I have
+> since then changed the implementation, based on feedback by Linus, to
+> not call irq_domain_alloc_irqs() here and instead call
+> irq_create_fwspec_mapping(). This has the advantage of not requiring the
+> irq_domain_alloc_irqs() function to be exported. It ends up calling that
+> function internally, but as discussed with Linus it's also a nicer way
+> to create these mappings.
+>
+existing gpio-tegra driver maps hwirq to virtual interrupt number using 
+irq_create_mapping during gpio probe
 
-If the correct tag is missing, scripts/checkpatch.pl warns like this:
+and irq_create_fwspec_mapping() will always return virq number as virq 
+number exists already and irq_domain_alloc_irqs doesn't happen.
 
- WARNING: Missing or malformed SPDX-License-Identifier tag in line *
+So I was using irq_domain_alloc_irqs().
 
-So, people should notice it before the patch submission, but in reality
-broken tags sometimes slip in. The checkpatch warning is not useful for
-checking the committed files globally since large number of files still
-have no SPDX tag.
 
-Also, I am not sure about the legal effect when the SPDX tag is broken.
-
-Anyway, these typos are absolutely worth fixing. It is pretty easy to
-find suspicious lines by grep.
-
-  $ git grep --not -e SPDX-License-Identifier --and -e SPDX- -- \
-    :^LICENSES :^scripts/spdxcheck.py :^*/license-rules.rst
-  arch/arm/kernel/bugs.c:// SPDX-Identifier: GPL-2.0
-  drivers/phy/st/phy-stm32-usbphyc.c:// SPDX-Licence-Identifier: GPL-2.0
-  drivers/pinctrl/sh-pfc/pfc-r8a77980.c:// SPDX-Lincense-Identifier: GPL 2.0
-  lib/test_stackinit.c:// SPDX-Licenses: GPLv2
-  sound/soc/codecs/max9759.c:// SPDX-Licence-Identifier: GPL-2.0
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- arch/arm/kernel/bugs.c                | 2 +-
- drivers/phy/st/phy-stm32-usbphyc.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 2 +-
- lib/test_stackinit.c                  | 2 +-
- sound/soc/codecs/max9759.c            | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
-index d41d3598e5e5..14c8dbbb7d2d 100644
---- a/arch/arm/kernel/bugs.c
-+++ b/arch/arm/kernel/bugs.c
-@@ -1,4 +1,4 @@
--// SPDX-Identifier: GPL-2.0
-+// SPDX-License-Identifier: GPL-2.0
- #include <linux/init.h>
- #include <asm/bugs.h>
- #include <asm/proc-fns.h>
-diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
-index 1255cd1d9a60..56bdea4b0bd9 100644
---- a/drivers/phy/st/phy-stm32-usbphyc.c
-+++ b/drivers/phy/st/phy-stm32-usbphyc.c
-@@ -1,4 +1,4 @@
--// SPDX-Licence-Identifier: GPL-2.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * STMicroelectronics STM32 USB PHY Controller driver
-  *
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-index 473da65890a7..9ed4ead2dafb 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-@@ -1,4 +1,4 @@
--// SPDX-Lincense-Identifier: GPL 2.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A77980 processor support - PFC hardware block.
-  *
-diff --git a/lib/test_stackinit.c b/lib/test_stackinit.c
-index 13115b6f2b88..e97dc54b4fdf 100644
---- a/lib/test_stackinit.c
-+++ b/lib/test_stackinit.c
-@@ -1,4 +1,4 @@
--// SPDX-Licenses: GPLv2
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Test cases for compiler-based stack variable zeroing via future
-  * compiler flags or CONFIG_GCC_PLUGIN_STRUCTLEAK*.
-diff --git a/sound/soc/codecs/max9759.c b/sound/soc/codecs/max9759.c
-index ecfb4a80424b..00e9d4fd1651 100644
---- a/sound/soc/codecs/max9759.c
-+++ b/sound/soc/codecs/max9759.c
-@@ -1,4 +1,4 @@
--// SPDX-Licence-Identifier: GPL-2.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * MAX9759 Amplifier Driver
-  *
--- 
-2.17.1
+>> +	}
+>>   
+>> -	return irq_find_mapping(tgi->irq_domain, offset);
+>> +	return irq_find_mapping(domain, offset);
+>>   }
+>>   
+>>   static void tegra_gpio_irq_ack(struct irq_data *d)
+>> @@ -365,7 +381,10 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>>   	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>>   		irq_set_handler_locked(d, handle_edge_irq);
+>>   
+>> -	return 0;
+>> +	if (d->parent_data)
+>> +		return irq_chip_set_type_parent(d, type);
+>> +	else
+>> +		return 0;
+> There's no need for this final else. Just make it a regular "return 0;"
+> at the end of the function, without the extra else branch.
+>
+>>   }
+>>   
+>>   static void tegra_gpio_irq_shutdown(struct irq_data *d)
+>> @@ -503,6 +522,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+>>   	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+>>   	unsigned int gpio = d->hwirq;
+>>   	u32 port, bit, mask;
+>> +	int ret;
+>>   
+>>   	port = GPIO_PORT(gpio);
+>>   	bit = GPIO_BIT(gpio);
+>> @@ -513,7 +533,14 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+>>   	else
+>>   		bank->wake_enb[port] &= ~mask;
+>>   
+>> -	return irq_set_irq_wake(bank->irq, enable);
+>> +	ret = irq_set_irq_wake(bank->irq, enable);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (d->parent_data)
+>> +		return irq_chip_set_wake_parent(d, enable);
+>> +	else
+>> +		return 0;
+> Same here.
+>
+> Thierry
