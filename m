@@ -1,40 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/2] pinctrl: mediatek: mt8183: Add support for wake
- sources
-Date: Sat, 1 Jun 2019 19:41:18 +0200
-Message-ID: <CACRpkdb1cfQts-CshwgoSXDv5JM8=miy4=2FhKpOi-jZL6OTxw@mail.gmail.com>
-References: <20190508073331.27475-1-drinkcat@chromium.org>
+Subject: Re: [PATCH 1/2] gpio: max732x: use i2c_new_dummy_device()
+Date: Sat, 1 Jun 2019 19:44:28 +0200
+Message-ID: <CACRpkdYaeD4=T=uux_tKwJpgKzyRcZnKFW2EwhNPzpkHNe3-QQ@mail.gmail.com>
+References: <20190521090306.28113-1-brgl@bgdev.pl> <CAMRc=MdJoO602kLfP_Hw9-0pB25CeUMxfqBUYhC7CB3Aw+5O4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190508073331.27475-1-drinkcat@chromium.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nicolas Boichat <drinkcat@chromium.org>
-Cc: Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Sean Wang <sean.wang@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMRc=MdJoO602kLfP_Hw9-0pB25CeUMxfqBUYhC7CB3Aw+5O4A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 8, 2019 at 9:33 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-
-> This adds support for wake sources in pinctrl-mtk-common-v2, and
-> pinctrl-mt8183. Without this patch, all interrupts that are left
-> enabled on suspend act as wake sources (and wake sources without
-> interrupt enabled do not).
+On Tue, May 28, 2019 at 5:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> wt., 21 maj 2019 o 11:03 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82=
+(a):
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > We now have a resource managed version of i2c_new_dummy_device() that
+> > also returns an actual error code instead of a NULL-pointer. Use it
+> > in the max732x GPIO driver and simplify code in the process.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
 >
-> Changes since v1:
->  - Move changes from mtk-common-v2 to mtk-pinctrl-paris, as
->    recommended by Sean, to keep better separation between eint
->    and pinctrl-common features.
+> If there are no objections I'll apply it by the end of this week.
 
-Both patches applied with Sean's ACK!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Just include it in some pull request to me!
 
 Yours,
 Linus Walleij
