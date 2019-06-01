@@ -1,92 +1,52 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 51/56] gpio: gpio-omap: add check for off wake capable gpios
-Date: Sat,  1 Jun 2019 09:25:55 -0400
-Message-ID: <20190601132600.27427-51-sashal@kernel.org>
-References: <20190601132600.27427-1-sashal@kernel.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] treewide: fix typos of SPDX-License-Identifier
+Date: Sat, 1 Jun 2019 18:29:45 +0200
+Message-ID: <20190601162945.GA6395@kroah.com>
+References: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190601132600.27427-1-sashal@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Russell King <rmk+kernel@armlinux.org.uk>, Tero Kristo <t-kristo@ti.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Joe Perches <joe@perches.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-stm32@st-md-mailman.stormreply.com, linux-renesas-soc@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+On Sat, Jun 01, 2019 at 12:22:42PM +0900, Masahiro Yamada wrote:
+> Prior to the adoption of SPDX, it was difficult for tools to determine
+> the correct license due to incomplete or badly formatted license text.
+> The SPDX solves this issue, assuming people can correctly spell
+> "SPDX-License-Identifier" although this assumption is broken in some
+> places.
+> 
+> Since scripts/spdxcheck.py parses only lines that exactly matches to
+> the correct tag, it cannot (should not) detect this kind of error.
+> 
+> If the correct tag is missing, scripts/checkpatch.pl warns like this:
+> 
+>  WARNING: Missing or malformed SPDX-License-Identifier tag in line *
+> 
+> So, people should notice it before the patch submission, but in reality
+> broken tags sometimes slip in. The checkpatch warning is not useful for
+> checking the committed files globally since large number of files still
+> have no SPDX tag.
+> 
+> Also, I am not sure about the legal effect when the SPDX tag is broken.
+> 
+> Anyway, these typos are absolutely worth fixing. It is pretty easy to
+> find suspicious lines by grep.
+> 
+>   $ git grep --not -e SPDX-License-Identifier --and -e SPDX- -- \
+>     :^LICENSES :^scripts/spdxcheck.py :^*/license-rules.rst
+>   arch/arm/kernel/bugs.c:// SPDX-Identifier: GPL-2.0
+>   drivers/phy/st/phy-stm32-usbphyc.c:// SPDX-Licence-Identifier: GPL-2.0
+>   drivers/pinctrl/sh-pfc/pfc-r8a77980.c:// SPDX-Lincense-Identifier: GPL 2.0
+>   lib/test_stackinit.c:// SPDX-Licenses: GPLv2
+>   sound/soc/codecs/max9759.c:// SPDX-Licence-Identifier: GPL-2.0
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit da38ef3ed10a09248e13ae16530c2c6d448dc47d ]
+Very nice catch, thanks!  I'll go queue this up now.
 
-We are currently assuming all GPIOs are non-wakeup capable GPIOs as we
-not configuring the bank->non_wakeup_gpios like we used to earlier with
-platform_data.
-
-Let's add omap_gpio_is_off_wakeup_capable() to make the handling clearer
-while considering that later patches may want to configure SoC specific
-bank->non_wakeup_gpios for the GPIOs in wakeup domain.
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Tero Kristo <t-kristo@ti.com>
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-omap.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 9943273ec9818..c8c49b1d5f9f9 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -292,6 +292,22 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
- 	}
- }
- 
-+/*
-+ * Off mode wake-up capable GPIOs in bank(s) that are in the wakeup domain.
-+ * See TRM section for GPIO for "Wake-Up Generation" for the list of GPIOs
-+ * in wakeup domain. If bank->non_wakeup_gpios is not configured, assume none
-+ * are capable waking up the system from off mode.
-+ */
-+static bool omap_gpio_is_off_wakeup_capable(struct gpio_bank *bank, u32 gpio_mask)
-+{
-+	u32 no_wake = bank->non_wakeup_gpios;
-+
-+	if (no_wake)
-+		return !!(~no_wake & gpio_mask);
-+
-+	return false;
-+}
-+
- static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 						unsigned trigger)
- {
-@@ -323,13 +339,7 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 	}
- 
- 	/* This part needs to be executed always for OMAP{34xx, 44xx} */
--	if (!bank->regs->irqctrl) {
--		/* On omap24xx proceed only when valid GPIO bit is set */
--		if (bank->non_wakeup_gpios) {
--			if (!(bank->non_wakeup_gpios & gpio_bit))
--				goto exit;
--		}
--
-+	if (!bank->regs->irqctrl && !omap_gpio_is_off_wakeup_capable(bank, gpio)) {
- 		/*
- 		 * Log the edge gpio and manually trigger the IRQ
- 		 * after resume if the input level changes
-@@ -342,7 +352,6 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 			bank->enabled_non_wakeup_gpios &= ~gpio_bit;
- 	}
- 
--exit:
- 	bank->level_mask =
- 		readl_relaxed(bank->base + bank->regs->leveldetect0) |
- 		readl_relaxed(bank->base + bank->regs->leveldetect1);
--- 
-2.20.1
+greg k-h
