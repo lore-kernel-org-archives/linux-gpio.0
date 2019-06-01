@@ -1,27 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: max732x: use devm_gpiochip_add_data()
-Date: Sat, 1 Jun 2019 19:45:04 +0200
-Message-ID: <CACRpkdYNSgVTLijca53kn6Ve1bje2U0TrVyvLAOU0Z=upv3R4A@mail.gmail.com>
-References: <20190521090306.28113-1-brgl@bgdev.pl> <20190521090306.28113-2-brgl@bgdev.pl>
+Subject: Re: BUG: gpio: pca953x: 24 bit expanders broken since v5.2-rc1
+Date: Sat, 1 Jun 2019 23:57:46 +0200
+Message-ID: <CACRpkdajVu2H-9zX4gAEnHHR8gd=4jseabLGsHB=0CF1BKH-JA@mail.gmail.com>
+References: <F29452FD-AFA4-422B-992C-D348FEEAE0E2@goldelico.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521090306.28113-2-brgl@bgdev.pl>
+In-Reply-To: <F29452FD-AFA4-422B-992C-D348FEEAE0E2@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Nandor Han <nandor.han@vaisala.com>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Tony Lindgren <tony@atomide.com>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 21, 2019 at 11:03 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Fri, May 31, 2019 at 7:06 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Now, this was not a (visible) problem until patch
 >
-> We can simplify the code a bit with a resource managed variant of
-> gpiochip_add_data().
+>         8b9f9d4dc511 regmap: verify if register is writeable before writing operations
 >
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> enforces to check the register number before invoking the
+> callback pca953x_writeable_register(). pca953x_writeable_register()
+> seems to know about REG_ADDR_AI (through reg & REG_ADDR_MASK) and
+> accepts 0x88 as a valid register number.
+>
+> After the regmap patch the register is checked against
+> pca953x_i2c_regmap.max_register before applying REG_ADDR_MASK
+> and 0x88 is obviously beyond, explaining the symptom.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Can we simply bump the .max_register in
+pca953x_i2c_regmap to 0xff for a quick fix with a comment
+FIXME to figure it out the right way?
 
 Yours,
 Linus Walleij
