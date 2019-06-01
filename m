@@ -1,149 +1,114 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V2 04/12] clk: tegra: add support for peripheral clock
- suspend and resume
-Date: Fri, 31 May 2019 12:55:56 -0700
-Message-ID: <abd481db-9387-8e7f-e68e-9f1a3e217b51@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-5-git-send-email-skomatineni@nvidia.com>
- <20190529233049.A7E5924371@mail.kernel.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] treewide: fix typos of SPDX-License-Identifier
+Date: Sat,  1 Jun 2019 12:22:42 +0900
+Message-ID: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190529233049.A7E5924371@mail.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>, jason@lakedaemon.net, jonathanh@nvidia.com, linus.walleij@linaro.org, marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de, thierry.reding@gmail.com
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: alsa-devel@alsa-project.org, Kees Cook <keescook@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-renesas-soc@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>, linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Kishon Vijay Abraham I <kishon@ti.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Alexandre Torgue <alexandre.torgue@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t=1559332560; bh=fyUgksf15TgB7D/+ZMOAO7M7CVG31MW/WSQCDBy4pVQ=;
-	h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-	 User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-	 X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-	 Content-Language;
-	b=iqAjo2NdebEX6IQgtE+dZ1EoyeCEIZAqRf22p21EapkVX0OBJC3q4Gq7gRPrH2fJC
-	 uhLbg6vyTpA7tw+SL/Q6OC76foZllVOZDlC8m02oSU3qttQyJX5rCD59shHR+I4y1U
-	 EO5f5ynsViWBR2kJNtgRO2yTrKQCYOWgX2VSfb1c3OX347L/TSCQDDFU/bocKSDD6L
-	 cjVCbddyiIHj6HtpiRzWKIezGprf40oa5Lsd7heEqGTFe2IPIuIAcrtSjmg455iUvU
-	 qyKwofgEpOyXkvlW1Jy4Xm+1v3hRH1W5bgxWWMWL7BWkGQQDwHLZXwNVTA0iT/JH6L
-	 nz/b3Hyar6Dwg==
+Prior to the adoption of SPDX, it was difficult for tools to determine
+the correct license due to incomplete or badly formatted license text.
+The SPDX solves this issue, assuming people can correctly spell
+"SPDX-License-Identifier" although this assumption is broken in some
+places.
 
-On 5/29/19 4:30 PM, Stephen Boyd wrote:
-> Quoting Sowjanya Komatineni (2019-05-28 16:08:48)
->> This patch implements peripheral clock context save and restore
->> to support system suspend and resume operation.
-> Again, why?
-Will add more in commit in next version of this series.
->> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
->> index 6f2862eddad7..08b788766564 100644
->> --- a/drivers/clk/tegra/clk.c
->> +++ b/drivers/clk/tegra/clk.c
->> @@ -81,6 +81,10 @@ static struct clk **clks;
->>   static int clk_num;
->>   static struct clk_onecell_data clk_data;
->>   
->> +#ifdef CONFIG_PM_SLEEP
->> +static u32 *periph_ctx;
->> +#endif
-> Please move this into the ifdef below.
->
-WIll fix in V3
->> +
->>   /* Handlers for SoC-specific reset lines */
->>   static int (*special_reset_assert)(unsigned long);
->>   static int (*special_reset_deassert)(unsigned long);
->> @@ -210,6 +214,65 @@ const struct tegra_clk_periph_regs *get_reg_bank(int clkid)
->>          }
->>   }
->>   
->> +#ifdef CONFIG_PM_SLEEP
->> +void tegra_clk_periph_suspend(void __iomem *clk_base)
->> +{
->> +       int i, idx;
->> +
->> +       idx = 0;
->> +       for (i = 0; i < periph_banks; i++, idx++)
->> +               periph_ctx[idx] =
->> +                       readl_relaxed(clk_base + periph_regs[i].rst_reg);
->> +
->> +       for (i = 0; i < periph_banks; i++, idx++)
->> +               periph_ctx[idx] =
->> +                       readl_relaxed(clk_base + periph_regs[i].enb_reg);
->> +}
->> +
->> +void tegra_clk_periph_force_on(u32 *clks_on, int count, void __iomem *clk_base)
->> +{
->> +       int i;
->> +
->> +       WARN_ON(count != periph_banks);
->> +
->> +       for (i = 0; i < count; i++)
->> +               writel_relaxed(clks_on[i], clk_base + periph_regs[i].enb_reg);
->> +}
->> +
->> +void tegra_clk_periph_resume(void __iomem *clk_base)
->> +{
->> +       int i, idx;
->> +
->> +       idx = 0;
->> +       for (i = 0; i < periph_banks; i++, idx++)
->> +               writel_relaxed(periph_ctx[idx],
->> +                              clk_base + periph_regs[i].rst_reg);
->> +
->> +       /* ensure all resets have propagated */
->> +       fence_udelay(2, clk_base);
->> +       tegra_read_chipid();
->> +
->> +       for (i = 0; i < periph_banks; i++, idx++)
->> +               writel_relaxed(periph_ctx[idx],
->> +                              clk_base + periph_regs[i].enb_reg);
->> +
->> +       /* ensure all enables have propagated */
->> +       fence_udelay(2, clk_base);
->> +       tegra_read_chipid();
->> +}
->> +
->> +static int tegra_clk_suspend_ctx_init(int banks)
->> +{
->> +       int err = 0;
->> +
->> +       periph_ctx = kzalloc(2 * banks * sizeof(*periph_ctx), GFP_KERNEL);
-> Is this kcalloc(2 * banks, sizeof(*periph_ctx)... ?
-Will fix in V3
->> +       if (!periph_ctx)
->> +               err = -ENOMEM;
->> +
->> +       return err;
->> +}
->> +#endif
->> +
->>   struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
->>   {
->>          clk_base = regs;
->> @@ -226,11 +289,20 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
->>          periph_banks = banks;
->>   
->>          clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
->> -       if (!clks)
->> +       if (!clks) {
->>                  kfree(periph_clk_enb_refcnt);
->> +               return NULL;
->> +       }
->>   
->>          clk_num = num;
->>   
->> +#ifdef CONFIG_PM_SLEEP
-> Can you use if (IS_ENABLED(CONFIG_PM_SLEEP)) here?
-Will fix in V3
->
->> +       if (tegra_clk_suspend_ctx_init(banks)) {
->> +               kfree(periph_clk_enb_refcnt);
->> +               kfree(clks);
->> +               return NULL;
->> +       }
->> +#endif
->>          return clks;
->>   }
->>   
+Since scripts/spdxcheck.py parses only lines that exactly matches to
+the correct tag, it cannot (should not) detect this kind of error.
+
+If the correct tag is missing, scripts/checkpatch.pl warns like this:
+
+ WARNING: Missing or malformed SPDX-License-Identifier tag in line *
+
+So, people should notice it before the patch submission, but in reality
+broken tags sometimes slip in. The checkpatch warning is not useful for
+checking the committed files globally since large number of files still
+have no SPDX tag.
+
+Also, I am not sure about the legal effect when the SPDX tag is broken.
+
+Anyway, these typos are absolutely worth fixing. It is pretty easy to
+find suspicious lines by grep.
+
+  $ git grep --not -e SPDX-License-Identifier --and -e SPDX- -- \
+    :^LICENSES :^scripts/spdxcheck.py :^*/license-rules.rst
+  arch/arm/kernel/bugs.c:// SPDX-Identifier: GPL-2.0
+  drivers/phy/st/phy-stm32-usbphyc.c:// SPDX-Licence-Identifier: GPL-2.0
+  drivers/pinctrl/sh-pfc/pfc-r8a77980.c:// SPDX-Lincense-Identifier: GPL 2.0
+  lib/test_stackinit.c:// SPDX-Licenses: GPLv2
+  sound/soc/codecs/max9759.c:// SPDX-Licence-Identifier: GPL-2.0
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/arm/kernel/bugs.c                | 2 +-
+ drivers/phy/st/phy-stm32-usbphyc.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 2 +-
+ lib/test_stackinit.c                  | 2 +-
+ sound/soc/codecs/max9759.c            | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
+index d41d3598e5e5..14c8dbbb7d2d 100644
+--- a/arch/arm/kernel/bugs.c
++++ b/arch/arm/kernel/bugs.c
+@@ -1,4 +1,4 @@
+-// SPDX-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0
+ #include <linux/init.h>
+ #include <asm/bugs.h>
+ #include <asm/proc-fns.h>
+diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
+index 1255cd1d9a60..56bdea4b0bd9 100644
+--- a/drivers/phy/st/phy-stm32-usbphyc.c
++++ b/drivers/phy/st/phy-stm32-usbphyc.c
+@@ -1,4 +1,4 @@
+-// SPDX-Licence-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * STMicroelectronics STM32 USB PHY Controller driver
+  *
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+index 473da65890a7..9ed4ead2dafb 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+@@ -1,4 +1,4 @@
+-// SPDX-Lincense-Identifier: GPL 2.0
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * R8A77980 processor support - PFC hardware block.
+  *
+diff --git a/lib/test_stackinit.c b/lib/test_stackinit.c
+index 13115b6f2b88..e97dc54b4fdf 100644
+--- a/lib/test_stackinit.c
++++ b/lib/test_stackinit.c
+@@ -1,4 +1,4 @@
+-// SPDX-Licenses: GPLv2
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Test cases for compiler-based stack variable zeroing via future
+  * compiler flags or CONFIG_GCC_PLUGIN_STRUCTLEAK*.
+diff --git a/sound/soc/codecs/max9759.c b/sound/soc/codecs/max9759.c
+index ecfb4a80424b..00e9d4fd1651 100644
+--- a/sound/soc/codecs/max9759.c
++++ b/sound/soc/codecs/max9759.c
+@@ -1,4 +1,4 @@
+-// SPDX-Licence-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * MAX9759 Amplifier Driver
+  *
+-- 
+2.17.1
