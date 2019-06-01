@@ -1,129 +1,92 @@
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V2 10/12] gpio: tegra: implement wake event support for
- Tegra210 and prior GPIO
-Date: Sat, 1 Jun 2019 01:28:44 -0700
-Message-ID: <9f9633e0-5f45-d2ba-9758-d2a85a41ede9@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-11-git-send-email-skomatineni@nvidia.com>
- <20190529140318.GB17679@ulmo>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 51/56] gpio: gpio-omap: add check for off wake capable gpios
+Date: Sat,  1 Jun 2019 09:25:55 -0400
+Message-ID: <20190601132600.27427-51-sashal@kernel.org>
+References: <20190601132600.27427-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190529140318.GB17679@ulmo>
-Content-Language: en-US
+In-Reply-To: <20190601132600.27427-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Keerthy <j-keerthy@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Russell King <rmk+kernel@armlinux.org.uk>, Tero Kristo <t-kristo@ti.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+From: Tony Lindgren <tony@atomide.com>
 
-On 5/29/19 7:03 AM, Thierry Reding wrote:
-> On Tue, May 28, 2019 at 04:08:54PM -0700, Sowjanya Komatineni wrote:
->> The GPIO controller doesn't have any controls to enable the system to
->> wake up from low power states based on activity on GPIO pins. An extra
->> hardware block that is part of the power management controller (PMC)
->> contains these controls. In order for the GPIO controller to be able
->> to cooperate with the PMC, obtain a reference to the PMC's IRQ domain
->> and make it a parent to the GPIO controller's IRQ domain. This way the
->> PMC gets an opportunity to program the additional registers required
->> to enable wakeup sources on suspend.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/gpio/gpio-tegra.c | 116 +++++++++++++++++++++++++++++++++++++++++++---
->>   1 file changed, 110 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
->> index 6d9b6906b9d0..5190129668d3 100644
->> --- a/drivers/gpio/gpio-tegra.c
->> +++ b/drivers/gpio/gpio-tegra.c
->> @@ -32,6 +32,8 @@
->>   #include <linux/pinctrl/consumer.h>
->>   #include <linux/pm.h>
->>   
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->>   #define GPIO_BANK(x)		((x) >> 5)
->>   #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
->>   #define GPIO_BIT(x)		((x) & 0x7)
->> @@ -275,8 +277,22 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
->>   static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->>   {
->>   	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
->> +	struct irq_domain *domain = tgi->irq_domain;
->> +
->> +	if (!gpiochip_irqchip_irq_valid(chip, offset))
->> +		return -ENXIO;
->> +
->> +	if (irq_domain_is_hierarchy(domain)) {
->> +		struct irq_fwspec spec;
->> +
->> +		spec.fwnode = domain->fwnode;
->> +		spec.param_count = 2;
->> +		spec.param[0] = offset;
->> +		spec.param[1] = IRQ_TYPE_NONE;
->> +		return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
-> This looks like it was copied from the equivalent Tegra186 patch. I have
-> since then changed the implementation, based on feedback by Linus, to
-> not call irq_domain_alloc_irqs() here and instead call
-> irq_create_fwspec_mapping(). This has the advantage of not requiring the
-> irq_domain_alloc_irqs() function to be exported. It ends up calling that
-> function internally, but as discussed with Linus it's also a nicer way
-> to create these mappings.
->
-existing gpio-tegra driver maps hwirq to virtual interrupt number using 
-irq_create_mapping during gpio probe
+[ Upstream commit da38ef3ed10a09248e13ae16530c2c6d448dc47d ]
 
-and irq_create_fwspec_mapping() will always return virq number as virq 
-number exists already and irq_domain_alloc_irqs doesn't happen.
+We are currently assuming all GPIOs are non-wakeup capable GPIOs as we
+not configuring the bank->non_wakeup_gpios like we used to earlier with
+platform_data.
 
-So I was using irq_domain_alloc_irqs().
+Let's add omap_gpio_is_off_wakeup_capable() to make the handling clearer
+while considering that later patches may want to configure SoC specific
+bank->non_wakeup_gpios for the GPIOs in wakeup domain.
 
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Tero Kristo <t-kristo@ti.com>
+Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-omap.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
->> +	}
->>   
->> -	return irq_find_mapping(tgi->irq_domain, offset);
->> +	return irq_find_mapping(domain, offset);
->>   }
->>   
->>   static void tegra_gpio_irq_ack(struct irq_data *d)
->> @@ -365,7 +381,10 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->>   	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->>   		irq_set_handler_locked(d, handle_edge_irq);
->>   
->> -	return 0;
->> +	if (d->parent_data)
->> +		return irq_chip_set_type_parent(d, type);
->> +	else
->> +		return 0;
-> There's no need for this final else. Just make it a regular "return 0;"
-> at the end of the function, without the extra else branch.
->
->>   }
->>   
->>   static void tegra_gpio_irq_shutdown(struct irq_data *d)
->> @@ -503,6 +522,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
->>   	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
->>   	unsigned int gpio = d->hwirq;
->>   	u32 port, bit, mask;
->> +	int ret;
->>   
->>   	port = GPIO_PORT(gpio);
->>   	bit = GPIO_BIT(gpio);
->> @@ -513,7 +533,14 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
->>   	else
->>   		bank->wake_enb[port] &= ~mask;
->>   
->> -	return irq_set_irq_wake(bank->irq, enable);
->> +	ret = irq_set_irq_wake(bank->irq, enable);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	if (d->parent_data)
->> +		return irq_chip_set_wake_parent(d, enable);
->> +	else
->> +		return 0;
-> Same here.
->
-> Thierry
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 9943273ec9818..c8c49b1d5f9f9 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -292,6 +292,22 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
+ 	}
+ }
+ 
++/*
++ * Off mode wake-up capable GPIOs in bank(s) that are in the wakeup domain.
++ * See TRM section for GPIO for "Wake-Up Generation" for the list of GPIOs
++ * in wakeup domain. If bank->non_wakeup_gpios is not configured, assume none
++ * are capable waking up the system from off mode.
++ */
++static bool omap_gpio_is_off_wakeup_capable(struct gpio_bank *bank, u32 gpio_mask)
++{
++	u32 no_wake = bank->non_wakeup_gpios;
++
++	if (no_wake)
++		return !!(~no_wake & gpio_mask);
++
++	return false;
++}
++
+ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
+ 						unsigned trigger)
+ {
+@@ -323,13 +339,7 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
+ 	}
+ 
+ 	/* This part needs to be executed always for OMAP{34xx, 44xx} */
+-	if (!bank->regs->irqctrl) {
+-		/* On omap24xx proceed only when valid GPIO bit is set */
+-		if (bank->non_wakeup_gpios) {
+-			if (!(bank->non_wakeup_gpios & gpio_bit))
+-				goto exit;
+-		}
+-
++	if (!bank->regs->irqctrl && !omap_gpio_is_off_wakeup_capable(bank, gpio)) {
+ 		/*
+ 		 * Log the edge gpio and manually trigger the IRQ
+ 		 * after resume if the input level changes
+@@ -342,7 +352,6 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
+ 			bank->enabled_non_wakeup_gpios &= ~gpio_bit;
+ 	}
+ 
+-exit:
+ 	bank->level_mask =
+ 		readl_relaxed(bank->base + bank->regs->leveldetect0) |
+ 		readl_relaxed(bank->base + bank->regs->leveldetect1);
+-- 
+2.20.1
