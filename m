@@ -1,27 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/5] pinctrl: meson: gpio: update with SPDX Licence identifier
-Date: Sat, 1 Jun 2019 19:35:09 +0200
-Message-ID: <CACRpkdZ6PBMPDie4RyuPfzfhs3W5XunZMqa6cG4bg7+kEhUegg@mail.gmail.com>
-References: <20190520144108.3787-1-narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 0/2] pinctrl: mediatek: mt8183: Add support for wake
+ sources
+Date: Sat, 1 Jun 2019 19:41:18 +0200
+Message-ID: <CACRpkdb1cfQts-CshwgoSXDv5JM8=miy4=2FhKpOi-jZL6OTxw@mail.gmail.com>
+References: <20190508073331.27475-1-drinkcat@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190520144108.3787-1-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190508073331.27475-1-drinkcat@chromium.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Chuanjia Liu <Chuanjia.Liu@mediatek.com>, Sean Wang <sean.wang@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Evan Green <evgreen@chromium.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 20, 2019 at 4:41 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Wed, May 8, 2019 at 9:33 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
 
-> Update the SPDX Licence identifier for the Amlogic Pinctrl drivers and
-> the corresponding GPIO dt-bindings headers.
+> This adds support for wake sources in pinctrl-mtk-common-v2, and
+> pinctrl-mt8183. Without this patch, all interrupts that are left
+> enabled on suspend act as wake sources (and wake sources without
+> interrupt enabled do not).
 >
-> Neil Armstrong (5):
+> Changes since v1:
+>  - Move changes from mtk-common-v2 to mtk-pinctrl-paris, as
+>    recommended by Sean, to keep better separation between eint
+>    and pinctrl-common features.
 
-All 5 patches applied, I took a quick look in mainline and it appears those
-files were not hit by the large scripted conversions to SPDX that tglx did
-recently.
+Both patches applied with Sean's ACK!
 
 Yours,
 Linus Walleij
