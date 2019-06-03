@@ -1,73 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Mon, 3 Jun 2019 19:30:19 +0200
-Message-ID: <CACRpkdaiZEqLWYGoVLYTzWEc-hX10kT4bXqx3bUynBDcyStLjw@mail.gmail.com>
-References: <20190529145322.20630-1-thierry.reding@gmail.com>
- <20190529145322.20630-2-thierry.reding@gmail.com> <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
- <20190603075324.GA27753@ulmo> <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
- <20190603121227.GB30132@ulmo>
+From: Hongwei Zhang <hongweiz@ami.com>
+Subject: [PATCH linux dev-5.1 v1] ARM: dts: aspeed: Add SGPM pinmux
+Date: Mon, 3 Jun 2019 18:43:09 -0400
+Message-ID: <1559601789-27121-1-git-send-email-hongweiz@ami.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190603121227.GB30132@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>, Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Hongwei Zhang <hongweiz@ami.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 2:12 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Mon, Jun 03, 2019 at 12:58:02PM +0200, Linus Walleij wrote:
-> > On Mon, Jun 3, 2019 at 9:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > Me
-> >
-> > > > Please drop this. The default .to_irq() should be good for everyone.
-> > > > Also patch 2/2 now contains a identical copy of the gpiolib
-> > > > .to_irq() which I suspect you indended to drop, actually.
-> > >
-> > > It's not actually identical to the gpiolib implementation. There's still
-> > > the conversion to the non-linear DT representation for GPIO specifiers
-> > > from the linear GPIO number space, which is not taken care of by the
-> > > gpiolib variant. That's precisely the point why this patch makes it
-> > > possible to let the driver override things.
-> >
-> > OK something is off here, because the purpose of the irqdomain
-> > is exactly to translate between different number spaces, so it should
-> > not happen in the .to_irq() function at all.
-> >
-> > Irqdomain uses .map() in the old variant and .translate() in the
-> > hierarchical variant to do this, so something is skewed.
-> >
-> > All .to_irq() should ever do is just call the irqdomain to do the
-> > translation, no other logic (unless I am mistaken) so we should
-> > be able to keep the simple .to_irq() logic inside gpiolib.
->
-> Well, that's exactly the problem that I'm trying to solve. The problem
-> is that .translate() translates from the DT number space to the GPIO or
-> IRQ number space. However, since gpiochip_to_irq() now wants to call the
-> irq_create_fwspec_mapping() interface, it must convert from the offset
-> (in GPIO space) into the DT number space, which is what that function
-> expects.
+Add SGPM pinmux to ast2500-pinctrl function and group, to prepare for
+supporting SGPIO in AST2500 SoC.
 
-It sounds a lot like you want to use the irqdomain APIs for
-something they were not made for.
+Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 2 +-
+ arch/arm/boot/dts/aspeed-g5.dtsi                             | 5 +++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-The irqdomain in general remaps from hwirqs to Linux irqs.
-
-The hierarchical irqdomain 1-to-1 remaps hwirqs on interrupt
-controller A to hwirqs on interrupt controller B, then to Linux irqs.
-
-The DT number space is not normally any concern of the
-irqdomain, and is not normally used to shape up that.
-
-But how to do it is another question. Maybe making it
-possible to override .translate() is what we need to do,
-as you say.
-
-That way .translate() can account for weirdness in the DT,
-get the real hwirq out and proceed to translate as usual.
-
-And then in the end the irqdomain .translate() is indeed
-used to fix up weird DTs.... well. Hm this one is strange. :)
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+index 3b7266c..8f1c5c4 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+@@ -84,7 +84,7 @@ NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4 NDTR1 NDTR2 NDTR3 NDTR4 NRI1 NRI2
+ NRI3 NRI4 NRTS1 NRTS2 NRTS3 NRTS4 OSCCLK PEWAKE PNOR PWM0 PWM1 PWM2 PWM3 PWM4
+ PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 RXD1 RXD2 RXD3 RXD4 SALT1 SALT10
+ SALT11 SALT12 SALT13 SALT14 SALT2 SALT3 SALT4 SALT5 SALT6 SALT7 SALT8 SALT9
+-SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO SIOPWREQ
++SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPM SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO SIOPWREQ
+ SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1CS1 SPI1DEBUG SPI1PASSTHRU SPI2CK SPI2CS0
+ SPI2CS1 SPI2MISO SPI2MOSI TIMER3 TIMER4 TIMER5 TIMER6 TIMER7 TIMER8 TXD1 TXD2
+ TXD3 TXD4 UART6 USB11BHID USB2AD USB2AH USB2BD USB2BH USBCKI VGABIOSROM VGAHS
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 383510d..d10c3ea 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -1394,6 +1394,11 @@
+ 		groups = "SDA2";
+ 	};
+ 
++	pinctrl_sgpm_default: sgpm_default {
++		function = "SGPM";
++		groups = "SGPM";
++	};
++
+ 	pinctrl_sgps1_default: sgps1_default {
+ 		function = "SGPS1";
+ 		groups = "SGPS1";
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+index 187abd7..0c89647 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+@@ -577,6 +577,8 @@ SS_PIN_DECL(N3, GPIOJ2, SGPMO);
+ SIG_EXPR_LIST_DECL_SINGLE(SGPMI, SGPM, SIG_DESC_SET(SCU84, 11));
+ SS_PIN_DECL(N4, GPIOJ3, SGPMI);
+ 
++FUNC_GROUP_DECL(SGPM, R2, L2, N3, N4);
++
+ #define N5 76
+ SIG_EXPR_LIST_DECL_SINGLE(VGAHS, VGAHS, SIG_DESC_SET(SCU84, 12));
+ SIG_EXPR_LIST_DECL_SINGLE(DASHN5, DASHN5, SIG_DESC_SET(SCU94, 8));
+@@ -2127,6 +2129,7 @@ static const struct aspeed_pin_group aspeed_g5_groups[] = {
+ 	ASPEED_PINCTRL_GROUP(SD2),
+ 	ASPEED_PINCTRL_GROUP(SDA1),
+ 	ASPEED_PINCTRL_GROUP(SDA2),
++	ASPEED_PINCTRL_GROUP(SGPM),
+ 	ASPEED_PINCTRL_GROUP(SGPS1),
+ 	ASPEED_PINCTRL_GROUP(SGPS2),
+ 	ASPEED_PINCTRL_GROUP(SIOONCTRL),
+@@ -2296,6 +2299,7 @@ static const struct aspeed_pin_function aspeed_g5_functions[] = {
+ 	ASPEED_PINCTRL_FUNC(SD2),
+ 	ASPEED_PINCTRL_FUNC(SDA1),
+ 	ASPEED_PINCTRL_FUNC(SDA2),
++	ASPEED_PINCTRL_FUNC(SGPM),
+ 	ASPEED_PINCTRL_FUNC(SGPS1),
+ 	ASPEED_PINCTRL_FUNC(SGPS2),
+ 	ASPEED_PINCTRL_FUNC(SIOONCTRL),
+-- 
+2.7.4
