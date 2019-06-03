@@ -1,46 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
-Date: Sun, 2 Jun 2019 22:35:22 +0200
-Message-ID: <CACRpkdb6OjHZGgDHXH8gfi0WwzX8170zHJKbpbnSRv+UsZvfhw@mail.gmail.com>
-References: <20190529145322.20630-1-thierry.reding@gmail.com>
- <20190529145322.20630-2-thierry.reding@gmail.com> <CACRpkda_aK++k0eVHmGszgts86usaxbQ9uU0kqAzAjapK8AOQg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] treewide: fix typos of SPDX-License-Identifier
+Date: Mon, 3 Jun 2019 09:07:54 +0200
+Message-ID: <CAMuHMdXXbEr=oU0amKLbEkTm3cZ=jyQuk1-aZa5L4JL_dUmYMw@mail.gmail.com>
+References: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda_aK++k0eVHmGszgts86usaxbQ9uU0kqAzAjapK8AOQg@mail.gmail.com>
+In-Reply-To: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, Kees Cook <keescook@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joe Perches <joe@perches.com>, linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Kishon Vijay Abraham I <kishon@ti.com>, linux-stm32@
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jun 2, 2019 at 3:51 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 29, 2019 at 4:53 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+Hi Yamada-san,
+
+On Sat, Jun 1, 2019 at 5:24 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Prior to the adoption of SPDX, it was difficult for tools to determine
+> the correct license due to incomplete or badly formatted license text.
+> The SPDX solves this issue, assuming people can correctly spell
+> "SPDX-License-Identifier" although this assumption is broken in some
+> places.
 >
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Hierarchical IRQ domains can be used to stack different IRQ controllers
-> > on top of each other. One specific use-case where this can be useful is
-> > if a power management controller has top-level controls for wakeup
-> > interrupts. In such cases, the power management controller can be a
-> > parent to other interrupt controllers and program additional registers
-> > when an IRQ has its wake capability enabled or disabled.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v3:
-> > - use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
-> > - add missing kerneldoc for new parent_domain field
-> > - keep IRQ_DOMAIN dependency for clarity
+> Since scripts/spdxcheck.py parses only lines that exactly matches to
+> the correct tag, it cannot (should not) detect this kind of error.
 >
-> Actually I applied the patch, and dropped the two lines making
-> it possible to override .to_irq() for now, so I can illustrate my
-> idea on top. If I manage.
+> If the correct tag is missing, scripts/checkpatch.pl warns like this:
+>
+>  WARNING: Missing or malformed SPDX-License-Identifier tag in line *
+>
+> So, people should notice it before the patch submission, but in reality
+> broken tags sometimes slip in. The checkpatch warning is not useful for
+> checking the committed files globally since large number of files still
+> have no SPDX tag.
+>
+> Also, I am not sure about the legal effect when the SPDX tag is broken.
+>
+> Anyway, these typos are absolutely worth fixing. It is pretty easy to
+> find suspicious lines by grep.
+>
+>   $ git grep --not -e SPDX-License-Identifier --and -e SPDX- -- \
+>     :^LICENSES :^scripts/spdxcheck.py :^*/license-rules.rst
+>   arch/arm/kernel/bugs.c:// SPDX-Identifier: GPL-2.0
+>   drivers/phy/st/phy-stm32-usbphyc.c:// SPDX-Licence-Identifier: GPL-2.0
+>   drivers/pinctrl/sh-pfc/pfc-r8a77980.c:// SPDX-Lincense-Identifier: GPL 2.0
+>   lib/test_stackinit.c:// SPDX-Licenses: GPLv2
+>   sound/soc/codecs/max9759.c:// SPDX-Licence-Identifier: GPL-2.0
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Bah I rewrote the whole think as I want it, maybe my ideas are stupid
-but take a look at it, also very interested in input from the irqchip
-maintainers.
+Thanks for your patch!
 
-Sending it out as RFC in a moment.
+>  drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 2 +-
 
-Yours,
-Linus Walleij
+For the sh-pfc change:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
