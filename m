@@ -1,68 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 22/22] docs: fix broken documentation links
-Date: Mon, 3 Jun 2019 16:41:17 +0100
-Message-ID: <20190603154117.GW2456@sirena.org.uk>
-References: <cover.1559171394.git.mchehab+samsung@kernel.org>
-	<f9fecacbe4ce0b2b3aed38d71ae3753f2daf3ce3.1559171394.git.mchehab+samsung@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
+Date: Mon, 3 Jun 2019 19:30:19 +0200
+Message-ID: <CACRpkdaiZEqLWYGoVLYTzWEc-hX10kT4bXqx3bUynBDcyStLjw@mail.gmail.com>
+References: <20190529145322.20630-1-thierry.reding@gmail.com>
+ <20190529145322.20630-2-thierry.reding@gmail.com> <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+ <20190603075324.GA27753@ulmo> <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
+ <20190603121227.GB30132@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8239485151609244520=="
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-In-Reply-To: <f9fecacbe4ce0b2b3aed38d71ae3753f2daf3ce3.1559171394.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andy Lutomirski <luto@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Pavel Tatashin <pasha.tatashin@oracle.com>, Paul Mackerras <paulus@samba.org>, Alessia Mantegazza <amantegazza@vaga.pv.it>, Jakub Wilk <jwilk@jwilk.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Paul E. McKenney" <paulmck@linux.ibm.com>, Kevin Hilman <khilman@baylibre.com>, James Morris <jmorris@namei.org>, linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, xen-devel@lists.xenproject.org, Alexander Popov <alex.popov@linux.com>, Qian Cai <cai@lca.pw>, Al Viro <viro@zeniv.linux.org.uk>, Thomas Preston <thomas.preston@codethink.co.uk>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190603121227.GB30132@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lina Iyer <ilina@codeaurora.org>, Jon Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Bitan Biswas <bbiswas@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon, Jun 3, 2019 at 2:12 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Mon, Jun 03, 2019 at 12:58:02PM +0200, Linus Walleij wrote:
+> > On Mon, Jun 3, 2019 at 9:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+> > > Me
+> >
+> > > > Please drop this. The default .to_irq() should be good for everyone.
+> > > > Also patch 2/2 now contains a identical copy of the gpiolib
+> > > > .to_irq() which I suspect you indended to drop, actually.
+> > >
+> > > It's not actually identical to the gpiolib implementation. There's still
+> > > the conversion to the non-linear DT representation for GPIO specifiers
+> > > from the linear GPIO number space, which is not taken care of by the
+> > > gpiolib variant. That's precisely the point why this patch makes it
+> > > possible to let the driver override things.
+> >
+> > OK something is off here, because the purpose of the irqdomain
+> > is exactly to translate between different number spaces, so it should
+> > not happen in the .to_irq() function at all.
+> >
+> > Irqdomain uses .map() in the old variant and .translate() in the
+> > hierarchical variant to do this, so something is skewed.
+> >
+> > All .to_irq() should ever do is just call the irqdomain to do the
+> > translation, no other logic (unless I am mistaken) so we should
+> > be able to keep the simple .to_irq() logic inside gpiolib.
+>
+> Well, that's exactly the problem that I'm trying to solve. The problem
+> is that .translate() translates from the DT number space to the GPIO or
+> IRQ number space. However, since gpiochip_to_irq() now wants to call the
+> irq_create_fwspec_mapping() interface, it must convert from the offset
+> (in GPIO space) into the DT number space, which is what that function
+> expects.
 
---===============8239485151609244520==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ULJ2Z7kCM1hyNsWd"
-Content-Disposition: inline
+It sounds a lot like you want to use the irqdomain APIs for
+something they were not made for.
 
+The irqdomain in general remaps from hwirqs to Linux irqs.
 
---ULJ2Z7kCM1hyNsWd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The hierarchical irqdomain 1-to-1 remaps hwirqs on interrupt
+controller A to hwirqs on interrupt controller B, then to Linux irqs.
 
-On Wed, May 29, 2019 at 08:23:53PM -0300, Mauro Carvalho Chehab wrote:
-> Mostly due to x86 and acpi conversion, several documentation
-> links are still pointing to the old file. Fix them.
+The DT number space is not normally any concern of the
+irqdomain, and is not normally used to shape up that.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+But how to do it is another question. Maybe making it
+possible to override .translate() is what we need to do,
+as you say.
 
---ULJ2Z7kCM1hyNsWd
-Content-Type: application/pgp-signature; name="signature.asc"
+That way .translate() can account for weirdness in the DT,
+get the real hwirq out and proceed to translate as usual.
 
------BEGIN PGP SIGNATURE-----
+And then in the end the irqdomain .translate() is indeed
+used to fix up weird DTs.... well. Hm this one is strange. :)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz1P5wACgkQJNaLcl1U
-h9CgCQf+J9k75rt3mgSxGm21PStcBWah+jHorcSB3vAFo/VgwBXCI7/qQymUKkNd
-rUN0absPBGdyjsU+iDp0RrGijvdavWuigfic8bEJ/z2tbzj1I3+XRrah0tiPgdrF
-6/uFF/xfdYflsvBqmmu+/uXwwvzWtE/DITZ/m7fXcUjk8uahw4sWCAiyoPAqgUCL
-otIcJ8/L/0bQ2oiDiLTBqWp/NcOepodvjV5BcRyh49dwR0RDdBVxfdjyVboI9WQN
-YK9ZiCa/QaQRl0S5ce7bPH/c4U+mujmla7rE8icfqRDhtsMuXa+JvQMCPEIfnzxe
-kGqmVHCLVcqZZ5sJZOMLQSVlIsbckw==
-=aP8U
------END PGP SIGNATURE-----
-
---ULJ2Z7kCM1hyNsWd--
-
---===============8239485151609244520==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Virtualization mailing list
-Virtualization@lists.linux-foundation.org
-https://lists.linuxfoundation.org/mailman/listinfo/virtualization
---===============8239485151609244520==--
+Yours,
+Linus Walleij
