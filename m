@@ -1,65 +1,32 @@
-From: Hongwei Zhang <hongweiz@ami.com>
-Subject: [PATCH 1/3 linux dev-5.1 v2] ARM: dts: aspeed: Add SGPM pinmux
-Date: Tue, 4 Jun 2019 17:53:32 -0400
-Message-ID: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH 0/3] (Qualcomm) UFS device reset support
+Date: Tue, 4 Jun 2019 15:00:27 -0700
+Message-ID: <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190604072001.9288-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>, Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Hongwei Zhang <hongweiz@ami.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add SGPM pinmux to ast2500-pinctrl function and group, to prepare for
-supporting SGPIO in AST2500 SoC.
+On Tue, Jun 4, 2019 at 12:22 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> This series exposes the ufs_reset line as a gpio, adds support for ufshcd to
+> acquire and toggle this and then adds this to SDM845 MTP.
+>
+> Bjorn Andersson (3):
+>   pinctrl: qcom: sdm845: Expose ufs_reset as gpio
+>   scsi: ufs: Allow resetting the UFS device
+>   arm64: dts: qcom: sdm845-mtp: Specify UFS device-reset GPIO
 
-Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
----
- Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 2 +-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Adding similar change as in sdm845-mtp to the not yet upstream
+blueline dts, I validated this allows my micron UFS pixel3 to boot.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-index 3b7266c..8f1c5c4 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-@@ -84,7 +84,7 @@ NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4 NDTR1 NDTR2 NDTR3 NDTR4 NRI1 NRI2
- NRI3 NRI4 NRTS1 NRTS2 NRTS3 NRTS4 OSCCLK PEWAKE PNOR PWM0 PWM1 PWM2 PWM3 PWM4
- PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 RXD1 RXD2 RXD3 RXD4 SALT1 SALT10
- SALT11 SALT12 SALT13 SALT14 SALT2 SALT3 SALT4 SALT5 SALT6 SALT7 SALT8 SALT9
--SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO SIOPWREQ
-+SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPM SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO SIOPWREQ
- SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1CS1 SPI1DEBUG SPI1PASSTHRU SPI2CK SPI2CS0
- SPI2CS1 SPI2MISO SPI2MOSI TIMER3 TIMER4 TIMER5 TIMER6 TIMER7 TIMER8 TXD1 TXD2
- TXD3 TXD4 UART6 USB11BHID USB2AD USB2AH USB2BD USB2BH USBCKI VGABIOSROM VGAHS
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 187abd7..0c89647 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -577,6 +577,8 @@ SS_PIN_DECL(N3, GPIOJ2, SGPMO);
- SIG_EXPR_LIST_DECL_SINGLE(SGPMI, SGPM, SIG_DESC_SET(SCU84, 11));
- SS_PIN_DECL(N4, GPIOJ3, SGPMI);
- 
-+FUNC_GROUP_DECL(SGPM, R2, L2, N3, N4);
-+
- #define N5 76
- SIG_EXPR_LIST_DECL_SINGLE(VGAHS, VGAHS, SIG_DESC_SET(SCU84, 12));
- SIG_EXPR_LIST_DECL_SINGLE(DASHN5, DASHN5, SIG_DESC_SET(SCU94, 8));
-@@ -2127,6 +2129,7 @@ static const struct aspeed_pin_group aspeed_g5_groups[] = {
- 	ASPEED_PINCTRL_GROUP(SD2),
- 	ASPEED_PINCTRL_GROUP(SDA1),
- 	ASPEED_PINCTRL_GROUP(SDA2),
-+	ASPEED_PINCTRL_GROUP(SGPM),
- 	ASPEED_PINCTRL_GROUP(SGPS1),
- 	ASPEED_PINCTRL_GROUP(SGPS2),
- 	ASPEED_PINCTRL_GROUP(SIOONCTRL),
-@@ -2296,6 +2299,7 @@ static const struct aspeed_pin_function aspeed_g5_functions[] = {
- 	ASPEED_PINCTRL_FUNC(SD2),
- 	ASPEED_PINCTRL_FUNC(SDA1),
- 	ASPEED_PINCTRL_FUNC(SDA2),
-+	ASPEED_PINCTRL_FUNC(SGPM),
- 	ASPEED_PINCTRL_FUNC(SGPS1),
- 	ASPEED_PINCTRL_FUNC(SGPS2),
- 	ASPEED_PINCTRL_FUNC(SIOONCTRL),
--- 
-2.7.4
+Tested-by: John Stultz <john.stultz@linaro.org>
+
+thanks
+-john
