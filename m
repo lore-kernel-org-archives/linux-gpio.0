@@ -1,58 +1,56 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] gpio: pca953x: hack to fix 24 bit gpio expanders
-Date: Tue,  4 Jun 2019 14:35:58 +0200
-Message-ID: <9bb9ca6102e795dc2495d92b7b661779509adebc.1559651758.git.hns@goldelico.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH V2 06/12] clk: tegra: add suspend resume support for DFLL
+ clock
+Date: Tue, 4 Jun 2019 15:41:20 +0300
+Message-ID: <20190604124120.GD29894@pdeschrijver-desktop.Nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com, pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-24 bit expanders use REG_ADDR_AI in combination with register addressing. This
-conflicts with regmap which takes this bit as part of the register number,
-i.e. a second cache entry is defined for accessed with REG_ADDR_AI being
-set although on the chip it is the same register as with REG_ADDR_AI being
-cleared.
+On Tue, May 28, 2019 at 04:08:50PM -0700, Sowjanya Komatineni wrote:
+> This patch adds support for suspend and resume for DFLL clock.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 82 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-dfll.h |  2 ++
+>  2 files changed, 84 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 1fc71baae13b..d92a5a05fbbc 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -286,6 +286,7 @@ struct tegra_dfll {
+>  	unsigned long			dvco_rate_min;
+>  
+>  	enum dfll_ctrl_mode		mode;
+> +	enum dfll_ctrl_mode		resume_mode;
+>  	enum dfll_tune_range		tune_range;
+>  	struct dentry			*debugfs_dir;
+>  	struct clk_hw			dfll_clk_hw;
+> @@ -1873,6 +1874,87 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
+>  }
+>  
+>  /*
+> + * tegra_dfll_suspend
+> + * @pdev: DFLL instance
+> + *
+> + * dfll controls clock/voltage to other devices, including CPU. Therefore,
+> + * dfll driver pm suspend callback does not stop cl-dvfs operations. It is
+> + * only used to enforce cold voltage limit, since SoC may cool down during
+> + * suspend without waking up. The correct temperature zone after suspend will
+> + * be updated via dfll cooling device interface during resume of temperature
+> + * sensor.
 
-The problem was introduced by
+Temperature dependent cl-dvfs is not yet implemented in upstream, so
+leave out the part about cold voltage limits and temperature zones.
 
-	commit b32cecb46bdc ("gpio: pca953x: Extract the register address mangling to single function")
-
-but only became visible by
-
-	commit 8b9f9d4dc511 ("regmap: verify if register is writeable before writing operations")
-
-because before, the regmap size was effectively ignored and
-pca953x_writeable_register() did know to ignore REG_ADDR_AI. Still, there
-were two separate cache entries created.
-
-Since the use of REG_ADDR_AI seems to be static we can work around this
-issue by simply increasing the size of the regmap to cover the "virtual"
-registers with REG_ADDR_AI being set. This only means that half of the
-regmap buffer will be unused.
-
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index b7ef33f63392..2b27d18410aa 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -308,7 +308,8 @@ static const struct regmap_config pca953x_i2c_regmap = {
- 	.volatile_reg = pca953x_volatile_register,
- 
- 	.cache_type = REGCACHE_RBTREE,
--	.max_register = 0x7f,
-+	/* REVISIT: should be 0x7f but some 24 bit chips use REG_ADDR_AI */
-+	.max_register = 0xff,
- };
- 
- static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
--- 
-2.19.1
+Peter.
