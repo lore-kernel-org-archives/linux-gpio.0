@@ -1,839 +1,123 @@
-From: Bhupesh Sharma <bhsharma@redhat.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Subject: Re: [PATCH 22/22] docs: fix broken documentation links
-Date: Tue, 4 Jun 2019 11:42:47 +0530
-Message-ID: <CACi5LpMf1DqrKgUmbr528Qgxsc2z=YPu3925scte-J9unrd72w@mail.gmail.com>
+Date: Tue, 4 Jun 2019 06:46:14 -0300
+Message-ID: <20190604064614.67cde821@coco.lan>
 References: <cover.1559171394.git.mchehab+samsung@kernel.org>
- <f9fecacbe4ce0b2b3aed38d71ae3753f2daf3ce3.1559171394.git.mchehab+samsung@kernel.org>
+	<f9fecacbe4ce0b2b3aed38d71ae3753f2daf3ce3.1559171394.git.mchehab+samsung@kernel.org>
+	<64e136de-1a7b-3436-9675-44ea9fa7b64a@c-s.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <f9fecacbe4ce0b2b3aed38d71ae3753f2daf3ce3.1559171394.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andy Lutomirski <luto@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Pavel Tatashin <pasha.tatashin@oracle.com>, Paul Mackerras <paulus@samba.org>, Alessia Mantegazza <amantegazza@vaga.pv.it>, Jakub Wilk <jwilk@jwilk.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "Paul E. McKenney" <paulmck@linux.ibm.com>, Kevin Hilman <khilman@baylibre.com>, James Morris <jmorris@namei.org>, linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, xen-devel@lists.xenproject.org, Alexander Popov <alex.popov@linux.com>, Qian Cai <cai@lca.pw>, Al Viro <viro@zeniv.linux.org.uk>, Thomas Preston <thomas.preston@codethink.co.uk>, Thomas Gleixner <tglx@linutronix.de>, Kairui Song <kasong@redhat.com>, Ding Xiang <dingxiang@cmss.chinamobi>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <64e136de-1a7b-3436-9675-44ea9fa7b64a@c-s.fr>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Andrew Lunn <andrew@lunn.ch>, Thomas Preston <thomas.preston@codethink.co.uk>, Wolfram Sang <wsa@the-dreams.de>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, Paul Mackerras <paulus@samba.org>, Alessia Mantegazza <amantegazza@vaga.pv.it>, Jakub Wilk <jwilk@jwilk.net>, AKASHI Takahiro <takahiro.akashi@linaro.org>, Kevin Hilman <khilman@baylibre.com>, James Morris <jmorris@namei.org>, linux-acpi@vger.kernel.org, Andy Gross <agross@kernel.org>, xen-devel@lists.xenproject.org, Alexander Popov <alex.popov@linux.com>, Qian Cai <cai@lca.pw>, Al Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Kairui Song <kasong@redhat.com>, Quentin Perret <quentin.perret@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.or>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/30/2019 04:53 AM, Mauro Carvalho Chehab wrote:
-> Mostly due to x86 and acpi conversion, several documentation
-> links are still pointing to the old file. Fix them.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->   Documentation/acpi/dsd/leds.txt                  |  2 +-
->   Documentation/admin-guide/kernel-parameters.rst  |  6 +++---
->   Documentation/admin-guide/kernel-parameters.txt  | 16 ++++++++--------
->   Documentation/admin-guide/ras.rst                |  2 +-
->   .../devicetree/bindings/net/fsl-enetc.txt        |  7 +++----
->   .../bindings/pci/amlogic,meson-pcie.txt          |  2 +-
->   .../bindings/regulator/qcom,rpmh-regulator.txt   |  2 +-
->   Documentation/devicetree/booting-without-of.txt  |  2 +-
->   Documentation/driver-api/gpio/board.rst          |  2 +-
->   Documentation/driver-api/gpio/consumer.rst       |  2 +-
->   .../firmware-guide/acpi/enumeration.rst          |  2 +-
->   .../firmware-guide/acpi/method-tracing.rst       |  2 +-
->   Documentation/i2c/instantiating-devices          |  2 +-
->   Documentation/sysctl/kernel.txt                  |  4 ++--
->   .../translations/it_IT/process/howto.rst         |  2 +-
->   .../it_IT/process/stable-kernel-rules.rst        |  4 ++--
->   .../translations/zh_CN/process/4.Coding.rst      |  2 +-
->   Documentation/x86/x86_64/5level-paging.rst       |  2 +-
->   Documentation/x86/x86_64/boot-options.rst        |  4 ++--
->   .../x86/x86_64/fake-numa-for-cpusets.rst         |  2 +-
->   MAINTAINERS                                      |  6 +++---
->   arch/arm/Kconfig                                 |  2 +-
->   arch/arm64/kernel/kexec_image.c                  |  2 +-
->   arch/powerpc/Kconfig                             |  2 +-
->   arch/x86/Kconfig                                 | 16 ++++++++--------
->   arch/x86/Kconfig.debug                           |  2 +-
->   arch/x86/boot/header.S                           |  2 +-
->   arch/x86/entry/entry_64.S                        |  2 +-
->   arch/x86/include/asm/bootparam_utils.h           |  2 +-
->   arch/x86/include/asm/page_64_types.h             |  2 +-
->   arch/x86/include/asm/pgtable_64_types.h          |  2 +-
->   arch/x86/kernel/cpu/microcode/amd.c              |  2 +-
->   arch/x86/kernel/kexec-bzimage64.c                |  2 +-
->   arch/x86/kernel/pci-dma.c                        |  2 +-
->   arch/x86/mm/tlb.c                                |  2 +-
->   arch/x86/platform/pvh/enlighten.c                |  2 +-
->   drivers/acpi/Kconfig                             | 10 +++++-----
->   drivers/net/ethernet/faraday/ftgmac100.c         |  2 +-
->   .../fieldbus/Documentation/fieldbus_dev.txt      |  4 ++--
->   drivers/vhost/vhost.c                            |  2 +-
->   include/acpi/acpi_drivers.h                      |  2 +-
->   include/linux/fs_context.h                       |  2 +-
->   include/linux/lsm_hooks.h                        |  2 +-
->   mm/Kconfig                                       |  2 +-
->   security/Kconfig                                 |  2 +-
->   tools/include/linux/err.h                        |  2 +-
->   tools/objtool/Documentation/stack-validation.txt |  4 ++--
->   tools/testing/selftests/x86/protection_keys.c    |  2 +-
->   48 files changed, 77 insertions(+), 78 deletions(-)
->
-> diff --git a/Documentation/acpi/dsd/leds.txt b/Documentation/acpi/dsd/led=
-s.txt
-> index 81a63af42ed2..cc58b1a574c5 100644
-> --- a/Documentation/acpi/dsd/leds.txt
-> +++ b/Documentation/acpi/dsd/leds.txt
-> @@ -96,4 +96,4 @@ where
->       <URL:http://www.uefi.org/sites/default/files/resources/_DSD-hierarc=
-hical-data-extension-UUID-v1.1.pdf>,
->       referenced 2019-02-21.
->
-> -[7] Documentation/acpi/dsd/data-node-reference.txt
-> +[7] Documentation/firmware-guide/acpi/dsd/data-node-references.rst
-> diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentat=
-ion/admin-guide/kernel-parameters.rst
-> index 0124980dca2d..8d3273e32eb1 100644
-> --- a/Documentation/admin-guide/kernel-parameters.rst
-> +++ b/Documentation/admin-guide/kernel-parameters.rst
-> @@ -167,7 +167,7 @@ parameter is applicable::
->       X86-32  X86-32, aka i386 architecture is enabled.
->       X86-64  X86-64 architecture is enabled.
->                       More X86-64 boot options can be found in
-> -                     Documentation/x86/x86_64/boot-options.txt .
-> +                     Documentation/x86/x86_64/boot-options.rst.
->       X86     Either 32-bit or 64-bit x86 (same as X86-32+X86-64)
->       X86_UV  SGI UV support is enabled.
->       XEN     Xen support is enabled
-> @@ -181,10 +181,10 @@ In addition, the following text indicates that the =
-option::
->   Parameters denoted with BOOT are actually interpreted by the boot
->   loader, and have no meaning to the kernel directly.
->   Do not modify the syntax of boot loader parameters without extreme
-> -need or coordination with <Documentation/x86/boot.txt>.
-> +need or coordination with <Documentation/x86/boot.rst>.
->
->   There are also arch-specific kernel-parameters not documented here.
-> -See for example <Documentation/x86/x86_64/boot-options.txt>.
-> +See for example <Documentation/x86/x86_64/boot-options.rst>.
->
->   Note that ALL kernel parameters listed below are CASE SENSITIVE, and th=
-at
->   a trailing =3D on the name of any parameter states that that parameter =
-will
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index 138f6664b2e2..4a02d1346635 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -53,7 +53,7 @@
->                       ACPI_DEBUG_PRINT statements, e.g.,
->                           ACPI_DEBUG_PRINT((ACPI_DB_INFO, ...
->                       The debug_level mask defaults to "info".  See
-> -                     Documentation/acpi/debug.txt for more information a=
-bout
-> +                     Documentation/firmware-guide/acpi/debug.rst for mor=
-e information about
->                       debug layers and levels.
->
->                       Enable processor driver info messages:
-> @@ -963,7 +963,7 @@
->                       for details.
->
->       nompx           [X86] Disables Intel Memory Protection Extensions.
-> -                     See Documentation/x86/intel_mpx.txt for more
-> +                     See Documentation/x86/intel_mpx.rst for more
->                       information about the feature.
->
->       nopku           [X86] Disable Memory Protection Keys CPU feature fo=
-und
-> @@ -1189,7 +1189,7 @@
->                       that is to be dynamically loaded by Linux. If there=
- are
->                       multiple variables with the same name but with diff=
-erent
->                       vendor GUIDs, all of them will be loaded. See
-> -                     Documentation/acpi/ssdt-overlays.txt for details.
-> +                     Documentation/admin-guide/acpi/ssdt-overlays.rst fo=
-r details.
->
->
->       eisa_irq_edge=3D  [PARISC,HW]
-> @@ -2383,7 +2383,7 @@
->
->       mce             [X86-32] Machine Check Exception
->
-> -     mce=3Doption      [X86-64] See Documentation/x86/x86_64/boot-option=
-s.txt
-> +     mce=3Doption      [X86-64] See Documentation/x86/x86_64/boot-option=
-s.rst
->
->       md=3D             [HW] RAID subsystems devices and level
->                       See Documentation/admin-guide/md.rst.
-> @@ -2439,7 +2439,7 @@
->                       set according to the
->                       CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE kernel config
->                       option.
-> -                     See Documentation/memory-hotplug.txt.
-> +                     See Documentation/admin-guide/mm/memory-hotplug.rst=
-.
->
->       memmap=3Dexactmap [KNL,X86] Enable setting of an exact
->                       E820 memory map, as specified by the user.
-> @@ -2528,7 +2528,7 @@
->                       mem_encrypt=3Don:         Activate SME
->                       mem_encrypt=3Doff:        Do not activate SME
->
-> -                     Refer to Documentation/x86/amd-memory-encryption.tx=
-t
-> +                     Refer to Documentation/virtual/kvm/amd-memory-encry=
-ption.rst
->                       for details on when memory encryption can be activa=
-ted.
->
->       mem_sleep_default=3D      [SUSPEND] Default system suspend mode:
-> @@ -3528,7 +3528,7 @@
->                       See Documentation/blockdev/paride.txt.
->
->       pirq=3D           [SMP,APIC] Manual mp-table setup
-> -                     See Documentation/x86/i386/IO-APIC.txt.
-> +                     See Documentation/x86/i386/IO-APIC.rst.
->
->       plip=3D           [PPT,NET] Parallel port network link
->                       Format: { parport<nr> | timid | 0 }
-> @@ -5054,7 +5054,7 @@
->                       Can be used multiple times for multiple devices.
->
->       vga=3D            [BOOT,X86-32] Select a particular video mode
-> -                     See Documentation/x86/boot.txt and
-> +                     See Documentation/x86/boot.rst and
->                       Documentation/svga.txt.
->                       Use vga=3Dask for menu.
->                       This is actually a boot loader parameter; the value=
- is
-> diff --git a/Documentation/admin-guide/ras.rst b/Documentation/admin-guid=
-e/ras.rst
-> index c7495e42e6f4..2b20f5f7380d 100644
-> --- a/Documentation/admin-guide/ras.rst
-> +++ b/Documentation/admin-guide/ras.rst
-> @@ -199,7 +199,7 @@ Architecture (MCA)\ [#f3]_.
->     mode).
->
->   .. [#f3] For more details about the Machine Check Architecture (MCA),
-> -  please read Documentation/x86/x86_64/machinecheck at the Kernel tree.
-> +  please read Documentation/x86/x86_64/machinecheck.rst at the Kernel tr=
-ee.
->
->   EDAC - Error Detection And Correction
->   *************************************
-> diff --git a/Documentation/devicetree/bindings/net/fsl-enetc.txt b/Docume=
-ntation/devicetree/bindings/net/fsl-enetc.txt
-> index c812e25ae90f..25fc687419db 100644
-> --- a/Documentation/devicetree/bindings/net/fsl-enetc.txt
-> +++ b/Documentation/devicetree/bindings/net/fsl-enetc.txt
-> @@ -16,8 +16,8 @@ Required properties:
->   In this case, the ENETC node should include a "mdio" sub-node
->   that in turn should contain the "ethernet-phy" node describing the
->   external phy.  Below properties are required, their bindings
-> -already defined in ethernet.txt or phy.txt, under
-> -Documentation/devicetree/bindings/net/*.
-> +already defined in Documentation/devicetree/bindings/net/ethernet.txt or
-> +Documentation/devicetree/bindings/net/phy.txt.
->
->   Required:
->
-> @@ -51,8 +51,7 @@ Example:
->   connection:
->
->   In this case, the ENETC port node defines a fixed link connection,
-> -as specified by "fixed-link.txt", under
-> -Documentation/devicetree/bindings/net/*.
-> +as specified by Documentation/devicetree/bindings/net/fixed-link.txt.
->
->   Required:
->
-> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt=
- b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> index 12b18f82d441..efa2c8b9b85a 100644
-> --- a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> @@ -3,7 +3,7 @@ Amlogic Meson AXG DWC PCIE SoC controller
->   Amlogic Meson PCIe host controller is based on the Synopsys DesignWare =
-PCI core.
->   It shares common functions with the PCIe DesignWare core driver and
->   inherits common properties defined in
-> -Documentation/devicetree/bindings/pci/designware-pci.txt.
-> +Documentation/devicetree/bindings/pci/designware-pcie.txt.
->
->   Additional properties are described here:
->
-> diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regula=
-tor.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.t=
-xt
-> index 7ef2dbe48e8a..14d2eee96b3d 100644
-> --- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-> @@ -97,7 +97,7 @@ Second Level Nodes - Regulators
->                   sent for this regulator including those which are for a
->                   strictly lower power state.
->
-> -Other properties defined in Documentation/devicetree/bindings/regulator.=
-txt
-> +Other properties defined in Documentation/devicetree/bindings/regulator/=
-regulator.txt
->   may also be used.  regulator-initial-mode and regulator-allowed-modes m=
-ay be
->   specified for VRM regulators using mode values from
->   include/dt-bindings/regulator/qcom,rpmh-regulator.h.  regulator-allow-b=
-ypass
-> diff --git a/Documentation/devicetree/booting-without-of.txt b/Documentat=
-ion/devicetree/booting-without-of.txt
-> index e86bd2f64117..60f8640f2b2f 100644
-> --- a/Documentation/devicetree/booting-without-of.txt
-> +++ b/Documentation/devicetree/booting-without-of.txt
-> @@ -277,7 +277,7 @@ it with special cases.
->     the decompressor (the real mode entry point goes to the same  32bit
->     entry point once it switched into protected mode). That entry point
->     supports one calling convention which is documented in
-> -  Documentation/x86/boot.txt
-> +  Documentation/x86/boot.rst
->     The physical pointer to the device-tree block (defined in chapter II)
->     is passed via setup_data which requires at least boot protocol 2.09.
->     The type filed is defined as
-> diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driv=
-er-api/gpio/board.rst
-> index b37f3f7b8926..ce91518bf9f4 100644
-> --- a/Documentation/driver-api/gpio/board.rst
-> +++ b/Documentation/driver-api/gpio/board.rst
-> @@ -101,7 +101,7 @@ with the help of _DSD (Device Specific Data), introdu=
-ced in ACPI 5.1::
->       }
->
->   For more information about the ACPI GPIO bindings see
-> -Documentation/acpi/gpio-properties.txt.
-> +Documentation/firmware-guide/acpi/gpio-properties.rst.
->
->   Platform Data
->   -------------
-> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/d=
-river-api/gpio/consumer.rst
-> index 5e4d8aa68913..fdecb6d711db 100644
-> --- a/Documentation/driver-api/gpio/consumer.rst
-> +++ b/Documentation/driver-api/gpio/consumer.rst
-> @@ -437,7 +437,7 @@ case, it will be handled by the GPIO subsystem automa=
-tically.  However, if the
->   _DSD is not present, the mappings between GpioIo()/GpioInt() resources =
-and GPIO
->   connection IDs need to be provided by device drivers.
->
-> -For details refer to Documentation/acpi/gpio-properties.txt
-> +For details refer to Documentation/firmware-guide/acpi/gpio-properties.r=
-st
->
->
->   Interacting With the Legacy GPIO Subsystem
-> diff --git a/Documentation/firmware-guide/acpi/enumeration.rst b/Document=
-ation/firmware-guide/acpi/enumeration.rst
-> index 850be9696931..1252617b520f 100644
-> --- a/Documentation/firmware-guide/acpi/enumeration.rst
-> +++ b/Documentation/firmware-guide/acpi/enumeration.rst
-> @@ -339,7 +339,7 @@ a code like this::
->   There are also devm_* versions of these functions which release the
->   descriptors once the device is released.
->
-> -See Documentation/acpi/gpio-properties.txt for more information about th=
-e
-> +See Documentation/firmware-guide/acpi/gpio-properties.rst for more infor=
-mation about the
->   _DSD binding related to GPIOs.
->
->   MFD devices
-> diff --git a/Documentation/firmware-guide/acpi/method-tracing.rst b/Docum=
-entation/firmware-guide/acpi/method-tracing.rst
-> index d0b077b73f5f..0aa7e2c5d32a 100644
-> --- a/Documentation/firmware-guide/acpi/method-tracing.rst
-> +++ b/Documentation/firmware-guide/acpi/method-tracing.rst
-> @@ -68,7 +68,7 @@ c. Filter out the debug layer/level matched logs when t=
-he specified
->
->   Where:
->      0xXXXXXXXX/0xYYYYYYYY
-> -     Refer to Documentation/acpi/debug.txt for possible debug layer/leve=
-l
-> +     Refer to Documentation/firmware-guide/acpi/debug.rst for possible d=
-ebug layer/level
->        masking values.
->      \PPPP.AAAA.TTTT.HHHH
->        Full path of a control method that can be found in the ACPI namesp=
-ace.
-> diff --git a/Documentation/i2c/instantiating-devices b/Documentation/i2c/=
-instantiating-devices
-> index 0d85ac1935b7..5a3e2f331e8c 100644
-> --- a/Documentation/i2c/instantiating-devices
-> +++ b/Documentation/i2c/instantiating-devices
-> @@ -85,7 +85,7 @@ Method 1c: Declare the I2C devices via ACPI
->   -------------------------------------------
->
->   ACPI can also describe I2C devices. There is special documentation for =
-this
-> -which is currently located at Documentation/acpi/enumeration.txt.
-> +which is currently located at Documentation/firmware-guide/acpi/enumerat=
-ion.rst.
->
->
->   Method 2: Instantiate the devices explicitly
-> diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kerne=
-l.txt
-> index f0c86fbb3b48..92f7f34b021a 100644
-> --- a/Documentation/sysctl/kernel.txt
-> +++ b/Documentation/sysctl/kernel.txt
-> @@ -155,7 +155,7 @@ is 0x15 and the full version number is 0x234, this fi=
-le will contain
->   the value 340 =3D 0x154.
->
->   See the type_of_loader and ext_loader_type fields in
-> -Documentation/x86/boot.txt for additional information.
-> +Documentation/x86/boot.rst for additional information.
->
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> @@ -167,7 +167,7 @@ The complete bootloader version number.  In the examp=
-le above, this
->   file will contain the value 564 =3D 0x234.
->
->   See the type_of_loader and ext_loader_ver fields in
-> -Documentation/x86/boot.txt for additional information.
-> +Documentation/x86/boot.rst for additional information.
->
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documen=
-tation/translations/it_IT/process/howto.rst
-> index 9903ac7c566b..44e6077730e8 100644
-> --- a/Documentation/translations/it_IT/process/howto.rst
-> +++ b/Documentation/translations/it_IT/process/howto.rst
-> @@ -131,7 +131,7 @@ Di seguito una lista di file che sono presenti nei so=
-rgente del kernel e che
->       "Linux kernel patch submission format"
->               http://linux.yyz.us/patch-format.html
->
-> -  :ref:`Documentation/process/translations/it_IT/stable-api-nonsense.rst=
- <it_stable_api_nonsense>`
-> +  :ref:`Documentation/translations/it_IT/process/stable-api-nonsense.rst=
- <it_stable_api_nonsense>`
->
->       Questo file descrive la motivazioni sottostanti la conscia decision=
-e di
->       non avere un API stabile all'interno del kernel, incluso cose come:
-> diff --git a/Documentation/translations/it_IT/process/stable-kernel-rules=
-.rst b/Documentation/translations/it_IT/process/stable-kernel-rules.rst
-> index 48e88e5ad2c5..4f206cee31a7 100644
-> --- a/Documentation/translations/it_IT/process/stable-kernel-rules.rst
-> +++ b/Documentation/translations/it_IT/process/stable-kernel-rules.rst
-> @@ -33,7 +33,7 @@ Regole sul tipo di patch che vengono o non vengono acce=
-ttate nei sorgenti
->    - Non deve includere alcuna correzione "banale" (correzioni grammatica=
-li,
->      pulizia dagli spazi bianchi, eccetera).
->    - Deve rispettare le regole scritte in
-> -   :ref:`Documentation/translation/it_IT/process/submitting-patches.rst =
-<it_submittingpatches>`
-> +   :ref:`Documentation/translations/it_IT/process/submitting-patches.rst=
- <it_submittingpatches>`
->    - Questa patch o una equivalente deve esistere gi=C3=A0 nei sorgenti p=
-rincipali di
->      Linux
->
-> @@ -43,7 +43,7 @@ Procedura per sottomettere patch per i sorgenti -stable
->
->    - Se la patch contiene modifiche a dei file nelle cartelle net/ o driv=
-ers/net,
->      allora seguite le linee guida descritte in
-> -   :ref:`Documentation/translation/it_IT/networking/netdev-FAQ.rst <it_n=
-etdev-FAQ>`;
-> +   :ref:`Documentation/translations/it_IT/networking/netdev-FAQ.rst <it_=
-netdev-FAQ>`;
->      ma solo dopo aver verificato al seguente indirizzo che la patch non =
-sia
->      gi=C3=A0 in coda:
->      https://patchwork.ozlabs.org/bundle/davem/stable/?series=3D&submitte=
-r=3D&state=3D*&q=3D&archive=3D
-> diff --git a/Documentation/translations/zh_CN/process/4.Coding.rst b/Docu=
-mentation/translations/zh_CN/process/4.Coding.rst
-> index 5301e9d55255..8bb777941394 100644
-> --- a/Documentation/translations/zh_CN/process/4.Coding.rst
-> +++ b/Documentation/translations/zh_CN/process/4.Coding.rst
-> @@ -241,7 +241,7 @@ scripts/coccinelle=E7=9B=AE=E5=BD=95=E4=B8=8B=E5=B7=
-=B2=E7=BB=8F=E6=89=93=E5=8C=85=E4=BA=86=E7=9B=B8=E5=BD=93=E5=A4=9A=E7=9A=84=
-=E5=86=85=E6=A0=B8=E2=80=9C=E8=AF=AD=E4=B9=89=E8=A1=A5=E4=B8=81=E2=80=9D
->
->   =E4=BB=BB=E4=BD=95=E6=B7=BB=E5=8A=A0=E6=96=B0=E7=94=A8=E6=88=B7=E7=A9=
-=BA=E9=97=B4=E7=95=8C=E9=9D=A2=E7=9A=84=E4=BB=A3=E7=A0=81=EF=BC=88=E5=8C=85=
-=E6=8B=AC=E6=96=B0=E7=9A=84sysfs=E6=88=96/proc=E6=96=87=E4=BB=B6=EF=BC=89=
-=E9=83=BD=E5=BA=94=E8=AF=A5=E5=8C=85=E5=90=AB=E8=AF=A5=E7=95=8C=E9=9D=A2=E7=
-=9A=84
->   =E6=96=87=E6=A1=A3=EF=BC=8C=E8=AF=A5=E6=96=87=E6=A1=A3=E4=BD=BF=E7=94=
-=A8=E6=88=B7=E7=A9=BA=E9=97=B4=E5=BC=80=E5=8F=91=E4=BA=BA=E5=91=98=E8=83=BD=
-=E5=A4=9F=E7=9F=A5=E9=81=93=E4=BB=96=E4=BB=AC=E5=9C=A8=E4=BD=BF=E7=94=A8=E4=
-=BB=80=E4=B9=88=E3=80=82=E8=AF=B7=E5=8F=82=E9=98=85
-> -Documentation/abi/readme=EF=BC=8C=E4=BA=86=E8=A7=A3=E5=A6=82=E4=BD=95=E6=
-=A0=BC=E5=BC=8F=E5=8C=96=E6=AD=A4=E6=96=87=E6=A1=A3=E4=BB=A5=E5=8F=8A=E9=9C=
-=80=E8=A6=81=E6=8F=90=E4=BE=9B=E5=93=AA=E4=BA=9B=E4=BF=A1=E6=81=AF=E3=80=82
-> +Documentation/ABI/README=EF=BC=8C=E4=BA=86=E8=A7=A3=E5=A6=82=E4=BD=95=E6=
-=A0=BC=E5=BC=8F=E5=8C=96=E6=AD=A4=E6=96=87=E6=A1=A3=E4=BB=A5=E5=8F=8A=E9=9C=
-=80=E8=A6=81=E6=8F=90=E4=BE=9B=E5=93=AA=E4=BA=9B=E4=BF=A1=E6=81=AF=E3=80=82
->
->   =E6=96=87=E4=BB=B6 :ref:`Documentation/admin-guide/kernel-parameters.rs=
-t <kernelparameters>`
->   =E6=8F=8F=E8=BF=B0=E4=BA=86=E5=86=85=E6=A0=B8=E7=9A=84=E6=89=80=E6=9C=
-=89=E5=BC=95=E5=AF=BC=E6=97=B6=E9=97=B4=E5=8F=82=E6=95=B0=E3=80=82=E4=BB=BB=
-=E4=BD=95=E6=B7=BB=E5=8A=A0=E6=96=B0=E5=8F=82=E6=95=B0=E7=9A=84=E8=A1=A5=E4=
-=B8=81=E9=83=BD=E5=BA=94=E8=AF=A5=E5=90=91=E8=AF=A5=E6=96=87=E4=BB=B6=E6=B7=
-=BB=E5=8A=A0=E9=80=82=E5=BD=93=E7=9A=84
-> diff --git a/Documentation/x86/x86_64/5level-paging.rst b/Documentation/x=
-86/x86_64/5level-paging.rst
-> index ab88a4514163..44856417e6a5 100644
-> --- a/Documentation/x86/x86_64/5level-paging.rst
-> +++ b/Documentation/x86/x86_64/5level-paging.rst
-> @@ -20,7 +20,7 @@ physical address space. This "ought to be enough for an=
-ybody" =C2=A9.
->   QEMU 2.9 and later support 5-level paging.
->
->   Virtual memory layout for 5-level paging is described in
-> -Documentation/x86/x86_64/mm.txt
-> +Documentation/x86/x86_64/mm.rst
->
->
->   Enabling 5-level paging
-> diff --git a/Documentation/x86/x86_64/boot-options.rst b/Documentation/x8=
-6/x86_64/boot-options.rst
-> index 2f69836b8445..6a4285a3c7a4 100644
-> --- a/Documentation/x86/x86_64/boot-options.rst
-> +++ b/Documentation/x86/x86_64/boot-options.rst
-> @@ -9,7 +9,7 @@ only the AMD64 specific ones are listed here.
->
->   Machine check
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> -Please see Documentation/x86/x86_64/machinecheck for sysfs runtime tunab=
-les.
-> +Please see Documentation/x86/x86_64/machinecheck.rst for sysfs runtime t=
-unables.
->
->      mce=3Doff
->               Disable machine check
-> @@ -89,7 +89,7 @@ APICs
->        Don't use the local APIC (alias for i386 compatibility)
->
->      pirq=3D...
-> -     See Documentation/x86/i386/IO-APIC.txt
-> +     See Documentation/x86/i386/IO-APIC.rst
->
->      noapictimer
->       Don't set up the APIC timer
-> diff --git a/Documentation/x86/x86_64/fake-numa-for-cpusets.rst b/Documen=
-tation/x86/x86_64/fake-numa-for-cpusets.rst
-> index 74fbb78b3c67..04df57b9aa3f 100644
-> --- a/Documentation/x86/x86_64/fake-numa-for-cpusets.rst
-> +++ b/Documentation/x86/x86_64/fake-numa-for-cpusets.rst
-> @@ -18,7 +18,7 @@ For more information on the features of cpusets, see
->   Documentation/cgroup-v1/cpusets.txt.
->   There are a number of different configurations you can use for your nee=
-ds.  For
->   more information on the numa=3Dfake command line option and its various=
- ways of
-> -configuring fake nodes, see Documentation/x86/x86_64/boot-options.txt.
-> +configuring fake nodes, see Documentation/x86/x86_64/boot-options.rst.
->
->   For the purposes of this introduction, we'll assume a very primitive NU=
-MA
->   emulation setup of "numa=3Dfake=3D4*512,".  This will split our system =
-memory into
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5cfbea4ce575..a38d7273705a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3874,7 +3874,7 @@ F:      Documentation/devicetree/bindings/hwmon/cir=
-rus,lochnagar.txt
->   F:  Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.txt
->   F:  Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
->   F:  Documentation/devicetree/bindings/sound/cirrus,lochnagar.txt
-> -F:   Documentation/hwmon/lochnagar
-> +F:   Documentation/hwmon/lochnagar.rst
->
->   CISCO FCOE HBA DRIVER
->   M:  Satish Kharat <satishkh@cisco.com>
-> @@ -11272,7 +11272,7 @@ NXP FXAS21002C DRIVER
->   M:  Rui Miguel Silva <rmfrfs@gmail.com>
->   L:  linux-iio@vger.kernel.org
->   S:  Maintained
-> -F:   Documentation/devicetree/bindings/iio/gyroscope/fxas21002c.txt
-> +F:   Documentation/devicetree/bindings/iio/gyroscope/nxp,fxas21002c.txt
->   F:  drivers/iio/gyro/fxas21002c_core.c
->   F:  drivers/iio/gyro/fxas21002c.h
->   F:  drivers/iio/gyro/fxas21002c_i2c.c
-> @@ -13043,7 +13043,7 @@ M:    Niklas Cassel <niklas.cassel@linaro.org>
->   L:  netdev@vger.kernel.org
->   S:  Maintained
->   F:  drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> -F:   Documentation/devicetree/bindings/net/qcom,dwmac.txt
-> +F:   Documentation/devicetree/bindings/net/qcom,ethqos.txt
->
->   QUALCOMM GENERIC INTERFACE I2C DRIVER
->   M:  Alok Chauhan <alokc@codeaurora.org>
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 8869742a85df..0f220264cc23 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1263,7 +1263,7 @@ config SMP
->         uniprocessor machines. On a uniprocessor machine, the kernel
->         will run faster if you say N here.
->
-> -       See also <file:Documentation/x86/i386/IO-APIC.txt>,
-> +       See also <file:Documentation/x86/i386/IO-APIC.rst>,
->         <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO avail=
-able at
->         <http://tldp.org/HOWTO/SMP-HOWTO.html>.
->
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_im=
-age.c
-> index 07bf740bea91..31cc2f423aa8 100644
-> --- a/arch/arm64/kernel/kexec_image.c
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -53,7 +53,7 @@ static void *image_load(struct kimage *image,
->
->       /*
->        * We require a kernel with an unambiguous Image header. Per
-> -      * Documentation/booting.txt, this is the case when image_size
-> +      * Documentation/arm64/booting.txt, this is the case when image_siz=
-e
->        * is non-zero (practically speaking, since v3.17).
->        */
->       h =3D (struct arm64_image_header *)kernel;
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 8c1c636308c8..e868d2bd48b8 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -898,7 +898,7 @@ config PPC_MEM_KEYS
->         page-based protections, but without requiring modification of the
->         page tables when an application changes protection domains.
->
-> -       For details, see Documentation/vm/protection-keys.rst
-> +       For details, see Documentation/x86/protection-keys.rst
->
->         If unsure, say y.
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 2bbbd4d1ba31..78fdf2dd71d1 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -395,7 +395,7 @@ config SMP
->         Y to "Enhanced Real Time Clock Support", below. The "Advanced Pow=
-er
->         Management" code will be disabled if you say Y here.
->
-> -       See also <file:Documentation/x86/i386/IO-APIC.txt>,
-> +       See also <file:Documentation/x86/i386/IO-APIC.rst>,
->         <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO avail=
-able at
->         <http://www.tldp.org/docs.html#howto>.
->
-> @@ -1290,7 +1290,7 @@ config MICROCODE
->         the Linux kernel.
->
->         The preferred method to load microcode from a detached initrd is =
-described
-> -       in Documentation/x86/microcode.txt. For that you need to enable
-> +       in Documentation/x86/microcode.rst. For that you need to enable
->         CONFIG_BLK_DEV_INITRD in order for the loader to be able to scan =
-the
->         initrd for microcode blobs.
->
-> @@ -1329,7 +1329,7 @@ config MICROCODE_OLD_INTERFACE
->         It is inadequate because it runs too late to be able to properly
->         load microcode on a machine and it needs special tools. Instead, =
-you
->         should've switched to the early loading method with the initrd or
-> -       builtin microcode by now: Documentation/x86/microcode.txt
-> +       builtin microcode by now: Documentation/x86/microcode.rst
->
->   config X86_MSR
->       tristate "/dev/cpu/*/msr - Model-specific register support"
-> @@ -1478,7 +1478,7 @@ config X86_5LEVEL
->         A kernel with the option enabled can be booted on machines that
->         support 4- or 5-level paging.
->
-> -       See Documentation/x86/x86_64/5level-paging.txt for more
-> +       See Documentation/x86/x86_64/5level-paging.rst for more
->         information.
->
->         Say N if unsure.
-> @@ -1626,7 +1626,7 @@ config ARCH_MEMORY_PROBE
->       depends on X86_64 && MEMORY_HOTPLUG
->       help
->         This option enables a sysfs memory/probe interface for testing.
-> -       See Documentation/memory-hotplug.txt for more information.
-> +       See Documentation/admin-guide/mm/memory-hotplug.rst for more info=
-rmation.
->         If you are unsure how to answer this question, answer N.
->
->   config ARCH_PROC_KCORE_TEXT
-> @@ -1783,7 +1783,7 @@ config MTRR
->         You can safely say Y even if your machine doesn't have MTRRs, you=
-'ll
->         just add about 9 KB to your kernel.
->
-> -       See <file:Documentation/x86/mtrr.txt> for more information.
-> +       See <file:Documentation/x86/mtrr.rst> for more information.
->
->   config MTRR_SANITIZER
->       def_bool y
-> @@ -1895,7 +1895,7 @@ config X86_INTEL_MPX
->         process and adds some branches to paths used during
->         exec() and munmap().
->
-> -       For details, see Documentation/x86/intel_mpx.txt
-> +       For details, see Documentation/x86/intel_mpx.rst
->
->         If unsure, say N.
->
-> @@ -1911,7 +1911,7 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
->         page-based protections, but without requiring modification of the
->         page tables when an application changes protection domains.
->
-> -       For details, see Documentation/x86/protection-keys.txt
-> +       For details, see Documentation/x86/protection-keys.rst
->
->         If unsure, say y.
->
-> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-> index f730680dc818..59f598543203 100644
-> --- a/arch/x86/Kconfig.debug
-> +++ b/arch/x86/Kconfig.debug
-> @@ -156,7 +156,7 @@ config IOMMU_DEBUG
->         code. When you use it make sure you have a big enough
->         IOMMU/AGP aperture.  Most of the options enabled by this can
->         be set more finegrained using the iommu=3D command line
-> -       options. See Documentation/x86/x86_64/boot-options.txt for more
-> +       options. See Documentation/x86/x86_64/boot-options.rst for more
->         details.
->
->   config IOMMU_LEAK
-> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-> index 850b8762e889..90d791ca1a95 100644
-> --- a/arch/x86/boot/header.S
-> +++ b/arch/x86/boot/header.S
-> @@ -313,7 +313,7 @@ start_sys_seg:    .word   SYSSEG          # obsolete =
-and meaningless, but just
->
->   type_of_loader:     .byte   0               # 0 means ancient bootloade=
-r, newer
->                                       # bootloaders know to change this.
-> -                                     # See Documentation/x86/boot.txt fo=
-r
-> +                                     # See Documentation/x86/boot.rst fo=
-r
->                                       # assigned ids
->
->   # flags, unused bits must be zero (RFU) bit within loadflags
-> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> index 11aa3b2afa4d..33f9fc38d014 100644
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -8,7 +8,7 @@
->    *
->    * entry.S contains the system-call and fault low-level handling routin=
-es.
->    *
-> - * Some of this is documented in Documentation/x86/entry_64.txt
-> + * Some of this is documented in Documentation/x86/entry_64.rst
->    *
->    * A note on terminology:
->    * - iret frame:    Architecture defined interrupt frame from SS to RIP
-> diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/as=
-m/bootparam_utils.h
-> index f6f6ef436599..101eb944f13c 100644
-> --- a/arch/x86/include/asm/bootparam_utils.h
-> +++ b/arch/x86/include/asm/bootparam_utils.h
-> @@ -24,7 +24,7 @@ static void sanitize_boot_params(struct boot_params *bo=
-ot_params)
->        * IMPORTANT NOTE TO BOOTLOADER AUTHORS: do not simply clear
->        * this field.  The purpose of this field is to guarantee
->        * compliance with the x86 boot spec located in
-> -      * Documentation/x86/boot.txt .  That spec says that the
-> +      * Documentation/x86/boot.rst .  That spec says that the
->        * *whole* structure should be cleared, after which only the
->        * portion defined by struct setup_header (boot_params->hdr)
->        * should be copied in.
-> diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/=
-page_64_types.h
-> index 793c14c372cb..288b065955b7 100644
-> --- a/arch/x86/include/asm/page_64_types.h
-> +++ b/arch/x86/include/asm/page_64_types.h
-> @@ -48,7 +48,7 @@
->
->   #define __START_KERNEL_map  _AC(0xffffffff80000000, UL)
->
-> -/* See Documentation/x86/x86_64/mm.txt for a description of the memory m=
-ap. */
-> +/* See Documentation/x86/x86_64/mm.rst for a description of the memory m=
-ap. */
->
->   #define __PHYSICAL_MASK_SHIFT       52
->
-> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/a=
-sm/pgtable_64_types.h
-> index 88bca456da99..52e5f5f2240d 100644
-> --- a/arch/x86/include/asm/pgtable_64_types.h
-> +++ b/arch/x86/include/asm/pgtable_64_types.h
-> @@ -103,7 +103,7 @@ extern unsigned int ptrs_per_p4d;
->   #define PGDIR_MASK  (~(PGDIR_SIZE - 1))
->
->   /*
-> - * See Documentation/x86/x86_64/mm.txt for a description of the memory m=
-ap.
-> + * See Documentation/x86/x86_64/mm.rst for a description of the memory m=
-ap.
->    *
->    * Be very careful vs. KASLR when changing anything here. The KASLR add=
-ress
->    * range must not overlap with anything except the KASAN shadow area, w=
-hich
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/mi=
-crocode/amd.c
-> index e1f3ba19ba54..06d4e67f31ab 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -61,7 +61,7 @@ static u8 amd_ucode_patch[PATCH_MAX_SIZE];
->
->   /*
->    * Microcode patch container file is prepended to the initrd in cpio
-> - * format. See Documentation/x86/microcode.txt
-> + * format. See Documentation/x86/microcode.rst
->    */
->   static const char
->   ucode_path[] __maybe_unused =3D "kernel/x86/microcode/AuthenticAMD.bin"=
-;
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bz=
-image64.c
-> index 22f60dd26460..b07e7069b09e 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -416,7 +416,7 @@ static void *bzImage64_load(struct kimage *image, cha=
-r *kernel,
->       efi_map_offset =3D params_cmdline_sz;
->       efi_setup_data_offset =3D efi_map_offset + ALIGN(efi_map_sz, 16);
->
-> -     /* Copy setup header onto bootparams. Documentation/x86/boot.txt */
-> +     /* Copy setup header onto bootparams. Documentation/x86/boot.rst */
->       setup_header_size =3D 0x0202 + kernel[0x0201] - setup_hdr_offset;
-
-For the arm, arm64 and x86 kexec bits:
-
-Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
-
-Thanks,
-Bhupesh
+RW0gTW9uLCAzIEp1biAyMDE5IDA5OjM0OjE1ICswMjAwCkNocmlzdG9waGUgTGVyb3kgPGNocmlz
+dG9waGUubGVyb3lAYy1zLmZyPiBlc2NyZXZldToKCj4gTGUgMzAvMDUvMjAxOSDDoCAwMToyMywg
+TWF1cm8gQ2FydmFsaG8gQ2hlaGFiIGEgw6ljcml0wqA6Cj4gPiBNb3N0bHkgZHVlIHRvIHg4NiBh
+bmQgYWNwaSBjb252ZXJzaW9uLCBzZXZlcmFsIGRvY3VtZW50YXRpb24KPiA+IGxpbmtzIGFyZSBz
+dGlsbCBwb2ludGluZyB0byB0aGUgb2xkIGZpbGUuIEZpeCB0aGVtLgo+ID4gCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWIrc2Ftc3VuZ0BrZXJuZWwub3Jn
+Pgo+ID4gLS0tCj4gPiAgIERvY3VtZW50YXRpb24vYWNwaS9kc2QvbGVkcy50eHQgICAgICAgICAg
+ICAgICAgICB8ICAyICstCj4gPiAgIERvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUva2VybmVsLXBh
+cmFtZXRlcnMucnN0ICB8ICA2ICsrKy0tLQo+ID4gICBEb2N1bWVudGF0aW9uL2FkbWluLWd1aWRl
+L2tlcm5lbC1wYXJhbWV0ZXJzLnR4dCAgfCAxNiArKysrKysrKy0tLS0tLS0tCj4gPiAgIERvY3Vt
+ZW50YXRpb24vYWRtaW4tZ3VpZGUvcmFzLnJzdCAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAg
+IC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9mc2wtZW5ldGMudHh0ICAgICAgICB8ICA3ICsr
+Ky0tLS0KPiA+ICAgLi4uL2JpbmRpbmdzL3BjaS9hbWxvZ2ljLG1lc29uLXBjaWUudHh0ICAgICAg
+ICAgIHwgIDIgKy0KPiA+ICAgLi4uL2JpbmRpbmdzL3JlZ3VsYXRvci9xY29tLHJwbWgtcmVndWxh
+dG9yLnR4dCAgIHwgIDIgKy0KPiA+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jvb3Rpbmct
+d2l0aG91dC1vZi50eHQgIHwgIDIgKy0KPiA+ICAgRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL2dw
+aW8vYm9hcmQucnN0ICAgICAgICAgIHwgIDIgKy0KPiA+ICAgRG9jdW1lbnRhdGlvbi9kcml2ZXIt
+YXBpL2dwaW8vY29uc3VtZXIucnN0ICAgICAgIHwgIDIgKy0KPiA+ICAgLi4uL2Zpcm13YXJlLWd1
+aWRlL2FjcGkvZW51bWVyYXRpb24ucnN0ICAgICAgICAgIHwgIDIgKy0KPiA+ICAgLi4uL2Zpcm13
+YXJlLWd1aWRlL2FjcGkvbWV0aG9kLXRyYWNpbmcucnN0ICAgICAgIHwgIDIgKy0KPiA+ICAgRG9j
+dW1lbnRhdGlvbi9pMmMvaW5zdGFudGlhdGluZy1kZXZpY2VzICAgICAgICAgIHwgIDIgKy0KPiA+
+ICAgRG9jdW1lbnRhdGlvbi9zeXNjdGwva2VybmVsLnR4dCAgICAgICAgICAgICAgICAgIHwgIDQg
+KystLQo+ID4gICAuLi4vdHJhbnNsYXRpb25zL2l0X0lUL3Byb2Nlc3MvaG93dG8ucnN0ICAgICAg
+ICAgfCAgMiArLQo+ID4gICAuLi4vaXRfSVQvcHJvY2Vzcy9zdGFibGUta2VybmVsLXJ1bGVzLnJz
+dCAgICAgICAgfCAgNCArKy0tCj4gPiAgIC4uLi90cmFuc2xhdGlvbnMvemhfQ04vcHJvY2Vzcy80
+LkNvZGluZy5yc3QgICAgICB8ICAyICstCj4gPiAgIERvY3VtZW50YXRpb24veDg2L3g4Nl82NC81
+bGV2ZWwtcGFnaW5nLnJzdCAgICAgICB8ICAyICstCj4gPiAgIERvY3VtZW50YXRpb24veDg2L3g4
+Nl82NC9ib290LW9wdGlvbnMucnN0ICAgICAgICB8ICA0ICsrLS0KPiA+ICAgLi4uL3g4Ni94ODZf
+NjQvZmFrZS1udW1hLWZvci1jcHVzZXRzLnJzdCAgICAgICAgIHwgIDIgKy0KPiA+ICAgTUFJTlRB
+SU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDYgKysrLS0tCj4g
+PiAgIGFyY2gvYXJtL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAy
+ICstCj4gPiAgIGFyY2gvYXJtNjQva2VybmVsL2tleGVjX2ltYWdlLmMgICAgICAgICAgICAgICAg
+ICB8ICAyICstCj4gPiAgIGFyY2gvcG93ZXJwYy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8ICAyICstCj4gPiAgIGFyY2gveDg2L0tjb25maWcgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8IDE2ICsrKysrKysrLS0tLS0tLS0KPiA+ICAgYXJjaC94ODYvS2NvbmZp
+Zy5kZWJ1ZyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYv
+Ym9vdC9oZWFkZXIuUyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJj
+aC94ODYvZW50cnkvZW50cnlfNjQuUyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+
+ICAgYXJjaC94ODYvaW5jbHVkZS9hc20vYm9vdHBhcmFtX3V0aWxzLmggICAgICAgICAgIHwgIDIg
+Ky0KPiA+ICAgYXJjaC94ODYvaW5jbHVkZS9hc20vcGFnZV82NF90eXBlcy5oICAgICAgICAgICAg
+IHwgIDIgKy0KPiA+ICAgYXJjaC94ODYvaW5jbHVkZS9hc20vcGd0YWJsZV82NF90eXBlcy5oICAg
+ICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYva2VybmVsL2NwdS9taWNyb2NvZGUvYW1kLmMg
+ICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYva2VybmVsL2tleGVjLWJ6aW1hZ2U2
+NC5jICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYva2VybmVsL3BjaS1kbWEu
+YyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYvbW0vdGxiLmMg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgYXJjaC94ODYvcGxh
+dGZvcm0vcHZoL2VubGlnaHRlbi5jICAgICAgICAgICAgICAgIHwgIDIgKy0KPiA+ICAgZHJpdmVy
+cy9hY3BpL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTAgKysrKystLS0t
+LQo+ID4gICBkcml2ZXJzL25ldC9ldGhlcm5ldC9mYXJhZGF5L2Z0Z21hYzEwMC5jICAgICAgICAg
+fCAgMiArLQo+ID4gICAuLi4vZmllbGRidXMvRG9jdW1lbnRhdGlvbi9maWVsZGJ1c19kZXYudHh0
+ICAgICAgfCAgNCArKy0tCj4gPiAgIGRyaXZlcnMvdmhvc3Qvdmhvc3QuYyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAyICstCj4gPiAgIGluY2x1ZGUvYWNwaS9hY3BpX2RyaXZlcnMuaCAg
+ICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAgIGluY2x1ZGUvbGludXgvZnNfY29udGV4
+dC5oICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAgIGluY2x1ZGUvbGludXgvbHNt
+X2hvb2tzLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAgIG1tL0tjb25maWcg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAgIHNlY3Vy
+aXR5L0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gPiAg
+IHRvb2xzL2luY2x1ZGUvbGludXgvZXJyLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAyICst
+Cj4gPiAgIHRvb2xzL29ianRvb2wvRG9jdW1lbnRhdGlvbi9zdGFjay12YWxpZGF0aW9uLnR4dCB8
+ICA0ICsrLS0KPiA+ICAgdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMveDg2L3Byb3RlY3Rpb25fa2V5
+cy5jICAgIHwgIDIgKy0KPiA+ICAgNDggZmlsZXMgY2hhbmdlZCwgNzcgaW5zZXJ0aW9ucygrKSwg
+NzggZGVsZXRpb25zKC0pICAKPiAKPiBbLi4uXQo+IAo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvcG93
+ZXJwYy9LY29uZmlnIGIvYXJjaC9wb3dlcnBjL0tjb25maWcKPiA+IGluZGV4IDhjMWM2MzYzMDhj
+OC4uZTg2OGQyYmQ0OGI4IDEwMDY0NAo+ID4gLS0tIGEvYXJjaC9wb3dlcnBjL0tjb25maWcKPiA+
+ICsrKyBiL2FyY2gvcG93ZXJwYy9LY29uZmlnCj4gPiBAQCAtODk4LDcgKzg5OCw3IEBAIGNvbmZp
+ZyBQUENfTUVNX0tFWVMKPiA+ICAgCSAgcGFnZS1iYXNlZCBwcm90ZWN0aW9ucywgYnV0IHdpdGhv
+dXQgcmVxdWlyaW5nIG1vZGlmaWNhdGlvbiBvZiB0aGUKPiA+ICAgCSAgcGFnZSB0YWJsZXMgd2hl
+biBhbiBhcHBsaWNhdGlvbiBjaGFuZ2VzIHByb3RlY3Rpb24gZG9tYWlucy4KPiA+ICAgCj4gPiAt
+CSAgRm9yIGRldGFpbHMsIHNlZSBEb2N1bWVudGF0aW9uL3ZtL3Byb3RlY3Rpb24ta2V5cy5yc3QK
+PiA+ICsJICBGb3IgZGV0YWlscywgc2VlIERvY3VtZW50YXRpb24veDg2L3Byb3RlY3Rpb24ta2V5
+cy5yc3QgIAo+IAo+IEl0IGxvb2tzIHN0cmFuZ2UgdG8gcmVmZXJlbmNlIGFuIHg4NiBmaWxlLCBm
+b3IgcG93ZXJwYyBhcmNoLgoKSW5kZWVkLiBZZXQsIHNlZWtpbmcgZm9yIHRoZSBBUEkgZG9jdW1l
+bnRlZCB0aGVyZToKCiAkIGdpdCBncmVwIC1sIHBrZXlfbXByb3RlY3QKRG9jdW1lbnRhdGlvbi94
+ODYvcHJvdGVjdGlvbi1rZXlzLnJzdAphcmNoL2FscGhhL2tlcm5lbC9zeXNjYWxscy9zeXNjYWxs
+LnRibAphcmNoL2FybS90b29scy9zeXNjYWxsLnRibAphcmNoL2FybTY0L2luY2x1ZGUvYXNtL3Vu
+aXN0ZDMyLmgKYXJjaC9pYTY0L2tlcm5lbC9zeXNjYWxscy9zeXNjYWxsLnRibAphcmNoL202OGsv
+a2VybmVsL3N5c2NhbGxzL3N5c2NhbGwudGJsCmFyY2gvbWljcm9ibGF6ZS9rZXJuZWwvc3lzY2Fs
+bHMvc3lzY2FsbC50YmwKYXJjaC9taXBzL2tlcm5lbC9zeXNjYWxscy9zeXNjYWxsX24zMi50YmwK
+YXJjaC9taXBzL2tlcm5lbC9zeXNjYWxscy9zeXNjYWxsX242NC50YmwKYXJjaC9taXBzL2tlcm5l
+bC9zeXNjYWxscy9zeXNjYWxsX28zMi50YmwKYXJjaC9wYXJpc2Mva2VybmVsL3N5c2NhbGxzL3N5
+c2NhbGwudGJsCmFyY2gvcG93ZXJwYy9rZXJuZWwvc3lzY2FsbHMvc3lzY2FsbC50YmwKYXJjaC9z
+MzkwL2tlcm5lbC9zeXNjYWxscy9zeXNjYWxsLnRibAphcmNoL3NoL2tlcm5lbC9zeXNjYWxscy9z
+eXNjYWxsLnRibAphcmNoL3NwYXJjL2tlcm5lbC9zeXNjYWxscy9zeXNjYWxsLnRibAphcmNoL3g4
+Ni9lbnRyeS9zeXNjYWxscy9zeXNjYWxsXzMyLnRibAphcmNoL3g4Ni9lbnRyeS9zeXNjYWxscy9z
+eXNjYWxsXzY0LnRibAphcmNoL3h0ZW5zYS9rZXJuZWwvc3lzY2FsbHMvc3lzY2FsbC50YmwKaW5j
+bHVkZS9saW51eC9zeXNjYWxscy5oCmluY2x1ZGUvdWFwaS9hc20tZ2VuZXJpYy91bmlzdGQuaApr
+ZXJuZWwvc3lzX25pLmMKbW0vbXByb3RlY3QuYwp0b29scy9pbmNsdWRlL3VhcGkvYXNtLWdlbmVy
+aWMvdW5pc3RkLmgKdG9vbHMvcGVyZi9hcmNoL3Bvd2VycGMvZW50cnkvc3lzY2FsbHMvc3lzY2Fs
+bC50YmwKdG9vbHMvcGVyZi9hcmNoL3g4Ni9lbnRyeS9zeXNjYWxscy9zeXNjYWxsXzY0LnRibAp0
+b29scy9wZXJmL2J1aWx0aW4tdHJhY2UuYwp0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy94ODYvcHJv
+dGVjdGlvbl9rZXlzLmMKCkRlc3BpdGUgYmVpbmcgdXNlZCBvbiBzZXZlcmFsIGFyY2hzLCB0aGUg
+b25seSBkb2N1bWVudGF0aW9uIGZvciBpdAppcyBpbnNpZGUgdGhlIHg4NiBkaXJlY3RvcnksIGFz
+IGl0IHNlZW1zIHRoYXQgdGhpcyBpcyBub3QKYXJjaC1zcGVjaWZpYy4KClBlcmhhcHMgdGhlIGZp
+bGUgc2hvdWxkLCBpbnN0ZWFkLCBiZSBtb3ZlZCB0byBhbm90aGVyIGJvb2suCgpUaGFua3MsCk1h
+dXJvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClZpcnR1
+YWxpemF0aW9uIG1haWxpbmcgbGlzdApWaXJ0dWFsaXphdGlvbkBsaXN0cy5saW51eC1mb3VuZGF0
+aW9uLm9yZwpodHRwczovL2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFpbG1hbi9saXN0aW5m
+by92aXJ0dWFsaXphdGlvbg==
