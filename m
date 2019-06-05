@@ -1,89 +1,31 @@
-From: "Andrew Jeffery" <andrew@aj.id.au>
-Subject: Re: [PATCH 1/3 linux dev-5.1 v2] ARM: dts: aspeed: Add SGPM pinmux
-Date: Wed, 05 Jun 2019 11:01:13 +0930
-Message-ID: <b4ba9af9-9d6d-45fa-8552-3aad5258352a@www.fastmail.com>
-References: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
+From: Avri Altman <Avri.Altman@wdc.com>
+Subject: RE: [PATCH 0/3] (Qualcomm) UFS device reset support
+Date: Wed, 5 Jun 2019 05:50:36 +0000
+Message-ID: <SN6PR04MB4925530F216E86F6404FE14CFC160@SN6PR04MB4925.namprd04.prod.outlook.com>
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
+ <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
+In-Reply-To: <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hongwei Zhang <hongweiz@ami.com>, Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: John Stultz <john.stultz@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On Wed, 5 Jun 2019, at 07:23, Hongwei Zhang wrote:
-> Add SGPM pinmux to ast2500-pinctrl function and group, to prepare for
-> supporting SGPIO in AST2500 SoC.
-> 
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-
-> ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 2 +-
->  drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git 
-> a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt 
-> b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-> index 3b7266c..8f1c5c4 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
-> @@ -84,7 +84,7 @@ NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4 NDTR1 NDTR2 
-> NDTR3 NDTR4 NRI1 NRI2
->  NRI3 NRI4 NRTS1 NRTS2 NRTS3 NRTS4 OSCCLK PEWAKE PNOR PWM0 PWM1 PWM2 
-> PWM3 PWM4
->  PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 RXD1 RXD2 RXD3 RXD4 SALT1 
-> SALT10
->  SALT11 SALT12 SALT13 SALT14 SALT2 SALT3 SALT4 SALT5 SALT6 SALT7 SALT8 
-> SALT9
-> -SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO 
-> SIOPWREQ
-> +SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPM SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO 
-> SIOPWREQ
->  SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1CS1 SPI1DEBUG SPI1PASSTHRU SPI2CK 
-> SPI2CS0
->  SPI2CS1 SPI2MISO SPI2MOSI TIMER3 TIMER4 TIMER5 TIMER6 TIMER7 TIMER8 
-> TXD1 TXD2
->  TXD3 TXD4 UART6 USB11BHID USB2AD USB2AH USB2BD USB2BH USBCKI 
-> VGABIOSROM VGAHS
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c 
-> b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-> index 187abd7..0c89647 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-> @@ -577,6 +577,8 @@ SS_PIN_DECL(N3, GPIOJ2, SGPMO);
->  SIG_EXPR_LIST_DECL_SINGLE(SGPMI, SGPM, SIG_DESC_SET(SCU84, 11));
->  SS_PIN_DECL(N4, GPIOJ3, SGPMI);
->  
-> +FUNC_GROUP_DECL(SGPM, R2, L2, N3, N4);
-> +
->  #define N5 76
->  SIG_EXPR_LIST_DECL_SINGLE(VGAHS, VGAHS, SIG_DESC_SET(SCU84, 12));
->  SIG_EXPR_LIST_DECL_SINGLE(DASHN5, DASHN5, SIG_DESC_SET(SCU94, 8));
-> @@ -2127,6 +2129,7 @@ static const struct aspeed_pin_group 
-> aspeed_g5_groups[] = {
->  	ASPEED_PINCTRL_GROUP(SD2),
->  	ASPEED_PINCTRL_GROUP(SDA1),
->  	ASPEED_PINCTRL_GROUP(SDA2),
-> +	ASPEED_PINCTRL_GROUP(SGPM),
->  	ASPEED_PINCTRL_GROUP(SGPS1),
->  	ASPEED_PINCTRL_GROUP(SGPS2),
->  	ASPEED_PINCTRL_GROUP(SIOONCTRL),
-> @@ -2296,6 +2299,7 @@ static const struct aspeed_pin_function 
-> aspeed_g5_functions[] = {
->  	ASPEED_PINCTRL_FUNC(SD2),
->  	ASPEED_PINCTRL_FUNC(SDA1),
->  	ASPEED_PINCTRL_FUNC(SDA2),
-> +	ASPEED_PINCTRL_FUNC(SGPM),
->  	ASPEED_PINCTRL_FUNC(SGPS1),
->  	ASPEED_PINCTRL_FUNC(SGPS2),
->  	ASPEED_PINCTRL_FUNC(SIOONCTRL),
-> -- 
-> 2.7.4
-> 
->
+SGksDQoNCj4gDQo+IE9uIFR1ZSwgSnVuIDQsIDIwMTkgYXQgMTI6MjIgQU0gQmpvcm4gQW5kZXJz
+c29uDQo+IDxiam9ybi5hbmRlcnNzb25AbGluYXJvLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBUaGlz
+IHNlcmllcyBleHBvc2VzIHRoZSB1ZnNfcmVzZXQgbGluZSBhcyBhIGdwaW8sIGFkZHMgc3VwcG9y
+dCBmb3IgdWZzaGNkIHRvDQo+ID4gYWNxdWlyZSBhbmQgdG9nZ2xlIHRoaXMgYW5kIHRoZW4gYWRk
+cyB0aGlzIHRvIFNETTg0NSBNVFAuDQo+ID4NCj4gPiBCam9ybiBBbmRlcnNzb24gKDMpOg0KPiA+
+ICAgcGluY3RybDogcWNvbTogc2RtODQ1OiBFeHBvc2UgdWZzX3Jlc2V0IGFzIGdwaW8NCj4gPiAg
+IHNjc2k6IHVmczogQWxsb3cgcmVzZXR0aW5nIHRoZSBVRlMgZGV2aWNlDQo+ID4gICBhcm02NDog
+ZHRzOiBxY29tOiBzZG04NDUtbXRwOiBTcGVjaWZ5IFVGUyBkZXZpY2UtcmVzZXQgR1BJTw0KPiAN
+Cj4gQWRkaW5nIHNpbWlsYXIgY2hhbmdlIGFzIGluIHNkbTg0NS1tdHAgdG8gdGhlIG5vdCB5ZXQg
+dXBzdHJlYW0NCj4gYmx1ZWxpbmUgZHRzLCBJIHZhbGlkYXRlZCB0aGlzIGFsbG93cyBteSBtaWNy
+b24gVUZTIHBpeGVsMyB0byBib290Lg0KPiANCj4gVGVzdGVkLWJ5OiBKb2huIFN0dWx0eiA8am9o
+bi5zdHVsdHpAbGluYXJvLm9yZz4NCk1heWJlIHVmc19oYmFfdmFyaWFudF9vcHMgd291bGQgYmUg
+dGhlIHByb3BlciBwbGFjZSB0byBhZGQgdGhpcz8NCg0KVGhhbmtzLA0KQXZyaQ0KDQoNCg0KPiAN
+Cj4gdGhhbmtzDQo+IC1qb2huDQo=
