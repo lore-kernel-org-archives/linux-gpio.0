@@ -1,70 +1,33 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
-Date: Wed, 5 Jun 2019 09:56:56 +0200
-Message-ID: <20190605075656.GC29637@localhost>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-2-lee.jones@linaro.org>
- <20190605062020.GL22737@tuxbook-pro>
- <20190605071625.GK4797@dell>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v2 0/3] gpio: davinci: Add support for TI K3 AM6 platform
+Date: Wed, 5 Jun 2019 13:32:56 +0530
+Message-ID: <20190605080259.2462-1-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190605071625.GK4797@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, balbi@kernel.org, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, david.brown@linaro.org, alokc@codeaurora.org, kramasub@codeaurora.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: lokeshvutla@ti.com, linux-gpio@vger.kernel.org, t-kristo@ti.com, j-keerthy@ti.com, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 08:16:25AM +0100, Lee Jones wrote:
-> On Tue, 04 Jun 2019, Bjorn Andersson wrote:
-> 
-> > On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
-> > 
-> > > The Qualcomm Geni I2C driver currently probes silently which can be
-> > > confusing when debugging potential issues.  Add a low level (INFO)
-> > > print when each I2C controller is successfully initially set-up.
-> > > 
-> > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > > ---
-> > >  drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> > > index 0fa93b448e8d..e27466d77767 100644
-> > > --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> > > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> > > @@ -598,6 +598,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> > >  		return ret;
-> > >  	}
-> > >  
-> > > +	dev_info(&pdev->dev, "Geni-I2C adaptor successfully added\n");
-> > > +
-> > 
-> > I would prefer that we do not add such prints, as it would be to accept
-> > the downstream behaviour of spamming the log to the point where no one
-> > will ever look through it.
-> 
-> We should be able to find a middle ground.  Spamming the log with all
-> sorts of device specific information/debug is obviously not
-> constructive, but a single liner to advertise that an important
-> device/controller has been successfully initialised is more helpful
-> than it is hinderous.
-> 
-> This print was added due to the silent initialisation costing me
-> several hours of debugging ACPI device/driver code (albeit learning a
-> lot about ACPI as I go) just to find out that it was already doing the
-> right thing - just very quietly.
+K3 AM6 platform has 2 instances of gpio banks on main domain
+and 1 instance on wakeup domin. All are capable of generating
+banked interrupts.
 
-No, we don't add noise like this to the logs just because it may be
-useful while debugging. Even one-liners add up.
+Changes in v2:
 
-There are plenty of options for debugging already ranging from adding a
-temporary dev_info() to the probe function in question to using dynamic
-debugging to have driver core log every successful probe.
+  * Introduced a separate compatible for am654. 
 
-And in this case you say the driver was in fact already bound; that can
-easily be verified through sysfs too in case things aren't behaving the
-way you expect.
+Documentation patch link: https://patchwork.kernel.org/patch/10976445/
 
-Johan
+Keerthy (3):
+  gpio: davinci: Fix the compiler warning with ARM64 config enabled
+  gpio: davinci: Add new compatible for K3 AM654 SoCs
+  gpio: Davinci: Add K3 dependencies
+
+ drivers/gpio/Kconfig        | 2 +-
+ drivers/gpio/gpio-davinci.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
