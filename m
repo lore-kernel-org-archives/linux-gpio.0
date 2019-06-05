@@ -1,53 +1,89 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [EXT] [PATCH 2/3] scsi: ufs: Allow resetting the UFS device
-Date: Tue, 4 Jun 2019 15:30:25 -0700
-Message-ID: <20190604223025.GD4814@minitux>
-References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
- <20190604072001.9288-3-bjorn.andersson@linaro.org>
- <BN7PR08MB568450B1EC51ABAA2E426AC0DB150@BN7PR08MB5684.namprd08.prod.outlook.com>
+From: "Andrew Jeffery" <andrew@aj.id.au>
+Subject: Re: [PATCH 1/3 linux dev-5.1 v2] ARM: dts: aspeed: Add SGPM pinmux
+Date: Wed, 05 Jun 2019 11:01:13 +0930
+Message-ID: <b4ba9af9-9d6d-45fa-8552-3aad5258352a@www.fastmail.com>
+References: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BN7PR08MB568450B1EC51ABAA2E426AC0DB150@BN7PR08MB5684.namprd08.prod.outlook.com>
+In-Reply-To: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-Cc: Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+To: Hongwei Zhang <hongweiz@ami.com>, Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue 04 Jun 01:13 PDT 2019, Bean Huo (beanhuo) wrote:
-> >@@ -6159,6 +6179,9 @@ static int ufshcd_reset_and_restore(struct ufs_hba
-> >*hba)
-> > 	int retries = MAX_HOST_RESET_RETRIES;
-> >
-> > 	do {
-> >+		/* Reset the attached device */
-> >+		ufshcd_device_reset(hba);
-> >+
+
+
+On Wed, 5 Jun 2019, at 07:23, Hongwei Zhang wrote:
+> Add SGPM pinmux to ast2500-pinctrl function and group, to prepare for
+> supporting SGPIO in AST2500 SoC.
 > 
-> what's problem you met, and you should reset UFS device here? could you give more info?
+> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 2 +-
+>  drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 > 
-> It is true that we don't reset UFS device in case of device fatal error. According to UFS host spec,
-> Host should be device reset except that in addition to resetting UIC. But as so far,
-> We didn't experience any problems result from this missing reset.
+> diff --git 
+> a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt 
+> b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> index 3b7266c..8f1c5c4 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> @@ -84,7 +84,7 @@ NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4 NDTR1 NDTR2 
+> NDTR3 NDTR4 NRI1 NRI2
+>  NRI3 NRI4 NRTS1 NRTS2 NRTS3 NRTS4 OSCCLK PEWAKE PNOR PWM0 PWM1 PWM2 
+> PWM3 PWM4
+>  PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 RXD1 RXD2 RXD3 RXD4 SALT1 
+> SALT10
+>  SALT11 SALT12 SALT13 SALT14 SALT2 SALT3 SALT4 SALT5 SALT6 SALT7 SALT8 
+> SALT9
+> -SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO 
+> SIOPWREQ
+> +SCL1 SCL2 SD1 SD2 SDA1 SDA2 SGPM SGPS1 SGPS2 SIOONCTRL SIOPBI SIOPBO 
+> SIOPWREQ
+>  SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1CS1 SPI1DEBUG SPI1PASSTHRU SPI2CK 
+> SPI2CS0
+>  SPI2CS1 SPI2MISO SPI2MOSI TIMER3 TIMER4 TIMER5 TIMER6 TIMER7 TIMER8 
+> TXD1 TXD2
+>  TXD3 TXD4 UART6 USB11BHID USB2AD USB2AH USB2BD USB2BH USBCKI 
+> VGABIOSROM VGAHS
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c 
+> b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> index 187abd7..0c89647 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> @@ -577,6 +577,8 @@ SS_PIN_DECL(N3, GPIOJ2, SGPMO);
+>  SIG_EXPR_LIST_DECL_SINGLE(SGPMI, SGPM, SIG_DESC_SET(SCU84, 11));
+>  SS_PIN_DECL(N4, GPIOJ3, SGPMI);
+>  
+> +FUNC_GROUP_DECL(SGPM, R2, L2, N3, N4);
+> +
+>  #define N5 76
+>  SIG_EXPR_LIST_DECL_SINGLE(VGAHS, VGAHS, SIG_DESC_SET(SCU84, 12));
+>  SIG_EXPR_LIST_DECL_SINGLE(DASHN5, DASHN5, SIG_DESC_SET(SCU94, 8));
+> @@ -2127,6 +2129,7 @@ static const struct aspeed_pin_group 
+> aspeed_g5_groups[] = {
+>  	ASPEED_PINCTRL_GROUP(SD2),
+>  	ASPEED_PINCTRL_GROUP(SDA1),
+>  	ASPEED_PINCTRL_GROUP(SDA2),
+> +	ASPEED_PINCTRL_GROUP(SGPM),
+>  	ASPEED_PINCTRL_GROUP(SGPS1),
+>  	ASPEED_PINCTRL_GROUP(SGPS2),
+>  	ASPEED_PINCTRL_GROUP(SIOONCTRL),
+> @@ -2296,6 +2299,7 @@ static const struct aspeed_pin_function 
+> aspeed_g5_functions[] = {
+>  	ASPEED_PINCTRL_FUNC(SD2),
+>  	ASPEED_PINCTRL_FUNC(SDA1),
+>  	ASPEED_PINCTRL_FUNC(SDA2),
+> +	ASPEED_PINCTRL_FUNC(SGPM),
+>  	ASPEED_PINCTRL_FUNC(SGPS1),
+>  	ASPEED_PINCTRL_FUNC(SGPS2),
+>  	ASPEED_PINCTRL_FUNC(SIOONCTRL),
+> -- 
+> 2.7.4
 > 
-> We have three UFS device reset ways.  Comparing to this hardware reset, 
-> I prefer to use DME_ENDPOINTRESET.req software reset.
-> 
-
-Hi Bean,
-
-Thanks for your questions. With some memories we see issues establishing
-the link during bootup, so that's the purpose of issuing this reset.
-
-Unfortunately the downstream Qualcomm patch [1] (which I should have
-remembered to attribute), does not mention why the reset during host
-controller reset is needed - but I'm fairly certain that this scenario
-would be similar to the handover from bootloader to kernel that we do
-see an issue with.
-
-
-[1] https://source.codeaurora.org/quic/la/kernel/msm-4.4/commit/?h=msm-4.4&id=0c82737188e2d63a08196e078e411032dbbc3b89
-
-Regards,
-Bjorn
+>
