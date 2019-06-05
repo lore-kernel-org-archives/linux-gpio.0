@@ -1,86 +1,88 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
-Date: Wed, 5 Jun 2019 09:20:47 +0100
-Message-ID: <20190605082047.GM4797@dell>
+Date: Wed, 5 Jun 2019 09:23:27 +0100
+Message-ID: <20190605082327.GN4797@dell>
 References: <20190604104455.8877-1-lee.jones@linaro.org>
  <20190604104455.8877-2-lee.jones@linaro.org>
  <20190605062020.GL22737@tuxbook-pro>
  <20190605071625.GK4797@dell>
- <20190605075656.GC29637@localhost>
+ <CAKv+Gu_YcdePUkkCGdP5DC9rxCUAshgOzU32pViAp2CbmAaJuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190605075656.GC29637@localhost>
+In-Reply-To: <CAKv+Gu_YcdePUkkCGdP5DC9rxCUAshgOzU32pViAp2CbmAaJuw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, balbi@kernel.org, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, david.brown@linaro.org, alokc@codeaurora.org, kramasub@codeaurora.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, balbi@kernel.org, wsa+renesas@sang-engineering.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>, alokc@codeaurora.org, kramasub@codeaurora.org, linux-i2c <linux-i2c@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, Jeffrey Hugo <jlhugo@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 05 Jun 2019, Johan Hovold wrote:
+On Wed, 05 Jun 2019, Ard Biesheuvel wrote:
 
-> On Wed, Jun 05, 2019 at 08:16:25AM +0100, Lee Jones wrote:
+> On Wed, 5 Jun 2019 at 09:16, Lee Jones <lee.jones@linaro.org> wrote:
+> >
 > > On Tue, 04 Jun 2019, Bjorn Andersson wrote:
-> > 
+> >
 > > > On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
-> > > 
+> > >
 > > > > The Qualcomm Geni I2C driver currently probes silently which can be
 > > > > confusing when debugging potential issues.  Add a low level (INFO)
 > > > > print when each I2C controller is successfully initially set-up.
-> > > > 
+> > > >
 > > > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > > > > ---
 > > > >  drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
 > > > >  1 file changed, 2 insertions(+)
-> > > > 
+> > > >
 > > > > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
 > > > > index 0fa93b448e8d..e27466d77767 100644
 > > > > --- a/drivers/i2c/busses/i2c-qcom-geni.c
 > > > > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
 > > > > @@ -598,6 +598,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> > > >  		return ret;
-> > > >  	}
-> > > >  
-> > > > +	dev_info(&pdev->dev, "Geni-I2C adaptor successfully added\n");
+> > > >             return ret;
+> > > >     }
+> > > >
+> > > > +   dev_info(&pdev->dev, "Geni-I2C adaptor successfully added\n");
 > > > > +
-> > > 
+> > >
 > > > I would prefer that we do not add such prints, as it would be to accept
 > > > the downstream behaviour of spamming the log to the point where no one
 > > > will ever look through it.
-> > 
+> >
 > > We should be able to find a middle ground.  Spamming the log with all
 > > sorts of device specific information/debug is obviously not
 > > constructive, but a single liner to advertise that an important
 > > device/controller has been successfully initialised is more helpful
 > > than it is hinderous.
-> > 
+> >
 > > This print was added due to the silent initialisation costing me
 > > several hours of debugging ACPI device/driver code (albeit learning a
 > > lot about ACPI as I go) just to find out that it was already doing the
 > > right thing - just very quietly.
+> >
 > 
-> No, we don't add noise like this to the logs just because it may be
-> useful while debugging. Even one-liners add up.
+> I agree.
+> 
+> There are numerous EHCI drivers IIRC which, if compiled in,
+> unconditionally print some blurb, whether you have the hardware or
+> not, which is pretty annoying.
+> 
+> In this case, however, having a single line per successfully probed
+> device (containing the dev_name and perhaps the MMIO base address or
+> some other identifying feature) is pretty useful, and shouldn't be
+> regarded as log spamming imo. dev_info() honours the 'quiet' kernel
+> command line parameter, and so you will only see the message if you
+> actually look at the log.
 
-One line per device is should not cause an issue.
++999
 
-Problems occur when developers try to print all kinds of device
-specifics to the boot log.  A simple, single line for such an
-important device/controller has more benefits than drawbacks.
+This is exactly as I see it.
 
-> There are plenty of options for debugging already ranging from adding a
-> temporary dev_info() to the probe function in question to using dynamic
-> debugging to have driver core log every successful probe.
-
-This is what I ended up doing.  It was time consuming to parse though
-a log of that size when you have no paging or keyboard.
-
-> And in this case you say the driver was in fact already bound; that can
-> easily be verified through sysfs too in case things aren't behaving the
-> way you expect.
-
-Not in a non-booting system with no keyboard you can't. ;)
+If people want a quiet log/fast boot-up times, they can request it.
+Otherwise, it's far more useful to trade a second or two for
+important information such as which devices are present/enabled on a
+platform.
 
 -- 
 Lee Jones [李琼斯]
