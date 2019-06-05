@@ -1,133 +1,118 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Date: Wed,  5 Jun 2019 12:42:58 +0100
-Message-ID: <20190605114302.22509-4-lee.jones@linaro.org>
-References: <20190605114302.22509-1-lee.jones@linaro.org>
+From: Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: Re: [PATCH 7/8] usb: dwc3: qcom: Start USB in 'host mode' on the
+ SDM845
+Date: Wed, 5 Jun 2019 08:07:54 -0600
+Message-ID: <d9ba98e6-3caf-62fc-45ca-944cb718b7e4@codeaurora.org>
+References: <20190604104455.8877-1-lee.jones@linaro.org>
+ <20190604104455.8877-7-lee.jones@linaro.org>
+ <20190605070029.GN22737@tuxbook-pro> <20190605083454.GO4797@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, jlhugo@gmail.com, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190605083454.GO4797@dell>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: balbi@kernel.org, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, david.brown@linaro.org, alokc@codeaurora.org, kramasub@codeaurora.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch provides basic support for booting with ACPI instead
-of the currently supported Device Tree.  When doing so there are a
-couple of differences which we need to taken into consideration.
+On 6/5/2019 2:34 AM, Lee Jones wrote:
+> On Wed, 05 Jun 2019, Bjorn Andersson wrote:
+> 
+>> On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+>>
+>>> When booting with Device Tree, the current default boot configuration
+>>> table option, the request to boot via 'host mode' comes from the
+>>> "dr_mode" property.
+>>
+>> This has been the default on the MTP, but this is changing as this is
+>> causing issues when connected downstream from a hub (the typical
+>> development case for the primary USB port of a phone like device) and
+>> more importantly we don't have support for the PMIC blocks that control
+>> VBUS.
+> 
+> My point is not about which mode is currently chosen.  It's more about
+> the capability of choosing which mode is appropriate for a given
+> system via DT.
+> 
+>> Once these issues are resolved the dr_mode would be "otg".
+> 
+> OTG doesn't work on this H/W, so we need to specify "host" mode.
 
-Firstly, the SDM850 ACPI tables omit information pertaining to the
-4 reserved GPIOs on the platform.  If Linux attempts to touch/
-initialise any of these lines, the firmware will restart the
-platform.
+How have you made that determination?
 
-Secondly, when booting with ACPI, it is expected that the firmware
-will set-up things like; Regulators, Clocks, Pin Functions, etc in
-their ideal configuration.  Thus, the possible Pin Functions
-available to this platform are not advertised when providing the
-higher GPIOD/Pinctrl APIs with pin information.
+> 
+>>> A property of the same name can be used inside
+>>> ACPI tables too.  However it is missing from the SDM845's ACPI tables
+>>> so we have to supply this information using Platform Device Properites
+>>> instead.
+>>>
+>>
+>> Afaict this would install a fall-back property, so in the case that we
+>> have specified dr_mode in DT (or ACPI) that would take precedence. So
+> 
+> That's correct.
+> 
+>> the commit message should reflect that this redefines the default choice
+>> to be "host", rather than "otg".
+> 
+> No problem. >
+>> Which is in conflict with what's described for dr_mode in
+>> Documentation/devicetree/bindings/usb/generic.txt
+> 
+> This implementation only affects ACPI based platforms.  When booting
+> with DT, the description in that DT related document is still
+> accurate.
+> 
+>> And this driver is used on a range of different Qualcomm platforms, so I
+>> don't think this is SDM845 specific.
+> 
+> ACPI based platforms?
+> 
+> All the ones I've seen use the XHCI USB driver directly ("PNP0D10").
+>   
+>>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>>> ---
+>>>   drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
+>>>   1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+>>> index 349bf549ee44..f21fdd6cdd1a 100644
+>>> --- a/drivers/usb/dwc3/dwc3-qcom.c
+>>> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+>>> @@ -468,6 +468,11 @@ static const struct acpi_device_id dwc3_qcom_acpi_match[] = {
+>>>   };
+>>>   MODULE_DEVICE_TABLE(acpi, dwc3_qcom_acpi_match);
+>>>   
+>>> +static const struct property_entry dwc3_qcom_acpi_properties[] = {
+>>> +	PROPERTY_ENTRY_STRING("dr_mode", "host"),
+>>> +	{}
+>>> +};
+>>> +
+>>>   static int dwc3_qcom_probe(struct platform_device *pdev)
+>>>   {
+>>>   	struct device_node	*np = pdev->dev.of_node, *dwc3_np;
+>>> @@ -603,6 +608,13 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+>>>   			goto platform_unalloc;
+>>>   		}
+>>>   
+>>> +		ret = platform_device_add_properties(qcom->dwc3,
+>>> +						     dwc3_qcom_acpi_properties);
+>>> +		if (ret < 0) {
+>>> +			dev_err(&pdev->dev, "failed to add properties\n");
+>>> +			goto platform_unalloc;
+>>> +		}
+>>> +
+>>>   		ret = platform_device_add(qcom->dwc3);
+>>>   		if (ret) {
+>>>   			dev_err(&pdev->dev, "failed to add device\n");
+> 
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/pinctrl/qcom/Kconfig          |  2 +-
- drivers/pinctrl/qcom/pinctrl-sdm845.c | 35 ++++++++++++++++++++++++++-
- 2 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 2e66ab72c10b..aafbe932424f 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -168,7 +168,7 @@ config PINCTRL_SDM660
- 
- config PINCTRL_SDM845
-        tristate "Qualcomm Technologies Inc SDM845 pin controller driver"
--       depends on GPIOLIB && OF
-+       depends on GPIOLIB && (OF || ACPI)
-        select PINCTRL_MSM
-        help
-          This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-index c97f20fca5fd..7188bee3cf3e 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -1277,6 +1278,10 @@ static const struct msm_pingroup sdm845_groups[] = {
- 	UFS_RESET(ufs_reset, 0x99f000),
- };
- 
-+static const int sdm845_acpi_reserved_gpios[] = {
-+	0, 1, 2, 3, 81, 82, 83, 84, -1
-+};
-+
- static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.pins = sdm845_pins,
- 	.npins = ARRAY_SIZE(sdm845_pins),
-@@ -1284,14 +1289,41 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(sdm845_functions),
- 	.groups = sdm845_groups,
- 	.ngroups = ARRAY_SIZE(sdm845_groups),
-+	.reserved_gpios = sdm845_acpi_reserved_gpios,
-+	.ngpios = 150,
-+};
-+
-+static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
-+	.pins = sdm845_pins,
-+	.npins = ARRAY_SIZE(sdm845_pins),
-+	.groups = sdm845_groups,
-+	.ngroups = ARRAY_SIZE(sdm845_groups),
-+	.reserved_gpios = sdm845_acpi_reserved_gpios,
- 	.ngpios = 150,
- };
- 
- static int sdm845_pinctrl_probe(struct platform_device *pdev)
- {
--	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-+	int ret;
-+
-+	if (pdev->dev.of_node) {
-+		ret = msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-+	} else if (ACPI_HANDLE(&pdev->dev)) {
-+		ret = msm_pinctrl_probe(pdev, &sdm845_acpi_pinctrl);
-+	} else {
-+		dev_err(&pdev->dev, "DT and ACPI disabled\n");
-+		return -EINVAL;
-+	}
-+
-+	return ret;
- }
- 
-+static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
-+	{ "QCOM0217"},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, sdm845_pinctrl_acpi_match);
-+
- static const struct of_device_id sdm845_pinctrl_of_match[] = {
- 	{ .compatible = "qcom,sdm845-pinctrl", },
- 	{ },
-@@ -1302,6 +1334,7 @@ static struct platform_driver sdm845_pinctrl_driver = {
- 		.name = "sdm845-pinctrl",
- 		.pm = &msm_pinctrl_dev_pm_ops,
- 		.of_match_table = sdm845_pinctrl_of_match,
-+		.acpi_match_table = ACPI_PTR(sdm845_pinctrl_acpi_match),
- 	},
- 	.probe = sdm845_pinctrl_probe,
- 	.remove = msm_pinctrl_remove,
 -- 
-2.17.1
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
