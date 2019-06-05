@@ -1,62 +1,103 @@
-From: Avri Altman <Avri.Altman@wdc.com>
-Subject: RE: [PATCH 0/3] (Qualcomm) UFS device reset support
-Date: Wed, 5 Jun 2019 09:32:32 +0000
-Message-ID: <SN6PR04MB492521B7D2DB6F3462EDB7D9FC160@SN6PR04MB4925.namprd04.prod.outlook.com>
-References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
- <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
- <SN6PR04MB4925530F216E86F6404FE14CFC160@SN6PR04MB4925.namprd04.prod.outlook.com>
- <20190605060154.GJ22737@tuxbook-pro>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 6/8] usb: dwc3: qcom: Add support for booting with ACPI
+Date: Wed, 5 Jun 2019 10:55:24 +0100
+Message-ID: <20190605095524.GS4797@dell>
+References: <20190604104455.8877-1-lee.jones@linaro.org>
+ <20190604104455.8877-6-lee.jones@linaro.org>
+ <20190605063507.GM22737@tuxbook-pro>
+ <20190605070928.GJ4797@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190605060154.GJ22737@tuxbook-pro>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190605070928.GJ4797@dell>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: John Stultz <john.stultz@linaro.org>, Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Cc: alokc@codeaurora.org, kramasub@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
->=20
-> On Tue 04 Jun 22:50 PDT 2019, Avri Altman wrote:
->=20
-> > Hi,
-> >
-> > >
-> > > On Tue, Jun 4, 2019 at 12:22 AM Bjorn Andersson
-> > > <bjorn.andersson@linaro.org> wrote:
-> > > >
-> > > > This series exposes the ufs_reset line as a gpio, adds support for =
-ufshcd to
-> > > > acquire and toggle this and then adds this to SDM845 MTP.
-> > > >
-> > > > Bjorn Andersson (3):
-> > > >   pinctrl: qcom: sdm845: Expose ufs_reset as gpio
-> > > >   scsi: ufs: Allow resetting the UFS device
-> > > >   arm64: dts: qcom: sdm845-mtp: Specify UFS device-reset GPIO
-> > >
-> > > Adding similar change as in sdm845-mtp to the not yet upstream
-> > > blueline dts, I validated this allows my micron UFS pixel3 to boot.
-> > >
-> > > Tested-by: John Stultz <john.stultz@linaro.org>
-> > Maybe ufs_hba_variant_ops would be the proper place to add this?
-> >
->=20
-> Are you saying that these memories only need a reset when they are
-> paired with the Qualcomm host controller?
-ufs_hba_variant_ops is for vendors to implement their own vops,
-and as you can see, many of them do.
-Adding hw_reset to that template seems like the proper way
-to do what you are doing.
+On Wed, 05 Jun 2019, Lee Jones wrote:
 
-Thanks,
-Avri
->=20
-> The way it's implemented it here is that the device-reset GPIO is
-> optional and only if you specify it we'll toggle the reset. So if your
-> board design has a UFS memory that requires a reset pulse during
-> initialization you specify this, regardless of which vendor your SoC
-> comes from.
->=20
-> Regards,
-> Bjorn
+> On Tue, 04 Jun 2019, Bjorn Andersson wrote:
+> 
+> > On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+> > > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> > [..]
+> > > @@ -373,7 +416,7 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+> > >  
+> > >  	qcom->num_clocks = count;
+> > >  
+> > > -	if (!count)
+> > > +	if (!count || ACPI_HANDLE(dev))
+> > >  		return 0;
+> > 
+> > Afaict you call this with count = of_count_phandle_with_args(), which
+> > should be 0. But why not skip calling this at all?
+> 
+> Actually count can be <0, which is why I must have needed it at the
+> beginning.  There is another patch in this set which checks for
+> errors, thus the ACPI_HANDLE() call should now be superfluous.  I
+> will test and remove it.
+
+Just looked into this - it is still required.
+
+of_count_phandle_with_args() returns an error not to be heeded in the
+ACPI case.  So the logic goes:
+
+[This patch]
+ * It's fine to boot DT with no clocks to initialise (return 0)
+ * There are no clocks to enable when booting ACPI (return 0)
+
+[Another patch]
+ * It's not fine to boot DT and for 'count < 0' (return count)
+
+> > >  	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
+> > > @@ -409,12 +452,28 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static const struct dwc3_acpi_pdata sdm845_acpi_pdata = {
+> > > +	.qscratch_base_offset = SDM845_QSCRATCH_BASE_OFFSET,
+> > > +	.qscratch_base_size = SDM845_QSCRATCH_SIZE,
+> > > +	.dwc3_core_base_size = SDM845_DWC3_CORE_SIZE,
+> > > +	.hs_phy_irq_index = 1,
+> > > +	.dp_hs_phy_irq_index = 4,
+> > > +	.dm_hs_phy_irq_index = 3,
+> > > +	.ss_phy_irq_index = 2
+> > > +};
+> > > +
+> > > +static const struct acpi_device_id dwc3_qcom_acpi_match[] = {
+> > > +	{ "QCOM2430", (unsigned long)&sdm845_acpi_pdata },
+> > > +	{ },
+> > > +};
+> > > +MODULE_DEVICE_TABLE(acpi, dwc3_qcom_acpi_match);
+> > 
+> > Analog to of_device_get_match_data() there seems to be a
+> > acpi_device_get_match_data(), if you use this you should be able to
+> > have you acpi_device_id array next to the of_device_id.
+> 
+> Do you mean "Analogous"?
+> 
+> I will try to group them, thanks.
+> 
+> > > +
+> > >  static int dwc3_qcom_probe(struct platform_device *pdev)
+> > 
+> > It seems that all that's left unconditional on ACPI_HANDLE() in this
+> > function are the optional pieces and the tail. Wouldn't it be cleaner to
+> > split it out in different functions?
+> 
+> There are ~50 lines of shared code in dwc3_qcom_probe(), most of it is
+> interspersed between the configuration table (DT, ACPI) pieces, which
+> is why it's formatted in the current way.
+> 
+> I can split a few things out into separate functions if you think
+> it'll help.
+> 
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
