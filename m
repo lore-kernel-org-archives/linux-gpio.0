@@ -1,41 +1,87 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-Date: Wed, 5 Jun 2019 22:41:28 +0200
-Message-ID: <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
+From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Subject: RE: [EXT] [PATCH 2/3] scsi: ufs: Allow resetting the UFS device
+Date: Wed, 5 Jun 2019 21:17:48 +0000
+Message-ID: <BN7PR08MB5684B63CABF148C279FD64C1DB160@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
+ <20190604072001.9288-3-bjorn.andersson@linaro.org>
+ <BN7PR08MB568450B1EC51ABAA2E426AC0DB150@BN7PR08MB5684.namprd08.prod.outlook.com>
+ <20190604223025.GD4814@minitux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559754961-26783-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <20190604223025.GD4814@minitux>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Pedro Sousa <pedrom.sousa@synopsys.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Andy Gross <agross@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
->
-> Add initial device tree support for the Qualcomm IPQ6018 SoC and
-> CP01 evaluation board.
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->
-> +       clocks {
-> +               sleep_clk: sleep_clk {
-> +                       compatible = "fixed-clock";
-> +                       clock-frequency = <32000>;
-> +                       #clock-cells = <0>;
-> +               };
-> +
-Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
->From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-declares them at 32000 Hz. Since you probably have access to the BOM and
-datasheets. Can you please confirm what's the real clock frequency for
-the IPQ6018.
-(And maybe also for the sleep_clk of the IPQ4018 as well?).
+Hi, Bjorn
+I think I should give up my preview suggestion DME_ENDPOINTRESET.req softwa=
+re reset,  go back to your HW reset.
+Although SW reset can cover most of the requirement, and compatible with di=
+fferent vendor UFS device, for some device
+fatal error cases, UFS internal stuck and would not accept SW Reset. An HW =
+reset is expected. =20
+Please go on your reset way.
 
-Cheers,
-Christian
+Thanks,
+//Bean
+
+>Andy Gross <agross@kernel.org>; Linus Walleij <linus.walleij@linaro.org>;
+>Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+>linux-arm-msm@vger.kernel.org; linux-gpio@vger.kernel.org;
+>devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+>scsi@vger.kernel.org
+>Subject: Re: [EXT] [PATCH 2/3] scsi: ufs: Allow resetting the UFS device
+>
+>On Tue 04 Jun 01:13 PDT 2019, Bean Huo (beanhuo) wrote:
+>> >@@ -6159,6 +6179,9 @@ static int ufshcd_reset_and_restore(struct
+>> >ufs_hba
+>> >*hba)
+>> > 	int retries =3D MAX_HOST_RESET_RETRIES;
+>> >
+>> > 	do {
+>> >+		/* Reset the attached device */
+>> >+		ufshcd_device_reset(hba);
+>> >+
+>>
+>> what's problem you met, and you should reset UFS device here? could you
+>give more info?
+>>
+>> It is true that we don't reset UFS device in case of device fatal
+>> error. According to UFS host spec, Host should be device reset except
+>> that in addition to resetting UIC. But as so far, We didn't experience a=
+ny
+>problems result from this missing reset.
+>>
+>> We have three UFS device reset ways.  Comparing to this hardware
+>> reset, I prefer to use DME_ENDPOINTRESET.req software reset.
+>>
+>
+>Hi Bean,
+>
+>Thanks for your questions. With some memories we see issues establishing
+>the link during bootup, so that's the purpose of issuing this reset.
+>
+>Unfortunately the downstream Qualcomm patch [1] (which I should have
+>remembered to attribute), does not mention why the reset during host
+>controller reset is needed - but I'm fairly certain that this scenario wou=
+ld be
+>similar to the handover from bootloader to kernel that we do see an issue
+>with.
+>
+>
+>[1]
+>https://nam01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fsource
+>.codeaurora.org%2Fquic%2Fla%2Fkernel%2Fmsm-
+>4.4%2Fcommit%2F%3Fh%3Dmsm-
+>4.4%26id%3D0c82737188e2d63a08196e078e411032dbbc3b89&amp;data=3D02%
+>7C01%7Cbeanhuo%40micron.com%7Cf72404eb906440e1f9c408d6e93c401d%7
+>Cf38a5ecd28134862b11bac1d563c806f%7C0%7C0%7C636952842324926509&a
+>mp;sdata=3DI%2FH7km6b34jyoUa1RVEPApfYt5uSFtHqL3%2BvV1bvryM%3D&amp
+>;reserved=3D0
+>
+>Regards,
+>Bjorn
