@@ -1,48 +1,91 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [RFC RESEND PATCH v2 2/4] arm64: dts: ti: am6-wakeup: Add gpio node
-Date: Thu, 6 Jun 2019 15:26:18 +0530
-Message-ID: <20190606095620.6211-3-j-keerthy@ti.com>
-References: <20190606095620.6211-1-j-keerthy@ti.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: tb10x: Use flexible-array member and struct_size()
+ helper
+Date: Thu, 6 Jun 2019 10:12:32 -0500
+Message-ID: <20190606151232.GA20105@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190606095620.6211-1-j-keerthy@ti.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: t-kristo@ti.com, nm@ti.com, robh+dt@kernel.org
-Cc: lokeshvutla@ti.com, bgolaszewski@baylibre.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, j-keerthy@ti.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add gpio0 node under wakeup domain. This has 56 gpios
-and all are capable of generating banked interrupts.
+Update the code to use a flexible array member instead of a pointer in
+structure i2c_mux_pinctrl and use the struct_size() helper:
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+struct tb10x_pinctrl {
+        ...
+	struct tb10x_of_pinfunc pinfuncs[];
+};
+
+Also, make use of the struct_size() helper instead of an open-coded
+version in order to avoid any potential type mistakes, in particular
+in the context in which this code is being used.
+
+So, replace the following form:
+
+sizeof(struct tb10x_pinctrl) + of_get_child_count(of_node) * sizeof(struct tb10x_of_pinfunc)
+
+with:
+
+struct_size(state, pinfuncs, of_get_child_count(of_node))
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/pinctrl/pinctrl-tb10x.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-index f1ca171abdf8..9cf2c0849a24 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-@@ -74,4 +74,19 @@
- 		ti,sci-dst-id = <56>;
- 		ti,sci-rm-range-girq = <0x4>;
- 	};
-+
-+	wkup_gpio0: wkup_gpio0@42110000 {
-+		compatible = "ti,am654-gpio", "ti,keystone-gpio";
-+		reg = <0x42110000 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&intr_wkup_gpio>;
-+		interrupts = <59 128>, <59 129>, <59 130>, <59 131>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <56>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		clocks = <&k3_clks 59 0>;
-+		clock-names = "gpio";
-+	};
+diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
+index 2e90a6d8fb3b..a32badf3f118 100644
+--- a/drivers/pinctrl/pinctrl-tb10x.c
++++ b/drivers/pinctrl/pinctrl-tb10x.c
+@@ -483,22 +483,22 @@ struct tb10x_port {
+  * @base: register set base address.
+  * @pingroups: pointer to an array of the pin groups this driver manages.
+  * @pinfuncgrpcnt: number of pingroups in @pingroups.
+- * @pinfuncs: pointer to an array of pin functions this driver manages.
+  * @pinfuncnt: number of pin functions in @pinfuncs.
+  * @mutex: mutex for exclusive access to a pin controller's state.
+  * @ports: current state of each port.
+  * @gpios: Indicates if a given pin is currently used as GPIO (1) or not (0).
++ * @pinfuncs: flexible array of pin functions this driver manages.
+  */
+ struct tb10x_pinctrl {
+ 	struct pinctrl_dev *pctl;
+ 	void *base;
+ 	const struct tb10x_pinfuncgrp *pingroups;
+ 	unsigned int pinfuncgrpcnt;
+-	struct tb10x_of_pinfunc *pinfuncs;
+ 	unsigned int pinfuncnt;
+ 	struct mutex mutex;
+ 	struct tb10x_port ports[TB10X_PORTS];
+ 	DECLARE_BITMAP(gpios, MAX_PIN + 1);
++	struct tb10x_of_pinfunc pinfuncs[];
  };
+ 
+ static inline void tb10x_pinctrl_set_config(struct tb10x_pinctrl *state,
+@@ -771,15 +771,13 @@ static int tb10x_pinctrl_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	state = devm_kzalloc(dev, sizeof(struct tb10x_pinctrl) +
+-					of_get_child_count(of_node)
+-					* sizeof(struct tb10x_of_pinfunc),
+-				GFP_KERNEL);
++	state = devm_kzalloc(dev, struct_size(state, pinfuncs,
++					      of_get_child_count(of_node)),
++			     GFP_KERNEL);
+ 	if (!state)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, state);
+-	state->pinfuncs = (struct tb10x_of_pinfunc *)(state + 1);
+ 	mutex_init(&state->mutex);
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -- 
-2.17.1
+2.21.0
