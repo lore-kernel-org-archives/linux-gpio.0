@@ -1,56 +1,87 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 2/3] gpio: davinci: Add new compatible for K3 AM654 SoCs
-Date: Thu, 6 Jun 2019 09:49:07 +0200
-Message-ID: <CAMRc=Mfe+K=s4OZp7VWRik7JtSU6Fpufx0yDZtYCMNh5+LSJuQ@mail.gmail.com>
-References: <20190605080259.2462-1-j-keerthy@ti.com> <20190605080259.2462-3-j-keerthy@ti.com>
- <CAMpxmJXjMX20TAEsfEa7pqZx5-aW_rMKwS+6g9NTvRNEfuAyeA@mail.gmail.com> <96dbfd50-2a45-e3dc-3928-47fbc52f9269@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [RFC RESEND PATCH v2 4/4] arm64: dts: ti: am654-base-board: Add
+ gpio_keys node
+Date: Thu, 6 Jun 2019 15:26:20 +0530
+Message-ID: <20190606095620.6211-5-j-keerthy@ti.com>
+References: <20190606095620.6211-1-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <96dbfd50-2a45-e3dc-3928-47fbc52f9269@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, lokeshvutla@ti.com, linux-gpio <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190606095620.6211-1-j-keerthy@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: t-kristo@ti.com, nm@ti.com, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, lokeshvutla@ti.com, j-keerthy@ti.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 5 cze 2019 o 17:12 Keerthy <j-keerthy@ti.com> napisa=C5=82(a):
->
->
->
-> On 05/06/19 7:56 PM, Bartosz Golaszewski wrote:
-> > =C5=9Br., 5 cze 2019 o 10:02 Keerthy <j-keerthy@ti.com> napisa=C5=82(a)=
-:
-> >>
-> >> Add new compatible for K3 AM654 SoCs.
-> >>
-> >> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> >> ---
-> >>   drivers/gpio/gpio-davinci.c | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> >> index 0977590eb996..fc494a84a29d 100644
-> >> --- a/drivers/gpio/gpio-davinci.c
-> >> +++ b/drivers/gpio/gpio-davinci.c
-> >> @@ -632,6 +632,7 @@ static int davinci_gpio_irq_setup(struct platform_=
-device *pdev)
-> >>
-> >>   static const struct of_device_id davinci_gpio_ids[] =3D {
-> >>          { .compatible =3D "ti,keystone-gpio", keystone_gpio_get_irq_c=
-hip},
-> >> +       { .compatible =3D "ti,am654-gpio", keystone_gpio_get_irq_chip}=
-,
-> >
-> > Please add a patch adding this compatible to the binding document as we=
-ll.
->
-> https://patchwork.kernel.org/patch/10976445/
->
-> Posted but did not add you in Cc. Sorry about that.
->
+There are 2 push buttons: SW5 and SW6 that are basically connected to
+WKUP_GPIO0_24 and WKUP_GPIO0_27 respectively. Add the respective
+nodes and the pinctrl data to set the mode to GPIO and Input.
 
-I don't see it on GPIO patchwork either. Please resend it as part of
-this series.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Bart
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index cf1aa276a1ea..ea50b6e36eff 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -6,6 +6,7 @@
+ /dts-v1/;
+ 
+ #include "k3-am654.dtsi"
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	compatible =  "ti,am654-evm", "ti,am654";
+@@ -33,6 +34,25 @@
+ 			no-map;
+ 		};
+ 	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		autorepeat;
++		pinctrl-names = "default";
++		pinctrl-0 = <&push_button_pins_default>;
++
++		sw5 {
++			label = "GPIO Key USER1";
++			linux,code = <BTN_0>;
++			gpios = <&wkup_gpio0 24 GPIO_ACTIVE_LOW>;
++		};
++
++		sw6 {
++			label = "GPIO Key USER2";
++			linux,code = <BTN_1>;
++			gpios = <&wkup_gpio0 27 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &wkup_pmx0 {
+@@ -42,6 +62,13 @@
+ 			AM65X_WKUP_IOPAD(0x00e4, PIN_INPUT, 0) /* (AD6) WKUP_I2C0_SDA */
+ 		>;
+ 	};
++
++	push_button_pins_default: push_button__pins_default {
++		pinctrl-single,pins = <
++			AM65X_WKUP_IOPAD(0x0030, PIN_INPUT, 7) /* (R5) WKUP_GPIO0_24 */
++			AM65X_WKUP_IOPAD(0x003c, PIN_INPUT, 7) /* (P2) WKUP_GPIO0_27 */
++		>;
++	};
+ };
+ 
+ &main_pmx0 {
+-- 
+2.17.1
