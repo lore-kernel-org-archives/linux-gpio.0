@@ -1,91 +1,174 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] pinctrl: tb10x: Use flexible-array member and struct_size()
- helper
-Date: Thu, 6 Jun 2019 10:12:32 -0500
-Message-ID: <20190606151232.GA20105@embeddedor>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2 07/12] clk: tegra: support for Tegra210 clocks suspend-resume
+Date: Thu, 06 Jun 2019 11:17:10 -0700
+Message-ID: <20190606181711.744502083D@mail.kernel.org>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com> <1559084936-4610-8-git-send-email-skomatineni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <1559084936-4610-8-git-send-email-skomatineni@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: jason@lakedaemon.net, jonathanh@nvidia.com, linus.walleij@linaro.org, marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de, thierry.reding@gmail.com
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com, skomatineni@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Update the code to use a flexible array member instead of a pointer in
-structure i2c_mux_pinctrl and use the struct_size() helper:
+Quoting Sowjanya Komatineni (2019-05-28 16:08:51)
+> @@ -3381,6 +3398,367 @@ static struct tegra_clk_init_table init_table[] _=
+_initdata =3D {
+>         { TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+>  };
+> =20
+> +#ifdef CONFIG_PM_SLEEP
+> +static unsigned long pll_c_rate, pll_c2_rate, pll_c3_rate, pll_x_rate;
+> +static unsigned long pll_c4_rate, pll_d2_rate, pll_dp_rate;
+> +static unsigned long pll_re_vco_rate, pll_d_rate, pll_a_rate, pll_a1_rat=
+e;
+> +static unsigned long pll_c_out1_rate;
+> +static unsigned long pll_a_out0_rate, pll_c4_out3_rate;
+> +static unsigned long pll_p_out_rate[5];
+> +static unsigned long pll_u_out1_rate, pll_u_out2_rate;
+> +static unsigned long pll_mb_rate;
+> +static u32 pll_m_v;
+> +static u32 pll_p_outa, pll_p_outb;
+> +static u32 pll_re_out_div, pll_re_out_1;
+> +static u32 cpu_softrst_ctx[3];
+> +static u32 cclkg_burst_policy_ctx[2];
+> +static u32 cclklp_burst_policy_ctx[2];
+> +static u32 sclk_burst_policy_ctx[3];
+> +static u32 sclk_ctx, spare_ctx, misc_clk_enb_ctx, clk_arm_ctx;
 
-struct tb10x_pinctrl {
-        ...
-	struct tb10x_of_pinfunc pinfuncs[];
-};
+This is a lot of state to maintain globally. Can it go into a container
+struct so we can get docs and understand what's going on a little
+better?
 
-Also, make use of the struct_size() helper instead of an open-coded
-version in order to avoid any potential type mistakes, in particular
-in the context in which this code is being used.
+> +
+> +static struct platform_device *dfll_pdev;
+> +#define car_readl(_base, _off) \
+> +       readl_relaxed(clk_base + (_base) + ((_off) * 4))
+> +#define car_writel(_val, _base, _off) \
+> +       writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
+> +
+> +static u32 *periph_clk_src_ctx;
+> +struct periph_source_bank {
+> +       u32 start;
+> +       u32 end;
 
-So, replace the following form:
+Do these need to be u32 or could they be u16?
 
-sizeof(struct tb10x_pinctrl) + of_get_child_count(of_node) * sizeof(struct tb10x_of_pinfunc)
+> +};
+> +
+> +static struct periph_source_bank periph_srcs[] =3D {
 
-with:
+Can this be const?
 
-struct_size(state, pinfuncs, of_get_child_count(of_node))
+> +       [0] =3D {
+> +               .start =3D 0x100,
+> +               .end =3D 0x198,
+> +       },
+> +       [1] =3D {
+> +               .start =3D 0x1a0,
+> +               .end =3D 0x1f8,
+> +       },
+> +       [2] =3D {
+> +               .start =3D 0x3b4,
+> +               .end =3D 0x42c,
+> +       },
+> +       [3] =3D {
+> +               .start =3D 0x49c,
+> +               .end =3D 0x4b4,
+> +       },
+> +       [4] =3D {
+> +               .start =3D 0x560,
+> +               .end =3D 0x564,
+> +       },
+> +       [5] =3D {
+> +               .start =3D 0x600,
+> +               .end =3D 0x678,
+> +       },
+> +       [6] =3D {
+> +               .start =3D 0x694,
+> +               .end =3D 0x6a0,
+> +       },
+> +       [7] =3D {
+> +               .start =3D 0x6b8,
+> +               .end =3D 0x718,
+> +       },
+> +};
+> +
+> +/* This array lists the valid clocks for each periph clk bank */
+> +static u32 periph_clks_on[] =3D {
 
-This code was detected with the help of Coccinelle.
+const?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/pinctrl/pinctrl-tb10x.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> +       0xdcd7dff9,
+> +       0x87d1f3e7,
+> +       0xf3fed3fa,
+> +       0xffc18cfb,
+> +       0x793fb7ff,
+> +       0x3fe66fff,
+> +       0xfc1fc7ff,
 
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index 2e90a6d8fb3b..a32badf3f118 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -483,22 +483,22 @@ struct tb10x_port {
-  * @base: register set base address.
-  * @pingroups: pointer to an array of the pin groups this driver manages.
-  * @pinfuncgrpcnt: number of pingroups in @pingroups.
-- * @pinfuncs: pointer to an array of pin functions this driver manages.
-  * @pinfuncnt: number of pin functions in @pinfuncs.
-  * @mutex: mutex for exclusive access to a pin controller's state.
-  * @ports: current state of each port.
-  * @gpios: Indicates if a given pin is currently used as GPIO (1) or not (0).
-+ * @pinfuncs: flexible array of pin functions this driver manages.
-  */
- struct tb10x_pinctrl {
- 	struct pinctrl_dev *pctl;
- 	void *base;
- 	const struct tb10x_pinfuncgrp *pingroups;
- 	unsigned int pinfuncgrpcnt;
--	struct tb10x_of_pinfunc *pinfuncs;
- 	unsigned int pinfuncnt;
- 	struct mutex mutex;
- 	struct tb10x_port ports[TB10X_PORTS];
- 	DECLARE_BITMAP(gpios, MAX_PIN + 1);
-+	struct tb10x_of_pinfunc pinfuncs[];
- };
- 
- static inline void tb10x_pinctrl_set_config(struct tb10x_pinctrl *state,
-@@ -771,15 +771,13 @@ static int tb10x_pinctrl_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	state = devm_kzalloc(dev, sizeof(struct tb10x_pinctrl) +
--					of_get_child_count(of_node)
--					* sizeof(struct tb10x_of_pinfunc),
--				GFP_KERNEL);
-+	state = devm_kzalloc(dev, struct_size(state, pinfuncs,
-+					      of_get_child_count(of_node)),
-+			     GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, state);
--	state->pinfuncs = (struct tb10x_of_pinfunc *)(state + 1);
- 	mutex_init(&state->mutex);
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--- 
-2.21.0
+What are these magic numbers?
+
+> +};
+> +
+> +static inline unsigned long clk_get_rate_nolock(struct clk *clk)
+> +{
+> +       if (IS_ERR_OR_NULL(clk)) {
+
+NULL is a valid clk pointer. Typically usage of IS_ERR_OR_NULL() is
+wrong.
+
+> +               WARN_ON(1);
+> +               return 0;
+> +       }
+> +
+> +       return clk_hw_get_rate(__clk_get_hw(clk));
+> +}
+> +
+> +static inline struct clk *pll_p_clk(unsigned int x)
+> +{
+> +       if (x < 4) {
+
+What is magic value 4?
+
+> +               return clks[TEGRA210_CLK_PLL_P_OUT1 + x];
+> +       } else if (x !=3D 4) {
+> +               WARN_ON(1);
+> +               return NULL;
+> +       } else {
+> +               return clks[TEGRA210_CLK_PLL_P_OUT5];
+> +       }
+> +}
+> +
+[..]
+> +
+> +static void tegra210_clk_resume(void)
+> +{
+[..]
+> +       fence_udelay(2, clk_base);
+> +       for (i =3D 0; i < BURST_POLICY_REG_SIZE; i++) {
+> +               car_writel(cclklp_burst_policy_ctx[i], CCLKLP_BURST_POLIC=
+Y, i);
+> +               car_writel(sclk_burst_policy_ctx[i], SCLK_BURST_POLICY, i=
+);
+> +       }
+> +       car_writel(sclk_burst_policy_ctx[i], SYS_CLK_DIV, 0);
+> +
+> +       car_writel(sclk_ctx, SYSTEM_CLK_RATE, 0);
+> +       car_writel(spare_ctx, SPARE_REG0, 0);
+> +       car_writel(misc_clk_enb_ctx, MISC_CLK_ENB, 0);
+> +       car_writel(clk_arm_ctx, CLK_MASK_ARM, 0);
+> +
+> +       /* enable all clocks before configuring clock sources */
+> +       tegra_clk_periph_force_on(periph_clks_on, ARRAY_SIZE(periph_clks_=
+on),
+> +                                 clk_base);
+> +
+> +       wmb();
+
+Please add a comment before barriers so we know what they're for.
+
+> +       fence_udelay(2, clk_base);
+> +
