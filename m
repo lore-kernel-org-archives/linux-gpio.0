@@ -1,29 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 16/22] docs: gpio: driver.rst: fix a bad tag
-Date: Fri, 7 Jun 2019 22:57:16 +0200
-Message-ID: <CACRpkdYmqGj3PC1firW2awWyi4OuzHwSrYo7n3Ph8j0==824qA@mail.gmail.com>
-References: <cover.1559171394.git.mchehab+samsung@kernel.org> <ab694e03ba6de8908d0a19a58408180eee3f795b.1559171394.git.mchehab+samsung@kernel.org>
+Subject: Re: [PATCH] dt-bindings: imx: Correct pinfunc head file path for i.MX8MM
+Date: Fri, 7 Jun 2019 22:59:01 +0200
+Message-ID: <CACRpkdYmX3GRmXCuPe-zoQE6PEYr_TQruj_ymR3G_jBjtjrwpw@mail.gmail.com>
+References: <20190530031357.17484-1-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ab694e03ba6de8908d0a19a58408180eee3f795b.1559171394.git.mchehab+samsung@kernel.org>
+In-Reply-To: <20190530031357.17484-1-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 30, 2019 at 1:24 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
+On Thu, May 30, 2019 at 5:12 AM <Anson.Huang@nxp.com> wrote:
 
-> With ReST, [foo]_ means a reference to foo, causing this warning:
+> From: Anson Huang <Anson.Huang@nxp.com>
 >
->     Documentation/driver-api/gpio/driver.rst:419: WARNING: Unknown target name: "devm".
+> The i.MX8MM pinfunc head file is located in DT folder, correct it.
 >
-> Fix it by using a literal for the name.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Patch applied to the GPIO tree.
+Patch applied.
 
 Yours,
 Linus Walleij
