@@ -1,37 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/8] pinctrl: msm: Add ability for drivers to supply a
- reserved GPIO list
-Date: Sat, 8 Jun 2019 01:02:09 +0200
-Message-ID: <CACRpkdaEe3uKAsSuhbToevXH1cMsuMUvwaopLPuD+JkDTnuEnQ@mail.gmail.com>
-References: <20190605114302.22509-1-lee.jones@linaro.org> <20190605114302.22509-3-lee.jones@linaro.org>
+Subject: Re: [PATCH 0/6] Add minimal boot support for IPQ6018
+Date: Sat, 8 Jun 2019 01:08:22 +0200
+Message-ID: <CACRpkdbxUHR8Uo+M7+_0v77Pg6k_jmL79KeHKNzWmFhtq+mZXw@mail.gmail.com>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190605114302.22509-3-lee.jones@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jlhugo@gmail.com, linux-i2c@vger.kernel.org, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sricharan R <sricharan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, MSM <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <agross@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 1:43 PM Lee Jones <lee.jones@linaro.org> wrote:
-
-> When booting MSM based platforms with Device Tree or some ACPI
-> implementations, it is possible to provide a list of reserved pins
-> via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
-> However some ACPI tables are not populated with this information,
-> thus it has to come from a knowledgable device driver instead.
->
-> Here we provide the MSM common driver with additional support to
-> parse this informtion and correctly populate the widely used
-> 'valid_mask'.
->
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-
-Exactly how we should use of the API, so if Bj=C3=B6rn can supply an
-ACK to patches 3 and 4 I'm happy to apply them.
-
-Bj=C3=B6rn?
-
-Yours,
-Linus Walleij
+T24gV2VkLCBKdW4gNSwgMjAxOSBhdCA3OjE2IFBNIFNyaWNoYXJhbiBSIDxzcmljaGFyYW5AY29k
+ZWF1cm9yYS5vcmc+IHdyb3RlOgoKPiBUaGUgSVBRNjAxOCBpcyBRdWFsY29tbeKAmXMgODAyLjEx
+YXggU29DIGZvciBSb3V0ZXJzLAo+IEdhdGV3YXlzIGFuZCBBY2Nlc3MgUG9pbnRzLgo+Cj4gVGhp
+cyBzZXJpZXMgYWRkcyBtaW5pbWFsIGJvYXJkIGJvb3Qgc3VwcG9ydCBmb3IgaXBxNjAxOC1jcDAx
+Cj4gYm9hcmQuCj4KPiBTcmljaGFyYW4gUiAoNik6Cj4gICBwaW5jdHJsOiBxY29tOiBBZGQgaXBx
+NjAxOCBwaW5jdHJsIGRyaXZlcgo+ICAgZHQtYmluZGluZ3M6IHFjb206IEFkZCBpcHE2MDE4IGJp
+bmRpbmdzCgpJJ20gaGFwcHkgdG8gbWVyZ2UgdGhlc2UgdHdvIGlmIEkgY2FuIGdldCBhIHJldmll
+dyBmcm9tCkJqb3JuIEFuZGVyc3NvbiBvbiB0aGVtLgoKWW91cnMsCkxpbnVzIFdhbGxlaWoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
+ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
+dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
+ZWwK
