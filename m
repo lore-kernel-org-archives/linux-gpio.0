@@ -1,35 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/6] Add minimal boot support for IPQ6018
-Date: Sat, 8 Jun 2019 01:08:22 +0200
-Message-ID: <CACRpkdbxUHR8Uo+M7+_0v77Pg6k_jmL79KeHKNzWmFhtq+mZXw@mail.gmail.com>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+Subject: Re: [PATCH v2] pinctrl: tb10x: Use flexible-array member and
+ struct_size() helper
+Date: Sat, 8 Jun 2019 01:24:47 +0200
+Message-ID: <CACRpkdYXxHZ2KmU5Fz1eDXN=Z9i=uqwAtOWmpHam6F0U-eYySA@mail.gmail.com>
+References: <20190606231144.GA1402@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sricharan R <sricharan@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, MSM <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <agross@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190606231144.GA1402@embeddedor>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gV2VkLCBKdW4gNSwgMjAxOSBhdCA3OjE2IFBNIFNyaWNoYXJhbiBSIDxzcmljaGFyYW5AY29k
-ZWF1cm9yYS5vcmc+IHdyb3RlOgoKPiBUaGUgSVBRNjAxOCBpcyBRdWFsY29tbeKAmXMgODAyLjEx
-YXggU29DIGZvciBSb3V0ZXJzLAo+IEdhdGV3YXlzIGFuZCBBY2Nlc3MgUG9pbnRzLgo+Cj4gVGhp
-cyBzZXJpZXMgYWRkcyBtaW5pbWFsIGJvYXJkIGJvb3Qgc3VwcG9ydCBmb3IgaXBxNjAxOC1jcDAx
-Cj4gYm9hcmQuCj4KPiBTcmljaGFyYW4gUiAoNik6Cj4gICBwaW5jdHJsOiBxY29tOiBBZGQgaXBx
-NjAxOCBwaW5jdHJsIGRyaXZlcgo+ICAgZHQtYmluZGluZ3M6IHFjb206IEFkZCBpcHE2MDE4IGJp
-bmRpbmdzCgpJJ20gaGFwcHkgdG8gbWVyZ2UgdGhlc2UgdHdvIGlmIEkgY2FuIGdldCBhIHJldmll
-dyBmcm9tCkJqb3JuIEFuZGVyc3NvbiBvbiB0aGVtLgoKWW91cnMsCkxpbnVzIFdhbGxlaWoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
-ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
-dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
-ZWwK
+On Fri, Jun 7, 2019 at 1:11 AM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+
+> Update the code to use a flexible array member instead of a pointer in
+> structure tb10x_pinctrl and use the struct_size() helper:
+>
+> struct tb10x_pinctrl {
+>         ...
+>         struct tb10x_of_pinfunc pinfuncs[];
+> };
+>
+> Also, make use of the struct_size() helper instead of an open-coded
+> version in order to avoid any potential type mistakes.
+>
+> So, replace the following form:
+>
+> sizeof(struct tb10x_pinctrl) + of_get_child_count(of_node) * sizeof(struct tb10x_of_pinfunc)
+>
+> with:
+>
+> struct_size(state, pinfuncs, of_get_child_count(of_node))
+>
+> This code was detected with the help of Coccinelle.
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Changes in v2:
+>  - Update changelog text.
+>  - Add Kees' Reviewed-by tag.
+
+Patch applied.
+
+Yours,
+Linus Walleij
