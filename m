@@ -1,95 +1,122 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] pinctrl: tb10x: Use flexible-array member and
- struct_size() helper
-Date: Thu, 6 Jun 2019 18:11:44 -0500
-Message-ID: <20190606231144.GA1402@embeddedor>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v2 4/8] pinctrl: qcom: sdm845: Provide ACPI support
+Date: Fri,  7 Jun 2019 09:28:57 +0100
+Message-ID: <20190607082901.6491-4-lee.jones@linaro.org>
+References: <20190607082901.6491-1-lee.jones@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20190607082901.6491-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
+To: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Update the code to use a flexible array member instead of a pointer in
-structure tb10x_pinctrl and use the struct_size() helper:
+This patch provides basic support for booting with ACPI instead
+of the currently supported Device Tree.  When doing so there are a
+couple of differences which we need to taken into consideration.
 
-struct tb10x_pinctrl {
-        ...
-	struct tb10x_of_pinfunc pinfuncs[];
-};
+Firstly, the SDM850 ACPI tables omit information pertaining to the
+4 reserved GPIOs on the platform.  If Linux attempts to touch/
+initialise any of these lines, the firmware will restart the
+platform.
 
-Also, make use of the struct_size() helper instead of an open-coded
-version in order to avoid any potential type mistakes.
+Secondly, when booting with ACPI, it is expected that the firmware
+will set-up things like; Regulators, Clocks, Pin Functions, etc in
+their ideal configuration.  Thus, the possible Pin Functions
+available to this platform are not advertised when providing the
+higher GPIOD/Pinctrl APIs with pin information.
 
-So, replace the following form:
-
-sizeof(struct tb10x_pinctrl) + of_get_child_count(of_node) * sizeof(struct tb10x_of_pinfunc)
-
-with:
-
-struct_size(state, pinfuncs, of_get_child_count(of_node))
-
-This code was detected with the help of Coccinelle.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
-Changes in v2:
- - Update changelog text.
- - Add Kees' Reviewed-by tag.
+ drivers/pinctrl/qcom/Kconfig          |  2 +-
+ drivers/pinctrl/qcom/pinctrl-sdm845.c | 35 ++++++++++++++++++++++++++-
+ 2 files changed, 35 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/pinctrl-tb10x.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index 2e90a6d8fb3b..a32badf3f118 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -483,22 +483,22 @@ struct tb10x_port {
-  * @base: register set base address.
-  * @pingroups: pointer to an array of the pin groups this driver manages.
-  * @pinfuncgrpcnt: number of pingroups in @pingroups.
-- * @pinfuncs: pointer to an array of pin functions this driver manages.
-  * @pinfuncnt: number of pin functions in @pinfuncs.
-  * @mutex: mutex for exclusive access to a pin controller's state.
-  * @ports: current state of each port.
-  * @gpios: Indicates if a given pin is currently used as GPIO (1) or not (0).
-+ * @pinfuncs: flexible array of pin functions this driver manages.
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index 2e66ab72c10b..aafbe932424f 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -168,7 +168,7 @@ config PINCTRL_SDM660
+ 
+ config PINCTRL_SDM845
+        tristate "Qualcomm Technologies Inc SDM845 pin controller driver"
+-       depends on GPIOLIB && OF
++       depends on GPIOLIB && (OF || ACPI)
+        select PINCTRL_MSM
+        help
+          This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+index c97f20fca5fd..7188bee3cf3e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
   */
- struct tb10x_pinctrl {
- 	struct pinctrl_dev *pctl;
- 	void *base;
- 	const struct tb10x_pinfuncgrp *pingroups;
- 	unsigned int pinfuncgrpcnt;
--	struct tb10x_of_pinfunc *pinfuncs;
- 	unsigned int pinfuncnt;
- 	struct mutex mutex;
- 	struct tb10x_port ports[TB10X_PORTS];
- 	DECLARE_BITMAP(gpios, MAX_PIN + 1);
-+	struct tb10x_of_pinfunc pinfuncs[];
+ 
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -1277,6 +1278,10 @@ static const struct msm_pingroup sdm845_groups[] = {
+ 	UFS_RESET(ufs_reset, 0x99f000),
  };
  
- static inline void tb10x_pinctrl_set_config(struct tb10x_pinctrl *state,
-@@ -771,15 +771,13 @@ static int tb10x_pinctrl_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
++static const int sdm845_acpi_reserved_gpios[] = {
++	0, 1, 2, 3, 81, 82, 83, 84, -1
++};
++
+ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.pins = sdm845_pins,
+ 	.npins = ARRAY_SIZE(sdm845_pins),
+@@ -1284,14 +1289,41 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.nfunctions = ARRAY_SIZE(sdm845_functions),
+ 	.groups = sdm845_groups,
+ 	.ngroups = ARRAY_SIZE(sdm845_groups),
++	.reserved_gpios = sdm845_acpi_reserved_gpios,
++	.ngpios = 150,
++};
++
++static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
++	.pins = sdm845_pins,
++	.npins = ARRAY_SIZE(sdm845_pins),
++	.groups = sdm845_groups,
++	.ngroups = ARRAY_SIZE(sdm845_groups),
++	.reserved_gpios = sdm845_acpi_reserved_gpios,
+ 	.ngpios = 150,
+ };
  
--	state = devm_kzalloc(dev, sizeof(struct tb10x_pinctrl) +
--					of_get_child_count(of_node)
--					* sizeof(struct tb10x_of_pinfunc),
--				GFP_KERNEL);
-+	state = devm_kzalloc(dev, struct_size(state, pinfuncs,
-+					      of_get_child_count(of_node)),
-+			     GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
+ static int sdm845_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
++	int ret;
++
++	if (pdev->dev.of_node) {
++		ret = msm_pinctrl_probe(pdev, &sdm845_pinctrl);
++	} else if (ACPI_HANDLE(&pdev->dev)) {
++		ret = msm_pinctrl_probe(pdev, &sdm845_acpi_pinctrl);
++	} else {
++		dev_err(&pdev->dev, "DT and ACPI disabled\n");
++		return -EINVAL;
++	}
++
++	return ret;
+ }
  
- 	platform_set_drvdata(pdev, state);
--	state->pinfuncs = (struct tb10x_of_pinfunc *)(state + 1);
- 	mutex_init(&state->mutex);
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
++	{ "QCOM0217"},
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, sdm845_pinctrl_acpi_match);
++
+ static const struct of_device_id sdm845_pinctrl_of_match[] = {
+ 	{ .compatible = "qcom,sdm845-pinctrl", },
+ 	{ },
+@@ -1302,6 +1334,7 @@ static struct platform_driver sdm845_pinctrl_driver = {
+ 		.name = "sdm845-pinctrl",
+ 		.pm = &msm_pinctrl_dev_pm_ops,
+ 		.of_match_table = sdm845_pinctrl_of_match,
++		.acpi_match_table = ACPI_PTR(sdm845_pinctrl_acpi_match),
+ 	},
+ 	.probe = sdm845_pinctrl_probe,
+ 	.remove = msm_pinctrl_remove,
 -- 
-2.21.0
+2.17.1
