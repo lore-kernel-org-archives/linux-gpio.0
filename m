@@ -1,26 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3 linux dev-5.1 v2] ARM: dts: aspeed: Add SGPM pinmux
-Date: Sat, 8 Jun 2019 00:23:21 +0200
-Message-ID: <CACRpkdb=NBkqG1qi6F66pcd7UaxmpT9LFVLaCLFrM2SXDihJng@mail.gmail.com>
-References: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
+Subject: Re: [PATCH v2 1/3] gpio: davinci: Fix the compiler warning with ARM64
+ config enabled
+Date: Sat, 8 Jun 2019 00:34:48 +0200
+Message-ID: <CACRpkdYe4L3MAG3sFAnpdELp7FNB6kqMDCv8xt4E5h77N=rLxQ@mail.gmail.com>
+References: <20190605080259.2462-1-j-keerthy@ti.com> <20190605080259.2462-2-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559685212-15857-1-git-send-email-hongweiz@ami.com>
+In-Reply-To: <20190605080259.2462-2-j-keerthy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hongwei Zhang <hongweiz@ami.com>
-Cc: Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Keerthy <j-keerthy@ti.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Lokesh Vutla <lokeshvutla@ti.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 11:53 PM Hongwei Zhang <hongweiz@ami.com> wrote:
+On Wed, Jun 5, 2019 at 10:02 AM Keerthy <j-keerthy@ti.com> wrote:
 
-> Add SGPM pinmux to ast2500-pinctrl function and group, to prepare for
-> supporting SGPIO in AST2500 SoC.
+> Fix the compiler warning with ARM64 config enabled
+> as the current mask assumes 32 bit by default.
 >
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-Patch applied! I altered the subject a bit to match the change
-to the pinctrl subsystem.
+Patch applied, I think this and patch 2/3 work fine
+together as-is.
 
 Yours,
 Linus Walleij
