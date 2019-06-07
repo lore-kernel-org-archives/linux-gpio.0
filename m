@@ -1,31 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
-Date: Fri, 7 Jun 2019 23:08:10 +0200
-Message-ID: <CACRpkdbdkbSofrvJ0hSV66DX+DcwWXp0ONDjx0265Pz50yE8TA@mail.gmail.com>
-References: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: Document drive strength
+ settings for BM1880 SoC
+Date: Fri, 7 Jun 2019 23:13:34 +0200
+Message-ID: <CACRpkdZcwZks6eKOb=Mq1EfCP8Kir+nPC1r9=FrA=si5WpwQww@mail.gmail.com>
+References: <20190603073421.10314-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org>
+In-Reply-To: <20190603073421.10314-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tengfei Fan <tengfeif@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <swboyd@chromium.org>, Niklas Cassel <niklas.cassel@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, haitao.suo@bitmain.com, darren.tsao@bitmain.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, alec.lin@bitmain.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 31, 2019 at 8:52 AM Tengfei Fan <tengfeif@codeaurora.org> wrote:
+On Mon, Jun 3, 2019 at 9:35 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> The gpio interrupt status bit is getting set after the
-> irq is disabled and causing an immediate interrupt after
-> enablling the irq, so clear status bit on irq_unmask.
+> Document drive strength settings for Bitmain BM1880 SoC.
 >
-> Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-This looks pretty serious, can one of the Qcom maintainers ACK
-this?
-
-Should it be sent to fixes and even stable?
-
-Fixes: tag?
+Standard bindings, uncontroversial so patch applied!
 
 Yours,
 Linus Walleij
