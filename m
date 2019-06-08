@@ -1,61 +1,44 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 3/8] pinctrl: msm: Add ability for drivers to supply a
- reserved GPIO list
-Date: Fri, 7 Jun 2019 21:10:44 -0700
-Message-ID: <20190608041044.GK24059@builder>
-References: <20190605114302.22509-1-lee.jones@linaro.org>
- <20190605114302.22509-3-lee.jones@linaro.org>
- <CACRpkdaEe3uKAsSuhbToevXH1cMsuMUvwaopLPuD+JkDTnuEnQ@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH v2 12/22] docs: gpio: driver.rst: fix a bad tag
+Date: Sat, 8 Jun 2019 06:42:08 -0300
+Message-ID: <20190608064208.12e0e145@coco.lan>
+References: <cover.1559656538.git.mchehab+samsung@kernel.org>
+        <ee8f4f56658247a0ab0d9e2c16a9afafefe38da0.1559656538.git.mchehab+samsung@kernel.org>
+        <CACRpkdayQdrtqO3aygY1uDG0LCX_9rVnSnxP5F_C-KMZURTAYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaEe3uKAsSuhbToevXH1cMsuMUvwaopLPuD+JkDTnuEnQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdayQdrtqO3aygY1uDG0LCX_9rVnSnxP5F_C-KMZURTAYA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Felipe Balbi <balbi@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Greg KH <gregkh@linuxfoundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>, alokc@codeaurora.org, linux-i2c@vger.kernel.org, MSM <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, jlhugo@gmail.com, Lee Jones <lee.jones@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri 07 Jun 16:02 PDT 2019, Linus Walleij wrote:
+Hi Linus,
 
-> On Wed, Jun 5, 2019 at 1:43 PM Lee Jones <lee.jones@linaro.org> wrote:
-> =
+Em Sat, 8 Jun 2019 00:08:10 +0200
+Linus Walleij <linus.walleij@linaro.org> escreveu:
 
-> > When booting MSM based platforms with Device Tree or some ACPI
-> > implementations, it is possible to provide a list of reserved pins
-> > via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
-> > However some ACPI tables are not populated with this information,
-> > thus it has to come from a knowledgable device driver instead.
+> On Tue, Jun 4, 2019 at 4:18 PM Mauro Carvalho Chehab
+> <mchehab+samsung@kernel.org> wrote:
+> 
+> > With ReST, [foo]_ means a reference to foo, causing this warning:
 > >
-> > Here we provide the MSM common driver with additional support to
-> > parse this informtion and correctly populate the widely used
-> > 'valid_mask'.
+> >     Documentation/driver-api/gpio/driver.rst:419: WARNING: Unknown target name: "devm".
 > >
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> =
+> > Fix it by using a literal for the name.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> 
+> Looks identical to the v1 I already applied, so keeping
+> that one.
 
-> Exactly how we should use of the API, so if Bj=F6rn can supply an
-> ACK to patches 3 and 4 I'm happy to apply them.
-> =
+Thanks for applying it.
 
-> Bj=F6rn?
-> =
+Yeah, it should be identical (and so it should be the v3 I sent yesterday).
 
+v2 and v3 are just rebases on the top of linux-next.
 
-I'm waiting for a version that does not specify the reserved_gpios for
-struct msm_pinctrl_soc_data sdm845_pinctrl {}, as this would override
-the ability of getting these from DT.
-
-I haven't seen such revision yet, will review it once I find it.
-
-Regards,
-Bjorn
+Thanks,
+Mauro
