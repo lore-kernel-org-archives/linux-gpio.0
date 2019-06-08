@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 13/31] gpio: fix gpio-adp5588 build errors
-Date: Sat,  8 Jun 2019 07:46:24 -0400
-Message-ID: <20190608114646.9415-13-sashal@kernel.org>
-References: <20190608114646.9415-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/20] gpio: fix gpio-adp5588 build errors
+Date: Sat,  8 Jun 2019 07:47:43 -0400
+Message-ID: <20190608114756.9742-7-sashal@kernel.org>
+References: <20190608114756.9742-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190608114646.9415-1-sashal@kernel.org>
+In-Reply-To: <20190608114756.9742-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Randy Dunlap <rdunlap@infradead.org>, kbuild test robot <lkp@intel.com>, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michael Hennerich <michael.hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>
@@ -47,10 +47,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3f80f167ed56..2357d2f73c1a 100644
+index 12d417a4d4a8..b992badb99dd 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -712,6 +712,7 @@ config GPIO_ADP5588
+@@ -670,6 +670,7 @@ config GPIO_ADP5588
  config GPIO_ADP5588_IRQ
  	bool "Interrupt controller support for ADP5588"
  	depends on GPIO_ADP5588=y
