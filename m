@@ -1,62 +1,104 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 05/13] gpio: fix gpio-adp5588 build errors
-Date: Sat,  8 Jun 2019 07:48:37 -0400
-Message-ID: <20190608114847.9973-5-sashal@kernel.org>
-References: <20190608114847.9973-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 08/70] pinctrl: intel: Clear interrupt status in mask/unmask callback
+Date: Sat,  8 Jun 2019 07:38:47 -0400
+Message-ID: <20190608113950.8033-8-sashal@kernel.org>
+References: <20190608113950.8033-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190608114847.9973-1-sashal@kernel.org>
+In-Reply-To: <20190608113950.8033-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>, kbuild test robot <lkp@intel.com>, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michael Hennerich <michael.hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit e9646f0f5bb62b7d43f0968f39d536cfe7123b53 ]
+[ Upstream commit 670784fb4ebe54434e263837390e358405031d9e ]
 
-The gpio-adp5588 driver uses interfaces that are provided by
-GPIOLIB_IRQCHIP, so select that symbol in its Kconfig entry.
+Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
+added because clearing interrupt status bit is required to avoid
+unexpected behavior.
 
-Fixes these build errors:
+Turns out the unmask callback also needs the fix, which can solve weird
+IRQ triggering issues on I2C touchpad ELAN1200.
 
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_handler’:
-../drivers/gpio/gpio-adp5588.c:266:26: error: ‘struct gpio_chip’ has no member named ‘irq’
-            dev->gpio_chip.irq.domain, gpio));
-                          ^
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_setup’:
-../drivers/gpio/gpio-adp5588.c:298:2: error: implicit declaration of function ‘gpiochip_irqchip_add_nested’ [-Werror=implicit-function-declaration]
-  ret = gpiochip_irqchip_add_nested(&dev->gpio_chip,
-  ^
-../drivers/gpio/gpio-adp5588.c:307:2: error: implicit declaration of function ‘gpiochip_set_nested_irqchip’ [-Werror=implicit-function-declaration]
-  gpiochip_set_nested_irqchip(&dev->gpio_chip,
-  ^
-
-Fixes: 459773ae8dbb ("gpio: adp5588-gpio: support interrupt controller")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-gpio@vger.kernel.org
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/intel/pinctrl-intel.c | 37 +++++----------------------
+ 1 file changed, 6 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 469dc378adeb..aaae6040b4c8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -579,6 +579,7 @@ config GPIO_ADP5588
- config GPIO_ADP5588_IRQ
- 	bool "Interrupt controller support for ADP5588"
- 	depends on GPIO_ADP5588=y
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to enable the adp5588 to be used as an interrupt
- 	  controller. It requires the driver to be built in the kernel.
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 3b1818184207..717148d2818c 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -913,35 +913,6 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	}
+ }
+ 
+-static void intel_gpio_irq_enable(struct irq_data *d)
+-{
+-	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
+-	const struct intel_community *community;
+-	const struct intel_padgroup *padgrp;
+-	int pin;
+-
+-	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
+-	if (pin >= 0) {
+-		unsigned int gpp, gpp_offset, is_offset;
+-		unsigned long flags;
+-		u32 value;
+-
+-		gpp = padgrp->reg_num;
+-		gpp_offset = padgroup_offset(padgrp, pin);
+-		is_offset = community->is_offset + gpp * 4;
+-
+-		raw_spin_lock_irqsave(&pctrl->lock, flags);
+-		/* Clear interrupt status first to avoid unexpected interrupt */
+-		writel(BIT(gpp_offset), community->regs + is_offset);
+-
+-		value = readl(community->regs + community->ie_offset + gpp * 4);
+-		value |= BIT(gpp_offset);
+-		writel(value, community->regs + community->ie_offset + gpp * 4);
+-		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+-	}
+-}
+-
+ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -954,15 +925,20 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 	if (pin >= 0) {
+ 		unsigned int gpp, gpp_offset;
+ 		unsigned long flags;
+-		void __iomem *reg;
++		void __iomem *reg, *is;
+ 		u32 value;
+ 
+ 		gpp = padgrp->reg_num;
+ 		gpp_offset = padgroup_offset(padgrp, pin);
+ 
+ 		reg = community->regs + community->ie_offset + gpp * 4;
++		is = community->regs + community->is_offset + gpp * 4;
+ 
+ 		raw_spin_lock_irqsave(&pctrl->lock, flags);
++
++		/* Clear interrupt status first to avoid unexpected interrupt */
++		writel(BIT(gpp_offset), is);
++
+ 		value = readl(reg);
+ 		if (mask)
+ 			value &= ~BIT(gpp_offset);
+@@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+ 
+ static struct irq_chip intel_gpio_irqchip = {
+ 	.name = "intel-gpio",
+-	.irq_enable = intel_gpio_irq_enable,
+ 	.irq_ack = intel_gpio_irq_ack,
+ 	.irq_mask = intel_gpio_irq_mask,
+ 	.irq_unmask = intel_gpio_irq_unmask,
 -- 
 2.20.1
