@@ -1,87 +1,56 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: remove unused pin_is_valid()
-Date: Mon, 10 Jun 2019 00:09:53 +0900
-Message-ID: <20190609150953.6432-1-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kernel@vger.kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 4.4 116/241] pinctrl: pistachio: fix leaked of_node references
+Date: Sun,  9 Jun 2019 18:40:58 +0200
+Message-ID: <20190609164151.148628901@linuxfoundation.org>
+References: <20190609164147.729157653@linuxfoundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190609164147.729157653@linuxfoundation.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This function was used by pin_request() to pointlessly double-check
-the pin validity, and it was the only user ever.
+[ Upstream commit 44a4455ac2c6b0981eace683a2b6eccf47689022 ]
 
-Since commit d2f6a1c6fb0e ("pinctrl: remove double pin validity
-check."), no one has ever used it.
+The call to of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/pinctrl-pistachio.c:1422:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1360, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ drivers/pinctrl/pinctrl-pistachio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/pinctrl/core.c          | 23 -----------------------
- include/linux/pinctrl/pinctrl.h | 10 ----------
- 2 files changed, 33 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index a64849a9d1b0..aeba6366fb13 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -177,29 +177,6 @@ const char *pin_get_name(struct pinctrl_dev *pctldev, const unsigned pin)
- 	return desc->name;
- }
- 
--/**
-- * pin_is_valid() - check if pin exists on controller
-- * @pctldev: the pin control device to check the pin on
-- * @pin: pin to check, use the local pin controller index number
-- *
-- * This tells us whether a certain pin exist on a certain pin controller or
-- * not. Pin lists may be sparse, so some pins may not exist.
-- */
--bool pin_is_valid(struct pinctrl_dev *pctldev, int pin)
--{
--	struct pin_desc *pindesc;
--
--	if (pin < 0)
--		return false;
--
--	mutex_lock(&pctldev->mutex);
--	pindesc = pin_desc_get(pctldev, pin);
--	mutex_unlock(&pctldev->mutex);
--
--	return pindesc != NULL;
--}
--EXPORT_SYMBOL_GPL(pin_is_valid);
--
- /* Deletes a range of pin descriptors */
- static void pinctrl_free_pindescs(struct pinctrl_dev *pctldev,
- 				  const struct pinctrl_pin_desc *pins,
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index e429e5d92dd6..34b10d112be6 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -166,7 +166,6 @@ extern struct pinctrl_dev *devm_pinctrl_register(struct device *dev,
- extern void devm_pinctrl_unregister(struct device *dev,
- 				struct pinctrl_dev *pctldev);
- 
--extern bool pin_is_valid(struct pinctrl_dev *pctldev, int pin);
- extern void pinctrl_add_gpio_range(struct pinctrl_dev *pctldev,
- 				struct pinctrl_gpio_range *range);
- extern void pinctrl_add_gpio_ranges(struct pinctrl_dev *pctldev,
-@@ -197,15 +196,6 @@ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
- extern const char *pinctrl_dev_get_name(struct pinctrl_dev *pctldev);
- extern const char *pinctrl_dev_get_devname(struct pinctrl_dev *pctldev);
- extern void *pinctrl_dev_get_drvdata(struct pinctrl_dev *pctldev);
--#else
--
--struct pinctrl_dev;
--
--/* Sufficiently stupid default functions when pinctrl is not in use */
--static inline bool pin_is_valid(struct pinctrl_dev *pctldev, int pin)
--{
--	return pin >= 0;
--}
- 
- #endif /* !CONFIG_PINCTRL */
- 
+diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+index 98a459b1c095a..86e8d989092c8 100644
+--- a/drivers/pinctrl/pinctrl-pistachio.c
++++ b/drivers/pinctrl/pinctrl-pistachio.c
+@@ -1373,6 +1373,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (!of_find_property(child, "gpio-controller", NULL)) {
+ 			dev_err(pctl->dev,
+ 				"No gpio-controller property for bank %u\n", i);
++			of_node_put(child);
+ 			ret = -ENODEV;
+ 			goto err;
+ 		}
+@@ -1380,6 +1381,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		irq = irq_of_parse_and_map(child, 0);
+ 		if (irq < 0) {
+ 			dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
++			of_node_put(child);
+ 			ret = irq;
+ 			goto err;
+ 		}
 -- 
-2.17.1
+2.20.1
