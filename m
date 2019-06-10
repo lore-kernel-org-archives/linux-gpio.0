@@ -1,114 +1,54 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/8] i2c: i2c-qcom-geni: Provide support for ACPI
-Date: Mon, 10 Jun 2019 07:44:28 +0100
-Message-ID: <20190610064428.GF4797@dell>
-References: <20190607082901.6491-1-lee.jones@linaro.org>
- <CAKv+Gu_SP7qBggCrVkF41BimV3PnCQXb5OUKyCsE0bBxa68RZA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] pinctrl: msm: Add ability for drivers to supply a
+ reserved GPIO list
+Date: Mon, 10 Jun 2019 08:57:30 +0100
+Message-ID: <20190610075730.GH4797@dell>
+References: <20190605114302.22509-1-lee.jones@linaro.org>
+ <20190605114302.22509-3-lee.jones@linaro.org>
+ <CACRpkdaEe3uKAsSuhbToevXH1cMsuMUvwaopLPuD+JkDTnuEnQ@mail.gmail.com>
+ <20190608041044.GK24059@builder>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_SP7qBggCrVkF41BimV3PnCQXb5OUKyCsE0bBxa68RZA@mail.gmail.com>
+In-Reply-To: <20190608041044.GK24059@builder>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, wsa+renesas@sang-engineering.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, Jeffrey Hugo <jlhugo@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jlhugo@gmail.com, linux-i2c@vger.kernel.org, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 07 Jun 2019, Ard Biesheuvel wrote:
+On Fri, 07 Jun 2019, Bjorn Andersson wrote:
 
-> On Fri, 7 Jun 2019 at 10:29, Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > Add a match table to allow automatic probing of ACPI device
-> > QCOM0220.  Ignore clock attainment errors.  Set default clock
-> > frequency value.
-> >
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/i2c/busses/i2c-qcom-geni.c | 19 +++++++++++++++++--
-> >  1 file changed, 17 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> > index db075bc0d952..0fa93b448e8d 100644
-> > --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> > @@ -1,6 +1,7 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-> >
-> > +#include <linux/acpi.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/dma-mapping.h>
-> >  #include <linux/err.h>
-> > @@ -483,6 +484,12 @@ static const struct i2c_algorithm geni_i2c_algo = {
-> >         .functionality  = geni_i2c_func,
-> >  };
-> >
-> > +static const struct acpi_device_id geni_i2c_acpi_match[] = {
-> > +       { "QCOM0220"},
-> > +       { },
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, geni_i2c_acpi_match);
-> > +
+> On Fri 07 Jun 16:02 PDT 2019, Linus Walleij wrote:
 > 
-> We usually put #ifdef CONFIG_ACPI/#endif around these, otherwise you
-> end up with acpi:XXXX modaliases even though ACPI is not compiled in.
-
-No problem.
-
-> >  static int geni_i2c_probe(struct platform_device *pdev)
-> >  {
-> >         struct geni_i2c_dev *gi2c;
-> > @@ -502,7 +509,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> >                 return PTR_ERR(gi2c->se.base);
-> >
-> >         gi2c->se.clk = devm_clk_get(&pdev->dev, "se");
+> > On Wed, Jun 5, 2019 at 1:43 PM Lee Jones <lee.jones@linaro.org> wrote:
+> > 
+> > > When booting MSM based platforms with Device Tree or some ACPI
+> > > implementations, it is possible to provide a list of reserved pins
+> > > via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
+> > > However some ACPI tables are not populated with this information,
+> > > thus it has to come from a knowledgable device driver instead.
+> > >
+> > > Here we provide the MSM common driver with additional support to
+> > > parse this informtion and correctly populate the widely used
+> > > 'valid_mask'.
+> > >
+> > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > 
+> > Exactly how we should use of the API, so if Björn can supply an
+> > ACK to patches 3 and 4 I'm happy to apply them.
+> > 
+> > Björn?
+> > 
 > 
-> Can we avoid this call altogether in ACPI mode? Also, please use
-
-I'm trying not to place all non-ACPI specific callers into if ()
-statements.  The tabbing becomes ridiculous in some places.  A great
-deal of these calls are requesting optional resources too, so it's
-better to simply ignore the returning error in the cases where
-non-optional resources (such as this one) are requested, since it has
-the least impact on the existing code.
-
-> 'has_acpi_companion()' to test whether we are probing via ACPI.
-
-Sure.
-
-> > -       if (IS_ERR(gi2c->se.clk)) {
-> > +       if (IS_ERR(gi2c->se.clk) && !ACPI_HANDLE(&pdev->dev)) {
+> I'm waiting for a version that does not specify the reserved_gpios for
+> struct msm_pinctrl_soc_data sdm845_pinctrl {}, as this would override
+> the ability of getting these from DT.
 > 
-> 
-> >                 ret = PTR_ERR(gi2c->se.clk);
-> >                 dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
-> >                 return ret;
-> > @@ -510,12 +517,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
-> >
-> >         ret = device_property_read_u32(&pdev->dev, "clock-frequency",
-> >                                                         &gi2c->clk_freq_out);
-> > -       if (ret) {
-> > +       if (ret && !ACPI_HANDLE(&pdev->dev)) {
-> >                 dev_info(&pdev->dev,
-> >                         "Bus frequency not specified, default to 100kHz.\n");
-> >                 gi2c->clk_freq_out = KHZ(100);
-> >         }
-> >
-> > +       if (ACPI_HANDLE(&pdev->dev)) {
-> > +               ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(&pdev->dev));
-> > +
-> > +               /* Using default, same as the !ACPI case above */
-> > +               gi2c->clk_freq_out = KHZ(100);
-> > +       }
-> > +
-> 
-> You are overriding the speed to 100 kHz even if the ACPI device has a
-> "clock-frequency" property.
+> I haven't seen such revision yet, will review it once I find it.
 
-Will look at this.
-
-Thanks Ard.
+Just testing it now.  It should be on the list by the time you start.
 
 -- 
 Lee Jones [李琼斯]
