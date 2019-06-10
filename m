@@ -1,82 +1,62 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
-Date: Mon, 10 Jun 2019 14:15:28 +0200
-Message-ID: <4056907.DrFocau5Ix@debian64>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <CAAd0S9DKqAgFPgLzHiCBiJgE+OmUW7ainyjM_3-RyfCoKEa51A@mail.gmail.com> <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [RFC next v1 0/5] stmmac: honor the GPIO flags for the PHY reset GPIO
+Date: Mon, 10 Jun 2019 14:31:17 +0200
+Message-ID: <CAFBinCCs5pa1QmaV32Dk9rOADKGXXFpZsSK=LUk4CGWMrG5VUQ@mail.gmail.com>
+References: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
+ <20190609204510.GB8247@lunn.ch> <20190610114700.tymqzzax334ahtz4@flea>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50231fba-7212-f8b9-9313-0c79294d4cc6@codeaurora.org>
+In-Reply-To: <20190610114700.tymqzzax334ahtz4@flea>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com, linux-kernel@vger.kernel.org, davem@davemloft.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
-> Hi Christian,
-> 
-> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
-> > On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
-> >>
-> >> Add initial device tree support for the Qualcomm IPQ6018 SoC and
-> >> CP01 evaluation board.
-> >>
-> >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> >>
-> >> +       clocks {
-> >> +               sleep_clk: sleep_clk {
-> >> +                       compatible = "fixed-clock";
-> >> +                       clock-frequency = <32000>;
-> >> +                       #clock-cells = <0>;
-> >> +               };
-> >> +
-> > Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
-> > on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
-> > From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
-> > declares them at 32000 Hz. Since you probably have access to the BOM and
-> > datasheets. Can you please confirm what's the real clock frequency for
-> > the IPQ6018.
-> > (And maybe also for the sleep_clk of the IPQ4018 as well?).
-> > 
-> 
-> What exactly is the issue that you faced ?
-> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
+Hi Maxime,
 
-We need just a confirmation.
+On Mon, Jun 10, 2019 at 1:47 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> Hi Andrew,
+>
+> On Sun, Jun 09, 2019 at 10:45:10PM +0200, Andrew Lunn wrote:
+> > > Patch #1 and #4 are minor cleanups which follow the boyscout rule:
+> > > "Always leave the campground cleaner than you found it."
+> >
+> > > I
+> > > am also looking for suggestions how to handle these cross-tree changes
+> > > (patch #2 belongs to the linux-gpio tree, patches #1, 3 and #4 should
+> > > go through the net-next tree. I will re-send patch #5 separately as
+> > > this should go through Kevin's linux-amlogic tree).
+> >
+> > Patches 1 and 4 don't seem to have and dependencies. So i would
+> > suggest splitting them out and submitting them to netdev for merging
+> > independent of the rest.
+>
+> Jumping on the occasion of that series. These properties have been
+> defined to deal with phy reset, while it seems that the PHY core can
+> now handle that pretty easily through generic properties.
+>
+> Wouldn't it make more sense to just move to that generic properties
+> that already deals with the flags properly?
+thank you for bringing this up!
+if anyone else (just like me) doesn't know about it, there are generic
+bindings defined here: [0]
 
-Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
+I just tested this on my X96 Max by defining the following properties
+inside the PHY node:
+  reset-delay-us = <10000>;
+  reset-assert-us = <10000>;
+  reset-deassert-us = <10000>;
+  reset-gpios = <&gpio GPIOZ_15 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
 
-|		sleep_clk: sleep_clk {
-|			compatible = "fixed-clock";
-|			clock-frequency = <32768>;
-|			#clock-cells = <0>;
-|		};
+that means I don't need any stmmac patches which seems nice.
+instead I can submit a patch to mark the snps,reset-gpio properties in
+the dt-bindings deprecated (and refer to the generic bindings instead)
+what do you think?
 
-<https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
 
-Which makes sense, because all previous Qualcomm Atheros MIPS and the
-future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
+Martin
 
-For example: The AR9344 derives the clock from the 25MHz/40MHz external
-oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
-Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
-depending whenever the external reference crystal has 40MHz or 25MHz.
-(1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
-in "10.19.11 Derived RTC Clock". 
 
-For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
-<http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
-"I was only able to verify for IPQ8072 that it had a 32.768 KHz
-sleep clock." 
-
-So this is pretty much "why there is an issue", it's confusing.
-Is possible can you please look if there are (fixed) divisors values
-listed in the documentation or the registers and bits that the values
-are stored in? Because then we could just calculate it. 
-
-Regards,
-Christian
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/net/phy.txt?id=b54dd90cab00f5b64ed8ce533991c20bf781a3cd#n58
