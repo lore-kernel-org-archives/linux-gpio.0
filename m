@@ -1,51 +1,59 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [RFC next v1 0/5] stmmac: honor the GPIO flags for the PHY reset GPIO
-Date: Mon, 10 Jun 2019 17:52:51 +0200
-Message-ID: <CAFBinCAc6cczcZX_diCZJiUsNObcmFqfdq4v_osiwee18Gk0iA@mail.gmail.com>
-References: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
- <20190609204510.GB8247@lunn.ch> <20190610114700.tymqzzax334ahtz4@flea>
- <CAFBinCCs5pa1QmaV32Dk9rOADKGXXFpZsSK=LUk4CGWMrG5VUQ@mail.gmail.com> <20190610132546.GE8247@lunn.ch>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+Date: Mon, 10 Jun 2019 09:48:04 -0700
+Message-ID: <20190610164805.18D15206C3@mail.kernel.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <1559754961-26783-6-git-send-email-sricharan@codeaurora.org> <20190608034835.GH24059@builder> <048a25c0-3a2c-3906-84d4-5eb67f3ce2ef@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190610132546.GE8247@lunn.ch>
-Sender: netdev-owner@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com, linux-kernel@vger.kernel.org, davem@davemloft.net, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <048a25c0-3a2c-3906-84d4-5eb67f3ce2ef@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, sboyd@codeaurora.org, linus.walleij@linaro.org, agross@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andrew,
+Quoting Sricharan R (2019-06-10 08:45:22)
+> On 6/8/2019 9:18 AM, Bjorn Andersson wrote:
+> > On Wed 05 Jun 10:16 PDT 2019, Sricharan R wrote:
+> >> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/d=
+ts/qcom/ipq6018.dtsi
+> >> new file mode 100644
+> >> index 0000000..79cccdd
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <32000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            xo: xo {
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <24000000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            bias_pll_cc_clk {
+> >=20
+> > Please give this a label and reference it from the node that uses it
+> > (regardless of the implementation matching by clock name).
+> >=20
+>  ok, in that case, so might have to remove these for now, till we add
+>  the corresponding users.
 
-On Mon, Jun 10, 2019 at 3:25 PM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > if anyone else (just like me) doesn't know about it, there are generic
-> > bindings defined here: [0]
-> >
-> > I just tested this on my X96 Max by defining the following properties
-> > inside the PHY node:
-> >   reset-delay-us = <10000>;
-> >   reset-assert-us = <10000>;
-> >   reset-deassert-us = <10000>;
-> >   reset-gpios = <&gpio GPIOZ_15 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
-> >
-> > that means I don't need any stmmac patches which seems nice.
-> > instead I can submit a patch to mark the snps,reset-gpio properties in
-> > the dt-bindings deprecated (and refer to the generic bindings instead)
-> > what do you think?
->
-> Hi Martin
->
-> I know Linus wants to replace all users of old GPIO numbers with gpio
-> descriptors. So your patches have value, even if you don't need them.
-OK, then I will send my patches anyways
+Yes, please remove them. They don't look like board clks, instead
+they're SoC level details that need to be created by some clk driver
+like GCC.
 
-> One other things to watch out for. We have generic code at two
-> levels. Either the GPIO is per PHY, and the properties should be in
-> the PHY node, or the reset is for all PHYs of an MDIO bus, and then
-> the properties should be in the MDIO node.
-our Amlogic boards only have one PHY and all schematics I'm aware of
-route the SoC's GPIO line directly to the PHY's reset line.
-so in my opinion defining the resets for the PHY is the right thing to do
-
-
-Martin
+>=20
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <300000000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
+> >> +            bias_pll_nss_noc_clk {
+> >> +                    compatible =3D "fixed-clock";
+> >> +                    clock-frequency =3D <416500000>;
+> >> +                    #clock-cells =3D <0>;
+> >> +            };
+> >> +
