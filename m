@@ -1,51 +1,65 @@
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: Re: [PATCH 2/6] dt-bindings: qcom: Add ipq6018 bindings
-Date: Mon, 10 Jun 2019 16:31:54 +0530
-Message-ID: <93e5b0c5-f97b-ef62-8c7f-262e80a53b49@codeaurora.org>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
- <1559754961-26783-3-git-send-email-sricharan@codeaurora.org>
- <20190608032754.GD24059@builder>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [RFC next v1 0/5] stmmac: honor the GPIO flags for the PHY reset
+ GPIO
+Date: Mon, 10 Jun 2019 13:47:00 +0200
+Message-ID: <20190610114700.tymqzzax334ahtz4@flea>
+References: <20190609180621.7607-1-martin.blumenstingl@googlemail.com>
+ <20190609204510.GB8247@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fo7fw3siaxhdftz7"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190608032754.GD24059@builder>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190609204510.GB8247@lunn.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linus.walleij@linaro.org, Stephen Boyd <sboyd@kernel.org>, agross@kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, devicetree@vger.kernel.org, narmstrong@baylibre.com, khilman@baylibre.com, linux-kernel@vger.kernel.org, davem@davemloft.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 
+--fo7fw3siaxhdftz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/8/2019 8:57 AM, Bjorn Andersson wrote:
-> On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
-> 
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: speriaka <speriaka@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/arm/qcom.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
->> index f6316ab..7b19028 100644
->> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
->> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
->> @@ -36,6 +36,7 @@ description: |
->>    	mdm9615
->>    	ipq8074
->>    	sdm845
->> +	ipq6018
-> 
-> It would be nice if these lists where sorted, but as that's not the
-> case, please sort it wrt the other ipq at least.
-> 
+Hi Andrew,
 
- ok.
+On Sun, Jun 09, 2019 at 10:45:10PM +0200, Andrew Lunn wrote:
+> > Patch #1 and #4 are minor cleanups which follow the boyscout rule:
+> > "Always leave the campground cleaner than you found it."
+>
+> > I
+> > am also looking for suggestions how to handle these cross-tree changes
+> > (patch #2 belongs to the linux-gpio tree, patches #1, 3 and #4 should
+> > go through the net-next tree. I will re-send patch #5 separately as
+> > this should go through Kevin's linux-amlogic tree).
+>
+> Patches 1 and 4 don't seem to have and dependencies. So i would
+> suggest splitting them out and submitting them to netdev for merging
+> independent of the rest.
 
-Regards,
- Sricharan
+Jumping on the occasion of that series. These properties have been
+defined to deal with phy reset, while it seems that the PHY core can
+now handle that pretty easily through generic properties.
 
+Wouldn't it make more sense to just move to that generic properties
+that already deals with the flags properly?
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fo7fw3siaxhdftz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXP5DNAAKCRDj7w1vZxhR
+xa7wAPsFyeyyMzy2Mo76JgsYSYvgpcYRFmoiWzu3x+sgya0khgEAjtxK626tAXRA
+KJga7pcCDwguE9DoA7ftHh5GzRGyjQo=
+=h3Ed
+-----END PGP SIGNATURE-----
+
+--fo7fw3siaxhdftz7--
