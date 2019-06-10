@@ -1,89 +1,138 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH v3 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Date: Mon, 10 Jun 2019 12:20:30 +0200
-Message-ID: <CAKv+Gu94ES4_SjkmAMaAgwCtsx_YmOn0=yaeM9GFjPCCxrANoQ@mail.gmail.com>
-References: <20190610084213.1052-1-lee.jones@linaro.org> <20190610084213.1052-4-lee.jones@linaro.org>
- <CAKv+Gu_s7i8JC4cv-dJMvm1_0cGzzhzf+Dxu0rxcF7iugF=vHg@mail.gmail.com>
- <20190610085542.GL4797@dell> <CAKv+Gu8rhxciy1cOG3B3pda9+p4R_COGrrqa7S_Rj9y2HeBxYw@mail.gmail.com>
- <20190610092245.GN4797@dell>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: Re: [PATCH 1/6] pinctrl: qcom: Add ipq6018 pinctrl driver
+Date: Mon, 10 Jun 2019 16:30:59 +0530
+Message-ID: <1766bee3-e4da-7c7c-9881-4a58885640dc@codeaurora.org>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+ <1559754961-26783-2-git-send-email-sricharan@codeaurora.org>
+ <20190608032613.GC24059@builder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190610092245.GN4797@dell>
+In-Reply-To: <20190608032613.GC24059@builder>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, wsa+renesas@sang-engineering.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeffrey Hugo <jlhugo@gmail.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh+dt@kernel.org, Stephen Boyd <sboyd@kernel.org>, linus.walleij@linaro.org, agross@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 10 Jun 2019 at 11:22, Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
->
-> > On Mon, 10 Jun 2019 at 10:55, Lee Jones <lee.jones@linaro.org> wrote:
-> > >
-> > > On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
-> > >
-> > > > On Mon, 10 Jun 2019 at 10:42, Lee Jones <lee.jones@linaro.org> wrote:
-> > > > >
-> > > > > This patch provides basic support for booting with ACPI instead
-> > > > > of the currently supported Device Tree.  When doing so there are a
-> > > > > couple of differences which we need to taken into consideration.
-> > > > >
-> > > > > Firstly, the SDM850 ACPI tables omit information pertaining to the
-> > > > > 4 reserved GPIOs on the platform.  If Linux attempts to touch/
-> > > > > initialise any of these lines, the firmware will restart the
-> > > > > platform.
-> > > > >
-> > > > > Secondly, when booting with ACPI, it is expected that the firmware
-> > > > > will set-up things like; Regulators, Clocks, Pin Functions, etc in
-> > > > > their ideal configuration.  Thus, the possible Pin Functions
-> > > > > available to this platform are not advertised when providing the
-> > > > > higher GPIOD/Pinctrl APIs with pin information.
-> > > > >
-> > > > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > > >
-> > > > For the ACPI probing boilerplate:
-> > > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > >
-> > > > *However*, I really don't like hardcoding reserved GPIOs like this.
-> > > > What guarantee do we have that each and every ACPI system
-> > > > incorporating the QCOM0217 device has the exact same list of reserved
-> > > > GPIOs?
-> > >
-> > > This is SDM845 specific, so the chances are reduced.
-> >
-> > You don't know that.
->
-> All the evidence I have to hand tells me that this is the case.  Even
-> on very closely related variants Qualcomm uses different H/W blocks
-> for GPIO.
->
-> > > However, if another SDM845 variant does crop up, also lacking the
-> > > "gpios" property, we will have to find another differentiating factor
-> > > between them and conduct some matching.  What else can you do with
-> > > platforms supporting non-complete/non-forthcoming ACPI tables?
-> > >
-> >
-> > Either we don't touch any pins at all if they are not referenced
-> > explicitly anywhere
->
-> I guess this would require an API change, which is out of scope of
-> this patch-set.  Happy to change this implementation later if the
-> subsystem allows for it though.
->
-> > or we parse the PEP tables, which seem to cover
-> > some of this information (if Bjorn's analysis is correct)
->
-> Maybe someone can conduct some further work on this when we start to
-> enable or write a driver for the PEP (Windows-compatible System Power
-> Management Controller).  The tables for the PEP look pretty complex,
-> so this task would be extremely difficult if not impossible without
-> Qualcomm's help.  I wouldn't even know how to extrapolate this
-> information from the tables.
->
-> > (if Bjorn's analysis is correct)
->
-> Bjorn is about to provide his Reviewed-by for this implementation.
->
+Hi Bjorn,
 
-If Bjorn can live with it, then so can I.
+On 6/8/2019 8:56 AM, Bjorn Andersson wrote:
+> On Wed 05 Jun 10:15 PDT 2019, Sricharan R wrote:
+> 
+>> Add initial pinctrl driver to support pin configuration with
+>> pinctrl framework for ipq6018.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
+>> Signed-off-by: speriaka <speriaka@codeaurora.org>
+> 
+
+ Thanks for the review !!
+
+> These should start with the author, then followed by each person that
+> handled the patch on its way to the list - so your name should probably
+> be last.  If you have more than one author add Co-developed-by, in
+> addition to the Signed-off-by.
+> 
+> And please spell our speriaka's first and last name.
+> 
+ 
+  ok, will fix it.
+
+> [..]
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.txt
+> [..]
+>> +- #gpio-cells:
+>> +	Usage: required
+>> +	Value type: <u32>
+>> +	Definition: must be 2. Specifying the pin number and flags, as defined
+>> +		    in <dt-bindings/gpio/gpio.h>
+> 
+> You're missing the required "gpio-ranges" property.
+> 
+
+ ok, will add.
+
+>> +
+> [..]
+>> +- function:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Specify the alternative function to be configured for the
+>> +		    specified pins. Functions are only valid for gpio pins.
+>> +		    Valid values are:
+>> +	adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char, atest_char0,
+> 
+> Please indent these.
+> 
+
+ ok.
+
+> [..]
+> 
+> The rest should be in a separate patch from the binding.
+> 
+>> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+> [..]
+>> +enum ipq6018_functions {
+> [..]
+>> +	msm_mux_NA,
+> 
+> I like when these are sorted, and if you make the last entry msm_mux__
+> the msm_pingroup array becomes easier to read.
+> 
+
+ ok.
+
+>> +};
+> [..]
+>> +static const struct msm_function ipq6018_functions[] = {
+> [..]
+>> +	FUNCTION(gcc_tlmm),
+> 
+> As above, please sort these.
+> 
+
+ ok.
+
+>> +};
+>> +
+>> +static const struct msm_pingroup ipq6018_groups[] = {
+>> +	PINGROUP(0, qpic_pad, wci20, qdss_traceclk_b, NA, burn0, NA, NA, NA,
+>> +		 NA),
+> 
+> Please ignore the 80-char and skip the line breaks.
+> 
+
+ ok.
+
+>> +	PINGROUP(1, qpic_pad, mac12, qdss_tracectl_b, NA, burn1, NA, NA, NA,
+>> +		 NA),
+>> +	PINGROUP(2, qpic_pad, wci20, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(3, qpic_pad, mac01, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(4, qpic_pad, mac01, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+>> +	PINGROUP(5, qpic_pad4, mac21, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
+> 
+> Is there a reason to keep qpic_padN as separate functions from qpic_pad?
+> 
+  Hmm, the auto-gen scripts needs to be fixed. Will correct it.
+
+> [..]
+>> +static struct platform_driver ipq6018_pinctrl_driver = {
+>> +	.driver = {
+>> +		.name = "ipq6018-pinctrl",
+>> +		.owner = THIS_MODULE,
+> 
+> .owner is populated automagically by platform_driver_register, so please
+> omit this.
+> 
+
+ ok, missed it. will fix. 
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
