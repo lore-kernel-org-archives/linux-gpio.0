@@ -1,59 +1,48 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MN by
- default
-Date: Tue, 11 Jun 2019 10:51:58 +0000
-Message-ID: <AM0PR04MB4211E5EC9392837648BB488880ED0__48970.938210708$1560250340$gmane$org@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190530030546.9224-1-Anson.Huang@nxp.com>
- <20190530030546.9224-3-Anson.Huang@nxp.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 0/4] irqchip: renesas: Use proper irq_chip name and parent
+Date: Tue, 11 Jun 2019 12:23:02 +0100
+Message-ID: <b1720fb0-b638-32d1-7f48-c1f24b64e83f@arm.com>
+References: <20190607095858.10028-1-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190530030546.9224-3-Anson.Huang@nxp.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190607095858.10028-1-geert+renesas@glider.be>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Anson Huang <anson.huang@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>, "olof@lixom.net" <olof@lixom.net>, "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>, "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>, Leonard Crestez <leonard.crestez@nxp.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "dinguyen@kernel.org" <dinguyen@kernel.org>, enric.balletbo@collabo
-Cc: dl-linux-imx <linux-imx@nxp.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-> From: Anson.Huang@nxp.com [mailto:Anson.Huang@nxp.com]
-> Sent: Thursday, May 30, 2019 11:06 AM
+On 07/06/2019 10:58, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> Enable CONFIG_PINCTRL_IMX8MN by default to support i.MX8MN pinctrl
-> driver.
+> Recently, Marc pointed out some common misconceptions w.r.t. the .name
+> and .parent_device fields in struct irq_chip.  This patch series fixes
+> them in the Renesas interrupt controller drivers.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-
-Nitpick: please check the alphabetical order,
-Otherwise:
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Regards
-Dong Aisheng
-
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> The first two patches are destined for the irqchip tree, the last two
+> for the GPIO tree.
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 7c7b6b5..8d4f25c 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -373,6 +373,7 @@ CONFIG_SPI_SUN6I=y
->  CONFIG_SPMI=y
->  CONFIG_PINCTRL_SINGLE=y
->  CONFIG_PINCTRL_MAX77620=y
-> +CONFIG_PINCTRL_IMX8MN=y
->  CONFIG_PINCTRL_IMX8MM=y
->  CONFIG_PINCTRL_IMX8MQ=y
->  CONFIG_PINCTRL_IMX8QXP=y
-> --
-> 2.7.4
+> Thanks!
+> 
+> Geert Uytterhoeven (4):
+>   irqchip/renesas-intc-irqpin: Use proper irq_chip name and parent
+>   irqchip/renesas-irqc: Use proper irq_chip name and parent
+>   gpio: em: Use proper irq_chip name
+>   gpio: rcar: Use proper irq_chip name
+> 
+>  drivers/gpio/gpio-em.c                    | 2 +-
+>  drivers/gpio/gpio-rcar.c                  | 2 +-
+>  drivers/irqchip/irq-renesas-intc-irqpin.c | 3 ++-
+>  drivers/irqchip/irq-renesas-irqc.c        | 3 ++-
+>  4 files changed, 6 insertions(+), 4 deletions(-)
+> 
+
+I've applied patches 1 and2 to the irqchip tree.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
