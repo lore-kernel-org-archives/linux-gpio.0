@@ -1,80 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH-next 00/20]  gpio: gpio-omap: set of fixes and big
- clean-up
-Date: Tue, 11 Jun 2019 00:37:20 -0700
-Message-ID: <20190611073720.GB5447@atomide.com>
-References: <20190610171103.30903-1-grygorii.strashko@ti.com>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Subject: RE: [PATCH 1/3] dt-bindings: imx: Add pinctrl binding doc for i.MX8MN
+Date: Tue, 11 Jun 2019 10:00:36 +0000
+Message-ID: <AM0PR04MB421171336B9206D02FF6514080ED0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190530030546.9224-1-Anson.Huang@nxp.com>
+ <CACRpkdY-35o378Ka+4bgeSPjmq6P8DM872sgTxq2X3dDP9XZHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190610171103.30903-1-grygorii.strashko@ti.com>
+In-Reply-To: <CACRpkdY-35o378Ka+4bgeSPjmq6P8DM872sgTxq2X3dDP9XZHQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Russell King <rmk@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Linus Walleij <linus.walleij@linaro.org>, Anson Huang <anson.huang@nxp.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Olof Johansson <olof@lixom.net>, Simon Horman <horms+renesas@verge.net.au>, Jagan Teki <jagan@amarulasolutions.com>, Leonard Crestez <leonard.crestez@nxp.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dinh Nguyen <dinguyen@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-* Grygorii Strashko <grygorii.strashko@ti.com> [190610 10:11]:
-> Hi Linus, Russell, Tony, All,
-> 
-> This series contains set of patches from Russell King which were circulated
-> internally for quite some time already and I fill it's reasonable to move
-> future discussion upstream (and also avoid rebasing).
-> Fisrt two patches are fixes and the rest are big, great clean up
-> from Russell King.
-> 
-> Personally, I like this clean up and refactoring very much and don't want
-> it to be lost.
-
-Adding Aaro to Cc too hopefully for more testing. Yes this is very nice
-and behaves for my idle test cases. I've also boot tested omap1 osk and
-it still works just fine for NFSroot.
-
-FYI, after this series, the only issue I'm aware of still remaining
-is the lost edge wake-up interrupts for L4 PER idle that I posted a WIP
-fix as "[PATCH] gpio: gpio-omap: Fix lost edge wake-up interrupts".
-But that one still needs a bit more work and is a separate fix from this
-series.
-
-So for this whole series, please feel free to add:
-
-Tested-by: Tony Lindgren <tony@atomide.com>
-
-
-
-> Code can be found at:
->  git@git.ti.com:~gragst/ti-linux-kernel/gragsts-ti-linux-kernel.git
-> branch:
->  lkml-next-gpio-clean-up
-> 
-> Russell King (20):
->   gpio: gpio-omap: ensure irq is enabled before wakeup
->   gpio: gpio-omap: fix lack of irqstatus_raw0 for OMAP4
->   gpio: gpio-omap: remove remainder of list management
->   gpio: gpio-omap: clean up edge interrupt handling
->   gpio: gpio-omap: remove irq_ack method
->   gpio: gpio-omap: move omap_gpio_request() and omap_gpio_free()
->   gpio: gpio-omap: simplify omap_gpio_get_direction()
->   gpio: gpio-omap: simplify get() method
->   gpio: gpio-omap: simplify get_multiple()
->   gpio: gpio-omap: simplify set_multiple()
->   gpio: gpio-omap: simplify bank->level_mask
->   gpio: gpio-omap: simplify read-modify-write
->   gpio: gpio-omap: simplify omap_toggle_gpio_edge_triggering()
->   gpio: gpio-omap: simplify omap_set_gpio_irqenable()
->   gpio: gpio-omap: remove dataout variation in context handling
->   gpio: gpio-omap: clean up omap_gpio_restore_context()
->   gpio: gpio-omap: constify register tables
->   gpio: gpio-omap: clean up wakeup handling
->   gpio: gpio-omap: irq_startup() must not return error codes
->   gpio: gpio-omap: clean up register access in omap2_set_gpio_debounce()
-> 
->  drivers/gpio/gpio-omap.c                | 497 ++++++++----------------
->  include/linux/platform_data/gpio-omap.h |   2 +-
->  2 files changed, 161 insertions(+), 338 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+PiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0K
+PiBTZW50OiBTYXR1cmRheSwgSnVuZSA4LCAyMDE5IDU6MDQgQU0NCj4gDQo+IE9uIFRodSwgTWF5
+IDMwLCAyMDE5IGF0IDU6MDQgQU0gPEFuc29uLkh1YW5nQG54cC5jb20+IHdyb3RlOg0KPiANCj4g
+PiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPg0KPiA+IEFkZCBi
+aW5kaW5nIGRvYyBmb3IgaS5NWDhNTiBwaW5jdHJsIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiANCj4gTG9va3MgbW9z
+dGx5IE9LIHRvIG1lLCBidXQgSSdkIGxpa2UgdGhlIG1haW50YWluZXJzIHRvIHJldmlldywgc28g
+RG9uZyBldCBhbA0KPiBwbGVhc2UgbG9vayBhdCB0aGlzIQ0KPiANCj4gPiArUmVxdWlyZWQgcHJv
+cGVydGllczoNCj4gPiArLSBjb21wYXRpYmxlOiAiZnNsLGlteDhtbi1pb211eGMiDQo+IA0KPiBT
+byBzaG91bGQgdGhpcyBub3QgYmUgIm54cCxpbXg4bW4taW9tdXhjIg0KPiBvciAibnhwLGZyZWVz
+Y2FsZS1pbXg4bW4taW9tdXhjIiBvciBzb21ldGhpbmcgdGhlc2UgZGF5cz8gVGhlIHZlbmRvciBu
+YW1lDQo+IGlzIG54cCBpcyBpdCBub3QuDQo+IA0KPiBJIHdhcyBjb21wbGFpbmluZyB0byB0aGUg
+RFQgbWFpbnRhaW5lcnMgYXQgb25lIHBvaW50IHRoYXQgdGhlc2UgY29tcGFuaWVzDQo+IHNlZW0g
+dG8gYnV5IGVhY2ggb3RoZXIgbGVmdCBhbmQgcmlnaHQgc28gdGhpcyB2ZW5kb3Igbm9tZW5jbGF0
+dXJlIGlzIGR1YmlvdXMsDQo+IGJ1dCBJIGd1ZXNzIGF0IGxlYXN0IGl0IHNob3VsZCByZWZsZWN0
+IHRoZSB2ZW5kb3IgdGhhdCBwcm9kdWNlZCB0aGUgY2hpcCBvcg0KPiBzb21ldGhpbmcuDQo+IA0K
+PiBJZiBldmVyeW9uZSBpcyBoYXBweSB3aXRoICJmc2wsKiIgSSB3aWxsIG5vdCBjb21wbGFpbiB0
+aG91Z2guDQo+IChpLmUuIGlmIHRoZSBtYWludGFpbmVycyBBQ0sgaXQuKQ0KDQpXZSBwcmVmZXJy
+ZWQgdG8ga2VlcCAiZnNsLCoiIGZvciBGcmVlc2NhbGUgaS5NWCBwcm9kdWN0IGxpbmUgYWNjb3Jk
+aW5nIHRvIGxhc3QgZGlzY3Vzc2lvbi4NCkFuZCB3ZSBhbHJlYWR5IGRpZCB0aGlzIHdheSBmb3Ig
+bW9zdCBpLk1YIGRldmljZXMuDQoNClNvOg0KQWNrZWQtYnk6IERvbmcgQWlzaGVuZyA8YWlzaGVu
+Zy5kb25nQG54cC5jb20+DQoNCihSb2IsIHBsZWFzZSBsZXQgdXMga25vdyBpZiB5b3UgaGF2ZSBk
+aWZmZXJlbnQgaWRlYSkNCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQoNCj4gDQo+IFlvdXJzLA0K
+PiBMaW51cyBXYWxsZWlqDQo=
