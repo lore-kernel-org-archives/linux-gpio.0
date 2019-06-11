@@ -1,130 +1,50 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Date: Tue, 11 Jun 2019 11:40:13 -0700
-Message-ID: <20190611184013.GQ4814@minitux>
-References: <20190610084213.1052-1-lee.jones@linaro.org>
- <20190610084213.1052-4-lee.jones@linaro.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
+Date: Tue, 11 Jun 2019 11:51:01 -0700
+Message-ID: <20190611185102.368ED21744@mail.kernel.org>
+References: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org> <CACRpkdbdkbSofrvJ0hSV66DX+DcwWXp0ONDjx0265Pz50yE8TA@mail.gmail.com> <20190610145132.DD1132085A@mail.kernel.org> <46b715974766d5c557685a1ab9131abe@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190610084213.1052-4-lee.jones@linaro.org>
+In-Reply-To: <46b715974766d5c557685a1ab9131abe@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: tengfeif@codeaurora.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon 10 Jun 01:42 PDT 2019, Lee Jones wrote:
+Quoting tengfeif@codeaurora.org (2019-06-11 03:41:26)
+> On 2019-06-10 22:51, Stephen Boyd wrote:
+> > Quoting Linus Walleij (2019-06-07 14:08:10)
+> >> On Fri, May 31, 2019 at 8:52 AM Tengfei Fan <tengfeif@codeaurora.org> =
 
-> This patch provides basic support for booting with ACPI instead
-> of the currently supported Device Tree.  When doing so there are a
-> couple of differences which we need to taken into consideration.
-> 
-> Firstly, the SDM850 ACPI tables omit information pertaining to the
-> 4 reserved GPIOs on the platform.  If Linux attempts to touch/
-> initialise any of these lines, the firmware will restart the
-> platform.
-> 
-> Secondly, when booting with ACPI, it is expected that the firmware
-> will set-up things like; Regulators, Clocks, Pin Functions, etc in
-> their ideal configuration.  Thus, the possible Pin Functions
-> available to this platform are not advertised when providing the
-> higher GPIOD/Pinctrl APIs with pin information.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> >> wrote:
+> >>=20
+> >> > The gpio interrupt status bit is getting set after the
+> >> > irq is disabled and causing an immediate interrupt after
+> >> > enablling the irq, so clear status bit on irq_unmask.
+> >> >
+> >> > Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
+> >>=20
+> >> This looks pretty serious, can one of the Qcom maintainers ACK
+> >> this?
+> >>=20
+> >> Should it be sent to fixes and even stable?
+> >>=20
+> >> Fixes: tag?
+> >>=20
+> >=20
+> > How is the interrupt status bit getting set after the irq is disabled?
+> > It looks like this is a level type interrupt? I thought that after
+> > commit b55326dc969e ("pinctrl: msm: Really mask level interrupts to
+> > prevent latching") this wouldn't be a problem. Am I wrong, or is qcom
+> > just clearing out patches on drivers and this is the last one that=20
+> > needs
+> > to be upstreamed?
+>=20
+> Your patch(commit b55326dc969e) can cover our issue, and my patch is no=20
+> longer needed.
+> Your patch isn't included in our code, so I submitted this patch.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> ---
->  drivers/pinctrl/qcom/Kconfig          |  2 +-
->  drivers/pinctrl/qcom/pinctrl-sdm845.c | 36 ++++++++++++++++++++++++++-
->  2 files changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-> index 2e66ab72c10b..aafbe932424f 100644
-> --- a/drivers/pinctrl/qcom/Kconfig
-> +++ b/drivers/pinctrl/qcom/Kconfig
-> @@ -168,7 +168,7 @@ config PINCTRL_SDM660
->  
->  config PINCTRL_SDM845
->         tristate "Qualcomm Technologies Inc SDM845 pin controller driver"
-> -       depends on GPIOLIB && OF
-> +       depends on GPIOLIB && (OF || ACPI)
->         select PINCTRL_MSM
->         help
->           This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> index c97f20fca5fd..98a438dba711 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
->   */
->  
-> +#include <linux/acpi.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -1277,6 +1278,10 @@ static const struct msm_pingroup sdm845_groups[] = {
->  	UFS_RESET(ufs_reset, 0x99f000),
->  };
->  
-> +static const int sdm845_acpi_reserved_gpios[] = {
-> +	0, 1, 2, 3, 81, 82, 83, 84, -1
-> +};
-> +
->  static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->  	.pins = sdm845_pins,
->  	.npins = ARRAY_SIZE(sdm845_pins),
-> @@ -1287,11 +1292,39 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->  	.ngpios = 150,
->  };
->  
-> +static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
-> +	.pins = sdm845_pins,
-> +	.npins = ARRAY_SIZE(sdm845_pins),
-> +	.groups = sdm845_groups,
-> +	.ngroups = ARRAY_SIZE(sdm845_groups),
-> +	.reserved_gpios = sdm845_acpi_reserved_gpios,
-> +	.ngpios = 150,
-> +};
-> +
->  static int sdm845_pinctrl_probe(struct platform_device *pdev)
->  {
-> -	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-> +	int ret;
-> +
-> +	if (pdev->dev.of_node) {
-> +		ret = msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-> +	} else if (has_acpi_companion(&pdev->dev)) {
-> +		ret = msm_pinctrl_probe(pdev, &sdm845_acpi_pinctrl);
-> +	} else {
-> +		dev_err(&pdev->dev, "DT and ACPI disabled\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return ret;
->  }
->  
-> +#if CONFIG_ACPI
-> +static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
-> +	{ "QCOM0217"},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(acpi, sdm845_pinctrl_acpi_match);
-> +#endif
-> +
->  static const struct of_device_id sdm845_pinctrl_of_match[] = {
->  	{ .compatible = "qcom,sdm845-pinctrl", },
->  	{ },
-> @@ -1302,6 +1335,7 @@ static struct platform_driver sdm845_pinctrl_driver = {
->  		.name = "sdm845-pinctrl",
->  		.pm = &msm_pinctrl_dev_pm_ops,
->  		.of_match_table = sdm845_pinctrl_of_match,
-> +		.acpi_match_table = ACPI_PTR(sdm845_pinctrl_acpi_match),
->  	},
->  	.probe = sdm845_pinctrl_probe,
->  	.remove = msm_pinctrl_remove,
-> -- 
-> 2.17.1
-> 
+Alright cool. Sounds like this patch can be dropped then and you can
+pick up the patch from upstream into your vendor kernel.
