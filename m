@@ -1,50 +1,48 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
-Date: Tue, 11 Jun 2019 11:51:01 -0700
-Message-ID: <20190611185102.368ED21744@mail.kernel.org>
-References: <1559285512-27784-1-git-send-email-tengfeif@codeaurora.org> <CACRpkdbdkbSofrvJ0hSV66DX+DcwWXp0ONDjx0265Pz50yE8TA@mail.gmail.com> <20190610145132.DD1132085A@mail.kernel.org> <46b715974766d5c557685a1ab9131abe@codeaurora.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 2/8] i2c: i2c-qcom-geni: Signify successful driver
+ probe
+Date: Tue, 11 Jun 2019 12:40:48 -0700
+Message-ID: <20190611194048.GR4814@minitux>
+References: <20190610084213.1052-1-lee.jones@linaro.org>
+ <20190610084213.1052-2-lee.jones@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <46b715974766d5c557685a1ab9131abe@codeaurora.org>
+Content-Disposition: inline
+In-Reply-To: <20190610084213.1052-2-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: tengfeif@codeaurora.org
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting tengfeif@codeaurora.org (2019-06-11 03:41:26)
-> On 2019-06-10 22:51, Stephen Boyd wrote:
-> > Quoting Linus Walleij (2019-06-07 14:08:10)
-> >> On Fri, May 31, 2019 at 8:52 AM Tengfei Fan <tengfeif@codeaurora.org> =
+On Mon 10 Jun 01:42 PDT 2019, Lee Jones wrote:
 
-> >> wrote:
-> >>=20
-> >> > The gpio interrupt status bit is getting set after the
-> >> > irq is disabled and causing an immediate interrupt after
-> >> > enablling the irq, so clear status bit on irq_unmask.
-> >> >
-> >> > Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
-> >>=20
-> >> This looks pretty serious, can one of the Qcom maintainers ACK
-> >> this?
-> >>=20
-> >> Should it be sent to fixes and even stable?
-> >>=20
-> >> Fixes: tag?
-> >>=20
-> >=20
-> > How is the interrupt status bit getting set after the irq is disabled?
-> > It looks like this is a level type interrupt? I thought that after
-> > commit b55326dc969e ("pinctrl: msm: Really mask level interrupts to
-> > prevent latching") this wouldn't be a problem. Am I wrong, or is qcom
-> > just clearing out patches on drivers and this is the last one that=20
-> > needs
-> > to be upstreamed?
->=20
-> Your patch(commit b55326dc969e) can cover our issue, and my patch is no=20
-> longer needed.
-> Your patch isn't included in our code, so I submitted this patch.
+> The Qualcomm Geni I2C driver currently probes silently which can be
+> confusing when debugging potential issues.  Add a low level (INFO)
+> print when each I2C controller is successfully initially set-up.
+> 
 
-Alright cool. Sounds like this patch can be dropped then and you can
-pick up the patch from upstream into your vendor kernel.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 9e3b8a98688d..a89bfce5388e 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -596,6 +596,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	dev_dbg(&pdev->dev, "Geni-I2C adaptor successfully added\n");
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.17.1
+> 
