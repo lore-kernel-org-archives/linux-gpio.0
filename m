@@ -1,101 +1,112 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 11/11] ARM: dts: sun8i: s3: add
- devicetree for Lichee zero plus w/ S3
-Date: Tue, 11 Jun 2019 16:32:39 +0200
-Message-ID: <20190611143239.zvganlwaiku3bs63@flea>
-References: <20190611140940.14357-1-icenowy@aosc.io>
- <20190611140940.14357-12-icenowy@aosc.io>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 4/8] pinctrl: qcom: sdm845: Provide ACPI support
+Date: Tue, 11 Jun 2019 11:39:45 -0700
+Message-ID: <20190611183945.GP4814@minitux>
+References: <20190610084213.1052-1-lee.jones@linaro.org>
+ <20190610084213.1052-4-lee.jones@linaro.org>
+ <CAKv+Gu_s7i8JC4cv-dJMvm1_0cGzzhzf+Dxu0rxcF7iugF=vHg@mail.gmail.com>
+ <20190610085542.GL4797@dell>
+ <CAKv+Gu8rhxciy1cOG3B3pda9+p4R_COGrrqa7S_Rj9y2HeBxYw@mail.gmail.com>
+ <20190610092245.GN4797@dell>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6e3io72tcrt3erkz"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBFHX73TQKGQEQU5M5AI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190611140940.14357-12-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20190610092245.GN4797@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, wsa+renesas@sang-engineering.com, Linus Walleij <linus.walleij@linaro.org>, balbi@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeffrey Hugo <jlhugo@gmail.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon 10 Jun 02:22 PDT 2019, Lee Jones wrote:
 
---6e3io72tcrt3erkz
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+> On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
+> 
+> > On Mon, 10 Jun 2019 at 10:55, Lee Jones <lee.jones@linaro.org> wrote:
+> > >
+> > > On Mon, 10 Jun 2019, Ard Biesheuvel wrote:
+> > >
+> > > > On Mon, 10 Jun 2019 at 10:42, Lee Jones <lee.jones@linaro.org> wrote:
+> > > > >
+> > > > > This patch provides basic support for booting with ACPI instead
+> > > > > of the currently supported Device Tree.  When doing so there are a
+> > > > > couple of differences which we need to taken into consideration.
+> > > > >
+> > > > > Firstly, the SDM850 ACPI tables omit information pertaining to the
+> > > > > 4 reserved GPIOs on the platform.  If Linux attempts to touch/
+> > > > > initialise any of these lines, the firmware will restart the
+> > > > > platform.
+> > > > >
+> > > > > Secondly, when booting with ACPI, it is expected that the firmware
+> > > > > will set-up things like; Regulators, Clocks, Pin Functions, etc in
+> > > > > their ideal configuration.  Thus, the possible Pin Functions
+> > > > > available to this platform are not advertised when providing the
+> > > > > higher GPIOD/Pinctrl APIs with pin information.
+> > > > >
+> > > > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > > >
+> > > > For the ACPI probing boilerplate:
+> > > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > >
+> > > > *However*, I really don't like hardcoding reserved GPIOs like this.
+> > > > What guarantee do we have that each and every ACPI system
+> > > > incorporating the QCOM0217 device has the exact same list of reserved
+> > > > GPIOs?
+> > >
+> > > This is SDM845 specific, so the chances are reduced.
+> > 
+> > You don't know that.
+> 
+> All the evidence I have to hand tells me that this is the case.  Even
+> on very closely related variants Qualcomm uses different H/W blocks
+> for GPIO.
+> 
 
-Hi,
+I presume with this you mean that e.g. the 835 laptops doesn't sport a
+QCOM0217?
 
-On Tue, Jun 11, 2019 at 10:09:40PM +0800, Icenowy Zheng wrote:
-> Lichee zero plus is a core board made by Sipeed, which includes on-board
-> TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
-> header, a microUSB slot and a gold finger connector for expansion. It
-> can use either Sochip S3 or Allwinner S3L SoC.
->
-> Add the basic device tree for the core board, w/o optional onboard
-> storage, and with S3 SoC.
->
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> ---
-> New patch in v2.
->
->  arch/arm/boot/dts/Makefile                    |  1 +
->  .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
->  .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 39 +++++++++++++++++++
->  3 files changed, 48 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
->  create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 5559028b770e..2b5e6a1d20ff 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -1110,6 +1110,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
->  	sun8i-r16-nintendo-super-nes-classic.dtb \
->  	sun8i-r16-parrot.dtb \
->  	sun8i-r40-bananapi-m2-ultra.dtb \
-> +	sun8i-s3-lichee-zero-plus.dtb \
->  	sun8i-t3-cqa3t-bv3.dtb \
->  	sun8i-v3s-licheepi-zero.dtb \
->  	sun8i-v3s-licheepi-zero-dock.dtb \
-> diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-> new file mode 100644
-> index 000000000000..7d2f6b145190
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (C) 2019 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun8i-s3.dtsi"
-> +#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
-> diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-> new file mode 100644
-> index 000000000000..bb148e796df7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (C) 2019 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> + */
-> +
-> +#include "sunxi-common-regulators.dtsi"
+> > > However, if another SDM845 variant does crop up, also lacking the
+> > > "gpios" property, we will have to find another differentiating factor
+> > > between them and conduct some matching.  What else can you do with
+> > > platforms supporting non-complete/non-forthcoming ACPI tables?
+> > >
+> > 
+> > Either we don't touch any pins at all if they are not referenced
+> > explicitly anywhere
+> 
+> I guess this would require an API change, which is out of scope of
+> this patch-set.  Happy to change this implementation later if the
+> subsystem allows for it though.
+> 
 
-If possible, you should get rid of that include. What are you using it
-for?
+Last time we discussed this the _only_ offender was the loop issuing a
+get_direction() on all descs towards the end of
+gpiochip_add_data_with_key()
 
-Maxime
+> > or we parse the PEP tables, which seem to cover
+> > some of this information (if Bjorn's analysis is correct)
+> 
+> Maybe someone can conduct some further work on this when we start to
+> enable or write a driver for the PEP (Windows-compatible System Power
+> Management Controller).  The tables for the PEP look pretty complex,
+> so this task would be extremely difficult if not impossible without
+> Qualcomm's help.  I wouldn't even know how to extrapolate this
+> information from the tables.
+> 
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---6e3io72tcrt3erkz--
+Yeah that looks quite different, so I'm not sure how to tie that into
+the current driver. But I'm fine with adding this for now, if PEP brings
+a different approach we can always rip this out later.
+
+Regards,
+Bjorn
+
+> > (if Bjorn's analysis is correct)
+> 
+> Bjorn is about to provide his Reviewed-by for this implementation.
+> 
+> -- 
+> Lee Jones [?????????]
+> Linaro Services Technical Lead
+> Linaro.org ??? Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
