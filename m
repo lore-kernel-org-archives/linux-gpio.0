@@ -1,29 +1,101 @@
-From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Subject: Re: [PATCH] pinctrl: xway: Switch to SPDX header
-Date: Tue, 11 Jun 2019 16:29:49 +0200
-Message-ID: <8870c141-c7f2-7529-5452-3e246697496b@metux.net>
-References: <20190611072001.2978298-1-lkundrak@v3.sk>
+From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 11/11] ARM: dts: sun8i: s3: add
+ devicetree for Lichee zero plus w/ S3
+Date: Tue, 11 Jun 2019 16:32:39 +0200
+Message-ID: <20190611143239.zvganlwaiku3bs63@flea>
+References: <20190611140940.14357-1-icenowy@aosc.io>
+ <20190611140940.14357-12-icenowy@aosc.io>
+Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190611072001.2978298-1-lkundrak@v3.sk>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lubomir Rintel <lkundrak@v3.sk>, Linus Walleij <linus.walleij@linaro.org>
-Cc: John Crispin <john@phrozen.org>, Martin Schiller <mschiller@tdt.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6e3io72tcrt3erkz"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBFHX73TQKGQEQU5M5AI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20190611140940.14357-12-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 11.06.19 09:20, Lubomir Rintel wrote:
-> The original license text had a typo ("publishhed") which would be
-> likely to confuse automated licensing auditing tools. Let's just switch
-> to SPDX instead of fixing the wording.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-Reviewed-By: Enrico Weigelt <info@metux.net>
+--6e3io72tcrt3erkz
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Hi,
+
+On Tue, Jun 11, 2019 at 10:09:40PM +0800, Icenowy Zheng wrote:
+> Lichee zero plus is a core board made by Sipeed, which includes on-board
+> TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
+> header, a microUSB slot and a gold finger connector for expansion. It
+> can use either Sochip S3 or Allwinner S3L SoC.
+>
+> Add the basic device tree for the core board, w/o optional onboard
+> storage, and with S3 SoC.
+>
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> ---
+> New patch in v2.
+>
+>  arch/arm/boot/dts/Makefile                    |  1 +
+>  .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
+>  .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 39 +++++++++++++++++++
+>  3 files changed, 48 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+>  create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 5559028b770e..2b5e6a1d20ff 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1110,6 +1110,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+>  	sun8i-r16-nintendo-super-nes-classic.dtb \
+>  	sun8i-r16-parrot.dtb \
+>  	sun8i-r40-bananapi-m2-ultra.dtb \
+> +	sun8i-s3-lichee-zero-plus.dtb \
+>  	sun8i-t3-cqa3t-bv3.dtb \
+>  	sun8i-v3s-licheepi-zero.dtb \
+>  	sun8i-v3s-licheepi-zero-dock.dtb \
+> diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+> new file mode 100644
+> index 000000000000..7d2f6b145190
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> + */
+> +
+> +/dts-v1/;
+> +#include "sun8i-s3.dtsi"
+> +#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
+> diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+> new file mode 100644
+> index 000000000000..bb148e796df7
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+> @@ -0,0 +1,39 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (C) 2019 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> + */
+> +
+> +#include "sunxi-common-regulators.dtsi"
+
+If possible, you should get rid of that include. What are you using it
+for?
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+--6e3io72tcrt3erkz--
