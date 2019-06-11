@@ -1,54 +1,93 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
-Date: Tue, 11 Jun 2019 22:00:43 +0200
-Message-ID: <20190611200043.eib3g3acc7ilawsx@earth.universe>
-References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 7/8] usb: dwc3: qcom: Start USB in 'host mode' on the
+ SDM845
+Date: Tue, 11 Jun 2019 15:33:49 -0700
+Message-ID: <20190611223349.GS4814@minitux>
+References: <20190610084213.1052-1-lee.jones@linaro.org>
+ <20190610084213.1052-7-lee.jones@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qfajaxb2wnhwswu6"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20190610084213.1052-7-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon 10 Jun 01:42 PDT 2019, Lee Jones wrote:
 
---qfajaxb2wnhwswu6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> When booting with Device Tree, the current default boot configuration
+> table option, the request to boot via 'host mode' comes from the
+> 'dr_mode' property.
 
-Hi,
+As I said in my previous review, the default mode for SDM845 is OTG. For
+the MTP specifically we specify the default mode to be peripheral (was
+host).
 
-On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
-> Patch series introducing support for ROHM BD70528 PMIC
-> [...]
 
-I think all patches have been reviewed by the respective subsystem
-maintainers. Lee, can you provide an immutable branch with the MFD
-patches (1, 2, 4)? Looks like the other patches only depend on those
-and can go through their respective subsystems.
+The remaining thing that worries me with this patch is that I do expect
+that at least one of the USB-C ports is OTG. But I am not able to
+conclude anything regarding this and host-only is a good default for
+this type of device, so I suggest that we merge this.
 
--- Sebastian
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
---qfajaxb2wnhwswu6
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+Bjorn
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0ACGsACgkQ2O7X88g7
-+pqpvxAAiZzNy6zuuXZ4vjjMA7V17elDn9CTdWUe1RZBcvYxmFmOUWxTEPtRsmoC
-DSstvCVI3H0sOGanHoZ6WFe1R5cyV3jG4J9Xam7XQSQmVpWJPaQXSgQpSy4O6aMX
-3Hrs2E8Nv+zUuflVsm4yIOnX7avFBDxBdJlZzKNRzA2b3KOzmNvNr3Y/CbvS9IO4
-dTHBXDzcoo+XfrbOKD7Z/0LD6kPsVVkjI8qDiGMN0LCxVkkXV2IFFvMluaWzJHQl
-hDUheJRJkD1TXC6z1bCxHSzT4/DCDbWHXN191CnZSIeORMLeZxFFldSmKbYIvOV1
-DTJemYQUksIOl2usnvNvSl0GnxjrzZpw7PKbh3rXVlWaa52FEvRJJX++voIP3fNW
-zTHSYUTZrBqyLzC4Rp9AWeCy19ebFTrPjV3g3LZDIx0D37C3BeS71gNotRa9o91w
-aGBN/Um6Zm3PASbxAPk5TB9RIatlGSELFcVg4qa4of1Y7fY5+O/J5Civ/R1vQJkG
-iKE+ujAxYfKJkoUebhETYoHhonRh+naZuEgVC4yl9TsP2hGhz4rArD76kKTUnwNY
-g5rSpqb8LptHOkHdkP6ueQYIHavaNGfE6wJBfLqjG3uLU/8RU7YaOqZubQOH/WNT
-f2hxCJ76WfvTO5avZpYkykwOS0LwdP8MUoVz2tVnYLYm/q7DhB4=
-=2BRP
------END PGP SIGNATURE-----
-
---qfajaxb2wnhwswu6--
+> A property of the same name can be used inside
+> ACPI tables too.  However it is missing from the SDM845's ACPI tables
+> so we have to supply this information using Platform Device Properties
+> instead.
+> 
+> This does not change the behaviour of any currently supported devices.
+> The property is only set on ACPI enabled platforms, thus for H/W
+> booting DT, unless a 'dr_mode' property is present, the default is
+> still OTG (On-The-Go) as per [0].  Any new ACPI devices added will
+> also be able to over-ride this implementation by providing a 'dr_mode'
+> property in their ACPI tables.  In cases where 'dr_mode' is omitted
+> from the tables AND 'host mode' should not be the default (very
+> unlikely), then we will have to add some way of choosing between them
+> at run time - most likely by ACPI HID.
+> 
+> [0] Documentation/devicetree/bindings/usb/generic.txt
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> index 1e1f12b7991d..55ba04254e38 100644
+> --- a/drivers/usb/dwc3/dwc3-qcom.c
+> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> @@ -444,6 +444,11 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+>  	return 0;
+>  }
+>  
+> +static const struct property_entry dwc3_qcom_acpi_properties[] = {
+> +	PROPERTY_ENTRY_STRING("dr_mode", "host"),
+> +	{}
+> +};
+> +
+>  static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
+>  {
+>  	struct dwc3_qcom 	*qcom = platform_get_drvdata(pdev);
+> @@ -488,6 +493,13 @@ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
+>  		goto out;
+>  	}
+>  
+> +	ret = platform_device_add_properties(qcom->dwc3,
+> +					     dwc3_qcom_acpi_properties);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed to add properties\n");
+> +		goto out;
+> +	}
+> +
+>  	ret = platform_device_add(qcom->dwc3);
+>  	if (ret)
+>  		dev_err(&pdev->dev, "failed to add device\n");
+> -- 
+> 2.17.1
+> 
