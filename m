@@ -1,14 +1,15 @@
 From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 2/3] pinctrl: freescale: Add i.MX8MN pinctrl driver support
-Date: Tue, 11 Jun 2019 10:45:51 +0000
-Message-ID: <AM0PR04MB4211964EA3993A99465D861980ED0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MN by
+ default
+Date: Tue, 11 Jun 2019 10:51:58 +0000
+Message-ID: <AM0PR04MB4211E5EC9392837648BB488880ED0__48970.938210708$1560250340$gmane$org@AM0PR04MB4211.eurprd04.prod.outlook.com>
 References: <20190530030546.9224-1-Anson.Huang@nxp.com>
- <20190530030546.9224-2-Anson.Huang@nxp.com>
+ <20190530030546.9224-3-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190530030546.9224-2-Anson.Huang@nxp.com>
+In-Reply-To: <20190530030546.9224-3-Anson.Huang@nxp.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -26,76 +27,33 @@ List-Id: linux-gpio@vger.kernel.org
 > From: Anson.Huang@nxp.com [mailto:Anson.Huang@nxp.com]
 > Sent: Thursday, May 30, 2019 11:06 AM
 > 
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> Add the pinctrl driver support for i.MX8MN.
+> Enable CONFIG_PINCTRL_IMX8MN by default to support i.MX8MN pinctrl
+> driver.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/pinctrl/freescale/Kconfig          |   7 +
->  drivers/pinctrl/freescale/Makefile         |   1 +
->  drivers/pinctrl/freescale/pinctrl-imx8mn.c | 348
-> +++++++++++++++++++++++++++++
->  3 files changed, 356 insertions(+)
->  create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mn.c
-> 
-> diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-> index aeab0d9..4ff52fa 100644
-> --- a/drivers/pinctrl/freescale/Kconfig
-> +++ b/drivers/pinctrl/freescale/Kconfig
-> @@ -123,6 +123,13 @@ config PINCTRL_IMX7ULP
->  	help
->  	  Say Y here to enable the imx7ulp pinctrl driver
-> 
-> +config PINCTRL_IMX8MN
 
-Nitpick: this seems should be under imx8mm if in alphabetical order
-
-> +	bool "IMX8MN pinctrl driver"
-> +	depends on ARCH_MXC && ARM64
-> +	select PINCTRL_IMX
-> +	help
-> +	  Say Y here to enable the imx8mn pinctrl driver
-> +
->  config PINCTRL_IMX8MM
->  	bool "IMX8MM pinctrl driver"
->  	depends on ARCH_MXC && ARM64
-> diff --git a/drivers/pinctrl/freescale/Makefile
-> b/drivers/pinctrl/freescale/Makefile
-> index 02020a7..18225da 100644
-> --- a/drivers/pinctrl/freescale/Makefile
-> +++ b/drivers/pinctrl/freescale/Makefile
-> @@ -18,6 +18,7 @@ obj-$(CONFIG_PINCTRL_IMX6SX)	+= pinctrl-imx6sx.o
->  obj-$(CONFIG_PINCTRL_IMX6UL)	+= pinctrl-imx6ul.o
->  obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
->  obj-$(CONFIG_PINCTRL_IMX7ULP)	+= pinctrl-imx7ulp.o
-> +obj-$(CONFIG_PINCTRL_IMX8MN)	+= pinctrl-imx8mn.o
-
-ditto
-
->  obj-$(CONFIG_PINCTRL_IMX8MM)	+= pinctrl-imx8mm.o
->  obj-$(CONFIG_PINCTRL_IMX8MQ)	+= pinctrl-imx8mq.o
->  obj-$(CONFIG_PINCTRL_IMX8QM)	+= pinctrl-imx8qm.o
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-> b/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-> new file mode 100644
-> index 0000000..67161df
-> --- /dev/null
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx8mn.c
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2018-2019 NXP
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/of_device.h>
-
-This could be of.h
-
+Nitpick: please check the alphabetical order,
 Otherwise:
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
 Regards
 Dong Aisheng
+
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 7c7b6b5..8d4f25c 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -373,6 +373,7 @@ CONFIG_SPI_SUN6I=y
+>  CONFIG_SPMI=y
+>  CONFIG_PINCTRL_SINGLE=y
+>  CONFIG_PINCTRL_MAX77620=y
+> +CONFIG_PINCTRL_IMX8MN=y
+>  CONFIG_PINCTRL_IMX8MM=y
+>  CONFIG_PINCTRL_IMX8MQ=y
+>  CONFIG_PINCTRL_IMX8QXP=y
+> --
+> 2.7.4
