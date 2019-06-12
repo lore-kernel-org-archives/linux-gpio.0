@@ -1,78 +1,99 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH net-next v2 0/1] stmmac: honor the GPIO flags for the PHY reset GPIO
-Date: Wed, 12 Jun 2019 21:31:14 +0200
-Message-ID: <20190612193115.6751-1-martin.blumenstingl@googlemail.com>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: [PATCH v1 09/31] docs: driver-model: convert docs to ReST and
+ rename to *.rst
+Date: Wed, 12 Jun 2019 13:21:38 -0700
+Message-ID: <5e818fb4bf253fc69259093e7ff68122e4a4044c.camel@intel.com>
+References: <cover.1560364493.git.mchehab+samsung@kernel.org>
+         <c90bb60d65aaba4ce5957894cc6890ebe5048d95.1560364494.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-ty+pfSLvRBl9i77r2BhF"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c90bb60d65aaba4ce5957894cc6890ebe5048d95.1560364494.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: netdev@vger.kernel.org, peppe.cavallaro@st.com, alexandre.torgue@st.com, joabreu@synopsys.com, davem@davemloft.net, andrew@lunn.ch
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, maxime.ripard@bootlin.com, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "David S. Miller" <davem@davemloft.net>, Julia Lawall <Julia.Lawall@lip6.fr>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>, Michal Marek <michal.lkml@markovi.net>, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, cocci@systeme.lip6.fr
 List-Id: linux-gpio@vger.kernel.org
 
-Recent Amlogic SoCs (G12A which includes S905X2 and S905D2 as well as
-G12B which includes S922X) use GPIOZ_14 or GPIOZ_15 for the PHY reset
-line. These GPIOs are special because they are marked as "3.3V input
-tolerant open drain (OD) pins" which means they can only drive the pin
-output LOW (to reset the PHY) or to switch to input mode (to take the
-PHY out of reset).
-The GPIO subsystem already supports this with the GPIO_OPEN_DRAIN and
-GPIO_OPEN_SOURCE flags in the devicetree bindings.
 
-The goal of this series to add support for these special GPIOs in
-stmmac (even though the "snps,reset-gpio" binding is deprecated).
+--=-ty+pfSLvRBl9i77r2BhF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-My test-cases were:
-- X96 Max: snps,reset-gpio = <&gpio GPIOZ_15 0> with and without
-           snps,reset-active-low before these patches. The PHY was
-           not detected.
-- X96 Max: snps,reset-gpio = <&gpio GPIOZ_15
-                              (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>.
-           The PHY is now detected correctly
-- Meson8b EC100: snps,reset-gpio = <&gpio GPIOH_4 0> with
-                 snps,reset-active-low. Before and after these
-                 patches the PHY is detected correctly.
-- Meson8b EC100: snps,reset-gpio = <&gpio GPIOH_4 0> without
-                 snps,reset-active-low. Before and after these
-                 patches the PHY is not detected (this is expected
-                 because we need to set the output LOW to take the
-                 PHY out of reset).
-- Meson8b EC100: snps,reset-gpio = <&gpio GPIOH_4 GPIO_ACTIVE_LOW>
-                 but without snps,reset-active-low. Before these
-                 patches the PHY was not detected. With these patches
-                 the PHY is now detected correctly.
+On Wed, 2019-06-12 at 15:38 -0300, Mauro Carvalho Chehab wrote:
+> Convert the various documents at the driver-model, preparing
+> them to be part of the driver-api book.
+>=20
+> The conversion is actually:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - fix tables markups;
+>   - add some lists markups;
+>   - mark literal blocks;
+>   - adjust title markups.
+>=20
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+For the ice driver comment change.
+
+> ---
+>  Documentation/driver-api/gpio/driver.rst      |   2 +-
+>  .../driver-model/{binding.txt =3D> binding.rst} |  20 +-
+>  .../driver-model/{bus.txt =3D> bus.rst}         |  69 ++--
+>  .../driver-model/{class.txt =3D> class.rst}     |  74 ++--
+>  ...esign-patterns.txt =3D> design-patterns.rst} | 106 +++---
+>  .../driver-model/{device.txt =3D> device.rst}   |  57 +--
+>  .../driver-model/{devres.txt =3D> devres.rst}   |  50 +--
+>  .../driver-model/{driver.txt =3D> driver.rst}   | 112 +++---
+>  Documentation/driver-model/index.rst          |  26 ++
+>  .../{overview.txt =3D> overview.rst}            |  37 +-
+>  .../{platform.txt =3D> platform.rst}            |  30 +-
+>  .../driver-model/{porting.txt =3D> porting.rst} | 333 +++++++++---------
+>  Documentation/eisa.txt                        |   4 +-
+>  Documentation/hwmon/submitting-patches.rst    |   2 +-
+>  drivers/base/platform.c                       |   2 +-
+>  drivers/gpio/gpio-cs5535.c                    |   2 +-
+>  drivers/net/ethernet/intel/ice/ice_main.c     |   2 +-
+>  scripts/coccinelle/free/devm_free.cocci       |   2 +-
+>  18 files changed, 489 insertions(+), 441 deletions(-)
+>  rename Documentation/driver-model/{binding.txt =3D> binding.rst} (92%)
+>  rename Documentation/driver-model/{bus.txt =3D> bus.rst} (76%)
+>  rename Documentation/driver-model/{class.txt =3D> class.rst} (75%)
+>  rename Documentation/driver-model/{design-patterns.txt =3D> design-
+> patterns.rst} (59%)
+>  rename Documentation/driver-model/{device.txt =3D> device.rst} (71%)
+>  rename Documentation/driver-model/{devres.txt =3D> devres.rst} (93%)
+>  rename Documentation/driver-model/{driver.txt =3D> driver.rst} (75%)
+>  create mode 100644 Documentation/driver-model/index.rst
+>  rename Documentation/driver-model/{overview.txt =3D> overview.rst} (90%)
+>  rename Documentation/driver-model/{platform.txt =3D> platform.rst} (95%)
+>  rename Documentation/driver-model/{porting.txt =3D> porting.rst} (62%)
 
 
-Changes since RFC v1 at [0]:
-- dropped all patches except the main patch which changes
-  stmmac_mdio_reset to use GPIO descriptors (I will send the cleanup
-  patches in a separate series once this patch is merged)
-- drop the active_low field from struct stmmac_mdio_bus_data
-- added Linus Walleij's Reviewed-by (thank you!)
+--=-ty+pfSLvRBl9i77r2BhF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
-DEPENDENCIES:
-This has a runtime dependency on the preparation patch [0] from
-Linus W.'s GPIO tree. Without that dependency the
-snps,reset-active-low property (which quite a few .dts files use)
-will be ignored.
-Linus created an immutable branch which can be pulled into net-next:
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-ib-snps-reset-gpio
-gitweb for this immutable branch: [2]
+iQIzBAABCgAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAl0BXtIACgkQ5W/vlVpL
+7c4pqBAAjI5ICv0jNPfnf/dx8MCYTQgnqe5o0zbkpxSHIeNyftE7ga/fAa4J66pK
+yJP9+EJIO8IGMCFSZxybwq9AxxQOK2fzpm2zrm3AGZ3MFesW3u/zxqGzp88XgqBY
+uaqSUJIuYPlDkVay8iLBiUKm5StnPJ25soquD3pRqHCStCU5HPM7ML9AFbK4UgSA
+OMbmXcdKoJubrdWd/CPIgMdGwRBzHl0L072QPnapJLJBNfn8OwkeoO67N7mCvitG
+o/I05rRyNIeunWTmiqmwVe6j+DQ8QzKPvXSKGGBM3Dl7QxP+fcV9jXkVulrjlpa6
+HDOQMLdRX6T5+6JPGHDTnY5PfWXf/hsMIF+szh+iI9+ZaetLbA/OQYm12foIxcbr
+2qu1iOn6RrRS4COcCFq6oTUEXRBBrlTI9iPVImuRF2Jt2+g/dQvfwK9U4XWCd0vG
+s0BFVM5A4CGFCBMGI6jYrSm+Q8Z3IpvMC/l7CmzZW5YPhplS8mPud5eqllLmFfr/
+8y0YyBAxXFpm9ajncxSc6m3TyBAmSevKYdvoL31TfZKLDN+W6ZyM47U1z1baDJBu
+3RBxzmVNXxu+DScqKTxYKsW5UY06Grs3HuDWGthqSztzc2+H6gK7s7YfT2S2diKe
+4vi2AzHXn4ghgp0OW4Kcg1YC5aeP7xdjVYDhaIeLEaaYaB6IiGw=
+=Uy44
+-----END PGP SIGNATURE-----
 
-
-[0] https://patchwork.kernel.org/cover/10983801/
-[1] https://patchwork.ozlabs.org/cover/1113217/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-snps-reset-gpio
-
-
-Martin Blumenstingl (1):
-  net: stmmac: use GPIO descriptors in stmmac_mdio_reset
-
- .../net/ethernet/stmicro/stmmac/stmmac_mdio.c | 27 +++++++++----------
- include/linux/stmmac.h                        |  2 +-
- 2 files changed, 14 insertions(+), 15 deletions(-)
-
--- 
-2.22.0
+--=-ty+pfSLvRBl9i77r2BhF--
