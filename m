@@ -1,39 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/8] pinctrl: msm: Add ability for drivers to supply a
- reserved GPIO list
-Date: Wed, 12 Jun 2019 09:25:47 +0200
-Message-ID: <CACRpkdaXHC6dfOMMOj-a8o1zCzqqZoeQLEEAZ=XpPWKN_nf=9w@mail.gmail.com>
-References: <20190610084213.1052-1-lee.jones@linaro.org> <20190610084213.1052-3-lee.jones@linaro.org>
+Subject: Re: [PATCH 0/1] gpio: of: prepare for switching stmmac to GPIO descriptors
+Date: Wed, 12 Jun 2019 09:49:54 +0200
+Message-ID: <CACRpkdboUO1iEipXTvhy2x6bxuVJuwxd5FduMdk-KtK3f8FeaA@mail.gmail.com>
+References: <20190610170523.26554-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190610084213.1052-3-lee.jones@linaro.org>
+In-Reply-To: <20190610170523.26554-1-martin.blumenstingl@googlemail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: alokc@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Felipe Balbi <balbi@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Jeffrey Hugo <jlhugo@gmail.com>, linux-i2c <linux-i2c@vger.kernel.org>, MSM <linux-arm-msm@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 10:42 AM Lee Jones <lee.jones@linaro.org> wrote:
+On Mon, Jun 10, 2019 at 7:05 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-> When booting MSM based platforms with Device Tree or some ACPI
-> implementations, it is possible to provide a list of reserved pins
-> via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
-> However some ACPI tables are not populated with this information,
-> thus it has to come from a knowledgable device driver instead.
+> This is a preparation patch which is needed before we can switch stmmac
+> to GPIO descriptors. stmmac has a custom "snps,reset-active-low"
+> property because it has ignored the GPIO flags including the polarity.
 >
-> Here we provide the MSM common driver with additional support to
-> parse this informtion and correctly populate the widely used
-> 'valid_mask'.
+> Add the parsing to gpiolib-of so we can port stmmac over to GPIO
+> descriptors.
 >
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> This patch is split from my series at [0].
+>
+> Linus W.: please create an immutable branch as discussed so I can send
+> the stmmac patches to the net-next tree (which will then have to pull
+> in your immutable branch).
 
-I have queued patches 3 and 4 in the pin control tree on an
-immutable branch with Bjorn's ACKs:
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-ib-qcom-acpi
+Thanks Martin!
+I have applied the patch and created an immutable branch:
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ib-snps-reset-gpio
 
-I have also merge this to pinctrl's devel branch for next.
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-snps-reset-gpio
+
+Please refer to this so the network maintainer can pull it in.
+
+It is based on v5.2-rc1
 
 Yours,
 Linus Walleij
