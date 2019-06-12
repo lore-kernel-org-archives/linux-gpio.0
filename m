@@ -1,113 +1,37 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 7/8] usb: dwc3: qcom: Start USB in 'host mode' on the
- SDM845
-Date: Wed, 12 Jun 2019 06:57:36 +0100
-Message-ID: <20190612055736.GO4797@dell>
-References: <20190610084213.1052-1-lee.jones@linaro.org>
- <20190610084213.1052-7-lee.jones@linaro.org>
- <20190611223349.GS4814@minitux>
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Date: Wed, 12 Jun 2019 07:03:28 +0100
+Message-ID: <20190612060328.GQ4797@dell>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190611223349.GS4814@minitux>
+In-Reply-To: <20190611200043.eib3g3acc7ilawsx@earth.universe>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: alokc@codeaurora.org, andy.gross@linaro.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, linus.walleij@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org, jlhugo@gmail.com, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 11 Jun 2019, Bjorn Andersson wrote:
+On Tue, 11 Jun 2019, Sebastian Reichel wrote:
 
-> On Mon 10 Jun 01:42 PDT 2019, Lee Jones wrote:
+> Hi,
 > 
-> > When booting with Device Tree, the current default boot configuration
-> > table option, the request to boot via 'host mode' comes from the
-> > 'dr_mode' property.
+> On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > Patch series introducing support for ROHM BD70528 PMIC
+> > [...]
 > 
-> As I said in my previous review, the default mode for SDM845 is OTG. For
-> the MTP specifically we specify the default mode to be peripheral (was
-> host).
-> 
-> 
-> The remaining thing that worries me with this patch is that I do expect
-> that at least one of the USB-C ports is OTG. But I am not able to
-> conclude anything regarding this and host-only is a good default for
-> this type of device, so I suggest that we merge this.
+> I think all patches have been reviewed by the respective subsystem
+> maintainers. Lee, can you provide an immutable branch with the MFD
+> patches (1, 2, 4)? Looks like the other patches only depend on those
+> and can go through their respective subsystems.
 
-Right.  So one thing to consider is that Qualcomm Mobile Dept. do not
-use ACPI for Linux, so this patch-set only affects the Laptop
-form factor devices, where 'host' is the expected mode.
+Yes.  It's on my TODO list.
 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Thanks for taking the time to review this Bjorn.
-
-Hopefully we can get Felipe's attention soon.
-
-Felipe,
-
-One thing to think about when taking Bjorn's Reviewed-by into
-consideration; although we both work for Linaro, we actually operate
-in different teams.  Bjorn is on the Qualcomm Landing Team, and as an
-ex-Qualcomm employee he is in an excellent position to review these
-patches, thus his Review should carry more weight than the usual
-co-worker review IMHO.
-
-TIA.
-
-> > A property of the same name can be used inside
-> > ACPI tables too.  However it is missing from the SDM845's ACPI tables
-> > so we have to supply this information using Platform Device Properties
-> > instead.
-> > 
-> > This does not change the behaviour of any currently supported devices.
-> > The property is only set on ACPI enabled platforms, thus for H/W
-> > booting DT, unless a 'dr_mode' property is present, the default is
-> > still OTG (On-The-Go) as per [0].  Any new ACPI devices added will
-> > also be able to over-ride this implementation by providing a 'dr_mode'
-> > property in their ACPI tables.  In cases where 'dr_mode' is omitted
-> > from the tables AND 'host mode' should not be the default (very
-> > unlikely), then we will have to add some way of choosing between them
-> > at run time - most likely by ACPI HID.
-> > 
-> > [0] Documentation/devicetree/bindings/usb/generic.txt
-> > 
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> > index 1e1f12b7991d..55ba04254e38 100644
-> > --- a/drivers/usb/dwc3/dwc3-qcom.c
-> > +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> > @@ -444,6 +444,11 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
-> >  	return 0;
-> >  }
-> >  
-> > +static const struct property_entry dwc3_qcom_acpi_properties[] = {
-> > +	PROPERTY_ENTRY_STRING("dr_mode", "host"),
-> > +	{}
-> > +};
-> > +
-> >  static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
-> >  {
-> >  	struct dwc3_qcom 	*qcom = platform_get_drvdata(pdev);
-> > @@ -488,6 +493,13 @@ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
-> >  		goto out;
-> >  	}
-> >  
-> > +	ret = platform_device_add_properties(qcom->dwc3,
-> > +					     dwc3_qcom_acpi_properties);
-> > +	if (ret < 0) {
-> > +		dev_err(&pdev->dev, "failed to add properties\n");
-> > +		goto out;
-> > +	}
-> > +
-> >  	ret = platform_device_add(qcom->dwc3);
-> >  	if (ret)
-> >  		dev_err(&pdev->dev, "failed to add device\n");
+Would you prefer this method over me just taking them all and sending
+out a PR?  The latter is my usual flow, but I'm happy with either.
 
 -- 
 Lee Jones [李琼斯]
