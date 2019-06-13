@@ -1,35 +1,190 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] include: linux: gpio: fix build warnings on undefined
- struct pinctrl_dev
-Date: Thu, 13 Jun 2019 02:39:50 +0200
-Message-ID: <CACRpkdbBcbOmwu6=fB0TkSU-p_-mRRRLpeE3nFAgvSD4Z75DOA@mail.gmail.com>
-References: <1560376776-21994-1-git-send-email-info@metux.net>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] driver: core: Allow subsystems to continue deferring probe
+Date: Thu, 13 Jun 2019 19:00:11 +0200
+Message-ID: <20190613170011.9647-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560376776-21994-1-git-send-email-info@metux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J . Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 12:04 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> From: Enrico Weigelt <info@metux.net>
->
-> This fixes the warnings:
->
-> * include/linux/gpio.h:254:11: warning: 'struct pinctrl_dev' declared
->   inside parameter list will not be visible outside of this definition
->   or declaration
-> * include/linux/gpio/driver.h:602:11: warning: 'struct pinctrl_dev'
->   declared inside parameter list will not be visible outside of this
->   definition or declaration
->
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+Some subsystems, such as pinctrl, allow continuing to defer probe
+indefinitely. This is useful for devices that depend on resources
+provided by devices that are only probed after the init stage.
 
-Patch applied, also reported by the build robot.
+One example of this can be seen on Tegra, where the DPAUX hardware
+contains pinmuxing controls for pins that it shares with an I2C
+controller. The I2C controller is typically used for communication
+with a monitor over HDMI (DDC). However, other instances of the I2C
+controller are used to access system critical components, such as a
+PMIC. The I2C controller driver will therefore usually be a builtin
+driver, whereas the DPAUX driver is part of the display driver that
+is loaded from a module to avoid bloating the kernel image with all
+of the DRM/KMS subsystem.
 
-Thanks,
-Linus Walleij
+In this particular case the pins used by this I2C/DDC controller
+become accessible very late in the boot process. However, since the
+controller is only used in conjunction with display, that's not an
+issue.
+
+Unfortunately the driver core currently outputs a warning message
+when a device fails to get the pinctrl before the end of the init
+stage. That can be confusing for the user because it may sound like
+an unwanted error occurred, whereas it's really an expected and
+harmless situation.
+
+In order to eliminate this warning, this patch allows callers of the
+driver_deferred_probe_check_state() helper to specify that they want
+to continue deferring probe, regardless of whether we're past the
+init stage or not. All of the callers of that function are updated
+for the new signature, but only the pinctrl subsystem passes a true
+value in the new persist parameter if appropriate.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- pass persist flag via flags parameter to make the function call easier
+  to understand
+
+ drivers/base/dd.c            | 19 ++++++++++++++-----
+ drivers/base/power/domain.c  |  2 +-
+ drivers/iommu/of_iommu.c     |  2 +-
+ drivers/pinctrl/devicetree.c |  9 +++++----
+ include/linux/device.h       | 18 +++++++++++++++++-
+ 5 files changed, 38 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 0df9b4461766..0399a6f6c479 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -238,23 +238,32 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+ /**
+  * driver_deferred_probe_check_state() - Check deferred probe state
+  * @dev: device to check
++ * @flags: Flags used to control the behavior of this function. Drivers can
++ *   set the DRIVER_DEFER_PROBE_PERSIST flag to indicate that they want to
++ *   keep trying to probe after built-in drivers have had a chance to probe.
++ *   This is useful for built-in drivers that rely on resources provided by
++ *   modular drivers.
+  *
+  * Returns -ENODEV if init is done and all built-in drivers have had a chance
+- * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
+- * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
++ * to probe (i.e. initcalls are done) and unless the DRIVER_DEFER_PROBE_PERSIST
++ * flag is set, -ETIMEDOUT if deferred probe debug timeout has expired, or
++ * -EPROBE_DEFER if none of those conditions are met.
+  *
+  * Drivers or subsystems can opt-in to calling this function instead of directly
+  * returning -EPROBE_DEFER.
+  */
+-int driver_deferred_probe_check_state(struct device *dev)
++int driver_deferred_probe_check_state(struct device *dev, unsigned long flags)
+ {
+ 	if (initcalls_done) {
+ 		if (!deferred_probe_timeout) {
+ 			dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+ 			return -ETIMEDOUT;
+ 		}
+-		dev_warn(dev, "ignoring dependency for device, assuming no driver");
+-		return -ENODEV;
++
++		if ((flags & DRIVER_DEFER_PROBE_PERSIST) == 0) {
++			dev_warn(dev, "ignoring dependency for device, assuming no driver");
++			return -ENODEV;
++		}
+ 	}
+ 	return -EPROBE_DEFER;
+ }
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 33c30c1e6a30..6198c6a30fe2 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2423,7 +2423,7 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
+ 		mutex_unlock(&gpd_list_lock);
+ 		dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
+ 			__func__, PTR_ERR(pd));
+-		return driver_deferred_probe_check_state(base_dev);
++		return driver_deferred_probe_check_state(base_dev, 0);
+ 	}
+ 
+ 	dev_dbg(dev, "adding to PM domain %s\n", pd->name);
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 614a93aa5305..b95d4342e414 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -105,7 +105,7 @@ static int of_iommu_xlate(struct device *dev,
+ 	 * a proper probe-ordering dependency mechanism in future.
+ 	 */
+ 	if (!ops)
+-		return driver_deferred_probe_check_state(dev);
++		return driver_deferred_probe_check_state(dev, 0);
+ 
+ 	return ops->of_xlate(dev, iommu_spec);
+ }
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index f7e354f85518..43c0183fa23f 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -111,13 +111,14 @@ static int dt_to_map_one_config(struct pinctrl *p,
+ 
+ 		np_pctldev = of_get_next_parent(np_pctldev);
+ 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
++			unsigned long flags = 0;
++
+ 			of_node_put(np_pctldev);
+-			ret = driver_deferred_probe_check_state(p->dev);
+ 			/* keep deferring if modules are enabled unless we've timed out */
+-			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret == -ENODEV)
+-				ret = -EPROBE_DEFER;
++			if (IS_ENABLED(CONFIG_MODULES) && !allow_default)
++				flags |= DRIVER_DEFER_PROBE_PERSIST;
+ 
+-			return ret;
++			return driver_deferred_probe_check_state(p->dev, flags);
+ 		}
+ 		/* If we're creating a hog we can use the passed pctldev */
+ 		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
+diff --git a/include/linux/device.h b/include/linux/device.h
+index e0649f6adf2e..d364656a920c 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -340,7 +340,23 @@ struct device *driver_find_device(struct device_driver *drv,
+ 				  int (*match)(struct device *dev, void *data));
+ 
+ void driver_deferred_probe_add(struct device *dev);
+-int driver_deferred_probe_check_state(struct device *dev);
++
++/*
++ * This can be use to continue to defer probe after the init stage and after
++ * all the built-in drivers have had a chance to probe. This is useful if a
++ * built-in driver requires resources provided by a modular driver.
++ *
++ * One such example is the pinctrl subsystem, where for example the DPAUX
++ * hardware on Tegra provides pinmuxing controls for pins shared between DPAUX
++ * and I2C controllers. Only a subset of I2C controllers need the DPAUX
++ * pinmuxing, and some I2C controllers are used during early boot for critical
++ * tasks (such as communicating with the system PMIC). The I2C controllers
++ * that don't share pins with a DPAUX block will want to be driven by a built-
++ * in driver to make sure they are available early on.
++ */
++#define DRIVER_DEFER_PROBE_PERSIST (1 << 0)
++
++int driver_deferred_probe_check_state(struct device *dev, unsigned long flags);
+ 
+ /**
+  * struct subsys_interface - interfaces to device functions
+-- 
+2.21.0
