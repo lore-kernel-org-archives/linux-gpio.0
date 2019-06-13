@@ -1,14 +1,14 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.19 112/118] gpio: vf610: Do not share irq_chip
-Date: Thu, 13 Jun 2019 10:34:10 +0200
-Message-ID: <20190613075650.784121106@linuxfoundation.org>
-References: <20190613075643.642092651@linuxfoundation.org>
+Subject: [PATCH 4.14 77/81] gpio: vf610: Do not share irq_chip
+Date: Thu, 13 Jun 2019 10:34:00 +0200
+Message-ID: <20190613075654.646180331@linuxfoundation.org>
+References: <20190613075649.074682929@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190613075643.642092651@linuxfoundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
@@ -35,7 +35,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 7e09ce75ffb2..a9cb5571de54 100644
+index 1309b444720e..3210fba16a9b 100644
 --- a/drivers/gpio/gpio-vf610.c
 +++ b/drivers/gpio/gpio-vf610.c
 @@ -37,6 +37,7 @@ struct fsl_gpio_soc_data {
@@ -70,8 +70,8 @@ index 7e09ce75ffb2..a9cb5571de54 100644
 -
  static int vf610_gpio_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
-@@ -259,6 +249,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
+@@ -261,6 +251,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
  	struct vf610_gpio_port *port;
  	struct resource *iores;
  	struct gpio_chip *gc;
@@ -79,7 +79,7 @@ index 7e09ce75ffb2..a9cb5571de54 100644
  	int i;
  	int ret;
  
-@@ -295,6 +286,14 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+@@ -297,6 +288,14 @@ static int vf610_gpio_probe(struct platform_device *pdev)
  	gc->direction_output = vf610_gpio_direction_output;
  	gc->set = vf610_gpio_set;
  
@@ -94,7 +94,7 @@ index 7e09ce75ffb2..a9cb5571de54 100644
  	ret = gpiochip_add_data(gc, port);
  	if (ret < 0)
  		return ret;
-@@ -306,14 +305,13 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+@@ -308,14 +307,13 @@ static int vf610_gpio_probe(struct platform_device *pdev)
  	/* Clear the interrupt status register for all GPIO's */
  	vf610_gpio_writel(~0, port->base + PORT_ISFR);
  
