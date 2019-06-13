@@ -1,115 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.14 77/81] gpio: vf610: Do not share irq_chip
-Date: Thu, 13 Jun 2019 10:34:00 +0200
-Message-ID: <20190613075654.646180331@linuxfoundation.org>
-References: <20190613075649.074682929@linuxfoundation.org>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Date: Thu, 13 Jun 2019 11:35:06 +0300
+Message-ID: <CANhJrGNM7fBXa8cY6ybF8WsaigwcREMvbGN0K4pdUVKck4POzw@mail.gmail.com>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe> <20190612060328.GQ4797@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190613075649.074682929@linuxfoundation.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190612060328.GQ4797@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, "Vaittinen, Matti" <matti.vaittinen@fi.rohmeurope.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-rtc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-[ Upstream commit 338aa10750ba24d04beeaf5dc5efc032e5cf343f ]
+On Wed, Jun 12, 2019 at 9:03 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+>
+> > Hi,
+> >
+> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > > Patch series introducing support for ROHM BD70528 PMIC
+> > > [...]
+> >
+> > I think all patches have been reviewed by the respective subsystem
+> > maintainers. Lee, can you provide an immutable branch with the MFD
+> > patches (1, 2, 4)? Looks like the other patches only depend on those
+> > and can go through their respective subsystems.
+>
+> Yes.  It's on my TODO list.
+>
+> Would you prefer this method over me just taking them all and sending
+> out a PR?  The latter is my usual flow, but I'm happy with either.
 
-Fix the warning produced by gpiochip_set_irq_hooks() by allocating a
-dedicated IRQ chip per GPIO chip/port.
+Thanks guys for taking care of this! :)
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-imx@nxp.com
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-vf610.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 1309b444720e..3210fba16a9b 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -37,6 +37,7 @@ struct fsl_gpio_soc_data {
- 
- struct vf610_gpio_port {
- 	struct gpio_chip gc;
-+	struct irq_chip ic;
- 	void __iomem *base;
- 	void __iomem *gpio_base;
- 	const struct fsl_gpio_soc_data *sdata;
-@@ -66,8 +67,6 @@ struct vf610_gpio_port {
- #define PORT_INT_EITHER_EDGE	0xb
- #define PORT_INT_LOGIC_ONE	0xc
- 
--static struct irq_chip vf610_gpio_irq_chip;
--
- static const struct fsl_gpio_soc_data imx_data = {
- 	.have_paddr = true,
- };
-@@ -243,15 +242,6 @@ static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
- 	return 0;
- }
- 
--static struct irq_chip vf610_gpio_irq_chip = {
--	.name		= "gpio-vf610",
--	.irq_ack	= vf610_gpio_irq_ack,
--	.irq_mask	= vf610_gpio_irq_mask,
--	.irq_unmask	= vf610_gpio_irq_unmask,
--	.irq_set_type	= vf610_gpio_irq_set_type,
--	.irq_set_wake	= vf610_gpio_irq_set_wake,
--};
--
- static int vf610_gpio_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
-@@ -261,6 +251,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	struct vf610_gpio_port *port;
- 	struct resource *iores;
- 	struct gpio_chip *gc;
-+	struct irq_chip *ic;
- 	int i;
- 	int ret;
- 
-@@ -297,6 +288,14 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	gc->direction_output = vf610_gpio_direction_output;
- 	gc->set = vf610_gpio_set;
- 
-+	ic = &port->ic;
-+	ic->name = "gpio-vf610";
-+	ic->irq_ack = vf610_gpio_irq_ack;
-+	ic->irq_mask = vf610_gpio_irq_mask;
-+	ic->irq_unmask = vf610_gpio_irq_unmask;
-+	ic->irq_set_type = vf610_gpio_irq_set_type;
-+	ic->irq_set_wake = vf610_gpio_irq_set_wake;
-+
- 	ret = gpiochip_add_data(gc, port);
- 	if (ret < 0)
- 		return ret;
-@@ -308,14 +307,13 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	/* Clear the interrupt status register for all GPIO's */
- 	vf610_gpio_writel(~0, port->base + PORT_ISFR);
- 
--	ret = gpiochip_irqchip_add(gc, &vf610_gpio_irq_chip, 0,
--				   handle_edge_irq, IRQ_TYPE_NONE);
-+	ret = gpiochip_irqchip_add(gc, ic, 0, handle_edge_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(dev, "failed to add irqchip\n");
- 		gpiochip_remove(gc);
- 		return ret;
- 	}
--	gpiochip_set_chained_irqchip(gc, &vf610_gpio_irq_chip, port->irq,
-+	gpiochip_set_chained_irqchip(gc, ic, port->irq,
- 				     vf610_gpio_irq_handler);
- 
- 	return 0;
--- 
-2.20.1
+--Matti
