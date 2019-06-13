@@ -1,38 +1,41 @@
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
-Date: Thu, 13 Jun 2019 11:35:06 +0300
-Message-ID: <CANhJrGNM7fBXa8cY6ybF8WsaigwcREMvbGN0K4pdUVKck4POzw@mail.gmail.com>
-References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
- <20190611200043.eib3g3acc7ilawsx@earth.universe> <20190612060328.GQ4797@dell>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 2/2] pinctrl: make pinconf.h self-contained
+Date: Thu, 13 Jun 2019 10:55:32 +0900
+Message-ID: <20190613015532.19685-2-yamada.masahiro@socionext.com>
+References: <20190613015532.19685-1-yamada.masahiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190612060328.GQ4797@dell>
+In-Reply-To: <20190613015532.19685-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, "Vaittinen, Matti" <matti.vaittinen@fi.rohmeurope.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-rtc@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 9:03 AM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
->
-> > Hi,
-> >
-> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
-> > > Patch series introducing support for ROHM BD70528 PMIC
-> > > [...]
-> >
-> > I think all patches have been reviewed by the respective subsystem
-> > maintainers. Lee, can you provide an immutable branch with the MFD
-> > patches (1, 2, 4)? Looks like the other patches only depend on those
-> > and can go through their respective subsystems.
->
-> Yes.  It's on my TODO list.
->
-> Would you prefer this method over me just taking them all and sending
-> out a PR?  The latter is my usual flow, but I'm happy with either.
+This header uses 'bool', but it does not include any header by itself.
 
-Thanks guys for taking care of this! :)
+So, it could cause unknown type name error, depending on the header
+include order, although probably <linux/types.h> has been included by
+someone else.
 
---Matti
+Include <linux/types.h> to make it self-contained.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ include/linux/pinctrl/pinconf.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/pinctrl/pinconf.h b/include/linux/pinctrl/pinconf.h
+index eb16a1e0bcfa..f8a8215e9021 100644
+--- a/include/linux/pinctrl/pinconf.h
++++ b/include/linux/pinctrl/pinconf.h
+@@ -11,6 +11,8 @@
+ #ifndef __LINUX_PINCTRL_PINCONF_H
+ #define __LINUX_PINCTRL_PINCONF_H
+ 
++#include <linux/types.h>
++
+ struct pinctrl_dev;
+ struct seq_file;
+ 
+-- 
+2.17.1
