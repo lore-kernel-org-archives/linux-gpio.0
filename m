@@ -1,91 +1,71 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v3 1/8] i2c: i2c-qcom-geni: Provide support for ACPI
-Date: Thu, 13 Jun 2019 11:19:26 +0200
-Message-ID: <20190613091926.GB952@kunai>
-References: <20190610084213.1052-1-lee.jones@linaro.org>
- <20190612103453.ccet2pneairnlpcc@ninjato>
- <20190612104011.GA4660@dell>
- <20190612104459.gvji3qxym5s4odfq@ninjato>
- <20190613085204.GF4660@dell>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Date: Thu, 13 Jun 2019 15:05:29 +0200
+Message-ID: <20190613130529.kgswgbuszb24itxz@earth.universe>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe>
+ <20190612060328.GQ4797@dell>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1624337728034579834=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190613085204.GF4660@dell>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="z7gwwmvwfgzls6v6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190612060328.GQ4797@dell>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: balbi@kernel.org, linux-usb@vger.kernel.org, wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, alokc@codeaurora.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org
+Cc: mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---===============1624337728034579834==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
-Content-Disposition: inline
-
-
---Fba/0zbH8Xs+Fj9o
+--z7gwwmvwfgzls6v6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-> I contacted both of them.
+On Wed, Jun 12, 2019 at 07:03:28AM +0100, Lee Jones wrote:
+> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > > Patch series introducing support for ROHM BD70528 PMIC
+> > > [...]
+> >=20
+> > I think all patches have been reviewed by the respective subsystem
+> > maintainers. Lee, can you provide an immutable branch with the MFD
+> > patches (1, 2, 4)? Looks like the other patches only depend on those
+> > and can go through their respective subsystems.
 >=20
->  Andy doesn't touch anything that isn't QUP based (8994 and older).
->=20
->  David doesn't deal with MSM platforms if Andy is available.=20
+> Yes.  It's on my TODO list.
 
-That's good to know, thanks!
+Thanks.
 
-> So I guess the decision is yours.  Seeing at this patch is pretty
-> trivial and has our ACPI expert's Ack, the decision shouldn't be a
-> difficult one.
+> Would you prefer this method over me just taking them all and sending
+> out a PR?  The latter is my usual flow, but I'm happy with either.
 
-No worries, the patch will be applied. I just wanted to check if the
-listed maintainers are still there. Otherwise I need to orphan this
-driver.
+Both methods are fine with me. I usually go with "my" method, since
+that results in less shared commits. It simplifies potential
+follow-up bug fixes, since there is only one tree to fix.
 
+-- Sebastian
 
---Fba/0zbH8Xs+Fj9o
+--z7gwwmvwfgzls6v6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0CFRkACgkQFA3kzBSg
-KbaquBAArPmt8Fz3DGFNlnfxI6ee/fBc4huwdqsLrUXhirCq2NxTHi0g8mc1Y4O5
-js7pOOLQSqZ6cTamIqHGv7wNonZ16xhvJPexVAz8CPT9BOysmHI/Z1eBEorBqOh8
-MXkJGWXCSJ8li3yAdDLcQWKyj42zzEV7YJ/7kzEVpodSec/ufP1l34mxPNY+gVkj
-b2YAX41oX7KMQ+ix+O9dK1U/wja5costVyUNXxjLuzZBTooVShj7dnrcLuROw1ss
-I3V09OpXN7E8tF4Tq52gJ3xH1wJslMsi2GGGBFC4kKC3txfO04cuOZsLmf36Jomd
-hBFUBBQotylM32w5lshWXcPQOUWBsKlDtfK5qyAhKIeBEvs08pbqK1Lw8hFT8T7t
-6kD5Ty0cRPx5yBU0DE46FWuR60RYUqfq+bLYy4Y1O5lyCY2IdM46SMuFo6pp96lq
-GQReaFopNp4SCpNPNJCDFtoHegeEoT5JKrcjLHRV9Zg2+p4mNL2O7Epkvi+4JvzV
-p1gVvtL0/x5wVD8QWtXq8a7/IQ5oYUaULExw+WzhWD+VV4c/4JyyMNtGpCmnXCAr
-EXj+7drBHheZN7nmmrer+sEuAySjTlhhHtFvb2K735P06Etqu5YWAtm88j7FcZUU
-SaCzuSKqPQgU401V3+k5aexWOMCEN1DehlbyL+n7nQazEovGM24=
-=dLE0
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0CShYACgkQ2O7X88g7
++pr+dQ//UKZYRSKZHKIkw81U/LPaGmkXOWyyYGwVfxHDYeMyeHur/klljg+mU4bW
+gMCGCns23SP/L4c9lOc3aY/Ovkjuq2gjonKtMFo66fY9slf6MdnC4L9FNXXUqsPK
+oa8Fir0ful7FdJ4HxsxLqkiTT1wWDNRgchMI/iNEhcjMt14rlzwIM7wyktT8O/Zr
+9Om2Cx282JEE5hGbl2D98VPrR67vqNRqOwIhZ+lQBNgXiOUgvlh2UDqpXziOjdwX
+vxgmoxUB1v72itnyz0qf46L+ayqnPmBH6MSEdTYs5vYz4l64c4jIXoyyJ/pPr+ck
+rb6eygO0LkADnW6zab11yWn1HH/CYJG1TUNMNOw8a4RFPpCyDW17U5ksICi55hhx
+HrG1YXCPgpiGV2d0MawLwLhEbv3FXIYDPPt6xEne0FXUHg53apOQjmyPoGP404RN
+M7jJJlpkGyHd5N2iskFU79NBES64aHkc/uvmEZw56xHUVg0SZ9e/V7zLKWwxMYeM
+C0kaTjsN86xnoNwsMoVx94RiIjk38xDz1anaAafOtpkUxdFb2xL9qpGWiUlwZKVJ
+ALa7k8jleI0Mzv/fOFHGBZzkGoPCdqURkANKyCLHBA8Pi++nGR4RHF2Om/goK/mb
+pLme4LVfDKswR8HYUbrfCBLsG/uBNX1GfoEH9/CQ2gNKSphUZ90=
+=ScGm
 -----END PGP SIGNATURE-----
 
---Fba/0zbH8Xs+Fj9o--
-
-
---===============1624337728034579834==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1624337728034579834==--
+--z7gwwmvwfgzls6v6--
