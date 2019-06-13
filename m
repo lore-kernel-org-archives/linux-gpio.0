@@ -1,71 +1,115 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
-Date: Thu, 13 Jun 2019 15:05:29 +0200
-Message-ID: <20190613130529.kgswgbuszb24itxz@earth.universe>
-References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
- <20190611200043.eib3g3acc7ilawsx@earth.universe>
- <20190612060328.GQ4797@dell>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5.1 150/155] gpio: vf610: Do not share irq_chip
+Date: Thu, 13 Jun 2019 10:34:22 +0200
+Message-ID: <20190613075701.244231707@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="z7gwwmvwfgzls6v6"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190612060328.GQ4797@dell>
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Chris Healy <cphealy@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Sasha Levin <sashal@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+[ Upstream commit 338aa10750ba24d04beeaf5dc5efc032e5cf343f ]
 
---z7gwwmvwfgzls6v6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix the warning produced by gpiochip_set_irq_hooks() by allocating a
+dedicated IRQ chip per GPIO chip/port.
 
-Hi,
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-imx@nxp.com
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-vf610.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-On Wed, Jun 12, 2019 at 07:03:28AM +0100, Lee Jones wrote:
-> On Tue, 11 Jun 2019, Sebastian Reichel wrote:
-> > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
-> > > Patch series introducing support for ROHM BD70528 PMIC
-> > > [...]
-> >=20
-> > I think all patches have been reviewed by the respective subsystem
-> > maintainers. Lee, can you provide an immutable branch with the MFD
-> > patches (1, 2, 4)? Looks like the other patches only depend on those
-> > and can go through their respective subsystems.
->=20
-> Yes.  It's on my TODO list.
-
-Thanks.
-
-> Would you prefer this method over me just taking them all and sending
-> out a PR?  The latter is my usual flow, but I'm happy with either.
-
-Both methods are fine with me. I usually go with "my" method, since
-that results in less shared commits. It simplifies potential
-follow-up bug fixes, since there is only one tree to fix.
-
--- Sebastian
-
---z7gwwmvwfgzls6v6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0CShYACgkQ2O7X88g7
-+pr+dQ//UKZYRSKZHKIkw81U/LPaGmkXOWyyYGwVfxHDYeMyeHur/klljg+mU4bW
-gMCGCns23SP/L4c9lOc3aY/Ovkjuq2gjonKtMFo66fY9slf6MdnC4L9FNXXUqsPK
-oa8Fir0ful7FdJ4HxsxLqkiTT1wWDNRgchMI/iNEhcjMt14rlzwIM7wyktT8O/Zr
-9Om2Cx282JEE5hGbl2D98VPrR67vqNRqOwIhZ+lQBNgXiOUgvlh2UDqpXziOjdwX
-vxgmoxUB1v72itnyz0qf46L+ayqnPmBH6MSEdTYs5vYz4l64c4jIXoyyJ/pPr+ck
-rb6eygO0LkADnW6zab11yWn1HH/CYJG1TUNMNOw8a4RFPpCyDW17U5ksICi55hhx
-HrG1YXCPgpiGV2d0MawLwLhEbv3FXIYDPPt6xEne0FXUHg53apOQjmyPoGP404RN
-M7jJJlpkGyHd5N2iskFU79NBES64aHkc/uvmEZw56xHUVg0SZ9e/V7zLKWwxMYeM
-C0kaTjsN86xnoNwsMoVx94RiIjk38xDz1anaAafOtpkUxdFb2xL9qpGWiUlwZKVJ
-ALa7k8jleI0Mzv/fOFHGBZzkGoPCdqURkANKyCLHBA8Pi++nGR4RHF2Om/goK/mb
-pLme4LVfDKswR8HYUbrfCBLsG/uBNX1GfoEH9/CQ2gNKSphUZ90=
-=ScGm
------END PGP SIGNATURE-----
-
---z7gwwmvwfgzls6v6--
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 541fa6ac399d..7e9451f47efe 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -29,6 +29,7 @@ struct fsl_gpio_soc_data {
+ 
+ struct vf610_gpio_port {
+ 	struct gpio_chip gc;
++	struct irq_chip ic;
+ 	void __iomem *base;
+ 	void __iomem *gpio_base;
+ 	const struct fsl_gpio_soc_data *sdata;
+@@ -60,8 +61,6 @@ struct vf610_gpio_port {
+ #define PORT_INT_EITHER_EDGE	0xb
+ #define PORT_INT_LOGIC_ONE	0xc
+ 
+-static struct irq_chip vf610_gpio_irq_chip;
+-
+ static const struct fsl_gpio_soc_data imx_data = {
+ 	.have_paddr = true,
+ };
+@@ -237,15 +236,6 @@ static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
+ 	return 0;
+ }
+ 
+-static struct irq_chip vf610_gpio_irq_chip = {
+-	.name		= "gpio-vf610",
+-	.irq_ack	= vf610_gpio_irq_ack,
+-	.irq_mask	= vf610_gpio_irq_mask,
+-	.irq_unmask	= vf610_gpio_irq_unmask,
+-	.irq_set_type	= vf610_gpio_irq_set_type,
+-	.irq_set_wake	= vf610_gpio_irq_set_wake,
+-};
+-
+ static int vf610_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -253,6 +243,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct vf610_gpio_port *port;
+ 	struct resource *iores;
+ 	struct gpio_chip *gc;
++	struct irq_chip *ic;
+ 	int i;
+ 	int ret;
+ 
+@@ -316,6 +307,14 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	gc->direction_output = vf610_gpio_direction_output;
+ 	gc->set = vf610_gpio_set;
+ 
++	ic = &port->ic;
++	ic->name = "gpio-vf610";
++	ic->irq_ack = vf610_gpio_irq_ack;
++	ic->irq_mask = vf610_gpio_irq_mask;
++	ic->irq_unmask = vf610_gpio_irq_unmask;
++	ic->irq_set_type = vf610_gpio_irq_set_type;
++	ic->irq_set_wake = vf610_gpio_irq_set_wake;
++
+ 	ret = gpiochip_add_data(gc, port);
+ 	if (ret < 0)
+ 		return ret;
+@@ -327,14 +326,13 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	/* Clear the interrupt status register for all GPIO's */
+ 	vf610_gpio_writel(~0, port->base + PORT_ISFR);
+ 
+-	ret = gpiochip_irqchip_add(gc, &vf610_gpio_irq_chip, 0,
+-				   handle_edge_irq, IRQ_TYPE_NONE);
++	ret = gpiochip_irqchip_add(gc, ic, 0, handle_edge_irq, IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_err(dev, "failed to add irqchip\n");
+ 		gpiochip_remove(gc);
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(gc, &vf610_gpio_irq_chip, port->irq,
++	gpiochip_set_chained_irqchip(gc, ic, port->irq,
+ 				     vf610_gpio_irq_handler);
+ 
+ 	return 0;
+-- 
+2.20.1
