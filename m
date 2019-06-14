@@ -1,55 +1,142 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drivers: Adjust scope for CONFIG_HAS_IOMEM before
- devm_platform_ioremap_resource()
-Date: Fri, 14 Jun 2019 18:50:27 +0200
-Message-ID: <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
-References: <20190221162627.3476-1-brgl@bgdev.pl>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: Add ipq6018 SoC and CP01 board support
+Date: Fri, 14 Jun 2019 22:41:15 +0200
+Message-ID: <1981742.H2rzviYcjI@debian64>
+References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org> <4056907.DrFocau5Ix@debian64> <1a00e8c8-d07c-3b02-8ea5-6d5f3e2c7b1a@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190221162627.3476-1-brgl@bgdev.pl>
-Content-Language: en-US
+In-Reply-To: <1a00e8c8-d07c-3b02-8ea5-6d5f3e2c7b1a@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, agross@kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?utf-8?B?0J/QsNCy0LXQuw==?= <be.dissent@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Jun 2019 17:45:13 +0200
+On Wednesday, June 12, 2019 11:48:48 AM CEST Sricharan R wrote:
+> Hi Christian,
+> 
+> On 6/10/2019 5:45 PM, Christian Lamparter wrote:
+> > On Monday, June 10, 2019 12:09:56 PM CEST Sricharan R wrote:
+> >> Hi Christian,
+> >>
+> >> On 6/6/2019 2:11 AM, Christian Lamparter wrote:
+> >>> On Wed, Jun 5, 2019 at 7:16 PM Sricharan R <sricharan@codeaurora.org> wrote:
+> >>>>
+> >>>> Add initial device tree support for the Qualcomm IPQ6018 SoC and
+> >>>> CP01 evaluation board.
+> >>>>
+> >>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> >>>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >>>> --- /dev/null
+> >>>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> >>>>
+> >>>> +       clocks {
+> >>>> +               sleep_clk: sleep_clk {
+> >>>> +                       compatible = "fixed-clock";
+> >>>> +                       clock-frequency = <32000>;
+> >>>> +                       #clock-cells = <0>;
+> >>>> +               };
+> >>>> +
+> >>> Recently-ish, we ran into an issue with the clock-frequency of the sleep_clk
+> >>> on older IPQ40XX (and IPQ806x) on the OpenWrt Github and ML.
+> >>> From what I know, the external "32KHz" crystals have 32768 Hz, but the QSDK
+> >>> declares them at 32000 Hz. Since you probably have access to the BOM and
+> >>> datasheets. Can you please confirm what's the real clock frequency for
+> >>> the IPQ6018.
+> >>> (And maybe also for the sleep_clk of the IPQ4018 as well?).
+> >>>
+> >>
+> >> What exactly is the issue that you faced ?
+> >> Looking in to the docs, it is <32000> only on ipq6018 and ipq40xx as well.
+> > 
+> > We need just a confirmation.
+> > 
+> > Then again, Currently the qcom-ipq4019.dtsi is using 32768 Hz.
+> > 
+> > |		sleep_clk: sleep_clk {
+> > |			compatible = "fixed-clock";
+> > |			clock-frequency = <32768>;
+> > |			#clock-cells = <0>;
+> > |		};
+> > 
+> > <https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/qcom-ipq4019.dtsi#L144>
+> > 
+> > Which makes sense, because all previous Qualcomm Atheros MIPS and the
+> > future IPQ8072 SoCs have been either using or deriving a 32768 Hz clock.
+> > 
+> > For example: The AR9344 derives the clock from the 25MHz/40MHz external
+> > oscillator. This is explained in "8.16.9 Derived RTC Clock (DERIVED_RTC_CLK)".
+> > Which mentions that the "32KHz" clock interval is 30.5 usec / 30.48 usec
+> > depending whenever the external reference crystal has 40MHz or 25MHz.
+> > (1/30.5usec = 32.7868852 kilohertz!). The QCA9558 datasheet says the same
+> > in "10.19.11 Derived RTC Clock". 
+> > 
+> > For IPQ8072: I point to the post by Sven Eckelmann on the OpenWrt ML:
+> > <http://lists.infradead.org/pipermail/openwrt-devel/2019-May/017131.html>
+> > "I was only able to verify for IPQ8072 that it had a 32.768 KHz
+> > sleep clock." 
+> > 
+> > So this is pretty much "why there is an issue", it's confusing.
+> > Is possible can you please look if there are (fixed) divisors values
+> > listed in the documentation or the registers and bits that the values
+> > are stored in? Because then we could just calculate it. 
+> > 
+> 
+> Really sorry for the confusion. So looking little more, SLEEP_CLK is derived
+> from an external 38.4MHZ crystal, it is 32.768 KHZ.
+That's really valuable information to have. Thank you!
 
-Move the preprocessor statement =E2=80=9C#ifdef CONFIG_HAS_IOMEM=E2=80=9D =
-so that
-the corresponding scope for conditional compilation includes also comments
-for this function implementation.
+> Somehow the clk freq plan etc seems to mention them only as .032 MHZ and misses
+> out. That means i will correct the patch for 32768 and probably the
+> ipq8074.dtsi as well
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/base/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, there's one more issue that Paul found (at least with the IPQ4019),
+https://patchwork.ozlabs.org/patch/1099482
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 4d1729853d1a..a5f40974a6ef 100644
-=2D-- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -78,6 +78,7 @@ struct resource *platform_get_resource(struct platform_d=
-evice *dev,
- 	return NULL;
- }
- EXPORT_SYMBOL_GPL(platform_get_resource);
-+#ifdef CONFIG_HAS_IOMEM
+it seems that the "sleep_clk" node in the qcom-ipq4019.dtsi is not used by
+the gcc-ipq4019.c clk driver. this causes both wifi rtc_clks and the usb sleep
+clks to dangle in the /sys/kernel/debug/clk/clk_summary (from a RT-AC58U)
 
- /**
-  * devm_platform_ioremap_resource - call devm_ioremap_resource() for a pl=
-atform
-@@ -87,7 +88,6 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
-  *        resource management
-  * @index: resource index
-  */
--#ifdef CONFIG_HAS_IOMEM
- void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev=
-,
- 					     unsigned int index)
- {
-=2D-
-2.22.0
+   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ xo                                       9            9    48000000          0 0
+ [...]
+ sleep_clk                                1            1       32768          0 0  
+ gcc_wcss5g_rtc_clk                       1            1           0          0 0  
+ gcc_wcss2g_rtc_clk                       1            1           0          0 0  
+ gcc_usb3_sleep_clk                       1            1           0          0 0  
+ gcc_usb2_sleep_clk                       1            1           0          0 0  
+
+with his patch the /sys/kernel/debug/clk/clk_summary looks "better" 
+
+(something like this:)
+
+   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ xo                                       9            9    48000000          0 0
+ [...] 
+ gcc_sleep_clk_src                        5            5       32000          0 0  
+    gcc_wcss5g_rtc_clk                    1            1       32000          0 0  
+    gcc_wcss2g_rtc_clk                    1            1       32000          0 0  
+    gcc_usb3_sleep_clk                    1            1       32000          0 0  
+    gcc_usb2_sleep_clk                    1            1       32000          0 0  
+
+but judging from your comment "SLEEP_CLK is derived from an
+external 38.4MHZ crystal" the gcc_sleep_clk_src / sleep_clk
+should have xo as the parent. so the ideal output should be:
+
+   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ xo                                      10           10    48000000          0 0
+ [...] 
+    gcc_sleep_clk                         5            5       32768          0 0  
+       gcc_wcss5g_rtc_clk                 1            1       32768          0 0  
+       gcc_wcss2g_rtc_clk                 1            1       32768          0 0  
+       gcc_usb3_sleep_clk                 1            1       32768          0 0  
+       gcc_usb2_sleep_clk                 1            1       32768          0 0  
+
+or am I missing/skipping over something important? 
+
+Regards,
+Christian
