@@ -1,65 +1,55 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 1/2] pinctrl: remove unneeded #ifdef around declarations
-Date: Fri, 14 Jun 2019 23:59:45 +0900
-Message-ID: <CAK7LNAQ4KmXd0J2UYfi9WiisnfGa4g62BH2S46ELn4fYG05UcA@mail.gmail.com>
-References: <20190613015532.19685-1-yamada.masahiro@socionext.com> <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drivers: Adjust scope for CONFIG_HAS_IOMEM before
+ devm_platform_ioremap_resource()
+Date: Fri, 14 Jun 2019 18:50:27 +0200
+Message-ID: <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
+References: <20190221162627.3476-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
+In-Reply-To: <20190221162627.3476-1-brgl@bgdev.pl>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 10:21 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
->
-> On 13.06.19 03:55, Masahiro Yamada wrote:
-> > What is the point in surrounding the whole of declarations with
-> > ifdef like this?
-> >
-> >   #ifdef CONFIG_FOO
-> >   int foo(void);
-> >   #endif
-> >
-> > If CONFIG_FOO is not defined, all callers of foo() will fail
-> > with implicit declaration errors since the top Makefile adds
-> > -Werror-implicit-function-declaration to KBUILD_CFLAGS.
-> >
-> > This breaks the build earlier when you are doing something wrong.
-> > That's it.
->
-> hmm, in general I like the idea of breaking the build as early as
-> possible. depending on your available cpu power, a kernel build can
-> take a while, and it could be a huge waste of time when having to
-> wait for link stage, just to find out about missing functions.
->
-> @linus: what's your oppinion ?
->
->
-> --mtx
->
-> --
-> Enrico Weigelt, metux IT consult
-> Free software and Linux embedded engineering
-> info@metux.net -- +49-151-27565287
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Jun 2019 17:45:13 +0200
 
+Move the preprocessor statement =E2=80=9C#ifdef CONFIG_HAS_IOMEM=E2=80=9D =
+so that
+the corresponding scope for conditional compilation includes also comments
+for this function implementation.
 
-My previous clean-up (http://patchwork.ozlabs.org/patch/1112656/)
-broke this build.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/base/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And, this patch will fix the build issue.
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d1729853d1a..a5f40974a6ef 100644
+=2D-- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -78,6 +78,7 @@ struct resource *platform_get_resource(struct platform_d=
+evice *dev,
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(platform_get_resource);
++#ifdef CONFIG_HAS_IOMEM
 
-Did you realize the madness of
-surrounding the forward declarations with #ifdef ?
-
-
-All GPIO/pinctrl headers are written in a bad way.
-
-Linus Walleij must realize he was doing *wrong*.
-
-
--- 
-Best Regards
-Masahiro Yamada
+ /**
+  * devm_platform_ioremap_resource - call devm_ioremap_resource() for a pl=
+atform
+@@ -87,7 +88,6 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
+  *        resource management
+  * @index: resource index
+  */
+-#ifdef CONFIG_HAS_IOMEM
+ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev=
+,
+ 					     unsigned int index)
+ {
+=2D-
+2.22.0
