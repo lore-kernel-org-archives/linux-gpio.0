@@ -1,25 +1,35 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2] driver: core: Allow subsystems to continue deferring probe
-Date: Fri, 14 Jun 2019 11:03:43 +0200
-Message-ID: <CAJZ5v0i5t_KjSwKdq+iXiJpNQHkNgn6OtwEkJOm0cG5yaHRaDQ@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH v2] driver: core: Allow subsystems to continue deferring
+	probe
+Date: Fri, 14 Jun 2019 11:10:58 +0200
+Message-ID: <20190614091058.GA25912@kroah.com>
 References: <20190613170011.9647-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190613170011.9647-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, linux-gpio@vger.kernel.org, "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20190613170011.9647-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J . Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 7:00 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
+On Thu, Jun 13, 2019 at 07:00:11PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
 > Some subsystems, such as pinctrl, allow continuing to defer probe
 > indefinitely. This is useful for devices that depend on resources
 > provided by devices that are only probed after the init stage.
->
+> 
 > One example of this can be seen on Tegra, where the DPAUX hardware
 > contains pinmuxing controls for pins that it shares with an I2C
 > controller. The I2C controller is typically used for communication
@@ -29,38 +39,38 @@ On Thu, Jun 13, 2019 at 7:00 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 > driver, whereas the DPAUX driver is part of the display driver that
 > is loaded from a module to avoid bloating the kernel image with all
 > of the DRM/KMS subsystem.
->
+> 
 > In this particular case the pins used by this I2C/DDC controller
 > become accessible very late in the boot process. However, since the
 > controller is only used in conjunction with display, that's not an
 > issue.
->
+> 
 > Unfortunately the driver core currently outputs a warning message
 > when a device fails to get the pinctrl before the end of the init
 > stage. That can be confusing for the user because it may sound like
 > an unwanted error occurred, whereas it's really an expected and
 > harmless situation.
->
+> 
 > In order to eliminate this warning, this patch allows callers of the
 > driver_deferred_probe_check_state() helper to specify that they want
 > to continue deferring probe, regardless of whether we're past the
 > init stage or not. All of the callers of that function are updated
 > for the new signature, but only the pinctrl subsystem passes a true
 > value in the new persist parameter if appropriate.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > Changes in v2:
 > - pass persist flag via flags parameter to make the function call easier
 >   to understand
->
+> 
 >  drivers/base/dd.c            | 19 ++++++++++++++-----
 >  drivers/base/power/domain.c  |  2 +-
 >  drivers/iommu/of_iommu.c     |  2 +-
 >  drivers/pinctrl/devicetree.c |  9 +++++----
 >  include/linux/device.h       | 18 +++++++++++++++++-
 >  5 files changed, 38 insertions(+), 12 deletions(-)
->
+> 
 > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
 > index 0df9b4461766..0399a6f6c479 100644
 > --- a/drivers/base/dd.c
@@ -71,15 +81,6 @@ On Thu, Jun 13, 2019 at 7:00 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 >   * @dev: device to check
 > + * @flags: Flags used to control the behavior of this function. Drivers can
 > + *   set the DRIVER_DEFER_PROBE_PERSIST flag to indicate that they want to
-
-What about calling this flag DRIVER_DEFER_PROBE_CONTINUE ?
-
-Also, I would just say
-
-@flags: Flags used to control the behavior of this function.
-
-here and added the description of the flag below.
-
 > + *   keep trying to probe after built-in drivers have had a chance to probe.
 > + *   This is useful for built-in drivers that rely on resources provided by
 > + *   modular drivers.
@@ -88,105 +89,47 @@ here and added the description of the flag below.
 > - * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
 > - * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
 > + * to probe (i.e. initcalls are done) and unless the DRIVER_DEFER_PROBE_PERSIST
-
-"unless DRIVER_DEFER_PROBE_CONTINUE is set in @flags"
-
 > + * flag is set, -ETIMEDOUT if deferred probe debug timeout has expired, or
 > + * -EPROBE_DEFER if none of those conditions are met.
 >   *
 >   * Drivers or subsystems can opt-in to calling this function instead of directly
 >   * returning -EPROBE_DEFER.
-
-And here:
-
-"In that case, passing DRIVER_DEFER_PROBE_CONTINUE in @flags indicates
-that the caller wants to keep trying to probe after built-in drivers
-have had a chance to probe, which is useful for built-in drivers that
-rely on resources provided by modular drivers."
-
 >   */
 > -int driver_deferred_probe_check_state(struct device *dev)
 > +int driver_deferred_probe_check_state(struct device *dev, unsigned long flags)
 >  {
->         if (initcalls_done) {
->                 if (!deferred_probe_timeout) {
->                         dev_WARN(dev, "deferred probe timeout, ignoring dependency");
->                         return -ETIMEDOUT;
->                 }
-> -               dev_warn(dev, "ignoring dependency for device, assuming no driver");
-> -               return -ENODEV;
+>  	if (initcalls_done) {
+>  		if (!deferred_probe_timeout) {
+>  			dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+>  			return -ETIMEDOUT;
+>  		}
+> -		dev_warn(dev, "ignoring dependency for device, assuming no driver");
+> -		return -ENODEV;
 > +
-> +               if ((flags & DRIVER_DEFER_PROBE_PERSIST) == 0) {
-
-What about
-
-if (!(flags & DRIVER_DEFER_PROBE_PERSIST)) {
-
-> +                       dev_warn(dev, "ignoring dependency for device, assuming no driver");
-> +                       return -ENODEV;
-> +               }
->         }
->         return -EPROBE_DEFER;
+> +		if ((flags & DRIVER_DEFER_PROBE_PERSIST) == 0) {
+> +			dev_warn(dev, "ignoring dependency for device, assuming no driver");
+> +			return -ENODEV;
+> +		}
+>  	}
+>  	return -EPROBE_DEFER;
 >  }
 > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
 > index 33c30c1e6a30..6198c6a30fe2 100644
 > --- a/drivers/base/power/domain.c
 > +++ b/drivers/base/power/domain.c
 > @@ -2423,7 +2423,7 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                 mutex_unlock(&gpd_list_lock);
->                 dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
->                         __func__, PTR_ERR(pd));
-> -               return driver_deferred_probe_check_state(base_dev);
-> +               return driver_deferred_probe_check_state(base_dev, 0);
->         }
->
->         dev_dbg(dev, "adding to PM domain %s\n", pd->name);
-> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> index 614a93aa5305..b95d4342e414 100644
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -105,7 +105,7 @@ static int of_iommu_xlate(struct device *dev,
->          * a proper probe-ordering dependency mechanism in future.
->          */
->         if (!ops)
-> -               return driver_deferred_probe_check_state(dev);
-> +               return driver_deferred_probe_check_state(dev, 0);
->
->         return ops->of_xlate(dev, iommu_spec);
->  }
-> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-> index f7e354f85518..43c0183fa23f 100644
-> --- a/drivers/pinctrl/devicetree.c
-> +++ b/drivers/pinctrl/devicetree.c
-> @@ -111,13 +111,14 @@ static int dt_to_map_one_config(struct pinctrl *p,
->
->                 np_pctldev = of_get_next_parent(np_pctldev);
->                 if (!np_pctldev || of_node_is_root(np_pctldev)) {
-> +                       unsigned long flags = 0;
-> +
->                         of_node_put(np_pctldev);
-> -                       ret = driver_deferred_probe_check_state(p->dev);
->                         /* keep deferring if modules are enabled unless we've timed out */
-> -                       if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret == -ENODEV)
-> -                               ret = -EPROBE_DEFER;
-> +                       if (IS_ENABLED(CONFIG_MODULES) && !allow_default)
-> +                               flags |= DRIVER_DEFER_PROBE_PERSIST;
->
-> -                       return ret;
-> +                       return driver_deferred_probe_check_state(p->dev, flags);
->                 }
->                 /* If we're creating a hog we can use the passed pctldev */
->                 if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index e0649f6adf2e..d364656a920c 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -340,7 +340,23 @@ struct device *driver_find_device(struct device_driver *drv,
->                                   int (*match)(struct device *dev, void *data));
->
->  void driver_deferred_probe_add(struct device *dev);
-> -int driver_deferred_probe_check_state(struct device *dev);
-> +
+>  		mutex_unlock(&gpd_list_lock);
+>  		dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
+>  			__func__, PTR_ERR(pd));
+> -		return driver_deferred_probe_check_state(base_dev);
+> +		return driver_deferred_probe_check_state(base_dev, 0);
+
+Again, I said no odd flags for functions, how is anyone supposed to know
+what "0" means here?
+
+You just swapped a boolean for a bitmapped flag, right?  That did not
+make the api any easier to understand at all.
+
 > +/*
 > + * This can be use to continue to defer probe after the init stage and after
 > + * all the built-in drivers have had a chance to probe. This is useful if a
@@ -202,11 +145,11 @@ if (!(flags & DRIVER_DEFER_PROBE_PERSIST)) {
 > + */
 > +#define DRIVER_DEFER_PROBE_PERSIST (1 << 0)
 
-Use BIT(1) ?
+In the future, please always use BIT() for stuff like this.
 
-> +
-> +int driver_deferred_probe_check_state(struct device *dev, unsigned long flags);
->
->  /**
->   * struct subsys_interface - interfaces to device functions
-> --
+Anyway, this isn't ok, do it correctly please, like I asked for the
+first time...
+
+thanks,
+
+greg k-h
