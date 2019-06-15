@@ -1,44 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net-next v2 1/1] net: stmmac: use GPIO descriptors in
- stmmac_mdio_reset
-Date: Fri, 14 Jun 2019 19:08:53 -0700 (PDT)
-Message-ID: <20190614.190853.71764546033996539.davem@davemloft.net>
-References: <20190612193115.6751-1-martin.blumenstingl@googlemail.com>
- <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH net-next v2 1/1] net: stmmac: use GPIO descriptors in stmmac_mdio_reset
+Date: Sat, 15 Jun 2019 11:07:53 +0200
+Message-ID: <CACRpkdajXRXRFz=XpbEzwUb-crhBxNQ4f-m9rfdY6+HcG0+_gA@mail.gmail.com>
+References: <20190612193115.6751-1-martin.blumenstingl@googlemail.com> <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: martin.blumenstingl@googlemail.com
-Cc: andrew@lunn.ch, alexandre.torgue@st.com, maxime.ripard@bootlin.com, netdev@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, joabreu@synopsys.com, peppe.cavallaro@st.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: netdev <netdev@vger.kernel.org>, Giuseppe CAVALLARO <peppe.cavallaro@st.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 12 Jun 2019 21:31:15 +0200
+Hi Martin!
 
-> Switch stmmac_mdio_reset to use GPIO descriptors. GPIO core handles the
-> "snps,reset-gpio" for GPIO descriptors so we don't need to take care of
-> it inside the driver anymore.
-> 
-> The advantage of this is that we now preserve the GPIO flags which are
-> passed via devicetree. This is required on some newer Amlogic boards
-> which use an Open Drain pin for the reset GPIO. This pin can only output
-> a LOW signal or switch to input mode but it cannot output a HIGH signal.
-> There are already devicetree bindings for these special cases and GPIO
-> core already takes care of them but only if we use GPIO descriptors
-> instead of GPIO numbers.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks for fixing this up!
 
-Applied.
+A hint for a follow-up:
+
+On Wed, Jun 12, 2019 at 9:31 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+
+> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+> index 4335bd771ce5..816edb545592 100644
+> --- a/include/linux/stmmac.h
+> +++ b/include/linux/stmmac.h
+> @@ -97,7 +97,7 @@ struct stmmac_mdio_bus_data {
+>         int *irqs;
+>         int probed_phy_irq;
+>  #ifdef CONFIG_OF
+> -       int reset_gpio, active_low;
+> +       int reset_gpio;
+
+Nothing in the kernel seems to be using this reset_gpio either.
+
+I think it can be deleted with associated code, any new users
+should use machine descriptors if they insist on board files.
+
+Yours,
+Linus Walleij
