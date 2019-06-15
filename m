@@ -1,59 +1,44 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v4 2/6] i2c: i2c-qcom-geni: Signify successful driver
- probe
-Date: Fri, 14 Jun 2019 23:17:31 +0200
-Message-ID: <20190614211731.GI17899@ninjato>
-References: <20190612142654.9639-1-lee.jones@linaro.org>
- <20190612142654.9639-3-lee.jones@linaro.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next v2 1/1] net: stmmac: use GPIO descriptors in
+ stmmac_mdio_reset
+Date: Fri, 14 Jun 2019 19:08:53 -0700 (PDT)
+Message-ID: <20190614.190853.71764546033996539.davem@davemloft.net>
+References: <20190612193115.6751-1-martin.blumenstingl@googlemail.com>
+ <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PWfwoUCx3AFJRUBq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190612142654.9639-3-lee.jones@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org, wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org, balbi@kernel.org, gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org, jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.or
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: martin.blumenstingl@googlemail.com
+Cc: andrew@lunn.ch, alexandre.torgue@st.com, maxime.ripard@bootlin.com, netdev@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, joabreu@synopsys.com, peppe.cavallaro@st.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 12 Jun 2019 21:31:15 +0200
 
---PWfwoUCx3AFJRUBq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Switch stmmac_mdio_reset to use GPIO descriptors. GPIO core handles the
+> "snps,reset-gpio" for GPIO descriptors so we don't need to take care of
+> it inside the driver anymore.
+> 
+> The advantage of this is that we now preserve the GPIO flags which are
+> passed via devicetree. This is required on some newer Amlogic boards
+> which use an Open Drain pin for the reset GPIO. This pin can only output
+> a LOW signal or switch to input mode but it cannot output a HIGH signal.
+> There are already devicetree bindings for these special cases and GPIO
+> core already takes care of them but only if we use GPIO descriptors
+> instead of GPIO numbers.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Jun 12, 2019 at 03:26:50PM +0100, Lee Jones wrote:
-> The Qualcomm Geni I2C driver currently probes silently which can be
-> confusing when debugging potential issues.  Add a low level (INFO)
-> print when each I2C controller is successfully initially set-up.
->=20
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Applied to for-next, thanks!
-
-Alok, are you still there? Your ack is missed here...
-
-
---PWfwoUCx3AFJRUBq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0EDusACgkQFA3kzBSg
-KbaF5A//eOUYXPdT2ti6Q1bKBj1UFPE+GDDgTGN5/r9/yp/CvXDI2rmQRzYZ4Hzw
-gu+c+ZlfvgufyiS3nOri6r8RgiSRqWPRUCKK+PZNGdiYg7bjmHGSzYj3QwprXu6Y
-vorDbXJ8AsnSr3/LAqO+vwzxwJIUdUNu51svi+IYKw0t+v7mbxfSKbl6vTCmrums
-DepavKTDuQKnoLD6RX7E89ffTw/wvnR5kR/kGlIeAmcOHYCWyNZhdmrNLSqhZdmf
-Ki1TTIq8D0dHoVKia0GdkcCBeegTHBpfwkiDzRl9ubpPaZen6T3ny5mrbyTWV2wF
-Xn3H7nYSiT2jbY35k09RINb1G2YSc6zHClcgIAdx0OO9Zs1OXV4s5sdHvjzHR1ep
-SbpBxZ+ndXOt+Eyo4aXSpK8In3noXs0RZiw+kf7DxUKQWOb465hHb7aX7cCwp2Fv
-kjHYMgizH6agnT5ApVTa4GLF/NQ2uTj+EmWjgwhFmPWsnfjS1rCOrvWkizGx1dpn
-55ROyQ1sS8fIRk4lhKJa0H54up9gg4ql07O0qMvkwRUkLvBnEedob5AapJp2jg2b
-FKH9EhHky3pgSWkrlChUiNcRsBtF9IKORupVYGjhDfKGo+dQMvrEhgFIpcPINk2E
-1zRvv6B2/eRrDN13n6Kztrfil3fRYOEYmbSn01W7loWGu51o2LE=
-=OtA8
------END PGP SIGNATURE-----
-
---PWfwoUCx3AFJRUBq--
+Applied.
