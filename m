@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379B1C31E5B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66105C31E5C
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15781208E4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A5C220863
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfFQSlp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:41:45 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:33549 "EHLO
+        id S1728720AbfFQSlo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:41:44 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:55069 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbfFQSlo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:44 -0400
+        with ESMTP id S1726095AbfFQSln (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:43 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1My3AX-1iYB1C1P6F-00zTbF; Mon, 17 Jun 2019 20:41:29 +0200
+ 1MowSu-1iPkr60HhG-00qVKy; Mon, 17 Jun 2019 20:41:22 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,28 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 06/30] drivers: gpio: lantiq: use subsys_platform_driver()
-Date:   Mon, 17 Jun 2019 20:40:47 +0200
-Message-Id: <1560796871-18560-6-git-send-email-info@metux.net>
+Subject: [PATCH 02/30] drivers: gpio: altera: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:40:43 +0200
+Message-Id: <1560796871-18560-2-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:GNYirr7jJEU69T27OYUit3DCM2eQ50qRxRzE0yyrJ7VYcGGI0FQ
- tSb1LqO5HXvshCPpgNlHKsFwE9pjMgdLUghNSIZGWhdBKZUFPs/UX2lVoKqNPJd4OOOCyuu
- QvH5XsWZrprwyKtNza7TVZrjRyaVDmsHXpdFouFyS4/1Wvo2ed3bxgLaZplkQlTvmOtZrTR
- 2owe9fm1A5TvMl0zxZquw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Mw4fZ2uihQA=:FMr4oJjRvghnAVG6L0uOCz
- gQKTXO9RJ/eO3egisxNa+n460m7XGrsy+n9BK2yOXzE1H9RJuHD5SXncy5WXGIVkXK9/Zq56A
- K6mhJCiCGm9z7uwg5CoZuZlgPnEKs+JByB2yI8eRgaJAFS3+qRGaZA/qrI+cjxcnXDxsXlIEi
- 9bnOXrB0DQQsDhzFGf56uyicfyUjzNjkiyo+9CmGQZWsVytUtbIVQaq2TH5tDIgpLv55EbqbA
- QB/iL3neyNeXqq4Ec8t6Oo0KUjZ2VAIXxlwHd7pJW6g+558sFg9+hYSFfD5eCbxbdDl31E9tT
- 0IqxMJUOSds2Gyn1e50sx1nrtvQQQVaJRdxsHPdLgSFkHsreL3GXAlps88Ep+782300yWXsh1
- 6BlhEhIny9fqeDz7PsHLNOgu06SRaIXTaOnw+jOfeG72GhWDyN1bM1Xiwk1nrxgmXVfWhvRdL
- Qbg/1GIOXfNTB5dsEvooRieWO2vCM6Fp2CCFXkaontZ49YbOt450n5IxrvIcu+7bd6on+lGhF
- d7sfcpXac9mfeI5FD6SK0xYrv2/vPzlajvGyX0h/laQzkYSbwJEE3RB8hi6AGsWPTY1ihS4xR
- JjqwebsqEipXA9wneLyd4B2flndTmtIkWkoX9DY2gR5sWCT02pUTiBZMpiTy28uNYY3UsT7B3
- VgLPCwiPkvqG2XuGdFYQJsI0PFD5QJUqFqlOhjOuTd2l2QI4+3Zc8Y3+O1gML9V6iy/2C9tnh
- nyu4lDFtepgVaQxIPWB6M3vZ+Qu7DFcdxNIuPw==
+X-Provags-ID: V03:K1:n6lNF/HiERfH9tPVBrtbF8cjwb9Kd5R4hEw89zBMMBUSS2AViuC
+ 4gJyGnofyR32s6hyLipxjrmtm0hVyHI6gjievevJWOve7tRnvPBcIMtAJw7wKJhAWq5rDjj
+ Iyj9m7RQrAUUKBSUGqHD1PBvmVAELc1atMNKegIh8gMZfgg4yV3opmtlH4Fg5chMY3jfnUb
+ MdYDYDeTK0EIp4a8LH4YA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FubfsVQejOg=:hcx/YkqnedyIVid8oMi3jN
+ yFOL1ldrSamVyPD1XqgcK7HgFK+YLZiUZ5yvtylcHhNZk5uHA+E7qZ88wMhHMfx/G6qICZD0t
+ kUFz1TDSL2m3B39o8Io548h4eFN/QTaqpPmDIe0dunWwnR1niVaJ+u0P0aqZd25Dz4V8TegoU
+ pnvj81x//YNVy2u9bJ0kzKQxjgLvAtc83GT8hRXOiDQFPm9mriTFPaw1bpeR1oNppt0pK83dJ
+ dD3mH7BDynA0Q4gJRNVe3ofzSKpACg3mGS7U9Vq2lYVKtrr/SyraobT8ddVtOx3qWQIW4RD3v
+ fjskP8Mt6UrUjEJDI1a4nmMvvYdD07zeobqRexYJCodR3kxAkE8iDK5liLpetva6eRoNkJjFX
+ b9uKQXHWqbf4vnKcgKhkMLaddWIxFDwa4F2DxlBbqF9Z5OSAq8vVPA2y06vqu/VVEtOAra6v5
+ K89jcHmBOGrt2YxGcaQO4ADJoAFw3n+DDbQL7f+fjeIJDS3PS0S3hoA0Wz14HnVEeV+yD6LSd
+ rzL3OApCEIKrUxcGx9Z4W21lsMRMqPj7+3/YclHcYNUiad8gv47ZcU1aICcAME4tCBOv6a9Ko
+ GGL12YFdJN5kIorHVpjmaAXnznWQPuaMSTNIur8CLGbRii4Vg63T6blfjBi4swjCMcib4ojaD
+ 48A8xT3tkMu3KlL2VaZbvNvw/u0D38Ga6DgmOIxmWdQbhVbYsS4c09qzB2a/ebj+8aJS6Lcbk
+ 3G/hwmRXYSg8ea7msahEPVimEv97KizsfoZKPw==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -66,31 +66,33 @@ subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-mm-lantiq.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpio/gpio-altera.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
-index b0754fe..3e5ef46 100644
---- a/drivers/gpio/gpio-mm-lantiq.c
-+++ b/drivers/gpio/gpio-mm-lantiq.c
-@@ -146,16 +146,4 @@ static int ltq_mm_remove(struct platform_device *pdev)
- 		.of_match_table = ltq_mm_match,
- 	},
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index e088b90..b757c650 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -342,18 +342,7 @@ static int altera_gpio_remove(struct platform_device *pdev)
+ 	.probe		= altera_gpio_probe,
+ 	.remove		= altera_gpio_remove,
  };
 -
--static int __init ltq_mm_init(void)
+-static int __init altera_gpio_init(void)
 -{
--	return platform_driver_register(&ltq_mm_driver);
+-	return platform_driver_register(&altera_gpio_driver);
 -}
+-subsys_initcall(altera_gpio_init);
 -
--subsys_initcall(ltq_mm_init);
--
--static void __exit ltq_mm_exit(void)
+-static void __exit altera_gpio_exit(void)
 -{
--	platform_driver_unregister(&ltq_mm_driver);
+-	platform_driver_unregister(&altera_gpio_driver);
 -}
--module_exit(ltq_mm_exit);
-+subsys_platform_driver(ltq_mm_driver);
+-module_exit(altera_gpio_exit);
++subsys_platform_driver(altera_gpio_driver);
+ 
+ MODULE_AUTHOR("Tien Hock Loh <thloh@altera.com>");
+ MODULE_DESCRIPTION("Altera GPIO driver");
 -- 
 1.9.1
 
