@@ -7,46 +7,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1DEC46477
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABC2C31E5C
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FFD02084D
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C59B208C4
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfFQSkq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:40:46 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:40089 "EHLO
+        id S1728321AbfFQSmG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:42:06 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:53437 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfFQSkq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:40:46 -0400
+        with ESMTP id S1726331AbfFQSmF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:05 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MsI4Q-1iVAln3msE-00tltd; Mon, 17 Jun 2019 20:40:42 +0200
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MjSHc-1iMTao45Na-00kzYa; Mon, 17 Jun 2019 20:41:41 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        broonie@kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: [PATCH 1/3] include: linux: spi: more helpers for declaring spi drivers
-Date:   Mon, 17 Jun 2019 20:40:38 +0200
-Message-Id: <1560796840-18207-1-git-send-email-info@metux.net>
+Cc:     thloh@altera.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, andriy.shevchenko@linux.intel.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, grygorii.strashko@ti.com,
+        ssantosh@kernel.org, khilman@kernel.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: [PATCH 12/30] drivers: gpio: stp-xway: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:40:53 +0200
+Message-Id: <1560796871-18560-12-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:05rIirEOuVh/P2GdhGgoALTibWMKzcYIYDli8Uu//ZC/3VBGI2w
- +JIY4qGMr/KjTh0Ppz2vrXxXy41cx263AHETMbkXWAcydFrR/jKTiozF+AkwFY4RA6qyQ1K
- LI3uMpGHuBiSXZ0GeZqOZ/65Qg9BNa1sGxKroYGElKDyvZvERJiKF/NWASU/ArGsW5bqcaJ
- 4uNZhph5J1wMf9p1vjweg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DbZzcJp0H/g=:W4xpeF7mD2ihzuY4mz4zvV
- Mz9o6ivmAQFHsM/1tyfdeMxNAZDi7t+3LNqty4ZeuajIz+U2oSfAPH2P0ZS4XyCV2Xayhl31P
- egaXRNkJpZlROWmx+b2taN/QMksYOmTDkjBNp/Yw1Tbm5el1UPFkWE0L4U/aqC3OQ6R3g4osR
- kX+uYV849Jxe41HHoyaxJxHZtxO92vr8or61zWPuKf/cYYDuZk/ZzuzVF5jkluL5j3y5X/awS
- iJBRfTKIUlzevJGA4pvD9ICWW1wQ5dKX/t5pepqsDqn2uVBRVpTsroc/nanzrXrxWtzZM189d
- 6TR8r0F0HvzALAn16IENWRDnjQdQDNKgO2/QNnbP4Eg3yBQxUFlByLdO/EO25OjWY0BmTskRQ
- ndtfnOEJChtozu9D1u3U+ONHCDXHaLNVVFkKOz/bDjQSHfjFFBnouZAQkcI7gyDzxsV0ffeif
- i82sCtCrJsDekSwAMumFmgjOlAiDQM/6simcBGLXqQEQeS4hmRiCMasPv3GiFcTOQWq66GMJA
- V1DYoOg9Q/mRlqcfHbDU66g34t9YR/aIp19WF+LZQeW0soIzZr6RAfmehGTDlcmmlaQuwdNeY
- ZWSmfhPPJWLvlzbFXmWETCP3qPn9DrnfQm7dUtH4cDIi9/5/aeHqbu4RTrCw32T83dvNFXmmc
- W78gciRdLng6agaEH4nGGwrzAwZTAczz+hhHzWOl9L918q8I6AAhgEMq5GbKlNCRZPDB5zrE6
- Lyk9Ofw7cVoGsQ7HgYVW7ElpIwzCBAMkzA3pew==
+In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
+References: <1560796871-18560-1-git-send-email-info@metux.net>
+X-Provags-ID: V03:K1:dT3uRABFS0LCiG7s1U7q3nGf/2a0ASckiTEOKLXOYnnfgA7OHZB
+ khNvDFh0WSuZo3sx9EzH1v4pwUtmCnUx8+yZKGS92xqtasNDk2YCaGg6b8IKhHzYuxexo0Y
+ wHC38Ds5/US63cBfXEJJPg/iR8aNjOxE1scwYrl4MmNLk7SHxanRyG+5o8nBaJtDHdpx+BT
+ 0j4p24g1uWpb7eoKGmCJw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ECsY8i4iHY8=:2q+L124zG9xrKP0LAEPhfN
+ ASqnqFzsop8gYZmbgo53tw4T7qDXMVzNza/v/SgvoB5hR3VjvafiXE3KJ2dxb3H97ZQpNInBC
+ tGPGo0npikJGvGe8o2vDzCqz+gjAhvXbHRRINPa9+Vz60vMKvyju/CEAp91aynkCSVj4Gk6am
+ GpjIvOUsjYrcox4Y3Wx1Sud0BLcdLsY7qG4tCG1cyo32QyvaRQmzLNDXfiYMlkOBCKP1zJzMG
+ vPrk88Rf8ZJhE35kMaRrU3cNh2GdhiDdEpJxTUznct9kYErfrRLQVlmjAyKeDM9NCGnFvTtTp
+ y+YOTvf27NmEukQXOWnB33QlkQxYLFp0f+IHWgJ1w2qxfP6QnIUX1dLZGQQwUBKdjACmqN7ry
+ W4/81AzT3L0rO6A1BD3hm218J9/X68t0RTBrsR9fULKK5srwkDHYm3+IUFZKvft+UxJ0ljIt9
+ k/OaXy4RCaXzQqFtZ36EatNgWfQ5AX30/uw2ZhUSzLbRD5hZJ3JlIGdZ5L21DbpKJi2TFzd5t
+ GIDgSCl2QNrbsGjaIpSupzc8pzb40iDDs+KPOYCiiURS8W3hPm8DNtX+9mgLbLWblgn0Z4c/A
+ dOVzS/882Wouf8O0mllLBwYdnFlS5AmZ39NoBVSgfGdLGLqO+yDGWX+5pJGqgeYdwP+XIoWVs
+ Uoh7idNLZnKDperYhzCo1z4iCWLyytrL63GNKDzAY3wzZ60UhH0TNUomkbKTejeqwmqibb/er
+ 5zvmMAC9BX/3J93ZTT75W26IWeW8//4afUl4Kg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -54,45 +61,30 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Enrico Weigelt <info@metux.net>
 
-Add more helper macros for trivial driver init cases, similar to the
-already existing module_spi_driver()+friends - now for those which
-are initialized at other stages (eg. by subsys_initcall()).
-
-This helps to further reduce driver init boilerplate.
+Reduce driver init boilerplate by using the new
+subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- include/linux/spi/spi.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpio/gpio-stp-xway.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 053abd2..f55ba34 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -296,6 +296,23 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
- 	module_driver(__spi_driver, spi_register_driver, \
- 			spi_unregister_driver)
- 
-+/* subsys_spi_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces subsys_initcall() and module_exit()
-+ */
-+#define subsys_spi_driver(__spi_driver) \
-+static int __init __spi_driver##_init(void) \
-+{ \
-+	return spi_register_driver(&(__spi_driver)); \
-+} \
-+subsys_initcall(__spi_driver##_init); \
-+static void __exit __spi_driver##_exit(void) \
-+{ \
-+	spi_unregister_driver(&(__spi_driver)); \
-+} \
-+module_exit(__spi_driver##_exit);
-+
- /**
-  * struct spi_controller - interface to SPI master or slave controller
-  * @dev: device interface to this driver
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index 8a319d5..3f5c039 100644
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -291,10 +291,4 @@ static int xway_stp_probe(struct platform_device *pdev)
+ 		.of_match_table = xway_stp_match,
+ 	},
+ };
+-
+-static int __init xway_stp_init(void)
+-{
+-	return platform_driver_register(&xway_stp_driver);
+-}
+-
+-subsys_initcall(xway_stp_init);
++subsys_platform_driver(xway_stp_driver);
 -- 
 1.9.1
 
