@@ -2,46 +2,47 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A205C31E5B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 21:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E903EC31E5E
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 21:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C2F21530
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 21:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDA7520673
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 21:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Ke/V8OCa"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="onoS9TVD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726001AbfFQVzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 17:55:06 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51462 "EHLO
+        id S1728791AbfFQVz0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 17:55:26 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51487 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfFQVzG (ORCPT
+        with ESMTP id S1727540AbfFQVzG (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 17:55:06 -0400
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 16968891A9;
-        Tue, 18 Jun 2019 09:55:01 +1200 (NZST)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2856B891AC;
+        Tue, 18 Jun 2019 09:55:02 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1560808501;
-        bh=hMGkfofcp3Y5IvOC7/IuqFMk2ddLSIWy+00ffvgz630=;
-        h=From:To:Cc:Subject:Date;
-        b=Ke/V8OCav3k/c2C8Nsapp1G5nBaMhbwDz/3rdEVmHvCe4W+iQbODyVYuCUG/ALlVy
-         T97hrgA6uJy5xCqOD2xrhMg3w7kkav0befvCHDW9GfqInRG6oMNMBR7USkhU54mjst
-         iT/cMHX2ecy0abrfvGf9+Hbj+tDWGxWBSMvk9XnMI/bZNx9CHpmuy5utfVJ3LZSQ94
-         JRJMEBzjuNLDWlONcfuJONmRQDJvFlVBk4JtsK+NnZaGYhKuJGo2Jq1Z+J821JgCcH
-         K3rYmjg2T+WDWjaTjaFDEN1Mte6r219q4tlPwGdcVUzGXvCqlA7WY09itzA96rnq4u
-         W/JUP/10Tbhdg==
+        s=mail181024; t=1560808502;
+        bh=qowtavXJViXnn3/KlNuAQC4YwCzj8dq8UfZnKycmpqQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=onoS9TVDiyUQDCgYYXqciyfaz9kMUMiNgO4mEADKLJ9u4RAb6bLwCk15T6bX/HRy6
+         PDNto7c2cek1L/bwxwDOq5vb7o7/BbG59HhXsYboBUaxPuxAMR03q6+KiTq7cguJmZ
+         dPK3RHy58qqhkH8q4ivobrV3piVVu6IyY8He3R47cFIroLosG36M0JathfIDcmM2Ns
+         wzI+4/4m+TT6+oRrzT76hg9li3UqNikCxb32RdlUxGpoEKHm/6iDY4VEGlMlcfog43
+         HS0ZxqAvywb1tertHG0X7xHd8g8XW6G/WoSEvxAbOV10m9PPTmnoK1o4BLTypqE27a
+         rLBeFaPofcneg==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d080c340004>; Tue, 18 Jun 2019 09:55:00 +1200
+        id <B5d080c340007>; Tue, 18 Jun 2019 09:55:00 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 35BA413EF89;
+        by smtp (Postfix) with ESMTP id 4B39E13EEAD;
         Tue, 18 Jun 2019 09:55:01 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 0B8B21E04F0; Tue, 18 Jun 2019 09:55:00 +1200 (NZST)
+        id 252521E04F0; Tue, 18 Jun 2019 09:55:00 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, linus.walleij@linaro.org,
@@ -50,10 +51,12 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 0/4] Add support for Marvell 98DX1135
-Date:   Tue, 18 Jun 2019 09:54:54 +1200
-Message-Id: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 1/4] dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
+Date:   Tue, 18 Jun 2019 09:54:55 +1200
+Message-Id: <20190617215458.32688-2-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
+References: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 x-atlnz-ls: pat
@@ -62,30 +65,81 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Marvell 98DX1135 is a switch chip with an integrated ARMv5 CPU, it is
-similar to the 98DX4122 with differences in clocking and pin control.
+The 98DX1135 is similar to the 98DX4122 except the MPP options differ.
 
-I haven't added a separate dts for the SoC since it would be so similar t=
-o
-kirkwood-98dx4122.dtsi.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ .../pinctrl/marvell,kirkwood-pinctrl.txt      | 44 ++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 2 deletions(-)
 
-Changes in v2:
-- Update description of mv98dx1135-core-clock
-- Collect review from Andrew
-
-Chris Packham (4):
-  dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
-  dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core
-    clock
-  pinctrl: mvebu: Add support for MV98DX1135
-  clk: kirkwood: Add support for MV98DX1135
-
- .../bindings/clock/mvebu-core-clock.txt       |   1 +
- .../pinctrl/marvell,kirkwood-pinctrl.txt      |  44 +-
- drivers/clk/mvebu/kirkwood.c                  |  17 +
- drivers/pinctrl/mvebu/pinctrl-kirkwood.c      | 576 +++++++++---------
- 4 files changed, 357 insertions(+), 281 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-p=
+inctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-p=
+inctrl.txt
+index 6c0ea155b708..2932f171ee85 100644
+--- a/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.=
+txt
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.=
+txt
+@@ -6,8 +6,8 @@ part and usage.
+ Required properties:
+ - compatible: "marvell,88f6180-pinctrl",
+               "marvell,88f6190-pinctrl", "marvell,88f6192-pinctrl",
+-              "marvell,88f6281-pinctrl", "marvell,88f6282-pinctrl"
+-              "marvell,98dx4122-pinctrl"
++              "marvell,88f6281-pinctrl", "marvell,88f6282-pinctrl",
++              "marvell,98dx4122-pinctrl", "marvell,98dx1135-pinctrl"
+ - reg: register specifier of MPP registers
+=20
+ This driver supports all kirkwood variants, i.e. 88f6180, 88f619x, and 8=
+8f628x.
+@@ -317,3 +317,43 @@ mpp44         44       gpio
+ mpp45         45       gpio
+ mpp49         49       gpio
+=20
++* Marvell Poncat2 98dx1135
++
++name          pins     functions
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
++
++mpp0          0        gpio, nand(io2), spi(cs)
++mpp1          1        gpo, nand(io3), spi(mosi)
++mpp2          2        gpo, nand(io4), spi(sck)
++mpp3          3        gpo, nand(io5), spi(miso)
++mpp4          4        gpio, nand(io6), uart0(rxd)
++mpp5          5        gpo, nand(io7), uart0(txd)
++mpp6          6        sysrst(out)
++mpp7          7        gpo, spi(cs)
++mpp8          8        gpio, twsi0(sda), uart1(rts)
++mpp9          9        gpio, twsi(sck), uart1(cts)
++mpp10         10       gpo, uart0(txd)
++mpp11         11       gpio, uart0(rxd)
++mpp13         13       gpio, uart1(txd)
++mpp14         14       gpio, uart1(rxd)
++mpp15         15       gpio, uart0(rts)
++mpp16         16       gpio, uart0(cts)
++mpp17         17       gpio, nand(cle)
++mpp18         18       gpo, nand(io0)
++mpp19         19       gpo, nand(io1)
++mpp20         20       gpio
++mpp21         21       gpio
++mpp22         22       gpio
++mpp23         23       gpio
++mpp24         24       gpio
++mpp25         25       gpio
++mpp26         26       gpio
++mpp27         27       gpio
++mpp28         28       gpio, nand(ren)
++mpp29         29       gpio, nand(wen)
++mpp30         30       gpio
++mpp31         31       gpio
++mpp32         32       gpio
++mpp33         33       gpio
++mpp34         34       gpio, nand(ale)
++mpp35         35       gpio, nand(cen)
 --=20
 2.21.0
 
