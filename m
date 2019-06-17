@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA0DC31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AC2C31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656A82084D
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C92C42084D
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbfFQSmB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:42:01 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:45181 "EHLO
+        id S1728283AbfFQSnY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:43:24 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:36169 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbfFQSmA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:00 -0400
+        with ESMTP id S1728829AbfFQSl7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:59 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N2E9Y-1ictzX48Sc-013cKu; Mon, 17 Jun 2019 20:41:34 +0200
+ 1MV6G0-1i1eQB3wpy-00S5f6; Mon, 17 Jun 2019 20:41:46 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,31 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 07/30] drivers: gpio: msic: use subsys_platform_driver()
-Date:   Mon, 17 Jun 2019 20:40:48 +0200
-Message-Id: <1560796871-18560-7-git-send-email-info@metux.net>
+Subject: [PATCH 17/30] drivers: gpio: twl4030: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:40:58 +0200
+Message-Id: <1560796871-18560-17-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:yJFhu1QLeFAijmsii3GfgqPjU9KlJQygg8gkAZ0J/CfjZ+vPBSK
- 7fBgwp7EjQh6jTbruay/xqHtivSQ0Uv/nAW+mi5jJunWoPnC50t8sA/xx1SQfZ72EeVQJ1n
- vcCW7Kq2aysbfI7g3No2PAn83tXYmWQy8CaCHfrzukXXeODDK8RUWkm2PqWGosWTatJ+jib
- i2JRRuLw56VW53N7pP47w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:R0ukR3VM6a8=:WbmrvP/nlyY8CXTo7mO+Md
- OLSbVdWEQevXhDeqfMRASVVB1cMt7jRLmjRfAFK81n92GAUuDIyypvIrkPTUw8dun53KwTEU8
- j8A2O3d9COwEnY6jwb2riTww4dc9Y/vY9dULuNoeF0b41l4PpEXXvZ1gItgaAsT7/Zu0VTOaO
- hBCkNUl+O52kGmpMT8vOudiXxlts4FSMLFeJvjUNdtmLEVWLEazzgwdeSDMN+X4HTYMxDArB4
- rrlvhIgvf4mrzciIX/xcAGP9UwFe/gcnxwImUY6TFjbvBXx5XRxIOPzgyqRsz2a5+CrmBHVo+
- 6qxgZJ+yhp6rEdBC5HpdTXNNZw66b7FYUNDBwDOOJ2KAfYx4okW5dpsXqtdW/SNq2SW5+YRlx
- 3KN+X4iyxsTjaxBg6Q+Bza3uYRu8iC2vpVjXXVzETydSvP20WvKdFpaLb6I0VP05XlACzS/v9
- x34mYJh0mTmzdoNx+PeEM+xRmZxaIja7qrJxLnFbuYLJfGDvQquHHkfhx+zABcAF5UIqyRBNQ
- GlIcrP8MSjYNchWh+e1WpdhsnmQRcAEpWqVwszLd6w7MiU18xrhsSXFYIbfMvtzLtF9bgMlqh
- jvpGUE9Sceu10XJ89A+gEt/Q5TUL4P1iLKbkZV5okzAG0056aK04eI1+vwFhDTrwrqgmTm0CD
- 3VyROm1p1k66LE7h/U4djCsv6bDlA5C/pznVj0HVcBkFotykWsg1ZwAFeasGVMMPzyKsdPht+
- cmir0Mt3XXrn71blSgnKuudIKvt6M6F68dVmXw51rT+caqIgtP1XljT8FnU=
+X-Provags-ID: V03:K1:6h1ie7eICxYmU6Y5CiT5Tc3+IJDhPWvoYpt1jRu50qNzLd6UPAP
+ stcXFTdT4A2zB7A2Kh6IWZSrm4sQZJar+8J454KgqhNMbHwuVe2IKXNlSEfw9OshUC3E+82
+ W9SeQ+m/ih4xZIGm30ZlqYY9sI6mCcDhSR0e/CSRnDotAsjxJx7d+xcDvmDkb4aGVAz8/vZ
+ K8Y68ow7D7s5GAg8D+Ysw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sUhDXB3tx3s=:J+X9AEmECvzP1W9+WPVEgQ
+ naDmQ+MYiNXeHyN78Ot3D8mmC9xcot+i47Qs8q0mLFOlvlCO1DKPOQTe+GmqA9qMGVXfQQj36
+ nVEtfiIO8t1mtSXsutm8M75OfRwPBKps8PgRtSYl/UhOQ9+zEwyEnqqN8gzsADR3JRTAFWF2m
+ ptPahmrHC2kuwLVeBJvzB99vd1GXfIl+pGxQGmMZ+j62nQ2Uo9QJ6BI2wsCXvsJE2HKOIKKVw
+ JqqVwkQtu+GBU1UyCFBaeDYa4tslac9OoJS02bzzoAxajA9JqK5zkaNzubaaahul1LxdSTzG6
+ ctmx0jzPCh2lq7XTFcARvtvQ6Yqjzg3bHCCJhwsKnrZs0z1ghVNDGLnSe0Y2YypoITdQIlhTG
+ cBLUrYvEXejxWoay1Tl2Md4WOdUegsVrnQoW4XcivxgReSr/JsFp/tX/dlS2XTB5+JlqnuUDl
+ 2q4dg0ev0vJtMBmTONh3X82Cj/bRZ1d7ct7sOZZFDtQPP30+epkG9iSCkXPJTDNvH5C4simfH
+ UZ7X/6eXktItvMU0xeQ4yzdGBTaRdXuh7T+Pzt5M8FrkdscIy5gtotf6G6/GM83FZgx/iDiSp
+ 7JyljriOUZ3wmhSrAQF3urZ27Rt315HYRwpF8Tg41EeFFMtAWzyCqQIAbKr96pk80XWG6NKWR
+ s21zwYMopq8j7HhEMuKWeq4qpWKDoOM5AaWwNQpnpUd55eia9yFw/xslyt9LfzVxZfAzeIw6I
+ 6Y0dvyOvXw+rb0wzRDYe2+q6u+VVqE4RSpINcVEv0Mt0rQ/sD9zBJnC6t28c4Mv9XX4wTUVqv
+ 9jMzkCsyaFbhV7uqScEFE4MDesNFBX1WkwoE/uGoZiUBXQOxFX8Bjm4N8y3lmSePQZ6ptJBf+
+ JQ01wiU61DgyICIRuqMYKGGWevmyq43PwjhdX2hN8zQFqP4z1msrron8yGtzLXxyfmg+qq4Fm
+ jOfC/Htoozg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -66,24 +69,33 @@ subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-msic.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-twl4030.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-msic.c b/drivers/gpio/gpio-msic.c
-index 7e3c96e..5903ce3 100644
---- a/drivers/gpio/gpio-msic.c
-+++ b/drivers/gpio/gpio-msic.c
-@@ -306,9 +306,4 @@ static int platform_msic_gpio_probe(struct platform_device *pdev)
- 	},
- 	.probe		= platform_msic_gpio_probe,
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index fbfb648..0c9a86f 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -633,18 +633,7 @@ static int gpio_twl4030_remove(struct platform_device *pdev)
+ 	.probe		= gpio_twl4030_probe,
+ 	.remove		= gpio_twl4030_remove,
  };
 -
--static int __init platform_msic_gpio_init(void)
+-static int __init gpio_twl4030_init(void)
 -{
--	return platform_driver_register(&platform_msic_gpio_driver);
+-	return platform_driver_register(&gpio_twl4030_driver);
 -}
--subsys_initcall(platform_msic_gpio_init);
-+subsys_platform_driver(platform_msic_gpio_driver);
+-subsys_initcall(gpio_twl4030_init);
+-
+-static void __exit gpio_twl4030_exit(void)
+-{
+-	platform_driver_unregister(&gpio_twl4030_driver);
+-}
+-module_exit(gpio_twl4030_exit);
++subsys_platform_driver(gpio_twl4030_driver);
+ 
+ MODULE_AUTHOR("Texas Instruments, Inc.");
+ MODULE_DESCRIPTION("GPIO interface for TWL4030");
 -- 
 1.9.1
 
