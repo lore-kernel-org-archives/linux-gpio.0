@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7E4C31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591DFC31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C78208C4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3803120863
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725844AbfFQSjn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:39:43 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:37641 "EHLO
+        id S1726834AbfFQSkq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:40:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:55045 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfFQSjn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:39:43 -0400
+        with ESMTP id S1726088AbfFQSkq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:40:46 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MZk1p-1i5l7r2t2l-00Wl3Z; Mon, 17 Jun 2019 20:39:40 +0200
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1M72bv-1hhaSb2MWN-008X1c; Mon, 17 Jun 2019 20:40:42 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        wsa@the-dreams.de, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH 2/3] drivers: gpio: pca953x: use subsys_i2c_driver()
-Date:   Mon, 17 Jun 2019 20:39:38 +0200
-Message-Id: <1560796779-17117-2-git-send-email-info@metux.net>
+        broonie@kernel.org, linux-gpio@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: [PATCH 3/3] drivers: gpio: mc33880: use subsys_spi_driver()
+Date:   Mon, 17 Jun 2019 20:40:40 +0200
+Message-Id: <1560796840-18207-3-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560796779-17117-1-git-send-email-info@metux.net>
-References: <1560796779-17117-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:y/OLPt8jWGxBdQc5g2OSfdKXZL4KwALMlRKEmmbL/xl4LEmPK9X
- dqH+Uj77VBvCwLBmi4HtUwoSroGEToLQ3xMQ7WPwMrx0THYZ+9f8CELH8L3hoh/+0Ofd9ml
- 8nbM7uXxARYP0UDiAGCfS7tdm2WxHqQOFIAl6vc9++H+XzzgjjIAW9vQTxHO4Zrye+kci6h
- YV168eOxGY6k5RIuQgagQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:n9ZFQGog3wE=:OyEj5HFmdTkSqbmWBi2hgn
- oprlKpQbpKIJzslBvavsf6B7gVZ3ltUmlRFgFb0O6l+ArCvx9x14bjTFnKTAmza9fMVpK5zp5
- WH0/Rwig2ERdtRusXJQyVNl8cBvNufA9wsoND9OVrbtpyPvMnP7w9pF5YIJ6TqwhzmOyruBaW
- OvRK/xM6PlC2gzZOywkPgRtdWIIyX+XFD9m/CweFAS69QhN9D/gvjenJDtzx81JXyt9CiRZb+
- a3PQVsAcwG0ONRhaNPaTilk3hG1dJtcKIobM70c4triu1bmvIvrX4xUDmetPeHxBCRblnB4u+
- c0/IsuehtmdhMknDE2WlHmNCZYZL+RnMoH/G1PQS5U9/hQNJyyd1CgTdBKGwZ7cVntcEJZkY5
- QHS6t+uHVFESc8op3pbMwPPjh878j6JMorekVfX7brLZAPGuhAL7FsXNBgE8FtgqhwMQxdTsE
- sp3Km9/SYIDkEcmYfXIYegAQN7fQtXfE1Pg9fGABd19OV1G1Bi2LOLZ5WDncMvSkMWVVhhgTR
- Mh1galLA70gi6WQQPNG7vVSDu/dWD9P7/Ani2MJSpqwzBPOi7rybSMUbM/xN8K/DLLnS9e6s3
- YDRgD/rdImxXfzGIF0Il94o5KVNEcLPpXGtgcFWcZK/i/LD+5mOyj7s0a1aONPx6HaO7FKTS1
- DSXPEOc7Eu6XqPpw3RPDF/6UnwMJis/poE+ZwAu9n1ZTH2ofzyorGrLCi2n/hx59d67Xv4VEs
- dehaH1Np7hSB5O4Vx5d1indM4UGjGOymDJhVJw==
+In-Reply-To: <1560796840-18207-1-git-send-email-info@metux.net>
+References: <1560796840-18207-1-git-send-email-info@metux.net>
+X-Provags-ID: V03:K1:IaUNo2LISoksoHpM067Yxxizrv4ia1vDNAPnlkCC16FLenVR/LQ
+ 2nKdbvumgxiAy5amfyeRkCLUDjJ5YUkeI/Y6zQo9bMbqu2P1iWjxKAiDvP9nzMY76xNoAWu
+ jE5IHsRJ4DJS2EYxJRa3taqOjZ3lFTgocePA5Bm+kqo2Jx0kjAOWlcheqMJmXE1Nk35bv9e
+ n0S/ffXhfURKOhxJJLf2w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ymbqzy7Jl74=:71GHVSPQfr8zkDMir2bKNz
+ kKntcIsG1RtG+fLZVgTO35auZOdan2142hoIlBPNEYLOPs+5xt1ur/MPNHtTYMxwAPOP+JjNG
+ ACkGAmhCLWgVIFfMa1YRZg78D0X2WVzLhHJngHyPJYai3nyK4nJmJAd6Up71twKJSvCZhnBkJ
+ Zo93b68bYpm9U3fSBsSAGh/wBFFS0FXpHBrlipDcgD0oCt2EJMudmJ6kde2GRpm3YR4ST7wfB
+ qq3ZB9e2C2onAP1V+OEgt5JDqoupaY6fuV+y9hW0ozfAg9mva1XJBUrvT+l4E1+UgkZ38K4a7
+ FUjEq+yZxJrTQMNcM/m3kSK/R2iv7eJBD09NrJYJHVePjzS9cw/az678GNBTzSTPBEdFqau7h
+ IYnRBvnZR8+XJeoibstEvhUrzbQwsXYCUak/Rk9SRoFVd4pHo6qUcdeEWBceR/PAq/FgGKZHD
+ wJH9CkTDArqr9FMHtUb5rJvysa1AdsQbe4WsZeHeB8rd3Nvw8GxbGntyavgHMIyQxcZ98CrIS
+ peIO3XX0OJOwFqj73/aDlScRKZOYwgZlrvIyiC6MhXkZASzYLuLq4T6xVGGz4JjRG4Lu0aUaU
+ GDE6s0ZhoqDfS8ZYNmdP4sNKQQg/hhW4OFdcr1+sQCY1r4Y+28Wzk2HEmImVVBjeThVVMYdkH
+ PV6mYT8KOGT5uI7KD/2KuImp3zQnGuvxKoJQnMd2bPpYwBu4z4ewFM/2faiKgtQWkzxERKyFb
+ jqJfEIV8cnUwzn1BsE1tTBU0dcIMICaUwd/1LTkKDVDCNJ+sJgju/v6BFfpEY7NKKpaZmugzX
+ 2jf11ompMFwFkDywNmUlxAoh2QYxh6dXsPJeLeA5t179wzQcox36lOaaVeGW01OdFIggqPoWS
+ 1G2xhwxEI9gUFaSsTHwj+lEcv9VCAxvo2gwzAMYRBusWm9jXAaialyBkjGwYCYrXquyce5LYa
+ J+MdfmFvhEA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -56,39 +59,40 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 From: Enrico Weigelt <info@metux.net>
 
 Reduce driver init boilerplate by using the new
-subsys_i2c_driver() macro.
+subsys_spi_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-pca953x.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/gpio/gpio-mc33880.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index cfe827c..532762d 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -1202,20 +1202,10 @@ static int pca953x_resume(struct device *dev)
- 	.id_table	= pca953x_id,
+diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
+index f8194f7..1b9434c 100644
+--- a/drivers/gpio/gpio-mc33880.c
++++ b/drivers/gpio/gpio-mc33880.c
+@@ -156,21 +156,10 @@ static int mc33880_remove(struct spi_device *spi)
+ 	.remove		= mc33880_remove,
  };
  
--static int __init pca953x_init(void)
+-static int __init mc33880_init(void)
 -{
--	return i2c_add_driver(&pca953x_driver);
+-	return spi_register_driver(&mc33880_driver);
 -}
- /* register after i2c postcore initcall and before
+ /* register after spi postcore initcall and before
   * subsys initcalls that may rely on these GPIOs
   */
--subsys_initcall(pca953x_init);
+-subsys_initcall(mc33880_init);
 -
--static void __exit pca953x_exit(void)
+-static void __exit mc33880_exit(void)
 -{
--	i2c_del_driver(&pca953x_driver);
+-	spi_unregister_driver(&mc33880_driver);
 -}
--module_exit(pca953x_exit);
-+subsys_i2c_driver(pca953x_driver);
+-module_exit(mc33880_exit);
++subsys_spi_driver(mc33880_driver);
  
- MODULE_AUTHOR("eric miao <eric.miao@marvell.com>");
- MODULE_DESCRIPTION("GPIO expander driver for PCA953x");
+ MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
+ MODULE_LICENSE("GPL v2");
+-
 -- 
 1.9.1
 
