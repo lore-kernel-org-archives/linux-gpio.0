@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C56A6C31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5104FC31E5D
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3ED208C4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 265A4208C4
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbfFQQtg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 12:49:36 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:51765 "EHLO
+        id S1728435AbfFQQtY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 12:49:24 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:41503 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728417AbfFQQtY (ORCPT
+        with ESMTP id S1728293AbfFQQtY (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 12:49:24 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M3UIe-1hcMr23CWg-000dXq; Mon, 17 Jun 2019 18:49:22 +0200
+ 1Mi23L-1iG7No45uD-00e52D; Mon, 17 Jun 2019 18:49:22 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
         linux-gpio@vger.kernel.org
-Subject: [PATCH 5/7] drivers: gpio: grgpio: use devm_platform_ioremap_resource()
-Date:   Mon, 17 Jun 2019 18:49:18 +0200
-Message-Id: <1560790160-3372-5-git-send-email-info@metux.net>
+Subject: [PATCH 3/7] drivers: gpio: eic-sprd: use devm_platform_ioremap_resource()
+Date:   Mon, 17 Jun 2019 18:49:16 +0200
+Message-Id: <1560790160-3372-3-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560790160-3372-1-git-send-email-info@metux.net>
 References: <1560790160-3372-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:Hmq0T1rLoSViSCrvNG5bce5XgCMtZroN6pQn0fzfUOYc/m7ESsm
- bEYHVCDm4BbxLfYpJ+9D9xQuOsYKqZT/UvdI0hdLGFqtXQcq4zqi9ZuNXDU9Iob8x5BKm9l
- p6Gj3RNCi0BSQkBjDYMHOsgO0WV4zuT8g8YYxYbdnxpUxuVrcsw2is9NJAQB2zHcZfyPjIC
- V4pIpMznfVJtFxutDz5zQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6VQqVWWucyw=:nOAg7etMc3df8rPvyEq0L6
- /7mb/J43FeGXhvcb549JCTP5nf3B0UEAflBOaUKVxYdXDgKOrq35M0GjBvE3LQr0EVtkHvEzs
- jYUuvWVORjyjWOEJBUkly8OrUlYY7jbyLCLkVi4CjBPHNlz8hgtXFb8yq6Yce2ePdALoOigP0
- MHdETXf5Lu+V76476a2TXdLiA5AkQ38zNfD8t3XTQSiKJfs/A8hzlZLKPPmgyIGJYM940CU/G
- abyXJpubI8emb9NAezUg1I7ysyhB4dP3FyRsYdCogsiOFTTjSEwgdxm+HN54tMHZ9+TOpU1sz
- oLLKr+bFQzt6jI8UOrrRJrba+P3KzqNijst+rvv7WNzeBka4BReNoHRF3TEfofqGzn+O3EdDJ
- CaKVu9QnCQQzOp7cVWaOQZH1EGLy1YpSFQqKeyrtiEjB6giNsV9nggjUm7SlHKjeoAIdoxuOW
- +KPDqcE6rjWrW945HbNpdbiEJmoWvgzS9O7am8IhlWOoP9XZWkMX/TN/kufL9tUwmqKJ/jPY2
- Bu32x0JlKvMciCk5mZlB5JG1O8zwIE3d5a4XA+GT9W0kNpkriDa5FDHZEsUKUr3hx8mjmxDGt
- dkxZBbk3S2HyyE08kLmz1ONgE4SOYmpG7M6JGVcWkAvBSwwsm4FVGVb3VKNHD6axyL7qHKSc1
- BAFnlSp5TaYCUKRuT7QQ7C986u/v+xhWMb8zeBopU5h+TtIz/YY56cOh54F4Vq+7RUK2PNzHe
- Qcqu19WxpNO1hxPgWwcfiJpEXMTiuC8AknXy6g==
+X-Provags-ID: V03:K1:9Jlp9rHiItV3zqKzDwaWVBFkDeX7gjjyObSukf3rIXhuONjebUQ
+ ZYl1jTOOEBWEPasLxvfcp6lvcVoJieD/5zCltzryi0HxWqabeTpHiI5eMLwqxjMBWvQ96K7
+ PAnrCBYF+Vv0JmjJrO8R1rjR1OcJNBnUAaOy342pFeyUgBhjPrdu8npOt6QW34kURcLHUKz
+ g08VtqaX1ArHJHny9oZpg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PE9+bm3ZAZs=:RxCy8vZlMN0lEU3XeOwMnE
+ xlP7Ie4LoSPgLSa7TQXnr13nZi143W+uCLF8PCur7Rp/aYst41eeXTbInRPLxyABphzhQjJph
+ TGYiJMAplHg8uawDU27OJlaS7oA+hhue5d0tYAqAzwkB/JPhpNhkDsMsL6jgShLpgujf6+xeO
+ 8OGstXgtQgYacvA7hev/mIzgJeai30Zbi5tte4oekMp37dyx3TPSwBD8tBtWJ67lL/N7RY+dc
+ Fn3pEgscFJIm9SSaliRKWoMUuA28Ibfn/gsFDGCvwEkkHlvT9yNtYTr4oNVNQ3e5GEtNnsOa2
+ RWukKF5+fTzyJOs1IsbZXRDOMQ8KVlz7KEXK8vz8/wiwYU1ZMhytWtF8HL6C1I1tnPrK5cn0p
+ s/3WUb4lM7LR3KS3P8tzk+eJF6VzOv3N9ab149emDtHXplwK4IMhVjYg2fDUN5FSEuP005KT0
+ hi5so8QDsMJDHzWfkPhIJPaUxmb0YUOr9FoN8QCzcqXg1JrBf6BZdVbRSus+oRvA6ug6tJq+1
+ dsKhf2vsnBLjf3C75Oxf/wswIugIMhusT1OI2wvPkdbHkAa4p8IoMcE6of8cQDRr25fbZRo/l
+ Umpe52UxLDp52rQ12Hr6n7gisK2ByVPkzfxRewskGbgmpgq2K6ULMCYBgJbx6NsPfTNBlEvIC
+ FjP8Zjiwu/JaAOpwJNSOpD9rJoOKPmzJ+ULjHJPPvu/ulW3gxWCBmCvbsFrnfaZX/h2pZu03I
+ fqm0AcYMQcF8OzvDPNxBaggG/OnrUJC1gAAMKA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -59,31 +59,37 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/gpio/gpio-grgpio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpio/gpio-eic-sprd.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-index 7df48e7..0937b60 100644
---- a/drivers/gpio/gpio-grgpio.c
-+++ b/drivers/gpio/gpio-grgpio.c
-@@ -329,7 +329,6 @@ static int grgpio_probe(struct platform_device *ofdev)
- 	void  __iomem *regs;
- 	struct gpio_chip *gc;
- 	struct grgpio_priv *priv;
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index 7709226..7b9ac4a 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -568,7 +568,6 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 	const struct sprd_eic_variant_data *pdata;
+ 	struct gpio_irq_chip *irq;
+ 	struct sprd_eic *sprd_eic;
 -	struct resource *res;
- 	int err;
- 	u32 prop;
- 	s32 *irqmap;
-@@ -340,8 +339,7 @@ static int grgpio_probe(struct platform_device *ofdev)
- 	if (!priv)
- 		return -ENOMEM;
+ 	int ret, i;
  
--	res = platform_get_resource(ofdev, IORESOURCE_MEM, 0);
--	regs = devm_ioremap_resource(&ofdev->dev, res);
-+	regs = devm_platform_ioremap_resource(ofdev, 0);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+ 	pdata = of_device_get_match_data(&pdev->dev);
+@@ -597,13 +596,9 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 		 * have one bank EIC, thus base[1] and base[2] can be
+ 		 * optional.
+ 		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			continue;
+-
+-		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
++		sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, i);
+ 		if (IS_ERR(sprd_eic->base[i]))
+-			return PTR_ERR(sprd_eic->base[i]);
++			continue;
+ 	}
  
+ 	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
 -- 
 1.9.1
 
