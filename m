@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66105C31E5C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3F0C31E5B
 	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A5C220863
+	by mail.kernel.org (Postfix) with ESMTP id 907ED2084D
 	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbfFQSlo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728715AbfFQSlo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 17 Jun 2019 14:41:44 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:55069 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.13]:33781 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfFQSln (ORCPT
+        with ESMTP id S1726535AbfFQSln (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:43 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MowSu-1iPkr60HhG-00qVKy; Mon, 17 Jun 2019 20:41:22 +0200
+ 1Md6V3-1iBB3Y2vZr-00aF6z; Mon, 17 Jun 2019 20:41:23 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,28 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 02/30] drivers: gpio: altera: use subsys_platform_driver()
-Date:   Mon, 17 Jun 2019 20:40:43 +0200
-Message-Id: <1560796871-18560-2-git-send-email-info@metux.net>
+Subject: [PATCH 04/30] drivers: gpio: htc-egpio: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:40:45 +0200
+Message-Id: <1560796871-18560-4-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:n6lNF/HiERfH9tPVBrtbF8cjwb9Kd5R4hEw89zBMMBUSS2AViuC
- 4gJyGnofyR32s6hyLipxjrmtm0hVyHI6gjievevJWOve7tRnvPBcIMtAJw7wKJhAWq5rDjj
- Iyj9m7RQrAUUKBSUGqHD1PBvmVAELc1atMNKegIh8gMZfgg4yV3opmtlH4Fg5chMY3jfnUb
- MdYDYDeTK0EIp4a8LH4YA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FubfsVQejOg=:hcx/YkqnedyIVid8oMi3jN
- yFOL1ldrSamVyPD1XqgcK7HgFK+YLZiUZ5yvtylcHhNZk5uHA+E7qZ88wMhHMfx/G6qICZD0t
- kUFz1TDSL2m3B39o8Io548h4eFN/QTaqpPmDIe0dunWwnR1niVaJ+u0P0aqZd25Dz4V8TegoU
- pnvj81x//YNVy2u9bJ0kzKQxjgLvAtc83GT8hRXOiDQFPm9mriTFPaw1bpeR1oNppt0pK83dJ
- dD3mH7BDynA0Q4gJRNVe3ofzSKpACg3mGS7U9Vq2lYVKtrr/SyraobT8ddVtOx3qWQIW4RD3v
- fjskP8Mt6UrUjEJDI1a4nmMvvYdD07zeobqRexYJCodR3kxAkE8iDK5liLpetva6eRoNkJjFX
- b9uKQXHWqbf4vnKcgKhkMLaddWIxFDwa4F2DxlBbqF9Z5OSAq8vVPA2y06vqu/VVEtOAra6v5
- K89jcHmBOGrt2YxGcaQO4ADJoAFw3n+DDbQL7f+fjeIJDS3PS0S3hoA0Wz14HnVEeV+yD6LSd
- rzL3OApCEIKrUxcGx9Z4W21lsMRMqPj7+3/YclHcYNUiad8gv47ZcU1aICcAME4tCBOv6a9Ko
- GGL12YFdJN5kIorHVpjmaAXnznWQPuaMSTNIur8CLGbRii4Vg63T6blfjBi4swjCMcib4ojaD
- 48A8xT3tkMu3KlL2VaZbvNvw/u0D38Ga6DgmOIxmWdQbhVbYsS4c09qzB2a/ebj+8aJS6Lcbk
- 3G/hwmRXYSg8ea7msahEPVimEv97KizsfoZKPw==
+X-Provags-ID: V03:K1:RwgFmAEyv1n2hFnjBFxldqdtVTz9NuzsBFs1rsWBuAG7a6EOF8U
+ D0jzZGXTuPhFo5yWwS4c1Rl8RjJfm5APncOEUECZb6Z2LtYnP76UnbflJORhV4hH0Lwp5O7
+ LcAIMOqIHwcJBp2QNLl60mWH37OrPFS5pE1cVZQxH8RU8HEWJFVnEyEut4Ki3yVQ1KD3Cl/
+ uigegXYy47qr7vxzBqxvw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TpXdJMxOdO4=:gAmkSvXxjg2hwntDW2JfUu
+ ATMMTR7e6Aw+bP4NLJWmVtwxoChPtzJNJQtRD+JyzOya06sYBXVGKoo1fQZUdCQRNXW98MJVf
+ KMAupSauqqLD4CQGmgERW6yu1GqtGnZQWZ6ITPJbP7qKya32N+a68saJYpHdIr/zeU8uyi4zt
+ po9c2CNC49Tl7YuG6otKslk+naxq+aQJ9l7eLp/Ln+qnf0XoMV7zaOYca6KpB3lNJxIJ15iQW
+ 2PefcO3IsliP66nNKBEvY+SBhc1PptTmITwOB00hVmzpi5Ib0mQv1XhTuIS0SGf78wcWRZ+hp
+ hemPTLklcu70zbUesvMzz3kmW2wTf1oMkax4fzc5rgPAauHSu8hLyU2Q/9mdDZ5H2IJG1NdgA
+ 0j6+gUfn1brZ6LjRqkLT2Z078y1CICMSQf+warTDpQ+RZKSa6J5RhgTezwTgvJeGzbpeN88XA
+ boHGVk5oaLdHOe5cXpDlzGWhd9vBn1ZR+tiUzGEpEVc7O2bXIqQ5dSj5M/HTUtKODXxpL+Hve
+ 8LU/Q9uUnSXu4mTeg0IAM6JZG31IqAPu6aRNSd50nWgoeo8q92Xv/3CijhqkkYJS4SZEAj31a
+ jSborxLHhPm6InAZUuAwLJisXFcxO50jfUGjqPDMBHktCRLB0jV4+hmE1huSfsC8UICDsngEE
+ wubFcljAehhjTZrT/7/G4f7W7AnsDvWNPBZJGQk78E2lKCh7AJ0tF4/dtYzql2fS/zIFLJhkN
+ Q2Bg2gWqalQPdJW+SJq1zdWfCNv7JIF+NYi0yA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -66,33 +66,25 @@ subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-altera.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpio/gpio-htc-egpio.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index e088b90..b757c650 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -342,18 +342,7 @@ static int altera_gpio_remove(struct platform_device *pdev)
- 	.probe		= altera_gpio_probe,
- 	.remove		= altera_gpio_remove,
+diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
+index 9d3ac51..cc7a655 100644
+--- a/drivers/gpio/gpio-htc-egpio.c
++++ b/drivers/gpio/gpio-htc-egpio.c
+@@ -422,10 +422,4 @@ static int egpio_resume(struct platform_device *pdev)
+ 	.suspend      = egpio_suspend,
+ 	.resume       = egpio_resume,
  };
 -
--static int __init altera_gpio_init(void)
+-static int __init egpio_init(void)
 -{
--	return platform_driver_register(&altera_gpio_driver);
+-	return platform_driver_probe(&egpio_driver, egpio_probe);
 -}
--subsys_initcall(altera_gpio_init);
--
--static void __exit altera_gpio_exit(void)
--{
--	platform_driver_unregister(&altera_gpio_driver);
--}
--module_exit(altera_gpio_exit);
-+subsys_platform_driver(altera_gpio_driver);
- 
- MODULE_AUTHOR("Tien Hock Loh <thloh@altera.com>");
- MODULE_DESCRIPTION("Altera GPIO driver");
+-/* start early for dependencies */
+-subsys_initcall(egpio_init);
++subsys_platform_driver(egpio_driver);
 -- 
 1.9.1
 
