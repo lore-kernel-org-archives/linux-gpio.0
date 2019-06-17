@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CABC2C31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E759FC31E5C
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C59B208C4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE99321783
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfFQSmG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:42:06 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:53437 "EHLO
+        id S1728946AbfFQSmV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:42:21 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:33399 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfFQSmF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:05 -0400
+        with ESMTP id S1728929AbfFQSmT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:19 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MjSHc-1iMTao45Na-00kzYa; Mon, 17 Jun 2019 20:41:41 +0200
+ 1N0G5h-1iVzAa3H2l-00xHk9; Mon, 17 Jun 2019 20:42:03 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,28 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 12/30] drivers: gpio: stp-xway: use subsys_platform_driver()
-Date:   Mon, 17 Jun 2019 20:40:53 +0200
-Message-Id: <1560796871-18560-12-git-send-email-info@metux.net>
+Subject: [PATCH 22/30] drivers: gpio: em: use postcore_platform_driver()
+Date:   Mon, 17 Jun 2019 20:41:03 +0200
+Message-Id: <1560796871-18560-22-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:dT3uRABFS0LCiG7s1U7q3nGf/2a0ASckiTEOKLXOYnnfgA7OHZB
- khNvDFh0WSuZo3sx9EzH1v4pwUtmCnUx8+yZKGS92xqtasNDk2YCaGg6b8IKhHzYuxexo0Y
- wHC38Ds5/US63cBfXEJJPg/iR8aNjOxE1scwYrl4MmNLk7SHxanRyG+5o8nBaJtDHdpx+BT
- 0j4p24g1uWpb7eoKGmCJw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ECsY8i4iHY8=:2q+L124zG9xrKP0LAEPhfN
- ASqnqFzsop8gYZmbgo53tw4T7qDXMVzNza/v/SgvoB5hR3VjvafiXE3KJ2dxb3H97ZQpNInBC
- tGPGo0npikJGvGe8o2vDzCqz+gjAhvXbHRRINPa9+Vz60vMKvyju/CEAp91aynkCSVj4Gk6am
- GpjIvOUsjYrcox4Y3Wx1Sud0BLcdLsY7qG4tCG1cyo32QyvaRQmzLNDXfiYMlkOBCKP1zJzMG
- vPrk88Rf8ZJhE35kMaRrU3cNh2GdhiDdEpJxTUznct9kYErfrRLQVlmjAyKeDM9NCGnFvTtTp
- y+YOTvf27NmEukQXOWnB33QlkQxYLFp0f+IHWgJ1w2qxfP6QnIUX1dLZGQQwUBKdjACmqN7ry
- W4/81AzT3L0rO6A1BD3hm218J9/X68t0RTBrsR9fULKK5srwkDHYm3+IUFZKvft+UxJ0ljIt9
- k/OaXy4RCaXzQqFtZ36EatNgWfQ5AX30/uw2ZhUSzLbRD5hZJ3JlIGdZ5L21DbpKJi2TFzd5t
- GIDgSCl2QNrbsGjaIpSupzc8pzb40iDDs+KPOYCiiURS8W3hPm8DNtX+9mgLbLWblgn0Z4c/A
- dOVzS/882Wouf8O0mllLBwYdnFlS5AmZ39NoBVSgfGdLGLqO+yDGWX+5pJGqgeYdwP+XIoWVs
- Uoh7idNLZnKDperYhzCo1z4iCWLyytrL63GNKDzAY3wzZ60UhH0TNUomkbKTejeqwmqibb/er
- 5zvmMAC9BX/3J93ZTT75W26IWeW8//4afUl4Kg==
+X-Provags-ID: V03:K1:+XdyFKamGFWUFxEeDb6N68e30kmuta1qkOj7bQND+1fkqKnd3Cy
+ va4HUJ8iu1/u0Fu0O2Oxm6ABjgPG1mXo+VlLjSrbBe0qfckPTug2IhG3xb61B3brYGMQ9wp
+ DxtjcUlJn7GQR00z+CWCLXlJwkbuBAexBjV0piNOiJcQ8mv/G15iKL69YuHosSYE8Qjk3F9
+ UJCkn7fyFAX8S2LrAWhCw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gcFXNkZP8ic=:BkVRsM0TzQA0vzTsksV/IA
+ BnkI/ebLbVIaU5UHw6ZC0jgAAAlyHpnKYbNkjQRR5QkG5FClMxVB9RKiIj2n8QyFcCo5wJr76
+ 6yqpacv9YnQgWBmrTwHPItHrYO0VsxsbucJMNYzMJ4ugBY+DbZlRTKe0tJI2uiGH5WxuPgdqk
+ qIPsejPYGmyHrnknI9Yd7rBgaws7F0By6g4EVTkXpyAzPljDeeHMRzbeNFJC+GdkeOKrHgyZK
+ L4NV0m7sUJO15tbCRtuonbyhv12SA/ycHni0fmfotq4oWav4nUPKcifbWseIBBZ+CsCGuRgOf
+ 7XkzPl57gyeWHOkSy2vBiBVY4UBt/IjiihPwcGVoV0NMyA13JH8Tq8YBmiaDXq6RrZ11NO5ac
+ onvjWA7yVW+0J3OMzXnmjoHdFjX3/3W/HK8Ls2j39sIAs0aDREP/RY8aUYhEoi9+4uPsYtJEq
+ bZDu3qGSaC3PohJI6ARiN7+Qew0XkGllDSRLMk4O3Zm0mhFBPHA2CK47FbxuH3dYK4/i4MIsp
+ 35fmssGD8MY8ezcNVgNZHveVNOC/J/an/LDtlDgsBBcKPM/mrOYy5VLmseIN08AYGsS92ouub
+ Y6M/XiJQ6jrY13zblbYyxF1bBwQ5F3bdshcrUehxinm6H0CK8zsoQAeVdJoaz8Poh8CUR24FH
+ O8Jkwsq05vHIhMQ57J3wP3eoKBPh8emGs6GRKaL9W/NF+DUYUXkeWOUhEWJ75Fa++8OBGyQ87
+ Fh1y5a8mWoXJ+8yyiuiL339Dvj5/pEIBjwVmuQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -62,29 +62,37 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 From: Enrico Weigelt <info@metux.net>
 
 Reduce driver init boilerplate by using the new
-subsys_platform_driver() macro.
+postcore_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-stp-xway.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/gpio/gpio-em.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
-index 8a319d5..3f5c039 100644
---- a/drivers/gpio/gpio-stp-xway.c
-+++ b/drivers/gpio/gpio-stp-xway.c
-@@ -291,10 +291,4 @@ static int xway_stp_probe(struct platform_device *pdev)
- 		.of_match_table = xway_stp_match,
- 	},
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 84a7375..8b8037c 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -396,18 +396,7 @@ static int em_gio_remove(struct platform_device *pdev)
+ 		.of_match_table = em_gio_dt_ids,
+ 	}
  };
 -
--static int __init xway_stp_init(void)
+-static int __init em_gio_init(void)
 -{
--	return platform_driver_register(&xway_stp_driver);
+-	return platform_driver_register(&em_gio_device_driver);
 -}
+-postcore_initcall(em_gio_init);
 -
--subsys_initcall(xway_stp_init);
-+subsys_platform_driver(xway_stp_driver);
+-static void __exit em_gio_exit(void)
+-{
+-	platform_driver_unregister(&em_gio_device_driver);
+-}
+-module_exit(em_gio_exit);
++postcore_platform_driver(em_gio_device_driver);
+ 
+ MODULE_AUTHOR("Magnus Damm");
+ MODULE_DESCRIPTION("Renesas Emma Mobile GIO Driver");
 -- 
 1.9.1
 
