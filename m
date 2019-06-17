@@ -2,90 +2,164 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5958BC31E57
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04F7C31E57
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32510208E4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 951DF2084D
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Q4w3DyMp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pr7pW/pD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfFQKEq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 06:04:46 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50922 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfFQKEq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 06:04:46 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A630E891A9;
-        Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1560765884;
-        bh=4b/x7I8aVyzsurIMFQ0LkU0sx+0wbtevSohKT1oCTNk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Q4w3DyMpFyN4fgkK6aAGhdxc8LIEI9NzWSVZI0qj/zExIpxvRDhUeeSwwgdnwU3LZ
-         b91LOHT/IVlF6UWsXgLCVEvDFU6YJYeyHP4sTmnwcdhPimcpYX936ylvaR5LRrKt9X
-         eJn4g6i5nSR+skXJduqHefC0SKZW1MjGqBalm1kxHEQ0o6PLlqFNlK6In41/oeJBCt
-         hY2Q08zRPoAHzOFXF2HLsllJb2/0arZYIeD2XZRuzJGZFJ1/pFFicMhbg4JyRyVfl1
-         ZoihyL0muyI1CrWzuB63FZ415wp/UlJ8RH9gqPFgL+znzBhw9eEX47hwcElk30CNMB
-         bfZhVyRT0PGJw==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d0765bc0002>; Mon, 17 Jun 2019 22:04:44 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 7C70313EED3;
-        Mon, 17 Jun 2019 22:04:45 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 536631E04F0; Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linus.walleij@linaro.org,
-        jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 2/4] dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core clock
-Date:   Mon, 17 Jun 2019 22:04:30 +1200
-Message-Id: <20190617100432.13037-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
-References: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+        id S1728088AbfFQKOh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 06:14:37 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41827 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbfFQKOh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 06:14:37 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c2so9284931wrm.8
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Jun 2019 03:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0h7IM4lrz+H9Hm55K4LDe4S6XuzNxvQo2AKIRNvmLBw=;
+        b=Pr7pW/pDVfmnr1f95jMU1cjpSQB6d5bTyGiKUHuQmECYAAmlvQ2YmHiXyDHzGHWt6+
+         cXEDSmKaSOEcy4gxQX8e4uqO0XleQxrbMWtM/p2M7wbrleb/gJxdcfVA4QzH1AS7ljHo
+         dlXnrwUvlTmmn5PUk2gfTHyqFb55p4K/J/MTA99zw/pXDWZ2Vm5R8MIqQLdu+FsEJYHM
+         c9XX7Hny7i4JQgqqvxwpkMXV8Hlr8hYhuYuyGxSdco6PT/Szg/fVWye6R/EOZJsm8b21
+         5pkz82OGwz0MSywdlg8AnAe1OnItyssC/hAWvgcYqic959IYI2obFsLxC/PBOANecqjJ
+         JHiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0h7IM4lrz+H9Hm55K4LDe4S6XuzNxvQo2AKIRNvmLBw=;
+        b=mCpJ+z5H/rMe2PkVTaSoz6h3xcAZV1bWkbrMf4tTGbAVcnwfKtaJMFyJLmsVomlQJt
+         X12SYPSu87yQQ3Q6wrA3rEgxtOeKdSox+wzx8eqXDI4QAkQbUof+917WyPOSKkXSXpO2
+         XQpYXdU6z3r4XWat/Hh/t6FLXsv1IjlIaItoohhBx7bGDyYqG5tHiKN7bzHv5zeu9Mnn
+         MBZz+AdP/FLd8/DEMqNRE3UNUv2osLtCu+k2f3rju3Qw737Md4DEL1mluAh29CcwCnH+
+         sFbNzHkf5vjUvJ2k+DGC2dsT2McE7E8FOGWw2cg8ldLgdfiPLKaagseNNWcEPpXcGOPh
+         6kEw==
+X-Gm-Message-State: APjAAAX5yr7uZu4AoznrLchIPABIBKMaDJb0ObrEbNQaeh6FjDVS8eL2
+        s7a4FFRblZvItNF2w8czsA2iGg==
+X-Google-Smtp-Source: APXvYqxM183T4T8pUHIJPMxjfA6ieRjPgyyNwqF9AptFukBr31lpl3EdpNm5vAtxOqsCKbTl9IykQw==
+X-Received: by 2002:a5d:6449:: with SMTP id d9mr19355586wrw.192.1560766475722;
+        Mon, 17 Jun 2019 03:14:35 -0700 (PDT)
+Received: from dell ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id b6sm10592370wrx.85.2019.06.17.03.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 03:14:35 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 11:14:33 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, jlhugo@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-usb@vger.kernel.or
+Subject: Re: [PATCH v4 3/6] soc: qcom: geni: Add support for ACPI
+Message-ID: <20190617101433.GF16364@dell>
+References: <20190612142654.9639-1-lee.jones@linaro.org>
+ <20190612142654.9639-4-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190612142654.9639-4-lee.jones@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add compatible string for the core clock on the 98dx1135 switch with
-integrated CPU.
+David, Andy,
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- Documentation/devicetree/bindings/clock/mvebu-core-clock.txt | 1 +
- 1 file changed, 1 insertion(+)
+Since there does not appear to be any other Maintainers for this
+file/subsystem, one of you guys are going to have to at least
+review/ack it.
 
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt=
- b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-index 796c260c183d..76f0952cfc64 100644
---- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-@@ -59,6 +59,7 @@ Required properties:
- 	"marvell,dove-core-clock" - for Dove SoC core clocks
- 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
- 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
-+	"marvell,mv98dx1135-core-clock" - for 98dx1135 SoC core clocks
- 	"marvell,mv88f5181-core-clock" - for Orion MV88F5181 SoC
- 	"marvell,mv88f5182-core-clock" - for Orion MV88F5182 SoC
- 	"marvell,mv88f5281-core-clock" - for Orion MV88F5281 SoC
---=20
-2.21.0
+Which route do changes to this file usually take?
 
+At worst I can take them, but I need maintainer Acks to do so.
+
+===========================
+
+> When booting with ACPI as the active set of configuration tables,
+> all; clocks, regulators, pin functions ect are expected to be at
+> their ideal values/levels/rates, thus the associated frameworks
+> are unavailable.  Ensure calls to these APIs are shielded when
+> ACPI is enabled.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/soc/qcom/qcom-geni-se.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+> index 6b8ef01472e9..d5cf953b4337 100644
+> --- a/drivers/soc/qcom/qcom-geni-se.c
+> +++ b/drivers/soc/qcom/qcom-geni-se.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/clk.h>
+>  #include <linux/slab.h>
+>  #include <linux/dma-mapping.h>
+> @@ -450,6 +451,9 @@ int geni_se_resources_off(struct geni_se *se)
+>  {
+>  	int ret;
+>  
+> +	if (has_acpi_companion(se->dev))
+> +		return 0;
+> +
+>  	ret = pinctrl_pm_select_sleep_state(se->dev);
+>  	if (ret)
+>  		return ret;
+> @@ -487,6 +491,9 @@ int geni_se_resources_on(struct geni_se *se)
+>  {
+>  	int ret;
+>  
+> +	if (has_acpi_companion(se->dev))
+> +		return 0;
+> +
+>  	ret = geni_se_clks_on(se);
+>  	if (ret)
+>  		return ret;
+> @@ -724,12 +731,14 @@ static int geni_se_probe(struct platform_device *pdev)
+>  	if (IS_ERR(wrapper->base))
+>  		return PTR_ERR(wrapper->base);
+>  
+> -	wrapper->ahb_clks[0].id = "m-ahb";
+> -	wrapper->ahb_clks[1].id = "s-ahb";
+> -	ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
+> -	if (ret) {
+> -		dev_err(dev, "Err getting AHB clks %d\n", ret);
+> -		return ret;
+> +	if (!has_acpi_companion(&pdev->dev)) {
+> +		wrapper->ahb_clks[0].id = "m-ahb";
+> +		wrapper->ahb_clks[1].id = "s-ahb";
+> +		ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
+> +		if (ret) {
+> +			dev_err(dev, "Err getting AHB clks %d\n", ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	dev_set_drvdata(dev, wrapper);
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
