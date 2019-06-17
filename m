@@ -2,138 +2,126 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D03EC31E5B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB5BC31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A85420863
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C7B6208C0
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:57:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oIw06plI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfFQSlh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:41:37 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:35253 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfFQSlh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:37 -0400
-Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MhUDl-1iFYm80Vff-00eexp; Mon, 17 Jun 2019 20:41:15 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     thloh@altera.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, andriy.shevchenko@linux.intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, grygorii.strashko@ti.com,
-        ssantosh@kernel.org, khilman@kernel.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: [PATCH 01/30] include: linux: platform_device: more helpers for declaring platform drivers
-Date:   Mon, 17 Jun 2019 20:40:42 +0200
-Message-Id: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:vh3WgaKAfp/7utsDwGStG8lhMEJOLPpqeqqOIPZUy69iRDhMgUT
- YLO0VVH9+WSHOOP9Z9lTkwLZQut5VFowC3UxPBimZV2gDZsASGuddTCo4Ns+x279im1k6P6
- DvVmuitj/sUJGSikRzupru9N53/CfW5itFY6p4aDEVz9PvxnW7pBVq3Fmi/cVgqMjBnVHGa
- GhxJ055QzOASmoYXb/xGw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pncoYwVZfPU=:I4jSkF7FQyUU1Sq0ZMKvoJ
- hrJzfvo2len4wsFtN0hwymlMcBge1MDGz+loqbRkJ8CW/uRDselgl9z8OUHkvxhAJwTUPCoK2
- 5LRdxHWKDEVzf+MuRQjoI+ISMzc40B9oTOcQXNJn3uxLp24Zf0lG++O4eNVoKQJk32AVy3b6T
- 7z80l+YlX2u6QXjMp2DzSlFJ5FwvWeJ2nTmoWP8EpQeg8OoAf/ecvdpSWa7ZjRgf3udyWH7Fm
- YTcg2Rho7x7lehyZlIG+aFWHsQqBlWWsAa2cKA0/W8Nlk4QHva+ZiPenQ4qo+tavkhrew/M1J
- 99WAeRqb8RxlmqjxXqIVewncVfPRIbnHN4lm53x1O4kYrdlRETFiqL3wsiLhsU6pb7OhSpcke
- H01Gpa7OSgdd+7tbdwfSE2dnCuhFHgxdI9iP2KiBrO08v6ihVnsWKvCjCdsBr0wd0c/vmqaaD
- cOC+hxmoLR4uO7790+Uwko4cRo813Uc1adwb/A7nrMNIWc3D1yWASdCxy0X14MJ5ewLUt3EMS
- 04MllSWdEijwsXKnH9zr+YctR/GxkORREQwZab5xab0l6k+QY4bGbB1FH1I6l1cMBHHJ0EYMf
- xUbRGtlHTBwRBpR7kHDfTij/AkHg00n1c4hTwOWu7/YHW1ud65SgcWkdAVvYU8Mr1ylUhXiUU
- 1LeCBRSQvuBLsKgKGHNygUZdlvOtR7m3hQ+MhrZslo8e24+3/0fbPcwoAc1RtbmIk3gFaYxiZ
- TlsWX1yXNmkScOxTVP7Gxd5Jxz50lkfGbbRVwQ==
+        id S1726286AbfFQS5i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:57:38 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41014 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfFQS5i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:57:38 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5HIvPLJ005706;
+        Mon, 17 Jun 2019 13:57:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560797845;
+        bh=eXKVDlqZzqdlgcUJUU+jPPZepnuhi3ZTqQo/hbODeEM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=oIw06plIitBYLiJdchxsmU0MSki7Rlx0JhmUTmr2teR4u91wdDsjNpjwIYjoeLg1n
+         Z+J4I5d3HwJ5wVpymWg0Ry7rhcxKNViibyTroUMRqLATNP9Du2Gqmccpq0tlg9E9tP
+         M1STJHAzAB8aN53HvWsfWtEqGZIA/bgLzLAMoRT4=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5HIvPdS082788
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Jun 2019 13:57:25 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 17
+ Jun 2019 13:57:24 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 17 Jun 2019 13:57:24 -0500
+Received: from [10.250.96.121] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5HIvKQp019312;
+        Mon, 17 Jun 2019 13:57:21 -0500
+Subject: Re: [PATCH-next 20/20] gpio: gpio-omap: clean up register access in
+ omap2_set_gpio_debounce()
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Russell King <rmk@arm.linux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+References: <20190610171103.30903-1-grygorii.strashko@ti.com>
+ <20190610171103.30903-21-grygorii.strashko@ti.com>
+ <CACRpkda2FhYNYA2TkVANOF5GWd3hE9cqM7N_pFDFj9nh-fh=iA@mail.gmail.com>
+From:   grygorii <grygorii.strashko@ti.com>
+Message-ID: <0ab98094-f8b2-69a3-e73c-1dfdf812d627@ti.com>
+Date:   Mon, 17 Jun 2019 21:57:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <CACRpkda2FhYNYA2TkVANOF5GWd3hE9cqM7N_pFDFj9nh-fh=iA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
 
-Add more helper macros for trivial driver init cases, similar to the
-already existing module_platform_driver()+friends - now for those which
-are initialized at other stages. Lots of drivers couldn't use the existing
-macros, as they need to be called at different init stages, eg. subsys,
-postcore, arch.
 
-This helps to further reduce driver init boilerplate.
+On 12/06/2019 12:11, Linus Walleij wrote:
+> On Mon, Jun 10, 2019 at 7:13 PM Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> From: Russell King <rmk+kernel@armlinux.org.uk>
+>>
+>> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> 
+> Patch applied.
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- include/linux/platform_device.h | 51 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+Thanks Linus.
 
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index beb25f2..5f3a967 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -259,6 +259,57 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
- } \
- module_exit(__platform_driver##_exit);
- 
-+/* postcore_platform_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces postcore_initcall() and module_exit()
-+ */
-+#define postcore_platform_driver(__platform_driver) \
-+static int __init __platform_driver##_init(void) \
-+{ \
-+	return platform_driver_register(&(__platform_driver)); \
-+} \
-+postcore_initcall(__platform_driver##_init); \
-+static void __exit __platform_driver##_exit(void) \
-+{ \
-+	platform_driver_unregister(&(__platform_driver)); \
-+} \
-+module_exit(__platform_driver##_exit);
-+
-+/* subsys_platform_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces subsys_initcall() and module_exit()
-+ */
-+#define subsys_platform_driver(__platform_driver) \
-+static int __init __platform_driver##_init(void) \
-+{ \
-+	return platform_driver_register(&(__platform_driver)); \
-+} \
-+subsys_initcall(__platform_driver##_init); \
-+static void __exit __platform_driver##_exit(void) \
-+{ \
-+	platform_driver_unregister(&(__platform_driver)); \
-+} \
-+module_exit(__platform_driver##_exit);
-+
-+/* arch_platform_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces arch_initcall() and module_exit()
-+ */
-+#define arch_platform_driver(__platform_driver) \
-+static int __init __platform_driver##_init(void) \
-+{ \
-+	return platform_driver_register(&(__platform_driver)); \
-+} \
-+arch_initcall(__platform_driver##_init); \
-+static void __exit __platform_driver##_exit(void) \
-+{ \
-+	platform_driver_unregister(&(__platform_driver)); \
-+} \
-+module_exit(__platform_driver##_exit);
-+
- /* builtin_platform_driver_probe() - Helper macro for drivers that don't do
-  * anything special in device init.  This eliminates some boilerplate.  Each
-  * driver may only use this macro once, and using it replaces device_initcall.
+> 
+> At your convenience please look at the debounce function a bit
+> closer because I think there is a bug/unpredictable behavior:
+> 
+> IIUC the whole bank/block of GPIOs share the same debounce
+> timer setting, and it is currently handled in a "last caller wins"
+> manner, so if the different GPIOs in the bank has different
+> debounce settings, the call order decides what debounce time
+> is used across all of them.
+
+Yeah. this is a "known" problem :(
+
+> 
+> In drivers/gpio/gpio-ftgpio.c function ftgpio_gpio_set_config()
+> I simply reject a dounce time setting
+> different from the currently configured if any GPIOs are
+> currently using the deounce feature.
+> 
+> (It's the semantic I came up with but maybe there are other
+> ideas here.)
+
+
+There is one more patch in int. queue for debounce, but I've
+decided to send it after this series as OMAP debounce changes are
+usually debatable.
+
+I'll look at gpio-ftgpio also.
+
+By the way, there seems no ABI for debounce cfg in gpio_dev interface.
+(or i'm missing smth?)
+
 -- 
-1.9.1
-
+Best regards,
+grygorii
