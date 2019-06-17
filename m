@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37575C31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A55C31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14DCB20863
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44DE21530
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbfFQSlz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:41:55 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:58913 "EHLO
+        id S1728853AbfFQSnz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:43:55 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:58803 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728799AbfFQSly (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:54 -0400
+        with ESMTP id S1728766AbfFQSlu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:41:50 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MRTEp-1hxThR0fuX-00NOxf; Mon, 17 Jun 2019 20:41:40 +0200
+ 1MxDgs-1ia6h43Oy8-00xYak; Mon, 17 Jun 2019 20:41:34 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,28 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 11/30] drivers: gpio: stmpe: use subsys_platform_driver()
-Date:   Mon, 17 Jun 2019 20:40:52 +0200
-Message-Id: <1560796871-18560-11-git-send-email-info@metux.net>
+Subject: [PATCH 08/30] drivers: gpio: palmas: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:40:49 +0200
+Message-Id: <1560796871-18560-8-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:7YUAmuuIb36tOmML+CuZG3gueQCIO11o+yMbjFCLCRWDWJnjITO
- EE2RrNvSLPil8KexSJ6NLygnc/2xNpY1/8+ZW3xXQxoHinWM1O6n6e5lAa/iUJ8KKJWaS1V
- aaAtHjPoGIi7q4vqIjXnzKdFH0Rf+r8InWPpZ9fCdT4lt337pcEEzclqjiAMrAtuJMsPXOC
- A5iBq7ujXBkwYMlBHLknQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1vqbZGDS+eg=:nLGYJ+RktPeqACPzOrNBld
- OQBpWBTICAbRKNgWfqwP88ppIfh2N5aoF34MyGT798E9107cfm+tYBEaRv++qptby75DBfjO9
- o3p1tuiHmJRV3ROCUT2Sux0+XdJUmJX9OBCUQYJWeCljwqTGcivBarCQg1SpmSPJNidY6b50R
- +m2wGGo5d3HUR3CbZXncRUP20zH9JzxpKguv8gWvjVFzKNji9Ibh1NQ/AjWZP8JJvgQAAyR7+
- 9lUf39AUizOInqywLyJKeA7NJWTKJA9BEczCm3VuPBOTzxKvv8JUfnDqzQV6t8pisl/bDzTdg
- TMhOeQzTEyvh8gRyiqcGCyvnMJQeX9MiZOLpA08Ce24YfKNAQynexzfKTWw7krTr1EVNwRP6V
- I8tBvqfX9k/ptCfSUBcJ/fzUQDwgDRVaMsXXj/OUKVzAgD3PVAZDvi8GPLmwBIgAzwQxWBFmq
- rk4R/nof4WUW3JyStnSNpE0VlMxB/qQ2PQNsaZLEglxOi3GQlx3rIEYU8NvRs/XyTaR28Wt0H
- Lz3yFqL0Rt6KpFjoPwPUqBwAAcWFDzSUdIIRPj09hDv5JZl4R4w7l2/UW58ejoRNQ9y2p8EWt
- nVu9vPm9KiD0BEZFT9PsmRrPi4CQRpJD62rjtuuuCaVr4l3d99IniyQbGf2pA8+VtzuiLNNk6
- taexxYgfa4jTqNNlzE61CLQcugUZLmr2ykalHhRjAEoX4dQzCRcDfvia7iwTyWkExYpMdt3g8
- gnzYYaMAuj3kqcdPd1dV62pxtiTNrV9N0Nfucw==
+X-Provags-ID: V03:K1:52SXi3L2+ORnIKsoInSeCQIdMCF5PqEvUSjZ1IUqdMXOQjJz6CK
+ QFuwK7in9fJYjIHT4RIe/33222jvXueshWiZ8Ty5PzTB0cL9rtWBFW9GEUfEO7THrrvJ/wa
+ R1wYvi9ClTKRtByvwAcWPr4gyEb3kRQGl2BdljXN9n+db1DZ1QGFXfMfReOYRRr273ZH2DY
+ /ujckZ8//MAObPqGSHK0g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yJUB0z5Bicc=:qUUcWOSONcIQ6ODc1wyPsJ
+ WrRlT9QHHkK+w0AqpLSmh3m1e6+tREInEOeJHknNVa12/TG6CmP9E8mozvWQY6yd3QEECRC8Y
+ Y4rx7tcfFd5NsxIIE2x7yv4Aa48ET9GRaXMZa1cafuXhyDaoIm4r85pFHOeAYpemTB8kdOcih
+ 8ukpgLFvCs6IBYRUCj/8GulixCCt+6G39WaL8qUESfpLWYq9mPuR14XgEDdcFO+3EQr/+/RLg
+ Goripr+/9PvgWI8OOtaouUBBDlOb7ILPBceTTWrAvPd3e6RChKNsRp+jyiKIRHjRT/29bHc+G
+ Qlhm8dvTJj4m+22nBZFGXU8zx9FBth/4yPu9dejlasoAEfLhfextU9yJ5OzJoDfq9zQV26AVU
+ IY4ynzMekCMuPxf2f1eie3A38WkPllRnGwV+4Nmr7BjAYx40Tkf6bkYx9YmqxLR6GsIPwmiQi
+ hyOewigA+Z4g1CuCRQ7nZhXTMNkqFH/WcHC2440ycBUsrZOcgNeMLctMqMSInbpbfeZPFu/X8
+ PEHTFxtnzMV3Np1KVZwQgXRGfF8Ul8J+QiZdjVi94HgsA+BeDI0ETIb5IAkoyER1fQHU8sdAl
+ nchOBjfVXdrwfMetWrX/wxGeWMukc30nGGm8dsOLRfwP2dTT1jFsMT17owQyzVbEGyEs6ZqZ/
+ I55uY2EdqrO2HUVzKx2bWX0me5ZRLPnCUYecFWAvZQiRY3FwSa7/QcEfxkgr9hIDxnB5RTYBn
+ ClsEPOVYoL2cdIQEvHMoeQInju2Aw5va+WhMFg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -66,24 +66,24 @@ subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-stmpe.c | 7 +------
+ drivers/gpio/gpio-palmas.c | 7 +------
  1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 65a2315..bb34f34 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -530,9 +530,4 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 	},
- 	.probe		= stmpe_gpio_probe,
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index e8e9029..4726200 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -195,9 +195,4 @@ static int palmas_gpio_probe(struct platform_device *pdev)
+ 	.driver.of_match_table = of_palmas_gpio_match,
+ 	.probe		= palmas_gpio_probe,
  };
 -
--static int __init stmpe_gpio_init(void)
+-static int __init palmas_gpio_init(void)
 -{
--	return platform_driver_register(&stmpe_gpio_driver);
+-	return platform_driver_register(&palmas_gpio_driver);
 -}
--subsys_initcall(stmpe_gpio_init);
-+subsys_platform_driver(stmpe_gpio_driver);
+-subsys_initcall(palmas_gpio_init);
++subsys_platform_driver(palmas_gpio_driver);
 -- 
 1.9.1
 
