@@ -2,111 +2,66 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8100EC31E5C
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02DEC31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 17:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F19208C4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 16:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F47420652
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 17:06:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QKSfB9gL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfFQQtp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 12:49:45 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:47831 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728284AbfFQQtX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 12:49:23 -0400
-Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MzyAy-1iWGpD2UYo-00wzKU; Mon, 17 Jun 2019 18:49:21 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 2/7] drivers: gpio: amdpt: drop unneeded deref of &pdev->dev
-Date:   Mon, 17 Jun 2019 18:49:15 +0200
-Message-Id: <1560790160-3372-2-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560790160-3372-1-git-send-email-info@metux.net>
-References: <1560790160-3372-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:Z3KuajUAaUUjLvsAg7Xpv8G/DgShgCtjBl3js4zSDDS61jfGx7s
- oEnwoORX3CnJNmya8kV5iANt4JSd0WRVdObYZpsWOXzhH1YK0yEMOBplGvAjU3evG7V+YoN
- Ixtw9mhS72bQhophVMdXVaratm3ZvZsn85Pc02/hujh2R7w2oZayxA2n6eyhBBCZb3KNidy
- VvgkLsJ3myN4KLJ5uhYvg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4cTBDo7hRso=:7XE4qgatN8cKIgZKws7cr3
- NwboWBqYLTMyLaahGrLMVKZZhyosrvEcwZBQWgH7Nj1XGL+VlciRg1WTEtJ2xDGTACtr5k+E9
- 4JO7vLwZtA+Ujj9dBYMid6zf0DDGH75ZPPIJwevXwzsB31WjcB2UU2b1hEmPqLZfqRBcO2Pag
- d50Lus0c67juIVtzIRRFVYxcDZ0GJ4+6KPtxIr7+r4izufR+ds4KDDKQ2BKAgZ0Z16w9JgN0F
- wRdEbrVKiWtWoLydh2CzcwqY6EvA5cAwlSXKuaY+RiP/j4aZ7Hkla9U1e8tYrkQhd6EBeylHy
- Ai1lO46PatkMXjXOyeC8YZTQRKWs4MuNyLik0Z5vHtjCdlA+ksXEV1LFBxouOomwbeH86gxIS
- iFRRFZrrR9Nliw7Z2HrUfWsEzTsWAQVFafoTDNFdrbvevecP17RQPRWUL91XhrHk2vksTabM3
- vcMEAl2sHj9NuKx4MzcV6kVWMD7o/C/SFsrBxXM1kxTO+GUpAA08SkFhVo1U77AkZ+d2xvijO
- p9ATiShzT1bIM08MCfh2rhXAHBP9aT4DYFb/6FZ9DbNeziHpN6ndjUG5+35KwElkC3PmAOwxS
- vRkr2ObrmY8gU9nBdqMC7fu3KaneMm+gXwclOT7q3/fmcpHMHdrr5iTpmET50GQ3sodV+0Rrx
- LBTtNu/6jQ3Gwm/8fu/uzDvKan0/QhcZ6++Fdu1XSA1PZ+IfMh1UMrtDwStS3iDmJuuQN0NC2
- sn5VRvLf/afi5CjVk9tRgTHXjtSmChlsOh5uTg==
+        id S1726964AbfFQRGI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 13:06:08 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:33808 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726005AbfFQRGI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 17 Jun 2019 13:06:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=c2vuJiTwtQzjv2F45bZwsuMoP3BkTbqwFosnz18l/Y8=; b=QKSfB9gLZ82gohVUVWpq1kfUG2
+        vOPTx0ySmtV4UoxlueQKc6sK+3wJT91drJOoetUC3BwJWJiIVW+WqlmULdG7oaNrWeOdkDpk8cItI
+        K57pWtql3ZE0tGcsgwJutR9ZbkSz3mSkX4ZgRIsnwYw+FvGhnNzfqjKoxGcsB949teWw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hcv4l-0001tV-TB; Mon, 17 Jun 2019 19:05:47 +0200
+Date:   Mon, 17 Jun 2019 19:05:47 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org,
+        jason@lakedaemon.net, gregory.clement@bootlin.com,
+        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: pinctrl: mvebu: Document bindings for
+ 98DX1135
+Message-ID: <20190617170547.GF17551@lunn.ch>
+References: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+ <20190617100432.13037-2-chris.packham@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617100432.13037-2-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We already have the struct device* pointer in a local variable,
-so we can write this a bit shorter.
+On Mon, Jun 17, 2019 at 10:04:29PM +1200, Chris Packham wrote:
+> The 98DX1135 is similar to the 98DX4122 except the MPP options differ.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/gpio/gpio-amdpt.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index 1ffd7c2..2ec9d1f 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -91,7 +91,7 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 
- 	pt_gpio->reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pt_gpio->reg_base)) {
--		dev_err(&pdev->dev, "Failed to map MMIO resource for PT GPIO.\n");
-+		dev_err(dev, "Failed to map MMIO resource for PT GPIO.\n");
- 		return PTR_ERR(pt_gpio->reg_base);
- 	}
- 
-@@ -101,7 +101,7 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 			 pt_gpio->reg_base + PT_DIRECTION_REG, NULL,
- 			 BGPIOF_READ_OUTPUT_REG_SET);
- 	if (ret) {
--		dev_err(&pdev->dev, "bgpio_init failed\n");
-+		dev_err(dev, "bgpio_init failed\n");
- 		return ret;
- 	}
- 
-@@ -110,11 +110,11 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 	pt_gpio->gc.free             = pt_gpio_free;
- 	pt_gpio->gc.ngpio            = PT_TOTAL_GPIO;
- #if defined(CONFIG_OF_GPIO)
--	pt_gpio->gc.of_node          = pdev->dev.of_node;
-+	pt_gpio->gc.of_node          = dev->of_node;
- #endif
- 	ret = gpiochip_add_data(&pt_gpio->gc, pt_gpio);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to register GPIO lib\n");
-+		dev_err(dev, "Failed to register GPIO lib\n");
- 		return ret;
- 	}
- 
-@@ -124,7 +124,7 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 	writel(0, pt_gpio->reg_base + PT_SYNC_REG);
- 	writel(0, pt_gpio->reg_base + PT_CLOCKRATE_REG);
- 
--	dev_dbg(&pdev->dev, "PT GPIO driver loaded\n");
-+	dev_dbg(dev, "PT GPIO driver loaded\n");
- 	return ret;
- }
- 
--- 
-1.9.1
-
+    Andrew
