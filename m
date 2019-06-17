@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD03C31E5B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7352C31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E632133F
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B4A208E4
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 18:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfFQSmt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:42:49 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:35907 "EHLO
+        id S1728656AbfFQSnA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 14:43:00 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:56873 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728951AbfFQSmX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:23 -0400
+        with ESMTP id S1728464AbfFQSmT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 14:42:19 -0400
 Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MZCSt-1i7Pqf2Uvx-00V8jn; Mon, 17 Jun 2019 20:42:04 +0200
+ 1MMXYH-1hsXkr46gZ-00JX4b; Mon, 17 Jun 2019 20:42:03 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     thloh@altera.com, linus.walleij@linaro.org,
@@ -32,28 +32,28 @@ Cc:     thloh@altera.com, linus.walleij@linaro.org,
         alexandre.torgue@st.com, linux-gpio@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH 23/30] drivers: gpio: ep93xx: use postcore_platform_driver()
-Date:   Mon, 17 Jun 2019 20:41:04 +0200
-Message-Id: <1560796871-18560-23-git-send-email-info@metux.net>
+Subject: [PATCH 21/30] drivers: gpio: xilinx: use subsys_platform_driver()
+Date:   Mon, 17 Jun 2019 20:41:02 +0200
+Message-Id: <1560796871-18560-21-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
 References: <1560796871-18560-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:WOHD6z9asr3ikN7lL1ee98rfa+4yx4hBYLHbF+efX3j4M5LLkvR
- sDVXUFmCtykyFiGPmYDnEKUAY8QshybPv6k5kxMpVGYxvCguQBbmzLBJCna07ckyJl6RSZM
- NeNjhxyFIK+1Vik1jGS9+TF5Vplnn/ft6QRXrV6tgGnHhCcEF0gmP1izCgKW2Qgbqh4qnxR
- heNHTgcWFM3MT6KFvJhkQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2xDZlBi8Df8=:A0N9iN1j1VFuwuzLFBQzIs
- 2OyhIK9xxJwdIJsd0YEMKwvNpWuQf7jlCkhZLHaEMmsJtUvGOB0N9QivzjRiGFHwA2BJGRQi9
- iqTuYcWTYyrAkQF5iTVWxa0IWCQ3bi9qp4WmnQj3N+Gnrd+7n316xGp8pT856Wzq0VxEnuwox
- vHISWCC8YbDhLxDiAj0S8J+EbeYYnel3CPLOG6IAF0wfZK/qUYiUdc6+1Z0LalYiwU8B1TTsg
- u1T/p5Er5TfNWQ4qqJua2N1mK5K4Q2/sKelBadu1AfxzHc8JqXqLjK5TlexHgFod9ANaDkeKC
- 3Dviu6iSNhMmzVstVoGK3aK/kTOfePnVgRFQRjgwO9SbqpVygrRDtqVZgBRcV2muBHvx1ckFH
- ieZtNcQPvQQJSljh4/KlgGMGxneQS22OasLwtbJnDLYnY5F/eBXYinG/BSvlUEZiOouIwMKcT
- BQmCXOjhBlBdLFMI4+3m6P8f8TKSZRJu3YBoFlFTFgDnLbILLs+YHhlHROMBS17/EKOOZ3375
- tW8xci8v/8TdcIlPw+EbqERV8WFNhuuty36kyTICLxPcfVdhS5oA1QY3h/yIwLJcAd8SIxmqT
- 3qtxuaDPUnADbQT70J0e2VgG4VUpRvz+/UxnyfuRcgy3AKIevNkiYXU7+TOygqZ7jX12UKPR6
- bhB0mggBEBsftzQvrVmQuSEp12TLSYleMm4NL+4HvZ6tGNe6V6Y2Ytnh+WGbdmxZfvxYpaCNi
- Yn0nEIgyoqyoVm7zBXjR+qc+S070MS0f6qjUJg==
+X-Provags-ID: V03:K1:jZQIPS/8kKBvumGOIeRZuEAZfBqep8NBgz3VKgJkgVxmn/2i+46
+ FLlq0UcVuWtpQwBDhlk7SchFPixQJXzIjLbhU4okNMK1xqofBeHvPHPLY1lvryE/VJUZ5yZ
+ rFpaYvh8TKkLlrnF+mXC4fh2PSaSPmSDCBZyCL7J6azaRKrLrxVaVLNMWOPj9JBztB686W6
+ VQxIKEaVuwqplatFtFqTA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WGfUmeSdphc=:LI3Ccf1BYHeuToQjrLXimx
+ NJP/R+hDLf5AShTxNufrxU8XyW23qnVylQVOV4vn7kOkI/ReczOdNefOBEmyS8qETuDFgvkYu
+ 90fVIssCcWjOYiJuWGnowlyh8HxdXfpxPEq9XDezHHKlqvZqLBds0F1i8ULidSzZCht0tOc5R
+ 1q0HgfWRosnVn3veP6zRG6nIH3WgjjMlOflt7UspIPMfejjdaspEBZxkavKcUJkY+uYuD7Yo0
+ Mwg//qezX8gGfxU/Dhxw+j3vijeXjI5DAR0kyprJlGl6lKnPvAYGypZtksCR7k3xUw/iU5eXM
+ RpWeJOfo9ULAchTpU/RcUUBLudJFEuz1xkJ4yQnb5242EndVJAofniOGO2MNec8BoQw7IYrza
+ b8XbbQJg09Qw+PPpwMOq6b9WII6NQ078iI9P6m9FYDWcf32ZEOqb35UsZqkIx5N4LumcPepmI
+ muHIEQbXV7R6opaMqvj4SzSoHgQtBdreSWJIYFCj0D7L+XpbeKTZLGPcTSm4n7f7ZYrY4jU3L
+ fRmi8WVCVPtRdCv/DJyOhr9NucYmBlZqs5UNktJR6G7XrAu1xf+qc65aXy3fYOUiVQ4CCG3+b
+ XfUqNTJuXstGwD6M4mAtari3bETGjNFS1XALzARL4X/okpDqlDEZxqSYi8+PTLz2WkTeGn79x
+ K1GhG7Xk1LODkC1t/PZrA8tFn6+Whw7q+trhFotAPXFriX1B+An5Sq4asIKtTecYzv8NBFAgq
+ t3ObVbdOcDOw3hw0GhdrSvYsRT6RQRUJqdzrZQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -62,31 +62,38 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 From: Enrico Weigelt <info@metux.net>
 
 Reduce driver init boilerplate by using the new
-postcore_platform_driver() macro.
+subsys_platform_driver() macro.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/gpio/gpio-ep93xx.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-xilinx.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 71728d6..d4dfb50 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -429,12 +429,7 @@ static int ep93xx_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 32944eb..255facc 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -376,19 +376,7 @@ static int xgpio_probe(struct platform_device *pdev)
+ 			.of_match_table	= xgpio_of_match,
  	},
- 	.probe		= ep93xx_gpio_probe,
  };
 -
--static int __init ep93xx_gpio_init(void)
+-static int __init xgpio_init(void)
 -{
--	return platform_driver_register(&ep93xx_gpio_driver);
+-	return platform_driver_register(&xgpio_plat_driver);
 -}
--postcore_initcall(ep93xx_gpio_init);
-+postcore_platform_driver(ep93xx_gpio_driver);
+-
+-subsys_initcall(xgpio_init);
+-
+-static void __exit xgpio_exit(void)
+-{
+-	platform_driver_unregister(&xgpio_plat_driver);
+-}
+-module_exit(xgpio_exit);
++subsys_platform_driver(xgpio_plat_driver);
  
- MODULE_AUTHOR("Ryan Mallon <ryan@bluewatersys.com> "
- 		"H Hartley Sweeten <hsweeten@visionengravers.com>");
+ MODULE_AUTHOR("Xilinx, Inc.");
+ MODULE_DESCRIPTION("Xilinx GPIO driver");
 -- 
 1.9.1
 
