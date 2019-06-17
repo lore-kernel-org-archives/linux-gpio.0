@@ -2,28 +2,28 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF379C31E5B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 15:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55377C31E5B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 15:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A228F208C4
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 15:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38459208E4
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 15:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbfFQPOB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 11:14:01 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:55568 "EHLO
+        id S1728342AbfFQPOE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 11:14:04 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:55575 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728170AbfFQPOB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 11:14:01 -0400
+        with ESMTP id S1728170AbfFQPOE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 11:14:04 -0400
 Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
         by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1hctKW-0004z2-Es from Harish_Kandiga@mentor.com ; Mon, 17 Jun 2019 08:13:56 -0700
+        id 1hctKc-000504-Ki from Harish_Kandiga@mentor.com ; Mon, 17 Jun 2019 08:14:02 -0700
 Received: from hkandiga-VirtualBox.ina-wifi.mentorg.com (137.202.0.90) by
  svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Mon, 17 Jun 2019 16:13:52 +0100
+ (TLS) id 15.0.1320.4; Mon, 17 Jun 2019 16:13:58 +0100
 From:   Harish Jenny K N <harish_kandiga@mentor.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
@@ -31,10 +31,12 @@ CC:     <linux-gpio@vger.kernel.org>,
         Harish Jenny K N <harish_kandiga@mentor.com>,
         Balasubramani Vivekanandan 
         <balasubramani_vivekanandan@mentor.com>
-Subject: [PATCH V2 0/2] Add Inverter controller for gpio configuration
-Date:   Mon, 17 Jun 2019 20:43:43 +0530
-Message-ID: <1560784425-20227-1-git-send-email-harish_kandiga@mentor.com>
+Subject: [PATCH V2 2/2] gpio: inverter: document the inverter bindings
+Date:   Mon, 17 Jun 2019 20:43:45 +0530
+Message-ID: <1560784425-20227-3-git-send-email-harish_kandiga@mentor.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1560784425-20227-1-git-send-email-harish_kandiga@mentor.com>
+References: <1560784425-20227-1-git-send-email-harish_kandiga@mentor.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [137.202.0.90]
@@ -45,49 +47,51 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The purpose of this patchset is to provide a new inverter
-gpio controller to configure the polarity of the gpio pins.
-This driver enables the consumers to directly use the gpio pin
-without worrying about the hardware level polarity configuration.
-Polarity configuration will be done by the inverter gpio controller
-based on device tree information.
+Document the device tree binding for the inverter gpio
+controller to configure the polarity of the gpio pins
+used by the consumers.
 
-This is created after the discussion in the thread
-"gpio: set active-state of GPIO lines using device tree"
-https://www.spinics.net/lists/linux-gpio/msg38829.html
-to model inverters in the device tree to describe the hardware.
-
-Thanks,
-Harish.
-
+Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 ---
-
-Changes in V2:
-- Addressed review findings from Linus Walleij, Phil Reid,
-  Geert Uytterhoeven and Enrico Weigelt
-- Implement can_sleep changes
-- Changes not included
-  Wrap some functions like .set_multiple/.get_multiple/.set_config.
- Reason: Not completely certain of the necessity in this driver
-especially given gpio_chip_set_multiple and gpio_chip_get_multiple
-functions in gpiolib handles when the callbacks are not set.
-Also not sure of using gpiochip_generic_config as a callback function
-or with some other implementation.
-
-  Please let me know if they need to be implemented.
-
-Harish Jenny K N (2):
-  gpio: inverter: Add Inverter controller for gpio configuration
-  gpio: inverter: document the inverter bindings
-
- .../devicetree/bindings/gpio/gpio-inverter.txt     |  29 +++++
- drivers/gpio/Kconfig                               |   9 ++
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-inverter.c                       | 130 +++++++++++++++++++++
- 4 files changed, 169 insertions(+)
+ .../devicetree/bindings/gpio/gpio-inverter.txt     | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-inverter.txt
- create mode 100644 drivers/gpio/gpio-inverter.c
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-inverter.txt b/Documentation/devicetree/bindings/gpio/gpio-inverter.txt
+new file mode 100644
+index 0000000..cc8fe55
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-inverter.txt
+@@ -0,0 +1,29 @@
++GPIO-INVERTER
++======
++This binding defines the gpio-inverter. The gpio-inverter is a driver that
++allows to properly describe the gpio polarities on the hardware.
++
++Please refer to gpio.txt for generic information regarding GPIO bindings.
++
++Required properties:
++- compatible : "gpio-inverter".
++- gpio-controller: Marks the port as GPIO controller.
++- #gpio-cells: Two. The first cell is the pin number and
++   the second cell is used to specify the gpio polarity as defined in
++   defined in <dt-bindings/gpio/gpio.h>:
++      0 = GPIO_ACTIVE_HIGH
++      1 = GPIO_ACTIVE_LOW
++- mapped-gpios: Array of GPIO pins required from consumers, whose polarity has
++  to be configured in the driver.
++- gpio-line-names: This is an array of strings defining the names for the
++  mapped-gpios correspondingly. Name should be defined for each gpio pin.
++
++Example:
++
++gpio_inv: gpio-inv {
++	compatible = "gpio-inverter";
++	gpio-controller;
++	#gpio-cell = <2>;
++	mapped-gpios = <&gpio5 24 1>, <&gpio7 0 1>, <&gpio7 1 1>;
++	gpio-line-names = "JTAG_DNL_EN", "lvds-pwrdwn", "lcd-on";
++};
 --
 2.7.4
 
