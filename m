@@ -2,42 +2,43 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE49C31E44
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 06:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4D6C31E44
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 06:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E97218CD
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 06:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F8EB218C9
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 06:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560752708;
-	bh=co4CH3+SDS8TMkRgK/NCJ9ECqQhqAHMJdhoNOGwoOuo=;
+	s=default; t=1560752981;
+	bh=UcxbS7rUCgcBM/DB0jqfsiIGehfsD3/yjUCvwOkO9hs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QpLirFIxOH7ePDKbF7Z93ZX2iplRBSoQv6cto6/FqSpHaWzduVLglDxOEuU7b+tGe
-	 7KEVy91M+iC9Zy9uBjK8RCZlPxpvPTAw2VhK3TKRak4oiKqBFYJUtkTpR+HKPhtUno
-	 3mPavBDefZN/HqCqUJVe69PCH+F1GRskuofoR4xQ=
+	b=Q5i9EA2MCzKNQwLzqL8dzocpBeCvUuYZmyCWTL6jYKON77c4qTWynoUVWnkLu6HBW
+	 evEylBBf8n1VkG5AYjphppWLglC3zqy/IPcOz5Op8ZsEQENy8jael6ndSHdmvRnDDQ
+	 ikvYtVH5VVDnlRbmR48j9ty/fYVXrSzv5OZy2OZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbfFQGZH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 02:25:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
+        id S1725983AbfFQG3l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 02:29:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbfFQGZH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Jun 2019 02:25:07 -0400
+        id S1725468AbfFQG3k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 17 Jun 2019 02:29:40 -0400
 Received: from localhost (unknown [122.178.208.218])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D14202189F;
-        Mon, 17 Jun 2019 06:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25351218C9;
+        Mon, 17 Jun 2019 06:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560752706;
-        bh=co4CH3+SDS8TMkRgK/NCJ9ECqQhqAHMJdhoNOGwoOuo=;
+        s=default; t=1560752980;
+        bh=UcxbS7rUCgcBM/DB0jqfsiIGehfsD3/yjUCvwOkO9hs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X8Pfmd/rIU96IjvzY+RN4dwMfiLLpJtl74U3hxuwtuKX/aTl4lbPWXvaSFakH+RUi
-         qzB5vRYtTNTN5ASjIF9dNN6HsKOMCJzQkTwiZEyN/jzyp/7Me3DJi6EuSi/Ywpm4en
-         J8eG7dVIMlCWxnrBDNra6ZL/TyA0skTChyzI2CT4=
-Date:   Mon, 17 Jun 2019 11:51:58 +0530
+        b=0GW+tvR3UXIHVn9kTa0d5frYtD6j+epz/de/4QneHVmb5DBuSFjAFqdL3XYA/J3uQ
+         e/bvSEtKodHJBIsJ9rfClmB3o6sqj5rGgTb4BZ3RqgqPZcwHW91VAaio+6ZVD2vbw8
+         O+uJnoyHifdLQUaWJdBj6JZocjTJu8rctL4+IwS0=
+Date:   Mon, 17 Jun 2019 11:56:31 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -45,69 +46,116 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Prasad Sodagudi <psodagud@codeaurora.org>,
         Andy Gross <agross@kernel.org>,
         David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         "Isaac J . Manjarres" <isaacm@codeaurora.org>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SM8150 pinctrl
- binding
-Message-ID: <20190617062158.GG2962@vkoul-mobl>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: Add SM8150 pinctrl driver
+Message-ID: <20190617062631.GH2962@vkoul-mobl>
 References: <20190614053032.24208-1-vkoul@kernel.org>
- <20190617042032.GE750@tuxbook-pro>
+ <20190614053032.24208-2-vkoul@kernel.org>
+ <20190617041736.GD750@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617042032.GE750@tuxbook-pro>
+In-Reply-To: <20190617041736.GD750@tuxbook-pro>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 16-06-19, 21:20, Bjorn Andersson wrote:
+On 16-06-19, 21:17, Bjorn Andersson wrote:
 > On Thu 13 Jun 22:30 PDT 2019, Vinod Koul wrote:
-
-> > +- reg:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: the base address and size of the north, south , west
 > 
-> Extra space after south.
-
-Thanks will fix that
-
-> > +- #gpio-cells:
-> > +	Usage: required
-> > +	Value type: <u32>
-> > +	Definition: must be 2. Specifying the pin number and flags, as defined
-> > +		    in <dt-bindings/gpio/gpio.h>
-> > +
+> > From: Prasad Sodagudi <psodagud@codeaurora.org>
+> > 
+> > Add initial pinctrl driver to support pin configuration with
+> > pinctrl framework for SM8150
+> > 
+> > Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+> > Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
 > 
-> Please also document gpio-ranges and gpio-reserved-ranges.
+> I presume you did stuff to make it fit with my upstream tiling, mention
+> that here.
 
-Will add
+Thanks for pointing I did miss the changes I did
 
-> > +Example:
-> > +
-> > +	tlmm: pinctrl@3000000 {
-> > +		compatible = "qcom,sm8150-pinctrl";
-> > +		reg = <0x03100000 0x300000>,
-> > +		      <0x03500000 0x300000>,
-> > +		      <0x03900000 0x300000>,
-> > +		      <0x03D00000 0x300000>;
-> > +		reg-names = "west", "east", "north", "south";
-> > +		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +		interrupt-controller;
-> > +		#interrupt-cells = <2>;
 > 
-> You're missing the required gpio-ranges from the example, see e.g.
-> msm8996 (and please send a patch to the binding you based this on).
+> [..]
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-sm8150.c b/drivers/pinctrl/qcom/pinctrl-sm8150.c
+> [..]
+> > +static const struct pinctrl_pin_desc sm8150_pins[] = {
+> [..]
+> > +	PINCTRL_PIN(178, "UFS_RESET"),
+> 
+> Please follow
+> https://lore.kernel.org/linux-arm-msm/20190606010249.3538-2-bjorn.andersson@linaro.org/
+> for ufs_reset.
 
-I ported this from downstream but did look at existing upstream
-examples so will do that
+Sure will update 
+> 
+> > +};
+> [..]
+> > +enum sm8150_functions {
+> > +	msm_mux_phase_flag8,
+> 
+> Please sort these alphabetically and please squash all the phase_flag*
+> into msm_mux_phase_flag.
+
+Will do, is there a reason why we want to squash them?
+> 
+> > +	msm_mux_phase_flag7,
+> > +	msm_mux_emac_pps,
+> > +	msm_mux_qup12,
+> > +	msm_mux_qup16,
+> > +	msm_mux_tsif1_clk,
+> 
+> Please squash all tsif1 into msm_mux_tsif1.
+
+Will do
+
+> 
+> > +	msm_mux_qup8,
+> > +	msm_mux_qspi_cs,
+> > +	msm_mux_tgu_ch3,
+> > +	msm_mux_tsif1_en,
+> > +	msm_mux_qspi0,
+> > +	msm_mux_mdp_vsync0,
+> > +	msm_mux_mdp_vsync1,
+> > +	msm_mux_mdp_vsync2,
+> > +	msm_mux_mdp_vsync3,
+> > +	msm_mux_tgu_ch0,
+> > +	msm_mux_tsif1_data,
+> > +	msm_mux_qspi1,
+> > +	msm_mux_sdc4_cmd,
+> 
+> Squash sdc4_cmd, sdc4_clk and sdc4{0,1,2,3} into msm_mux_sdc4.
+
+Sure will do on all and again what is the motivation. I am trying to
+understand the reasoning so that next time I know what to do :-)
+
+> > +static const struct msm_function sm8150_functions[] = {
+> > +	FUNCTION(phase_flag8),
+> 
+> Please sort this array as well.
+
+okay
+
+> > +static const struct msm_pingroup sm8150_groups[] = {
+> [..]
+> > +	[58] = PINGROUP(58, SOUTH, qup17, qup19, qdss_cti, qdss_cti, _, _, _, _, _),
+> 
+> qdss_cti can't be both function 3 and 4 of a single pin.
+
+Let me check, maybe error in downstream code
+
+> > +static struct platform_driver sm8150_pinctrl_driver = {
+> > +	.driver = {
+> > +		.name = "sm8150-pinctrl",
+> > +		.owner = THIS_MODULE,
+> 
+> No .owner in platform_driver
+
+Yeah missed to remove
 
 -- 
 ~Vinod
