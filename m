@@ -2,46 +2,47 @@ Return-Path: <SRS0=hS6F=UQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D22C31E58
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5958BC31E57
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78F620833
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32510208E4
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jun 2019 10:05:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="egLGVkaJ"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Q4w3DyMp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfFQKFF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jun 2019 06:05:05 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50906 "EHLO
+        id S1728096AbfFQKEq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jun 2019 06:04:46 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50922 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbfFQKEr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 06:04:47 -0400
+        with ESMTP id S1726960AbfFQKEq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jun 2019 06:04:46 -0400
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5D8A3806A8;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A630E891A9;
         Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1560765884;
-        bh=9TpEGxHoVApXP2xLWWFd+WbRCiDRhmBeG+15sZtDkzI=;
-        h=From:To:Cc:Subject:Date;
-        b=egLGVkaJOy4SKnBeqUY9fYo6IV/6Ys5fal7z2qTJ/DlqBSCjr1hz6IJwJrNuY3EdE
-         e9p7YxcLRCp9k1cKlcWJTo9QUUGejZrk5+GE5eyPtoDUJukOg19BVxUa6mLChv2tns
-         LrATW1fxZWkBH7BVZ1NLuyIC4EKfxvaxHI9EgD0xgSjo0AmOe6UWC3Jz326GlOevjv
-         iu/3fd3fyigLsNiaH6ius07s3i/bXxr7SvB6s5iQ/ZgKNiINH6Skq758URaQsF/w2A
-         +psnuWVfbIo+gDvikFiuZZUl/Rgpb52CEHVB0MdnCEGICKpCrXeNgaatYGvG20X4+w
-         1sQGPDKbgVIqA==
+        bh=4b/x7I8aVyzsurIMFQ0LkU0sx+0wbtevSohKT1oCTNk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Q4w3DyMpFyN4fgkK6aAGhdxc8LIEI9NzWSVZI0qj/zExIpxvRDhUeeSwwgdnwU3LZ
+         b91LOHT/IVlF6UWsXgLCVEvDFU6YJYeyHP4sTmnwcdhPimcpYX936ylvaR5LRrKt9X
+         eJn4g6i5nSR+skXJduqHefC0SKZW1MjGqBalm1kxHEQ0o6PLlqFNlK6In41/oeJBCt
+         hY2Q08zRPoAHzOFXF2HLsllJb2/0arZYIeD2XZRuzJGZFJ1/pFFicMhbg4JyRyVfl1
+         ZoihyL0muyI1CrWzuB63FZ415wp/UlJ8RH9gqPFgL+znzBhw9eEX47hwcElk30CNMB
+         bfZhVyRT0PGJw==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d0765bc0000>; Mon, 17 Jun 2019 22:04:44 +1200
+        id <B5d0765bc0002>; Mon, 17 Jun 2019 22:04:44 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 4985E13EED3;
+        by smtp (Postfix) with ESMTP id 7C70313EED3;
         Mon, 17 Jun 2019 22:04:45 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 1E69B1E04F0; Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
+        id 536631E04F0; Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, linus.walleij@linaro.org,
@@ -50,10 +51,12 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 0/4] Add support for Marvell 98DX1135
-Date:   Mon, 17 Jun 2019 22:04:28 +1200
-Message-Id: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 2/4] dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core clock
+Date:   Mon, 17 Jun 2019 22:04:30 +1200
+Message-Id: <20190617100432.13037-3-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+References: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 x-atlnz-ls: pat
@@ -62,26 +65,27 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Marvell 98DX1135 is a switch chip with an integrated ARMv5 CPU, it is
-similar to the 98DX4122 with differences in clocking and pin control.
+Add compatible string for the core clock on the 98dx1135 switch with
+integrated CPU.
 
-I haven't added a separate dts for the SoC since it would be so similar t=
-o
-kirkwood-98dx4122.dtsi.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ Documentation/devicetree/bindings/clock/mvebu-core-clock.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Chris Packham (4):
-  dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
-  dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core
-    clock
-  pinctrl: mvebu: Add support for MV98DX1135
-  clk: kirkwood: Add support for MV98DX1135
-
- .../bindings/clock/mvebu-core-clock.txt       |   1 +
- .../pinctrl/marvell,kirkwood-pinctrl.txt      |  44 +-
- drivers/clk/mvebu/kirkwood.c                  |  17 +
- drivers/pinctrl/mvebu/pinctrl-kirkwood.c      | 576 +++++++++---------
- 4 files changed, 357 insertions(+), 281 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt=
+ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+index 796c260c183d..76f0952cfc64 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+@@ -59,6 +59,7 @@ Required properties:
+ 	"marvell,dove-core-clock" - for Dove SoC core clocks
+ 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
+ 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
++	"marvell,mv98dx1135-core-clock" - for 98dx1135 SoC core clocks
+ 	"marvell,mv88f5181-core-clock" - for Orion MV88F5181 SoC
+ 	"marvell,mv88f5182-core-clock" - for Orion MV88F5182 SoC
+ 	"marvell,mv88f5281-core-clock" - for Orion MV88F5281 SoC
 --=20
 2.21.0
 
