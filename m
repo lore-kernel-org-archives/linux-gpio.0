@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89E9C31E5D
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26D1C31E5E
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13A42084B
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787F720863
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 07:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rKHUB+Hq"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Wkp4Qxu1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729258AbfFRHrW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Jun 2019 03:47:22 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9740 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729251AbfFRHrW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 03:47:22 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0897080000>; Tue, 18 Jun 2019 00:47:20 -0700
+        id S1729215AbfFRHrR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Jun 2019 03:47:17 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14193 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfFRHrQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 03:47:16 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0897030000>; Tue, 18 Jun 2019 00:47:15 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Jun 2019 00:47:21 -0700
+  Tue, 18 Jun 2019 00:47:15 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 00:47:21 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 07:47:20 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 18 Jun 2019 07:47:20 +0000
+        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 00:47:15 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
+ 2019 07:47:15 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
+ 2019 07:47:15 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 18 Jun 2019 07:47:15 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.168.217]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0897060003>; Tue, 18 Jun 2019 00:47:20 -0700
+        id <B5d0897000006>; Tue, 18 Jun 2019 00:47:15 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -48,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V3 17/17] arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-Date:   Tue, 18 Jun 2019 00:46:31 -0700
-Message-ID: <1560843991-24123-18-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V3 15/17] soc/tegra: pmc: configure core power request polarity
+Date:   Tue, 18 Jun 2019 00:46:29 -0700
+Message-ID: <1560843991-24123-16-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
 References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
@@ -58,47 +61,56 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560844041; bh=Vsp36/vqBLGzaHV4U5nFiJBH5J5qqVmQ31C7uPAHcPk=;
+        t=1560844035; bh=ZIM1lgKmGOLI8vjBUZA7Djdy5mObSNe1HI0kza+VS88=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=rKHUB+HqOYKLOeLs3gxU+2VJICl873Ak0DxOzwmFxJZtt4Rp0tDiqJwLoQAf2qHEe
-         bFfkRful2dQCxQoJuqpkTKOVj4/yD2dC6WT7xi8zRhobYnUS4uKcOa+Yzn3ey5QgUc
-         iSSNhOqqtjMwLwlrTl3kgmE/K7AW0VcJil7Z6O5Rspqz0LKi9ChNJwkIvBaYQMxG8F
-         +/yJ75T4Rigjpd8SWCxauF8IkDj+H9CfO3QTSOjKyE1FXg0TBAwt3gCM/rxMHKBkGq
-         kl71f1CHD6tzP7ABi5ojSXQHJQ1cZBpvdEve42/MNE67nkDNUDldpsob1DTwJxfo4X
-         Z88pVPot5Alnw==
+        b=Wkp4Qxu1JqsaH8jdLmvAIkoRC95+Ax2jKrePMPbf+rOcKLuTcrM9b9uJQyWNi8E7V
+         BCX2c8EhvV06SxEXy4k98Gw3gWjzK3zFXdarlfVBEANy8yIyR45GV5a8HF47Bpx7TQ
+         F8szrzHmPD0mZYmcCVm7FLCq6dYFaDjOH728DNWqXu5YfsKRcVDMGFBVkzmnHBHMqC
+         gkfbXglYAP1LDpOd6SOBkIET/b+YmHq2poXiI1k9Y9yJZOQ1JWaoBo+SIDL/Iiinlv
+         N0TmSvRWUM1pr44OxVOLhFnqUVBPXmjatk/w1TEmfPrHDylCV9kS7KlbgsGZdvxAzQ
+         hnxLNiPFjE7KA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch has Jetson TX1 platform specific SC7 timing configuration
-in device tree.
+This patch configures polarity of the core power request signal
+in PMC control register based on the device tree property.
+
+PMC asserts and de-asserts power request signal based on it polarity
+when it need to power-up and power-down the core rail during SC7.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/soc/tegra/pmc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index e8654061ce03..f7c9332085f8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -279,6 +279,13 @@
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 603fc3bd73f5..c9eea5ef008a 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -56,6 +56,7 @@
+ #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
+ #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
  
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <4587 3876>;
-+		nvidia,core-pwr-off-time = <39065>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
- 	};
+@@ -2304,6 +2305,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	else
+ 		value |= PMC_CNTRL_SYSCLK_POLARITY;
  
- 	/* eMMC */
++	if (pmc->corereq_high)
++		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
++	else
++		value |= PMC_CNTRL_PWRREQ_POLARITY;
++
+ 	/* configure the output polarity while the request is tristated */
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+ 
 -- 
 2.7.4
 
