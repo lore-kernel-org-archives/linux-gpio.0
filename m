@@ -1,317 +1,154 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: Add SM8150 pinctrl driver
-Date: Sun, 16 Jun 2019 21:17:36 -0700
-Message-ID: <20190617041736.GD750@tuxbook-pro>
-References: <20190614053032.24208-1-vkoul@kernel.org>
- <20190614053032.24208-2-vkoul@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190614053032.24208-2-vkoul@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>, Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "Isaac J . Manjarres" <isaacm@codeaurora.org>
-List-Id: linux-gpio@vger.kernel.org
+Return-Path: <SRS0=ToIH=UR=vger.kernel.org=linux-gpio-owner@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E596C31E51
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 09:30:49 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 745EA206B7
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 09:30:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOehSmar"
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1729541AbfFRJap (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Jun 2019 05:30:45 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35413 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfFRJao (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 05:30:44 -0400
+Received: by mail-lj1-f195.google.com with SMTP id x25so2783951ljh.2;
+        Tue, 18 Jun 2019 02:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hwSDkScSTH1y8sb3aftSeN21vZ+s3ceMmS61Z1eIWFg=;
+        b=IOehSmarBYtYG0PESpyQ5pXtttvQrv4cn6RnKaUml6NcUFPgEnZ4p3s2+KnQTzJ5R3
+         njsVw+Y0UqiN7ZYQ9IHfdpFDjgdeBLHUgR8KWGgaogvXcwIxgED0Nlubsugg2ilIXMmp
+         LzvBrVxbwvIH6HluvcTtnKciuadwIa/tXeug4lhRfKjC9jb5ij6QI8OEhkrqipUQ9t/2
+         OY9x9adFYgZ2syqQBqOkk2zHp/iX9DgKNT+R6mveMP1Y6+3B6b4DPwpF4vE5rNmrtOTG
+         i+J3zUHmBHsf3vPOqECQaFMvbWw7cRLntoCAwekfKL3lOX3Mxs0rJXmy8tRMQMXVQUfk
+         rzug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hwSDkScSTH1y8sb3aftSeN21vZ+s3ceMmS61Z1eIWFg=;
+        b=d4UVfACq/+0fGUiaxR/KdzQ5mhrXfQgyYW0WFXq1i1QV+k+Pg40JjZX+4/qDJTcDYN
+         WuV+bRWTd0Pn+xueI+MRkg6FcMq3ibUnBVIoWuZi4DwevQavY4+Yci067LqmfcFbWyGy
+         YpNYUTJT4DPmAeW3REVSdE301XaQu7b9YB6jgGC0LM7GI1H+K4IASUOooyjE5qVDZJty
+         Q1iLGSWGtmqzl5LB3WtS5ndWOWFdILZ8u4DIpXszYiZz42rkvvq0vdsV+Waz3bZXEfkR
+         Lo5hoyGrpfkMaqM5fKsQrNTtpqFus1QLvD+4UNfJyzEMdKJdCx/OEr6E0mRDYsHd9KQ2
+         Ldlw==
+X-Gm-Message-State: APjAAAVbxrKuMAB3Ct7kxKaRpGshaIBKIKzKa5uzBW62gO8Bx+firXpu
+        KtgRKh8076uSwIxPsoHY+ih/NmAK
+X-Google-Smtp-Source: APXvYqzuLpP3JYktzxazLNNIsazSiiqdNS4Ctr1RcL4eCpoQTgI0mNPjSHZa1/yoASQxaOiRlZjddw==
+X-Received: by 2002:a2e:4794:: with SMTP id u142mr16247893lja.222.1560850240997;
+        Tue, 18 Jun 2019 02:30:40 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id r17sm1306703ljb.77.2019.06.18.02.30.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 02:30:40 -0700 (PDT)
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        Stephen Warren <swarren@wwwdotorg.org>
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+Message-ID: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+Date:   Tue, 18 Jun 2019 12:30:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+MIME-Version: 1.0
+In-Reply-To: <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-gpio-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-gpio.vger.kernel.org>
+X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu 13 Jun 22:30 PDT 2019, Vinod Koul wrote:
-
-> From: Prasad Sodagudi <psodagud@codeaurora.org>
+18.06.2019 12:22, Dmitry Osipenko пишет:
+> 18.06.2019 10:46, Sowjanya Komatineni пишет:
+>> This patch adds suspend and resume support for Tegra pinctrl driver
+>> and registers them to syscore so the pinmux settings are restored
+>> before the devices resume.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>>  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>  drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>  7 files changed, 84 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> index 34596b246578..ceced30d8bd1 100644
+>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>> @@ -20,11 +20,16 @@
+>>  #include <linux/pinctrl/pinmux.h>
+>>  #include <linux/pinctrl/pinconf.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/syscore_ops.h>
+>>  
+>>  #include "../core.h"
+>>  #include "../pinctrl-utils.h"
+>>  #include "pinctrl-tegra.h"
+>>  
+>> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+>> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+>> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+>> +
+>>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>>  {
+>>  	return readl(pmx->regs[bank] + reg);
+>> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>  			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>  		}
+>>  	}
+>> +
+>> +	if (pmx->soc->has_park_padcfg) {
+>> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>> +		val &= ~EMMC_DPD_PARKING;
+>> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>> +
+>> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>> +		val &= ~EMMC_DPD_PARKING;
+>> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>> +	}
+>> +}
 > 
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for SM8150
+> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+> asking in a comment to v2?
 > 
-> Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-> Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
+> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+> consistency when possible, hence adding platform specifics here should be discouraged.
+> And then the parked_bitmask will also result in a proper hardware description in the code.
+> 
 
-I presume you did stuff to make it fit with my upstream tiling, mention
-that here.
+I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
+for the pinctrl drivers. So I guess all those tables were auto-generated initially.
 
-[..]
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sm8150.c b/drivers/pinctrl/qcom/pinctrl-sm8150.c
-[..]
-> +static const struct pinctrl_pin_desc sm8150_pins[] = {
-[..]
-> +	PINCTRL_PIN(178, "UFS_RESET"),
-
-Please follow
-https://lore.kernel.org/linux-arm-msm/20190606010249.3538-2-bjorn.andersson@linaro.org/
-for ufs_reset.
-
-> +};
-[..]
-> +enum sm8150_functions {
-> +	msm_mux_phase_flag8,
-
-Please sort these alphabetically and please squash all the phase_flag*
-into msm_mux_phase_flag.
-
-> +	msm_mux_phase_flag7,
-> +	msm_mux_emac_pps,
-> +	msm_mux_qup12,
-> +	msm_mux_qup16,
-> +	msm_mux_tsif1_clk,
-
-Please squash all tsif1 into msm_mux_tsif1.
-
-> +	msm_mux_qup8,
-> +	msm_mux_qspi_cs,
-> +	msm_mux_tgu_ch3,
-> +	msm_mux_tsif1_en,
-> +	msm_mux_qspi0,
-> +	msm_mux_mdp_vsync0,
-> +	msm_mux_mdp_vsync1,
-> +	msm_mux_mdp_vsync2,
-> +	msm_mux_mdp_vsync3,
-> +	msm_mux_tgu_ch0,
-> +	msm_mux_tsif1_data,
-> +	msm_mux_qspi1,
-> +	msm_mux_sdc4_cmd,
-
-Squash sdc4_cmd, sdc4_clk and sdc4{0,1,2,3} into msm_mux_sdc4.
-
-> +	msm_mux_phase_flag31,
-> +	msm_mux_tgu_ch1,
-> +	msm_mux_wlan1_adc1,
-> +	msm_mux_tsif1_sync,
-> +	msm_mux_qspi2,
-> +	msm_mux_sdc43,
-> +	msm_mux_vfr_1,
-> +	msm_mux_phase_flag30,
-> +	msm_mux_tgu_ch2,
-> +	msm_mux_wlan1_adc0,
-> +	msm_mux_tsif2_clk,
-
-Please squash all tsif2
-
-> +	msm_mux_qup11,
-> +	msm_mux_qspi_clk,
-> +	msm_mux_sdc4_clk,
-> +	msm_mux_phase_flag27,
-> +	msm_mux_wlan2_adc1,
-> +	msm_mux_tsif2_en,
-> +	msm_mux_qspi3,
-> +	msm_mux_sdc42,
-> +	msm_mux_phase_flag26,
-> +	msm_mux_wlan2_adc0,
-> +	msm_mux_tsif2_data,
-> +	msm_mux_sdc41,
-> +	msm_mux_phase_flag25,
-> +	msm_mux_tsif2_sync,
-> +	msm_mux_sdc40,
-> +	msm_mux_tsif2_error,
-> +	msm_mux_phase_flag11,
-> +	msm_mux_sd_write,
-> +	msm_mux_tsif1_error,
-> +	msm_mux_qup7,
-> +	msm_mux_ddr_bist,
-> +	msm_mux_ddr_pxi3,
-> +	msm_mux_atest_usb13,
-> +	msm_mux_ddr_pxi1,
-> +	msm_mux_pll_bypassnl,
-> +	msm_mux_atest_usb12,
-> +	msm_mux_pll_reset,
-> +	msm_mux_pci_e1,
-> +	msm_mux_uim2_data,
-> +	msm_mux_uim2_clk,
-> +	msm_mux_uim2_reset,
-> +	msm_mux_uim2_present,
-
-Please squash uim2.
-
-> +	msm_mux_uim1_data,
-> +	msm_mux_uim1_clk,
-> +	msm_mux_uim1_reset,
-> +	msm_mux_uim1_present,
-
-Please squash uim1.
-
-> +	msm_mux_uim_batt,
-> +	msm_mux_usb2phy_ac,
-> +	msm_mux_aoss_cti,
-> +	msm_mux_qup1,
-> +	msm_mux_rgmii_txc,
-
-Please squash all the rmiii_*
-
-> +	msm_mux_phase_flag20,
-> +	msm_mux_rgmii_rxc,
-> +	msm_mux_phase_flag19,
-> +	msm_mux_adsp_ext,
-> +	msm_mux_rgmii_rx,
-> +	msm_mux_phase_flag18,
-> +	msm_mux_rgmii_rxd0,
-> +	msm_mux_phase_flag17,
-> +	msm_mux_rgmii_rxd1,
-> +	msm_mux_phase_flag16,
-> +	msm_mux_qup5,
-> +	msm_mux_rgmii_rxd2,
-> +	msm_mux_phase_flag15,
-> +	msm_mux_rgmii_rxd3,
-> +	msm_mux_phase_flag14,
-> +	msm_mux_rgmii_tx,
-> +	msm_mux_phase_flag13,
-> +	msm_mux_rgmii_txd0,
-> +	msm_mux_phase_flag12,
-> +	msm_mux_atest_usb22,
-> +	msm_mux_emac_phy,
-> +	msm_mux_hs3_mi2s,
-> +	msm_mux_sec_mi2s,
-> +	msm_mux_qup2,
-> +	msm_mux_phase_flag9,
-> +	msm_mux_phase_flag4,
-> +	msm_mux_phase_flag21,
-> +	msm_mux_jitter_bist,
-> +	msm_mux_atest_usb21,
-> +	msm_mux_pll_bist,
-> +	msm_mux_atest_usb20,
-> +	msm_mux_atest_char0,
-> +	msm_mux_ter_mi2s,
-> +	msm_mux_gcc_gp1,
-> +	msm_mux_atest_char1,
-> +	msm_mux_atest_char2,
-> +	msm_mux_atest_char3,
-> +	msm_mux_qua_mi2s,
-> +	msm_mux_pri_mi2s,
-> +	msm_mux_qup3,
-> +	msm_mux_phase_flag29,
-> +	msm_mux_ddr_pxi0,
-> +	msm_mux_pri_mi2s_ws,
-> +	msm_mux_phase_flag28,
-> +	msm_mux_vsense_trigger,
-> +	msm_mux_atest_usb1,
-> +	msm_mux_atest_usb11,
-> +	msm_mux_ddr_pxi2,
-> +	msm_mux_dbg_out,
-> +	msm_mux_atest_usb10,
-> +	msm_mux_spkr_i2s,
-> +	msm_mux_audio_ref,
-> +	msm_mux_lpass_slimbus,
-> +	msm_mux_tsense_pwm1,
-> +	msm_mux_tsense_pwm2,
-> +	msm_mux_btfm_slimbus,
-> +	msm_mux_hs1_mi2s,
-> +	msm_mux_cri_trng0,
-> +	msm_mux_hs2_mi2s,
-> +	msm_mux_cri_trng1,
-> +	msm_mux_cri_trng,
-> +	msm_mux_sp_cmu,
-> +	msm_mux_prng_rosc,
-> +	msm_mux_qup0,
-> +	msm_mux_gpio,
-> +	msm_mux_qup6,
-> +	msm_mux_rgmii_txd1,
-> +	msm_mux_rgmii_txd2,
-> +	msm_mux_rgmii_txd3,
-> +	msm_mux_qup_l6,
-> +	msm_mux_rgmii_mdc,
-> +	msm_mux_qup_l5,
-> +	msm_mux_mdp_vsync,
-> +	msm_mux_edp_lcd,
-> +	msm_mux_qup10,
-> +	msm_mux_m_voc,
-> +	msm_mux_edp_hot,
-> +	msm_mux_cam_mclk,
-> +	msm_mux_qdss_gpio0,
-
-Please squash all qdss_gpio into msm_mux_qdss (iirc qdss_cti is a
-separate thing).
-
-> +	msm_mux_qdss_gpio1,
-> +	msm_mux_qdss_gpio2,
-> +	msm_mux_qdss_gpio3,
-> +	msm_mux_cci_i2c,
-> +	msm_mux_qdss_gpio4,
-> +	msm_mux_phase_flag3,
-> +	msm_mux_qdss_gpio5,
-> +	msm_mux_phase_flag2,
-> +	msm_mux_qdss_gpio6,
-> +	msm_mux_phase_flag1,
-> +	msm_mux_qdss_gpio7,
-> +	msm_mux_cci_timer0,
-> +	msm_mux_gcc_gp2,
-> +	msm_mux_qdss_gpio8,
-> +	msm_mux_cci_timer1,
-> +	msm_mux_gcc_gp3,
-> +	msm_mux_qdss_gpio,
-> +	msm_mux_cci_timer2,
-> +	msm_mux_qup18,
-> +	msm_mux_qdss_gpio9,
-> +	msm_mux_cci_timer3,
-> +	msm_mux_cci_async,
-> +	msm_mux_qdss_gpio10,
-> +	msm_mux_cci_timer4,
-> +	msm_mux_qdss_gpio11,
-> +	msm_mux_qdss_gpio12,
-> +	msm_mux_qup15,
-> +	msm_mux_qdss_gpio15,
-> +	msm_mux_qdss_gpio13,
-> +	msm_mux_qdss_gpio14,
-> +	msm_mux_pci_e0,
-> +	msm_mux_qup_l4,
-> +	msm_mux_agera_pll,
-> +	msm_mux_usb_phy,
-> +	msm_mux_qup9,
-> +	msm_mux_qup13,
-> +	msm_mux_qdss_cti,
-> +	msm_mux_qup14,
-> +	msm_mux_qup4,
-> +	msm_mux_qup17,
-> +	msm_mux_qup19,
-> +	msm_mux_phase_flag5,
-> +	msm_mux_phase_flag0,
-> +	msm_mux_phase_flag22,
-> +	msm_mux_rgmii_mdio,
-> +	msm_mux_phase_flag10,
-> +	msm_mux_atest_char,
-> +	msm_mux_nav_pps,
-> +	msm_mux_atest_usb2,
-> +	msm_mux_qlink_request,
-> +	msm_mux_qlink_enable,
-> +	msm_mux_wmss_reset,
-> +	msm_mux_atest_usb23,
-> +	msm_mux_phase_flag6,
-> +	msm_mux_pa_indicator,
-> +	msm_mux_phase_flag23,
-> +	msm_mux_mss_lte,
-> +	msm_mux_phase_flag24,
-> +	msm_mux__,
-> +};
-[..]
-> +static const struct msm_function sm8150_functions[] = {
-> +	FUNCTION(phase_flag8),
-
-Please sort this array as well.
-
-> +	FUNCTION(phase_flag7),
-[..]
-> +};
-> +
-> +/*
-> + * Every pin is maintained as a single group, and missing or non-existing pin
-> + * would be maintained as dummy group to synchronize pin group index with
-> + * pin descriptor registered with pinctrl core.
-> + * Clients would not be able to request these dummy pin groups.
-> + */
-> +static const struct msm_pingroup sm8150_groups[] = {
-[..]
-> +	[58] = PINGROUP(58, SOUTH, qup17, qup19, qdss_cti, qdss_cti, _, _, _, _, _),
-
-qdss_cti can't be both function 3 and 4 of a single pin.
-
-[..]
-> +static struct platform_driver sm8150_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "sm8150-pinctrl",
-> +		.owner = THIS_MODULE,
-
-No .owner in platform_driver
-
-> +		.of_match_table = sm8150_pinctrl_of_match,
-> +	},
-> +	.probe = sm8150_pinctrl_probe,
-> +	.remove = msm_pinctrl_remove,
-> +};
-
-Regards,
-Bjorn
+Stephen, maybe you could adjust the generator to take into account the bitmask (of
+course if that's a part of the generated code) and then re-gen it all for Sowjanya?
