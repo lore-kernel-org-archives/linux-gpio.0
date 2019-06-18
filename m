@@ -2,88 +2,132 @@ Return-Path: <SRS0=ToIH=UR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7ECC31E5B
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 14:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2322C31E5B
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 15:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8328F20B1F
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 14:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560867027;
-	bh=+MaWx/yhErpFJc8IRp9wu8NUBg6hG3zsUCoiMKe9yZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LLqgLXP8jJhXFWnak4CXcNJI97YABb3BM/t6Olb8N5jKa4GfFmWq/BdHvFmySi1Dw
-	 NkvqJ5sH3hjjdktFcxf6XG05I4KnSxPiAuOTi1PKY+wIYM0//R4rmX6Sq++x/Xp5+R
-	 K3osgb/7C4crgPb7jawuMsgDnEnQNywHfQHSE9Gg=
+	by mail.kernel.org (Postfix) with ESMTP id 96F5621655
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 15:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfFROK1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Jun 2019 10:10:27 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44719 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfFROK0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 10:10:26 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p144so8593588qke.11;
-        Tue, 18 Jun 2019 07:10:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ymzVRv+HbWASk9IbK9IR5jfXe4p30txsWn7MI2aWfko=;
-        b=DOOWp3vW4HwawykDQ1Pi4PSzyzJfFkgUpAfvf3igvw4gXZF41Mzo4LPMBc/wFuOxyj
-         E/2KT3DTrrLJ+sEeEXDFA7EpBmwI5jBOS/TYM08CsTGFQmWSFxaTueKQlgqylOxWgWe3
-         Spj7JsDpBU3rvPrzEO93Nexo0Zc1GM34St7cdpKA9YwHEiFGhEclq3L9+GpgFxO+LKRu
-         svzvOg+fZ9PFaxV67ZYcGW2o7+SkUt9jyOy3GhjF8vt/X+2nhdSJuSizZyF4CXe5R2Bt
-         4kmgX36oU8/3yA9m3KUBn/M2PaLTWftzs/4MXiei4dNijc5WKT/ZAdYmmsUUmEjsEePq
-         dfbg==
-X-Gm-Message-State: APjAAAWncFOW1ieSn3+JMmOVhYFVZn6YzLJ0qtz2gPRxP3p2Pa/Z1d7Q
-        FWVUbVEXcn3EF5gZ/a4XtQ==
-X-Google-Smtp-Source: APXvYqzTd+SUScnI+raBK375orxhwOZtIjBl7LTQ+SrdOuzX+fB6KoQ7w06WVT6SBK2QaP+LwnqcBg==
-X-Received: by 2002:a37:9ece:: with SMTP id h197mr75339469qke.50.1560867025673;
-        Tue, 18 Jun 2019 07:10:25 -0700 (PDT)
-Received: from localhost ([64.188.179.192])
-        by smtp.gmail.com with ESMTPSA id s11sm9602685qte.49.2019.06.18.07.10.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 07:10:25 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 08:10:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Mark Rutland <mark.rutland@arm.com>, openbmc@lists.ozlabs.org,
-        openipmi-developer@lists.sourceforge.net,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] dt-bindings: Add missing newline at end of file
-Message-ID: <20190618141023.GA20154@bogus>
-References: <20190617143322.4332-1-geert+renesas@glider.be>
+        id S1729472AbfFRPsX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Jun 2019 11:48:23 -0400
+Received: from avon.wwwdotorg.org ([104.237.132.123]:60274 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbfFRPsX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 11:48:23 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 11:48:22 EDT
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 95AB01C015A;
+        Tue, 18 Jun 2019 09:41:05 -0600 (MDT)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+ <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+Date:   Tue, 18 Jun 2019 09:41:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617143322.4332-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 17 Jun 2019 16:33:22 +0200, Geert Uytterhoeven wrote:
-> "git diff" says:
+On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
+> 18.06.2019 12:22, Dmitry Osipenko пишет:
+>> 18.06.2019 10:46, Sowjanya Komatineni пишет:
+>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>> and registers them to syscore so the pinmux settings are restored
+>>> before the devices resume.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>   7 files changed, 84 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> index 34596b246578..ceced30d8bd1 100644
+>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> @@ -20,11 +20,16 @@
+>>>   #include <linux/pinctrl/pinmux.h>
+>>>   #include <linux/pinctrl/pinconf.h>
+>>>   #include <linux/slab.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   
+>>>   #include "../core.h"
+>>>   #include "../pinctrl-utils.h"
+>>>   #include "pinctrl-tegra.h"
+>>>   
+>>> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+>>> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+>>> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+>>> +
+>>>   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>>>   {
+>>>   	return readl(pmx->regs[bank] + reg);
+>>> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>>   		}
+>>>   	}
+>>> +
+>>> +	if (pmx->soc->has_park_padcfg) {
+>>> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +
+>>> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +	}
+>>> +}
+>>
+>> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+>> asking in a comment to v2?
+>>
+>> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+>> consistency when possible, hence adding platform specifics here should be discouraged.
+>> And then the parked_bitmask will also result in a proper hardware description in the code.
+>>
 > 
->     \ No newline at end of file
+> I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
+> for the pinctrl drivers. So I guess all those tables were auto-generated initially.
 > 
-> after modifying the files.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt      | 2 +-
->  .../devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt     | 2 +-
->  Documentation/devicetree/bindings/regulator/pv88060.txt         | 2 +-
->  Documentation/devicetree/bindings/sound/cs42l73.txt             | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
+> Stephen, maybe you could adjust the generator to take into account the bitmask (of
+> course if that's a part of the generated code) and then re-gen it all for Sowjanya?
 
-Applied, thanks.
-
-Rob
+https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that 
+generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. 
+IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is 
+welcome to send a patch to that repo if the code needs to be updated.
