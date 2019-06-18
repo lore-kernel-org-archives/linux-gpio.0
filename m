@@ -2,61 +2,91 @@ Return-Path: <SRS0=ToIH=UR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AC3C31E51
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A11FC31E51
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82945208E4
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB9421655
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbfFRKke (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1729529AbfFRKke (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 18 Jun 2019 06:40:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:59579 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.75]:38287 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFRKke (ORCPT
+        with ESMTP id S1729206AbfFRKke (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 06:40:34 -0400
 Received: from orion.localdomain ([95.114.66.109]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M4bA0-1hepQm44TG-001jAh; Tue, 18 Jun 2019 12:40:31 +0200
+ 1MA7Su-1hkI1F2aZm-00BeoB; Tue, 18 Jun 2019 12:40:31 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel@pengutronix.de, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
-Subject: siox: driver init boilerplate reduction v2
-Date:   Tue, 18 Jun 2019 12:40:25 +0200
-Message-Id: <1560854427-27537-1-git-send-email-info@metux.net>
+Subject: [PATCH v2 2/2] drivers: gpio: siox: use module_siox_driver()
+Date:   Tue, 18 Jun 2019 12:40:27 +0200
+Message-Id: <1560854427-27537-3-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:Od4aM4fmkzHf7juVTjpfT9hTLNtLZiRBXdT3JPvX8+iO4dtGdqw
- exQgRGz/8ptCo0sw/U//tYvpjiXaXvp/y6NLiYjW/+1TAn1jS8elKMxKX69HeCZdnoklp4i
- 3n4MVD0mS6Zx5ODdKiu9RwpzN566tOkcK4VEM2k69rvSWPy0whSW8+gxLxT0ch+6NTx8hjO
- qhZIii9Enl3BSHzwa2g5A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:noWjooNOWnc=:OwE0GiMr/cWHwjVHoT4SZq
- xlHpeB8RZYROxlfvSz9L28pziCwbmebaULL7lD7IuL7Oku8HUmoe15qJa0X2Ch+94VTYUSpYy
- y4lRLJrcV1Io2g2CV9Tqlyh62YoR3tQNaZbK0jFSelvjCjfzuZLKa1HdE4ImoOjN0oi4fBjf6
- ELu7g5E98erlxFLZzHVK9zmAk2EhLRaAjhWfxgkIcemPhTydiB9pg1qLgD6KqszFNJw4GLJsn
- crtPtmqq+6PnrQOJeWQc7E0g51ThRu6/12W/jz1qbjzw83ZGkeRqPDbPW63DnCvwL3yU5p01s
- Ddc1bcwyPO8QtTdqHNBkMxg48kmSIbLJbleG4i1/6yVg9RVcKyKzlOIUpQEYXro2PLVY9CuUE
- OcuHF9JIBRufM51KehNG8tw+UtMjc43h+U/9ZWeKmIG+b85NDT9bvZTim2zr+w4fTvV6VoA5B
- 5uk43IxVoKlGw0I+5WyTW8y/TH30oyMRHeczDJZp+yKK6lrDUq+Ej84WOfLChA04vcQ0/WXkL
- mHt6xj5SDGKhm2XOjEkQ2Id1q+cWlS3TTl7TNy8tO01xTkEGWRvgoXvyAVy2nq44LCS6ey6KU
- HAGr4pKw+AczYC3mfFFCEgh+KeTNTqeq+p82Hxy+U58mtq6Th0J3w3sqgB1ljXH42/muT9trV
- IDSP/N8p4Gvnti2/CikBQMOx35Aa6PU23CaP4C+j5r5RvqQ8ImNx6h5+uV6Kfcw+ckLJbvLLu
- WyaPBqna5EBZOewt6NjAjaiUTjPYbfqRsBHNaA==
+In-Reply-To: <1560854427-27537-1-git-send-email-info@metux.net>
+References: <1560854427-27537-1-git-send-email-info@metux.net>
+X-Provags-ID: V03:K1:45Ac3UiLARhLc+RI3tf9JOC/IGGQDCADcprV2HEjVi8Z0XOcCcR
+ h+KHapYSoNqkKxh2T8dt4jvrQNMV5/bfa62a8mVgEppDX+8q9ATwSUEcyVo5XuCfyjWAZg6
+ bAgD5wj60+FFAL7o2KfVUosD2a/nVTbIaXYZyVYeN6ArQDBOUXvQSZnv7kQdbFkQpvMQKtk
+ mK0IK2jTatxbhUlbYj4IQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L710K/kQJxs=:NynDmR7iOe4ZTnnQlmTXe5
+ QG0aSHjXfZeiProtldHrG+pvy8Pb4TbAO/kr2PlBCp574pJg0KXPB2YJX9/7c50Ej69to+3sj
+ 61ZYvVE+3R5a9JQrp6FKrddpH+gnJ4YHa6ETPD4q8NXvzM5CUKkOvQOcVCHU6T+uVfc9hMh84
+ vYghpGEGteh1UdghxjW7FBqB6md5QwluhlOYnCYWJzSVYqr9JcMvTzrGRXUB3OQZxQEngQBPS
+ dVa2ig49/GkmgiVU25Dg+Sy9sd0jOTovmWf79gYebcAuGoq14VeEWjbSulbgOMA9Cwh0YMij/
+ JZ21c1dJFD4qY+qYqzh7VjkJezTaxkoRCMA/yEGQ2bbaK5TH0OHoXBVhj+J+f+YIw+A4ER2+j
+ e+Fjt9F0JSLoa/guQ+RsZZFuDRlDxx98kbLsNHoCXs7bDoWX5pPuUiEBLSFAIzgqI9BkZDYH9
+ 9tVw6Jgm35c18sSFUAuVioMKnvkca0CVABpThSVjYeYufeEVKe7nrt0iZKn3J7aJQSkeRcLDq
+ IOzQOHRkHUx7OU0Z2/Iav6g9PyjHaYciAnYYFxl+bbNCBeMRhbdfSiaoimQFgc23IvhNxWIFN
+ tHydZtvlZFCytJbziHXYzmlVDcG+nhWW4mdJ0L0uBbKlyItnxWIltCS9vFrb9z0iPBlwHIXYz
+ VEn429JtFnT6zs8rY6RtUM7QkiSZ/PmX0GRHT08bgP6oLV2nvrqOs7WobFTuvbGo8+DC+/aPi
+ Uov/L0xq1/xtxI5LZ3CRkfHofk6rwWoWm8pFnA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi folks,
+From: Enrico Weigelt <info@metux.net>
 
+Reduce driver init boilerplate by using the new
+module_siox_driver() macro.
 
-this is v2 of my siox/gpio series from yesterday.
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/gpio/gpio-siox.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-v2: fixed the typos pointed out by Uwe.
-
-
---mtx
+diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
+index 571b2a8..fb4e318 100644
+--- a/drivers/gpio/gpio-siox.c
++++ b/drivers/gpio/gpio-siox.c
+@@ -275,18 +275,7 @@ static int gpio_siox_remove(struct siox_device *sdevice)
+ 		.name = "gpio-siox",
+ 	},
+ };
+-
+-static int __init gpio_siox_init(void)
+-{
+-	return siox_driver_register(&gpio_siox_driver);
+-}
+-module_init(gpio_siox_init);
+-
+-static void __exit gpio_siox_exit(void)
+-{
+-	siox_driver_unregister(&gpio_siox_driver);
+-}
+-module_exit(gpio_siox_exit);
++module_siox_driver(gpio_siox_driver);
+ 
+ MODULE_AUTHOR("Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>");
+ MODULE_DESCRIPTION("SIOX gpio driver");
+-- 
+1.9.1
 
