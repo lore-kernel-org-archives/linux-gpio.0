@@ -2,85 +2,128 @@ Return-Path: <SRS0=ToIH=UR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AFAC31E5E
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D7EC31E51
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF78C21670
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E76A2147A
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jun 2019 10:59:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vEKCtOAR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbfFRKke (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Jun 2019 06:40:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:40627 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729203AbfFRKke (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 06:40:34 -0400
-Received: from orion.localdomain ([95.114.66.109]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MJm8N-1hsv0I1KbB-00K4yK; Tue, 18 Jun 2019 12:40:31 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 1/2] include: linux: siox: more for declaring siox drivers
-Date:   Tue, 18 Jun 2019 12:40:26 +0200
-Message-Id: <1560854427-27537-2-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560854427-27537-1-git-send-email-info@metux.net>
-References: <1560854427-27537-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:EkSkVpDgp4UTN6kI5aXE5wb6bJNvAzVW1Wd7WHb7iqb27uBomDM
- Ghkr1Hn3Ry9cd37Yf0f3wUbpQb+kUF7anIUaItGDM52S1oqr0uoBR3OZW48X5gJc3eEqkHQ
- SL65tVimHDLR23LbWy+UqtijqP4TXu0K8YEA65i1eRbvMKfQ7GuQcvcTBLAhJxnDyR0+dRk
- 2tll6TWBz2vpuoLsqqKSg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wniqpdYrzPY=:qghauUcVf1uINJZCbgn5ZD
- 082M5EA+7ChW3FfSnNp+fx2amzAqp/w4kMLnDTOBgAtCC4W5zHGv3kPjAMIsDaiLInrGCpeBF
- x8+SbAlYbC4iMVPe4Ix9ulLmdmbapvg83AfyegJdolinlUDJr34aOhseYF3MAa/kCDoj7PMPw
- VDw7JhNPhKdPx3458gQYzscAmCiL3Gw1qM4itQZA5gtiK6VBTx/ux7DHkaRzS6mM2k0kdweLo
- uNR7En7Hvwz80M7hR4wv7QHTPEjwOoLStCbfuKxiVsvzxmekDjRLAf49lrh6lZ+mK71rmzWXA
- BVJV9IPoiutIcW01PjJo4jVJPuIYk7oVosV8wTH1B9hyzNQ1mZHcJx7and39HZCWtRurwMXwE
- Gs5MYKitDGZMvDJaCQpVnV6OcKFCWli5X+ubAKfxyGB53mWKPbRHNp3pSXsa0ky12fVte/qPI
- IiVqREuxrVENrnxdvXLJ02uSfgf/3zMj/yvkxIIk9n/tBhlsokm4aOWePVE9MNPCDhMymaFXz
- IOC90Va4EOOhUVdv86wjLHM0FoBueNayJDJKJKmzl+2MQUAk+g2w3Nd1c6G7DAq7lfYsHGUhH
- vfavYYu6o8MO4zTfPFNTR8jL3A8BrsBx2QDOPWw4rKVKkPE4hbx67EKkieF76NDWxW5IXBks8
- 5yPykMYQdQoEVRRgxxu3lUz4Drg7upQCfgZiGnA7HjEGuBf9aHWcqz7TZLhyN4IOq8jenVwol
- cjFZc12GrCDgCmXNFNOaxXGomgXTH4evN9LSCA==
+        id S1729010AbfFRK7C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Jun 2019 06:59:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40951 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfFRK7C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jun 2019 06:59:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p11so13461866wre.7;
+        Tue, 18 Jun 2019 03:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=erWl2ztGQC1+LMUU2GDgbAUN0dxGbS3XfDl1jE6l2ow=;
+        b=vEKCtOARKjx5EDFmxAJP5qqdrxjSakRCZS/TgKM4RtapEG3kuF3EcgT+PH7T7Et5xP
+         YFmWyPUzNyz/Sikfrd2Wvs40djchhc4QsPzZFtFYyvgb6MmHE6gVCk2iSkxw/iFYYAB2
+         DiqR/87gvY86T+U12boAwdwwjhnXBlsraE2LNmc/5SVXbQ259vZ3kym0MHWOzSsNGg4/
+         rDCrjn4s2Op1omFqMkOwkdQF4QzgQnymUDW9oSFeC3YCHPSwjxmZYUUzDMhSL5kdCIXj
+         s5YZLLa7iVK+sg56EJFDFhGVN09zKD0Pla3p/go1FbagxfZnqlyQpfcMiPHyUIKYA/bI
+         G2qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=erWl2ztGQC1+LMUU2GDgbAUN0dxGbS3XfDl1jE6l2ow=;
+        b=gmg5204szueOsUlOSb7aV8zd9Z91VtoNjanULaRk0vkOb8vxPrAB5jGgtBn/3m3oaY
+         gDv5dB71bL2BX3J/NQaPXsWfT1ZkufciIlptT5pEH3yN6xSLDjKrTWf33EV8oIfugTpx
+         m7p85PT3Q3w/uObDawqkajwCWrLy2BKTWxpebV7UpAeFSa2zowIOlq2iWwZYsSQXq9GZ
+         TvH4lY1XoU+aUn/wwHVKmWro/ewzrUWSvrweRafqZ7GgazpHVvaK31f8ZhDk/QtpEfZx
+         OOI5oOokPTza5R/qdR5jI09B4lEc5BaILyW5yuewoPeDe3qP/FFem4S4rVy/t1RLEk+j
+         6LWw==
+X-Gm-Message-State: APjAAAVifWmQQ4PXz5uBsUXOP1rVFKUkklbi4+XP8p8tk+tPOpnkGsKW
+        FPA1NVAoimB9lbgFvtPGwws=
+X-Google-Smtp-Source: APXvYqyrCJUtg1gqiMWv2NhNK6EU8WMp4kmrJ0w+oq+L1m8gW/h13kuBpFPjrwh8Cp3+wVCytRNK9g==
+X-Received: by 2002:a5d:4a90:: with SMTP id o16mr22664381wrq.13.1560855539430;
+        Tue, 18 Jun 2019 03:58:59 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id l1sm1930397wmg.13.2019.06.18.03.58.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 18 Jun 2019 03:58:58 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 12:58:57 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V3 01/17] irqchip: tegra: do not disable COP IRQ during
+ suspend
+Message-ID: <20190618105857.GD28892@ulmo>
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RhUH2Ysw6aD5utA4"
+Content-Disposition: inline
+In-Reply-To: <1560843991-24123-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
 
-Add more helper macros for trivial driver init cases, similar to the
-already existing module_platform_driver() or module_i2c_driver().
+--RhUH2Ysw6aD5utA4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This helps to reduce driver init boilerplate.
+On Tue, Jun 18, 2019 at 12:46:15AM -0700, Sowjanya Komatineni wrote:
+> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
+> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+>=20
+> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
+> for Tegra210.
+>=20
+> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+> interrupt controller suspend operation.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/irqchip/irq-tegra.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- include/linux/siox.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/include/linux/siox.h b/include/linux/siox.h
-index d79624e..d53b2b2 100644
---- a/include/linux/siox.h
-+++ b/include/linux/siox.h
-@@ -75,3 +75,12 @@ static inline void siox_driver_unregister(struct siox_driver *sdriver)
- {
- 	return driver_unregister(&sdriver->driver);
- }
-+
-+/* module_siox_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces module_init() and module_exit()
-+ */
-+#define module_siox_driver(__siox_driver) \
-+	module_driver(__siox_driver, siox_driver_register, \
-+			siox_driver_unregister)
--- 
-1.9.1
+--RhUH2Ysw6aD5utA4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0Iw/EACgkQ3SOs138+
+s6GLLRAAvKzInFHRhecpwNZPDwkUnBKfQIyiErHNkSUfLXJP6QSIaQa+BCBJuoNf
+BTxROMwnCIJebjytKZIoLlNjND82Hk/5NDNhjivrBhsXVdmL4vCnlwFNSCQNEqbi
+Hp2iVP/LtvGNaeG2Wrp3UD8bA7w4Qb94jXItmE2iwLfCaJV+7myCiySGJea3CTqQ
+p7PCgu0joBLlfFG9nYE/JA+VAZPSi+IV7mCvyWquvVV7nfca1Cjfje1FcJDn08YI
+eTMxfqj+hSUrmYadTXgqERUoZOPHjaQ/TGTyTsyWKsFvR/zTB9PNZpzo7o7wOnik
+0ph9gZo4LKY88tSzdK9AM+r3F5sMQCXM8WAETePUrrADLLRUEQvnTKeG3tJvaIRB
+Zk1WbiJIXH7K54epAeuLnu4zHFj5XFaDs4orPkXhF36d1BouB01KZ9KytMnnrRUv
+tIVMGNDFuYV77jKUdAVUl0qBoZmFaYDW+WfGfassadJEpgJDNR4SgkhJZrq2O0VF
+3J2mc8k0frM0EPbtldLOpAMGJbAbchHFKd51mRxVNBLYFzA9N8N+d6oC15ZIpBKN
+iiM35hN9xskQpJdZJYsNBISdEW8+9AcODhhY8FrD6B8IvV4wPaTvmdAj+NhI17As
+M1P9Sm4OTVElx0ApVdGLDdDir6s/I5CiErAqXEQejQKlmMbAxnI=
+=NwCH
+-----END PGP SIGNATURE-----
+
+--RhUH2Ysw6aD5utA4--
