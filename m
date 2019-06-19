@@ -2,234 +2,90 @@ Return-Path: <SRS0=bHLr=US=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8FFC31E49
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jun 2019 12:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE7BC31E5D
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jun 2019 14:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9925206E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jun 2019 12:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 262412166E
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jun 2019 14:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731724AbfFSMqV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Jun 2019 08:46:21 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:58120 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731422AbfFSMqV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jun 2019 08:46:21 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1hdZyP-0004XZ-Fu from Harish_Kandiga@mentor.com ; Wed, 19 Jun 2019 05:45:57 -0700
-Received: from hkandiga-VirtualBox.ina-wifi.mentorg.com (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 19 Jun 2019 13:45:52 +0100
-From:   Harish Jenny K N <harish_kandiga@mentor.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     <linux-gpio@vger.kernel.org>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>
-Subject: [PATCH V3 1/2] gpio: inverter: Add Inverter controller for gpio configuration
-Date:   Wed, 19 Jun 2019 18:15:43 +0530
-Message-ID: <1560948344-6543-2-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560948344-6543-1-git-send-email-harish_kandiga@mentor.com>
-References: <1560948344-6543-1-git-send-email-harish_kandiga@mentor.com>
+        id S1729753AbfFSObW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Jun 2019 10:31:22 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:52483 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfFSObW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jun 2019 10:31:22 -0400
+X-Originating-IP: 92.137.69.152
+Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 5EA3620016;
+        Wed, 19 Jun 2019 14:31:14 +0000 (UTC)
+Date:   Wed, 19 Jun 2019 16:31:12 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, mazziesaccount@gmail.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v15 0/7] support ROHM BD70528 PMIC
+Message-ID: <20190619143112.GO23549@piout.net>
+References: <cover.1559546139.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190611200043.eib3g3acc7ilawsx@earth.universe>
+ <20190612060328.GQ4797@dell>
+ <20190613130529.kgswgbuszb24itxz@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613130529.kgswgbuszb24itxz@earth.universe>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Provides a new inverter gpio controller to configure the polarity
-of the gpio pins. This driver enables the consumers to directly
-use the gpio pin without worrying about the hardware level
-polarity configuration. Polarity configuration will be done by
-the inverter gpio controller based on device tree information.
+On 13/06/2019 15:05:29+0200, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Wed, Jun 12, 2019 at 07:03:28AM +0100, Lee Jones wrote:
+> > On Tue, 11 Jun 2019, Sebastian Reichel wrote:
+> > > On Mon, Jun 03, 2019 at 10:23:37AM +0300, Matti Vaittinen wrote:
+> > > > Patch series introducing support for ROHM BD70528 PMIC
+> > > > [...]
+> > > 
+> > > I think all patches have been reviewed by the respective subsystem
+> > > maintainers. Lee, can you provide an immutable branch with the MFD
+> > > patches (1, 2, 4)? Looks like the other patches only depend on those
+> > > and can go through their respective subsystems.
+> > 
+> > Yes.  It's on my TODO list.
+> 
+> Thanks.
+> 
+> > Would you prefer this method over me just taking them all and sending
+> > out a PR?  The latter is my usual flow, but I'm happy with either.
+> 
+> Both methods are fine with me. I usually go with "my" method, since
+> that results in less shared commits. It simplifies potential
+> follow-up bug fixes, since there is only one tree to fix.
+> 
 
-Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
----
- drivers/gpio/Kconfig         |   9 +++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-inverter.c | 130 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 140 insertions(+)
- create mode 100644 drivers/gpio/gpio-inverter.c
+Personally, I'm fine with Lee taking everything in his tree as it is
+very unlikely to require follow up patches this cycle (i.e before rc1).
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index acd40eb..8978047 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -77,6 +77,15 @@ config GPIO_GENERIC
- 	depends on HAS_IOMEM # Only for IOMEM drivers
- 	tristate
 
-+config GPIO_INVERTER
-+	tristate "Inverter GPIO controller for handling hardware inverters"
-+	depends on OF_GPIO
-+	help
-+	 Enabling this configuration provides an inverter gpio controller to
-+	 configure the polarity of the gpio pins.
-+	 This enables the consumers to directly use the gpio pin without
-+	 worrying about the hardware level polarity configuration.
-+
- # put drivers in the right section, in alphabetical order
-
- # This symbol is selected by both I2C and SPI expanders
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 6700eee..b951b73 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_GPIO_HLWD)		+= gpio-hlwd.o
- obj-$(CONFIG_HTC_EGPIO)		+= gpio-htc-egpio.o
- obj-$(CONFIG_GPIO_ICH)		+= gpio-ich.o
- obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
-+obj-$(CONFIG_GPIO_INVERTER)	+= gpio-inverter.o
- obj-$(CONFIG_GPIO_IXP4XX)	+= gpio-ixp4xx.o
- obj-$(CONFIG_GPIO_IT87)		+= gpio-it87.o
- obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
-diff --git a/drivers/gpio/gpio-inverter.c b/drivers/gpio/gpio-inverter.c
-new file mode 100644
-index 0000000..2dbf1d1
---- /dev/null
-+++ b/drivers/gpio/gpio-inverter.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Inverter GPIO controller for configuring the gpio polarity
-+ *
-+ * Copyright (c) 2019 Mentor Graphics Inc.
-+ * Developed using gpiolib and gpio documentation as reference
-+ *
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/platform_device.h>
-+
-+struct gpio_inverter {
-+	struct gpio_chip gpiochip;
-+	int count;
-+	struct gpio_desc *gpios[];
-+};
-+
-+static int gpio_inverter_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_direction_input(inv->gpios[offset]);
-+}
-+
-+static int gpio_inverter_direction_output(struct gpio_chip *chip,
-+					  unsigned int offset, int value)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_direction_output(inv->gpios[offset], value);
-+}
-+
-+static int gpio_inverter_get(struct gpio_chip *chip,
-+			     unsigned int offset)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return !gpiod_get_value(inv->gpios[offset]);
-+}
-+
-+static void gpio_inverter_set(struct gpio_chip *chip,
-+			      unsigned int offset, int value)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_set_value(inv->gpios[offset], !value);
-+}
-+
-+static int gpio_inverter_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct gpio_inverter *inv;
-+	struct gpio_chip *gpio_chip;
-+	struct gpio_desc *gpio;
-+	int index = 0;
-+	int count;
-+	int ret;
-+
-+	count = of_gpio_named_count(dev->of_node, "inverted-gpios");
-+	if (count <= 0)
-+		return count ? count : -ENOENT;
-+
-+	inv = devm_kzalloc(dev, struct_size(inv, gpios, count), GFP_KERNEL);
-+	if (!inv)
-+		return -ENOMEM;
-+
-+	inv->count = count;
-+	gpio_chip = &inv->gpiochip;
-+
-+	platform_set_drvdata(pdev, inv);
-+
-+	while (index < count) {
-+		gpio = devm_gpiod_get_index(dev, "inverted", index, GPIOD_ASIS);
-+
-+		if (gpio == ERR_PTR(-ENOENT)) {
-+			devm_kfree(dev, inv);
-+			return -EPROBE_DEFER;
-+		}
-+
-+		if (IS_ERR(gpio))
-+			return PTR_ERR(gpio);
-+
-+		inv->gpios[index++] = gpio;
-+
-+		if (!gpio_chip->can_sleep && gpiod_cansleep(gpio))
-+			gpio_chip->can_sleep = true;
-+	}
-+
-+	gpio_chip->direction_input = gpio_inverter_direction_input;
-+	gpio_chip->direction_output = gpio_inverter_direction_output;
-+	gpio_chip->get = gpio_inverter_get;
-+	gpio_chip->set = gpio_inverter_set;
-+	gpio_chip->label = dev_name(dev);
-+	gpio_chip->parent = dev;
-+	gpio_chip->owner = THIS_MODULE;
-+	gpio_chip->base = -1;
-+	gpio_chip->ngpio = count;
-+
-+	ret = devm_gpiochip_add_data(dev, gpio_chip, inv);
-+	if (ret) {
-+		dev_err(dev, "failed to add gpio controller\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id gpio_inverter_match[] = {
-+	{ .compatible =	"gpio-inverter", }, { },
-+};
-+
-+static struct platform_driver gpio_inverter_driver = {
-+	.probe = gpio_inverter_probe,
-+	.driver = {
-+		.name = "gpio-inverter",
-+		.of_match_table = of_match_ptr(gpio_inverter_match),
-+	}
-+};
-+
-+module_platform_driver(gpio_inverter_driver);
-+
-+MODULE_AUTHOR("Harish Jenny K N <harish_kandiga@mentor.com>");
-+MODULE_AUTHOR("Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>");
-+MODULE_DESCRIPTION("Inverter GPIO controller for configuring the gpio polarity");
-+MODULE_LICENSE("GPL v2");
---
-2.7.4
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
