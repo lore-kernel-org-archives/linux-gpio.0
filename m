@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE958C43613
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9812BC48BE3
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D62120675
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77633205F4
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561054712;
-	bh=qMzfbiSIwksrwUm8tdqYP8brg/c+K2rOMHysxHULuh4=;
+	s=default; t=1561054936;
+	bh=8FEJBlsPgGUlPAFJgXTBUbeBRFkXgl8m6hhx9L8hzgU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aVHFuVLD1rID7zTRc3dvHqPnTJR7LUuZ/wxtD/4Y7Eu1vKDjKORiA83Jm2mrqcS+q
-	 KPCbDSA+4Q8pD3G3PNFBQ3JfXllJdOhU1nnynz8LqXBM5hnRH5pkfHsoASp85ezEFs
-	 MrUx4v8LvpHMwXAfJBXTS9C/aad9csAMxzlpkl6I=
+	b=VIuGp76Y5ivJnXF0l8Ob2/vpway2xmWVzg7kFgrdw5obivshmGSDzyNkWtaCF5JH9
+	 0kcmfh9pgmiM3jlPzcZkZKMiOm3ZsVjmk6GmrY4je4aICyM0MmlDIOT5qzsRGB0zQC
+	 AYECoKUpkTrwwHuHUk7Z5C3Sy06aOawr2lBCQjuo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfFTSQ2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jun 2019 14:16:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45598 "EHLO mail.kernel.org"
+        id S1726992AbfFTSLI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jun 2019 14:11:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729365AbfFTSQ0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:26 -0400
+        id S1727517AbfFTSLH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:11:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DA06208CA;
-        Thu, 20 Jun 2019 18:16:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33244215EA;
+        Thu, 20 Jun 2019 18:11:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054585;
-        bh=qMzfbiSIwksrwUm8tdqYP8brg/c+K2rOMHysxHULuh4=;
+        s=default; t=1561054266;
+        bh=8FEJBlsPgGUlPAFJgXTBUbeBRFkXgl8m6hhx9L8hzgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTySs0GdGQ0Cv5p6qt1ZMtwYD/DLeE1hYWxJ951BGDU9TDaTwOO+N1y+Au1XELQcD
-         7B0B8FSlCEL1EyOZ9MVvkiqCNcvzLgwpkxhDWbnyzmVD4bpWO7j5fuud0jVGou9lmD
-         sluL6JugxST4oNOojvvybONgC5z8LCHFqgwkoPDk=
+        b=kmQ78YAQRrtTGLjU+ZGAUepU40hu0KXHF6IptnMphz+bYHZsKze8mhaSTuvprmYqT
+         3NROi+JrCcV+Lb1ae4Qv2fORmzGnfGE1LuDhRpPbW5PMqYOXZL0jueTYAc8HuijNSV
+         F9X5/9e14dYa137Ppsvc9rtJEIBUWyKunf6deWuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Hennerich <michael.hennerich@analog.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 51/98] gpio: fix gpio-adp5588 build errors
-Date:   Thu, 20 Jun 2019 19:57:18 +0200
-Message-Id: <20190620174351.591617923@linuxfoundation.org>
+Subject: [PATCH 4.19 30/61] gpio: fix gpio-adp5588 build errors
+Date:   Thu, 20 Jun 2019 19:57:25 +0200
+Message-Id: <20190620174342.507409004@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -95,10 +95,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3f50526a771f..864a1ba7aa3a 100644
+index 4f52c3a8ec99..ed51221621a5 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -824,6 +824,7 @@ config GPIO_ADP5588
+@@ -784,6 +784,7 @@ config GPIO_ADP5588
  config GPIO_ADP5588_IRQ
  	bool "Interrupt controller support for ADP5588"
  	depends on GPIO_ADP5588=y
