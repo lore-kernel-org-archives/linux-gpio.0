@@ -2,112 +2,107 @@ Return-Path: <SRS0=0She=UT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1774C43613
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D457C43613
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11CE20656
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561055152;
-	bh=AtCq6jVeihqXRMeoxArxYvOW6neI01z4myOsxS1vX7E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jt5Je9TBKZQQKNrtq5uoYz/8KrrfuQLprIJ/FD9vkwGzjiqYLsWHSQb5vZXasK8oF
-	 6oJJlnCXHUqz5SBlK25zTCWL4Wy7OzgE1JhTMgwdUyXc11FPKmLoxQP3XtpV7qOzGZ
-	 Dae2TFrbCEDAuR211KvuB3dKZfX5MLRuvHOD0hHc=
+	by mail.kernel.org (Postfix) with ESMTP id 0715E20665
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jun 2019 18:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfFTSZw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jun 2019 14:25:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727657AbfFTSGs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:06:48 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 176F6204FD;
-        Thu, 20 Jun 2019 18:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054007;
-        bh=AtCq6jVeihqXRMeoxArxYvOW6neI01z4myOsxS1vX7E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AS8Uxyclsn3DGQd20+fxZ4nconYu8LWbmzoeyeEih/erMFym+9QB4iLjhCvGaxfFw
-         JUBIY3KcuQFauf3QKOhbgM9KCV3P3dMCZ9o80+PoWYbZpeL1Qwnc+IvOPraeA9bQku
-         PWG1P+digfvhHmdCdtY3Q8jEpxTxSc2IDELNzovg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 103/117] gpio: fix gpio-adp5588 build errors
-Date:   Thu, 20 Jun 2019 19:57:17 +0200
-Message-Id: <20190620174357.919590022@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726894AbfFTSav (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jun 2019 14:30:51 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56473 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfFTSat (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jun 2019 14:30:49 -0400
+X-Originating-IP: 90.65.161.137
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id E774CE0006;
+        Thu, 20 Jun 2019 18:30:45 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 2/2] pinctrl: ocelot: fix pinmuxing for pins after 31
+Date:   Thu, 20 Jun 2019 20:30:37 +0200
+Message-Id: <20190620183037.29652-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190620183037.29652-1-alexandre.belloni@bootlin.com>
+References: <20190620183037.29652-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-[ Upstream commit e9646f0f5bb62b7d43f0968f39d536cfe7123b53 ]
+The actual layout for OCELOT_GPIO_ALT[01] when there are more than 32 pins
+is interleaved, i.e. OCELOT_GPIO_ALT0[0], OCELOT_GPIO_ALT1[0],
+OCELOT_GPIO_ALT0[1], OCELOT_GPIO_ALT1[1]. Introduce a new REG_ALT macro to
+facilitate the register offset calculation and use it where necessary.
 
-The gpio-adp5588 driver uses interfaces that are provided by
-GPIOLIB_IRQCHIP, so select that symbol in its Kconfig entry.
-
-Fixes these build errors:
-
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_handler’:
-../drivers/gpio/gpio-adp5588.c:266:26: error: ‘struct gpio_chip’ has no member named ‘irq’
-            dev->gpio_chip.irq.domain, gpio));
-                          ^
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_setup’:
-../drivers/gpio/gpio-adp5588.c:298:2: error: implicit declaration of function ‘gpiochip_irqchip_add_nested’ [-Werror=implicit-function-declaration]
-  ret = gpiochip_irqchip_add_nested(&dev->gpio_chip,
-  ^
-../drivers/gpio/gpio-adp5588.c:307:2: error: implicit declaration of function ‘gpiochip_set_nested_irqchip’ [-Werror=implicit-function-declaration]
-  gpiochip_set_nested_irqchip(&dev->gpio_chip,
-  ^
-
-Fixes: 459773ae8dbb ("gpio: adp5588-gpio: support interrupt controller")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-gpio@vger.kernel.org
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-ocelot.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 12d417a4d4a8..b992badb99dd 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -670,6 +670,7 @@ config GPIO_ADP5588
- config GPIO_ADP5588_IRQ
- 	bool "Interrupt controller support for ADP5588"
- 	depends on GPIO_ADP5588=y
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to enable the adp5588 to be used as an interrupt
- 	  controller. It requires the driver to be built in the kernel.
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index d2478db975bd..fb76fb2e9ea5 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -396,7 +396,7 @@ static int ocelot_pin_function_idx(struct ocelot_pinctrl *info,
+ 	return -1;
+ }
+ 
+-#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
++#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + ((info)->stride * ((p) / 32))))
+ 
+ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 				 unsigned int selector, unsigned int group)
+@@ -412,19 +412,21 @@ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 
+ 	/*
+ 	 * f is encoded on two bits.
+-	 * bit 0 of f goes in BIT(pin) of ALT0, bit 1 of f goes in BIT(pin) of
+-	 * ALT1
++	 * bit 0 of f goes in BIT(pin) of ALT[0], bit 1 of f goes in BIT(pin) of
++	 * ALT[1]
+ 	 * This is racy because both registers can't be updated at the same time
+ 	 * but it doesn't matter much for now.
+ 	 */
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(0, info, pin->pin),
+ 			   BIT(p), f << p);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(1, info, pin->pin),
+ 			   BIT(p), f << (p - 1));
+ 
+ 	return 0;
+ }
+ 
++#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
++
+ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned int pin, bool input)
+@@ -445,9 +447,9 @@ static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+ 	unsigned int p = offset % 32;
+ 
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, offset),
++	regmap_update_bits(info->map, REG_ALT(0, info, offset),
+ 			   BIT(p), 0);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, offset),
++	regmap_update_bits(info->map, REG_ALT(1, info, offset),
+ 			   BIT(p), 0);
+ 
+ 	return 0;
 -- 
-2.20.1
-
-
+2.21.0
 
