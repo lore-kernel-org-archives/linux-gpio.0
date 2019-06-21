@@ -2,109 +2,109 @@ Return-Path: <SRS0=CuJ+=UU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BC2C43613
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jun 2019 20:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 509B0C43613
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jun 2019 20:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8528E20673
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jun 2019 20:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C7252070B
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jun 2019 20:41:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdnB5LAW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i8wirE+Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbfFUUVO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Jun 2019 16:21:14 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35146 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUUVO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jun 2019 16:21:14 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so4147725edd.2;
-        Fri, 21 Jun 2019 13:21:12 -0700 (PDT)
+        id S1726043AbfFUUl3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Jun 2019 16:41:29 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46545 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUUl3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jun 2019 16:41:29 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v9so3881082pgr.13
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Jun 2019 13:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jqSjyrMoWRwF+do82t/l3WMtzN9PwjpWvsfZitq7qSk=;
-        b=WdnB5LAW59jSJgUEDunfjsU/5l5fFVMI3/eFRKtiTEoiHYu4a2QM5fsze+aO0wy1eT
-         2RpyXxFNo442c3fpamyEnpJe2I4B894rtJNhsdukEVui7mO8Ub4QTH02oqJZbRz9+gDu
-         Yh+V9rejvZTuC2rYZCKUl1QDy3JF0rvYIP57MVf0Qi0nZ16LZ4vLNfFBHjxv5bB+G7cm
-         8sesRSWyB3sf2HBMeGhlbk/CfiVf1Gi0NEcP6c0kDemuXE75s8Zjswio36544k8KmfY5
-         Rw1VwYDeyxqzXxghdOEWplgmZdtLUHnTidI6tt8dT81iDIBfMpA29CYxKoBn2Pt3L+oq
-         zq4w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qWTzX9MzfA/u/Gk1JqbnxD3tgG+hmJryjHkJZCkg4lo=;
+        b=i8wirE+YGtYSRJmDmz8NIGPbUbZZ6wAIROs728P47J0H9VjwSXA/3ZaK1kHUfvim2g
+         Pl/Ngf6h6PtfVhN4xm/uXfyB8VVE77ARKZjsW08DzeSjU8WMA4Rjl98IijSoo6l05l88
+         0w8pIcHaXP3YfbGwN4BeR6z1e0aKeC0KdQpgckdWOkfDYoOwT1F0+RRCmOP5jmiC5y22
+         ko3yZSOy8WzY6nzCVR87nDMUwl4qQKMY8i+5ujYLw1V55cxSXCygR9qt2WsUvr0Umtja
+         osAdTZ4eWgntYxLCo4Bg4vr3uRtnGlusW6RYE9BWN70NSoCdWZW4yrp/piccIgRmkauO
+         EXZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jqSjyrMoWRwF+do82t/l3WMtzN9PwjpWvsfZitq7qSk=;
-        b=Btq1tA7NV53bbP/PKx0LAd239vHW3eaVMtU49rwaEsy7FOfpBPMFYLQ4NRGUC5yMxU
-         wBcFB67J33egyJH7YV9MhtZdjeEbwqoz7y6RHecaoodC6O6+hibD8zSDjJPsrMaGC28+
-         EHpkIaGGhGQX5pTqmOLx3XGFq5+xh30ixvZ5WdtZFYtexTIMfKIP0gvsJXn5Xv0jwlz2
-         Z08mBl2U1Yh2jnNkAuyh0lXk9+Fyca6GdCnb4fGtRwKsDtW0Zqogx4HxeYJJolOSC0lS
-         YMqrzaC6VIG4hjYbVcZog45SR7PU28IkV6IsfA7eE+p5VPzlIF0JzFci/ospp30MAjzM
-         9g9w==
-X-Gm-Message-State: APjAAAUkQTzNso405tSfkGoyr6kxyA2BPh9/nVk8OkG1LDVR/t6puaHV
-        nADn7oty4fg+hFPBRkaQKNM=
-X-Google-Smtp-Source: APXvYqzenDJfKSir67f/YQyStUGcpJj5rohxQxWjWh4nYxPfnU6E8IJwdl+sHHnJnp30ejMd6+Dgpw==
-X-Received: by 2002:a17:906:1596:: with SMTP id k22mr22688551ejd.102.1561148471594;
-        Fri, 21 Jun 2019 13:21:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id g8sm585031eje.1.2019.06.21.13.21.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 13:21:10 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: qcom: sdm845: Fix CONFIG preprocessor guard
-Date:   Fri, 21 Jun 2019 13:20:43 -0700
-Message-Id: <20190621202043.95967-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qWTzX9MzfA/u/Gk1JqbnxD3tgG+hmJryjHkJZCkg4lo=;
+        b=etxTWRwXYrtnLzSpFli9L8v+79XdEBtmhHHIqVy7OEFut//jOUZnELciiW4uuvJjgS
+         RUx+mOEW0RRdhXvDLsE+z2yQyrrlrAsyjWBxJh2Xo2lAtUYtqP8tbIPmS95uldnF4Afb
+         MHT4A/3VbGBOtBxmiNsptukyTModeu4YfMUgE+iob0o/cUYJ2HxJEBotBST9PI/BNe7t
+         ahmhMLTYlO8+vE5ut3sRght4luYRGDa5ZwL2b5VEOQWK8Kj2lujxZPyiWyp4cvIexGgu
+         KgKbfCcdaoWYxhptXvPDg5caPdBGpbwp6D202vi1Tr51eOJhekML2GQ/J+/VlUM4CdE1
+         VNPg==
+X-Gm-Message-State: APjAAAU6fXW+DYrgJs3ezqDl+XnSJfjn58nHRpKktyZEkg7ZkJrhFaAy
+        RE/7/B92xtm2HO4eqi4z8ghoRGgwLYykESqc1PX8Hw==
+X-Google-Smtp-Source: APXvYqyq342BLmVtOIG4HSACeRf6++pMT1eaBYTIF0JERgZ6y5GX/QPX/sXUFSF3ypMufH5vBQuKkqpCHhihV8Twza4=
+X-Received: by 2002:a17:90a:bf02:: with SMTP id c2mr9075257pjs.73.1561149688206;
+ Fri, 21 Jun 2019 13:41:28 -0700 (PDT)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20190621202043.95967-1-natechancellor@gmail.com>
+In-Reply-To: <20190621202043.95967-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 21 Jun 2019 13:41:17 -0700
+Message-ID: <CAKwvOdnP+XMn4BMHRcFeO=TCLxjhKk5NBrpmSyZnsAtwFj+gTw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: sdm845: Fix CONFIG preprocessor guard
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Clang warns when CONFIG_ACPI is unset:
+On Fri, Jun 21, 2019 at 1:21 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns when CONFIG_ACPI is unset:
+>
+>  drivers/pinctrl/qcom/pinctrl-sdm845.c:1320:5: warning: 'CONFIG_ACPI' is
+>  not defined, evaluates to 0 [-Wundef]
+>  #if CONFIG_ACPI
+>      ^
+>  1 warning generated.
+>
+> Use ifdef instead of if to resolve this.
+>
+> Fixes: a229105d7a1e ("pinctrl: qcom: sdm845: Provide ACPI support")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/569
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
- drivers/pinctrl/qcom/pinctrl-sdm845.c:1320:5: warning: 'CONFIG_ACPI' is
- not defined, evaluates to 0 [-Wundef]
- #if CONFIG_ACPI
-     ^
- 1 warning generated.
+Thanks for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Use ifdef instead of if to resolve this.
+> ---
+>  drivers/pinctrl/qcom/pinctrl-sdm845.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> index 06790e5ece6c..39f498c09906 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> @@ -1317,7 +1317,7 @@ static int sdm845_pinctrl_probe(struct platform_device *pdev)
+>         return ret;
+>  }
+>
+> -#if CONFIG_ACPI
+> +#ifdef CONFIG_ACPI
 
-Fixes: a229105d7a1e ("pinctrl: qcom: sdm845: Provide ACPI support")
-Link: https://github.com/ClangBuiltLinux/linux/issues/569
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/pinctrl/qcom/pinctrl-sdm845.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-index 06790e5ece6c..39f498c09906 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-@@ -1317,7 +1317,7 @@ static int sdm845_pinctrl_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--#if CONFIG_ACPI
-+#ifdef CONFIG_ACPI
- static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
- 	{ "QCOM0217"},
- 	{ },
--- 
-2.22.0
-
+Thanks,
+~Nick Desaulniers
