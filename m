@@ -1,198 +1,94 @@
-Return-Path: <SRS0=NDNc=UV=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=wEfq=UW=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE5DC43613
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Jun 2019 09:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E486AC43613
+	for <linux-gpio@archiver.kernel.org>; Sun, 23 Jun 2019 04:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A962B2089C
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Jun 2019 09:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561194117;
-	bh=slTO2zLq2ufIYO3y3EFV/+5ngNVWnhZU35MaCgNodks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=occx+UWRnUZgrQTjaSGjQNaE0A+/LCHUQO7KkKbjHULIwNxDCKqohyKBQrHWYarsV
-	 NZ44sNaKv5iivFioLdszKckb5O6f+FPAYzZZM96hH+GRc+8KLKzx0YcD6XIqU7pa8K
-	 wywfI9KTMkxnLLo31ivCxKKm4YEh426C8WFItnUU=
+	by mail.kernel.org (Postfix) with ESMTP id C72432073F
+	for <linux-gpio@archiver.kernel.org>; Sun, 23 Jun 2019 04:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfFVJB5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 22 Jun 2019 05:01:57 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46442 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbfFVJB5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Jun 2019 05:01:57 -0400
-Received: by mail-ot1-f67.google.com with SMTP id z23so8639845ote.13;
-        Sat, 22 Jun 2019 02:01:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Am4zNsdjshHM90JZDzFjZuL0ON4HFAuYzga2LSkhurU=;
-        b=UBIW+RBcEg0qQ1QY+1EPmrh2kYSmClrFI2v2mHHyxEyEDYfTyD7myhbjX45SFAFWEr
-         5g1KBLUsXQWgec+1OJNbNlWVN05icc0Xe+VfSTi1A91jlmz8GOZHSzkNbVIZjM6X47GB
-         3qI9S7yXxbb0A7tWYK1xpEcgIX1JUIEngLXTFzhenTL4szhQo7ABAQTzfnJvT3mHJdk2
-         exweCgqiz7i2RLEVs7dwaQCXPJhF6w7tNk9otlflP+Yfqr/TLl6DNF8IId+/I2lDhnyD
-         TuWvkeYrDLUp4HIfqlwxr/ff0fDo/YR8qsudJtcPBNdEgHqIXKUxYlZw5tqwqkNkoitw
-         X5iQ==
-X-Gm-Message-State: APjAAAVjMVfP1FD8ybcU9hovrfU/cvBowka5GdyN+fA/Y8sBOM+txM6o
-        0X21H3q3lXJs7k+lPsg6GUn/jyH8bogD0ZUFtCE=
-X-Google-Smtp-Source: APXvYqwdxb7u3LZKydtaWtFS50RQkYKAv2KRBoAKm2g76GJd1iOJ+Trs5tf78028BvvvjXrT7G0dVz7TZ/OOLIi/h68=
-X-Received: by 2002:a9d:5d15:: with SMTP id b21mr14204964oti.262.1561194115936;
- Sat, 22 Jun 2019 02:01:55 -0700 (PDT)
+        id S1726050AbfFWEir (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Jun 2019 00:38:47 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:52095 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbfFWEir (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 23 Jun 2019 00:38:47 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 7AB836212D;
+        Sun, 23 Jun 2019 04:38:42 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 0/9] Support for Allwinner V3/S3L and Sochip S3
+Date:   Sun, 23 Jun 2019 12:37:52 +0800
+Message-Id: <20190623043801.14040-1-icenowy@aosc.io>
 MIME-Version: 1.0
-References: <20190621151725.20414-1-thierry.reding@gmail.com>
-In-Reply-To: <20190621151725.20414-1-thierry.reding@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 22 Jun 2019 11:01:44 +0200
-Message-ID: <CAJZ5v0iZ9Y3eAMe-kODqiXYzycb7MtxtzMbs_qgwcjhYUJ2geQ@mail.gmail.com>
-Subject: Re: [PATCH v3] driver: core: Allow subsystems to continue deferring probe
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 5:17 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
-> Some subsystems, such as pinctrl, allow continuing to defer probe
-> indefinitely. This is useful for devices that depend on resources
-> provided by devices that are only probed after the init stage.
->
-> One example of this can be seen on Tegra, where the DPAUX hardware
-> contains pinmuxing controls for pins that it shares with an I2C
-> controller. The I2C controller is typically used for communication
-> with a monitor over HDMI (DDC). However, other instances of the I2C
-> controller are used to access system critical components, such as a
-> PMIC. The I2C controller driver will therefore usually be a builtin
-> driver, whereas the DPAUX driver is part of the display driver that
-> is loaded from a module to avoid bloating the kernel image with all
-> of the DRM/KMS subsystem.
->
-> In this particular case the pins used by this I2C/DDC controller
-> become accessible very late in the boot process. However, since the
-> controller is only used in conjunction with display, that's not an
-> issue.
->
-> Unfortunately the driver core currently outputs a warning message
-> when a device fails to get the pinctrl before the end of the init
-> stage. That can be confusing for the user because it may sound like
-> an unwanted error occurred, whereas it's really an expected and
-> harmless situation.
->
-> In order to eliminate this warning, this patch allows callers of the
-> driver_deferred_probe_check_state() helper to specify that they want
-> to continue deferring probe, regardless of whether we're past the
-> init stage or not. All of the callers of that function are updated
-> for the new signature, but only the pinctrl subsystem passes a true
-> value in the new persist parameter if appropriate.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
 
-Overall
+Allwinner V3/V3s/S3L and Sochip S3 share the same die, but with
+different package. V3 is BGA w/o co-packaged DDR, V3s is QFP w/ DDR2,
+S3L is BGA w/ DDR2 and S3 is BGA w/ DDR3. (S3 and S3L is compatible
+for pinout, but because of different DDR, DDR voltage is different
+between the two variants). Because of the pin count of V3s is
+restricted due to the package, some pins are not bound on V3s, but
+they're bound on V3/S3/S3L.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Currently the kernel is only prepared for the features available on V3s.
+This patchset adds the features missing on V3s for using them on
+V3/S3/S3L, and add bindings for V3/S3/S3L. It also adds a S3 SoM by
+Sipeed, called Lichee Zero Plus.
 
-with one nit below.
+Icenowy Zheng (9):
+  pinctrl: sunxi: v3s: introduce support for V3
+  clk: sunxi-ng: v3s: add the missing PLL_DDR1
+  dt-bindings: clk: sunxi-ccu: add compatible string for V3 CCU
+  clk: sunxi-ng: v3s: add Allwinner V3 support
+  dt-bindings: vendor-prefixes: add SoChip
+  ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
+  dt-bindings: vendor-prefixes: add Sipeed
+  dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
+  ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
 
-> ---
-> Changes in v3:
-> - add new function rather than extend the existing function with flags
->
-> Changes in v2:
-> - pass persist flag via flags parameter to make the function call easier
->   to understand
->
->  drivers/base/dd.c            | 55 ++++++++++++++++++++++++++++++------
->  drivers/pinctrl/devicetree.c |  7 ++---
->  include/linux/device.h       |  1 +
->  3 files changed, 51 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 0df9b4461766..994a90747420 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -235,6 +235,19 @@ static int __init deferred_probe_timeout_setup(char *str)
->  }
->  __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
->
-> +static int __driver_deferred_probe_check_state(struct device *dev)
-> +{
-> +       if (!initcalls_done)
-> +               return -EPROBE_DEFER;
-> +
-> +       if (!deferred_probe_timeout) {
-> +               dev_WARN(dev, "deferred probe timeout, ignoring dependency");
-> +               return -ETIMEDOUT;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * driver_deferred_probe_check_state() - Check deferred probe state
->   * @dev: device to check
-> @@ -248,14 +261,40 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
->   */
->  int driver_deferred_probe_check_state(struct device *dev)
->  {
-> -       if (initcalls_done) {
-> -               if (!deferred_probe_timeout) {
-> -                       dev_WARN(dev, "deferred probe timeout, ignoring dependency");
-> -                       return -ETIMEDOUT;
-> -               }
-> -               dev_warn(dev, "ignoring dependency for device, assuming no driver");
-> -               return -ENODEV;
-> -       }
-> +       int ret;
-> +
-> +       ret = __driver_deferred_probe_check_state(dev);
-> +       if (ret < 0)
+ .../devicetree/bindings/arm/sunxi.yaml        |   5 +
+ .../clock/allwinner,sun4i-a10-ccu.yaml        |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   4 +
+ arch/arm/boot/dts/Makefile                    |   1 +
+ .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |   8 +
+ .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    |  44 ++
+ arch/arm/boot/dts/sun8i-s3.dtsi               |   6 +
+ arch/arm/boot/dts/sun8i-s3l.dtsi              |   6 +
+ arch/arm/boot/dts/sun8i-v3.dtsi               |  14 +
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 244 ++++++++-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |   6 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c     | 473 ++++++++++++++----
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h         |   2 +
+ include/dt-bindings/clock/sun8i-v3s-ccu.h     |   4 +
+ include/dt-bindings/reset/sun8i-v3s-ccu.h     |   3 +
+ 15 files changed, 704 insertions(+), 117 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-s3.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-s3l.dtsi
+ create mode 100644 arch/arm/boot/dts/sun8i-v3.dtsi
 
-The function returning this valie doesn't return positive numbers, so
-it "if (ret)" would be sufficient here (and below).
+-- 
+2.21.0
 
-> +               return ret;
-> +
-> +       dev_warn(dev, "ignoring dependency for device, assuming no driver");
-> +
-> +       return -ENODEV;
-> +}
-> +
-> +/**
-> + * driver_deferred_probe_check_state_continue() - check deferred probe state
-> + * @dev: device to check
-> + *
-> + * Returns -ETIMEDOUT if deferred probe debug timeout has expired, or
-> + * -EPROBE_DEFER otherwise.
-> + *
-> + * Drivers or subsystems can opt-in to calling this function instead of
-> + * directly returning -EPROBE_DEFER.
-> + *
-> + * This is similar to driver_deferred_probe_check_state(), but it allows the
-> + * subsystem to keep deferring probe after built-in drivers have had a chance
-> + * to probe. One scenario where that is useful is if built-in drivers rely on
-> + * resources that are provided by modular drivers.
-> + */
-> +int driver_deferred_probe_check_state_continue(struct device *dev)
-> +{
-> +       int ret;
-> +
-> +       ret = __driver_deferred_probe_check_state(dev);
-> +       if (ret < 0)
-> +               return ret;
-> +
->         return -EPROBE_DEFER;
->  }
