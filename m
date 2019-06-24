@@ -2,88 +2,88 @@ Return-Path: <SRS0=+BAr=UX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678F3C43613
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 05:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D589C43613
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 05:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46D6D2089F
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 05:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D5F62166E
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 05:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfFXFkl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jun 2019 01:40:41 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:52767 "EHLO
+        id S1727529AbfFXFoH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jun 2019 01:44:07 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:45721 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfFXFkl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jun 2019 01:40:41 -0400
-Received: from orion.localdomain ([77.4.138.202]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MRmwM-1i8Ktz3dWc-00TFa1; Mon, 24 Jun 2019 07:40:37 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de, linus.walleij@linaro.org,
+        with ESMTP id S1727528AbfFXFoG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jun 2019 01:44:06 -0400
+Received: from [192.168.1.110] ([77.4.138.202]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mirb8-1iBLL42bbQ-00ernJ; Mon, 24 Jun 2019 07:44:02 +0200
+Subject: Re: [PATCH 1/3] include: linux: i2c: more helpers for declaring i2c
+ drivers
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        t.scherer@eckelmann.de
-Subject: [PATCH 1/2] siox: add helper macro to simplify driver registration
-Date:   Mon, 24 Jun 2019 07:40:33 +0200
-Message-Id: <1561354834-22617-2-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1561354834-22617-1-git-send-email-info@metux.net>
-References: <1561354834-22617-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:pu61IGV/1q4lpgLp+aBNG7OE4lWm55EcChTDsjKrvIxqyTLMk2a
- GfOtCtSvGCs8/+p+nGl64iadCag1mbmjMQHYwLaE1FSEN1yJGqOqGgG3uuYD2Bzi+4fEi0/
- f6kEYFyuKBvLSB00KYmoCAkK0jw3RFC862q35TOCVpvOhQ/ZRsGd7SfTnNFQpFZr0VBLXth
- q54oVYhPOGEnBNpG4bcEg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5J8Hxi1ig1U=:5zv9ddOpsP1G1dUVB1bMr+
- K8M1NQzf/63jmBJMFl7vCZ/2VmBjGVZPM8RQhzd1pGmYqwlyJRh5JI1c9fPQBlQJ+4Zk1YG0p
- 2vjJ5sq1+hrgAboxoJ/bMVs7VI6Lr73xLBbssS7oYeV4DxnxkqQc8DWcOQp+hUvr5JFNIZuvj
- vwb8oWtZoEwXV9WmZBwh5aqBDytAM98jOlxJSy18QO84YJTuDHs5qWyVd2grtlUKitW2AiMAC
- L6RO/IaNZak2i/+dCrGspKDEmtI7tgTf7uYWyqBIF9SGUweFN5w5k6wC+Stew4ikP2ZZtf+3J
- T02bsnViOXIOTppVNgbOKyRgTPmxKJOK+sBKOfIDmKIUo4Z1+aVbQ8x7HDhWX3LbsSjqk/+qv
- iydugXEycHJ3dAx4fHuQVQ5KryM/0R4p/s80SghWO0wt5zD9+G8wAYeAjDGPegsW08iWhvtz3
- k/y1ppXn4j2lROyOXO8kgyvUxYQjoQZ1SjlcldeaeF6MRY0ta7Ei2j3yOuAAwtpB64FMRRvl9
- KVwk/9Y1pJplg4XTL6a/4g8M/Umyamd5gdulTah3vyxV9x6NFHLs80JNBSpl2OZhqNzk8dlWR
- XTCKovFEJgtLhDityIk69YcaXmsRu41kaw5lNCS7WbTKk/0sGRe0IMZD5OMzARVtV/Sbrp65I
- 6t1ayUGeYJopMsSZpBgbokDDlm1KHXsUAhUh9t6amuEgJHbC0eD00fgvbrDxzB39Och2q86id
- bgj69DT0jaMJ/TWBBFe+offc1EA16NpkL44cew==
+        linux-i2c@vger.kernel.org
+References: <1560796779-17117-1-git-send-email-info@metux.net>
+ <20190621211744.GC950@kunai>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <c669a041-f025-693a-492a-80ce888db737@metux.net>
+Date:   Mon, 24 Jun 2019 07:44:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190621211744.GC950@kunai>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:FvDrHSFA8yM3VTo9ZSCraAJ6BwDwCFk9ahYKWgsP4DDZkk6r8ky
+ YFwhJqRRev+bQQvSYnqRJ90sIt6HfVrJ4Bb47ltZXGJ88avFYlgHZ+qCH1NjHAf9+tQC6Vm
+ W11tVZdPEFw5OhhXUqDmP9fBpb9UiaBpeM6oRcWZBL71fQfYGypQ0n49np14OS1JRe37L8A
+ EaU5Wc/r33jgiYVpdodpQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:q6wwMcoSqTc=:htisqL60GOqxnfeGPCSIZn
+ UJmJhGBi0BgHHnYj8q1iSAR/lqlgPRdCgELgPdPoh3MUsaQB22sU4hAPzHRcU5bJuinye4Piv
+ DfHiq4aIzeI0TBOGqvMxxvEc6FAOypHr89MZDA3MbMr8lkvjGGProSXW3t21CNxDHceO8vbog
+ AtSbo35dKdRc/QRVXsMY4L0OwM7Zn4zOlbRWDHVFebmfe8xNhG+mE1gX1L3rbOgrhIdH0UrVS
+ iGxLLsRWC4W/sHQ1auGy9qMFzwR0hNSN06UUJVLh34vgP1Q0MAyeS+Eb7nX9YjB5tZyYOQNkT
+ yztCYLQXsYJ4+i3saQaCmv+KGHemO6hQiDqz746Ip2Dq1TkhsgCxJCkWAQE+AyW/igwJZdxtX
+ kvwmljNdd/ybBtg3eC8u4wrLKrHPFS2C33VGPFxf8PyMnKZWvGxQWgtKljWnkVNcZaj7Moml8
+ gH2m5bW6b6ERSN33wc1A2YaVIAKMXDCCWxrq2sAokOHkV7ibq8BnVBgj9HjrhHuj3uEZ66IO7
+ yzTPAV4pxY7pRyO2uXuuVHYsvzGAH/NKUKjFuwD6wCcKfddVAUCkV598vU7AV8BONsbO6l+hm
+ r6/8vQV4eciWiOHbmuhiW0ZstbU/9/D7DIoryOtuQKOmtT8Ve3jgv9ozaKUXupEWD5+TeT4NJ
+ gSUPdHrl6kpMvbtxaLlKYagL3XuJjWK5ZHGIKnO5mxdQT8w/0zDCx3gOdtPLu2vWHxBKo5A6z
+ OTaLIuuvpDca82Nfxbq5IrwleGpB9tTjBcZNhkpjt5yXA9R/Qngu8dnh9kA=
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+On 21.06.19 23:17, Wolfram Sang wrote:
+> On Mon, Jun 17, 2019 at 08:39:37PM +0200, Enrico Weigelt, metux IT consult wrote:
+>> From: Enrico Weigelt <info@metux.net>
+>>
+>> Add more helper macros for trivial driver init cases, similar to the
+>> already existing module_i2c_driver()+friends - now for those which
+>> are initialized at other stages (eg. by subsys_initcall()).
+>>
+>> This helps to further reduce driver init boilerplate.
+> 
+> Uh, no! Using subsys_initcall is an old fashioned hack to work around
+> boot time dependencies. Unless there are very strong arguments, I
+> usually do not accept them anymore. So, any simplification of that sends
+> out the wrong message.
 
-Add more helper macros for trivial driver init cases, similar to the
-already existing module_platform_driver() or module_i2c_driver().
+Okay, what's the correct initialization method then ?
+Just convert it to already existing module_i2c_driver() ?
 
-This helps to reduce driver init boilerplate.
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- include/linux/siox.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--mtx
 
-diff --git a/include/linux/siox.h b/include/linux/siox.h
-index a860cb8..da7225b 100644
---- a/include/linux/siox.h
-+++ b/include/linux/siox.h
-@@ -72,3 +72,13 @@ static inline void siox_driver_unregister(struct siox_driver *sdriver)
- {
- 	return driver_unregister(&sdriver->driver);
- }
-+
-+/*
-+ * module_siox_driver() - Helper macro for drivers that don't do
-+ * anything special in module init/exit.  This eliminates a lot of
-+ * boilerplate.  Each module may only use this macro once, and
-+ * calling it replaces module_init() and module_exit()
-+ */
-+#define module_siox_driver(__siox_driver) \
-+	module_driver(__siox_driver, siox_driver_register, \
-+			siox_driver_unregister)
 -- 
-1.9.1
-
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
