@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A494C48BE4
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4CCC43613
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33691208C3
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247B4208CA
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XD4x4ifi"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EYKXHL/f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfFXDDV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Jun 2019 23:03:21 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17263 "EHLO
+        id S1727546AbfFXDDo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Jun 2019 23:03:44 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17314 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbfFXDDU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Jun 2019 23:03:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d103d740000>; Sun, 23 Jun 2019 20:03:16 -0700
+        with ESMTP id S1727545AbfFXDDm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Jun 2019 23:03:42 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d103d8c0000>; Sun, 23 Jun 2019 20:03:40 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 23 Jun 2019 20:03:18 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 23 Jun 2019 20:03:41 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 23 Jun 2019 20:03:18 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
- 2019 03:03:17 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
- 2019 03:03:17 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 24 Jun 2019 03:03:17 +0000
+        by hqpgpgate102.nvidia.com on Sun, 23 Jun 2019 20:03:41 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 03:03:41 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 03:03:40 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Jun 2019 03:03:40 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.126]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d103d730000>; Sun, 23 Jun 2019 20:03:17 -0700
+        id <B5d103d8a0000>; Sun, 23 Jun 2019 20:03:41 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V4 05/18] clk: tegra: pllout: save and restore pllout context
-Date:   Sun, 23 Jun 2019 20:02:46 -0700
-Message-ID: <1561345379-2429-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra wake
+Date:   Sun, 23 Jun 2019 20:02:54 -0700
+Message-ID: <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
 References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
@@ -61,103 +61,90 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561345397; bh=ycvqvQuDZMmSCDGioXrw9dbuEJexSVefYb0uyI8Uy7A=;
+        t=1561345420; bh=4EGQI++zj4lUDjQs0M1vegh7zzNvu5bAdmZ5kricB/0=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=XD4x4ifi5/8zXkhvg37FlFSJ/ZWAjsCDu54veAGpJGc0+JWs5vK7n5WzwwDwQIVgH
-         YJgJaOzU/RDoTjL2/QLQ3Qshme1c7QOjtOggZByHGTJBNTjPRfpW0c+OHwAPKU8+S1
-         yinoZ4NRjV0K0SaQhl1vGASlzwSMTz8Y0QdKn4WtRZitMVFxcYZUPkfVGGPgm0LRb6
-         Hrrcg1mNa852JZinv7cWwBvdN5udGuBRX5xOdU2e8gfaPxRpi5M/qB0Bq7cNdRBU9m
-         MBsAtJg/NMcrT+p7PjRy25T8fBjAwoAMhZlVITTm3FcN+/MkptN/n0e2QKdpz2eUbH
-         T0UQBb3I3R8nQ==
+        b=EYKXHL/fZIwVDvujMVzoUXptHAiacdUIgNtbpK+2/bFznSOyOaqGaz3d0F8Bxdrmz
+         vAviRpxdlaCu1vPYt+Gga3frJFj7gKxPENbM7Uz0IeB0rFsSzonCmDxhnLpTxglbiS
+         4RT6HYtzAuwL2ScQxMsjYEnOqa81Cb3swEVfABIDtIoG2ZJ87zBz2idEusfqVVMs6J
+         Q/kd5IUiGJ4vIktEszSbbxzWBnLiEQnooE69efAGtScV5dKoOP0fVu5WWBuF4rLbR7
+         h05C1OI1mZZxBn5K/xGmmKAfmL/1skJNzr72uaHKxGnuq1CLFZEvRYnNqOwjXGeNYT
+         qYOl/p7Iv95Yg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch implements save and restore of pllout context.
+This patch allows to create separate irq_set_wake and irq_set_type
+implementations for different tegra designs PMC that has different
+wake models which require difference wake registers and different
+programming sequence.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
+AOWAKE model support is available for Tegra186 and Tegra194 only
+and it resides within PMC and supports tiered wake architecture.
 
-So during suspend entry the state of pllout is saved and on resume
-it is restored back to have pllout in same state as before suspend.
+Tegra210 and prior tegra designs uses PMC directly to receive wake
+events and coordinate the wake sequence.
 
-pllout rate is saved and restore in clock divider so it will be at
-same rate as before suspend when pllout state is restored.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll-out.c | 28 ++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h         |  3 +++
- 2 files changed, 31 insertions(+)
+ drivers/soc/tegra/pmc.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
-index 35f2bf00e1e6..52d140379ce3 100644
---- a/drivers/clk/tegra/clk-pll-out.c
-+++ b/drivers/clk/tegra/clk-pll-out.c
-@@ -69,10 +69,38 @@ static void clk_pll_out_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll_out->lock, flags);
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index edd4fe06810f..e87f29a35fcf 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+ 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+ 				   struct device_node *np,
+ 				   bool invert);
++	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
++	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+ 
+ 	const char * const *reset_sources;
+ 	unsigned int num_reset_sources;
+@@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+ 	.alloc = tegra_pmc_irq_alloc,
+ };
+ 
+-static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
++static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	unsigned int offset, bit;
+@@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
  }
  
-+static int tegra_clk_pll_out_save_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
-+
-+	if (!strcmp(__clk_get_name(hw->clk), "pll_re_out1"))
-+		pll_out->pllout_ctx = readl_relaxed(pll_out->reg);
-+	else
-+		pll_out->pllout_ctx = clk_hw_get_rate(hw);
-+
-+	return 0;
-+}
-+
-+static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll_out *pll_out = to_clk_pll_out(hw);
-+
-+	if (!strcmp(__clk_get_name(hw->clk), "pll_re_out1")) {
-+		writel_relaxed(pll_out->pllout_ctx, pll_out->reg);
-+	} else {
-+		if (!__clk_get_enable_count(hw->clk))
-+			clk_pll_out_disable(hw);
-+		else
-+			clk_pll_out_enable(hw);
-+	}
-+}
-+
- const struct clk_ops tegra_clk_pll_out_ops = {
- 	.is_enabled = clk_pll_out_is_enabled,
- 	.enable = clk_pll_out_enable,
- 	.disable = clk_pll_out_disable,
-+	.save_context = tegra_clk_pll_out_save_context,
-+	.restore_context = tegra_clk_pll_out_restore_context,
- };
+-static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
++static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+ 	u32 value;
+@@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+ 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+ 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+ 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+-	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+-	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
++	if (pmc->soc->irq_set_type)
++		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
++	if (pmc->soc->irq_set_wake)
++		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
  
- struct clk *tegra_clk_register_pll_out(const char *name,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 83623f5f55f3..b47f373c35ad 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -439,6 +439,8 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
-  * @rst_bit_idx:	bit to reset PLL divider
-  * @lock:		register lock
-  * @flags:		hardware-specific flags
-+ * @pllout_ctx:		pllout context to save and restore during suspend
-+ *			and resume
-  */
- struct tegra_clk_pll_out {
- 	struct clk_hw	hw;
-@@ -447,6 +449,7 @@ struct tegra_clk_pll_out {
- 	u8		rst_bit_idx;
- 	spinlock_t	*lock;
- 	u8		flags;
-+	unsigned int	pllout_ctx;
- };
- 
- #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
+ 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+ 					       &tegra_pmc_irq_domain_ops, pmc);
+@@ -2679,6 +2683,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
++	.irq_set_wake = tegra186_pmc_irq_set_wake,
++	.irq_set_type = tegra186_pmc_irq_set_type,
+ 	.reset_sources = tegra186_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
+ 	.reset_levels = tegra186_reset_levels,
 -- 
 2.7.4
 
