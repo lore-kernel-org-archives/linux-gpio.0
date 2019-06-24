@@ -2,166 +2,153 @@ Return-Path: <SRS0=+BAr=UX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3291CC43613
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 15:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E893C48BE9
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 16:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1216020652
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 15:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63A3C20663
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 16:22:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pEd8vglz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfFXPfj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jun 2019 11:35:39 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36009 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfFXPfj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jun 2019 11:35:39 -0400
-Received: by mail-ot1-f68.google.com with SMTP id r6so13956799oti.3;
-        Mon, 24 Jun 2019 08:35:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oDs8l0EqS99acnWR7VOY7oZc27cA1C7UyoMqytNjurQ=;
-        b=JR3hBzXMaRo6CTAjNnpok4EDPJgfGl8o1GfVDUn2zxDojA6vxPpWSOQj3l1NLs1LKY
-         FjiAg6fTKAl/3ojfNA6Nt6vyUHNS71uAatvGrhbfELc3FdtaFlmqy6CMBASKPt9+koPm
-         OnbiqBJOyLpf1zRlQ8l6+6LZPfr6/AL9SJ3BcbLFNPAymMGJ69HDPq6vZyMC3zCIiG4L
-         by1jf9gQRBRpUNUxB2pf5ab/2p1HnuotWAQXdtDZlg92yOhMVGRyCMfnELVdhO4h++ZS
-         lbB+G/MMpWl8Nz1g1BDh19Xm2Kt+XCk1Mr+2VoXaFlJljevdaIktSL2WE7aK9DjzBJgn
-         RfRg==
-X-Gm-Message-State: APjAAAUvPe6kPWcapGPbsolKagjln++q/zshAu7hqLU6uzqtkrOSlDdt
-        v+lf+QBV10wV+qMKe+HXXxGi8CJf5C3i0roYnB2RJB4c
-X-Google-Smtp-Source: APXvYqyCfTccALRL7UUQdCywFtvUJdVbHF8z4IjuBjMFvn94y0cAWWP2IP8qtQBBYVSaFzJ0isSgfKa/yy7C3VUHaN4=
-X-Received: by 2002:a9d:69ce:: with SMTP id v14mr17440403oto.39.1561390538697;
- Mon, 24 Jun 2019 08:35:38 -0700 (PDT)
+        id S1732041AbfFXQVs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jun 2019 12:21:48 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18242 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732017AbfFXQVr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jun 2019 12:21:47 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d10f8970001>; Mon, 24 Jun 2019 09:21:43 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Jun 2019 09:21:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Jun 2019 09:21:45 -0700
+Received: from [10.2.174.126] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 16:21:41 +0000
+Subject: Re: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra
+ wake
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
+ <86d0j3pfga.wl-marc.zyngier@arm.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <dc320c81-6601-4e6d-a7a0-57df8771bd99@nvidia.com>
+Date:   Mon, 24 Jun 2019 09:21:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190620062420.11650-1-sr@denx.de> <CAMuHMdXMpS_pg9N0qSW=Li0QavAMRG79RJcS4s0w6NTCxv_zzg@mail.gmail.com>
- <24bfb52c-6f77-b7cd-7421-9e6e4b0aa7d3@denx.de>
-In-Reply-To: <24bfb52c-6f77-b7cd-7421-9e6e4b0aa7d3@denx.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Jun 2019 17:35:26 +0200
-Message-ID: <CAMuHMdWeX6=SuSPVUB=WaYMsUbrmg5sraM=APeXsqr_Yv6u4AA@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v9] serial: mctrl_gpio: Check if GPIO property exisits
- before requesting it
-To:     Stefan Roese <sr@denx.de>
-Cc:     "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <86d0j3pfga.wl-marc.zyngier@arm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561393303; bh=XARYCg4Be2F4cVbObRkOiXOwjOP0Mst/Yjb4BxYksk0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=pEd8vglzapKb+YjH1kGdq1VvI2uMA+mEhIyqxyWrXHKcbEabHER36cmfheBuAXH/+
+         vwgY3pHKBGeLWWTaPihZ7JnQckG/pIOcjGpxkG22i4HM/fv2VvmS1F751NssxwWs5q
+         yB1ylptYE7DJ09259Ltst/0zXgzj5VU0voWZe3SFKU5ZnE8Yyhr/rKGTYMb+GaYgbu
+         BQNNfXXuCKZElcuZOLzroNxOOAtdMv2S8BOeu/AA92VpmzH7QwZxjzqXk17B/lN5B/
+         apDiv7TaS+FHvQhgcDOylFeDL7wanZT2PtbhHQECsfolUVLfW3PDzKdo/quVC0BXQm
+         VYS4YczznrIJg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Stefan,
 
-On Mon, Jun 24, 2019 at 5:29 PM Stefan Roese <sr@denx.de> wrote:
-> On 24.06.19 10:42, Geert Uytterhoeven wrote:
-> > On Thu, Jun 20, 2019 at 8:24 AM Stefan Roese <sr@denx.de> wrote:
-> >> This patch adds a check for the GPIOs property existence, before the
-> >> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-> >> support is added (2nd patch in this patch series) on x86 platforms using
-> >> ACPI.
-> >>
-> >> Here Mika's comments from 2016-08-09:
-> >>
-> >> "
-> >> I noticed that with v4.8-rc1 serial console of some of our Broxton
-> >> systems does not work properly anymore. I'm able to see output but input
-> >> does not work.
-> >>
-> >> I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-> >> ("tty/serial/8250: use mctrl_gpio helpers").
-> >>
-> >> The reason why it fails is that in ACPI we do not have names for GPIOs
-> >> (except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-> >> resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-> >> calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-> >> UART device in Broxton has following (simplified) ACPI description:
-> >>
-> >>      Device (URT4)
-> >>      {
-> >>          ...
-> >>          Name (_CRS, ResourceTemplate () {
-> >>              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-> >>                      "\\_SB.GPO0", 0x00, ResourceConsumer)
-> >>              {
-> >>                  0x003A
-> >>              }
-> >>              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-> >>                      "\\_SB.GPO0", 0x00, ResourceConsumer)
-> >>              {
-> >>                  0x003D
-> >>              }
-> >>          })
-> >>
-> >> In this case it finds the first GPIO (0x003A which happens to be RX pin
-> >> for that UART), turns it into GPIO which then breaks input for the UART
-> >> device. This also breaks systems with bluetooth connected to UART (those
-> >> typically have some GPIOs in their _CRS).
-> >>
-> >> Any ideas how to fix this?
-> >>
-> >> We cannot just drop the _CRS index lookup fallback because that would
-> >> break many existing machines out there so maybe we can limit this to
-> >> only DT enabled machines. Or alternatively probe if the property first
-> >> exists before trying to acquire the GPIOs (using
-> >> device_property_present()).
-> >> "
-> >>
-> >> This patch implements the fix suggested by Mika in his statement above.
-> >>
-> >> Signed-off-by: Stefan Roese <sr@denx.de>
-
-> >> --- a/drivers/tty/serial/serial_mctrl_gpio.c
-> >> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
-
-> >> @@ -116,6 +117,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
-> >>
-> >>          for (i = 0; i < UART_GPIO_MAX; i++) {
-> >>                  enum gpiod_flags flags;
-> >> +               char *gpio_str;
-> >> +               bool present;
-> >> +
-> >> +               /* Check if GPIO property exists and continue if not */
-> >> +               gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
-> >> +                                    mctrl_gpios_desc[i].name);
-> >
-> > This will silently break DTBs using "(cts|dsr|dcd|rng|rts|dtr)-gpio" instead
-> > of "(cts|dsr|dcd|rng|rts|dtr)-gpios".
+On 6/24/19 1:15 AM, Marc Zyngier wrote:
+> On Mon, 24 Jun 2019 04:02:54 +0100,
+> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+>> This patch allows to create separate irq_set_wake and irq_set_type
+>> implementations for different tegra designs PMC that has different
+>> wake models which require difference wake registers and different
+>> programming sequence.
+>>
+>> AOWAKE model support is available for Tegra186 and Tegra194 only
+>> and it resides within PMC and supports tiered wake architecture.
+>>
+>> Tegra210 and prior tegra designs uses PMC directly to receive wake
+>> events and coordinate the wake sequence.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/soc/tegra/pmc.c | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index edd4fe06810f..e87f29a35fcf 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
+>>   	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+>>   				   struct device_node *np,
+>>   				   bool invert);
+>> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+>> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+>>   
+>>   	const char * const *reset_sources;
+>>   	unsigned int num_reset_sources;
+>> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>>   	.alloc = tegra_pmc_irq_alloc,
+>>   };
+>>   
+>> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>   	unsigned int offset, bit;
+>> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   	return 0;
+>>   }
+>>   
+>> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>   	u32 value;
+>> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>>   	pmc->irq.irq_unmask = irq_chip_unmask_parent;
+>>   	pmc->irq.irq_eoi = irq_chip_eoi_parent;
+>>   	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
+>> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
+>> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
+>> +	if (pmc->soc->irq_set_type)
+>> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+>> +	if (pmc->soc->irq_set_wake)
+>> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+> I already commented on how superfluous these 'if ()' where. If you
+> disagree, please let me know why.
 >
-> Should both options be supported ("cts-gpio" vs "cts-gpios")?
-> Documentation/devicetree/bindings/serial/serial.txt only mentions
-> the "-gpios" variant.
+> Thanks,
+>
+> 	M.
 
-Well, the "-gpio" variant is deprecated, but still supported by
-devm_gpiod_get_index_optional(), and there are active users in upstream
-DTS files.
+Sorry Marc, missed it. Will fix in next version...
 
-My main objection is (trying to) replicate the matching logic inside
-gpiolib.c, causing subtle semantic differences. And keeping it consistent,
-of course.
 
-It would be nice if this could be fixed inside acpi_find_gpio(), so
-users don't need to be updated.  There may be other subsystems where
-the difference between DT and ACPI may cause issues, unbeknownst.
+Thanks
 
-Gr{oetje,eeting}s,
+Sowjanya
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
