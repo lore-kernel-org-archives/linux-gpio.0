@@ -1,145 +1,105 @@
-Return-Path: <SRS0=wEfq=UW=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=+BAr=UX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25259C43613
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Jun 2019 04:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E0CC43613
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 01:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048142073F
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Jun 2019 04:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76AE52133F
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 01:49:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qoH1VMAt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFWEk5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Jun 2019 00:40:57 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52321 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfFWEk5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 23 Jun 2019 00:40:57 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 6486F6B5D5;
-        Sun, 23 Jun 2019 04:40:53 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        id S1726379AbfFXBtQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Jun 2019 21:49:16 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38267 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfFXBtQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Jun 2019 21:49:16 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r9so10909632ljg.5;
+        Sun, 23 Jun 2019 18:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=334pQU/K019L/xPgu12eyPFo9ngLaIjC4OmIKGsurD8=;
+        b=qoH1VMAtHIpF2Y+Vy0lGAEKDuRzO9hYXc7m77KROcS6j/noy5cZzEbC8pZ8LH0FPGx
+         FFvTt+ALdo949E53lDh9R7E/MUTzHiYGN08Il4UZLbWs0QFHG8/4ToeZo9tGvHJCS/K5
+         AaCugNsxAIHOh9ImOckVfXx+XQjjPheXRdStj+USdcQQRoLdgfb8litqFldXPQZed7Q6
+         zOtvBc5nysQTk/gdFEC+NcUJe0jCxZXAuMyE/g8SmbmTeBZ0Bgjy3KJE1Mk6xJNEo8kU
+         tXnU8CYCo3y7d1PHTHashT+nVJywv309ZEyaZXbhnRA76C3nyaOK3lA1/nkLFh5xDUZs
+         13Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=334pQU/K019L/xPgu12eyPFo9ngLaIjC4OmIKGsurD8=;
+        b=YhVMgRO/qSel6X6xpARoRu5sCUTPYN7jss4/D57PqF7zVqIUrbfZmIOWaY5mjCL2Te
+         j9W7zcmoCRxJ0ycq/zZEXDwFpQF3voskPoWgK8Z0DpHhlLQBrxJhCts0Pr/nwzOS5P/e
+         qsRSANrqGtNisvsc/5LPijBLcRMlBt77TKMqUbbr1rv9C8uETJ7R0/W0i/Ga3+e5i1Zk
+         CwamAf4BlBEVqkxdLmGEvyaufoTep3SqF6BkBLB97ap1GcdIcq0wVsnST/cUck7UM6z8
+         EMTXmGaYtlpDc730vFVrRa0smU+JcMQLjDMSDSaswObleWgBQjVtDzDyE4LFMMCvQsOs
+         S6NQ==
+X-Gm-Message-State: APjAAAX16TgFTVtSo6vmtWRsp8hrLklHQk/qtrmQi+TDPT2w/Yfy0ofo
+        UdgzCRfSANNLfm2NYAkSBgzCyaIW
+X-Google-Smtp-Source: APXvYqxEEKJhCeD4AZKNpynf6pv2TU2j54d4+FEkWU0nC+rYYRCVHsR8/RaqjV3pF3rF69LLMz7oTQ==
+X-Received: by 2002:a2e:5cc8:: with SMTP id q191mr51568583ljb.118.1561339302350;
+        Sun, 23 Jun 2019 18:21:42 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id n1sm1332343lfk.19.2019.06.23.18.21.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Jun 2019 18:21:41 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] pinctrl: tegra: Add bitmask support for parked
+ bits
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 9/9] ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
-Date:   Sun, 23 Jun 2019 12:38:01 +0800
-Message-Id: <20190623043801.14040-10-icenowy@aosc.io>
-In-Reply-To: <20190623043801.14040-1-icenowy@aosc.io>
-References: <20190623043801.14040-1-icenowy@aosc.io>
+Cc:     Stephen Warren <swarren@wwwdotorg.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20190621151932.20662-1-thierry.reding@gmail.com>
+ <20190621151932.20662-2-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5f38ce80-dac5-5a1e-0569-27535a6f35fd@gmail.com>
+Date:   Mon, 24 Jun 2019 04:21:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <20190621151932.20662-2-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Lichee zero plus is a core board made by Sipeed, which includes on-board
-TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
-header, a microUSB slot and a gold finger connector for expansion. It
-can use either Sochip S3 or Allwinner S3L SoC.
+21.06.2019 18:19, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Some pin groups have park bits for multiple pins in one register.
+> Support this by turning the parked bit field into a parked bitmask
+> field. If no parked bits are supported, the bitmask can be 0.
+> 
+> Update the pingroup table on Tegra210, which is the only generation
+> where this is supported, with the parked bitmask.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - write to mux_bank/mux_reg or drv_bank/drv_reg depending on pin
 
-Add the basic device tree for the core board, w/o optional onboard
-storage, and with S3 SoC.
+Looking great! Thank you!
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3:
-- Drop common regulator DTSI usage and added vcc3v3 regulator.
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
- arch/arm/boot/dts/Makefile                    |  1 +
- .../boot/dts/sun8i-s3-lichee-zero-plus.dts    |  8 ++++
- .../dts/sun8i-s3-s3l-lichee-zero-plus.dtsi    | 44 +++++++++++++++++++
- 3 files changed, 53 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
- create mode 100644 arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
+For Tegra20/30
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c4742afe41a7..d24dec29245e 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1113,6 +1113,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-r16-nintendo-super-nes-classic.dtb \
- 	sun8i-r16-parrot.dtb \
- 	sun8i-r40-bananapi-m2-ultra.dtb \
-+	sun8i-s3-lichee-zero-plus.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3s-licheepi-zero.dtb \
- 	sun8i-v3s-licheepi-zero-dock.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-new file mode 100644
-index 000000000000..7d2f6b145190
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-s3.dtsi"
-+#include "sun8i-s3-s3l-lichee-zero-plus.dtsi"
-diff --git a/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-new file mode 100644
-index 000000000000..e68f738c3046
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-s3-s3l-lichee-zero-plus.dtsi
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+&mmc0 {
-+	broken-cd;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pb_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
--- 
-2.21.0
-
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
