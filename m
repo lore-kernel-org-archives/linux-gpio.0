@@ -2,159 +2,174 @@ Return-Path: <SRS0=+BAr=UX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE48AC43613
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 02:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D256C43613
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7492F20657
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 02:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53B4D2073F
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jun 2019 03:03:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e/k9EVQH"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IpCOSL/+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfFXCgd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Jun 2019 22:36:33 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:55345 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfFXCgc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Jun 2019 22:36:32 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190624000832epoutp046b96c81e3192ba8a284fd87ca68117e4~q_dSUSwb71862018620epoutp04a
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Jun 2019 00:08:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190624000832epoutp046b96c81e3192ba8a284fd87ca68117e4~q_dSUSwb71862018620epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561334912;
-        bh=FXLhH3xp58N69ijMnn/sGIRveP7AeFn1jV5SXYXCSfo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=e/k9EVQHgtzF6idvBashl0scU6AqpCG3MikscZIOkWNep6MYPFyUtqO4RE+tc7+H0
-         LTgvUPQAZdSdROBgxBbGGNUMJqyH4V5c762HQc12PfoGoiQZJ2kVty5jtkKoKhqxAw
-         QqTf+cxP0HmxrBRXfu7B9AZrYkSN0TNRQAvRK/4c=
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190624000828epcas1p35a140a12268e526527e29b924b776d5c~q_dO12xgF2287522875epcas1p3m;
-        Mon, 24 Jun 2019 00:08:28 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        02.07.04108.874101D5; Mon, 24 Jun 2019 09:08:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190624000822epcas1p423597f0f8dd7a4a68047ee0ef6421d11~q_dJj4tkz2257922579epcas1p45;
-        Mon, 24 Jun 2019 00:08:22 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190624000822epsmtrp10fb5112d79464145805163aff943c17c~q_dJjHIpg0223602236epsmtrp1U;
-        Mon, 24 Jun 2019 00:08:22 +0000 (GMT)
-X-AuditID: b6c32a39-89fff7000000100c-ca-5d1014781765
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        92.90.03662.674101D5; Mon, 24 Jun 2019 09:08:22 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190624000822epsmtip2abc340df84519acf14a96ee564282d31~q_dJZLITx2730627306epsmtip2g;
-        Mon, 24 Jun 2019 00:08:22 +0000 (GMT)
-Subject: Re: [PATCH] extcon: gpio: Request reasonable interrupts
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <547eacd4-e4b9-e9a9-9f89-aa33b05cb674@samsung.com>
-Date:   Mon, 24 Jun 2019 09:10:58 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
+        id S1726418AbfFXDDH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Jun 2019 23:03:07 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13165 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfFXDDG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Jun 2019 23:03:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d103d670001>; Sun, 23 Jun 2019 20:03:03 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 23 Jun 2019 20:03:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 23 Jun 2019 20:03:04 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 03:03:03 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 03:03:03 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 24 Jun 2019 03:03:03 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.126]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d103d650000>; Sun, 23 Jun 2019 20:03:03 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH V4 00/18] SC7 entry and exit support for Tegra210
+Date:   Sun, 23 Jun 2019 20:02:41 -0700
+Message-ID: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaCaZyzfr9=QRz6uRZpK6mw_zDeVmBwgH7=FPbNGKB9tQ@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmk+LIzCtJLcpLzFFi42LZdlhTT7dCRCDW4OIHZospf5YzWWye/4fR
-        4vKuOWwWtxtXsDmweNy5tofNo2/LKkaPz5vkApijsm0yUhNTUosUUvOS81My89JtlbyD453j
-        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
-        UgtScgosC/SKE3OLS/PS9ZLzc60MDQyMTIEKE7IzHv86yFhwj69iy1PpBsYd3F2MHBwSAiYS
-        n1YwdzFycQgJ7GCUaNl8hxXC+cQocf/DIhYI5xujxLmtT9m7GDnBOt69ncgOkdjLKPFu9T82
-        COc9o8SliTfBqoQFHCRmXf8MZosI6Eh0b/vJCmIzCyxnlFhwzxLEZhPQktj/4gYbiM0voChx
-        9cdjRhCbV8BO4tuHJ2D1LAKqEg9WdoHZogIREpe37IKqEZQ4OfMJC4jNKRAo8fl3CwvEfHGJ
-        W0/mM0HY8hLNW2eDPSchcIZN4vPhy1AvuEhs6zvJCGELS7w6vgUqLiXxsr8Nyq6WWHnyCBtE
-        cwejxJb9F1ghEsYS+5dOZgKFHrOApsT6XfoQYUWJnb/nMkIs5pN497WHFRLAvBIdbUIQJcoS
-        lx/cZYKwJSUWt3eyTWBUmoXknVlIXpiF5IVZCMsWMLKsYhRLLSjOTU8tNiwwRY7sTYzghKhl
-        uYPx2DmfQ4wCHIxKPLwCG/hjhVgTy4orcw8xSnAwK4nw8uTwxArxpiRWVqUW5ccXleakFh9i
-        NAWG9kRmKdHkfGCyziuJNzQ1MjY2tjAxNDM1NFQS543nvhkjJJCeWJKanZpakFoE08fEwSnV
-        wKjrWcP7dOksg/p1iUnbj33dc9r/yqqpyjZK/3/2vHaYdu3OjXceyhVcTLna79/8TJ4srqAf
-        wHxKU23hkSW1TldWid6sMri4U33bjsUMi3d4rJ2eHlJwV0assP3kPzbejMoTh9czR002DQ9f
-        Gzx7oZrjM23m3a+DlA5Pm+t0R3PNNoaln50jn19TYinOSDTUYi4qTgQAZ8Fbe54DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvG6ZiECswbKfuhZT/ixnstg8/w+j
-        xeVdc9gsbjeuYHNg8bhzbQ+bR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGU8/nWQseAeX8WW
-        p9INjDu4uxg5OSQETCTevZ3I3sXIxSEksJtR4trE5YwQCUmJaRePMncxcgDZwhKHDxdD1Lxl
-        lLhy5S1YjbCAg8Ss65/ZQWwRAR2J7m0/WUGKmAWWM0rcP3qXFaKjh0niz4duNpAqNgEtif0v
-        boDZ/AKKEld/PAabxCtgJ/HtwxNWEJtFQFXiwcouMFtUIEKir202G0SNoMTJmU9YQGxOgUCJ
-        z79bwGxmAXWJP/MuMUPY4hK3nsxngrDlJZq3zmaewCg8C0n7LCQts5C0zELSsoCRZRWjZGpB
-        cW56brFhgVFearlecWJucWleul5yfu4mRnB0aGntYDxxIv4QowAHoxIPr8AG/lgh1sSy4src
-        Q4wSHMxKIrw8OTyxQrwpiZVVqUX58UWlOanFhxilOViUxHnl849FCgmkJ5akZqemFqQWwWSZ
-        ODilGhitA5ZkTA/PXP/FavIHn5tX69lPndnlelTsOIdFwOd5f/7+mxNauauS7/rrvhJ5xY4I
-        f+9tBc/tOuKOdTv0Zenu+/vI0LEjdtlU1f5ta87Kl3u/4VzVlcdtvEw7Of94aPnnm9Zq61d8
-        X/w8n6lQKkL2sYqkm+q1rJt3DZ8tXiSjOf+U2/lpL1YqsRRnJBpqMRcVJwIAT2T+9IoCAAA=
-X-CMS-MailID: 20190624000822epcas1p423597f0f8dd7a4a68047ee0ef6421d11
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190530183941epcas5p4688d5fa80df649e4184a296ea78e6256
-References: <CGME20190530183941epcas5p4688d5fa80df649e4184a296ea78e6256@epcas5p4.samsung.com>
-        <20190530183932.4132-1-linus.walleij@linaro.org>
-        <28b92b86-19ac-0bf3-57d8-c7ab4557a45b@samsung.com>
-        <CACRpkdaCaZyzfr9=QRz6uRZpK6mw_zDeVmBwgH7=FPbNGKB9tQ@mail.gmail.com>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561345383; bh=FXKH8IMDorFgav/DVdwP1OzQMzFRRIOPr/T/3uTyBFU=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=IpCOSL/++rOP3zioi/NBgfIA6zsHbAjJJ24ukprP13lUzOAxnN2GiEvaiwmb7w58E
+         qGSq8jMusbPDKl4Y+9zQ4eoYjiK6uhKJP27/EKvf4k6iI+w8JwEVASr9LMjSGmf2Uz
+         Q6wy8Dc8uWeSkGCumppxlCCJ6g9q7UXdvsQ23SzlxoXpy+Xc6iLxrzN8UJJ4+xlzaj
+         8sSGNG6Teyuk6/EBLuG7asHCddGLsKy57KfSbsXjljUQ/BqdJSodLg0meOj4YLLQ1t
+         smhCJYwoGq7P031IaID+NefAxIec7M3i4rqYRT0w3uoLCgjhL3kaJiMLKZbPraX5q7
+         /Yjnmdo8DUV7Q==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 19. 6. 8. 오전 6:24, Linus Walleij wrote:
-> On Tue, Jun 4, 2019 at 3:30 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> On 19. 5. 31. 오전 3:39, Linus Walleij wrote:
-> 
->>> +     /*
->>> +      * It is unlikely that this is an acknowledged interrupt that goes
->>> +      * away after handling, what we are looking for are falling edges
->>> +      * if the signal is active low, and rising edges if the signal is
->>> +      * active high.
->>> +      */
->>> +     if (gpiod_is_active_low(data->gpiod))
->>> +             irq_flags = IRQF_TRIGGER_FALLING;
->>
->> If gpiod_is_active_low(data->gpiod) is true, irq_flags might be
->> IRQF_TRIGGER_LOW instead of IRQF_TRIGGER_FALLING. How can we sure
->> that irq_flags is always IRQF_TRIGGER_FALLING?
-> 
-> OK correct me if I'm wrong, but this is an external connector and
-> the GPIO goes low/high when the connector is physically inserted.
-> If it was level trigged, it would lock up the CPU with interrupts until
-> it was unplugged again, since there is no way to acknowledge a
-> level IRQ.
-> 
-> I think level IRQ on GPIOs are only used for logic peripherals
-> such as ethernet controllers etc where you can talk to the peripheral
-> and get it to deassert the line and thus acknowledge the IRQ.
-> 
-> So the way I see it only edge triggering makes sense for extcon.
-> 
-> Correct me if I'm wrong.
+This patch series includes Tegra210 deepsleep support with RTC alarm
+wake event.
 
-Sorry for late reply because of vacation.
+This series also includes save and restore of PLLs, clocks, OSC contexts
+for deepsleep exit to normal operation.
 
-Actually, I have not thought that the kind of irq_flags are fixed
-according to the category of specific h/w device. Until now, as I knew,
-the h/w device have to initialize the the kind of irq_flags
-for each peripheral device dependency. The each vendor of peripheral device
-might design the kind of the kind of irq-flags for detection.
+This patch series doesn't support 100% suspend/resume to allow fully
+functional state upon resume and we are working on some more drivers suspend
+and resume implementations.
 
-If possible, could you provide some example on mainline kernel?
+[V4]: Changes between V3 & V4 are
+	- V3 feedback fixes
+	- Removed park bits clear for EMMC pads in pinctrl-tegra driver
+	  function tegra_pinctrl_clear_parked_bits as based on V3 feedback
+	  parked_bit is updated to parked_bitmask to use with DRV_PINGROUP
+	  as well and thierry posted patch series for this.
+	- Implemented all peripheral clocks save and restore through their
+	  corresponding clk_ops save_context and restore_context and removed
+	  all direct registers store and restore in clk-tegra210 driver.
+	- Created separate patch for fence_delay update during PLLU init based
+	  on V3 feedback.
+	- Added more comments in tegra210_clk_resume regarding dfll restore
+	  sequence and its dependency on peripheral clocks restore.
+
+[V3]: Changes between V2 & V3 are
+	- V2 feedback fixes
+	- GPIO restore should happen prior to Pinctrl restore to prevent
+	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
+	  gpio resume prior to pinctrl resume.
+	- Implemented save_context and restore_context callbacks for clock
+	  plls, pll outs and dividers in corresponding drivers.
+	  Note: Peripheral clocks and clock enable and reset need to be in
+	  Tegra210 clock suspend/resume as they need to be in proper sequence
+	  w.r.t DFLL resume for restoring CPU clock.
+	- Removed gpio-tegra changes for hierarchical support to have PMC as
+	  parent to GPIOs for GPIO wake event support. Thierry is working on
+	  gpiolib for some cleanup before adding hierarchical support. So
+	  holding on to GPIO wake support for now.
+
+[V2] : V1 feedback fixes
+	Patch 0002: This version still using syscore. Thierry suggest not to
+	use syscore and waiting on suggestion from Linux Walleij for any better
+	way of storing current state of pins before suspend entry and restoring
+	them on resume at very early stage. So left this the same way as V1 and
+	will address once I get more feedback on this.
+	Also need to findout and implement proper way of forcing resume order
+	between pinctrl and gpio driver.
+
+[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
+	using hierarchical IRQ with PMC as parent to GPIO.
+
+
+
+Sowjanya Komatineni (18):
+  irqchip: tegra: do not disable COP IRQ during suspend
+  pinctrl: tegra: add suspend and resume support
+  gpio: tegra: use resume_noirq for tegra gpio resume
+  clk: tegra: save and restore divider rate
+  clk: tegra: pllout: save and restore pllout context
+  clk: tegra: pll: save and restore pll context
+  clk: tegra: save and restore CPU and System clocks context
+  clk: tegra: support for saving and restoring OSC context
+  clk: tegra: add suspend resume support for DFLL
+  clk: tegra: add save and restore context support for peripheral clocks
+  clk: tegra210: use fence_udelay during PLLU init
+  clk: tegra210: support for Tegra210 clocks suspend and resume
+  soc/tegra: pmc: allow support for more tegra wake
+  soc/tegra: pmc: add pmc wake support for tegra210
+  arm64: tegra: enable wake from deep sleep on RTC alarm.
+  soc/tegra: pmc: configure core power request polarity
+  soc/tegra: pmc: configure deep sleep control settings
+  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
+
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |   7 ++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   5 +-
+ drivers/clk/tegra/clk-dfll.c                   |  78 ++++++++++++++
+ drivers/clk/tegra/clk-dfll.h                   |   2 +
+ drivers/clk/tegra/clk-divider.c                |  23 ++++
+ drivers/clk/tegra/clk-periph-fixed.c           |  31 ++++++
+ drivers/clk/tegra/clk-periph-gate.c            |  34 ++++++
+ drivers/clk/tegra/clk-periph.c                 |  43 ++++++++
+ drivers/clk/tegra/clk-pll-out.c                |  28 +++++
+ drivers/clk/tegra/clk-pll.c                    | 115 ++++++++++++++------
+ drivers/clk/tegra/clk-sdmmc-mux.c              |  30 ++++++
+ drivers/clk/tegra/clk-tegra-fixed.c            |  14 +++
+ drivers/clk/tegra/clk-tegra-super-gen4.c       |   4 -
+ drivers/clk/tegra/clk-tegra210.c               | 123 +++++++++++++++++++--
+ drivers/clk/tegra/clk.c                        |  94 ++++++++++++++++
+ drivers/clk/tegra/clk.h                        |  35 +++++-
+ drivers/gpio/gpio-tegra.c                      |   5 +-
+ drivers/irqchip/irq-tegra.c                    |  20 +++-
+ drivers/pinctrl/tegra/pinctrl-tegra.c          |  47 ++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h          |   4 +
+ drivers/pinctrl/tegra/pinctrl-tegra210.c       |   6 ++
+ drivers/soc/tegra/pmc.c                        | 143 ++++++++++++++++++++++++-
+ 22 files changed, 838 insertions(+), 53 deletions(-)
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.7.4
+
