@@ -2,78 +2,94 @@ Return-Path: <SRS0=lsbl=UY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A13C48BD5
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 12:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2271CC48BD4
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 12:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA9A0208CA
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 12:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE73204EC
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 12:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z5L7R/RH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I48yWJwG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfFYMEq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Jun 2019 08:04:46 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46568 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfFYMEq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 08:04:46 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z15so12394067lfh.13
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Jun 2019 05:04:44 -0700 (PDT)
+        id S1727442AbfFYMTE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Jun 2019 08:19:04 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43871 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727893AbfFYMTA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 08:19:00 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 16so16009207ljv.10
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Jun 2019 05:18:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/f28aOrleoqvEJ4bHiEApOEKhIHy1kX+iAJZIMQ4U9Q=;
-        b=z5L7R/RHQ8gi6kmdrSF+HFirS1VB7C5YI2Qog1AcaZ2uB7ENqcpmCaNfSQ1HbUcSSw
-         anA3Ao+KibkpTeYsrrpvLX5azepaGkFdyjbEq1zy8aYdGFpL2qGGPzl8ixWZy0gA11Sh
-         iZDQRoV25xY+M1el8CxVRlxvP/b5HZ5GEbv6LhIlMg05w5Onyd/9ZsGmi0dvxOKLHj0k
-         gerU1H7y94Tq9tVKHeiVzmAT7+61RQ6h1UDxYN2jKT2NUrYwSuTDN+Z65KRniCOVp3kp
-         TwjSPaEfM3w2Q7kdLV4soj47Ha4+dnbh/HAhyf2aMMqDqc/iIA3LdFXKIwZe2S8W+d9x
-         2QzQ==
+        bh=jALhUuHnRMGGpmpdlDb0HIhW7kZ/qK9Mq/evTmTkD00=;
+        b=I48yWJwGiioj2FgBHsgEqo+h9ie0rIphzW/pO7El8g0Ve0FckbkZNMUB367r5J1WCU
+         /cp9KZzBY2nwMFG8rx5wAWI3vxwowVuqV3/DhgJsA/mAau+OXwxd52Z31Uo/CcD719oD
+         ddSYF/1nj92zTIcEfhIDG6VdaKTFVkOLK70ziTnrdpYIUhIJ1xtv1Tign5rn2dAyJN/V
+         n/uaJ9MMqHk0Zffw7LvtEWm60FzmpXVsPeqxEqH1IatZUK0UyjDSnMUbm7iXIQQcxioF
+         Fp+ZtWzAYNpPGOy04scBl/bQPaBfMkr6h0ztFmvx3nacYkph9QHVVk5TbIhDP2ncAWDY
+         Joaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/f28aOrleoqvEJ4bHiEApOEKhIHy1kX+iAJZIMQ4U9Q=;
-        b=AYMxHKg+eemRrQMSqVJC6HANaiFqnxnK5m+nLC0Xg3eGEZQ7kZJzsJEZnNOkppL7Tu
-         FBvYna/46OtYG3KOmyotE/TesfUG6IygYzqB5RHHriz10AkQrFJaSVEwAkxHP1MAif8W
-         szxGV584KBKRk1+OKt1EGp7jn1N3dpI7Ii++G9SLj1I4imTDQDMpgYkvf80q+BNUbr8E
-         D39fQTmTykLsFsLcszVF4s+e3gjipRYasuUTA983kqG5Y8fSe6ZuqVOLZEY8pfmRAMYX
-         h14K3LnZy33f7uEe7jnM8GGlDydKSASkn5Ch6R2CGjl0ljmH07lrvgLtVFIE3sVeFd7s
-         TP/w==
-X-Gm-Message-State: APjAAAVUO/fykxMrTmQa4Df2+gZqOT9ERLgIbiMuSHGT0pO05gYyPESe
-        mKcKhN1xjFEDnkCjM+0wo92X47w+m5HxPNDQT+EEwvnx
-X-Google-Smtp-Source: APXvYqzNxR9cJAP4Uogl1051fZWl8BhQWMHJTzIVqKCqjWVlLKzkndXO2hB3c3GS+CgH+LiOvJBRYTewv4Y05BvbVo8=
-X-Received: by 2002:a19:7616:: with SMTP id c22mr24949459lff.115.1561464284131;
- Tue, 25 Jun 2019 05:04:44 -0700 (PDT)
+        bh=jALhUuHnRMGGpmpdlDb0HIhW7kZ/qK9Mq/evTmTkD00=;
+        b=J6qeizjVbt9Fof35l1ycMGBZD2EnLY09JWLVa3a0sk/KRRLYnqfOlTBATF6EMkYtF8
+         eqSyhSjgrdso4+LxGbGZo7dAqrgozI5ZpttT2s1e7MUeu9bX1ODkeH9kCNvenD1OZG33
+         fTaWtogu4HAAa1bPFagy7pRRi7JnVu1Co0/8dlzOJoP+VxHkgxd/i1SDadp2yhjHJOQV
+         w+qGWeUK+ws5aAyxy0ppmjg/e2eAcdlYd5HQ5TNrEqVJOaRlM4xBiNX1YE9Xhts+eaLc
+         AIJJpvTlWL5SvBCVSA0ylZ4LACfBDSBjzSEO2Kec46xXY3GCdWigaGDYekLeEOXSKejl
+         msfw==
+X-Gm-Message-State: APjAAAVlfJabETFPDdhIYe2Vfuw1ZLowfEQZJtsZcLKig7xj+CN9bYgi
+        TvIj0YN/V1VgM1mwJ6KnHfQ+4MbhD5vx6qrqx8pHqwVm
+X-Google-Smtp-Source: APXvYqwJlShOUGzSJYy1EdHq8lnqlJ7DfvQSdzbDHyFXLiG7jgfjQp4H2cmef6cUs212VQhxBDPSZv9UmUqJAyI51+o=
+X-Received: by 2002:a2e:81d8:: with SMTP id s24mr33236100ljg.37.1561465138557;
+ Tue, 25 Jun 2019 05:18:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190624144956.32354-1-geert+renesas@glider.be>
-In-Reply-To: <20190624144956.32354-1-geert+renesas@glider.be>
+References: <1560764090-22740-1-git-send-email-neeraju@codeaurora.org>
+ <CACRpkdZ4BoZzX7pVw4HYBzSMvhnyu_oVNoiiLk3ME05nnG1T3Q@mail.gmail.com> <c9eb6bfc-a8d1-75df-159b-3f2304fdb8ea@codeaurora.org>
+In-Reply-To: <c9eb6bfc-a8d1-75df-159b-3f2304fdb8ea@codeaurora.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 14:04:32 +0200
-Message-ID: <CACRpkdaeXoL7cvrKMjAsp4U0jHdoC=JK9jRJ8JLXk5LV_jv3eQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Sort GPIO drivers in Makefile
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Date:   Tue, 25 Jun 2019 14:18:46 +0200
+Message-ID: <CACRpkdYMW8TiK3jBfgVhmST_S8CHuyY2rTD=ZZ37eckdrJ2uTw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: qcom: Add irq_enable callback for msm gpio
+To:     Neeraj Upadhyay <neeraju@codeaurora.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Srinivas Ramana <sramana@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 4:49 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, Jun 25, 2019 at 12:29 PM Neeraj Upadhyay <neeraju@codeaurora.org> wrote:
+> On 6/25/19 2:28 PM, Linus Walleij wrote:
 
-> Sort the definitions for the individual GPIO drivers in the Makefile, by
-> object file name.  Align all entries while at it.
+> > Please don't name functions __like __that.
+> >
+> >> -static void msm_gpio_irq_unmask(struct irq_data *d)
+> >> +static void __msm_gpio_irq_unmask(struct irq_data *d, bool status_clear)
+> > Instead of __unclear __underscore __semantic use something
+> > really descriptive like
+> >
+> > static void msm_gpio_irq_clear_irq()
+> >
+> > That is what it does, right?
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Is below ok? as it clears (if status_clear set) and then unmasks irq
+>
+> static void msm_gpio_irq_clear_unmask()
 
-Patch applied.
+Sure thing! Thanks.
 
 Yours,
 Linus Walleij
