@@ -2,84 +2,123 @@ Return-Path: <SRS0=lsbl=UY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA695C48BD4
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94EEC48BD5
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 10:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF2120883
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8C7214DA
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 10:29:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KXHl8FC/"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Syd3W+CI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Syd3W+CI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbfFYJ3O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Jun 2019 05:29:14 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41757 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbfFYJ3O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 05:29:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 205so6718558ljj.8
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Jun 2019 02:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hr4BbnUnDdRpb27xjTEqnGYw6rCO5zWnBaHQ20uJ7BU=;
-        b=KXHl8FC/0veHBSg/ULgTCwAprsrhNoPV8NhifJf2qTxk5mFMgWPX1nqLoyRsZPpvKo
-         pFNeuWvTRzzWkCu7VDOLOQTmwjWurCgAG9CHNm0paqQ0oMu5cXKRHnkBONPQtx9LQARc
-         iHvn/kqHRl7E/R9tN6rcqqlfRHw1fg2t9zCkzCMwbKViqQpaoPMrZBJfzx2zSCcFd94z
-         IB3VDOxshdO4/wOCf0o6YVtNMGq9o799OlkamQcw4zyY5Ja95PPdydyyGhy9OeJcbF5A
-         23mBAAUHxxh7n2g9nlhmWmgL/WADGjFCGEA9by1HpPG+CKCTPmTsxbr0g6WPLBhh+EwF
-         Vyfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hr4BbnUnDdRpb27xjTEqnGYw6rCO5zWnBaHQ20uJ7BU=;
-        b=dAmE0kIMaW+4Pjn11rVc8ONFNtbFeOTHYec5jxmmpu1eN9PTUzuc/ybJUE4ZG3EQKS
-         IiDvWVDzB9kImbVhN3qAY0/CPxfJRqa0+G2gXAZgmOljw7kIInge+r2Gn0XVUJpezaYB
-         Wvfosah97K1+d+vqa1FY6IPewrxWb5MoRySd8PMsY8/OF+8XEbH0jvAv8JQF0mbvUCc3
-         Pt5f18IMoqRs65utL/URzWQu4Oewb7oXbHleKrzPO2jAkOW1xv7GVAH2waIcYaRR3oAF
-         LgBJEeAH8U0Difjiny8P31qefDmCymOQL10mDEFdt9Gzkr0kv8lvd/g6zLtMPpFSeJ3H
-         8eog==
-X-Gm-Message-State: APjAAAWcv7Cfnh8XMY/FhRd58Q1pP+2NTV/COBm2agkplyNCzxSp23nN
-        jy3FCZ4xWxgmAIIOhGjW9nhGHU8QIOpKmDYlbuj/zA==
-X-Google-Smtp-Source: APXvYqyq/VXlss4wucidr7AAtR022RhlcgqfGNaAxL8EywC9WN9LasEYhqnj3xLZO+qCDN0AUTVroAL+awthaj5oNs8=
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr8538623ljm.180.1561454952662;
- Tue, 25 Jun 2019 02:29:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <1561354834-22617-1-git-send-email-info@metux.net> <1561354834-22617-3-git-send-email-info@metux.net>
-In-Reply-To: <1561354834-22617-3-git-send-email-info@metux.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 11:29:01 +0200
-Message-ID: <CACRpkdYzpYbkMstj2nqv5ygvYipqFfhJ5GrMnRjQstu7op6rXA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drivers: gpio: siox: use module_siox_driver()
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        id S1726506AbfFYK3U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Jun 2019 06:29:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36912 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbfFYK3U (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 06:29:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9143B6028D; Tue, 25 Jun 2019 10:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561458558;
+        bh=BCA2m2EDttizL1A7WMCfrSo2P/383TvoBmUFUGVg/ZU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Syd3W+CIctgNf4j9/Jyu09VjziFwHSAzzZ4OWTV/cNVSgN7q8/Ei6igMA3HeuCNrF
+         kBES8tsru1ZVUwAdTYT5gdSO3IwW7Jrgnt3VDCGjh5x4srhKmP99vdT0Eg8PDFK99N
+         xZAFpSlJ7sQe39Uy3pgj+ik11mcvWgSPnWdmQBI0=
+Received: from [10.204.78.89] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: neeraju@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9CB060255;
+        Tue, 25 Jun 2019 10:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561458558;
+        bh=BCA2m2EDttizL1A7WMCfrSo2P/383TvoBmUFUGVg/ZU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Syd3W+CIctgNf4j9/Jyu09VjziFwHSAzzZ4OWTV/cNVSgN7q8/Ei6igMA3HeuCNrF
+         kBES8tsru1ZVUwAdTYT5gdSO3IwW7Jrgnt3VDCGjh5x4srhKmP99vdT0Eg8PDFK99N
+         xZAFpSlJ7sQe39Uy3pgj+ik11mcvWgSPnWdmQBI0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9CB060255
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
+Subject: Re: [PATCH v2] pinctrl: qcom: Add irq_enable callback for msm gpio
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        t.scherer@eckelmann.de
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Srinivas Ramana <sramana@codeaurora.org>
+References: <1560764090-22740-1-git-send-email-neeraju@codeaurora.org>
+ <CACRpkdZ4BoZzX7pVw4HYBzSMvhnyu_oVNoiiLk3ME05nnG1T3Q@mail.gmail.com>
+From:   Neeraj Upadhyay <neeraju@codeaurora.org>
+Message-ID: <c9eb6bfc-a8d1-75df-159b-3f2304fdb8ea@codeaurora.org>
+Date:   Tue, 25 Jun 2019 15:59:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdZ4BoZzX7pVw4HYBzSMvhnyu_oVNoiiLk3ME05nnG1T3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 7:40 AM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
 
-> From: Enrico Weigelt <info@metux.net>
+On 6/25/19 2:28 PM, Linus Walleij wrote:
+> On Mon, Jun 17, 2019 at 11:35 AM Neeraj Upadhyay <neeraju@codeaurora.org> wrote:
 >
-> Reduce driver init boilerplate by using the new
-> module_siox_driver() macro.
+>> From: Srinivas Ramana <sramana@codeaurora.org>
+>>
+>> Introduce the irq_enable callback which will be same as irq_unmask
+>> except that it will also clear the status bit before unmask.
+>>
+>> This will help in clearing any erroneous interrupts that would
+>> have got latched when the interrupt is not in use.
+>>
+>> There may be devices like UART which can use the same gpio line
+>> for data rx as well as a wakeup gpio when in suspend. The data that
+>> was flowing on the line may latch the interrupt and when we enable
+>> the interrupt before going to suspend, this would trigger the
+>> unexpected interrupt. This change helps clearing the interrupt
+>> so that these unexpected interrupts gets cleared.
+>>
+>> Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
+>> Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+> Overall this looks good to me, waiting for Bjorn's review.
 >
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+>> Changes since v1:
+>> - Extracted common code into __msm_gpio_irq_unmask().
+> Please don't name functions __like __that.
+>
+>> -static void msm_gpio_irq_unmask(struct irq_data *d)
+>> +static void __msm_gpio_irq_unmask(struct irq_data *d, bool status_clear)
+> Instead of __unclear __underscore __semantic use something
+> really descriptive like
+>
+> static void msm_gpio_irq_clear_irq()
+>
+> That is what it does, right?
 
-Patch applied.
+Is below ok? as it clears (if status_clear set) and then unmasks irq
 
-Yours,
-Linus Walleij
+static void msm_gpio_irq_clear_unmask()
+
+>
+> Other than that it looks fine.
+>
+> Yours,
+> Linus Walleij
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
+
