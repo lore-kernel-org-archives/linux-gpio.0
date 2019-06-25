@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12760C48BD4
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCAEC48BD5
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA27A208CA
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A21208CA
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jun 2019 09:05:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GqEjpL8F"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nFParKFr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbfFYJEb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Jun 2019 05:04:31 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36551 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730865AbfFYJEb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 05:04:31 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so15455052ljj.3
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Jun 2019 02:04:29 -0700 (PDT)
+        id S1728801AbfFYJFk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Jun 2019 05:05:40 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42506 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbfFYJFk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jun 2019 05:05:40 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x144so4625164lfa.9
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Jun 2019 02:05:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rhBjmgTFiYbfZZESWFQ8f7valPKPixUWhzHoz12+ivw=;
-        b=GqEjpL8FHzMdySOuqZoN9HZ/OkZx7WFMmzNdnwrGpQ+jCqyaej++1ThsR1ZV5rjHoB
-         ZwcNL59UKwVRJBRlevU81FuITNrJ929IPiuGv3ysff62ONus6boiXH6VfC/JbaiKuEEp
-         zGkt42Fm+sEkxLPKPfSvrAJeJC9ft+j1lC8xswbhuCJrpCnqLjdIUMvAyQbGNEVhjEKG
-         WOVSloHSmWWSXZlSXL+oZ6HQdczouaj2LcA5iUTWEF0XpHMSiHKOuAxM2U8RLIn0UdXl
-         uxQengVbdXro7sXTxTB0+hJ5nrO5LuZuV0RaUXxGvOEMj+vgvWMruSFCcULQ4Zpf8FnF
-         i3kQ==
+        bh=PfsIEjwno9984x0xaZFvFQRHreP7y383b0yA/8o51ao=;
+        b=nFParKFr+QigyexDCDFFBgRPTVH7s2tgXQic1JyrzOYcjzvFaAe0cJHxr3XlvxzlAS
+         EqoKOFf6cyewb+42kGLyTQwePgf7SG6lJd4ZkGBUqGk+nrP0IstFMCC8dsyJrh4MG+4o
+         y8yLMITzcDvN+qcKEfUIKfrhpQKDA3P9F4vEkqC2efNYSKyO+idLW96uKvbpLkW4YC5c
+         k5IHlLaU47Xns1FNHNwJVKZe/7ZDZucBQe9oFpX5hB18sgoAMYhpobbOG+6xsaWebLcu
+         dIQH1HMond/+QbcSJZM8ejlgvyYcuZmNXTyCoyVpQT5PbnIyriqEO7x6N/gYrE9rFJMr
+         ANxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rhBjmgTFiYbfZZESWFQ8f7valPKPixUWhzHoz12+ivw=;
-        b=iBwA5FV+LhRMM2eVExF4ItMIGmyHeFs0vm5wMwj4XhlEkICw/62PIET647oZme6CGN
-         rHcKlkN7KV8FKeukJ8mTEvPhnbVrf6pbB549k4Yc10lrnJj1IWIORb3EfVdG0TIC9l5/
-         7s12Le1gTghuYsaVg0yJzInTcAZS2Y4QBNtSxwkOQFiOx5Avb8Cw7W/QhgTNfzYOMDo/
-         7mKTy/rCTIGldq6v9z5OS7jAAOKmejmB5rEqPJIFPEkpjyOuL1gIeH4zOBFvhEeclDqD
-         FTmUjp3/RVnxlV956NB9QCGdXJECiEtN+50iRAStWfkcC3uPhpI7+bm8HlqM9rQ/olt2
-         ytzg==
-X-Gm-Message-State: APjAAAWFk3kGYFr89Lfz2O730/HFPjrW/DzYyqXbRH93Le0AdybL+hUB
-        hfVlkMJL8sHzvyLTZMnuzEnctMiXEvi49SiISnnSJ28C
-X-Google-Smtp-Source: APXvYqye7HuIOF5YxCSm4sBtOJdPFIUuBv2Fl2N7KdeZdnjWH1VOEEmCjLP5M8RahTU5/pd3UgjGIZJRBiP2FVhZEY8=
-X-Received: by 2002:a2e:650a:: with SMTP id z10mr43756285ljb.28.1561453469329;
- Tue, 25 Jun 2019 02:04:29 -0700 (PDT)
+        bh=PfsIEjwno9984x0xaZFvFQRHreP7y383b0yA/8o51ao=;
+        b=mx+E1euCRSPM7mFRP4OR2ad/uDR7dJc1E9AnFhUWXzFJV0EFemifjFwtwCyaa3KdTn
+         theWRnY5cleErwVa+aNDXVNVkukD5Og8U7Mn6uuC0qQWpkYmWqumVodbjtPq/I0GAvpB
+         ZAPoio537MHxcDhxYOsu5Q2+r3ZTFkBRBv/5ag6QdexNHDHb4M3OnPTe/kn9aFwb9eG8
+         7gyOLJKHulaTcEVP3suFOGjFmN8U8MBjjrOj4WabPEQ6/e9MXi5heCZRpPKVDrw6ML2k
+         zdpPJxMG8O7VffuUm+rZzRxUWwzjsQOkmDlwpH6vrmTidFo2t3S3+GJTpD2TdDnHUh3S
+         pdVQ==
+X-Gm-Message-State: APjAAAWFDdAmknG9OKzWf9CytScSEOhu8kqhAQLxwT11ei9dO0XCVnxr
+        ORNowDzHQHd4ILWbIRtVUA/In13TxLJcAYIXO8GIsA==
+X-Google-Smtp-Source: APXvYqxeHuqZCf8OLU6iYGSBN9wT3sJ7A0Tzxmly5Y10lX4/3f8I/dMLymuTvaCc9HjkJUkdC9fFt7v7D9Pf1Y63hFs=
+X-Received: by 2002:ac2:4891:: with SMTP id x17mr28635379lfc.60.1561453537378;
+ Tue, 25 Jun 2019 02:05:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <1560790160-3372-1-git-send-email-info@metux.net>
-In-Reply-To: <1560790160-3372-1-git-send-email-info@metux.net>
+References: <1560790160-3372-1-git-send-email-info@metux.net> <1560790160-3372-2-git-send-email-info@metux.net>
+In-Reply-To: <1560790160-3372-2-git-send-email-info@metux.net>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 11:04:18 +0200
-Message-ID: <CACRpkdbcR5bcBRSx_21nq682Q+N+XgmYHS4wCVQVqdAiym1D+w@mail.gmail.com>
-Subject: Re: [PATCH 1/7] drivers: gpio: rcar: pedantic formatting
+Date:   Tue, 25 Jun 2019 11:05:25 +0200
+Message-ID: <CACRpkdaSj2OA8RX-oxK2sn6=fUQd=xB6oNnbErqxbQUMDVg9Eg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] drivers: gpio: amdpt: drop unneeded deref of &pdev->dev
 To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -73,9 +73,9 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 On Mon, Jun 17, 2019 at 6:49 PM Enrico Weigelt, metux IT consult
 <info@metux.net> wrote:
 
-> A tab sneaked in, where it shouldn't be.
+> We already have the struct device* pointer in a local variable,
+> so we can write this a bit shorter.
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
 Patch applied.
