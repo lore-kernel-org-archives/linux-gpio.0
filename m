@@ -2,147 +2,279 @@ Return-Path: <SRS0=9dBB=UZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAF5C4646B
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 06:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BB7C48BD6
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 07:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9406B2085A
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 06:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ADF72085A
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 07:21:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="jgTqN9Qt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mf2hR8iR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFZGOX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jun 2019 02:14:23 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33025 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfFZGOW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 02:14:22 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hg1C5-0005zD-Ll; Wed, 26 Jun 2019 08:14:09 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hg1C1-0003D1-Jo; Wed, 26 Jun 2019 08:14:05 +0200
-Date:   Wed, 26 Jun 2019 08:14:05 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
-        mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com,
-        linus.walleij@linaro.org, khilman@kernel.org,
-        patches@opensource.cirrus.com, bgolaszewski@baylibre.com,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org,
-        linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        alexandre.torgue@st.com
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-Message-ID: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
-References: <1560796871-18560-1-git-send-email-info@metux.net>
+        id S1726946AbfFZHVO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Jun 2019 03:21:14 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:37119 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726445AbfFZHVN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:21:13 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id EEAB61721;
+        Wed, 26 Jun 2019 03:15:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 26 Jun 2019 03:15:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=bDsw6KjgIezE4
+        hKWkzgtOU4DL3U+oK1ddciLPL0D0S8=; b=jgTqN9Qt0tKbDlrYNXZVyNrppjk4m
+        6CXWrAXgwqZaLY4QPjt5tXHK7UUtZGyI8ugpEaBm6puCMqsfd3QSHF/DLq6nCs6B
+        8XcRBVaptjMcMKdv+Hw1KMRevzD+e467BNY4EJ6GADwDfeTfOKcr7VBpM0/Szdaf
+        +lhBKsUtgSdRwOFGp9mLqqZH71Vh1yV4JYu3lxONUbHvz69bK3SHjbOrf6B8R4/9
+        /Foai8Sf2FZx/JXH7WmU3NtsB7qcgMWseJqA2WDz84N95U1P7qQ6r3JwdeoV30+a
+        RmIawYcwV5nnKBj2AQtD8PX90Ia8vVFXDjzCL2v8YlDVFOmIO/LNCvarg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=bDsw6KjgIezE4hKWkzgtOU4DL3U+oK1ddciLPL0D0S8=; b=Mf2hR8iR
+        wZj13vNy+U9ofaOoVPHadePDABhAjysADa5xu7FXU/SUubGr19fXXUqwUz5wTWVP
+        bvLp9t90Mbpi3QEJWb0S8bVLbxaGl76J1COJcX1bRaLFsdaksvMF+V9nmgP1Q42q
+        DfJeKq1PLjR4sysLuVqPgCZaW6EH94u6YClOYiiN0ha6LVbEld48wvD398SrY2zO
+        shWO8KkPgGKUMugqVWH248/TRFqpKrAV0FO0iBiBjkk8DJUzl7XIxdrI6GXeEScH
+        VjjhVffB+t2OjJvVP9s3VbMCGHHm5wUZUMe/CufRmiCBzCSR6JmvqRsN24zyJs6V
+        Lx4wnfho/oqcdg==
+X-ME-Sender: <xms:oRsTXcyFO1kJUgG0daPO_LgVBeMgDelLnuzUkEviJqxDb34x5UlHFg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudehgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgjfhgggfestdekre
+    dtredttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegr
+    jhdrihgurdgruheqnecukfhppedvtddvrdekuddrudekrdeftdenucfrrghrrghmpehmrg
+    hilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigv
+    pedt
+X-ME-Proxy: <xmx:oRsTXcias8y2_Rv88h13RPQg4Vz1pbXWdgNMFREyLhofO64D2fVWVA>
+    <xmx:oRsTXUlVgHMjzU9HOopndEOFDJhFkxOXJHQUDls8jtThFzLHh1ut_w>
+    <xmx:oRsTXYKHQ8XXElm0-l45r7flU65FKRCCZP7JW-XclM_R9S1ekkgJzw>
+    <xmx:oRsTXWLMjniddxG_YKQDBlR1cgwRFJ08CinFuvbbEUu8_1ncc_LBMg>
+Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0D486380083;
+        Wed, 26 Jun 2019 03:15:41 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-gpio@vger.kernel.org
+Cc:     ryan_chen@aspeedtech.com, Andrew Jeffery <andrew@aj.id.au>,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] dt-bindings: pinctrl: aspeed: Split bindings document in two
+Date:   Wed, 26 Jun 2019 16:44:23 +0930
+Message-Id: <20190626071430.28556-2-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190626071430.28556-1-andrew@aj.id.au>
+References: <20190626071430.28556-1-andrew@aj.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+Have one for each of the AST2400 and AST2500. The only thing that was
+common was the fact that both support ASPEED BMC SoCs.
 
-On Mon, Jun 17, 2019 at 08:40:42PM +0200, Enrico Weigelt, metux IT consult wrote:
-> From: Enrico Weigelt <info@metux.net>
-> 
-> Add more helper macros for trivial driver init cases, similar to the
-> already existing module_platform_driver()+friends - now for those which
-> are initialized at other stages. Lots of drivers couldn't use the existing
-> macros, as they need to be called at different init stages, eg. subsys,
-> postcore, arch.
-> 
-> This helps to further reduce driver init boilerplate.
-> 
-> Signed-off-by: Enrico Weigelt <info@metux.net>
-> ---
->  include/linux/platform_device.h | 51 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> index beb25f2..5f3a967 100644
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -259,6 +259,57 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
->  } \
->  module_exit(__platform_driver##_exit);
->  
-> +/* postcore_platform_driver() - Helper macro for drivers that don't do
-> + * anything special in module init/exit.  This eliminates a lot of
-> + * boilerplate.  Each module may only use this macro once, and
-> + * calling it replaces postcore_initcall() and module_exit()
-> + */
-> +#define postcore_platform_driver(__platform_driver) \
-> +static int __init __platform_driver##_init(void) \
-> +{ \
-> +	return platform_driver_register(&(__platform_driver)); \
-> +} \
-> +postcore_initcall(__platform_driver##_init); \
-> +static void __exit __platform_driver##_exit(void) \
-> +{ \
-> +	platform_driver_unregister(&(__platform_driver)); \
-> +} \
-> +module_exit(__platform_driver##_exit);
-> +
-> +/* subsys_platform_driver() - Helper macro for drivers that don't do
-> + * anything special in module init/exit.  This eliminates a lot of
-> + * boilerplate.  Each module may only use this macro once, and
-> + * calling it replaces subsys_initcall() and module_exit()
-> + */
-> +#define subsys_platform_driver(__platform_driver) \
-> +static int __init __platform_driver##_init(void) \
-> +{ \
-> +	return platform_driver_register(&(__platform_driver)); \
-> +} \
-> +subsys_initcall(__platform_driver##_init); \
-> +static void __exit __platform_driver##_exit(void) \
-> +{ \
-> +	platform_driver_unregister(&(__platform_driver)); \
-> +} \
-> +module_exit(__platform_driver##_exit);
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ .../pinctrl/aspeed,ast2400-pinctrl.txt        | 80 +++++++++++++++++++
+ ...-aspeed.txt => aspeed,ast2500-pinctrl.txt} | 63 ++-------------
+ 2 files changed, 85 insertions(+), 58 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.txt
+ rename Documentation/devicetree/bindings/pinctrl/{pinctrl-aspeed.txt => aspeed,ast2500-pinctrl.txt} (66%)
 
-Would it make sense to do something like:
-
-	#define __module_platform_driver(__platform_driver, __initlvl) \
-	static int __init __platform_driver##_init(void) \
-	{ \
-		return platform_driver_register(&(__platform_driver)); \
-	} \
-	__initlvl ## _initcall(__platform_driver##_init); \
-	static void __exit __platform_driver##_exit(void) \
-	{ \
-		platform_driver_unregister(&(__platform_driver)); \
-	} \
-	module_exit(__platform_driver##_exit);
-
-	#define postcore_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, postcore)
-	#define subsys_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, subsys)
-	...
-
-Which would be more compact and makes the difference between these
-macros a bit more obvious.
-
-Best regards
-Uwe
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.txt
+new file mode 100644
+index 000000000000..67e0325ccf2e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.txt
+@@ -0,0 +1,80 @@
++=============================
++Aspeed AST2400 Pin Controller
++=============================
++
++Required properties for the AST2400:
++- compatible : 			Should be one of the following:
++				"aspeed,ast2400-pinctrl"
++				"aspeed,g4-pinctrl"
++
++The pin controller node should be the child of a syscon node with the required
++property:
++
++- compatible : 		Should be one of the following:
++			"aspeed,ast2400-scu", "syscon", "simple-mfd"
++			"aspeed,g4-scu", "syscon", "simple-mfd"
++
++Refer to the the bindings described in
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Subnode Format
++==============
++
++The required properties of pinmux child nodes are:
++- function: the mux function to select
++- groups  : the list of groups to select with this function
++
++Required properties of pinconf child nodes are:
++- groups: A list of groups to select (either this or "pins" must be
++          specified)
++- pins  : A list of ball names as strings, eg "D14" (either this or "groups"
++          must be specified)
++
++Optional properties of pinconf child nodes are:
++- bias-disable  : disable any pin bias
++- bias-pull-down: pull down the pin
++- drive-strength: sink or source at most X mA
++
++Definitions are as specified in
++Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt, with any
++further limitations as described above.
++
++For pinmux, each mux function has only one associated pin group. Each group is
++named by its function. The following values for the function and groups
++properties are supported:
++
++ACPI ADC0 ADC1 ADC10 ADC11 ADC12 ADC13 ADC14 ADC15 ADC2 ADC3 ADC4 ADC5 ADC6
++ADC7 ADC8 ADC9 BMCINT DDCCLK DDCDAT EXTRST FLACK FLBUSY FLWP GPID GPID0 GPID2
++GPID4 GPID6 GPIE0 GPIE2 GPIE4 GPIE6 I2C10 I2C11 I2C12 I2C13 I2C14 I2C3 I2C4
++I2C5 I2C6 I2C7 I2C8 I2C9 LPCPD LPCPME LPCRST LPCSMI MAC1LINK MAC2LINK MDIO1
++MDIO2 NCTS1 NCTS2 NCTS3 NCTS4 NDCD1 NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4
++NDTR1 NDTR2 NDTR3 NDTR4 NDTS4 NRI1 NRI2 NRI3 NRI4 NRTS1 NRTS2 NRTS3 OSCCLK PWM0
++PWM1 PWM2 PWM3 PWM4 PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 ROM16 ROM8 ROMCS1
++ROMCS2 ROMCS3 ROMCS4 RXD1 RXD2 RXD3 RXD4 SALT1 SALT2 SALT3 SALT4 SD1 SD2 SGPMCK
++SGPMI SGPMLD SGPMO SGPSCK SGPSI0 SGPSI1 SGPSLD SIOONCTRL SIOPBI SIOPBO SIOPWREQ
++SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1DEBUG SPI1PASSTHRU SPICS1 TIMER3 TIMER4
++TIMER5 TIMER6 TIMER7 TIMER8 TXD1 TXD2 TXD3 TXD4 UART6 USB11D1 USB11H2 USB2D1
++USB2H1 USBCKI VGABIOS_ROM VGAHS VGAVS VPI18 VPI24 VPI30 VPO12 VPO24 WDTRST1
++WDTRST2
++
++Example
++=======
++
++syscon: scu@1e6e2000 {
++	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
++	reg = <0x1e6e2000 0x1a8>;
++
++	pinctrl: pinctrl {
++		compatible = "aspeed,g4-pinctrl";
++
++		pinctrl_i2c3_default: i2c3_default {
++			function = "I2C3";
++			groups = "I2C3";
++		};
++
++		pinctrl_gpioh0_unbiased_default: gpioh0 {
++			pins = "A8";
++			bias-disable;
++		};
++	};
++};
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.txt
+similarity index 66%
+rename from Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+rename to Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.txt
+index 3b7266c7c438..2f16e401338a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.txt
+@@ -1,14 +1,6 @@
+-======================
+-Aspeed Pin Controllers
+-======================
+-
+-The Aspeed SoCs vary in functionality inside a generation but have a common mux
+-device register layout.
+-
+-Required properties for g4:
+-- compatible : 			Should be one of the following:
+-				"aspeed,ast2400-pinctrl"
+-				"aspeed,g4-pinctrl"
++=============================
++Aspeed AST2500 Pin Controller
++=============================
+ 
+ Required properties for g5:
+ - compatible : 			Should be one of the following:
+@@ -23,8 +15,6 @@ The pin controller node should be the child of a syscon node with the required
+ property:
+ 
+ - compatible : 		Should be one of the following:
+-			"aspeed,ast2400-scu", "syscon", "simple-mfd"
+-			"aspeed,g4-scu", "syscon", "simple-mfd"
+ 			"aspeed,ast2500-scu", "syscon", "simple-mfd"
+ 			"aspeed,g5-scu", "syscon", "simple-mfd"
+ 
+@@ -57,24 +47,6 @@ For pinmux, each mux function has only one associated pin group. Each group is
+ named by its function. The following values for the function and groups
+ properties are supported:
+ 
+-aspeed,ast2400-pinctrl, aspeed,g4-pinctrl:
+-
+-ACPI ADC0 ADC1 ADC10 ADC11 ADC12 ADC13 ADC14 ADC15 ADC2 ADC3 ADC4 ADC5 ADC6
+-ADC7 ADC8 ADC9 BMCINT DDCCLK DDCDAT EXTRST FLACK FLBUSY FLWP GPID GPID0 GPID2
+-GPID4 GPID6 GPIE0 GPIE2 GPIE4 GPIE6 I2C10 I2C11 I2C12 I2C13 I2C14 I2C3 I2C4
+-I2C5 I2C6 I2C7 I2C8 I2C9 LPCPD LPCPME LPCRST LPCSMI MAC1LINK MAC2LINK MDIO1
+-MDIO2 NCTS1 NCTS2 NCTS3 NCTS4 NDCD1 NDCD2 NDCD3 NDCD4 NDSR1 NDSR2 NDSR3 NDSR4
+-NDTR1 NDTR2 NDTR3 NDTR4 NDTS4 NRI1 NRI2 NRI3 NRI4 NRTS1 NRTS2 NRTS3 OSCCLK PWM0
+-PWM1 PWM2 PWM3 PWM4 PWM5 PWM6 PWM7 RGMII1 RGMII2 RMII1 RMII2 ROM16 ROM8 ROMCS1
+-ROMCS2 ROMCS3 ROMCS4 RXD1 RXD2 RXD3 RXD4 SALT1 SALT2 SALT3 SALT4 SD1 SD2 SGPMCK
+-SGPMI SGPMLD SGPMO SGPSCK SGPSI0 SGPSI1 SGPSLD SIOONCTRL SIOPBI SIOPBO SIOPWREQ
+-SIOPWRGD SIOS3 SIOS5 SIOSCI SPI1 SPI1DEBUG SPI1PASSTHRU SPICS1 TIMER3 TIMER4
+-TIMER5 TIMER6 TIMER7 TIMER8 TXD1 TXD2 TXD3 TXD4 UART6 USB11D1 USB11H2 USB2D1
+-USB2H1 USBCKI VGABIOS_ROM VGAHS VGAVS VPI18 VPI24 VPI30 VPO12 VPO24 WDTRST1
+-WDTRST2
+-
+-aspeed,ast2500-pinctrl, aspeed,g5-pinctrl:
+-
+ ACPI ADC0 ADC1 ADC10 ADC11 ADC12 ADC13 ADC14 ADC15 ADC2 ADC3 ADC4 ADC5 ADC6
+ ADC7 ADC8 ADC9 BMCINT DDCCLK DDCDAT ESPI FWSPICS1 FWSPICS2 GPID0 GPID2 GPID4
+ GPID6 GPIE0 GPIE2 GPIE4 GPIE6 I2C10 I2C11 I2C12 I2C13 I2C14 I2C3 I2C4 I2C5 I2C6
+@@ -90,33 +62,8 @@ SPI2CS1 SPI2MISO SPI2MOSI TIMER3 TIMER4 TIMER5 TIMER6 TIMER7 TIMER8 TXD1 TXD2
+ TXD3 TXD4 UART6 USB11BHID USB2AD USB2AH USB2BD USB2BH USBCKI VGABIOSROM VGAHS
+ VGAVS VPI24 VPO WDTRST1 WDTRST2
+ 
+-Examples
+-========
+-
+-g4 Example
+-----------
+-
+-syscon: scu@1e6e2000 {
+-	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
+-	reg = <0x1e6e2000 0x1a8>;
+-
+-	pinctrl: pinctrl {
+-		compatible = "aspeed,g4-pinctrl";
+-
+-		pinctrl_i2c3_default: i2c3_default {
+-			function = "I2C3";
+-			groups = "I2C3";
+-		};
+-
+-		pinctrl_gpioh0_unbiased_default: gpioh0 {
+-			pins = "A8";
+-			bias-disable;
+-		};
+-	};
+-};
+-
+-g5 Example
+-----------
++Example
++=======
+ 
+ ahb {
+ 	apb {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.20.1
+
