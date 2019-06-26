@@ -2,102 +2,110 @@ Return-Path: <SRS0=9dBB=UZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B69C48BD6
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 17:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF968C48BD3
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A5720659
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 17:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE9882080C
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 18:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfFZRdB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jun 2019 13:33:01 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:41971 "EHLO
+        id S1726369AbfFZSQW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Jun 2019 14:16:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:38811 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfFZRdB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 13:33:01 -0400
+        with ESMTP id S1726239AbfFZSQW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 14:16:22 -0400
 Received: from [192.168.1.110] ([77.4.50.183]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M6UVr-1hdirL1gd7-006uGv; Wed, 26 Jun 2019 19:27:06 +0200
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
-        mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com,
-        linus.walleij@linaro.org, khilman@kernel.org,
-        patches@opensource.cirrus.com, bgolaszewski@baylibre.com,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org,
-        linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        alexandre.torgue@st.com
-References: <1560796871-18560-1-git-send-email-info@metux.net>
- <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MD9Kj-1hoguT0A41-0097SG; Wed, 26 Jun 2019 20:16:20 +0200
+Subject: Re: [RFC] Addition of kernel
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Martyn Welch <martyn.welch@collabora.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        kernel@collabora.com
+References: <dd30c34a83293926c072f6a3fe612dcf134b7620.camel@collabora.com>
+ <e6ca74e2-fc51-3f24-c5e9-18c22d6f87ef@metux.net>
+ <e344f5a35e314ebcea110ba082b74659de5b0e5e.camel@collabora.com>
+ <CACRpkdaLEDmJ49m_fpuuA1e33hTtyB-LsyZeOmpRybbULgmHDA@mail.gmail.com>
 From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
 Organization: metux IT consult
-Message-ID: <30f541a7-ef9d-d687-ab76-22a4544258f8@metux.net>
-Date:   Wed, 26 Jun 2019 19:27:02 +0200
+Message-ID: <c80c67e8-ed4c-d4eb-9655-9fbb4a6a4cd8@metux.net>
+Date:   Wed, 26 Jun 2019 20:16:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+In-Reply-To: <CACRpkdaLEDmJ49m_fpuuA1e33hTtyB-LsyZeOmpRybbULgmHDA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:4cVH4PkCtQv/LUwiS6UCMsXOnJKPoFgtu8YIQh2qre1SlC0rID3
- iH0aKQ/MKkZJ2yEuVJpv7mEkC1UjMv1ovjIFymwEqaJMY5AQyXvkOzmTCMq13end5r0f9xS
- yMx11gxpvqiWbWj5JDclzAGEDJ/U+TuS0GJfpPcHqTpNdKo6+6kBrvObB6Qy47Oj5TZ6PPN
- S2g10gMfdY9wpMg6E4Uzg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:p7DzD82Py24=:LTBxbNA+enqTVtVo1asr5u
- fojJY6VPTEzYaSJmnoo2Q08KvoDIOijxX27ZhdAkutA8pG3r2+igrKbf0Fr1hVHFN+0+Zm563
- xU3yBgs2kIQumCzDZakchFcCbHnWcLq1dDjHduz9l5x8WbJ/QjWvztmVLtLec6s3T/7wn9f4b
- hB94PAd14mx2OzyVmlsrfgS6p7iw5JWUcjH465pyFgPXWaa9f8VjH6xW5ux2bE6+rIMbpk5Ty
- junIYo1id38mTc1V85zeagLxg1x2WbqCQ08z0saH2UrLQj0TODg2fH+jgg1nULwKYD1b7QksU
- 5zYpMwlRIfQk33Hio6mvEahIFHMzJ4ehYRrJnkkp5az6d1WwBProOdeVWTK2qVW4zI/UFgwV6
- NAeOZfNFAsRJkPSNeywmV1Ms6jLg5J6SLBAW/b8VSQxanNDKjFtGLiUsQPGGrygYRASQ/lYRp
- +u8tbOCLBQKNl9ZVrApeSLLH0ksCfzNH+cZ8GNJCnSQitkHKMCw3t+mOxAGy0aif6rXMPdz9Q
- m6ftp/V4ktJEzSCtvq1zGgc6rxZALGDd1jSCx8umIEuSe4utCYnm2NJIpJ58Mh496OnAihtyD
- CHxFOC3zGdx+8PQVDH4pHkwEXG6nvHZfDaSNdRY6hV/UUbFvjekhcfWq+1Ms87SGmTwRNl2hy
- ec01eIhUZI7jd9eRtU9P3gL6qFG8ol+BFr7lrNRSyVSKVmlZmvsK8AlDOczVKKRXRAsYW9qoc
- AjvunGTjxWWoot/j7F503lFwZ0SKs+7YtXKRyB+QgYf4oTlYrIKhATZrRkE=
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:stXr7zNxTEE19r3e55Uc/69AOoaWMzK9hvTEKeQrhGNUZctgZgH
+ RkPBF3zwyHl2SVlLG31NGJI3nsRgIjtJQLL6kh3G3DqPq3+4XrylmxXF3NZN3M/8qGzggUe
+ gVJ9P7NmUMlMVFmAPgdOTe5qrsaSaq2ijyQFjGEASFSZit3++YhxvISWhZZ2s5THGYkH49u
+ 3cqwXSZIaShhM7/uMK7Lw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HBZETcKOX04=:jpk5G5p50Lh7dbnRTjyPDE
+ qLCsKvsfhYLYnaiBPj/kIMnUbNU9p/Vx+adwkfqMz7FFxG5IuZrojZnkI2x+fYap3kjwqHqAI
+ QlDIYt68PPS3e5i6XCdYbdDFIUJ1re+NPPaHHYvsyAE0ZclIlh4OzJHDzrJb62cruERL+GM5o
+ P9Bc6OJm75bUAYe+K63KKJX5NTbBbk5Nn5HVpfnblFSQlZJ7vvA77CZfIfDdpd96TDyf3P8VK
+ Y7EuWX6uhX4EgRsmQ/dcZ9D94S8Oudobpulpt2onVwUc2zCKB7q+lPVr7rTahSLSrlXqS3uSR
+ NLypxQvwY/m9HY58H9lOhEpZf1rbsJUoWughWcjuZDB94jbUGVPDZHmttowlOSrABIcwrWqIR
+ 4Cd0nj4FiWyhNYTxOOriYAmn02qtbg9ZrGM5WOjJ5n2VKnq/8JBE3Ua0bVXqCPvokZFpIJFQj
+ UsUUsTGnWgARi6Hu7nKbF7eYBOPg5sgbwXxGfWVrQrON9WwWj6Tk8d94fcuqgyqhILEE/tR6T
+ fjsdtEgHi4BNeMS0eckN6yg0rplreGNTUwNcin83wVGe+MgKixaoEs/X6LP5axAbqCIpVBYSW
+ eWqjf+YIOMD62S82h0L/9ZN6sXNMQhcSHWGIGzS/Pld+Uy/uDKljTzLl87R1iUd8yG07EsU+E
+ XGWqkJkH7cMt/HrJrTnwqUqklnZqDHJSxeEdeEg/o+jG2cr+bhpYtL/2OO15LhyxSV9ydGpPa
+ rjAafVumaD8mj/z2Wk5oSCiDpLX5kUof4Vu1V8bxY4jcayzRI8pGBamaH0U=
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 26.06.19 08:14, Uwe Kleine-König wrote:
-Hi,
+On 24.06.19 23:46, Linus Walleij wrote:
 
-> Would it make sense to do something like:
->
-> 	#define __module_platform_driver(__platform_driver, __initlvl) \
-> 	static int __init __platform_driver##_init(void) \
-> 	{ \
-> 		return platform_driver_register(&(__platform_driver)); \
-> 	} \
-> 	__initlvl ## _initcall(__platform_driver##_init); \
-> 	static void __exit __platform_driver##_exit(void) \
-> 	{ \
-> 		platform_driver_unregister(&(__platform_driver)); \
-> 	} \
-> 	module_exit(__platform_driver##_exit);
->
-> 	#define postcore_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, postcore)
-> 	#define subsys_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, subsys)
-> 	...
->
-> Which would be more compact and makes the difference between these
-> macros a bit more obvious.
-yeah, could do that, but not sure whether it's really good for
-readability when we have so many nested macros :p
+> A GPS unit should be handled using the GNSS subsystem in
+> drivers/gnss:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gnss
 
-OTOH, I didn't want to touch the existing macros for now, just trim down
-the actual init boilerplate, postponing further compactions for later.
+yes, since serdev we can also easily drive serial-connected devices
+(which many gps receivers are) from inside the kernel. there're also
+composite devices (eg. combined basebands) which also have gps amongst
+other things, so an own subsystem for gps devices is the way to go.
+
+> While we do encourage to use the right subsystems for this kind
+> of stuff there are certain cases we do defer to be handled in userspace,
+> but not many. These include one-off things like prototypes and
+
+Those are cases which probably nobody wants to have special support
+in the mainline kernel ... i recall some rules about no kernel drivers
+without corresponding free userland ...
+
+> factory lines with a myriad of relays (some PLC usecases),
+> door openers (we don't want drivers/dooropener) 
+
+Actually, I've got something like that in the pipeline: a generic relais
+subsystem for anything that just switches on/off. Haven't gathered all
+requirements yet - for now just abusing LED for that (yes, also actually
+door openers). Okay, door openers could be a complex matter on their
+own, depending on how it electrically/mechanically works - some devices
+let motors spin until an end reached, etc. ... but haven't had an
+actual usecase for putting such things into the kernel.
+
+> or fire alarm button
+
+Button -> input subsystem ?
+
+> (but definately any elaborate IIO sensors
+> goes into drivers/iio) so it is a bit on case-by-case intuition
+> here.
+
+yes, and it's primarily about high level functionality. in industrial
+world we often have composite devices that span multiple subsystems.
+
+I any case, for a good decision we need to know what exactly some
+individual device actually does.
 
 --mtx
 
