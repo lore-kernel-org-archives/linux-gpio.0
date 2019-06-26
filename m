@@ -2,58 +2,58 @@ Return-Path: <SRS0=9dBB=UZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6E1C48BD3
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FE7C48BD3
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E8F20645
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3E5520B1F
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OI251nww"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cwwWP69N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfFZJGn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jun 2019 05:06:43 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35970 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbfFZJGn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 05:06:43 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n4so1795786wrs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Jun 2019 02:06:42 -0700 (PDT)
+        id S1727146AbfFZJGv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Jun 2019 05:06:51 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:33384 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbfFZJGu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 05:06:50 -0400
+Received: by mail-wr1-f42.google.com with SMTP id n9so1814038wru.0
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Jun 2019 02:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
-        b=OI251nwwamcbJiqoK+UB/Xvd/6flu0o1NsCNHXMNnGjCJucGdtYeU2BAOR5pxbDyIf
-         3pcHb7SWZ7lgPOjn1NIwpQYiA7oY+GdaCy6w/RtniLVSjwqYJ5cEFwjlahGpDEOakzRp
-         HojdXsl4mFeJdV8ZNlbA6T0vu90xrCXQbrOlfVFNH4oBIt7JPA9v1saJYXvJx+/PtD2E
-         MC0CU7+d0AYzSPCQ1tTqW5c8DYy437GAzhZxBp4YLmEvRW9MPhLqvd1wbk6SvPNkE/Eh
-         6GEhofow4tZR9QuXfCR3+WMeVfmXi2KdOOKX3T/LxYMsFKsELkXaDRSxvQIm3Bm66Esk
-         MM0Q==
+        bh=ilVEeuyiLJqEM//7LRcyaeEvGW66sRMbkqNNEOmiSkI=;
+        b=cwwWP69NVx6TY/Gz7Z5p/lOUqhwSvirq/vUFxmAFk6SolV3fKhmbczvggqjW5Mlk3A
+         pDSxzCm/JDvZOz1aoNw1hlKwtY+LoadFpo84hRAKUUFzkK6cUwfWKJJMFJV9AYtbzWCr
+         /KJsASkXrd6fkobkgaqua+oCVzf5D5X0pyHOpksG9HOx40Gg4BLd/oZQ7RM0r/mjWd6L
+         B7GDAvIbXTTDRJi6PQI8gLJDWi1eUBjM7aQTRV9fPVaijB8D8Bo/oNMaOpXO8yR3P8J7
+         gDWR309Auoj3m0VarJzHvrCdAdsnrv0hV+7Qj8GrjPkvyrWiJ8LTzyR94NiLZsMrIiGk
+         HuUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
-        b=VAFBxM+hnxLLvbv/5FF+uSlq3bXJY2XfGPxGZnE8pSrKIV9QgF1b+Oc4SnD5CF+lTQ
-         V0/wOmtMvZeGGjB03OQLdPevVshEjn2i7/t1TZ/6nJKWOSOXBIRFgJ2dgYddKsU2QGiw
-         /sunyzqnhdjQ8DSah5VrUR9LAl3RmhgN7WdKvyIiuFm94UH4pXgUz+1jYSUFnWY/Kj0X
-         cncs2JbVuD/if69lDyBk9uCUf74K5qSzz5H/jnDSTURiIHecBY5EuKKMpRArPOHY4uzM
-         pX7/WJ3Kq7Ie4+evYKelmRAaYF2kFDbewTKIHhYZZQfNHjxlwGIZhGoiL+iUkvR9ok3u
-         a4gw==
-X-Gm-Message-State: APjAAAW1Xu8bY7Bb1Spl7TEMCR5DzY7I0TAIedhICQtCCD4QLErUkkZG
-        fawWki+fGf1gD7fRfCtnoCpArQ==
-X-Google-Smtp-Source: APXvYqz3vdyXnAtP1SpNLPKWrEQyz94x72h+b+vO8Fr71mlivyvfBRlVQGi5Jlk1VZVxT9rHkUqXTA==
-X-Received: by 2002:a5d:518c:: with SMTP id k12mr2735671wrv.322.1561540001249;
-        Wed, 26 Jun 2019 02:06:41 -0700 (PDT)
+        bh=ilVEeuyiLJqEM//7LRcyaeEvGW66sRMbkqNNEOmiSkI=;
+        b=Xz7+il/zJ13t32/bP7HeuEbPliE5iPmKXay8ls8SAtgOz+XzYg5VuzjT8w3Z8jB4sq
+         d80hGX6NpLqXx6JJa6NnMG4+uSzBp7lCapWTTqyRymsecGv4XSGtlQzD5Zco5nKCOPZ3
+         RAlh/T5j8usHN0XuftHRSPVHuu9bzoLtb+SkYV6Ph+fLwVUo5t/+ZlyS/fqwCMusM3U/
+         q6KrMx+3LBGw8e9GOEOpQ0GHPuTJdcDl4MsagtpWTKx4OFPdXR9PEROFYLVjuwVvGQaU
+         ys40dYmyBSf8jnE/uLr+3aWIZtrb1+hDRQM/gwbiK91QXfpD77iHoSlswSFyPuWW8Ehd
+         OQow==
+X-Gm-Message-State: APjAAAXzRsWJPv+eOdnQle/FZNgwztKRHSm82y9TGJ0DrRgS9wIAGi+u
+        0KLCA30QzPFl+/Rk+F7u/BLe2Q==
+X-Google-Smtp-Source: APXvYqzb1BGQn5vh83E/EV9iV7LTP4OmIHphpQesTpBpBMUvyLfTVQWwspLS+svQzdCN9waUUwRJIQ==
+X-Received: by 2002:a5d:518f:: with SMTP id k15mr2642212wrv.321.1561540008423;
+        Wed, 26 Jun 2019 02:06:48 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.40
+        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Jun 2019 02:06:40 -0700 (PDT)
+        Wed, 26 Jun 2019 02:06:47 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -61,9 +61,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v2 04/14] clk: meson: eeclk: add setup callback
-Date:   Wed, 26 Jun 2019 11:06:22 +0200
-Message-Id: <20190626090632.7540-5-narmstrong@baylibre.com>
+Subject: [RFC/RFT v2 11/14] arm64: dts: meson-g12a: add cpus OPP table
+Date:   Wed, 26 Jun 2019 11:06:29 +0200
+Message-Id: <20190626090632.7540-12-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190626090632.7540-1-narmstrong@baylibre.com>
 References: <20190626090632.7540-1-narmstrong@baylibre.com>
@@ -74,46 +74,103 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a setup() callback in the eeclk structure, to call an optional
-call() function at end of eeclk probe to setup clocks.
+Add the OPP table taken from the vendor u200 and u211 DTS.
 
-It's used for the G12A clock controller to setup the CPU clock notifiers.
+The Amlogic G12A SoC seems to available in 3 types :
+- low-speed: up to 1,8GHz
+- mid-speed: up to 1,908GHz
+- high-speed: up to 2.1GHz
+
+And the S905X2 opp voltages are slightly higher than the S905D2
+OPP voltages for the low-speed table.
+
+This adds the conservative OPP table with the S905X2 higher voltages
+and the maximum low-speed OPP frequency.
+
+The values were tested to be stable on an Amlogic U200 Reference Board,
+SeiRobotics SEI510 and X96 Max Set-Top-Boxes running the arm64 cpuburn
+at [1] and cycling between all the possible cpufreq translations and
+checking the final frequency using the clock-measurer, script at [2].
+
+[1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
+[2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/meson/meson-eeclk.c | 6 ++++++
- drivers/clk/meson/meson-eeclk.h | 1 +
- 2 files changed, 7 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 60 +++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index 6ba2094be257..81fd2abcd173 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (data->setup) {
-+		ret = data->setup(pdev);
-+		if (ret)
-+			return ret;
-+	}
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index ac15967bb7fa..733a9d46fc4b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -48,6 +48,66 @@
+ 			compatible = "cache";
+ 		};
+ 	};
 +
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 					   data->hw_onecell_data);
- }
-diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
-index 9ab5d6fa7ccb..7fdf424f71a6 100644
---- a/drivers/clk/meson/meson-eeclk.h
-+++ b/drivers/clk/meson/meson-eeclk.h
-@@ -20,6 +20,7 @@ struct meson_eeclkc_data {
- 	const struct reg_sequence	*init_regs;
- 	unsigned int			init_count;
- 	struct clk_hw_onecell_data	*hw_onecell_data;
-+	int				(*setup)(struct platform_device *pdev);
++	cpu_opp_table: opp-table {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-250000000 {
++			opp-hz = /bits/ 64 <250000000>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-667000000 {
++			opp-hz = /bits/ 64 <666666666>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <731000>;
++		};
++
++		opp-1398000000 {
++			opp-hz = /bits/ 64 <1398000000>;
++			opp-microvolt = <761000>;
++		};
++
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <791000>;
++		};
++
++		opp-1608000000 {
++			opp-hz = /bits/ 64 <1608000000>;
++			opp-microvolt = <831000>;
++		};
++
++		opp-1704000000 {
++			opp-hz = /bits/ 64 <1704000000>;
++			opp-microvolt = <861000>;
++		};
++
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <981000>;
++		};
++	};
  };
  
- int meson_eeclkc_probe(struct platform_device *pdev);
+ &sd_emmc_a {
 -- 
 2.21.0
 
