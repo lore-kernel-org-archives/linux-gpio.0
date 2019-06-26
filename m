@@ -2,64 +2,68 @@ Return-Path: <SRS0=9dBB=UZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A468C48BD6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBAFC48BD3
 	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 07:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8214208E3
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 07:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C933C208E3
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 07:21:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="S0omCvpX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tpI9QgLT"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="lNDZe0Ow";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="puLWPAjq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfFZHVO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726953AbfFZHVO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 26 Jun 2019 03:21:14 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:58819 "EHLO
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:40337 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726905AbfFZHVN (ORCPT
+        by vger.kernel.org with ESMTP id S1725930AbfFZHVN (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 26 Jun 2019 03:21:13 -0400
+X-Greylist: delayed 332 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jun 2019 03:21:12 EDT
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 150301C0D;
-        Wed, 26 Jun 2019 03:15:40 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7E04E1C22;
+        Wed, 26 Jun 2019 03:15:58 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 26 Jun 2019 03:15:40 -0400
+  by compute4.internal (MEProxy); Wed, 26 Jun 2019 03:15:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=jWnT3U2Yd8PxeSNAZtgVSCgMRj
-        OIJ80r4MORo/itpzI=; b=S0omCvpXCSNZGkzFEb/fFP8K1x9J5eYLs6pVmWWcCh
-        TEPEKCX+ucQP/dX3Dac6dRrz0Oz7E9jmP3VoXi4Jf7BFA+e7BC7yYTBcHP32PSu8
-        zSGdyWsXAuYSXZrEEbu378n+WdZWp4lH4RRbicWA5oQJbz2xxwC8QWF7VgQIrw36
-        D4CYRu8Oi6WwkyiBRhg6kKVjRxZ+I8Pxc62amLs63Fko6DEftBoLHF4syAnCx29y
-        P3xZDiPXnA0wgMW6y/LQVKtv88R6hGLtQqGYJ6JTZUTgylVf6hGv9MA7KHKvnA1w
-        r5XGnq5SQu665bEhM0/XxBecmO7DkPQG/Fl3XVa8/Iug==
+        :to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=fWlD1uewNsuOv
+        vJeyP+mMa6JLokQU6xzkQsW9nl9tuI=; b=lNDZe0OwrWhjUfAq+Ykf7egxE5PT+
+        TlpMZA8Aqdm9GKfmbzNSHzFTLTqiVth6hkZInumC9IlQvLXrRrLRRh/Nhmy2I2Oh
+        huZJy0QqifGtdjxtqD3DwAg+g4FX95lbpaSewrK7PzdPUYqL/oPHEE2Eh2ZGfcHh
+        DlEcUYWm6Agp/5fhcS+p5mgkBwGnXArZZwMtgD4MZuaS0AF4UDD9bh6szqY3WRBR
+        nAw3MHI8xYWqL7z7eVpn5FpiwCIHrKzXT6T+4EMtkyZFy+oWciefDbJmMJsLPoF4
+        B7D7d/qlqFLLT/if/Ja5aaNIPj7opctGOicwctW59RkcXYHZDRMBr++YA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=jWnT3U2Yd8PxeSNAZ
-        tgVSCgMRjOIJ80r4MORo/itpzI=; b=tpI9QgLTdpE8CpCxyMjw58lvXc+6nHo3Q
-        ZFKdctfd27el5gac2AGGnf5+MLX+ehyz//w7G55ti9mwoLxfni85FthpbOBl4gWE
-        Ob6bgaMKGDbOZ1bVme79PTd7Konua0ctQb+S7kDFh9361TSmoD4fl9GYv01BGUTN
-        pvQnSo8R/3857b5wf2h/wIoLR1s95vyS3GMbGXU/ORgriagdh89Aj88Fc6O9cZCC
-        FsUw+khIf7cuHEQjOckHyssvQCYn6oTFQSlTv55XA5OJ2dXX94hzMRHsHQtvK6lV
-        t3mM2mQCT+gkRCO7eVfLPIdl+QlTYFP40Ax60A+PdKe6YBHEwSoig==
-X-ME-Sender: <xms:mhsTXeawLyZAI5GrnS6l-vWzUHOeJvmadF8mjKSeMaiPwOequ2riFQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudehgdduudeiucetufdoteggodetrfdotf
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=fWlD1uewNsuOvvJeyP+mMa6JLokQU6xzkQsW9nl9tuI=; b=puLWPAjq
+        whxH/c7QidyFvKjgWRqCymc6vEDpiIa/O0wlvq32w+ldyywucvsmSIJJ1JgNNkxa
+        VxsubG6LyhdPmq7RttIWL3pPJT/IBCAF8ZYbaPcw8TVBEG4wKCV/fkzuskhOg4HE
+        0cW7eE8wFvA7QXeVkEEsoU1LZ6MtbkWVEPbxYWUBuzt+ah6Dfc4Ey1LU8j9C62vx
+        fElrkRFsEZzQJeBDULfIE27y7zLAKabz4F7yIeWBC/H1a7giGl7u5sB9L9vOsRzh
+        xGVxNUmF4FkvO4Y2q6hKvkamFUihRcB1o1KlhLRnEkikoBk8pWMPp8OQ6dh5sR8z
+        GC+1YP3iDF1hfw==
+X-ME-Sender: <xms:rhsTXWlP9ws_PPZRzyZx3jZQVpTxB6KyWfzOBAM3H8MP0NYYodpJdA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudehgdduudejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
-    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
-    ihgurdgruheqnecukfhppedvtddvrdekuddrudekrdeftdenucfrrghrrghmpehmrghilh
-    hfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:mhsTXcT_FxEgnN8JYjTHrUD6gsCY5oeyPxrndatJ1vsZzXnqwXQ_Kg>
-    <xmx:mhsTXQy_4PrGd6zTj2Ulv6whoGjKwbDBD-2YjY-xwzmDDX6O3YseqQ>
-    <xmx:mhsTXe0tULIKSwiMJ4drYOHVC8wx0QxRrvR7ADmi_4f0TZ_i9pEnlQ>
-    <xmx:nBsTXeZv7d_xKWXNpSht-SawLfNf8pDmUpyDepw3I94un5Yjb2_ItQ>
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgjfhgggfestdekre
+    dtredttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegr
+    jhdrihgurdgruheqnecukfhppedvtddvrdekuddrudekrdeftdenucfrrghrrghmpehmrg
+    hilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigv
+    pedu
+X-ME-Proxy: <xmx:rhsTXea8AUim3q9k60F2hy0ukk1inKBD5-vkK0e7z1dtpVOUvq3qoQ>
+    <xmx:rhsTXV0gWSQ-XQyewoq0qSiXREhxFsnm6gkfUEnHub6LDw4V2gglIg>
+    <xmx:rhsTXURq--Q-jb9A_GChcDNgbzCXGK7AgsCwSSqBU7pyudU9rftbvg>
+    <xmx:rhsTXe1FVeEOkH_6ZkGh_RmuGM_dxyrquAVFKMSeErk5f_NxzwBhoQ>
 Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B8E81380076;
-        Wed, 26 Jun 2019 03:15:34 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9CDFB380076;
+        Wed, 26 Jun 2019 03:15:54 -0400 (EDT)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     linux-gpio@vger.kernel.org
 Cc:     ryan_chen@aspeedtech.com, Andrew Jeffery <andrew@aj.id.au>,
@@ -67,10 +71,12 @@ Cc:     ryan_chen@aspeedtech.com, Andrew Jeffery <andrew@aj.id.au>,
         joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
         openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] pinctrl: aspeed: Preparation for AST2600
-Date:   Wed, 26 Jun 2019 16:44:22 +0930
-Message-Id: <20190626071430.28556-1-andrew@aj.id.au>
+Subject: [PATCH 4/8] MAINTAINERS: Add entry for ASPEED pinctrl drivers
+Date:   Wed, 26 Jun 2019 16:44:26 +0930
+Message-Id: <20190626071430.28556-5-andrew@aj.id.au>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190626071430.28556-1-andrew@aj.id.au>
+References: <20190626071430.28556-1-andrew@aj.id.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -78,62 +84,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello!
+Add myself as maintainer to avoid burdening others with the madness.
 
-The ASPEED AST2600 is in the pipeline, and we have enough information to start
-preparing to upstream support for it. This series lays some ground work;
-splitting the bindings and dicing the implementation up a little further to
-facilitate differences between the 2600 and previous SoC generations.
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I've added a bit more documentation to the private header to help outline the
-structures that are generated from the jungle of macros. There will be some
-tweaks to their behaviour in the future series to support multiple pin groups
-per function while maintaining the property that improperly describing the
-pin/signal/group/function relationships causes a failure to compile.
-
-Regarding the bindings this is my first attempt at using the json-schema
-approach. It has previously bugged me that there was no way to enforce the
-documented bindings on the devicetree, so I think this is an interesting
-development. Hopefully I've done an okay job there. I think I could better
-exploit the schema to constrain the function and group names used in the DTS,
-but I think that can be left as future work.
-
-Finally I've added myself in MAINTAINERS as the PoC for the drivers to make
-sure anyone unfortunate enough to stare at the implementations can ping me
-about them.
-
-Please review!
-
-Andrew
-
-Andrew Jeffery (8):
-  dt-bindings: pinctrl: aspeed: Split bindings document in two
-  dt-bindings: pinctrl: aspeed: Convert AST2400 bindings to json-schema
-  dt-bindings: pinctrl: aspeed: Convert AST2500 bindings to json-schema
-  MAINTAINERS: Add entry for ASPEED pinctrl drivers
-  pinctrl: aspeed: Correct comment that is no longer true
-  pinctrl: aspeed: Clarify comment about strapping W1C
-  pinctrl: aspeed: Split out pinmux from general pinctrl
-  pinctrl: aspeed: Add implementation-related documentation
-
- .../pinctrl/aspeed,ast2400-pinctrl.yaml       |  73 ++
- .../pinctrl/aspeed,ast2500-pinctrl.yaml       | 124 +++
- .../bindings/pinctrl/pinctrl-aspeed.txt       | 172 ----
- MAINTAINERS                                   |   9 +
- drivers/pinctrl/aspeed/Makefile               |   2 +-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c    |  94 ++-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c    | 123 ++-
- drivers/pinctrl/aspeed/pinctrl-aspeed.c       | 250 +-----
- drivers/pinctrl/aspeed/pinctrl-aspeed.h       | 549 +------------
- drivers/pinctrl/aspeed/pinmux-aspeed.c        |  96 +++
- drivers/pinctrl/aspeed/pinmux-aspeed.h        | 735 ++++++++++++++++++
- 11 files changed, 1294 insertions(+), 933 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
- create mode 100644 drivers/pinctrl/aspeed/pinmux-aspeed.c
- create mode 100644 drivers/pinctrl/aspeed/pinmux-aspeed.h
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a6954776a37e..978383f5c1ab 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2586,6 +2586,15 @@ S:	Maintained
+ F:	Documentation/hwmon/asc7621.rst
+ F:	drivers/hwmon/asc7621.c
+ 
++ASPEED PINCTRL DRIVERS
++M:	Andrew Jeffery <andrew@aj.id.au>
++L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
++L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/pinctrl/aspeed/
++F:	Documentation/devicetree/bindings/pinctrl/aspeed,*
++
+ ASPEED VIDEO ENGINE DRIVER
+ M:	Eddie James <eajames@linux.ibm.com>
+ L:	linux-media@vger.kernel.org
 -- 
 2.20.1
 
