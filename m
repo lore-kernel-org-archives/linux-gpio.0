@@ -2,57 +2,58 @@ Return-Path: <SRS0=9dBB=UZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20274C48BD6
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6E1C48BD3
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5C620644
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E8F20645
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jun 2019 09:06:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EmhhuBkj"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OI251nww"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfFZJGi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jun 2019 05:06:38 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43457 "EHLO
+        id S1726991AbfFZJGn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Jun 2019 05:06:43 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35970 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfFZJGi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 05:06:38 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p13so1752581wru.10
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Jun 2019 02:06:37 -0700 (PDT)
+        with ESMTP id S1726907AbfFZJGn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jun 2019 05:06:43 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so1795786wrs.3
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Jun 2019 02:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mNkBOhUSKZktXVzPgYHzPfOcBUciHYL1qLyKm8m40Ho=;
-        b=EmhhuBkjS/9rAtIkcIwpIcgZ3Gwn0zrnRkXyLjCQGmjeXCOilfqZFNx1wo3/FJFa7U
-         9Zf3mWYjuMWiSMztjZ+t0JkNLNA6+0NxTB0hHImzdVdROhyBF+N/VFwugbb1cfquvnDM
-         GigBE7k6TeDt+uMKPhQ6uMbUFN9qCJoBpsLPJXOVwMC1otSloUNC73MuEtir+kHO0GpJ
-         tf6H17PB/xAW7OUvxq1AdK5eoVwnr8vjho6yMVp+WQGfyPxn3AUJX6jitZCBLI+iwgR1
-         Yv64S3XIM0zji9dq5d9l+SNyhHmrsz6JnPZIiYZwTnGRwGDwbOdd2uQvWaS+1r9FPz7r
-         kYxQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
+        b=OI251nwwamcbJiqoK+UB/Xvd/6flu0o1NsCNHXMNnGjCJucGdtYeU2BAOR5pxbDyIf
+         3pcHb7SWZ7lgPOjn1NIwpQYiA7oY+GdaCy6w/RtniLVSjwqYJ5cEFwjlahGpDEOakzRp
+         HojdXsl4mFeJdV8ZNlbA6T0vu90xrCXQbrOlfVFNH4oBIt7JPA9v1saJYXvJx+/PtD2E
+         MC0CU7+d0AYzSPCQ1tTqW5c8DYy437GAzhZxBp4YLmEvRW9MPhLqvd1wbk6SvPNkE/Eh
+         6GEhofow4tZR9QuXfCR3+WMeVfmXi2KdOOKX3T/LxYMsFKsELkXaDRSxvQIm3Bm66Esk
+         MM0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mNkBOhUSKZktXVzPgYHzPfOcBUciHYL1qLyKm8m40Ho=;
-        b=jigFN7j1lPX1q1RBOOigHFw5dsuD9e+FTPXXsQ9bl4/jYHeD2uA6HKIjEVQSPq2tOJ
-         RXS6yVPRRIpg7UhyJmNJHgg4sFHdtjQRb5e5cu7QU5TDDNbuD98R910DaPUhTq2xCE3A
-         Cujrm86ZTexuqQ8O0kjyqv8i9moPZ4QVcFGXvmfj/yuf/RBJdOlLEipo4wLuI4Rre9tw
-         pI/Fbq3AwnPS//DiaFSFPlEAPEUsK5OwQQdJc1WOi4+ZeTq2M3I3E6FHzqN33c6KQXK+
-         AD5XPRq0bIQe2nVaoYdd0/9f+D8xdv/GFtAQr5CcWDsxGmNukGQotthPnbSn9xzSyWy6
-         bQhA==
-X-Gm-Message-State: APjAAAVZ+hQ7+Ql/HQwfsqFe/ApxImgNJWofWGOjOPrIS+Fegg0XYvgd
-        AZyTlGTpfq66zfQqKb43YO8dQg==
-X-Google-Smtp-Source: APXvYqwkO8aDGnvu8iP8rFMRwxiWuy/j1doyJakOZ/B3vub9BJrH3obe1f2ZF8drEhnPsKEo5ODJtQ==
-X-Received: by 2002:adf:afde:: with SMTP id y30mr2683421wrd.197.1561539996153;
-        Wed, 26 Jun 2019 02:06:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
+        b=VAFBxM+hnxLLvbv/5FF+uSlq3bXJY2XfGPxGZnE8pSrKIV9QgF1b+Oc4SnD5CF+lTQ
+         V0/wOmtMvZeGGjB03OQLdPevVshEjn2i7/t1TZ/6nJKWOSOXBIRFgJ2dgYddKsU2QGiw
+         /sunyzqnhdjQ8DSah5VrUR9LAl3RmhgN7WdKvyIiuFm94UH4pXgUz+1jYSUFnWY/Kj0X
+         cncs2JbVuD/if69lDyBk9uCUf74K5qSzz5H/jnDSTURiIHecBY5EuKKMpRArPOHY4uzM
+         pX7/WJ3Kq7Ie4+evYKelmRAaYF2kFDbewTKIHhYZZQfNHjxlwGIZhGoiL+iUkvR9ok3u
+         a4gw==
+X-Gm-Message-State: APjAAAW1Xu8bY7Bb1Spl7TEMCR5DzY7I0TAIedhICQtCCD4QLErUkkZG
+        fawWki+fGf1gD7fRfCtnoCpArQ==
+X-Google-Smtp-Source: APXvYqz3vdyXnAtP1SpNLPKWrEQyz94x72h+b+vO8Fr71mlivyvfBRlVQGi5Jlk1VZVxT9rHkUqXTA==
+X-Received: by 2002:a5d:518c:: with SMTP id k12mr2735671wrv.322.1561540001249;
+        Wed, 26 Jun 2019 02:06:41 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.35
+        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Jun 2019 02:06:35 -0700 (PDT)
+        Wed, 26 Jun 2019 02:06:40 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -60,10 +61,12 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v2 00/14] arm64: g12a: add support for DVFS
-Date:   Wed, 26 Jun 2019 11:06:18 +0200
-Message-Id: <20190626090632.7540-1-narmstrong@baylibre.com>
+Subject: [RFC/RFT v2 04/14] clk: meson: eeclk: add setup callback
+Date:   Wed, 26 Jun 2019 11:06:22 +0200
+Message-Id: <20190626090632.7540-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190626090632.7540-1-narmstrong@baylibre.com>
+References: <20190626090632.7540-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,88 +74,46 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
-cpu_clk / cpub_clk
-|   \- cpu_clk_dyn
-|      |  \- cpu_clk_premux0
-|      |        |- cpu_clk_postmux0
-|      |        |    |- cpu_clk_dyn0_div
-|      |        |    \- xtal/fclk_div2/fclk_div3
-|      |        \- xtal/fclk_div2/fclk_div3
-|      \- cpu_clk_premux1
-|            |- cpu_clk_postmux1
-|            |    |- cpu_clk_dyn1_div
-|            |    \- xtal/fclk_div2/fclk_div3
-|            \- xtal/fclk_div2/fclk_div3
-\ sys_pll / sys1_pll
+Add a setup() callback in the eeclk structure, to call an optional
+call() function at end of eeclk probe to setup clocks.
 
-This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
-cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
-the CPU clock in a safe way as recommended by the vendor Documentation
-and reference code.
+It's used for the G12A clock controller to setup the CPU clock notifiers.
 
-This patchset :
-- introduces needed core and meson clk changes
-- adds support for the G12B second cluster clock measurer ids
-- protects clock measurer from cooncurent measures
-- adds the clock notifiers
-- moves the G12A DT to a common g12a-common dtsi
-- adds the G12A and G12B OPPs
-- enables DVFS on all supported boards
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/meson-eeclk.c | 6 ++++++
+ drivers/clk/meson/meson-eeclk.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-Dependencies:
-- PWM AO input order fix at [1]
-- PWM enhancements from Martin at [2]
-
-Changes since RFT/RFC v1 at [3]:
-- Added EXPORT_SYMBOL_GPL() to clk_hw_set_parent
-- Added missing static to g12b_cpub_clk_mux0_div_ops and g12a_cpu_clk_mux_nb
-- Simplified g12a_cpu_clk_mux_notifier_cb() without switch/case
-- Fixed typo in "this the current path" in g12a.c
-- Fixed G12B dtsi by adding back the sdio quirk
-- Fixed G12A dtsi unwanted sdio quirk removal
-- Fixed various checkpatch errors
-
-[1] https://patchwork.kernel.org/patch/11006835/
-[2] https://patchwork.kernel.org/patch/11006835/
-[3] https://patchwork.kernel.org/cover/11006929/
-
-Neil Armstrong (14):
-  pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-  clk: core: introduce clk_hw_set_parent()
-  clk: meson: regmap: export regmap_div ops functions
-  clk: meson: eeclk: add setup callback
-  soc: amlogic: meson-clk-measure: protect measure with a mutex
-  soc: amlogic: meson-clk-measure: add G12B second cluster cpu clk
-  clk: meson: g12a: add notifiers to handle cpu clock change
-  clk: meson: g12a: expose CPUB clock ID for G12B
-  arm64: dts: move common G12A & G12B modes to meson-g12-common.dtsi
-  arm64: dts: meson-g12-common: add pwm_a on GPIOE_2 pinmux
-  arm64: dts: meson-g12a: add cpus OPP table
-  arm64: dts: meson-g12a: enable DVFS on G12A boards
-  arm64: dts: meson-g12b: add cpus OPP tables
-  arm64: dts: meson-g12b-odroid-n2: enable DVFS
-
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 2464 ++++++++++++++++
- .../boot/dts/amlogic/meson-g12a-sei510.dts    |   55 +
- .../boot/dts/amlogic/meson-g12a-u200.dts      |   55 +
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   |   52 +
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   | 2502 +----------------
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |   96 +
- arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  145 +-
- drivers/clk/clk.c                             |    6 +
- drivers/clk/meson/clk-regmap.c                |   10 +-
- drivers/clk/meson/clk-regmap.h                |    5 +
- drivers/clk/meson/g12a.c                      |  500 +++-
- drivers/clk/meson/meson-eeclk.c               |    6 +
- drivers/clk/meson/meson-eeclk.h               |    1 +
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    |    9 +
- drivers/soc/amlogic/meson-clk-measure.c       |   14 +-
- include/dt-bindings/clock/g12a-clkc.h         |    1 +
- include/linux/clk-provider.h                  |    1 +
- 17 files changed, 3439 insertions(+), 2483 deletions(-)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 6ba2094be257..81fd2abcd173 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (data->setup) {
++		ret = data->setup(pdev);
++		if (ret)
++			return ret;
++	}
++
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+ 					   data->hw_onecell_data);
+ }
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 9ab5d6fa7ccb..7fdf424f71a6 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -20,6 +20,7 @@ struct meson_eeclkc_data {
+ 	const struct reg_sequence	*init_regs;
+ 	unsigned int			init_count;
+ 	struct clk_hw_onecell_data	*hw_onecell_data;
++	int				(*setup)(struct platform_device *pdev);
+ };
+ 
+ int meson_eeclkc_probe(struct platform_device *pdev);
 -- 
 2.21.0
 
