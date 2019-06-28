@@ -2,40 +2,43 @@ Return-Path: <SRS0=o0Q7=U3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEE5C5B576
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F4BC5B577
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A709520656
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E05A2086D
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ETTtTjjf"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lV07bS1n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfF1CNl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:13:41 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:19612 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfF1CNk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jun 2019 22:13:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d1577cb0001>; Thu, 27 Jun 2019 19:13:31 -0700
+        id S1726694AbfF1CNv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Jun 2019 22:13:51 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17643 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbfF1CNj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jun 2019 22:13:39 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1577d00000>; Thu, 27 Jun 2019 19:13:36 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 27 Jun 2019 19:13:33 -0700
+  Thu, 27 Jun 2019 19:13:37 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:33 -0700
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:33 +0000
+        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:37 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:37 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:36 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
  (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 28 Jun 2019 02:13:33 +0000
+ Transport; Fri, 28 Jun 2019 02:13:36 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d1577cd0001>; Thu, 27 Jun 2019 19:13:33 -0700
+        id <B5d1577d00002>; Thu, 27 Jun 2019 19:13:36 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -48,9 +51,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V5 01/18] irqchip: tegra: Do not disable COP IRQ during suspend
-Date:   Thu, 27 Jun 2019 19:12:35 -0700
-Message-ID: <1561687972-19319-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V5 18/18] arm64: dts: tegra210-p3450: Jetson nano SC7 timings
+Date:   Thu, 27 Jun 2019 19:12:52 -0700
+Message-ID: <1561687972-19319-19-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
@@ -58,95 +61,47 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561688011; bh=s1XnuLcDk97/CuRHD9/IW+GAX3pxhADV42EQBIG7j4Y=;
+        t=1561688016; bh=nUcVR3aZhc7CmOqQ/Gf0Or0b77WEAikV513SetsAm3o=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=ETTtTjjfEu+L/wxeVVmd8cYksQbkCX1BAC6i3+R7aQOT6CazTXhXqr/531Ks2g6KO
-         uREF9fi+9zjcQZAyWJ8JWoRotKLI4tDvnUWh7S8Nzy1NDxZGm/4o72vvkJPRV1d32a
-         wpkjOREkFvio444O0ZKyL3dC8zfLAR47pk52qnE4OrGDllugTIYXun+ziZahauLueM
-         rXnswh8xu0LtGxWfwJk6+gdjw7Oy5jsPS5krxyBdcUgWtUiQDInEewOQRk8Uqfrf91
-         hTNC7uDbIz66YhPZi/A2KzLIkZqb7afAHwgPm+F8Wu+g/g1AULWN057B2lOCDNGrOj
-         Czlv7qR+FuL3A==
+        b=lV07bS1nw6Nyav+vjPMiy5zgQnmLOJyQ8iBL05bLAZxsqvAkPZm4pvjAu9G3/loHd
+         v39prKHsdCGeOTbBQBfiJfJHfX15MR373/8gVHDi07luwpwEfwNaNr9JghYaDUPvlt
+         eVhlsRK458IhZT6LIHRPHvUwNSbMx9xMFZb4TpPL/wL7v3rywlSQryJSAXW709u/Kz
+         8BN+icPwB73mJ/xSlwBc2chhvx2TzTETtNH53BS+cF/jMkJ8pOITVCHZvMgw0PhgEy
+         2rm6GIKIt7dCO/bj1VSmsxiCoOxXmuevPT23KfqCJOLwQAPfT7a7rLlkWD3SPYQpw+
+         7KQcNQ0s5s0lA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
-sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+This patch adds Jetson nano platform specific SC7 timing configuration
+in the device tree.
 
-So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
-for Tegra210.
-
-This patch has fix for leaving the COP IRQ enabled for Tegra210 during
-interrupt controller suspend operation.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/irqchip/irq-tegra.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index e1f771c72fc4..851f88cef508 100644
---- a/drivers/irqchip/irq-tegra.c
-+++ b/drivers/irqchip/irq-tegra.c
-@@ -44,6 +44,7 @@ static unsigned int num_ictlrs;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 9d17ec707bce..b81bfdfbc115 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -382,6 +382,13 @@
  
- struct tegra_ictlr_soc {
- 	unsigned int num_ictlrs;
-+	bool supports_sc7;
- };
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
  
- static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
-@@ -56,6 +57,7 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
- 
- static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
- 	.num_ictlrs = 6,
-+	.supports_sc7 = true,
- };
- 
- static const struct of_device_id ictlr_matches[] = {
-@@ -67,6 +69,7 @@ static const struct of_device_id ictlr_matches[] = {
- 
- struct tegra_ictlr_info {
- 	void __iomem *base[TEGRA_MAX_NUM_ICTLRS];
-+	const struct tegra_ictlr_soc *soc;
- #ifdef CONFIG_PM_SLEEP
- 	u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
- 	u32 cop_iep[TEGRA_MAX_NUM_ICTLRS];
-@@ -147,8 +150,20 @@ static int tegra_ictlr_suspend(void)
- 		lic->cop_ier[i] = readl_relaxed(ictlr + ICTLR_COP_IER);
- 		lic->cop_iep[i] = readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
- 
--		/* Disable COP interrupts */
--		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-+		/*
-+		 * AVP/COP/BPMP-Lite is the Tegra boot processor.
-+		 *
-+		 * Tegra210 system suspend flow uses sc7entry firmware which
-+		 * is executed by COP/BPMP and it includes disabling COP IRQ,
-+		 * clamping CPU rail, turning off VDD_CPU, and preparing the
-+		 * system to go to SC7/LP0.
-+		 *
-+		 * COP/BPMP wakes up when COP IRQ is triggered and runs
-+		 * sc7entry-firmware. So need to keep COP interrupt enabled.
-+		 */
-+		if (!lic->soc->supports_sc7)
-+			/* Disable COP interrupts if SC7 is not supported */
-+			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
- 
- 		/* Disable CPU interrupts */
- 		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
-@@ -339,6 +354,7 @@ static int __init tegra_ictlr_init(struct device_node *node,
- 		goto out_unmap;
- 	}
- 
-+	lic->soc = soc;
- 	tegra_ictlr_syscore_init();
- 
- 	pr_info("%pOF: %d interrupts forwarded to %pOF\n",
+ 	hda@70030000 {
 -- 
 2.7.4
 
