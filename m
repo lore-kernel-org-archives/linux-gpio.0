@@ -2,232 +2,87 @@ Return-Path: <SRS0=o0Q7=U3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4E3C4321A
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 05:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECD0C4321A
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 08:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA1E214AF
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 05:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9705C206E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 08:55:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bvLvrtfO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfF1FVU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Jun 2019 01:21:20 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:42326 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfF1FVT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Jun 2019 01:21:19 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1hgjJc-0003ZX-Ou from Harish_Kandiga@mentor.com ; Thu, 27 Jun 2019 22:20:52 -0700
-Received: from hkandiga-VirtualBox.ina-wifi.mentorg.com (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Fri, 28 Jun 2019 06:20:48 +0100
-From:   Harish Jenny K N <harish_kandiga@mentor.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     <linux-gpio@vger.kernel.org>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
+        id S1726385AbfF1Izk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Jun 2019 04:55:40 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38835 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfF1Izk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Jun 2019 04:55:40 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r9so5203161ljg.5
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Jun 2019 01:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6SDXvLF6WGLeyRshJ4F68qdUEnT/yo0TXC3eJQ5oViY=;
+        b=bvLvrtfOCRsDAbMbfqoawBL8qsAlSFfvYELFJJamjkbF9KGdm5UbBdrJLuWTBwlfoL
+         k8HgEeVZqt/Zg6IHOPjzMiqQ7RJ3fvfGgW7Zk0sLsZUgnGR9WpLh8cPSrRXgDwG8hvKz
+         AJzo8zrlu4SZHnxfCIR17X4+2FN8DGrfFoxNNPt5nNHrJ7/wxdat4RNT24R58aEPnvOH
+         kKaK1p88OVc9as0BZ0euyIGN0kweoZs7MxEEyzJARwd+NSjM/h9tX9lMly1Ov6/xRHEn
+         YsDX6L/hUdlxSinDUKCKZ9SZ0wd+8hizfmrUWsSMckFdJsfA3bUA5KbFO8k2sqCs3zD1
+         +4lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6SDXvLF6WGLeyRshJ4F68qdUEnT/yo0TXC3eJQ5oViY=;
+        b=Z4FFzKUw2Td7chGSkjqQf2CVOzm/vzd6WC3zlAAbpQ4Kc5zKacWw0MGAID+o1DQfJd
+         XRJAMtDiuQYO/54EVEavIQGWdLSof5peGR3SvvzT0Tp3sfXyC8MGQ6xzqCAkpS3nVy0r
+         0AlK4KVnoip3+eWC7zPtwSlUFaBOAm7JnXoMo0ee1dkrD+WcdT4vCE2Ely3ngn8HzYFM
+         1wTl3k56M+SNPFgYaPgskNEPwCW9MFYN+UaScReVfaLrPUby+a4k83xu9tkMTzzvYN4Z
+         1lUxHAtoDRBpwveC419fADajGPG605NbCuQ9XbIrWDsY9D6acWwT/IIgaCekWjh73bI1
+         jYpw==
+X-Gm-Message-State: APjAAAV/j3a6UwldYPz38+5PjSc+biKkAgS29Ha5pxGwK5lZGD/DqsIb
+        MHR99TTjm25zQ/tr7hbfjDvqOSCoFBeKdUE5SoJBlw==
+X-Google-Smtp-Source: APXvYqyrrpEwTUchSPESqzYoxtYOm3sJzDtertH7H0sUSkVbFiwz86m6fZBNCReNx09AlSfQxXSZcoK7BQX1NPz1uUs=
+X-Received: by 2002:a2e:8756:: with SMTP id q22mr5617189ljj.108.1561712137792;
+ Fri, 28 Jun 2019 01:55:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <1561699236-18620-1-git-send-email-harish_kandiga@mentor.com> <1561699236-18620-2-git-send-email-harish_kandiga@mentor.com>
+In-Reply-To: <1561699236-18620-2-git-send-email-harish_kandiga@mentor.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 28 Jun 2019 09:55:26 +0100
+Message-ID: <CACRpkdZQpr78=ZzBQEkbjS714W0HPEurO8haM8PpmpvYFivm-A@mail.gmail.com>
+Subject: Re: [PATCH V4 1/2] gpio: inverter: Add Inverter controller for gpio configuration
+To:     Harish Jenny K N <harish_kandiga@mentor.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Balasubramani Vivekanandan 
         <balasubramani_vivekanandan@mentor.com>
-Subject: [PATCH V4 1/2] gpio: inverter: Add Inverter controller for gpio configuration
-Date:   Fri, 28 Jun 2019 10:50:35 +0530
-Message-ID: <1561699236-18620-2-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561699236-18620-1-git-send-email-harish_kandiga@mentor.com>
-References: <1561699236-18620-1-git-send-email-harish_kandiga@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-06.mgc.mentorg.com (139.181.222.6) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Provides a new inverter gpio controller to configure the polarity
-of the gpio pins. This driver enables the consumers to directly
-use the gpio pin without worrying about the hardware level
-polarity configuration. Polarity configuration will be done by
-the inverter gpio controller based on device tree information.
+On Fri, Jun 28, 2019 at 6:20 AM Harish Jenny K N
+<harish_kandiga@mentor.com> wrote:
 
-Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
----
- drivers/gpio/Kconfig         |   9 +++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-inverter.c | 128 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 138 insertions(+)
- create mode 100644 drivers/gpio/gpio-inverter.c
+> Provides a new inverter gpio controller to configure the polarity
+> of the gpio pins. This driver enables the consumers to directly
+> use the gpio pin without worrying about the hardware level
+> polarity configuration. Polarity configuration will be done by
+> the inverter gpio controller based on device tree information.
+>
+> Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index acd40eb..8978047 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -77,6 +77,15 @@ config GPIO_GENERIC
- 	depends on HAS_IOMEM # Only for IOMEM drivers
- 	tristate
+This code is finished, very nice.
 
-+config GPIO_INVERTER
-+	tristate "Inverter GPIO controller for handling hardware inverters"
-+	depends on OF_GPIO
-+	help
-+	 Enabling this configuration provides an inverter gpio controller to
-+	 configure the polarity of the gpio pins.
-+	 This enables the consumers to directly use the gpio pin without
-+	 worrying about the hardware level polarity configuration.
-+
- # put drivers in the right section, in alphabetical order
+We still need some review from the DT people before I
+apply it.
 
- # This symbol is selected by both I2C and SPI expanders
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 6700eee..b951b73 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_GPIO_HLWD)		+= gpio-hlwd.o
- obj-$(CONFIG_HTC_EGPIO)		+= gpio-htc-egpio.o
- obj-$(CONFIG_GPIO_ICH)		+= gpio-ich.o
- obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
-+obj-$(CONFIG_GPIO_INVERTER)	+= gpio-inverter.o
- obj-$(CONFIG_GPIO_IXP4XX)	+= gpio-ixp4xx.o
- obj-$(CONFIG_GPIO_IT87)		+= gpio-it87.o
- obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
-diff --git a/drivers/gpio/gpio-inverter.c b/drivers/gpio/gpio-inverter.c
-new file mode 100644
-index 0000000..4883b33
---- /dev/null
-+++ b/drivers/gpio/gpio-inverter.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Inverter GPIO controller for configuring the gpio polarity
-+ *
-+ * Copyright (c) 2019 Mentor Graphics Inc.
-+ * Developed using gpiolib and gpio documentation as reference
-+ *
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+struct gpio_inverter {
-+	struct gpio_chip gpiochip;
-+	int count;
-+	struct gpio_desc *gpios[];
-+};
-+
-+static int gpio_inverter_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_direction_input(inv->gpios[offset]);
-+}
-+
-+static int gpio_inverter_direction_output(struct gpio_chip *chip,
-+					  unsigned int offset, int value)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_direction_output(inv->gpios[offset], value);
-+}
-+
-+static int gpio_inverter_get(struct gpio_chip *chip,
-+			     unsigned int offset)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return !gpiod_get_value(inv->gpios[offset]);
-+}
-+
-+static void gpio_inverter_set(struct gpio_chip *chip,
-+			      unsigned int offset, int value)
-+{
-+	struct gpio_inverter *inv = gpiochip_get_data(chip);
-+
-+	return gpiod_set_value(inv->gpios[offset], !value);
-+}
-+
-+static int gpio_inverter_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct gpio_inverter *inv;
-+	struct gpio_chip *gpio_chip;
-+	struct gpio_desc *gpio;
-+	int index = 0;
-+	int count;
-+	int ret;
-+
-+	count = gpiod_count(dev, "inverted");
-+	if (count <= 0)
-+		return count ? count : -ENOENT;
-+
-+	inv = devm_kzalloc(dev, struct_size(inv, gpios, count), GFP_KERNEL);
-+	if (!inv)
-+		return -ENOMEM;
-+
-+	inv->count = count;
-+	gpio_chip = &inv->gpiochip;
-+
-+	platform_set_drvdata(pdev, inv);
-+
-+	while (index < count) {
-+		gpio = devm_gpiod_get_index(dev, "inverted", index, GPIOD_ASIS);
-+
-+		if (gpio == ERR_PTR(-ENOENT))
-+			return -EPROBE_DEFER;
-+
-+		if (IS_ERR(gpio))
-+			return PTR_ERR(gpio);
-+
-+		inv->gpios[index++] = gpio;
-+
-+		if (!gpio_chip->can_sleep && gpiod_cansleep(gpio))
-+			gpio_chip->can_sleep = true;
-+	}
-+
-+	gpio_chip->direction_input = gpio_inverter_direction_input;
-+	gpio_chip->direction_output = gpio_inverter_direction_output;
-+	gpio_chip->get = gpio_inverter_get;
-+	gpio_chip->set = gpio_inverter_set;
-+	gpio_chip->label = dev_name(dev);
-+	gpio_chip->parent = dev;
-+	gpio_chip->owner = THIS_MODULE;
-+	gpio_chip->base = -1;
-+	gpio_chip->ngpio = count;
-+
-+	ret = devm_gpiochip_add_data(dev, gpio_chip, inv);
-+	if (ret) {
-+		dev_err(dev, "failed to add gpio controller\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id gpio_inverter_match[] = {
-+	{ .compatible =	"gpio-inverter", }, { },
-+};
-+
-+static struct platform_driver gpio_inverter_driver = {
-+	.probe = gpio_inverter_probe,
-+	.driver = {
-+		.name = "gpio-inverter",
-+		.of_match_table = of_match_ptr(gpio_inverter_match),
-+	}
-+};
-+
-+module_platform_driver(gpio_inverter_driver);
-+
-+MODULE_AUTHOR("Harish Jenny K N <harish_kandiga@mentor.com>");
-+MODULE_AUTHOR("Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>");
-+MODULE_DESCRIPTION("Inverter GPIO controller for configuring the gpio polarity");
-+MODULE_LICENSE("GPL v2");
---
-2.7.4
-
+Yours,
+Linus Walleij
