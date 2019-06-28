@@ -2,143 +2,128 @@ Return-Path: <SRS0=o0Q7=U3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0710C5B577
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F44AC4321A
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86CEF20656
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41EF72064A
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Jun 2019 02:39:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ru2F0sXy"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="NtUdJbkc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1wH69+gb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfF1CO6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Jun 2019 22:14:58 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:19578 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfF1CNg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jun 2019 22:13:36 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d1577cc0001>; Thu, 27 Jun 2019 19:13:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 27 Jun 2019 19:13:35 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 27 Jun 2019 19:13:35 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:34 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
- 2019 02:13:34 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 28 Jun 2019 02:13:33 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d1577ce0001>; Thu, 27 Jun 2019 19:13:34 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V5 07/18] clk: tegra: Support for saving and restoring OSC context
-Date:   Thu, 27 Jun 2019 19:12:41 -0700
-Message-ID: <1561687972-19319-8-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726633AbfF1CjR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Jun 2019 22:39:17 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:51903 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726437AbfF1CjR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 27 Jun 2019 22:39:17 -0400
+X-Greylist: delayed 156216 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jun 2019 22:39:16 EDT
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 815292AF1;
+        Thu, 27 Jun 2019 22:39:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 27 Jun 2019 22:39:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=yaZ8S1F4kpu7z+66z1meDyHJPf
+        imSKA8ebK+XQtSMvQ=; b=NtUdJbkc1H6xTV2I1gWf5YqUN4TAuHw7T6lBKjQdqW
+        anSWElodRu3vvtJkIhAGW9GBuDMJ+OCXK8YiAZtaHQ0xn+6b2qRKzMeedsmj4e33
+        L4P2AyyQoRZbisN/lEDLaWuzc85pA0+bleB9Tz3/JitwdMpRB3gPDr3FPxSSFX7j
+        fi52LZv3OR5CS1PiaI2YYMKGZNmniqHdxx0mxrc0HnzU+y8b3zBgD7/XB7WNixzq
+        axipiLsaJO5qo22jLQ2nFNj+gZBxp8hJuos2QHmARFJGTMSRcINCgSBesivJTKiJ
+        Zb6DlX1TGKZQ/TdFsG5rlO61sFNPdLMw9E+zMCX9sTXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=yaZ8S1F4kpu7z+66z
+        1meDyHJPfimSKA8ebK+XQtSMvQ=; b=1wH69+gbM+nYJEPjyqCx+VxVugCPiDcZb
+        xVbI3FrgkTTrAcTAJQCRwBbqrUkcGDFRGULJAkwQTW5PWux+GroMcqTzUzdXz6Z0
+        Gc2+xascjMVMjtsLeQElKVrlCY+BtgOU2r0wxKxGh4Z6y4V/RPu9pPwcXb2ZNTeL
+        FH67M8iTbfMuxBQiWiKG1dUoe6LcG/9MMGE20T9Nz3Iuknxv9gGhIoc1xKzwZZ/k
+        x3kAJHjYrTPRSgVlebStgrVTGvxa/TNS5a0jGneKgMybE8UXo2a8bNlZjhj5y2MZ
+        n6I9J4yb+V2cDNHgMejWHIk8rfxHcn9o4YcHxMoS+AzI/d61cPm6g==
+X-ME-Sender: <xms:0n0VXf4vXXZim-nddahFx3PYbz0h9eHXRfbqeFD9uDu8QCVQcODwZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudelgdeiudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
+    ugdrrghuqeenucffohhmrghinhepshhpihhnihgtshdrnhgvthenucfkphepvddtvddrke
+    durddukedrfedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhi
+    ugdrrghunecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:0n0VXYnkZJjFZXe-swgjdqTBDjNLGt6-jADzwyO9MUXnSLF7_Vij5w>
+    <xmx:0n0VXQS_V01O7qUlm_VNF49YQerGc5rbEogO6QskTDtCeYJhLj7uIQ>
+    <xmx:0n0VXXFclzcNw5DE0TuIlnwYKAhk4-Ukygs9G-kLM9_vCrLGJgzZ8Q>
+    <xmx:030VXTVX5_S09UVLkYsCfSas_ol6uZ3C5_4SUe_YrjcwZdWH7S1v_A>
+Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B68FC380075;
+        Thu, 27 Jun 2019 22:39:10 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-gpio@vger.kernel.org
+Cc:     ryan_chen@aspeedtech.com, Andrew Jeffery <andrew@aj.id.au>,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] pinctrl: aspeed: Preparation for AST2600
+Date:   Fri, 28 Jun 2019 12:08:30 +0930
+Message-Id: <20190628023838.15426-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561688013; bh=2YFtJYfYZEkx9Rsc+PePUh2qyM9iqhHjKzUjU/RdnjE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=ru2F0sXyh8TG8aU8SgAnqEObkpZejB+BCea1b9og7ZdN4iE/v87ZYy5gSa1GIkXrz
-         9SKFvyCMUlfXiLyYKy3dJ1SftIWWlXbZWzLU7kzztUjJWIDPYAp6ay+Vbr/mHRTRiE
-         lRc/TAwSPEOvECwL4dajrFXcftD5b5jZ/5H2J5DcV0RnJcqXdQFNEMBO2YOTLpfYZX
-         fNoFb+n6exbQOwV+6/UEUOC+XdSMhwQ4FVLMoWA8dwYd0WtdN4kBNvzEVvdHOUzgSt
-         l0/Z2km643rWaGpb/T4ADmkS/+JQZPgYshOcPI6GLjaLZhcaaUtxFghVTvOMANbQc5
-         GdlQQ0TyT7K/Q==
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds support for storing OSC clock frequency and the
-drive-strength during OSC clock init and creates an API to restore
-OSC control register value from the saved context.
+Hello!
 
-This API is invoked by Tegra210 clock driver during system resume
-to restore the  OSC clock settings.
+The ASPEED AST2600 is in the pipeline, and we have enough information to start
+preparing to upstream support for it. This series lays some ground work;
+splitting the bindings and dicing the implementation up a little further to
+facilitate differences between the 2600 and previous SoC generations.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk-tegra-fixed.c | 14 ++++++++++++++
- drivers/clk/tegra/clk.h             |  1 +
- 2 files changed, 15 insertions(+)
+v2 addresses Rob's comments on the bindings conversion patches. v1 can be found
+here:
 
-diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
-index 8d91b2b191cf..e8df0ccbffd0 100644
---- a/drivers/clk/tegra/clk-tegra-fixed.c
-+++ b/drivers/clk/tegra/clk-tegra-fixed.c
-@@ -17,7 +17,10 @@
- #define OSC_CTRL			0x50
- #define OSC_CTRL_OSC_FREQ_SHIFT		28
- #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
-+#define OSC_CTRL_MASK			(0x3f2 |	\
-+					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
- 
-+static u32 osc_ctrl_ctx;
- int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- 			      unsigned long *input_freqs, unsigned int num,
- 			      unsigned int clk_m_div, unsigned long *osc_freq,
-@@ -29,6 +32,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- 	unsigned osc_idx;
- 
- 	val = readl_relaxed(clk_base + OSC_CTRL);
-+	osc_ctrl_ctx = val & OSC_CTRL_MASK;
- 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
- 
- 	if (osc_idx < num)
-@@ -96,3 +100,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
- 		*dt_clk = clk;
- 	}
- }
-+
-+void tegra_clk_osc_resume(void __iomem *clk_base)
-+{
-+	u32 val;
-+
-+	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
-+	val |= osc_ctrl_ctx;
-+	writel_relaxed(val, clk_base + OSC_CTRL);
-+	fence_udelay(2, clk_base);
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index c66b0a73bb01..a687ed6127b6 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -863,6 +863,7 @@ void tegra_cclkg_burst_policy_save_context(void);
- void tegra_cclkg_burst_policy_restore_context(void);
- void tegra_sclk_cclklp_burst_policy_save_context(void);
- void tegra_sclk_cpulp_burst_policy_restore_context(void);
-+void tegra_clk_osc_resume(void __iomem *clk_base);
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
+https://www.spinics.net/lists/linux-gpio/msg40157.html
+
+Please review!
+
+Andrew
+
+Andrew Jeffery (8):
+  dt-bindings: pinctrl: aspeed: Split bindings document in two
+  dt-bindings: pinctrl: aspeed: Convert AST2400 bindings to json-schema
+  dt-bindings: pinctrl: aspeed: Convert AST2500 bindings to json-schema
+  MAINTAINERS: Add entry for ASPEED pinctrl drivers
+  pinctrl: aspeed: Correct comment that is no longer true
+  pinctrl: aspeed: Clarify comment about strapping W1C
+  pinctrl: aspeed: Split out pinmux from general pinctrl
+  pinctrl: aspeed: Add implementation-related documentation
+
+ .../pinctrl/aspeed,ast2400-pinctrl.yaml       |  81 ++
+ .../pinctrl/aspeed,ast2500-pinctrl.yaml       | 134 ++++
+ .../bindings/pinctrl/pinctrl-aspeed.txt       | 172 ----
+ MAINTAINERS                                   |   9 +
+ drivers/pinctrl/aspeed/Makefile               |   2 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c    |  94 ++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c    | 123 ++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c       | 250 +-----
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h       | 549 +------------
+ drivers/pinctrl/aspeed/pinmux-aspeed.c        |  96 +++
+ drivers/pinctrl/aspeed/pinmux-aspeed.h        | 735 ++++++++++++++++++
+ 11 files changed, 1312 insertions(+), 933 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+ create mode 100644 drivers/pinctrl/aspeed/pinmux-aspeed.c
+ create mode 100644 drivers/pinctrl/aspeed/pinmux-aspeed.h
+
 -- 
-2.7.4
+2.20.1
 
