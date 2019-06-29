@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74953C46478
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jun 2019 16:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C664C5B57D
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jun 2019 21:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4989321726
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jun 2019 16:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B48215EA
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Jun 2019 21:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeOSf24Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ooD/XQQO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfF2Q2T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Jun 2019 12:28:19 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:47009 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfF2Q2T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Jun 2019 12:28:19 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v24so8881800ljg.13;
-        Sat, 29 Jun 2019 09:28:17 -0700 (PDT)
+        id S1726935AbfF2Vpr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Jun 2019 17:45:47 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38268 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfF2Vpr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Jun 2019 17:45:47 -0400
+Received: by mail-qt1-f193.google.com with SMTP id n11so10429287qtl.5;
+        Sat, 29 Jun 2019 14:45:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UHacZalSuCYOHZspYGAnQfamsfWZBNs56bktpU32GpA=;
-        b=eeOSf24YZrPztGoI0/WgmJ/cvqtjVp4w4sFh89J2mKh0EyWBYY6W5rSwJ4E9F1ZGEp
-         Ak9aSwK0TDD47ZufOblgj7g7W/mkJ2qTC7X0jPoWJB1zVt6o8BqjEp55k5V9FaiyE//O
-         hApyaM0U0IunEym+y9r+H3Ppw9wCWsehad5GUPf345UERtSAL00rRm7tvyZesU6A6AD0
-         d7hFN4nZvy08+tE241GXbWeMLQ8FTgCdcJGqo65q/ep7eeq8t3dtvJzIlYAWl7q21/54
-         5onPD6s0cuTZhDbWVY4hQEuKAxDCZOBi+qTbVT5ohebuHBrbiUDdvgBZLTJLPIQE/Z3k
-         79UQ==
+        bh=PydfWRx3VTHAN1rB2bk+LBoB6vW7pvGp02+1fwRJ1RE=;
+        b=ooD/XQQOQhvoEjTcZV6/wWStcuJOHhQMYnlsHrJ+EZACNHEgB+ETmYQVB1+KkPL0mv
+         +ZTWXmMYQ5LzQL2UNNw3atUoWU6DjrpOfQyyKTM20LU2WWtAyWtPW5H97uWBVF/0DOp8
+         p5QIBlCQ4WYMWAz35A5rnFrUOWaiDuWgPErcAS/bepzjkfr9c12dlMStrP3HOWV2d064
+         1VqsugQ4Ln8GmzJvaYBCvCCfmYUrY/Lt5yoJK0U9FOQ/nnADrqpcmdywc2e9nBGMFsKT
+         oKZ9M2SQbYZh5hUBDoSrwIHqYHRkK7vxqTYr0LhO4ztn4mGmpeZFshB23SjG9t6F2J8E
+         6G0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=UHacZalSuCYOHZspYGAnQfamsfWZBNs56bktpU32GpA=;
-        b=Bcm808T7vKfF40r5vATvlHgpF0l4jrIdfNpM1E911F4oHD5LG9A/tGIHfy6c3epIG4
-         be2f+21EIqTuTJy4Sl13tWgALbEWemzMo4zTF0ZaiX3HUfQMoBJz23h3l6JKHPrjIIH9
-         aDCyfO6/xjVe/mjKKcSZ3ClW9EySURD3FG/NxsaDr3/agGeJOWFM404P8BQBmanIlG4t
-         BNH23aZSvDrHQmtEIPZS3YGpsB90kW5y8pHeJIaOuANKGEO8Rc/KDz6EVFAAhbJdiGPQ
-         MLLQ12m25CBfh8kQVLDRoUa5A1ulaEokmHSO883RcdpXRNhRaPyzFXAHLL1rCudZWE8Y
-         U+BA==
-X-Gm-Message-State: APjAAAWIXTAnUsFdqL30Mqt3ydKO7u3h10NxIOs6FQF+aeroAZRQZeaR
-        LShQ8BQqNvqfgD4MD1T9NOyLYP5l
-X-Google-Smtp-Source: APXvYqyE/K9bJgpn1ckbdvDl2gXW6sWLRckeurkBvCQqCRqB99DArcU2kKVYH4CAYs0RdteVT0zaTQ==
-X-Received: by 2002:a2e:80c8:: with SMTP id r8mr9262458ljg.168.1561825696039;
-        Sat, 29 Jun 2019 09:28:16 -0700 (PDT)
+        bh=PydfWRx3VTHAN1rB2bk+LBoB6vW7pvGp02+1fwRJ1RE=;
+        b=Q+txQT4l3rdGJlC9uEbLQy1lDjMqHoSpN24BNzCxYH6zamKDAXT0vOx8WfakHJOiF6
+         PsQX3dbEaOjq+j59vpbHv8Ei34iZGPI+yxcVT55WREvbVgd3eZZCwuHOJNzvjbNveMYJ
+         pSH4aHeEX/72cSPrBzFTzn6tjHzdBtod+kHyrRY/yB6eLL8CCKJG9UDiRJa/WLN+vZLe
+         PNfymA+cMI5evWQ8m/zyVXlnsZbvngAxwhwnA8Waroz8SPslQRqyKnRtnwhUESiPDkjl
+         LFe80Eda+KWGyeM0NK+r5vzNb9NpJQ1eTcYS9adhLoON21mZUxjnE3GW03gJgSWBOCfx
+         AitQ==
+X-Gm-Message-State: APjAAAWmspr7bnGsKbqikkWNXzifdo/R4IYiD8MGYJBn6UxKuCc+2Q2y
+        v/hjqFTz4URHp/x+PBpZQowsbQRJ
+X-Google-Smtp-Source: APXvYqxA4587hJlAfsh1OBgH3szPnO3jRvYdnE8AaoChTYYqPjyg0eVjEufh+AkrbjRBUIV36G6PTQ==
+X-Received: by 2002:ac8:30a7:: with SMTP id v36mr13504603qta.119.1561844745818;
+        Sat, 29 Jun 2019 14:45:45 -0700 (PDT)
 Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id m25sm1472959lfp.97.2019.06.29.09.28.14
+        by smtp.googlemail.com with ESMTPSA id k38sm3244931qtk.10.2019.06.29.14.45.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Jun 2019 09:28:15 -0700 (PDT)
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
+        Sat, 29 Jun 2019 14:45:45 -0700 (PDT)
+Subject: Re: [PATCH V5 08/18] clk: tegra: Add suspend resume support for DFLL
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
@@ -69,15 +69,14 @@ Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
         mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
         devicetree@vger.kernel.org
 References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <a262cbb3-845c-3ad1-16cc-375a24b9f7e9@gmail.com>
- <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
-Message-ID: <b7bfe578-69d3-bbe6-9613-bf5e98359703@gmail.com>
-Date:   Sat, 29 Jun 2019 19:28:13 +0300
+ <1561687972-19319-9-git-send-email-skomatineni@nvidia.com>
+ <594adc1e-4345-33ae-c79f-ad6f00964587@gmail.com>
+Message-ID: <e641e95e-57e5-4654-c951-a3b63d3b37c4@gmail.com>
+Date:   Sun, 30 Jun 2019 00:45:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <822867d6-4a4d-5f68-9b21-84a20d73c589@gmail.com>
+In-Reply-To: <594adc1e-4345-33ae-c79f-ad6f00964587@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,81 +85,98 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-29.06.2019 18:58, Dmitry Osipenko пишет:
-> 29.06.2019 18:46, Dmitry Osipenko пишет:
->> 28.06.2019 5:12, Sowjanya Komatineni пишет:
->>> This patch adds support for Tegra pinctrl driver suspend and resume.
->>>
->>> During suspend, context of all pinctrl registers are stored and
->>> on resume they are all restored to have all the pinmux and pad
->>> configuration for normal operation.
->>>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>  drivers/pinctrl/tegra/pinctrl-tegra.c    | 52 ++++++++++++++++++++++++++++++++
->>>  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
->>>  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
->>>  3 files changed, 56 insertions(+)
->>>
->>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
->>> index 34596b246578..e7c0a1011cba 100644
->>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->>> @@ -621,6 +621,43 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->>>  	}
->>>  }
->>>  
->>> +static int tegra_pinctrl_suspend(struct device *dev)
->>> +{
->>> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
->>> +	u32 *backup_regs = pmx->backup_regs;
->>> +	u32 *regs;
->>> +	unsigned int i, j;
->>> +
->>> +	for (i = 0; i < pmx->nbanks; i++) {
->>> +		regs = pmx->regs[i];
->>> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
->>> +			*backup_regs++ = readl(regs++);
->>> +	}
->>> +
->>> +	return pinctrl_force_sleep(pmx->pctl);
->>> +}
->>> +
->>> +static int tegra_pinctrl_resume(struct device *dev)
->>> +{
->>> +	struct tegra_pmx *pmx = dev_get_drvdata(dev);
->>> +	u32 *backup_regs = pmx->backup_regs;
->>> +	u32 *regs;
->>> +	unsigned int i, j;
->>> +
->>> +	for (i = 0; i < pmx->nbanks; i++) {
->>> +		regs = pmx->regs[i];
->>> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
->>> +			writel(*backup_regs++, regs++);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +const struct dev_pm_ops tegra_pinctrl_pm = {
->>> +	.suspend = &tegra_pinctrl_suspend,
->>> +	.resume = &tegra_pinctrl_resume
->>> +};
+29.06.2019 16:28, Dmitry Osipenko пишет:
+> 28.06.2019 5:12, Sowjanya Komatineni пишет:
+>> This patch creates APIs for supporting Tegra210 clock driver to
+>> perform DFLL suspend and resume operation.
 >>
->> Hm, so this are the generic platform-driver suspend-resume OPS here, which is very
->> nice! But.. shouldn't pinctrl be resumed before the CLK driver (which is syscore_ops
->> in this version of the series)? .. Given that "clock" function may need to be
->> selected for some of the pins.
+>> During suspend, DFLL mode is saved and on resume Tegra210 clock driver
+>> invokes DFLL resume API to re-initialize DFLL to enable target device
+>> clock in open loop mode or closed loop mode.
 >>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-dfll.c | 78 ++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/tegra/clk-dfll.h |  2 ++
+>>  2 files changed, 80 insertions(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+>> index f8688c2ddf1a..a1f37cf99b00 100644
+>> --- a/drivers/clk/tegra/clk-dfll.c
+>> +++ b/drivers/clk/tegra/clk-dfll.c
+>> @@ -277,6 +277,7 @@ struct tegra_dfll {
+>>  	unsigned long			dvco_rate_min;
+>>  
+>>  	enum dfll_ctrl_mode		mode;
+>> +	enum dfll_ctrl_mode		resume_mode;
+>>  	enum dfll_tune_range		tune_range;
+>>  	struct dentry			*debugfs_dir;
+>>  	struct clk_hw			dfll_clk_hw;
+>> @@ -1864,6 +1865,83 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
+>>  }
+>>  
+>>  /*
+>> + * tegra_dfll_suspend
+>> + * @pdev: DFLL instance
+>> + *
+>> + * dfll controls clock/voltage to other devices, including CPU. Therefore,
+>> + * dfll driver pm suspend callback does not stop cl-dvfs operations.
+>> + */
+>> +void tegra_dfll_suspend(struct platform_device *pdev)
+>> +{
+>> +	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
+>> +
+>> +	if (!td)
+>> +		return;
+>> +
+>> +	if (td->mode <= DFLL_DISABLED)
+>> +		return;
+>> +
+>> +	td->resume_mode = td->mode;
+>> +	switch (td->mode) {
+>> +	case DFLL_CLOSED_LOOP:
+>> +		dfll_set_mode(td, DFLL_CLOSED_LOOP);
+>> +		dfll_set_frequency_request(td, &td->last_req);
+>> +
+>> +		dfll_unlock(td);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +}
+>> +
+>> +/**
+>> + * tegra_dfll_resume - reprogram the DFLL after context-loss
+>> + * @pdev: DFLL instance
+>> + *
+>> + * Re-initialize and enable target device clock in open loop mode. Called
+>> + * directly from SoC clock resume syscore operation. Closed loop will be
+>> + * re-entered in platform syscore ops as well after CPU clock source is
+>> + * switched to DFLL in open loop.
+>> + */
+>> +void tegra_dfll_resume(struct platform_device *pdev, bool on_dfll)
+>> +{
+>> +	struct tegra_dfll *td = dev_get_drvdata(&pdev->dev);
+>> +
+>> +	if (!td)
+>> +		return;
+>> +
+>> +	if (on_dfll) {
+>> +		if (td->resume_mode == DFLL_CLOSED_LOOP)
+>> +			dfll_lock(td);
+>> +		td->resume_mode = DFLL_DISABLED;
+>> +		return;
+>> +	}
+>> +
+>> +	reset_control_deassert(td->dvco_rst);
+>> +
+>> +	pm_runtime_get(td->dev);
 > 
-> Oh, also what about GPIO-pinctrl suspend resume ordering .. is it okay that pinctrl
-> will be resumed after GPIO? Shouldn't a proper pin-muxing be selected at first?
+> pm_runtime_get_sync()?
 > 
-> This also looks to me very unsafe in a context of older Tegras which are initializing
-> the static muxing very early during of the boot, otherwise things won't work well for
-> the drivers.
-> 
+> Otherwise looks like you're risking a lot here because pm_runtime_get() is an
+> asynchronous request.
 
-Although, scratch what I wrote about older Tegras. We are probing pinctl driver very
-early, hence it should suspend last and resume first. Should be okay.
+It looks like DFLL driver should be masked as IRQ-safe using pm_runtime_irq_safe()
+and then the synchronous resume could be used..
