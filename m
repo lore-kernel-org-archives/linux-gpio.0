@@ -2,127 +2,71 @@ Return-Path: <SRS0=1pex=U6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E17C0650E
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01B8C0650E
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 14:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3A0217F9
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="r81XUdll"
+	by mail.kernel.org (Postfix) with ESMTP id 9A39921721
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 14:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbfGAJNO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:13:14 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51875 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbfGAJNO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 05:13:14 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so15008535wma.1
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qYJwtVX2r7KnFTDIFCTGswCpHKhjGFZMmXuYYyexqis=;
-        b=r81XUdllxw5uXCyKEsvqIiwFjD4+Lrm0Imlfz2u7g/nBUVEQ/H/q2CcOkbeh1IoekK
-         XqmukpLUNFQgaTn4IzOvgmZdqpd98YvfrZ7VM1YVyM7O5eDofTXxiSS1mEh+NDA/Dbr/
-         Z3rI9N48FtEgbYu/2B2DhrOANpStsKc6vG9zfUvuIwAIhkKO792IlVEEN/ne/3TDpBV2
-         UMhi4YZeH4ltR34+Y1erlZG1nyZ5RNqBMezdYHN4zSt9QqeyPrjfBFHM9wEpAnv1QO1z
-         /3GabGCSPZoKQPdlx6VzaT707o+ONkoZ9Yy3YgxKcPSkOCS95zyEqQqYpKHXjSJMRrcy
-         iJ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qYJwtVX2r7KnFTDIFCTGswCpHKhjGFZMmXuYYyexqis=;
-        b=H5R7R3R+uI7vN8WwxKgZU/NMxY4EU0phLm/f7dJBJoYvxcT85peEQwmyzHE6ILmezb
-         mSQoUOjOHf5GxiTWT19/yCvQZ78AmKgvYZozejATlFVO7WI8OyrDbFioHHWNBgyaC9ro
-         HByPx38Er2RR3nLT7+zz1a5k30lN2QPW0HB5/v6WzdcGwOJ4p1nxGsUSlN/IunEJE0XC
-         lOagN/grkhuVIkqHdW+9PEGk53WTlkCdDsvP/mDejFSvHtUCothprB+Dnm24wxuv9iCP
-         e50YHKTlkIGQG+xuBvbuQ5+/JvIYIQGJv2lb3i7GHSLL8AaxCzxrQDFOOMlZRY2s0988
-         s3TQ==
-X-Gm-Message-State: APjAAAVBrrcmtEhm3dO+uaI8jRpJ6/oaviwiY8Dgh81XK7GVjVnCnLxZ
-        G+UJvBBj4sY+r4v7AlL/xODs0g==
-X-Google-Smtp-Source: APXvYqyKAKMyxCAc6vR2xD8svMCql407vi8e1s9D1IiPlHCg1OCzLfGcgLf5UyySc+lgVIZBWOUuTA==
-X-Received: by 2002:a05:600c:303:: with SMTP id q3mr16802095wmd.130.1561972391870;
-        Mon, 01 Jul 2019 02:13:11 -0700 (PDT)
-Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:11 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
-        linux-gpio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-Date:   Mon,  1 Jul 2019 11:12:45 +0200
-Message-Id: <20190701091258.3870-2-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
-References: <20190701091258.3870-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729407AbfGAOKM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Jul 2019 10:10:12 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:47744 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbfGAOKM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 10:10:12 -0400
+Received: from ramsan ([84.194.98.4])
+        by andre.telenet-ops.be with bizsmtp
+        id XSA92000M05gfCL01SA9c6; Mon, 01 Jul 2019 16:10:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hhx0T-00082W-AE; Mon, 01 Jul 2019 16:10:09 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hhx0T-0006Q1-84; Mon, 01 Jul 2019 16:10:09 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] Documentation: gpio: Fix reference to gpiod_get_array()
+Date:   Mon,  1 Jul 2019 16:10:05 +0200
+Message-Id: <20190701141005.24631-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
+The function is called gpiod_get_array(), not gpiod_array_get().
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Fixes: 77588c14ac868cae ("gpiolib: Pass array info to get/set array functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/meson/pinctrl-meson-g12a.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/driver-api/gpio/consumer.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index d494492e98e9..f69af4fa7cf8 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -801,6 +801,9 @@ static const unsigned int remote_ao_input_pins[]	= { GPIOAO_5 };
- /* ir_out */
- static const unsigned int remote_ao_out_pins[]		= { GPIOAO_4 };
+diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+index 23d68c321c5c7c7d..9559aa3cbcef25a2 100644
+--- a/Documentation/driver-api/gpio/consumer.rst
++++ b/Documentation/driver-api/gpio/consumer.rst
+@@ -364,7 +364,7 @@ accessed sequentially.
+ The functions take three arguments:
+ 	* array_size	- the number of array elements
+ 	* desc_array	- an array of GPIO descriptors
+-	* array_info	- optional information obtained from gpiod_array_get()
++	* array_info	- optional information obtained from gpiod_get_array()
+ 	* value_bitmap	- a bitmap to store the GPIOs' values (get) or
+ 			  a bitmap of values to assign to the GPIOs (set)
  
-+/* pwm_a_e */
-+static const unsigned int pwm_a_e_pins[]		= { GPIOE_2 };
-+
- /* pwm_ao_a */
- static const unsigned int pwm_ao_a_pins[]		= { GPIOAO_11 };
- static const unsigned int pwm_ao_a_hiz_pins[]		= { GPIOAO_11 };
-@@ -888,6 +891,7 @@ static struct meson_pmx_group meson_g12a_aobus_groups[] = {
- 	GROUP(i2c_ao_slave_sda,		3),
- 	GROUP(remote_ao_input,		1),
- 	GROUP(remote_ao_out,		1),
-+	GROUP(pwm_a_e,			3),
- 	GROUP(pwm_ao_a,			3),
- 	GROUP(pwm_ao_a_hiz,		2),
- 	GROUP(pwm_ao_b,			3),
-@@ -1192,6 +1196,10 @@ static const char * const remote_ao_out_groups[] = {
- 	"remote_ao_out",
- };
- 
-+static const char * const pwm_a_e_groups[] = {
-+	"pwm_a_e",
-+};
-+
- static const char * const pwm_ao_a_groups[] = {
- 	"pwm_ao_a", "pwm_ao_a_hiz",
- };
-@@ -1290,6 +1298,7 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(i2c_ao_slave),
- 	FUNCTION(remote_ao_input),
- 	FUNCTION(remote_ao_out),
-+	FUNCTION(pwm_a_e),
- 	FUNCTION(pwm_ao_a),
- 	FUNCTION(pwm_ao_b),
- 	FUNCTION(pwm_ao_c),
 -- 
-2.21.0
+2.17.1
 
