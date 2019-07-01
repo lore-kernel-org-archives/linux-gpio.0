@@ -2,57 +2,58 @@ Return-Path: <SRS0=1pex=U6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4D7C0650E
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE7FC0650E
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F24D521743
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 005632145D
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:13:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Y/+nvdVS"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lIYZhQL3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfGAJNN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:13:13 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52923 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728284AbfGAJNN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 05:13:13 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so15003928wms.2
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jul 2019 02:13:11 -0700 (PDT)
+        id S1728395AbfGAJNS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Jul 2019 05:13:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38681 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728367AbfGAJNQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 05:13:16 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s15so14998782wmj.3
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h5u4pWU3fhpBiHxumPv/qTZvnc0aCekcJz77EzSTwqA=;
-        b=Y/+nvdVSW313vqjXZLRZxPJSbMTY9V5q7d9kbNc707FQ5DLekBH9JBsqxcqQSdcpsG
-         fa9fbsfFISHQYuSag01PKjhD83+23p8PsdwbCp6pLzymoDUwiIVRvK4/+jpO8JTVE1+a
-         VvVSu1ae4DHEwx1lAL0LzX6VXG4GNQybC3ts7Z2vwR2gFq4KUWAJMLBjtMaGjD6NVTdv
-         OLEZU+KjrXbbZtizvbXrdIf3H1cn0/yYeD4OJUF9i7JYk1covruE8wiu3q+SvWM7oq1l
-         b38IsjfQaAtcb9JYO7ZSRG5G0gWBlvmfIWH+SxRWLqT1JkrWBCVlFXlw0AkG+l+Tc+88
-         +p3g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
+        b=lIYZhQL3jTzMkEXGBHTejQuEo2Wg6Z7RjfFgI4uYHafubWHGXRc6G+3127Ldq9Aj1b
+         DGM+VLYAo7oKAb+SM81qnIo8he0wpupHrxH+YJ1bu32D/udLAkQHUGXDCMKNkiwztdmr
+         UL1t/r1dxSb7cPCvGnE2yL3ZPEBPkcivM+DmX8myy2McJHzaa2T9Fm8m42TOt5j5q9/7
+         YKxjVrQD3XhAkTr+IXcWmgW+XxJR5OvgmBKrZnFG2XMJXkFXuuoZCsK9NAYps93yG8t8
+         nRDiYAz8hiTqPaDXGfSF6MXla2iU2+7NE4SbYalzr0mDioFbl9yyPpAcaN7IF16ReuVy
+         bcAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h5u4pWU3fhpBiHxumPv/qTZvnc0aCekcJz77EzSTwqA=;
-        b=K6wRe67SBLZDPhA47XHdUrdyANRzwqTHyOMU4I6dUA2rj4krfOhZhE7GyUiVwBiKWb
-         1kZVpSxn36HZaA5KNOSR+PEdpZhvzK1TA0jGbKbuQcPawKTD7cHlaGoNTDhu1zfTkVb/
-         vq2CXz2WiQxjN2O2zOXXnLCNpMYpC630kajB9DT2HgcjlH26OYdFZ4spIshEaBIYkZ8G
-         ncGnPPWe6qJeBuJIFlbuSB3YsnvK999r4CVuNhcbpzHqqrtIdyAN9/rU/86j8TJoAs0u
-         TDPOWdno7xlEVm91VtRDIQl6+VZt7Xjgos3Rig1J7fcAc/URDkCZncImei6xV2kT4mXv
-         u8Ew==
-X-Gm-Message-State: APjAAAVrSjjrTQ0aydjI4sxtE8eJKSoyH19To1ijoZ2Zc4xeS1KThkb+
-        WytRSWFXY+opYjvC+OiSvzGbEg==
-X-Google-Smtp-Source: APXvYqz2UhQEnseZ8WNhpF/O9vEWNicypD7qyv62oJG8BxzOAHVHA2jQIKd9fwd+Rev2X/o90QCKlw==
-X-Received: by 2002:a1c:df46:: with SMTP id w67mr15810427wmg.69.1561972390865;
-        Mon, 01 Jul 2019 02:13:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QF6xtFv2zQ8ZUqjO9Cs7FIQcWQGqk9AuakROnInyaSE=;
+        b=YyoPRpkkSsE5qqe0nIF3wRKl2mLwyvpo3KErCTvwoG8TWFd9GKUvlPKs4G79RSZFt9
+         sAqDQnTEVpqi51ncK6KOdm4fCd+Onwg3nd6Ak0F1/mx44wurJ168LY+QQkXoIwuHQ106
+         vxKJ6WnVr0+Quwt6ctHJJGARDGA2fU07nEmCWG7unCYwq1A62uPSg2M6JUYwgnCTL0rE
+         mV5vFAQrkO1ZogpZyTBy626eWHSHWJ/iSpTyt1Nhbix1K72ex0qqhO4DjY5GETa9syx7
+         1pgys8thXowtpSrwRH0U7c+eGanGebrsH/sHeNTudkrQPdV/Ax3y6mzlhJc9g3W62y8c
+         5aOA==
+X-Gm-Message-State: APjAAAX4/OO/OUhDs2giDZlNgD/8vkOWSIdrwX0M6vxXg8kR3WKQl3Pi
+        EadgPI9ueia4mMunRsgzOrnF7w==
+X-Google-Smtp-Source: APXvYqz0R1Me131hk3YNR44WqrLF91l40/ePDko2bzhUb5OlZVcim0JviXo7HbsXJhGIuvbExPl9Cg==
+X-Received: by 2002:a05:600c:240e:: with SMTP id 14mr15893491wmp.30.1561972393857;
+        Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
 Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.09
+        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:10 -0700 (PDT)
+        Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -60,10 +61,12 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 00/14] arm64: g12a: add support for DVFS
-Date:   Mon,  1 Jul 2019 11:12:44 +0200
-Message-Id: <20190701091258.3870-1-narmstrong@baylibre.com>
+Subject: [RFC/RFT v3 03/14] clk: meson: regmap: export regmap_div ops functions
+Date:   Mon,  1 Jul 2019 11:12:47 +0200
+Message-Id: <20190701091258.3870-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,94 +74,69 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
-cpu_clk / cpub_clk
-|   \- cpu_clk_dyn
-|      |  \- cpu_clk_premux0
-|      |        |- cpu_clk_postmux0
-|      |        |    |- cpu_clk_dyn0_div
-|      |        |    \- xtal/fclk_div2/fclk_div3
-|      |        \- xtal/fclk_div2/fclk_div3
-|      \- cpu_clk_premux1
-|            |- cpu_clk_postmux1
-|            |    |- cpu_clk_dyn1_div
-|            |    \- xtal/fclk_div2/fclk_div3
-|            \- xtal/fclk_div2/fclk_div3
-\ sys_pll / sys1_pll
+The G12A CPU Clock Postmux divider needs a custom div_set_rate() call.
 
-This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
-cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
-the CPU clock in a safe way as recommended by the vendor Documentation
-and reference code.
+Export the clk_regmap_div_round_rate() and clk_regmap_div_recalc_rate()
+to be able to override the default clk_regmap_div_set_rate() callback.
 
-This patchset :
-- introduces needed core and meson clk changes
-- adds support for the G12B second cluster clock measurer ids
-- protects clock measurer from cooncurent measures
-- adds the clock notifiers
-- moves the G12A DT to a common g12a-common dtsi
-- adds the G12A and G12B OPPs
-- enables DVFS on all supported boards
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/clk-regmap.c | 10 ++++++----
+ drivers/clk/meson/clk-regmap.h |  5 +++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-Dependencies:
-- PWM AO input order fix at [1]
-- PWM enhancements from Martin at [2]
-
-Changes since RFT/RFC v2 at [4]:
-- Rebased on linux-amlogic v5.3/dt64 and clk-meson v5.3/drivers trees
-- fixed mesure/measure in patch 5
-- added Kevin's review tags
-
-Changes since RFT/RFC v1 at [3]:
-- Added EXPORT_SYMBOL_GPL() to clk_hw_set_parent
-- Added missing static to g12b_cpub_clk_mux0_div_ops and g12a_cpu_clk_mux_nb
-- Simplified g12a_cpu_clk_mux_notifier_cb() without switch/case
-- Fixed typo in "this the current path" in g12a.c
-- Fixed G12B dtsi by adding back the sdio quirk
-- Fixed G12A dtsi unwanted sdio quirk removal
-- Fixed various checkpatch errors
-
-[1] https://patchwork.kernel.org/patch/11006835/
-[2] https://patchwork.kernel.org/patch/11006835/
-[3] https://patchwork.kernel.org/cover/11006929/
-[4] https://patchwork.kernel.org/cover/11017273/
-
-Neil Armstrong (14):
-  pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-  clk: core: introduce clk_hw_set_parent()
-  clk: meson: regmap: export regmap_div ops functions
-  clk: meson: eeclk: add setup callback
-  soc: amlogic: meson-clk-measure: protect measure with a mutex
-  soc: amlogic: meson-clk-measure: add G12B second cluster cpu clk
-  clk: meson: g12a: add notifiers to handle cpu clock change
-  clk: meson: g12a: expose CPUB clock ID for G12B
-  arm64: dts: move common G12A & G12B modes to meson-g12-common.dtsi
-  arm64: dts: meson-g12-common: add pwm_a on GPIOE_2 pinmux
-  arm64: dts: meson-g12a: add cpus OPP table
-  arm64: dts: meson-g12a: enable DVFS on G12A boards
-  arm64: dts: meson-g12b: add cpus OPP tables
-  arm64: dts: meson-g12b-odroid-n2: enable DVFS
-
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 2416 ++++++++++++++++
- .../boot/dts/amlogic/meson-g12a-sei510.dts    |   55 +
- .../boot/dts/amlogic/meson-g12a-u200.dts      |   54 +
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   |   52 +
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   | 2455 +----------------
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |   96 +
- arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  145 +-
- drivers/clk/clk.c                             |    6 +
- drivers/clk/meson/clk-regmap.c                |   10 +-
- drivers/clk/meson/clk-regmap.h                |    5 +
- drivers/clk/meson/g12a.c                      |  500 +++-
- drivers/clk/meson/meson-eeclk.c               |    6 +
- drivers/clk/meson/meson-eeclk.h               |    1 +
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    |    9 +
- drivers/soc/amlogic/meson-clk-measure.c       |   14 +-
- include/dt-bindings/clock/g12a-clkc.h         |    1 +
- include/linux/clk-provider.h                  |    1 +
- 17 files changed, 3390 insertions(+), 2436 deletions(-)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+index dcd1757cc5df..26c8c74a8cf0 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -56,8 +56,8 @@ const struct clk_ops clk_regmap_gate_ro_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
+ 
+-static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+-						unsigned long prate)
++unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
++					 unsigned long prate)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+@@ -74,9 +74,10 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+ 	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
+ 				   div->width);
+ }
++EXPORT_SYMBOL_GPL(clk_regmap_div_recalc_rate);
+ 
+-static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
+-				      unsigned long *prate)
++long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+@@ -100,6 +101,7 @@ static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return divider_round_rate(hw, rate, prate, div->table, div->width,
+ 				  div->flags);
+ }
++EXPORT_SYMBOL_GPL(clk_regmap_div_round_rate);
+ 
+ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index 1dd0abe3ba91..d22b83fb9bad 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -78,6 +78,11 @@ clk_get_regmap_div_data(struct clk_regmap *clk)
+ 	return (struct clk_regmap_div_data *)clk->data;
+ }
+ 
++unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
++					 unsigned long prate);
++long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate);
++
+ extern const struct clk_ops clk_regmap_divider_ops;
+ extern const struct clk_ops clk_regmap_divider_ro_ops;
+ 
 -- 
 2.21.0
 
