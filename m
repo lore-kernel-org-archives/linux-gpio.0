@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E6FC06510
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDA9C06511
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC32217D9
-	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 650EA2184C
+	for <linux-gpio@archiver.kernel.org>; Mon,  1 Jul 2019 09:14:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="X3BPQb1o"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HsAPm2yL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbfGAJOE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 1 Jul 2019 05:14:04 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51882 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728377AbfGAJNQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 05:13:16 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so15008704wma.1
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jul 2019 02:13:15 -0700 (PDT)
+        id S1728335AbfGAJOR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 1 Jul 2019 05:14:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52928 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbfGAJNP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jul 2019 05:13:15 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s3so15004056wms.2
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jul 2019 02:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
-        b=X3BPQb1oIV2x3Nt6jna67Clm8NfVyqvfwFA5grXCGNefyz+/yhFp29J7UxF350H1uB
-         2A/KSsEjBPVrHmtNTaeVwZfi+LVJYzfdusQbg1SMyERh2CMHUewA7njbMAKXXbEWXqnw
-         YIaqY4q70csEqv/5ucwnlOpRGHKzNggjQFQX+Ji4MMkG4ldiTmX1OrmmWnIQBZh5z6uT
-         B+9B133Dk9rtO6vSMAUSlpAOf/XFsJ3J6I1Y4ikwsbti/NHvU/FmVHpxXmSEQATSrXd7
-         9SiMeOTc34vpOtnfAoYiIJUANQXu3JyxsRXxVI3DG0fs4fqdic/CDqMSb3RxGpbKj8EQ
-         gElw==
+        bh=3PBhHywaKoqeEXor4qGKKEbTn6ANfeSg4ls1LrAVLLs=;
+        b=HsAPm2yLJUTmVQ7VrhIS3c6633P/oVY1hyXWdRrTSY0DaJFH5bo3iwB4WDLzqoIjFb
+         +ofZX4UV7FR6yYxUXONipQWUjI3LKOc/TveJvoc3qP8bVzL0lMb2xqRjT3Aj98RxHlB+
+         GpNhcY2zmaGoJcTVbOliiJ6VXhUVfeSD7wO9C2/2prWgE9+Gdr833y2faMoNUxwUOhv4
+         Ty6IF1dEIyHgu4lzo46tWct6hPdW3k3KdsfcG0Wy5bOHVMxjZgNe2KVsQXBtDH5beIQX
+         zOrKkgH/T2TGdTUlj9ohM0pkt2w+MnhOGAblF+pefLHBIOfNrheg34r/1SMhDhjzwlLK
+         yNKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0YLGRK88mV5vZE4LqM30CD7m71X58sUA87fhljEjqxY=;
-        b=kFg3y+go6yHcuF9c7wAHVks5d5E3iSxtxXz49bic7UhXH2xhWXeejA005kGabPJS3W
-         Xc2vXGQja1kz357WmcxHkqqMa3xeBqY28tnP2CLfF02WlHEUqLSnHNcox0zXw2ZRkP57
-         TG/96YlkTQZtR6rRwwgNI8lj1/etBeaEv/rZrB3jULzune5qvIcDscXYs6DsytecgXmw
-         TEFJpAnlMcUCHBMMFXV/6zRlGdWw00Km++TN4u57oh9EROBg20cAmiEphWZ6/RLp6Sue
-         3W4b6OFt1CXfGAO3ovaHwgs6dTW/s+TlUwo87M37TGXHvpmSGVqpAPnCGUU12ofsgn5q
-         Q3mg==
-X-Gm-Message-State: APjAAAUrh2HPHgdBrJvx2o+z40ndoMI9Hzzh1nAXA+rVu1QrUsAYmTgd
-        lL7k2ZAjRl0NWKls6e3raCWrGg==
-X-Google-Smtp-Source: APXvYqxo5Z8WiwiSIqfSVLsBg4/Fz465U9hGUrecgfM0bpcIhpYoQ8Z0JjUAK9SoDzeRMVjsViWAzA==
-X-Received: by 2002:a05:600c:254b:: with SMTP id e11mr15128659wma.171.1561972394998;
-        Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
+        bh=3PBhHywaKoqeEXor4qGKKEbTn6ANfeSg4ls1LrAVLLs=;
+        b=NqKbkoB7KO6n6m1PtnN6GoasYPaMdUnOTA4XL6VGZko0zbix4weD0uwBcArS68vCik
+         yWhnHTrC07/LhE8NBhIgsDt7PiIhfPjorynPANn7poZ2srACS+lWQdP4KOHdB/fS+QVy
+         7vdN4CmFJ1KYfL90hzYI3gTxWRUEaxxdM7Sumy8a1AC/gzZ5t4zPhPZ695kR1uYvnFDK
+         +YkDH7JmYM4X1ELwEqqPPKCefqjsJshn5r49llnYEOIXnAiErg1P4wnDPfQGQuFztmX4
+         FCklweJSTQtNlO9lVZfemmJSaLCPp2lWQAUrsoF+AYAfbrp69IKZqzsJlN327saxb8Eh
+         Y44A==
+X-Gm-Message-State: APjAAAX58Xz5+ue0DykIOqgndngU2j7WRDrXm8TpXaQmmslvpUCe+43D
+        qhy6bAW2p+UiELmLvg9xtkZSyg==
+X-Google-Smtp-Source: APXvYqwUZnbG+qavm8RsJY6F9HtxkvEbIBbdChezRZVD4NLmW5HAZs5R0eARFRcCFjxg92naHMdEkQ==
+X-Received: by 2002:a1c:c14b:: with SMTP id r72mr16534969wmf.166.1561972392885;
+        Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
 Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.13
+        by smtp.gmail.com with ESMTPSA id i16sm6305659wrm.37.2019.07.01.02.13.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 02:13:14 -0700 (PDT)
+        Mon, 01 Jul 2019 02:13:12 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com, khilman@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -61,9 +61,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
         linux-gpio@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
-Date:   Mon,  1 Jul 2019 11:12:48 +0200
-Message-Id: <20190701091258.3870-5-narmstrong@baylibre.com>
+Subject: [RFC/RFT v3 02/14] clk: core: introduce clk_hw_set_parent()
+Date:   Mon,  1 Jul 2019 11:12:46 +0200
+Message-Id: <20190701091258.3870-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190701091258.3870-1-narmstrong@baylibre.com>
 References: <20190701091258.3870-1-narmstrong@baylibre.com>
@@ -74,46 +74,48 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a setup() callback in the eeclk structure, to call an optional
-call() function at end of eeclk probe to setup clocks.
+Introduce the clk_hw_set_parent() provider call to change parent of
+a clock by using the clk_hw pointers.
 
-It's used for the G12A clock controller to setup the CPU clock notifiers.
+This eases the clock reparenting from clock rate notifiers and
+implementing DVFS with simpler code avoiding the boilerplates
+functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/meson/meson-eeclk.c | 6 ++++++
- drivers/clk/meson/meson-eeclk.h | 1 +
+ drivers/clk/clk.c            | 6 ++++++
+ include/linux/clk-provider.h | 1 +
  2 files changed, 7 insertions(+)
 
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index 6ba2094be257..81fd2abcd173 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (data->setup) {
-+		ret = data->setup(pdev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 					   data->hw_onecell_data);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756fd4d6..06e1abe3391c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2490,6 +2490,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 	return ret;
  }
-diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
-index 9ab5d6fa7ccb..7fdf424f71a6 100644
---- a/drivers/clk/meson/meson-eeclk.h
-+++ b/drivers/clk/meson/meson-eeclk.h
-@@ -20,6 +20,7 @@ struct meson_eeclkc_data {
- 	const struct reg_sequence	*init_regs;
- 	unsigned int			init_count;
- 	struct clk_hw_onecell_data	*hw_onecell_data;
-+	int				(*setup)(struct platform_device *pdev);
- };
  
- int meson_eeclkc_probe(struct platform_device *pdev);
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
++{
++	return clk_core_set_parent_nolock(hw->core, parent->core);
++}
++EXPORT_SYMBOL_GPL(clk_hw_set_parent);
++
+ /**
+  * clk_set_parent - switch the parent of a mux clk
+  * @clk: the mux clk whose input we are switching
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bb6118f79784..8a453380f9a4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -812,6 +812,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
 -- 
 2.21.0
 
