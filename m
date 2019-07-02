@@ -7,71 +7,84 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E27C46478
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41F1C06511
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49341218FC
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A29812089C
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:59:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="DoR1ThEg"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CuI2IgTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfGCAvu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 20:51:50 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43788 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbfGCAvs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:51:48 -0400
-Received: by mail-ot1-f66.google.com with SMTP id q10so484800otk.10;
-        Tue, 02 Jul 2019 17:51:47 -0700 (PDT)
+        id S1727132AbfGCA7C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:59:02 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37699 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfGCA7C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:59:02 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t76so608769oih.4;
+        Tue, 02 Jul 2019 17:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ByhsgyjfPRCaYRtGVf0X74WgyTuKcSf1bOHMoBSZqlM=;
-        b=DoR1ThEgGbjv19cCdz5BE+R5n05F1pnqjFfoBynSpfmBlQXLCSunPFhbew6NEfAxPs
-         hvktSZdshjCkXciJetywqYC7halqVs7rQ//KLFsw2G6zRA5AsIWS+MKAiB3BahXdsdnG
-         3pcSjZaiZgcd8FrveXvr89fZ0fLQgFuSogZ9Keg4qmRLU/wDp3HL5P22/Mw1kYoZQ5+G
-         fuMux96KZ77382ZmWkZNoWLAaBNs9Wxu3z9DmmEm1nfFS9MPhHQDYbiOF++COdVen6EM
-         7Bk7sB7xgr9U92H4vgfSCaES5Uuh91WVyRugW9AD2JAN7CGio1F23wG2jEvDRRzT8tfR
-         wLqQ==
+        bh=TCrBHpvs2bjlY0tZQ78kB/teoCTIaxox5gIgv2Zg7MM=;
+        b=CuI2IgTXX842IlAyxReyqFM1sRgD7KsYh/dPgH6QAHgmHFKOPh7/a3W6pU8NOrWD0i
+         r0HgT9QAhB3P0L/SWdmy2QahcMIkNdOT9sM4bcNQi4Ow67paIGHcnPZqpW4yB3lDIPYr
+         3LvXJK+WTzqu0K9DtXHI7rFi97IFGrcgRoSResKlOVMBTEYfPmMfxpIT9k+/4uJ1yP8z
+         HPI5nCrJ5EzIiMBe7xemYcyUYwvaQdSLLELy1yUsDPMaZfgnz3HGUWHwT8mgyNVshEBb
+         ruxaz1jL4/BjMVUXqdAUlRklzGjyHeKoZ/I+J8ZcWABIvPw0KHcl3yLKYqpM3asVZDIp
+         CZgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ByhsgyjfPRCaYRtGVf0X74WgyTuKcSf1bOHMoBSZqlM=;
-        b=AbBJ5Hf5VLOiGy0ijgtAXlcJWJ4IXuu6MrNs3zBYgg9qnoSD59HHOQ2aMVYiUUFc2O
-         LxXcX32WmOLPxWqcVVzS37hNZzBq/9MNf8a2L5LCpulyYKGHQJtNRz/AlE7Y3NvzN+0u
-         q/vczSzK07IBWEjVGq8cQ4IFTwj9yDTRxs85koEDyh9rnHmCueAg6UenK6PqYatv+uWj
-         BFXjQ7Gzck1EGt2gdmjXwFpmUAq26uF1M96L2LsBhJi5tddu84pZskNMTyhZP7tHCudU
-         okdPbToO8BF5T2pRzneCxa52R1aZaDLwOUbMiFyCSVtW6c3w5h3LH3wsh4JDin2P2v+h
-         fuFw==
-X-Gm-Message-State: APjAAAVuOpXUJHOgUu9p6ChPVxuUYaNFzhF85lI2EK8uCjvoHtYovZVg
-        rcisKdpQeKSrB+MQZasML6SqEq02hRTUYs9wzWh0Lowc
-X-Google-Smtp-Source: APXvYqzMU6LhYLtDxe6IzTmM1WolsPD+74qKOzIux1HcUkzeXscSddhWfH+OlTyFXLefL/eH9LreXfId+iDH0UNqUbY=
-X-Received: by 2002:a9d:6d8d:: with SMTP id x13mr4126550otp.6.1562108605726;
- Tue, 02 Jul 2019 16:03:25 -0700 (PDT)
+        bh=TCrBHpvs2bjlY0tZQ78kB/teoCTIaxox5gIgv2Zg7MM=;
+        b=GtqPsYVqQG1GIEcfbhyCT37s4m+muGPBuAoyKX1PSDtJ6bN2ikU4lVR8UXCm+ykZaP
+         2QzN9ej9gcxfUsr04h9DxVk7qDVdyEZp6SWDu6q9HUjr7CRhF3R+ggO1coEn1beSEZlR
+         AHV1+2yA64iG9GqRVSDrYryTsMH0OqCEMVrpzUQ/zYOEPzaE1fmb/6UAwIbw3gV9KWoe
+         qZodJN1i/BoLSxwX2Y4KUNyeRz8JhbY/2voj/76Bv9ne2xKpPeu1ia0zprr/OEFKj+pd
+         yFHDrnpWJsNB3btb4Gixb1af99K9nZfyspv+bJM75XOPxcBbPdbVFdjqC6mieSWXGsMw
+         NY5g==
+X-Gm-Message-State: APjAAAVheCBvlaZjxSL0ddNQFfeRDe9ZW0lzpNCnxhNxzJIhyzPkElGH
+        KgLQPuIdzm1ttGagJeYVVVHttDYCsLp/BO3uFf+ymcX5
+X-Google-Smtp-Source: APXvYqwmd7VMNZTet4EgIbGsgiX7YKyruChF5ByKLBpLAB5R3TkByx3a5jpZ7+k3zDWzGsAg0iUnSr7TbRx2PMhG4lo=
+X-Received: by 2002:aca:4306:: with SMTP id q6mr4696022oia.39.1562109386381;
+ Tue, 02 Jul 2019 16:16:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-9-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-9-narmstrong@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-5-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-5-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:03:14 +0200
-Message-ID: <CAFBinCAwvAb42uitinRr0k_Hkb_cDOc9dygQgg54E5nO69h=fg@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 08/14] clk: meson: g12a: expose CPUB clock ID for G12B
+Date:   Wed, 3 Jul 2019 01:16:15 +0200
+Message-ID: <CAFBinCA1gUUbEj=++1rGcFQ1RdyxSheofAo=TKw3-UaenFAcug@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        amergnat@baylibre.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
++Cc Alexandre Mergnat
+
 On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> Expose the CPUB clock id to add DVFS to the second CPU cluster of
-> the Amlogic G12B SoC.
+> Add a setup() callback in the eeclk structure, to call an optional
+> call() function at end of eeclk probe to setup clocks.
+>
+> It's used for the G12A clock controller to setup the CPU clock notifiers.
 >
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+this will probably work fine, but I want do double check first
+
+are we planning to get rid of meson-eeclk (mid-term)?
+Alex has some patches to get rid of all these IN_PREFIX logic.
+I'm asking because if we want to get rid of meson-eeclk it may be the
+time to do so now to have less logic to migrate later on
+
+
+Martin
