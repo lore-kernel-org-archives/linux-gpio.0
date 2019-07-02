@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2886AC5B57D
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 335B6C5B57D
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB40920645
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F213E2064A
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XUQwjWyC"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hEaxITbD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfGCBMc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 21:12:32 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43181 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGCBMc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 21:12:32 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so713011wru.10;
-        Tue, 02 Jul 2019 18:12:30 -0700 (PDT)
+        id S1726430AbfGCBTF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 21:19:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40580 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGCBTF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 21:19:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p11so736231wre.7;
+        Tue, 02 Jul 2019 18:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=K7ni9UM28FpD/k7nkpFsWw7aGdJuOADK0tvwXCdIFII=;
-        b=XUQwjWyCmFtubExU8PzLfrARKbRw0z6VjMVgtYU+nuxrdym1bhC67W5aqZ0gvRp2RA
-         Y4QWsxI5SX8pExi6QbbpNea2gV0wgrrowlSJD162cBQ8hrAlEUwZJ6jda65+Zw33aycH
-         Bc8BEhLoPQ1HqSu743IaGvR59natR4WKtzKZlCtC7Oo1YZE9trffuFxEi49iEc8RCe2Y
-         W+fdIzsAH5jFAJotXlGdNxgq+fq2UDAASRRPmKbOdyIUXH4UPZygJMzJzTUsedDVNw8L
-         cqMGNk56GQfMOrA2HQW6S/tM146UXAwA0LJ6Q/UiLKdYfpaSKxHF2JO1Yo95MzwmMU6h
-         oSNw==
+        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
+        b=hEaxITbD6g01GU/E4tW0b9uFqAt6dT6NrdnsjGynaCiSDczc3wBtQ6h3N5KDIjVZTs
+         bq+litxweOV0YzLcD+htddP+0KeUARG1QFlrZPaZdPOatV60kjAJGRzibtzNi4tCJ6LB
+         BCx2+cvlgKxvgtol8Y1IZtr2JRmkDwnZqCDzK6DS1vsIUyorzJuuJrPhYZlbwugny5iY
+         iHJYtLyqvTZSz1n2plu+X1bFXa7JU1nQbLEavg2aUj+SUizBeOLnB2hZ3y/LTPqDH9jG
+         44vqaZTTMpgbCGizFvZHtpQ/h3jknSoV3ETZo7RMtxtbEcxrYA2HO32qpbuGGnHhQdbU
+         WFsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K7ni9UM28FpD/k7nkpFsWw7aGdJuOADK0tvwXCdIFII=;
-        b=LJaHLe3Vn+1XpKVADLHMKBluSK+yUXW7Hli6ptxRdZjTdso+usVv3CgJgJKFyaIRd8
-         1lbYBCzgf8NIEvKbr4rW5vt4p+3VXIYr74C1fPwQT5ciS/PIdahPjxSVCOxq9IkOqEt6
-         fVYGY+mRUIP6JhGvAW//eQiQQ9w/OXfbjngiFkVe2RwQ0s+LPhlhiSiyAXPIUrSWhEsk
-         JbjTsBBS6teO3crPOFbxsDipRcz+jtRqcXNA4iWdkNYlULXlQN0oDC1UFYfUiTdd/q4V
-         eLzIfwJaSGY4n+fXaXri3ogSOC5tPEn4poQishdOWYKYacPTlTzNXVJAxEmfRPggfMVL
-         l6Rg==
-X-Gm-Message-State: APjAAAXLek65CEn2UIrzNa9u4liaV74D7NfLYcVpDYO6JcNkHUFn951W
-        2PGgBUTdLIYhYH1mt1xYe5TB1Qy/
-X-Google-Smtp-Source: APXvYqxuWTZ6QLovwtI+F2WWdSLMlSfZ3cTk0wHb/ZmTptUJUfUzP7v+CkTEDhHX8agLoms9Ecm8CQ==
-X-Received: by 2002:adf:e9c6:: with SMTP id l6mr4014wrn.216.1562106790356;
-        Tue, 02 Jul 2019 15:33:10 -0700 (PDT)
+        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
+        b=g+ZxcVmHJHNHNcsO9GJNMGjyauQ6AOIPzI4VeHw9ikGSKvZGLntv9xG6G9Gv01b08s
+         rlWzoqm5CRVq4a7YiTnJSnyzSGSpDLQlDGgb+77aCLULUy5Jw3IfFhYUsarDZH785nO2
+         muSHqkum5uZ6G8Kpak7XrzrvxN9l7spdxJWaUP7lv3CBkH9abEIQMrOzSCLQ533YGYje
+         NkAkyg+YdpmjtJ3VEPLr0QODq8V3SJlU9UyEvCRAYwKhT3xpR4B6rDhQf0wMlbN8/76H
+         vcOaQ15pQg++l5m5nqoky0VcOC7I5JQCyp/DE147oYVCq9tedjXZvm2wspt9Frj48jDj
+         1Sag==
+X-Gm-Message-State: APjAAAUUtPri8q2NXI3JyTXk0jNSKa3Bora0EOA6KTXm0arccsOX1w5O
+        WeCUR9Pg5O1e4xmDZx9WgrWmtS0G
+X-Google-Smtp-Source: APXvYqy1mj2CZXwhgjct0fF4qSkZ62Tn5IxLxpLT3bp0eyZredMoec+t+UbjgZuFjSB63XicwdQ2Cg==
+X-Received: by 2002:adf:e311:: with SMTP id b17mr6840692wrj.11.1562106792800;
+        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
 Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
-        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.09
+        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:33:09 -0700 (PDT)
+        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     blogic@openwrt.org, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
 Cc:     dev@kresin.me, linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/4] gpio: stp-xway: improve module clock error handling
-Date:   Wed,  3 Jul 2019 00:32:46 +0200
-Message-Id: <20190702223248.31934-3-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 4/4] gpio: stp-xway: allow compile-testing
+Date:   Wed,  3 Jul 2019 00:32:48 +0200
+Message-Id: <20190702223248.31934-5-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
 References: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
@@ -73,54 +73,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Three module clock error handling improvements:
-- use devm_clk_get() so the clock instance can be freed if
-  devm_gpiochip_add_data() fails later on
-- switch to clk_prepare_enable() so the driver is ready whenever the
-  lantiq target switches to the common clock framework
-- disable the clock again (using clk_disable_unprepare()) if
-  devm_gpiochip_add_data()
-
-All of these are virtually no-ops with the current lantiq target.
-However, these will be relevant if we switch to the common clock
-framework.
+Enable compile-testing of the stp-xway GPIO driver now that it does not
+depend on any architecture specific includes anymore.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/gpio/gpio-stp-xway.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpio/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
-index a3326255ce3c..b31e08f84681 100644
---- a/drivers/gpio/gpio-stp-xway.c
-+++ b/drivers/gpio/gpio-stp-xway.c
-@@ -256,18 +256,23 @@ static int xway_stp_probe(struct platform_device *pdev)
- 	if (!of_find_property(pdev->dev.of_node, "lantiq,rising", NULL))
- 		chip->edge = XWAY_STP_FALLING;
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f1f02dac324e..43d7d6a9d9ab 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -489,7 +489,8 @@ config GPIO_STA2X11
  
--	clk = clk_get(&pdev->dev, NULL);
-+	clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "Failed to get clock\n");
- 		return PTR_ERR(clk);
- 	}
--	clk_enable(clk);
-+
-+	ret = clk_prepare_enable(clk);
-+	if (ret)
-+		return ret;
- 
- 	xway_stp_hw_init(chip);
- 
- 	ret = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
--	if (ret)
-+	if (ret) {
-+		clk_disable_unprepare(clk);
- 		return ret;
-+	}
- 
- 	dev_info(&pdev->dev, "Init done\n");
- 
+ config GPIO_STP_XWAY
+ 	bool "XWAY STP GPIOs"
+-	depends on SOC_XWAY
++	depends on SOC_XWAY || COMPILE_TEST
++	depends on OF_GPIO
+ 	help
+ 	  This enables support for the Serial To Parallel (STP) unit found on
+ 	  XWAY SoC. The STP allows the SoC to drive a shift registers cascade,
 -- 
 2.22.0
 
