@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 042BDC06510
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 13:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67744C06510
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 13:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C767521850
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 13:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C7592146F
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 13:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562072702;
-	bh=2T9roSM3LT3RxpEiDD2cVH6gEg5tCCAff4mNKqwdFoU=;
+	s=default; t=1562072716;
+	bh=+azCj+cMO3XIh2rSMDlPq7s2qWHXwV43z9SYnAVLTdY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=f0KX5jI6giAOKd3ocV80rleovOXsPJtPlmKhvz609nR4RSxdUtyVXmMXlamKN4sDz
-	 1F98DEFbFUnsxdMQ8+xJRv8qVi/dHflbg9bw+lA2hMYD1c+MADoSqOmJsfOGHBrwYO
-	 K9n48Y9HZCKVnR80JnMTSC1iof60Td8IYdNKL1GM=
+	b=gW4MqL/wfZR/j8kBbvt16aBzvbjoiqc525CpwNvsk0cNN4kkZum2cDnjWwmTIC+Mr
+	 ZlquUtDF8dwdYyImbbeeVqTbzsfEdJu9sH9l74NrxUcem9NzXwPz1FZysiZ5IummB5
+	 rNO5O/is2HzUvAXth7RfFlLomEmkIj/rGcjE3iLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfGBNFC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 09:05:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40424 "EHLO
+        id S1727017AbfGBNFP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 09:05:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40426 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbfGBNE7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 09:04:59 -0400
+        with ESMTP id S1727104AbfGBNE6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 09:04:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=38bKnnsp+5AITcDf4hxZ2pCsTbrl84ROyPJJ2wW7PyA=; b=COcR2mRLcBND
-        WC+jmOzdVImhYr+jlehSdet8VzLgps3Yz8YYKPRUwMj4t9hoqIhieJaIL9DdNhBkUGWx5AHonP6kM
-        Z7CDE6hVKe26/k97473ZCK2+xNGpq4JBChLPzaVi4lZO22P24LYZyFoUFizhtd4/1YW3QoHK28DQf
-        N47/0=;
+        List-Archive; bh=TB1BY3JpVVw0yk1/i7xvIzCABiNm+3ZZC7MHuFdfUYw=; b=H3m1NPfZUeZN
+        t8F09BxisUXsRK+8/skP22uEWnXJPunPVZJN8Z025kvjrHCqldyUYNSmA0E9q6+WY4YojT6IgFu1Y
+        5rOknnvPHpzme5tCERvjvO9ORqHaEd8wX1RUpgEB9LKwL0gD7BKYRPnSlxiBXNJ3yicuazSVDHlJZ
+        F0ijg=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hiISt-0002Od-3A; Tue, 02 Jul 2019 13:04:55 +0000
+        id 1hiISt-0002Oe-7P; Tue, 02 Jul 2019 13:04:55 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 8891D440049; Tue,  2 Jul 2019 14:04:54 +0100 (BST)
+        id A2E2544004A; Tue,  2 Jul 2019 14:04:54 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: gpio: Fix handling of CS GPIO for DT systems" to the spi tree
+Subject: Applied "Revert "spi: gpio: Don't request CS GPIO in DT use-case"" to the spi tree
 In-Reply-To: <20190701172517.31641-1-linus.walleij@linaro.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190702130454.8891D440049@finisterre.sirena.org.uk>
+Message-Id: <20190702130454.A2E2544004A@finisterre.sirena.org.uk>
 Date:   Tue,  2 Jul 2019 14:04:54 +0100 (BST)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +60,11 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 The patch
 
-   spi: gpio: Fix handling of CS GPIO for DT systems
+   Revert "spi: gpio: Don't request CS GPIO in DT use-case"
 
 has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,10 +85,10 @@ to this mail.
 Thanks,
 Mark
 
-From 83ce8ad482f64159155b605add18eb130b6a03fc Mon Sep 17 00:00:00 2001
+From 0540ac3729da9c7d664197151fb7f432a1e11e3a Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
 Date: Mon, 1 Jul 2019 19:25:17 +0200
-Subject: [PATCH] spi: gpio: Fix handling of CS GPIO for DT systems
+Subject: [PATCH] Revert "spi: gpio: Don't request CS GPIO in DT use-case"
 
 This reverts commit 249e2632dcd0509b8f8f296f5aabf4d48dfd6da8.
 
@@ -96,8 +96,7 @@ After this commit drivers/net/dsa/vitesse-vsc73xx.c stopped
 working. Apparently CS is not working because the reads
 from the device is just returning just 1:s or just 0:s at
 all bisection points, so it is a complete regression and
-I think spi-gpio CS is essentially broken.  [No other reports?
-A bit concerning... --- broonie]
+I think spi-gpio CS is essentially broken.
 
 The revert had to be hand-crafted to preserve all the other
 cleanup and changes to this driver, but now it works.
@@ -116,10 +115,10 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 78 insertions(+), 59 deletions(-)
 
 diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index 487ee55d26f7..45f3c196cc60 100644
+index eca9d52ecf65..7cf800efef93 100644
 --- a/drivers/spi/spi-gpio.c
 +++ b/drivers/spi/spi-gpio.c
-@@ -45,6 +45,7 @@ struct spi_gpio {
+@@ -36,6 +36,7 @@ struct spi_gpio {
  	struct gpio_desc		*miso;
  	struct gpio_desc		*mosi;
  	struct gpio_desc		**cs_gpios;
@@ -127,7 +126,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  };
  
  /*----------------------------------------------------------------------*/
-@@ -214,7 +215,7 @@ static void spi_gpio_chipselect(struct spi_device *spi, int is_active)
+@@ -205,7 +206,7 @@ static void spi_gpio_chipselect(struct spi_device *spi, int is_active)
  		gpiod_set_value_cansleep(spi_gpio->sck, spi->mode & SPI_CPOL);
  
  	/* Drive chip select line, if we have one */
@@ -136,7 +135,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  		struct gpio_desc *cs = spi_gpio->cs_gpios[spi->chip_select];
  
  		/* SPI chip selects are normally active-low */
-@@ -232,12 +233,10 @@ static int spi_gpio_setup(struct spi_device *spi)
+@@ -223,12 +224,10 @@ static int spi_gpio_setup(struct spi_device *spi)
  	 * The CS GPIOs have already been
  	 * initialized from the descriptor lookup.
  	 */
@@ -153,7 +152,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  
  	if (!status)
  		status = spi_bitbang_setup(spi);
-@@ -288,8 +287,12 @@ static void spi_gpio_cleanup(struct spi_device *spi)
+@@ -279,8 +278,12 @@ static void spi_gpio_cleanup(struct spi_device *spi)
   * floating signals.  (A weak pulldown would save power too, but many
   * drivers expect to see all-ones data as the no slave "response".)
   */
@@ -167,7 +166,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  	spi_gpio->mosi = devm_gpiod_get_optional(dev, "mosi", GPIOD_OUT_LOW);
  	if (IS_ERR(spi_gpio->mosi))
  		return PTR_ERR(spi_gpio->mosi);
-@@ -302,6 +305,13 @@ static int spi_gpio_request(struct device *dev, struct spi_gpio *spi_gpio)
+@@ -293,6 +296,13 @@ static int spi_gpio_request(struct device *dev, struct spi_gpio *spi_gpio)
  	if (IS_ERR(spi_gpio->sck))
  		return PTR_ERR(spi_gpio->sck);
  
@@ -181,7 +180,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  	return 0;
  }
  
-@@ -312,55 +322,44 @@ static const struct of_device_id spi_gpio_dt_ids[] = {
+@@ -303,55 +313,44 @@ static const struct of_device_id spi_gpio_dt_ids[] = {
  };
  MODULE_DEVICE_TABLE(of, spi_gpio_dt_ids);
  
@@ -266,7 +265,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  
  static void spi_gpio_put(void *data)
  {
-@@ -372,11 +371,22 @@ static int spi_gpio_probe(struct platform_device *pdev)
+@@ -363,11 +362,22 @@ static int spi_gpio_probe(struct platform_device *pdev)
  	int				status;
  	struct spi_master		*master;
  	struct spi_gpio			*spi_gpio;
@@ -291,7 +290,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  
  	master = spi_alloc_master(dev, sizeof(*spi_gpio));
  	if (!master)
-@@ -386,17 +396,22 @@ static int spi_gpio_probe(struct platform_device *pdev)
+@@ -377,17 +387,22 @@ static int spi_gpio_probe(struct platform_device *pdev)
  	if (status)
  		return status;
  
@@ -322,7 +321,7 @@ index 487ee55d26f7..45f3c196cc60 100644
  	if (status)
  		return status;
  
-@@ -414,9 +429,13 @@ static int spi_gpio_probe(struct platform_device *pdev)
+@@ -405,9 +420,13 @@ static int spi_gpio_probe(struct platform_device *pdev)
  	}
  
  	master->bus_num = pdev->id;
