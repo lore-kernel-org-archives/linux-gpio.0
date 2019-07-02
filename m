@@ -2,110 +2,79 @@ Return-Path: <SRS0=g0nt=VA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C075CC5B57D
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8EDC5B57D
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A678218A5
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474A320673
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iJzLgUka"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZL/zgmk5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfGCAeF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 20:34:05 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54041 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfGCAeF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:34:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x15so372792wmj.3;
-        Tue, 02 Jul 2019 17:34:04 -0700 (PDT)
+        id S1727033AbfGCAfE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:35:04 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46941 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCAfE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:35:04 -0400
+Received: by mail-ot1-f68.google.com with SMTP id z23so431793ote.13;
+        Tue, 02 Jul 2019 17:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TGoqpi8eTuf/N4Y6xU5hQJ3LkSfTnTRxjGlzchSiNoo=;
-        b=iJzLgUkaf/kITE4bgtlY7bRYzyMu418HQO39xYh5QhykMUkbA7iuGAEPIkd5OA23oJ
-         IV/QNiGjxXVWfUF/bOXvMfR7spHQ4DHr8DpZa8s0o9eRRTtPhJj8JDjtKnHPbSPs5tC3
-         jTbxSo0AraxUKtNkaMNehTDcIkl1QGaOp1pu38PhAp6MW0NYPuysWVyCGpAFM1B5KdAK
-         XZ6ov3TmN9MBV3uDyXf8TlLmqrAW+A4xHYIUr3iLnrOhelsx5+2ijz/pMtBuQveMFwj7
-         MUMwlm+N/RADtZ8rtGNu8I/pE+2mScENf3NPQJ4aWUgBU2r/z155Lkcw4c6RwhkmvPBG
-         tSWA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
+        b=ZL/zgmk5C6P8mXBb7AQ7vp5C1Xz9VF3Onrg6rH+mPkYfq1bkn35Xn/20CUxdaHn/Ba
+         As8W8rj8MO2TPxJbLYAsV8Zr1JcXNxcB7S3nTswhG/q8JMEduSCQJcmZLLQ9zOQSQfyk
+         kx6R2lLIgaUoq7ViMRDuO36Wn2pKUGkrTuOcSp1cqtLZyOJUPgX447cc56NnfWuKJcvy
+         dk+DNAVbg9S/dYMV8QLSIJUIMiqtDPDb9aFykMXk/YpOwSbjg03XRU3rPcXWYsTdoOjF
+         TQXzWG83z4s362gpdu9ENdszdpz5ERCO3qPD4xQdAvzEluLxpKpd1AhOMkZ7qym/hOma
+         +DYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TGoqpi8eTuf/N4Y6xU5hQJ3LkSfTnTRxjGlzchSiNoo=;
-        b=qKn4efvMbY+lUKFDEXtsbBTUJclnXJ1nVy47oVgj9w3Cg/1p97b9lDbTbrNOqXPlsM
-         Iy5lZHA3S0bPD8xOA21y80GKzSYc4m3DDezv+FcQXekF3Y7R1jk2suCHUiJtiRAXrnmI
-         PS4y2+oWAIeFxz63+yHhSCE4Ojtfn5EGpfbz9wx5Z0bBgKiua//wH91908jYqjxfZT5T
-         bbW2ELLsOqFXW3n383Zgi9PUzxsEct1lnv888f2VMekGuLcpbYh8/mbImn+5uEjhDKng
-         12sInHyF4A4vf1+SxPSdQJyIvpnm3PCx8gZzfnZhVm7ZrsDOJ3apU2P/xPwX7n9VpROT
-         Dk+A==
-X-Gm-Message-State: APjAAAW+jxdEkfDS0VoubRClucIuEu9RFJh77Xp2x7nieYJwC+w6O90a
-        mpBoKgpLlTQYhTXzanynDGaL6Pp+
-X-Google-Smtp-Source: APXvYqyooLUdpD1x6HJlyZAkAlxvY6nD8KekDIR8WttCJQ6A3tTSLOeJLUZ0B7DLdI7FkWi8Nr6Btw==
-X-Received: by 2002:a1c:c145:: with SMTP id r66mr4721581wmf.139.1562106791814;
-        Tue, 02 Jul 2019 15:33:11 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
-        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:33:10 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     blogic@openwrt.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
-Cc:     dev@kresin.me, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/4] gpio: stp-xway: get rid of the #include <lantiq_soc.h> dependency
-Date:   Wed,  3 Jul 2019 00:32:47 +0200
-Message-Id: <20190702223248.31934-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
-References: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
+        b=szqJMGikUpqhNZjWfnCCEG1CoZQnO2s9EhLAEYk9FYBMQQV80GY1Ucj7NvjP7lG9He
+         oCesTSL4qn0a5gDvzs2yGN2KRYUr5uAz6ONbjBO9CCVdFEDyvYK8sxwl6KLw9mP+1Rbk
+         3Kl1GK0nGeF8cpjN9SJYylPcVDxZhDj6Af+fFWpieWBuGSYaMGh4tIrhz/CCQfPk5Klo
+         kY+OEHwy4fxsAu34AcX9F0eX1ovnGALa/8I6iPlLWk5CbV1PKKA828fgELaWnI6AJ4p7
+         xkPUKUOVp9A9AUtIV4MIbDGUgbNuyV8HXwvj4485nF49mTSctM153f05tG84GogWyQTl
+         3xJw==
+X-Gm-Message-State: APjAAAVvuH0gniloCtMUxKFWHd4DBS+JGwp+3aSy9IBz4epPd+gRz8L0
+        iDltOaHOyUL+lOO36yqaL1Vz13O9hj6f+eeNykwgsG1F
+X-Google-Smtp-Source: APXvYqyZYeVdqlXDt36fdhfbAYHQ2O+BsFsPr+MyhLgpJe6VJlBkHeJ6Eta6tLBIetsFlmHLbT/xvN+x6/atColGNo0=
+X-Received: by 2002:a9d:23ca:: with SMTP id t68mr26108783otb.98.1562108343442;
+ Tue, 02 Jul 2019 15:59:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-7-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-7-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 00:58:52 +0200
+Message-ID: <CAFBinCBdB96e4PzxNMbOhuiRrxGz-4vRXu3dOs7n86qoA8MDeQ@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 06/14] soc: amlogic: meson-clk-measure: add G12B
+ second cluster cpu clk
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use the xway_stp_{r,w}32 helpers in xway_stp_w32_mask instead of relying
-on ltq_{r,w}32 from the architecture specific <lantiq_soc.h>.
-This will allow the driver to be compile-tested on all architectures
-that support MMIO.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/gpio/gpio-stp-xway.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
-index b31e08f84681..9e23a5ae8108 100644
---- a/drivers/gpio/gpio-stp-xway.c
-+++ b/drivers/gpio/gpio-stp-xway.c
-@@ -15,8 +15,6 @@
- #include <linux/clk.h>
- #include <linux/err.h>
- 
--#include <lantiq_soc.h>
--
- /*
-  * The Serial To Parallel (STP) is found on MIPS based Lantiq socs. It is a
-  * peripheral controller used to drive external shift register cascades. At most
-@@ -71,8 +69,7 @@
- #define xway_stp_r32(m, reg)		__raw_readl(m + reg)
- #define xway_stp_w32(m, val, reg)	__raw_writel(val, m + reg)
- #define xway_stp_w32_mask(m, clear, set, reg) \
--		ltq_w32((ltq_r32(m + reg) & ~(clear)) | (set), \
--		m + reg)
-+		xway_stp_w32(m, (xway_stp_r32(m, reg) & ~(clear)) | (set), reg)
- 
- struct xway_stp {
- 	struct gpio_chip gc;
--- 
-2.22.0
-
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add the G12B second CPU cluster CPU and SYS_PLL measure IDs.
+>
+> These IDs returns 0Hz on G12A.
+>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
