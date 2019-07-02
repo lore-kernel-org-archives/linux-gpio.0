@@ -2,178 +2,110 @@ Return-Path: <SRS0=g0nt=VA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEACBC06511
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C075CC5B57D
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A812821E6C
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A678218A5
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:34:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aW71dvXz"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iJzLgUka"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfGCAax (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 20:30:53 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35051 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfGCAaw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:30:52 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j19so489506otq.2;
-        Tue, 02 Jul 2019 17:30:52 -0700 (PDT)
+        id S1727065AbfGCAeF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:34:05 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54041 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbfGCAeF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:34:05 -0400
+Received: by mail-wm1-f67.google.com with SMTP id x15so372792wmj.3;
+        Tue, 02 Jul 2019 17:34:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=aW71dvXzx3/OZ2dyur8K2R3t59hdwnCvtsuhJGdee/nm9r6PCmqTtx+JWgAIJLo2/d
-         Y21AhbIEphVmstcZOwfTGkQASbWx10y4fsfburjD7qorfBw7J73NAYnWdXDN5k5epES2
-         9xsxotFn9XmfaHw9GsQaebN96U6pHmRUkIvbu0rqpCA3ltYn9AaqBA81bvwfZWb2bRXK
-         PGExbAEeQJBbEYszopwMOpV+S9XN0z12R0Vy2r2L+ErpKfnQnxV/0MIwpTrNI/wPBJUQ
-         Q4OJpy3R867Yl9+XNBz9RWRkL9MFWnLifF6/SdKW9uCH6tpmnrx4YKPqcv3J2LmnI790
-         wFfg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TGoqpi8eTuf/N4Y6xU5hQJ3LkSfTnTRxjGlzchSiNoo=;
+        b=iJzLgUkaf/kITE4bgtlY7bRYzyMu418HQO39xYh5QhykMUkbA7iuGAEPIkd5OA23oJ
+         IV/QNiGjxXVWfUF/bOXvMfR7spHQ4DHr8DpZa8s0o9eRRTtPhJj8JDjtKnHPbSPs5tC3
+         jTbxSo0AraxUKtNkaMNehTDcIkl1QGaOp1pu38PhAp6MW0NYPuysWVyCGpAFM1B5KdAK
+         XZ6ov3TmN9MBV3uDyXf8TlLmqrAW+A4xHYIUr3iLnrOhelsx5+2ijz/pMtBuQveMFwj7
+         MUMwlm+N/RADtZ8rtGNu8I/pE+2mScENf3NPQJ4aWUgBU2r/z155Lkcw4c6RwhkmvPBG
+         tSWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=JyqDon+pTlje8hOecDtTi3T1tCiHKDoBqevjUXlT0QD1tKYWqRkUhzQiOIu46AsPOC
-         7aEf+Xw9mBFZUaueoCQX03NjIg/mlgCQN66hA9SCfLWjrYM8QSL6IdNH75pkWwUq7ngY
-         d1S0PqqAoGWjWunvwVCQUeWOgO8l14EX9uVWxX8UK2Y+AysM+Gcvx5al4rBFhQSoYV0/
-         YMYyOcenwhKEv3jIepvyC7HlqUf5aNOSLmr6SJvJq3q9aGZs6m5Anom1Xh3RPtXWj34s
-         uo8X2+8vK5qH8FaxvIBvC3x3euBkezXX7O073ONwiEhwFWO026xvKCOecHHhB55A+8Wj
-         Yc1A==
-X-Gm-Message-State: APjAAAXy6O1lSAnOZ4zZQfXUjHvcjK0SaQK1tqhBtMl1fn73k6DskWNj
-        OlsdcuHptjogpcmfkBxc3T4yQWJMEOqtsOostw1gH1bH
-X-Google-Smtp-Source: APXvYqy/QQUN0J6b4O2bTl3SYceaajLNKXdMQ4/wzOnMkRg4M4DkLByhdEGK3wJrQJDIJWZll9ZaCAX1i1L6mFoN5Ec=
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27395004otb.81.1562110146329;
- Tue, 02 Jul 2019 16:29:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-8-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-8-narmstrong@baylibre.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TGoqpi8eTuf/N4Y6xU5hQJ3LkSfTnTRxjGlzchSiNoo=;
+        b=qKn4efvMbY+lUKFDEXtsbBTUJclnXJ1nVy47oVgj9w3Cg/1p97b9lDbTbrNOqXPlsM
+         Iy5lZHA3S0bPD8xOA21y80GKzSYc4m3DDezv+FcQXekF3Y7R1jk2suCHUiJtiRAXrnmI
+         PS4y2+oWAIeFxz63+yHhSCE4Ojtfn5EGpfbz9wx5Z0bBgKiua//wH91908jYqjxfZT5T
+         bbW2ELLsOqFXW3n383Zgi9PUzxsEct1lnv888f2VMekGuLcpbYh8/mbImn+5uEjhDKng
+         12sInHyF4A4vf1+SxPSdQJyIvpnm3PCx8gZzfnZhVm7ZrsDOJ3apU2P/xPwX7n9VpROT
+         Dk+A==
+X-Gm-Message-State: APjAAAW+jxdEkfDS0VoubRClucIuEu9RFJh77Xp2x7nieYJwC+w6O90a
+        mpBoKgpLlTQYhTXzanynDGaL6Pp+
+X-Google-Smtp-Source: APXvYqyooLUdpD1x6HJlyZAkAlxvY6nD8KekDIR8WttCJQ6A3tTSLOeJLUZ0B7DLdI7FkWi8Nr6Btw==
+X-Received: by 2002:a1c:c145:: with SMTP id r66mr4721581wmf.139.1562106791814;
+        Tue, 02 Jul 2019 15:33:11 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
+        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 15:33:10 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:28:55 +0200
-Message-ID: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu
- clock change
-To:     sboyd@codeaurora.org, Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To:     blogic@openwrt.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
+Cc:     dev@kresin.me, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/4] gpio: stp-xway: get rid of the #include <lantiq_soc.h> dependency
+Date:   Wed,  3 Jul 2019 00:32:47 +0200
+Message-Id: <20190702223248.31934-4-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
+References: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Stephen, Hi Neil,
+Use the xway_stp_{r,w}32 helpers in xway_stp_w32_mask instead of relying
+on ltq_{r,w}32 from the architecture specific <lantiq_soc.h>.
+This will allow the driver to be compile-tested on all architectures
+that support MMIO.
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> In order to implement clock switching for the CLKID_CPU_CLK and
-> CLKID_CPUB_CLK, notifiers are added on specific points of the
-> clock tree :
->
-> cpu_clk / cpub_clk
-> |   \- cpu_clk_dyn
-> |      |  \- cpu_clk_premux0
-> |      |        |- cpu_clk_postmux0
-> |      |        |    |- cpu_clk_dyn0_div
-> |      |        |    \- xtal/fclk_div2/fclk_div3
-> |      |        \- xtal/fclk_div2/fclk_div3
-> |      \- cpu_clk_premux1
-> |            |- cpu_clk_postmux1
-> |            |    |- cpu_clk_dyn1_div
-> |            |    \- xtal/fclk_div2/fclk_div3
-> |            \- xtal/fclk_div2/fclk_div3
-> \ sys_pll / sys1_pll
->
-> This for each cluster, a single one for G12A, two for G12B.
->
-> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
-> to be used as "parking" clock in a safe clock frequency.
-it seems that this is one case where the "coordinated clocks" feature
-would come handy: [0]
-Stephen, do you know if those patches stopped in March or if there's
-still some ongoing effort to get them ready?
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/gpio/gpio-stp-xway.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-[...]
-> -/*
-> - * Internal sys pll emulation configuration parameters
-> - */
-> -static const struct reg_sequence g12a_sys_init_regs[] = {
-> -       { .reg = HHI_SYS_PLL_CNTL1,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL2,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL3,     .def = 0x48681c00 },
-> -       { .reg = HHI_SYS_PLL_CNTL4,     .def = 0x88770290 },
-> -       { .reg = HHI_SYS_PLL_CNTL5,     .def = 0x39272000 },
-> -       { .reg = HHI_SYS_PLL_CNTL6,     .def = 0x56540000 },
-> +static const struct pll_mult_range g12a_sys_pll_mult_range = {
-> +       .min = 128,
-> +       .max = 250,
->  };
->
->  static struct clk_regmap g12a_sys_pll_dco = {
-> @@ -124,14 +118,15 @@ static struct clk_regmap g12a_sys_pll_dco = {
->                         .shift   = 29,
->                         .width   = 1,
->                 },
-> -               .init_regs = g12a_sys_init_regs,
-> -               .init_count = ARRAY_SIZE(g12a_sys_init_regs),
-> +               .range = &g12a_sys_pll_mult_range,
-Neil, I believe that this should be a separate patch with a
-description which explains why we don't need the "init regs" anymore
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index b31e08f84681..9e23a5ae8108 100644
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -15,8 +15,6 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ 
+-#include <lantiq_soc.h>
+-
+ /*
+  * The Serial To Parallel (STP) is found on MIPS based Lantiq socs. It is a
+  * peripheral controller used to drive external shift register cascades. At most
+@@ -71,8 +69,7 @@
+ #define xway_stp_r32(m, reg)		__raw_readl(m + reg)
+ #define xway_stp_w32(m, val, reg)	__raw_writel(val, m + reg)
+ #define xway_stp_w32_mask(m, clear, set, reg) \
+-		ltq_w32((ltq_r32(m + reg) & ~(clear)) | (set), \
+-		m + reg)
++		xway_stp_w32(m, (xway_stp_r32(m, reg) & ~(clear)) | (set), reg)
+ 
+ struct xway_stp {
+ 	struct gpio_chip gc;
+-- 
+2.22.0
 
->         },
->         .hw.init = &(struct clk_init_data){
->                 .name = "sys_pll_dco",
-> -               .ops = &meson_clk_pll_ro_ops,
-> +               .ops = &meson_clk_pll_ops,
->                 .parent_names = (const char *[]){ IN_PREFIX "xtal" },
->                 .num_parents = 1,
-> +               /* This clock feeds the CPU, avoid disabling it */
-> +               .flags = CLK_IS_CRITICAL,
-maybe we should have a separate patch for making the CPU clock tree
-mutable as well
-
-[...]
-> +/* This divider uses bit 26 to take change in account */
-> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw,
-> +                                          unsigned long rate,
-> +                                          unsigned long parent_rate)
-> +{
-> +       struct clk_regmap *clk = to_clk_regmap(hw);
-> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
-> +                             div->flags);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       val = (unsigned int)ret << div->shift;
-> +
-> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
-> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
-> +
-> +       return regmap_update_bits(clk->map, div->offset,
-> +                                 clk_div_mask(div->width) << div->shift |
-> +                                 SYS_CPU_DYN_ENABLE, val);
-> +};
-the public S922X datasheet doesn't mention bit 26
-do I understand the semantics correctly?:
-- set SYS_CPU_DYN_ENABLE
-- update the divider
-- unset SYS_CPU_DYN_ENABLE
-
-too bad it's not a gate which we could model with
-CLK_SET_RATE_GATE/CLK_SET_RATE_UNGATE
-
-
-Martin
-
-[0] https://patchwork.kernel.org/patch/10838949/
