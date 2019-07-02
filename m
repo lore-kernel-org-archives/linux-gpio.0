@@ -2,63 +2,62 @@ Return-Path: <SRS0=g0nt=VA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C6EC06510
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2C9C4646D
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 298D820673
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E51218DA
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:39:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TtsFiJat"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="fqxKgFLt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfGCAfI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 20:35:08 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46944 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfGCAfI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:35:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id z23so431952ote.13;
-        Tue, 02 Jul 2019 17:35:08 -0700 (PDT)
+        id S1727089AbfGCAjs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:39:48 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40975 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbfGCAjr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 20:39:47 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m30so280322pff.8;
+        Tue, 02 Jul 2019 17:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Qbrn6+3X47dwhyUkAWXte8J+fjd+tHfpJpFHgAD+S58=;
-        b=TtsFiJatyqjLoJBxRVt34oXzoLGjO+FToXJtmv6CMHqLJ1J83PkR6QLrCwLHwZJnDn
-         rctTXjH0uAqvaRXNTUMUyew3QYxk8VGHKOJx53ikFwb5551GicsjHXcHFydA3g2ygLLm
-         qUGMeUdNAuAwkIfZf0Xdyzf7BNKslpY47cG4HmIReOIUhHcoNfXFQGvf7od4YcjkIT0x
-         xfigNk7ibXc0Nk50OjWAz5Hnkma8gjHVw6gkyxtRaWT80undWb/Xshw9gtH2ElUj2U6b
-         xNHQG6Gf3IEUxRhcTkGmBLtMbJiauTEClCyOKiARxVaySyOrgn6brYMqadKyW+9xVZ78
-         6kng==
+        bh=gOTP+ZaLmXyKKyNKXioW6RTool5zGcTlIioWS0XWh/0=;
+        b=fqxKgFLtXz/y3i1XJccpf1r8OEVcFBvDBBeD+u/RiosA2OQeo7s6BpIY9TIOjicG9c
+         U88HeaU0Ng/LvQaa8nO7Gv/JnfcgGSSbkhzU8g/92RM2NjgO3h9s93BEqVr5Qr1zjrJn
+         q8ByxOhcpNXhfQxpSYR7QsG1SFw4oiONM3xTXEzkZd7PzfxXzh9qX2lSVWFXnfOz/fkW
+         SD+bw1p0PshSoyG7jMoVbs8WZ8s5ChDT2fsDrlSnwDQIQXgHwaaEi7YP+Qh193HO4HnN
+         +u5d9y8u8Ts7K9Nz5GDSvMbTMW7SOHnXfA6JoMcS0/s3jyH3GK/7PJZWH81Bzzk8dQK/
+         OvpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Qbrn6+3X47dwhyUkAWXte8J+fjd+tHfpJpFHgAD+S58=;
-        b=f4gxwhGxUjo3niQhJVlsG0kZkWIFZR/51ztYJA2hFyhbtLeb0BXv7kMIuGAkjo7tWl
-         VHvt5lOjpfBxZ9Ps/LH7o1wJyWhstKF+CvtZKKxeHHHmOeyp5lDvsfMcfzY62looSKJr
-         B5eWUJFIlCWJIj98g80TFQbC1qygNCnnARIr+bmy6eWdjLxCR3YNHtJ3sGC/kTuoPfv1
-         B/AH0OCNMuUZnvTp/ef3cVlddTjvDnGXtvZHDLFlZ0KSE2MUxwWipMPkQM2Az+cXC1VO
-         gaZwddATfFOc38kpKvu7mDlIN9L+OUja2CM04m++ukD1QagFEVXIUz9TVtZ7W0WJVpEF
-         ReyQ==
-X-Gm-Message-State: APjAAAWMeYzMoD4mZc0P3anNqE2vh3Tj3jjHvGm/TBeetPK5S6YxQbtd
-        rnzk4SoTieMRqmKAhKafMRBcTqwUf+3S1ePQycq1ER7Q
-X-Google-Smtp-Source: APXvYqwyhHHZpYKTd+W1EP2ObsG3A5HTjaf6wiigNc78pHsXxw86smXpidtCkCRHFB9PyazmH3UOEt3pYpO/+Mr8cF0=
-X-Received: by 2002:a9d:23ca:: with SMTP id t68mr26119392otb.98.1562108518402;
- Tue, 02 Jul 2019 16:01:58 -0700 (PDT)
+        bh=gOTP+ZaLmXyKKyNKXioW6RTool5zGcTlIioWS0XWh/0=;
+        b=IdxInYWtjLJ2AizWZUKD2/Uj+RDBuOvWrkl0p2Vmhnba516+h53P+yvW9fNsN/IJYJ
+         QIYHIEjYLXjAJdFZP2tfZoBHa4GzkHdpHnyrteiVluY7MJtyNwFgawls4Jc+TY0Gfm8r
+         SXwuhtGqSH5WnVyzkTLCyQfdVnOeK6d5Yu6lK8sFxH/cmVeBaoQwOLcbqqKu7m4IjH2Z
+         zx2wGGl/QkqDNaCPsFCgvCdBDkmYOO/UDIOd5qTDXSuqMHdiCQ8qT/iubk3LOdLGHMPF
+         33q7/jO2S3q44d9F/CQNGIcw9P2okeU252/1VmA5UR3jYOhnXdagqGCZ+fbRKVEvlZ4S
+         nC1Q==
+X-Gm-Message-State: APjAAAV8VNewe0RpLxf9lyOt0FE/7rfiY4eIsm30qj2++spJ8H6N4y9B
+        7FWXxUCQQXxj5Xmf6wBt4WfXpqW4x4mx68dqG/vnKg5h
+X-Google-Smtp-Source: APXvYqwD5pAmB4x2ApOe+c2vc+d9pRDSp0daWsi8O5RWBkaiMnmqlFRjUobb+dXGUccoH7FswIqUb6z3GneFdMYr2Qw=
+X-Received: by 2002:a05:6808:8f0:: with SMTP id d16mr1528711oic.47.1562111165901;
+ Tue, 02 Jul 2019 16:46:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-6-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-6-narmstrong@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-15-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-15-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:01:47 +0200
-Message-ID: <CAFBinCD8WfhgcjKfstvVoDaLWm9yoZUg4SJpj-i1R+KgZ17aKg@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 05/14] soc: amlogic: meson-clk-measure: protect
- measure with a mutex
+Date:   Wed, 3 Jul 2019 01:45:55 +0200
+Message-ID: <CAFBinCA5-5kbD-0e7Lm7FwRneWsKeW4yQrucd1PAk=s2PrtxJQ@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 14/14] arm64: dts: meson-g12b-odroid-n2: enable DVFS
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
@@ -70,29 +69,31 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Neil,
-
 On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> In order to protect clock measuring when multiple process asks for
-> a measure, protect the main measure function with mutexes.
+> Enable DVFS for the Odroid-N2 by setting the clock, OPP and supply
+> for each cores of each CPU clusters.
 >
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> The first cluster uses the "VDDCPU_B" power supply, and the second
+> cluster uses the "VDDCPU_A" power supply.
+>
+> Each power supply can achieve 0.73V to 1.01V using 2 distinct PWM
+> outputs clocked at 800KHz with an inverse duty-cycle.
+>
+> DVFS has been tested by running the arm64 cpuburn at [1] and cycling
+> between all the possible cpufreq translations of each cluster and
+> checking the final frequency using the clock-measurer, script at [2].
+>
+> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
+> [2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
+>
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-> index 19d4cbc93a17..c470e24f1dfa 100644
-> --- a/drivers/soc/amlogic/meson-clk-measure.c
-> +++ b/drivers/soc/amlogic/meson-clk-measure.c
-> @@ -11,6 +11,8 @@
->  #include <linux/debugfs.h>
->  #include <linux/regmap.h>
->
-> +static DEFINE_MUTEX(measure_lock);
-I wonder if that should be part of struct meson_msr for consistency reasons
-
-apart from that:
 Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+[...]
+> +       vddcpu_b: regulator-vddcpu-b {
+> +               /*
+> +                * Silergy SY8120B1ABC Regulator.
+> +                */
+interesting that they use different regulator ICs for CPU A and CPU B
+the public schematics confirm your comments
