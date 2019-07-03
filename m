@@ -2,99 +2,156 @@ Return-Path: <SRS0=g0nt=VA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335B6C5B57D
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3E2C06511
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F213E2064A
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 01:19:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hEaxITbD"
+	by mail.kernel.org (Postfix) with ESMTP id 9AB82218A3
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1562120177;
+	bh=p1XCA/irewpiugjrYL5BJdM0CofSQTCBty11OIsla2A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=pVv1XX8g+ZNxH8mdx3Kj280QnZzDDJ39ng/w1iD+efE9eYoy/NmmkamBK8qPZq9ol
+	 xpyYQFOGes3MB5kvruoVHsu2ACjMDdrd7uhqXub6Xym6ICPMJQPzS51jQdL2STJ9nJ
+	 3+H4Y9g4d/EzmRNCWg1yIe7sEImVfOPsiHe5u9nc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbfGCBTF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 21:19:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40580 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfGCBTF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 21:19:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p11so736231wre.7;
-        Tue, 02 Jul 2019 18:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
-        b=hEaxITbD6g01GU/E4tW0b9uFqAt6dT6NrdnsjGynaCiSDczc3wBtQ6h3N5KDIjVZTs
-         bq+litxweOV0YzLcD+htddP+0KeUARG1QFlrZPaZdPOatV60kjAJGRzibtzNi4tCJ6LB
-         BCx2+cvlgKxvgtol8Y1IZtr2JRmkDwnZqCDzK6DS1vsIUyorzJuuJrPhYZlbwugny5iY
-         iHJYtLyqvTZSz1n2plu+X1bFXa7JU1nQbLEavg2aUj+SUizBeOLnB2hZ3y/LTPqDH9jG
-         44vqaZTTMpgbCGizFvZHtpQ/h3jknSoV3ETZo7RMtxtbEcxrYA2HO32qpbuGGnHhQdbU
-         WFsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
-        b=g+ZxcVmHJHNHNcsO9GJNMGjyauQ6AOIPzI4VeHw9ikGSKvZGLntv9xG6G9Gv01b08s
-         rlWzoqm5CRVq4a7YiTnJSnyzSGSpDLQlDGgb+77aCLULUy5Jw3IfFhYUsarDZH785nO2
-         muSHqkum5uZ6G8Kpak7XrzrvxN9l7spdxJWaUP7lv3CBkH9abEIQMrOzSCLQ533YGYje
-         NkAkyg+YdpmjtJ3VEPLr0QODq8V3SJlU9UyEvCRAYwKhT3xpR4B6rDhQf0wMlbN8/76H
-         vcOaQ15pQg++l5m5nqoky0VcOC7I5JQCyp/DE147oYVCq9tedjXZvm2wspt9Frj48jDj
-         1Sag==
-X-Gm-Message-State: APjAAAUUtPri8q2NXI3JyTXk0jNSKa3Bora0EOA6KTXm0arccsOX1w5O
-        WeCUR9Pg5O1e4xmDZx9WgrWmtS0G
-X-Google-Smtp-Source: APXvYqy1mj2CZXwhgjct0fF4qSkZ62Tn5IxLxpLT3bp0eyZredMoec+t+UbjgZuFjSB63XicwdQ2Cg==
-X-Received: by 2002:adf:e311:: with SMTP id b17mr6840692wrj.11.1562106792800;
-        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
-        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     blogic@openwrt.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
-Cc:     dev@kresin.me, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 4/4] gpio: stp-xway: allow compile-testing
-Date:   Wed,  3 Jul 2019 00:32:48 +0200
-Message-Id: <20190702223248.31934-5-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
-References: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
+        id S1727860AbfGCCQQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 22:16:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727881AbfGCCQQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:16:16 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C979E218A3;
+        Wed,  3 Jul 2019 02:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562120175;
+        bh=p1XCA/irewpiugjrYL5BJdM0CofSQTCBty11OIsla2A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U5k3So/N5f/gLUMZHrhjA0OTwoiS8DTRTcfFW87v806Okln4+80BQ1YaAF23Hwtac
+         IFnuH3bDZL6fRgj/lL64qZ9OnktVLfkq5oCY2ll9BBVQ/aRXuchKMl2zvs7GgjwPhU
+         2BR9Tbv53nk5gYeFIWz40mRmeAxYm7Cv9ptuMYnA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 36/39] pinctrl: mediatek: Update cur_mask in mask/mask ops
+Date:   Tue,  2 Jul 2019 22:15:11 -0400
+Message-Id: <20190703021514.17727-36-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
+References: <20190703021514.17727-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Enable compile-testing of the stp-xway GPIO driver now that it does not
-depend on any architecture specific includes anymore.
+From: Nicolas Boichat <drinkcat@chromium.org>
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+[ Upstream commit 9d957a959bc8c3dfe37572ac8e99affb5a885965 ]
+
+During suspend/resume, mtk_eint_mask may be called while
+wake_mask is active. For example, this happens if a wake-source
+with an active interrupt handler wakes the system:
+irq/pm.c:irq_pm_check_wakeup would disable the interrupt, so
+that it can be handled later on in the resume flow.
+
+However, this may happen before mtk_eint_do_resume is called:
+in this case, wake_mask is loaded, and cur_mask is restored
+from an older copy, re-enabling the interrupt, and causing
+an interrupt storm (especially for level interrupts).
+
+Step by step, for a line that has both wake and interrupt enabled:
+ 1. cur_mask[irq] = 1; wake_mask[irq] = 1; EINT_EN[irq] = 1 (interrupt
+    enabled at hardware level)
+ 2. System suspends, resumes due to that line (at this stage EINT_EN
+    == wake_mask)
+ 3. irq_pm_check_wakeup is called, and disables the interrupt =>
+    EINT_EN[irq] = 0, but we still have cur_mask[irq] = 1
+ 4. mtk_eint_do_resume is called, and restores EINT_EN = cur_mask, so
+    it reenables EINT_EN[irq] = 1 => interrupt storm as the driver
+    is not yet ready to handle the interrupt.
+
+This patch fixes the issue in step 3, by recording all mask/unmask
+changes in cur_mask. This also avoids the need to read the current
+mask in eint_do_suspend, and we can remove mtk_eint_chip_read_mask
+function.
+
+The interrupt will be re-enabled properly later on, sometimes after
+mtk_eint_do_resume, when the driver is ready to handle it.
+
+Fixes: 58a5e1b64bb0 ("pinctrl: mediatek: Implement wake handler and suspend resume")
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/mediatek/mtk-eint.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index f1f02dac324e..43d7d6a9d9ab 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -489,7 +489,8 @@ config GPIO_STA2X11
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 737385e86beb..7e526bcf5e0b 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -113,6 +113,8 @@ static void mtk_eint_mask(struct irq_data *d)
+ 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+ 						eint->regs->mask_set);
  
- config GPIO_STP_XWAY
- 	bool "XWAY STP GPIOs"
--	depends on SOC_XWAY
-+	depends on SOC_XWAY || COMPILE_TEST
-+	depends on OF_GPIO
- 	help
- 	  This enables support for the Serial To Parallel (STP) unit found on
- 	  XWAY SoC. The STP allows the SoC to drive a shift registers cascade,
++	eint->cur_mask[d->hwirq >> 5] &= ~mask;
++
+ 	writel(mask, reg);
+ }
+ 
+@@ -123,6 +125,8 @@ static void mtk_eint_unmask(struct irq_data *d)
+ 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+ 						eint->regs->mask_clr);
+ 
++	eint->cur_mask[d->hwirq >> 5] |= mask;
++
+ 	writel(mask, reg);
+ 
+ 	if (eint->dual_edge[d->hwirq])
+@@ -217,19 +221,6 @@ static void mtk_eint_chip_write_mask(const struct mtk_eint *eint,
+ 	}
+ }
+ 
+-static void mtk_eint_chip_read_mask(const struct mtk_eint *eint,
+-				    void __iomem *base, u32 *buf)
+-{
+-	int port;
+-	void __iomem *reg;
+-
+-	for (port = 0; port < eint->hw->ports; port++) {
+-		reg = base + eint->regs->mask + (port << 2);
+-		buf[port] = ~readl_relaxed(reg);
+-		/* Mask is 0 when irq is enabled, and 1 when disabled. */
+-	}
+-}
+-
+ static int mtk_eint_irq_request_resources(struct irq_data *d)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+@@ -384,7 +375,6 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+ 
+ int mtk_eint_do_suspend(struct mtk_eint *eint)
+ {
+-	mtk_eint_chip_read_mask(eint, eint->base, eint->cur_mask);
+ 	mtk_eint_chip_write_mask(eint, eint->base, eint->wake_mask);
+ 
+ 	return 0;
 -- 
-2.22.0
+2.20.1
 
