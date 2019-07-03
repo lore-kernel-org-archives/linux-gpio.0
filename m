@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3E2C06511
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B42D3C06511
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB82218A3
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DACF21873
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562120177;
-	bh=p1XCA/irewpiugjrYL5BJdM0CofSQTCBty11OIsla2A=;
+	s=default; t=1562120230;
+	bh=aDN70qcwkeDqPdAinBSB8dWscJxpUhdC/Ecsaa5kelI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pVv1XX8g+ZNxH8mdx3Kj280QnZzDDJ39ng/w1iD+efE9eYoy/NmmkamBK8qPZq9ol
-	 xpyYQFOGes3MB5kvruoVHsu2ACjMDdrd7uhqXub6Xym6ICPMJQPzS51jQdL2STJ9nJ
-	 3+H4Y9g4d/EzmRNCWg1yIe7sEImVfOPsiHe5u9nc=
+	b=12muwmBdEehc9CdaX+WubBEhsMAxvGK5pGek1xrY3ABqZJzygvozqlySZngQSY1Ng
+	 IgucLSeVT27LnwS4molg+LhPKwJJ7coSgYgLtR1oYl37FjbCmgmHjTUtYrwpnI0GJ0
+	 nEi2T+pzv5iIdvmjL+6UCVye1Tfoag1V6rfH+kZA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfGCCQQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 22:16:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54574 "EHLO mail.kernel.org"
+        id S1727572AbfGCCRK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 22:17:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727881AbfGCCQQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:16:16 -0400
+        id S1728126AbfGCCRB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:17:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C979E218A3;
-        Wed,  3 Jul 2019 02:16:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4781321897;
+        Wed,  3 Jul 2019 02:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562120175;
-        bh=p1XCA/irewpiugjrYL5BJdM0CofSQTCBty11OIsla2A=;
+        s=default; t=1562120220;
+        bh=aDN70qcwkeDqPdAinBSB8dWscJxpUhdC/Ecsaa5kelI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U5k3So/N5f/gLUMZHrhjA0OTwoiS8DTRTcfFW87v806Okln4+80BQ1YaAF23Hwtac
-         IFnuH3bDZL6fRgj/lL64qZ9OnktVLfkq5oCY2ll9BBVQ/aRXuchKMl2zvs7GgjwPhU
-         2BR9Tbv53nk5gYeFIWz40mRmeAxYm7Cv9ptuMYnA=
+        b=l8dVMOpBO3vY2IM4ZhmytHl+I8Hz9mg36iNi4lPoJQ3T+cpKARJ7z4UcdN/AllnBJ
+         Hv6sgYROtACMTc5052fHK8c4Kpfs3uEzqjf5YYuOhgwQml6PqFMPnHsVTd5lDqkl5n
+         b8MoHT7Y8voXsp/0DD9/JixaL1b8nwJwA9OEkDG8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nicolas Boichat <drinkcat@chromium.org>,
         Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 36/39] pinctrl: mediatek: Update cur_mask in mask/mask ops
-Date:   Tue,  2 Jul 2019 22:15:11 -0400
-Message-Id: <20190703021514.17727-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 25/26] pinctrl: mediatek: Update cur_mask in mask/mask ops
+Date:   Tue,  2 Jul 2019 22:16:24 -0400
+Message-Id: <20190703021625.18116-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
-References: <20190703021514.17727-1-sashal@kernel.org>
+In-Reply-To: <20190703021625.18116-1-sashal@kernel.org>
+References: <20190703021625.18116-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -103,7 +103,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-index 737385e86beb..7e526bcf5e0b 100644
+index b9f3c02ba59d..564cfaee129d 100644
 --- a/drivers/pinctrl/mediatek/mtk-eint.c
 +++ b/drivers/pinctrl/mediatek/mtk-eint.c
 @@ -113,6 +113,8 @@ static void mtk_eint_mask(struct irq_data *d)
