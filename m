@@ -1,79 +1,90 @@
-Return-Path: <SRS0=cLbR=U7=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=g0nt=VA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089D4C06510
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 19:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834EBC06511
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4ED2186A
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Jul 2019 19:41:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xpi3vAPb"
+	by mail.kernel.org (Postfix) with ESMTP id 599EC21993
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 00:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfGBTlS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 15:41:18 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33158 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfGBTlS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jul 2019 15:41:18 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h10so18194388ljg.0
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jul 2019 12:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZYo3fqkgckZ01WAJt3EqS51tHEujjvkKZjkmoWDUa9A=;
-        b=Xpi3vAPbwBAlVsv0euo5n4oQ6uuO0hk1xXNMSeCj4fUnq4AY25PEkmkkI++aTo2Jw6
-         VJwf1SKbDpivAthOmK8wEUGxRyBzWbKmFvdQL/QKpH03GQa9FORJz3/kIm2l6tdlaxfh
-         ZVStIPp9g7LN3Aj+SAe5pG+D9WKFIA/iFRIzuR/XbnJJ6rby72ncCB/IxAtewnquIwVp
-         /lpu5mCEpcVKdkFRRaOpI7ciD3GB+R7FpPV5XY/LLm1zFLw8BcgTlwMQhs6ZVP6mzKMx
-         jrU8gqcGwPkF/D2xuzoRmYeWk1aR2Szmd6ehrRYJGi7AAsXu87HzRwGNLW3CP4QasQ6i
-         vDuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZYo3fqkgckZ01WAJt3EqS51tHEujjvkKZjkmoWDUa9A=;
-        b=cR9h7hyzc11BY17AZRf2dyRk48JQ7oMS5gyZR2W663T2RvsMx27rxBAV1g8BgIiswC
-         il3CsSPMi4mtB8aGm/4NkI7TJfEcGBPzS9grw2hhBtVz9rEeTxgWfxrIvyJqqLgy0wIM
-         OSnsdkufnHPREcXNpurck++jl+NYAMW0A/CPQdKj+Rml5vAmKgLz4EYckwVevFYaslyy
-         c+6NqwjfZcvi4a91dL0/lszxgMdGFGnIMbg1gprnNDTjq5Vk3yzzcsWKG58IboxTx1VG
-         SfCinKnwdXp8CcejssObvacpgc4eXBWyZuTXGj2x0WXyVHWHCbOQMEm7d9VehdP6ivP+
-         Cz3A==
-X-Gm-Message-State: APjAAAWd1k9CNKmNIj81q9lPeUKE7L+6o766cJSYiEDvddMXHtkaQdeI
-        /di1WHcaF8ddy7s6CBNcqZb19InhsKj0uBsecVmPqyTQ
-X-Google-Smtp-Source: APXvYqzlfSQ2odWRbFfHpnUHsDrMaxebp6ZbRHkkCp3wBOqoPBe3KPJAJ7knDKlNyx6IHJexgvlVZtuUd8j5oYh2UUo=
-X-Received: by 2002:a2e:2c14:: with SMTP id s20mr18257301ljs.54.1562096476358;
- Tue, 02 Jul 2019 12:41:16 -0700 (PDT)
+        id S1727138AbfGCAaX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 20:30:23 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56882 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727078AbfGCAaW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:30:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 17:30:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,445,1557212400"; 
+   d="scan'208";a="315413822"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2019 17:30:20 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9577712C; Wed,  3 Jul 2019 03:30:19 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] pinctrl: baytrail: Use defined macro instead of magic in byt_get_gpio_mux()
+Date:   Wed,  3 Jul 2019 03:30:17 +0300
+Message-Id: <20190703003018.75186-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190701172517.31641-1-linus.walleij@linaro.org>
- <20190702113914.GH2793@sirena.org.uk> <CACRpkdbng1M=5BnzFuiubRaqM1Bu4eLxqKvb3fCQuqyKsVcBjg@mail.gmail.com>
-In-Reply-To: <CACRpkdbng1M=5BnzFuiubRaqM1Bu4eLxqKvb3fCQuqyKsVcBjg@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Jul 2019 21:41:04 +0200
-Message-ID: <CACRpkdZ=FTUc2xTx9JJtU1c8x0s8N3c_=wbUzJpCRq=_xV9HKw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "spi: gpio: Don't request CS GPIO in DT use-case"
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi <linux-spi@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 3:08 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+By the fact byt_get_gpio_mux() returns a value of mux settings as
+it is represented in hardware. Use defined macro instead of magic numbers
+to clarify this.
 
-> I am trying to rootcause it, I suspect I was just the first to try this
-> on real hardware actually.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Ha! I found it. Only affects active high CS GPIO users.
-A nasty one. Sent a patch.
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 18d9ad504194..c72d831ca8b6 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -91,6 +91,7 @@
+  * does not find a match for the requested function.
+  */
+ #define BYT_DEFAULT_GPIO_MUX	0
++#define BYT_ALTER_GPIO_MUX	1
+ 
+ struct byt_gpio_pin_context {
+ 	u32 conf0;
+@@ -932,14 +933,14 @@ static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned int offset)
+ 	/* SCORE pin 92-93 */
+ 	if (!strcmp(vg->soc_data->uid, BYT_SCORE_ACPI_UID) &&
+ 	    offset >= 92 && offset <= 93)
+-		return 1;
++		return BYT_ALTER_GPIO_MUX;
+ 
+ 	/* SUS pin 11-21 */
+ 	if (!strcmp(vg->soc_data->uid, BYT_SUS_ACPI_UID) &&
+ 	    offset >= 11 && offset <= 21)
+-		return 1;
++		return BYT_ALTER_GPIO_MUX;
+ 
+-	return 0;
++	return BYT_DEFAULT_GPIO_MUX;
+ }
+ 
+ static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned int offset)
+-- 
+2.20.1
 
-Yours,
-Linus Walleij
