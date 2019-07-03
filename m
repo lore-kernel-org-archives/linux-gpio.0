@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F255EC5B57D
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA8AC5B57D
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3AA21874
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3FC52187F
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 Jul 2019 02:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1562120484;
-	bh=oy9qP0wxrh1xE2kpkmhSfLTWKOcJ1/JMq2K1MVKuUOs=;
+	s=default; t=1562120506;
+	bh=Lu7Rm6lZyhB8upg6bSwZbm8eUXjav1L23VNJbikpp7A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SqSYnuOnAEO12SJwvmAmfnhV5oFuK3tjj8WJkITZ67i1WHLo8Y8SVzM3y7L+GGO40
-	 4Xb+b2Ni0thmkb/zUPs1nj8ZRqYNDpqe1egFzdeFJo1r+lcc57QWLHpYixrZzMI1Wf
-	 JOAoLNKK/kNLn4HBx5FNEouoeJN2era4b7A+iwMY=
+	b=wVfevKiNM8Q2z1tzwFFGH3qpAh2QFI4N29BPJHMHuO0ManMPQNVSyQH+HnmWgGPiA
+	 FDEpKsXTFCiB6eqv8gx3Z9YGCBWTTbGoEPb2sCEPt4PwIuMFmA/Ujwsxlj+2u68z7n
+	 +iWGBgGpWz+CMv89a7t5/M+2kJnmnd/K3t64vLy4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfGCCQF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Jul 2019 22:16:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        id S1727758AbfGCCPw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Jul 2019 22:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbfGCCQD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 2 Jul 2019 22:16:03 -0400
+        id S1727745AbfGCCPw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jul 2019 22:15:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D994021881;
-        Wed,  3 Jul 2019 02:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35DE9218A3;
+        Wed,  3 Jul 2019 02:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562120162;
-        bh=oy9qP0wxrh1xE2kpkmhSfLTWKOcJ1/JMq2K1MVKuUOs=;
+        s=default; t=1562120150;
+        bh=Lu7Rm6lZyhB8upg6bSwZbm8eUXjav1L23VNJbikpp7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9O7JvQDTqHT4hnMjvc4LqEHXjELsr1QcGBhU17FUGaDh8XnaEKj0W4XpHcYkthMk
-         rjUuev4JrHJkgB/7cu7zN9oaHPShzZ95zUYxBQ6jUKv4p0a9K9p+aFpo71leZkHVd/
-         Sr3kfriZq3rvP0w1S+3/xL41VmCrY2R7Lq9wllXk=
+        b=zrX+7Z5QYbmpcjLn2AWD4lFCHZaEe2VMFL9evJ36/VucMBFM8uVZzTtb4mnimxBPj
+         45C+ieJ1TXkm0QUfddwFmKqkRlahNKNeeQSz6drb8bMhENC5F20LhyppMSkLhZsG4m
+         Uyt3Ruhnhk12be5irczrPnUDlLHZmijzkfGjUsyk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Sean Wang <sean.wang@kernel.org>,
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 33/39] pinctrl: mediatek: Ignore interrupts that are wake only during resume
-Date:   Tue,  2 Jul 2019 22:15:08 -0400
-Message-Id: <20190703021514.17727-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 25/39] pinctrl: ocelot: fix pinmuxing for pins after 31
+Date:   Tue,  2 Jul 2019 22:15:00 -0400
+Message-Id: <20190703021514.17727-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703021514.17727-1-sashal@kernel.org>
 References: <20190703021514.17727-1-sashal@kernel.org>
@@ -59,75 +58,74 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Nicolas Boichat <drinkcat@chromium.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 35594bc7cecf3a78504b590e350570e8f4d7779e ]
+[ Upstream commit 4b36082e2e09c2769710756390d54cfca563ed96 ]
 
-Before suspending, mtk-eint would set the interrupt mask to the
-one in wake_mask. However, some of these interrupts may not have a
-corresponding interrupt handler, or the interrupt may be disabled.
+The actual layout for OCELOT_GPIO_ALT[01] when there are more than 32 pins
+is interleaved, i.e. OCELOT_GPIO_ALT0[0], OCELOT_GPIO_ALT1[0],
+OCELOT_GPIO_ALT0[1], OCELOT_GPIO_ALT1[1]. Introduce a new REG_ALT macro to
+facilitate the register offset calculation and use it where necessary.
 
-On resume, the eint irq handler would trigger nevertheless,
-and irq/pm.c:irq_pm_check_wakeup would be called, which would
-try to call irq_disable. However, if the interrupt is not enabled
-(irqd_irq_disabled(&desc->irq_data) is true), the call does nothing,
-and the interrupt is left enabled in the eint driver.
-
-Especially for level-sensitive interrupts, this will lead to an
-interrupt storm on resume.
-
-If we detect that an interrupt is only in wake_mask, but not in
-cur_mask, we can just mask it out immediately (as mtk_eint_resume
-would do anyway at a later stage in the resume sequence, when
-restoring cur_mask).
-
-Fixes: bf22ff45bed6 ("genirq: Avoid unnecessary low level irq function calls")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-Acked-by: Sean Wang <sean.wang@kernel.org>
+Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/mediatek/mtk-eint.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-ocelot.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-index f464f8cd274b..737385e86beb 100644
---- a/drivers/pinctrl/mediatek/mtk-eint.c
-+++ b/drivers/pinctrl/mediatek/mtk-eint.c
-@@ -318,7 +318,7 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct mtk_eint *eint = irq_desc_get_handler_data(desc);
- 	unsigned int status, eint_num;
--	int offset, index, virq;
-+	int offset, mask_offset, index, virq;
- 	void __iomem *reg =  mtk_eint_get_offset(eint, 0, eint->regs->stat);
- 	int dual_edge, start_level, curr_level;
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index d2478db975bd..fb76fb2e9ea5 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -396,7 +396,7 @@ static int ocelot_pin_function_idx(struct ocelot_pinctrl *info,
+ 	return -1;
+ }
  
-@@ -328,10 +328,24 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
- 		status = readl(reg);
- 		while (status) {
- 			offset = __ffs(status);
-+			mask_offset = eint_num >> 5;
- 			index = eint_num + offset;
- 			virq = irq_find_mapping(eint->domain, index);
- 			status &= ~BIT(offset);
+-#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
++#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + ((info)->stride * ((p) / 32))))
  
-+			/*
-+			 * If we get an interrupt on pin that was only required
-+			 * for wake (but no real interrupt requested), mask the
-+			 * interrupt (as would mtk_eint_resume do anyway later
-+			 * in the resume sequence).
-+			 */
-+			if (eint->wake_mask[mask_offset] & BIT(offset) &&
-+			    !(eint->cur_mask[mask_offset] & BIT(offset))) {
-+				writel_relaxed(BIT(offset), reg -
-+					eint->regs->stat +
-+					eint->regs->mask_set);
-+			}
+ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 				 unsigned int selector, unsigned int group)
+@@ -412,19 +412,21 @@ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 
+ 	/*
+ 	 * f is encoded on two bits.
+-	 * bit 0 of f goes in BIT(pin) of ALT0, bit 1 of f goes in BIT(pin) of
+-	 * ALT1
++	 * bit 0 of f goes in BIT(pin) of ALT[0], bit 1 of f goes in BIT(pin) of
++	 * ALT[1]
+ 	 * This is racy because both registers can't be updated at the same time
+ 	 * but it doesn't matter much for now.
+ 	 */
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(0, info, pin->pin),
+ 			   BIT(p), f << p);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(1, info, pin->pin),
+ 			   BIT(p), f << (p - 1));
+ 
+ 	return 0;
+ }
+ 
++#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
 +
- 			dual_edge = eint->dual_edge[index];
- 			if (dual_edge) {
- 				/*
+ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned int pin, bool input)
+@@ -445,9 +447,9 @@ static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+ 	unsigned int p = offset % 32;
+ 
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, offset),
++	regmap_update_bits(info->map, REG_ALT(0, info, offset),
+ 			   BIT(p), 0);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, offset),
++	regmap_update_bits(info->map, REG_ALT(1, info, offset),
+ 			   BIT(p), 0);
+ 
+ 	return 0;
 -- 
 2.20.1
 
