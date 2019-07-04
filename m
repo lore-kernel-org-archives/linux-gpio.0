@@ -2,57 +2,73 @@ Return-Path: <SRS0=Yh4R=VB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F29CC0651F
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jul 2019 13:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B31C0651F
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jul 2019 15:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB2C21852
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jul 2019 13:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6783021852
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jul 2019 15:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfGDNNZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Jul 2019 09:13:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44586 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727205AbfGDNNZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 4 Jul 2019 09:13:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2019 06:13:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,451,1557212400"; 
-   d="scan'208";a="184993869"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 04 Jul 2019 06:13:22 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 04 Jul 2019 16:13:21 +0300
-Date:   Thu, 4 Jul 2019 16:13:21 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] pinctrl: intel: Drop double check for data in
- intel_pinctrl_probe_by_uid()
-Message-ID: <20190704131321.GK2640@lahna.fi.intel.com>
-References: <20190704130239.24111-1-andriy.shevchenko@linux.intel.com>
+        id S1727905AbfGDPib (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Jul 2019 11:38:31 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59371 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727892AbfGDPiP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jul 2019 11:38:15 -0400
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hj3oH-0004wg-97; Thu, 04 Jul 2019 17:38:09 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 7/7] gpiolib: Use spinlock_t instead of struct spinlock
+Date:   Thu,  4 Jul 2019 17:38:03 +0200
+Message-Id: <20190704153803.12739-8-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190704153803.12739-1-bigeasy@linutronix.de>
+References: <20190704153803.12739-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190704130239.24111-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 04:02:39PM +0300, Andy Shevchenko wrote:
-> There is no need to duplicate the check which is done in the common
-> intel_pinctrl_probe().
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+For spinlocks the type spinlock_t should be used instead of "struct
+spinlock".
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Use spinlock_t for spinlock's definition.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ drivers/gpio/gpiolib.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 7a65dad43932c..7c52c2442173e 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -210,7 +210,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				  struct gpio_array *array_info,
+ 				  unsigned long *value_bitmap);
+ 
+-extern struct spinlock gpio_lock;
++extern spinlock_t gpio_lock;
+ extern struct list_head gpio_devices;
+ 
+ struct gpio_desc {
+-- 
+2.20.1
+
