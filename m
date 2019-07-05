@@ -2,130 +2,111 @@ Return-Path: <SRS0=+c2y=VC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF63CC0650E
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jul 2019 01:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DDDC5B57D
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jul 2019 09:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CF02189E
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jul 2019 01:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F2D218C3
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jul 2019 09:33:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="m4FzD/dy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Um6GqYrv"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bcXmhFmt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfGEBoW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Jul 2019 21:44:22 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:55359 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726871AbfGEBoV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jul 2019 21:44:21 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 45FEF4E3;
-        Thu,  4 Jul 2019 21:44:20 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 04 Jul 2019 21:44:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=AC9iklpKIwYXIcd/uqSiNNW7KAX/fNS
-        eGhQ1Hz/1+6s=; b=m4FzD/dyhZWL1rW8gSYdlRqfpBBXuzRLKF/2SV3d2CFkVki
-        xT4NAWi/Vxg4aLNmV7bCm9Om1oBRHrKrC7j3GL7gvh46inDGEBp2Qp2yRq0Syx97
-        zT3TCMrkrCTeuXdfyJ20TNqmvZdYw9nNl0bGCKiOy7QtQslsb8AalX+t+xfrMOL0
-        Muan/4vtv0LfE6BNlfgOEQJcJ3OEGBw+24qIWZSvxZXnRpMqePtZLkQ2nAbZfuf3
-        BosE5I2CVdKZKp7NRqcEpS/5MNeVDyJHVSb0UjiAP76obhG4ixWL747WVXHHxjB8
-        +Sm+feXrVGWq4A4BVkzIiv+i19OAVPErPf1uugA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AC9ikl
-        pKIwYXIcd/uqSiNNW7KAX/fNSeGhQ1Hz/1+6s=; b=Um6GqYrv5Ys3AdNcB0mMjY
-        z6qiIw230NNPSVYt4UgvI2fHfkPdi6AafATzx/ZqQgt2PFFFrb8ap9jeI+LDKLlb
-        JI+PQw6x8JYn0UbUX1ZkxsY7lh6REK1rQxgEbRPRmFUkO16NaEnnZY6dc/SdhZIY
-        pSR4KQakV/OJA2c7HfxVkQIgItGGMxSGgR8k2hdTPwFm295gu6IOhgsJNvMFarfY
-        CBlxY5+mx6IIFhakl/Lu13ImK9gpmDQeE57JDcYElHD2yHNwtAKikO9kyfQpLmMK
-        ZGYYh3l1jf6k3nCsYkXZyB2T1YgOL93ehR2wd33rBuYUb1nnoi9wZw3Y5HwtD5yg
-        ==
-X-ME-Sender: <xms:cqseXWvG2Lxn5MKyZfi9o3Gm9VGDky7BeXbYHpjWdsYzXm_Lb3xH6g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrfeefgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucffohhmrg
-    hinhepkhgvrhhnvghlrdhorhhgpdhgohhoghhlvghsohhurhgtvgdrtghomhdpghhithhh
-    uhgsuhhsvghrtghonhhtvghnthdrtghomhenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:cqseXdX1-Aldm5Jfo7AJj2CQ4tsKjHC0T8Xs2JqjBDiWDuCOMDTwNg>
-    <xmx:cqseXW47mDPqSEqgRJPDbB4xWdeVz4wMt6TAnyd9uLlshxUAFWir3g>
-    <xmx:cqseXRaLbzTCCKKucTtAXUQT14zErQ6f7lwG3vKZsJoFZ5dzKjY2eA>
-    <xmx:c6seXV5ubfpdG_LnEC6CufQ0Y-iyh-BoA2QF4wk3c7mATwel8bXSyw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id CEA41E00A2; Thu,  4 Jul 2019 21:44:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-731-g19d3b16-fmstable-20190627v1
-Mime-Version: 1.0
-Message-Id: <2b5ceaf5-211b-4f7c-ab81-90a35de0aac6@www.fastmail.com>
-In-Reply-To: <201907042014.2WXYWvdg%lkp@intel.com>
-References: <201907042014.2WXYWvdg%lkp@intel.com>
-Date:   Fri, 05 Jul 2019 11:44:14 +1000
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     kbuild-all@01.org, linux-gpio@vger.kernel.org,
-        "kbuild test robot" <lkp@intel.com>
-Subject: =?UTF-8?Q?Re:_[pinctrl:devel_72/79]_drivers/pinctrl/aspeed/pinctrl-aspee?=
- =?UTF-8?Q?d.h:547:28:_error:_field_'pinmux'_has_incomplete_type?=
-Content-Type: text/plain
+        id S1727383AbfGEJdY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Jul 2019 05:33:24 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36243 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfGEJdY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jul 2019 05:33:24 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r6so8470447oti.3
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Jul 2019 02:33:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HROQIJhsY4TQuJdqnfvqx5TwTIiaIY9u98AqrzcTE1U=;
+        b=bcXmhFmtX81Q+N9rH9dDCAKUMfDnSZyX8tMy4JwVU0I03xUNM4oWkTkS9xnhR5KGkA
+         GOEL35PULJqihGmen0bInboR/NNRs7FKMm8H8jxjc9RbPcEOykxXFZPxMKwBsyptaEF+
+         cyucE0b/7d6US6oV2mD0/EP+bXd23muODKzcU6U4dbJKcu9kJoHssSVBeLLElWjn88tJ
+         gFAlZkRMo4WThpBknpJ+KmKpDfH805IS5jRqRGDRIiM67O4hAGel/poQQKDv72w1g7Ui
+         uTzOUQ7GaKJE82xZtRq4D9/axEvuRRDfI3hGCqeMn+jCX+LXlewpOZLL+4/O6BdmKE+y
+         t9rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HROQIJhsY4TQuJdqnfvqx5TwTIiaIY9u98AqrzcTE1U=;
+        b=Nz+uEWi/JblWx5AHrlNZRIICxlkKDKKI6z+4YS1ufqiy4t/vaWJICVymrhVes1Qf90
+         m11hADaplFW2UyoA+z/g1HauCXxop4bDfTS+lExGuT9jT7wdY1UwIybehSEmWQVajmzL
+         0hu5fNdiYYAUaBAuI4DYRyfaZU4j2OepEI5BjVyr7CvLopFKKwjvBkIauE2pUAI9zWoo
+         QQycgTWQY0lNz2rnsrINzrd3S9zQ6K3d/jRCihUXcNb9m/OmhC4u6ISinW6HKpL4miuo
+         WAAOV/BQHVTRlIsaSPAIMGvsHbO9lsseaINhfCCS8nXoDKJOEl/sMlxBLuqDuiJHD3jp
+         VQYg==
+X-Gm-Message-State: APjAAAUxztihoEtw4ixLXeIFfdEDjanI7+NbNgUf7me1TVzDRmVbO8C1
+        dsMMszDlYDL2zn62oSrCbWi3Vldt3wyNobNCdfPvmg==
+X-Google-Smtp-Source: APXvYqw/93nr/E5l0p2Rqtw78pD8KO36CuASALI3gbDEnX3dng9qRsUPVaIkDy3GbV4sAr9h6a1SE2DYzahy++A3mqw=
+X-Received: by 2002:a9d:2969:: with SMTP id d96mr2138546otb.85.1562319203458;
+ Fri, 05 Jul 2019 02:33:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190705093031.18182-1-michael.wu@vatics.com>
+In-Reply-To: <20190705093031.18182-1-michael.wu@vatics.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 5 Jul 2019 11:33:12 +0200
+Message-ID: <CAMpxmJUzaEREeUxCu2BCV12Huv7K=yeUSKntA5RGMfOQbnxaFg@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix incorrect IRQ requesting of an active-low lineevent
+To:     Michael Wu <michael.wu@vatics.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, mvp.kutali@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Linus,
+pt., 5 lip 2019 o 11:30 Michael Wu <michael.wu@vatics.com> napisa=C5=82(a):
+>
+> When a pin is active-low, logical trigger edge should be inverted
+> to match the same interrupt opportunity.
+>
+> For example, a button pushed trigger falling edge in ACTIVE_HIGH
+> case; in ACTIVE_LOW case, the button pushed trigger rising edge.
+> For user space the IRQ requesting doesn't need to do any
+> modification except to configuring GPIOHANDLE_REQUEST_ACTIVE_LOW.
+>
+> Signed-off-by: Michael Wu <michael.wu@vatics.com>
+> ---
+>  drivers/gpio/gpiolib.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e013d417a936..b98466a05091 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -956,9 +956,11 @@ static int lineevent_create(struct gpio_device *gdev=
+, void __user *ip)
+>         }
+>
+>         if (eflags & GPIOEVENT_REQUEST_RISING_EDGE)
+> -               irqflags |=3D IRQF_TRIGGER_RISING;
+> +               irqflags |=3D test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
+> +                       IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
+>         if (eflags & GPIOEVENT_REQUEST_FALLING_EDGE)
+> -               irqflags |=3D IRQF_TRIGGER_FALLING;
+> +               irqflags |=3D test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
+> +                       IRQ_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
+>         irqflags |=3D IRQF_ONESHOT;
+>
+>         INIT_KFIFO(le->events);
+> --
+> 2.17.1
+>
 
-On Thu, 4 Jul 2019, at 22:11, kbuild test robot wrote:
-> tree:   
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-> head:   eb0a2daa45b83d67b69a620243ed844e9dfa671b
-> commit: efa5623981b72f6b5f95933d1c36ed2518c2ee4e [72/79] pinctrl: 
-> aspeed: Split out pinmux from general pinctrl
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 7.4.0
-> reproduce:
->         wget 
-> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout efa5623981b72f6b5f95933d1c36ed2518c2ee4e
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.4.0 make.cross ARCH=arm 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
+Is this something that causes a bug in user-space? Any scenario to reproduc=
+e it?
 
-It looks like in fixing the SPDX churn you dropped the include from this hunk:
-
-```
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.h b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-index c5918c4a087c..11cc0eb6666b 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-@@ -1,514 +1,15 @@
- /* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * Copyright (C) 2016 IBM Corp.
-- */
-+/* Copyright (C) 2016,2019 IBM Corp. */
- 
- #ifndef PINCTRL_ASPEED
- #define PINCTRL_ASPEED
- 
-+#include "pinmux-aspeed.h"
-+
-```
-
-It's missing here: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/diff/drivers/pinctrl/aspeed/pinctrl-aspeed.h?h=devel&id=efa5623981b72f6b5f95933d1c36ed2518c2ee4e
-
-Should I send a fixup? Or do you want me to re-spin the series on top of
-v5.2-rc1 and resend?
-
-Andrew
+Bart
