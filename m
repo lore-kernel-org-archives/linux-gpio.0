@@ -2,166 +2,110 @@ Return-Path: <SRS0=GbQa=VE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480C4C0650E
-	for <linux-gpio@archiver.kernel.org>; Sun,  7 Jul 2019 08:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED688C48BDE
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Jul 2019 20:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1015F208E4
-	for <linux-gpio@archiver.kernel.org>; Sun,  7 Jul 2019 08:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 600FF2070D
+	for <linux-gpio@archiver.kernel.org>; Sun,  7 Jul 2019 20:36:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1Ri51AC"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="vVAhNuVC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfGGIKM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 7 Jul 2019 04:10:12 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43103 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfGGIKM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Jul 2019 04:10:12 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c19so3218555lfm.10
-        for <linux-gpio@vger.kernel.org>; Sun, 07 Jul 2019 01:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Og+1ZMEbhyV3WkQcVL8uCE7LlGWe+B5LDW/MNApWX1Y=;
-        b=S1Ri51ACwXiJMsz2WwUSg2J/xsP0BTp5sA8ch2iWa1+lHQrGaK1Y+Jwh1LDGzxbZaL
-         L7MNooFvJq4ZjNqhtLqpIjGn+/wwp4r3BR0/mG63AZCsix8oJTVLLEPgZG1yFxyEV5Fo
-         UIsrlNiop6OhKKnltnEi+bkxLXCDkI3Rear1Ry0JaJ4Pz9fO6y+avnY45+1gGOAYTYk5
-         2hM8/bs/AOG7rRnhEqn0/Tu+HrF0cLop37FrpHnFslu0VukxToPHqZ1tuIQEyE2w1ny5
-         ofMA+mkcAsf4Y22/l56JbnSeX6O8Pct3X+uu5A1tznXkxy5HRYIVSe+Eo8uBz/odh718
-         MW1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Og+1ZMEbhyV3WkQcVL8uCE7LlGWe+B5LDW/MNApWX1Y=;
-        b=Q0clLgv+rwu8A9GGwbng/gZ2iztFEzhT7+jpKP/UnVDBRrQl/kkKNBQSOYfg/HlnBH
-         EdsmYAX2o35piehkO7hbbnh2Ph/K3Wf6kn48ZM9yPEjhHR/AzXDBlclR8sI+TK94IfGW
-         v9NY3xuuhFBauplrpOXgtmUJ+yzgYQogkreuvn52047O1tIQP0gQ2JzkejQCv35NHv/G
-         EmKzJYEeZg7UX0u5wqZKJm+xWUDM6rF4bx9TYNEkH8ecXwrbvRHYLjVf83qyNIq8Yo8y
-         RK3fpr+tAN/Z9hhlazLnJ75TH9jFPA92xKprtHdlbQ8ArbqgZ4dlGJZ6Nlsk3TAnAN9J
-         o2ng==
-X-Gm-Message-State: APjAAAVcFQlmNslDZrMfu7v6FxxYFDZVfGWvFxCkctUnc3jMIVMAMjCp
-        9jKLR74Vbq1U49zAEdNQXgz/7uZswIPLgf+L/b00lA==
-X-Google-Smtp-Source: APXvYqxoHHmUVZdcgQBEOQn+LeoqbK4jG7rRaLTFboV1selGXXe7TJPonCkYixwGCn7jRaj0WJKy6ko1zRXlE/GqdJs=
-X-Received: by 2002:a19:7616:: with SMTP id c22mr5869043lff.115.1562487010498;
- Sun, 07 Jul 2019 01:10:10 -0700 (PDT)
+        id S1727429AbfGGUgH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 7 Jul 2019 16:36:07 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:55976 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727456AbfGGUgH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Jul 2019 16:36:07 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 268038364E;
+        Mon,  8 Jul 2019 08:36:05 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1562531765;
+        bh=ip95pvT/MENdDX9ljvlE3O/xZmTn56E0COWj53gsn+U=;
+        h=From:To:Cc:Subject:Date;
+        b=vVAhNuVCRdWDOZTWZcT6OCfk4jWNCpkS4GAx1eXBhZkLwWCX5dleIRbQCxoZa2hC1
+         9aapr1ARjFDsDXa3FPJHowJ0eOpaYqECy9VX7NkUPurjR4IUYoTYb05iu72WYzdCyP
+         vtHlhE7vrvZCLH7gfsgqtW8s4BJXFNu3grq20PeUO9gEWY1gmmzxqw1ECToo5ZxDD+
+         VcJAe0aeBBqIb+kMZGkJUuYnJkxxaG/mPRwzBxr9Usp2cvaTQFKuiRBqVLBMNRSNv9
+         4B5OQuQb8Om3VAtXg84b7eso1simIQX0AJ7d1FO5LK1ZmHDzFb+dhdjxoZUrbTDkW3
+         zUXUYtets/FRg==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d2257af0000>; Mon, 08 Jul 2019 08:36:03 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 5370813EECF;
+        Mon,  8 Jul 2019 08:36:02 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 9932C1E0BBE; Mon,  8 Jul 2019 08:36:00 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        ricardo.ribalda@gmail.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3] gpiolib: Preserve desc->flags when setting state
+Date:   Mon,  8 Jul 2019 08:35:58 +1200
+Message-Id: <20190707203558.10993-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190624132531.6184-1-linus.walleij@linaro.org> <20190707014620.GA9690@onstation.org>
-In-Reply-To: <20190707014620.GA9690@onstation.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 7 Jul 2019 10:09:58 +0200
-Message-ID: <CACRpkdY7ydVi90JpNKJy2nPXxm0N2Ji5PmQu1gWbmifFnbpFYA@mail.gmail.com>
-Subject: Re: [PATCH 1/4 v1] gpio: Add support for hierarchical IRQ domains
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org,
-        David Daney <david.daney@cavium.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Jul 7, 2019 at 3:46 AM Brian Masney <masneyb@onstation.org> wrote:
+desc->flags may already have values set by of_gpiochip_add() so make
+sure that this isn't undone when setting the initial direction.
 
-> I got this working with spmi-gpio with two additional changes. See below
-> for details. Hopefully I'll have time tomorrow evening (GMT-4) to finish
-> cleaning up what I have so I can send out my series.
+Fixes: 3edfb7bd76bd1cba ("gpiolib: Show correct direction from the beginn=
+ing")
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-Awesome! No hurry because it is v5.4 material at this point but I'm
-hoping to get to something you, Lina and Thierry can all use for early
-merge and smoke test.
+Notes:
+    Changes in v2:
+    - add braces to avoid ambiguious else warning
+    Changes in v3:
+    - clear the direction output in the negative case
 
-> > +static const struct irq_domain_ops gpiochip_hierarchy_domain_ops = {
-> > +     .activate = gpiochip_irq_domain_activate,
-> > +     .deactivate = gpiochip_irq_domain_deactivate,
-> > +     .translate = gpiochip_hierarchy_irq_domain_translate,
-> > +     .alloc = gpiochip_hierarchy_irq_domain_alloc,
-> > +     .free = irq_domain_free_irqs_common,
-> > +};
->
-> spmi and ssbi gpio both need to subtract one from the hwirq in the
-> translate function.
->
-> https://elixir.bootlin.com/linux/latest/source/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c#L956
->
-> I'm going to optionally allow overriding the translate() function
-> pointer as well.
+ drivers/gpio/gpiolib.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-Hm was more thinking to let gpiolib call out to an optional translate
-function (on top of the template) but this is maybe cleaner.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e013d417a936..dbd1180316a0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1392,12 +1392,17 @@ int gpiochip_add_data_with_key(struct gpio_chip *=
+chip, void *data,
+ 	for (i =3D 0; i < chip->ngpio; i++) {
+ 		struct gpio_desc *desc =3D &gdev->descs[i];
+=20
+-		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+-			desc->flags =3D !chip->get_direction(chip, i) ?
+-					(1 << FLAG_IS_OUT) : 0;
+-		else
+-			desc->flags =3D !chip->direction_input ?
+-					(1 << FLAG_IS_OUT) : 0;
++		if (chip->get_direction && gpiochip_line_is_valid(chip, i)) {
++			if (!chip->get_direction(chip, i))
++				set_bit(FLAG_IS_OUT, &desc->flags);
++			else
++				clear_bit(FLAG_IS_OUT, &desc->flags);
++		} else {
++			if (!chip->direction_input)
++				set_bit(FLAG_IS_OUT, &desc->flags);
++			else
++				clear_bit(FLAG_IS_OUT, &desc->flags);
++		}
+ 	}
+=20
+ 	acpi_gpiochip_add(chip);
+--=20
+2.22.0
 
-> > +             /*
-> > +              * We set handle_bad_irq because the .set_type() should
-> > +              * always be invoked and set the right type of handler.
-> > +              */
-> > +             irq_domain_set_info(d,
-> > +                                 irq + i,
-> > +                                 hwirq + i,
-> > +                                 gc->irq.chip,
-> > +                                 gc,
-> > +                                 handle_bad_irq,
->                                     ^^^^^^^^^^
-> In order to get this working, I had to change handle_bad_irq to
-> handle_level_irq otherwise I get this attempted NULL pointer
-> dereference:
-
-Hmmmmmmmm that should not happen, we need to get to the
-bottom of this.
-
-> [    2.624430] [<c0372af4>] (irq_chip_ack_parent) from [<c0373f6c>] (__irq_do_set_handler+0x1b4/0x1bc)
-> [    2.632584] [<c0373f6c>] (__irq_do_set_handler) from [<c0373fc0>] (__irq_set_handler+0x4c/0x78)
-> [    2.641441] [<c0373fc0>] (__irq_set_handler) from [<c0375d44>] (irq_domain_set_info+0x38/0x4c)
-> [    2.650126] [<c0375d44>] (irq_domain_set_info) from [<c06cf28c>] (gpiochip_hierarchy_irq_domain_alloc+0x16c/0x22c)
-> [    2.658808] [<c06cf28c>] (gpiochip_hierarchy_irq_domain_alloc) from [<c0376bac>] (__irq_domain_alloc_irqs+0x12c/0x320)
-
-I wonder why irq_chip_ack_parent() is called there.
-Like there is some pending IRQ or something.
-
-> The parent's irq_chip struct isn't populated yet and the error occurs
-> here:
->
->     void irq_chip_ack_parent(struct irq_data *data)
->     {
->             data = data->parent_data;
->             data->chip->irq_ack(data);
->                   ^^^^
->
-> We haven't called irq_domain_alloc_irqs_parent() yet, which is fine.
->
-> __irq_do_set_handler() has a special check for handle_bad_irq():
->
-> https://elixir.bootlin.com/linux/latest/source/kernel/irq/chip.c#L974
->
-> I'm not sure what the proper fix is here and not going to dig into this
-> anymore this evening.
-
-I'm a bit puzzled too. :/
-
-> > diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
-> > index 1ce7fcd0f989..3099c7fbefdb 100644
-> > --- a/Documentation/driver-api/gpio/driver.rst
-> > +++ b/Documentation/driver-api/gpio/driver.rst
->
-> I'm still on linux next-20190701. Does this patch series of yours
-> require any other patches? I get a merge conflict against driver.rst.
-> Everything else applies cleanly. I honestly haven't looked in detail
-> about the conflicts.
-
-I have some pending documentation patch I think.
-Sorry about that.
-
-Yours,
-Linus Walleij
