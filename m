@@ -2,38 +2,37 @@ Return-Path: <SRS0=xWdb=VF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1020DC606AC
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 11:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903D2C606AF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 11:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83E42087F
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 11:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FF4021473
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 11:02:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="S3I2jkIj"
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="lWSxrK30"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbfGHLCJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jul 2019 07:02:09 -0400
-Received: from onstation.org ([52.200.56.107]:56170 "EHLO onstation.org"
+        id S1730122AbfGHLB5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jul 2019 07:01:57 -0400
+Received: from onstation.org ([52.200.56.107]:56098 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730264AbfGHLB6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:01:58 -0400
+        id S1725836AbfGHLB4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Jul 2019 07:01:56 -0400
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 270CF45752;
-        Mon,  8 Jul 2019 11:01:57 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 009DE3E912;
+        Mon,  8 Jul 2019 11:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1562583717;
-        bh=2RS0KK1hfrl4EHuQ2ry/wHGZzJKEyGQ/7nvoEOIsG+c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3I2jkIjojC0S6qKPu9ezIbQyDdmKYQkdjulFIdMWHqxTDEM93i3GnLE7qHG1sb1c
-         gh6b/OovLwUyucZR/1JTMc2VKnJgneRaH/FCrh2Zo0TuX+8mf+861rgoiW37Bx6uV6
-         I8U/DwSBapFjIsQbwnOgk/yilIz4xwjuUnNTxIZc=
+        s=default; t=1562583716;
+        bh=Qm/4+Z0/sz1rCO9MskaUatf9RSxxFsoX4hvz0Scz0wo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lWSxrK30kwh+TjTMBFonMQCYwFPlJ0SeNYUzF6nJyzLDvnOf1IbNg+wdOStKLus8S
+         ZU5MDFgGkK35t6IhWxM9f7GeBJb9bwT9iW7Ya/+9sollmo91dJ0/x45oD3BKRlhwEW
+         q862w4up8QzG6e+7MhBnuFBeHFu5mDPjahF8QmaI=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
@@ -43,12 +42,10 @@ Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
         yamada.masahiro@socionext.com, treding@nvidia.com,
         bjorn.andersson@linaro.org, agross@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] gpio: use handler in gpio_irq_chip instead of handle_bad_irq
-Date:   Mon,  8 Jul 2019 07:01:37 -0400
-Message-Id: <20190708110138.24657-4-masneyb@onstation.org>
+Subject: [PATCH 0/4] gpio: hierarchical IRQ improvements
+Date:   Mon,  8 Jul 2019 07:01:34 -0400
+Message-Id: <20190708110138.24657-1-masneyb@onstation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190708110138.24657-1-masneyb@onstation.org>
-References: <20190708110138.24657-1-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -56,38 +53,29 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use the IRQ handler field that's available in the struct gpio_irq_chip
-when allocating an IRQ rather than hardcoding the handler to
-handle_bad_irq(). The kernel reboots without any messages when testing
-this using spmi-gpio on the Nexus 5.
+This builds on top of Linus Walleij's existing patches that adds
+hierarchical IRQ support to the GPIO core [1] so that Qualcomm's
+spmi-gpio and ssbi-gpio can be converted to use these new helpers.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
-I didn't have time to dig into more detail about why this is happening.
-I suspect the issue is that __irq_do_set_handler() has a special check
-for handle_bad_irq:
+Linus: Feel free to squash these into your existing patches if you'd
+like to use any of this code. Just give me some kind of mention in the
+commit description.
 
-https://elixir.bootlin.com/linux/latest/source/kernel/irq/chip.c#L974
+[1] https://lore.kernel.org/linux-gpio/20190624132531.6184-1-linus.walleij@linaro.org/
 
-My post about this:
-https://lore.kernel.org/linux-gpio/20190707014620.GA9690@onstation.org/
+Brian Masney (4):
+  gpio: introduce gpiochip_populate_parent_fwspec_{two,four}cell
+    functions
+  gpio: allow customizing hierarchical IRQ chips
+  gpio: use handler in gpio_irq_chip instead of handle_bad_irq
+  qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
 
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c                   | 78 ++++++++++++++++----
+ drivers/pinctrl/qcom/Kconfig             |  1 +
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 92 +++++++-----------------
+ include/linux/gpio/driver.h              | 65 +++++++++++++++++
+ 4 files changed, 154 insertions(+), 82 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5423242deb81..bc68ebb8f40e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1872,7 +1872,7 @@ static int gpiochip_hierarchy_irq_domain_alloc(struct irq_domain *d,
- 				    hwirq + i,
- 				    gc->irq.chip,
- 				    gc,
--				    handle_bad_irq,
-+				    girq->handler,
- 				    NULL, NULL);
- 		irq_set_probe(irq + i);
- 
 -- 
 2.20.1
 
