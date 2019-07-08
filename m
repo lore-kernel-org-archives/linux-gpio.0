@@ -2,87 +2,126 @@ Return-Path: <SRS0=xWdb=VF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D01EC606BF
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24443C606BD
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22AFE216F4
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB3F21479
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:51:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="PgagO2Is"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbfGHPD5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jul 2019 11:03:57 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:58226 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730192AbfGHPD5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Jul 2019 11:03:57 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 3788B1FF8E;
-        Mon,  8 Jul 2019 17:03:55 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 1D49020DD5;
-        Mon,  8 Jul 2019 17:03:55 +0200 (CEST)
-Subject: Re: [RFC] SW connection between DVB Transport Stream demuxer and
- I2C-based frontend
-To:     Enrico Weigelt <lkml@metux.net>, I2C <linux-i2c@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        GPIO <linux-gpio@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Brad Love <brad@nextdimension.cc>,
-        Antti Palosaari <crope@iki.fi>,
-        Olli Salonen <olli.salonen@iki.fi>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <5e35b4fb-646d-6428-f372-ee47d7352cd6@free.fr>
- <b6abf5a2-3151-29e5-8eb7-c960580fd4ea@metux.net>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <79b9bd5e-be05-daa8-0d16-d84a383138a7@free.fr>
-Date:   Mon, 8 Jul 2019 17:03:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2388400AbfGHPvH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jul 2019 11:51:07 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46064 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfGHPvH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jul 2019 11:51:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u10so11256199lfm.12
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jul 2019 08:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Lcu6DKhuqC2EdjddGasiGPHtfViOaKatj/mPHVzp6VA=;
+        b=PgagO2IsiF4rFEsQ1pEGwMwtjC8l+1tE8BYXAKHXqKARn1Bgx6b0qiLcG4o9m8tAef
+         j2UHyQ87E5pA7Mj1JvJuqxMQqRBNveBXnd3sZkPk3PmHPvJzJSLZcqBZZQC/0yn6VvEn
+         SkHCb6zWMay4selpqMxmN7N9KrSzkrgwRKnNxIfypr53cC4Y5rjNVXAKd4rJxM34RKob
+         xl14dKBErxnaPATmaknikgb7R4iRU5F8zITKvktvo0mF2/bOBK47FZGxd2Y4SCHGDdAP
+         0VxhjAWpVyMLvzYBCevSIT7jmdk1ua3SD2czk/0TVdRBKWwH1OZUeVFpig2/K4Su0MO4
+         +Ndw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Lcu6DKhuqC2EdjddGasiGPHtfViOaKatj/mPHVzp6VA=;
+        b=CyDVduc0I7GHcdysQm4ABpWps/dMB9axgsD4tIyiRekos4LRU/QhN1178MpJ7c1p+L
+         UEAWqGjpPOfqmjHR/iK+PjQzGEhSMwPMoXFDCzqZaSALH8LFabrdMgg4sdP/M8cQSCJn
+         LTtp1AAbnGWHGlYz43/P8MOKDrWQcHxLIB3nm3w7KueaFNuvkb8/OeDhzw4PZcp/nIl7
+         f9u3vgG+jDco1MxBi2RxHYSZC4I7mD/QhoGViXusH56zwba+w0aJO/kTsBlcdpMA/T6A
+         cPdE+iMbmRCr+UKVRwt2Xz12qZNzUYUv5F/2mBMiLkajN1SVhYi2TxkmXnLIXo4DnNr8
+         XJrQ==
+X-Gm-Message-State: APjAAAXRiU+HxTmcfUNh4wySV8nLmZ6pxehgeIeAPD1YTKgKCWdNcpi9
+        pPnSlqHuvUm1tgJzca7wwC+mwg==
+X-Google-Smtp-Source: APXvYqxEVIlyCLwyyxfKqlR4trRT9l0+9B6drLsoXei3PDRFkDOgzGGIqdglLJdOft3RmoF5pEmJJQ==
+X-Received: by 2002:a05:6512:48f:: with SMTP id v15mr7144576lfq.37.1562601065318;
+        Mon, 08 Jul 2019 08:51:05 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:4440:228b:a5c8:af47:c662:2fa9? ([2a00:1fa0:4440:228b:a5c8:af47:c662:2fa9])
+        by smtp.gmail.com with ESMTPSA id n10sm2819753lfe.24.2019.07.08.08.51.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Jul 2019 08:51:04 -0700 (PDT)
+Subject: Re: [PATCH RFC 1/7] pinctrl: sh-pfc: add new flags into struct
+ sh_pfc_pin_config
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linus.walleij@linaro.org, geert+renesas@glider.be,
+        thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1562576868-8124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1562576868-8124-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f5f0a790-3ed5-dfbc-e489-be1ecc55d742@cogentembedded.com>
+Date:   Mon, 8 Jul 2019 18:51:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <b6abf5a2-3151-29e5-8eb7-c960580fd4ea@metux.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1562576868-8124-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Jul  8 17:03:55 2019 +0200 (CEST)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 08/07/2019 16:44, Enrico Weigelt wrote:
+On 08.07.2019 12:07, Yoshihiro Shimoda wrote:
 
-> On 08.07.19 13:08, Marc Gonzalez wrote:
+> To clean/modify the code up later, this patch just adds new flags
+> "mux_set" and "gpio_enabled" into the struct sh_pfc_pin_config.
 > 
->> The tuner (si2157) is not on the i2c5 bus, instead it is on a private
->> i2c bus *behind* si2168, which routes requests to the proper client.
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>   drivers/pinctrl/sh-pfc/pinctrl.c | 14 +++++++++++++-
+>   1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> Should the si2168 make up its own i2c controller ?
+> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+> index 2824be4..157b257 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -27,6 +27,8 @@
+>   
+>   struct sh_pfc_pin_config {
+>   	u32 type;
+> +	bool mux_set;
+> +	bool gpio_enabled;
+>   };
+>   
+>   struct sh_pfc_pinctrl {
+> @@ -364,7 +366,15 @@ static int sh_pfc_func_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
+>   	for (i = 0; i < grp->nr_pins; ++i) {
+>   		ret = sh_pfc_config_mux(pfc, grp->mux[i], PINMUX_TYPE_FUNCTION);
+>   		if (ret < 0)
+> -			break;
+> +			goto done;
+> +	}
+> +
+> +	/* All group pins are configurated, mark the pins as mux_set */
 
-It does AFAIU ;-)
+    Configured.
 
-https://elixir.bootlin.com/linux/latest/source/drivers/media/dvb-frontends/si2168.c#L780
+> +	for (i = 0; i < grp->nr_pins; ++i) {
+> +		int idx = sh_pfc_get_pin_index(pfc, grp->pins[i]);
+> +		struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
+> +
+> +		cfg->mux_set = true;
+>   	}
+>   
+>   done:
+[...]
 
-	/* create mux i2c adapter for tuner */
-	dev->muxc = i2c_mux_alloc(client->adapter, &client->dev, 1, 0, I2C_MUX_LOCKED, si2168_select, si2168_deselect);
-
-	ret = i2c_mux_add_adapter(dev->muxc, 0, 0, 0);
-
-	/* this is the new internal i2c bus */
-	struct i2c_adapter *si2168_bus = dev->muxc->adapter[0];
-
-
-One problem is that since the internal bus is "created" (declared?) at run-time,
-it doesn't seem possible to define it (or its client) in DT.
-
-Regards.
+MBR, Sergei
