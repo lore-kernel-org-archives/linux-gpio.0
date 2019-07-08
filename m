@@ -2,126 +2,190 @@ Return-Path: <SRS0=xWdb=VF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24443C606BD
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD17EC606BD
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 16:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB3F21479
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 15:51:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="PgagO2Is"
+	by mail.kernel.org (Postfix) with ESMTP id BDDF821707
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jul 2019 16:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388400AbfGHPvH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jul 2019 11:51:07 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46064 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfGHPvH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jul 2019 11:51:07 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u10so11256199lfm.12
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jul 2019 08:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Lcu6DKhuqC2EdjddGasiGPHtfViOaKatj/mPHVzp6VA=;
-        b=PgagO2IsiF4rFEsQ1pEGwMwtjC8l+1tE8BYXAKHXqKARn1Bgx6b0qiLcG4o9m8tAef
-         j2UHyQ87E5pA7Mj1JvJuqxMQqRBNveBXnd3sZkPk3PmHPvJzJSLZcqBZZQC/0yn6VvEn
-         SkHCb6zWMay4selpqMxmN7N9KrSzkrgwRKnNxIfypr53cC4Y5rjNVXAKd4rJxM34RKob
-         xl14dKBErxnaPATmaknikgb7R4iRU5F8zITKvktvo0mF2/bOBK47FZGxd2Y4SCHGDdAP
-         0VxhjAWpVyMLvzYBCevSIT7jmdk1ua3SD2czk/0TVdRBKWwH1OZUeVFpig2/K4Su0MO4
-         +Ndw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Lcu6DKhuqC2EdjddGasiGPHtfViOaKatj/mPHVzp6VA=;
-        b=CyDVduc0I7GHcdysQm4ABpWps/dMB9axgsD4tIyiRekos4LRU/QhN1178MpJ7c1p+L
-         UEAWqGjpPOfqmjHR/iK+PjQzGEhSMwPMoXFDCzqZaSALH8LFabrdMgg4sdP/M8cQSCJn
-         LTtp1AAbnGWHGlYz43/P8MOKDrWQcHxLIB3nm3w7KueaFNuvkb8/OeDhzw4PZcp/nIl7
-         f9u3vgG+jDco1MxBi2RxHYSZC4I7mD/QhoGViXusH56zwba+w0aJO/kTsBlcdpMA/T6A
-         cPdE+iMbmRCr+UKVRwt2Xz12qZNzUYUv5F/2mBMiLkajN1SVhYi2TxkmXnLIXo4DnNr8
-         XJrQ==
-X-Gm-Message-State: APjAAAXRiU+HxTmcfUNh4wySV8nLmZ6pxehgeIeAPD1YTKgKCWdNcpi9
-        pPnSlqHuvUm1tgJzca7wwC+mwg==
-X-Google-Smtp-Source: APXvYqxEVIlyCLwyyxfKqlR4trRT9l0+9B6drLsoXei3PDRFkDOgzGGIqdglLJdOft3RmoF5pEmJJQ==
-X-Received: by 2002:a05:6512:48f:: with SMTP id v15mr7144576lfq.37.1562601065318;
-        Mon, 08 Jul 2019 08:51:05 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:4440:228b:a5c8:af47:c662:2fa9? ([2a00:1fa0:4440:228b:a5c8:af47:c662:2fa9])
-        by smtp.gmail.com with ESMTPSA id n10sm2819753lfe.24.2019.07.08.08.51.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Jul 2019 08:51:04 -0700 (PDT)
-Subject: Re: [PATCH RFC 1/7] pinctrl: sh-pfc: add new flags into struct
- sh_pfc_pin_config
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linus.walleij@linaro.org, geert+renesas@glider.be,
-        thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <1562576868-8124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1562576868-8124-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f5f0a790-3ed5-dfbc-e489-be1ecc55d742@cogentembedded.com>
-Date:   Mon, 8 Jul 2019 18:51:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1730416AbfGHQmF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jul 2019 12:42:05 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:46746 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730383AbfGHQmF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Jul 2019 12:42:05 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 979F920BC5;
+        Mon,  8 Jul 2019 18:42:02 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 72279208E6;
+        Mon,  8 Jul 2019 18:42:02 +0200 (CEST)
+Subject: Re: [RFC] SW connection between DVB Transport Stream demuxer and
+ I2C-based frontend
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     I2C <linux-i2c@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        GPIO <linux-gpio@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Brad Love <brad@nextdimension.cc>,
+        Antti Palosaari <crope@iki.fi>,
+        Olli Salonen <olli.salonen@iki.fi>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <5e35b4fb-646d-6428-f372-ee47d7352cd6@free.fr>
+Message-ID: <4b9c5a48-aaed-5f1f-1835-167fcdcb7655@free.fr>
+Date:   Mon, 8 Jul 2019 18:42:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <1562576868-8124-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5e35b4fb-646d-6428-f372-ee47d7352cd6@free.fr>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Jul  8 18:42:02 2019 +0200 (CEST)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 08.07.2019 12:07, Yoshihiro Shimoda wrote:
+On 08/07/2019 13:08, Marc Gonzalez wrote:
 
-> To clean/modify the code up later, this patch just adds new flags
-> "mux_set" and "gpio_enabled" into the struct sh_pfc_pin_config.
+> PROBLEM #1
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->   drivers/pinctrl/sh-pfc/pinctrl.c | 14 +++++++++++++-
->   1 file changed, 13 insertions(+), 1 deletion(-)
+> The media framework requires that the TSIF and demod be "tied" together,
+> by calling dvb_register_frontend(). If I do that in tsif.c, then I need to
+> get the frontend pointer from the demod at some point. There is no such
+> callback presently. Since si2168 lives on an I2C bus, I can get a
+> struct i2c_client pointer, through the DT phandle. But some kind of
+> abstraction is missing to query the i2c_client object to make sure it
+> is a demodulator and request its frontend pointer.
 > 
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-> index 2824be4..157b257 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -27,6 +27,8 @@
->   
->   struct sh_pfc_pin_config {
->   	u32 type;
-> +	bool mux_set;
-> +	bool gpio_enabled;
->   };
->   
->   struct sh_pfc_pinctrl {
-> @@ -364,7 +366,15 @@ static int sh_pfc_func_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
->   	for (i = 0; i < grp->nr_pins; ++i) {
->   		ret = sh_pfc_config_mux(pfc, grp->mux[i], PINMUX_TYPE_FUNCTION);
->   		if (ret < 0)
-> -			break;
-> +			goto done;
-> +	}
-> +
-> +	/* All group pins are configurated, mark the pins as mux_set */
+> For the time being, I have added a very generic pointer to struct i2c_client
+> but I feel this is not quite right... (though it gets the job done)
 
-    Configured.
+As far as PROBLEM #1 is concerned, I think I have a better solution;
+one that doesn't involve messing with struct i2c_client.
 
-> +	for (i = 0; i < grp->nr_pins; ++i) {
-> +		int idx = sh_pfc_get_pin_index(pfc, grp->pins[i]);
-> +		struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
-> +
-> +		cfg->mux_set = true;
->   	}
->   
->   done:
-[...]
+Basically, we embed a common struct in every demod driver, at the
+beginning of their private control struct. That way, demod consumers
+have a generic/common data type to inspect, and don't need to know
+the specific demod they are working with. (I left the removals in
+the diff below, to show the two proposed solutions so far.)
 
-MBR, Sergei
+@linux-media maintainers, I think this solution is acceptable for
+mainline, right?
+
+Regards.
+
+
+
+diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
+index 726bb6759315..692f3207cd9d 100644
+--- a/drivers/media/dvb-frontends/si2168.c
++++ b/drivers/media/dvb-frontends/si2168.c
+@@ -666,12 +666,6 @@ struct si2168_config si2168_config;
+ struct si2157_config si2157_config;
+ struct i2c_client *tuner;
+ 
+-static void *get_fe(struct i2c_client *client)
+-{
+-	struct si2168_dev *dev = i2c_get_clientdata(client);
+-	return &dev->fe;
+-}
+-
+ static int si2168_probe(struct i2c_client *client,
+ 		const struct i2c_device_id *id)
+ {
+@@ -700,7 +694,7 @@ static int si2168_probe(struct i2c_client *client,
+ 		goto err;
+ 	}
+ 
+-	client->get_something = get_fe;
++	dev->common.fe = &dev->fe;
+ 	i2c_set_clientdata(client, dev);
+ 	mutex_init(&dev->i2c_mutex);
+ 
+diff --git a/drivers/media/dvb-frontends/si2168_priv.h b/drivers/media/dvb-frontends/si2168_priv.h
+index 804d5b30c697..2e69080f8a1c 100644
+--- a/drivers/media/dvb-frontends/si2168_priv.h
++++ b/drivers/media/dvb-frontends/si2168_priv.h
+@@ -22,6 +22,7 @@
+ 
+ /* state struct */
+ struct si2168_dev {
++	struct dvb_demod_common common;
+ 	struct mutex i2c_mutex;
+ 	struct i2c_mux_core *muxc;
+ 	struct dvb_frontend fe;
+diff --git a/drivers/media/platform/tsif.c b/drivers/media/platform/tsif.c
+index a0118c2ee870..c13fa19c9779 100644
+--- a/drivers/media/platform/tsif.c
++++ b/drivers/media/platform/tsif.c
+@@ -237,6 +237,7 @@ static int msm_tspp_probe(struct platform_device *pdev)
+ 	{
+ 		struct device_node *tsif_node, *demod_node;
+ 		struct i2c_client *demod;
++		struct dvb_demod_common *demod_data;
+ 
+ 		tsif_node = pdev->dev.of_node;
+ 		demod_node = of_parse_phandle(tsif_node, "demod", 0);
+@@ -244,10 +245,8 @@ static int msm_tspp_probe(struct platform_device *pdev)
+ 		demod = of_find_i2c_device_by_node(demod_node);
+ 		if (!demod) panic("of_find_i2c_device_by_node");
+ 
+-		/*** TODO: Improve callback naming & handling ***/
+-		if (!demod->get_something)
+-			panic("Wrong i2c_client");
+-		my_dvb_frontend = demod->get_something(demod);
++		demod_data = i2c_get_clientdata(demod);
++		my_dvb_frontend = demod_data->fe;
+ 		of_node_put(demod_node);
+ 	}
+ 
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 5fca596e0dd0..e982b8913b73 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -295,8 +295,6 @@ struct i2c_driver {
+ };
+ #define to_i2c_driver(d) container_of(d, struct i2c_driver, driver)
+ 
+-typedef void *generic_func(struct i2c_client *this);
+-
+ /**
+  * struct i2c_client - represent an I2C slave device
+  * @flags: I2C_CLIENT_TEN indicates the device uses a ten bit chip address;
+@@ -330,7 +328,6 @@ struct i2c_client {
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+ 	i2c_slave_cb_t slave_cb;	/* callback for slave mode	*/
+ #endif
+-	generic_func *get_something;
+ };
+ #define to_i2c_client(d) container_of(d, struct i2c_client, dev)
+ 
+diff --git a/include/media/dvb_frontend.h b/include/media/dvb_frontend.h
+index f05cd7b94a2c..087486bc027e 100644
+--- a/include/media/dvb_frontend.h
++++ b/include/media/dvb_frontend.h
+@@ -73,6 +73,10 @@ struct dvb_frontend_tune_settings {
+ 
+ struct dvb_frontend;
+ 
++struct dvb_demod_common {
++	struct dvb_frontend *fe;
++};
++
+ /**
+  * struct dvb_tuner_info - Frontend name and min/max ranges/bandwidths
+  *
