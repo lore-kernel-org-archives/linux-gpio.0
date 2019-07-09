@@ -2,95 +2,82 @@ Return-Path: <SRS0=cw75=VG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A933FC606DA
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C8FC004EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 11:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892ED21670
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67E0721537
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 11:45:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIni4gkw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfGIK3c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Jul 2019 06:29:32 -0400
-Received: from mx.socionext.com ([202.248.49.38]:38475 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbfGIK3c (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jul 2019 06:29:32 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 09 Jul 2019 19:29:30 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 0226C60629;
-        Tue,  9 Jul 2019 19:29:31 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 9 Jul 2019 19:29:31 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 9320C1A14E3;
-        Tue,  9 Jul 2019 19:29:30 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-gpio@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 2/5] pinctrl: uniphier: Add another audio I/O pin-mux settings for LD20
-Date:   Tue,  9 Jul 2019 19:29:13 +0900
-Message-Id: <1562668156-12927-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1726043AbfGILpJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Jul 2019 07:45:09 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42016 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfGILpI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jul 2019 07:45:08 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s19so12476632lfb.9
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Jul 2019 04:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=seSzBj7AVM5QAXmTv+Gol7Pcz0p7LUdYuUhosI+3OMk=;
+        b=IIni4gkwnjWLWCyUw1SdCL25sb64vL0YCG20t+qjKZU2aG8OHTv4Map8ZoiYxfoSAr
+         dSZiRr8g1HPLIceVx+A7oA8o7YR85fzdcjp+agRhQQ2YMmBYVYC77S5XRJaxq8+pdFiL
+         Br44M5cTSEqno5Wo3p08ugG7lAW/ZecDoB0IuV0OTzQEDEQ7+sGLlIXyCW+9RJzbX6G1
+         pJRfumDWsnM9F25A/nwLs1uFEXbTgy5BaHAh2KwLsc8QE5YuwVqcRLHPprMG3lmwu3h7
+         CqBJGDwARV32389VNVOzhXPN+5Phff3eq4z8Fzge8n7dpVD9fuq7YlJdT1BhcWqf2jqB
+         uPMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=seSzBj7AVM5QAXmTv+Gol7Pcz0p7LUdYuUhosI+3OMk=;
+        b=Rm1ZCN+8xHyaxYXg9XWhIkLqjlryhuL0U2xJ9iAZxvrAI1ed7DnMjW+U20vyhXMd2E
+         DgmR3iSaqhHy1xt+t3NmlIqm66WCXIdRE1+aG3YIYeE772O5x+D53C7ydRQ8mH/I5s0W
+         nx0ZEKAKpnQdyxL5Tn0gpDcy/WrLhXP2nOqi2amDYUNv88TzJBfRU5DG909ar/W/QJ5C
+         j4mysNyMJN7sBPAIhDtE7+kgugtCnlYwCPOj8TM7mCbMa+hXi7WSRO2WKbGHk7p1FCvU
+         FRGLJj3TCCKehvijLylgkWqkY0VJaswnK71Hbvadb1lQCgCyhmtMLlLacupIKWM5OS/i
+         1NiQ==
+X-Gm-Message-State: APjAAAX8mXCa/35EHZkb4pxMC7PAyqa3qiatM1Roca3ZlDJdFOYctsOF
+        uK5Ke2Duxg/M1BFsBfLy3KmYuJAZUQJOEF10Cr94aQ==
+X-Google-Smtp-Source: APXvYqy/8XcCvB7nFODWD7OENtnuJiJybM+yNUBuqGnuVouCx9mUgPQgu2w6rIbgvNniO8PCprZNbAC9qXzmLQHXU80=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr11675399lfp.61.1562672706813;
+ Tue, 09 Jul 2019 04:45:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190626134258.26991-1-jonathanh@nvidia.com> <CACRpkdaFOs24DJbXg4eKVOAzdGOx__X9rbHPcPUzpTJpZ-jbVw@mail.gmail.com>
+ <f5e711a6-4472-8dcb-56b2-b789733231c2@nvidia.com>
+In-Reply-To: <f5e711a6-4472-8dcb-56b2-b789733231c2@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 9 Jul 2019 13:44:54 +0200
+Message-ID: <CACRpkdbGoh-rHpiKzp+QKirSRdE8uE3nGoUDCxx7USvOkES-kg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: tegra: Clean-up debugfs initialisation
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds support for pinmux settings of aout1b groups. This group includes
-aout1 signals derived from xirq pins.
+On Tue, Jul 9, 2019 at 12:11 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> On 08/07/2019 08:04, Linus Walleij wrote:
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> > Sadly I've had to revert this commit because of build errors, but
+> > let's see if we can figure it out after the merge window.
+>
+> Sorry about that. I will be more thorough in future.
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-index 28e54b3..2c66e70 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-@@ -544,6 +544,8 @@ static const struct pinctrl_pin_desc uniphier_ld20_pins[] = {
- 
- static const unsigned aout1_pins[] = {137, 138, 139, 140, 141, 142};
- static const int aout1_muxvals[] = {0, 0, 0, 0, 0, 0};
-+static const unsigned aout1b_pins[] = {150, 151, 152, 153, 154, 155, 156};
-+static const int aout1b_muxvals[] = {1, 1, 1, 1, 1, 1, 1};
- static const unsigned aoutiec1_pins[] = {135, 136};
- static const int aoutiec1_muxvals[] = {0, 0};
- static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
-@@ -664,6 +666,7 @@ static const unsigned int gpio_range2_pins[] = {
- 
- static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP(aout1),
-+	UNIPHIER_PINCTRL_GROUP(aout1b),
- 	UNIPHIER_PINCTRL_GROUP(aoutiec1),
- 	UNIPHIER_PINCTRL_GROUP(emmc),
- 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
-@@ -708,6 +711,7 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
- };
- 
- static const char * const aout1_groups[] = {"aout1"};
-+static const char * const aout1b_groups[] = {"aout1b"};
- static const char * const aoutiec1_groups[] = {"aoutiec1"};
- static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
- static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
-@@ -746,6 +750,7 @@ static const char * const usb3_groups[] = {"usb3"};
- 
- static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
- 	UNIPHIER_PINMUX_FUNCTION(aout1),
-+	UNIPHIER_PINMUX_FUNCTION(aout1b),
- 	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
- 	UNIPHIER_PINMUX_FUNCTION(emmc),
- 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
--- 
-2.7.4
+Don't beat yourself up about it, happens all the time. I saw Arnd
+sent some suggested fixups BTW!
 
+Yours,
+Linus Walleij
