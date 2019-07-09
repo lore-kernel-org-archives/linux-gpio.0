@@ -2,31 +2,31 @@ Return-Path: <SRS0=cw75=VG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED111C606DA
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C318C606DD
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3950214AF
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC1121670
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jul 2019 10:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfGIK33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Jul 2019 06:29:29 -0400
-Received: from mx.socionext.com ([202.248.49.38]:38475 "EHLO mx.socionext.com"
+        id S1726298AbfGIK3d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Jul 2019 06:29:33 -0400
+Received: from mx.socionext.com ([202.248.49.38]:38484 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726018AbfGIK33 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jul 2019 06:29:29 -0400
+        id S1726309AbfGIK3d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 9 Jul 2019 06:29:33 -0400
 Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 09 Jul 2019 19:29:28 +0900
+  by mx.socionext.com with ESMTP; 09 Jul 2019 19:29:31 +0900
 Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 4BFEF18022B;
-        Tue,  9 Jul 2019 19:29:28 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 9 Jul 2019 19:29:28 +0900
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id E149418022B;
+        Tue,  9 Jul 2019 19:29:31 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 9 Jul 2019 19:29:31 +0900
 Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 9C1331A14E3;
-        Tue,  9 Jul 2019 19:29:27 +0900 (JST)
+        by kinkan.css.socionext.com (Postfix) with ESMTP id A2AF81A14E3;
+        Tue,  9 Jul 2019 19:29:31 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -35,35 +35,62 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 0/5] pinctrl: uniphier: Add some improvements and new settings
-Date:   Tue,  9 Jul 2019 19:29:11 +0900
-Message-Id: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: [PATCH 3/5] pinctrl: uniphier: Add 4th LD20 MPEG2-TS input pin-mux setting
+Date:   Tue,  9 Jul 2019 19:29:14 +0900
+Message-Id: <1562668156-12927-4-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series adds some improvements and new settings for pin-mux.
+The 4th serial TS interface uses the following pins:
+  hscin4_s: PCA[11-14]
 
-Kunihiko Hayashi (5):
-  pinctrl: uniphier: Separate modem group from UART ctsrts group
-  pinctrl: uniphier: Add another audio I/O pin-mux settings for LD20
-  pinctrl: uniphier: Add 4th LD20 MPEG2-TS input pin-mux setting
-  pinctrl: uniphier: Add Pro5 PCIe pin-mux settings
-  pinctrl: uniphier: Fix Pro5 SD pin-mux setting
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 20 +++++++++++++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 17 +++++++++++++----
- drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 10 +++++++---
- drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c | 10 +++++++---
- 9 files changed, 79 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index 2c66e70..2de601c 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -576,6 +576,8 @@ static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
+ static const int hscin2_s_muxvals[] = {3, 3, 3, 3};
+ static const unsigned hscin3_s_pins[] = {129, 130, 131, 132};
+ static const int hscin3_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin4_s_pins[] = {80, 81, 82, 83};
++static const int hscin4_s_muxvals[] = {3, 3, 3, 3};
+ static const unsigned hscout0_ci_pins[] = {113, 114, 115, 116, 117, 118, 119,
+ 					   120, 121, 122, 123};
+ static const int hscout0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+@@ -679,6 +681,7 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(hscin1_s),
+ 	UNIPHIER_PINCTRL_GROUP(hscin2_s),
+ 	UNIPHIER_PINCTRL_GROUP(hscin3_s),
++	UNIPHIER_PINCTRL_GROUP(hscin4_s),
+ 	UNIPHIER_PINCTRL_GROUP(hscout0_ci),
+ 	UNIPHIER_PINCTRL_GROUP(hscout0_p),
+ 	UNIPHIER_PINCTRL_GROUP(hscout0_s),
+@@ -722,6 +725,7 @@ static const char * const hscin0_groups[] = {"hscin0_ci",
+ static const char * const hscin1_groups[] = {"hscin1_p", "hscin1_s"};
+ static const char * const hscin2_groups[] = {"hscin2_s"};
+ static const char * const hscin3_groups[] = {"hscin3_s"};
++static const char * const hscin4_groups[] = {"hscin4_s"};
+ static const char * const hscout0_groups[] = {"hscout0_ci",
+ 					      "hscout0_p",
+ 					      "hscout0_s"};
+@@ -759,6 +763,7 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(hscin1),
+ 	UNIPHIER_PINMUX_FUNCTION(hscin2),
+ 	UNIPHIER_PINMUX_FUNCTION(hscin3),
++	UNIPHIER_PINMUX_FUNCTION(hscin4),
+ 	UNIPHIER_PINMUX_FUNCTION(hscout0),
+ 	UNIPHIER_PINMUX_FUNCTION(hscout1),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c0),
 -- 
 2.7.4
 
