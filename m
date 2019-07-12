@@ -2,170 +2,120 @@ Return-Path: <SRS0=aTw1=VJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB83AC742AE
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jul 2019 09:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1917FC742D2
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jul 2019 20:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8464020838
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jul 2019 09:27:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="X22GS1wk"
+	by mail.kernel.org (Postfix) with ESMTP id DEEB820989
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jul 2019 20:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfGLJ14 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Jul 2019 05:27:56 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34962 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfGLJ14 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jul 2019 05:27:56 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j19so8845134otq.2
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Jul 2019 02:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jYy0XP6ethrem4b19nt43P11ZiYCCwivtW53JRcikeE=;
-        b=X22GS1wk91UjPm6+zhjoIjTp6TANbMdrUt6PVMNOW9CW/5FPKoxIlUCGugAB+NRfRQ
-         monlxmvfGjdkXHE0ZXj5TSesu/oigagcXG+j6OYS3f9S8e/jIh/2BrFN70n632G8bJlr
-         ArRi2NabuE5PXCf2lJC1fyNzO3ZGV7RMpfSmQmT5SJv8S0yYl8b5duVEmdRMT9zOjLV6
-         MMlp4NQ2biV1cCjV+lAXpJShoHW000qTR2iSqk+SzD7uaPhNExUrMOch2dzqjkDkaiI0
-         Wi1yENBcScRkf2Hq1RIw7hwJWljm7CgJxis3HKB0cvCOtLD888T6G++Uniy7ZJtM3XzJ
-         hhIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jYy0XP6ethrem4b19nt43P11ZiYCCwivtW53JRcikeE=;
-        b=eBxsfVzXKhlYBd9f8Cb9H9pnJlG4Dtqz3I2OeEcKN5RKMT6QZHmGxC3FrJH8eG16GA
-         ztnfbMF1/gCQ21WkHewmHlDDqZgEUJ5ZqOqMe7GIglWym10eKVulD0hfefuIbxw3VOUM
-         VCHRfU5RLMH644osuBR0PBf04oQGNWY0+2h2XFRM6dtaXbGz+duqujCaD33XjQ9f7Vvh
-         wSXCKXUvyD94sfzASiKdGD5VAxts+oUZ2Prl9L0IiLd4nJ9GHJcme4T4FIQZl0rMKPaM
-         2g8lDgfG2RmVFuFgFASpnnL5Op1qWY3IGT8TpV8wWrkW46KgamFgaG6Woj5YkkzhlG92
-         ehKg==
-X-Gm-Message-State: APjAAAU7nuwpXs2ESQ9Y9esdjyEGGFMYjDSlc7G6PcIRk8fGpbvggryC
-        8H2mvM4wIYMXT5mhPC6meLybQmIgxIc6IA2xrBsMug==
-X-Google-Smtp-Source: APXvYqxmQFQAuZwu//RzFgfnJxLEi/izHgwx7Kkeq/oXPVKBHwaEP5wdAyHZxZ54Z6rZrZsRLEQzcJL5gRduQ6uOogU=
-X-Received: by 2002:a9d:7352:: with SMTP id l18mr2470502otk.292.1562923674988;
- Fri, 12 Jul 2019 02:27:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190705160536.12047-1-geert+renesas@glider.be>
- <CAMpxmJXOrDLdw6ZPBHxzsDRYiLmhRNCb-s_Z=Gu=Ecg1XA5ONQ@mail.gmail.com>
- <CAMuHMdWdb0dcS8Nvk-Poz2dT7nuHjFhqpsRPZZnSKsc3VffcRA@mail.gmail.com>
- <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com> <CAMuHMdUkF32+wOLkfd2BL4h-=0nZjPDMtVOpOcyDYzBbhWXteQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUkF32+wOLkfd2BL4h-=0nZjPDMtVOpOcyDYzBbhWXteQ@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 12 Jul 2019 11:27:43 +0200
-Message-ID: <CAMpxmJXCYeGjCu_PhCPffZQZ+ST9YCp27-PTHfL2SJ0Bh8SJFQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S1727487AbfGLUOF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Jul 2019 16:14:05 -0400
+Received: from atlmailgw1.ami.com ([63.147.10.40]:56173 "EHLO
+        atlmailgw1.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfGLUOF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jul 2019 16:14:05 -0400
+X-AuditID: ac1060b2-3fdff70000003a7d-24-5d28ea136749
+Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by atlmailgw1.ami.com (Symantec Messaging Gateway) with SMTP id F5.C9.14973.31AE82D5; Fri, 12 Jul 2019 16:14:11 -0400 (EDT)
+Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
+ atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 12 Jul 2019 16:14:03 -0400
+From:   Hongwei Zhang <hongweiz@ami.com>
+To:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        <devicetree@vger.kernel.org>
+CC:     Hongwei Zhang <hongweiz@ami.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH 2/3 v2] dt-bindings: gpio: aspeed: Add SGPIO support
+Date:   Fri, 12 Jul 2019 16:14:00 -0400
+Message-ID: <1562962440-15908-1-git-send-email-hongweiz@ami.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [172.16.98.93]
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsWyRiBhgq7wK41Yg6nnFSx2Xeaw+DL3FIvF
+        /CPnWC1+n//LbDHlz3Imi02Pr7FaNK8+x2yxef4fRovLu+awWSy9fpHJonXvEXYHbo+r7bvY
+        PdbMW8Po8f5GK7vHxY/HmD02repk87hzbQ+bx+Yl9R7nZyxk9Pi8SS6AM4rLJiU1J7MstUjf
+        LoErY9+ehUwF0wUqTn3eydzAOJu3i5GDQ0LARKJ9V0oXIxeHkMAuJonbr+6yQDiHGSWuv//O
+        3sXIycEmoCaxd/McJpCEiEAvo8TCr4vBHGaB1UwS7RuOg1UJC7hIrDjbywZiswioSnSduscC
+        YvMKOEj8/vcMrEZCQE7i5rlOZoi4oMTJmU/AapgFJCQOvngBFhcSkJW4degxE0S9gsTzvscs
+        Exj5ZiFpmYWkZQEj0ypGocSSnNzEzJz0ckO9xNxMveT83E2MkDDftIOx5aL5IUYmDsZDjBIc
+        zEoivKv+q8cK8aYkVlalFuXHF5XmpBYfYpTmYFES51255luMkEB6YklqdmpqQWoRTJaJg1Oq
+        gXHrH3H5dyUOYndeT792gKF/9TWfu/JlgYeeynnI3Y85Usbu+/belScZh3c/qHo/3/7V0+Yz
+        j6JvzazNPCyYoJQt2nG577PPld4XzYuFhApW35PqC5m+ib00fXuDtfr82ODzTw+W9XvZvf/v
+        /iLwx+r2r8VfFdf+bDk1c7K8xk7eexIfAoXeX7JUYinOSDTUYi4qTgQADUXdmGECAAA=
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 9 lip 2019 o 17:59 Geert Uytterhoeven <geert@linux-m68k.org> napisa=C5=
-=82(a):
->
-> Hi Bartosz,
->
-> On Tue, Jul 9, 2019 at 4:59 PM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
-> > pon., 8 lip 2019 o 12:24 Geert Uytterhoeven <geert@linux-m68k.org> napi=
-sa=C5=82(a):
-> > > On Mon, Jul 8, 2019 at 11:45 AM Bartosz Golaszewski
-> > > <bgolaszewski@baylibre.com> wrote:
-> > > > pt., 5 lip 2019 o 18:05 Geert Uytterhoeven <geert+renesas@glider.be=
-> napisa=C5=82(a):
-> > > > > GPIO controllers are exported to userspace using /dev/gpiochip*
-> > > > > character devices.  Access control to these devices is provided b=
-y
-> > > > > standard UNIX file system permissions, on an all-or-nothing basis=
-:
-> > > > > either a GPIO controller is accessible for a user, or it is not.
-> > > > > Currently no mechanism exists to control access to individual GPI=
-Os.
-> > > > >
-> > > > > Hence add a virtual GPIO driver to aggregate existing GPIOs (up t=
-o 32),
-> > > > > and expose them as a new gpiochip.  This is useful for implementi=
-ng
-> > > > > access control, and assigning a set of GPIOs to a specific user.
-> > > > > Furthermore, it would simplify and harden exporting GPIOs to a vi=
-rtual
-> > > > > machine, as the VM can just grab the full virtual GPIO controller=
-, and
-> > > > > no longer needs to care about which GPIOs to grab and which not,
-> > > > > reducing the attack surface.
-> > > > >
-> > > > > Virtual GPIO controllers are instantiated by writing to the "new_=
-device"
-> > > > > attribute file in sysfs:
-> > > > >
-> > > > >     $ echo "<gpiochipA> <gpioA1> [<gpioA2> ...]"
-> > > > >            "[, <gpiochipB> <gpioB1> [<gpioB2> ...]] ...]"
-> > > > >             > /sys/bus/platform/drivers/gpio-virt-agg/new_device
-> > > > >
-> > > > > Likewise, virtual GPIO controllers can be destroyed after use:
-> > > > >
-> > > > >     $ echo gpio-virt-agg.<N> \
-> > > > >             > /sys/bus/platform/drivers/gpio-virt-agg/delete_devi=
-ce
->
-> > Am I doing it right? I'm trying to create a device and am only getting =
-this:
-> >
-> > # echo gpiochip2 23 > new_device
-> > [  707.507039] gpio-virt-agg gpio-virt-agg.0: Cannot find gpiochip gpio=
-chip2
-> >
-> > gpiochip2 *does* exist in the system.
->
-> Please try the name of the platform device instead.
-> I.e. for my koelsch (R-Car M2-W), it needs "e6052000.gpio" instead
-> of "gpiochip2".
->
-> Probably the driver should match on both.
->
-> > I see. I'll try to review it more thoroughly once I get to play with
-> > it. So far I'm stuck on creating the virtual chip.
->
-> Thanks, good luck!
->
+Add bindings to support SGPIO on AST2400 or AST2500.
 
-This is not a show-stopper but one thing that's bothering me in this
-is that lines used by the aggregator are considered 'used' in regard
-to the original chip. I'm wondering how much effort would it take to
-have them be 'muxed' into two (real and virtual) chips at once.
+Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+---
+ .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
 
-Other than that - seems to works pretty nice other than the matching
-by chip name and by line names.
+diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
+new file mode 100755
+index 0000000..3ae2b79
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
+@@ -0,0 +1,43 @@
++Aspeed SGPIO controller Device Tree Bindings
++-------------------------------------------
++
++Required properties:
++- compatible		: Either "aspeed,ast2400-sgpio" or "aspeed,ast2500-sgpio"
++
++- #gpio-cells 		: Should be two
++			  - First cell is the GPIO line number
++			  - Second cell is used to specify optional
++			    parameters (unused)
++
++- reg			: Address and length of the register set for the device
++- gpio-controller	: Marks the device node as a GPIO controller.
++- interrupts		: Interrupt specifier (see interrupt bindings for
++			  details)
++
++- interrupt-controller	: Mark the GPIO controller as an interrupt-controller
++
++- nr-gpios		: number of GPIO pins to serialise. (should be multiple of 8, up to 80 pins)
++			  if not specified, defaults to 80.
++
++- clocks               : A phandle to the APB clock for SGPM clock division
++
++- bus-frequency	: SGPM CLK frequency, if not specified defaults to 1 MHz
++
++
++The sgpio and interrupt properties are further described in their respective bindings documentation:
++
++- Documentation/devicetree/bindings/sgpio/gpio.txt
++- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++
++  Example:
++	sgpio@1e780200 {
++		#gpio-cells = <2>;
++		compatible = "aspeed,ast2500-sgpio";
++		gpio-controller;
++		interrupts = <40>;
++		reg = <0x1e780200 0x0100>;
++		clocks = <&syscon ASPEED_CLK_APB>;
++		interrupt-controller;
++		nr-gpios = <80>;
++		bus-frequency = <1000000>;
++	};
+-- 
+2.7.4
 
-Bart
-
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
