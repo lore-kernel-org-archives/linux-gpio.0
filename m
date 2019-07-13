@@ -2,94 +2,68 @@ Return-Path: <SRS0=oD5X=VK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E26C31E40
-	for <linux-gpio@archiver.kernel.org>; Sat, 13 Jul 2019 15:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9174CC31E40
+	for <linux-gpio@archiver.kernel.org>; Sat, 13 Jul 2019 22:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5511920838
-	for <linux-gpio@archiver.kernel.org>; Sat, 13 Jul 2019 15:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F92D2084B
+	for <linux-gpio@archiver.kernel.org>; Sat, 13 Jul 2019 22:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1563058223;
+	bh=n/2RX+EYpOi6Mx2SSQGjaIEylLShIe8jstvRAdZhf6w=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=twHT5Ow/26OphbeebiEIPf5+L1IEIUXaRisiIMkpCNl9ctQt5Xw34i+IRpCkpiDLI
+	 CKulSHgSgtKNdVl2PVMfBC6fxiMg7lnDi9tdQ6x+LKb9UdbrhnUEJ3U/bOyAOqYmyY
+	 VCpKaAm8rfqt7dlOh/HReFT/W8pxGGLfIw5gkd3s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfGMPfC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 13 Jul 2019 11:35:02 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46960 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727711AbfGMPfC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 Jul 2019 11:35:02 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h21so11326583qtn.13;
-        Sat, 13 Jul 2019 08:35:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/VYOF52fJvexeKbOu9BKHZH1XPWQ9fg20nK1W0PVBPU=;
-        b=N6ZDCY84nmzm9o9fc7+bE+lRW3ZudNjOdihqZm35ZDybQ2EK7Uw+a5GsYJII3bHlrU
-         EsfdA3RToVDtZqZbfMEcpsSVGZGv3CFPjk5YjDp13LsuKbz9eemIVTH6NKm4i8kmKHPZ
-         aLrdI0Pnl71pTcafFbqwq+CpgyDNsglyHeIoPkfhPWe8QVxQwc1XXvC4fc/aUJcfQ7we
-         mIWm0vTPRSfRxvCOtxr+MlZUmokd8d48ZeY9KeN74APgzxN38aNcVdFAYeY8ANyj/V/F
-         wO2RLlZIzC499COdaI9tI+cLPuTOsZ3ZR/q/ejSog28ZoUGuPfvy/EADynjoElSFbeEG
-         iOfA==
-X-Gm-Message-State: APjAAAVONo95XOuRy1gfwTtFQVEPStdc49UQMkHJQWFN0KwKpVxjKHXY
-        v7KzCqCvVOORi14AwRJmfGgnW6xn4HyY/b9lJ44=
-X-Google-Smtp-Source: APXvYqx27JWKTE5WBop/U7bMtyQP/Kzr2bIFkryE+f5lOFq7JP5QSUbQfKs8QOW9ZjZHS4O4f+3uLloLQ3C7fGXHhRU=
-X-Received: by 2002:a0c:b88e:: with SMTP id y14mr11211808qvf.93.1563032100815;
- Sat, 13 Jul 2019 08:35:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190712085437.4007720-1-arnd@arndb.de> <fb36b507-e637-e4d9-fdd4-2947eb7faf14@metux.net>
-In-Reply-To: <fb36b507-e637-e4d9-fdd4-2947eb7faf14@metux.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 13 Jul 2019 17:34:44 +0200
-Message-ID: <CAK8P3a3SPpQAbXu5+rHjEaF-MSVxVmG9sWy9hxu844HKn8JgLg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: pcengines-apu2 needs gpiolib
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728483AbfGMWuQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 13 Jul 2019 18:50:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728026AbfGMWuO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 13 Jul 2019 18:50:14 -0400
+Subject: Re: [GIT PULL] Pin control bulk changes for v5.3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563058214;
+        bh=n/2RX+EYpOi6Mx2SSQGjaIEylLShIe8jstvRAdZhf6w=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=gQ6qXeEXtQUj7ZagxJcMZRlQIlUoQ6eldDB2yHmOhC1HFfWr/6ns58Iq8HkKvzavD
+         Dk+T56oTKgjhCOIdfVVu4phCKzeuQFKoJkStBqp0liJcjkjHmfOVHmZAZ6aCCJ2JJn
+         clWDV2xVb0rMWB2ikjgQArj2tsagvLvzC7MXF5Wk=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdaaO14KOdsPBqjyx+78ohdGJ9Z0YrF+GcG7-geO1w1R8A@mail.gmail.com>
+References: <CACRpkdaaO14KOdsPBqjyx+78ohdGJ9Z0YrF+GcG7-geO1w1R8A@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdaaO14KOdsPBqjyx+78ohdGJ9Z0YrF+GcG7-geO1w1R8A@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ tags/pinctrl-v5.3-1
+X-PR-Tracked-Commit-Id: 4c105769bf6de29856bf80a4045e6725301c58ce
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 43c95d3694cc448fdf50bd53b7ff3a5bb4655883
+Message-Id: <156305821404.12932.9253627724064501407.pr-tracker-bot@kernel.org>
+Date:   Sat, 13 Jul 2019 22:50:14 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 4:36 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
-> On 12.07.19 10:54, Arnd Bergmann wrote:
-> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> > index e869a5c760b6..cf48b9068843 100644
-> > --- a/drivers/platform/x86/Kconfig
-> > +++ b/drivers/platform/x86/Kconfig
-> > @@ -1324,8 +1324,8 @@ config PCENGINES_APU2
-> >       tristate "PC Engines APUv2/3 front button and LEDs driver"
-> >       depends on INPUT && INPUT_KEYBOARD
-> >       depends on LEDS_CLASS
-> > -     select GPIO_AMD_FCH
-> > -     select KEYBOARD_GPIO_POLLED
-> > +     select GPIO_AMD_FCH if GPIOLIB
-> > +     select KEYBOARD_GPIO_POLLED if GPIOLIB
-> >       select LEDS_GPIO
-> >       help
-> >         This driver provides support for the front button and LEDs on
->
-> That might compile but the driver won't work, if KEYBOARD_GPIO_POLLED
-> or GPIO_AMD_FCH isn't there.
+The pull request you sent on Fri, 12 Jul 2019 11:10:34 +0200:
 
-Right, I agree it's a bit inconsistent. A better way would probably
-be to turn all of the 'select' statements into 'depends on' here, or
-possibly just remove them and document in the help text what others
-are required.
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.3-1
 
-Generally using 'select' in order to save users from thinking causes
-more problems than it helps, as the build problems in this driver
-have already illustrated.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/43c95d3694cc448fdf50bd53b7ff3a5bb4655883
 
-      Arnd
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
