@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511BEC7618F
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C459EC7618F
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B33B21851
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:27:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D8E321530
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563200854;
-	bh=vQchrjEMQsmWJx/HONoUfde2+hN/g83S5iGj7XJsXPQ=;
+	s=default; t=1563201281;
+	bh=0HI/V71hEnscoGS3lqK8HGVqlM0rDLB1SZ29c9PcMLE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wbl3Dr7xPgDU+Ho4QNhXZhTodu/hHxbmgCPPrlf0SJJrNT+xbQCK+nAZX8go+W47W
-	 +G1nlQNViYZ3I3iInvxPrRqkvvK/KmXfPXZq2DyFFr3w/KCi9K4WjSWBaj76MsIlfn
-	 5p4Jl0kSfJnO9qZLRPYKj4S/TCj2btj1zwzaNFNQ=
+	b=CQgryQ6VIr5sbBKga0tN85xVKFwnFfwuqAXG5NI9gX1mLixF43xRK6Qij3DORbq6m
+	 lawqnvSn9PPwOUI8sol+NaDcXOhC61x0JffI9pKDM7K0qVnOv7/OzM2FXBQUa83dXW
+	 gKBhM7qIapO7p8ashg/DqStddU/5fcVWyPyNobC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbfGOO1a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:27:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36734 "EHLO mail.kernel.org"
+        id S2404130AbfGOOel (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jul 2019 10:34:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390351AbfGOO13 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:27:29 -0400
+        id S2403991AbfGOOel (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:34:41 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C88B21842;
-        Mon, 15 Jul 2019 14:27:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D9FC206B8;
+        Mon, 15 Jul 2019 14:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200848;
-        bh=vQchrjEMQsmWJx/HONoUfde2+hN/g83S5iGj7XJsXPQ=;
+        s=default; t=1563201279;
+        bh=0HI/V71hEnscoGS3lqK8HGVqlM0rDLB1SZ29c9PcMLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O8zHQ4kWSFXGKKXHaWdXEprlf4VU3ZpQXpD9RXdKvKYrJ1VIu6WvotQnKjyYxNcZA
-         0Mi4cHnKVG5mv+GpJWwjBljO5TFxzebe90oZ2Hx8phyGGqK7gNhhyk0g2SPqN4fEOR
-         S+vIdAFRXuyKqWi1d1BeMw+VvralY1RFwl5/n5V8=
+        b=okpyJpq/RTRrbvlnIs3LWIZIMnZaYsUt+bXIH3pnVGEVYWUVOpTp+E6r5DHtVlPTU
+         nfvNSOGt5m0i5UuXsTcNYI6qo5TT9n6NrtJ1eEts7sE2BIBkniJ6dLc44sxrOY6jRo
+         5qSuD3DWodoCo7js+t/twZjPtw4skO7WQfo+/z2g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 144/158] gpiolib: Fix references to gpiod_[gs]et_*value_cansleep() variants
-Date:   Mon, 15 Jul 2019 10:17:55 -0400
-Message-Id: <20190715141809.8445-144-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 095/105] gpiolib: Fix references to gpiod_[gs]et_*value_cansleep() variants
+Date:   Mon, 15 Jul 2019 10:28:29 -0400
+Message-Id: <20190715142839.9896-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
-References: <20190715141809.8445-1-sashal@kernel.org>
+In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
+References: <20190715142839.9896-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -76,23 +76,23 @@ Link: https://lore.kernel.org/r/20190701142738.25219-1-geert+renesas@glider.be
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index fd713326dcfc..4a48c7c47709 100644
+index 21062cb6b85f..3db0a9b0d259 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2877,7 +2877,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+@@ -2480,7 +2480,7 @@ static int _gpiod_get_raw_value(const struct gpio_desc *desc)
  int gpiod_get_raw_value(const struct gpio_desc *desc)
  {
  	VALIDATE_DESC(desc);
 -	/* Should be using gpio_get_value_cansleep() */
 +	/* Should be using gpiod_get_raw_value_cansleep() */
  	WARN_ON(desc->gdev->chip->can_sleep);
- 	return gpiod_get_raw_value_commit(desc);
+ 	return _gpiod_get_raw_value(desc);
  }
-@@ -2898,7 +2898,7 @@ int gpiod_get_value(const struct gpio_desc *desc)
+@@ -2501,7 +2501,7 @@ int gpiod_get_value(const struct gpio_desc *desc)
  	int value;
  
  	VALIDATE_DESC(desc);
@@ -100,23 +100,15 @@ index fd713326dcfc..4a48c7c47709 100644
 +	/* Should be using gpiod_get_value_cansleep() */
  	WARN_ON(desc->gdev->chip->can_sleep);
  
- 	value = gpiod_get_raw_value_commit(desc);
-@@ -3123,7 +3123,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 	value = _gpiod_get_raw_value(desc);
+@@ -2670,7 +2670,7 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
  void gpiod_set_raw_value(struct gpio_desc *desc, int value)
  {
  	VALIDATE_DESC_VOID(desc);
 -	/* Should be using gpiod_set_value_cansleep() */
 +	/* Should be using gpiod_set_raw_value_cansleep() */
  	WARN_ON(desc->gdev->chip->can_sleep);
- 	gpiod_set_raw_value_commit(desc, value);
- }
-@@ -3164,6 +3164,7 @@ static void gpiod_set_value_nocheck(struct gpio_desc *desc, int value)
- void gpiod_set_value(struct gpio_desc *desc, int value)
- {
- 	VALIDATE_DESC_VOID(desc);
-+	/* Should be using gpiod_set_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
- 	gpiod_set_value_nocheck(desc, value);
+ 	_gpiod_set_raw_value(desc, value);
  }
 -- 
 2.20.1
