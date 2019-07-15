@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB2C76195
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591FBC76191
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B50BA20861
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3271B20651
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563201801;
-	bh=8LJGaQcquEdVsFoeWyXpkqumTYbSPSrrFcy3rBx4mx8=;
+	s=default; t=1563201804;
+	bh=mynSzExel/lLIRLTUxiJvLSolLoXNFNTrd1QzisdISE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g2rQZ4FM5ns9nYG0bSNcL2Kqf/znBCr8RC9ADA3aj5Knpi4FTGS91p8OHQdr13RMW
-	 zI99VEQosOFjWgeAtW8PmAvGsvaYVsVWPN8BN2BKmAmuhfydMbZOtQW9zRAJmKRBia
-	 cLjYqLY5vFkiCw6m27JWl0cq9HYK4IqfV8SYwpqc=
+	b=n6Mt0FUSCAk285EPGdhbI+d+8U8uvyTv9+xyEW7ake3AoWr4Opdgt0GzvRkuUkqP5
+	 o8Y6ziv81dC7D4328CdFGAX3nd9uKAr9WP1PwU1jC6azeO5MPDW9Ua6LhWJtu9lKEd
+	 5OknFqmre80/uBsyd+KrDH6NMTjqBuI2leyX7sUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392189AbfGOOis (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:38:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37438 "EHLO mail.kernel.org"
+        id S1730998AbfGOOio (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jul 2019 10:38:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392182AbfGOOis (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:38:48 -0400
+        id S2391945AbfGOOio (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:38:44 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31ECE20651;
-        Mon, 15 Jul 2019 14:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBDC2205ED;
+        Mon, 15 Jul 2019 14:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201527;
-        bh=8LJGaQcquEdVsFoeWyXpkqumTYbSPSrrFcy3rBx4mx8=;
+        s=default; t=1563201523;
+        bh=mynSzExel/lLIRLTUxiJvLSolLoXNFNTrd1QzisdISE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FfclDnrT7H+YsmFsABJBWVTAW73vgNEqC+BQFsmwl0e/kvgihDJBTIFd01Ogttynj
-         TgzPZDDybF9++dcCtC19iEAlOWCu70A9xI6M5Eh0rSSD9CWe4cJwiX9hryNjnzFMxw
-         yRXFn/1OttDrzChsFtrZebm5sWufPk+xqitxPKzw=
+        b=kOc+8wc/eV4fYLm4CiE4T3t5xfTVIMDt181FVBTt3L3whzU0bvbwiMFmi7pZZUKsR
+         WlAuWIIlC9wjfOVB1oKIWuOgrHstnHtWDwXaeSYNo/lr1RHOIBrPstegmcVrDjCtpO
+         1i8rKD32LmkGV04vtDtgt54KcmQnDvwVwlqqwvHA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
@@ -46,9 +46,9 @@ Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 34/73] gpio: omap: ensure irq is enabled before wakeup
-Date:   Mon, 15 Jul 2019 10:35:50 -0400
-Message-Id: <20190715143629.10893-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 33/73] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
+Date:   Mon, 15 Jul 2019 10:35:49 -0400
+Message-Id: <20190715143629.10893-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715143629.10893-1-sashal@kernel.org>
 References: <20190715143629.10893-1-sashal@kernel.org>
@@ -63,83 +63,41 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit c859e0d479b3b4f6132fc12637c51e01492f31f6 ]
+[ Upstream commit 64ea3e9094a1f13b96c33244a3fb3a0f45690bd2 ]
 
-Documentation states:
+Commit 384ebe1c2849 ("gpio/omap: Add DT support to GPIO driver") added
+the register definition tables to the gpio-omap driver. Subsequently to
+that commit, commit 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx()
+checks from *_runtime_resume()") added definitions for irqstatus_raw*
+registers to the legacy OMAP4 definitions, but missed the DT
+definitions.
 
-  NOTE: There must be a correlation between the wake-up enable and
-  interrupt-enable registers. If a GPIO pin has a wake-up configured
-  on it, it must also have the corresponding interrupt enabled (on
-  one of the two interrupt lines).
+This causes an unintentional change of behaviour for the 1.101 errata
+workaround on OMAP4 platforms. Fix this oversight.
 
-Ensure that this condition is always satisfied by enabling the detection
-events after enabling the interrupt, and disabling the detection before
-disabling the interrupt.  This ensures interrupt/wakeup events can not
-happen until both the wakeup and interrupt enables correlate.
-
-If we do any clearing, clear between the interrupt enable/disable and
-trigger setting.
-
+Fixes: 4e962e8998cc ("gpio/omap: remove cpu_is_omapxxxx() checks from *_runtime_resume()")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Tested-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-omap.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-omap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index bd12b433f964..fc841ce24db7 100644
+index 038882183bdf..bd12b433f964 100644
 --- a/drivers/gpio/gpio-omap.c
 +++ b/drivers/gpio/gpio-omap.c
-@@ -786,9 +786,9 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
- 
- 	raw_spin_lock_irqsave(&bank->lock, flags);
- 	bank->irq_usage &= ~(BIT(offset));
--	omap_set_gpio_irqenable(bank, offset, 0);
--	omap_clear_gpio_irqstatus(bank, offset);
- 	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
-+	omap_clear_gpio_irqstatus(bank, offset);
-+	omap_set_gpio_irqenable(bank, offset, 0);
- 	if (!LINE_USED(bank->mod_usage, offset))
- 		omap_clear_gpio_debounce(bank, offset);
- 	omap_disable_gpio_module(bank, offset);
-@@ -830,8 +830,8 @@ static void omap_gpio_mask_irq(struct irq_data *d)
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&bank->lock, flags);
--	omap_set_gpio_irqenable(bank, offset, 0);
- 	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
-+	omap_set_gpio_irqenable(bank, offset, 0);
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
-@@ -843,9 +843,6 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&bank->lock, flags);
--	if (trigger)
--		omap_set_gpio_triggering(bank, offset, trigger);
--
- 	omap_set_gpio_irqenable(bank, offset, 1);
- 
- 	/*
-@@ -853,9 +850,13 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	 * is cleared, thus after the handler has run. OMAP4 needs this done
- 	 * after enabing the interrupt to clear the wakeup status.
- 	 */
--	if (bank->level_mask & BIT(offset))
-+	if (bank->regs->leveldetect0 && bank->regs->wkup_en &&
-+	    trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
- 		omap_clear_gpio_irqstatus(bank, offset);
- 
-+	if (trigger)
-+		omap_set_gpio_triggering(bank, offset, trigger);
-+
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
+@@ -1585,6 +1585,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
+ 	.clr_dataout =		OMAP4_GPIO_CLEARDATAOUT,
+ 	.irqstatus =		OMAP4_GPIO_IRQSTATUS0,
+ 	.irqstatus2 =		OMAP4_GPIO_IRQSTATUS1,
++	.irqstatus_raw0 =	OMAP4_GPIO_IRQSTATUSRAW0,
++	.irqstatus_raw1 =	OMAP4_GPIO_IRQSTATUSRAW1,
+ 	.irqenable =		OMAP4_GPIO_IRQSTATUSSET0,
+ 	.irqenable2 =		OMAP4_GPIO_IRQSTATUSSET1,
+ 	.set_irqenable =	OMAP4_GPIO_IRQSTATUSSET0,
 -- 
 2.20.1
 
