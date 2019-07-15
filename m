@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22131C76191
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D564CC76195
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50962067C
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A41252067C
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jul 2019 14:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563202203;
-	bh=e8Fe9t3zyOgzmgKzPaJgfNh0vVRTM1k/Qcqi8GklCYo=;
+	s=default; t=1563202324;
+	bh=zOhher1t8UjSg3FVe0YNUJV5nl5oI8SJMpyi7hQU/zg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MVC+y0jblMQWwG5gFQFFgjCsjQWTtnPJD/nWPq003Zn3uZMMgfVFrMF6A6MFj38iz
-	 8Hk7sRozn1FjdzSn7P7d97dM5eOlNhnRLe62nBq/ZBwJWpYtoOXaOha2ubc6ApBSiT
-	 PwtjMVQNrzi2GnXYIJa8tZMyjleMpfmRrSrwOboA=
+	b=qsKeOgETXaTZCGfb2xa863irzTenNrB42NJpcjp/G/CkPq+p5wHiJu31RLHwjWK4c
+	 2//8GFN+6PI6Ywu9gUqHp7taI7LK90qJ+wDjGitshi6WSV1nJVU5diK7HeBHLB28nc
+	 oFb6JmPnA4P0IF5EVc/+UTH7MDIWl6P42cAswO5U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391854AbfGOOrN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:47:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41240 "EHLO mail.kernel.org"
+        id S2391476AbfGOObW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jul 2019 10:31:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387393AbfGOOrL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:47:11 -0400
+        id S2390959AbfGOObQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:31:16 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1815321537;
-        Mon, 15 Jul 2019 14:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8188520C01;
+        Mon, 15 Jul 2019 14:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563202030;
-        bh=e8Fe9t3zyOgzmgKzPaJgfNh0vVRTM1k/Qcqi8GklCYo=;
+        s=default; t=1563201076;
+        bh=zOhher1t8UjSg3FVe0YNUJV5nl5oI8SJMpyi7hQU/zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eT7rdsYwpuC1ZWYelYZ+8y08uoa0BnQeKsYj4S+Y8SHSa/RDI86fmwFnFgkejNsRG
-         bwL5NCDWHmqkh67qR5bRhUdrXlNkwVEs0BkQlDPP+KeRwyYT5sMZFp+6FQNkLRMxGP
-         8asUSJEcKtn97U7L/urGsOtB4QYKWd/OrqNcTIRs=
+        b=ZXt52aEHMg1rdCHIikwQHvJMG7YjMAQPytq8AEpdcicKCvXYVnL2Q48IEMtcfXWRm
+         /7o77VDS00a8MuKjBoKoJISXmbPmgiIX5dK6kEESLjOLJnZGv891N5a2xgLtka1UDj
+         Ln0i3rB6cFZYspVzWTgnhmGtW2wCtRLRPV55Lwb8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
@@ -46,12 +46,12 @@ Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 26/53] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
-Date:   Mon, 15 Jul 2019 10:45:08 -0400
-Message-Id: <20190715144535.11636-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 044/105] gpio: omap: fix lack of irqstatus_raw0 for OMAP4
+Date:   Mon, 15 Jul 2019 10:27:38 -0400
+Message-Id: <20190715142839.9896-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715144535.11636-1-sashal@kernel.org>
-References: <20190715144535.11636-1-sashal@kernel.org>
+In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
+References: <20190715142839.9896-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -86,10 +86,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index c8c49b1d5f9f..f23136825a6e 100644
+index 83c6843db50c..abe54659b1f4 100644
 --- a/drivers/gpio/gpio-omap.c
 +++ b/drivers/gpio/gpio-omap.c
-@@ -1611,6 +1611,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
+@@ -1604,6 +1604,8 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
  	.clr_dataout =		OMAP4_GPIO_CLEARDATAOUT,
  	.irqstatus =		OMAP4_GPIO_IRQSTATUS0,
  	.irqstatus2 =		OMAP4_GPIO_IRQSTATUS1,
