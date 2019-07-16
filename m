@@ -2,86 +2,79 @@ Return-Path: <SRS0=JkP7=VN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CF2C76188
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jul 2019 08:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEE9C76195
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jul 2019 08:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8394320659
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jul 2019 08:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E65E206C2
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jul 2019 08:56:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NYWBxxtk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbfGPIal (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jul 2019 04:30:41 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:49233 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfGPIal (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jul 2019 04:30:41 -0400
-Received: from localhost (91-163-65-175.subs.proxad.net [91.163.65.175])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id C1EAD240005;
-        Tue, 16 Jul 2019 08:28:21 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 10:28:21 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mark Brown <broonie@kernel.org>, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Ensure child nodes are of type 'object'
-Message-ID: <20190716082821.eafjvqfczxahx4as@flea>
-References: <20190715230457.3901-1-robh@kernel.org>
+        id S1731706AbfGPI4y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jul 2019 04:56:54 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39354 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727042AbfGPI4y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jul 2019 04:56:54 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v18so19104454ljh.6
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jul 2019 01:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=InUWrv7LAkQKvZ+McQ69NdIMdHUt9wQBtSn0Ql2S6b4=;
+        b=NYWBxxtkEarHHKN4dpAk9Z3o+e7dlOaIFbYRjCgVyDUXE5/Q7hCWk37cEjSrv+kDaI
+         v7yHpJDZmf/3oYGlbX117KQzLJ4umJQ5+OjX6dw31RpDF48K6L5OswFhXCK2/NpCeonR
+         jNNqGULBmAFVTWgakUEu4ZcLpiMAjEecaPzDROkawKgKwYej+eNtIu6Sj0yns/uOU40q
+         TQ/2gC66WBgRApLvY2Qn8suKx1B64NI8JQeg/SyQBB+mBkNPYCOO26gNFyyVaq5smfTc
+         2mZLXc/xf0XXa5oYidiHELyQSWN/3pnZoGg9/bVf2tLlzPOewh0d4cEHHMqWpOZfR0CT
+         F65A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=InUWrv7LAkQKvZ+McQ69NdIMdHUt9wQBtSn0Ql2S6b4=;
+        b=Cx/V56keflU1z1GSkLsJRJxoZHbQjQDSXnmJU1G0npbUXdhoFUIPe3qfYqR00+b2wH
+         y1jlJlDPLgDSltYkLyXBzjs9e0E91tFrJtwi2fmNy/8A26qDj+AlUoefMwPCGWkZwok5
+         iTiw6SSmxLYuFYnrfF0k8xpr1+mbreiXY8us20Acv9YzqzcFNqPkodXIDCMiyEK2cx39
+         mvYpHpnPfmZjjRJNWIRPGj/G0/0HXw8EHU88Mnb6g4vG5w0j02DRls43rSAzPaTpW+BY
+         DUsKmyCiondpcTpgOCo5mHdxoFXI895mGPh8zDnOpr4//3ayrras3o4pssRXfaHfOZVT
+         9oqg==
+X-Gm-Message-State: APjAAAWQdg2xIhWFx4kwolhnHRrdkMnO15siQgq6d40C3QtnChbv8ZWo
+        D7Ckp7g5C+MKDTqfSbbrGxUoAHzs5JwGFHzXGJ3jrw==
+X-Google-Smtp-Source: APXvYqz0/LleO9xJcnbDEQsKjfgEBzAose29BV4VVCT9BK/mzxrXWaVnDmJyWLu7V7p65vgCAaGIQkI8PUIsBxalh2E=
+X-Received: by 2002:a2e:781a:: with SMTP id t26mr16865993ljc.28.1563267411846;
+ Tue, 16 Jul 2019 01:56:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715230457.3901-1-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <20190715204529.9539-1-linus.walleij@linaro.org> <20190716012712.BC9F22173C@mail.kernel.org>
+In-Reply-To: <20190716012712.BC9F22173C@mail.kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Jul 2019 10:56:40 +0200
+Message-ID: <CACRpkdaLQzax2XPJ4j1a9gNw3r=ZizVSgsbLFGAycCLd2TzD0g@mail.gmail.com>
+Subject: Re: [PATCH] Revert "gpio/spi: Fix spi-gpio regression on active high CS"
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 05:04:57PM -0600, Rob Herring wrote:
-> Properties which are child node definitions need to have an explict
-> type. Otherwise, a matching (DT) property can silently match when an
-> error is desired. Fix this up tree-wide. Once this is fixed, the
-> meta-schema will enforce this on any child node definitions.
->
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-spi@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Tue, Jul 16, 2019 at 3:27 AM Sasha Levin <sashal@kernel.org> wrote:
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> v5.2.1: Build OK!
+> v5.1.18: Failed to apply! Possible dependencies:
+(...)
+> How should we proceed with this patch?
+
+Only apply it to 5.2.y once upstream.
 
 Thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Linus Walleij
