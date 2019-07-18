@@ -2,181 +2,98 @@ Return-Path: <SRS0=Xulj=VP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D96C7618F
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jul 2019 01:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370B4C76191
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jul 2019 06:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D562B2173E
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jul 2019 01:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C2622173E
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jul 2019 06:51:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="mRG+7PMf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tm7whVMv"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BQUMM2Pq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732404AbfGRBs1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jul 2019 21:48:27 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:51231 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727804AbfGRBs1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:48:27 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BD7FF2942;
-        Wed, 17 Jul 2019 21:48:23 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 17 Jul 2019 21:48:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=FDtAha3aM/d7uySbVX6vDZnPDLMPpkQ
-        a4d+2z+nDkSw=; b=mRG+7PMfIT+vCcwHo0gdhqnL4lMvsLsNLq65jw6Q6pbUTb+
-        u12le5/HXSk6FLw+pspOYBp1nMpPWdPTAbrZAlZJ33yuY6b/fOefBwjxmNI+rRrJ
-        mCVY8EwTXBbXobAdtB3iZpA24y4QME3ApQmhBfeoxP9UnEU1NYWy4htADuvr36rG
-        wxZB6oE+ZwE1m+wZgcosCwaVyD2mloWWZYWNn84djblf1bjJEIGgYxE6qeXj1K6U
-        4xr9HAG1zLUj+BQ78R6dNfOzkJTyndSpu0v7t/ui8C2EkttkNDeVD/8GUVWIVW4n
-        m3Sn4R9ZIEo+GAESQEWqxVxWSMEDJhECIxfDAVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=FDtAha
-        3aM/d7uySbVX6vDZnPDLMPpkQa4d+2z+nDkSw=; b=Tm7whVMvkVnMhjx7wSeVwg
-        NmZLxtcINIEt+TvTc/Yse+AWv58Qzg3bgV3Gc8ywxNu8LX1jp/o10XnPnep+AFy1
-        vKFIxhemFb71uNunnPEb0vwBvd+J2M5rLa8o/RitCYq/6T2iDLYx2Ylj7NvPDaxP
-        5OXdQbAR3xZ2aXilTUO5rYs1OPF0mKXYqnyJkZy+eF+r1K39hdbYV3+PSM6JbpYA
-        uwnKpO226esrlEdVzWjMFaUKqBavVXGwBKZaULu4+QkR5IW5xnyA0+4DExKfaT6i
-        jZC1fBjnUTei0jhzgZkxkKDmB/PuR5A7D6bE/GLIL/T2LnRyWLR6iO5/nDaIMyHg
-        ==
-X-ME-Sender: <xms:5s8vXdK5zURUKobPB6VxEAlu0IO77MFnRoBvJDSRFxvuy4KwhM_toA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrieeggdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucffohhmrg
-    hinhepkhgvrhhnvghlrdhorhhgnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgv
-    fiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:5s8vXXy-0vpsWkOw3eYGa4hc7Kadwe8o2-UgtEwHV5-C27O5PUAkeQ>
-    <xmx:5s8vXVUS6Ynnx8mqEFsgnwx9FHrmzA7EERgzZFwqM77hVDGdUFS19g>
-    <xmx:5s8vXUmNmjvoKr2WmhBxnuhYxOKOfxp5qLTBwNeuy3OfPHnu1zrEYA>
-    <xmx:588vXTm4qUFyCosHKHr7T6nADc1lutgBpHEG2TgZbddTwYeDiB2LGw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 470C0E03EA; Wed, 17 Jul 2019 21:48:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-731-g19d3b16-fmstable-20190627v1
-Mime-Version: 1.0
-Message-Id: <f1a91695-e02b-4ec4-9bf4-0bd97ac2ffc4@www.fastmail.com>
-In-Reply-To: <1563394325-15941-1-git-send-email-hongweiz@ami.com>
-References: <1563394325-15941-1-git-send-email-hongweiz@ami.com>
-Date:   Thu, 18 Jul 2019 11:18:29 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Hongwei Zhang" <hongweiz@ami.com>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org
-Cc:     "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/3 v4] dt-bindings: gpio: aspeed: Add SGPIO support
-Content-Type: text/plain
+        id S1726423AbfGRGvp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 Jul 2019 02:51:45 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:36276 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfGRGvp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jul 2019 02:51:45 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x6I6p9ST017611;
+        Thu, 18 Jul 2019 15:51:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x6I6p9ST017611
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563432670;
+        bh=ZhDfduBxSN7i25VRGia8YNv8px3x7GeUSF1hPbqj3LU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BQUMM2PqBjQldXgRks4B2tHXeL+fCcUba6f9gjeYYXVgbhLUkboZ4cPmrsDhO8ziF
+         +oMFxoX3052q3b4eS03q7yLzplHv8JHGBfzg81gUfb40uff4unZXHwApfakjniUph2
+         uM5HrDTa4OGwkX5NaOxpUYd9e1dwBhh+QHr+V2/Q7fQ2osiYA2Ouj1H5Gr+w0ME9Fc
+         5gQbyEMJNAiPjrfIOnRo1KSNmlBB7o1d3Af438PZZUt667PYZCde8HDZ2ORvy4ySGa
+         ORNgsvgH6E6rrhgYvG6/k73fnAobar9HMbMxzlXnCkLs2YdUvNpqOyWhSt9WMgt/H4
+         NRC6oGRR0FZVg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: refactor gpiochip_allocate_mask() with bitmap_alloc()
+Date:   Thu, 18 Jul 2019 15:51:01 +0900
+Message-Id: <20190718065101.26994-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The subject is largely correct, but please see the discussion on the driver patch
-about how to clean up the [PATCH ...] prefix.
+Refactor gpiochip_allocate_mask() slightly by using bitmap_alloc().
 
-On Thu, 18 Jul 2019, at 05:42, Hongwei Zhang wrote:
-> Add bindings to support SGPIO on AST2400 or AST2500.
-> 
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> ---
->  .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 55 ++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt 
-> b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> new file mode 100644
-> index 0000000..2d6305e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> @@ -0,0 +1,55 @@
-> +Aspeed SGPIO controller Device Tree Bindings
-> +-------------------------------------------
-> +
-> +This SGPIO controller is for ASPEED AST2500 SoC, it supports up to 80 
-> full 
-> +featured Serial GPIOs. Each of the Serial GPIO pins can be programmed 
-> to 
-> +support the following options:
-> +- Support interrupt option for each input port and various interrupt 
-> +  sensitivity option (level-high, level-low, edge-high, edge-low)
-> +- Support reset tolerance option for each output port
-> +- Directly connected to APB bus and its shift clock is from APB bus 
-> clock
-> +  divided by a programmable value.
-> +- Co-work with external signal-chained TTL components (74LV165/74LV595)
-> +
-> +
-> +Required properties:
-> +
-> +- compatible		: Either "aspeed,ast2400-sgpio" or "aspeed,ast2500-sgpio"
-> +
-> +- #gpio-cells 		: Should be two
-> +			  - First cell is the GPIO line number
-> +			  - Second cell is used to specify optional
-> +			    parameters (unused)
-> +
-> +- reg			: Address and length of the register set for the device
-> +- gpio-controller	: Marks the device node as a GPIO controller
-> +- interrupts		: Interrupt specifier (see interrupt bindings for
-> +			  details)
-> +
-> +- interrupt-controller	: Mark the GPIO controller as an 
-> interrupt-controller
-> +
-> +- nr-gpios		: number of GPIO pins to serialise. 
-> +			  (should be multiple of 8, up to 80 pins)
+I used bitmap_free() for the corresponding free parts. Actually,
+bitmap_free() is a wrapper of kfree(), but I did this for consistency.
 
-Please change the property name to "ngpios", as per the generic GPIO
-bindings[1].
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/gpio/gpio.txt?h=v5.2#n141
+ drivers/gpio/gpiolib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Cheers,
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 3ee99d070608..5ac2daa01a53 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -350,7 +350,7 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
+ {
+ 	unsigned long *p;
+ 
+-	p = kmalloc_array(BITS_TO_LONGS(chip->ngpio), sizeof(*p), GFP_KERNEL);
++	p = bitmap_alloc(chip->ngpio, GFP_KERNEL);
+ 	if (!p)
+ 		return NULL;
+ 
+@@ -391,7 +391,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
+ 
+ static void gpiochip_free_valid_mask(struct gpio_chip *gpiochip)
+ {
+-	kfree(gpiochip->valid_mask);
++	bitmap_free(gpiochip->valid_mask);
+ 	gpiochip->valid_mask = NULL;
+ }
+ 
+@@ -1626,7 +1626,7 @@ static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+ 
+ static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
+ {
+-	kfree(gpiochip->irq.valid_mask);
++	bitmap_free(gpiochip->irq.valid_mask);
+ 	gpiochip->irq.valid_mask = NULL;
+ }
+ 
+-- 
+2.17.1
 
-Andrew
-
-> +
-> +- clocks                : A phandle to the APB clock for SGPM clock 
-> division
-> +
-> +- bus-frequency		: SGPM CLK frequency
-> +
-> +
-> +The sgpio and interrupt properties are further described in their 
-> respective bindings documentation:
-> +
-> +- Documentation/devicetree/bindings/sgpio/gpio.txt
-> +- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-> +
-> +  Example:
-> +	sgpio: sgpio@1e780200 {
-> +		#gpio-cells = <2>;
-> +		compatible = "aspeed,ast2500-sgpio";
-> +		gpio-controller;
-> +		interrupts = <40>;
-> +		reg = <0x1e780200 0x0100>;
-> +		clocks = <&syscon ASPEED_CLK_APB>;
-> +		interrupt-controller;
-> +		nr-gpios = <8>;
-> +		bus-frequency = <12000000>;
-> +	};
-> -- 
-> 2.7.4
-> 
->
