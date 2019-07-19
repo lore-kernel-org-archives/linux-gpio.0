@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79203C76188
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 03:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77482C76188
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A142082E
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 03:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B4C218BB
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563508633;
-	bh=n4tzgIJGYk/RW0+7lrFTK5XGxFRsx5zPbIlfOt2bBmQ=;
+	s=default; t=1563509271;
+	bh=K91EohZt4L29zaPqCO66X2NU/30Xyqzpk9PG5+les1g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AUoEpgWOziPkv54rJR9zBFxiH1qan7YdhMx6GnMr47lI3wqJO48pNPOwkTyas5aLC
-	 ViVfs2O+mh4ZP26cx+2lPrrX6wztqWkLDuybtUPo62ICtB3gskGSxwGPJFoN2mL2Hg
-	 FbeYeBSsNkvnsnpBc/1dNXT4PNtRqHfqTwUBUP44=
+	b=NO0mXLDNLuoPj6GkNFA4P1lLtGGqs/5FUJQwQUnIwHIS0M0k+eXzntZahdaSHmfKo
+	 13xPcv5+gqQjHCxIH+Iz5PllRPgMHAPoRtoD2hMndUb9KliUlYlk8SoqA9gWteRt36
+	 Dy/Lw4L238LFsj4VzgaeZAMWIS/2KeSV4pWupyqc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfGSD5M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 Jul 2019 23:57:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56498 "EHLO mail.kernel.org"
+        id S1731820AbfGSEHt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Jul 2019 00:07:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727056AbfGSD5L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:57:11 -0400
+        id S1732780AbfGSEHs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:07:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0566A21852;
-        Fri, 19 Jul 2019 03:57:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B27D72189F;
+        Fri, 19 Jul 2019 04:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508630;
-        bh=n4tzgIJGYk/RW0+7lrFTK5XGxFRsx5zPbIlfOt2bBmQ=;
+        s=default; t=1563509267;
+        bh=K91EohZt4L29zaPqCO66X2NU/30Xyqzpk9PG5+les1g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cIqahlJH1vg7HGfq9TGHiOdBxjSey8lsN+MJ+znsfO95csp6NsjLVbU9xwTLdGL1q
-         yVRYLWYGlFLwhNRHrLqAVWbdlNrRzLnrqmqk0vDbyBH36dEnn/YxP8v6jKrSvCtJtZ
-         MFtyz/nuy/x1DLZX90eIB33FpxT+gVteneC3xTMs=
+        b=j6toSPgU9nQ4m1SUPNAndNA9EYc/0y/36S6kchqkW2GKYjKRUFt7V36dnz3/nqqMl
+         0eTT7vsPXAAsYdXyF4Lp0aedIjJgBmiXBS+Y2hfPJf0nZ4iKl3tKlHfpIovjZ8uLLp
+         xo3NUvSNOLjmvqJTBAf9bdOIPoEMESSIeu0NBLZY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wen Yang <wen.yang99@zte.com.cn>,
         Linus Walleij <linus.walleij@linaro.org>,
         Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
         linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 012/171] pinctrl: rockchip: fix leaked of_node references
-Date:   Thu, 18 Jul 2019 23:54:03 -0400
-Message-Id: <20190719035643.14300-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 007/101] pinctrl: rockchip: fix leaked of_node references
+Date:   Fri, 19 Jul 2019 00:05:58 -0400
+Message-Id: <20190719040732.17285-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
-References: <20190719035643.14300-1-sashal@kernel.org>
+In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
+References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 807a3263d849..62a622159006 100644
+index f4a61429e06e..8d83817935da 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3204,6 +3204,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+@@ -3172,6 +3172,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
  						    base,
  						    &rockchip_regmap_config);
  		}
