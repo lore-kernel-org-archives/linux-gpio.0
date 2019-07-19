@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC2AC76195
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E89C76196
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6772082F
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5658C2173B
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 Jul 2019 04:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563509672;
-	bh=yR9hjSI+cVCIl0XMZxpMhWedcBUToI5qDQYTPyxAR8Q=;
+	s=default; t=1563510149;
+	bh=2TsqgTtV5msx/zzYcKcl/fi+6Ict7H3SQtjGBp/phhk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TeE3ek8aakChZbSVP7JLkCWzGgAmAKo/cW4dQZX6UIvz+fmQin2Zd/xRp5IUxDLsg
-	 DnJtNnL4kJgOJ3BB47nIBVTkohbBwYTQi4npqiOvm5Ld3hlxa/XR64NIsB3XkiJ4tI
-	 xRMJi08RIZ/0+Os9XzkLgh0WicRdQHgaiW2t+4R0=
+	b=RqA8athe3uXnpvMELo5ISdiJtEWqCC/ng/+d99lDlJFBNuuBxcWhEO5SVFTWrm+ai
+	 uiVcb3tQ3G1imYeBKTOOW4oHZFfGTiF+N3AE23Y5yCpBNqG8Hx/zVr5REq4Wktx08w
+	 LtefXHSdmqfMF4+F031U5oRRDvoVIwhT8+vgrGbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389727AbfGSEOb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 Jul 2019 00:14:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50726 "EHLO mail.kernel.org"
+        id S2388998AbfGSEW2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 Jul 2019 00:22:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389725AbfGSEOb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:14:31 -0400
+        id S1733163AbfGSELR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE65B2189D;
-        Fri, 19 Jul 2019 04:14:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E0AF2189E;
+        Fri, 19 Jul 2019 04:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509670;
-        bh=yR9hjSI+cVCIl0XMZxpMhWedcBUToI5qDQYTPyxAR8Q=;
+        s=default; t=1563509477;
+        bh=2TsqgTtV5msx/zzYcKcl/fi+6Ict7H3SQtjGBp/phhk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dCZgit4iw4RgbkfNI63CtOO0Ky18fZrDP7j835W2vC0UOda0487UR1qAfMds48fNj
-         8gGdplaXQ+8kf0Zz78EjNHsYrI4ARQtEd6tuSVWHx3qxDerS0+KPCBR7pYCAwDW5eO
-         DL9BFW5PPbIqaKYLcT0FFJLu67mFJuwduKLx5WQE=
+        b=xd4yHrWBaqvMWfLTEpSgNG3U1NDap+bRBx5ZBM/5HKhtSDAz7dAuGXOa/33ye4Q97
+         1bgzKPf50E2k3DYIbvCBAslj62HVdQa9lmn2ZMRgV/gjexmdJ8rv4pToc92sdihYUx
+         VtxNmz2CB2MhE27OgCLGP1tUIAhkxAvoxNrKsHCQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wen Yang <wen.yang99@zte.com.cn>,
         Linus Walleij <linus.walleij@linaro.org>,
         Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
         linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/35] pinctrl: rockchip: fix leaked of_node references
-Date:   Fri, 19 Jul 2019 00:13:52 -0400
-Message-Id: <20190719041423.19322-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 04/60] pinctrl: rockchip: fix leaked of_node references
+Date:   Fri, 19 Jul 2019 00:10:13 -0400
+Message-Id: <20190719041109.18262-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719041423.19322-1-sashal@kernel.org>
-References: <20190719041423.19322-1-sashal@kernel.org>
+In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
+References: <20190719041109.18262-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index a0651128e23a..616055b5e996 100644
+index a9bc1e01f982..5d6cf024ee9c 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1837,6 +1837,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+@@ -2941,6 +2941,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
  						    base,
  						    &rockchip_regmap_config);
  		}
