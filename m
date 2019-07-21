@@ -2,43 +2,40 @@ Return-Path: <SRS0=4zV0=VS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB0CC76196
-	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A06DC76196
+	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C50721738
-	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477D621721
+	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NME1X1iT"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U75hOrfw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfGUTmF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 21 Jul 2019 15:42:05 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15853 "EHLO
+        id S1727618AbfGUTlI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 21 Jul 2019 15:41:08 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15841 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfGUTlL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jul 2019 15:41:11 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d34bfdd0000>; Sun, 21 Jul 2019 12:41:17 -0700
+        with ESMTP id S1727601AbfGUTlG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jul 2019 15:41:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d34bfd80000>; Sun, 21 Jul 2019 12:41:12 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 21 Jul 2019 12:41:10 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 21 Jul 2019 12:41:05 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 21 Jul 2019 12:41:10 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:41:09 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:41:09 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sun, 21 Jul 2019 19:41:09 +0000
+        by hqpgpgate101.nvidia.com on Sun, 21 Jul 2019 12:41:05 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:41:04 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sun, 21 Jul 2019 19:41:05 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.85]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d34bfd40000>; Sun, 21 Jul 2019 12:41:09 -0700
+        id <B5d34bfcf0001>; Sun, 21 Jul 2019 12:41:04 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +48,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V6 12/21] cpufreq: tegra124: Add suspend and resume support
-Date:   Sun, 21 Jul 2019 12:40:51 -0700
-Message-ID: <1563738060-30213-13-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 09/21] clk: tegra: clk-super: Fix to enable PLLP branches to CPU
+Date:   Sun, 21 Jul 2019 12:40:48 -0700
+Message-ID: <1563738060-30213-10-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
@@ -61,104 +58,111 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563738077; bh=ERM45gzILmBTa9m60jszJM5aBp4VqzLlD5QiVJxaQLQ=;
+        t=1563738072; bh=3K7x/Oh8TQ/N8+NUlmWQ/I1v4OLQzS5q7gcJIEIHpvw=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=NME1X1iTJsBLu1Mi6wjnP50EmLtURbBbGNdHSSYOvhm7CBrXin0jYMspYYKTotsbY
-         medU6u9QbGFnlXNmisA3dDS//8X+mk0fWMc4DqS0teHcmTSBOtoLMURehnXI4TOOGK
-         SGKn5ddgTyxDXhBYigSHWVruen95P63hm53XQIcB9KZf5B/7qAIRC+sc2yKqNJWaXO
-         ylHtfRTr9hT7r9FyFf+h7flv0Bul0YuUQ0r9W5ez5/SSSW6rA87/SeeqBVhUF3gfq+
-         oAY15IrjQcqoCe2ydht2MykT9eRNvxikI8MaP+9w+ouq9vnS2Bezt9gVyTQBizWmKX
-         dygWqDFahnlbQ==
+        b=U75hOrfw9Zo6SQfx5tUtMiuAHkmqQ6n3fODs1qXTqxclkbzlZ41U3iKBhjnZW6+hO
+         /t/Rk0n48gxj3qT3ct8xjZDueHfgx6YxynZF7/FdsV5NdYJqb2qPVAaTptqSeOcex5
+         b06gawEKA+aLghLMT7d/54aw2ADrsWde4ZtJTPM3QGewQ/Ccvo7V/enCBBR6MEyhZ7
+         BluJsj8aLn76Al81Xjf82q6sbiaVbOZEDBr1fpQOPn0Ayjsa5zZZCMT59vRbmqogeQ
+         QhPdWW/s/VGS0M6smJNDZAlU7lqlkdVLxpeyLMKjnvDY3xwgPyXBtOPI+Wz5c7TaW2
+         Oa/CTRtBtaCDA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds suspend and resume pm ops for cpufreq driver.
+This patch has a fix to enable PLLP branches to CPU before changing
+the CPU clusters clock source to PLLP for Gen5 Super clock.
 
-PLLP is the safe clock source for CPU during system suspend and
-resume as PLLP rate is below the CPU Fmax at Vmin.
+During system suspend entry and exit, CPU source will be switched
+to PLLP and this needs PLLP branches to be enabled to CPU prior to
+the switch.
 
-CPUFreq driver suspend switches the CPU clock source to PLLP and
-disables the DFLL clock.
-
-During system resume, warmboot code powers up the CPU with PLLP
-clock source. So CPUFreq driver resume enabled DFLL clock and
-switches CPU back to DFLL clock source.
+On system resume, warmboot code enables PLLP branches to CPU and
+powers up the CPU with PLLP clock source.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 46 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/clk/tegra/clk-super.c            | 11 +++++++++++
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  4 ++--
+ drivers/clk/tegra/clk.h                  |  4 ++++
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4f0c637b3b49..4eff63379b0f 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 39ef31b46df5..d73c587e4853 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -28,6 +28,9 @@
+ #define super_state_to_src_shift(m, s) ((m->width * s))
+ #define super_state_to_src_mask(m) (((1 << m->width) - 1))
  
- #include <linux/clk.h>
-+#include <linux/cpufreq.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -128,8 +129,53 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int tegra124_cpufreq_suspend(struct device *dev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
++#define CCLK_SRC_PLLP_OUT0 4
++#define CCLK_SRC_PLLP_OUT4 5
++
+ static u8 clk_super_get_parent(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
+@@ -97,6 +100,14 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+ 		if (index == mux->div2_index)
+ 			index = mux->pllx_index;
+ 	}
 +
 +	/*
-+	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
-+	 * use during suspend and resume. So, switch the CPU clock source
-+	 * to PLLP and disable DFLL.
++	 * Enable PLLP branches to CPU before selecting PLLP source
 +	 */
-+	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
++	if ((mux->flags & TEGRA_CPU_CLK) &&
++	    ((index == CCLK_SRC_PLLP_OUT0) || (index == CCLK_SRC_PLLP_OUT4)))
++		tegra_clk_set_pllp_out_cpu(true);
 +
-+	/* disable DFLL clock */
-+	clk_disable_unprepare(priv->dfll_clk);
-+
-+	return 0;
-+}
-+
-+static int tegra124_cpufreq_resume(struct device *dev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	/*
-+	 * Warmboot code powers up the CPU with PLLP clock source.
-+	 * Enable DFLL clock and switch CPU clock source back to DFLL.
-+	 */
-+	ret = clk_prepare_enable(priv->dfll_clk);
-+	if (ret) {
-+		dev_warn(dev, "failed to enable DFLL clock for CPU\n");
-+		clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-+		disable_cpufreq();
-+		return ret;
-+	}
-+
-+	clk_set_parent(priv->cpu_clk, priv->dfll_clk);
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
-+				tegra124_cpufreq_resume)
-+};
-+
- static struct platform_driver tegra124_cpufreq_platdrv = {
- 	.driver.name	= "cpufreq-tegra124",
-+	.driver.pm	= &tegra124_cpufreq_pm_ops,
- 	.probe		= tegra124_cpufreq_probe,
- };
+ 	val &= ~((super_state_to_src_mask(mux)) << shift);
+ 	val |= (index & (super_state_to_src_mask(mux))) << shift;
  
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index cdfe7c9697e1..cd208d0eca2a 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -180,7 +180,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
+ 					gen_info->num_cclk_g_parents,
+ 					CLK_SET_RATE_PARENT,
+ 					clk_base + CCLKG_BURST_POLICY,
+-					0, 4, 8, 0, NULL);
++					TEGRA_CPU_CLK, 4, 8, 0, NULL);
+ 		} else {
+ 			clk = tegra_clk_register_super_mux("cclk_g",
+ 					gen_info->cclk_g_parents,
+@@ -201,7 +201,7 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
+ 					gen_info->num_cclk_lp_parents,
+ 					CLK_SET_RATE_PARENT,
+ 					clk_base + CCLKLP_BURST_POLICY,
+-					0, 4, 8, 0, NULL);
++					TEGRA_CPU_CLK, 4, 8, 0, NULL);
+ 		} else {
+ 			clk = tegra_clk_register_super_mux("cclk_lp",
+ 					gen_info->cclk_lp_parents,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index ac6de3a0b91f..c357b49e49b0 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -694,6 +694,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
+  * Flags:
+  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
+  *     that this is LP cluster clock.
++ * TEGRA_CPU_CLK - This flag indicates this is CPU cluster clock. To use PLLP
++ * for CPU clock source, need to enable PLLP branches to CPU by setting the
++ * additional bit PLLP_OUT_CPU for gen5 super clock.
+  */
+ struct tegra_clk_super_mux {
+ 	struct clk_hw	hw;
+@@ -710,6 +713,7 @@ struct tegra_clk_super_mux {
+ #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
+ 
+ #define TEGRA_DIVIDER_2 BIT(0)
++#define TEGRA_CPU_CLK	BIT(1)
+ 
+ extern const struct clk_ops tegra_clk_super_ops;
+ struct clk *tegra_clk_register_super_mux(const char *name,
 -- 
 2.7.4
 
