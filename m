@@ -5,40 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E37C76191
-	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5967FC76197
+	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2FD20823
-	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D2621738
+	for <linux-gpio@archiver.kernel.org>; Sun, 21 Jul 2019 19:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GcES4xjr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="HzcncTV9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfGUTmX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 21 Jul 2019 15:42:23 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12478 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbfGUTlC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jul 2019 15:41:02 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d34bfcd0000>; Sun, 21 Jul 2019 12:41:01 -0700
+        id S1727548AbfGUTlA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 21 Jul 2019 15:41:00 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15816 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbfGUTlA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jul 2019 15:41:00 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d34bfcc0001>; Sun, 21 Jul 2019 12:41:01 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 21 Jul 2019 12:41:00 -0700
+  Sun, 21 Jul 2019 12:40:53 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 21 Jul 2019 12:41:00 -0700
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:41:00 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
- 2019 19:40:59 +0000
+        by hqpgpgate102.nvidia.com on Sun, 21 Jul 2019 12:40:53 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 21 Jul
+ 2019 19:40:53 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sun, 21 Jul 2019 19:40:59 +0000
+ Transport; Sun, 21 Jul 2019 19:40:53 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.85]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d34bfca0000>; Sun, 21 Jul 2019 12:41:00 -0700
+        id <B5d34bfc40000>; Sun, 21 Jul 2019 12:40:53 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -51,9 +48,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V6 06/21] clk: tegra: pll: Save and restore pll context
-Date:   Sun, 21 Jul 2019 12:40:45 -0700
-Message-ID: <1563738060-30213-7-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V6 02/21] pinctrl: tegra: Add suspend and resume support
+Date:   Sun, 21 Jul 2019 12:40:41 -0700
+Message-ID: <1563738060-30213-3-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
@@ -61,295 +58,146 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563738061; bh=aHWJSVx13LuzUutUKwAZaVtBY+ayrcR85Vq9Znm7wZ8=;
+        t=1563738061; bh=0TWDtDoYIVMoTSFpzR7yFBbnojgeD2sdZQyue/UYp68=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=GcES4xjrPQcsRDHO2yAPAy97aWt9M27BBGBO3a0ZABOED56SNrV1EAeoRRnw6sW+O
-         1bNSQ1Nc2206e7neLaxJKKGjPHI/di+IygQJEsJd6/WwVDnebZbrwju+vmpdNr6z+6
-         fkC5phKuMxcTF5rIozQL5ZdaAw1NxlG0whxjh/Kf1Bd58lE8frIaAzVedtHzCnaJVa
-         8kMdZeiTTSL/ua1g+vrlJFavdMvKIBnIqcOUkUqFp7EJrk89UL4OxLdvCbJdESD/0m
-         vMD5PVnC5wkNo66R7rlUoj0vHOSpsrsP+0qXcVWl9xwd2Ad1/qbbJfJYIAZ+KXMpzm
-         uc89zmrdNym3A==
+        b=HzcncTV99aOe/XLBEzcraeO7a2FwpLsthslZBvwetK46VKaP6m2J0XJwP1bKYtQYm
+         r7B5KBImoWaOnU94tMFyJDFMieG864vnfUF2fPEzI0BVUQ+hgVaPl0DOv7DEm3IiYp
+         nOWoxsATYpdWBbq/sj2rBtgj2KNDMUKOJVH3UMc1tpm9+uNmJ/vShhP/GuNqOMyyUv
+         dECpqy6Ajzwi3joD8enbcmCc0jsi+DbOIueCy0fm8dKVouNnXTcMpdX9b57JFSD4pV
+         W5mYb0MHUNnAJM650OiK306sCsYK2wq1Gxgq8DWxgWYPWeoFp/ssb9w3s63tFzZeKa
+         baTNVebOqopHg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch implements save and restore of PLL context.
+This patch adds support for Tegra pinctrl driver suspend and resume.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
-
-So during suspend entry pll rate is stored and on resume it is
-restored back along with its state.
+During suspend, context of all pinctrl registers are stored and
+on resume they are all restored to have all the pinmux and pad
+configuration for normal operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c      | 121 ++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk-tegra210.c |   2 +-
- drivers/clk/tegra/clk.h          |  10 +++-
- 3 files changed, 99 insertions(+), 34 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
+ 2 files changed, 62 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1583f5fc992f..f136964e6c44 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1008,6 +1008,59 @@ static unsigned long clk_plle_recalc_rate(struct clk_hw *hw,
- 	return rate;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 186ef98e7b2b..e3a237534281 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	}
  }
  
-+void tegra_clk_sync_state_pll(struct clk_hw *hw)
++static size_t tegra_pinctrl_get_bank_size(struct device *dev,
++					  unsigned int bank_id)
 +{
-+	if (!__clk_get_enable_count(hw->clk))
-+		clk_pll_disable(hw);
-+	else
-+		clk_pll_enable(hw);
++	struct platform_device *pdev = to_platform_device(dev);
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
++
++	return resource_size(res) / 4;
 +}
 +
-+static int tegra_clk_pll_save_context(struct clk_hw *hw)
++static int tegra_pinctrl_suspend(struct device *dev)
 +{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val = 0;
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	size_t bank_size;
++	unsigned int i, k;
 +
-+	pll->rate = clk_hw_get_rate(hw);
++	for (i = 0; i < pmx->nbanks; i++) {
++		bank_size = tegra_pinctrl_get_bank_size(dev, i);
++		regs = pmx->regs[i];
++		for (k = 0; k < bank_size; k++)
++			*backup_regs++ = readl_relaxed(regs++);
++	}
 +
-+	if (pll->params->flags & TEGRA_PLLMB)
-+		val = pll_readl_base(pll);
-+	else if (pll->params->flags & TEGRA_PLLRE)
-+		val = pll_readl_base(pll) & divp_mask_shifted(pll);
++	return pinctrl_force_sleep(pmx->pctl);
++}
 +
-+	pll->pllbase_ctx = val;
++static int tegra_pinctrl_resume(struct device *dev)
++{
++	struct tegra_pmx *pmx = dev_get_drvdata(dev);
++	u32 *backup_regs = pmx->backup_regs;
++	u32 *regs;
++	size_t bank_size;
++	unsigned int i, k;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		bank_size = tegra_pinctrl_get_bank_size(dev, i);
++		regs = pmx->regs[i];
++		for (k = 0; k < bank_size; k++)
++			writel_relaxed(*backup_regs++, regs++);
++	}
 +
 +	return 0;
 +}
 +
-+static void tegra_clk_pll_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
-+	u32 val;
++const struct dev_pm_ops tegra_pinctrl_pm = {
++	.suspend = &tegra_pinctrl_suspend,
++	.resume = &tegra_pinctrl_resume
++};
 +
-+	if (clk_pll_is_enabled(hw))
-+		return;
+ static bool gpio_node_has_range(const char *compatible)
+ {
+ 	struct device_node *np;
+@@ -655,6 +707,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int i;
+ 	const char **group_pins;
+ 	int fn, gn, gfn;
++	unsigned long backup_regs_size = 0;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+@@ -707,6 +760,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		if (!res)
+ 			break;
++		backup_regs_size += resource_size(res);
+ 	}
+ 	pmx->nbanks = i;
+ 
+@@ -715,6 +769,11 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	if (!pmx->regs)
+ 		return -ENOMEM;
+ 
++	pmx->backup_regs = devm_kzalloc(&pdev->dev, backup_regs_size,
++					GFP_KERNEL);
++	if (!pmx->backup_regs)
++		return -ENOMEM;
 +
-+	if (pll->params->flags & TEGRA_PLLMB) {
-+		pll_writel_base(pll->pllbase_ctx, pll);
-+	} else if (pll->params->flags & TEGRA_PLLRE) {
-+		val = pll_readl_base(pll);
-+		val &= ~(divp_mask_shifted(pll));
-+		pll_writel_base(pll->pllbase_ctx | val, pll);
-+	}
-+
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
-+	clk_pll_set_rate(hw, pll->rate, parent_rate);
-+
-+	/* do not sync pllx state here. pllx is sync'd after dfll resume */
-+	if (!(pll->params->flags & TEGRA_PLLX))
-+		tegra_clk_sync_state_pll(hw);
-+}
-+
- const struct clk_ops tegra_clk_pll_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.enable = clk_pll_enable,
-@@ -1015,6 +1068,8 @@ const struct clk_ops tegra_clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_round_rate,
- 	.set_rate = clk_pll_set_rate,
-+	.save_context = tegra_clk_pll_save_context,
-+	.restore_context = tegra_clk_pll_restore_context,
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 105309774079..0fc82eea9cf1 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -17,6 +17,7 @@ struct tegra_pmx {
+ 
+ 	int nbanks;
+ 	void __iomem **regs;
++	u32 *backup_regs;
  };
  
- const struct clk_ops tegra_clk_plle_ops = {
-@@ -1802,6 +1857,27 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ enum tegra_pinconf_param {
+@@ -193,6 +194,8 @@ struct tegra_pinctrl_soc_data {
+ 	bool drvtype_in_mux;
+ };
  
- 	return ret;
- }
++extern const struct dev_pm_ops tegra_pinctrl_pm;
 +
-+static void _clk_plle_tegra_init_parent(struct tegra_clk_pll *pll)
-+{
-+	u32 val, val_aux;
-+
-+	/* ensure parent is set to pll_ref */
-+	val = pll_readl_base(pll);
-+	val_aux = pll_readl(pll->params->aux_reg, pll);
-+
-+	if (val & PLL_BASE_ENABLE) {
-+		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
-+		    (val_aux & PLLE_AUX_PLLP_SEL))
-+			WARN(1, "pll_e enabled with unsupported parent %s\n",
-+			     (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
-+			     "pll_re_vco");
-+	} else {
-+		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
-+		pll_writel(val_aux, pll->params->aux_reg, pll);
-+		fence_udelay(1, pll->clk_base);
-+	}
-+}
+ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data);
  #endif
- 
- static struct tegra_clk_pll *_tegra_init_pll(void __iomem *clk_base,
-@@ -2214,27 +2290,12 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- {
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
--	u32 val, val_aux;
- 
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
--	/* ensure parent is set to pll_re_vco */
--
--	val = pll_readl_base(pll);
--	val_aux = pll_readl(pll_params->aux_reg, pll);
--
--	if (val & PLL_BASE_ENABLE) {
--		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
--			(val_aux & PLLE_AUX_PLLP_SEL))
--			WARN(1, "pll_e enabled with unsupported parent %s\n",
--			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
--					"pll_re_vco");
--	} else {
--		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
--		pll_writel(val_aux, pll_params->aux_reg, pll);
--	}
-+	_clk_plle_tegra_init_parent(pll);
- 
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
- 				      &tegra_clk_plle_tegra114_ops);
-@@ -2276,6 +2337,8 @@ static const struct clk_ops tegra_clk_pllss_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
-+	.save_context = tegra_clk_pll_save_context,
-+	.restore_context = tegra_clk_pll_restore_context,
- };
- 
- struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
-@@ -2375,6 +2438,7 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
-+	pll_params->flags |= TEGRA_PLLRE;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -2520,11 +2584,19 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
-+static void tegra_clk_plle_t210_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+
-+	_clk_plle_tegra_init_parent(pll);
-+}
-+
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
- 	.disable = clk_plle_tegra210_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
-+	.restore_context = tegra_clk_plle_t210_restore_context,
- };
- 
- struct clk *tegra_clk_register_plle_tegra210(const char *name,
-@@ -2535,27 +2607,12 @@ struct clk *tegra_clk_register_plle_tegra210(const char *name,
- {
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
--	u32 val, val_aux;
- 
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
--	/* ensure parent is set to pll_re_vco */
--
--	val = pll_readl_base(pll);
--	val_aux = pll_readl(pll_params->aux_reg, pll);
--
--	if (val & PLLE_BASE_ENABLE) {
--		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
--			(val_aux & PLLE_AUX_PLLP_SEL))
--			WARN(1, "pll_e enabled with unsupported parent %s\n",
--			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
--					"pll_re_vco");
--	} else {
--		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
--		pll_writel(val_aux, pll_params->aux_reg, pll);
--	}
-+	_clk_plle_tegra_init_parent(pll);
- 
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
- 				      &tegra_clk_plle_tegra210_ops);
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4721ee030d1c..58397f93166c 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1602,7 +1602,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllx_nmp,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLLX,
- 	.dyn_ramp = tegra210_pllx_dyn_ramp,
- 	.set_defaults = tegra210_pllx_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index fb29a8c27873..8532f5150091 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -235,6 +235,8 @@ struct tegra_clk_pll;
-  * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-  *     flag indicated that it is PLLMB.
-  * TEGRA_PLL_VCO_OUT - Used to indicate that the PLL has a VCO output
-+ * TEGRA_PLLRE - Used to indicate that it is PLLRE.
-+ * TEGRA_PLLX - Used to indicate that it is PLLX.
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -301,6 +303,8 @@ struct tegra_clk_pll_params {
- #define TEGRA_MDIV_NEW BIT(11)
- #define TEGRA_PLLMB BIT(12)
- #define TEGRA_PLL_VCO_OUT BIT(13)
-+#define TEGRA_PLLRE BIT(14)
-+#define TEGRA_PLLX BIT(15)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -310,6 +314,8 @@ struct tegra_clk_pll_params {
-  * @pmc:	address of PMC, required to read override bits
-  * @lock:	register lock
-  * @params:	PLL parameters
-+ * @rate:	rate during system suspend and resume
-+ * @pllbase_ctx: pll base register value during suspend and resume
-  */
- struct tegra_clk_pll {
- 	struct clk_hw	hw;
-@@ -317,6 +323,8 @@ struct tegra_clk_pll {
- 	void __iomem	*pmc;
- 	spinlock_t	*lock;
- 	struct tegra_clk_pll_params	*params;
-+	unsigned long	rate;
-+	u32	pllbase_ctx;
- };
- 
- #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
-@@ -840,7 +848,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
- int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
- 		 u8 frac_width, u8 flags);
--
-+void tegra_clk_sync_state_pll(struct clk_hw *hw);
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
 -- 
 2.7.4
 
