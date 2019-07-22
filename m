@@ -2,37 +2,37 @@ Return-Path: <SRS0=DcKL=VT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1670C7618F
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F34C76190
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7562199C
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AAFE2199C
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="CwL8GCHt"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="dT5CNo+X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbfGVRIf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jul 2019 13:08:35 -0400
-Received: from mout.gmx.net ([212.227.17.22]:38515 "EHLO mout.gmx.net"
+        id S1727916AbfGVRIk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jul 2019 13:08:40 -0400
+Received: from mout.gmx.net ([212.227.17.21]:48797 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729199AbfGVRIf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:08:35 -0400
+        id S1729813AbfGVRIk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:08:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1563815284;
-        bh=6nS7Lf6FNdVUYXGMd00gzIso1Z3I8h5vATfhDbo1HWw=;
+        s=badeba3b8450; t=1563815286;
+        bh=4VYJOdem6Xvc5GKoj1MdJCoWa0bgBVw0372KSDnlJ88=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=CwL8GCHtNFhZegQ5GJpGixfEKuZAW3OvKeo6E8p1XLU49IO/VtcHztedrkMhfhcG/
-         wSWePnRucp/is/KGyfMub4XAW7F93RWzU+CwSLAMi4UPHcihzYKxdwP6YwzIzGO0pd
-         hIZHZvczmZ8AwMOvkP9ZMBlh9P4C8l3myls8HC0A=
+        b=dT5CNo+XipWN1OV+kWC/xTbmr171UUPd4rLxqIlHPRHOeZ9VXfTHywbuB1/iAQ9qX
+         9gWc0zg9HsA2Ja5eJ50itsGVP4ArATzz7IkW1QcQdpgbEqIWJsIfvnyNjQPGB89rFG
+         8SgJ3sNBmsPXGw4XskSmBgSu1Q26eLuRbIRgQVxs=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from localhost.localdomain ([37.4.249.131]) by mail.gmx.com
  (mrgmx103 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 0MSdRI-1hxCTY1BPo-00RWdx; Mon, 22 Jul 2019 19:08:04 +0200
+ 0LjZn2-1iQrQE1P8y-00bf57; Mon, 22 Jul 2019 19:08:06 +0200
 From:   Stefan Wahren <wahrenst@gmx.net>
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -51,59 +51,68 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-mmc@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 15/18] ARM: bcm2835: Add bcm2711 compatible string
-Date:   Mon, 22 Jul 2019 19:07:34 +0200
-Message-Id: <1563815257-2648-3-git-send-email-wahrenst@gmx.net>
+Subject: [PATCH 18/18] MAINTAINERS: Add BCM2711 to BCM2835 ARCH
+Date:   Mon, 22 Jul 2019 19:07:37 +0200
+Message-Id: <1563815257-2648-6-git-send-email-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563815257-2648-1-git-send-email-wahrenst@gmx.net>
 References: <1563815257-2648-1-git-send-email-wahrenst@gmx.net>
-X-Provags-ID: V03:K1:Ozi+ow31HYFixm+4tvpLjYLuEY8a4Oa9cmfUylPS1EPl7hgn+hu
- b/GDHJJiJIvw67knfV5u6EemfRwXcCus7QkJ/+doBkq1EH0ErKqEItVtvRu0wSP5wE6MyJN
- RtnKax7+8pku7MuqFTOU3FH4yQwcnYUzscDM5w2yyFFcka2Yr2sVvVD0WYmvx6sMCpcsRCX
- miPEpEqAyUCkLZ8K8Dz1Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8gfPkhoX25A=:wSjmZWPeWuCf/BgF5Ueu/h
- gwIst7D0FoUnVfKeiJgl4xzL+WE5aLGhk0armELJB1K1NMR9tla/hP8MCu7Yuz4QmpygAw/ud
- B8ZnAEf/pDv8peBME+XreO6t4IWQ7PkJkWnnJMrOfSPfDqykk1tv7/7VjfagqvzmfUxlCjotU
- kVJbDhkvRUDSF4OM8LE81vsdv5Rybzx+Wu2+ubAP0l2FjBvIWkWoRv9IAMPGgMy0qhIkGHCAg
- oEPyaT7C19sW0PPstUnqRJvLinZbY2o/bbZEjR5LFDnRefyYajSD5Z7yedBrqr19qSyKEgYZJ
- lF5edJmbMRDIEAhtSewjwhi0RCRtYGVYNj+TBNB8zzmcXnCOYes+aI6IJtAuacupM4iRE+2cD
- +D91aSEZ7vTUUM6dRE5OHfj+rKDMm57IwTRkNySWzko+pBy2vYFvTZ5cT2g+kYkYTFrfwropc
- egaal02UXqU9xrH31HXixDwtsSO5SQ8OyN+Kgu5VxRqmMmpXOLNRC9t6/h3Saa6Dxl5vzBWFV
- sJJCKcDKLzZDR9e1nGH0IOFK0ABtESI1TzKutKHL0KWTGBlIxBI3X0tP/QzoOoJ00zdoJ3AHo
- dGACzjLnfhNQ0bqMv/pDJRpFy1OgyLJtcly/xT0yrw+SKGCqarw/SIAMlUsdO79v/ktDBlE5B
- AgWKeJEP02QbhzPZ8IsONhMkWw2vwbGCYXAtw7B3g8g2gT2JTbLuDosgEf//dmf/ZeXH0WLKl
- GFdYVyB9EjSLRyaMtiVd0IDsEDpJD2V1ZGDat6x6gI8gErcmhXjEo1yz+Ut0tKFN7VlsNFQ6B
- kaA+K2whJYcv1H2MiX7zNtA4AdwDRTBx0QvJOfnf12/ucS2yX+GR0XVLXc0c5RJiAiWVsKkGY
- E08e3Tr6rlI/T4iDafFsd7ey1sLd9JwIq+mpL6OdmSzEqfgq5GhBNYzVBhbMpJGinovfdZZFK
- 4/j9umBEY243or8RCOY9iiGb4P+VWbxppV1mrMwzekVPA3mlk8Zv9ilcyWJdHqqNSpRqc7twM
- Rco/Jz3vCE3c/yoGNf0PMwzgJpGLB8Z8P1Xj/5qXzi5c/T8T1mTzRjTPFjgA1P8fgdTT94GDs
- jJFBthqHiXNC+U=
+X-Provags-ID: V03:K1:fbWcM/cwfxzKEcCXiGWjElKaqnnMSGp6SBPLjHXtY6V0WTR4A57
+ Yy5eUXpIK+3iJ9vTCeUK1ByJG90AOX+sHjh2tLSNbaBXJQ3fmWVetFgcx2moLcsZacRrU+R
+ 42bEaYNipWRmmNbvfu2HKjqzeoLD5id2nGJ2zUpu3qNGi6FNPdSivtbmmdvhmffBXSTUCY3
+ gTkhUHipdSygxEPTeOUYA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:D/ohtluw/Ec=:4Ocp42Dy8WgDSuv8+nxqrY
+ cMaOdkkrsSp7k4iYVGxoZLgvdMfFsoPupdiPCfJMSnuooEN7b5V3AN9Y69oauLJNdSRCuwHiz
+ uQ5xt/ZhYybLSverOoxLk4/2NvtTZ3Fm1dd+Q+0u5J2ys/c+lZP249co127e/Atw7u9j0xQ6z
+ qYcVnSIOBjmiTipP+qz8H5xxGTygxsgtbXm2ZWh02VSawaJSe0K1+Z1l4ICFpuBsJnrg2tNMu
+ q+TV88gBr2X37mIfcxKA+BYEg+7eYahu2KftSG2I/Bj6vmVJxJS3t/8xcVLEIU/fPF8YKssyZ
+ 15Cd2n+QnJj+eZeJN6wzX7PH3llr/ER725gGRSnrIv1j6BXiuLeuFo/S0c/A+WgfCQCd/TZba
+ PfQT7CtlJOf3AFk6fdBOLHVG1UQD4AQGCJtchz4lGPAztJSFgrJriD+H1hEM2+ELUal+NLk+4
+ XkKXe4NdCVE2MTAa39G/qyUyTwVP4ePtgKlClSultFtaJmz6Bee4LdAbIXcrx4/+bCh0znqfe
+ zsCExpbogOAP4PnKQTqj2D5t9MZWjOyiDc8c/nbYZqN/cjgb22fulQyTfdvx8g0Mm+MXhNO/k
+ 6JArpHNiJcje/Z9Z/604Ca9f29CZ2h6CplnTGbNDYneOyx8JxWyXcXesRJK3q+Bk1B8LagyRZ
+ +bTQMBSjxq41Ci6/wssSjCKSgOBJWmP3YegZCaBJ9AvKXFXkP5qr4D8Hu33BS9T25CmLkgu7/
+ IG4ocusXeusw4WVxjOvivKEhnS1zZIe1N2+8HfZvAjlWUSKWT1XZdzd285RqQH6yd9OZ02j8R
+ F7EdsHoxfdM3jA1wO7n20c9nz5fr3b9i63GkfVhOGmAIBqU2X8CuxVGFqLvRFjFQhbiB26DJN
+ f6pRAxVPmPRoWuHh4pr4dAdpOxDPhjGw2bnv2lO9Qk+H2ef4SB+uH8T/9oHyhyMPyfn//1Tfx
+ t4P2TXEQn0+EO8zaQSFY+Kzb9fdLe8qOhzPnAp9Ip8lOGKvjtVNNXdoAf4/qmiDKCMPffJOPj
+ cfjpTcgFAAb50PcWVE8U6oylj6t/pXYTJG/Fxk1nvwYxUIO12nQgHsk6REbY1ZkP8S55EycIQ
+ AJKEemX9d3gTn8=
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds support for the new BCM2711 SoC found on the Raspberry Pi 4.
+Clarify that BCM2711 belongs to the BCM2835 ARCH.
 
 Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 =2D--
- arch/arm/mach-bcm/board_bcm2835.c | 1 +
- 1 file changed, 1 insertion(+)
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-bcm/board_bcm2835.c b/arch/arm/mach-bcm/board_b=
-cm2835.c
-index d2b31a9..c09cf25 100644
-=2D-- a/arch/arm/mach-bcm/board_bcm2835.c
-+++ b/arch/arm/mach-bcm/board_bcm2835.c
-@@ -17,6 +17,7 @@ static const char * const bcm2835_compat[] =3D {
- 	"brcm,bcm2835",
- #endif
- #ifdef CONFIG_ARCH_MULTI_V7
-+	"brcm,bcm2711",
- 	"brcm,bcm2836",
- 	"brcm,bcm2837",
- #endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c6fa7e8..ef75b7b 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3137,7 +3137,7 @@ N:	bcm216*
+ N:	kona
+ F:	arch/arm/mach-bcm/
+
+-BROADCOM BCM2835 ARM ARCHITECTURE
++BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE
+ M:	Eric Anholt <eric@anholt.net>
+ M:	Stefan Wahren <wahrenst@gmx.net>
+ L:	bcm-kernel-feedback-list@broadcom.com
+@@ -3145,6 +3145,7 @@ L:	linux-rpi-kernel@lists.infradead.org (moderated f=
+or non-subscribers)
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ T:	git git://github.com/anholt/linux
+ S:	Maintained
++N:	bcm2711
+ N:	bcm2835
+ F:	drivers/staging/vc04_services
+
 =2D-
 2.7.4
 
