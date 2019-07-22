@@ -2,187 +2,292 @@ Return-Path: <SRS0=DcKL=VT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802EEC76195
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 05:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4B0C76197
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D39D2199C
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 05:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A34B921BE6
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:10:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="jfvqjgCI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UE2rtg/B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfGVF4V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jul 2019 01:56:21 -0400
-Received: from mout.gmx.net ([212.227.17.22]:34927 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727407AbfGVF4U (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 Jul 2019 01:56:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1563774934;
-        bh=nTl109vyOUBR2zyRol9VTmFHR6gjS2AXS/Pgcx0bQTY=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=jfvqjgCISbf+Pa+4ERn3aG+TLMc5aEPOQ3Ya5vwgAUfV7o7TGBrneL2PgT5gWeXWD
-         AbfRMW8zQMEfxM7un7lZWl84atKOgysssowkyeqkxsL7PSHciqe1hMZ31lhVQvXhDb
-         pa0BQJLf0Vfhm/GWwfwPPoLknl0SY2ZHIi7W6K3E=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([37.4.249.98]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lurin-1iXGMB16Fl-01063s; Mon, 22
- Jul 2019 07:55:34 +0200
-From:   Stefan Wahren <wahrenst@gmx.net>
-To:     Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mmc@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 00/18] ARM: Add minimal Raspberry Pi 4 support
-Date:   Mon, 22 Jul 2019 07:54:31 +0200
-Message-Id: <1563774880-8061-1-git-send-email-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:nFbHXC3fhyDvHOK156rPlI/cNhYflJ/Mq9kOF5ukfMQHr/MP8Xg
- /WzrjIdPAsrrY1Krk7yAn2KGUOz+yI+aZNDXc72ZqDctEvoZInuoZLO1+9a6kam6ycWKLBy
- a16E4sUXp+tq1kW9tlRHjN4oCeX+BJqhNuCOfHRYFDIgTeg1pZbx9OLN0LsHARTIRA8k3sb
- i0Ns448tqkluxVdwyDcDA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Uldo6zz6IjY=:ga4Bk0EAggcaniosdxi3TY
- BgQyrQ/Wkn2YpDgu7u7b8ifl7wnfTANjECLKncwQDvzaSAWMk7izDeEH72fc75g6LPW0WODLI
- YLQvm79Bt7xPXTF0xpfsMPMkPUxW6i3VW6U5EIkCiCW5KXEBrq0qhW9/QcBraTqYvtditq/sq
- ZgbqDmDf4pSHfL4zGPYH5CiamfU7uGDvi/zAWp7hYSSgolLaUXP2ryaTrHeVlIYI1SpS4sRZP
- XuQFTA1xVV/R9P4VrtQjzVnHEQvg+BFkzTCqUMuTRIbw4VGuMvbZwrC9HjS5H2cRlbOWdA3fl
- xGXEIWen1XTvSXoXubZqvenCp2NrixbbLO9A5LH0Ob/xH+lP16ZxDLNvsskQPYunGo1dN7gfN
- MyGdPoQepoivceGY8b12ZOv0ygiJnZBIQDDxZunWvzZiRfWNsVQWs2EgZV2Wco3q/bhowjtAr
- y5oeXMjFiAVJBthnny3IOzEaLBpVeKPSkePSsglBIcD1qr3Cd1AdxdvpTLYdvwmekv93Uil+A
- F3JwYjPF0DZp8ZkVkoekXsrLt2gyBDGiOfL4gu5TA6phJ9p9uk6Yq16WFmrC7fqZ77glL9puN
- XKkQQZfjP8Qf0AM4B0FfZs1kKyHtfQX/gkFN4fD2gts9/YBxPkLeycqD7uuosqzjVGcCmoXQx
- 8nuvWU51P89VsYXBzfJux5457i2tL7qan84KBSxhpoDDk2TQrtBbHsppDoryF8AmN1Hj4mLe6
- AcO17zpKaLND0FEChvMS0+4KxuTkF3iuX5yZFNaNSjFRUkcSwQzTtEcS/rWsLYxLLyiAn0gDX
- 8Ns/aldail14qEJBSyyVye31qAusvon7Wjv5iE/+fXzzzUK4RfohAs+a5Oz5RsdYSjPnedM+g
- NfUi6Broc0jG8Hwya3g01GKrfoRRJeQhbxiQZl+ihHQjV6L7YnqH8Nrf4WqCL3swLO7oJvcrd
- bSy82RJvZOPr9tY8NQOdPTTUgMi6wmYZEt5QHTELstfSqTjD5cEX0hf+28p9b1oJmmS9DBaKQ
- UJBRHKf65g3qrzsQ+Arz/YMxZkKHiH0WkV+HhTcPvTWykl0YYKnQbXgsApS4PJGWF3ytrk4Tx
- VUNxcUIbZYGdso=
-Content-Transfer-Encoding: quoted-printable
+        id S1726547AbfGVGKJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jul 2019 02:10:09 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34600 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfGVGKJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jul 2019 02:10:09 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p17so36352346ljg.1;
+        Sun, 21 Jul 2019 23:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=68NS5MbPNGx3oVlzPDafzy93b3e0AKuHa1JWZ/+s3eI=;
+        b=UE2rtg/BgoQ25KHxvLwe+9vZJ8jVjSjp7xm+yti7wvF2U3QGw8r0Sg0AEp1hv8Va9R
+         c1eIgbzT7QWxERbHgY+gRUwMNO5RZUhX7mp+5sXkgSYDW47J87qSu7qXzdNZyQF07dya
+         Sw+5ueLy8m4kBuZByZKpf8UwD5hhKZSnm/O37MQEp0pPLXjfv0WCng5cUwIk1nqQQJjY
+         W4xT8cVrTWtHKgVnbaZ67x8g+Rpt9DNaYVa1c06urHU1tkcYE9+8RfWgkKcVjaIKibJa
+         ZPwIF74TMQjjXcVKTFbbuwxA866AxBe6wkBRcRa8CkVqotCi8KNHEpG6mFsdb7AxR3VG
+         s6bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=68NS5MbPNGx3oVlzPDafzy93b3e0AKuHa1JWZ/+s3eI=;
+        b=NjAWGCP4Z0WqliGEYAOsuG8dub+kgThKLFwOMFPTlbKea914sYQq0MznNOcVN9DX7d
+         c4WcOwmSOsz/z0PI5ASxevIHHf2ogWjPtMmV0tJ+h0MA4w3yoRkfQnfGDboGekTeoilu
+         DOXVehR9/cbrDONz870xBKh7oFcGzeO+ZBefe5FoGU5OufpqM4NHH0iSIlk1WKl0R5MH
+         uhO8L0qAvBd0AxAz7Ziha5larTbmIJkrNMBFSK0ASrHtFMjVEaQiJHswE5NASXbmY3eL
+         OwU5LZShLH1vVNyvru9x+h3lWQty0sGJLc7v+W5UZVAS1rsnu6Rg/jWxmlN5UqHMDhcC
+         HGzA==
+X-Gm-Message-State: APjAAAWAt+BoNgKzj3iGwnbVFkUqEPKxv4K9OZ6CqdA+142olCWuVyhr
+        6f5uJX+AdLcMlgIBsNH1hqqZ+T1Q
+X-Google-Smtp-Source: APXvYqw1KkWjC+xvlA+ECAECuodIEg0Kh6r/WI/+a86Y4AW/YGn/6J3Bgd9ve7cDggr8cWSPIeIhwA==
+X-Received: by 2002:a2e:2bd3:: with SMTP id r80mr35916957ljr.23.1563775805562;
+        Sun, 21 Jul 2019 23:10:05 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id c19sm5809639lfi.39.2019.07.21.23.10.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Jul 2019 23:10:04 -0700 (PDT)
+Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-15-git-send-email-skomatineni@nvidia.com>
+ <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com>
+ <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com>
+Date:   Mon, 22 Jul 2019 09:10:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series adds minimal support for the new Raspberry Pi 4, so we are abl=
-e
-to login via debug UART.
+22.07.2019 1:45, Sowjanya Komatineni пишет:
+> 
+> On 7/21/19 2:38 PM, Dmitry Osipenko wrote:
+>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
+>>> This patch adds support for clk: tegra210: suspend-resume.
+>>>
+>>> All the CAR controller settings are lost on suspend when core
+>>> power goes off.
+>>>
+>>> This patch has implementation for saving and restoring all PLLs
+>>> and clocks context during system suspend and resume to have the
+>>> clocks back to same state for normal operation.
+>>>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/clk/tegra/clk-tegra210.c | 68
+>>> ++++++++++++++++++++++++++++++++++++++--
+>>>   drivers/clk/tegra/clk.c          | 14 +++++++++
+>>>   drivers/clk/tegra/clk.h          |  1 +
+>>>   3 files changed, 80 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra210.c
+>>> b/drivers/clk/tegra/clk-tegra210.c
+>>> index 55a88c0824a5..68271873acc1 100644
+>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>> @@ -9,6 +9,7 @@
+>>>   #include <linux/clkdev.h>
+>>>   #include <linux/of.h>
+>>>   #include <linux/of_address.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   #include <linux/delay.h>
+>>>   #include <linux/export.h>
+>>>   #include <linux/mutex.h>
+>>> @@ -220,11 +221,15 @@
+>>>   #define CLK_M_DIVISOR_SHIFT 2
+>>>   #define CLK_M_DIVISOR_MASK 0x3
+>>>   +#define CLK_MASK_ARM    0x44
+>>> +#define MISC_CLK_ENB    0x48
+>>> +
+>>>   #define RST_DFLL_DVCO 0x2f4
+>>>   #define DVFS_DFLL_RESET_SHIFT 0
+>>>     #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
+>>>   #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
+>>> +#define CPU_SOFTRST_CTRL 0x380
+>>>     #define LVL2_CLK_GATE_OVRA 0xf8
+>>>   #define LVL2_CLK_GATE_OVRC 0x3a0
+>>> @@ -2825,6 +2830,7 @@ static int tegra210_enable_pllu(void)
+>>>       struct tegra_clk_pll_freq_table *fentry;
+>>>       struct tegra_clk_pll pllu;
+>>>       u32 reg;
+>>> +    int ret;
+>>>         for (fentry = pll_u_freq_table; fentry->input_rate; fentry++) {
+>>>           if (fentry->input_rate == pll_ref_freq)
+>>> @@ -2853,9 +2859,8 @@ static int tegra210_enable_pllu(void)
+>>>       reg |= PLL_ENABLE;
+>>>       writel(reg, clk_base + PLLU_BASE);
+>>>   -    readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+>>> -                      reg & PLL_BASE_LOCK, 2, 1000);
+>>> -    if (!(reg & PLL_BASE_LOCK)) {
+>>> +    ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
+>>> +    if (ret) {
+>> Why this is needed? Was there a bug?
+>>
+> during resume pllu init is needed and to use same terga210_init_pllu,
+> poll_timeout_atomic can't be used as its ony for atomic context.
+> 
+> So changed to use wait_for_mask which should work in both cases.
 
-Patch 1-5:   Prepare platform and DTS for the new SoC BMC2711
-Patch 6-10:  Enable support for emmc2 on BCM2711
-Patch 11-12: Enable pinctrl for BCM2711
-Patch 13-17: Add Raspberry Pi 4 DTS support
-Patch 18:    Update MAINTAINERS
+Atomic variant could be used from any context, not sure what do you
+mean. The 'atomic' part only means that function won't cause scheduling
+and that's it.
 
-Unfortunately the Raspberry Pi Foundation didn't released a
-peripheral documentation for the new SoC yet. So we only have a preliminar=
-y
-datasheet [1] and reduced schematics [2].
-
-Changes since RFC:
-- change BCM2838 -> BCM2711 as discussed in RFC
-- update MAINTAINERS accordingly
-- drop "spi: bcm2835: enable shared interrupt support" from series
-- squash all pinctrl-bcm2835 changes into one patch
-- introduce SoC specific clock registration as suggested by Florian
-- fix watchdog probing for Raspberry Pi 4
-- convert brcm,bcm2835.txt to json-schema
-- move VC4 node to bcm2835-common.dtsi
-- fallback to legacy pull config for Raspberry Pi 4
-- revert unintended change of mailbox in bcm283x.dtsi
-- add reference for arm64
-
-[1] - https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm27=
-11/rpi_DATA_2711_1p0_preliminary.pdf
-[2] - https://www.raspberrypi.org/documentation/hardware/raspberrypi/schem=
-atics/rpi_SCH_4b_4p0_reduced.pdf
-
-Phil Elwell (1):
-  ARM: bcm2835: DMA can only address 1GB
-
-Stefan Wahren (17):
-  ARM: bcm283x: Reduce register ranges for UART, SPI and I2C
-  ARM: dts: bcm283x: Move BCM2835/6/7 specific to bcm2835-common.dtsi
-  ARM: dts: bcm283x: Define MMC interfaces at board level
-  ARM: dts: bcm283x: Define memory at board level
-  dt-bindings: bcm2835-cprman: Add bcm2711 support
-  clk: bcm2835: Introduce SoC specific clock registration
-  clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support
-  dt-bindings: sdhci-iproc: Add brcm,bcm2711-emmc2
-  mmc: sdhci-iproc: Add support for emmc2 of the BCM2711
-  dt-bindings: pinctrl: bcm2835: Add brcm,bcm2711 compatible
-  pinctrl: bcm2835: Add support for BCM2711 pull-up functionality
-  dt-bindings: arm: Convert BCM2835 board/soc bindings to json-schema
-  dt-bindings: arm: bcm2835: Add Raspberry Pi 4 to DT schema
-  ARM: bcm2835: Add bcm2711 compatible string
-  ARM: dts: Add minimal Raspberry Pi 4 support
-  arm64: dts: broadcom: Add reference to RPi 4 B
-  MAINTAINERS: Add BCM2711 to BCM2835 ARCH
-
- .../devicetree/bindings/arm/bcm/bcm2835.yaml       |  51 ++
- .../devicetree/bindings/arm/bcm/brcm,bcm2835.txt   |  67 ---
- .../bindings/clock/brcm,bcm2835-cprman.txt         |   4 +-
- .../devicetree/bindings/mmc/brcm,sdhci-iproc.txt   |   4 +-
- .../bindings/pinctrl/brcm,bcm2835-gpio.txt         |   1 +
- MAINTAINERS                                        |   3 +-
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts              | 120 ++++
- arch/arm/boot/dts/bcm2711.dtsi                     | 667 ++++++++++++++++=
-+++++
- arch/arm/boot/dts/bcm2835-common.dtsi              | 177 ++++++
- arch/arm/boot/dts/bcm2835-rpi-a-plus.dts           |  12 +
- arch/arm/boot/dts/bcm2835-rpi-a.dts                |  12 +
- arch/arm/boot/dts/bcm2835-rpi-b-plus.dts           |  12 +
- arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts           |  12 +
- arch/arm/boot/dts/bcm2835-rpi-b.dts                |  12 +
- arch/arm/boot/dts/bcm2835-rpi-cm1-io1.dts          |   7 +
- arch/arm/boot/dts/bcm2835-rpi-cm1.dtsi             |   5 +
- arch/arm/boot/dts/bcm2835-rpi-zero-w.dts           |  12 +
- arch/arm/boot/dts/bcm2835-rpi-zero.dts             |  12 +
- arch/arm/boot/dts/bcm2835-rpi.dtsi                 |  18 -
- arch/arm/boot/dts/bcm2835.dtsi                     |   1 +
- arch/arm/boot/dts/bcm2836-rpi-2-b.dts              |   8 +
- arch/arm/boot/dts/bcm2836.dtsi                     |   1 +
- arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts         |   1 +
- arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts         |   1 +
- arch/arm/boot/dts/bcm2837-rpi-3-b.dts              |   1 +
- arch/arm/boot/dts/bcm2837-rpi-cm3-io3.dts          |   7 +
- arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi             |   1 +
- arch/arm/boot/dts/bcm2837.dtsi                     |   1 +
- arch/arm/boot/dts/bcm283x.dtsi                     | 160 +----
- arch/arm/mach-bcm/board_bcm2835.c                  |   2 +
- arch/arm64/boot/dts/broadcom/Makefile              |   3 +-
- arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dts   |   2 +
- drivers/clk/bcm/clk-bcm2835.c                      | 117 +++-
- drivers/mmc/host/sdhci-iproc.c                     |   9 +
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              | 105 +++-
- include/dt-bindings/clock/bcm2835.h                |   2 +
- 37 files changed, 1365 insertions(+), 266 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835=
-.txt
- create mode 100644 arch/arm/boot/dts/bcm2711-rpi-4-b.dts
- create mode 100644 arch/arm/boot/dts/bcm2711.dtsi
- create mode 100644 arch/arm/boot/dts/bcm2835-common.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dts
-
-=2D-
-2.7.4
+>>>           pr_err("Timed out waiting for PLL_U to lock\n");
+>>>           return -ETIMEDOUT;
+>>>       }
+>>> @@ -3288,6 +3293,56 @@ static void tegra210_disable_cpu_clock(u32 cpu)
+>>>   }
+>>>     #ifdef CONFIG_PM_SLEEP
+>>> +#define car_readl(_base, _off) readl_relaxed(clk_base + (_base) +
+>>> ((_off) * 4))
+>>> +#define car_writel(_val, _base, _off) \
+>>> +        writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
+>>> +
+>>> +static u32 spare_reg_ctx, misc_clk_enb_ctx, clk_msk_arm_ctx;
+>>> +static u32 cpu_softrst_ctx[3];
+>>> +
+>>> +static int tegra210_clk_suspend(void)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    clk_save_context();
+>>> +
+>>> +    /*
+>>> +     * save the bootloader configured clock registers SPARE_REG0,
+>>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL
+>> Nit: Start all multi-line comments with a capital letter and put dot in
+>> the end of sentence.
+>>
+>>> +     */
+>>> +    spare_reg_ctx = readl_relaxed(clk_base + SPARE_REG0);
+>>> +    misc_clk_enb_ctx = readl_relaxed(clk_base + MISC_CLK_ENB);
+>>> +    clk_msk_arm_ctx = readl_relaxed(clk_base + CLK_MASK_ARM);
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>>> +        cpu_softrst_ctx[i] = car_readl(CPU_SOFTRST_CTRL, i);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static void tegra210_clk_resume(void)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    tegra_clk_osc_resume(clk_base);
+>>> +
+>>> +    /*
+>>> +     * restore the bootloader configured clock registers SPARE_REG0,
+>>> +     * MISC_CLK_ENB, CLK_MASK_ARM, CPU_SOFTRST_CTRL from saved context.
+>> Same here.
+>>
+>>> +     */
+>>> +    writel_relaxed(spare_reg_ctx, clk_base + SPARE_REG0);
+>>> +    writel_relaxed(misc_clk_enb_ctx, clk_base + MISC_CLK_ENB);
+>>> +    writel_relaxed(clk_msk_arm_ctx, clk_base + CLK_MASK_ARM);
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(cpu_softrst_ctx); i++)
+>>> +        car_writel(cpu_softrst_ctx[i], CPU_SOFTRST_CTRL, i);
+>>> +
+>>> +    fence_udelay(5, clk_base);
+>>> +
+>>> +    tegra210_init_pllu();
+>>> +    clk_restore_context();
+>>> +}
+>>> +
+>>>   static void tegra210_cpu_clock_suspend(void)
+>>>   {
+>>>       /* switch coresite to clk_m, save off original source */
+>>> @@ -3303,6 +3358,11 @@ static void tegra210_cpu_clock_resume(void)
+>>>   }
+>>>   #endif
+>>>   +static struct syscore_ops tegra_clk_syscore_ops = {
+>>> +    .suspend = tegra210_clk_suspend,
+>>> +    .resume = tegra210_clk_resume,
+>>> +};
+>>> +
+>>>   static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
+>>>       .wait_for_reset    = tegra210_wait_cpu_in_reset,
+>>>       .disable_clock    = tegra210_disable_cpu_clock,
+>>> @@ -3587,5 +3647,7 @@ static void __init tegra210_clock_init(struct
+>>> device_node *np)
+>>>       tegra210_mbist_clk_init();
+>>>         tegra_cpu_car_ops = &tegra210_cpu_car_ops;
+>>> +
+>>> +    register_syscore_ops(&tegra_clk_syscore_ops);
+>>>   }
+>>>   CLK_OF_DECLARE(tegra210, "nvidia,tegra210-car", tegra210_clock_init);
+>>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+>>> index 573e3c967ae1..eb08047fd02f 100644
+>>> --- a/drivers/clk/tegra/clk.c
+>>> +++ b/drivers/clk/tegra/clk.c
+>>> @@ -23,6 +23,7 @@
+>>>   #define CLK_OUT_ENB_W            0x364
+>>>   #define CLK_OUT_ENB_X            0x280
+>>>   #define CLK_OUT_ENB_Y            0x298
+>>> +#define CLK_ENB_PLLP_OUT_CPU        BIT(31)
+>>>   #define CLK_OUT_ENB_SET_L        0x320
+>>>   #define CLK_OUT_ENB_CLR_L        0x324
+>>>   #define CLK_OUT_ENB_SET_H        0x328
+>>> @@ -199,6 +200,19 @@ const struct tegra_clk_periph_regs
+>>> *get_reg_bank(int clkid)
+>>>       }
+>>>   }
+>>>   +void tegra_clk_set_pllp_out_cpu(bool enable)
+>>> +{
+>>> +    u32 val;
+>>> +
+>>> +    val = readl_relaxed(clk_base + CLK_OUT_ENB_Y);
+>>> +    if (enable)
+>>> +        val |= CLK_ENB_PLLP_OUT_CPU;
+>>> +    else
+>>> +        val &= ~CLK_ENB_PLLP_OUT_CPU;
+>>> +
+>>> +    writel_relaxed(val, clk_base + CLK_OUT_ENB_Y);
+>>> +}
+>>> +
+>>>   struct clk ** __init tegra_clk_init(void __iomem *regs, int num,
+>>> int banks)
+>>>   {
+>>>       clk_base = regs;
+>>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>>> index 562a3ee2d537..0ffa763c755b 100644
+>>> --- a/drivers/clk/tegra/clk.h
+>>> +++ b/drivers/clk/tegra/clk.h
+>>> @@ -863,6 +863,7 @@ int div_frac_get(unsigned long rate, unsigned
+>>> parent_rate, u8 width,
+>>>            u8 frac_width, u8 flags);
+>>>   void tegra_clk_sync_state_pll(struct clk_hw *hw);
+>>>   void tegra_clk_osc_resume(void __iomem *clk_base);
+>>> +void tegra_clk_set_pllp_out_cpu(bool enable);
+>>>     /* Combined read fence with delay */
+>>>   #define fence_udelay(delay, reg)    \
+>>>
 
