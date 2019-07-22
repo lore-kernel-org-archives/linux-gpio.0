@@ -8,31 +8,31 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5165FC76197
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD1BC76195
 	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 05:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0A22199C
+	by mail.kernel.org (Postfix) with ESMTP id 795552229A
 	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 05:56:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="WAcQDrsb"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="LAI7Hzhk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfGVF4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726701AbfGVF4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 22 Jul 2019 01:56:03 -0400
-Received: from mout.gmx.net ([212.227.17.20]:57615 "EHLO mout.gmx.net"
+Received: from mout.gmx.net ([212.227.17.20]:35555 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbfGVF4C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 Jul 2019 01:56:02 -0400
+        id S1727360AbfGVF4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jul 2019 01:56:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1563774939;
-        bh=iBgoZEjqz1uvIdXtw/jNq8gNBaVuMlaRN35UMIiLDco=;
+        s=badeba3b8450; t=1563774941;
+        bh=Mfs0KFxfuAdl7r1+zeKQYCRtJqTlchom4wahS0rVa9E=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=WAcQDrsb3w3p7Xi5DZHYcCaC8VjjmomOSaVi+vLjBkIYXlq6n9LRDoViTrLPhcCG/
-         8T/zHwRhLBnzyLl/MLyrI6JIaeGTiHe78FclVr1enuxev52WVK2G59tBTd7FZjx7fY
-         g9hrhNnFY/Fubf8RaDy41kdPd2LLRp1Hg/vF5Tq4=
+        b=LAI7HzhkHmg0EPk8R4lCkHHwMYmBL/H+4RGITe1XCKHXI8kDAlC4Kwr62UM3Z4ub/
+         9w4invLuc3itgf0SJaJhZjT28rmBIHGhWfIeHS9YGvm73Eu9WF6VolxM+Lc2TMT1ST
+         F7DTv1lnEgq1rrlWG66rNGsFjQJbk99tnZSXHn04=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from localhost.localdomain ([37.4.249.98]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0Me5Q2-1i4Dmn1gRq-00Pxpf; Mon, 22
- Jul 2019 07:55:39 +0200
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0M96Jd-1hhU9J4AwP-00CPJs; Mon, 22
+ Jul 2019 07:55:41 +0200
 From:   Stefan Wahren <wahrenst@gmx.net>
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -51,33 +51,33 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-mmc@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 06/18] dt-bindings: bcm2835-cprman: Add bcm2711 support
-Date:   Mon, 22 Jul 2019 07:54:37 +0200
-Message-Id: <1563774880-8061-7-git-send-email-wahrenst@gmx.net>
+Subject: [PATCH 08/18] clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support
+Date:   Mon, 22 Jul 2019 07:54:39 +0200
+Message-Id: <1563774880-8061-9-git-send-email-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563774880-8061-1-git-send-email-wahrenst@gmx.net>
 References: <1563774880-8061-1-git-send-email-wahrenst@gmx.net>
-X-Provags-ID: V03:K1:l/MjxzPQLu7Ob/0EM/lxZew7fom9VFEYdrdZU8LU4EKKAr/D1J1
- fM+Z1x/rK7ksOIO8DrAVlJc3ZqRmcvBsFeqPeoCmpJz2NyrmAK8YpDddDSSvkW09NBiwXmd
- BpM+mZZ4FBTEC3zvWYcLzm0EeCpSb3RkLJgGkrP9k6NmoMmR9oSHmH8shJPcO/Ap47WMKZr
- /Z9D2x0Cq20ptvVHpQaOw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:P+/kdd+TwHM=:8FUBPHf0/8+qFt6wQVsCh3
- Rg1HiKrxOrblkjCvfD7+fXMt/S8iiYvYCbBThrvZrJjiBJP0DAqvj95O6avO6mMBAbZ5Q3ko1
- r0iBI4bxhqyWkFF6Tc2EU55IKVCUI69gYbxGqaMBhZQjuyBbkjpY/wpjrtSvuRD3Qg8hN45z0
- rFLtRN2V0llLayek1PZVVxMkYQL1DtGGR4CkYcssjT/eGPdHVoNafi7Xk1IDhRTegw/QPSlrb
- g5EfkQ872NmBQE/Z9qHjlOSz0OqQ/OykCT3B929avxPY+Y4+ug1ZccE5ODQVzmX1UpOs4Iywl
- DAz+0uYLupEvO6qWm4vhMRePBQglLldxj/yzj4vVFNvHTXyJe8rsKFiis4cB1GpnXot5KRwUU
- fGroCSjypfS3fOn9qE49h3hthWb80aOQ5zlpf/xt+Zo8LP5J/+h2GdPyO/iXLpTShAslxVl+P
- JO8aAVMAMhSUxxBilGLyZbuJVSg1QWCD3cn1caJUlDr6VXBuQhvuCmT58rbwvuvx58wre0Iav
- CroiRlV9JYvrIc+FvRxe93on4SlK/v8bzLPBtNzfqjMvUaugghhq3PNUilMDcxfuxw1QUZCsA
- T9CKcDvaY5aQsONWvX2eIjDRqzOPfAu3XwW7HC/E6EPm2aq19ukECpDpegeK0jMOKX93OWBTA
- P8RS6lg2P+s8OyscACluqEXHGaxUnrZ9S2ClwqKYl28cdHOmEwcgWn9MVFgppoc3sFcHEhjrt
- 7Fu1V7YkOZnNCMU4hOvqC3zNc8ns448kKaAuES4E71JG2p84VjZ7ezWUSWtcbHlID8ZwD8Uby
- jubELe3i5iwk6UZ4paNdkFkUn+MUB7q3T+BnhKkbiEZkf9Q9KI7cyxccl3laQVzXfp65VQRpK
- 8m/+K89Art4FReadbrmZo0AFMDDFT/bbch1L4aflo9lqo1bFa21iYC93zv3P7BlTD6sVy44Hf
- drFuGnJHBWvcC6UjksrxVFVSsfbwc3OWH0zx1K510fCB0ITijK5E/acu+DHO3379y2oNSZGGc
- o5Ujd3nQanzr2LiRIKjdfIOdWqJwcjYxrZykpXzlFsT2og0XTpQzxXuL6To3AyoQLcp/CZy5j
- eMJua1ikFqcBbA=
+X-Provags-ID: V03:K1:jOIrka6HlPmHspKjerxs8OHrw+5PSYK7EHf98yzfquXNqTlzaXl
+ wqkK02jPXet29eNpvVl6ZCzFT2lDri2YewY5qZYpxPQUlkZaWrqUIjd2H/Vys6vakrEUTLX
+ ER5H5A3MWuLkIC9HB/NE+VPVgtGmoN2CRUXq/cpr8hxEVlgMOMmaiLIdiXKGJ9kSRPHWW8y
+ 11kSozk9voAcY7UBmqx4g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:RvlB6W0jnFk=:zEnFQRGi6xEmsCsXqgqK6v
+ Z86h5PRUbMVuiSbhbpJaaA+iOunXMXODXGIhNbqsxjooEG7RNNMv0+70im+kVOX6Bmm1TkwgE
+ Em3rqLuS967zU3WntcmqEp7th1aXZZBTdf06hvQbFoANkn7t2s9jJNAQp3HmJ1vTBEA1joeH8
+ jxZjy9+7G7cN4qSuFNmX/U+kDlsOKC9BncLZMg45zW1PY05lnbxn3g9uBofAnjndVXK1Phaho
+ SRQMyDsqL/MySpzJTgU3A9FFIG2OGmy/H4H98nhiJRLx6CMORL2RIc8eUPkrEcJkNi0z0dhzb
+ wCIbvHgTHy/BwmQRXeseoiYbgbLu933IUGWrvR15B6n02rCOiZkqbvAVJj+HCt1dXTke5joEJ
+ maxoaSzapET7qQaWKl7sxNd/cjBc3r703ZwDIG98se1g/65xpMtWPM5+7kNYxtNWFwU/yKx2m
+ VC6O7+cS27lkSeYnwtcZqU8PeayjfbZY18DPPMwpOD3W+1zfARWiOII4Gg9qt2graoY6zZlWp
+ D0tw0dfpYW+0sdPZ9Sym7PRz/KYzWwpE0nECgY1J5wamm7GbVFGtRAa9+cYDlQ+oF5eCT+ckh
+ QvUoTYvbeRLE3q4kU8oj7POGXjqTHwGzssZPr4PFRELygCXDKiYA4j8NWoMvdXbOsHlYpzLTh
+ EWvVHOSFECNsbaohLPj3XnmkmvcIonmfwfMEb/kJO+i50UOKJwXKZzMh+/ZeA4unqaH2bcIZt
+ Sr8F905f6YHd/hzrU12tybLG17Gcml10oJmZ88+U51G0utiuKuZswgpH2C8QT0AQoFp5Fob9E
+ Nzmcca6I73fVKPlrKQO3DSwCjg91EcbCqn3GX9exalRSBeQaPF4L65jJA4DiDjch8K3Cy/Lyr
+ qiyMVd/2c0xICvUGEvYy3PofHZRUPVVQ8MY7aVNltDsL2V/+zcU7BqGTZs2ePmSFw+XApi8nG
+ PEqsqTpLAgNN6UNVuDpg5T/aNfzwv0+uFvOsCRS4QnMyCarQnnZ6ak/sAeH80Ikys643uNeBh
+ TDkyWiXi0VkNeNyp3JhdiLJWfY+iyirulvSxs//lmMc2fvcCQ+U8IoVN+EaN5yDhM9Z76Hq5u
+ PlzqoEv/O6BHVo=
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
@@ -85,43 +85,65 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 The new BCM2711 supports an additional clock for the emmc2 block.
-So we need an additional compatible.
+So add a new compatible and register this clock only for BCM2711.
 
 Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 =2D--
- Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt | 4 +++-
- include/dt-bindings/clock/bcm2835.h                             | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.t=
-xt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-index dd906db..9e0b03a 100644
-=2D-- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -12,7 +12,9 @@ clock generators, but a few (like the ARM or HDMI) will =
-source from
- the PLL dividers directly.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 3231b76..fbdc4e1 100644
+=2D-- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -114,6 +114,8 @@
+ #define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+ #define CM_EMMCDIV		0x1c4
++#define CM_EMMC2CTL		0x1d0
++#define CM_EMMC2DIV		0x1d4
 
- Required properties:
-=2D- compatible:	Should be "brcm,bcm2835-cprman"
-+- compatible:	should be one of the following,
-+	"brcm,bcm2711-cprman"
-+	"brcm,bcm2835-cprman"
- - #clock-cells:	Should be <1>. The permitted clock-specifier values can b=
-e
- 		  found in include/dt-bindings/clock/bcm2835.h
- - reg:		Specifies base physical address and size of the registers
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clo=
-ck/bcm2835.h
-index 2cec01f..b60c0343 100644
-=2D-- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -58,3 +58,5 @@
- #define BCM2835_CLOCK_DSI1E		48
- #define BCM2835_CLOCK_DSI0P		49
- #define BCM2835_CLOCK_DSI1P		50
+ /* General bits for the CM_*CTL regs */
+ # define CM_ENABLE			BIT(4)
+@@ -290,7 +292,8 @@
+ #define BCM2835_MAX_FB_RATE	1750000000u
+
+ #define SOC_BCM2835		BIT(0)
+-#define SOC_ALL			(SOC_BCM2835)
++#define SOC_BCM2711		BIT(1)
++#define SOC_ALL			(SOC_BCM2835 | SOC_BCM2711)
+
+ /*
+  * Names of clocks used within the driver that need to be replaced
+@@ -1999,6 +2002,16 @@ static const struct bcm2835_clk_desc clk_desc_array=
+[] =3D {
+ 		.frac_bits =3D 8,
+ 		.tcnt_mux =3D 39),
+
++	/* EMMC2 clock (only available for BCM2711) */
++	[BCM2711_CLOCK_EMMC2]	=3D REGISTER_PER_CLK(
++		SOC_BCM2711,
++		.name =3D "emmc2",
++		.ctl_reg =3D CM_EMMC2CTL,
++		.div_reg =3D CM_EMMC2DIV,
++		.int_bits =3D 4,
++		.frac_bits =3D 8,
++		.tcnt_mux =3D 42),
 +
-+#define BCM2711_CLOCK_EMMC2		51
+ 	/* General purpose (GPIO) clocks */
+ 	[BCM2835_CLOCK_GP0]	=3D REGISTER_PER_CLK(
+ 		SOC_ALL,
+@@ -2230,6 +2243,7 @@ static int bcm2835_clk_probe(struct platform_device =
+*pdev)
+
+ static const struct of_device_id bcm2835_clk_of_match[] =3D {
+ 	{ .compatible =3D "brcm,bcm2835-cprman", .data =3D (void *)SOC_BCM2835 }=
+,
++	{ .compatible =3D "brcm,bcm2711-cprman", .data =3D (void *)SOC_BCM2711 }=
+,
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, bcm2835_clk_of_match);
 =2D-
 2.7.4
 
