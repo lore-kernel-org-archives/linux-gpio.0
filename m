@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409F6C76195
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 07:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C29C76196
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 07:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B40022324
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 07:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B37DA22353
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 07:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o8dkVWu4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fd8yseA9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfGVHMX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jul 2019 03:12:23 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36984 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727547AbfGVHMX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jul 2019 03:12:23 -0400
-Received: by mail-lj1-f196.google.com with SMTP id z28so36576606ljn.4;
-        Mon, 22 Jul 2019 00:12:20 -0700 (PDT)
+        id S1727591AbfGVHR0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jul 2019 03:17:26 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42697 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfGVHR0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jul 2019 03:17:26 -0400
+Received: by mail-lf1-f65.google.com with SMTP id s19so25841308lfb.9;
+        Mon, 22 Jul 2019 00:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mBKVeIVQCt2orG0fki4lpTf+aSp4EgOO+T725Y0RvfA=;
-        b=o8dkVWu4ivIVqOCEk5kZlnczdt5JHt9VKNdyrDYv883Gmz224pqtlZAhlWbcGPMFuN
-         w+NdPgL2u1mVGSsSQR5BRlKkbUozQF3VZiF+ceCzID3itV74lKhsFMjxSGUSJFIa8dnH
-         Hx32bzcTWs1usTBnGVGilZdd18ipYBxnJZ7XC0arnDtGmqnMJyL1FT/rI1lOZ44emSG9
-         IYTaOqlBFivlS0ZAagLXpVrP7hghLWBVmPHx0cSBb7AAK9I1jkbw348FlMF2Ru3vWEpI
-         hr3QCbncd269+l0vO+R0yKnA/CyvaB3cu6Y6dltdRHFtTXyvTBfBR36ODLS13CPBwnZ/
-         Oaeg==
+        bh=Z0WGnZO7/Z4erbEFJXtlAz4VpQQFxoA/ZnqQf2BM+eg=;
+        b=Fd8yseA9gCqzx7yaMON3nloZwpWND5wPXO/aEqDkPh5zM83u5LoczvrTwniRAsukLT
+         C2l2jGfpBvJI8YBGy37OT2q6x/gAesw/ozvz8VLJpI1bwlko9mbVyDHvcJKrPtc11S0I
+         v70I2kUtE0Xcg0w8MW13A10vU1tqKHdLfkTP2sIjoPkWCRk1VByKY3i2i2JJyIhfd/0p
+         7oB7+rob0E3V9n2rdhXpMSOZatBG9J6/OxLcR41m3u9nSd4L7725tRU5CnFeEs6pMs9V
+         0RtmO3xvI6XO3ETBYWfgEGipnjJ8sbdEYdR6ZJmAqwocH7u18gNAJWbPbGMj9vlrT2kl
+         sJZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=mBKVeIVQCt2orG0fki4lpTf+aSp4EgOO+T725Y0RvfA=;
-        b=l5L+m82FZ1V2nz2/3waMBnWCh6HYTck9u31WbqQGTYRfl69amKcidYUGTXFuTzKq6g
-         KQJUixwSDsfgX71Ij/Um8iFj9hWKm2m1ORDgRFEWQuHmZr7IV3FhHe4/+enTK4bb0ki5
-         Vs7DoC8VmVujLwW53IaVo7WbW/6TA8QfiOhmOtuUUY4gneE5v0U2EbCVH5tWX1GBXgLF
-         UXuaYnNROK+j+X49Y/DdsOiPjTf/jWp+hXps8T5FQTSXugWZBbufqtSpdjO5VRShS918
-         7GGyUGm90e5RTRSbUeFheoGcU2Ewe9+ZLYhy3IA5Lk9VvYMtDpcCdR5ggtEaK+9zSVp6
-         N+9A==
-X-Gm-Message-State: APjAAAVoeuDVNUIUnGHXsNvkHVhUkRWDOBV4t6GymZiIpWLBnz5+7MYv
-        3nmw2AouSrXyCj525NV0BIIbwzcb
-X-Google-Smtp-Source: APXvYqw+GSlCIsco7u9txxEB8qC5mgHLLuRe+V3r/zzJl+yOVFS0+qpTpVhaEes3WxjH7peyh14qYQ==
-X-Received: by 2002:a2e:96c3:: with SMTP id d3mr35208035ljj.68.1563779539117;
-        Mon, 22 Jul 2019 00:12:19 -0700 (PDT)
+        bh=Z0WGnZO7/Z4erbEFJXtlAz4VpQQFxoA/ZnqQf2BM+eg=;
+        b=AtuHhJlTjngYNWuyYU/DfmGHL0OwCMMszCgpXIlvSvP6seiDcrZkEF29DjAtLzZvSS
+         O2t0QpzXMd6BMZcX4gQVX9xrezzyUS4ZUvt2WoiAnzuqunUtRNENWTDVLvWpA9geHVHY
+         bQF9Yk8Fvn09vj9ESQTvyCimrk/RJQi6JwyicuA56ZGZl8Ko1mIJWZRbM89KhgvFy/+d
+         uCFzESSiI8qEJqTbL5pLV/TFcMHzWqZ3KQMWFwwWZeRMkv242u/5SbgOsN/tItHICHEv
+         4ynlkVJapy7Thgq4E+MKMloZ+nn3dcRcX5iBFKoXLyuCRdbYSt3L1fFc76/3fWEGk9TO
+         gWaw==
+X-Gm-Message-State: APjAAAUFgjGEjDkB3jxFw3Plt9lPkq+JgB7qQa14kHt3+KnDpbkTCjGR
+        ydHnFbL1z5MLVsWqYx9rr4k7Q+2T
+X-Google-Smtp-Source: APXvYqymW5DVgDWAMbJNr3hkhaEfXmSrFlU4NpYDViBae5vFGIW2EVKxfWCOFnUZKoZz2d1lPijPOg==
+X-Received: by 2002:a19:f819:: with SMTP id a25mr32445291lff.183.1563779843135;
+        Mon, 22 Jul 2019 00:17:23 -0700 (PDT)
 Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id r5sm5929037lfn.89.2019.07.22.00.12.17
+        by smtp.googlemail.com with ESMTPSA id h22sm7434994ljj.105.2019.07.22.00.17.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 00:12:18 -0700 (PDT)
-Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
-From:   Dmitry Osipenko <digetx@gmail.com>
+        Mon, 22 Jul 2019 00:17:22 -0700 (PDT)
+Subject: Re: [PATCH V6 09/21] clk: tegra: clk-super: Fix to enable PLLP
+ branches to CPU
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
         jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -69,18 +69,19 @@ Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
         mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
         devicetree@vger.kernel.org
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-15-git-send-email-skomatineni@nvidia.com>
- <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com>
- <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com>
- <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com>
- <e2d0e8cc-b4ea-1148-4af1-fee6bb266cca@nvidia.com>
- <5054f178-db27-9286-d123-3e2b2a885717@gmail.com>
-Message-ID: <8c259511-d8ea-51b2-0b1d-c85b964bc44c@gmail.com>
-Date:   Mon, 22 Jul 2019 10:12:17 +0300
+ <1563738060-30213-10-git-send-email-skomatineni@nvidia.com>
+ <0c86cd7f-81b5-40c5-6f1e-796e8f13b522@gmail.com>
+ <042f4b43-7b9c-533d-2548-d903b34363da@nvidia.com>
+ <7933a83c-3208-b551-d41d-70285ae528e3@nvidia.com>
+ <f6ac50af-c3a5-1fef-2e0d-a9ecadeb2495@gmail.com>
+ <d9bbe208-6cd3-6a28-3e43-fdd566699b1d@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <07897688-2a02-b7a7-7048-72c4078d26a2@gmail.com>
+Date:   Mon, 22 Jul 2019 10:17:21 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <5054f178-db27-9286-d123-3e2b2a885717@gmail.com>
+In-Reply-To: <d9bbe208-6cd3-6a28-3e43-fdd566699b1d@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -89,93 +90,92 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-22.07.2019 10:09, Dmitry Osipenko пишет:
-> 22.07.2019 9:52, Sowjanya Komatineni пишет:
->>
->> On 7/21/19 11:10 PM, Dmitry Osipenko wrote:
->>> 22.07.2019 1:45, Sowjanya Komatineni пишет:
->>>> On 7/21/19 2:38 PM, Dmitry Osipenko wrote:
+22.07.2019 10:12, Sowjanya Komatineni пишет:
+> 
+> On 7/21/19 11:32 PM, Dmitry Osipenko wrote:
+>> 22.07.2019 6:17, Sowjanya Komatineni пишет:
+>>> On 7/21/19 3:39 PM, Sowjanya Komatineni wrote:
+>>>> On 7/21/19 2:16 PM, Dmitry Osipenko wrote:
 >>>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
->>>>>> This patch adds support for clk: tegra210: suspend-resume.
+>>>>>> This patch has a fix to enable PLLP branches to CPU before changing
+>>>>>> the CPU clusters clock source to PLLP for Gen5 Super clock.
 >>>>>>
->>>>>> All the CAR controller settings are lost on suspend when core
->>>>>> power goes off.
+>>>>>> During system suspend entry and exit, CPU source will be switched
+>>>>>> to PLLP and this needs PLLP branches to be enabled to CPU prior to
+>>>>>> the switch.
 >>>>>>
->>>>>> This patch has implementation for saving and restoring all PLLs
->>>>>> and clocks context during system suspend and resume to have the
->>>>>> clocks back to same state for normal operation.
+>>>>>> On system resume, warmboot code enables PLLP branches to CPU and
+>>>>>> powers up the CPU with PLLP clock source.
 >>>>>>
->>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
 >>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 >>>>>> ---
->>>>>>    drivers/clk/tegra/clk-tegra210.c | 68
->>>>>> ++++++++++++++++++++++++++++++++++++++--
->>>>>>    drivers/clk/tegra/clk.c          | 14 +++++++++
->>>>>>    drivers/clk/tegra/clk.h          |  1 +
->>>>>>    3 files changed, 80 insertions(+), 3 deletions(-)
+>>>>>>    drivers/clk/tegra/clk-super.c            | 11 +++++++++++
+>>>>>>    drivers/clk/tegra/clk-tegra-super-gen4.c |  4 ++--
+>>>>>>    drivers/clk/tegra/clk.h                  |  4 ++++
+>>>>>>    3 files changed, 17 insertions(+), 2 deletions(-)
 >>>>>>
->>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c
->>>>>> b/drivers/clk/tegra/clk-tegra210.c
->>>>>> index 55a88c0824a5..68271873acc1 100644
->>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
->>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>>>>> @@ -9,6 +9,7 @@
->>>>>>    #include <linux/clkdev.h>
->>>>>>    #include <linux/of.h>
->>>>>>    #include <linux/of_address.h>
->>>>>> +#include <linux/syscore_ops.h>
->>>>>>    #include <linux/delay.h>
->>>>>>    #include <linux/export.h>
->>>>>>    #include <linux/mutex.h>
->>>>>> @@ -220,11 +221,15 @@
->>>>>>    #define CLK_M_DIVISOR_SHIFT 2
->>>>>>    #define CLK_M_DIVISOR_MASK 0x3
->>>>>>    +#define CLK_MASK_ARM    0x44
->>>>>> +#define MISC_CLK_ENB    0x48
+>>>>>> diff --git a/drivers/clk/tegra/clk-super.c
+>>>>>> b/drivers/clk/tegra/clk-super.c
+>>>>>> index 39ef31b46df5..d73c587e4853 100644
+>>>>>> --- a/drivers/clk/tegra/clk-super.c
+>>>>>> +++ b/drivers/clk/tegra/clk-super.c
+>>>>>> @@ -28,6 +28,9 @@
+>>>>>>    #define super_state_to_src_shift(m, s) ((m->width * s))
+>>>>>>    #define super_state_to_src_mask(m) (((1 << m->width) - 1))
+>>>>>>    +#define CCLK_SRC_PLLP_OUT0 4
+>>>>>> +#define CCLK_SRC_PLLP_OUT4 5
 >>>>>> +
->>>>>>    #define RST_DFLL_DVCO 0x2f4
->>>>>>    #define DVFS_DFLL_RESET_SHIFT 0
->>>>>>      #define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
->>>>>>    #define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
->>>>>> +#define CPU_SOFTRST_CTRL 0x380
->>>>>>      #define LVL2_CLK_GATE_OVRA 0xf8
->>>>>>    #define LVL2_CLK_GATE_OVRC 0x3a0
->>>>>> @@ -2825,6 +2830,7 @@ static int tegra210_enable_pllu(void)
->>>>>>        struct tegra_clk_pll_freq_table *fentry;
->>>>>>        struct tegra_clk_pll pllu;
->>>>>>        u32 reg;
->>>>>> +    int ret;
->>>>>>          for (fentry = pll_u_freq_table; fentry->input_rate;
->>>>>> fentry++) {
->>>>>>            if (fentry->input_rate == pll_ref_freq)
->>>>>> @@ -2853,9 +2859,8 @@ static int tegra210_enable_pllu(void)
->>>>>>        reg |= PLL_ENABLE;
->>>>>>        writel(reg, clk_base + PLLU_BASE);
->>>>>>    -    readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
->>>>>> -                      reg & PLL_BASE_LOCK, 2, 1000);
->>>>>> -    if (!(reg & PLL_BASE_LOCK)) {
->>>>>> +    ret = tegra210_wait_for_mask(&pllu, PLLU_BASE, PLL_BASE_LOCK);
->>>>>> +    if (ret) {
->>>>> Why this is needed? Was there a bug?
->>>>>
->>>> during resume pllu init is needed and to use same terga210_init_pllu,
->>>> poll_timeout_atomic can't be used as its ony for atomic context.
->>>>
->>>> So changed to use wait_for_mask which should work in both cases.
->>> Atomic variant could be used from any context, not sure what do you
->>> mean. The 'atomic' part only means that function won't cause scheduling
->>> and that's it.
+>>>>>>    static u8 clk_super_get_parent(struct clk_hw *hw)
+>>>>>>    {
+>>>>>>        struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
+>>>>>> @@ -97,6 +100,14 @@ static int clk_super_set_parent(struct clk_hw
+>>>>>> *hw, u8 index)
+>>>>>>            if (index == mux->div2_index)
+>>>>>>                index = mux->pllx_index;
+>>>>>>        }
+>>>>>> +
+>>>>>> +    /*
+>>>>>> +     * Enable PLLP branches to CPU before selecting PLLP source
+>>>>>> +     */
+>>>>>> +    if ((mux->flags & TEGRA_CPU_CLK) &&
+>>>>>> +        ((index == CCLK_SRC_PLLP_OUT0) || (index ==
+>>>>>> CCLK_SRC_PLLP_OUT4)))
+>>>>>> +        tegra_clk_set_pllp_out_cpu(true);
+>>>>> Should somewhere here be tegra_clk_set_pllp_out_cpu(false) when
+>>>>> switching from PLLP?
+>>>> PLLP may be used for other CPU clusters.
+>>> Though to avoid flag and check needed to make sure other CPU is not
+>>> using before disabling PLLP branch to CPU.
+>>>
+>>> But leaving it enabled shouldn't impact much as clock source mux is
+>>> after this in design anyway.
+>>>
+>>> But can add as well if its clear that way.
+>> The TRM doc says "The CPU subsystem supports a switch-cluster mode
+>> meaning that only one of the clusters can be active at any given time".
 >>
->> Sorry, replied incorrect. readx_poll_timeout_atomic uses ktime_get() and
->> during resume timekeeping suspend/resume happens later than clock
->> suspend/resume. So using tegra210_wait_for_mask.
+>> Given that cluster-switching isn't supported in upstream, I don't think
+>> that you need to care about the other cluster at all, at least for now.
 >>
->> both timekeeping and clk-tegra210 drivers are registered as syscore but
->> not ordered.
+>> The cluster-switching implementation in upstream is very complicated
+>> because it requires a special "hotplugging" CPU governor, which
+>> apparently no other platform needs.
+>>
+>> [snip]
 > 
-> Okay, thank you for the clarification.
+> This patch enables PLLP branches to CPU for both CPUG & CPULP if they
+> use PLLP source.
 > 
-> [snip]
+> So, to disable PLLP out CPU when not in use, we still need check for
+> other cluster because during resume both LP CPU and G CPU gets restored.
+> CPUG runs from PLLP on resume and when it does super clk restore for LP
+> CPU which may not be using PLLP, but as both uses same super mux
+> clk_ops, without check (for PLLP branch to CPU in use) disabling PLLP
+> branch to CPU during LP CPU restore looses clock to CPU G as well which
+> is running from PLLP.
 > 
+> Will add check and disable PLLP if not in use in next version... this
+> need extern flag as well to mark PLLP usage with either of CPU's.
 
-You should remove the 'iopoll.h' then, since it's not used anymore.
+I still don't understand why do you need to care about LP cluster at
+all, given that it's always in a power-gated state.
