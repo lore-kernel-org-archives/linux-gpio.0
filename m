@@ -2,99 +2,112 @@ Return-Path: <SRS0=DcKL=VT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F8CC76194
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDF1C7618F
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2462190F
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563815244;
-	bh=t+2o4xoPd3DZSy7yWww1q6tby571fFi/LIU8nHtFYwo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j3SZt4n6ytPstEZaWVAJfBW4XfaP6hWb9ODPADqKUxDhd+3FDWPyQXAt9p28Un/1l
-	 EbUCIbUh7AxRjCAuAA8dyigrJsvZehbxU4Olt7J4TRQP/ROxh4buD0dIYaoPf1fWc1
-	 FvS0gvP0d1NaN5PzsIKY1ZtY+VRmEXI6p0dLCCNc=
+	by mail.kernel.org (Postfix) with ESMTP id 9D71B2190F
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 17:08:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="ZwYF0nDM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730746AbfGVRHX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jul 2019 13:07:23 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44224 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbfGVRHX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jul 2019 13:07:23 -0400
-Received: by mail-io1-f66.google.com with SMTP id s7so75449637iob.11;
-        Mon, 22 Jul 2019 10:07:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0TKHVmpYowYp+z8r1gzs39hyeM5llWsZFOmeR/oEPIw=;
-        b=WCT7ypccdr7tTW6UDiQVUDeux9CYtBGplN+h6ZYGl8qJ/2mLkE7ibRllbaVSvfnHS7
-         g1lIFwxZglQvX5HoK7yiU5VhNrBUgZ6Dg5asWEHF7PsoG1deX3vnnV5qozYxaZTBMz2l
-         zv3nGsh1TxyuZRpJMu7KClCPZG0kEwt9WF4Eif7mbHUxrXQF8/Tiejf0wTLzk3GiNaav
-         Xtg84hRjl4yyhnXS1AzSTLvK8MqJ6+KYS8E69o6QVFAcVXOS7P7I2i1H0H3yQv+yxYS7
-         lDjgTg1qkecHOSx9bHp88pFBTwP7df13g7nSYhL+eqtNhIkmjDDLvyFV7oNHUUX2Fogr
-         keLQ==
-X-Gm-Message-State: APjAAAVfYkpi1DK2pCKWQKUlkBECwGZWJQ6qHZ6RoqK6BYpPbsvXx6uX
-        fdgA3FZzIalsZtUkzH3LvA==
-X-Google-Smtp-Source: APXvYqywlOe9Bln+H5VDBcuJ2G9N9BSSNYkN/W6yLk3BvElGQtwQj/aF4fSQmFJDY/Yn5HQE6kkASg==
-X-Received: by 2002:a02:9991:: with SMTP id a17mr46589517jal.1.1563815242458;
-        Mon, 22 Jul 2019 10:07:22 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id e22sm30446659iob.66.2019.07.22.10.07.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 10:07:21 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 11:07:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        id S1729835AbfGVRI3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jul 2019 13:08:29 -0400
+Received: from mout.gmx.net ([212.227.17.20]:38761 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728887AbfGVRI3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:08:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1563815283;
+        bh=pOipip/7SqtkvUBVosuhUW8StWC6Eq11sbfDOvaTu7Q=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=ZwYF0nDMAeBRG23gIr8vph6vCHmXVzh5Oc6eXpUPa26K85FB2T54eaZmGl4Mclv2U
+         MAOabspJXe6JPy5J/ddNUTyoKPRxpgqvFeJBSVSgO14mpcBGnqpysJB/G0JTRej5ho
+         8XxXImAFo5cnTHpVlmVCNjkJNSeyg4PIVos6l0kE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.131]) by mail.gmx.com
+ (mrgmx103 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 0LqQTl-1iK0iw2bjd-00e836; Mon, 22 Jul 2019 19:08:03 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v4 5/8] clk: sunxi-ng: v3s: add Allwinner V3 support
-Message-ID: <20190722170721.GA6216@bogus>
-References: <20190713034634.44585-1-icenowy@aosc.io>
- <20190713034634.44585-6-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190713034634.44585-6-icenowy@aosc.io>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-mmc@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 14/18] dt-bindings: arm: bcm2835: Add Raspberry Pi 4 to DT schema
+Date:   Mon, 22 Jul 2019 19:07:33 +0200
+Message-Id: <1563815257-2648-2-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1563815257-2648-1-git-send-email-wahrenst@gmx.net>
+References: <1563815257-2648-1-git-send-email-wahrenst@gmx.net>
+X-Provags-ID: V03:K1:tO/RDLStxpBhSjI1Yvpz+5kIM9YY1HHCUcN1/0HPyCye/v1766M
+ dUboVfHUppGM2laRPxmJ9p4clRdI+r8cKyEfUJAYlxhgtufM1SQUbq57V2XeOgPwG97pmn6
+ hv1S8Q/w+SkPySkFVdtASHwD5ZJWe7FRz2IySKhn8bMxOMi71BqjQ1Mhn3M5AC+7b0WmO38
+ JKEJ4JvfbgF3tXTBvDoWg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zjxQ1KMgLug=:bfvv6r+DDraqyjvFqBBjPS
+ YsTOefVQWL/J+48TcXkjaff5GfVDeb+Tah6l/Vd+W54jG7SNsXF57krrl+r6MxXK9VlAdMo8S
+ s0nO8a7GpIY4AAFf8mJqZ/dGPiD0EoVaP/LU0Y+JTd/laZfuXgsXfJmDZ7MCW0o6ggdzT0Z+0
+ IloG1T6ZD43C2ZdEbsYesgFAklAZ/R2mv/E+2dXpEKnuwb52gZZLkXfdoZs+5w19sCK7Tc9jx
+ qLgMb/oJBHAGHgqGiEB3LGRbbwd3o2INW41rmL3zfwWRtP9KOQopRKCEDs53vz+V2IL+JwcCL
+ NlvbZrkBAVT2/PLg/cZ5czNZLrZKB6muQ3RslgFq5T4fYEKgoGRHNdJakkabkZvLZIKO3snBD
+ x1MsKSlHeqV3aGCGDTRwlNPgzNoPlpYw/ADvg+7IO/u8SIE85w48XSPUrA2KRy02OdYagE0Mq
+ nwi9D7vEmIN126abhIBCzKxlrjhHyXoWVJ17Do0faABNv100SDzUHNCusB8cA3j7rcQbF79mT
+ SLv4JA6duJ5J7+7nM4jCvWCQ0Yk+1q07kyJgDfxE5d+V0RCCygZdiYOs8tFNdggP+H0ImWzc0
+ /r4YJyLeqNFpM+JzAm3sERhWgNrcwJb46GhxoB5U2jlgf0+dXSGVXIWPrc+Y7d4ZJNW2o2t1m
+ CafN2uzea+XJdWnWCEENBKNUWv6KN+khx+t8/mXV1X/6uyiUHiDiwo1SAPydvzPtiwM8z+5MG
+ gYHoqmEeMCeSh74qJUC4Sw8Mzkwpdf+FVR9Dli+7BpP6uiPVOIGIbceq7gcZYCJDoFYuc8jyp
+ ykQ8wcRzReuAb/JtoFcbj5Xm6tqIEUpu0bAk9Fw0j6tiCF7f+PK5xscPKmdOLXFtlJridSiKQ
+ b1eU9bJ3Lrx9BhNw6s2DP8lYMJJtNb6z57WoGKmueGnBvhOK2284VMSqHvXwFTYt04QoK4eb1
+ 8C7r+COQ1GzgNRTEr8/F2L50H0ZOD4KAvLUmRtpHRfLnzsSFxmG5nNYGdxw3cPMTL4kXjZqw3
+ tEDoWmytBNsDXtTpf+xBE8NRKQ2ymZVGKVcWPJAe+HN8oCqbDuT77skql+K9P54GBvr/S8UQs
+ WG+3WE0ioDojQg=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, 13 Jul 2019 11:46:31 +0800, Icenowy Zheng wrote:
-> Allwinner V3 has the same main die with V3s, but with more pins wired.
-> There's a I2S bus on V3 that is not available on V3s.
-> 
-> Add the V3-only peripheral's clocks and reset to the V3s CCU driver,
-> bound to a new V3 compatible string. The driver name is not changed
-> because it's part of the device tree binding (the header file name).
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v4:
-> - Add the missing MMC2 clock slices.
-> 
-> No changes in v3/v2.
-> 
->  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c      | 228 +++++++++++++++++++++-
->  drivers/clk/sunxi-ng/ccu-sun8i-v3s.h      |   2 +-
->  include/dt-bindings/clock/sun8i-v3s-ccu.h |   4 +
->  include/dt-bindings/reset/sun8i-v3s-ccu.h |   3 +
->  4 files changed, 234 insertions(+), 3 deletions(-)
-> 
+Add new Raspberry Pi 4 to DT schema.
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-If a tag was not added on purpose, please state why and what changed.
+diff --git a/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml b/Docu=
+mentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+index 1a4be26..8c3bbad 100644
+=2D-- a/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
++++ b/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+@@ -15,6 +15,11 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
++      - description: BCM2711 based Boards
++        items:
++          - enum:
++              - raspberrypi,4-model-b
++
+       - description: BCM2835 based Boards
+         items:
+           - enum:
+=2D-
+2.7.4
+
