@@ -2,94 +2,109 @@ Return-Path: <SRS0=DcKL=VT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7534FC76188
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F85C76188
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DDF21BE6
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691B7219BE
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jul 2019 06:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PX/sutwS"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="Fs7+OVDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfGVGPE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jul 2019 02:15:04 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39775 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfGVGPD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jul 2019 02:15:03 -0400
-Received: by mail-io1-f67.google.com with SMTP id f4so71435144ioh.6
-        for <linux-gpio@vger.kernel.org>; Sun, 21 Jul 2019 23:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kX0BwYLOwNUlNgHxpx7CjmRWqoQEUjzIqeh8o3Pqthw=;
-        b=PX/sutwSVjl/2Y3XTd4qqCfz05CLsbLY0nZ9nsfREhOtpGDWV7OZi60HWK+i5wXiyt
-         yWpIG/ejlfDzC7yXMcJqIE3kCoWyHWuI3U96AV61BnGtvvshy6pllCmEC87xYMFnTQ3B
-         I5tejJqQtT3M1lOcpN736GYOLowq8z9RlN/4hK+1Xde9OSmNm75kBJ6Q3j0gxM2LT6ms
-         8taFE80ygibQHdlwOLZH8suTJjVI5L5lfl6FOu2jMjIna/hSiE7ZRl8qpBYDRF0Gef3P
-         8QHhtH+EJudycoTb4AYf+OUwjHEKpU0Wm05ipWWP6p7VFSMXOHhBg6uSHFQ6RJU1VKRd
-         HpkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kX0BwYLOwNUlNgHxpx7CjmRWqoQEUjzIqeh8o3Pqthw=;
-        b=aCRGFb3jn00QeHKS8LEzbeTNazEVonA8bkqdeyL9QHSD1c10De9c1YJ849QKyICsUh
-         kWGHxS71XBPOOSDzgxwXvR9+H9psRpXB2VqvHHPv9IurRul7xuAiPGGmiX0EUMK5Pn41
-         /vGIHaRXGtFvK70KfZ2B66y24HOvq80GQaasl/mXAupf1GwvG0iu2JPJREUKoeHVzs4+
-         +fogjEzybzhoFWwGUWVFTIOGSzpnkQOtlPEl6TElXsSlGg9vlGMyIAkmwoWy+NlHeaMp
-         vVGFsxuKSfYRoV1yMAFVl3pL9/sUTvAvQqXIzsxs9Z1i+n6tExzGc3AD+W4M61lk2syk
-         Pdow==
-X-Gm-Message-State: APjAAAXtllZB9BQfgTN+TPR5A1V0fH5FkPRzBTq6ivIU1k+GrFJuhJ0Z
-        h8oXszzpgghlB7331t6FASSxOTqcV4nreYpeO1E=
-X-Google-Smtp-Source: APXvYqzc/MqOnPkc6Erbr3xhLWJvVo8HVczLWBKMYcQnIGByIRIh/0GfUKYy/vZd+Z/uSeZ5HC7s7y1JYvOoMbLSM6g=
-X-Received: by 2002:a02:37d6:: with SMTP id r205mr69512569jar.57.1563776102949;
- Sun, 21 Jul 2019 23:15:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190708082343.30726-1-brgl@bgdev.pl> <CACRpkdb5xKHZja0mkd-wZJ+YHZpGJaDrkA0dv60MNYKXFcPK4w@mail.gmail.com>
- <CAMRc=MfB9R70QDqtjG5a5Roq1roeL78Ss5noytrY-7P=tY1OHA@mail.gmail.com>
- <CACRpkdaiZgK1EoaUxDtbm_GJHVjZU56e_qBQ-OF0mmwb5W8+tg@mail.gmail.com>
- <CAMpxmJWDTkhuWhfSJ-fkJ6r+7a3kErXafQ_sJLVgMf=cA=1+aQ@mail.gmail.com> <CACRpkdYkp0OnyEiUX_VQF_nu5JumkupdsX9fG4rWCf0apNtX5A@mail.gmail.com>
-In-Reply-To: <CACRpkdYkp0OnyEiUX_VQF_nu5JumkupdsX9fG4rWCf0apNtX5A@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 22 Jul 2019 08:14:52 +0200
-Message-ID: <CAMRc=MchP-nAnYL8rq1k6QUF8DBoayZKB95xh-YL-5gB6GQC1g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: don't WARN() on NULL descs if gpiolib is disabled
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Claus H . Stovgaard" <cst@phaseone.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726547AbfGVGYA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jul 2019 02:24:00 -0400
+Received: from mout.gmx.net ([212.227.17.22]:36443 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbfGVGX7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jul 2019 02:23:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1563776616;
+        bh=p7EuEN+WXnzmcDfw8Q5gWYTDfwT+rrLjIA0t4iR5+DU=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Fs7+OVDivi+bxt7RG4MgsXL9iMFsdsFLsu8M/Ofw0D3bG2jayz7C5BLqxT0Jz7ChV
+         xfSd9tEIGIK0/QkidlIkkj75mePWfRAai0gs2I1knyTADe0T6oKDWoRHiy6gawpFiA
+         JqIYS6XbhH7MFrv06OwjEF/7cW4bl9/PpAgNiDvo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.98]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MaV3V-1i8uWX2ZBZ-00KCgz; Mon, 22
+ Jul 2019 08:23:36 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-mmc@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 11/18] dt-bindings: pinctrl: bcm2835: Add brcm,bcm2711 compatible
+Date:   Mon, 22 Jul 2019 08:23:24 +0200
+Message-Id: <1563776607-8368-2-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1563776607-8368-1-git-send-email-wahrenst@gmx.net>
+References: <1563776607-8368-1-git-send-email-wahrenst@gmx.net>
+X-Provags-ID: V03:K1:L6MvCiJSUEBAg1rTPB7ACRbeRDXsOwcCOZcjaEYDTpcasQM/U5z
+ 3+lW4tcXkM8Ok5cyjtm399i4Fiin6mdeNhwTW8WSrDg4LkG9sXABaWVT7PNX5VjBaS2Oe+m
+ qfJNByhfka/+Pn7gu74tdiZ60bAd+LH3IleO0W+0Rr1Ut2+3yAGprJDmJMjKR+1P54l7v2I
+ DFjYVlyuh3cTv0FNKCGIg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MJTh9r2apxo=:iwLc9ZJ3pv2oOMTOXOcVge
+ I9yPnQoAGYB7VvLujM0XRTWRzYaDGW4JBSR/9CVMI/KP9szSSAFVsF1IFFeJXqD0Sc60mwSLF
+ BwO4AhkEUbvo4tdx/7dhG780XfC9wNkSE4Hld9prwxaZW7Mw6+coZBi6pfxmRKDB8PEI++dy+
+ SXHt9d9A2jTwY1k7xamdHOBDkgrxVIaywxHvImhzCxx82RvZCAg7xgb2faAVHLUMF45Jp41Ap
+ B97Y8dBBk43dejfqln2C8iKdbH04YnTxzARdUZInRacl6JyO5px44kJhG9meTJ7zXISls5mhB
+ Xw7gAwZF65p7eqhhM8ELp3lRE4omt8XCrXWmxgO2H0j1edeKFdZ4QWBLYw000UoL8LmSxD6ia
+ c19xye46n7nWEE/bCuXPgYrepKyZlmaz0YZHUZ9E+tru35fOm1gMZk+Dj0r0Mc9mO1O1Fey64
+ fVZMwREad/Pko4gXl3mSeVzECi/GUNn+UPASk8yJXUY1mP8Vh6wnkefdWVomTtGsu7aa+fSLb
+ JzWLq2hYWAMYLQRW3ioihAQVgsp+2EoZwKiEg/AIB1JY9UbRjPg3+RLNGS9eDWTIHF1cpoPVC
+ HaNrIqDL9YBxl9pTmk6V2jRAwqsHe+LpwXPH20Ug5VzWstd3tMbbO+U9twwVBAuLW2t1LRZY9
+ 2f1nS2+UWqCRgKTpyyP5mYjShHKzpOcn11lUomyoDj261j6AotDFCGIHnasTbOjXAvoDXqMfi
+ DcyYFJYLj1a4AnFBZ5tr89H/HZy3xNrjWiaxKEEW7furQ9U9kS8pUGVsD7qW4n2a2cS22d0T/
+ CPveiO/8mgjF6ApfsVWCuFZn84if6SmqUewB1Yrv93ZZpsgMOcLgU0H/iiOVGUh5GtHHKKDca
+ w0ySOjNFi2LKkRF4iwQHJe6DQuOi42H9Sou+fQmkm0nDCBPa4WtCfTmQSHDbS/zquaTXcUzP3
+ B8qwWJMDZGekfEmnBIf2OvFDQ38pjdb3XOOeCP37b+VyYD13j66Zgtq28LamiEbwlnyZgWcuv
+ OmbTgKBzmetHA/mjgkR5vpNQF6ShB88cLDK19LNIiImiTVfVeX9/35OwHVMfwCUr5CpRp3elI
+ sshxoWksxyjM38=
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-sob., 20 lip 2019 o 21:45 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
->
-> On Sat, Jul 20, 2019 at 8:03 PM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
->
-> > I'll apply it to my local tree and send it for v5.3-rc2.
->
-> OK! Do you see it as bug fix so it should go in the rcs?
->
-> It pretty much needs to be a regression to go in there,
-> because this stub stuff blew up in my face before :/
->
-> Thanks,
-> Linus
+Add a new compatible for the BCM2711.
 
-It causes a warning every time someone writes to an at24 EEPROM
-without GPIOLIB selected. To me it sounds like a bug that should go
-into stable. Let me know if I'm wrong in thinking that, then I'll send
-it for v5.4.
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bart
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.t=
+xt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+index ac6d614..3cab733 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible: should be one of:
+   "brcm,bcm2835-gpio" - BCM2835 compatible pinctrl
+   "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
++  "brcm,bcm2711-gpio" - BCM2711 compatible pinctrl
+ - reg: Should contain the physical address of the GPIO module's registers=
+.
+ - gpio-controller: Marks the device node as a GPIO controller.
+ - #gpio-cells : Should be two. The first cell is the pin number and the
+=2D-
+2.7.4
+
