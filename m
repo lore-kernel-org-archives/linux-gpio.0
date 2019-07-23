@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6B2C76190
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1340CC7618B
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04616223BA
+	by mail.kernel.org (Postfix) with ESMTP id DF207206B8
 	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732208AbfGWP4h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Jul 2019 11:56:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:47566 "EHLO mga09.intel.com"
+        id S1733008AbfGWP4i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Jul 2019 11:56:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:13172 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728497AbfGWP4h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:56:37 -0400
+        id S1728497AbfGWP4i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 Jul 2019 11:56:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:36 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,299,1559545200"; 
-   d="scan'208";a="169599229"
+   d="scan'208";a="177332549"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 23 Jul 2019 08:56:35 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Jul 2019 08:56:36 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C596D177; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
+        id BA01F130; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 4/8] pinctrl: icelake: Provide Interrupt Status register offset
-Date:   Tue, 23 Jul 2019 18:56:29 +0300
-Message-Id: <20190723155633.65232-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/8] pinctrl: geminilake: Provide Interrupt Status register offset
+Date:   Tue, 23 Jul 2019 18:56:28 +0300
+Message-Id: <20190723155633.65232-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
 References: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
@@ -52,29 +52,29 @@ it make sense to provide it explicitly in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-icelake.c | 2 ++
+ drivers/pinctrl/intel/pinctrl-geminilake.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-index 5f2f5c61ad41..6489e9bbb61f 100644
---- a/drivers/pinctrl/intel/pinctrl-icelake.c
-+++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-@@ -18,6 +18,7 @@
- #define ICL_PAD_OWN	0x020
- #define ICL_PADCFGLOCK	0x080
- #define ICL_HOSTSW_OWN	0x0b0
-+#define ICL_GPI_IS	0x100
- #define ICL_GPI_IE	0x110
+diff --git a/drivers/pinctrl/intel/pinctrl-geminilake.c b/drivers/pinctrl/intel/pinctrl-geminilake.c
+index b49a484754b9..de96aa9794a2 100644
+--- a/drivers/pinctrl/intel/pinctrl-geminilake.c
++++ b/drivers/pinctrl/intel/pinctrl-geminilake.c
+@@ -17,6 +17,7 @@
+ #define GLK_PAD_OWN	0x020
+ #define GLK_PADCFGLOCK	0x080
+ #define GLK_HOSTSW_OWN	0x0b0
++#define GLK_GPI_IS	0x100
+ #define GLK_GPI_IE	0x110
  
- #define ICL_GPP(r, s, e, g)				\
-@@ -36,6 +37,7 @@
- 		.padown_offset = ICL_PAD_OWN,		\
- 		.padcfglock_offset = ICL_PADCFGLOCK,	\
- 		.hostown_offset = ICL_HOSTSW_OWN,	\
-+		.is_offset = ICL_GPI_IS,		\
- 		.ie_offset = ICL_GPI_IE,		\
+ #define GLK_COMMUNITY(s, e)				\
+@@ -24,6 +25,7 @@
+ 		.padown_offset = GLK_PAD_OWN,		\
+ 		.padcfglock_offset = GLK_PADCFGLOCK,	\
+ 		.hostown_offset = GLK_HOSTSW_OWN,	\
++		.is_offset = GLK_GPI_IS,		\
+ 		.ie_offset = GLK_GPI_IE,		\
+ 		.gpp_size = 32,                         \
  		.pin_base = (s),			\
- 		.npins = ((e) - (s) + 1),		\
 -- 
 2.20.1
 
