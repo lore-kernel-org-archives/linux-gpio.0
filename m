@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9E8C7618B
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA73C7618B
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BAD206B8
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06AEC206B8
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387632AbfGWP4j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Jul 2019 11:56:39 -0400
-Received: from mga11.intel.com ([192.55.52.93]:25328 "EHLO mga11.intel.com"
+        id S2387666AbfGWP4k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Jul 2019 11:56:40 -0400
+Received: from mga09.intel.com ([134.134.136.24]:47566 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733236AbfGWP4j (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:56:39 -0400
+        id S1733236AbfGWP4k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 Jul 2019 11:56:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:39 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,299,1559545200"; 
-   d="scan'208";a="180778819"
+   d="scan'208";a="344780866"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 23 Jul 2019 08:56:37 -0700
+  by orsmga005.jf.intel.com with ESMTP; 23 Jul 2019 08:56:37 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E04FC4EB; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
+        id 0250C552; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 6/8] pinctrl: denverton: Provide Interrupt Status register offset
-Date:   Tue, 23 Jul 2019 18:56:31 +0300
-Message-Id: <20190723155633.65232-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 8/8] pinctrl: intel: Remove default Interrupt Status offset
+Date:   Tue, 23 Jul 2019 18:56:33 +0300
+Message-Id: <20190723155633.65232-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
 References: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
@@ -48,36 +48,35 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Since some of the GPIO controllers use different Interrupt Status offset,
-it make sense to provide it explicitly in the driver.
+it make sense to provide it explicitly in the drivers.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-denverton.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-denverton.c b/drivers/pinctrl/intel/pinctrl-denverton.c
-index 3a4932b557b4..fde83cd4aac5 100644
---- a/drivers/pinctrl/intel/pinctrl-denverton.c
-+++ b/drivers/pinctrl/intel/pinctrl-denverton.c
-@@ -15,8 +15,9 @@
- #include "pinctrl-intel.h"
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 1e8018edde4d..3a945997b8eb 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -30,7 +30,6 @@
+ #define REVID_MASK			GENMASK(31, 16)
  
- #define DNV_PAD_OWN	0x020
--#define DNV_HOSTSW_OWN	0x0C0
- #define DNV_PADCFGLOCK	0x090
-+#define DNV_HOSTSW_OWN	0x0C0
-+#define DNV_GPI_IS	0x100
- #define DNV_GPI_IE	0x120
+ #define PADBAR				0x00c
+-#define GPI_IS				0x100
  
- #define DNV_GPP(n, s, e)				\
-@@ -32,6 +33,7 @@
- 		.padown_offset = DNV_PAD_OWN,		\
- 		.padcfglock_offset = DNV_PADCFGLOCK,	\
- 		.hostown_offset = DNV_HOSTSW_OWN,	\
-+		.is_offset = DNV_GPI_IS,		\
- 		.ie_offset = DNV_GPI_IE,		\
- 		.pin_base = (s),			\
- 		.npins = ((e) - (s) + 1),		\
+ #define PADOWN_BITS			4
+ #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
+@@ -1343,9 +1342,6 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
+ 		community->regs = regs;
+ 		community->pad_regs = regs + padbar;
+ 
+-		if (!community->is_offset)
+-			community->is_offset = GPI_IS;
+-
+ 		ret = intel_pinctrl_add_padgroups(pctrl, community);
+ 		if (ret)
+ 			return ret;
 -- 
 2.20.1
 
