@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32CCC76194
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6B2C76190
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6E8223BA
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04616223BA
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jul 2019 15:56:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfGWP4h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1732208AbfGWP4h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 23 Jul 2019 11:56:37 -0400
-Received: from mga12.intel.com ([192.55.52.136]:13172 "EHLO mga12.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:47566 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732208AbfGWP4h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1728497AbfGWP4h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 23 Jul 2019 11:56:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:36 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:56:36 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,299,1559545200"; 
-   d="scan'208";a="188863570"
+   d="scan'208";a="169599229"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Jul 2019 08:56:35 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 23 Jul 2019 08:56:35 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D0EDA1A3; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
+        id C596D177; Tue, 23 Jul 2019 18:56:34 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 5/8] pinctrl: sunrisepoint: Provide Interrupt Status register offset
-Date:   Tue, 23 Jul 2019 18:56:30 +0300
-Message-Id: <20190723155633.65232-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/8] pinctrl: icelake: Provide Interrupt Status register offset
+Date:   Tue, 23 Jul 2019 18:56:29 +0300
+Message-Id: <20190723155633.65232-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
 References: <20190723155633.65232-1-andriy.shevchenko@linux.intel.com>
@@ -52,29 +52,29 @@ it make sense to provide it explicitly in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 2 ++
+ drivers/pinctrl/intel/pinctrl-icelake.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-index ccafeea4939c..44d7f50bbc82 100644
---- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+index 5f2f5c61ad41..6489e9bbb61f 100644
+--- a/drivers/pinctrl/intel/pinctrl-icelake.c
++++ b/drivers/pinctrl/intel/pinctrl-icelake.c
 @@ -18,6 +18,7 @@
- #define SPT_PAD_OWN	0x020
- #define SPT_PADCFGLOCK	0x0a0
- #define SPT_HOSTSW_OWN	0x0d0
-+#define SPT_GPI_IS	0x100
- #define SPT_GPI_IE	0x120
+ #define ICL_PAD_OWN	0x020
+ #define ICL_PADCFGLOCK	0x080
+ #define ICL_HOSTSW_OWN	0x0b0
++#define ICL_GPI_IS	0x100
+ #define ICL_GPI_IE	0x110
  
- #define SPT_COMMUNITY(b, s, e)				\
-@@ -26,6 +27,7 @@
- 		.padown_offset = SPT_PAD_OWN,		\
- 		.padcfglock_offset = SPT_PADCFGLOCK,	\
- 		.hostown_offset = SPT_HOSTSW_OWN,	\
-+		.is_offset = SPT_GPI_IS,		\
- 		.ie_offset = SPT_GPI_IE,		\
- 		.gpp_size = 24,				\
- 		.gpp_num_padown_regs = 4,		\
+ #define ICL_GPP(r, s, e, g)				\
+@@ -36,6 +37,7 @@
+ 		.padown_offset = ICL_PAD_OWN,		\
+ 		.padcfglock_offset = ICL_PADCFGLOCK,	\
+ 		.hostown_offset = ICL_HOSTSW_OWN,	\
++		.is_offset = ICL_GPI_IS,		\
+ 		.ie_offset = ICL_GPI_IE,		\
+ 		.pin_base = (s),			\
+ 		.npins = ((e) - (s) + 1),		\
 -- 
 2.20.1
 
