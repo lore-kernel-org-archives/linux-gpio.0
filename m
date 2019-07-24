@@ -2,110 +2,118 @@ Return-Path: <SRS0=lKIO=VV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B593C7618B
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jul 2019 08:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22985C7618B
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jul 2019 08:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF3F22ADA
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jul 2019 08:13:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="k+q7UAhc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GFIe5u//"
+	by mail.kernel.org (Postfix) with ESMTP id ED159229ED
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jul 2019 08:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725870AbfGXINO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Jul 2019 04:13:14 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:51279 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725826AbfGXINO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:13:14 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A211B1BE7;
-        Wed, 24 Jul 2019 04:13:12 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2019 04:13:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=Z9cu/jAfTLPXGSW6gAaNx3qAdg
-        J+sFyDlgrk5M8Y63Q=; b=k+q7UAhcAM26oYO9hUAagwzL+hrHSR5s1p4h3DUQVf
-        U3oIxLHjx4rde1dUZb3afCorQ47ps3UvIeWll38clz3gIQSrUXZLsTcKduGXhJig
-        M5TDhditvHG6Wpop8EwwNbYeJOnupyh8HCP8xRxD7xR1W4bdWBlh+HnWy14AWr1a
-        ehnYd/38CqNYPW1mhoKfUl+eL3Wu+4+BY5YQgXq+KptsKc2Vi5XE7KfpAnEC7S0n
-        7u12uMdmE7Z+VlUwF/3clczCW9aT8DZDgvBVyEZVgOpT7E1wUXoR3kc0DR6CAO6M
-        ChGbhsmZvMPQGfJ5ueLDxtjr9VYqFbbY7H2CC5W3lUoQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Z9cu/jAfTLPXGSW6g
-        AaNx3qAdgJ+sFyDlgrk5M8Y63Q=; b=GFIe5u//MOSehrg4pLFa6fzeaefHTTHsC
-        KcE4DtVvZqDdLSceuqsQt74U+Fx+UA3axFB9xLje/Zb6P1GbPk/I4g4I1j561/1r
-        JzAKtd/Ra8UErE38HeG12g3eV73lZy4jnhHUYVIb64bSM0gfwDAUphRHwrYKXtrJ
-        qcXBgtxmr8wPK7lxymd27AgKja3OcGk3WvlTLUm+8pw0XePcfUqVQmuW8hVszxgf
-        J94UMeUPDWMiSyGdSwbJgC5+VrurGAoy2Dr65wseWzAuvVyQ+1rQWo6KnC3C8iIt
-        wWnie7Fzf/Nf5il8bON/iYJWq8WO2hRRaXvbAUjIdQaZKVncbKs5Q==
-X-ME-Sender: <xms:FhM4XdYl6s_v0frgxQfX-eAxBSB57mw8dBAcmK27Bs_7YjhXcUg_pQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrjeelgdduvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
-    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
-    ihgurdgruheqnecukfhppedvtddvrdekuddrudekrdeftdenucfrrghrrghmpehmrghilh
-    hfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:FhM4XToB9bhuKD6ybOqqYrcDVYdn-dvk50NL61v-LwO7mQPfIfvx3Q>
-    <xmx:FhM4XcI2RIvOldexMpK96YaIO-5G9jytay0HYhfJ-Ztm1QwL-a8F_A>
-    <xmx:FhM4XWbVBuikG1oH89_lRhBz9FV561KMHpeEQTIfLsvmUBKtopUwqA>
-    <xmx:GBM4XVPmw2y04_DCBD8HGgbOG8QP_NcgdJT1ysI4NMLMBin7QWcMMg>
-Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 97BA080060;
-        Wed, 24 Jul 2019 04:13:06 -0400 (EDT)
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     linux-aspeed@lists.ozlabs.org
-Cc:     Andrew Jeffery <andrew@aj.id.au>, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 0/3] ARM: dts: aspeed: Deprecate g[45]-style compatibles
-Date:   Wed, 24 Jul 2019 17:43:10 +0930
-Message-Id: <20190724081313.12934-1-andrew@aj.id.au>
-X-Mailer: git-send-email 2.20.1
+        id S1726065AbfGXIht (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Jul 2019 04:37:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726031AbfGXIht (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:37:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 00FA9AF03;
+        Wed, 24 Jul 2019 08:37:47 +0000 (UTC)
+Message-ID: <ab7af8537ebcbc7a7bdf04d2c06152ba6821b333.camel@suse.de>
+Subject: Re: [PATCH 00/18] ARM: Add minimal Raspberry Pi 4 support
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Chen-Yu Tsai <wens@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Eric Anholt <eric@anholt.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        "open list:BROADCOM BCM281XX..." 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2835..." 
+        <linux-rpi-kernel@lists.infradead.org>
+Date:   Wed, 24 Jul 2019 10:37:45 +0200
+In-Reply-To: <CAGb2v66-o23CW5iH9Bn1aELymPSiKrA43eJd2q6EZ7iubcogaw@mail.gmail.com>
+References: <1563774880-8061-1-git-send-email-wahrenst@gmx.net>
+         <96113adb5fcab9c2f4bb5fa82b84ff5f9c07fd07.camel@suse.de>
+         <bc650090-db86-ccac-01dc-23f08ad7b19b@gmx.net>
+         <20190723093442.GA27239@lst.de>
+         <04c5eaa03f3a124dbbce6186e11e19acc4539cc8.camel@suse.de>
+         <b15509d6-bc2e-3d06-0eea-943e6e456d62@gmx.net>
+         <5f9b11f54c66fd0487837f7e58af3adf7f86635f.camel@suse.de>
+         <CAGb2v66-o23CW5iH9Bn1aELymPSiKrA43eJd2q6EZ7iubcogaw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Rf1Vi16408MDtIxce0fT"
+User-Agent: Evolution 3.32.3 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
 
-Joel and I decided that going forward we're not going to name compatibles along
-the lines of SoC generations, so discourage any further attempts by removing
-the remaining instances.
+--=-Rf1Vi16408MDtIxce0fT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It's probably best if we push the three patches all through one tree rather
-than fragmenting. Is everyone happy if Joel applies them to the aspeed tree?
+> > > Does it fix the wifi issue too?
+> >=20
+> > Well it works as long as I revert this: 901bb98918 ("nl80211: require a=
+nd
+> > validate vendor command policy"). Which has nothing to do with DMA anyw=
+ays.
+> >=20
+> > Was this the issue you where seeing?
+> >=20
+> > [    4.969679] WARNING: CPU: 2 PID: 21 at net/wireless/core.c:868
+> > wiphy_register+0x8e8/0xbdc [cfg80211]
+> > [...]
+> > [    4.969974] ieee80211 phy0: brcmf_cfg80211_attach: Could not registe=
+r
+> > wiphy device (-22)
+>=20
+> We're seeing this on different platforms (allwinner / rockchip / amlogic)
+> with Broadcom WiFi chips. So it's unlikely to be related with anything in
+> this series.
+>=20
+> I believe a fix for this has already been queued up:
+>=20
+>=20
+https://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git/commit/?=
+id=3D91046d6364afde646734c7ead1f649d253c386e9
 
-Cheers,
+Thanks for pointing it out, it fixes the issue alright.
 
-Andrew
 
-Andrew Jeffery (3):
-  dts: ARM: aspeed: Migrate away from aspeed,g[45].* compatibles
-  pinctrl: aspeed: Document existence of deprecated compatibles
-  dt-bindings: aspeed: Remove mention of deprecated compatibles
+--=-Rf1Vi16408MDtIxce0fT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
- Documentation/devicetree/bindings/mfd/aspeed-scu.txt         | 2 --
- Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt   | 2 --
- .../devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml  | 5 +----
- .../devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml  | 4 +---
- arch/arm/boot/dts/aspeed-g4.dtsi                             | 2 +-
- arch/arm/boot/dts/aspeed-g5.dtsi                             | 2 +-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c                   | 4 ++++
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
- 8 files changed, 12 insertions(+), 13 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.20.1
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl04GNkACgkQlfZmHno8
+x/4D2wgAqq3ax066fAw16mhXFvRvsvt5N2yK9ur2hwqz0YVcIYT9FlKTnuFyrUOY
+w1MvuMiaeLz+2xFpt+LVsmP/ygSqwzfzikUGJh/vHIu+mRqYPdbHrIKvLqutyQnF
+oXe6qqy8bXRfT50JQRnyH7ysKXks44suhiyTrYpidvmqkFZnasP86QgelISZiuKo
+umHPmmEck4luauMqSuQxzaNtbiJhLWzdKAWH3u+iufEHZT5Mbhi0v82jwviF2x+k
+lHI6OQpyuuOyVlsbIcAKAuu3qafq8KWaIf13JUmRGdo+dAjpBQ/lsuxeQGH4mHHk
+JvMKjYzUiMp4hvcgcoVTNcJ/Zz7zpw==
+=vcHF
+-----END PGP SIGNATURE-----
+
+--=-Rf1Vi16408MDtIxce0fT--
 
