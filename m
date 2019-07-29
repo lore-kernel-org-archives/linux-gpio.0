@@ -1,4 +1,4 @@
-Return-Path: <SRS0=HUs+=VZ=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Z7qP=V2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,108 +6,96 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F76C7618F
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Jul 2019 23:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616FDC7618F
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 00:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D6B2085A
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 Jul 2019 23:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39DBD2085A
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 00:11:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="eK8A1Thu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pNeZHonu"
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="gH3oCbmk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfG1XlO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 28 Jul 2019 19:41:14 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60963 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726203AbfG1XlO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:41:14 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C65CD108B;
-        Sun, 28 Jul 2019 19:41:12 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Sun, 28 Jul 2019 19:41:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=U4RDuA+FSEF8yU1ZGRvQY82lPLeCcjf
-        hhcly0ZZX73U=; b=eK8A1ThuZVoK4sXEsuVOEEhAwXkF1Yy77aDYbCW9IrJ/OYo
-        n/Xq54zf6PMwyMfx+kR6Wjxy46DHAU1UqJgSiHeCNXWdBiOfDJ2aUg+TdbGCJNXi
-        yvByaeGHqMHHt3+7CX6mhuUBnjjnqKvlL+HOYEIOrFtNCF9WaOq8w/d+us4s/QSE
-        5G+F6AF2yLRoX8MR0YTB5Wnpz0T7KAlp1/kWKuL8iUyL+BR28Knb31AoAZPWNKIA
-        LsgMqG25wyLYu2vqIJXFjC3KwyDZyB7LFortsXGniIuL4UCzfgWM3COAOmU7W64X
-        WRm2hez+5RNzFeLKhYZGyIyU0sqyR3PyECBTEpw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=U4RDuA
-        +FSEF8yU1ZGRvQY82lPLeCcjfhhcly0ZZX73U=; b=pNeZHonuKkVktSvIThlH/V
-        fYL19ZQpECOIQs61lYsbRiQT7BVt2YitAJRtljv0NPSYHnj3KlE32wRLolJg5KL8
-        UshJdoM0O2VOJEWzarRdOr335PaRZlxb3zLATuhD/4LlRwGSNWy2j4n14njuSZj5
-        u9vJcualcV6GIcCK/CoF87dREOmijBshNYL8B8hvXas13tWoezDwGNjMKCcLeEeH
-        xoDjie8OTu5frdKQ4rh2YvtiusrBCiMKCq3c4qAEyqvfjzNw2QeDOVBpvE+U8xmm
-        v+qi1Ucu35yzKfMPn7UsQX2Zin5Ad4NnHGUqVf4piNJaXMx4SFPPmagXLB7CzhYA
-        ==
-X-ME-Sender: <xms:lTI-Xf0D-h9NjPtChndbt_AZAEcGOgba9qUFHi71HCoRLpxCds5Hjg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrledtgddvgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:lTI-XaIJins3UcM1v_qAS1wAwJcnzQH3zB9Z9iJzd-dsfWe_JnEAxw>
-    <xmx:lTI-XV1gZJJ5wfub7rrZbuhLNdfqfhc-KxeMMkbZWoy-6-Xk7KjPIA>
-    <xmx:lTI-XVyjXvVm-gpkrvZRwv0CJYJOEjsyW5wxW2m5b8pmEw8-alJt4Q>
-    <xmx:mDI-XVdQMfBvgBauhlEZAvpotqZ8mpaX0JOXEV8Mkk2lONrbFJDrkw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3062AE00A2; Sun, 28 Jul 2019 19:41:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-736-gdfb8e44-fmstable-20190718v2
-Mime-Version: 1.0
-Message-Id: <950b8374-2a06-44fe-a1fc-87be17e7d608@www.fastmail.com>
-In-Reply-To: <CACRpkdb4pEdPHbo=3+fJXe9WG8K7A2_xVMtKWCJCfEawDO5wBw@mail.gmail.com>
-References: <20190711041942.23202-1-andrew@aj.id.au>
- <CACRpkdb4pEdPHbo=3+fJXe9WG8K7A2_xVMtKWCJCfEawDO5wBw@mail.gmail.com>
-Date:   Mon, 29 Jul 2019 09:11:28 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Linus Walleij" <linus.walleij@linaro.org>
+        id S1726429AbfG2ALx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 28 Jul 2019 20:11:53 -0400
+Received: from onstation.org ([52.200.56.107]:33482 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbfG2ALx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 28 Jul 2019 20:11:53 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id A37F13E911;
+        Mon, 29 Jul 2019 00:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1564359112;
+        bh=fTbFvKTimvfSnY3qv6EFPf24BLGT92XXZetGoC+8T30=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gH3oCbmkasua7ZqHWoXpzrYFMS2XYEalSeBlrnKp80q7IsWlxwJrL36R6Ld5jg50s
+         daYNl/qq7EX0BKrVYHFY+/Fp/R1gvE9ZpmVo81puHzOrl+XC2k/Wzn1eWn0whVZ5fL
+         yGCBXhyTfKb0Ov+hKYhXZmgd07Y43Mnf47CVRW6w=
+Date:   Sun, 28 Jul 2019 20:11:51 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Ryan Chen" <ryanchen.aspeed@gmail.com>,
-        "Johnny Huang" <johnny_huang@aspeedtech.com>,
-        linux-aspeed@lists.ozlabs.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org,
+        David Daney <david.daney@cavium.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] pinctrl: aspeed: Add AST2600 pinmux support
-Content-Type: text/plain
+Subject: Re: [PATCH 2/4] gpio: allow customizing hierarchical IRQ chips
+Message-ID: <20190729001151.GA17127@onstation.org>
+References: <20190708110138.24657-1-masneyb@onstation.org>
+ <20190708110138.24657-3-masneyb@onstation.org>
+ <CACRpkdZn-czbOOTrRs5ZgR7qTtf2A4i_L4J8_vk+kJiBuAnikg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZn-czbOOTrRs5ZgR7qTtf2A4i_L4J8_vk+kJiBuAnikg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-
-On Mon, 29 Jul 2019, at 08:44, Linus Walleij wrote:
-> On Thu, Jul 11, 2019 at 6:19 AM Andrew Jeffery <andrew@aj.id.au> wrote:
+On Mon, Jul 29, 2019 at 12:49:55AM +0200, Linus Walleij wrote:
+> On Mon, Jul 8, 2019 at 1:01 PM Brian Masney <masneyb@onstation.org> wrote:
+> > +static void gpiochip_add_default_irq_domain_ops(struct irq_domain_ops *ops)
+> > +{
+> > +       if (!ops->activate)
+> > +               ops->activate = gpiochip_irq_domain_activate;
+> > +
+> > +       if (!ops->deactivate)
+> > +               ops->deactivate = gpiochip_irq_domain_deactivate;
+> > +
+> > +       if (!ops->translate)
+> > +               ops->translate = gpiochip_hierarchy_irq_domain_translate;
+> > +
+> > +       if (!ops->alloc)
+> > +               ops->alloc = gpiochip_hierarchy_irq_domain_alloc;
+> > +
+> > +       if (!ops->free)
+> > +               ops->free = irq_domain_free_irqs_common;
+> > +}
 > 
-> > This series adds pinmux support for the AST2600. Some more rework was required
-> > on top of the previous cleanup series, but this rework was focussed on
-> > supporting features of the AST2600 pinmux rather than fixing issues with the
-> > existing infrastructure for the ASPEED drivers. Due to the dependences it's
-> > based on top of pinctrl/devel, so should avoid any more SPDX issues.
-> >
-> > ASPEED have been testing the patches on hardware, so even for an initial pass
-> > there's some confidence in the implementation.
+> I'm fine with translate(), this seems to be what Lina needs too.
 > 
-> I'm unsure if I need to wait for the DT bindings to be fixed on this
-> series?
+> But do we really need to make them all optional? activate() and
+> deactivate() will require the driver to lock the irq etc which is hairy.
 
-Yeah, I need to, sorry for the delay. Been distracted by other stuff.
+I can't think of a reason right now that we'd need to override the
+others. Since the structure was there, I made all of them optional to
+try to future proof this a little bit.
 
-Will send a v2 shortly.
+It probably would be better to only make translate optional at this
+point. If needed, someone can submit a patch for one or more of the
+others with their use case.
 
-Andrew
+Brian
