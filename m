@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A597C7618B
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 13:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C32C433FF
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 13:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D256F214AE
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 13:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B450206DD
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jul 2019 13:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WMpj5QHm"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YiaN9TvK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfG2Npp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Jul 2019 09:45:45 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:21475 "EHLO
+        id S1727409AbfG2Nqp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Jul 2019 09:46:45 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:22738 "EHLO
         conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfG2Npp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jul 2019 09:45:45 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x6TDjbSu003622;
-        Mon, 29 Jul 2019 22:45:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6TDjbSu003622
+        with ESMTP id S1726327AbfG2Nqp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jul 2019 09:46:45 -0400
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x6TDkd2c004063;
+        Mon, 29 Jul 2019 22:46:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6TDkd2c004063
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564407938;
-        bh=VgyZn3U//MF81+efTBgICKWVreWt1CvUqxcn1hoetTk=;
+        s=dec2015msa; t=1564407999;
+        bh=cWonGbORACMO992JEG6wXpUqVMiORjcWPcSpyfVWOk0=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WMpj5QHm204O3U+89kXdV12RJuUmyFrXLLwtFg1BqtzyiWvx6U0DfhxRTMC7UVH8f
-         togauNYEunYBm4lYQXOzHAlGN+zdiAuIrtt8SfYcD7Q9Mu+Sa6EbsyuB8ErgxouXm4
-         t+w8NlvbXjS0revQmaH4UUFAgwegwfRSIzkZwKfmLRF+pZrLYvAAzmQTDFsZvzatLe
-         6/j9aeko2Teh1a48/B8FqeYvCWTsjDT000bqtxa3mIYVm3NP+eo769YO0em3TsijO/
-         iBvzVfYw4NZ5TElrX9PNHXIhWSai3D75T0b3iww/qDTiQd9+D0MrcruEpyefllGHkG
-         /pyfc0HcvqXIA==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id 2so40735612vso.8;
-        Mon, 29 Jul 2019 06:45:38 -0700 (PDT)
-X-Gm-Message-State: APjAAAVBBw1kJtUkW1UG0Z4tB+R5Mkps8I7jq20Spp51yVtqNlETBZTR
-        byx5ycG8d+4OiYrATOi+3HtCRe5q7xke+bXsT3s=
-X-Google-Smtp-Source: APXvYqyWqVnFLVPX2fs2nTxoZNXWls7FMCZA5Ra7eHohioGPq4IsN5YgV/jZAXcrkKhi2YSN4Ac0V99EijZxcoVeB30=
-X-Received: by 2002:a67:cd1a:: with SMTP id u26mr67298701vsl.155.1564407937090;
- Mon, 29 Jul 2019 06:45:37 -0700 (PDT)
+        b=YiaN9TvKEiAy5f9FiC7CIBYwMpyY2i4mh9BVD3eZYHuWmzxzbeMeNYnqzqzr2jSgx
+         kB1YPbCyWnRwwSpeQNg2EkndNVjq0ItYxyJY4pb0mAVx+3LcB+Da4F5QLyb0hgJ5//
+         c9iFonMEFGqEPNojbYIuZjXdjT17oK3un8zV8v/r+9Z/SKHwr49xKSET/QwxpFwfO3
+         M1aNvrc3fV+QGQRCx/ljkmpU3S90hU0z/502lt88/HVZY/JhzKKL8jzukKbE3TxlBC
+         CA5sCqpmDTAAuYwQ+/zdmZdEwOMWE36BCmCAHrexFtRH2Q4FQZDxyq7JElB175GCRN
+         5oCKD/G5U2YMw==
+X-Nifty-SrcIP: [209.85.221.178]
+Received: by mail-vk1-f178.google.com with SMTP id f68so11958376vkf.5;
+        Mon, 29 Jul 2019 06:46:39 -0700 (PDT)
+X-Gm-Message-State: APjAAAWzcM6x8MeUZdRCq1VHqSTTXSB74JXUsITWTE3wA2JuZ6DGnYaQ
+        q+nWNfpIpZ5EpUiIW/pNFbcBo4xg4CStYRciqY8=
+X-Google-Smtp-Source: APXvYqwBJsXVFguSWM2zN6i1W5HEZ0K0TTlacTQ34Up1dQRt6B588UuGnxnYplz478eRNNtsGmGRMZj0/96+C/dgC7c=
+X-Received: by 2002:a1f:a34c:: with SMTP id m73mr27781226vke.74.1564407998326;
+ Mon, 29 Jul 2019 06:46:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com> <1562668156-12927-2-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1562668156-12927-2-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com> <1562668156-12927-5-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1562668156-12927-5-git-send-email-hayashi.kunihiko@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Jul 2019 22:45:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARTjBH=bWz3AjTrw2ySVziAH-f4uaYcu51E-ZXk-5zskQ@mail.gmail.com>
-Message-ID: <CAK7LNARTjBH=bWz3AjTrw2ySVziAH-f4uaYcu51E-ZXk-5zskQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] pinctrl: uniphier: Separate modem group from UART
- ctsrts group
+Date:   Mon, 29 Jul 2019 22:46:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT7irhQWdMkKsY9E8Qwgvwqobs8GF1Mvmoe9wfTqVE4nA@mail.gmail.com>
+Message-ID: <CAK7LNAT7irhQWdMkKsY9E8Qwgvwqobs8GF1Mvmoe9wfTqVE4nA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] pinctrl: uniphier: Add Pro5 PCIe pin-mux settings
 To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -68,38 +67,66 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 On Tue, Jul 9, 2019 at 7:29 PM Kunihiko Hayashi
 <hayashi.kunihiko@socionext.com> wrote:
 >
-> It depends on the board implementation whether to have each pins of
-> CTS/RTS, and others for modem. So it is necessary to divide current
-> uart_ctsrts group into uart_ctsrts and uart_modem groups.
->
-> Since the number of implemented pins for modem differs depending
-> on SoC, each uart_modem group also has a different number of pins.
+> Pro5 PCIe interface uses the following pins:
+>     XPERST, XPEWAKE, XPECLKRQ
 >
 > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> index 1d418e3..577f12e 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> @@ -855,6 +855,8 @@ static const unsigned usb1_pins[] = {126, 127};
+>  static const int usb1_muxvals[] = {0, 0};
+>  static const unsigned usb2_pins[] = {128, 129};
+>  static const int usb2_muxvals[] = {0, 0};
+> +static const unsigned pcie_pins[] = {109, 110, 111};
+> +static const int pcie_muxvals[] = {0, 0, 0};
 
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> index 414ff3a..d1ed5b7 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-> @@ -780,8 +780,10 @@ static const unsigned system_bus_cs5_pins[] = {55};
->  static const int system_bus_cs5_muxvals[] = {6};
->  static const unsigned uart0_pins[] = {135, 136};
->  static const int uart0_muxvals[] = {3, 3};
-> -static const unsigned uart0_ctsrts_pins[] = {137, 138, 139, 140, 141, 124};
-> -static const int uart0_ctsrts_muxvals[] = {3, 3, 3, 3, 3, 3};
-> +static const unsigned uart0_ctsrts_pins[] = {137, 139};
-> +static const int uart0_ctsrts_muxvals[] = {3, 3};
-> +static const unsigned uart0_modem_pins[] = {138, 140, 141, 124};
-
-Please sort this array
-while you are here.
-
-Otherwise, looks good to me.
+Please keep the alphabetical sorting.
 
 
+>  static const unsigned int gpio_range_pins[] = {
+>         89, 90, 91, 92, 93, 94, 95, 96,         /* PORT0x */
+>         97, 98, 99, 100, 101, 102, 103, 104,    /* PORT1x */
+> @@ -925,6 +927,7 @@ static const struct uniphier_pinctrl_group uniphier_pro5_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(usb0),
+>         UNIPHIER_PINCTRL_GROUP(usb1),
+>         UNIPHIER_PINCTRL_GROUP(usb2),
+> +       UNIPHIER_PINCTRL_GROUP(pcie),
+
+Ditto.
+
+>         UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range),
+>  };
+>
+> @@ -957,6 +960,7 @@ static const char * const uart3_groups[] = {"uart3"};
+>  static const char * const usb0_groups[] = {"usb0"};
+>  static const char * const usb1_groups[] = {"usb1"};
+>  static const char * const usb2_groups[] = {"usb2"};
+> +static const char * const pcie_groups[] = {"pcie"};
+>
+>  static const struct uniphier_pinmux_function uniphier_pro5_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(emmc),
+> @@ -979,6 +983,7 @@ static const struct uniphier_pinmux_function uniphier_pro5_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(usb0),
+>         UNIPHIER_PINMUX_FUNCTION(usb1),
+>         UNIPHIER_PINMUX_FUNCTION(usb2),
+> +       UNIPHIER_PINMUX_FUNCTION(pcie),
+
+Ditto.
 
 
+
+>  };
+>
+>  static int uniphier_pro5_get_gpio_muxval(unsigned int pin,
+> --
+> 2.7.4
+>
 
 
 --
