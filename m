@@ -4,43 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D58C433FF
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jul 2019 10:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168F5C433FF
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jul 2019 10:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD11B20679
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jul 2019 10:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D40572087F
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jul 2019 10:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfG3KJj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Jul 2019 06:09:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:33667 "EHLO mga04.intel.com"
+        id S1727729AbfG3Knl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Jul 2019 06:43:41 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56040 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbfG3KJj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:09:39 -0400
+        id S1726751AbfG3Knl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 30 Jul 2019 06:43:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 03:09:38 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 03:43:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
-   d="scan'208";a="370900900"
+   d="scan'208";a="200119611"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 30 Jul 2019 03:09:34 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 30 Jul 2019 03:43:38 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8174B42; Tue, 30 Jul 2019 13:09:35 +0300 (EEST)
+        id CBE9E42; Tue, 30 Jul 2019 13:43:37 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h
-Date:   Tue, 30 Jul 2019 13:09:34 +0300
-Message-Id: <20190730100934.86564-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/3] gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h
+Date:   Tue, 30 Jul 2019 13:43:36 +0300
+Message-Id: <20190730104337.21235-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190730100934.86564-1-andriy.shevchenko@linux.intel.com>
-References: <20190730100934.86564-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20190730104337.21235-1-andriy.shevchenko@linux.intel.com>
+References: <20190730104337.21235-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -56,6 +57,7 @@ which broke down OF parts of GPIO library. Here we do the similar to ACPI.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+v2: Cc to ACPI people
  drivers/gpio/gpio-dwapb.c    |   1 +
  drivers/gpio/gpio-mb86s7x.c  |   1 +
  drivers/gpio/gpio-xgene-sb.c |   1 +
