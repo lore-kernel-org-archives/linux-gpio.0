@@ -2,167 +2,113 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFADC433FF
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 20:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9A1C32751
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 20:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D232064A
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 20:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72CCE2171F
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 20:36:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFmwE6xH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfGaU1Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 16:27:16 -0400
-Received: from atlmailgw2.ami.com ([63.147.10.42]:60257 "EHLO
-        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbfGaU1Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 16:27:16 -0400
-X-AuditID: ac10606f-d11ff70000003324-75-5d41f9a38aec
-Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id AC.A0.13092.3A9F14D5; Wed, 31 Jul 2019 16:27:15 -0400 (EDT)
-Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
- atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 31 Jul 2019 16:27:14 -0400
-From:   Hongwei Zhang <hongweiz@ami.com>
-To:     Andrew Jeffery <andrew@aj.id.au>,
+        id S1729280AbfGaUgt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 16:36:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35339 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfGaUgs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 16:36:48 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s1so26339538pgr.2;
+        Wed, 31 Jul 2019 13:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+3m34La6ccE3Dbo0nKkW6PAk5aFsT9gCe5QCc84QY/M=;
+        b=EFmwE6xHJZlI7fbJj4ayQvxsXiguUUOE/YUP+QGUdsdsqzIBCNFzDXIfMHIIReAeq0
+         YxhAhukgJsf9Zk6f6yV8s2LP8u0sSr3FNuF8EyxKSURPID2YZC8Lbo6cduEjaNrfdCwf
+         DDLHx35Gdmi2wKQrsQFGdxEic/BLubYM2PdbA3n+K81Up9x+c+BTo+EUmFexA3wLK1m3
+         HTdCvaEPFAiwwj9xS/aDlE76GEOL8mwW7ic1UhN2QVquK+WFAQH9I/3g+WFQQCGFh/i7
+         YgzaMh2a0V/ot/+SNV3Vet++cuduT7j8egp6XJg1gKkL7jCKsSeeDqSN4CHI6M9V8jx9
+         7pRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+3m34La6ccE3Dbo0nKkW6PAk5aFsT9gCe5QCc84QY/M=;
+        b=FoQwXb2Gd4fRQC3kd1b2VQ1KEJks1rGHoyJPJtOl9fz5dT2smrp2je2LCVpDRx8oGp
+         n3a8Th9bpxbdYV6upCl7M5vXT8bZJ0rG6uzqTG+bujq2tMVDzllKCApuC2M8lL4j2sUf
+         xDj5cD2sN+6yVlsNjbESKoAxaY8M224KynxrVViQYUxRDtzzmzl6aJfRUetDGFPIjgB+
+         d+SDev05KcL0hGvcMYlsidLr0Pwfg1Bmo6xaS5v59dyj+YRPmE+l+FPrPKNm7sR+hvyL
+         kaTCIYHvDAyq/n3c+QvOxxWhqc3xZcfSi3mcpLaOXaEZVPcvlZVQTYjhwf0He0lg/2TS
+         C12w==
+X-Gm-Message-State: APjAAAUJHMxv/QuhNpH6cwqz9Ke2QpUrj8n7l5HFfn95ewOrgT/A4ilU
+        VzqFPu6/IZY5O9PRfNfRjx0=
+X-Google-Smtp-Source: APXvYqybC01d0TByWxoDrJxw7C9lUUE3ShsoXGzUiQlHPWLWfdxiLqpUEK75wQICNDQ0Ydie1eRIGg==
+X-Received: by 2002:a63:e907:: with SMTP id i7mr113621516pgh.84.1564605407843;
+        Wed, 31 Jul 2019 13:36:47 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h16sm77972581pfo.34.2019.07.31.13.36.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 13:36:47 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 13:36:46 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     soc@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>
-CC:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Hongwei Zhang <hongweiz@ami.com>
-Subject: [v6 2/2] gpio: aspeed: Add SGPIO driver
-Date:   Wed, 31 Jul 2019 16:25:45 -0400
-Message-ID: <1564604745-1639-1-git-send-email-hongweiz@ami.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564500268-2627-3-git-send-email-hongweiz@ami.com>
-References: <1564500268-2627-3-git-send-email-hongweiz@ami.com>
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-serial@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/14] watchdog: pnx4008_wdt: allow compile-testing
+Message-ID: <20190731203646.GB14817@roeck-us.net>
+References: <20190731195713.3150463-1-arnd@arndb.de>
+ <20190731195713.3150463-4-arnd@arndb.de>
+ <20190731202343.GA14817@roeck-us.net>
+ <CAK8P3a2=gqeCMtdzdqg4d1n6v1-cdaHObeUoVXeB+=Okwd1rqA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.98.93]
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWyRiBhgu7in46xBqv3KVjsusxh8WXuKRaL
-        3+f/MltM+bOcyWLT42usFs2rzzFbbJ7/h9Hi8q45bA4cHlfbd7F7vL/Ryu5x8eMxZo871/aw
-        eWxeUu9xfsZCRo/Pm+QC2KO4bFJSczLLUov07RK4Mto+/GYruCtRcfn/ctYGxgvCXYycHBIC
-        JhKtS84wdTFycQgJ7GKSeLtsCQuEc5hRYue3u4wgVWwCahJ7N88BqxIRmMUocevJLDaQBLPA
-        HUaJDd3ZILawgIHEz8VP2bsYOThYBFQltj2SAgnzCthLXOg8wASxTU7i5rlOZhCbU8BBYv6V
-        frC4EEjNi3UsEPWCEidnPmGBGC8hcfDFC2aIGlmJW4ceQ81RkHje95hlAiPQMQgts5C0LGBk
-        WsUolFiSk5uYmZNebqSXmJupl5yfu4kREuL5Oxg/fjQ/xMjEwXiIUYKDWUmEd7G4fawQb0pi
-        ZVVqUX58UWlOavEhRmkOFiVx3lVrvsUICaQnlqRmp6YWpBbBZJk4OKUaGNk0O9+mbH/U0dLm
-        9kJg8hLdiVrTQ+senJu/PCgv4FhQ+xbZf7Yin2esuST96fnD15oz7MwXzPzsu7h5d3i69pV9
-        9Tybvx7KYBVzSfdeJCr9xEq4YWbwHssw/6cpnZ/SI03YJlzQmaQ2/ap37OPVxwOUOX7O32OT
-        k514jvf3ti9R6l/3Xb+Y2qzEUpyRaKjFXFScCAD4HFqxXwIAAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2=gqeCMtdzdqg4d1n6v1-cdaHObeUoVXeB+=Okwd1rqA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Andrew,
-Thanks so much for your help.
-
-> From:	Andrew Jeffery <andrew@aj.id.au>
-> Sent:	Tuesday, July 30, 2019 8:19 PM
-> To:	Hongwei Zhang; Linus Walleij; linux-gpio@vger.kernel.org
-> Cc:	Joel Stanley; linux-aspeed@lists.ozlabs.org; Bartosz Golaszewski; linux-kernel@vger.kernel.org; 
-> linux-arm-kernel@lists.infradead.org
-> Subject:	Re: [v6 2/2] gpio: aspeed: Add SGPIO driver
-> 
-> 
-> 
-> On Wed, 31 Jul 2019, at 00:55, Hongwei Zhang wrote:
-> > Add SGPIO driver support for Aspeed AST2500 SoC.
-> > 
-> > Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> > ---
-> >  drivers/gpio/sgpio-aspeed.c | 521 
-> > ++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 521 insertions(+)
-> >  create mode 100644 drivers/gpio/sgpio-aspeed.c
-> > 
-> > diff --git a/drivers/gpio/sgpio-aspeed.c b/drivers/gpio/sgpio-aspeed.c 
-> > new file mode 100644 index 0000000..9a17b1a
-> > --- /dev/null
-> > +++ b/drivers/gpio/sgpio-aspeed.c
-> > @@ -0,0 +1,521 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright 2019 American Megatrends International LLC.
-> > + *
-> > + * Author: Karthikeyan Mani <karthikeyanm@amiindia.co.in>  */
-> > +
-> > +#include <linux/bitfield.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/hashtable.h>
-> > +#include <linux/init.h>
-> > +
-> > +static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int
-> > offset, int val)
-> > +{
-> > +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> > +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
-> > +	unsigned long flags;
-> > +	void __iomem *addr;
-> > +	u32 reg = 0;
-> > +
-> > +	spin_lock_irqsave(&gpio->lock, flags);
-> > +
-> > +	addr = bank_reg(gpio, bank, reg_val);
-> > +
-> > +	if (val)
-> > +		reg |= GPIO_BIT(offset);
-> > +	else
-> > +		reg &= ~GPIO_BIT(offset);
-> 
-> reg is zero-initialised above and you haven't read from addr to assign to reg, so the else branch is 
-> redundant (reg is already zeroed). This path has a bug - you're clearing the state of all GPIOs associated 
-> with addr rather than just the GPIO associated with offset.
-> 
-
-you're correct, this is fixed in v7.
-
-> > +
-> > +	iowrite32(reg, addr);
-> > +
-> > +	spin_unlock_irqrestore(&gpio->lock, flags); }
-> > +
-> > +
-> > +static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int
-> > offset, int val)
-> > +{
-> > +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&gpio->lock, flags);
-> > +	gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
-> > +	spin_unlock_irqrestore(&gpio->lock, flags);
-> > +
-> > +	aspeed_sgpio_set(gc, offset, val);
-> 
-> In this case you should probably have an unlocked variant of aspeed_sgpio_set() so you can call it inside 
-> the the critical section above instead of needing to acquire/release the lock twice (once above and again 
-> in aspeed_sgpio_set() as it stands).
-> 
-
-moved _sgpio_set() so only one pair of acquire/release lock used.
-
-> Cheers,
-> 
-> Andrew
-> 
-
-Thanks,
---Hongwei
-
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > --
-> > 2.7.4
-> > 
+On Wed, Jul 31, 2019 at 10:26:35PM +0200, Arnd Bergmann wrote:
+> On Wed, Jul 31, 2019 at 10:23 PM Guenter Roeck <linux@roeck-us.net> wrote:
 > >
+> > On Wed, Jul 31, 2019 at 09:56:45PM +0200, Arnd Bergmann wrote:
+> > > The only thing that prevents building this driver on other
+> > > platforms is the mach/hardware.h include, which is not actually
+> > > used here at all, so remove the line and allow CONFIG_COMPILE_TEST.
+> > >
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> >
+> > What is the plan for this patch ? Push through watchdog
+> > or through your branch ?
+> 
+> I would prefer my branch so I can apply the final patch without waiting
+> for another release. Not in a hurry though, so if some other maintainer
+
+Ok with me.
+
+Guenter
