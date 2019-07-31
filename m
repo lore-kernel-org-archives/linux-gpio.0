@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BD0C32751
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7BCC32751
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF662182B
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE6A72171F
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TpXfYas1"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Njl7EV4K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbfGaVMM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:12:12 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9198 "EHLO
+        id S1730304AbfGaVLJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 17:11:09 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9184 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730184AbfGaVLK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:10 -0400
+        with ESMTP id S1729296AbfGaVLI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:08 -0400
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203f50002>; Wed, 31 Jul 2019 14:11:17 -0700
+        id <B5d4203f40001>; Wed, 31 Jul 2019 14:11:16 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:08 -0700
+  Wed, 31 Jul 2019 14:11:07 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:08 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:08 +0000
+        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:07 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 21:11:07 +0000
 Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:08 +0000
+ Transport; Wed, 31 Jul 2019 21:11:07 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203eb000c>; Wed, 31 Jul 2019 14:11:08 -0700
+        id <B5d4203ea0003>; Wed, 31 Jul 2019 14:11:06 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume support
-Date:   Wed, 31 Jul 2019 14:10:54 -0700
-Message-ID: <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 06/20] clk: tegra: Support for OSC context save and restore
+Date:   Wed, 31 Jul 2019 14:10:49 -0700
+Message-ID: <1564607463-28802-7-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
@@ -60,118 +60,84 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607477; bh=DlH5zne7afUgvFVw41nMXdKzqNL2H6Ti9hK3hgmeweE=;
+        t=1564607476; bh=xkj1s2KNWS1ox6olDiffSIxLRDDA825BMM0uyEpGVbk=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=TpXfYas1/NZmHok+0jyolcmYnCO/Np11LlxeZJGrjzymjbFR50F1o17o/IaszP5Jq
-         fMm08KqsGMkoA4ZYs0wv758n3eilTy8eXjo5FWHu8ZPzUwQ5iMHWV69nffZ2j+bqXX
-         xSZ6sc4VXFfx1ViZ7keuMafx1QJzFhYCDRAcLBnqAfI93tY+vTZC2VGChsl90pDzl0
-         q7VXeU3jTdAH/ud/uv29GXdUJFzBJizEZb3eaFt9pJbP3bboqFFUEqKWfwnLXYWbC+
-         7RIzyoJEabNfgk/p9HX80MuXv9wcoNSXkMAMUUQVIDK1gpXhhs75w8ZZ+4WusHCTb8
-         kz7LmmARqC0TA==
+        b=Njl7EV4KX2DkO4ib86vzdx37CzsFdZToTi2Is30z05PegDpQdXKlxaeQ7hhs+DO4W
+         GN+SM7sywh08elCC4wnw6t6OFHzrjKOL5u6YQjF3MC/rX+KMjtgpomcffdiykDyU33
+         DxpuBpneliQOKAsLeF+E0PfmE3Y3Q7GLW20nvgGHvjOjwT2KOBlik6P1QXiOb3p2da
+         8QF27TU9UE+lctME5JOuWDPqtBgarzd7QtFryznNddc7xvICxvOEl8CG5QMLYNJDpk
+         4QnW9exB7ScLbDGwgR2C7YKL7Pz0ec9nEu9rEebSIi8O+ayFBL0KAF7+9AscOHbERY
+         PyZaIxcJPqC3w==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds suspend and resume pm ops for cpufreq driver.
+This patch adds support for saving OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-PLLP is the safe clock source for CPU during system suspend and
-resume as PLLP rate is below the CPU Fmax at Vmin.
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
 
-CPUFreq driver suspend switches the CPU clock source to PLLP and
-disables the DFLL clock.
-
-During system resume, warmboot code powers up the CPU with PLLP
-clock source. So CPUFreq driver resume enabled DFLL clock and
-switches CPU back to DFLL clock source.
-
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 4f0c637b3b49..e979a3370988 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..7c6c8abfcde6 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,6 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
++
++static u32 osc_ctrl_ctx;
  
- #include <linux/clk.h>
-+#include <linux/cpufreq.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 	return ret;
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+@@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
+ 
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
+ 	}
  }
- 
-+static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
 +{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int err;
++	u32 val;
 +
-+	/*
-+	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
-+	 * use during suspend and resume. So, switch the CPU clock source
-+	 * to PLLP and disable DFLL.
-+	 */
-+	err = clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
-+		return err;
-+	}
-+
-+	/* disable DFLL clock */
-+	clk_disable_unprepare(priv->dfll_clk);
-+
-+	return 0;
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
 +}
-+
-+static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
-+{
-+	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
-+	int err;
-+
-+	/*
-+	 * Warmboot code powers up the CPU with PLLP clock source.
-+	 * Enable DFLL clock and switch CPU clock source back to DFLL.
-+	 */
-+	err = clk_prepare_enable(priv->dfll_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to enable DFLL clock for CPU: %d\n", err);
-+		goto disable_cpufreq;
-+	}
-+
-+	err = clk_set_parent(priv->cpu_clk, priv->dfll_clk);
-+	if (err < 0) {
-+		dev_err(dev, "failed to reparent to DFLL clock: %d\n", err);
-+		goto disable_dfll;
-+	}
-+
-+	return 0;
-+
-+disable_dfll:
-+	clk_disable_unprepare(priv->dfll_clk);
-+disable_cpufreq:
-+	disable_cpufreq();
-+
-+	return err;
-+}
-+
-+static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
-+				tegra124_cpufreq_resume)
-+};
-+
- static struct platform_driver tegra124_cpufreq_platdrv = {
- 	.driver.name	= "cpufreq-tegra124",
-+	.driver.pm	= &tegra124_cpufreq_pm_ops,
- 	.probe		= tegra124_cpufreq_probe,
- };
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f1ef6ae8c979..abba6d8a04cd 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
++void tegra_clk_osc_resume(void __iomem *clk_base);
  
+ 
+ /* Combined read fence with delay */
 -- 
 2.7.4
 
