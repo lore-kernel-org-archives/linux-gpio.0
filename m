@@ -2,199 +2,195 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28D9C433FF
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72806C433FF
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F40420665
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E05208C3
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KUt0KHTE"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="R98vohnb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfGaAWK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Jul 2019 20:22:10 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7209 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbfGaAUa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jul 2019 20:20:30 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d40ded40000>; Tue, 30 Jul 2019 17:20:36 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 30 Jul 2019 17:20:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 30 Jul 2019 17:20:27 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 00:20:26 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 00:20:27 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.107]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d40decb0003>; Tue, 30 Jul 2019 17:20:27 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH v7 00/20] SC7 entry and exit support for Tegra210
-Date:   Tue, 30 Jul 2019 17:20:04 -0700
-Message-ID: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S1726050AbfGaAXW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Jul 2019 20:23:22 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39760 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfGaAXW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jul 2019 20:23:22 -0400
+Received: by mail-wm1-f68.google.com with SMTP id u25so47828003wmc.4
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jul 2019 17:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=QXqPsrdZ2jzkQQsNFGYKiiVDgpptA9a8Q8K9En5QLp8=;
+        b=R98vohnbP5uBNmkNEAdJL3jCu3QmwB5T8fnIqS4Bej7Jz0TAW1q4Vnyi5mndrDqu89
+         WePis9pNQI5MAfq4wLiOKM0WZAb3zxk3tLR5XFaZFdcrmziCujcBv6Rjo+E6UnN2FQxt
+         yXJsFsjXUp+dSP1BTqclcMw5RpLoRqie44NNrQ4rqgKOKmsC6aCsQfgjg9tWkOE+6omk
+         uWhEvVhoU/LjPdpkJsogGHVCuBUoFBf8FtriKdsqvRX4m6i8/UtxODiF9JsNk9rTbNiE
+         7h7PRVxRaXt0xnHpBsG/MEc5+yqxzDWX6jhbOmQCIPYifYLT4W3t1DgMjZ1noKOaVHms
+         ENMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=QXqPsrdZ2jzkQQsNFGYKiiVDgpptA9a8Q8K9En5QLp8=;
+        b=uBJtWzW494nxVNyDgpwC6V28Qlzf6CxoFN//UQOe2NiHe+B/BzrHpIflthadZQyAiN
+         alioGEgROXepyOyec3rubcENeSc3hHjtQmh7KmheYG0TKDC9wYMali+Ur9s/1OX/HdNS
+         2yPhirG4ig3vxqzlfyd2Vx8F0t8x0OVNADvtyMAaJIBkX5Mu3GqA75V1a7cRy+iqzj9V
+         lCb/uiltecI42kgnCUw9jfQEGGQZo3F8tBzHb1x4af0tRUMEyzzc4UoY3DI/xhsqBNfF
+         7VurzKeoFZ+LI4yrNuw+ucwLVTT9298g2LE9kztjX4iuN67sfqTp7kFVozMoeyoSAIxb
+         KDGQ==
+X-Gm-Message-State: APjAAAWpdNtLKgF0/BjYXfScacrnWnKohFjCeGltfJvpkduHf70tsA2m
+        KOmGReFIx/oZIvoV3EzKGyIkizMvIgs=
+X-Google-Smtp-Source: APXvYqwoLJaiAlKymW0Fn/g/i3t5Kghmb/WOetYo/BAsIshaqjjAi/LToiKEMH4KOxC57781PjD7ig==
+X-Received: by 2002:a1c:f009:: with SMTP id a9mr5565609wmb.32.1564532600247;
+        Tue, 30 Jul 2019 17:23:20 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id u18sm52775218wmd.19.2019.07.30.17.23.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 17:23:19 -0700 (PDT)
+Message-ID: <5d40df77.1c69fb81.ae4ad.1402@mx.google.com>
+Date:   Tue, 30 Jul 2019 17:23:19 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564532436; bh=Paohd/0GlwDFo6d1zfjma7o1lYrzLZvAjiGOjwr/xbo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=KUt0KHTE+jD82cRYcDtbGVGGWVX4R28Y1M4pkPSnYiny5GNccY8h/GKOwE2raVnJJ
-         XXdo33Muc+YRNPC6kwmUZQkhcpIGUqkwKuyWoyV20f6+0j35Z2DJoqKt5dHnwwiiJU
-         K6lqriuofwUZmyWvjPsIZSBTTCwINSC9NgkZhKlMMas0svDUtOfcyBzIHAFznh0/ch
-         ayWQm38tpLTWf4MvROyk7Y7Bu2ym/VVnwL1IsRguPF8MEVy1H89qpw/m1mbCCXjuTZ
-         WjFRHMw3TzRQEPiSeuv6zYhW6mAQjtMITlHVazybYlnc5IkrI8gaw+R8CqS5Nu7ICr
-         Yn//7pZQtGopw==
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: linusw
+X-Kernelci-Kernel: v5.3-rc1-8-g2838bf941b12
+X-Kernelci-Branch: devel
+X-Kernelci-Report-Type: build
+Subject: linusw/devel build: 6 builds: 0 failed, 6 passed,
+ 13 warnings (v5.3-rc1-8-g2838bf941b12)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch series includes Tegra210 deepsleep (SC7) support with RTC alarm
-wake event.
+linusw/devel build: 6 builds: 0 failed, 6 passed, 13 warnings (v5.3-rc1-8-g=
+2838bf941b12)
 
-This series also includes save and restore of PLLs, clocks, OSC contexts
-for deepsleep exit to normal operation.
+Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
+5.3-rc1-8-g2838bf941b12/
 
-This patch series doesn't support 100% suspend/resume to allow fully
-functional state upon resume and we are working on some more drivers suspend
-and resume implementations.
+Tree: linusw
+Branch: devel
+Git Describe: v5.3-rc1-8-g2838bf941b12
+Git Commit: 2838bf941b120ec846a3903db13e319368d51b08
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 6 unique architectures
 
-[V7]: Changes between V6 & V7 are
-	- V6 feedback fixes
-	- Removed patch-0001 from V6 which keeps COP IRQ enabled. Looking
-	  more into ATF FW, it loads SC7 entry FW into IRAM and sets the
-	  COP reset vector to SC7 FW load address and resets COP. So, COP
-	  IRQ can be cleared during suspend.
+Warnings Detected:
 
-	Note:
-	  Below patch is also needed for SC7 support as GPIO restore need
-	  to happen prior to pinctrl.
-	  https://patchwork.kernel.org/patch/11012077/
+arc:
+    nsim_hs_defconfig (gcc-8): 2 warnings
 
-[V6]: Changes between V5 & V6 are
-	- V5 feedback fixes
-	- DFLL suspend and resume moved to DFLL clock driver
-	- Add suspend and resume support for CPUFreq driver to explicitly
-	  switch source to safe source of PLLP and disable DFLL clock.
-	- Fix to super clock driver to enable PLLP branch to CPU before
-	  source switch to PLLP.
-	- Added save and restore support for super clock driver.
+arm64:
 
-[V5]: Changes between V4 & V5 are
-	- V4 feedback fixes
+arm:
+    multi_v7_defconfig (gcc-8): 6 warnings
 
-[V4]: Changes between V3 & V4 are
-	- V3 feedback fixes
-	- Removed park bits clear for EMMC pads in pinctrl-tegra driver
-	  function tegra_pinctrl_clear_parked_bits as based on V3 feedback
-	  parked_bit is updated to parked_bitmask to use with DRV_PINGROUP
-	  as well and thierry posted patch series for this.
-	- Implemented all peripheral clocks save and restore through their
-	  corresponding clk_ops save_context and restore_context and removed
-	  all direct registers store and restore in clk-tegra210 driver.
-	- Created separate patch for fence_delay update during PLLU init based
-	  on V3 feedback.
-	- Added more comments in tegra210_clk_resume regarding dfll restore
-	  sequence and its dependency on peripheral clocks restore.
+mips:
+    32r2el_defconfig (gcc-8): 3 warnings
 
-[V3]: Changes between V2 & V3 are
-	- V2 feedback fixes
-	- GPIO restore should happen prior to Pinctrl restore to prevent
-	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
-	  gpio resume prior to pinctrl resume.
-	- Implemented save_context and restore_context callbacks for clock
-	  plls, pll outs and dividers in corresponding drivers.
-	  Note: Peripheral clocks and clock enable and reset need to be in
-	  Tegra210 clock suspend/resume as they need to be in proper sequence
-	  w.r.t DFLL resume for restoring CPU clock.
-	- Removed gpio-tegra changes for hierarchical support to have PMC as
-	  parent to GPIOs for GPIO wake event support. Thierry is working on
-	  gpiolib for some cleanup before adding hierarchical support. So
-	  holding on to GPIO wake support for now.
+riscv:
+    defconfig (gcc-8): 2 warnings
 
-[V2] : V1 feedback fixes
-	Patch 0002: This version still using syscore. Thierry suggest not to
-	use syscore and waiting on suggestion from Linux Walleij for any better
-	way of storing current state of pins before suspend entry and restoring
-	them on resume at very early stage. So left this the same way as V1 and
-	will address once I get more feedback on this.
-	Also need to findout and implement proper way of forcing resume order
-	between pinctrl and gpio driver.
-
-[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
-	using hierarchical IRQ with PMC as parent to GPIO.
+x86_64:
 
 
+Warnings summary:
 
-Sowjanya Komatineni (20):
-  pinctrl: tegra: Add suspend and resume support
-  pinctrl: tegra210: Add Tegra210 pinctrl pm ops
-  clk: tegra: divider: Save and restore divider rate
-  clk: tegra: pllout: Save and restore pllout context
-  clk: tegra: pll: Save and restore pll context
-  clk: tegra: Support for OSC context save and restore
-  clk: tegra: clk-periph: Add save and restore support
-  clk: tegra: clk-super: Fix to enable PLLP branches to CPU
-  clk: tegra: clk-super: Add save and restore support
-  clk: tegra: clk-dfll: Add suspend and resume support
-  cpufreq: tegra124: Add suspend and resume support
-  clk: tegra210: Use fence_udelay during PLLU init
-  clk: tegra210: Add suspend and resume support
-  soc/tegra: pmc: Allow to support more tegras wake
-  soc/tegra: pmc: Add pmc wake support for tegra210
-  arm64: tegra: Enable wake from deep sleep on RTC alarm
-  soc/tegra: pmc: Configure core power request polarity
-  soc/tegra: pmc: Configure deep sleep control settings
-  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-  arm64: dts: tegra210-p3450: Jetson Nano SC7 timings
+    7    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning =
+(reg_format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 by=
+tes) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+size-cells value
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+address-cells value
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_=
+reg): Failed prerequisite 'reg_format'
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_devi=
+ce_bus_num): Failed prerequisite 'reg_format'
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_=
+reg): Failed prerequisite 'reg_format'
 
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   7 ++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   7 ++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   5 +-
- drivers/clk/tegra/clk-dfll.c                       |  56 +++++++++
- drivers/clk/tegra/clk-dfll.h                       |   2 +
- drivers/clk/tegra/clk-divider.c                    |  11 ++
- drivers/clk/tegra/clk-periph-fixed.c               |  33 ++++++
- drivers/clk/tegra/clk-periph-gate.c                |  34 ++++++
- drivers/clk/tegra/clk-periph.c                     |  37 ++++++
- drivers/clk/tegra/clk-pll-out.c                    |  26 +++++
- drivers/clk/tegra/clk-pll.c                        | 112 +++++++++++++-----
- drivers/clk/tegra/clk-sdmmc-mux.c                  |  28 +++++
- drivers/clk/tegra/clk-super.c                      |  53 +++++++++
- drivers/clk/tegra/clk-tegra-fixed.c                |  15 +++
- drivers/clk/tegra/clk-tegra-super-gen4.c           |   2 +-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |   1 +
- drivers/clk/tegra/clk-tegra210.c                   |  86 ++++++++++++--
- drivers/clk/tegra/clk.c                            |  14 +++
- drivers/clk/tegra/clk.h                            |  26 +++++
- drivers/cpufreq/tegra124-cpufreq.c                 |  60 ++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.c              |  59 ++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h              |   3 +
- drivers/pinctrl/tegra/pinctrl-tegra210.c           |   1 +
- drivers/soc/tegra/pmc.c                            | 129 ++++++++++++++++++++-
- 24 files changed, 759 insertions(+), 48 deletions(-)
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
--- 
-2.7.4
+Detailed per-defconfig build reports:
 
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section mi=
+smatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
+tion mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---
+For more info write to <info@kernelci.org>
