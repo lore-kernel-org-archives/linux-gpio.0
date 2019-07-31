@@ -2,120 +2,101 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A8EC32751
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F17BC32751
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2746206A3
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E93721726
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UenDJ17y"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EbSeosDO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfGaVIk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:08:40 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10353 "EHLO
+        id S1728697AbfGaVLI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 17:11:08 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10547 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfGaVIk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:08:40 -0400
+        with ESMTP id S1726689AbfGaVLH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:07 -0400
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203570002>; Wed, 31 Jul 2019 14:08:39 -0700
+        id <B5d4203eb0000>; Wed, 31 Jul 2019 14:11:07 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:08:39 -0700
+  Wed, 31 Jul 2019 14:11:06 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:08:39 -0700
-Received: from [10.110.102.167] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:06 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:08:38 +0000
-Subject: Re: [PATCH v7 16/20] arm64: tegra: Enable wake from deep sleep on RTC
- alarm
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
+ 2019 21:11:06 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 21:11:06 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 31 Jul 2019 21:11:06 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d4203e90004>; Wed, 31 Jul 2019 14:11:05 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
 CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-17-git-send-email-skomatineni@nvidia.com>
- <1233ad49-22eb-a90a-d7cf-5fe133ded177@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <d4709085-f705-2608-08a8-65b238ae8844@nvidia.com>
-Date:   Wed, 31 Jul 2019 14:08:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
+        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v7 02/20] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
+Date:   Wed, 31 Jul 2019 14:10:45 -0700
+Message-ID: <1564607463-28802-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <1233ad49-22eb-a90a-d7cf-5fe133ded177@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607319; bh=XlHpdHbtbxW+pGHBpUV41umA2n21IWFw4wGwv1QIPi0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=UenDJ17yUxeK7zkDG7Pkq2W+yM57LLyemW5S81Fdy6R8p1oyT8DorQkbzRjPJ+VA3
-         kKqSdsHynICnxC9SZFU/RdKJ2+k1jt6h9n6o5u6++a8qBAt/CREyG2MPWJk0bAb+tI
-         VYK9AhlG1WWjcSqm4R3MwvZIsZujMkJ4GJJoGq6AMxb6KJQtBge9+wtn3i4PVVIIf7
-         EqsGODGKqpsIEQ/Z7xC6x5E5eN1ityGNdtlNxIUJlXtGBRfyUvYDs5pHAKB9FdtD/o
-         nZToRjbS8WQjxumSeWJ6w2iiWEO2vv/bggrSyR1n3KmP9s3+e3F6kcOvS4BcyNWrd9
-         ub4d3Q9hL4vAg==
+        t=1564607467; bh=BHwK3WCEUlQoYgNYri15m7IvYYDcUcYtnB4LBFhxM5w=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=EbSeosDOiy+x3+UkQRwXee49ff/V3EdOWzmDO3A4nmkn46Xrfk+a1DT0v6mrcU37o
+         PB6+z1b6VV+iDRWhNa+ioT2GMHIfUzlL7Ubp+jCRDVFsBsnO/dDm6jtrfGvNsPwASp
+         uAbL89T01aKcJe15skFgBfBc685V2pXIpSKWQv2gVOu+M5a+KeuECyfD4jfF74ka24
+         vPedxCUywNcy++lRSP19iNiefTTfNE9UluMKGjJpuhWfsmTxtHZkSTBdKXBYlAD4I5
+         MkQHFtWnaLTYxtbbtlJ6OXXRlKufdu0to/VSQOX9FBdwUEz5HGCAErrBwSUDK0R21I
+         vV6ZQ3decjH4Q==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+This patch adds suspend and resume functionality to Tegra210 pinctrl.
 
-On 7/31/19 4:04 AM, Dmitry Osipenko wrote:
-> 31.07.2019 3:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> This patch updates device tree for RTC and PMC to allow system wake
->> from deep sleep on RTC alarm.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/=
-dts/nvidia/tegra210.dtsi
->> index 659753118e96..30a7c48385a2 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->> @@ -768,7 +768,8 @@
->>   	rtc@7000e000 {
->>   		compatible =3D "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
->>   		reg =3D <0x0 0x7000e000 0x0 0x100>;
->> -		interrupts =3D <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
->> +		interrupts =3D <16 IRQ_TYPE_LEVEL_HIGH>;
->> +		interrupt-parent =3D <&pmc>;
->>   		clocks =3D <&tegra_car TEGRA210_CLK_RTC>;
->>   		clock-names =3D "rtc";
->>   	};
->> @@ -778,6 +779,8 @@
->>   		reg =3D <0x0 0x7000e400 0x0 0x400>;
->>   		clocks =3D <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
->>   		clock-names =3D "pclk", "clk32k_in";
->> +		#interrupt-cells =3D <2>;
->> +		interrupt-controller;
->>  =20
->>   		powergates {
->>   			pd_audio: aud {
->>
-> Is this a backwards-compatible change? Or it's not really worth to care
-> about the compatibility with older kernel versions, I'm not sure about
-> overall state of T210 in the upstream kernel.
-I don't think its required to be backwards-compatible as SC7 entry/exit=20
-implementation for T210 is with this patch series onwards..
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 39ab6480a941..fc072a36deb3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "tegra210-pinctrl",
+ 		.of_match_table = tegra210_pinctrl_of_match,
++		.pm = &tegra_pinctrl_pm,
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-- 
+2.7.4
+
