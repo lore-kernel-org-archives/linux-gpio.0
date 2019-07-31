@@ -2,650 +2,96 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E3FC433FF
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B438CC32750
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A81C520679
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:19:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B373206E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 00:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="YleDeY8b";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zTvAZTfP"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cK9oN/lc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfGaATR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Jul 2019 20:19:17 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56639 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728318AbfGaATQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 Jul 2019 20:19:16 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id DF4282235E;
-        Tue, 30 Jul 2019 20:19:12 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Tue, 30 Jul 2019 20:19:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=zGGUAzU91Ztc1y1qPK4leWTYhdzsi0+
-        pH+eAPDsWsQY=; b=YleDeY8bARAgmMYSkp2k1/r8K/63rcG/+NBu85aYvx4GxT3
-        46WNlu8Kr/vet+rqibKAFo4jDgJwcewe/rA/tkiHgxA4zW5NK33vpRUWv93eSI9C
-        uwm/wuGXLe0W+KznmKf8m9evM3ghE4L5qXJqOC2vA22GIoXUWkVv6ZhmZgniHJ9q
-        Z9YKuc0byWV6Oe9aElNLEohUMe+ecz4aowhXrKLzGV8APnE+n34o+TmSMf2haU+8
-        G1xFlbUkJmD5+qmE7L/Vn/SxNh4MBUHHwoHtLh+5Ak39CM4MhHpYUjMwuldoSru8
-        ioqwfhL8H9r+EvyRNmFMP+AhiHatfnmIqxPimQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=zGGUAz
-        U91Ztc1y1qPK4leWTYhdzsi0+pH+eAPDsWsQY=; b=zTvAZTfPbmB/DibWfj4QfM
-        4azPPvUXEEDAc48ZX0HuQ//s8svSf2pwTQwCty24epBEzGl/PjB2UPzQ/sWPa7X0
-        jGd1Cq8ptlRo1ICbbdvYsgwpkxwqhQo0RYpQEqj/93sCP2CvP/58wgPwntVUwPFF
-        V+0jVo/ZghFPZp4TtQJcLHFZP8g4pVqMQ+mVc6I3tjq++jegPK7i0bUFkbFVlwuh
-        WnLxLpnwhAgZ0wMdmlUgVnv82I6VF5G4w7i99hReVKZJtFg3X/o0ytlhTzHjD+9e
-        DKb3D9HTNc/7OzoJgoTbc7xJguxlEHvMoNDyZHbc52XKwfkjlkFSPuTTWM8B4+dw
-        ==
-X-ME-Sender: <xms:f95AXZzihev2GPjrv1nsvxOgOROwFUJHZ5lwwyncOa0xjPhC_MPI8g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleeggdeffecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:f95AXao7hCM1O5Dt3Awc0avag0bKVtcMEVvg01VwANjW3VEtF2kKNw>
-    <xmx:f95AXcniVvV40YwyCJx__x440kXJKispbRVWrpSCv7Lkgn8XlCgfZg>
-    <xmx:f95AXTzcAenQgAWlRZBK6Zc1V6wtDl7q8fvv9nlGrhqw7g-SglzY-A>
-    <xmx:gN5AXTmWXEHWTua3n3-KUVvGMoRwUqGKuwTzQAuYgio5p7Gb3tbmKQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id B2ACBE00A2; Tue, 30 Jul 2019 20:19:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-799-g925e343-fmstable-20190729v1
-Mime-Version: 1.0
-Message-Id: <ce557bcd-6719-4138-a90f-3c8a27fa1199@www.fastmail.com>
-In-Reply-To: <1564500268-2627-3-git-send-email-hongweiz@ami.com>
-References: <1564500268-2627-1-git-send-email-hongweiz@ami.com>
- <1564500268-2627-3-git-send-email-hongweiz@ami.com>
-Date:   Wed, 31 Jul 2019 09:49:21 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Hongwei Zhang" <hongweiz@ami.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Cc:     "Joel Stanley" <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [v6 2/2] gpio: aspeed: Add SGPIO driver
+        id S1728519AbfGaAUa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Jul 2019 20:20:30 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7229 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbfGaAU3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jul 2019 20:20:29 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d40ded40002>; Tue, 30 Jul 2019 17:20:37 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 30 Jul 2019 17:20:28 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 30 Jul 2019 17:20:28 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 00:20:27 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 31 Jul 2019 00:20:28 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.107]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d40decb0006>; Tue, 30 Jul 2019 17:20:27 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 02/20] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
+Date:   Tue, 30 Jul 2019 17:20:06 -0700
+Message-ID: <1564532424-10449-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
 Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564532437; bh=BHwK3WCEUlQoYgNYri15m7IvYYDcUcYtnB4LBFhxM5w=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=cK9oN/lcJY4/C07fx3T1DhItt/mTTnRN8ds0SFkTOGONhYt5tjMDDvMdorAHFsS1I
+         6GThk8Zr/Na5YhEvf+XvfaApehpPbJcOVon6wkp/siCrQ8SsakWGX9wjgyqvedosFC
+         g20yQMveOjYmiRraMfR15TTGdpPerX5j0K0GcDqintgUyt4K8OaUiPDZ3u33G1pweX
+         KAGOxqj7n7hU8MtdpMDM/XRtLYqHyczeSgLpfK+4cPOasCPHCzIbGJemJcGdR8JEg8
+         ebvpNaxvr/zcofrpa8o/4TJ7JDBRCZJaMzIWdika8RGd3PmPGEnZqrpYLEXbReeHwT
+         wOK3bim/5Y1CQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+This patch adds suspend and resume functionality to Tegra210 pinctrl.
 
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Wed, 31 Jul 2019, at 00:55, Hongwei Zhang wrote:
-> Add SGPIO driver support for Aspeed AST2500 SoC.
-> 
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> ---
->  drivers/gpio/sgpio-aspeed.c | 521 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 521 insertions(+)
->  create mode 100644 drivers/gpio/sgpio-aspeed.c
-> 
-> diff --git a/drivers/gpio/sgpio-aspeed.c b/drivers/gpio/sgpio-aspeed.c
-> new file mode 100644
-> index 0000000..9a17b1a
-> --- /dev/null
-> +++ b/drivers/gpio/sgpio-aspeed.c
-> @@ -0,0 +1,521 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright 2019 American Megatrends International LLC.
-> + *
-> + * Author: Karthikeyan Mani <karthikeyanm@amiindia.co.in>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/clk.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/hashtable.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/string.h>
-> +
-> +#define MAX_NR_SGPIO			80
-> +
-> +#define ASPEED_SGPIO_CTRL		0x54
-> +
-> +#define ASPEED_SGPIO_PINS_MASK		GENMASK(9, 6)
-> +#define ASPEED_SGPIO_CLK_DIV_MASK	GENMASK(31, 16)
-> +#define ASPEED_SGPIO_ENABLE		BIT(0)
-> +
-> +struct aspeed_sgpio {
-> +	struct gpio_chip chip;
-> +	struct clk *pclk;
-> +	spinlock_t lock;
-> +	void __iomem *base;
-> +	uint32_t dir_in[3];
-> +	int irq;
-> +};
-> +
-> +struct aspeed_sgpio_bank {
-> +	uint16_t    val_regs;
-> +	uint16_t    rdata_reg;
-> +	uint16_t    irq_regs;
-> +	const char  names[4][3];
-> +};
-> +
-> +/*
-> + * Note: The "value" register returns the input value when the GPIO is
-> + *	 configured as an input.
-> + *
-> + *	 The "rdata" register returns the output value when the GPIO is
-> + *	 configured as an output.
-> + */
-> +static const struct aspeed_sgpio_bank aspeed_sgpio_banks[] = {
-> +	{
-> +		.val_regs = 0x0000,
-> +		.rdata_reg = 0x0070,
-> +		.irq_regs = 0x0004,
-> +		.names = { "A", "B", "C", "D" },
-> +	},
-> +	{
-> +		.val_regs = 0x001C,
-> +		.rdata_reg = 0x0074,
-> +		.irq_regs = 0x0020,
-> +		.names = { "E", "F", "G", "H" },
-> +	},
-> +	{
-> +		.val_regs = 0x0038,
-> +		.rdata_reg = 0x0078,
-> +		.irq_regs = 0x003C,
-> +		.names = { "I", "J" },
-> +	},
-> +};
-> +
-> +enum aspeed_sgpio_reg {
-> +	reg_val,
-> +	reg_rdata,
-> +	reg_irq_enable,
-> +	reg_irq_type0,
-> +	reg_irq_type1,
-> +	reg_irq_type2,
-> +	reg_irq_status,
-> +};
-> +
-> +#define GPIO_VAL_VALUE      0x00
-> +#define GPIO_IRQ_ENABLE     0x00
-> +#define GPIO_IRQ_TYPE0      0x04
-> +#define GPIO_IRQ_TYPE1      0x08
-> +#define GPIO_IRQ_TYPE2      0x0C
-> +#define GPIO_IRQ_STATUS     0x10
-> +
-> +static void __iomem *bank_reg(struct aspeed_sgpio *gpio,
-> +				     const struct aspeed_sgpio_bank *bank,
-> +				     const enum aspeed_sgpio_reg reg)
-> +{
-> +	switch (reg) {
-> +	case reg_val:
-> +		return gpio->base + bank->val_regs + GPIO_VAL_VALUE;
-> +	case reg_rdata:
-> +		return gpio->base + bank->rdata_reg;
-> +	case reg_irq_enable:
-> +		return gpio->base + bank->irq_regs + GPIO_IRQ_ENABLE;
-> +	case reg_irq_type0:
-> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE0;
-> +	case reg_irq_type1:
-> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE1;
-> +	case reg_irq_type2:
-> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE2;
-> +	case reg_irq_status:
-> +		return gpio->base + bank->irq_regs + GPIO_IRQ_STATUS;
-> +	default:
-> +		/* acturally if code runs to here, it's an error case */
-> +		BUG_ON(1);
-> +	}
-> +}
-> +
-> +#define GPIO_BANK(x)    ((x) >> 5)
-> +#define GPIO_OFFSET(x)  ((x) & 0x1f)
-> +#define GPIO_BIT(x)     BIT(GPIO_OFFSET(x))
-> +
-> +static const struct aspeed_sgpio_bank *to_bank(unsigned int offset)
-> +{
-> +	unsigned int bank = GPIO_BANK(offset);
-> +
-> +	WARN_ON(bank >= ARRAY_SIZE(aspeed_sgpio_banks));
-> +	return &aspeed_sgpio_banks[bank];
-> +}
-> +
-> +static int aspeed_sgpio_get(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
-> +	unsigned long flags;
-> +	enum aspeed_sgpio_reg reg;
-> +	bool is_input;
-> +	int rc = 0;
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	is_input = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
-> +	reg = is_input ? reg_val : reg_rdata;
-> +	rc = !!(ioread32(bank_reg(gpio, bank, reg)) & GPIO_BIT(offset));
-> +
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +
-> +	return rc;
-> +}
-> +
-> +static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int 
-> offset, int val)
-> +{
-> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
-> +	unsigned long flags;
-> +	void __iomem *addr;
-> +	u32 reg = 0;
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	addr = bank_reg(gpio, bank, reg_val);
-> +
-> +	if (val)
-> +		reg |= GPIO_BIT(offset);
-> +	else
-> +		reg &= ~GPIO_BIT(offset);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 39ab6480a941..fc072a36deb3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "tegra210-pinctrl",
+ 		.of_match_table = tegra210_pinctrl_of_match,
++		.pm = &tegra_pinctrl_pm,
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-- 
+2.7.4
 
-reg is zero-initialised above and you haven't read from addr to assign to reg, so
-the else branch is redundant (reg is already zeroed). This path has a bug - you're
-clearing the state of all GPIOs associated with addr rather than just the GPIO
-associated with offset.
-
-> +
-> +	iowrite32(reg, addr);
-> +
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +}
-> +
-> +static int aspeed_sgpio_dir_in(struct gpio_chip *gc, unsigned int 
-> offset)
-> +{
-> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +	gpio->dir_in[GPIO_BANK(offset)] |= GPIO_BIT(offset);
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int 
-> offset, int val)
-> +{
-> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +	gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +
-> +	aspeed_sgpio_set(gc, offset, val);
-
-In this case you should probably have an unlocked variant of aspeed_sgpio_set()
-so you can call it inside the the critical section above instead of needing to
-acquire/release the lock twice (once above and again in aspeed_sgpio_set()
-as it stands).
-
-Cheers,
-
-Andrew
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int aspeed_sgpio_get_direction(struct gpio_chip *gc, unsigned 
-> int offset)
-> +{
-> +	int dir_status;
-> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +	dir_status = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +
-> +	return dir_status;
-> +
-> +}
-> +
-> +static void irqd_to_aspeed_sgpio_data(struct irq_data *d,
-> +					     struct aspeed_sgpio **gpio,
-> +					     const struct aspeed_sgpio_bank **bank,
-> +					     u32 *bit, int *offset)
-> +{
-> +	struct aspeed_sgpio *internal;
-> +
-> +	*offset = irqd_to_hwirq(d);
-> +	internal = irq_data_get_irq_chip_data(d);
-> +	WARN_ON(!internal);
-> +
-> +	*gpio = internal;
-> +	*bank = to_bank(*offset);
-> +	*bit = GPIO_BIT(*offset);
-> +}
-> +
-> +static void aspeed_sgpio_irq_ack(struct irq_data *d)
-> +{
-> +	const struct aspeed_sgpio_bank *bank;
-> +	struct aspeed_sgpio *gpio;
-> +	unsigned long flags;
-> +	void __iomem *status_addr;
-> +	int offset;
-> +	u32 bit;
-> +
-> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
-> +
-> +	status_addr = bank_reg(gpio, bank, reg_irq_status);
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	iowrite32(bit, status_addr);
-> +
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +}
-> +
-> +static void aspeed_sgpio_irq_set_mask(struct irq_data *d, bool set)
-> +{
-> +	const struct aspeed_sgpio_bank *bank;
-> +	struct aspeed_sgpio *gpio;
-> +	unsigned long flags;
-> +	u32 reg, bit;
-> +	void __iomem *addr;
-> +	int offset;
-> +
-> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
-> +	addr = bank_reg(gpio, bank, reg_irq_enable);
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	reg = ioread32(addr);
-> +	if (set)
-> +		reg |= bit;
-> +	else
-> +		reg &= ~bit;
-> +
-> +	iowrite32(reg, addr);
-> +
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +}
-> +
-> +static void aspeed_sgpio_irq_mask(struct irq_data *d)
-> +{
-> +	aspeed_sgpio_irq_set_mask(d, false);
-> +}
-> +
-> +static void aspeed_sgpio_irq_unmask(struct irq_data *d)
-> +{
-> +	aspeed_sgpio_irq_set_mask(d, true);
-> +}
-> +
-> +static int aspeed_sgpio_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +	u32 type0 = 0;
-> +	u32 type1 = 0;
-> +	u32 type2 = 0;
-> +	u32 bit, reg;
-> +	const struct aspeed_sgpio_bank *bank;
-> +	irq_flow_handler_t handler;
-> +	struct aspeed_sgpio *gpio;
-> +	unsigned long flags;
-> +	void __iomem *addr;
-> +	int offset;
-> +
-> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
-> +
-> +	switch (type & IRQ_TYPE_SENSE_MASK) {
-> +	case IRQ_TYPE_EDGE_BOTH:
-> +		type2 |= bit;
-> +		/* fall through */
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		type0 |= bit;
-> +		/* fall through */
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		handler = handle_edge_irq;
-> +		break;
-> +	case IRQ_TYPE_LEVEL_HIGH:
-> +		type0 |= bit;
-> +		/* fall through */
-> +	case IRQ_TYPE_LEVEL_LOW:
-> +		type1 |= bit;
-> +		handler = handle_level_irq;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	addr = bank_reg(gpio, bank, reg_irq_type0);
-> +	reg = ioread32(addr);
-> +	reg = (reg & ~bit) | type0;
-> +	iowrite32(reg, addr);
-> +
-> +	addr = bank_reg(gpio, bank, reg_irq_type1);
-> +	reg = ioread32(addr);
-> +	reg = (reg & ~bit) | type1;
-> +	iowrite32(reg, addr);
-> +
-> +	addr = bank_reg(gpio, bank, reg_irq_type2);
-> +	reg = ioread32(addr);
-> +	reg = (reg & ~bit) | type2;
-> +	iowrite32(reg, addr);
-> +
-> +	spin_unlock_irqrestore(&gpio->lock, flags);
-> +
-> +	irq_set_handler_locked(d, handler);
-> +
-> +	return 0;
-> +}
-> +
-> +static void aspeed_sgpio_irq_handler(struct irq_desc *desc)
-> +{
-> +	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *ic = irq_desc_get_chip(desc);
-> +	struct aspeed_sgpio *data = gpiochip_get_data(gc);
-> +	unsigned int i, p, girq;
-> +	unsigned long reg;
-> +
-> +	chained_irq_enter(ic, desc);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
-> +		const struct aspeed_sgpio_bank *bank = &aspeed_sgpio_banks[i];
-> +
-> +		reg = ioread32(bank_reg(data, bank, reg_irq_status));
-> +
-> +		for_each_set_bit(p, &reg, 32) {
-> +			girq = irq_find_mapping(gc->irq.domain, i * 32 + p);
-> +			generic_handle_irq(girq);
-> +		}
-> +
-> +	}
-> +
-> +	chained_irq_exit(ic, desc);
-> +}
-> +
-> +static struct irq_chip aspeed_sgpio_irqchip = {
-> +	.name       = "aspeed-sgpio",
-> +	.irq_ack    = aspeed_sgpio_irq_ack,
-> +	.irq_mask   = aspeed_sgpio_irq_mask,
-> +	.irq_unmask = aspeed_sgpio_irq_unmask,
-> +	.irq_set_type   = aspeed_sgpio_set_type,
-> +};
-> +
-> +static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
-> +				   struct platform_device *pdev)
-> +{
-> +	int rc, i;
-> +	const struct aspeed_sgpio_bank *bank;
-> +
-> +	rc = platform_get_irq(pdev, 0);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	gpio->irq = rc;
-> +
-> +	/* Disable IRQ and clear Interrupt status registers for all SPGIO 
-> Pins. */
-> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
-> +		bank =  &aspeed_sgpio_banks[i];
-> +		/* disable irq enable bits */
-> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_enable));
-> +		/* clear status bits */
-> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_status));
-> +	}
-> +
-> +	rc = gpiochip_irqchip_add(&gpio->chip, &aspeed_sgpio_irqchip,
-> +				  0, handle_bad_irq, IRQ_TYPE_NONE);
-> +	if (rc) {
-> +		dev_info(&pdev->dev, "Could not add irqchip\n");
-> +		return rc;
-> +	}
-> +
-> +	gpiochip_set_chained_irqchip(&gpio->chip, &aspeed_sgpio_irqchip,
-> +				     gpio->irq, aspeed_sgpio_irq_handler);
-> +
-> +	/* set IRQ settings and Enable Interrupt */
-> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
-> +		bank = &aspeed_sgpio_banks[i];
-> +		/* set falling or level-low irq */
-> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type0));
-> +		/* trigger type is edge */
-> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type1));
-> +		/* dual edge trigger mode. */
-> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_type2));
-> +		/* enable irq */
-> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_enable));
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id aspeed_sgpio_of_table[] = {
-> +	{ .compatible = "aspeed,ast2400-sgpio" },
-> +	{ .compatible = "aspeed,ast2500-sgpio" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, aspeed_sgpio_of_table);
-> +
-> +static int __init aspeed_sgpio_probe(struct platform_device *pdev)
-> +{
-> +	struct aspeed_sgpio *gpio;
-> +	u32 nr_gpios, sgpio_freq, sgpio_clk_div;
-> +	int rc;
-> +	unsigned long apb_freq;
-> +
-> +	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-> +	if (!gpio)
-> +		return -ENOMEM;
-> +
-> +	gpio->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(gpio->base))
-> +		return PTR_ERR(gpio->base);
-> +
-> +	rc = of_property_read_u32(pdev->dev.of_node, "ngpios", &nr_gpios);
-> +	if (rc < 0) {
-> +		dev_err(&pdev->dev, "Could not read ngpios property\n");
-> +		return -EINVAL;
-> +	} else if (nr_gpios > MAX_NR_SGPIO) {
-> +		dev_err(&pdev->dev, "Number of GPIOs exceeds the maximum of %d: 
-> %d\n",
-> +			MAX_NR_SGPIO, nr_gpios);
-> +		return -EINVAL;
-> +	}
-> +
-> +	rc = of_property_read_u32(pdev->dev.of_node, "bus-frequency", 
-> &sgpio_freq);
-> +	if (rc < 0) {
-> +		dev_err(&pdev->dev, "Could not read bus-frequency property\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	gpio->pclk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(gpio->pclk)) {
-> +		dev_err(&pdev->dev, "devm_clk_get failed\n");
-> +		return PTR_ERR(gpio->pclk);
-> +	}
-> +
-> +	apb_freq = clk_get_rate(gpio->pclk);
-> +
-> +	/*
-> +	 * From the datasheet,
-> +	 *	SGPIO period = 1/PCLK * 2 * (GPIO254[31:16] + 1)
-> +	 *	period = 2 * (GPIO254[31:16] + 1) / PCLK
-> +	 *	frequency = 1 / (2 * (GPIO254[31:16] + 1) / PCLK)
-> +	 *	frequency = PCLK / (2 * (GPIO254[31:16] + 1))
-> +	 *	frequency * 2 * (GPIO254[31:16] + 1) = PCLK
-> +	 *	GPIO254[31:16] = PCLK / (frequency * 2) - 1
-> +	 */
-> +	if (sgpio_freq == 0)
-> +		return -EINVAL;
-> +
-> +	sgpio_clk_div = (apb_freq / (sgpio_freq * 2)) - 1;
-> +
-> +	if (sgpio_clk_div > (1 << 16) - 1)
-> +		return -EINVAL;
-> +
-> +	iowrite32(FIELD_PREP(ASPEED_SGPIO_CLK_DIV_MASK, sgpio_clk_div) |
-> +		  FIELD_PREP(ASPEED_SGPIO_PINS_MASK, (nr_gpios / 8)) |
-> +		  ASPEED_SGPIO_ENABLE,
-> +		  gpio->base + ASPEED_SGPIO_CTRL);
-> +
-> +	spin_lock_init(&gpio->lock);
-> +
-> +	gpio->chip.parent = &pdev->dev;
-> +	gpio->chip.ngpio = nr_gpios;
-> +	gpio->chip.direction_input = aspeed_sgpio_dir_in;
-> +	gpio->chip.direction_output = aspeed_sgpio_dir_out;
-> +	gpio->chip.get_direction = aspeed_sgpio_get_direction;
-> +	gpio->chip.request = NULL;
-> +	gpio->chip.free = NULL;
-> +	gpio->chip.get = aspeed_sgpio_get;
-> +	gpio->chip.set = aspeed_sgpio_set;
-> +	gpio->chip.set_config = NULL;
-> +	gpio->chip.label = dev_name(&pdev->dev);
-> +	gpio->chip.base = -1;
-> +
-> +	/* set all SGPIO pins as input (1). */
-> +	memset(gpio->dir_in, 0xff, sizeof(gpio->dir_in));
-> +
-> +	rc = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	return aspeed_sgpio_setup_irqs(gpio, pdev);
-> +}
-> +
-> +static struct platform_driver aspeed_sgpio_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-> +		.of_match_table = aspeed_sgpio_of_table,
-> +	},
-> +};
-> +
-> +module_platform_driver_probe(aspeed_sgpio_driver, aspeed_sgpio_probe);
-> +MODULE_DESCRIPTION("Aspeed Serial GPIO Driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.7.4
-> 
->
