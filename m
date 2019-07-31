@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F17BC32751
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945D9C433FF
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E93721726
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DA6C21851
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:11:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EbSeosDO"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cF0vTPm9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbfGaVLI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:11:08 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10547 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfGaVLH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:07 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203eb0000>; Wed, 31 Jul 2019 14:11:07 -0700
+        id S1730635AbfGaVLM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 17:11:12 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17193 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730567AbfGaVLL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:11 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4203f00000>; Wed, 31 Jul 2019 14:11:12 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:06 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 31 Jul 2019 14:11:11 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:06 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:06 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
+        by hqpgpgate101.nvidia.com on Wed, 31 Jul 2019 14:11:11 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 21:11:10 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:06 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:06 +0000
+ 2019 21:11:10 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 31 Jul 2019 21:11:10 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203e90004>; Wed, 31 Jul 2019 14:11:05 -0700
+        id <B5d4203ee0000>; Wed, 31 Jul 2019 14:11:10 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -53,9 +53,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 02/20] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
-Date:   Wed, 31 Jul 2019 14:10:45 -0700
-Message-ID: <1564607463-28802-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 20/20] arm64: dts: tegra210-p3450: Jetson Nano SC7 timings
+Date:   Wed, 31 Jul 2019 14:11:03 -0700
+Message-ID: <1564607463-28802-21-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
@@ -63,40 +63,47 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607467; bh=BHwK3WCEUlQoYgNYri15m7IvYYDcUcYtnB4LBFhxM5w=;
+        t=1564607472; bh=IAZSdScPMp/Ip7Sf+sfNEWrp2xlTiRUarz1Aolfu/RA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=EbSeosDOiy+x3+UkQRwXee49ff/V3EdOWzmDO3A4nmkn46Xrfk+a1DT0v6mrcU37o
-         PB6+z1b6VV+iDRWhNa+ioT2GMHIfUzlL7Ubp+jCRDVFsBsnO/dDm6jtrfGvNsPwASp
-         uAbL89T01aKcJe15skFgBfBc685V2pXIpSKWQv2gVOu+M5a+KeuECyfD4jfF74ka24
-         vPedxCUywNcy++lRSP19iNiefTTfNE9UluMKGjJpuhWfsmTxtHZkSTBdKXBYlAD4I5
-         MkQHFtWnaLTYxtbbtlJ6OXXRlKufdu0to/VSQOX9FBdwUEz5HGCAErrBwSUDK0R21I
-         vV6ZQ3decjH4Q==
+        b=cF0vTPm91OYZIhKUXrVAAlDmo7PFU4MgrXyeF0eYj5gSZuFAFFqDd1ZHwFLJIXun4
+         CO/kQhyBb9yfQXDpNImeC69edPI2btVmrHWPflZz4ej6zwZP9H/pJVsUzs3mHA7STt
+         irIiPgQXJj9J9yhWO9og7Bc1gT399CbEUJNGCegkz98hjB3pFZamlTyYT5UtGy/ZFu
+         8z9CCvetE3flwrUGJP8yYRgaIGB8YgJdbIZUZtFzmwFRw8xLUzTLJuBuZSvEyEvm1g
+         RPBbejG8xR9tXShupaWLJWiiDf6eC+oc662SQbZZedO37DNJFMmMIr15Nj8gHL0XQc
+         1QpnD9jPUiVyA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds suspend and resume functionality to Tegra210 pinctrl.
+This patch adds Jetson Nano platform specific SC7 timing configuration
+in the device tree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 39ab6480a941..fc072a36deb3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 	.driver = {
- 		.name = "tegra210-pinctrl",
- 		.of_match_table = tegra210_pinctrl_of_match,
-+		.pm = &tegra_pinctrl_pm,
- 	},
- 	.probe = tegra210_pinctrl_probe,
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 9d17ec707bce..b525e69c172a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -382,6 +382,13 @@
+ 
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		nvidia,cpu-pwr-good-time = <0>;
++		nvidia,cpu-pwr-off-time = <0>;
++		nvidia,core-pwr-good-time = <4587 3876>;
++		nvidia,core-pwr-off-time = <39065>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
+ 
+ 	hda@70030000 {
 -- 
 2.7.4
 
