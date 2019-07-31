@@ -2,85 +2,72 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889E9C32751
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 13:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9988C32751
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 13:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6982F208E4
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 13:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA6B5208C3
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 13:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbfGaNYJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 09:24:09 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:33174 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbfGaNYJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 09:24:09 -0400
+        id S1726931AbfGaN3V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 09:29:21 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:33476 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGaN3U (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 09:29:20 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id jRQ82000C05gfCL06RQ80t; Wed, 31 Jul 2019 15:24:08 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id jRVJ2000905gfCL01RVJnN; Wed, 31 Jul 2019 15:29:18 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hsoaO-000190-6Z; Wed, 31 Jul 2019 15:24:08 +0200
+        id 1hsofO-0001Ag-Dn; Wed, 31 Jul 2019 15:29:18 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hsoaO-0004X4-57; Wed, 31 Jul 2019 15:24:08 +0200
+        id 1hsofO-0004al-Az; Wed, 31 Jul 2019 15:29:18 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Use dev_notice_once() instead of open-coding
-Date:   Wed, 31 Jul 2019 15:24:06 +0200
-Message-Id: <20190731132406.17381-1-geert+renesas@glider.be>
+Subject: [PATCH 0/3] pinctrl: Avoid hardcoded string offsets and buffer lengths
+Date:   Wed, 31 Jul 2019 15:29:14 +0200
+Message-Id: <20190731132917.17607-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-At the time of commit 9a643c9a11259955 ("sh-pfc: Convert message
-printing from pr_* to dev_*"), the dev_*_once() variants didn't exist
-yet, so the once behavior was open-coded.
+	Hi Linus,
 
-Since commit e135303bd5bebcd2 ("device: Add dev_<level>_once variants")
-they do, so "revert" to the good practice of using a helper.
+This patch series gets rid of hardcoded string offsets and buffer
+lengths, in favor of using strlen() and (devm_)kasprintf().
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v5.4.
+Thanks!
 
- drivers/pinctrl/sh-pfc/gpio.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Geert Uytterhoeven (3):
+  pinctrl: devicetree: Use strlen() instead of hardcoded number
+  pinctrl: lantiq: Use kasprintf() instead of fixed buffer formatting
+  pinctrl: xway: Use devm_kasprintf() instead of fixed buffer formatting
 
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 97c1332c1045739a..64c09aa374ae011f 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -255,18 +255,13 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
- #ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
- static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
- {
--	static bool __print_once;
- 	struct sh_pfc *pfc = gpio_to_pfc(gc);
- 	unsigned int mark = pfc->info->func_gpios[offset].enum_id;
- 	unsigned long flags;
- 	int ret;
- 
--	if (!__print_once) {
--		dev_notice(pfc->dev,
--			   "Use of GPIO API for function requests is deprecated."
--			   " Convert to pinctrl\n");
--		__print_once = true;
--	}
-+	dev_notice_once(pfc->dev,
-+			"Use of GPIO API for function requests is deprecated, convert to pinctrl\n");
- 
- 	if (mark == 0)
- 		return -EINVAL;
+ drivers/pinctrl/devicetree.c     | 6 ++----
+ drivers/pinctrl/pinctrl-falcon.c | 6 +-----
+ drivers/pinctrl/pinctrl-xway.c   | 4 +---
+ 3 files changed, 4 insertions(+), 12 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
