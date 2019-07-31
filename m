@@ -2,201 +2,148 @@ Return-Path: <SRS0=y42E=V4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C9FC32751
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC602C32751
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 22:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 310FB2067D
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 21:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB3A208E4
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 Jul 2019 22:42:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Qpqk2Jwn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m6MjpgSK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfGaVM4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:12:56 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17129 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfGaVLI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 17:11:08 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203eb0000>; Wed, 31 Jul 2019 14:11:07 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:06 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:06 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:05 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:05 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203e90002>; Wed, 31 Jul 2019 14:11:05 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 00/20] SC7 entry and exit support for Tegra210
-Date:   Wed, 31 Jul 2019 14:10:43 -0700
-Message-ID: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S1729578AbfGaWmQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 Jul 2019 18:42:16 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:32977 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727837AbfGaWmP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jul 2019 18:42:15 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x3so48742063lfc.0
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Jul 2019 15:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ssponi8HFghnoIL2FD87rDXrsR8CDf6ns5qoDwZ/ELA=;
+        b=m6MjpgSKUn4CX7tquDk3cuP97sYkSjQEaxRtS0He/0ahxlj/SpRCRz/CoOU2Cbh2xn
+         W6P16tYTC2Q4jdlK5+YJY2UJQ1OKVvh/P4JSd3VybD3eXP68y0vJ14/2WjZZxsNz7dTd
+         CGifXklsMSD5Q7EXAYeZqVIG67I18CgwwSvtjNxiEzlbOaK49UnjabjjD4QZCPVpQRU9
+         aMeVO0yDtEkvw9rYWI/yAvk05PwqjVmxMZs/g31OcjxZe+KKrwYvFZLekgeQzbGOs6aa
+         DpKAxxdteO+Rc8eQyit3RG90XRmuHgENlOnFJNslP8em0OHayfsfJRcM/cb34W0xzAK6
+         o3bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ssponi8HFghnoIL2FD87rDXrsR8CDf6ns5qoDwZ/ELA=;
+        b=PQdPL0hMqDUagQ2Le9dZUQWzWJCVeieYZ2eleV9eO9hDpF+A5WLK/6ckhZW96Hadzl
+         8QKMep/w7t8bVpfkFhasPlDhvX+ymH0OVztNzohir2P37bEMMoUuurZ4Le8THFn9VqQU
+         qMoKoLHrcPNrOZ9BIvjxyhOumqHRlvOBQIubLpI9ANdTVjw/yzLFFZx9PxdlSSMni1pE
+         Xsjlqp02fC2NINEnvVPlSMvEdMbobitfnOtXyOfqw567VWmvRwevsQwl9QSn+TFRdilZ
+         h2H437MjO/6zmm7JnIPpMhcwqhWnsOHQFRTGG9WD80niNi3enS2aPMvYShcz/nsE4neR
+         jO2w==
+X-Gm-Message-State: APjAAAVmvUwzQRZHWcP7Vu/083Kz/Lr0mb1/712hTMv76NANYyAneTLJ
+        FX4kChDwht8EcvVyat/Fv/bWNou9L48=
+X-Google-Smtp-Source: APXvYqzDR4sR+rQtHfQH2U63lDEu7guJc9Qfr+UpVuEQJ2GQmLKQnx1nTDXh3dgl2evcCb3rHPN+Hg==
+X-Received: by 2002:ac2:414d:: with SMTP id c13mr8411385lfi.47.1564612934013;
+        Wed, 31 Jul 2019 15:42:14 -0700 (PDT)
+Received: from genomnajs.lan (94-137-108-110.customers.ownit.se. [94.137.108.110])
+        by smtp.gmail.com with ESMTPSA id p76sm14189708ljb.49.2019.07.31.15.42.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 15:42:12 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: of: Fix hard-assigned valid_mask for OF case
+Date:   Thu,  1 Aug 2019 00:42:08 +0200
+Message-Id: <20190731224208.30429-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607467; bh=Paohd/0GlwDFo6d1zfjma7o1lYrzLZvAjiGOjwr/xbo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Qpqk2JwnYnhBhs+kUrVQOYjO8yu58Jd70ohO51KcuNLBs57hp4WKAFq0epnhphNSf
-         IToJyrtwl5LbNcgaaB36hAvnUzyApRCGVOEURZlo0BYLVNnY5SYEaPMNkfdKrw3Zmr
-         BvPJ+AGS4AX2MU5d/GRdZ5VD7DJix5FzV0NNXv8BJv5aRN6HFij0MfURpLL7lZN+LE
-         3ESCI3zQsEfvale1xxMOxVmIVrzdndextoJzTlzFcIzBR2/MC6yg8fhx++WR0CtBlm
-         EILvHcdz2Sy6rrvgSP2ipBzCQEnuKi8dHHrQ4BaiWOTtXyOnlx+yzxhZ4x+5ybHLqz
-         kTFyMf/u9PzAw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch series includes Tegra210 deepsleep (SC7) support with RTC alarm
-wake event.
+From: Stephen Boyd <swboyd@chromium.org>
 
-This series also includes save and restore of PLLs, clocks, OSC contexts
-for deepsleep exit to normal operation.
+The recent refactoring to break out OF code to its own file
+contained a bug by yours truly letting the need_valid_mask
+be overridden by the need of the device tree range check,
+and if there were no ranges, but device tree was active
+and the reserved GPIO used in another way, things likely
+crash.
 
-This patch series doesn't support 100% suspend/resume to allow fully
-functional state upon resume and we are working on some more drivers suspend
-and resume implementations.
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <swboyd@chromium.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib-of.c | 2 +-
+ drivers/gpio/gpiolib-of.h | 4 ++--
+ drivers/gpio/gpiolib.c    | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-[V7]: Changes between V6 & V7 are
-	- V6 feedback fixes
-	- Removed patch-0001 from V6 which keeps COP IRQ enabled. Looking
-	  more into ATF FW, it loads SC7 entry FW into IRAM and sets the
-	  COP reset vector to SC7 FW load address and resets COP. So, COP
-	  IRQ can be cleared during suspend.
-
-	Note:
-	  Below patch is also needed for SC7 support as GPIO restore need
-	  to happen prior to pinctrl.
-	  https://patchwork.kernel.org/patch/11012077/
-
-[V6]: Changes between V5 & V6 are
-	- V5 feedback fixes
-	- DFLL suspend and resume moved to DFLL clock driver
-	- Add suspend and resume support for CPUFreq driver to explicitly
-	  switch source to safe source of PLLP and disable DFLL clock.
-	- Fix to super clock driver to enable PLLP branch to CPU before
-	  source switch to PLLP.
-	- Added save and restore support for super clock driver.
-
-[V5]: Changes between V4 & V5 are
-	- V4 feedback fixes
-
-[V4]: Changes between V3 & V4 are
-	- V3 feedback fixes
-	- Removed park bits clear for EMMC pads in pinctrl-tegra driver
-	  function tegra_pinctrl_clear_parked_bits as based on V3 feedback
-	  parked_bit is updated to parked_bitmask to use with DRV_PINGROUP
-	  as well and thierry posted patch series for this.
-	- Implemented all peripheral clocks save and restore through their
-	  corresponding clk_ops save_context and restore_context and removed
-	  all direct registers store and restore in clk-tegra210 driver.
-	- Created separate patch for fence_delay update during PLLU init based
-	  on V3 feedback.
-	- Added more comments in tegra210_clk_resume regarding dfll restore
-	  sequence and its dependency on peripheral clocks restore.
-
-[V3]: Changes between V2 & V3 are
-	- V2 feedback fixes
-	- GPIO restore should happen prior to Pinctrl restore to prevent
-	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
-	  gpio resume prior to pinctrl resume.
-	- Implemented save_context and restore_context callbacks for clock
-	  plls, pll outs and dividers in corresponding drivers.
-	  Note: Peripheral clocks and clock enable and reset need to be in
-	  Tegra210 clock suspend/resume as they need to be in proper sequence
-	  w.r.t DFLL resume for restoring CPU clock.
-	- Removed gpio-tegra changes for hierarchical support to have PMC as
-	  parent to GPIOs for GPIO wake event support. Thierry is working on
-	  gpiolib for some cleanup before adding hierarchical support. So
-	  holding on to GPIO wake support for now.
-
-[V2] : V1 feedback fixes
-	Patch 0002: This version still using syscore. Thierry suggest not to
-	use syscore and waiting on suggestion from Linux Walleij for any better
-	way of storing current state of pins before suspend entry and restoring
-	them on resume at very early stage. So left this the same way as V1 and
-	will address once I get more feedback on this.
-	Also need to findout and implement proper way of forcing resume order
-	between pinctrl and gpio driver.
-
-[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
-	using hierarchical IRQ with PMC as parent to GPIO.
-
-
-
-Sowjanya Komatineni (20):
-  pinctrl: tegra: Add suspend and resume support
-  pinctrl: tegra210: Add Tegra210 pinctrl pm ops
-  clk: tegra: divider: Save and restore divider rate
-  clk: tegra: pllout: Save and restore pllout context
-  clk: tegra: pll: Save and restore pll context
-  clk: tegra: Support for OSC context save and restore
-  clk: tegra: clk-periph: Add save and restore support
-  clk: tegra: clk-super: Fix to enable PLLP branches to CPU
-  clk: tegra: clk-super: Add save and restore support
-  clk: tegra: clk-dfll: Add suspend and resume support
-  cpufreq: tegra124: Add suspend and resume support
-  clk: tegra210: Use fence_udelay during PLLU init
-  clk: tegra210: Add suspend and resume support
-  soc/tegra: pmc: Allow to support more tegras wake
-  soc/tegra: pmc: Add pmc wake support for tegra210
-  arm64: tegra: Enable wake from deep sleep on RTC alarm
-  soc/tegra: pmc: Configure core power request polarity
-  soc/tegra: pmc: Configure deep sleep control settings
-  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
-  arm64: dts: tegra210-p3450: Jetson Nano SC7 timings
-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   7 ++
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   7 ++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   5 +-
- drivers/clk/tegra/clk-dfll.c                       |  56 +++++++++
- drivers/clk/tegra/clk-dfll.h                       |   2 +
- drivers/clk/tegra/clk-divider.c                    |  11 ++
- drivers/clk/tegra/clk-periph-fixed.c               |  33 ++++++
- drivers/clk/tegra/clk-periph-gate.c                |  34 ++++++
- drivers/clk/tegra/clk-periph.c                     |  37 ++++++
- drivers/clk/tegra/clk-pll-out.c                    |  26 +++++
- drivers/clk/tegra/clk-pll.c                        | 112 +++++++++++++-----
- drivers/clk/tegra/clk-sdmmc-mux.c                  |  28 +++++
- drivers/clk/tegra/clk-super.c                      |  53 +++++++++
- drivers/clk/tegra/clk-tegra-fixed.c                |  15 +++
- drivers/clk/tegra/clk-tegra-super-gen4.c           |   2 +-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |   1 +
- drivers/clk/tegra/clk-tegra210.c                   |  86 ++++++++++++--
- drivers/clk/tegra/clk.c                            |  14 +++
- drivers/clk/tegra/clk.h                            |  26 +++++
- drivers/cpufreq/tegra124-cpufreq.c                 |  60 ++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.c              |  59 ++++++++++
- drivers/pinctrl/tegra/pinctrl-tegra.h              |   3 +
- drivers/pinctrl/tegra/pinctrl-tegra210.c           |   1 +
- drivers/soc/tegra/pmc.c                            | 129 ++++++++++++++++++++-
- 24 files changed, 759 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index b10d04dd9296..e39b4290b80c 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -87,7 +87,7 @@ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+  * @dev: the device for the GPIO provider
+  * @return: true if the valid mask needs to be set
+  */
+-bool of_gpio_need_valid_mask(struct gpio_chip *gc)
++bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ {
+ 	int size;
+ 	struct device_node *np = gc->of_node;
+diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
+index 34954921d96e..454d1658ee2d 100644
+--- a/drivers/gpio/gpiolib-of.h
++++ b/drivers/gpio/gpiolib-of.h
+@@ -16,7 +16,7 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ int of_gpiochip_add(struct gpio_chip *gc);
+ void of_gpiochip_remove(struct gpio_chip *gc);
+ int of_gpio_get_count(struct device *dev, const char *con_id);
+-bool of_gpio_need_valid_mask(struct gpio_chip *gc);
++bool of_gpio_need_valid_mask(const struct gpio_chip *gc);
+ #else
+ static inline struct gpio_desc *of_find_gpio(struct device *dev,
+ 					     const char *con_id,
+@@ -36,7 +36,7 @@ static inline int of_gpio_get_count(struct device *dev, const char *con_id)
+ {
+ 	return 0;
+ }
+-static inline bool of_gpio_need_valid_mask(struct gpio_chip *gc)
++static inline bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ {
+ 	return false;
+ }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f83870a18ae7..20f13129cdaa 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -363,8 +363,8 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
+ 
+ static int gpiochip_alloc_valid_mask(struct gpio_chip *gc)
+ {
+-	if (IS_ENABLED(CONFIG_OF_GPIO))
+-		gc->need_valid_mask = of_gpio_need_valid_mask(gc);
++	if (of_gpio_need_valid_mask(gc))
++		gc->need_valid_mask = true;
+ 	if (!gc->need_valid_mask)
+ 		return 0;
+ 
 -- 
-2.7.4
+2.21.0
 
