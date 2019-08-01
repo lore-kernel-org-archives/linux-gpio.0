@@ -2,118 +2,87 @@ Return-Path: <SRS0=2ktD=V5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C076C433FF
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 05:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF6AC32754
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 05:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11AEC2089E
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 05:45:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="c3dr1lWk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JsKzzgmp"
+	by mail.kernel.org (Postfix) with ESMTP id 36E6F2173E
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 05:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564639100;
+	bh=18M1+P9KesdsimSQfSqq898kk6BSKJDA151IrpFkfuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1c2i89G0dZEBl+ZhgjUfFYXeyuKwpMa3S1evYI4kcm6+n1+pFcfCRjtO3smPtR3W6
+	 83EyXBAbNopeojlzFUJXiH10ubXEJksnU1QNPSo3w3X3y//Z7eboKOlhBS7iPiaGue
+	 jaCOX/5b6LEwo7WEhkn0L1L+4bPy9iTxD7NaFHkA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfHAFpY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Aug 2019 01:45:24 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35431 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726157AbfHAFpY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Aug 2019 01:45:24 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id A69C0207E1;
-        Thu,  1 Aug 2019 01:45:23 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 01 Aug 2019 01:45:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=ikk9XWI/PaloHpfzYfJtJOTFwmWnC+0
-        JCdYs26D7ubs=; b=c3dr1lWkMo5FSBT8lrLsCneT0ER9KaOWAen1lPJ/wlWkYD+
-        F3Kmfml5a07j1yCb4s8Viy1CUWnpejg8CDu0KA5iTw0nSF3qC7NQqTV657E5hVap
-        pSQR1Pf8Wgou7XoLYuZ4qudaorYvMy2xrptaEvXmVTht1kW1w+Mlojv60ywB12bb
-        fG3Ty3Chl/dMWLtjwoB60usxxKlck9JuHYL/HAknm5ol2jNCRQ5QTYFofGMDSADH
-        Ac94iEGVdzLwoG2YqlB6AaaGfl2OrzOspnvLtYBwBnn6hLF/M4ka+HvB4iDZ747J
-        zM/CB4CEMMtecKqqIkfgoBojRQWHoJpIvIbgVzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ikk9XW
-        I/PaloHpfzYfJtJOTFwmWnC+0JCdYs26D7ubs=; b=JsKzzgmpM0pAwDfOFWmIwy
-        e/gkpP11y8xh4J5E+5Un3MJJvj6+kBcaPZP6NDENM20ed/dJYPGZFeLMRjC9jV9X
-        Dqrzgn1S25oXgX+lx3hf9cO9axVEH4ivwRWfGifTyqdwomgpZaCAnnG4eYzh6scC
-        WIpjXLemDL50BI5V42NeIsfdrFSHHHPKA0FMw9/q9JMWSnVRRIJDTq/vTUWsrFkc
-        YV0dqm+NLi3r7DQRmDFYyBAl9XobaJM7ZdBMhEBMGsy7REetXwiVStDKkEooTKHq
-        ChEcckQ+d2OGXGZEJoz//Q4vQqVL5ncl0+2LNP122XoQgPiLUHWgzSIMRn873jkw
-        ==
-X-ME-Sender: <xms:cnxCXZVcGZ-455p_bs-LgSCuUcxEUsQjAFwH5XFLyD8cPPPD-UFwCw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleeigdeliecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:cnxCXVQZ-SI3cyKIbEqkpWS00qvrgEQGxGZ91gMOKDy0EMzP2EVh8Q>
-    <xmx:cnxCXQGaiX7f4V_3p0_o7VOwBTVPNBIzU41xNJjUBySxz-berHYqVQ>
-    <xmx:cnxCXdS_CSb-UN8ZrY2Xcmzsmy8hJzu_ASfyRT9L9fSYSMOPNs8M3A>
-    <xmx:c3xCXYeXDra6wsCCxx5QzKiSgLq2LCV_21ukNLHu4uHAyrtgDo0zLA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 67318E00A1; Thu,  1 Aug 2019 01:45:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-799-g925e343-fmstable-20190729v1
-Mime-Version: 1.0
-Message-Id: <3691f6cb-2451-43f7-9f00-d5693071ba59@www.fastmail.com>
-In-Reply-To: <9d0f2b20-e6f6-419c-a866-c4a0dd92aa63@www.fastmail.com>
-References: <20190724081313.12934-1-andrew@aj.id.au>
- <CACRpkdapypySGPrLgSMSNy1fzkca2BfMUGzf3koFWQZ-M5VOvg@mail.gmail.com>
- <9d0f2b20-e6f6-419c-a866-c4a0dd92aa63@www.fastmail.com>
-Date:   Thu, 01 Aug 2019 15:15:42 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        "Lee Jones" <lee.jones@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH 0/3] ARM: dts: aspeed: Deprecate g[45]-style compatibles
-Content-Type: text/plain
+        id S1728276AbfHAF6N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Aug 2019 01:58:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727540AbfHAF6N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 1 Aug 2019 01:58:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C931206A2;
+        Thu,  1 Aug 2019 05:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564639092;
+        bh=18M1+P9KesdsimSQfSqq898kk6BSKJDA151IrpFkfuU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IhuIctS7MqfUiQKncJHIjrxZSF+/Dx0klY386/15CcNttSPWK/WXc16jf9+HVeMTG
+         DUuwqZp4ieY7O1fs2S6Qg8S2JJ8fIE0vcE0xmzV3JU6znCfn1ZqVWviIJeyISiAgVn
+         JXI5g2aEP0Vx7p3kRieznWXbKV8+Dekxfd4y1660=
+Date:   Thu, 1 Aug 2019 07:58:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     soc@kernel.org, linux-arm-kernel@lists.infradead.org,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] usb: ohci-nxp: enable compile-testing
+Message-ID: <20190801055809.GA24607@kroah.com>
+References: <20190731195713.3150463-1-arnd@arndb.de>
+ <20190731195713.3150463-2-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731195713.3150463-2-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-
-On Tue, 30 Jul 2019, at 10:27, Andrew Jeffery wrote:
+On Wed, Jul 31, 2019 at 09:56:43PM +0200, Arnd Bergmann wrote:
+> The driver hardcodes a hardware I/O address the way one should
+> generally not do, and this prevents both compile-testing, and
+> moving the platform to CONFIG_ARCH_MULTIPLATFORM.
 > 
+> Change the code to be independent of the machine headers
+> to allow those two. Removing the hardcoded address would
+> be hard and is not necessary, so leave that in place for now.
 > 
-> On Tue, 30 Jul 2019, at 07:23, Linus Walleij wrote:
-> > On Wed, Jul 24, 2019 at 10:13 AM Andrew Jeffery <andrew@aj.id.au> wrote:
-> > 
-> > > It's probably best if we push the three patches all through one tree rather
-> > > than fragmenting. Is everyone happy if Joel applies them to the aspeed tree?
-> > 
-> > If you are sure it will not collide with parallell work in the
-> > pinctrl tree, yes.
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > (If it does collide I'd prefer to take the pinctrl patches and fix the
-> > conflicts in my tree.)
-> 
-> Fair enough, I don't know the answer so I'll poke around. I don't 
-> really mind
-> where the series goes in, I just want to avoid landing only part of it 
-> if I split it up.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/usb/host/Kconfig    |  3 ++-
+>  drivers/usb/host/ohci-nxp.c | 25 ++++++++++++++++++-------
+>  2 files changed, 20 insertions(+), 8 deletions(-)
 
-Okay, it currently conflicts with my cleanup-devicetree-warnings series.
-
-Joel, do you mind if Linus takes this series through the pinctrl tree, given
-the fix to the devicetrees is patch 1/3?
-
-Andrew
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
