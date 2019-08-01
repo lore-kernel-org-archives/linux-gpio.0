@@ -2,150 +2,116 @@ Return-Path: <SRS0=2ktD=V5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DC5C433FF
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 08:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F073C19759
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 08:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAEA206A3
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 08:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3254F20449
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Aug 2019 08:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAXRWo8X"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmVPsbqw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730450AbfHAIlX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Aug 2019 04:41:23 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36416 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728296AbfHAIlX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Aug 2019 04:41:23 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so68531736ljj.3
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Aug 2019 01:41:21 -0700 (PDT)
+        id S1730273AbfHAIyB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Aug 2019 04:54:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36723 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfHAIyB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Aug 2019 04:54:01 -0400
+Received: by mail-lj1-f193.google.com with SMTP id i21so68567699ljj.3
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Aug 2019 01:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+4DBMF2Zte9lbb8+gtbY6RWDlcSP8w6E9Z0ywxOOvw4=;
-        b=YAXRWo8X6F6wz5PKvmW08QL99wEuNQNPC5fMWRNuSkxkey+SRqTz9XGN9NJGP9eqYa
-         Q0tF6b9ViA3a5SI3rST4Ne8tyz/WLlCbLKkL5wiimdTe9b+DeXm/7MeRNV65yOKZwcVs
-         jUika+QzRTGYMdg8tGJ4oRQmSWd7MRITrJMcjb97yPHoSwKEP48fU32H/asZVahdnK95
-         ClDMx1P/8TFgXbIC3P0k4UHKa8gQNXcDCLxQxGYd+HQg10ROWqJmC4WTV0vmXCAV6fMX
-         sCUWduO8Raz+EY5MiehROp2QugR+GmK/OY2fxXJ+DmHk4a0nsQy3OgUgj2DWbaAkVSEz
-         tbJg==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=fj6W4jsDxt5GsOE7AoLkpZsyiRf9t5PKjkLMJ6plbFU=;
+        b=DmVPsbqw/kSlVSFadze89/Sc0JzpcdtHUnqSdiL5TyQ1QeMKBopbggLJpuRSmJRnAE
+         pG0xR14TgLrgySXKBytkziQtyjTwBcisTJY06pzdHHvHbSkMF8wwnEW+98MMyUf6KrOH
+         f/cUObCtFQNZBK1UISVrZYk7c6skL6t0wIEVApagXM58STpeHWYpC2w4nSsV/pRRMGdT
+         +QhweXMNUXgheZrTpnzHKZYQgiA8mcw15xz/vThes6vsPnUnzeSmwpc6OIgTSsjnFhMb
+         JJGrkiW6nzxvObOXI3YSORdUKkYrskTgTIDf3/Eidgj1PKQIVCc0SaoJo7HwkLvMc4Y+
+         uB8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+4DBMF2Zte9lbb8+gtbY6RWDlcSP8w6E9Z0ywxOOvw4=;
-        b=HRw2oywUYKyxo/fAkBPk8RZghwhEt4RQvKYmvswayCeyTLtBdNGjH78xvAgpPSZU1h
-         gvSWR+jww3D2f1Ue11LVieWImeE5YAlKsKWo2/nyRnyyRSyqFw9Q5r+jHPAW0UeKdxkn
-         ha9AsB6QUMPVLrR1AqQXr5s+QzCyydntRSEal6k60KMhKxX9VC6GZC9mHgoqPaN2xycn
-         /b/WYkJiwmjISUlA9AMHS5jwUniL9V7h3ePYCVDkGriKA6F1+z+aVb7EpC6XvM8eZ1t3
-         f2xYXZeiMwbF8hDxJP30mB19D9c6VfOuziLreJNNTjMMLQdPXxe2NYzkFZpb0SmQrKEU
-         wTrg==
-X-Gm-Message-State: APjAAAUSO9SXKgDB9xdFeDwVQF3OAEhlPCRe91dmm1pd0reOcUu30LrN
-        2mvc0Zaok1erPvmeaTvcFs55kG2IlYj5VXC4eLTjKw==
-X-Google-Smtp-Source: APXvYqxHEo1NnEuEea/EVgMvvV8QMVqO2H6dE9nSCXlcgxLIpX1H4/F1RTRXNMP6rHMR7tplWY1KPvxie4hjSNzYZAo=
-X-Received: by 2002:a2e:8756:: with SMTP id q22mr68107000ljj.108.1564648881037;
- Thu, 01 Aug 2019 01:41:21 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=fj6W4jsDxt5GsOE7AoLkpZsyiRf9t5PKjkLMJ6plbFU=;
+        b=ia2aGy1aDnuH+BTxBJDtXbuU26/RsJkS1BmOL3qC2Rpe0Z6NUahHJT0fZVC9Hc0Sso
+         AyLFPNFwnRRcxBYVh8RXzAO4RCs2J5l175qHnaTfkDWqjvh0l9rC6jv/lqwMOrBsVBT6
+         Z7hdDTrSRF6k5Tk6FNNuPj5fZqr3RpLMcOtqSqsul7Q01nVFYHsknV9NFCN3HH2e0zn5
+         5cozWx0Z5EYOOaGNetE0ukMP+aX0SgA2xaZjGWz4yKBP3bwtgFcIJeWkYEC60o1n89Hd
+         q/DEuleG7KnoJeRtq/IL7ce98pIontMcG+1F7+AqcDeytwD03C03MAceMrXZSca1Ak1I
+         ErfA==
+X-Gm-Message-State: APjAAAUKBfH6l+1xRchu2pC8Hsutwb2oInVETZaX+OIMla0kcolZm+gi
+        uKym1JyyAJ/l36XXOjHfhcCtlyexq3/ketfuff2IBw==
+X-Google-Smtp-Source: APXvYqyYaZPASZtOn0ZX+gJmT9dDUAOlR4zhzJeW212QGArfen4IG1eVzvHqoyWaaoH0MWG02b4AQ7AproTe9HBLplc=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr3822821ljm.180.1564649639696;
+ Thu, 01 Aug 2019 01:53:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190705160536.12047-1-geert+renesas@glider.be>
-In-Reply-To: <20190705160536.12047-1-geert+renesas@glider.be>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 1 Aug 2019 10:41:09 +0200
-Message-ID: <CACRpkdY6qAUkQW4YHN9HskvZS2P-viWYTHSb28ECh1p+itU=4Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Zyngier <marc.zyngier@arm.com>, christoffer.dall@arm.com
+Date:   Thu, 1 Aug 2019 10:53:48 +0200
+Message-ID: <CACRpkdYN=GzAa6E+krY3+kMq2NgM=U26FQe1SJzGbbsnOO6V9g@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for the v5.3 series
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alexander Graf <agraf@suse.de>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Geert!
+Hi Linus,
 
-Thanks for this very interesting patch!
+here are some three GPIO fixes for v5.3, all touching
+the core, so quite important fixes.
 
-On Fri, Jul 5, 2019 at 6:05 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-
-> GPIO controllers are exported to userspace using /dev/gpiochip*
-> character devices.  Access control to these devices is provided by
-> standard UNIX file system permissions, on an all-or-nothing basis:
-> either a GPIO controller is accessible for a user, or it is not.
-> Currently no mechanism exists to control access to individual GPIOs.
-
-Yes, I did that decision deliberately, as the chip is one device
-and the base system control is usually on a per-device granularity.
-At one point some people were asking for individual GPIO line
-permissions in the character device and my argument was something
-like why can't I have individual control over the access rights on a block
-device or the pixels on a graphics device then.
-
-Jokes aside, filesystems do provide access control over individual
-blocks on a block device in a way. So it is further up the stack.
-
-The same goes for this: something above the GPIO chip provide
-more granular access control, and as such it fits the need very well.
-
-> Hence add a virtual GPIO driver to aggregate existing GPIOs (up to 32),
-> and expose them as a new gpiochip.  This is useful for implementing
-> access control, and assigning a set of GPIOs to a specific user.
-> Furthermore, it would simplify and harden exporting GPIOs to a virtual
-> machine, as the VM can just grab the full virtual GPIO controller, and
-> no longer needs to care about which GPIOs to grab and which not,
-> reducing the attack surface.
-
-Excellent approach.
-
-I would even go so far as to call it "gpio-virtualization" or
-"gpio-virtualized" rather than "gpio-virtual" so it is clear what the
-intended usecase is. We have a bit of confusion in the kernel
-because people misuse the word "virtual" left and right, like for
-"virtual IRQ number" (Linux IRQ numbers) which are just some
-random number space, but not really "virtual", it's a semantic
-disease similar to the confusion of using the word "manual" in
-computer code.
-
-Here it is however used correctly! (Maybe for the first time.)
-
-> Virtual GPIO controllers are instantiated by writing to the "new_device"
-> attribute file in sysfs:
->
->     $ echo "<gpiochipA> <gpioA1> [<gpioA2> ...]"
->            "[, <gpiochipB> <gpioB1> [<gpioB2> ...]] ...]"
->             > /sys/bus/platform/drivers/gpio-virt-agg/new_device
->
-> Likewise, virtual GPIO controllers can be destroyed after use:
->
->     $ echo gpio-virt-agg.<N> \
->             > /sys/bus/platform/drivers/gpio-virt-agg/delete_device
-
-I suppose this is the right way to use sysfs.
-
-I would check with some virtualization people (paged Marc Zyngier
-and Christoffer Dall) so they can say whether this is the way any
-virtual machine wants to populate its local GPIO chip for
-use with a certain machine.
-
-If QEMU can deal in a simple and straight-forward way with this
-I see it quickly becoming a very useful tool for industrial automation
-where you want to run each control system in isolation and just
-respawn the virtual machine if something goes wrong.
-
-Since this might be very popular we need some scrutiny but the
-concept as a whole is very appetizing!
+Please pull them in!
 
 Yours,
 Linus Walleij
+
+
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.3-3
+
+for you to fetch changes up to d95da993383c78f7efd25957ba3af23af4b1c613:
+
+  gpiolib: Preserve desc->flags when setting state (2019-07-29 00:57:39 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.3 series:
+
+- Fix the request of active low GPIO line events.
+
+- Don't issue WARN() stuff on NULL descriptors if
+  the GPIOLIB is disabled.
+
+- Preserve the descriptor flags when setting the
+  initial direction on lines.
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpio: don't WARN() on NULL descs if gpiolib is disabled
+
+Chris Packham (1):
+      gpiolib: Preserve desc->flags when setting state
+
+Linus Walleij (1):
+      Merge tag 'gpio-v5.3-rc3-fixes-for-linus' of
+git://git.kernel.org/.../brgl/linux into fixes
+
+Michael Wu (1):
+      gpiolib: fix incorrect IRQ requesting of an active-low lineevent
+
+ drivers/gpio/gpiolib.c        | 23 ++++++++++------
+ include/linux/gpio/consumer.h | 64 +++++++++++++++++++++----------------------
+ 2 files changed, 47 insertions(+), 40 deletions(-)
