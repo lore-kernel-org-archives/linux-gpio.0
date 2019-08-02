@@ -2,54 +2,71 @@ Return-Path: <SRS0=JNxN=V6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B31C32750
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1496DC32750
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 17:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E48620657
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2D7C2182B
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 17:35:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AdtNFlSp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAdAuboH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392919AbfHBNFl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Aug 2019 09:05:41 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4503 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388240AbfHBNFk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Aug 2019 09:05:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d44352d0001>; Fri, 02 Aug 2019 06:05:49 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 02 Aug 2019 06:05:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 06:05:39 -0700
-Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Fri, 2 Aug 2019 13:05:39 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 3241140DF8; Fri,  2 Aug 2019 16:05:37 +0300 (EEST)
-Date:   Fri, 2 Aug 2019 16:05:37 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
+        id S2405426AbfHBRfb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Aug 2019 13:35:31 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37246 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405108AbfHBRfa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Aug 2019 13:35:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so53435169lfh.4;
+        Fri, 02 Aug 2019 10:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m01E/00kIIUrZ+us6qTkntaWmvfO8MGjTN9DZjqTTM4=;
+        b=LAdAuboHztw2JZLafdgtT4UzeS6mncq1WKhvo7JyiSvSF0vyS3isLkwFQqzG0jKKpk
+         ZghWSAlT/5CZGGwhFgXqGtPeZ/LfjQlgTx3E5AghaB5qUdQ2WllUyvxX/dowJBtNzVUF
+         LFPJAZox16R/ZWpDSEC7NHXsBN6PZ/GKBTdLJho0tEIWT25IPgejuqKDLabN5Oduz5W9
+         J+NyLp1voKwSQg7PL832WiDwrty7Ea7e/JIL8zXVZi8+0azrxZ/SaJl3NnRYEOqC0Q2T
+         kitin+A76BSUfE/SmIkMmNN7vsk/R+p/oEvwqRn0PS1Bmn7/FfSWmtkm6jj996+GQ/vO
+         Znpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m01E/00kIIUrZ+us6qTkntaWmvfO8MGjTN9DZjqTTM4=;
+        b=MdsEwqFyq51tlP5dAb9bd6aO14lQA7WrbHVNkEdb9KpM3Kqvk8Ji1wmnE0sX/0Wc5V
+         ubWvNluJinZ2R/wtgfps+nH0t/pCU0OZwjVQjcnSiuIDKR+FEDgwyOXymcNy1A+bIckQ
+         +iXhkue4Eg5JsqOyViuLyeh5sjKlDtL141tWwQbQKCuJszwtPS5+idZm88jgvsEbA1XK
+         Lbd7J1HJrDzzIzm0VPM6HmcVpjCwR+ZswuVCBh0PV4A/21LoGFz022ElmxyuwiSc+IqH
+         h4HbknOCSyMzhMUHYd0kFmKNKypiEHX/Aw23Qtzdk5yIJ95YhYfiJSkMyqy2XzyI7RC2
+         +OGA==
+X-Gm-Message-State: APjAAAVV3jzPiImSAD0Em0NK8btqk/mNmHp2+sPUuvlDbPo31w5NNdb4
+        0AZFczMrLA5E2OAUmZpIvtvSPwN2
+X-Google-Smtp-Source: APXvYqzEH57oEFNxugmY7hPZFcpHs6jb6KCEOBcB2f3QbbxjctMfhdkQqcRF4ctLUWfk5cCLSA/tLg==
+X-Received: by 2002:ac2:50c4:: with SMTP id h4mr62216920lfm.104.1564767327937;
+        Fri, 02 Aug 2019 10:35:27 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id k12sm12901127lfc.8.2019.08.02.10.35.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 10:35:26 -0700 (PDT)
 Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
  suspend
-Message-ID: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
 References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
  <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
  <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
@@ -58,81 +75,67 @@ References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
  <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
  <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
  <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
+ <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ba3924fe-d632-7bcb-5353-bc7668957661@gmail.com>
+Date:   Fri, 2 Aug 2019 20:35:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564751149; bh=iWRDIXuKhFHou0kB3cN1+ZlnEuWKXRrrc3TGXxnLF+o=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:
-         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=AdtNFlSpz81uTllfhqGBNz872kPPOqcfTn2+V15vEhHh4FkLvnh20CjgOa7iI79Q3
-         c9KO/+NdJdsfrL1qlvKJPecqls3hOFaDMW/UhJP3MOyxh86lnQk/DCS1cCEEPVlmKU
-         m/U2aPW0Zh3EPMU4aehJQ9iMQya/5+pAbeGoCqY7ak7If7Jhqv0qn2hfpRbOfiJ+7Y
-         kVNE7IbZ0e/xBb8cUp+wbR2mCipkGS8mRsAaPYTnyfKOJ7RdxSDYMQ6VmJkMeExDUp
-         0h0WKpYxpEVnT7kSHWG2NdkzIU8wFVh351o/3Bp2PfjBMXSmurDidsUldCosbjaHMB
-         95SC0HDs2MYGQ==
+In-Reply-To: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
-> 25.07.2019 13:38, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
-> >> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
-> >>> 25.07.2019 12:55, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
-> >>>>>
-> >>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the commen=
-t
-> >>>>> doesn't sound correct to me. Something like 'firmware_sc7' should s=
-uit
-> >>>>> better here.
-> >>>>>
-> >>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-> >>>>>
-> >>>>> Secondly, I'm also not sure why COP interrupts need to be disabled =
-for
-> >>>>> pre-T210 at all, since COP is unused. This looks to me like it was
-> >>>>> cut-n-pasted from downstream kernel without a good reason and could=
- be
-> >>>>> simply removed.
-> >>>>
-> >>>> I don't think we can rely on the fact that COP is unused. People can
-> >>>> write their own code to run on COP.
-> >>>
-> >>> 1. Not upstream - doesn't matter.
-> >>>
-> >>
-> >> The code is not part of the kernel, so obviously it's not upstream?
-> >>
-> >>> 2. That's not very good if something unknown is running on COP and th=
-en
-> >>> kernel suddenly intervenes, don't you think so?
-> >>
-> >> Unless the code was written with this in mind.
-> >>
->=20
-> In that case, please see 1. ;)
->=20
+02.08.2019 16:05, Peter De Schrijver пишет:
+> On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
+>> 25.07.2019 13:38, Peter De Schrijver пишет:
+>>> On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
+>>>> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
+>>>>> 25.07.2019 12:55, Peter De Schrijver пишет:
+>>>>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
+>>>>>>>
+>>>>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
+>>>>>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
+>>>>>>> better here.
+>>>>>>>
+>>>>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>>>>>>
+>>>>>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
+>>>>>>> pre-T210 at all, since COP is unused. This looks to me like it was
+>>>>>>> cut-n-pasted from downstream kernel without a good reason and could be
+>>>>>>> simply removed.
+>>>>>>
+>>>>>> I don't think we can rely on the fact that COP is unused. People can
+>>>>>> write their own code to run on COP.
+>>>>>
+>>>>> 1. Not upstream - doesn't matter.
+>>>>>
+>>>>
+>>>> The code is not part of the kernel, so obviously it's not upstream?
+>>>>
+>>>>> 2. That's not very good if something unknown is running on COP and then
+>>>>> kernel suddenly intervenes, don't you think so?
+>>>>
+>>>> Unless the code was written with this in mind.
+>>>>
+>>
+>> In that case, please see 1. ;)
+>>
+> 
+> In general the kernel should not touch the COP interrupts I think.
+> 
+>>>
+>>> Looking at this again, I don't think we need to enable the IRQ at all.
+>>
+>> Could you please clarify? The code only saves/restores COP's interrupts
+>> context across suspend-resume.
+> 
+> The sc7 entry firmware doesn't use interrupts.
 
-In general the kernel should not touch the COP interrupts I think.
-
-> >=20
-> > Looking at this again, I don't think we need to enable the IRQ at all.
->=20
-> Could you please clarify? The code only saves/restores COP's interrupts
-> context across suspend-resume.
-
-The sc7 entry firmware doesn't use interrupts.
-
-Peter.
+Okay, it shouldn't hurt to clean up the LIC's code a tad by removing the
+COP's bits, will make a patch.
