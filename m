@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F66C433FF
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 09:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E95CC32750
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 10:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78402182B
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 09:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691BE2087E
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Aug 2019 10:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564738497;
-	bh=NyiIAODgi67SoAGH9ft/V6UUhfzqoyu7bgemhXXdjTg=;
+	s=default; t=1564740066;
+	bh=goHfdpkyjRkUxgqH3PRtuRUvEVTPWNxCNirmAlAXiTE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DoHkX5gftgOJ07QNNTHhTYpcScMoZ7nXTtR+FTEpr/gwK0td/kHmJvp5M67uRL1QA
-	 0IEBf/uGHw2vlQnIhNFzpcc6F20BaOtHRWuMrGu/RN2NsCXpmW2o8QiRFXa3Gp9/rB
-	 dLF75OcApWmlk7UN9/o2iXac4Rz+ECDSItpIunzE=
+	b=EWUaQ/7TdS719v/4wX+O7/Xn7tSoZQkkKvkYs2G0gNhgjx2LAMCtjG3cK1aHj18Y5
+	 BeajGkai/v0hPi1Tmk6jxkVYDRdOxSPyzUvlWfQ5b+VRzGqwsJ2WXLdpsioyjwf1Ju
+	 xByQ+SGdLEu9mXrUugzFP9Txvk+2tmhz+VyjTQ04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403766AbfHBJe4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Aug 2019 05:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35100 "EHLO mail.kernel.org"
+        id S2405659AbfHBJvi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Aug 2019 05:51:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391581AbfHBJez (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:34:55 -0400
+        id S2405876AbfHBJvg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:51:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EA46217D4;
-        Fri,  2 Aug 2019 09:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD8872064A;
+        Fri,  2 Aug 2019 09:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738494;
-        bh=NyiIAODgi67SoAGH9ft/V6UUhfzqoyu7bgemhXXdjTg=;
+        s=default; t=1564739495;
+        bh=goHfdpkyjRkUxgqH3PRtuRUvEVTPWNxCNirmAlAXiTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x80LHCYew8mks2oJi/OZrAMiLe+omdakI4eSNr0D6dnirdLpNbIAyon28ytlqjkw1
-         zcOAqhX3UAUTWR5cEs+Fo+/DJS+QRhv/QWQhaDhd51qj84VJPZqmANaRE1wN6xOMwG
-         imU9W11CW84IfjGZ/IhXHkQcgpXRiOZRan3WvUaM=
+        b=N+F5/N2xS17DE2+KW71cST1dRyNTwfdPsA/svXoYfIznhTmRFB3ox5P6YxhUua6P2
+         8YcpTcrWamBuODt3HZlpJuS9lKDRmERuI55lPmMhgh1myF0S1G+P481LBbw0UCv8Zq
+         S6w7SDfrUOxYHiii8kawOuLaHycytO8lsdsN9iSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,12 +45,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
         linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 109/158] pinctrl: rockchip: fix leaked of_node references
-Date:   Fri,  2 Aug 2019 11:28:50 +0200
-Message-Id: <20190802092226.353596858@linuxfoundation.org>
+Subject: [PATCH 4.9 162/223] pinctrl: rockchip: fix leaked of_node references
+Date:   Fri,  2 Aug 2019 11:36:27 +0200
+Message-Id: <20190802092248.664754116@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
-References: <20190802092203.671944552@linuxfoundation.org>
+In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
+References: <20190802092238.692035242@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index a0651128e23a..616055b5e996 100644
+index f826793e972c..417cd3bd7e0c 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1837,6 +1837,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+@@ -2208,6 +2208,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
  						    base,
  						    &rockchip_regmap_config);
  		}
