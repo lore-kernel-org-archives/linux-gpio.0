@@ -2,27 +2,27 @@ Return-Path: <SRS0=WyK8=WB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE82C41514
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 10:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD37C433FF
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 10:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A202087B
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 10:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2501D20880
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 10:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfHEKQR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Aug 2019 06:16:17 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58401 "EHLO
+        id S1727739AbfHEKQS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Aug 2019 06:16:18 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:40533 "EHLO
         relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfHEKQR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Aug 2019 06:16:17 -0400
+        with ESMTP id S1727259AbfHEKQS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Aug 2019 06:16:18 -0400
 X-Originating-IP: 86.250.200.211
 Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B1F542000F;
-        Mon,  5 Aug 2019 10:16:13 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 3EE512000B;
+        Mon,  5 Aug 2019 10:16:15 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -38,44 +38,46 @@ Cc:     <devicetree@vger.kernel.org>,
         Marcin Wojtas <mw@semihalf.com>,
         Stefan Chulski <stefanc@marvell.com>,
         Yan Markman <ymarkman@marvell.com>,
+        Konstantin Porotchkin <kostap@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 0/3] CP115 pinctrl support
-Date:   Mon,  5 Aug 2019 12:16:04 +0200
-Message-Id: <20190805101607.29811-1-miquel.raynal@bootlin.com>
+Subject: [PATCH 1/3] pinctrl: mvebu: Add CP110 missing pin functionality
+Date:   Mon,  5 Aug 2019 12:16:05 +0200
+Message-Id: <20190805101607.29811-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190805101607.29811-1-miquel.raynal@bootlin.com>
+References: <20190805101607.29811-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+From: Konstantin Porotchkin <kostap@marvell.com>
 
-This is the second batch of changes (out of three) to support the brand
-new Marvell CN9130 SoCs which are made of one AP807 and one CP115.
+Add missing definition for function 0xe on CP-110 MPP-62.
+The pin function is Data Strobe for SDIO interface.
 
-We add a new compatible (and the relevant support in the pinctrl
-driver) before the addition in batch 3/3 of CN9130 SoCs DT using it.
+Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-cp110.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-1st batch was clocks support and is independent from this one.
-
-Thanks,
-Miquèl
-
-
-Grzegorz Jaszczyk (2):
-  dt-bindings: cp110: document the new CP115 pinctrl compatible
-  pinctrl: mvebu: add additional variant for standalone CP115
-
-Konstantin Porotchkin (1):
-  pinctrl: mvebu: Add CP110 missing pin functionality
-
- .../arm/marvell/cp110-system-controller.txt   |  4 ++--
- drivers/pinctrl/mvebu/pinctrl-armada-cp110.c  | 20 ++++++++++++++-----
- 2 files changed, 17 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-cp110.c b/drivers/pinctrl/mvebu/pinctrl-armada-cp110.c
+index 584952b2ba47..85ade9761885 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-cp110.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-cp110.c
+@@ -597,7 +597,8 @@ static struct mvebu_mpp_mode armada_cp110_mpp_modes[] = {
+ 		 MPP_FUNCTION(7,	"uart0",	"rxd"),
+ 		 MPP_FUNCTION(8,	"uart2",	"rxd"),
+ 		 MPP_FUNCTION(9,	"sata0",	"present_act"),
+-		 MPP_FUNCTION(10,	"ge",		"mdc")),
++		 MPP_FUNCTION(10,	"ge",		"mdc"),
++		 MPP_FUNCTION(14,	"sdio",		"ds")),
+ };
+ 
+ static const struct of_device_id armada_cp110_pinctrl_of_match[] = {
 -- 
 2.20.1
 
