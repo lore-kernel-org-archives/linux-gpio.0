@@ -2,74 +2,136 @@ Return-Path: <SRS0=WyK8=WB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA55C0650F
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 07:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AB1C433FF
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 08:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E290820B1F
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 07:20:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D3B2067D
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Aug 2019 08:28:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gn0LHf8E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfHEHUI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Aug 2019 03:20:08 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:37720 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726394AbfHEHUI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 5 Aug 2019 03:20:08 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DD4B71A01E4;
-        Mon,  5 Aug 2019 09:20:05 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1DDBC1A0013;
-        Mon,  5 Aug 2019 09:20:00 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 930A340296;
-        Mon,  5 Aug 2019 15:19:52 +0800 (SGT)
-From:   Hui Song <hui.song_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727826AbfHEI2A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Aug 2019 04:28:00 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40560 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbfHEI2A (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Aug 2019 04:28:00 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l15so27201662oth.7
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Aug 2019 01:27:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qvG85uu+23wc3aOz56jKz9zl98RKrlFXnI9v0RdgYHY=;
+        b=gn0LHf8ENoBGwjVAUPWk1trAn5THo247jg8e6zjlOG+W0AiNseHCflLSx/XH7Kcfy9
+         2wSOMmbwOPfMbBjkX6M2RQupJ/NbQ7i1OeZV4x0b7UaMTogOPcjGAh2WD4/Wzn3oFz+S
+         s68do0KW/i5W4PVQKdwoTVYuoajMggDI1ujveZBBQeM1XkbfxbcpVORGDNzhN6D90l0s
+         nchBa36BsovaPAw4h8M0gY9GSFJmJ6RPIM5M8O2TBp8svyqdG+/Z77FGfO1gxNobnwjE
+         Hl6bo1835l7C2TEp1ARt072yPf+OHySWwJSl6kUR7uAp3M2jEwLs21KSIEzQgcwZEeFx
+         EIwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qvG85uu+23wc3aOz56jKz9zl98RKrlFXnI9v0RdgYHY=;
+        b=HB+qqDNifkY6z5dV7SS74IcjsayU0UFWUnsS1VDwC9c6L7SYq6r+uRWHQ4qLI97ahs
+         dk+KuhcRhfgmrWesioOWhms9zv8rWu9ad9OM2ErH4HhLDdQIiKxmjBKLMMa2LOy8atbV
+         BbeBDag62b0Is6TuPZTVgIvRjRsGXEHohFQ+Tkm/wBHg6f9n5rvjlPSeRM6h0LpGWLQT
+         T5evWYxKtgzVnabc0QEvnJYkw/jaNezBjMLczJC7MVtVLe3U4DbgtApyPiXAK+rod3/i
+         f2bpRk5ATgZsqtEemx9w2onqc62N8VcWe5dtFdQiPtS3EQ+JKSRJOSgLXMFUwT/pvQPS
+         /p9A==
+X-Gm-Message-State: APjAAAWZkQdwpYwPCVWUK3TpQT4d2y95N9bOCCc4jH0n+l/Oui8rt756
+        j7C9tcF2Wxi1JngQVUOKFeUT1opTDW+3MnQR9fZ7pw==
+X-Google-Smtp-Source: APXvYqyHiFzcWgwMSYIdyYbnaCWSjRwGweIT3RKPv1xwORdpLKUPWaLHXzDYxYbuZLEk4t8xeoYAy31E8HbSzjuIfD4=
+X-Received: by 2002:a9d:2969:: with SMTP id d96mr115002880otb.85.1564993679131;
+ Mon, 05 Aug 2019 01:27:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190731195713.3150463-1-arnd@arndb.de> <20190731195713.3150463-6-arnd@arndb.de>
+ <CAMpxmJWFfT_vrDas2fzW5tnxskk9kmgHQpGnGQ-_C20UaS_jhA@mail.gmail.com> <CAK8P3a3KpKvRKXY72toE_5eAp4ER_Mre0GX3guwGeQgsY2HX+g@mail.gmail.com>
+In-Reply-To: <CAK8P3a3KpKvRKXY72toE_5eAp4ER_Mre0GX3guwGeQgsY2HX+g@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 5 Aug 2019 10:27:48 +0200
+Message-ID: <CAMpxmJUdSnp0QNwWB0rJ1opFrYs9R2KSVS64Tz8X5GDYAJYLpg@mail.gmail.com>
+Subject: Re: [PATCH 05/14] gpio: lpc32xx: allow building on non-lpc32xx targets
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     soc@kernel.org, arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Song Hui <hui.song_1@nxp.com>
-Subject: [PATCH v1] gpio: mpc8xxx: Add new platforms GPIO DT node description
-Date:   Mon,  5 Aug 2019 15:10:24 +0800
-Message-Id: <20190805071024.7992-1-hui.song_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-serial@vger.kernel.org,
+        USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Song Hui <hui.song_1@nxp.com>
+pt., 2 sie 2019 o 13:20 Arnd Bergmann <arnd@arndb.de> napisa=C5=82(a):
+>
+> On Fri, Aug 2, 2019 at 9:10 AM Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
+> > > -#include <mach/hardware.h>
+> > > -#include <mach/platform.h>
+> > > +#define _GPREG(x)                              (x)
+> >
+> > What purpose does this macro serve?
+> >
+> > >
+> > >  #define LPC32XX_GPIO_P3_INP_STATE              _GPREG(0x000)
+> > >  #define LPC32XX_GPIO_P3_OUTP_SET               _GPREG(0x004)
+>
+> In the existing code base, this macro converts a register offset to
+> an __iomem pointer for a gpio register. I changed the definition of the
+> macro here to keep the number of changes down, but I it's just
+> as easy to remove it if you prefer.
 
-Update the NXP GPIO node dt-binding file for QorIQ and
-Layerscape platforms, and add one more example with
-ls1028a GPIO node.
+Could you just add a comment so that it's clear at first glance?
 
-Signed-off-by: Song Hui <hui.song_1@nxp.com>
----
- Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> > > @@ -167,14 +166,26 @@ struct lpc32xx_gpio_chip {
+> > >         struct gpio_regs        *gpio_grp;
+> > >  };
+> > >
+> > > +void __iomem *gpio_reg_base;
+> >
+> > Any reason why this can't be made part of struct lpc32xx_gpio_chip?
+>
+> It could be, but it's the same for each instance, and not known until
+> probe() time, so the same pointer would need to be copied into each
+> instance that is otherwise read-only.
+>
+> Let me know if you'd prefer me to rework these two things or leave
+> them as they are.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-index 69d4616..fbe6d75 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-@@ -28,7 +28,7 @@ gpio0: gpio@1100 {
- Example of gpio-controller node for a ls2080a SoC:
- 
- gpio0: gpio@2300000 {
--	compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
-+	compatible = "fsl,ls1028a-gpio","fsl,ls2080a-gpio", "fsl,qoriq-gpio";
- 	reg = <0x0 0x2300000 0x0 0x10000>;
- 	interrupts = <0 36 0x4>; /* Level high type */
- 	gpio-controller;
--- 
-2.9.5
+I would prefer not to have global state in the driver, let's just
+store the pointer in the data passed to gpiochip_add_data().
 
+Bart
+
+>
+> > > +static inline u32 gpreg_read(unsigned long offset)
+> >
+> > Here and elsewhere: could you please keep the lpc32xx_gpio prefix for
+> > all symbols?
+>
+> Sure.
+>
+>       Arnd
