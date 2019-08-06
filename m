@@ -2,83 +2,113 @@ Return-Path: <SRS0=mAID=WC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6843DC433FF
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 02:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B385EC31E40
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 03:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F27C214C6
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 02:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 858DA20657
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 03:42:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OyBQEypi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfHFC7I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Aug 2019 22:59:08 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:33618 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729170AbfHFC7H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 5 Aug 2019 22:59:07 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DECF1A009A;
-        Tue,  6 Aug 2019 04:59:06 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B0CA41A0043;
-        Tue,  6 Aug 2019 04:59:00 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5FC6E402B5;
-        Tue,  6 Aug 2019 10:58:53 +0800 (SGT)
-From:   Hui Song <hui.song_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Song Hui <hui.song_1@nxp.com>
-Subject: [PATCH v2] gpio: mpc8xxx: Add new platforms GPIO DT node description
-Date:   Tue,  6 Aug 2019 10:49:23 +0800
-Message-Id: <20190806024923.34355-1-hui.song_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730036AbfHFDmq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Aug 2019 23:42:46 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39406 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728892AbfHFDmq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Aug 2019 23:42:46 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b7so37310574pls.6
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Aug 2019 20:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GyYuYt1i9WaZ8yCH43JVWCp96Q/+Qm0jgwO0UVQVYIs=;
+        b=OyBQEypiuCQvac5FyjGAX77gD8/Avj+XxwEX//E2nSdxoMtc7EFMRUUphfEwLEFnoG
+         sq/4QcEsvf1mQcjecx45TrN+bf2AMyjhLtMKCZAszIMUgee2MEIFKqjCvi37Rjq9Ug57
+         Oy4KPgPrPLi7nYd4zsNB0ruffzhRNwNvjeLidTsx+b4a5Vap7ueKYsxb6duFp4t2HWW4
+         EdLtGLCmmiJ9K7n/65f6cvAzNNht94g8ye6z8eybM1+ezw7XWLWDWm9xG1fkef1gyOaO
+         hGRp64Gp8fj96avZDJfn1NWbghMaLy1lqvZOcgazhfi1Sgwf/39R25++R+JY592vuUL1
+         waMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GyYuYt1i9WaZ8yCH43JVWCp96Q/+Qm0jgwO0UVQVYIs=;
+        b=ilcAfdKt+X1+SAomfIWVo/w49OKyzpsNjxTOSwZCXSYjOHMLZsKFwcqSijpxpIvkeF
+         1dLkm8ra0z38ss+jqCmNmJaSXxe/4RB/Q3zy2dXkvWoAQJGAdozHDrdYjQ5nRmrJju8e
+         v4G6XGI5XHU9llQV6TwrKsfm3Ps7iovSCfion4yp0FM5yKEIOaG08evC9R6zj1H6BXaS
+         NBbrAPqD0v66UOiMH2y9hL2EVJh3mrXgY0gve3WgmD+gFIhk+tCGg164mJ4/C6RJK5/F
+         Al0qGnxPksBCE51QK1+KOifGH6VYdi88Fl14vIOrytpLf7McZF3JD11AAmP7toUkNbWz
+         l5cg==
+X-Gm-Message-State: APjAAAU84zCT2/UsWVnhsxqFZ/ZewVU8tplaQLh07QsQI2Mloc17xRnp
+        w+7CL5LEpHDZ+Hqg6cIPb+w0wvItBnw=
+X-Google-Smtp-Source: APXvYqxoV+QNFxK1CxcdutLlR77u2tg+qbi8oydh1HNTQ8wuXUp3r07Qbcew/h4xMlPZTdNcoXH1cQ==
+X-Received: by 2002:a17:902:4381:: with SMTP id j1mr1002780pld.4.1565062965267;
+        Mon, 05 Aug 2019 20:42:45 -0700 (PDT)
+Received: from localhost ([122.172.146.3])
+        by smtp.gmail.com with ESMTPSA id a5sm18285778pjv.21.2019.08.05.20.42.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2019 20:42:43 -0700 (PDT)
+Date:   Tue, 6 Aug 2019 09:12:41 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     vireshk@kernel.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: spear: spear: Add of_node_put() before return
+Message-ID: <20190806034241.oqy53svdoyydgjli@vireshk-i7>
+References: <20190804154948.4584-1-nishkadg.linux@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190804154948.4584-1-nishkadg.linux@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Song Hui <hui.song_1@nxp.com>
+On 04-08-19, 21:19, Nishka Dasgupta wrote:
+> Each iteration of for_each_child_of_node puts the previous node, but in
+> the case of a return from the middle of the loop, there is no put, thus
+> causing a memory leak. Hence add an of_node_put before the return in
+> two places.
+> Issue found with Coccinelle.
+> 
+> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> ---
+>  drivers/pinctrl/spear/pinctrl-spear.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
+> index c4f850345dc4..7ec19c73f870 100644
+> --- a/drivers/pinctrl/spear/pinctrl-spear.c
+> +++ b/drivers/pinctrl/spear/pinctrl-spear.c
+> @@ -157,12 +157,16 @@ static int spear_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	/* calculate number of maps required */
+>  	for_each_child_of_node(np_config, np) {
+>  		ret = of_property_read_string(np, "st,function", &function);
+> -		if (ret < 0)
+> +		if (ret < 0) {
+> +			of_node_put(np);
+>  			return ret;
+> +		}
+>  
+>  		ret = of_property_count_strings(np, "st,pins");
+> -		if (ret < 0)
+> +		if (ret < 0) {
+> +			of_node_put(np);
+>  			return ret;
+> +		}
+>  
+>  		count += ret;
+>  	}
 
-Update the NXP GPIO node dt-binding file for QorIQ and
-Layerscape platforms, and add one more example with
-ls1028a GPIO node.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Song Hui <hui.song_1@nxp.com>
----
- Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-index 69d4616..2df5fc0 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-@@ -37,3 +37,17 @@ gpio0: gpio@2300000 {
- 	interrupt-controller;
- 	#interrupt-cells = <2>;
- };
-+
-+
-+Example of gpio-controller node for a ls1028a SoC:
-+
-+gpio1: gpio@2300000 {
-+	compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
-+	reg = <0x0 0x2300000 0x0 0x10000>;
-+	interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	little-endian;
-+};
 -- 
-2.9.5
-
+viresh
