@@ -2,92 +2,89 @@ Return-Path: <SRS0=mAID=WC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DBDC31E40
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 14:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B12C31E40
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 16:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7992B2089E
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 14:27:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRVypgpg"
+	by mail.kernel.org (Postfix) with ESMTP id 455822070D
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Aug 2019 16:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfHFO1r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Aug 2019 10:27:47 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38799 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbfHFO1q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Aug 2019 10:27:46 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r9so82410660ljg.5
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Aug 2019 07:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eXHAOgrT3aqDJbWQZyVCHNE9w4LKxuarG8u+DMQjMBc=;
-        b=kRVypgpgW+U13mXabeCprgFSroAP9njk3XKkXXwByiKBU4XgtH/iehbTDT6cldft/+
-         /TXUajxPi/SiS19kGWFFMyMPgMmrAat+s9NYdWTQ4iwxgKI6YkDnKcPmAk9nGuTmg2TH
-         RzKO4ofnqiPh9huO9cIZbnipMIFxr+BTt2zpyQQEr7cxpCMezDs9Zn75yHAUtZmvE2gx
-         6nNP1tSSUJzUR9FYigfMEfEvF0dG9iewvqXZK7sKy0CyTIqxovHu3juoY9sYu1ZPKuMP
-         I8xCh9DoL7dbSqDOKIwZsnKl537QVZIgpuaO0o3OI02s5EFIozQhDRJS5oYMNAKWmPKq
-         LzAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eXHAOgrT3aqDJbWQZyVCHNE9w4LKxuarG8u+DMQjMBc=;
-        b=MufT81DFQxkpLfM+2ioICQ0C7VKt9adGmo9fzZMLukZKLKOCLNkmn8MyFT5mWxJcfZ
-         gXDjtxuQXizI3lXMbFw0ENbRtNm6DHbWaiDbXwPUUXkaiwBIPvbEA+KpTMAHWQKcVSoW
-         6qQ+TJNHCfiWbd+XMjfkGL9ffMX87cHg6z6hrwst9XmZ75LqYYGBWl6AemqYPV1blJld
-         rQBCc7IxfaJCT5eAfUTP/T+4TDweyibvlzM7wTXJZpAHhPFMdFHrBQBH+wMuv1glb2DL
-         oFQgf6Ztkc32NpWvmkdC8riXlhTRC7sSixBT+IhBpX01qSuDP9Jp22ZuHX0jC8YB/PxF
-         Ipbw==
-X-Gm-Message-State: APjAAAX2CxU47r28tOSSrTEhHnlcS1qxbH1lf786GPbSkUPsrD40lRoW
-        kjV01n0oTH3IbWMEmUWHp1RZ81/GXvaatpXIlVZglIZA
-X-Google-Smtp-Source: APXvYqwjBu3QaDljOnAr6J4mSyraVtYhMkkNjpCPjTNiPs+dIcn0dX9BiPqfMvJ6LUfcYGXpxkAfq6U5ESq1gCGUiCg=
-X-Received: by 2002:a2e:8195:: with SMTP id e21mr1829775ljg.62.1565101664435;
- Tue, 06 Aug 2019 07:27:44 -0700 (PDT)
+        id S1732676AbfHFQAQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Aug 2019 12:00:16 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39867 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729638AbfHFQAQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Aug 2019 12:00:16 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hv1sg-0008Cu-8f; Tue, 06 Aug 2019 18:00:10 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hv1sd-0008QY-2C; Tue, 06 Aug 2019 18:00:07 +0200
+Date:   Tue, 6 Aug 2019 18:00:07 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH RFC 5/7] pwm: rcar: remove a redundant condition in
+ rcar_pwm_apply()
+Message-ID: <20190806160007.mqwzixddhzejbmcb@pengutronix.de>
+References: <1562576868-8124-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1562576868-8124-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWw1Gh_CxgiO5gd+MY0vUvWX_ACDj+L3_Wcomkaf5Oo4Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190726200830.52728-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20190726200830.52728-1-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 6 Aug 2019 16:27:32 +0200
-Message-ID: <CACRpkdYyNVrOuNQMbpAreO2NeSOXxctHC7pbDWZVddPjOAYkOA@mail.gmail.com>
-Subject: Re: [PATCH v1] pinctrl: intel: Allow to request locked pins
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWw1Gh_CxgiO5gd+MY0vUvWX_ACDj+L3_Wcomkaf5Oo4Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+Hello,
 
-On Fri, Jul 26, 2019 at 10:08 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Aug 06, 2019 at 11:05:30AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Jul 8, 2019 at 11:08 AM Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > Since the rcar_pwm_apply() has already check whehter state->enabled
+> > is not set or not, this patch removes a redundant condition.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> This is completely independent from the rest of the series, and can be applied
+> immediately, right?
 
-> Some firmwares would like to protect pins from being modified by OS
-> and at the same time provide them to OS as a resource. So, the driver
-> in such circumstances may request pin and may not change its state.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The original patch didn't make it into my mailbox. I only see a few
+replies. Is it only me?
+https://patchwork.ozlabs.org/project/linux-pwm/list/ doesn't seem to
+have it either.
 
-Interesting patch!
+Best regards
+Uwe
 
-> +enum {
-> +       PAD_UNLOCKED    = 0,
-> +       PAD_LOCKED      = 1,
-> +       PAD_LOCKED_TX   = 2,
-> +       PAD_LOCKED_FULL = PAD_LOCKED | PAD_LOCKED_TX,
-> +};
-
-Please add some kerneldoc explaining what these different lock
-states are. My head is spinning. Locked? Locked TX? Locked full?
-
-Yours,
-Linus Walleij
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
