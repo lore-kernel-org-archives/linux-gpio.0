@@ -2,107 +2,219 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9D2C32751
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 17:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18655C433FF
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9524121E71
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 17:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80A7822297
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="XCWn2KFa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jXikMaQ2";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wEcv+ppC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388461AbfHGRtB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Aug 2019 13:49:01 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:45129 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387999AbfHGRtB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Aug 2019 13:49:01 -0400
-Received: by mail-wr1-f48.google.com with SMTP id q12so1965707wrj.12
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Aug 2019 10:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=gImaQby3yoH3gy/TjxICqeBf48PaHvN2W+2XPmqngt0=;
-        b=XCWn2KFajmVRdapezDUVDATPTWNRUyssJljmErEDsBtZVpGtOKbg+6WVUIy7J9JZcU
-         1i62r0F+W2CfdF31Z8WqHXCewwtJMOW5JmNb01QdpkgotfEjtdxAtrvDZJnWZBQVAjwc
-         7gZyltkStY2AEoGgG+qJHnSYc0M0+M+quTYWpd6M49lD3cBYuxiriMhudKGW3OoeXt6l
-         +ACU8kYE0/eB9wAqRzlO9ffFVYCEdJIdJUsVOFTIj7G+q6TDPtya29fNpB2JnGmHyucv
-         6T01O1/rsTWPbW9tn4IU03D0W7ZAG8fRkKH8jr+mKvZZjeYqi+0V6cXkj6Cu9m4iEOr1
-         uerw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=gImaQby3yoH3gy/TjxICqeBf48PaHvN2W+2XPmqngt0=;
-        b=fIcweOm7VboNKMEu8GYLYLfFBLLOsJra6WELrBsV4SEl76dGjH8jhcH7za2d6nH/xG
-         u840EGXtV4eGjWZPBZ8Q5/bLz1p1G0pW3Jm4hyxdtnLVAq40/jXYXmi9/NxiQPL2Bwvu
-         +GGfbmC16mJKdpfxlQr+qrZfAoiXdmWT9Od0ZGyx+Eqp8oEEyX/dtPXnvppEvkZbV/aS
-         5+OWJRT08iTXqk8kkaZMrKFhHpx7oVRUpw3CYAgIaA4H4c5/XcRyqjanUd+n5IvaSEe/
-         PyT0Srop5+ckHvTerIDgeIYWT5UooGZcSsZ9s1gP26kbFNw3WgDO0IPPdPa734dhNvTg
-         6CnQ==
-X-Gm-Message-State: APjAAAU0ZRfjkzPzDki3r9ug9b99/mKr7pzErmhGqtYFA04QDRTjYe5N
-        F24hYsGpWAEcfCUzbPrpMQg3sqaJjmYptw==
-X-Google-Smtp-Source: APXvYqxrZcdnlVr+d7AySDJypIMifr1mQAfcr0k6wdcsOknT+o4R/fgQjD/nOi4Muu54XoJMnhIh9Q==
-X-Received: by 2002:adf:fd08:: with SMTP id e8mr12734327wrr.147.1565200138622;
-        Wed, 07 Aug 2019 10:48:58 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id c78sm1348469wmd.16.2019.08.07.10.48.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2019 10:48:57 -0700 (PDT)
-Message-ID: <5d4b0f09.1c69fb81.37eaa.7c18@mx.google.com>
-Date:   Wed, 07 Aug 2019 10:48:57 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2388554AbfHGTvz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Aug 2019 15:51:55 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:16054 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388488AbfHGTvz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Aug 2019 15:51:55 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 0A960A1039
+        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:54 +0200 (CEST)
+Authentication-Results: spamfilter04.heinlein-hosting.de (amavisd-new);
+        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+        header.d=mailbox.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1565207513; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OXYVVcxkLaXfdngIhXH0oRHczAi+LJo+CZaddXInpvU=;
+        b=jXikMaQ2K3YNk6cWRrq0uzRze/E8CNYQduaMI5rJyT9jGkZW20WfYvC4ddCXt0XJDeU6RT
+        OkrxjV6Ezx1g4TccHX1Bd/WkhxIGnFqcw35SQCcQy+1eukePvMf8RPbPsgHjAkvN+FmCQ6
+        ILbl/8jaitbxEJYHjsV00AvTy2nObEPNeQSOYYWXY8n1cUkpuAKLbOi1EBSnVgVjdEdoIJ
+        6cUF+dWHpwwJLNwcMF0lT9yaqpDjeEarJA6CKia+B0oSHBuM4Y02ywSzaYQDS5qGUXAc1f
+        exa5eeVKCAfRjTM6IUKq+XRkQhcygkR1ws8ZWOr3ykTcbb3RSMi3TBYHmL/u1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-transfer-encoding:mime-version:references:in-reply-to
+        :message-id:date:date:subject:subject:from:from:received; s=
+        mail20150812; t=1565207509; bh=gpP2T+v6dRzvxGBKKkpW7plXri7B+V7gB
+        Frww9OFup0=; b=wEcv+ppCinyRHHQ+GeqT1l5+OM5l1JG+K8v/kEQRsOxZncf1h
+        NOY0xv4ZzQsqjNimJPSoZM7bzDvsjppniv8QT0bqWIAHaldVcrNAlPAep4z4xNFf
+        2/rLYbXRUV019aPR/Sm9xWwMqwUphm2R/DfEGqrw3H5JHXnQyk3IPz82pf4ZNdUu
+        7EVVvNXZViPdNVg3zhbEIrLMy/hMOoztGLSdsPHVtT+Y9OBG34jM5kp66KujZIFt
+        M2BPIvRg4r4M+98wNBhsDsJP7GHnC2ErorP+uLs/Jqyou15hTYJPV6N+nOd7o2cp
+        1Jqrqlac/TdBXvPt8W0N46DbF+MQrpedHo83Q==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id RZ5AZD9ByHDl; Wed,  7 Aug 2019 21:51:49 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@mailbox.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Alexander Stein <alexander.stein@mailbox.org>
+Subject: [libgpiod] [PATCH 4/5] bindings: cxx: Fix compile errors
+Date:   Wed,  7 Aug 2019 21:51:31 +0200
+Message-Id: <20190807195132.7538-4-alexander.stein@mailbox.org>
+In-Reply-To: <20190807195132.7538-1-alexander.stein@mailbox.org>
+References: <20190807195132.7538-1-alexander.stein@mailbox.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: linusw
-X-Kernelci-Kernel: gpio-v5.3-3-20-g6926e30f09db
-X-Kernelci-Branch: for-next
-X-Kernelci-Report-Type: boot
-Subject: linusw/for-next boot: 45 boots: 1 failed,
- 44 passed (gpio-v5.3-3-20-g6926e30f09db)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next boot: 45 boots: 1 failed, 44 passed (gpio-v5.3-3-20-g6926e3=
-0f09db)
+This fixes the following compile errors:
+tests-event.cpp:152:3: error: cannot declare reference to
+'class std::system_error&', which is not a typedef or a template type
+argument
+  152 |   REQUIRE_THROWS_AS(line.event_get_fd(), ::std::system_error&);
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/for-next=
-/kernel/gpio-v5.3-3-20-g6926e30f09db/
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/gpio-v5.3-3-20-g6926e30f09db/
-
-Tree: linusw
-Branch: for-next
-Git Describe: gpio-v5.3-3-20-g6926e30f09db
-Git Commit: 6926e30f09db0b77f5a3689c662d96ff85ef1a2a
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 35 unique boards, 14 SoC families, 2 builds out of 5
-
-Boot Regressions Detected:
-
-arm64:
-
-    defconfig:
-        gcc-8:
-          apq8016-sbc:
-              lab-mhart: failing since 8 days (last pass: v5.2-10813-g88785=
-b7fa74a - first fail: v5.3-rc1-10-gd2a561ae1961)
-
-Boot Failure Detected:
-
-arm64:
-    defconfig:
-        gcc-8:
-            apq8016-sbc: 1 failed lab
-
+Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 ---
-For more info write to <info@kernelci.org>
+ bindings/cxx/tests/tests-chip.cpp  |  8 ++++----
+ bindings/cxx/tests/tests-event.cpp |  4 ++--
+ bindings/cxx/tests/tests-line.cpp  | 16 ++++++++--------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/bindings/cxx/tests/tests-chip.cpp b/bindings/cxx/tests/tests-chip.cpp
+index 11c2d4c..c9eb8e5 100644
+--- a/bindings/cxx/tests/tests-chip.cpp
++++ b/bindings/cxx/tests/tests-chip.cpp
+@@ -107,7 +107,7 @@ TEST_CASE("Uninitialized GPIO chip behaves correctly", "[chip]")
+ 
+ 	SECTION("using uninitialized chip throws logic_error")
+ 	{
+-		REQUIRE_THROWS_AS(chip.name(), ::std::logic_error&);
++		REQUIRE_THROWS_AS(chip.name(), ::std::logic_error);
+ 	}
+ }
+ 
+@@ -139,7 +139,7 @@ TEST_CASE("GPIO chip can be opened with the open() method with implicit lookup",
+ 
+ TEST_CASE("Trying to open a nonexistent chip throws system_error", "[chip]")
+ {
+-	REQUIRE_THROWS_AS(::gpiod::chip("nonexistent-chip"), ::std::system_error&);
++	REQUIRE_THROWS_AS(::gpiod::chip("nonexistent-chip"), ::std::system_error);
+ }
+ 
+ TEST_CASE("Chip object can be reset", "[chip]")
+@@ -244,12 +244,12 @@ TEST_CASE("Errors occurring when retrieving lines are correctly reported", "[chi
+ 
+ 	SECTION("invalid offset (single line)")
+ 	{
+-		REQUIRE_THROWS_AS(chip.get_line(9), ::std::out_of_range&);
++		REQUIRE_THROWS_AS(chip.get_line(9), ::std::out_of_range);
+ 	}
+ 
+ 	SECTION("invalid offset (multiple lines)")
+ 	{
+-		REQUIRE_THROWS_AS(chip.get_lines({ 1, 19, 4, 7 }), ::std::out_of_range&);
++		REQUIRE_THROWS_AS(chip.get_lines({ 1, 19, 4, 7 }), ::std::out_of_range);
+ 	}
+ 
+ 	SECTION("line not found by name")
+diff --git a/bindings/cxx/tests/tests-event.cpp b/bindings/cxx/tests/tests-event.cpp
+index b34347f..b41cf7e 100644
+--- a/bindings/cxx/tests/tests-event.cpp
++++ b/bindings/cxx/tests/tests-event.cpp
+@@ -149,7 +149,7 @@ TEST_CASE("It's possible to retrieve the event file descriptor", "[event][line]"
+ 
+ 	SECTION("error if not requested")
+ 	{
+-		REQUIRE_THROWS_AS(line.event_get_fd(), ::std::system_error&);
++		REQUIRE_THROWS_AS(line.event_get_fd(), ::std::system_error);
+ 	}
+ 
+ 	SECTION("error if requested for values")
+@@ -157,7 +157,7 @@ TEST_CASE("It's possible to retrieve the event file descriptor", "[event][line]"
+ 		config.request_type = ::gpiod::line_request::DIRECTION_INPUT;
+ 
+ 		line.request(config);
+-		REQUIRE_THROWS_AS(line.event_get_fd(), ::std::system_error&);
++		REQUIRE_THROWS_AS(line.event_get_fd(), ::std::system_error);
+ 	}
+ }
+ 
+diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
+index e827e60..08ff1e8 100644
+--- a/bindings/cxx/tests/tests-line.cpp
++++ b/bindings/cxx/tests/tests-line.cpp
+@@ -122,7 +122,7 @@ TEST_CASE("Line bulk object works correctly", "[line][bulk]")
+ 	{
+ 		auto lines = chip.get_all_lines();
+ 
+-		REQUIRE_THROWS_AS(lines.get(11), ::std::out_of_range&);
++		REQUIRE_THROWS_AS(lines.get(11), ::std::out_of_range);
+ 	}
+ }
+ 
+@@ -242,7 +242,7 @@ TEST_CASE("Exported line can be released", "[line]")
+ 	line.release();
+ 
+ 	REQUIRE_FALSE(line.is_requested());
+-	REQUIRE_THROWS_AS(line.get_value(), ::std::system_error&);
++	REQUIRE_THROWS_AS(line.get_value(), ::std::system_error);
+ }
+ 
+ TEST_CASE("Uninitialized GPIO line behaves correctly", "[line]")
+@@ -256,7 +256,7 @@ TEST_CASE("Uninitialized GPIO line behaves correctly", "[line]")
+ 
+ 	SECTION("using uninitialized line throws logic_error")
+ 	{
+-		REQUIRE_THROWS_AS(line.name(), ::std::logic_error&);
++		REQUIRE_THROWS_AS(line.name(), ::std::logic_error);
+ 	}
+ }
+ 
+@@ -271,7 +271,7 @@ TEST_CASE("Uninitialized GPIO line_bulk behaves correctly", "[line][bulk]")
+ 
+ 	SECTION("using uninitialized line_bulk throws logic_error")
+ 	{
+-		REQUIRE_THROWS_AS(bulk.get(0), ::std::logic_error&);
++		REQUIRE_THROWS_AS(bulk.get(0), ::std::logic_error);
+ 	}
+ }
+ 
+@@ -289,7 +289,7 @@ TEST_CASE("Cannot request the same line twice", "[line]")
+ 		auto line = chip.get_line(3);
+ 
+ 		REQUIRE_NOTHROW(line.request(config));
+-		REQUIRE_THROWS_AS(line.request(config), ::std::system_error&);
++		REQUIRE_THROWS_AS(line.request(config), ::std::system_error);
+ 	}
+ 
+ 	SECTION("request the same line twice in line_bulk")
+@@ -300,7 +300,7 @@ TEST_CASE("Cannot request the same line twice", "[line]")
+ 		 */
+ 		auto lines = chip.get_lines({ 2, 3, 4, 4 });
+ 
+-		REQUIRE_THROWS_AS(lines.request(config), ::std::system_error&);
++		REQUIRE_THROWS_AS(lines.request(config), ::std::system_error);
+ 	}
+ }
+ 
+@@ -312,12 +312,12 @@ TEST_CASE("Cannot get/set values of unrequested lines", "[line]")
+ 
+ 	SECTION("get value")
+ 	{
+-		REQUIRE_THROWS_AS(line.get_value(), ::std::system_error&);
++		REQUIRE_THROWS_AS(line.get_value(), ::std::system_error);
+ 	}
+ 
+ 	SECTION("set value")
+ 	{
+-		REQUIRE_THROWS_AS(line.set_value(1), ::std::system_error&);
++		REQUIRE_THROWS_AS(line.set_value(1), ::std::system_error);
+ 	}
+ }
+ 
+-- 
+2.22.0
+
