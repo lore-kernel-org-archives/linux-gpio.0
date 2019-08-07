@@ -2,163 +2,82 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9362DC32754
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DDDC32751
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 21:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 665A22229C
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SG5OiQVM";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IXN1Ogc3"
+	by mail.kernel.org (Postfix) with ESMTP id 2A61821874
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 21:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565212957;
+	bh=Ez8LaKwI1SJs6govk+MMRlWWhM/4pEOdFZMRWLlQ2mI=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=qLP4N2PVCMdRM8X4q7+WhLHSubHYxIIcueUJqLAAftaWUhCG8tZs5I2YJiDehB+v8
+	 1j2QW95I0LeyEU5TyzPPVL6ySdfc3zYlveM3BFSTo6o3wIzT6u1dUGtiArAkhqv1O5
+	 GSi+Iqf5gmjUspfrXHOyBUDkFNBG3mAvz3Y/wNkU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388669AbfHGTwE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Aug 2019 15:52:04 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:16408 "EHLO mx2.mailbox.org"
+        id S1730380AbfHGVWb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Aug 2019 17:22:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388488AbfHGTwD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Aug 2019 15:52:03 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1727751AbfHGVWb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Aug 2019 17:22:31 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id BFD72A1050
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:52:01 +0200 (CEST)
-Authentication-Results: spamfilter03.heinlein-hosting.de (amavisd-new);
-        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
-        header.d=mailbox.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1565207521; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=H1m80uKzIAFE/mF3ndNDkAbvlnV/ue1wAtMWXnY8wv0=;
-        b=SG5OiQVMZgoC5Lyv92BO9ZDwvqf4K5qwznQPOjGHQs2CZJv9WqijNkyRWhXZRerHLE+Rur
-        DHyb+oFkXj/bzAzcQEkTGX6eZ8eiLgxkLYWb64QAeQgGBKuTFjPErwJuPIqI6a9WT0uLWS
-        wKlLJPqiWvXQWel06stTvztwnKKhOE5jIOnFJ2qiKcnKuZLZki83cJteU0BxBN4xBo/PP3
-        6zEFFcca+oCXsdW9Mfmit7DpMps/kzbNE+z0YzXOA4SaLDCPAtiCAyZ972zAR/2xBZk0HB
-        t4vtslp88KDiWw3wD7XoS3Zvh92ZdM/W83Qp4i5eW7IOSqjT9RNZulUz18GAwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-transfer-encoding:mime-version:message-id:date:date
-        :subject:subject:from:from:received; s=mail20150812; t=
-        1565207508; bh=IVLMiHuS37YI+EtvtBodmJvmLHM9nzIPIlYlrxOirRo=; b=I
-        XN1Ogc3Km9qr7AFf9Mq+2jdESn4JE1lm09XRpMY85IwigMPpxlIKs14M4KfsXmUl
-        DPuHmE7k1dKHc/aPKUGPj1+xfPQyw9GJ40oAJV67iq753DRUI4P8A47FfOB3oFwX
-        dIGp0GGEUGN44OMFF4Htnfok9aJvQ6yYpHeZTU3peUhtwOfP3IBick7rT0iK+CoI
-        G3RxdIeGPk9xSNtUVAEiqjPMEJJKnfB5t5xmAIx+0dzgSep5EDVnynPrhcO3deSk
-        K8LctGldjKfEk65hrBxiaSFp1mRPBxk7cuu0JeR4CcPDwrev4TCTLQW4yNoqwsKj
-        NY1DgnFtpfH4LJokKTBCw==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id YeBPhWT1Xd4T; Wed,  7 Aug 2019 21:51:48 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@mailbox.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Alexander Stein <alexander.stein@mailbox.org>
-Subject: [libgpiod] [PATCH 1/5] bindings: cxx: Use 'upstream' include path
-Date:   Wed,  7 Aug 2019 21:51:28 +0200
-Message-Id: <20190807195132.7538-1-alexander.stein@mailbox.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id EA9D821743;
+        Wed,  7 Aug 2019 21:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565212950;
+        bh=Ez8LaKwI1SJs6govk+MMRlWWhM/4pEOdFZMRWLlQ2mI=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=cY4O2u58IhUIdMTd2VykvzwyKqa36wyMzcXktOUUXt1/u6PLDCxNF0IZGbiu7aH3z
+         Xau3Ylg34uY3DDcvU4GpqaH4VbrPnaOgNPzPJH8bl4FUnjaTwcdVwm2GnFnmxZIefS
+         9MeJwaeSkFbatmYDiI2zH9BcanjGPtL+JM3TREtg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <641727e6-4796-f982-3b58-4c8d666de1a2@nvidia.com>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com> <1563738060-30213-15-git-send-email-skomatineni@nvidia.com> <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com> <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com> <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com> <e2d0e8cc-b4ea-1148-4af1-fee6bb266cca@nvidia.com> <5054f178-db27-9286-d123-3e2b2a885717@gmail.com> <8c259511-d8ea-51b2-0b1d-c85b964bc44c@gmail.com> <20190802175119.1E401217F5@mail.kernel.org> <641727e6-4796-f982-3b58-4c8d666de1a2@nvidia.com>
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        jason@lakedaemon.net, jonathanh@nvidia.com,
+        linus.walleij@linaro.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de,
+        thierry.reding@gmail.com
+User-Agent: alot/0.8.1
+Date:   Wed, 07 Aug 2019 14:22:29 -0700
+Message-Id: <20190807212229.EA9D821743@mail.kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-According to https://github.com/catchorg/Catch2/issues/1202 the
-regular include is 'catch2/catch.hpp'
-Also CMake and pkg-config provide include paths for this include name.
+Quoting Sowjanya Komatineni (2019-08-02 13:39:57)
+>=20
+> On 8/2/19 10:51 AM, Stephen Boyd wrote:
+> > And also add a comment to this location in the code because it's
+> > non-obvious that we can't use iopoll here.
+> >
+> Actually added comment during function usage instead of during include=20
+> as iopoll.h is removed.
+>=20
+> Will add additional comment in include section as well highlighting=20
+> reason for removal of iopoll.h
+>=20
 
-Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
----
- bindings/cxx/tests/gpiod-cxx-test.cpp | 2 +-
- bindings/cxx/tests/tests-chip.cpp     | 2 +-
- bindings/cxx/tests/tests-event.cpp    | 2 +-
- bindings/cxx/tests/tests-iter.cpp     | 2 +-
- bindings/cxx/tests/tests-line.cpp     | 2 +-
- configure.ac                          | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/bindings/cxx/tests/gpiod-cxx-test.cpp b/bindings/cxx/tests/gpiod-cxx-test.cpp
-index fbae84f..236fd2d 100644
---- a/bindings/cxx/tests/gpiod-cxx-test.cpp
-+++ b/bindings/cxx/tests/gpiod-cxx-test.cpp
-@@ -6,7 +6,7 @@
-  */
- 
- #define CATCH_CONFIG_MAIN
--#include <catch.hpp>
-+#include <catch2/catch.hpp>
- #include <linux/version.h>
- #include <sys/utsname.h>
- #include <system_error>
-diff --git a/bindings/cxx/tests/tests-chip.cpp b/bindings/cxx/tests/tests-chip.cpp
-index 276b533..11c2d4c 100644
---- a/bindings/cxx/tests/tests-chip.cpp
-+++ b/bindings/cxx/tests/tests-chip.cpp
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-  */
- 
--#include <catch.hpp>
-+#include <catch2/catch.hpp>
- #include <gpiod.hpp>
- 
- #include "gpio-mockup.hpp"
-diff --git a/bindings/cxx/tests/tests-event.cpp b/bindings/cxx/tests/tests-event.cpp
-index f93bb72..b34347f 100644
---- a/bindings/cxx/tests/tests-event.cpp
-+++ b/bindings/cxx/tests/tests-event.cpp
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-  */
- 
--#include <catch.hpp>
-+#include <catch2/catch.hpp>
- #include <gpiod.hpp>
- #include <map>
- #include <poll.h>
-diff --git a/bindings/cxx/tests/tests-iter.cpp b/bindings/cxx/tests/tests-iter.cpp
-index 1af0256..fdc2cb5 100644
---- a/bindings/cxx/tests/tests-iter.cpp
-+++ b/bindings/cxx/tests/tests-iter.cpp
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-  */
- 
--#include <catch.hpp>
-+#include <catch2/catch.hpp>
- #include <gpiod.hpp>
- 
- #include "gpio-mockup.hpp"
-diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
-index 2684bcb..e827e60 100644
---- a/bindings/cxx/tests/tests-line.cpp
-+++ b/bindings/cxx/tests/tests-line.cpp
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-  */
- 
--#include <catch.hpp>
-+#include <catch2/catch.hpp>
- #include <gpiod.hpp>
- 
- #include "gpio-mockup.hpp"
-diff --git a/configure.ac b/configure.ac
-index f72e13b..0459007 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -165,7 +165,7 @@ then
- 	if test "x$with_tests" = xtrue
- 	then
- 		AC_LANG_PUSH([C++])
--		AC_CHECK_HEADERS([catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch.hpp])])
-+		AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
- 		AC_LANG_POP([C++])
- 	fi
- fi
--- 
-2.22.0
+No I wasn't saying to add a comment to the include section, just add a
+comment in the place where you would have called iopoll but don't. Sorry
+that it wasn't clear.
 
