@@ -2,65 +2,65 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB31C32756
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E10A0C32751
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E6A22231F
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B786F22297
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UiUXTIqA";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TBbjZ7Qf"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AgBF6h/W";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xB5Ql0ee"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388530AbfHGTv5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Aug 2019 15:51:57 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:16136 "EHLO mx2.mailbox.org"
+        id S2388639AbfHGTwA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Aug 2019 15:52:00 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:16202 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388488AbfHGTv5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Aug 2019 15:51:57 -0400
+        id S2388488AbfHGTwA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Aug 2019 15:52:00 -0400
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id F1BC6A1039
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:55 +0200 (CEST)
-Authentication-Results: spamfilter04.heinlein-hosting.de (amavisd-new);
+        by mx2.mailbox.org (Postfix) with ESMTPS id 94463A11FA
+        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:57 +0200 (CEST)
+Authentication-Results: spamfilter06.heinlein-hosting.de (amavisd-new);
         dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
         header.d=mailbox.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1565207515; h=from:from:sender:reply-to:subject:subject:date:date:
+        t=1565207517; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OEzvxhlE3UJuf4xtoza4rVxrUE4YeRY3kBEVBlsvziE=;
-        b=UiUXTIqAk8u7Wag37Wo+Agj6PVXSzuN1caUSl57KSE8tOP05H60XUrZaejAIMX8/VRvvbr
-        lTNw02+oRhW4snDOlIXDfG86NL6vh8dfBgOA+kckCWgAZhvjJ77nm1+N9vyfgKUT7HSRTG
-        ld9dBDoQdqajmPxLMdcgW36bGDZA0Ginf0Op1aRuPXu+5s9BStxIs1uqpm4VRcsG6jd0aZ
-        XpSx7nsFu8rQZzlLe/LAsZuSsj8breCadooeubjIh9mZNJIhQuolldqdmTShJ1tLAYPhoE
-        /b7/LxfIgXmv/I68kuOSaHWl3M9u4BVhogZhp6cRiCk1WLQprRva5pKmbg4S+A==
+        bh=ZM0q6fG66z18NMdEyIKUnWJVFj6hjUgzfqunUf4LTSw=;
+        b=AgBF6h/WUuR9fIEMjABnmgXjofFW8H1ph1D9N6iUtekfH1GY5V2eU+eltIy2JsqQe0SfcL
+        YUmFdwWycyKeaqRvYRN4a4Q4+j1AFO3yzi46OCZUXLYAd/huS3sRDncolk5OT/epVxOCxp
+        JacMAC/7aSxq54q5knSMCqfVnjNfCrtI7bzXWQFaAOAxWlPVARTifFbAX4c4wQsK33YjxQ
+        +68mxJ+J8LOHGAUsGlVP7uvGH16gBrpsJq2i4TPvRF9Y3SUuSby0xS68R82U5NU3zXZVCu
+        NaVa+2RGCquMqOaYEZD24vV3J031sYDbBRD5UbnwiCkw5s42ryaJMY/SEJZPZw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
         content-transfer-encoding:mime-version:references:in-reply-to
         :message-id:date:date:subject:subject:from:from:received; s=
-        mail20150812; t=1565207509; bh=DAKalmpg5kd1ZVhN+5FleL6qAx9Pt7aW7
-        EL/oiiXuTc=; b=TBbjZ7QfpYcU+uBak9U9GpIojP0iIXxGFUwRVQecS6WmkNbs+
-        h079c/be5IZNaINav8qpvp1PXpueXu+MVghZT16n2Y/2zHPVnj7hoqO4N9bvI7Qk
-        ocguhvWPq+SCq+oZnhpBr6zuZC91Tgb5Cz8AcqoL+Fg4ULhr+09Pla84XRbrSju4
-        2ebY40TDBZa9Cp4Y8Gtm62PClCQPFyUsMCTPEREd40Y7es8hamGDdNzdd4odp0gV
-        n1PfiF4OQVe9uPmGPQqfEwclDtiA7TeRX3UnxaWMaJqO+/Pfm9iLE4nu+7OUH+tn
-        NNaPUwE6F5g/sOk7LGFp80n0VlM6nSKiKCwwA==
+        mail20150812; t=1565207508; bh=O0z/UI7q2gKvi236q3df6pyPF0i2asc5U
+        +3NawpeZvI=; b=xB5Ql0eemoFiQrUfssQcPWG5VZyI9qmDssyrfZgwYEm1UV+cy
+        JKE4s6I5RIFtJeHGkD4SxzXveWtGqqilsRyXlOdtyIP3o8ez6l9S++9MWaO76QDD
+        u6W/1xPsf1WXGFYcs7JM8v4oWCTFyLfXCz6JRZf1OkPkIA6dWongACcWNOC8/dy5
+        QqTNNPymtn0x8ppRWoOy+yBqsEk8MA+FTL9OGKIxHb5f/Pyv9EcXUZQvchOek+PE
+        RFMS3Zq1MlZT8Ij0gXpnPFOqC4uQ/Q95bSjUf5k+Wz7GqBDBxB/A2YCypUfo7eRB
+        F5Oxt9jsCLZrjg38kWuV4JZvVCmO1R8OVIMAA==
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id XOp4IzSKJN26; Wed,  7 Aug 2019 21:51:49 +0200 (CEST)
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id LmkfEiqe_tpU; Wed,  7 Aug 2019 21:51:48 +0200 (CEST)
 From:   Alexander Stein <alexander.stein@mailbox.org>
 To:     linux-gpio@vger.kernel.org
 Cc:     Alexander Stein <alexander.stein@mailbox.org>
-Subject: [libgpiod] [PATCH 5/5] bindings: cxx: Workaround --success run
-Date:   Wed,  7 Aug 2019 21:51:32 +0200
-Message-Id: <20190807195132.7538-5-alexander.stein@mailbox.org>
+Subject: [libgpiod] [PATCH 2/5] bindings: cxx: Try using pkg-config to detect catch2
+Date:   Wed,  7 Aug 2019 21:51:29 +0200
+Message-Id: <20190807195132.7538-2-alexander.stein@mailbox.org>
 In-Reply-To: <20190807195132.7538-1-alexander.stein@mailbox.org>
 References: <20190807195132.7538-1-alexander.stein@mailbox.org>
 MIME-Version: 1.0
@@ -70,57 +70,46 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If run with --success, all expressions are evaluated and printed out.
-But REQUIRE_FALSE(chip) tries to iterate over the chip resulting in this
-backtrace:
-#0  gpiod_chip_num_lines (chip=chip@entry=0x0) at ../../lib/core.c:235
-#1  gpiod_line_iter_new (chip=0x0) at ../../lib/iter.c:140
-#2  gpiod::(anonymous namespace)::make_line_iter (chip=0x0) at ../../../bindings/cxx/iter.cpp:29
-#3  gpiod::line_iter::line_iter (this=0x7fffffffd690, owner=...) at ../../../bindings/cxx/iter.cpp:109
-#4  Catch::rangeToString<gpiod::chip> (range=...) at /usr/include/catch2/catch.hpp:1959
-[...]
-
-Workaround by forcing catch2 to call gpiod::chip::operator bool().
+If there is no system wide package, try using a regular header as before.
 
 Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 ---
-This actually looks like a flaw in the binding itself that the
-gpiod::line_iter can't cope with an empty gpiod::chip.
+ bindings/cxx/tests/Makefile.am | 2 +-
+ configure.ac                   | 8 +++++---
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
- bindings/cxx/tests/tests-chip.cpp | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/bindings/cxx/tests/tests-chip.cpp b/bindings/cxx/tests/tests-chip.cpp
-index c9eb8e5..1c69872 100644
---- a/bindings/cxx/tests/tests-chip.cpp
-+++ b/bindings/cxx/tests/tests-chip.cpp
-@@ -70,7 +70,7 @@ TEST_CASE("GPIO chip can be opened with the open() method in different modes", "
- 	mockup::probe_guard mockup_chips({ 8, 8, 8 });
- 	::gpiod::chip chip;
+diff --git a/bindings/cxx/tests/Makefile.am b/bindings/cxx/tests/Makefile.am
+index 155445f..d1da0d3 100644
+--- a/bindings/cxx/tests/Makefile.am
++++ b/bindings/cxx/tests/Makefile.am
+@@ -8,7 +8,7 @@
  
--	REQUIRE_FALSE(chip);
-+	REQUIRE_FALSE(!!chip);
+ AM_CPPFLAGS = -I$(top_srcdir)/bindings/cxx/ -I$(top_srcdir)/include
+ AM_CPPFLAGS += -I$(top_srcdir)/tests/mockup/
+-AM_CPPFLAGS += -Wall -Wextra -g -std=gnu++11
++AM_CPPFLAGS += -Wall -Wextra -g -std=gnu++11 $(CATCH2_CFLAGS)
+ AM_LDFLAGS = -lgpiodcxx -L$(top_builddir)/bindings/cxx/
+ AM_LDFLAGS += -lgpiomockup -L$(top_builddir)/tests/mockup/
+ AM_LDFLAGS += -pthread
+diff --git a/configure.ac b/configure.ac
+index 0459007..bf364e7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -164,9 +164,11 @@ then
  
- 	SECTION("open by name")
- 	{
-@@ -102,7 +102,7 @@ TEST_CASE("Uninitialized GPIO chip behaves correctly", "[chip]")
+ 	if test "x$with_tests" = xtrue
+ 	then
+-		AC_LANG_PUSH([C++])
+-		AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
+-		AC_LANG_POP([C++])
++		PKG_CHECK_MODULES([CATCH2], [catch2],, [
++			AC_LANG_PUSH([C++])
++			AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
++			AC_LANG_POP([C++])
++		])
+ 	fi
+ fi
  
- 	SECTION("uninitialized chip is 'false'")
- 	{
--		REQUIRE_FALSE(chip);
-+		REQUIRE_FALSE(!!chip);
- 	}
- 
- 	SECTION("using uninitialized chip throws logic_error")
-@@ -149,7 +149,7 @@ TEST_CASE("Chip object can be reset", "[chip]")
- 	::gpiod::chip chip(mockup::instance().chip_name(0));
- 	REQUIRE(chip);
- 	chip.reset();
--	REQUIRE_FALSE(chip);
-+	REQUIRE_FALSE(!!chip);
- }
- 
- TEST_CASE("Chip info can be correctly retrieved", "[chip]")
 -- 
 2.22.0
 
