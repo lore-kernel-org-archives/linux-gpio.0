@@ -2,67 +2,64 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10A0C32751
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9362DC32754
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B786F22297
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 665A22229C
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AgBF6h/W";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xB5Ql0ee"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SG5OiQVM";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IXN1Ogc3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388639AbfHGTwA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Aug 2019 15:52:00 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:16202 "EHLO mx2.mailbox.org"
+        id S2388669AbfHGTwE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Aug 2019 15:52:04 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:16408 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388488AbfHGTwA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Aug 2019 15:52:00 -0400
+        id S2388488AbfHGTwD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Aug 2019 15:52:03 -0400
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 94463A11FA
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:57 +0200 (CEST)
-Authentication-Results: spamfilter06.heinlein-hosting.de (amavisd-new);
+        by mx2.mailbox.org (Postfix) with ESMTPS id BFD72A1050
+        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:52:01 +0200 (CEST)
+Authentication-Results: spamfilter03.heinlein-hosting.de (amavisd-new);
         dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
         header.d=mailbox.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1565207517; h=from:from:sender:reply-to:subject:subject:date:date:
+        t=1565207521; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZM0q6fG66z18NMdEyIKUnWJVFj6hjUgzfqunUf4LTSw=;
-        b=AgBF6h/WUuR9fIEMjABnmgXjofFW8H1ph1D9N6iUtekfH1GY5V2eU+eltIy2JsqQe0SfcL
-        YUmFdwWycyKeaqRvYRN4a4Q4+j1AFO3yzi46OCZUXLYAd/huS3sRDncolk5OT/epVxOCxp
-        JacMAC/7aSxq54q5knSMCqfVnjNfCrtI7bzXWQFaAOAxWlPVARTifFbAX4c4wQsK33YjxQ
-        +68mxJ+J8LOHGAUsGlVP7uvGH16gBrpsJq2i4TPvRF9Y3SUuSby0xS68R82U5NU3zXZVCu
-        NaVa+2RGCquMqOaYEZD24vV3J031sYDbBRD5UbnwiCkw5s42ryaJMY/SEJZPZw==
+         in-reply-to:references; bh=H1m80uKzIAFE/mF3ndNDkAbvlnV/ue1wAtMWXnY8wv0=;
+        b=SG5OiQVMZgoC5Lyv92BO9ZDwvqf4K5qwznQPOjGHQs2CZJv9WqijNkyRWhXZRerHLE+Rur
+        DHyb+oFkXj/bzAzcQEkTGX6eZ8eiLgxkLYWb64QAeQgGBKuTFjPErwJuPIqI6a9WT0uLWS
+        wKlLJPqiWvXQWel06stTvztwnKKhOE5jIOnFJ2qiKcnKuZLZki83cJteU0BxBN4xBo/PP3
+        6zEFFcca+oCXsdW9Mfmit7DpMps/kzbNE+z0YzXOA4SaLDCPAtiCAyZ972zAR/2xBZk0HB
+        t4vtslp88KDiWw3wD7XoS3Zvh92ZdM/W83Qp4i5eW7IOSqjT9RNZulUz18GAwA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-transfer-encoding:mime-version:references:in-reply-to
-        :message-id:date:date:subject:subject:from:from:received; s=
-        mail20150812; t=1565207508; bh=O0z/UI7q2gKvi236q3df6pyPF0i2asc5U
-        +3NawpeZvI=; b=xB5Ql0eemoFiQrUfssQcPWG5VZyI9qmDssyrfZgwYEm1UV+cy
-        JKE4s6I5RIFtJeHGkD4SxzXveWtGqqilsRyXlOdtyIP3o8ez6l9S++9MWaO76QDD
-        u6W/1xPsf1WXGFYcs7JM8v4oWCTFyLfXCz6JRZf1OkPkIA6dWongACcWNOC8/dy5
-        QqTNNPymtn0x8ppRWoOy+yBqsEk8MA+FTL9OGKIxHb5f/Pyv9EcXUZQvchOek+PE
-        RFMS3Zq1MlZT8Ij0gXpnPFOqC4uQ/Q95bSjUf5k+Wz7GqBDBxB/A2YCypUfo7eRB
-        F5Oxt9jsCLZrjg38kWuV4JZvVCmO1R8OVIMAA==
+        content-transfer-encoding:mime-version:message-id:date:date
+        :subject:subject:from:from:received; s=mail20150812; t=
+        1565207508; bh=IVLMiHuS37YI+EtvtBodmJvmLHM9nzIPIlYlrxOirRo=; b=I
+        XN1Ogc3Km9qr7AFf9Mq+2jdESn4JE1lm09XRpMY85IwigMPpxlIKs14M4KfsXmUl
+        DPuHmE7k1dKHc/aPKUGPj1+xfPQyw9GJ40oAJV67iq753DRUI4P8A47FfOB3oFwX
+        dIGp0GGEUGN44OMFF4Htnfok9aJvQ6yYpHeZTU3peUhtwOfP3IBick7rT0iK+CoI
+        G3RxdIeGPk9xSNtUVAEiqjPMEJJKnfB5t5xmAIx+0dzgSep5EDVnynPrhcO3deSk
+        K8LctGldjKfEk65hrBxiaSFp1mRPBxk7cuu0JeR4CcPDwrev4TCTLQW4yNoqwsKj
+        NY1DgnFtpfH4LJokKTBCw==
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id LmkfEiqe_tpU; Wed,  7 Aug 2019 21:51:48 +0200 (CEST)
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id YeBPhWT1Xd4T; Wed,  7 Aug 2019 21:51:48 +0200 (CEST)
 From:   Alexander Stein <alexander.stein@mailbox.org>
 To:     linux-gpio@vger.kernel.org
 Cc:     Alexander Stein <alexander.stein@mailbox.org>
-Subject: [libgpiod] [PATCH 2/5] bindings: cxx: Try using pkg-config to detect catch2
-Date:   Wed,  7 Aug 2019 21:51:29 +0200
-Message-Id: <20190807195132.7538-2-alexander.stein@mailbox.org>
-In-Reply-To: <20190807195132.7538-1-alexander.stein@mailbox.org>
-References: <20190807195132.7538-1-alexander.stein@mailbox.org>
+Subject: [libgpiod] [PATCH 1/5] bindings: cxx: Use 'upstream' include path
+Date:   Wed,  7 Aug 2019 21:51:28 +0200
+Message-Id: <20190807195132.7538-1-alexander.stein@mailbox.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -70,46 +67,98 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If there is no system wide package, try using a regular header as before.
+According to https://github.com/catchorg/Catch2/issues/1202 the
+regular include is 'catch2/catch.hpp'
+Also CMake and pkg-config provide include paths for this include name.
 
 Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 ---
- bindings/cxx/tests/Makefile.am | 2 +-
- configure.ac                   | 8 +++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ bindings/cxx/tests/gpiod-cxx-test.cpp | 2 +-
+ bindings/cxx/tests/tests-chip.cpp     | 2 +-
+ bindings/cxx/tests/tests-event.cpp    | 2 +-
+ bindings/cxx/tests/tests-iter.cpp     | 2 +-
+ bindings/cxx/tests/tests-line.cpp     | 2 +-
+ configure.ac                          | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/bindings/cxx/tests/Makefile.am b/bindings/cxx/tests/Makefile.am
-index 155445f..d1da0d3 100644
---- a/bindings/cxx/tests/Makefile.am
-+++ b/bindings/cxx/tests/Makefile.am
-@@ -8,7 +8,7 @@
+diff --git a/bindings/cxx/tests/gpiod-cxx-test.cpp b/bindings/cxx/tests/gpiod-cxx-test.cpp
+index fbae84f..236fd2d 100644
+--- a/bindings/cxx/tests/gpiod-cxx-test.cpp
++++ b/bindings/cxx/tests/gpiod-cxx-test.cpp
+@@ -6,7 +6,7 @@
+  */
  
- AM_CPPFLAGS = -I$(top_srcdir)/bindings/cxx/ -I$(top_srcdir)/include
- AM_CPPFLAGS += -I$(top_srcdir)/tests/mockup/
--AM_CPPFLAGS += -Wall -Wextra -g -std=gnu++11
-+AM_CPPFLAGS += -Wall -Wextra -g -std=gnu++11 $(CATCH2_CFLAGS)
- AM_LDFLAGS = -lgpiodcxx -L$(top_builddir)/bindings/cxx/
- AM_LDFLAGS += -lgpiomockup -L$(top_builddir)/tests/mockup/
- AM_LDFLAGS += -pthread
+ #define CATCH_CONFIG_MAIN
+-#include <catch.hpp>
++#include <catch2/catch.hpp>
+ #include <linux/version.h>
+ #include <sys/utsname.h>
+ #include <system_error>
+diff --git a/bindings/cxx/tests/tests-chip.cpp b/bindings/cxx/tests/tests-chip.cpp
+index 276b533..11c2d4c 100644
+--- a/bindings/cxx/tests/tests-chip.cpp
++++ b/bindings/cxx/tests/tests-chip.cpp
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+  */
+ 
+-#include <catch.hpp>
++#include <catch2/catch.hpp>
+ #include <gpiod.hpp>
+ 
+ #include "gpio-mockup.hpp"
+diff --git a/bindings/cxx/tests/tests-event.cpp b/bindings/cxx/tests/tests-event.cpp
+index f93bb72..b34347f 100644
+--- a/bindings/cxx/tests/tests-event.cpp
++++ b/bindings/cxx/tests/tests-event.cpp
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+  */
+ 
+-#include <catch.hpp>
++#include <catch2/catch.hpp>
+ #include <gpiod.hpp>
+ #include <map>
+ #include <poll.h>
+diff --git a/bindings/cxx/tests/tests-iter.cpp b/bindings/cxx/tests/tests-iter.cpp
+index 1af0256..fdc2cb5 100644
+--- a/bindings/cxx/tests/tests-iter.cpp
++++ b/bindings/cxx/tests/tests-iter.cpp
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+  */
+ 
+-#include <catch.hpp>
++#include <catch2/catch.hpp>
+ #include <gpiod.hpp>
+ 
+ #include "gpio-mockup.hpp"
+diff --git a/bindings/cxx/tests/tests-line.cpp b/bindings/cxx/tests/tests-line.cpp
+index 2684bcb..e827e60 100644
+--- a/bindings/cxx/tests/tests-line.cpp
++++ b/bindings/cxx/tests/tests-line.cpp
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
+  */
+ 
+-#include <catch.hpp>
++#include <catch2/catch.hpp>
+ #include <gpiod.hpp>
+ 
+ #include "gpio-mockup.hpp"
 diff --git a/configure.ac b/configure.ac
-index 0459007..bf364e7 100644
+index f72e13b..0459007 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -164,9 +164,11 @@ then
- 
+@@ -165,7 +165,7 @@ then
  	if test "x$with_tests" = xtrue
  	then
--		AC_LANG_PUSH([C++])
--		AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
--		AC_LANG_POP([C++])
-+		PKG_CHECK_MODULES([CATCH2], [catch2],, [
-+			AC_LANG_PUSH([C++])
-+			AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
-+			AC_LANG_POP([C++])
-+		])
+ 		AC_LANG_PUSH([C++])
+-		AC_CHECK_HEADERS([catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch.hpp])])
++		AC_CHECK_HEADERS([catch2/catch.hpp], [], [HEADER_NOT_FOUND_CXX([catch2/catch.hpp])])
+ 		AC_LANG_POP([C++])
  	fi
  fi
- 
 -- 
 2.22.0
 
