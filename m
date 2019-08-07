@@ -2,59 +2,100 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D93C32751
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 13:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA11C32751
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 14:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A005A21E70
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 13:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7511822296
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 14:07:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="PJh2pZx1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388309AbfHGNvA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Aug 2019 09:51:00 -0400
-Received: from mga11.intel.com ([192.55.52.93]:24187 "EHLO mga11.intel.com"
+        id S2388089AbfHGOHq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Aug 2019 10:07:46 -0400
+Received: from onstation.org ([52.200.56.107]:42714 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388289AbfHGNvA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Aug 2019 09:51:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Aug 2019 06:50:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,357,1559545200"; 
-   d="scan'208";a="192918127"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 07 Aug 2019 06:50:57 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 07 Aug 2019 16:50:57 +0300
-Date:   Wed, 7 Aug 2019 16:50:57 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: intel: Use NSEC_PER_USEC for debounce
- calculus
-Message-ID: <20190807135057.GN2716@lahna.fi.intel.com>
-References: <20190807134150.13492-1-andriy.shevchenko@linux.intel.com>
+        id S1726773AbfHGOHq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Aug 2019 10:07:46 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id BA57E3E951;
+        Wed,  7 Aug 2019 14:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1565186865;
+        bh=6WKzOMIrRhn+HZ7Ye4fD0m71zD/5MBx+bsdK86Uuj2c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PJh2pZx1sesHz3Pw1IeyqA+GVWbYfJ/w8c7srPHO3nDhOIha6mDNXfDJs6HHIfAjM
+         CiXOvgEDhoMJYJEGRjJPE4brU1fDnmAqM60bKD9D20iVuIvBNLfFPQ3sn4nRUezk7d
+         wQ6YdoznMAubLi/7Re6c8szg+FIep7LAAvM4XQtw=
+Date:   Wed, 7 Aug 2019 10:07:44 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org,
+        David Daney <david.daney@cavium.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] gpio: hierarchical IRQ improvements
+Message-ID: <20190807140744.GA18224@onstation.org>
+References: <20190708110138.24657-1-masneyb@onstation.org>
+ <CACRpkdYQhyh1BW789OcxGTomMkC3e8hMr8sodbWz-z1=5s9fDw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190807134150.13492-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CACRpkdYQhyh1BW789OcxGTomMkC3e8hMr8sodbWz-z1=5s9fDw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 04:41:50PM +0300, Andy Shevchenko wrote:
-> Replace hard coded constants with self-explanatory names, i.e.
-> use NSEC_PER_USEC for debounce calculus.
+On Wed, Aug 07, 2019 at 03:41:05PM +0200, Linus Walleij wrote:
+> On Mon, Jul 8, 2019 at 1:01 PM Brian Masney <masneyb@onstation.org> wrote:
 > 
-> While here, add a unit suffix to debounce period constant.
+> > This builds on top of Linus Walleij's existing patches that adds
+> > hierarchical IRQ support to the GPIO core [1] so that Qualcomm's
+> > spmi-gpio and ssbi-gpio can be converted to use these new helpers.
+> >
+> > Linus: Feel free to squash these into your existing patches if you'd
+> > like to use any of this code. Just give me some kind of mention in the
+> > commit description.
+> >
+> > [1] https://lore.kernel.org/linux-gpio/20190624132531.6184-1-linus.walleij@linaro.org/
+> >
+> > Brian Masney (4):
+> >   gpio: introduce gpiochip_populate_parent_fwspec_{two,four}cell
+> >     functions
+> >   gpio: allow customizing hierarchical IRQ chips
+> >   gpio: use handler in gpio_irq_chip instead of handle_bad_irq
+> >   qcom: spmi-gpio: convert to hierarchical IRQ helpers in gpio core
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> I solved things like this:
+> 
+> - I kept patches 1 & 4 as-is
+> - I squashed patches 2 and 3 into the main patch with minor modifications.
+> - I added Co-developed-by: for your contributions
+> 
+> Now I need to address Masahiro's comments on top and let's see if the
+> result looks acceptable!
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Ooops had to squash patch 1 as well...
+
+All of this sounds good. I'll retest once you send out the updated
+series.
+
+Brian
