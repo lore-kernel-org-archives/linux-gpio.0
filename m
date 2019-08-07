@@ -2,66 +2,65 @@ Return-Path: <SRS0=+g2X=WD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B854C32751
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB31C32756
 	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E72F22229C
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E6A22231F
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Aug 2019 19:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NRqRQLK5";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ZVHkOgwp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UiUXTIqA";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TBbjZ7Qf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbfHGTv5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2388530AbfHGTv5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 7 Aug 2019 15:51:57 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:16084 "EHLO mx2.mailbox.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:16136 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388530AbfHGTv5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S2388488AbfHGTv5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 7 Aug 2019 15:51:57 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 8BD1FA10D7
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:54 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id F1BC6A1039
+        for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2019 21:51:55 +0200 (CEST)
 Authentication-Results: spamfilter04.heinlein-hosting.de (amavisd-new);
         dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
         header.d=mailbox.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1565207514;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+        t=1565207515; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SIbEZkys0xQkypKxJ37FNkvw177E8S5bs4RtcY9Y55I=;
-        b=NRqRQLK5/RVqPxxYIh653PURBEhusMf8rRr9ic0DAYxWJZsQAn0/CDTaUwJ8xwr/ga64e0
-        PQZg761IYKKDclnVbKMzauyeMKQFzcnzhrkNqxygX1rk1hXA13X2GyEoeomruCDV1JVBVH
-        Mf8vIC5weL26/etmjpaC+wgcKTTkWhwLefFXoT2tIf5zuTWAxoT3fuorK4zpHPIP6b8haV
-        7AUjwLHMV5RsE/kfdzaYhy0uV1dy1GL3R/7o9ogohRV9W6SHMGM8gxT+el+195zh9+GkDl
-        +/2huYj1fshLi2qATiXu55e57A93SfBit4y74c1zcHmUUGtiBwWzzs6QgunHSg==
+        bh=OEzvxhlE3UJuf4xtoza4rVxrUE4YeRY3kBEVBlsvziE=;
+        b=UiUXTIqAk8u7Wag37Wo+Agj6PVXSzuN1caUSl57KSE8tOP05H60XUrZaejAIMX8/VRvvbr
+        lTNw02+oRhW4snDOlIXDfG86NL6vh8dfBgOA+kckCWgAZhvjJ77nm1+N9vyfgKUT7HSRTG
+        ld9dBDoQdqajmPxLMdcgW36bGDZA0Ginf0Op1aRuPXu+5s9BStxIs1uqpm4VRcsG6jd0aZ
+        XpSx7nsFu8rQZzlLe/LAsZuSsj8breCadooeubjIh9mZNJIhQuolldqdmTShJ1tLAYPhoE
+        /b7/LxfIgXmv/I68kuOSaHWl3M9u4BVhogZhp6cRiCk1WLQprRva5pKmbg4S+A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
         content-transfer-encoding:mime-version:references:in-reply-to
         :message-id:date:date:subject:subject:from:from:received; s=
-        mail20150812; t=1565207509; bh=Wh4n28IkQbo1GN1qbpNUAgM5wbfksXu0A
-        wsJv3VKJNQ=; b=ZVHkOgwpFWDw/r0KFptEZpIlOqsB9LAZ4ozRUCfNn7h5cj+eB
-        7Oo85GUC6zs4f5Hr4UyuMBHhuh/cgEWoaXMQzflC7Q+5NHxQo0CYq/G/GryhEU8L
-        SxWncAUuZ8eWV9RajeBt1inlZ85pgoJXDYgDTxIcnkHB/2zYKV0alYxW9p72EsWe
-        /GwKWJ3PoWFwFhFDcbqc4qgUXC2xjfF0LfBY/dmVSuJ7RVezmJZKEUhGkg1BwlKi
-        rxfHPkq7NmDP7oUdtE+66YyFyK15y0efitrZgT2Dnj3nJ9kKC5ljCpuCaKfQ4NPN
-        CvbDpcRL4fzbJYnwyUdKylg47pHkHZemNLpzw==
+        mail20150812; t=1565207509; bh=DAKalmpg5kd1ZVhN+5FleL6qAx9Pt7aW7
+        EL/oiiXuTc=; b=TBbjZ7QfpYcU+uBak9U9GpIojP0iIXxGFUwRVQecS6WmkNbs+
+        h079c/be5IZNaINav8qpvp1PXpueXu+MVghZT16n2Y/2zHPVnj7hoqO4N9bvI7Qk
+        ocguhvWPq+SCq+oZnhpBr6zuZC91Tgb5Cz8AcqoL+Fg4ULhr+09Pla84XRbrSju4
+        2ebY40TDBZa9Cp4Y8Gtm62PClCQPFyUsMCTPEREd40Y7es8hamGDdNzdd4odp0gV
+        n1PfiF4OQVe9uPmGPQqfEwclDtiA7TeRX3UnxaWMaJqO+/Pfm9iLE4nu+7OUH+tn
+        NNaPUwE6F5g/sOk7LGFp80n0VlM6nSKiKCwwA==
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
         by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id hOPQazYG9AeC; Wed,  7 Aug 2019 21:51:49 +0200 (CEST)
+        with ESMTP id XOp4IzSKJN26; Wed,  7 Aug 2019 21:51:49 +0200 (CEST)
 From:   Alexander Stein <alexander.stein@mailbox.org>
 To:     linux-gpio@vger.kernel.org
 Cc:     Alexander Stein <alexander.stein@mailbox.org>
-Subject: [libgpiod] [PATCH 3/5] bindings: cxx: Split out catch's main()
-Date:   Wed,  7 Aug 2019 21:51:30 +0200
-Message-Id: <20190807195132.7538-3-alexander.stein@mailbox.org>
+Subject: [libgpiod] [PATCH 5/5] bindings: cxx: Workaround --success run
+Date:   Wed,  7 Aug 2019 21:51:32 +0200
+Message-Id: <20190807195132.7538-5-alexander.stein@mailbox.org>
 In-Reply-To: <20190807195132.7538-1-alexander.stein@mailbox.org>
 References: <20190807195132.7538-1-alexander.stein@mailbox.org>
 MIME-Version: 1.0
@@ -71,53 +70,57 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Compiling the source using CATCH_CONFIG_MAIN to provide main() takes
-several seconds, so split it out from any library testing code, so it
-really needs to be built once only.
+If run with --success, all expressions are evaluated and printed out.
+But REQUIRE_FALSE(chip) tries to iterate over the chip resulting in this
+backtrace:
+#0  gpiod_chip_num_lines (chip=chip@entry=0x0) at ../../lib/core.c:235
+#1  gpiod_line_iter_new (chip=0x0) at ../../lib/iter.c:140
+#2  gpiod::(anonymous namespace)::make_line_iter (chip=0x0) at ../../../bindings/cxx/iter.cpp:29
+#3  gpiod::line_iter::line_iter (this=0x7fffffffd690, owner=...) at ../../../bindings/cxx/iter.cpp:109
+#4  Catch::rangeToString<gpiod::chip> (range=...) at /usr/include/catch2/catch.hpp:1959
+[...]
+
+Workaround by forcing catch2 to call gpiod::chip::operator bool().
 
 Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 ---
- bindings/cxx/tests/Makefile.am             | 3 ++-
- bindings/cxx/tests/gpiod-cxx-test-main.cpp | 2 ++
- bindings/cxx/tests/gpiod-cxx-test.cpp      | 2 --
- 3 files changed, 4 insertions(+), 3 deletions(-)
- create mode 100644 bindings/cxx/tests/gpiod-cxx-test-main.cpp
+This actually looks like a flaw in the binding itself that the
+gpiod::line_iter can't cope with an empty gpiod::chip.
 
-diff --git a/bindings/cxx/tests/Makefile.am b/bindings/cxx/tests/Makefile.am
-index d1da0d3..5800a23 100644
---- a/bindings/cxx/tests/Makefile.am
-+++ b/bindings/cxx/tests/Makefile.am
-@@ -15,7 +15,8 @@ AM_LDFLAGS += -pthread
+ bindings/cxx/tests/tests-chip.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/bindings/cxx/tests/tests-chip.cpp b/bindings/cxx/tests/tests-chip.cpp
+index c9eb8e5..1c69872 100644
+--- a/bindings/cxx/tests/tests-chip.cpp
++++ b/bindings/cxx/tests/tests-chip.cpp
+@@ -70,7 +70,7 @@ TEST_CASE("GPIO chip can be opened with the open() method in different modes", "
+ 	mockup::probe_guard mockup_chips({ 8, 8, 8 });
+ 	::gpiod::chip chip;
  
- bin_PROGRAMS = gpiod-cxx-test
+-	REQUIRE_FALSE(chip);
++	REQUIRE_FALSE(!!chip);
  
--gpiod_cxx_test_SOURCES =	gpiod-cxx-test.cpp \
-+gpiod_cxx_test_SOURCES =	gpiod-cxx-test-main.cpp \
-+				gpiod-cxx-test.cpp \
- 				gpio-mockup.cpp \
- 				gpio-mockup.hpp \
- 				tests-chip.cpp \
-diff --git a/bindings/cxx/tests/gpiod-cxx-test-main.cpp b/bindings/cxx/tests/gpiod-cxx-test-main.cpp
-new file mode 100644
-index 0000000..4ed06df
---- /dev/null
-+++ b/bindings/cxx/tests/gpiod-cxx-test-main.cpp
-@@ -0,0 +1,2 @@
-+#define CATCH_CONFIG_MAIN
-+#include <catch2/catch.hpp>
-diff --git a/bindings/cxx/tests/gpiod-cxx-test.cpp b/bindings/cxx/tests/gpiod-cxx-test.cpp
-index 236fd2d..e110a3c 100644
---- a/bindings/cxx/tests/gpiod-cxx-test.cpp
-+++ b/bindings/cxx/tests/gpiod-cxx-test.cpp
-@@ -5,8 +5,6 @@
-  * Copyright (C) 2019 Bartosz Golaszewski <bgolaszewski@baylibre.com>
-  */
+ 	SECTION("open by name")
+ 	{
+@@ -102,7 +102,7 @@ TEST_CASE("Uninitialized GPIO chip behaves correctly", "[chip]")
  
--#define CATCH_CONFIG_MAIN
--#include <catch2/catch.hpp>
- #include <linux/version.h>
- #include <sys/utsname.h>
- #include <system_error>
+ 	SECTION("uninitialized chip is 'false'")
+ 	{
+-		REQUIRE_FALSE(chip);
++		REQUIRE_FALSE(!!chip);
+ 	}
+ 
+ 	SECTION("using uninitialized chip throws logic_error")
+@@ -149,7 +149,7 @@ TEST_CASE("Chip object can be reset", "[chip]")
+ 	::gpiod::chip chip(mockup::instance().chip_name(0));
+ 	REQUIRE(chip);
+ 	chip.reset();
+-	REQUIRE_FALSE(chip);
++	REQUIRE_FALSE(!!chip);
+ }
+ 
+ TEST_CASE("Chip info can be correctly retrieved", "[chip]")
 -- 
 2.22.0
 
