@@ -2,120 +2,161 @@ Return-Path: <SRS0=3pww=WE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD957C433FF
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 10:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1DBC0650F
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 11:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9329A2173E
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 10:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF38C2173C
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 11:57:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v8cdwO7r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389990AbfHHK0Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Aug 2019 06:26:16 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41188 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389986AbfHHK0P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Aug 2019 06:26:15 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7EA3520092C;
-        Thu,  8 Aug 2019 12:26:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 68558200920;
-        Thu,  8 Aug 2019 12:26:08 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E30264029A;
-        Thu,  8 Aug 2019 18:26:01 +0800 (SGT)
-From:   Hui Song <hui.song_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Song Hui <hui.song_1@nxp.com>
-Subject: [PATCH v1 2/3] arm64: dts: fix gpio node
-Date:   Thu,  8 Aug 2019 18:16:27 +0800
-Message-Id: <20190808101628.36782-2-hui.song_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190808101628.36782-1-hui.song_1@nxp.com>
-References: <20190808101628.36782-1-hui.song_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729112AbfHHL54 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Aug 2019 07:57:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39215 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbfHHL54 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Aug 2019 07:57:56 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v18so88556613ljh.6
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Aug 2019 04:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8yEC218bFgjARk2k7GvRK1PPsge5yRD2wjYSYjKdg7g=;
+        b=v8cdwO7rvXKI4DkkmzAfACSUOFDLHhfrR3vQjLNzf6jrCOs3P0N5mvAKjP1bNPxmT5
+         vS0mdHXmjnzDSI4ItTsXJWSc6eu0593hgbvfPY8Me67ksTvYKtOVKZQGWzL/oFwf3qew
+         nNisLGkzYq2ddMSFbYKnhYiPNUFADrRZj6gFf9W/WD4BTSuIn2lUqv83YyZ44DWCxXes
+         L7fWOLKew0m5OwfvOoA/Ff3K8bFNCupzR6tnUwcmayxx2dkIpFBMuBun39q83Ln2Iz+H
+         0wpzYXTXSKKonr1KxxVH4H1CwMSXXbrh6ylnmtgYJklSm5JpMfPOpf8PWOiPtt4O6V8J
+         V3sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8yEC218bFgjARk2k7GvRK1PPsge5yRD2wjYSYjKdg7g=;
+        b=psHT1k0RikK66DVG2znI61n8/zf4N7RIBDub6XLxlhj3kjjESSb8Wd2RR9K5JvftLC
+         KaKLEIe0RBGcvv14hTnTy5eJ5r556SI+Ua2RnwCHgFd7mOQprSBQMPhMesDFUD6mvyP3
+         C1tnsoAP10RcPWH6d1rfohDbPXNEFdoQnSD8R9fEThiCqW6OMTk786ktPkczUk62MwwK
+         NfQsLJolTBLxToIMpfaH+W38Wz0ryxIoo8z8lMtdkQnf6OZgZN8YFr/Wtb9roCN1CefH
+         8Bsl82v8IK220hNptQp4b6dwPyU2wGCXXl5UNSXQIw/ZsJHU8djoE27CJA68BaK6XG+M
+         3rJg==
+X-Gm-Message-State: APjAAAU9Zo7qU55dTfrOFQ9tuKEBwYUxjFOq6Dvti/C53YU/AMaoYYAq
+        v4Bsy1ZyuFmB15cqJex9C/d+udEJj23AWuBqIZcwwgeG7Yw=
+X-Google-Smtp-Source: APXvYqy/eRplZEpIIs3O8rjK32pngwaifQdY4BLPZOPG3VNHOr4Cfi8eBlSeREnJtbfN3BCF1+x89m4iDhZHwh0OLds=
+X-Received: by 2002:a2e:781a:: with SMTP id t26mr7936425ljc.28.1565265474057;
+ Thu, 08 Aug 2019 04:57:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190624132531.6184-1-linus.walleij@linaro.org>
+ <20190624132531.6184-4-linus.walleij@linaro.org> <CAK7LNATdYG-POvQQXwEiOD1eYwT081ohqACXV95fU01kfojXjQ@mail.gmail.com>
+In-Reply-To: <CAK7LNATdYG-POvQQXwEiOD1eYwT081ohqACXV95fU01kfojXjQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 8 Aug 2019 13:57:42 +0200
+Message-ID: <CACRpkdbYrLPPcxVWqrXwkGeQxOYUWmiMs1r9gBCorJaiUfpBYA@mail.gmail.com>
+Subject: Re: [PATCH 4/4 v1] RFT: gpio: uniphier: Switch to GPIOLIB_IRQCHIP
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Brian Masney <masneyb@onstation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Song Hui <hui.song_1@nxp.com>
+Hi Masahiro,
 
-Update the nodes to include little-endian
-property to be consistent with the hardware
-and add ls1088a gpio specify compatible.
+thanks for your review!
 
-Signed-off-by: Song Hui <hui.song_1@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+On Thu, Jul 18, 2019 at 1:10 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> On Mon, Jun 24, 2019 at 10:25 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index 20f5ebd..d58d203 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -269,43 +269,47 @@
- 		};
- 
- 		gpio0: gpio@2300000 {
--			compatible = "fsl,qoriq-gpio";
-+			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
- 			reg = <0x0 0x2300000 0x0 0x10000>;
- 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			little-endian;
- 		};
- 
- 		gpio1: gpio@2310000 {
--			compatible = "fsl,qoriq-gpio";
-+			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
- 			reg = <0x0 0x2310000 0x0 0x10000>;
- 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			little-endian;
- 		};
- 
- 		gpio2: gpio@2320000 {
--			compatible = "fsl,qoriq-gpio";
-+			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
- 			reg = <0x0 0x2320000 0x0 0x10000>;
- 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			little-endian;
- 		};
- 
- 		gpio3: gpio@2330000 {
--			compatible = "fsl,qoriq-gpio";
-+			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
- 			reg = <0x0 0x2330000 0x0 0x10000>;
- 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
-+			little-endian;
- 		};
- 
- 		ifc: ifc@2240000 {
--- 
-2.9.5
+> > -static void uniphier_gpio_irq_unmask(struct irq_data *data)
+> > +static void uniphier_gpio_irq_unmask(struct irq_data *d)
+>
+> Are you renaming 'data' -> 'd'
+> just for your personal preference?
 
+Yes, I am still looking for proof of what kind of terseness gives
+the optimal perceptive qualities in written code, so I have only
+intuitive ideas about what is the easiest code to read and maintain.
+
+But it's your file, and since you seem not to like it I will
+back out this change.
+
+> > -static int uniphier_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+> > +static int uniphier_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>
+> Again, this seems a noise change.
+
+Contrary to popular belief, coding style changes while writing
+new code is not universally seen as "noise", actually the opposite,
+sending pure code style changes as singular patches, is seen as
+noise. See the following paragraph from
+Documentation/process/4.Coding.rst:
+
+"pure coding style fixes are seen as noise by the development community;
+they tend to get a chilly reception.  So this type of patch is best
+avoided.  It is natural to fix the style of a piece of code while working
+on it for other reasons, but coding style changes should not be made for
+their own sake."
+
+Given the number of pure coding style patches I get,
+one could believe this does not apply ... but I try to be
+accepting of it anyway.
+
+> I did not test this patch, but probably it would break my board.
+
+Oh too bad, let's see if we can make it more plausible to
+work (I will not apply it while it is in RFT state).
+
+> ->(de)activate hook has offset  UNIPHIER_GPIO_IRQ_OFFSET (=120),
+> but you are replacing it with generic  gpiochip_irq_domain_activate,
+> which as zero offset.
+
+Ah! Brian gave me the tool to fix this properly, I will try to
+iterate and get this right.
+
+> > -       priv->domain = irq_domain_create_hierarchy(
+> > -                                       parent_domain, 0,
+> > -                                       UNIPHIER_GPIO_IRQ_MAX_NUM,
+>
+> You are replacing UNIPHIER_GPIO_IRQ_MAX_NUM with gc->ngpio,
+> which will much more irqs than needed.
+>
+> Is it possible to provide more flexibility?
+
+UNIPHIER_GPIO_IRQ_MAX_NUM is 24 and ngpio comes
+from the device tree and is compulsory. The current device
+trees have:
+arch/arm/boot/dts/uniphier-ld4.dtsi:                    ngpios = <136>;
+arch/arm/boot/dts/uniphier-pro4.dtsi:                   ngpios = <248>;
+arch/arm/boot/dts/uniphier-pro5.dtsi:                   ngpios = <248>;
+arch/arm/boot/dts/uniphier-pxs2.dtsi:                   ngpios = <232>;
+arch/arm/boot/dts/uniphier-sld8.dtsi:                   ngpios = <136>;
+
+So I suppose that you mean that since only 24 GPIOs can
+ever have assigned IRQs, making headroom for say 248 is
+a waste of resources.
+
+However irq descriptors are dynamically allocated, so saying
+that the irqchip can have 24 descriptors rather than 248
+is not going to save any memory.
+
+What you might want is to only allow offset 0..23 to be mapped
+to irqs. If I understand correctly this is how the hardware works:
+the first 24 GPIOs have IRQs, the rest don't, is that right?
+
+We have a facility for that: struct gpio_irq_chip field
+.valid_mask
+
+I will try to come up with a separate patch for that so you can
+see if it works.
+
+Yours,
+Linus Walleij
