@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAF5C32756
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6106C433FF
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDA1217D7
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B68421773
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bJHukxtm"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pN4TEGpT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404921AbfHHXsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Aug 2019 19:48:11 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17859 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404919AbfHHXrG (ORCPT
+        id S2404941AbfHHXrG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Aug 2019 19:47:06 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12834 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404842AbfHHXrG (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Aug 2019 19:47:06 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4cb47a0002>; Thu, 08 Aug 2019 16:47:06 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4cb47a0000>; Thu, 08 Aug 2019 16:47:06 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 16:47:05 -0700
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 08 Aug 2019 16:47:04 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 08 Aug 2019 16:47:05 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
+        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:04 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
  2019 23:47:04 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
+ 2019 23:47:04 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Thu, 8 Aug 2019 23:47:04 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.110]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4cb4780001>; Thu, 08 Aug 2019 16:47:04 -0700
+        id <B5d4cb4770007>; Thu, 08 Aug 2019 16:47:04 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +53,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v8 13/21] clk: tegra210: Use fence_udelay during PLLU init
-Date:   Thu, 8 Aug 2019 16:46:52 -0700
-Message-ID: <1565308020-31952-14-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume support
+Date:   Thu, 8 Aug 2019 16:46:50 -0700
+Message-ID: <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
@@ -60,68 +63,137 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565308026; bh=RJjtD/wR8zo8cV5BUXlwlwAAOA63IpXqmMNKlX37eJo=;
+        t=1565308026; bh=ZmXQG3uKkfyAQI4tPlaiZSRJU0Jj7WxxNukinw2sjd0=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=bJHukxtmYY1lD+fE5oOiIEb72edP23a/Wc4qU3ZBcabHZjRo0qGic2nGXyw8zivHf
-         2e6S4L6xcOD5/AItHM/b1mtQNAfRfgJxAo7mQX+xzRHVou/QCGjKenqpX0jtIpz4yP
-         yDC1IcsbP/VWpXZeNTT+Olp25+K68h4PQfkWViVZTnDmG2YEM8NAUqQgb3T/1qfYGa
-         cTFi0uL3MwvKgeZzlBdjtjhXoaZoXGFHdvFNPyv4rr7L0kk7okP9rPX+H3xb5FG/hS
-         jL5OjigukBphflm54DdJ2/kcLDy9I2XbKwimJ7XLgWhzvObsW3HqOje5MFmtK4Y0J6
-         35bP1bK70UmsQ==
+        b=pN4TEGpT5neEasaIDCorZX7dErxt9ghpNf8CWAusUGoPpSfYMv7ONNcZvaQAcF2TE
+         yjErBWa8fSDKCvZWgA5/6Fh87hb5VaoDNDcSCXpCqJd1XrjaYfBAuxSJQAFjc3eB1o
+         SsbTf6z7iBT4PQK+Q8S02T6ptVxHHnmOD7Cc/dzKvP/nHxb1S7SIUqhWXB8oqg36fi
+         1ppWVw+R5/ZmH5GmVjpUKoYlSxoxDpTdL3aQt88PKa1xgj7HpyljGXT2ZJqDk/ktYq
+         NUR5dyzamnQtGiLHTe06/8OcuFsL/Oc8UOBQjd2Czm/zx9lpM6Rf/OmWy82nczTG4f
+         TIs5VHT6N1Qjg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch uses fence_udelay rather than udelay during PLLU
-initialization to ensure writes to clock registers happens before
-waiting for specified delay.
+This patch implements DFLL suspend and resume operation.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+During system suspend entry, CPU clock will switch CPU to safe
+clock source of PLLP and disables DFLL clock output.
+
+DFLL driver suspend confirms DFLL disable state and errors out on
+being active.
+
+DFLL is re-initialized during the DFLL driver resume as it goes
+through complete reset during suspend entry.
+
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h               |  2 ++
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
+ 3 files changed, 59 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4721ee030d1c..998bf60b219a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
- 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
- 	reg &= ~BIT(pllu.params->iddq_bit_idx);
- 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
--	udelay(5);
-+	fence_udelay(5, clk_base);
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index f8688c2ddf1a..eb298a5d7be9 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
+ 	td->last_unrounded_rate = 0;
  
- 	reg = readl_relaxed(clk_base + PLLU_BASE);
- 	reg &= ~GENMASK(20, 0);
-@@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
- 	reg |= fentry->n << 8;
- 	reg |= fentry->p << 16;
- 	writel(reg, clk_base + PLLU_BASE);
--	udelay(1);
-+	fence_udelay(1, clk_base);
- 	reg |= PLL_ENABLE;
- 	writel(reg, clk_base + PLLU_BASE);
+ 	pm_runtime_enable(td->dev);
++	pm_runtime_irq_safe(td->dev);
+ 	pm_runtime_get_sync(td->dev);
  
-@@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
- 		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
- 		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
- 		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
--		udelay(1);
-+		fence_udelay(1, clk_base);
+ 	dfll_set_mode(td, DFLL_DISABLED);
+@@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
+ 	return ret;
+ }
  
- 		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
- 		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
- 		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
--		udelay(1);
-+		fence_udelay(1, clk_base);
++/**
++ * tegra_dfll_suspend - check DFLL is disabled
++ * @dev: DFLL device *
++ *
++ * DFLL clock should be disabled by the CPUFreq driver. So, make
++ * sure it is disabled and disable all clocks needed by the DFLL.
++ */
++int tegra_dfll_suspend(struct device *dev)
++{
++	struct tegra_dfll *td = dev_get_drvdata(dev);
++
++	if (dfll_is_running(td)) {
++		dev_err(td->dev, "dfll is enabled while shouldn't be\n");
++		return -EBUSY;
++	}
++
++	reset_control_assert(td->dvco_rst);
++
++	return 0;
++}
++EXPORT_SYMBOL(tegra_dfll_suspend);
++
++/**
++ * tegra_dfll_resume - reinitialize DFLL on resume
++ * @dev: DFLL instance
++ *
++ * DFLL is disabled and reset during suspend and resume.
++ * So, reinitialize the DFLL IP block back for use.
++ * DFLL clock is enabled later in closed loop mode by CPUFreq
++ * driver before switching its clock source to DFLL output.
++ */
++int tegra_dfll_resume(struct device *dev)
++{
++	struct tegra_dfll *td = dev_get_drvdata(dev);
++
++	reset_control_deassert(td->dvco_rst);
++
++	pm_runtime_get_sync(td->dev);
++
++	dfll_set_mode(td, DFLL_DISABLED);
++	dfll_set_default_params(td);
++
++	if (td->soc->init_clock_trimmers)
++		td->soc->init_clock_trimmers();
++
++	dfll_set_open_loop_config(td);
++
++	dfll_init_out_if(td);
++
++	pm_runtime_put_sync(td->dev);
++
++	return 0;
++}
++EXPORT_SYMBOL(tegra_dfll_resume);
++
+ /*
+  * DT data fetch
+  */
+diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+index 1b14ebe7268b..fb209eb5f365 100644
+--- a/drivers/clk/tegra/clk-dfll.h
++++ b/drivers/clk/tegra/clk-dfll.h
+@@ -42,5 +42,7 @@ int tegra_dfll_register(struct platform_device *pdev,
+ struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev);
+ int tegra_dfll_runtime_suspend(struct device *dev);
+ int tegra_dfll_runtime_resume(struct device *dev);
++int tegra_dfll_suspend(struct device *dev);
++int tegra_dfll_resume(struct device *dev);
  
- 		reg = readl_relaxed(clk_base + PLLU_BASE);
- 		reg &= ~PLLU_BASE_CLKENABLE_USB;
+ #endif /* __DRIVERS_CLK_TEGRA_CLK_DFLL_H */
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index e84b6d52cbbd..2ac2679d696d 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -631,6 +631,7 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+ 			   tegra_dfll_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_dfll_suspend, tegra_dfll_resume)
+ };
+ 
+ static struct platform_driver tegra124_dfll_fcpu_driver = {
 -- 
 2.7.4
 
