@@ -2,139 +2,100 @@ Return-Path: <SRS0=3pww=WE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8569EC0650F
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 20:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DFAC433FF
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52ED4217F4
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 20:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565296446;
-	bh=w7pQ+8Bwl8Vkt3IYED3fHYyv6db/XzCcLfrpK81h7e8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=VAgs0K9PBaKEX2TkxTdhyLcKQ3lasxiM0JTpeCWglMu7Sr+u/YzR4peKlAikUJD5l
-	 cL3E7SMitEtFGV4pJ0klPhW2nZ8pktJKZmsl14SqJtHYPLXNE+J7x4/dwSrvAB4v+s
-	 +IxdvfanfC5qbTxeVqcZnZVnSAqi4v5sICocmuwc=
+	by mail.kernel.org (Postfix) with ESMTP id 1B0EB21881
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:47:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BXlb6cQ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390363AbfHHUd6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Aug 2019 16:33:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59174 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404800AbfHHUd6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Aug 2019 16:33:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Wzf+I9fcsxZuVaYRajx66L1PY3WCux2mFR6C4152LNM=; b=rzSrJ+LL0sL1
-        P6O11YsZkVDbKRtuB09B8IAybDpOKC8o5SUQUDFcB+RLyR4rwJJ/N/60pG0RAtnC0/dhwsunZ2Ock
-        7Ay7EWzrE2kRWW/mx26FUPj/ju13v/8e30dBhZwRCxpMqLb53d0ra80O+TTRiJ1sxgTR8CHmKWTnm
-        Z89Yc=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hvp6h-00043F-1u; Thu, 08 Aug 2019 20:33:55 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6CADD2742B42; Thu,  8 Aug 2019 21:33:54 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: Rename of_spi_register_master() function" to the spi tree
-In-Reply-To: <20190808150321.23319-1-linus.walleij@linaro.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20190808203354.6CADD2742B42@ypsilon.sirena.org.uk>
-Date:   Thu,  8 Aug 2019 21:33:54 +0100 (BST)
+        id S2404769AbfHHXrE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Aug 2019 19:47:04 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12806 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404329AbfHHXrD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Aug 2019 19:47:03 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4cb4780000>; Thu, 08 Aug 2019 16:47:04 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 08 Aug 2019 16:47:02 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:02 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
+ 2019 23:47:02 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 8 Aug 2019 23:47:02 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.110]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d4cb4760000>; Thu, 08 Aug 2019 16:47:02 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
+        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v8 02/21] pinctrl: tegra: Add write barrier after all pinctrl register writes
+Date:   Thu, 8 Aug 2019 16:46:41 -0700
+Message-ID: <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565308024; bh=NK4pgGR6xJSTh0oyzuTnp9rDJd43CHOoKN5Ajsuwe28=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=BXlb6cQ3SBMGJQRhljRbRT60OHFwr6YmnY3ZlJHqk+8Ip9SUS8Dy5SVKJX8q7YGy9
+         kLBfMFMJKjsnQviM+lnapI9bzaqKzC2NVNBzDc0Ff1hhxD6Lm094OLaIzplB6s69vB
+         djnd5ZL/UuLcCY/LS5TX1Nlyhl0fGMNtRm1VXD6eyg02hSs3xQf0SiIGFniV/UVeZE
+         Z6VDBbb6MmPRshQ5vvZHpeQhSM+BHT5aeA6SBw5olYb8eciqOnQALDS4sbY1PuYz5p
+         uN0M+ALfP0Zm4L/6StQwk/ELuxiX73Vp2lvmT0PCn3j49saJbSfpT9w7781J+X1OAq
+         fFTSYV23aLL8Q==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The patch
+This patch adds write barrier after all pinctrl register writes
+during resume to make sure all pinctrl changes are complete.
 
-   spi: Rename of_spi_register_master() function
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 43004f31ebf2705905460a6d9a77da4182170c38 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 8 Aug 2019 17:03:21 +0200
-Subject: [PATCH] spi: Rename of_spi_register_master() function
-
-Rename this function to of_spi_get_gpio_numbers() as this
-is what the function does, it does not register a master,
-it is called in the path of registering a master so the
-name is logical in a convoluted way, but it is better to
-follow Rusty Russell's ABI level no 7:
-"The obvious use is (probably) the correct one"
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20190808150321.23319-1-linus.walleij@linaro.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/spi/spi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 8e83c9567353..aef55acb5ccd 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2235,7 +2235,7 @@ struct spi_controller *__spi_alloc_controller(struct device *dev,
- EXPORT_SYMBOL_GPL(__spi_alloc_controller);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 982ee634b3b1..f49fe29fb6df 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -677,6 +677,8 @@ static int tegra_pinctrl_resume(struct device *dev)
+ 			writel_relaxed(*backup_regs++, regs++);
+ 	}
  
- #ifdef CONFIG_OF
--static int of_spi_register_master(struct spi_controller *ctlr)
-+static int of_spi_get_gpio_numbers(struct spi_controller *ctlr)
- {
- 	int nb, i, *cs;
- 	struct device_node *np = ctlr->dev.of_node;
-@@ -2268,7 +2268,7 @@ static int of_spi_register_master(struct spi_controller *ctlr)
++	/* make sure all the pinmux register writes are complete */
++	wmb();
  	return 0;
  }
- #else
--static int of_spi_register_master(struct spi_controller *ctlr)
-+static int of_spi_get_gpio_numbers(struct spi_controller *ctlr)
- {
- 	return 0;
- }
-@@ -2455,7 +2455,7 @@ int spi_register_controller(struct spi_controller *ctlr)
- 			ctlr->mode_bits |= SPI_CS_HIGH;
- 		} else {
- 			/* Legacy code path for GPIOs from DT */
--			status = of_spi_register_master(ctlr);
-+			status = of_spi_get_gpio_numbers(ctlr);
- 			if (status)
- 				return status;
- 		}
+ 
 -- 
-2.20.1
+2.7.4
 
