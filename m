@@ -2,342 +2,241 @@ Return-Path: <SRS0=5jam=WF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25020C31E40
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974D8C31E40
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A5E20820
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F9462085B
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:53:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kQTXHwN1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406607AbfHIOnT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 10:43:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:52963 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406439AbfHIOnT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 10:43:19 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MsJXG-1iBz611zvG-00tgzd; Fri, 09 Aug 2019 16:43:07 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     soc@kernel.org
-Cc:     Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH v2 05/13] gpio: lpc32xx: allow building on non-lpc32xx targets
-Date:   Fri,  9 Aug 2019 16:40:31 +0200
-Message-Id: <20190809144043.476786-6-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190809144043.476786-1-arnd@arndb.de>
-References: <20190809144043.476786-1-arnd@arndb.de>
+        id S1726164AbfHIOxC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 10:53:02 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33058 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfHIOxC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 10:53:02 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x79Equnw076130;
+        Fri, 9 Aug 2019 09:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565362376;
+        bh=V2KXqyvDDIJp8HPjSXjxQloTkI08WBnBkF4L8tqqD1A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kQTXHwN1zRnKz80S77FF9u2hIo/4nVL/HRzLlV99r1cBKa6aLtAGzYZjniUn7ko+e
+         CxwJL8BqezFQhXUGVW3xHLDR0bvyOzuGlVnRr8TSfEjU8s+LIoF9qEFSxS7DUN7AjG
+         tbJyyFkOtBNSj55rZJbKlhe6xBcVvoDcBJSwjxfQ=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x79EquWP041139
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Aug 2019 09:52:56 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 9 Aug
+ 2019 09:52:56 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 9 Aug 2019 09:52:56 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x79EqrAo086111;
+        Fri, 9 Aug 2019 09:52:54 -0500
+Subject: Re: [PATCH 2/6] arm64: dts: ti: k3-j721e: Add gpio nodes in main
+ domain
+To:     Lokesh Vutla <lokeshvutla@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Nishanth Menon <nm@ti.com>, <linus.walleij@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20190809082947.30590-1-lokeshvutla@ti.com>
+ <20190809082947.30590-3-lokeshvutla@ti.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <170f021e-eeeb-9b5b-1e66-7cf2dfc54185@ti.com>
+Date:   Fri, 9 Aug 2019 20:23:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:/mHIHcM4NUVHez/4l0Lm1IgoJwHRA/BTHyJw9ReNM2OTo0m9Aod
- /O1DdwbpKfucI3Vu/nSW1Mx3r/G6pP4GiPf7xoOOyxb9l8JP2dhlOHvHUFonOgsn9JgbFUI
- T76EjiBiCN+w5pUXFxPmuA4D41MDrJJmD43NC5aj6dGXMNSx4/AW43hTYxQpDXAQhKvu2XD
- EPib7hU9b0bM9hbXpermA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:e145JppYo8c=:btDTqUjP2xw07aCm+vPUBB
- gMV48+aRcWyxtdRnkWTZznJ9m1CbvklY9oCI+mcfAUiDqEtIFhueI/dbL4Utv0vtRz949Qa8l
- bUWwWSZi7x0AdA3Ss0f823OEsBMc2Y4Mw8Ryl7nEpBzVC9EONchO/UEekT5M/at/QhRwApz8x
- lT+GX7MZLa16AavB5Buju0zx3I17fW6FHxMsvub0k8kTM3vqTO3qonjsEvUtVPOISGMJlSoha
- 82CXkRVqtDXA9LzTyp62T2cpOl7pEz5ipPzk5CF++C16RqMEcG4uXQ414JE/9V4aa5OF6fPzt
- SawVmPBSigapi1xY6Wwgw26poYrQTIkem6fMthNUHsFdOxOvi7koB3o5uPwBBhMMpV2AuhBzy
- sszl3OCfOwijfOe/wXKFl0Gp7pZOn+T2dscCkcT8chKXy2A+kNt7INxSq9YcT5zHX0DSvmRxv
- RmO7Ul6N2eZ6sHgXWAaM4yyjXQww+tZM3U1UDiT6+JGI8iDu6MKuUYE/Rjl3tVwVHOECvw3af
- WmFf9uGE9ye5vbO5CkM8i0JZZr2ZS68/kHDHSvCHagr2nmmrvr2U1ZoBbCXJhCf9NVy8Volc1
- fEyk9e7GQRg07HjPgfD6l4xv6rKkiV7XACv7VqkjIy47W32Qy6PXtm/tITLLTq4516sJ55CSh
- blbkDgUtxk12GTfRtZFKnJKk+eAgBVriC/nKEsmXi0DvNlolCcQY/Tgxir1JoLQaaUa7h1X5J
- QPMa9E+NeJyV4/w3o3MrXFaomiRX8zsg6MYYpg==
+In-Reply-To: <20190809082947.30590-3-lokeshvutla@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The driver uses hardwire MMIO addresses instead of the data
-that is passed in device tree. Change it over to only
-hardcode the register offset values and allow compile-testing.
 
-Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Tested-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/configs/lpc32xx_defconfig |   1 +
- drivers/gpio/Kconfig               |   7 ++
- drivers/gpio/Makefile              |   2 +-
- drivers/gpio/gpio-lpc32xx.c        | 118 +++++++++++++++++------------
- 4 files changed, 77 insertions(+), 51 deletions(-)
 
-diff --git a/arch/arm/configs/lpc32xx_defconfig b/arch/arm/configs/lpc32xx_defconfig
-index 0cdc6c7974b3..3772d5a8975a 100644
---- a/arch/arm/configs/lpc32xx_defconfig
-+++ b/arch/arm/configs/lpc32xx_defconfig
-@@ -93,6 +93,7 @@ CONFIG_SERIAL_HS_LPC32XX_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_PNX=y
-+CONFIG_GPIO_LPC32XX=y
- CONFIG_SPI=y
- CONFIG_SPI_PL022=y
- CONFIG_GPIO_SYSFS=y
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index bb13c266c329..8b40a578963c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -311,6 +311,13 @@ config GPIO_LPC18XX
- 	  Select this option to enable GPIO driver for
- 	  NXP LPC18XX/43XX devices.
- 
-+config GPIO_LPC32XX
-+	tristate "NXP LPC32XX GPIO support"
-+	depends on OF_GPIO && (ARCH_LPC32XX || COMPILE_TEST)
-+	help
-+	  Select this option to enable GPIO driver for
-+	  NXP LPC32XX devices.
-+
- config GPIO_LYNXPOINT
- 	tristate "Intel Lynxpoint GPIO support"
- 	depends on ACPI && X86
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index a4e91175c708..87d659ae95eb 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -74,7 +74,7 @@ obj-$(CONFIG_GPIO_LP3943)		+= gpio-lp3943.o
- obj-$(CONFIG_GPIO_LP873X)		+= gpio-lp873x.o
- obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LPC18XX)		+= gpio-lpc18xx.o
--obj-$(CONFIG_ARCH_LPC32XX)		+= gpio-lpc32xx.o
-+obj-$(CONFIG_GPIO_LPC32XX)		+= gpio-lpc32xx.o
- obj-$(CONFIG_GPIO_LYNXPOINT)		+= gpio-lynxpoint.o
- obj-$(CONFIG_GPIO_MADERA)		+= gpio-madera.o
- obj-$(CONFIG_GPIO_MAX3191X)		+= gpio-max3191x.o
-diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
-index 24885b3db3d5..4e626c4235c2 100644
---- a/drivers/gpio/gpio-lpc32xx.c
-+++ b/drivers/gpio/gpio-lpc32xx.c
-@@ -16,36 +16,33 @@
- #include <linux/platform_device.h>
- #include <linux/module.h>
- 
--#include <mach/hardware.h>
--#include <mach/platform.h>
--
--#define LPC32XX_GPIO_P3_INP_STATE		_GPREG(0x000)
--#define LPC32XX_GPIO_P3_OUTP_SET		_GPREG(0x004)
--#define LPC32XX_GPIO_P3_OUTP_CLR		_GPREG(0x008)
--#define LPC32XX_GPIO_P3_OUTP_STATE		_GPREG(0x00C)
--#define LPC32XX_GPIO_P2_DIR_SET			_GPREG(0x010)
--#define LPC32XX_GPIO_P2_DIR_CLR			_GPREG(0x014)
--#define LPC32XX_GPIO_P2_DIR_STATE		_GPREG(0x018)
--#define LPC32XX_GPIO_P2_INP_STATE		_GPREG(0x01C)
--#define LPC32XX_GPIO_P2_OUTP_SET		_GPREG(0x020)
--#define LPC32XX_GPIO_P2_OUTP_CLR		_GPREG(0x024)
--#define LPC32XX_GPIO_P2_MUX_SET			_GPREG(0x028)
--#define LPC32XX_GPIO_P2_MUX_CLR			_GPREG(0x02C)
--#define LPC32XX_GPIO_P2_MUX_STATE		_GPREG(0x030)
--#define LPC32XX_GPIO_P0_INP_STATE		_GPREG(0x040)
--#define LPC32XX_GPIO_P0_OUTP_SET		_GPREG(0x044)
--#define LPC32XX_GPIO_P0_OUTP_CLR		_GPREG(0x048)
--#define LPC32XX_GPIO_P0_OUTP_STATE		_GPREG(0x04C)
--#define LPC32XX_GPIO_P0_DIR_SET			_GPREG(0x050)
--#define LPC32XX_GPIO_P0_DIR_CLR			_GPREG(0x054)
--#define LPC32XX_GPIO_P0_DIR_STATE		_GPREG(0x058)
--#define LPC32XX_GPIO_P1_INP_STATE		_GPREG(0x060)
--#define LPC32XX_GPIO_P1_OUTP_SET		_GPREG(0x064)
--#define LPC32XX_GPIO_P1_OUTP_CLR		_GPREG(0x068)
--#define LPC32XX_GPIO_P1_OUTP_STATE		_GPREG(0x06C)
--#define LPC32XX_GPIO_P1_DIR_SET			_GPREG(0x070)
--#define LPC32XX_GPIO_P1_DIR_CLR			_GPREG(0x074)
--#define LPC32XX_GPIO_P1_DIR_STATE		_GPREG(0x078)
-+#define LPC32XX_GPIO_P3_INP_STATE		(0x000)
-+#define LPC32XX_GPIO_P3_OUTP_SET		(0x004)
-+#define LPC32XX_GPIO_P3_OUTP_CLR		(0x008)
-+#define LPC32XX_GPIO_P3_OUTP_STATE		(0x00C)
-+#define LPC32XX_GPIO_P2_DIR_SET			(0x010)
-+#define LPC32XX_GPIO_P2_DIR_CLR			(0x014)
-+#define LPC32XX_GPIO_P2_DIR_STATE		(0x018)
-+#define LPC32XX_GPIO_P2_INP_STATE		(0x01C)
-+#define LPC32XX_GPIO_P2_OUTP_SET		(0x020)
-+#define LPC32XX_GPIO_P2_OUTP_CLR		(0x024)
-+#define LPC32XX_GPIO_P2_MUX_SET			(0x028)
-+#define LPC32XX_GPIO_P2_MUX_CLR			(0x02C)
-+#define LPC32XX_GPIO_P2_MUX_STATE		(0x030)
-+#define LPC32XX_GPIO_P0_INP_STATE		(0x040)
-+#define LPC32XX_GPIO_P0_OUTP_SET		(0x044)
-+#define LPC32XX_GPIO_P0_OUTP_CLR		(0x048)
-+#define LPC32XX_GPIO_P0_OUTP_STATE		(0x04C)
-+#define LPC32XX_GPIO_P0_DIR_SET			(0x050)
-+#define LPC32XX_GPIO_P0_DIR_CLR			(0x054)
-+#define LPC32XX_GPIO_P0_DIR_STATE		(0x058)
-+#define LPC32XX_GPIO_P1_INP_STATE		(0x060)
-+#define LPC32XX_GPIO_P1_OUTP_SET		(0x064)
-+#define LPC32XX_GPIO_P1_OUTP_CLR		(0x068)
-+#define LPC32XX_GPIO_P1_OUTP_STATE		(0x06C)
-+#define LPC32XX_GPIO_P1_DIR_SET			(0x070)
-+#define LPC32XX_GPIO_P1_DIR_CLR			(0x074)
-+#define LPC32XX_GPIO_P1_DIR_STATE		(0x078)
- 
- #define GPIO012_PIN_TO_BIT(x)			(1 << (x))
- #define GPIO3_PIN_TO_BIT(x)			(1 << ((x) + 25))
-@@ -72,12 +69,12 @@
- #define LPC32XX_GPO_P3_GRP	(LPC32XX_GPI_P3_GRP + LPC32XX_GPI_P3_MAX)
- 
- struct gpio_regs {
--	void __iomem *inp_state;
--	void __iomem *outp_state;
--	void __iomem *outp_set;
--	void __iomem *outp_clr;
--	void __iomem *dir_set;
--	void __iomem *dir_clr;
-+	unsigned long inp_state;
-+	unsigned long outp_state;
-+	unsigned long outp_set;
-+	unsigned long outp_clr;
-+	unsigned long dir_set;
-+	unsigned long dir_clr;
- };
- 
- /*
-@@ -165,16 +162,27 @@ static struct gpio_regs gpio_grp_regs_p3 = {
- struct lpc32xx_gpio_chip {
- 	struct gpio_chip	chip;
- 	struct gpio_regs	*gpio_grp;
-+	void __iomem		*reg_base;
- };
- 
-+static inline u32 gpreg_read(struct lpc32xx_gpio_chip *group, unsigned long offset)
-+{
-+	return __raw_readl(group->reg_base + offset);
-+}
-+
-+static inline void gpreg_write(struct lpc32xx_gpio_chip *group, u32 val, unsigned long offset)
-+{
-+	__raw_writel(val, group->reg_base + offset);
-+}
-+
- static void __set_gpio_dir_p012(struct lpc32xx_gpio_chip *group,
- 	unsigned pin, int input)
- {
- 	if (input)
--		__raw_writel(GPIO012_PIN_TO_BIT(pin),
-+		gpreg_write(group, GPIO012_PIN_TO_BIT(pin),
- 			group->gpio_grp->dir_clr);
- 	else
--		__raw_writel(GPIO012_PIN_TO_BIT(pin),
-+		gpreg_write(group, GPIO012_PIN_TO_BIT(pin),
- 			group->gpio_grp->dir_set);
- }
- 
-@@ -184,19 +192,19 @@ static void __set_gpio_dir_p3(struct lpc32xx_gpio_chip *group,
- 	u32 u = GPIO3_PIN_TO_BIT(pin);
- 
- 	if (input)
--		__raw_writel(u, group->gpio_grp->dir_clr);
-+		gpreg_write(group, u, group->gpio_grp->dir_clr);
- 	else
--		__raw_writel(u, group->gpio_grp->dir_set);
-+		gpreg_write(group, u, group->gpio_grp->dir_set);
- }
- 
- static void __set_gpio_level_p012(struct lpc32xx_gpio_chip *group,
- 	unsigned pin, int high)
- {
- 	if (high)
--		__raw_writel(GPIO012_PIN_TO_BIT(pin),
-+		gpreg_write(group, GPIO012_PIN_TO_BIT(pin),
- 			group->gpio_grp->outp_set);
- 	else
--		__raw_writel(GPIO012_PIN_TO_BIT(pin),
-+		gpreg_write(group, GPIO012_PIN_TO_BIT(pin),
- 			group->gpio_grp->outp_clr);
- }
- 
-@@ -206,31 +214,31 @@ static void __set_gpio_level_p3(struct lpc32xx_gpio_chip *group,
- 	u32 u = GPIO3_PIN_TO_BIT(pin);
- 
- 	if (high)
--		__raw_writel(u, group->gpio_grp->outp_set);
-+		gpreg_write(group, u, group->gpio_grp->outp_set);
- 	else
--		__raw_writel(u, group->gpio_grp->outp_clr);
-+		gpreg_write(group, u, group->gpio_grp->outp_clr);
- }
- 
- static void __set_gpo_level_p3(struct lpc32xx_gpio_chip *group,
- 	unsigned pin, int high)
- {
- 	if (high)
--		__raw_writel(GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_set);
-+		gpreg_write(group, GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_set);
- 	else
--		__raw_writel(GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_clr);
-+		gpreg_write(group, GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_clr);
- }
- 
- static int __get_gpio_state_p012(struct lpc32xx_gpio_chip *group,
- 	unsigned pin)
- {
--	return GPIO012_PIN_IN_SEL(__raw_readl(group->gpio_grp->inp_state),
-+	return GPIO012_PIN_IN_SEL(gpreg_read(group, group->gpio_grp->inp_state),
- 		pin);
- }
- 
- static int __get_gpio_state_p3(struct lpc32xx_gpio_chip *group,
- 	unsigned pin)
- {
--	int state = __raw_readl(group->gpio_grp->inp_state);
-+	int state = gpreg_read(group, group->gpio_grp->inp_state);
- 
- 	/*
- 	 * P3 GPIO pin input mapping is not contiguous, GPIOP3-0..4 is mapped
-@@ -242,13 +250,13 @@ static int __get_gpio_state_p3(struct lpc32xx_gpio_chip *group,
- static int __get_gpi_state_p3(struct lpc32xx_gpio_chip *group,
- 	unsigned pin)
- {
--	return GPI3_PIN_IN_SEL(__raw_readl(group->gpio_grp->inp_state), pin);
-+	return GPI3_PIN_IN_SEL(gpreg_read(group, group->gpio_grp->inp_state), pin);
- }
- 
- static int __get_gpo_state_p3(struct lpc32xx_gpio_chip *group,
- 	unsigned pin)
- {
--	return GPO3_PIN_IN_SEL(__raw_readl(group->gpio_grp->outp_state), pin);
-+	return GPO3_PIN_IN_SEL(gpreg_read(group, group->gpio_grp->outp_state), pin);
- }
- 
- /*
-@@ -497,12 +505,18 @@ static int lpc32xx_of_xlate(struct gpio_chip *gc,
- static int lpc32xx_gpio_probe(struct platform_device *pdev)
- {
- 	int i;
-+	void __iomem *reg_base;
-+
-+	reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(reg_base))
-+		return PTR_ERR(reg_base);
- 
- 	for (i = 0; i < ARRAY_SIZE(lpc32xx_gpiochip); i++) {
- 		if (pdev->dev.of_node) {
- 			lpc32xx_gpiochip[i].chip.of_xlate = lpc32xx_of_xlate;
- 			lpc32xx_gpiochip[i].chip.of_gpio_n_cells = 3;
- 			lpc32xx_gpiochip[i].chip.of_node = pdev->dev.of_node;
-+			lpc32xx_gpiochip[i].reg_base = reg_base;
- 		}
- 		devm_gpiochip_add_data(&pdev->dev, &lpc32xx_gpiochip[i].chip,
- 				  &lpc32xx_gpiochip[i]);
-@@ -527,3 +541,7 @@ static struct platform_driver lpc32xx_gpio_driver = {
- };
- 
- module_platform_driver(lpc32xx_gpio_driver);
-+
-+MODULE_AUTHOR("Kevin Wells <kevin.wells@nxp.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("GPIO driver for LPC32xx SoC");
--- 
-2.20.0
+On 09/08/19 1:59 PM, Lokesh Vutla wrote:
+> There are 8 instances of gpio modules in main domain divided into 2 groups:
+> - Group1: gpio0, gpio2, gpio4, gpio6
+> - Group2: gpio1, gpio3, gpio5, gpio7
+> 
+> Groups are created to provide protection between two different processor
+> virtual worlds. There are x gpio lines coming out of each group. Each module
+> in a group has equal x gpio lines pinned out. There is a top level mux for
+> selecting the module instance for each pin coming out of group. Exactly
+> one module can be selected to control the corresponding pin. This muxing
+> can be controlled along the pad mux configuration registers.
+> 
+> Group1 pins out 128 lines(8 banks). Group 2 pins out 36 lines(2 banks).
+> 
+> Add DT nodes for each module instance in the main domain. Users should
+> make sure that correct gpio instance is selected in their pad configuration.
 
+Reviewed-by: Keerthy <j-keerthy@ti.com>
+
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 132 ++++++++++++++++++++++
+>   1 file changed, 132 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> index 01661c22c39d..199bc9a00b20 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> @@ -240,4 +240,136 @@
+>   		clocks = <&k3_clks 286 0>;
+>   		clock-names = "fclk";
+>   	};
+> +
+> +	main_gpio0: gpio@600000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00600000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <105 0>, <105 1>, <105 2>, <105 3>,
+> +			     <105 4>, <105 5>, <105 6>, <105 7>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <128>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 105 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 105 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio1: gpio@601000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00601000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <106 0>, <106 1>, <106 2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <36>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 106 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 106 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio2: gpio@610000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00610000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <107 0>, <107 1>, <107 2>, <107 3>,
+> +			     <107 4>, <107 5>, <107 6>, <107 7>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <128>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 107 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 107 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio3: gpio@611000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00611000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <108 0>, <108 1>, <108 2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <36>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 108 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 108 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio4: gpio@620000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00620000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <109 0>, <109 1>, <109 2>, <109 3>,
+> +			     <109 4>, <109 5>, <109 6>, <109 7>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <128>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 109 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 109 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio5: gpio@621000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00621000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <110 0>, <110 1>, <110 2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <36>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 110 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 110 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio6: gpio@630000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00630000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <111 0>, <111 1>, <111 2>, <111 3>,
+> +			     <111 4>, <111 5>, <111 6>, <111 7>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <128>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 111 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 111 0>;
+> +		clock-names = "gpio";
+> +	};
+> +
+> +	main_gpio7: gpio@631000 {
+> +		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
+> +		reg = <0x0 0x00631000 0x0 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&main_gpio_intr>;
+> +		interrupts = <112 0>, <112 1>, <112 2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		ti,ngpio = <36>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		power-domains = <&k3_pds 112 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 112 0>;
+> +		clock-names = "gpio";
+> +	};
+>   };
+> 
