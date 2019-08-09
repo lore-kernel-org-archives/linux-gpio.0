@@ -1,110 +1,126 @@
-Return-Path: <SRS0=3pww=WE=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=5jam=WF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF216C0650F
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98CFC31E40
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 06:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E2421743
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Aug 2019 23:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88842208C3
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 06:56:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dW5zAICI"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="YvOZcNtZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404612AbfHHXrD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Aug 2019 19:47:03 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12811 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404428AbfHHXrD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Aug 2019 19:47:03 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4cb4780001>; Thu, 08 Aug 2019 16:47:04 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 16:47:02 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:02 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 23:47:02 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 23:47:02 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 8 Aug 2019 23:47:02 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.110]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4cb4750004>; Thu, 08 Aug 2019 16:47:01 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in pmx_writel
-Date:   Thu, 8 Aug 2019 16:46:40 -0700
-Message-ID: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S2405510AbfHIG4C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 02:56:02 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39944 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbfHIG4C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 02:56:02 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l15so71602571oth.7
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Aug 2019 23:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=q0yAdZCnl4yza0Qm5wDEWHe1HAJgCJfnoeF+H3gnS7o=;
+        b=YvOZcNtZ6DNLAqvbpe7Td7fHrY6w3YhE1VwZ6BAmcKSXav7nqZ6XvPpLdgGszCp3ht
+         mUMPz4VQdU9W5maFq4VcSWQgp1R3Tn/uWAQCnKDnIHU3672foN5oF5rLxixErlAv4XAs
+         TwOS3c/9TMf15SJH3/Udn4YAbGyWHSG/GKWKUTH4qAeLdyyJvS3z/Ns4cUN9kM4XbxX9
+         VbywtFBlK8lkCrGPMpeLFGRIDRRFANKozr1p0tFnlEgXh8hQ2Ft1wLIiSboCGX0TgwEn
+         ZJrVU/wwqH1RdUJaCIBMMEPTa6snvyI813qTk+ikrccce5oF+M6XUaOUUVfesK7kxKAe
+         OQRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q0yAdZCnl4yza0Qm5wDEWHe1HAJgCJfnoeF+H3gnS7o=;
+        b=q+SsHu10jnC4kHaNR90qJm995Ws0rwwk75/OAtgm8Ht/H4oyFB606QJZhqMiOJpevo
+         WE6Uh98ZNT41PjNQgOvQVuwEqYarfk5WnIoRXkMtPBsl+Iy7MbVZjovSOk9s1s+oZpvC
+         B5tF+4eiY9hJyaRAV11WD6PrPhJW7FPKbFTRRTD/u0XJsquaG3RlhiSBWLEgo1pUcsGw
+         HucfPTrAFEsC6iQRJvsHIB7J2Leqr8s3OFCnPXPZU5gneCBe4E/HBKElByDc1kA2ignG
+         gNd3Ur8tCOzdVdaCm5D3KHZiFJPHRr8LF9XxmMr4M+Uu2jtVk8jxrAVG6EOwyR1mv5cQ
+         2A1A==
+X-Gm-Message-State: APjAAAX2xcNbHliX35n3rHng0esFkAJ5pFQCHLAqTwJlzsFMek+7uIW4
+        ZPSl7lWRNqnek5wr8ql/2ijCQnpc9gx4PEIVNpYaXg==
+X-Google-Smtp-Source: APXvYqzg6R0mP9nyk4rls8eZDL/4RazH+/9Yf0PB4wEcK3N79LItWdhdt214RudLBxZAg4RaGKdXtDZYE9mEHA5rl40=
+X-Received: by 2002:a02:37d6:: with SMTP id r205mr20528844jar.57.1565333760970;
+ Thu, 08 Aug 2019 23:56:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565308024; bh=T0hWkMA7tg/ATUVmKaM0W8R8UCCke0gXGlSnoSao7QA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=dW5zAICIci4d3L+OGJSb36xBzsKxNRj2JDnWjg0uLubLbv1IqliyrOlSBVkkep1z8
-         RKdl9krgJwXV8NPBxgk6Tlp6TePx/QMvGf03PajVYd3zheR74ceO9ksOTydeMv4k5D
-         1jG/duE0z19uikiPkMoeaztomqnBzJVuT1UUbbsEczIA3s5ly24OO6RzHzICqMKb3u
-         ZNW+j3tvhQK/a5/eQB/CzBEDxD3A4uGIDtrixS8eAy7sF/LE/bf9VD5+1lHgRhWWow
-         smDE5IHiW57sSVqUfZXRKfF8GdnVNoIeJisBRNILhfEJztMox4WYJLTGeg99ykJzJq
-         chrlqcNHZcIxQ==
+References: <20190807195132.7538-1-alexander.stein@mailbox.org>
+ <20190807195132.7538-5-alexander.stein@mailbox.org> <CAMRc=McmKs=5ToTRLgQ_f30DRtqq-57OZRw-EnL1gm_M1kqUXQ@mail.gmail.com>
+ <6061947.U0Wa8ctkoo@kongar>
+In-Reply-To: <6061947.U0Wa8ctkoo@kongar>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 9 Aug 2019 08:55:50 +0200
+Message-ID: <CAMRc=MfBi77fYNgXFWFJ-wPSP_Eb6CoCf+vJA_ccZgie-_W42Q@mail.gmail.com>
+Subject: Re: [libgpiod] [PATCH 5/5] bindings: cxx: Workaround --success run
+To:     Alexander Stein <alexander.stein@mailbox.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-pmx_writel uses writel which inserts write barrier before the
-register write rather.
+czw., 8 sie 2019 o 20:41 Alexander Stein <alexander.stein@mailbox.org>
+napisa=C5=82(a):
+>
+>  On Thursday, August 8, 2019, 5:27:14 PM CEST Bartosz Golaszewski wrote:
+> > =C5=9Br., 7 sie 2019 o 21:51 Alexander Stein <alexander.stein@mailbox.o=
+rg>
+> > napisa=C5=82(a):
+> > >
+> > > If run with --success, all expressions are evaluated and printed out.
+> > > But REQUIRE_FALSE(chip) tries to iterate over the chip resulting in t=
+his
+> > > backtrace:
+> > > #0  gpiod_chip_num_lines (chip=3Dchip@entry=3D0x0) at ../../lib/core.=
+c:235
+> > > #1  gpiod_line_iter_new (chip=3D0x0) at ../../lib/iter.c:140
+> > > #2  gpiod::(anonymous namespace)::make_line_iter (chip=3D0x0) at ../.=
+./../bindings/cxx/iter.cpp:29
+> > > #3  gpiod::line_iter::line_iter (this=3D0x7fffffffd690, owner=3D...) =
+at ../../../bindings/cxx/iter.cpp:109
+> > > #4  Catch::rangeToString<gpiod::chip> (range=3D...) at /usr/include/c=
+atch2/catch.hpp:1959
+> > > [...]
+> > >
+> > > Workaround by forcing catch2 to call gpiod::chip::operator bool().
+> > >
+> > > Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+> > > ---
+> > > This actually looks like a flaw in the binding itself that the
+> > > gpiod::line_iter can't cope with an empty gpiod::chip.
+> > >
+> >
+> > Do you want to submit a patch that fixes that? Otherwise I can fix it.
+> > I think that simply throwing an exception on empty chip is enough,
+> > right?
+>
+> Reading that backtrace today, the actual problem is gpiod_chip_num_lines =
+deferencing the nullptr.
+> There are 2 possibilities:
+> * if gpiod_chip is NULL in gpiod_line_iter_new(), return NULLL iter as we=
+ll (which will raise an exception on line iter.cpp:31)
+> * return an iter with num_lines =3D 0
+>
+> Can't rate the 2nd one if this will raise other problems.
+>
+> Best regards,
+> Alexander
+>
+>
+>
 
-This patch has fix to replace writel with writel_relaxed followed
-by a write barrier to ensure write operation before the barrier
-is completed for successful pinctrl change.
+Hardening of argument validation in the core library (checking of
+NULL-pointers, etc.) has been on my TODO list for some time now. It
+seems I'll finally have to do it.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for the patches, all applied!
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index e3a237534281..982ee634b3b1 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -32,7 +32,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- 
- static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
- {
--	writel(val, pmx->regs[bank] + reg);
-+	writel_relaxed(val, pmx->regs[bank] + reg);
-+	/* make sure pinmux register write completed */
-+	wmb();
- }
- 
- static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
--- 
-2.7.4
-
+Bartosz
