@@ -2,160 +2,87 @@ Return-Path: <SRS0=5jam=WF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F07C31E40
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B058C41514
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C51720C01
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:23:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SJkVka8g"
+	by mail.kernel.org (Postfix) with ESMTP id F2C0520C01
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405611AbfHIQXZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 12:23:25 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3035 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407405AbfHIQXY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:23:24 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4d9dfc0001>; Fri, 09 Aug 2019 09:23:24 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 09 Aug 2019 09:23:22 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 09 Aug 2019 09:23:22 -0700
-Received: from [10.2.167.88] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 9 Aug
- 2019 16:23:21 +0000
-Subject: Re: [PATCH v8 19/21] soc/tegra: pmc: Configure deep sleep control
- settings
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-20-git-send-email-skomatineni@nvidia.com>
- <57ed54cd-bf57-cab1-eb63-8548761640de@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <275f3685-bc53-38ff-c778-cf2ea588e5a5@nvidia.com>
-Date:   Fri, 9 Aug 2019 09:23:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2407441AbfHIQd5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 12:33:57 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:35603 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407418AbfHIQd4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:33:56 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MYNaE-1hsKSU25II-00VNep; Fri, 09 Aug 2019 18:33:40 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     soc@kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, kbuild test robot <lkp@intel.com>
+Subject: [PATCH 2/7] dma: iop-adma: include prefetch.h
+Date:   Fri,  9 Aug 2019 18:33:16 +0200
+Message-Id: <20190809163334.489360-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190809163334.489360-1-arnd@arndb.de>
+References: <20190809162956.488941-1-arnd@arndb.de>
+ <20190809163334.489360-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <57ed54cd-bf57-cab1-eb63-8548761640de@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565367804; bh=hZlKkX1rFr4vL+pJND2gxRlDf4kcTv5t7znratg6u9E=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=SJkVka8g7pDkab2VphrL2rmAmK5iXvcQ05yk3qkKTv3xk4y3vUoBg/pRkL3nWidRN
-         5oiE+oirqHYJS+K+KJFSToQ7i7sCrAbjVP6LflqEOf7/PFpjEuCR/CS120Tlm4UKWF
-         admBMJgXBi4e0v/n+PqESkWFCAGHv5ndT77VICIqXja+08Cg+hAiq9WgpEUDN6MIuB
-         f4XvEanilPyGjZp81Au9pHkxlKQO/WFLl2dftnl38Me4HaR/WB4prpS25quawOpctt
-         yszooDw8n76ZdYfVywL8u3Vciydmc3ezjp+2wBcs4tbMS8Xejdw3WWIzKGrwkmJIcE
-         pbyST3xXUvLcw==
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Bh33ykmcy9xC7bSgKe5HpMvYyRBu8+rYYbrInIRFMtFJWkiaYiw
+ WkUwer8jq/UzOidzEA2SoYi8Cby4xXUV7rj1mrrTA9Tyw2wfzv3Z/MWd5Lqbvhp558XUBip
+ jgMrj+QezZpI3n5o6cFazIyoZ8oAk+Mf4GFmrn8xzYXhBaPucLOSAzl1X0tOzqPkzR7oH4x
+ cXZXRBV+RIzmlMdUMm03A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6RfzKM1WAow=:uRVERwLffrlsRjNFOt+pi/
+ o4Yzomyhusb70fgqKxK7mCVPktO6DPJmXP/KoHG4CqGpBCzcXM7+WBSKpiHoLwTisX0GuKMOP
+ USXv41Z27HZ2NpBieQROias2ZqVdiZQf3cyOpzSinyBbHjZp5K9whhaTUGFKaPFcIbDa0Sl5F
+ E+uayFQhczgS4r5YsgbfQhaK1pXGWrEB98+X8YtM5TJQ3tYdYmN9vIGMMPsmz6O3ObS3C+fB6
+ YbVmwjlqFgwEphEHMZk1FNozIkRcLXcx4g7lq4L9PYBaBborbA6OquIuQ6ZsZ7W5HIDwJ0wmK
+ EaQuJgjaQXdHxltzpjT3KzXxn1ywQwtFOxjmqgrl4XDVouqp5TIanotlqyh5tAScihZaDBNiF
+ BJL7+wC3D+rKTHlS9UAjeMy5YWvaMZ9mOc9IIs81L2YrLKzpxzwZ/J5WCYnFizUtuRIaAUSfD
+ 5qqs+SLcebKIS3173uK16zA8mgNOrMysSnLYv2xYz7KEDrTPS/q2Ruwztim9M7RY4Yqn8eU95
+ kgZoWtFhYpWG9tydQEVO/Q+9urJOK7FYWi1QvixiKrudFBkQkXsNGdHXA7L7JME/nRbprrpE/
+ qDE+hxr2Z5DBy50I7lUQrZkf2aJls+zc7PVokBNL/BVXzYxVUXleQa5qNjjk5IH6OJR1wvtda
+ w2dqwGRfE1zjjv4vAcWplfNoVImcKYxRj18CqNmbufCCrCx4V54IsFOfXRAaihabdu39gRPT0
+ JHKIiuxSzy17u+JGUIk78ntBZ7qpurTzJuKlyA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Compile-testing this driver fails on m68k without the
+extra header inclusion.
 
-On 8/9/19 6:23 AM, Dmitry Osipenko wrote:
-> 09.08.2019 2:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
->> timings which are platform specific that should be configured before
->> entering into deep sleep.
->>
->> Below are the timing specific configurations for deep sleep entry and
->> wakeup.
->> - Core rail power-on stabilization timer
->> - OSC clock stabilization timer after SOC rail power is stabilized.
->> - Core power off time is the minimum wake delay to keep the system
->>    in deep sleep state irrespective of any quick wake event.
->>
->> These values depends on the discharge time of regulators and turn OFF
->> time of the PMIC to allow the complete system to finish entering into
->> deep sleep state.
->>
->> These values vary based on the platform design and are specified
->> through the device tree.
->>
->> This patch has implementation to configure these timings which are must
->> to have for proper deep sleep and wakeup operations.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 13 ++++++++++++-
->>   1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index e013ada7e4e9..9a78d8417367 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -88,6 +88,8 @@
->>  =20
->>   #define PMC_CPUPWRGOOD_TIMER		0xc8
->>   #define PMC_CPUPWROFF_TIMER		0xcc
->> +#define PMC_COREPWRGOOD_TIMER		0x3c
->> +#define PMC_COREPWROFF_TIMER		0xe0
->>  =20
->>   #define PMC_PWR_DET_VALUE		0xe4
->>  =20
->> @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs tegra20_pmc_reg=
-s =3D {
->>  =20
->>   static void tegra20_pmc_init(struct tegra_pmc *pmc)
->>   {
->> -	u32 value;
->> +	u32 value, osc, pmu, off;
->>  =20
->>   	/* Always enable CPU power request */
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->> @@ -2303,6 +2305,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pm=
-c)
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->>   	value |=3D PMC_CNTRL_SYSCLK_OE;
->>   	tegra_pmc_writel(pmc, value, PMC_CNTRL);
->> +
->> +	osc =3D DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
->> +	pmu =3D DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
->> +	off =3D DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
->> +	if (osc && pmu)
->> +		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
->> +				 PMC_COREPWRGOOD_TIMER);
->> +	if (off)
->> +		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
-> The osc/pmu/off values are undefined if they are not defined in device-tr=
-ee. I suppose this
-> need to be corrected in tegra_pmc_parse_dt() if the values really matter =
-even if LP0 suspend
-> isn't supported in device-tree.
->
-> And I'm also not sure what's wrong with setting 0 for the timers.
->
-These settings are for SC7 only and will not have any impact in normal=20
-state.
->>   }
->>  =20
->>   static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
->>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/dma/iop-adma.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
+index c6c0143670d9..7857b54770d1 100644
+--- a/drivers/dma/iop-adma.c
++++ b/drivers/dma/iop-adma.c
+@@ -16,6 +16,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
++#include <linux/prefetch.h>
+ #include <linux/memory.h>
+ #include <linux/ioport.h>
+ #include <linux/raid/pq.h>
+-- 
+2.20.0
+
