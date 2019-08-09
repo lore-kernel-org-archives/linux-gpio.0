@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE45C32756
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BACC433FF
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB6A2166E
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD362171F
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wj8n0jj7"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RO2E0pNH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405395AbfHIIaj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 04:30:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48544 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405818AbfHIIaj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 04:30:39 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x798UZ1I117633;
-        Fri, 9 Aug 2019 03:30:35 -0500
+        id S2405850AbfHIIaq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 04:30:46 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42824 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405829AbfHIIaq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 04:30:46 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x798Uff5060647;
+        Fri, 9 Aug 2019 03:30:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565339435;
-        bh=4Xbkn6elvsTb+7O7XxccoWaDLZ3csgRAgOrOdCJJ2o4=;
+        s=ti-com-17Q1; t=1565339441;
+        bh=P6Dx1BDCeX/DKSv3G7ABtQg2q+CUI8R2lT6CeCWYdxE=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=wj8n0jj7s9RmTUkgCNZBrx/at6fTh7B+zpI6WmrpGqYTEsf6SqD/tfiJzbk2WDLND
-         vHWsyo/uSonk7NmQTQqRKZUB4CXGmTjjIskkzYeOb5ElXoN7V3rqsE9aXrRz306mKN
-         8/EB5DxudO10hVEIM5wQMt1HbYDgo7NKLbHNfUTE=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x798UZ88117311
+        b=RO2E0pNH8NmBr8sJ9PXxDDc4oGJNrotZLh5QQOsLIwldGEcXQHEZOr6Yj3BqGwuIg
+         cg4/Bo5+1SrCPCcwha0sgLuSDMFOVFcJc5j9merso9IGE2v5Nqc+3v+og6ey/kUeXA
+         UAyjKrJagaRokRYQFmHykksitlcIoDiSWsTTYbjQ=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x798Ufhc084571
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Aug 2019 03:30:35 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 9 Aug 2019 03:30:41 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 9 Aug
- 2019 03:30:34 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 03:30:40 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 9 Aug 2019 03:30:34 -0500
+ Frontend Transport; Fri, 9 Aug 2019 03:30:40 -0500
 Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x798USdf070370;
-        Fri, 9 Aug 2019 03:30:32 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x798USdh070370;
+        Fri, 9 Aug 2019 03:30:38 -0500
 From:   Lokesh Vutla <lokeshvutla@ti.com>
 To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
         <linus.walleij@linaro.org>
@@ -54,9 +54,9 @@ CC:     Keerthy <j-keerthy@ti.com>, Rob Herring <robh+dt@kernel.org>,
         Device Tree Mailing List <devicetree@vger.kernel.org>,
         Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH 1/6] dt-bindings: gpio: davinci: Add new compatible for J721E SoCs
-Date:   Fri, 9 Aug 2019 13:59:42 +0530
-Message-ID: <20190809082947.30590-2-lokeshvutla@ti.com>
+Subject: [PATCH 3/6] arm64: dts: ti: k3-j721e: Add gpio nodes in wakeup domain
+Date:   Fri, 9 Aug 2019 13:59:44 +0530
+Message-ID: <20190809082947.30590-4-lokeshvutla@ti.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190809082947.30590-1-lokeshvutla@ti.com>
 References: <20190809082947.30590-1-lokeshvutla@ti.com>
@@ -69,26 +69,58 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-J721e SoCs have same gpio IP as K2G davinci gpio. Add a new compatible to
-handle J721E SoCs.
+Similar to the gpio groups in main domain, there is one gpio group
+in wakup domain with 2 module instances in it. This gpio group pins
+out 84 lines(6 banks). Add DT node for these 2 gpio module instances.
 
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 ---
- Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 1 +
- 1 file changed, 1 insertion(+)
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-index bc6b4b62df83..cd91d61eac31 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-@@ -6,6 +6,7 @@ Required Properties:
- 						66AK2E SoCs
- 			"ti,k2g-gpio", "ti,keystone-gpio": for 66AK2G
- 			"ti,am654-gpio", "ti,keystone-gpio": for TI K3 AM654
-+			"ti,j721e-gpio", "ti,keystone-gpio": for J721E SoCs
- 
- - reg: Physical base address of the controller and the size of memory mapped
-        registers.
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+index e616c2481f51..555dc7b7aedc 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+@@ -87,4 +87,38 @@
+ 		ti,sci-dst-id = <14>;
+ 		ti,sci-rm-range-girq = <0x5>;
+ 	};
++
++	wkup_gpio0: gpio@42110000 {
++		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
++		reg = <0x0 0x42110000 0x0 0x100>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-parent = <&wkup_gpio_intr>;
++		interrupts = <113 0>, <113 1>, <113 2>,
++			     <113 3>, <113 4>, <113 5>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		ti,ngpio = <84>;
++		ti,davinci-gpio-unbanked = <0>;
++		power-domains = <&k3_pds 113 TI_SCI_PD_EXCLUSIVE>;
++		clocks = <&k3_clks 113 0>;
++		clock-names = "gpio";
++	};
++
++	wkup_gpio1: gpio@42100000 {
++		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
++		reg = <0x0 0x42100000 0x0 0x100>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-parent = <&wkup_gpio_intr>;
++		interrupts = <114 0>, <114 1>, <114 2>,
++			     <114 3>, <114 4>, <114 5>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		ti,ngpio = <84>;
++		ti,davinci-gpio-unbanked = <0>;
++		power-domains = <&k3_pds 114 TI_SCI_PD_EXCLUSIVE>;
++		clocks = <&k3_clks 114 0>;
++		clock-names = "gpio";
++	};
+ };
 -- 
 2.22.0
 
