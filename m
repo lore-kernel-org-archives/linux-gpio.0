@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32A5C31E40
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123CDC31E40
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACFE21743
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A04862171F
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 08:30:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="goVgQLLZ"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IBNlV8LR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405829AbfHIIar (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 04:30:47 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:58318 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405818AbfHIIaq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 04:30:46 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x798Ucvf084368;
-        Fri, 9 Aug 2019 03:30:38 -0500
+        id S2405876AbfHIIas (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 04:30:48 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42828 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405818AbfHIIar (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 04:30:47 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x798UhsZ060670;
+        Fri, 9 Aug 2019 03:30:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565339438;
-        bh=yiWuR6nRN6qjdbh/tKaFY/KbgnT9usj3xEZJ0CpaZSY=;
+        s=ti-com-17Q1; t=1565339443;
+        bh=/LQ7mn2gfK7/9aO67ju+/QCOcc+F8/so5NUcbTZEJhI=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=goVgQLLZ7+UYNp8G14wySKdHxR8o/yTfnZT7QeCBmTZAOJxZvRWXuk9Vrvn+RvYHn
-         G/jwFBnOqXkoQCM+C1D9ZKKa//kjzlFJz+GYhbGRSwaS2leNs/s+XZYhAj3bgzfHjD
-         jP8POP5fl2120DGf4sErtCv6aU/mKqEfBx7bH1bU=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x798UcsO084527
+        b=IBNlV8LR9mk9W/A3gC6Hz2mvMgW6LBjtR3V/DfOnpQ+/2vC2qyUGJ46sQmUaIUeDG
+         3Q6VZ0cs2dMJ9WcP0Z8OO3b1akXvhlSJQJ9w8hROFopVbTCxmrFyFaf3+LqbVxjPI9
+         vlOsTa4KEoVTajI5RJ3em7p2AKmwAxMR1RhXcZXk=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x798UhYE117455
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Aug 2019 03:30:38 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 9 Aug 2019 03:30:43 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 9 Aug
- 2019 03:30:37 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 03:30:43 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 9 Aug 2019 03:30:37 -0500
+ Frontend Transport; Fri, 9 Aug 2019 03:30:43 -0500
 Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x798USdg070370;
-        Fri, 9 Aug 2019 03:30:35 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x798USdi070370;
+        Fri, 9 Aug 2019 03:30:41 -0500
 From:   Lokesh Vutla <lokeshvutla@ti.com>
 To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
         <linus.walleij@linaro.org>
@@ -54,9 +54,9 @@ CC:     Keerthy <j-keerthy@ti.com>, Rob Herring <robh+dt@kernel.org>,
         Device Tree Mailing List <devicetree@vger.kernel.org>,
         Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH 2/6] arm64: dts: ti: k3-j721e: Add gpio nodes in main domain
-Date:   Fri, 9 Aug 2019 13:59:43 +0530
-Message-ID: <20190809082947.30590-3-lokeshvutla@ti.com>
+Subject: [PATCH 4/6] arm64: dts: ti: k3-j721e-common-proc-board: Disable unused gpio modules
+Date:   Fri, 9 Aug 2019 13:59:45 +0530
+Message-ID: <20190809082947.30590-5-lokeshvutla@ti.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190809082947.30590-1-lokeshvutla@ti.com>
 References: <20190809082947.30590-1-lokeshvutla@ti.com>
@@ -69,168 +69,56 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are 8 instances of gpio modules in main domain divided into 2 groups:
-- Group1: gpio0, gpio2, gpio4, gpio6
-- Group2: gpio1, gpio3, gpio5, gpio7
+There are 10 gpio instances inside SoC with 3 groups as below:
+- Group1: main_gpio0, main_gpio2, main_gpio4, main_gpio6
+- Group2: main_gpio1, main_gpio3, main_gpio5, main_gpio7
+- Group3: wkup_gpio0, wkup_gpio1
 
-Groups are created to provide protection between two different processor
-virtual worlds. There are x gpio lines coming out of each group. Each module
-in a group has equal x gpio lines pinned out. There is a top level mux for
-selecting the module instance for each pin coming out of group. Exactly
-one module can be selected to control the corresponding pin. This muxing
-can be controlled along the pad mux configuration registers.
-
-Group1 pins out 128 lines(8 banks). Group 2 pins out 36 lines(2 banks).
-
-Add DT nodes for each module instance in the main domain. Users should
-make sure that correct gpio instance is selected in their pad configuration.
+Only one instance can be used in each group at a time. So use main_gpio0,
+main_gpio1 and wkup_gpio0 for the current linux context and mark other
+gpio nodes as disabled.
 
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 132 ++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+ .../dts/ti/k3-j721e-common-proc-board.dts     | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index 01661c22c39d..199bc9a00b20 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -240,4 +240,136 @@
- 		clocks = <&k3_clks 286 0>;
- 		clock-names = "fclk";
- 	};
-+
-+	main_gpio0: gpio@600000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00600000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <105 0>, <105 1>, <105 2>, <105 3>,
-+			     <105 4>, <105 5>, <105 6>, <105 7>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <128>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 105 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 105 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio1: gpio@601000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00601000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <106 0>, <106 1>, <106 2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <36>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 106 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 106 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio2: gpio@610000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00610000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <107 0>, <107 1>, <107 2>, <107 3>,
-+			     <107 4>, <107 5>, <107 6>, <107 7>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <128>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 107 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 107 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio3: gpio@611000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00611000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <108 0>, <108 1>, <108 2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <36>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 108 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 108 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio4: gpio@620000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00620000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <109 0>, <109 1>, <109 2>, <109 3>,
-+			     <109 4>, <109 5>, <109 6>, <109 7>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <128>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 109 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 109 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio5: gpio@621000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00621000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <110 0>, <110 1>, <110 2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <36>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 110 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 110 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio6: gpio@630000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00630000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <111 0>, <111 1>, <111 2>, <111 3>,
-+			     <111 4>, <111 5>, <111 6>, <111 7>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <128>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 111 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 111 0>;
-+		clock-names = "gpio";
-+	};
-+
-+	main_gpio7: gpio@631000 {
-+		compatible = "ti,j721e-gpio", "ti,keystone-gpio";
-+		reg = <0x0 0x00631000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <112 0>, <112 1>, <112 2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <36>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 112 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 112 0>;
-+		clock-names = "gpio";
-+	};
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
+index 63b47b839388..509579ca3db2 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
+@@ -52,3 +52,31 @@
+ 	/* UART not brought out */
+ 	status = "disabled";
  };
++
++&main_gpio2 {
++	status = "disabled";
++};
++
++&main_gpio3 {
++	status = "disabled";
++};
++
++&main_gpio4 {
++	status = "disabled";
++};
++
++&main_gpio5 {
++	status = "disabled";
++};
++
++&main_gpio6 {
++	status = "disabled";
++};
++
++&main_gpio7 {
++	status = "disabled";
++};
++
++&wkup_gpio1 {
++	status = "disabled";
++};
 -- 
 2.22.0
 
