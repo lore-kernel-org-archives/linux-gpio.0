@@ -2,161 +2,142 @@ Return-Path: <SRS0=5jam=WF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7FEC433FF
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA2C31E40
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCD320665
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:40:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9x1XR+g"
+	by mail.kernel.org (Postfix) with ESMTP id 0899B20820
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 14:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfHIOkv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 10:40:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38410 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfHIOkv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 10:40:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id h28so69640284lfj.5
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Aug 2019 07:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wXxXOhEbXdsMl/G/C1HkrghsmnTlDveq2pniwsmkuSw=;
-        b=M9x1XR+g8vj12BKhOTf5BoK5l9EiegLyuQAa7ryt4d5B7FuTh67HNmX2CdYaKiAt8X
-         YBmXKe8K3wGekKRVk927ro0Y1Ir0wepXrfklB/ezn871qMJBvTS/ZGx6yxh3O6ngD+rz
-         C0h+CNdrJhnjt5YIBr2WujnHsfCpytuWBnTIla7Cz77oWeOt4HIOEzQPj2RnhOelAXXj
-         ZbVUe5BuzlkbiE19ho0EHatMAKnkCdTMXbW1QuhDC+qDuFoUO3kvNwRc8t6IO/feYOZe
-         aTr/HcuVQJoqMElB2AwuAi5St+UT8LiJ6Cd2ylABDvZHIFI5tN60Rw68n6SzspQiVt/d
-         Z69g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wXxXOhEbXdsMl/G/C1HkrghsmnTlDveq2pniwsmkuSw=;
-        b=SWeWRrqcQo2Rv3/qcztAQYg6v7A5Rm8dgS+n507or8M3UdUPfENPE+IireZLvTMs7X
-         G0fcuL4tR3GsPk4qEze5KNumOn+4Hw2u+oOTi2fuJZUS7+CtgSZ7xrY/mdpIvQPlSOXR
-         tfeaSaFCIldEuaIlgEOz/9FlXYKiFegA404cPhaOjSNJgfxBlbNaMbtjtEmF+1T7li4e
-         f90ANic7UxNVEuoHy3v4Z9KmDrdcONHo60YQkzy6iqo1eTLsXOxtVpPYl/URg2RY6mk8
-         hAfMW65olfMAQwuaSXWiMG6WCrnF/sqaKoTw9V5/mR0Kjqn0cXuftnDuUEJNrjED2iI0
-         wN/w==
-X-Gm-Message-State: APjAAAWh7Sl2K6BXEhbGZnfoGPUt2e/+DFo7xBOcKscS5ZvcyzAho/iM
-        8hdn7/wvPgxhNtAzZuECynR/gWq/Ebo=
-X-Google-Smtp-Source: APXvYqzECjEkfwlQ61hdxRDYuFLmaNDXWpdqGOwXFS1iDyOyvathh0qLWdLh1pPQr3FJ/YDVx1Tk/g==
-X-Received: by 2002:ac2:46ce:: with SMTP id p14mr13042213lfo.39.1565361649420;
-        Fri, 09 Aug 2019 07:40:49 -0700 (PDT)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id b1sm19517164ljj.26.2019.08.09.07.40.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 07:40:48 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        id S2406219AbfHIOlc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 10:41:32 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:60337 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfHIOlb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 10:41:31 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MkW10-1ibFNJ1O5W-00m6H3; Fri, 09 Aug 2019 16:40:55 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     soc@kernel.org
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH] gpio: tqmx86: Pass irqchip when adding gpiochip
-Date:   Fri,  9 Aug 2019 16:40:45 +0200
-Message-Id: <20190809144045.26018-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v2 00/13] v2: ARM: move lpc32xx to multiplatform
+Date:   Fri,  9 Aug 2019 16:40:26 +0200
+Message-Id: <20190809144043.476786-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:EDVZmvF9arLwN7tfCBk9s4OVXP20FvpzsVOImPPefg+0CLYE69K
+ gQAFFbE132roeOF6ToiNpoEiuz6MoXQQoc5ph+0VQSsr2DOk/xyOnFdZ2yMpZ8kHXXDBjmX
+ A8C1gOPJ7TLLjUPO1DDoXFvV90K+Q0ox7QSuSMrwxO7Jb3D1G7p8BVK5xTzCRV9mr0GgrzD
+ OwFVQkMOVFv8a5Cr1SW2Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DPoVW4gPjGQ=:8tG2AyA6Pk3b3tvngr6K5k
+ UMk3gPJV3BUtXv9nOJp7EvdBEwjSP1CtrdEXCNtEjUcawe0Pjf8Oy+Oz54J4+/x4CR/2rvHPa
+ gpdlQvCpws7DVMLQkcUgXF5nXU3i3nqr3aQlv9+MQBVPsOeC/4KDgkmDIlZVkpN4ynr4u7ucB
+ pu5WfQYm7lX8z2DvSWk7Jn/rSFxWFoWsN9AI3xUZs6pqAkjISwm7g1zj0r3DeZkxcnrFNH1IC
+ Egz1Ue13UnEuIbxdnowFCmkpbfHazRhxw48ERNB90saDpeer/Sfiohh/EdYsJRhBmP3r4qGIs
+ +hPd1B4v+tUWpAYpMDyNtJRuDSdY172Id6TFWwTfK2VuLkB9ao+/dWU4SVVvT+AlgJOv7mrag
+ yxf03FHvK+XpX2qgcpa4cziL54bf9OI7XmWHKooibuT2eSYSJ6U7TKh1q5rLi0sM21XV5X9vo
+ NoPD1teaUKJgXdmJzymvD8djLtwU5kyqACDEpfMdtI6Jz+NGrX4mbKeXFeREvcJy2hzyr3cHO
+ tqwe/jezzuaak1my9LxlhwtyAkQsThdCtdGwZAEEHIwEfIIVldDpQcLW3O9CM/DuL7mzrW4MG
+ QI+sI9RMaYFn11ATDc0BslmVI9Ed0tLk9mabp6wQUA8VioOBGUNQHUwI/Ach2uOPRo8wIWgEw
+ 4n28RI2aSzpaniC2eJhokOSjmOmfgSaC4kke4SvZJSNAMYdtJBvft9fpIWnThM9b34xRSoZTc
+ hGLgRyCeKuJkOaJQNWoTa81HQn+8nkhKCeCXPw==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We need to convert all old gpio irqchips to pass the irqchip
-setup along when adding the gpio_chip. For more info see
-drivers/gpio/TODO.
+Version 2 contains some minor changes based on earlier feedback
+and from the 0day build bot testing on other architectures. The
+only patch that changed significantly is the one for the gpio driver.
 
-For chained irqchips this is a pretty straight-forward
-conversion.
+I would suggest we merge this version into the soc tree directly
+if there are no further concerns.
 
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-tqmx86.c | 41 ++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+      Arnd
 
-diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-index d5880db7f9d4..07050cdbadb9 100644
---- a/drivers/gpio/gpio-tqmx86.c
-+++ b/drivers/gpio/gpio-tqmx86.c
-@@ -219,6 +219,7 @@ static int tqmx86_gpio_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct tqmx86_gpio_data *gpio;
- 	struct gpio_chip *chip;
-+	struct gpio_irq_chip *girq;
- 	void __iomem *io_base;
- 	struct resource *res;
- 	int ret, irq;
-@@ -264,12 +265,6 @@ static int tqmx86_gpio_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(&pdev->dev);
- 
--	ret = devm_gpiochip_add_data(dev, chip, gpio);
--	if (ret) {
--		dev_err(dev, "Could not register GPIO chip\n");
--		goto out_pm_dis;
--	}
--
- 	if (irq) {
- 		struct irq_chip *irq_chip = &gpio->irq_chip;
- 		u8 irq_status;
-@@ -287,23 +282,35 @@ static int tqmx86_gpio_probe(struct platform_device *pdev)
- 		irq_status = tqmx86_gpio_read(gpio, TQMX86_GPIIS);
- 		tqmx86_gpio_write(gpio, irq_status, TQMX86_GPIIS);
- 
--		ret = gpiochip_irqchip_add(chip, irq_chip,
--					   0, handle_simple_irq,
--					   IRQ_TYPE_EDGE_BOTH);
--		if (ret) {
--			dev_err(dev, "Could not add irq chip\n");
-+		girq = &chip->irq;
-+		girq->chip = irq_chip;
-+		girq->parent_handler = tqmx86_gpio_irq_handler;
-+		girq->num_parents = 1;
-+		girq->parents = devm_kcalloc(&pdev->dev, 1,
-+					     sizeof(*girq->parents),
-+					     GFP_KERNEL);
-+		if (!girq->parents) {
-+			ret = -ENOMEM;
- 			goto out_pm_dis;
- 		}
-+		girq->parents[0] = irq;
-+		girq->default_type = IRQ_TYPE_NONE;
-+		girq->handler = handle_simple_irq;
-+	}
- 
--		gpiochip_set_chained_irqchip(chip, irq_chip,
--					     irq, tqmx86_gpio_irq_handler);
-+	ret = devm_gpiochip_add_data(dev, chip, gpio);
-+	if (ret) {
-+		dev_err(dev, "Could not register GPIO chip\n");
-+		goto out_pm_dis;
- 	}
- 
- 	/* Only GPIOs 4-7 are valid for interrupts. Clear the others */
--	clear_bit(0, chip->irq.valid_mask);
--	clear_bit(1, chip->irq.valid_mask);
--	clear_bit(2, chip->irq.valid_mask);
--	clear_bit(3, chip->irq.valid_mask);
-+	if (irq) {
-+		clear_bit(0, girq->valid_mask);
-+		clear_bit(1, girq->valid_mask);
-+		clear_bit(2, girq->valid_mask);
-+		clear_bit(3, girq->valid_mask);
-+	}
- 
- 	dev_info(dev, "GPIO functionality initialized with %d pins\n",
- 		 chip->ngpio);
+Arnd Bergmann (12):
+  usb: ohci-nxp: enable compile-testing
+  usb: udc: lpc32xx: allow compile-testing
+  watchdog: pnx4008_wdt: allow compile-testing
+  serial: lpc32xx_hs: allow compile-testing
+  gpio: lpc32xx: allow building on non-lpc32xx targets
+  net: lpc-enet: factor out iram access
+  net: lpc-enet: move phy setup into platform code
+  net: lpc-enet: fix printk format strings
+  net: lpc-enet: allow compile testing
+  serial: lpc32xx: allow compile testing
+  ARM: lpc32xx: clean up header files
+  ARM: lpc32xx: allow multiplatform build
+
+kbuild test robot (1):
+  net: lpc-enet: fix badzero.cocci warnings
+
+ arch/arm/Kconfig                              |  17 +--
+ arch/arm/configs/lpc32xx_defconfig            |   2 +
+ arch/arm/mach-lpc32xx/Kconfig                 |  11 ++
+ arch/arm/mach-lpc32xx/common.c                |  24 +++-
+ arch/arm/mach-lpc32xx/common.h                |   1 -
+ arch/arm/mach-lpc32xx/include/mach/board.h    |  15 ---
+ .../mach-lpc32xx/include/mach/entry-macro.S   |  28 -----
+ arch/arm/mach-lpc32xx/include/mach/hardware.h |  25 ----
+ .../mach-lpc32xx/include/mach/uncompress.h    |  50 --------
+ .../{include/mach/platform.h => lpc32xx.h}    |  18 ++-
+ arch/arm/mach-lpc32xx/pm.c                    |   3 +-
+ arch/arm/mach-lpc32xx/serial.c                |  33 ++++-
+ arch/arm/mach-lpc32xx/suspend.S               |   3 +-
+ drivers/gpio/Kconfig                          |   7 ++
+ drivers/gpio/Makefile                         |   2 +-
+ drivers/gpio/gpio-lpc32xx.c                   | 118 ++++++++++--------
+ drivers/net/ethernet/nxp/Kconfig              |   2 +-
+ drivers/net/ethernet/nxp/lpc_eth.c            |  45 +++----
+ drivers/tty/serial/Kconfig                    |   3 +-
+ drivers/tty/serial/lpc32xx_hs.c               |  37 +-----
+ drivers/usb/gadget/udc/Kconfig                |   3 +-
+ drivers/usb/gadget/udc/lpc32xx_udc.c          |   3 +-
+ drivers/usb/host/Kconfig                      |   3 +-
+ drivers/usb/host/ohci-nxp.c                   |  25 ++--
+ drivers/watchdog/Kconfig                      |   2 +-
+ drivers/watchdog/pnx4008_wdt.c                |   1 -
+ include/linux/soc/nxp/lpc32xx-misc.h          |  33 +++++
+ 27 files changed, 242 insertions(+), 272 deletions(-)
+ create mode 100644 arch/arm/mach-lpc32xx/Kconfig
+ delete mode 100644 arch/arm/mach-lpc32xx/include/mach/board.h
+ delete mode 100644 arch/arm/mach-lpc32xx/include/mach/entry-macro.S
+ delete mode 100644 arch/arm/mach-lpc32xx/include/mach/hardware.h
+ delete mode 100644 arch/arm/mach-lpc32xx/include/mach/uncompress.h
+ rename arch/arm/mach-lpc32xx/{include/mach/platform.h => lpc32xx.h} (98%)
+ create mode 100644 include/linux/soc/nxp/lpc32xx-misc.h
+
 -- 
-2.21.0
+2.20.0
+
+Cc: soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-gpio@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+Cc: linux-watchdog@vger.kernel.org
 
