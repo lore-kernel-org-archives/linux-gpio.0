@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2F4C433FF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2244C32757
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53127214C6
+	by mail.kernel.org (Postfix) with ESMTP id 97C20217F5
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437235AbfHIQeL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 12:34:11 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:34229 "EHLO
+        id S2407445AbfHIQeD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 12:34:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:58595 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbfHIQeE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:34:04 -0400
+        with ESMTP id S2407425AbfHIQeC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:34:02 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N2Unv-1iJPbx03ep-013rP0; Fri, 09 Aug 2019 18:33:54 +0200
+ 1MOAJt-1hgXxb2QOn-00OWqK; Fri, 09 Aug 2019 18:33:46 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -32,80 +32,162 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-i2c@vger.kernel.org
-Subject: [PATCH 6/7] ARM: iop32x: make mach/uncompress.h independent of mach/hardware.h
-Date:   Fri,  9 Aug 2019 18:33:20 +0200
-Message-Id: <20190809163334.489360-6-arnd@arndb.de>
+Subject: [PATCH 4/7] dma: iop-adma: allow building without platform headers
+Date:   Fri,  9 Aug 2019 18:33:18 +0200
+Message-Id: <20190809163334.489360-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809163334.489360-1-arnd@arndb.de>
 References: <20190809162956.488941-1-arnd@arndb.de>
  <20190809163334.489360-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vI8dtEjZnzwjq2sWL8d5fbMPZeZEV7AvW59MnNKT2uhvW6Kjd4+
- QOBkKhwEY9azPiKocWLoN574G7bvFZsJ4nOPkqLfmzxeSVwcFhzfQ0JOtSGKa8iDPx/KThd
- TMGllJRSWZY65qV4DjOqg2L4+9LOEf+gmG01q5n2GW2PEpZW47K4PK4kCQfoxu3mdrKP62T
- Y4DxEjvGN/6JC5oXKg3Jg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:R8VBPo7GS74=:ak4pWH17CjBan7Jv8I0xTE
- PIAFwppEm1A3IRTBsM35Id6qfBh/wGR5EWYKsptcsgDSiEPj8uLo3tvEbQmu4aogQQfanUBRw
- ec6HQjPzNLXdXbJFCNHcdM3WgfIhVxyvnii6xXjPIhhxizJUK1/w6S5lIpgDiSNenX9lTdzx6
- PGGEJF926WXnFBe5J8mV7WM0Qc6x3OwgW1bfkrgTculBAGdAtIdlCotRzOJVZeUiiQSc9Y5mb
- dFVMH57p5cB6JE53vy5YKR23yZCq+lLg04xSTwfXEMId58QYyIsuZR/OBLBcSN2L5SOF/R1cS
- 9PEhxBXDgx04Fb42oV8eJAXGKCDlPOKZTqsBGbupDWte4b1+vbbO0DAAHUzmQoZ7QW3E2F5AS
- WdzkRtW0GakUXzPo1hggUyEZMQ9cG445/+0Gxn5ueOXi0NBIgK2qzlCkfgYFzPqjkPkCzJ7Wz
- 66EeDd0BvJWrn8SrbzAiiCDJCYuXtgYq3thXXmMF0vyIdwDM5nfAGQwsoWSwHPDwF/D4wqNrt
- lqky1W4IwL7IP7sJQspXT1F0G/YbHd25e7sQ2oaV3+OsVwtiwOBL0pYMl8he8OaZTOBRrzqHt
- LffMwccDCho231N3Tlzr4zve/UkmrsqydZ4w2Vv1KGkxSPUr/cKHapjHKfr+aB+a4pbQnz0C6
- Wh+vO2Ox24XvBnngmzChO+3Xq7I1QG+DTZNt1Y2qmyPoZ80MJRi5nE3OP3EE7i5QKJ53BMwPo
- vVZC+WLPECLeIdpiDVyM1KXUhsMwy37TNHPCbA==
+X-Provags-ID: V03:K1:u4Z5Q8yTDVcUzzMzBGkBzT4UZJwW8aGFhqKiWCEh7mh16JiuGrs
+ 7IZStdUpfO8N6pAlVC7ociBXCsFHeV+1j+u3ay/XI2kwkZ/N1T3Jm2eeSBYC9ZBevNopBrt
+ pCL+v1wAAM5qvLNpKizU7cT7FHI3Qo0OAG0+ghu3cPosZmT0m6lBrDY137x5gMwL9dwb5pX
+ eHX+YgocfodhKYK3lJlNQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Y3hzfQhETzE=:bt5C68uTCSgsRpntYwiNiB
+ yp61HklJ0NRpmIM+x9rFuZ/gTBsvr+OuR+7KwtQezKsOt39h68pj6XJe5EuqkKWbb+QMy4I1x
+ 1VMhG8AKBnjU7EHgD/uML4sQmeH7s2Ga7i3/DBayeIWNJ3djFXljMYISUohcYQARUIhrO2cB4
+ BNrXOu4KbHgksBV3N+gyPsYkytB4prSl9XBzOIa5O2aszVdW5T38JkD/7uZkG6aFHUCjNI4wp
+ dBIVio3dVk4XJII4U6ewoUqnHu7JIROpc0cFQotL8Kyam3qg82nIxORo873Fs6jh2l8WUZxBM
+ kfyvAcc2MXkMRQNESWXc9kvgUHHHtV7lnzj2ebGaImsf7dvCo8ibpVQUkki6SJsTL4G9fwJD+
+ 7RH58fUjLmY8EWkSc6GQk0PbE+Z3AfBtR4pdqnhVJsVi/ph2c3oqrWqOlk6TWMgcMPCj+dyj4
+ KAvX5HzFCXA+8gJonNk4tLTXZB9apKD6Ioj6ukWki2fiZAk7cpK70iVQ+xKM/0y4Dn2YhbJ3E
+ ZKw9jGuDgrJ09H1wv9yA7YtJJvu0Ah+KmCoLgpiY+IJQSCQ9A5gFoXeojEGTsMnvYPAcwlHuL
+ d8RmiZHHQQlF8NtutUikgPpwik/Sikbkza8q+rnDoNqBSvX3HSb6QIwiQqtJxepEmfV1k8Dbi
+ 4vMq8q5vnpea7wOrxguQ3GR/3qU15bsAUXWJfZ67QZ2q+dkwXxHkZX6ncoEqDCth7qT/pfxD4
+ NZt37UbFd/QtkfZ/SJA9XYA4lw7Sf6yM3LjamQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-All supported uarts use the same address: IQ80321_UART and IQ31244_UART
-are both defined to the default value of 0xfe800000. By using that as
-the address unconditionally, all dependencies on other machine headers
-can be avoided.
+Now that iop3xx and iop13xx are gone, the iop-adma driver no
+longer needs to deal with incompatible register layout defined
+in machine specific header files.
+
+Move the iop32x specific definitions into drivers/dma/iop-adma.h
+and the platform_data into include/linux/platform_data/dma-iop32x.h,
+and change the machine code to no longer reference those.
+
+The DMA0_ID/DMA1_ID/AAU_ID macros are required as part of the
+platform data interface and still need to be visible, so move
+those from one header to the other.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-iop32x/include/mach/uncompress.h | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
+ arch/arm/mach-iop32x/include/mach/adma.h                   | 6 ------
+ arch/arm/plat-iop/adma.c                                   | 3 +--
+ drivers/dma/Kconfig                                        | 4 ++--
+ drivers/dma/iop-adma.c                                     | 3 +--
+ .../asm/hardware/iop3xx-adma.h => drivers/dma/iop-adma.h   | 7 +------
+ .../iop_adma.h => include/linux/platform_data/dma-iop32x.h | 4 ++++
+ 6 files changed, 9 insertions(+), 18 deletions(-)
+ delete mode 100644 arch/arm/mach-iop32x/include/mach/adma.h
+ rename arch/arm/include/asm/hardware/iop3xx-adma.h => drivers/dma/iop-adma.h (99%)
+ rename arch/arm/include/asm/hardware/iop_adma.h => include/linux/platform_data/dma-iop32x.h (98%)
 
-diff --git a/arch/arm/mach-iop32x/include/mach/uncompress.h b/arch/arm/mach-iop32x/include/mach/uncompress.h
-index ed4ac3e28fa1..c8548875d942 100644
---- a/arch/arm/mach-iop32x/include/mach/uncompress.h
-+++ b/arch/arm/mach-iop32x/include/mach/uncompress.h
-@@ -6,9 +6,8 @@
- #include <asm/types.h>
- #include <asm/mach-types.h>
- #include <linux/serial_reg.h>
--#include <mach/hardware.h>
- 
--volatile u8 *uart_base;
-+#define uart_base ((volatile u8 *)0xfe800000)
- 
- #define TX_DONE		(UART_LSR_TEMT | UART_LSR_THRE)
- 
-@@ -23,17 +22,4 @@ static inline void flush(void)
- {
- }
- 
--static __inline__ void __arch_decomp_setup(unsigned long arch_id)
--{
--	if (machine_is_iq80321())
--		uart_base = (volatile u8 *)IQ80321_UART;
--	else if (machine_is_iq31244() || machine_is_em7210())
--		uart_base = (volatile u8 *)IQ31244_UART;
--	else
--		uart_base = (volatile u8 *)0xfe800000;
--}
+diff --git a/arch/arm/mach-iop32x/include/mach/adma.h b/arch/arm/mach-iop32x/include/mach/adma.h
+deleted file mode 100644
+index 2b20063123ad..000000000000
+--- a/arch/arm/mach-iop32x/include/mach/adma.h
++++ /dev/null
+@@ -1,6 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef IOP32X_ADMA_H
+-#define IOP32X_ADMA_H
+-#include <asm/hardware/iop3xx-adma.h>
+-#endif
 -
--/*
-- * nothing to do
-- */
--#define arch_decomp_setup()	__arch_decomp_setup(arch_id)
-+#define arch_decomp_setup() do { } while (0)
+diff --git a/arch/arm/plat-iop/adma.c b/arch/arm/plat-iop/adma.c
+index 368496471e60..601cc9c11b07 100644
+--- a/arch/arm/plat-iop/adma.c
++++ b/arch/arm/plat-iop/adma.c
+@@ -6,8 +6,7 @@
+ #include <linux/platform_device.h>
+ #include <asm/hardware/iop3xx.h>
+ #include <linux/dma-mapping.h>
+-#include <mach/adma.h>
+-#include <asm/hardware/iop_adma.h>
++#include <linux/platform_data/dma-iop32x.h>
+ 
+ #define IRQ_DMA0_EOT IRQ_IOP32X_DMA0_EOT
+ #define IRQ_DMA0_EOC IRQ_IOP32X_DMA0_EOC
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index cc84863bc52b..7c511e3db4c8 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -294,8 +294,8 @@ config INTEL_IOATDMA
+ 	  If unsure, say N.
+ 
+ config INTEL_IOP_ADMA
+-	tristate "Intel IOP ADMA support"
+-	depends on ARCH_IOP32X
++	tristate "Intel IOP32x ADMA support"
++	depends on ARCH_IOP32X || COMPILE_TEST
+ 	select DMA_ENGINE
+ 	select ASYNC_TX_ENABLE_CHANNEL_SWITCH
+ 	help
+diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
+index aebdd671651a..03f4a588cf7f 100644
+--- a/drivers/dma/iop-adma.c
++++ b/drivers/dma/iop-adma.c
+@@ -22,8 +22,7 @@
+ #include <linux/raid/pq.h>
+ #include <linux/slab.h>
+ 
+-#include <mach/adma.h>
+-
++#include "iop-adma.h"
+ #include "dmaengine.h"
+ 
+ #define to_iop_adma_chan(chan) container_of(chan, struct iop_adma_chan, common)
+diff --git a/arch/arm/include/asm/hardware/iop3xx-adma.h b/drivers/dma/iop-adma.h
+similarity index 99%
+rename from arch/arm/include/asm/hardware/iop3xx-adma.h
+rename to drivers/dma/iop-adma.h
+index 6d998df17efd..c499c9578f00 100644
+--- a/arch/arm/include/asm/hardware/iop3xx-adma.h
++++ b/drivers/dma/iop-adma.h
+@@ -6,8 +6,7 @@
+ #define _ADMA_H
+ #include <linux/types.h>
+ #include <linux/io.h>
+-#include <mach/hardware.h>
+-#include <asm/hardware/iop_adma.h>
++#include <linux/platform_data/dma-iop32x.h>
+ 
+ /* Memory copy units */
+ #define DMA_CCR(chan)		(chan->mmr_base + 0x0)
+@@ -34,10 +33,6 @@
+ #define AAU_EDCR1_IDX	17
+ #define AAU_EDCR2_IDX	26
+ 
+-#define DMA0_ID 0
+-#define DMA1_ID 1
+-#define AAU_ID 2
+-
+ struct iop3xx_aau_desc_ctrl {
+ 	unsigned int int_en:1;
+ 	unsigned int blk1_cmd_ctrl:3;
+diff --git a/arch/arm/include/asm/hardware/iop_adma.h b/include/linux/platform_data/dma-iop32x.h
+similarity index 98%
+rename from arch/arm/include/asm/hardware/iop_adma.h
+rename to include/linux/platform_data/dma-iop32x.h
+index bcedbab90ac0..ac83cff89549 100644
+--- a/arch/arm/include/asm/hardware/iop_adma.h
++++ b/include/linux/platform_data/dma-iop32x.h
+@@ -17,6 +17,10 @@
+ #endif
+ #define iop_paranoia(x) BUG_ON(IOP_PARANOIA && (x))
+ 
++#define DMA0_ID 0
++#define DMA1_ID 1
++#define AAU_ID 2
++
+ /**
+  * struct iop_adma_device - internal representation of an ADMA device
+  * @pdev: Platform device
 -- 
 2.20.0
 
