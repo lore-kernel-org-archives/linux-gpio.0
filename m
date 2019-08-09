@@ -4,24 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90047C31E40
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A8DC433FF
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BAB121743
+	by mail.kernel.org (Postfix) with ESMTP id AB659214C6
 	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 16:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437118AbfHIQd7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 12:33:59 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:43109 "EHLO
+        id S2437097AbfHIQeE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 12:34:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:45279 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407445AbfHIQd6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:33:58 -0400
+        with ESMTP id S2437156AbfHIQeB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 12:34:01 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MwQGj-1iCHo22V1R-00sLsu; Fri, 09 Aug 2019 18:33:43 +0200
+ 1MiaLn-1iYmm935N9-00fn4k; Fri, 09 Aug 2019 18:33:50 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     soc@kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -33,128 +32,80 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-i2c@vger.kernel.org
-Subject: [PATCH 3/7] dma: iop-adma: use correct printk format strings
-Date:   Fri,  9 Aug 2019 18:33:17 +0200
-Message-Id: <20190809163334.489360-3-arnd@arndb.de>
+Subject: [PATCH 5/7] ARM: xscale: fix multi-cpu compilation
+Date:   Fri,  9 Aug 2019 18:33:19 +0200
+Message-Id: <20190809163334.489360-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190809163334.489360-1-arnd@arndb.de>
 References: <20190809162956.488941-1-arnd@arndb.de>
  <20190809163334.489360-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:K2Gx1fY8Ljd2NDS0Jw6+u8SOqS2PIq6MXC+1tPMpqkPHMkN2W/I
- iUBsOGMIfYW0btXkuSVHgws6TSChnnyEjdPzKqoXg730XHuYfskdrup3mtEge1rLJ+RCNvQ
- GQbLW5G77AESmvtOHKekKJvRWjugWQADMHgElxGI6TZPj1M/u2a4Z8vgEVUsbkqZx9E69wR
- Q+AKv4g8mPLpqgrMovg+g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QlJroodNYQw=:7aGy8w9I7kaBCshH9xaCjU
- wXcGD7f/tjxfwmYWN0zF6a6BNWSScNC/Is7ufjpFaHt2cDsuBKoX3K3cuXluPLwW6I3Qisz3m
- U+42mPjMLyNFXswlSWWkloOyq+wzFchxwUWpSBj7/RUTP4lyyyI371+rz3Wc3bFpy8G1XkncX
- LoovGzApYsKtu1YPo1rEDONjs4MydfqiVD6Wg32W2qIqY5K8vWcPuJBEK5Cb+0/efGgbsNQV7
- V3wOvTjX70IxhULQLgAOMt2Bb4YJgU1rztLd+tOvjMRSAFBjDz/Zd7yLOvgx8lGvyRcQFrSh4
- rWTbIxgkc8UNl+eNyAsDeUi8uOphzhhXMi9NhAm9eGpMfZ+X2VEEkWvst5wPCoK2BkgLtu9iX
- pz3uTyHAQmgP78WyaeDMfD2uTJdp0eqjnxj/uy9YlSZm8RVQqeM99+n9825SzW0xxl+GQvu0N
- UwMPpWclDbP+vbdalZWzI5/8G+R2l5XV7wknLNi/L47H7ak53NkcdoXB+EbsO9mVne++T9wmn
- dcjnvVDeJ9qTx7yl7+w4dLPEtykr+QZ2wNwJ3vCqyKeDwFVkNcGJjk36HA7Zigxn8acuLL603
- M5dXoM+K4YhwfCd74Vhb5K7ND0GQ5kYbSogwdlOihfCjtVVqF51qXlKOnxfj02+v7s2e/sDsR
- pgZ94SPPF4hfRTom/6Acj8gyvdZq2e569om+DLW6j7bdszTGSgVGdr3oT+fRdUmHuG0RJ3tWd
- 18Cx/AYE/Vj++D0bSBIgCfsEps3UlwrZw+gGjg==
+X-Provags-ID: V03:K1:wZlcz48ar72OTI0b4lRDVG5g8z7FKcBbmmlRwz5OyJHN+RZnSIu
+ rPO+wv2A51N4cneEGdq5++c3p7S8W9hvSc0/+MJlbGu9ejYfTujT8svnratVAcjpJEGGv/T
+ NXHhTUGyJQX/PS6OeT3qB34XlnqG4OMumh+VLw3NibgQKnG6LEXRUilqHtuedJI6D+RIZly
+ Fm2LpeYj60KlsDF4evXVg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:p9OV/IkT9gI=:vQKEMVaVwwOvgHQ9k8wqNy
+ frRgQ5iPSYZBBsJ8Qrbd1D1A1CH34rn2cdmC6UGHpIGXrTyp8CD2Aa78I5ZU4E9jyTv9WvdIl
+ fbt/7UygAPSI8fo0/ttAzm1GSPsmpTVHt3DJLPiVMpWX4qAT63RJizHPB9OYD7IdxM5UQnwH9
+ LzDyHR8lG2qAV0gMRg6a8kksSkiEBhFFT1+JSKXdOVMSh/Wfm3ZYWTt1yUaYvD4fajrm1oM4X
+ oHx1+k/fMd6xnGJZC1jvy9yy5ntt/RVfiy74k9RPx8cZ4JFLKxxQDwwlKvCbYnU4qWm+kEyfI
+ Cnb6f+To5gLTzFOrAeaVq9rjR+CjsKD2hYMZ7n9pLVUWu1FsAPHu+eIbVkyTsPgzHivVNF3Fl
+ T9Xl35tHU6a+7gMm/0epFHhknfyINhgxBBCVl4Y7YnTQrZ97ZYpZwYMTqdn9ZzvaEgO0hzKRd
+ ofGcyc0AcO+aDSnWMN6PyWvOn2yuQWBxKjnmRNnx4uNKdkf2A5WKZaue0MYO59x7xX7PcCC3f
+ d4+w9fPOaCT+U6hD4KHvhRJhkQ1ibQjgCOLS5NQuEsRO4yJkVR1RIxLB9PepRwK4SO4idjf7D
+ HIM1rsTJ5V+xnSVw4JzkGeCHJC1dfPLXxhw4A9DvbGxKYVFF39vhTqy5t23p/4RsNyNZZJqp0
+ RHEMej39ZLyU/RccOCDWLGm4+2AWUCIv6b2hfUEJnCqEKAF1Aoz6hehAgXjaDaPThbJt/2iDa
+ I6d+QTwbVTuZmWqY4lyKpeiDTl0FNdnCXrKRBQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When compile-testing on other architectures, we get lots of warnings
-about incorrect format strings, like:
+Building a combined ARMv4+XScale kernel produces these
+and other build failures:
 
-   drivers/dma/iop-adma.c: In function 'iop_adma_alloc_slots':
-   drivers/dma/iop-adma.c:307:6: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
+/tmp/copypage-xscale-3aa821.s: Assembler messages:
+/tmp/copypage-xscale-3aa821.s:167: Error: selected processor does not support `pld [r7,#0]' in ARM mode
+/tmp/copypage-xscale-3aa821.s:168: Error: selected processor does not support `pld [r7,#32]' in ARM mode
+/tmp/copypage-xscale-3aa821.s:169: Error: selected processor does not support `pld [r1,#0]' in ARM mode
+/tmp/copypage-xscale-3aa821.s:170: Error: selected processor does not support `pld [r1,#32]' in ARM mode
+/tmp/copypage-xscale-3aa821.s:171: Error: selected processor does not support `pld [r7,#64]' in ARM mode
+/tmp/copypage-xscale-3aa821.s:176: Error: selected processor does not support `ldrd r4,r5,[r7],#8' in ARM mode
+/tmp/copypage-xscale-3aa821.s:180: Error: selected processor does not support `strd r4,r5,[r1],#8' in ARM mode
 
-   drivers/dma/iop-adma.c: In function 'iop_adma_prep_dma_memcpy':
->> drivers/dma/iop-adma.c:518:40: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
-Use %zu for printing size_t as required, and cast the dma_addr_t
-arguments to 'u64' for printing with %llx. Ideally this should use
-the %pad format string, but that requires an lvalue argument that
-doesn't work here.
+Add an explict .arch armv5 in the inline assembly to allow the ARMv5
+specific instructions regardless of the compiler -march= target.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/iop-adma.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/mm/copypage-xscale.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
-index 7857b54770d1..aebdd671651a 100644
---- a/drivers/dma/iop-adma.c
-+++ b/drivers/dma/iop-adma.c
-@@ -117,9 +117,9 @@ static void __iop_adma_slot_cleanup(struct iop_adma_chan *iop_chan)
- 	list_for_each_entry_safe(iter, _iter, &iop_chan->chain,
- 					chain_node) {
- 		pr_debug("\tcookie: %d slot: %d busy: %d "
--			"this_desc: %#x next_desc: %#x ack: %d\n",
-+			"this_desc: %#x next_desc: %#llx ack: %d\n",
- 			iter->async_tx.cookie, iter->idx, busy,
--			iter->async_tx.phys, iop_desc_get_next_desc(iter),
-+			iter->async_tx.phys, (u64)iop_desc_get_next_desc(iter),
- 			async_tx_test_ack(&iter->async_tx));
- 		prefetch(_iter);
- 		prefetch(&_iter->async_tx);
-@@ -307,9 +307,9 @@ iop_adma_alloc_slots(struct iop_adma_chan *iop_chan, int num_slots,
- 				int i;
- 				dev_dbg(iop_chan->device->common.dev,
- 					"allocated slot: %d "
--					"(desc %p phys: %#x) slots_per_op %d\n",
-+					"(desc %p phys: %#llx) slots_per_op %d\n",
- 					iter->idx, iter->hw_desc,
--					iter->async_tx.phys, slots_per_op);
-+					(u64)iter->async_tx.phys, slots_per_op);
- 
- 				/* pre-ack all but the last descriptor */
- 				if (num_slots != slots_per_op)
-@@ -517,7 +517,7 @@ iop_adma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dma_dest,
- 		return NULL;
- 	BUG_ON(len > IOP_ADMA_MAX_BYTE_COUNT);
- 
--	dev_dbg(iop_chan->device->common.dev, "%s len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s len: %zu\n",
- 		__func__, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -550,7 +550,7 @@ iop_adma_prep_dma_xor(struct dma_chan *chan, dma_addr_t dma_dest,
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
- 	dev_dbg(iop_chan->device->common.dev,
--		"%s src_cnt: %d len: %u flags: %lx\n",
-+		"%s src_cnt: %d len: %zu flags: %lx\n",
- 		__func__, src_cnt, len, flags);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -583,7 +583,7 @@ iop_adma_prep_dma_xor_val(struct dma_chan *chan, dma_addr_t *dma_src,
- 	if (unlikely(!len))
- 		return NULL;
- 
--	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
- 		__func__, src_cnt, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -621,7 +621,7 @@ iop_adma_prep_dma_pq(struct dma_chan *chan, dma_addr_t *dst, dma_addr_t *src,
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
- 	dev_dbg(iop_chan->device->common.dev,
--		"%s src_cnt: %d len: %u flags: %lx\n",
-+		"%s src_cnt: %d len: %zu flags: %lx\n",
- 		__func__, src_cnt, len, flags);
- 
- 	if (dmaf_p_disabled_continue(flags))
-@@ -684,7 +684,7 @@ iop_adma_prep_dma_pq_val(struct dma_chan *chan, dma_addr_t *pq, dma_addr_t *src,
- 		return NULL;
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
--	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
- 		__func__, src_cnt, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
+diff --git a/arch/arm/mm/copypage-xscale.c b/arch/arm/mm/copypage-xscale.c
+index 61d834157bc0..382e1c2855e8 100644
+--- a/arch/arm/mm/copypage-xscale.c
++++ b/arch/arm/mm/copypage-xscale.c
+@@ -42,6 +42,7 @@ static void mc_copy_user_page(void *from, void *to)
+ 	 * when prefetching destination as well.  (NP)
+ 	 */
+ 	asm volatile ("\
++.arch xscale					\n\
+ 	pld	[%0, #0]			\n\
+ 	pld	[%0, #32]			\n\
+ 	pld	[%1, #0]			\n\
+@@ -106,8 +107,9 @@ void
+ xscale_mc_clear_user_highpage(struct page *page, unsigned long vaddr)
+ {
+ 	void *ptr, *kaddr = kmap_atomic(page);
+-	asm volatile(
+-	"mov	r1, %2				\n\
++	asm volatile("\
++.arch xscale					\n\
++	mov	r1, %2				\n\
+ 	mov	r2, #0				\n\
+ 	mov	r3, #0				\n\
+ 1:	mov	ip, %0				\n\
 -- 
 2.20.0
 
