@@ -2,113 +2,372 @@ Return-Path: <SRS0=5jam=WF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2926C31E40
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 19:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CA8C31E40
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 20:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 979C92166E
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 19:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="rVihWVM5"
+	by mail.kernel.org (Postfix) with ESMTP id 437B1217D7
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Aug 2019 20:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfHIToJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Aug 2019 15:44:09 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40030 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfHIToI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 15:44:08 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l15so79747444oth.7
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Aug 2019 12:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AwTeQv0nkF8ZzkbuQwNoI5oM1jAqjP+SUKLHmshqgU4=;
-        b=rVihWVM562FWHeevrHmURj44PEleWt0ASN0AHKY6Hov5uYsCDz6oAGJ08b5H+EjqCD
-         hrjmBpOMNbBTXqmeCjkz46TBjIJrLkXjEjT+pVCiYGb3t70pJZ2s6SOhfMQAgipiQcfh
-         voXpiKFXiOl4fpATrz2qU7P+Vg3vo2ah//XnRDQOufMi7c8/E93rAoGgLk+1pT8eIesw
-         585O3KBYW/5zl+F/ep6RKtKY1WSoGGTwUAiTU/eKHm+FE0rZel3W99kgCKtIDv2+gsT6
-         wOOIjgW/HCzR2ZqBx4Wu4gcauVBAzX3ll5QJUQsdIRWzbWiBDlsl1aGpBEBpZSKJ+Urg
-         5L/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AwTeQv0nkF8ZzkbuQwNoI5oM1jAqjP+SUKLHmshqgU4=;
-        b=tCEbrPQWKzltgMDG8jecHXj+Rzk4MdRfpLVPHUbkEiZfq92g6PLf4otpcK4SL7tI3W
-         53UN1Lra7vHTHvYRxzt7mdlXyfXljVbnJ55VqnUq2sGDlpkeRRGTcTO8NyP4PGf6cXZX
-         urtpamgSFw5mWgeaCuDfQUD+1KQUlh34MUdrGBqM+/VybX+XSFNnnxoiXSMdglCbG8UN
-         vVks0MKwrdxRkGGEuR/GKEFTC4XtFcVLBG1fmODIQ9JJD1L3TFskKzcK/Z2M+TXdWdqc
-         qp+UPmwDSJ3z+G0Cn4osPwWdeImBYthddADZkpZVOTCRdpPXsIZqcftzj6Ify9X2I6tM
-         dWIA==
-X-Gm-Message-State: APjAAAWLZgKXWG0x/qn35CtjjlJo64f17Xe8Of2QLtXqtPUqJpzjGDQs
-        Cpf6qSlVYh7PRJV8DuTT6FmHyanv9pSpHPRPTkJeGg==
-X-Google-Smtp-Source: APXvYqwmGWxKnhH0pu0CdmdtkY9MWiQA2sqa6Y0AXYzLsTz11/rPRS6N91uTv6hH5s8O/RR8/YTXeJBAlToJ8WjZMUg=
-X-Received: by 2002:aca:d80a:: with SMTP id p10mr7522848oig.105.1565379847824;
- Fri, 09 Aug 2019 12:44:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190809162956.488941-1-arnd@arndb.de> <20190809163334.489360-1-arnd@arndb.de>
- <CAA9_cmdDbBm0ookyqGJMcyLVFHkYHuR3mEeawQKS2UqYJoWWaQ@mail.gmail.com> <20190809183658.GA13294@shell.armlinux.org.uk>
-In-Reply-To: <20190809183658.GA13294@shell.armlinux.org.uk>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 9 Aug 2019 12:43:56 -0700
-Message-ID: <CAPcyv4juKU5TLU+3=xAw0Hq=6EeLSxKA4C9kR1YqEV8XuH7e2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/7] [RFC] ARM: remove Intel iop33x and iop13xx support
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
-        Vinod Koul <vkoul@kernel.org>,
+        id S1727642AbfHIU2a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Aug 2019 16:28:30 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56133 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfHIU23 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Aug 2019 16:28:29 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MatZr-1iTKFv1eOZ-00cNuB; Fri, 09 Aug 2019 22:28:24 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     soc@kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, Martin Michlmayr <tbm@cyrius.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 03/16] gpio: remove ks8695 driver
+Date:   Fri,  9 Aug 2019 22:27:31 +0200
+Message-Id: <20190809202749.742267-4-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190809202749.742267-1-arnd@arndb.de>
+References: <20190809202749.742267-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:E7nBF4LfPcGf1UtY9oqFhzllxYnnt4naJwExzBwiSQrlI4pVGRN
+ aRwUaUtGC5jSU68hoOJidiwrAHd2X0W1UoURS2/YF3tJIAv3W6jeJHjjEPlzwj40hTQ7P9Q
+ lw+X26NIvRR62yUaHo1+bd6KT2Ke5PexYl0jtHTVGDQZl5QecRja7VrCyGL8s329BIi/gAe
+ /zUEmiKVJM08nSIeFGQfQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:84GdanFCoFU=:izKT5wpwMWi6/RUL+CkXBs
+ IYpBhnUt6UJEPOusKrqVak8lqHc5fe3+UiJnY8em4Pj0ViYXyg6ao2sOrGnF5a0T4EPfvBdxg
+ yigdk9u2t+hEnr7t6oa9sTzfM140op8cZYQMLI341fW7G9zYMegwWB6DwenjgRo+EweIPsmyr
+ P/nF/UHR/a32SoHVp8LTGVUgM4zq055qZifbHyjRzXo0i7LcA+5ZMnAFVrZVk46ZU3fhZB089
+ ThBAeaI0d0S6/o80okSNGmyzgk0Ad0ktM8JX+TOfI9KId6JGJXeGTE+TRiEuOeRtslk4C7L8i
+ OxDwYaxBPbrf02Vwwge72NHZAlnzRB3/F35pgIdSB6aO3IaxYX1Gy9x9QmmgXDnACK3S0VksI
+ C6onNyuGxja5iWnx0RBvVwvSDgflawW1hZ4D4yw6LQKObQZYVBr47PfrOdSNWS26soSq0H4uy
+ C5BT5z+eWQ72oO7NDsYRNCZs+ppzcwBp6EnQ36fh01UKDJIikj5a4efCWoRa4bmOnIE8y/jTP
+ Bmdjn5tZ5lbBlQKVawgZgMqfGrrRht88UDnptEXXaAY6gbbfko99zvpQbwUXW+L2WWCRPmTfy
+ muxJnjEHjv1wzLEHDUbyqCy4PeYpV6kVC9AVa2RMuS56jntzMHXl6FgynDWIllD7efvWLS5vA
+ HHMRSvutbdLR8zAJkoJ0c+ZoJo+coKzQVjgODPGFYuHbrhdbLGQ19TfTXF/OeoX5p72RT55dy
+ xkrKi1aOr8ids8e99Qckk4nc0B2H02SewP17Zg==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 11:37 AM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Fri, Aug 09, 2019 at 11:34:12AM -0700, Dan Williams wrote:
-> > [ add Martin (if cyrius.com address is still valid) ]
-> >
-> > On Fri, Aug 9, 2019 at 9:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > There are three families of IOP machines we support in Linux: iop32x
-> > > (which includes EP80219), iop33x and iop13xx (aka IOP34x aka WP8134x).
-> > >
-> > > All products we support in the kernel are based on the first of these,
-> > > iop32x, the other families only ever supported the Intel reference
-> > > boards but no actual machine anyone could ever buy.
-> > >
-> > > While one could clearly make them all three work in a single kernel
-> > > with some work, this takes the easy way out, removing the later two
-> > > platforms entirely, under the assumption that there are no remaining
-> > > users.
-> > >
-> > > Earlier versions of OpenWRT and Debian both had support for iop32x
-> > > but not the others, and they both dropped iop32x as well in their 2015
-> > > releases.
-> > >
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > > I'm just guessing that iop32x is still needed, and the other two are
-> > > not. If anyone disagrees with that assessment, let me know so we
-> > > can come up with an alternative approach.
-> >
-> > I'm not sure who would scream if iop32x support went away as well, but
-> > I have not followed this space in years hence copying Martin.
-> >
-> > In any event:
-> >
-> > Acked-by: Dan Williams <dan.j.williams@intel.com>
->
-> Those of us who have and still run Thecus N2100's, for example?
+The platform is getting removed, so there are no remaining
+users of this driver.
 
-Nice! Good to hear.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpio/Makefile      |   1 -
+ drivers/gpio/gpio-ks8695.c | 284 -------------------------------------
+ 2 files changed, 285 deletions(-)
+ delete mode 100644 drivers/gpio/gpio-ks8695.c
+
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index a4e91175c708..65d74084c9b2 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -67,7 +67,6 @@ obj-$(CONFIG_GPIO_IT87)			+= gpio-it87.o
+ obj-$(CONFIG_GPIO_IXP4XX)		+= gpio-ixp4xx.o
+ obj-$(CONFIG_GPIO_JANZ_TTL)		+= gpio-janz-ttl.o
+ obj-$(CONFIG_GPIO_KEMPLD)		+= gpio-kempld.o
+-obj-$(CONFIG_ARCH_KS8695)		+= gpio-ks8695.o
+ obj-$(CONFIG_GPIO_LOONGSON1)		+= gpio-loongson1.o
+ obj-$(CONFIG_GPIO_LOONGSON)		+= gpio-loongson.o
+ obj-$(CONFIG_GPIO_LP3943)		+= gpio-lp3943.o
+diff --git a/drivers/gpio/gpio-ks8695.c b/drivers/gpio/gpio-ks8695.c
+deleted file mode 100644
+index a0f87c124894..000000000000
+--- a/drivers/gpio/gpio-ks8695.c
++++ /dev/null
+@@ -1,284 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * arch/arm/mach-ks8695/gpio.c
+- *
+- * Copyright (C) 2006 Andrew Victor
+- * Updated to GPIOLIB, Copyright 2008 Simtec Electronics
+- *                     Daniel Silverstone <dsilvers@simtec.co.uk>
+- */
+-#include <linux/gpio/driver.h>
+-#include <linux/kernel.h>
+-#include <linux/mm.h>
+-#include <linux/init.h>
+-#include <linux/debugfs.h>
+-#include <linux/seq_file.h>
+-#include <linux/module.h>
+-#include <linux/io.h>
+-
+-#include <mach/hardware.h>
+-#include <asm/mach/irq.h>
+-
+-#include <mach/regs-gpio.h>
+-#include <mach/gpio-ks8695.h>
+-
+-/*
+- * Configure a GPIO line for either GPIO function, or its internal
+- * function (Interrupt, Timer, etc).
+- */
+-static void ks8695_gpio_mode(unsigned int pin, short gpio)
+-{
+-	unsigned int enable[] = { IOPC_IOEINT0EN, IOPC_IOEINT1EN, IOPC_IOEINT2EN, IOPC_IOEINT3EN, IOPC_IOTIM0EN, IOPC_IOTIM1EN };
+-	unsigned long x, flags;
+-
+-	if (pin > KS8695_GPIO_5)	/* only GPIO 0..5 have internal functions */
+-		return;
+-
+-	local_irq_save(flags);
+-
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPC);
+-	if (gpio)			/* GPIO: set bit to 0 */
+-		x &= ~enable[pin];
+-	else				/* Internal function: set bit to 1 */
+-		x |= enable[pin];
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPC);
+-
+-	local_irq_restore(flags);
+-}
+-
+-
+-static unsigned short gpio_irq[] = { KS8695_IRQ_EXTERN0, KS8695_IRQ_EXTERN1, KS8695_IRQ_EXTERN2, KS8695_IRQ_EXTERN3 };
+-
+-/*
+- * Configure GPIO pin as external interrupt source.
+- */
+-int ks8695_gpio_interrupt(unsigned int pin, unsigned int type)
+-{
+-	unsigned long x, flags;
+-
+-	if (pin > KS8695_GPIO_3)	/* only GPIO 0..3 can generate IRQ */
+-		return -EINVAL;
+-
+-	local_irq_save(flags);
+-
+-	/* set pin as input */
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPM);
+-	x &= ~IOPM(pin);
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPM);
+-
+-	local_irq_restore(flags);
+-
+-	/* Set IRQ triggering type */
+-	irq_set_irq_type(gpio_irq[pin], type);
+-
+-	/* enable interrupt mode */
+-	ks8695_gpio_mode(pin, 0);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(ks8695_gpio_interrupt);
+-
+-
+-
+-/* .... Generic GPIO interface .............................................. */
+-
+-/*
+- * Configure the GPIO line as an input.
+- */
+-static int ks8695_gpio_direction_input(struct gpio_chip *gc, unsigned int pin)
+-{
+-	unsigned long x, flags;
+-
+-	if (pin > KS8695_GPIO_15)
+-		return -EINVAL;
+-
+-	/* set pin to GPIO mode */
+-	ks8695_gpio_mode(pin, 1);
+-
+-	local_irq_save(flags);
+-
+-	/* set pin as input */
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPM);
+-	x &= ~IOPM(pin);
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPM);
+-
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-
+-
+-/*
+- * Configure the GPIO line as an output, with default state.
+- */
+-static int ks8695_gpio_direction_output(struct gpio_chip *gc,
+-					unsigned int pin, int state)
+-{
+-	unsigned long x, flags;
+-
+-	if (pin > KS8695_GPIO_15)
+-		return -EINVAL;
+-
+-	/* set pin to GPIO mode */
+-	ks8695_gpio_mode(pin, 1);
+-
+-	local_irq_save(flags);
+-
+-	/* set line state */
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPD);
+-	if (state)
+-		x |= IOPD(pin);
+-	else
+-		x &= ~IOPD(pin);
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPD);
+-
+-	/* set pin as output */
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPM);
+-	x |= IOPM(pin);
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPM);
+-
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-
+-
+-/*
+- * Set the state of an output GPIO line.
+- */
+-static void ks8695_gpio_set_value(struct gpio_chip *gc,
+-				  unsigned int pin, int state)
+-{
+-	unsigned long x, flags;
+-
+-	if (pin > KS8695_GPIO_15)
+-		return;
+-
+-	local_irq_save(flags);
+-
+-	/* set output line state */
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPD);
+-	if (state)
+-		x |= IOPD(pin);
+-	else
+-		x &= ~IOPD(pin);
+-	__raw_writel(x, KS8695_GPIO_VA + KS8695_IOPD);
+-
+-	local_irq_restore(flags);
+-}
+-
+-
+-/*
+- * Read the state of a GPIO line.
+- */
+-static int ks8695_gpio_get_value(struct gpio_chip *gc, unsigned int pin)
+-{
+-	unsigned long x;
+-
+-	if (pin > KS8695_GPIO_15)
+-		return -EINVAL;
+-
+-	x = __raw_readl(KS8695_GPIO_VA + KS8695_IOPD);
+-	return (x & IOPD(pin)) != 0;
+-}
+-
+-
+-/*
+- * Map GPIO line to IRQ number.
+- */
+-static int ks8695_gpio_to_irq(struct gpio_chip *gc, unsigned int pin)
+-{
+-	if (pin > KS8695_GPIO_3)	/* only GPIO 0..3 can generate IRQ */
+-		return -EINVAL;
+-
+-	return gpio_irq[pin];
+-}
+-
+-/* GPIOLIB interface */
+-
+-static struct gpio_chip ks8695_gpio_chip = {
+-	.label			= "KS8695",
+-	.direction_input	= ks8695_gpio_direction_input,
+-	.direction_output	= ks8695_gpio_direction_output,
+-	.get			= ks8695_gpio_get_value,
+-	.set			= ks8695_gpio_set_value,
+-	.to_irq			= ks8695_gpio_to_irq,
+-	.base			= 0,
+-	.ngpio			= 16,
+-	.can_sleep		= false,
+-};
+-
+-/* Register the GPIOs */
+-void ks8695_register_gpios(void)
+-{
+-	if (gpiochip_add_data(&ks8695_gpio_chip, NULL))
+-		printk(KERN_ERR "Unable to register core GPIOs\n");
+-}
+-
+-/* .... Debug interface ..................................................... */
+-
+-#ifdef CONFIG_DEBUG_FS
+-
+-static int ks8695_gpio_show(struct seq_file *s, void *unused)
+-{
+-	unsigned int enable[] = { IOPC_IOEINT0EN, IOPC_IOEINT1EN, IOPC_IOEINT2EN, IOPC_IOEINT3EN, IOPC_IOTIM0EN, IOPC_IOTIM1EN };
+-	unsigned int intmask[] = { IOPC_IOEINT0TM, IOPC_IOEINT1TM, IOPC_IOEINT2TM, IOPC_IOEINT3TM };
+-	unsigned long mode, ctrl, data;
+-	int i;
+-
+-	mode = __raw_readl(KS8695_GPIO_VA + KS8695_IOPM);
+-	ctrl = __raw_readl(KS8695_GPIO_VA + KS8695_IOPC);
+-	data = __raw_readl(KS8695_GPIO_VA + KS8695_IOPD);
+-
+-	seq_printf(s, "Pin\tI/O\tFunction\tState\n\n");
+-
+-	for (i = KS8695_GPIO_0; i <= KS8695_GPIO_15 ; i++) {
+-		seq_printf(s, "%i:\t", i);
+-
+-		seq_printf(s, "%s\t", (mode & IOPM(i)) ? "Output" : "Input");
+-
+-		if (i <= KS8695_GPIO_3) {
+-			if (ctrl & enable[i]) {
+-				seq_printf(s, "EXT%i ", i);
+-
+-				switch ((ctrl & intmask[i]) >> (4 * i)) {
+-				case IOPC_TM_LOW:
+-					seq_printf(s, "(Low)");		break;
+-				case IOPC_TM_HIGH:
+-					seq_printf(s, "(High)");	break;
+-				case IOPC_TM_RISING:
+-					seq_printf(s, "(Rising)");	break;
+-				case IOPC_TM_FALLING:
+-					seq_printf(s, "(Falling)");	break;
+-				case IOPC_TM_EDGE:
+-					seq_printf(s, "(Edges)");	break;
+-				}
+-			} else
+-				seq_printf(s, "GPIO\t");
+-		} else if (i <= KS8695_GPIO_5) {
+-			if (ctrl & enable[i])
+-				seq_printf(s, "TOUT%i\t", i - KS8695_GPIO_4);
+-			else
+-				seq_printf(s, "GPIO\t");
+-		} else {
+-			seq_printf(s, "GPIO\t");
+-		}
+-
+-		seq_printf(s, "\t");
+-
+-		seq_printf(s, "%i\n", (data & IOPD(i)) ? 1 : 0);
+-	}
+-	return 0;
+-}
+-
+-DEFINE_SHOW_ATTRIBUTE(ks8695_gpio);
+-
+-static int __init ks8695_gpio_debugfs_init(void)
+-{
+-	/* /sys/kernel/debug/ks8695_gpio */
+-	debugfs_create_file("ks8695_gpio", S_IFREG | S_IRUGO, NULL, NULL,
+-				&ks8695_gpio_fops);
+-	return 0;
+-}
+-postcore_initcall(ks8695_gpio_debugfs_init);
+-
+-#endif
+-- 
+2.20.0
+
