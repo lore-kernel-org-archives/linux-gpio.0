@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A29BC433FF
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24A9C433FF
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17F9B2063F
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23C720842
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbfHMIxu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Aug 2019 04:53:50 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16221 "EHLO
+        id S1727715AbfHMIxc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Aug 2019 04:53:32 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:24059 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727937AbfHMIxe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2019 04:53:34 -0400
-X-UUID: c7f4f8f3d41f4b269a4693c7148c42f3-20190813
-X-UUID: c7f4f8f3d41f4b269a4693c7148c42f3-20190813
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        with ESMTP id S1727705AbfHMIx3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2019 04:53:29 -0400
+X-UUID: 207f83eaaac248eda72b8f4d70f4bedd-20190813
+X-UUID: 207f83eaaac248eda72b8f4d70f4bedd-20190813
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <light.hsieh@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1338583607; Tue, 13 Aug 2019 16:53:28 +0800
+        with ESMTP id 405668400; Tue, 13 Aug 2019 16:53:21 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Aug 2019 16:53:23 +0800
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 13 Aug 2019 16:53:20 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Tue, 13 Aug 2019 16:53:20 +0800
@@ -36,15 +36,14 @@ To:     <linus.walleij@linaro.org>
 CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
         Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH v1 5/5] pinctrl: mediatek: Add support for pin configuration dump via sysfs.
-Date:   Tue, 13 Aug 2019 16:53:20 +0800
-Message-ID: <1565686400-5711-6-git-send-email-light.hsieh@mediatek.com>
+Subject: [PATCH v1 2/5] pinctrl: mediatek: Supporting driving setting without mapping current to register value
+Date:   Tue, 13 Aug 2019 16:53:17 +0800
+Message-ID: <1565686400-5711-3-git-send-email-light.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
 References: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 41BE2C130F025CE26F677411444F68295D1EEB5E0CD0F50C791DA3A9105C9AF72000:8
 X-MTK:  N
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
@@ -53,170 +52,104 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Light Hsieh <light.hsieh@mediatek.com>
 
-Add support for pin configuration dump via catting
-/sys/kernel/debug/pinctrl/$platform_dependent_path/pinconf-pins.
-pinctrl framework had already support such dump. This patch implement the
-operation function pointer to fullfill this dump.
+Mediatek's smarphone project actual usage does need to know current value
+(in mA) in procedure of finding the best driving setting.
+The steps in the procedure is like as follow:
 
-Change-Id: Ib59212eb47febcd84140cbf84e1bd7286769beb0
+1. set driving setting field in setting register as 0, measure waveform,
+   perform test, and etc.
+2. set driving setting field in setting register as 1, measure waveform,
+   perform test, and etc.
+...
+n. set driving setting field in setting register as n-1, measure
+   waveform, perform test, and etc.
+Check the results of steps 1~n and adopt the setting that get best result.
+
+This procedure does need to know the mapping between current to register
+value.
+Therefore, setting driving without mapping current is more pratical for
+Mediatek's smartphone usage.
+
+Change-Id: Iacdabf0cada230fc5acad96673810c12a6c4556d
 ---
- drivers/pinctrl/mediatek/pinctrl-paris.c | 88 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.h | 30 +++++++++++
- 2 files changed, 118 insertions(+)
+ drivers/pinctrl/mediatek/pinctrl-mt6765.c        |  4 ++--
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 21 +++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  5 +++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c         |  1 +
+ 4 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 0a9440a..91d6e72 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -531,12 +531,99 @@ static int mtk_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6765.c b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
+index 32451e8..e024ebc 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt6765.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
+@@ -1077,8 +1077,8 @@
+ 	.bias_disable_get = mtk_pinconf_bias_disable_get,
+ 	.bias_set = mtk_pinconf_bias_set,
+ 	.bias_get = mtk_pinconf_bias_get,
+-	.drive_set = mtk_pinconf_drive_set_rev1,
+-	.drive_get = mtk_pinconf_drive_get_rev1,
++	.drive_set = mtk_pinconf_drive_set_direct_val,
++	.drive_get = mtk_pinconf_drive_get_direct_val,
+ 	.adv_pull_get = mtk_pinconf_adv_pull_get,
+ 	.adv_pull_set = mtk_pinconf_adv_pull_set,
+ };
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 4687f63..23a9529 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -607,6 +607,27 @@ int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
  	return 0;
  }
  
-+int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int field)
++/* Revision direct value */
++int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, u32 arg)
 +{
-+	const struct mtk_pin_desc *desc;
-+	int value, err;
++	int err;
 +
-+	if (gpio > hw->soc->npins)
-+		return -EINVAL;
++	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV, arg);
 +
-+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
-+
-+	err = mtk_hw_get_value(hw, desc, field, &value);
-+	if (err)
-+		return err;
-+
-+	return value;
++	return err;
 +}
 +
-+ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
-+	unsigned int gpio, char *buf, unsigned int bufLen)
++int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, int *val)
 +{
-+	const struct mtk_pin_desc *desc;
-+	int pinmux, pullup, pullen, r1 = -1, r0 = -1, len = 0;
++	int err;
 +
-+	if (gpio > hw->soc->npins)
-+		return -EINVAL;
++	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV, val);
 +
-+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
-+	pinmux = mtk_pctrl_get_pinmux(hw, gpio);
-+	if (pinmux >= hw->soc->nfuncs)
-+		pinmux -= hw->soc->nfuncs;
-+
-+	mtk_pinconf_bias_get_combo(hw, desc, &pullup, &pullen);
-+	if (pullen == MTK_PUPD_SET_R1R0_00) {
-+		pullen = 0;
-+		r1 = 0;
-+		r0 = 0;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_01) {
-+		pullen = 1;
-+		r1 = 0;
-+		r0 = 1;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_10) {
-+		pullen = 1;
-+		r1 = 1;
-+		r0 = 0;
-+	} else if (pullen == MTK_PUPD_SET_R1R0_11) {
-+		pullen = 1;
-+		r1 = 1;
-+		r0 = 1;
-+	} else if (pullen != MTK_DISABLE && pullen != MTK_ENABLE) {
-+		pullen = 0;
-+	}
-+	len += snprintf(buf + len, bufLen - len,
-+			"%03d: %1d%1d%1d%1d%02d%1d%1d%1d%1d",
-+			gpio,
-+			pinmux,
-+			mtk_pctrl_get_direction(hw, gpio),
-+			mtk_pctrl_get_out(hw, gpio),
-+			mtk_pctrl_get_in(hw, gpio),
-+			mtk_pctrl_get_driving(hw, gpio),
-+			mtk_pctrl_get_smt(hw, gpio),
-+			mtk_pctrl_get_ies(hw, gpio),
-+			pullen,
-+			pullup);
-+
-+	if (r1 != -1) {
-+		len += snprintf(buf + len, bufLen - len, " (%1d %1d)\n",
-+			r1, r0);
-+	} else {
-+		len += snprintf(buf + len, bufLen - len, "\n");
-+	}
-+
-+	return len;
++	return err;
 +}
 +
-+#define PIN_DBG_BUF_SZ 96
-+static void mtk_pctrl_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
-+			  unsigned int gpio)
-+{
-+	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
-+	char buf[PIN_DBG_BUF_SZ];
+ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+ 			     const struct mtk_pin_desc *desc, bool pullup,
+ 			     u32 arg)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+index 1b7da42..b3bada0 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+@@ -288,6 +288,11 @@ int mtk_pinconf_drive_set_rev1(struct mtk_pinctrl *hw,
+ int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
+ 			       const struct mtk_pin_desc *desc, int *val);
+ 
++int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, u32 arg);
++int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, int *val);
 +
-+	(void)mtk_pctrl_show_one_pin(hw, gpio, buf, PIN_DBG_BUF_SZ);
-+
-+	seq_printf(s, "%s", buf);
-+}
-+
- static const struct pinctrl_ops mtk_pctlops = {
- 	.dt_node_to_map		= mtk_pctrl_dt_node_to_map,
- 	.dt_free_map		= pinctrl_utils_free_map,
- 	.get_groups_count	= mtk_pctrl_get_groups_count,
- 	.get_group_name		= mtk_pctrl_get_group_name,
- 	.get_group_pins		= mtk_pctrl_get_group_pins,
-+	.pin_dbg_show           = mtk_pctrl_dbg_show,
+ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+ 			     const struct mtk_pin_desc *desc, bool pullup,
+ 			     u32 arg);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 28b4951..71c94b2 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -964,3 +964,4 @@ static int mtk_paris_pinctrl_resume(struct device *device)
+ 	.suspend_noirq = mtk_paris_pinctrl_suspend,
+ 	.resume_noirq = mtk_paris_pinctrl_resume,
  };
- 
- static int mtk_pmx_get_funcs_cnt(struct pinctrl_dev *pctldev)
-@@ -633,6 +720,7 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
- 	.pin_config_get = mtk_pinconf_get,
- 	.pin_config_group_get	= mtk_pconf_group_get,
- 	.pin_config_group_set	= mtk_pconf_group_set,
-+	.is_generic = true,
- };
- 
- static struct pinctrl_desc mtk_desc = {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.h b/drivers/pinctrl/mediatek/pinctrl-paris.h
-index 3d43771..d73f4b6 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.h
-@@ -60,6 +60,36 @@
- int mtk_paris_pinctrl_probe(struct platform_device *pdev,
- 			    const struct mtk_pin_soc *soc);
- 
-+int mtk_hw_get_value_wrap(struct mtk_pinctrl *hw, unsigned int gpio, int field);
 +
-+#define mtk_pctrl_get_pinmux(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_MODE)
-+
-+/* MTK HW use 0 as input, 1 for output
-+ * This interface is for get direct register value,
-+ * so don't reverse
-+ */
-+#define mtk_pctrl_get_direction(hw, gpio)		\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DIR)
-+
-+#define mtk_pctrl_get_out(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DO)
-+
-+#define mtk_pctrl_get_in(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DI)
-+
-+#define mtk_pctrl_get_smt(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_SMT)
-+
-+#define mtk_pctrl_get_ies(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_IES)
-+
-+#define mtk_pctrl_get_driving(hw, gpio)			\
-+	mtk_hw_get_value_wrap(hw, gpio, PINCTRL_PIN_REG_DRV)
-+
-+ssize_t mtk_pctrl_show_one_pin(struct mtk_pinctrl *hw,
-+	unsigned int gpio, char *buf, unsigned int bufLen);
-+
- extern const struct dev_pm_ops mtk_paris_pinctrl_pm_ops;
- 
- #endif /* __PINCTRL_PARIS_H */
 -- 
 1.8.1.1.dirty
 
