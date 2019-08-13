@@ -2,154 +2,109 @@ Return-Path: <SRS0=BviA=WJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24A9C433FF
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE6FC433FF
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 09:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23C720842
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 08:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BCFC20679
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Aug 2019 09:36:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfHMIxc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Aug 2019 04:53:32 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:24059 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727705AbfHMIx3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2019 04:53:29 -0400
-X-UUID: 207f83eaaac248eda72b8f4d70f4bedd-20190813
-X-UUID: 207f83eaaac248eda72b8f4d70f4bedd-20190813
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <light.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 405668400; Tue, 13 Aug 2019 16:53:21 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Aug 2019 16:53:20 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Aug 2019 16:53:20 +0800
-From:   Light Hsieh <light.hsieh@mediatek.com>
-To:     <linus.walleij@linaro.org>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
-        Light Hsieh <light.hsieh@mediatek.com>
-Subject: [PATCH v1 2/5] pinctrl: mediatek: Supporting driving setting without mapping current to register value
-Date:   Tue, 13 Aug 2019 16:53:17 +0800
-Message-ID: <1565686400-5711-3-git-send-email-light.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
-References: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
+        id S1726915AbfHMJgZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Aug 2019 05:36:25 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:60207 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfHMJgZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Aug 2019 05:36:25 -0400
+Received: from [192.168.178.60] ([109.104.47.130]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M5gAG-1hukSx14nq-007FT2; Tue, 13 Aug 2019 11:36:17 +0200
+Subject: Re: [PATCH v4] spi: bcm2835: Convert to use CS GPIO descriptors
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        Chris Boot <bootc@bootc.net>
+References: <20190804003852.1312-1-linus.walleij@linaro.org>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <d4df1cdd-604b-89bd-27da-ed455f170b00@i2se.com>
+Date:   Tue, 13 Aug 2019 11:36:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20190804003852.1312-1-linus.walleij@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:jCoBHsGzrqvGdA03wROJa4FubZzr0bFm8xCEVDDmuFqFwFOdJN4
+ Rx+dIIKRYx+4DqV7/PtIa2Y7q3cIAWDm5etyKmuFGveGCKq4HpUNEud8irkcdax1xINgRit
+ dMVWtJzAUlD7xKcRNg61Z/3cXi1GU8OnjH/WJUli/ews8MUuMhxHPGfdNR9oSn2YQP2kQS1
+ RRk2gV7EfnRBvaPpaQdog==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uUABwUqmInI=:Ji8rCBQBBOxDVgq4U3KlIP
+ KqbEQdg5IqgWL6Nf78WESRbqYtInqOSrPTmZVc5FCsBAHxFfu+HykknX/+lFX6mXcaqUfUj8i
+ tULnac9w/eiN23/Ew43G1t+X3Wf4r8XHCcLaCK7D/PZBoqhO7vSX0LZG3h+g+EWFgAE8kCAgs
+ ONgMqZwh1NjVJcqlXQ3cJeGlSM3Obli72B17ipyWBJrwL3oZ6Bd3yyZ35n2Ujdee3Jx/Fw3kG
+ aOkkAhg3CC4yKbJW3QlIFMYmnIazTVi37AQtfi1tKaSLkfYLAKFrZ14WOsaz6LM/Vh7VRlaCd
+ yuUIs9d1nkah8etZAAhKmKs1WDfjrkiLWf3yEKOUmcmMkepfP7QgcJrsF36xMBd7mmX7Y/hA0
+ ifETm+T9isMScJBwGuWLsYEBsNlOVDWoBS2KqbkysvybnxjUK9CRPKoO9DzqJDMXfzFsu5IIy
+ 0hjwnn6YLMP6qpj7Co/1PS9ejhpIRrARiL7AIS97pM/DAj+t7JTo+xhqr+3otqo6UA5kkg69H
+ PHr877NfagmzC+NhX97qj/2pvfvAHk1UqGMVShxkc03J2OKYX7zjHnYN6jONrYVrfbJW1FCwa
+ MP7WUk9BdFlGupO433M0OkJGOnz8k8OUpk9Zn4mNhFTTYbNFUYUbjnltLA7A2p5gdFBnwsmvZ
+ q8WAAF2EczVebhvnadGcevTbVT5XOWvEwCMzEf/nHVxmdVsBxFpy8OT04d3uXTgoB52EEoZC2
+ Q+FLM3wp1uC6CAhInFZ38oCr+iIhQm18aZjcsgOOhFBLh/0MiTlk0FKg/AA=
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Light Hsieh <light.hsieh@mediatek.com>
+Hi Linus,
 
-Mediatek's smarphone project actual usage does need to know current value
-(in mA) in procedure of finding the best driving setting.
-The steps in the procedure is like as follow:
+On 04.08.19 02:38, Linus Walleij wrote:
+> This converts the BCM2835 SPI master driver to use GPIO
+> descriptors for chip select handling.
+>
+> The BCM2835 driver was relying on the core to drive the
+> CS high/low so very small changes were needed for this
+> part. If it managed to request the CS from the device tree
+> node, all is pretty straight forward.
+>
+> However for native GPIOs this driver has a quite unorthodox
+> loopback to request some GPIOs from the SoC GPIO chip by
+> looking it up from the device tree using gpiochip_find()
+> and then offseting hard into its numberspace. This has
+> been augmented a bit by using gpiochip_request_own_desc()
+> but this code really needs to be verified. If "native CS"
+> is actually an SoC GPIO, why is it even done this way?
+> Should this GPIO not just be defined in the device tree
+> like any other CS GPIO? I'm confused.
+>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Martin Sperl <kernel@martin.sperl.org>
+> Cc: Chris Boot <bootc@bootc.net>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v3->v4:
+> - Fix the offset of the chipselect line to be 8 - CS
+>   as in the original code.
+> - Use the modified gpiochip_request_own_desc() to set up
+>   line inversion semantics if need be. Look at the OF
+>   node of the SPI device for flags.
+> ChangeLog v2->v3:
+> - Fix unused variable "err" compile-time message.
+> ChangeLog RFT->v2:
+> - Rebased on v5.1-rc1
+>
+> I would very much appreciate if someone took this for
+> a ride on top of linux-next (there are some fixes in
+> the -rcs you need) and see if all still works as expected.
 
-1. set driving setting field in setting register as 0, measure waveform,
-   perform test, and etc.
-2. set driving setting field in setting register as 1, measure waveform,
-   perform test, and etc.
-...
-n. set driving setting field in setting register as n-1, measure
-   waveform, perform test, and etc.
-Check the results of steps 1~n and adopt the setting that get best result.
+sorry for my late reply, but i was on vacation.
 
-This procedure does need to know the mapping between current to register
-value.
-Therefore, setting driving without mapping current is more pratical for
-Mediatek's smartphone usage.
-
-Change-Id: Iacdabf0cada230fc5acad96673810c12a6c4556d
----
- drivers/pinctrl/mediatek/pinctrl-mt6765.c        |  4 ++--
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 21 +++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  5 +++++
- drivers/pinctrl/mediatek/pinctrl-paris.c         |  1 +
- 4 files changed, 29 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6765.c b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
-index 32451e8..e024ebc 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt6765.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
-@@ -1077,8 +1077,8 @@
- 	.bias_disable_get = mtk_pinconf_bias_disable_get,
- 	.bias_set = mtk_pinconf_bias_set,
- 	.bias_get = mtk_pinconf_bias_get,
--	.drive_set = mtk_pinconf_drive_set_rev1,
--	.drive_get = mtk_pinconf_drive_get_rev1,
-+	.drive_set = mtk_pinconf_drive_set_direct_val,
-+	.drive_get = mtk_pinconf_drive_get_direct_val,
- 	.adv_pull_get = mtk_pinconf_adv_pull_get,
- 	.adv_pull_set = mtk_pinconf_adv_pull_set,
- };
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4687f63..23a9529 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -607,6 +607,27 @@ int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
- 	return 0;
- }
- 
-+/* Revision direct value */
-+int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, u32 arg)
-+{
-+	int err;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV, arg);
-+
-+	return err;
-+}
-+
-+int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, int *val)
-+{
-+	int err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV, val);
-+
-+	return err;
-+}
-+
- int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
- 			     const struct mtk_pin_desc *desc, bool pullup,
- 			     u32 arg)
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 1b7da42..b3bada0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -288,6 +288,11 @@ int mtk_pinconf_drive_set_rev1(struct mtk_pinctrl *hw,
- int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
- 			       const struct mtk_pin_desc *desc, int *val);
- 
-+int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, u32 arg);
-+int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, int *val);
-+
- int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
- 			     const struct mtk_pin_desc *desc, bool pullup,
- 			     u32 arg);
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 28b4951..71c94b2 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -964,3 +964,4 @@ static int mtk_paris_pinctrl_resume(struct device *device)
- 	.suspend_noirq = mtk_paris_pinctrl_suspend,
- 	.resume_noirq = mtk_paris_pinctrl_resume,
- };
-+
--- 
-1.8.1.1.dirty
+Thanks for your efforts on this, but currently i don't have a setup to
+test this :-(
 
