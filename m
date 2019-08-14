@@ -2,196 +2,195 @@ Return-Path: <SRS0=VGDc=WK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2577C433FF
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 10:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A00C32753
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 10:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA16206C2
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 10:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDA0A214C6
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 10:24:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="m2rlIIW/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725828AbfHNKXJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Aug 2019 06:23:09 -0400
-Received: from mga11.intel.com ([192.55.52.93]:3680 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbfHNKXJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:23:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 03:23:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,384,1559545200"; 
-   d="scan'208";a="376683811"
-Received: from rfried-mobl1.iil.intel.com ([143.185.152.137])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Aug 2019 03:23:06 -0700
-Message-ID: <8dbeb0c64fbb90d05dfa7302c48cbf1ca45faa43.camel@linux.intel.com>
-Subject: Re: [PATCH v2] gpiolib: Take MUX usage into account
-From:   Ramon Fried <ramon.fried@linux.intel.com>
-To:     Stefan Wahren <wahrenst@gmx.net>, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 14 Aug 2019 13:22:12 +0300
-In-Reply-To: <f568ca31-c9f0-0dc2-be12-22de25891794@gmx.net>
-References: <20190813014210.15519-1-ramon.fried@linux.intel.com>
-         <1650c967-5176-70db-ff9a-b2af432ba1e7@i2se.com>
-         <88cbb5b2-fd95-afb3-3645-e5b799844941@linux.intel.com>
-         <f568ca31-c9f0-0dc2-be12-22de25891794@gmx.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        id S1725955AbfHNKYu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Aug 2019 06:24:50 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39528 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfHNKYu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2019 06:24:50 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t16so20453428wra.6
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Aug 2019 03:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=vXJxY5UH8tLvfb43FfCBW+Z+Cpl/0UGF3BDOSEIgVIk=;
+        b=m2rlIIW/wpMCOrIc8r8CLMogHIaviyQKhHyznGVU8jjsH18NCLrzg+KstaKPt2gQXc
+         iV8V/NpIh9Wy42jbdWXJtrY6rQKnQOPjPEbOAh1zA/GTumod0Cq/oqs9664KqSYKC11j
+         1ZI2qRozZwLEuPdhWV0rVUhCgTz+mkE86BuQty1Tjn2ggJwaBYwXOuLDdPlz1CXUpJhm
+         0Sm4HMAdwfacSx1JuOi0aR0jj9RaVUz0m7q+xND6UAG112dvBLdDbMw0zB6Q2rPROutY
+         urFXKYj5NYy63QvDCyWMFEIIwUMU6pKp5J6XJvobuiCNkWr9cZZaTbxyiXkoXYLqe0aI
+         bRAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=vXJxY5UH8tLvfb43FfCBW+Z+Cpl/0UGF3BDOSEIgVIk=;
+        b=SSn55aKIIbaTk2HEfAboupUXNLuEvkMnWKGEu5f41TOWLUqjnpMz52pGeXkenC94Nu
+         r8+lYJzGU2wKXRD8zhw388It9uF5/9XE82ddeppBzkLfr8TNFbuqei6PZEmS2xwQre5x
+         sNjMXGhU30emajXuezpJHR1SWcYHflw2wDOmyIdY3sAUUUHp8mVDyST1+guUPAQrkMGO
+         5yMFxXxCMh7x1Yd7Oo4YxPH+Sf80fpx8BS/Sd7j2WH9/v+VZEfpe4eRylF12cKnhaDjX
+         Xa13dRyriW42vwPv9DJG3pikF+vNcfrh3xqja+STToK/rCAgYoLeF7ADSYFJaEM0ZI9s
+         JAng==
+X-Gm-Message-State: APjAAAXBSqIyAB082/K4ftjXfftxtKlxU/r6VZxjgWpKFLSgJxqDV35R
+        4pEEUQr3Gwwc4IZKEslhqto+wHLQCvrIug==
+X-Google-Smtp-Source: APXvYqwr5rHh4aWtWal5Km9kc3sTweRAOeGwpVEoSn0idOy3YsG64Fbta9C2+D81PRlm7v8uRXm89w==
+X-Received: by 2002:a5d:6408:: with SMTP id z8mr50950312wru.246.1565778286957;
+        Wed, 14 Aug 2019 03:24:46 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e9sm2375167wrt.69.2019.08.14.03.24.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 03:24:46 -0700 (PDT)
+Message-ID: <5d53e16e.1c69fb81.74cda.c248@mx.google.com>
+Date:   Wed, 14 Aug 2019 03:24:46 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v5.3-rc1-25-g470219c619e9
+X-Kernelci-Tree: linusw
+X-Kernelci-Report-Type: build
+X-Kernelci-Branch: devel
+Subject: linusw/devel build: 6 builds: 0 failed, 6 passed,
+ 13 warnings (v5.3-rc1-25-g470219c619e9)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 2019-08-13 at 18:32 +0200, Stefan Wahren wrote:
-> Am 13.08.19 um 08:10 schrieb Fried, Ramon:
-> > On 8/13/2019 08:38, Stefan Wahren wrote:
-> > > Hi Ramon,
-> > > 
-> > > On 13.08.19 03:42, Ramon Fried wrote:
-> > > > From: Stefan Wahren <stefan.wahren@i2se.com>
-> > > > 
-> > > > The user space like gpioinfo only see the GPIO usage but not
-> > > > the
-> > > > MUX usage (e.g. I2C or SPI usage) of a pin. As a user we want
-> > > > to
-> > > > know which
-> > > > pin is free/safe to use. So take the MUX usage of strict pinmux
-> > > > controllers
-> > > > into account to get a more realistic view for ioctl
-> > > > GPIO_GET_LINEINFO_IOCTL.
-> > > > 
-> > > > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> > > > Tested-by: Ramon Fried <rfried.dev@gmail.com>
-> > > > Signed-off-by: Ramon Fried <rfried.dev@gmail.com>
-> > > > ---
-> > > > v2: Address review from linus:
-> > > > * ** Please notive logic was reversed **
-> > > > * renamed pinctrl_gpio_is_in_use() to
-> > > > pinctrl_gpio_can_use_line()
-> > > > * renamed pinmux_is_in_use() to pinmux_can_be_used_for_gpio()
-> > > > * changed dev_err to dev_dbg (Linus suggested removing it
-> > > > altogether, I
-> > > >    find it better to keep it for debug).
-> > > thanks for taking care of this.
-> > > >   drivers/gpio/gpiolib.c           |  3 ++-
-> > > >   drivers/pinctrl/core.c           | 28
-> > > > ++++++++++++++++++++++++++++
-> > > >   drivers/pinctrl/pinmux.c         | 27
-> > > > +++++++++++++++++++++++++++
-> > > >   drivers/pinctrl/pinmux.h         |  8 ++++++++
-> > > >   include/linux/pinctrl/consumer.h |  6 ++++++
-> > > >   5 files changed, 71 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > > index f497003f119c..52937bf8e514 100644
-> > > > --- a/drivers/gpio/gpiolib.c
-> > > > +++ b/drivers/gpio/gpiolib.c
-> > > > @@ -1084,7 +1084,8 @@ static long gpio_ioctl(struct file *filp,
-> > > > unsigned int cmd, unsigned long arg)
-> > > >               test_bit(FLAG_IS_HOGGED, &desc->flags) ||
-> > > >               test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
-> > > >               test_bit(FLAG_EXPORT, &desc->flags) ||
-> > > > -            test_bit(FLAG_SYSFS, &desc->flags))
-> > > > +            test_bit(FLAG_SYSFS, &desc->flags) ||
-> > > > +            !pinctrl_gpio_can_use_line(chip->base +
-> > > > lineinfo.line_offset))
-> > > >               lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
-> > > >           if (test_bit(FLAG_IS_OUT, &desc->flags))
-> > > >               lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
-> > > > diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> > > > index b70df27874d1..2bbd8ee93507 100644
-> > > > --- a/drivers/pinctrl/core.c
-> > > > +++ b/drivers/pinctrl/core.c
-> > > > @@ -736,6 +736,34 @@ int pinctrl_get_group_selector(struct
-> > > > pinctrl_dev *pctldev,
-> > > >       return -EINVAL;
-> > > >   }
-> > > >   +bool pinctrl_gpio_can_use_line(unsigned gpio)
-> > > > +{
-> > > > +    struct pinctrl_dev *pctldev;
-> > > > +    struct pinctrl_gpio_range *range;
-> > > > +    bool result;
-> > > > +    int pin;
-> > > > +
-> > > > +    /*
-> > > > +     * Try to obtain GPIO range, if it fails
-> > > > +     * we're probably dealing with GPIO driver
-> > > > +     * without a backing pin controller - bail out.
-> > > > +     */
-> > > > +    if (pinctrl_get_device_gpio_range(gpio, &pctldev, &range))
-> > > > +        return true;
-> > > > +
-> > > > +    mutex_lock(&pctldev->mutex);
-> > > > +
-> > > > +    /* Convert to the pin controllers number space */
-> > > > +    pin = gpio_to_pin(range, gpio);
-> > > > +
-> > > > +    result = pinmux_can_be_used_for_gpio(pctldev, pin);
-> > > > +
-> > > > +    mutex_unlock(&pctldev->mutex);
-> > > > +
-> > > > +    return result;
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(pinctrl_gpio_can_use_line);
-> > > > +
-> > > >   /**
-> > > >    * pinctrl_gpio_request() - request a single pin to be used
-> > > > as GPIO
-> > > >    * @gpio: the GPIO pin number from the GPIO subsystem number
-> > > > space
-> > > > diff --git a/drivers/pinctrl/pinmux.c
-> > > > b/drivers/pinctrl/pinmux.c
-> > > > index 020e54f843f9..7e42a5738d82 100644
-> > > > --- a/drivers/pinctrl/pinmux.c
-> > > > +++ b/drivers/pinctrl/pinmux.c
-> > > > @@ -70,6 +70,33 @@ int pinmux_validate_map(const struct
-> > > > pinctrl_map
-> > > > *map, int i)
-> > > >       return 0;
-> > > >   }
-> > > >   +/**
-> > > > + * pinmux_can_be_used_for_gpio() - check if a specific pin
-> > > > + *    is either muxed to a different function or used as gpio.
-> > > > + *
-> > > > + * @pin: the pin number in the global pin space
-> > > > + *
-> > > > + * Controllers not defined as strict will always return true,
-> > > > + * menaning that the gpio can be used.
-> > > > + */
-> > > > +bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev,
-> > > > unsigned pin)
-> > > > +{
-> > > > +    struct pin_desc *desc = pin_desc_get(pctldev, pin);
-> > > > +    const struct pinmux_ops *ops = pctldev->desc->pmxops;
-> > > > +
-> > > > +    if (!desc) {
-> > > > +        dev_dbg(pctldev->dev,
-> > > > +            "pin %u is not registered so it cannot be
-> > > > requested\n",
-> > > > +            pin);
-> > > > +        return true;
-> > > This return value looks strange to me.
-> > 
-> > Basically, it's just the reversed return value you returned in the
-> > original patch,
-> > It means in this context that if the pin is not owned by a
-> > pin-controller it can be used for GPIO.
-> As long as the provided pin is valid. Btw shouldn't we change the
-> logic
-> in the debug message?
-Good catch. yes we should.
-I'll send V3 shortly.
-Thanks,
-Ramon.
-> > Thanks,
-> > Ramon.
-> > 
-> > > Stefan
-> > > 
+linusw/devel build: 6 builds: 0 failed, 6 passed, 13 warnings (v5.3-rc1-25-=
+g470219c619e9)
 
+Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
+5.3-rc1-25-g470219c619e9/
+
+Tree: linusw
+Branch: devel
+Git Describe: v5.3-rc1-25-g470219c619e9
+Git Commit: 470219c619e9f76e41497b9a90f2ec61dbedf3f2
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 6 unique architectures
+
+Warnings Detected:
+
+arc:
+    nsim_hs_defconfig (gcc-8): 2 warnings
+
+arm64:
+
+arm:
+    multi_v7_defconfig (gcc-8): 6 warnings
+
+mips:
+    32r2el_defconfig (gcc-8): 3 warnings
+
+riscv:
+    defconfig (gcc-8): 2 warnings
+
+x86_64:
+
+
+Warnings summary:
+
+    7    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning =
+(reg_format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 by=
+tes) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+size-cells value
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warn=
+ing (avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #=
+address-cells value
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_=
+reg): Failed prerequisite 'reg_format'
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_devi=
+ce_bus_num): Failed prerequisite 'reg_format'
+    1    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_=
+reg): Failed prerequisite 'reg_format'
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section mi=
+smatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 6 warnings, 0 sec=
+tion mismatches
+
+Warnings:
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:129.4-18: Warning (reg_=
+format): /mdio-bus-mux/mdio@200:reg: property has invalid length (4 bytes) =
+(#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (pci_device_bu=
+s_num): Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (i2c_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dtb: Warning (spi_bus_reg):=
+ Failed prerequisite 'reg_format'
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #addre=
+ss-cells value
+    arch/arm/boot/dts/bcm47094-linksys-panamera.dts:128.22-132.5: Warning (=
+avoid_default_addr_size): /mdio-bus-mux/mdio@200: Relying on default #size-=
+cells value
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---
+For more info write to <info@kernelci.org>
