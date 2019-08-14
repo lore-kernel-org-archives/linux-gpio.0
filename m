@@ -2,130 +2,98 @@ Return-Path: <SRS0=VGDc=WK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A815C0650F
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 08:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C96D7C41514
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 08:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CCDF205C9
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 08:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31812084F
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Aug 2019 08:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B5hCQPPM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lr/rJWiC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfHNIJd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Aug 2019 04:09:33 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39363 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725265AbfHNIJd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2019 04:09:33 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x3so24918396lfn.6
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Aug 2019 01:09:32 -0700 (PDT)
+        id S1727654AbfHNIMu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Aug 2019 04:12:50 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34243 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfHNIMu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Aug 2019 04:12:50 -0400
+Received: by mail-lf1-f67.google.com with SMTP id b29so71444614lfq.1
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Aug 2019 01:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a3pu4WqgZpVtxAPpr6WRRG6CgvXxsRt/IJW7QWZZBkQ=;
-        b=B5hCQPPM/FOpJJlOBHnIL4YX7ZnsrCAX7eRZbnz2PJMhtcI0fVe6V4tL+rTL5JoHgZ
-         CHqDhH41nc5wKh+bC3n8fdrhtv10H700YfIlpEyJHujfqhUrKrq1Do8k8+av41R3vJeL
-         qs0QfYp8SOYllcOBS3PKhtLI4alQkT7Kt94EHplLYwzMh9sG1DGikunIPOdaoMVMjVwP
-         rN4aKmc05L+cbA9//qjMoTgsIYtOUYVIVrpo/q+SMLJzJZahwtGzHuBN85pWOa2Qdbu4
-         T8V7sVe3UoVNzPP82tcfVm/NqmzSFZEFfwoH/i5jHXfTKL1QicnXiUITV3szo9S/2uof
-         WWCg==
+        bh=8TIlZCkZJxlDHR28R+sS00MYCYudDvIqTXfAD+oLJbI=;
+        b=lr/rJWiCX2YbF/m0sA6in0LUPFKk7OLlPwqjMHp+4OuMai6Qm5bIo8KlHUfTj1Oj2p
+         IZsZuR71qepX2fmJ89BeC77N8//zuYP35xcuQY1nYpbt5xJG324dcqPR5bx6W7qixBEc
+         oSGT66V8vOOfqotF4pMAm/QyfrsPgChHTbRdFtzTicG9Qo4JsBpSnNUdxqwsWAuKU2xN
+         OxyGF+8uhS/RlYVjaJ0kO7itdnte1IkPN8q9WrvoAVKWU+hHVKctSHxhDg5fRyBedgmE
+         0TJnioZR+KInVg8xWUXPnMF/bhUgZfCvm4XcB682p85KaTnXAuqTdQuQWCNR4W0A8sH8
+         6eew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a3pu4WqgZpVtxAPpr6WRRG6CgvXxsRt/IJW7QWZZBkQ=;
-        b=og7B6bn0+h6sXoqHVSASwxPEU6SFAZcZCE+D34qmaiLSUw6vaVcBA9a3N8LPunHWmu
-         MUyB97jyln2g1/i/QqvzD5RY/AT9exzvp2NX7ceV4H37SaAIem0ltmDPpae/phREJSl/
-         fsDKPLxYFgUkn1vCN9Yk+dRnYMm+1QLgEdFWvSNuaQzKCkND0XF2tO96zCrui1u7oF41
-         8/cOS12GTE7oplTylI/GLqdQM3UZR0m0G6kBCcyTtou/8HqrSPMI8lvX8kuMCoKQtgED
-         +aoIUyTUr6WdlWTtWLuvDTQPWvu/AfUVW+9NrVJVnpMGce2OTgXduZlf+qmn+WlbUX/m
-         SCtA==
-X-Gm-Message-State: APjAAAUXFl5KJXR6+lFntweP2Sk1zunSfPjOZafLNX5tMOMHhfDxmKxq
-        ek/RdhyVOzgKgKANNxX1C1y+b+PxDiFmoM9UHUhXVA==
-X-Google-Smtp-Source: APXvYqxBCrpxYicv9hI8gzWTP6SjkdBV0kiAs9w9dXlSllL/56vgciBYrqOy9aeSFx8Aqqn7+5gXG80m6la1l53JTPU=
-X-Received: by 2002:a19:e006:: with SMTP id x6mr24363756lfg.165.1565770171843;
- Wed, 14 Aug 2019 01:09:31 -0700 (PDT)
+        bh=8TIlZCkZJxlDHR28R+sS00MYCYudDvIqTXfAD+oLJbI=;
+        b=J1VTu1CkulChJWPV2KHQz7BKMSZQ8TmDNF9V18iUQL2coD4CyRac8VgX7goZOfwns1
+         nLmm4c3mZTjs90gfQKAOWigAmalsBZvMNe01hvYLpv4+upxvgz+wBXH9K5PROzNRCwdy
+         Bvy3mXlRHuugp64ENojq09tTpqBiXatwoXor4FteOWhsjgLGQWm8YefoXD88TsRTSDxY
+         BJYe5zyW0bDh4ACcywrb16Uos5ELs+bvjZ128+s1+Gn3r73DduC3lv8HH9ESXN/0/5cz
+         U0AG7U/zN72nJzvVMyq/IRXqbhG9wOpjYqndlL2HhpSikbYLBSE4F4Fl6QNsc83ifDTt
+         5Dsw==
+X-Gm-Message-State: APjAAAU0OXI50CWDcBOdDHU8LbdX2g2KauVRqqoEzVR+pqrahuSlhYWs
+        5IRKsgIPUVtmaQ5smxSUAznVfXtpvuBpA7BRaGiTYw==
+X-Google-Smtp-Source: APXvYqwHvlDH0vndo0pr4NUQfvDBqBjDw418y79oXm0vBTRfqtR7xugOl/tDvhDPmUMcLM3wHxVOo0NOAEPfVdKl1bw=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr25628516lfp.61.1565770368060;
+ Wed, 14 Aug 2019 01:12:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564603297-1391-1-git-send-email-hongweiz@ami.com> <1564603297-1391-3-git-send-email-hongweiz@ami.com>
-In-Reply-To: <1564603297-1391-3-git-send-email-hongweiz@ami.com>
+References: <20190805101607.29811-1-miquel.raynal@bootlin.com> <CACRpkdar5jE116CcywYxLR9JKWunRusJjNw7f3C0SFK4-4+dNQ@mail.gmail.com>
+In-Reply-To: <CACRpkdar5jE116CcywYxLR9JKWunRusJjNw7f3C0SFK4-4+dNQ@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 14 Aug 2019 10:09:20 +0200
-Message-ID: <CACRpkdaojLe3UTc0=66b5J2yrSOo7t8o5bAY=WRscL+met3iWQ@mail.gmail.com>
-Subject: Re: [v7 2/2] gpio: aspeed: Add SGPIO driver
-To:     Hongwei Zhang <hongweiz@ami.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
+Date:   Wed, 14 Aug 2019 10:12:36 +0200
+Message-ID: <CACRpkdbEw5eCKb=nTCK4wuMsPEadEQdGx62cGRhk7F78p5X2CA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] CP115 pinctrl support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Yan Markman <ymarkman@marvell.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Hongwei,
-
-thanks for your patch!
-
-I have now merged the bindings so you only need to respin
-this patch.
-
-On Wed, Jul 31, 2019 at 10:02 PM Hongwei Zhang <hongweiz@ami.com> wrote:
-
-> Add SGPIO driver support for Aspeed AST2500 SoC.
+On Wed, Aug 7, 2019 at 2:47 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Aug 5, 2019 at 12:16 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 >
-> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> Reviewed-by:   Andrew Jeffery <andrew@aj.id.au>
+> > This is the second batch of changes (out of three) to support the brand
+> > new Marvell CN9130 SoCs which are made of one AP807 and one CP115.
+> >
+> > We add a new compatible (and the relevant support in the pinctrl
+> > driver) before the addition in batch 3/3 of CN9130 SoCs DT using it.
+>
+> Waiting for review from the Mvebu maintainers.
+>
+> If it takes too long just nudge me, it looks good to me.
 
-I guess I need to go with this, there are some minor things
-I still want to be fixed:
-
-> +static void __aspeed_sgpio_set(struct gpio_chip *gc, unsigned int offset, int val)
-
-I don't like __underscore_functions because their semantic
-is ambiguous.
-
-Rename this something like aspeed_sgpio_commit() or
-whatever best fits the actual use.
-
-> +static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
-> +                                  struct platform_device *pdev)
-> +{
-(...)
-> +       rc = gpiochip_irqchip_add(&gpio->chip, &aspeed_sgpio_irqchip,
-> +                                 0, handle_bad_irq, IRQ_TYPE_NONE);
-(...)
-> +       gpiochip_set_chained_irqchip(&gpio->chip, &aspeed_sgpio_irqchip,
-> +                                    gpio->irq, aspeed_sgpio_irq_handler);
-
-We do not set up chained irqchips like this anymore, sorry.
-
-I am currently rewriting all existing chained drivers to pass
-an initialized irqchip when registering the whole gpio chip.
-See drivers/gpio/TODO.
-
-Here are examples:
-https://lore.kernel.org/linux-gpio/20190811080539.15647-1-linus.walleij@linaro.org/
-https://lore.kernel.org/linux-gpio/20190812132554.18313-1-linus.walleij@linaro.org/
-
-> +       /* set all SGPIO pins as input (1). */
-> +       memset(gpio->dir_in, 0xff, sizeof(gpio->dir_in));
-
-Do the irqchip set-up here, before adding the gpio_chip.
-
-> +       rc = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
-> +       if (rc < 0)
-> +               return rc;
-> +
-> +       return aspeed_sgpio_setup_irqs(gpio, pdev);
+So if the other MVEBU maintainers don't really look much at MVEBU
+patches anymore while Miquel is working a lot on the platform,
+what about listing Miquel as maintainer under the SoC entry, hm?
 
 Yours,
 Linus Walleij
