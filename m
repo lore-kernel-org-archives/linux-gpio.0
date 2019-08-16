@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC4EC3A5A1
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B4EC3A59F
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A1F206C1
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0032173B
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DnB/En3o"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NchmTv+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfHPTma (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Aug 2019 15:42:30 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14970 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbfHPTm2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:28 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d57072f0000>; Fri, 16 Aug 2019 12:42:39 -0700
+        id S1727807AbfHPTmv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Aug 2019 15:42:51 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13150 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbfHPTmr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:47 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5707380000>; Fri, 16 Aug 2019 12:42:48 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 16 Aug 2019 12:42:27 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 16 Aug 2019 12:42:46 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:27 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
- 2019 19:42:27 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 16 Aug 2019 19:42:27 +0000
+        by hqpgpgate102.nvidia.com on Fri, 16 Aug 2019 12:42:46 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
+ 2019 19:42:45 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 16 Aug 2019 19:42:45 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.166.126]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d570721000b>; Fri, 16 Aug 2019 12:42:27 -0700
+        id <B5d5707330001>; Fri, 16 Aug 2019 12:42:45 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v9 07/22] clk: Add API to get index of the clock parent
-Date:   Fri, 16 Aug 2019 12:41:52 -0700
-Message-ID: <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 13/22] clk: tegra210: Use fence_udelay during PLLU init
+Date:   Fri, 16 Aug 2019 12:41:58 -0700
+Message-ID: <1565984527-5272-14-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
@@ -60,73 +60,68 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565984559; bh=+6ERoAACorYaysuYDP8ceYAHJiBt40PUivlQZua8vRY=;
+        t=1565984568; bh=PRKOkpHyMl0u9ptcwmTgBDTAVVQUlEvBmGS6LChWh10=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=DnB/En3oXEcmbvugodC0hNEERW5GDrDc61DLqJNPXdjoXD7bTPKtSPlGiZzqQHW1q
-         ipxEWonEkrmGjK2Ynbl1rm2Ha/2dqRMKE47knhedZS5sX5Bf2YWsQprdOsp0/gxUTW
-         df8/C76py62fO/59Mm1hcgpK6uHAtmDx7cVoWr4B7u/6KajBwi1QkQohvXCjZ7e3mp
-         e9a+22TvwgGU066OIW1uDqTe1IT6dkjRmyJQfp9+31BJ7VdE/Q7Ec4qMR5zMvmeCs6
-         g4a6vAZ709MUnlhQwOdtwI1wwPR47u74yPakl1+Uik9FGVPsM3nEB7GZ6sd9+2aMpc
-         PuwbQPgO9bjZw==
+        b=NchmTv+jae/K4+4X7pQfrid9rAthJzgrqd5tqI6V7onAmGN2FV/qiRhNxdRK37wxY
+         CA/gQWnqyNTGIedTgw8cLGdNKdQnkxy0bk0iBuYLzixFW/tBKxD658RND31D7zRiS8
+         vo4YR4E/64OewUGtoWdstBuI3S7eeYjXz6wor7uqdP44pxHHU5ksVhNTaMxmcUUyq2
+         D3yJVEd8Y5/jM8VoB5p0qRjnzn1ebGoq6FeVJraWxlW70h7/3qOL8QoweI7Sac3thj
+         DkRgoNgAhWJ2QvYEC01gClpFHOVA1iPkQrS8C0xD0QLjTmEbij/DUVfV+DBCmB8Hwh
+         hb09CmPx2t1EA==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds an API clk_hw_get_parent_index to get index of the
-clock parent to use during the clock restore operations on system
-resume.
+This patch uses fence_udelay rather than udelay during PLLU
+initialization to ensure writes to clock registers happens before
+waiting for specified delay.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/clk.c            | 17 +++++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 18 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cbcc333aec84..12ad0e9b8591 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1645,6 +1645,23 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 	return i;
- }
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index df172d5772d7..4c9538bd28ad 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2841,7 +2841,7 @@ static int tegra210_enable_pllu(void)
+ 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
+ 	reg &= ~BIT(pllu.params->iddq_bit_idx);
+ 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
+-	udelay(5);
++	fence_udelay(5, clk_base);
  
-+/**
-+ * clk_hw_get_parent_index - return the index of parent clock
-+ * @hw: clk_hw associated with the clk being consumed
-+ * @parent_hw: clk_hw associated with the parent of clk
-+ *
-+ * Fetches and returns the index of parent clock.
-+ * If hw or parent_hw is NULL, returns -EINVAL.
-+ */
-+int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw)
-+{
-+	if (!hw || !parent_hw)
-+		return -EINVAL;
-+
-+	return clk_fetch_parent_index(hw->core, parent_hw->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
-+
- /*
-  * Update the orphan status of @core and all its children.
-  */
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index dce5521a9bf6..cce830780900 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
- 					  unsigned int index);
-+int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw);
- int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
- unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ 	reg = readl_relaxed(clk_base + PLLU_BASE);
+ 	reg &= ~GENMASK(20, 0);
+@@ -2849,7 +2849,7 @@ static int tegra210_enable_pllu(void)
+ 	reg |= fentry->n << 8;
+ 	reg |= fentry->p << 16;
+ 	writel(reg, clk_base + PLLU_BASE);
+-	udelay(1);
++	fence_udelay(1, clk_base);
+ 	reg |= PLL_ENABLE;
+ 	writel(reg, clk_base + PLLU_BASE);
+ 
+@@ -2895,12 +2895,12 @@ static int tegra210_init_pllu(void)
+ 		reg = readl_relaxed(clk_base + XUSB_PLL_CFG0);
+ 		reg &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY_MASK;
+ 		writel_relaxed(reg, clk_base + XUSB_PLL_CFG0);
+-		udelay(1);
++		fence_udelay(1, clk_base);
+ 
+ 		reg = readl_relaxed(clk_base + PLLU_HW_PWRDN_CFG0);
+ 		reg |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+ 		writel_relaxed(reg, clk_base + PLLU_HW_PWRDN_CFG0);
+-		udelay(1);
++		fence_udelay(1, clk_base);
+ 
+ 		reg = readl_relaxed(clk_base + PLLU_BASE);
+ 		reg &= ~PLLU_BASE_CLKENABLE_USB;
 -- 
 2.7.4
 
