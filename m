@@ -2,90 +2,108 @@ Return-Path: <SRS0=6E3r=WM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957D4C3A59C
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 17:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D214C3A59D
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1312077C
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 17:05:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A136206C1
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="hbTpfDeL"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WixfZAc9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfHPRFl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Aug 2019 13:05:41 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:48174 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726447AbfHPRFk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:05:40 -0400
-X-Greylist: delayed 923 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 13:05:40 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TMl0t22j8qYVABIvPAxoYrZBeDSEu0ad3kM77/ptRoY=; b=hbTpfDeLYXAn+UuBGXwhvLgYW1
-        qE1JEkDq17OwOZsSvyKJAhAgykxc7KsKQyjq5YBrNJmbPfFZBodVEeJicEvKKDv+yL3e4rtI5E9Vg
-        wBijc8pOhYzsAWdCHz2KN/PLm0H8cAB8oSNnxPmRQsPOOkvYg7VBe74IBRMBs2LK4JCA=;
-Received: from pd9e2f4fd.dip0.t-ipconnect.de ([217.226.244.253] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1hyfQc-0002DT-Pg; Fri, 16 Aug 2019 18:50:15 +0200
-Received: from andi by aktux with local (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1hyfQc-0008QU-CO; Fri, 16 Aug 2019 18:50:14 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org, linux-spi@vger.kernel.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] gpio: of: fix Freescale SPI CS quirk handling
-Date:   Fri, 16 Aug 2019 18:50:00 +0200
-Message-Id: <20190816165000.32334-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.20.1
+        id S1727593AbfHPTmS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Aug 2019 15:42:18 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13152 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727557AbfHPTmS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:18 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d57071c0003>; Fri, 16 Aug 2019 12:42:20 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 16 Aug 2019 12:42:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:17 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
+ 2019 19:42:17 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
+ 2019 19:42:17 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 16 Aug 2019 19:42:17 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.166.126]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d5707170002>; Fri, 16 Aug 2019 12:42:17 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
+        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v9 02/22] pinctrl: tegra: Flush pinctrl writes during resume
+Date:   Fri, 16 Aug 2019 12:41:47 -0700
+Message-ID: <1565984527-5272-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565984541; bh=VHDrtC8ZGPiMwrhvcDYGr1zYEWJZ5BoN1NN2rqR7JiI=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=WixfZAc9ExfMuDT1FqsRjpvMy9ssde3X9yxS3uG4+KykQtCXbKSxO59f1LHwtsUU9
+         wa4qmlc4f9e2lXfQOkJ01TMwwe0kcBlycHstV374nDSqiLoy90BMzhsmGnDLMm9513
+         Wf/Kfcu5bhAh4kdrKeUgi/hbddwYBFceZ5Nc+hf9Usa3QYOSU2vOTuSdScrk62gSvl
+         f1ZntADlZGmnNoTU/k/BCrRr9/+wNYWqX0gwNzTXiHv4uvgbljF/uRGU/dswHCOSTa
+         qgwfHCSj0+BKz20KIKg9Njpw1azzVMrQJ+vu8VtVtzLRhUEL+yaTI0QR4Y2NW8WqoQ
+         3Cn0B4AzVjxRw==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On the gta04 we see:
-spi_gpio: probe of spi_lcd failed with error -2
+This patch adds pinctrl register read to flush all the prior pinctrl
+writes and then adds barrier for pinctrl register read to complete
+during resume to make sure all pinctrl changes are effective.
 
-The quirk introduced in
-commit e3023bf80639 ("gpio: of: Handle the Freescale SPI CS")
-can also be triggered by a temporary -EPROBE_DEFER and
-so "convert" it to a hard -ENOENT.
-
-Disable that conversion by checking for -EPROBE_DEFER.
-
-Fixes: e3023bf80639 ("gpio: of: Handle the Freescale SPI CS")
-Suggested-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/gpio/gpiolib-of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 567fb98c0892..9762dd6d99fa 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -363,7 +363,7 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 	/* Special handling for SPI GPIOs if used */
- 	if (IS_ERR(desc))
- 		desc = of_find_spi_gpio(dev, con_id, &of_flags);
--	if (IS_ERR(desc)) {
-+	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER) {
- 		/* This quirk looks up flags and all */
- 		desc = of_find_spi_cs_gpio(dev, con_id, idx, flags);
- 		if (!IS_ERR(desc))
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 5e3c00137d71..e9a7cbb9aa33 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -677,6 +677,10 @@ static int tegra_pinctrl_resume(struct device *dev)
+ 			writel_relaxed(*backup_regs++, regs++);
+ 	}
+ 
++	/* flush all the prior writes */
++	readl_relaxed(pmx->regs[0]);
++	/* wait for pinctrl register read to complete */
++	rmb();
+ 	return 0;
+ }
+ 
 -- 
-2.20.1
+2.7.4
 
