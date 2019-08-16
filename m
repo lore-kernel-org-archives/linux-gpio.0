@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002C7C3A5A1
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BF0C3A59D
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB49C21721
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A1C206C1
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hpjFWmoR"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="r8DB3jlB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfHPTme (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Aug 2019 15:42:34 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13117 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727671AbfHPTma (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:30 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id S1727678AbfHPTm0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Aug 2019 15:42:26 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14953 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727671AbfHPTm0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
         id <B5d5707270000>; Fri, 16 Aug 2019 12:42:31 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 16 Aug 2019 12:42:29 -0700
+  Fri, 16 Aug 2019 12:42:20 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:29 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
- 2019 19:42:28 +0000
+        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:20 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
+ 2019 19:42:19 +0000
 Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 16 Aug 2019 19:42:28 +0000
+ Transport; Fri, 16 Aug 2019 19:42:19 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.166.126]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d5707230000>; Fri, 16 Aug 2019 12:42:28 -0700
+        id <B5d5707190000>; Fri, 16 Aug 2019 12:42:19 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v9 08/22] clk: tegra: periph: Add restore_context support
-Date:   Fri, 16 Aug 2019 12:41:53 -0700
-Message-ID: <1565984527-5272-9-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 03/22] clk: tegra: divider: Save and restore divider rate
+Date:   Fri, 16 Aug 2019 12:41:48 -0700
+Message-ID: <1565984527-5272-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
@@ -60,125 +60,61 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565984551; bh=Iw7xdi6+oXEPCLHWZuUnzXeVEWHm9P1Mfz/SFOgojZQ=;
+        t=1565984551; bh=MtqUu0N+Lpcr8Jj2xIV5/hjuwWqS7+q8M0ew1JLKB4s=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=hpjFWmoRpyfhFFpo24s/ZNMW/cE69NP7i2554krL9bjJFm4p+5s2DAcpqqCrHPByT
-         hIEBxZeAFKQ249hBU8q4hIeAdVn9aOt0CxJmVb6mDWaeIdmCezhQS45MQHp+Xmb3PY
-         fi9OhkmR1IHjFY4Y3eTofMcDkGur9dKDm941KBhmvyag/ZECE85ycQoSEf8dVh2WMT
-         lf63fL94ol3YtJwfmH3+KSQLEzEcT5yX36bMvZXFEXffBHG7dww/7ptbbPB/zXd28f
-         ZByMviowPBbrDa0eWkzo7iUDghWdFOfVNJXQbryraX47QfqSnxFSHlPp8DidhJzE2u
-         nvQukDXZCwA8g==
+        b=r8DB3jlBjs40CV7Z9w/NCWZyqjS4DGYdDdqjH7HbwIj2hGnRHcK3XTO7BQgRYirIq
+         CFXZq4+yZkuOH6LzOB4f8BZdKcm4782JKbA/nyxVMxHUtuMn88yP/7ywif9kqJiWcw
+         HJ+cW2JwSVfQwrnFq3Yd5LdOgM5ncHn5ZbCSgcQSWthzELWdFqn7itakPeTvyhO11w
+         BuZsRD/3B700VlUlIxZyKurPD0ap6TMOqXOzYF5on38sU7XiWEmhv9y2KA4OQwA64t
+         UZhRFVMdJWValy3C62KOFAVhtmURFb+dDvDloR6UXJ/V/4EnHbgYb78l0jyva5XugW
+         g7xSGTgEKYEoQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch implements restore_context support for clk-periph and
-clk-sdmmc-mux clock operations to restore clock parent and rates
-on system resume.
+This patch implements context restore for clock divider.
 
-During system suspend, core power goes off and looses the context
-of the Tegra clock controller registers.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-So on system resume, clocks parent and rate are restored back to
-the context before suspend based on cached data.
+So on resume, clock dividers are restored back for normal operation.
 
 Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-periph.c    | 18 ++++++++++++++++++
- drivers/clk/tegra/clk-sdmmc-mux.c | 12 ++++++++++++
- 2 files changed, 30 insertions(+)
+ drivers/clk/tegra/clk-divider.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index 58437da25156..c9d28cbadccc 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -99,6 +100,20 @@ static void clk_periph_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index e76731fb7d69..ca0de5f11f84 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -109,10 +109,21 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
  }
  
-+static void clk_periph_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_periph *periph = to_clk_periph(hw);
-+	const struct clk_ops *div_ops = periph->div_ops;
-+	struct clk_hw *div_hw = &periph->divider.hw;
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
-+
-+	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
-+		div_ops->restore_context(div_hw);
-+
-+	clk_periph_set_parent(hw, parent_id);
-+}
-+
- const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
-@@ -108,6 +123,7 @@ const struct clk_ops tegra_clk_periph_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
- 	.disable = clk_periph_disable,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static const struct clk_ops tegra_clk_periph_nodiv_ops = {
-@@ -116,6 +132,7 @@ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
- 	.disable = clk_periph_disable,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static const struct clk_ops tegra_clk_periph_no_gate_ops = {
-@@ -124,6 +141,7 @@ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
- 	.recalc_rate = clk_periph_recalc_rate,
- 	.round_rate = clk_periph_round_rate,
- 	.set_rate = clk_periph_set_rate,
-+	.restore_context = clk_periph_restore_context,
- };
- 
- static struct clk *_tegra_clk_register_periph(const char *name,
-diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-index a5cd3e31dbae..8db48966b100 100644
---- a/drivers/clk/tegra/clk-sdmmc-mux.c
-+++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-@@ -194,6 +194,17 @@ static void clk_sdmmc_mux_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
-+static void clk_sdmmc_mux_restore_context(struct clk_hw *hw)
++static void clk_divider_restore_context(struct clk_hw *hw)
 +{
 +	struct clk_hw *parent = clk_hw_get_parent(hw);
 +	unsigned long parent_rate = clk_hw_get_rate(parent);
 +	unsigned long rate = clk_hw_get_rate(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
 +
-+	clk_sdmmc_mux_set_parent(hw, parent_id);
-+	clk_sdmmc_mux_set_rate(hw, rate, parent_rate);
++	if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
++		WARN_ON(1);
 +}
 +
- static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
- 	.get_parent = clk_sdmmc_mux_get_parent,
- 	.set_parent = clk_sdmmc_mux_set_parent,
-@@ -203,6 +214,7 @@ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
- 	.is_enabled = clk_sdmmc_mux_is_enabled,
- 	.enable = clk_sdmmc_mux_enable,
- 	.disable = clk_sdmmc_mux_disable,
-+	.restore_context = clk_sdmmc_mux_restore_context,
+ const struct clk_ops tegra_clk_frac_div_ops = {
+ 	.recalc_rate = clk_frac_div_recalc_rate,
+ 	.set_rate = clk_frac_div_set_rate,
+ 	.round_rate = clk_frac_div_round_rate,
++	.restore_context = clk_divider_restore_context,
  };
  
- struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+ struct clk *tegra_clk_register_divider(const char *name,
 -- 
 2.7.4
 
