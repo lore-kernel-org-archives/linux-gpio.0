@@ -7,38 +7,35 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D214C3A59D
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC4EC3A5A1
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A136206C1
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A1F206C1
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Aug 2019 19:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WixfZAc9"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DnB/En3o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfHPTmS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Aug 2019 15:42:18 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13152 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfHPTmS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:18 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d57071c0003>; Fri, 16 Aug 2019 12:42:20 -0700
+        id S1727697AbfHPTma (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Aug 2019 15:42:30 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14970 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfHPTm2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Aug 2019 15:42:28 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d57072f0000>; Fri, 16 Aug 2019 12:42:39 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 16 Aug 2019 12:42:17 -0700
+  Fri, 16 Aug 2019 12:42:27 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:17 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
- 2019 19:42:17 +0000
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
- 2019 19:42:17 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 16 Aug 2019 19:42:17 +0000
+        by hqpgpgate101.nvidia.com on Fri, 16 Aug 2019 12:42:27 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
+ 2019 19:42:27 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 16 Aug 2019 19:42:27 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.166.126]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d5707170002>; Fri, 16 Aug 2019 12:42:17 -0700
+        id <B5d570721000b>; Fri, 16 Aug 2019 12:42:27 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -53,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v9 02/22] pinctrl: tegra: Flush pinctrl writes during resume
-Date:   Fri, 16 Aug 2019 12:41:47 -0700
-Message-ID: <1565984527-5272-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v9 07/22] clk: Add API to get index of the clock parent
+Date:   Fri, 16 Aug 2019 12:41:52 -0700
+Message-ID: <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
 References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
@@ -63,47 +60,73 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565984541; bh=VHDrtC8ZGPiMwrhvcDYGr1zYEWJZ5BoN1NN2rqR7JiI=;
+        t=1565984559; bh=+6ERoAACorYaysuYDP8ceYAHJiBt40PUivlQZua8vRY=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=WixfZAc9ExfMuDT1FqsRjpvMy9ssde3X9yxS3uG4+KykQtCXbKSxO59f1LHwtsUU9
-         wa4qmlc4f9e2lXfQOkJ01TMwwe0kcBlycHstV374nDSqiLoy90BMzhsmGnDLMm9513
-         Wf/Kfcu5bhAh4kdrKeUgi/hbddwYBFceZ5Nc+hf9Usa3QYOSU2vOTuSdScrk62gSvl
-         f1ZntADlZGmnNoTU/k/BCrRr9/+wNYWqX0gwNzTXiHv4uvgbljF/uRGU/dswHCOSTa
-         qgwfHCSj0+BKz20KIKg9Njpw1azzVMrQJ+vu8VtVtzLRhUEL+yaTI0QR4Y2NW8WqoQ
-         3Cn0B4AzVjxRw==
+        b=DnB/En3oXEcmbvugodC0hNEERW5GDrDc61DLqJNPXdjoXD7bTPKtSPlGiZzqQHW1q
+         ipxEWonEkrmGjK2Ynbl1rm2Ha/2dqRMKE47knhedZS5sX5Bf2YWsQprdOsp0/gxUTW
+         df8/C76py62fO/59Mm1hcgpK6uHAtmDx7cVoWr4B7u/6KajBwi1QkQohvXCjZ7e3mp
+         e9a+22TvwgGU066OIW1uDqTe1IT6dkjRmyJQfp9+31BJ7VdE/Q7Ec4qMR5zMvmeCs6
+         g4a6vAZ709MUnlhQwOdtwI1wwPR47u74yPakl1+Uik9FGVPsM3nEB7GZ6sd9+2aMpc
+         PuwbQPgO9bjZw==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds pinctrl register read to flush all the prior pinctrl
-writes and then adds barrier for pinctrl register read to complete
-during resume to make sure all pinctrl changes are effective.
+This patch adds an API clk_hw_get_parent_index to get index of the
+clock parent to use during the clock restore operations on system
+resume.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/clk.c            | 17 +++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 5e3c00137d71..e9a7cbb9aa33 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -677,6 +677,10 @@ static int tegra_pinctrl_resume(struct device *dev)
- 			writel_relaxed(*backup_regs++, regs++);
- 	}
- 
-+	/* flush all the prior writes */
-+	readl_relaxed(pmx->regs[0]);
-+	/* wait for pinctrl register read to complete */
-+	rmb();
- 	return 0;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cbcc333aec84..12ad0e9b8591 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1645,6 +1645,23 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ 	return i;
  }
  
++/**
++ * clk_hw_get_parent_index - return the index of parent clock
++ * @hw: clk_hw associated with the clk being consumed
++ * @parent_hw: clk_hw associated with the parent of clk
++ *
++ * Fetches and returns the index of parent clock.
++ * If hw or parent_hw is NULL, returns -EINVAL.
++ */
++int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw)
++{
++	if (!hw || !parent_hw)
++		return -EINVAL;
++
++	return clk_fetch_parent_index(hw->core, parent_hw->core);
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
++
+ /*
+  * Update the orphan status of @core and all its children.
+  */
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index dce5521a9bf6..cce830780900 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
++int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw);
+ int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
 -- 
 2.7.4
 
