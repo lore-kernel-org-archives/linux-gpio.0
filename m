@@ -2,175 +2,153 @@ Return-Path: <SRS0=h5yB=WP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371B4C3A59D
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Aug 2019 09:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E885C3A59D
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Aug 2019 11:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125E92184E
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Aug 2019 09:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C79120851
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Aug 2019 11:27:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoOeXs46"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfHSJoB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Aug 2019 05:44:01 -0400
-Received: from esa3.mentor.iphmx.com ([68.232.137.180]:61995 "EHLO
-        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfHSJoB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Aug 2019 05:44:01 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Mon, 19 Aug 2019 05:44:00 EDT
-IronPort-SDR: ULwVpsUop0K8AujMfNBfValf0XikrucAtLkWBk4APUCFj5xf4r3C3ZN8A1g3AULVnMzsAp0pP+
- o2DxmNX4mDPz+tLi7X90wyxufpDRvMaf/Bvbok5yZ4Tubwx6nhFJjdmG7Rcu0CQxKpSS43gDQP
- We9vQAvDF+dGnuVpNzfSJhrIiIeAbu4ygQpsN/iWBlZRiP+shn7iaQDIbRBWZKvd3zbVs38Mvs
- SY3KCQE4ngRZ0y/bXLe3RY1CD7kVXY8WaS/di4X0LdBepOoPg6dC9QdS8TraKwaCi2g08Hx/vx
- +2o=
-X-IronPort-AV: E=Sophos;i="5.64,403,1559548800"; 
-   d="scan'208";a="40555512"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa3.mentor.iphmx.com with ESMTP; 19 Aug 2019 01:36:54 -0800
-IronPort-SDR: bWajPJagU5mFCq4Ct2iChEeRdKQEEgvSddLiibp1A3iihPj1cf9NYMzPL18nrBebE5xXcxByik
- VefVVKHQLuh5UWDdaXBPFhycaowZ1+mAYijzmsdlok1IeC0fni5P1UU0JUbt6XTEx/cNqBODYD
- D5sJTv84Mq6wkhxp+gF1hAusoUqLzwRTJFpV3MXSYEFcvOffT580cGce74/Qbvi11cDX3xDQX4
- bE/y2FbjPWKurkl5/ZPmGXu10A1udS5LclNCstlbqsgdbAEDpIvejSaFQHik8IJq2OpKM8iFnX
- vlg=
-Subject: Re: [PATCH V4 2/2] gpio: inverter: document the inverter bindings
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>
-References: <1561714250-19613-1-git-send-email-harish_kandiga@mentor.com>
- <CAL_Jsq+-xWLkvku-nLmJnFvbuS=dSD=9dG=GS4uBUqL50tdcDg@mail.gmail.com>
- <06c95f15-d577-e43d-e046-ee222f86c406@mentor.com>
- <CAL_JsqLQvjtnfUsZ2RP4eozvdwMLzNxtgmT+XFaxW4xzoFjL=w@mail.gmail.com>
- <f1616784-4dbf-d0fa-b33e-c85fd569383a@mentor.com>
- <CACRpkdZ+vXG-mGjn0Tt5gyGowAuxiCSQNdjEPGTP9qj23CwkSw@mail.gmail.com>
- <CAL_JsqLp___2O-naU+2PPQy0QmJX6+aN3hByz-OB9+qFvWgN9Q@mail.gmail.com>
- <CACRpkdbmyc9LsJ2xiX=zAQR9FZ9dmwu-nPrNbt1Tgud9+rBGpw@mail.gmail.com>
-From:   Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <978af20e-12aa-a8e9-5da9-9af6d6b8f553@mentor.com>
-Date:   Mon, 19 Aug 2019 15:06:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdbmyc9LsJ2xiX=zAQR9FZ9dmwu-nPrNbt1Tgud9+rBGpw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+        id S1727259AbfHSL07 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Aug 2019 07:26:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39659 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbfHSL07 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Aug 2019 07:26:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u17so1053607pgi.6;
+        Mon, 19 Aug 2019 04:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=vRVye6B8XFgwGVUEF0GcA194DZPYgp0SHGUoR6zegFI=;
+        b=eoOeXs46jigQlSjUrPijc/oAUBkYCMh5h7wy7K5rCwFMCI6NX5c67Ftrq7DQTgNEYA
+         rhi6pWmJ5wOab8uC9xZ60knm73pwug1ubUJMCgbe7BdN4k1fXliPgHEnzR4mUFSkWLJD
+         NOmdvihYR1oLgfDoHKMYrzC3xG6cacVYOabtrv8imr9G2I0nK57rf0i3nh2WEr2/wTOn
+         sF5SSNdCz1QC0wihKUP46q7IailDx74HUxS6VDxAJp9SmWLSChgz73DEkX153UQyAeIa
+         fwRkZwhx/JOA4l0QMpZ4n7p018JBE6g9pJmPelQXbDKwAD/2U0eObhWrL7T1LNy9k1Vh
+         Mb4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vRVye6B8XFgwGVUEF0GcA194DZPYgp0SHGUoR6zegFI=;
+        b=PHhZKsenuZ8VDfaRm4iwVLt+8Qn5qJF8ULrcYeSczlstt0ChQ+eQRh7nezoNZG1abm
+         Ty+8WaiUWmWkwWzCkHNe9QKlaaeka68N0Q+JVKBKfpuw88+1z3EvsZ8n3LM8gm7gYU1f
+         6nyuZv8CDwC4j8I3ASjvhMs3Q91KlQiIMFLSJCbI04pISYL6BkTEAQKZ6drGGetN9OE3
+         iqlUKeQjP/NL+WNZmjBlgcG7gxtQt+fsEaQucMZFz+nX/J03vrToXLHxaktF5TAd7i3s
+         JiJPm8+Tj2OkrgDIPKTs+a2p4/wgGVQnl1bleHCy9HVo01iX8znW5H0rFiZC7dF7wXif
+         9IoQ==
+X-Gm-Message-State: APjAAAV/noRaT2NJnyl9cfnPhJSqa7OtZQ59831L910ommbrKK6naZOm
+        yDPEll/sk1aXhOFJKap82cI=
+X-Google-Smtp-Source: APXvYqx0jyZSkUJc+ccc4cDOsChOkIyUbxMIWJOpwE3D6Rdphhg/hGR2Jsau1+7LWRECYdHdPsbsbA==
+X-Received: by 2002:a63:194f:: with SMTP id 15mr19939402pgz.382.1566214018788;
+        Mon, 19 Aug 2019 04:26:58 -0700 (PDT)
+Received: from localhost.localdomain ([58.173.144.54])
+        by smtp.googlemail.com with ESMTPSA id br18sm13826091pjb.20.2019.08.19.04.26.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 04:26:58 -0700 (PDT)
+From:   Ian W MORRISON <ianwmorrison@gmail.com>
+To:     benjamin.tissoires@redhat.com, hdegoede@redhat.com,
+        mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ian W MORRISON <ianwmorrison@gmail.com>
+Subject: [PATCH v2] Skip deferred request irqs for devices known to fail
+Date:   Mon, 19 Aug 2019 21:26:37 +1000
+Message-Id: <20190819112637.29943-1-ianwmorrison@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
+Patch ca876c7483b6 "gpiolib-acpi: make sure we trigger edge events at
+least once on boot" causes the MINIX family of mini PCs to fail to boot
+resulting in a "black screen". 
 
+This patch excludes MINIX devices from executing this trigger in order
+to successfully boot.
 
-On 10/08/19 2:21 PM, Linus Walleij wrote:
-> On Fri, Aug 9, 2019 at 4:08 PM Rob Herring <robh+dt@kernel.org> wrote:
->> On Mon, Aug 5, 2019 at 5:15 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->>> There is some level of ambition here which is inherently a bit fuzzy
->>> around the edges. ("How long is the coast of Britain?" comes to mind.)
->>>
->>> Surely the intention of device tree is not to recreate the schematic
->>> in all detail. What we want is a model of the hardware that will
->>> suffice for the operating system usecases.
->>>
->>> But sometimes the DTS files will become confusing: why is this
->>> component using GPIO_ACTIVE_LOW when another system
->>> doesn't have that flag? If there is an explicit inverter, the
->>> DTS gets more readable for a human.
->>>
->>> But arguable that is case for adding inverters as syntactic
->>> sugar in the DTS compiler instead...
->> If you really want something more explicit, then add a new GPIO
->> 'inverted' flag. Then a device can always have the same HIGH/LOW flag.
->> That also solves the abstract it for userspace problem.
-> I think there are some intricate ontologies at work here.
->
-> Consider this example: a GPIO is controlling a chip select
-> regulator, say Acme Foo. The chip select
-> has a pin named CSN. We know from convention that the
-> "N" at the end of that pin name means "negative" i.e. active
-> low, and that is how the electronics engineers think about
-> that chip select line: it activates the IC when
-> the line goes low.
->
-> The regulator subsystem and I think all subsystems in the
-> Linux kernel say the consumer pin should be named and
-> tagged after the datsheet of the regulator.
->
-> So it has for example:
->
-> foo {
->     compatible = "acme,foo";
->     cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
-> };
->
-> (It would be inappropriate to name it "csn-gpios" since
-> we have an established flag for active low. But it is another
-> of these syntactic choices where people likely do mistakes.)
->
-> I think it would be appropriate for the DT binding to say
-> that this flag must always be GPIO_ACTIVE_LOW since
-> the bindings are seen from the component point of view,
-> and thus this is always active low.
->
-> It would even be reasonable for a yaml schema to enfore
-> this, if it could. It is defined as active low after all.
->
-> Now if someone adds an inverter on that line between
-> gpio0 and Acme Foo it looks like this:
->
-> foo {
->     compatible = "acme,foo";
->     cs-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-> };
->
-> And now we get cognitive dissonance or whatever I should
-> call it: someone reading this DTS sheet and the data
-> sheet for the component Acme Foo to troubleshoot
-> this will be confused: this component has CS active
-> low and still it is specified as active high? Unless they
-> also look at the schematic or the board and find the
-> inverter things are pretty muddy and they will likely curse
-> and solve the situation with the usual trial-and-error,
-> inserting some random cursewords as a comment.
->
-> With an intermediate inverter node, the cs-gpios
-> can go back to GPIO_ACTIVE_LOW and follow
-> the bindings:
->
-> inv0: inverter {
->     compatible = "gpio-inverter";
->     gpio-controller;
->     #gpio-cells = <1>;
->     inverted-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-> };
->
-> foo {
->     compatible = "acme,foo";
->     cs-gpios = <&inv0 0 GPIO_ACTIVE_LOW>;
-> };
->
-> And now Acme Foo bindings can keep enforcing cs-gpios
-> to always be tagged GPIO_ACTIVE_LOW.
+Cc: stable@vger.kernel.org
+Signed-off-by: Ian W MORRISON <ianwmorrison@gmail.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-
-Can you please review/let us know your opinion on this ? I think the idea here is to also isolate the changes to a separate consumer driver and avoid getting inversions inside gpiolib.
-
-
-Thanks.
-
-
-Regards,
-
-Harish Jenny K N
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index fdee8afa5339..f6c3dcdc91c9 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -13,6 +13,7 @@
+ #include <linux/gpio/machine.h>
+ #include <linux/export.h>
+ #include <linux/acpi.h>
++#include <linux/dmi.h>
+ #include <linux/interrupt.h>
+ #include <linux/mutex.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -20,6 +21,17 @@
+ #include "gpiolib.h"
+ #include "gpiolib-acpi.h"
+ 
++static const struct dmi_system_id skip_deferred_request_irqs_table[] = {
++	{
++		.ident = "MINIX Z83-4",
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "MINIX"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
++		},
++	},
++	{}
++};
++
+ /**
+  * struct acpi_gpio_event - ACPI GPIO event handler data
+  *
+@@ -1273,19 +1285,28 @@ bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
+ 	return con_id == NULL;
+ }
+ 
+-/* Run deferred acpi_gpiochip_request_irqs() */
++/*
++ * Run deferred acpi_gpiochip_request_irqs()
++ * but exclude devices known to fail
++*/
+ static int acpi_gpio_handle_deferred_request_irqs(void)
+ {
+ 	struct acpi_gpio_chip *acpi_gpio, *tmp;
++	const struct dmi_system_id *dmi_id;
+ 
+-	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
+-	list_for_each_entry_safe(acpi_gpio, tmp,
++	dmi_id = dmi_first_match(skip_deferred_request_irqs_table);
++	if (dmi_id)
++		return 0;
++	else {
++		mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
++		list_for_each_entry_safe(acpi_gpio, tmp,
+ 				 &acpi_gpio_deferred_req_irqs_list,
+ 				 deferred_req_irqs_list_entry)
+-		acpi_gpiochip_request_irqs(acpi_gpio);
++			acpi_gpiochip_request_irqs(acpi_gpio);
+ 
+-	acpi_gpio_deferred_req_irqs_done = true;
+-	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
++		acpi_gpio_deferred_req_irqs_done = true;
++		mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
