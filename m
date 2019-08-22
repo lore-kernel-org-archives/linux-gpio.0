@@ -1,103 +1,99 @@
-Return-Path: <SRS0=6Eea=WR=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Ti4u=WS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7FEC3A59E
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Aug 2019 21:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAAAC3A59E
+	for <linux-gpio@archiver.kernel.org>; Thu, 22 Aug 2019 00:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A3B22CF7
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Aug 2019 21:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566421355;
-	bh=6ivhu7Dvdf0c8/tVlFVqd0t3at0NPseUai1rWDfwwmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fGIC8KYCDWjKGmxQgj+/bOBRugPUlsb9CemH7UU6xpI2kSXJ4zYvAmObdC8MpTvUV
-	 24R/ylYIVFjV9WrGRaKja5OsB8dcW7Y3KB/aNFlifd+knZZkdUxdVCvO/RDL6oHGXF
-	 DrOqQpvbsXkGwo/6NVhtnMI/M3b5IxmKj/pl08mE=
+	by mail.kernel.org (Postfix) with ESMTP id 2E14C22CE3
+	for <linux-gpio@archiver.kernel.org>; Thu, 22 Aug 2019 00:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfHUVCf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 21 Aug 2019 17:02:35 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44458 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbfHUVCe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Aug 2019 17:02:34 -0400
-Received: by mail-ot1-f67.google.com with SMTP id w4so3389703ote.11;
-        Wed, 21 Aug 2019 14:02:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qeldRNnrKJ6n4nBoYRhi7qGMwnjGqI0qiOR/k4DQ+G0=;
-        b=dErylmymL/cdPXUTD4Fl977fElu9afRvA8ZC0q+hr1G6KyZUINk3X0wKWC+eXdXjWv
-         es5xPCcEh5rEN+IWMwgn8dbarum10/mhNLRkEiNVAX0DgxPm4xpT57uYY0RJ1NZh/4+7
-         vLW2sYT2nGoRkgKk0qd3t1uVlClE5YlnZ0V+7e5JrQPo0huLkPP28SvYpktgdbUkqtNT
-         tgwqkTaqoVl9/X4sKnAts1NzCCIlnpEAgptP+U17p7jxHlIszD1I6mhKsGxW41HnecHq
-         COd/plInMt0QcvwqBOLzZj2iApdUsBdAkymi/JCzE3J660pcjHBTHKjftilxy8zaMW0H
-         0qjA==
-X-Gm-Message-State: APjAAAW8WO6Wn4ytjQW37rwPZB0qt+DkNNFsOvSzNl6N3QvwKNwTImms
-        7IzvpD4lylgdfIk/pWLXIQ==
-X-Google-Smtp-Source: APXvYqyRJsdPlJBUmlZSY3uPEIBvI3RM6nnZGMr1ukyS82VcusB4lOcfeVYUcWuho5QRGbPVjA0/Jw==
-X-Received: by 2002:a05:6830:1e79:: with SMTP id m25mr22039139otr.109.1566421353755;
-        Wed, 21 Aug 2019 14:02:33 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v5sm8176751otk.64.2019.08.21.14.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 14:02:32 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 16:02:32 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        linus.walleij@linaro.org, Keerthy <j-keerthy@ti.com>,
-        linux-gpio@vger.kernel.org,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 5/6] dt-bindings: pinctrl: k3: Introduce pinmux
- definitions for J721E
-Message-ID: <20190821210232.GA22578@bogus>
-References: <20190809082947.30590-1-lokeshvutla@ti.com>
- <20190809082947.30590-6-lokeshvutla@ti.com>
+        id S1727493AbfHVAuK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 21 Aug 2019 20:50:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727257AbfHVAuK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 21 Aug 2019 20:50:10 -0400
+Received: from [10.44.0.22] (unknown [103.48.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 614B5216F4;
+        Thu, 22 Aug 2019 00:50:08 +0000 (UTC)
+Subject: Re: [PATCH] m68k: coldfire: Include the GPIO driver header
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20190821070923.687-1-linus.walleij@linaro.org>
+ <CAMuHMdWF1GXYtFbjrALRMObqzezd-cBwDPAqhC-9d=RbrLxNyQ@mail.gmail.com>
+ <fb01f312-5cc5-03a1-a1a5-a12819e2ff7b@linux-m68k.org>
+ <CAMuHMdVsqKqppkvXYm=NiGeikhC_i99hH+Y2ecjQfr3S2-BTZA@mail.gmail.com>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <5bba9a8e-5f8d-8f33-6dba-503ae59a8ee4@linux-m68k.org>
+Date:   Thu, 22 Aug 2019 10:50:05 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809082947.30590-6-lokeshvutla@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMuHMdVsqKqppkvXYm=NiGeikhC_i99hH+Y2ecjQfr3S2-BTZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 01:59:46PM +0530, Lokesh Vutla wrote:
-> Add pinctrl macros for J721E SoC. These macro definitions are
-> similar to that of AM6, but adding new definitions to avoid
-> any naming confusions in the soc dts files.
-> 
-> Acked-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
->  include/dt-bindings/pinctrl/k3.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/dt-bindings/pinctrl/k3.h b/include/dt-bindings/pinctrl/k3.h
-> index 45e11b6170ca..499de6216581 100644
-> --- a/include/dt-bindings/pinctrl/k3.h
-> +++ b/include/dt-bindings/pinctrl/k3.h
-> @@ -32,4 +32,7 @@
->  #define AM65X_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->  #define AM65X_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
->  
-> +#define J721E_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
-> +#define J721E_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+Hi Geert, Linus,
 
-checkpatch reports a parentheses error:         (((pa) & 0x1fff) ((val) | (muxmode)))
+On 21/8/19 10:50 pm, Geert Uytterhoeven wrote:
+> On Wed, Aug 21, 2019 at 2:22 PM Greg Ungerer <gerg@linux-m68k.org> wrote:
+>> On 21/8/19 5:19 pm, Geert Uytterhoeven wrote:
+>>> CC Greg (coldfire)
+>>
+>> Thanks Geert.
+>> I am happy to take it via the m68knommu tree if you prefer?
+> 
+> Sounds most logical to me.
+> Thanks!
 
-> +
->  #endif
-> -- 
-> 2.22.0
+Pushed to the for-next branch of the m68knommu git tree.
+
+Regards
+Greg
+
+
+
+>>> On Wed, Aug 21, 2019 at 9:09 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>>>> The Coldfire GPIO driver needs to explicitly incldue the
+>>>> GPIO driver header since it is providing a driver.
+>>>>
+>>>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>>> ---
+>>>> Geert can you pick this up for m68k?
+>>>> ---
+>>>>    arch/m68k/coldfire/gpio.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
+>>>> index a83898426127..ca26de257871 100644
+>>>> --- a/arch/m68k/coldfire/gpio.c
+>>>> +++ b/arch/m68k/coldfire/gpio.c
+>>>> @@ -9,6 +9,7 @@
+>>>>    #include <linux/module.h>
+>>>>    #include <linux/init.h>
+>>>>    #include <linux/device.h>
+>>>> +#include <linux/gpio/driver.h>
+>>>>
+>>>>    #include <linux/io.h>
+>>>>    #include <asm/coldfire.h>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 > 
