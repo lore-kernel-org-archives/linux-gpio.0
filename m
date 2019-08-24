@@ -2,69 +2,65 @@ Return-Path: <SRS0=4OUI=WU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6517AC3A59E
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Aug 2019 21:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2AAC3A59E
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Aug 2019 23:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 351202133F
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Aug 2019 21:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566683408;
-	bh=EA9xCPYzTOMiystICS0U2wfYpmLVAQH7EJKGtmzwXOA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=I/OsYsh2/AFnuQHp3xvbJN1sz5jcGl4feDDaxHAyZFBjd11G+w8sUx2BU7HTsT2/9
-	 wQA78N46I0HQtMXiB6Pj1Si/fBruKmreAiufA5cQju7CD+Mg7iUYGvgadcGaPXAmLC
-	 zEubVAK/H23C6qjitehC4uJM92l3YIvy4Hgtln88=
+	by mail.kernel.org (Postfix) with ESMTP id 381E720850
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Aug 2019 23:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfHXVuH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 24 Aug 2019 17:50:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727956AbfHXVuH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 24 Aug 2019 17:50:07 -0400
-Subject: Re: [GIT PULL] GPIO fixes for v5.3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566683406;
-        bh=EA9xCPYzTOMiystICS0U2wfYpmLVAQH7EJKGtmzwXOA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=b5KG/Ru1V3/tZf5IURn2K6ZvwHt3CYGTEgumRxn3RUJtiolP5Ta5VMpYKhhPlAmXp
-         6M4Qhbz5XD155XXpMGF4WG5UmP7UHg5D8kujC9wfaJRPEmCNegTrjavp+Dja+xCHEa
-         W5/Mngd5nKyBJiMYNAiBcZ/DMbgDi/xIUDu/G2E0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaWR9GZ0Hem4h-jdGcYc_Uwx29XvsHuEgvXiebRG6DCwA@mail.gmail.com>
-References: <CACRpkdaWR9GZ0Hem4h-jdGcYc_Uwx29XvsHuEgvXiebRG6DCwA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaWR9GZ0Hem4h-jdGcYc_Uwx29XvsHuEgvXiebRG6DCwA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.3-4
-X-PR-Tracked-Commit-Id: 48057ed1840fde9239b1e000bea1a0a1f07c5e99
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 083f0f2cd402df40f62e16b1e4208e6033f52aba
-Message-Id: <156668340693.6376.1697881964961621306.pr-tracker-bot@kernel.org>
-Date:   Sat, 24 Aug 2019 21:50:06 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S1728289AbfHXXhq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 24 Aug 2019 19:37:46 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:40764 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfHXXhp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Aug 2019 19:37:45 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id E542D77F67F; Sun, 25 Aug 2019 01:37:43 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v1 2/2] gpiolib: print an error name instead of a plain number in error string
+Date:   Sun, 25 Aug 2019 01:37:24 +0200
+Message-Id: <20190824233724.1775-2-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190824233724.1775-1-uwe@kleine-koenig.org>
+References: <20190824233724.1775-1-uwe@kleine-koenig.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Sat, 24 Aug 2019 23:17:54 +0200:
+This is an example that makes use of the just introduced printk format
+%dE that prints (e.g.) "EIO" when the matching integer is -EIO (or EIO).
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.3-4
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/083f0f2cd402df40f62e16b1e4208e6033f52aba
-
-Thank you!
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f497003f119c..b50ea24f087f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1247,7 +1247,7 @@ static void gpiochip_setup_devs(void)
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
+ 		err = gpiochip_setup_dev(gdev);
+ 		if (err)
+-			pr_err("%s: Failed to initialize gpio device (%d)\n",
++			pr_err("%s: Failed to initialize gpio device (%dE)\n",
+ 			       dev_name(&gdev->dev), err);
+ 	}
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1
+
