@@ -2,187 +2,154 @@ Return-Path: <SRS0=U8tP=WX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9DDC3A5A6
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C572DC3A5A3
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 09:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 802952189D
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99A9B21883
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 09:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566896456;
+	bh=6OYUKcWdpe9efWkQSJwLUupORljzIj7186zOdJcs+Xk=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=AfdQZt7IG5UttQUH5ftqXAhmZTwttlP8DIHysVC7EPJdSpWJQbUstGBMDkBnw1/fJ
+	 n8HHuoKMsCJZisp6khPFxSYVD/2mEUjRo2GfvYRkNOtAkaqAv2ymSrXRPzVuuvdjJX
+	 +HFCvJkcMqJyQpKt66ba6C1nFug0lhbXSxpqE9T8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfH0HzB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Aug 2019 03:55:01 -0400
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:44310 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730207AbfH0Hy7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Aug 2019 03:54:59 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 03:54:58 EDT
-IronPort-SDR: 7ljm1gIQnKNVw/yCuBD7MDcBp1Tbbyl1fhloC9zBbFZtoTqRAy+g/aexh+OJzWbWnVa5u3hpVc
- FtrQ9xJpYQA3SpwYelnHwh+W1Ah4SwcfvyigGxe4KHZ4tyuH3jXOvkY9pB+CA4k9aPHnlb35CU
- /iMWC4D7DEE2frqOCjg7V0yOy7bb1wI/UUzBGp7qbfkGaoAf3VkBcatUqHBlQOfCLXMtIFjBB3
- zgSdXp3wgLsS9gghPYPMwzQsoW0qv4iZ4PB2awd1JTxif61qpIdQgPi8NRa9y1rDx/tEbwZwjN
- opw=
-X-IronPort-AV: E=Sophos;i="5.64,436,1559548800"; 
-   d="scan'208";a="40756529"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 26 Aug 2019 23:47:51 -0800
-IronPort-SDR: PBtNVqwncOR3DyyhHKAtZ5pgm7+7RfirIg1tml22USOCGNuBjoe/r1fXiHc16Pi3HhtioTa88r
- wG0tavERaSUvD+JeV+rIPAbfQBMYrK2lqAM2UGBdmTvjGjXNh/fmIQJdZMLeqsivJnKoTxZaia
- GUBKF9SUDzZeanABwzPrFHB2POrOpGZ0TxwkbwvwnhTEFzormNHPw/OqGmZZ8tqs+FB7hv42nV
- jj6BnnPc+UeJi6nZBnImhXUMXNvoCIpOsGLX8gBkW98GxGAD+QRgdQpzNf+Kdcl9jkPoupYzbo
- bH4=
-Subject: Re: [PATCH V4 2/2] gpio: inverter: document the inverter bindings
-From:   Harish Jenny K N <harish_kandiga@mentor.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        id S1729896AbfH0JAz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Aug 2019 05:00:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:41268 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfH0JAz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 27 Aug 2019 05:00:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27BE9337;
+        Tue, 27 Aug 2019 02:00:54 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46C143F246;
+        Tue, 27 Aug 2019 02:00:48 -0700 (PDT)
+Subject: Re: [PATCH 1/6 v2] gpio: Add support for hierarchical IRQ domains
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>
-References: <1561714250-19613-1-git-send-email-harish_kandiga@mentor.com>
- <CAL_Jsq+-xWLkvku-nLmJnFvbuS=dSD=9dG=GS4uBUqL50tdcDg@mail.gmail.com>
- <06c95f15-d577-e43d-e046-ee222f86c406@mentor.com>
- <CAL_JsqLQvjtnfUsZ2RP4eozvdwMLzNxtgmT+XFaxW4xzoFjL=w@mail.gmail.com>
- <f1616784-4dbf-d0fa-b33e-c85fd569383a@mentor.com>
- <CACRpkdZ+vXG-mGjn0Tt5gyGowAuxiCSQNdjEPGTP9qj23CwkSw@mail.gmail.com>
- <CAL_JsqLp___2O-naU+2PPQy0QmJX6+aN3hByz-OB9+qFvWgN9Q@mail.gmail.com>
- <CACRpkdbmyc9LsJ2xiX=zAQR9FZ9dmwu-nPrNbt1Tgud9+rBGpw@mail.gmail.com>
- <978af20e-12aa-a8e9-5da9-9af6d6b8f553@mentor.com>
-Message-ID: <f47588d5-226a-6a7a-6c74-c0caaafaf572@mentor.com>
-Date:   Tue, 27 Aug 2019 13:17:37 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>, linux-tegra@vger.kernel.org,
+        David Daney <david.daney@cavium.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <treding@nvidia.com>
+References: <20190808123242.5359-1-linus.walleij@linaro.org>
+ <20190816011054.GA1041@onstation.org>
+ <CACRpkdbZSJ4ggprUXaBJ07Hz=eryuy5=AmYOigTUmO9z4yahfQ@mail.gmail.com>
+ <63f2d086-eb71-4153-071e-71102fe24a14@arm.com>
+ <20190826161526.GB26639@codeaurora.org> <20190826194400.67c6e99b@why>
+ <20190826201400.GC26639@codeaurora.org>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <c812668e-0caf-4169-9990-9a7760adbb4e@kernel.org>
+Date:   Tue, 27 Aug 2019 10:00:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <978af20e-12aa-a8e9-5da9-9af6d6b8f553@mentor.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190826201400.GC26639@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
-
-
-On 19/08/19 3:06 PM, Harish Jenny K N wrote:
-> Hi Rob,
->
->
-> On 10/08/19 2:21 PM, Linus Walleij wrote:
->> On Fri, Aug 9, 2019 at 4:08 PM Rob Herring <robh+dt@kernel.org> wrote:
->>> On Mon, Aug 5, 2019 at 5:15 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->>>> There is some level of ambition here which is inherently a bit fuzzy
->>>> around the edges. ("How long is the coast of Britain?" comes to mind.)
+On 26/08/2019 21:14, Lina Iyer wrote:
+> On Mon, Aug 26 2019 at 13:02 -0600, Marc Zyngier wrote:
+>> On Mon, 26 Aug 2019 10:15:26 -0600
+>> Lina Iyer <ilina@codeaurora.org> wrote:
+>>
+>>> On Fri, Aug 23 2019 at 03:12 -0600, Marc Zyngier wrote:
+>>>> On 23/08/2019 09:24, Linus Walleij wrote:
+>>>>> Hi Brian,
+>>>>>
+>>>>> I tried to look into this ssbi-gpio problem...
+>>>>>
+>>>>> Paging in Marc Z as well.
+>>>>>
+>>>>> On Fri, Aug 16, 2019 at 3:10 AM Brian Masney <masneyb@onstation.org> wrote:
+>>>>>
+>>>>>> I started to convert ssbi-gpio over to this and pm8xxx_gpio_to_irq() has
+>>>>>> this little snippet that's different from spmi-gpio:
+>>>>>>
+>>>>>>         [ fwspec mapping code ]
+>>>>>>
+>>>>>>         /*
+>>>>>>          * Cache the IRQ since pm8xxx_gpio_get() needs this to get determine the
+>>>>>>          * line level.
+>>>>>>          */
+>>>>>>         pin->irq = ret;
+>>>>>>
+>>>>>> Here's the relevant code in pm8xxx_gpio_get():
+>>>>>>
+>>>>>>         if (pin->mode == PM8XXX_GPIO_MODE_OUTPUT) {
+>>>>>>                 ret = pin->output_value;
+>>>>>>         } else if (pin->irq >= 0) {
+>>>>>>                 ret = irq_get_irqchip_state(pin->irq, IRQCHIP_STATE_LINE_LEVEL, &state);
+>>>>>>                 ...
+>>>>>>         }
+>>>>>
+>>>>> It's a bit annoying that this API (irq_get_irqchip_state()) is relying on
+>>>>> the global irq numbers and the internal function using irqdesc
+>>>>> __irq_get_irqchip_state() is not exported.
+>>>>>
+>>>>> We should be encouraged to operate on IRQ descriptors rather
+>>>>> than IRQ numbers when doing this kind of deep core work,
+>>>>> right?
 >>>>
->>>> Surely the intention of device tree is not to recreate the schematic
->>>> in all detail. What we want is a model of the hardware that will
->>>> suffice for the operating system usecases.
+>>>> Certainly, I'd like to gradually move over from the IRQ number to an
+>>>> irq_desc. In interrupt-heavy contexts, this ends up being quite time
+>>>> consuming. I have an old patch series somewhere changing irq domains to
+>>>> use irq_descs internally instead of IRQ numbers, which I should maybe
+>>>> revive.
 >>>>
->>>> But sometimes the DTS files will become confusing: why is this
->>>> component using GPIO_ACTIVE_LOW when another system
->>>> doesn't have that flag? If there is an explicit inverter, the
->>>> DTS gets more readable for a human.
+>>>> As for __irq_get_irqchip_state, the main issue is that it doesn't
+>>>> perform any locking on its own, so you'd have to either provide your
+>>>> own, or wrap it with something else.
 >>>>
->>>> But arguable that is case for adding inverters as syntactic
->>>> sugar in the DTS compiler instead...
->>> If you really want something more explicit, then add a new GPIO
->>> 'inverted' flag. Then a device can always have the same HIGH/LOW flag.
->>> That also solves the abstract it for userspace problem.
->> I think there are some intricate ontologies at work here.
+>>> Marc, on a related note, What are your thoughts on a
+>>> irq_set_irqchip_state? We are running into an issue where chip state
+>>> clear is required as well as clearing out that of the parent. Do you see
+>>> problems in doing that from an irqchip driver?
 >>
->> Consider this example: a GPIO is controlling a chip select
->> regulator, say Acme Foo. The chip select
->> has a pin named CSN. We know from convention that the
->> "N" at the end of that pin name means "negative" i.e. active
->> low, and that is how the electronics engineers think about
->> that chip select line: it activates the IC when
->> the line goes low.
+>> [desperately trying to switch to my korg address...]
 >>
->> The regulator subsystem and I think all subsystems in the
->> Linux kernel say the consumer pin should be named and
->> tagged after the datsheet of the regulator.
+>> I'm not sure I fully get the question: if this is whether it is worth
+>> implementing it, it usually is a good idea if the HW supports is. But I
+>> have the feeling that this isn't your question, so maybe explaining
+>> your use-case would help.
 >>
->> So it has for example:
+>> Do you mean using irq_set_irqchip_state from within an irqchip driver?
+>> That'd be quite odd, as this function is usually used when something
+>> *outside* of the irqchip driver needs to poke at some internal state
+>> because "it knows best" (see for example what KVM does with the active
+>> state).
 >>
->> foo {
->>     compatible = "acme,foo";
->>     cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
->> };
->>
->> (It would be inappropriate to name it "csn-gpios" since
->> we have an established flag for active low. But it is another
->> of these syntactic choices where people likely do mistakes.)
->>
->> I think it would be appropriate for the DT binding to say
->> that this flag must always be GPIO_ACTIVE_LOW since
->> the bindings are seen from the component point of view,
->> and thus this is always active low.
->>
->> It would even be reasonable for a yaml schema to enfore
->> this, if it could. It is defined as active low after all.
->>
->> Now if someone adds an inverter on that line between
->> gpio0 and Acme Foo it looks like this:
->>
->> foo {
->>     compatible = "acme,foo";
->>     cs-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
->> };
->>
->> And now we get cognitive dissonance or whatever I should
->> call it: someone reading this DTS sheet and the data
->> sheet for the component Acme Foo to troubleshoot
->> this will be confused: this component has CS active
->> low and still it is specified as active high? Unless they
->> also look at the schematic or the board and find the
->> inverter things are pretty muddy and they will likely curse
->> and solve the situation with the usual trial-and-error,
->> inserting some random cursewords as a comment.
->>
->> With an intermediate inverter node, the cs-gpios
->> can go back to GPIO_ACTIVE_LOW and follow
->> the bindings:
->>
->> inv0: inverter {
->>     compatible = "gpio-inverter";
->>     gpio-controller;
->>     #gpio-cells = <1>;
->>     inverted-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
->> };
->>
->> foo {
->>     compatible = "acme,foo";
->>     cs-gpios = <&inv0 0 GPIO_ACTIVE_LOW>;
->> };
->>
->> And now Acme Foo bindings can keep enforcing cs-gpios
->> to always be tagged GPIO_ACTIVE_LOW.
->
-> Can you please review/let us know your opinion on this ? I think the idea here is to also isolate the changes to a separate consumer driver and avoid getting inversions inside gpiolib.
->
->
-> Thanks.
->
->
-> Regards,
->
-> Harish Jenny K N
->
+> Yeah, I meant to say, when invoked on a parent irqchip from a child
+> irqchip.
+> 
+> In my case when GPIO is used as an interrupt. Even though the interrupt
+> is not enabled, the GPIO could cause the GIC_ISPEND to be set at GIC. We
+> were wondering if we could use the irq_set_irqchip_state to clear
+> pending state at GPIO's irqchip parent and all the way to GIC,  when the
+> GPIO is enabled as an interrupt.
 
-Can you please comment on this ?
+You can of course chain the call from one level to its parent. It's a
+bit odd to have to clear a pending bit in this context, but I guess
+that's a HW-specific limitation.
 
-
-Thanks,
-
-Harish Jenny K N
-
-
+	M.
+-- 
+Jazz is not dead, it just smells funny...
