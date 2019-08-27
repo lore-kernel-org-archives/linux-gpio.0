@@ -2,67 +2,71 @@ Return-Path: <SRS0=U8tP=WX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2963C3A5A3
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA59C3A5A3
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95041217F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EF8D206BA
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Aug 2019 07:51:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YNYgBIyR"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kAEowIBM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbfH0HuF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Aug 2019 03:50:05 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42029 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfH0HuF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Aug 2019 03:50:05 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u13so4482789lfm.9
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Aug 2019 00:50:03 -0700 (PDT)
+        id S1726134AbfH0HvB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Aug 2019 03:51:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35206 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfH0HvB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Aug 2019 03:51:01 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l14so17557667lje.2
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Aug 2019 00:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=S8ZPnzIzwp3dPl5EFI/1g9MYzH1aSuoZopYt/nP5q80=;
-        b=YNYgBIyRPbSylY9yVS6fq7ufI5mIEOPQwSSIxhWCaFS6EppIOFX8+8R3WzVvbsdkTv
-         0dWBrvkU8dkIYNTLDM2+P2zpmD8+2MUTxYM2RjmAc42BnPuE9BL/yzqmzDc3E8Gsjszv
-         cWYnPdPljPLcBHEjO8obgZBS70w3HCWfiXX3HGC4cJjgpMtMuDJjpczks4lFG791PBtV
-         OVukTj/HICDHCW/KSGHs8dxdAfWwx5Xk2wwm5oq4OgeRMFgsG0XIx6C80ajP5JtnKehu
-         b/wAdpEeVxeMZBbi7rqbmOEshVQT9D38kWNcrF/+w+jQ9Qy2pagW/3OWXzrlaqjGcyhb
-         c+/A==
+        bh=L9Zh3GrxMUIZygrm/sqB7uRawwKNOmPmv1C0mbC/aHs=;
+        b=kAEowIBMqlOiQbXMCtXM6absLiz1V6Xiyw3B8NCBPEyEmirQQBDYiTQF8BY1AjPNsg
+         arEECZFILxQqVnSBMFJU2lh4X0rJrrloauZLDPGRtdSx/GjuYl11BxWuWVmaHqKzRaia
+         VvhBh4LM6zfMEAj4YoCbxnraby9WnHWRZitbl3UkiwtvUtG1lgiAnGQ8P4MEenhW6Ydy
+         KSi/3aZ/0MsCZmNqZsjgbUhNsvlczfuL7mAEea7kjx6IUii6bBJiMN1x4FPTZmo31HUY
+         1Rlb4wv6essdGhd5GfH1gx4e7uVdK755ydDcInQ2qBo/sTLj7cD+i/qknk/XVsioj90Y
+         N9sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=S8ZPnzIzwp3dPl5EFI/1g9MYzH1aSuoZopYt/nP5q80=;
-        b=AcdExNJT3mcIIfNDKuqUstsfy4l75gM2LLI6mABT2BKVxL84UJx2wG/W3enXGSX2Iz
-         Nncg2AspkuMylPnYMe+thVKRO98mMDUanUBjfySpBQo1VaZ3YJ+NfHNYpyzSFaVX33/t
-         H0EotiTWXCW3ts1yojjXDxjw1I1WSNW2ZvfqLtWy6awr1s+TnHCpkfzP6tk2GM1ExZmY
-         4dTRHl9FmXF0UCbmCbrrVaQRDyDUQcgnaSpwwa5zSEHZ4KwX9y4mIhmZXuOqGzuF/SLg
-         Rkg9uTdug4vz14Rd57issNT+p9SYD5GHifW+dSrsot/WfXvm7PFiefHEtxMtIR1GI2By
-         jU0Q==
-X-Gm-Message-State: APjAAAUZ5/xqAo9Hx95GiG+XCmOqN5dy4UByqsrHXN9EwijZvOIBtTCp
-        zAkCcVwSttJbqmIKKl46rdC0DGKoKxXJo8dyOu6eEw==
-X-Google-Smtp-Source: APXvYqxQ5kTmN/fXTcZ+sapT/n4YUo9Fiby1B6bZg0qbOjRVjoB/nX0hNjZmjRwzPSP63fisdzPHEwGUuyid++LnJyU=
-X-Received: by 2002:ac2:5939:: with SMTP id v25mr13681194lfi.115.1566892202913;
- Tue, 27 Aug 2019 00:50:02 -0700 (PDT)
+        bh=L9Zh3GrxMUIZygrm/sqB7uRawwKNOmPmv1C0mbC/aHs=;
+        b=bfiYg2qgbgIsCMj0we2J6gHNXfZ8DTqeP7DeKMY90JVPL2+zAD/7RGxjufkCSAwPAI
+         E6lcGYZcLB7CG3e7iA3jNNEs+AjzLGTtO45dtip7KKLpEAL4f9f3Yd6o1yV49I3UPZgH
+         5/gSQnMLxFO567Gm3F3cUL6K9N6y6q3wplz+uS2GfXGqdsS4yEeQDRl2YhUToANtcvjX
+         GfGihkI8ZmkdFmIL0FiGhLmArKxvmcLtCaH/kwimbS89MKH5lpq9ofT56hHLYGFYHm85
+         9uJu46PJA0Ow9uzHxsiBDfErsoQp+0s+elYCGKySnVbNpSaWz5wSxFLD8vVvC1BIw3JJ
+         eOpg==
+X-Gm-Message-State: APjAAAVQDrs7murLmqXeuexT0JmwFkkDIukhgn6HNCkG3I4r5Z6LYYQB
+        O2bw5AxA5ycCGh2daGX/YUcvQsw+5DwWnmtoeC7drg==
+X-Google-Smtp-Source: APXvYqzvGbIyA3LLknq2G4rbQ5Q7mx7t5yXqkOE+0yokVI69BeNEdJn00m2LbQgCn4KXb7+dQBM1CRBb9cVJArd4arA=
+X-Received: by 2002:a05:651c:28c:: with SMTP id b12mr13180755ljo.69.1566892259461;
+ Tue, 27 Aug 2019 00:50:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190805101607.29811-1-miquel.raynal@bootlin.com> <20190805101607.29811-4-miquel.raynal@bootlin.com>
-In-Reply-To: <20190805101607.29811-4-miquel.raynal@bootlin.com>
+References: <20190805101607.29811-1-miquel.raynal@bootlin.com>
+ <CACRpkdar5jE116CcywYxLR9JKWunRusJjNw7f3C0SFK4-4+dNQ@mail.gmail.com>
+ <CACRpkdbEw5eCKb=nTCK4wuMsPEadEQdGx62cGRhk7F78p5X2CA@mail.gmail.com>
+ <20190814143457.664b04c8@windsurf.home> <CACRpkdY-AtaS67u4s58PifFtP5C7xp4P15J+hW_Dba=Gb4rhSQ@mail.gmail.com>
+ <20190824133317.371dec4f@xps13>
+In-Reply-To: <20190824133317.371dec4f@xps13>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 27 Aug 2019 09:49:51 +0200
-Message-ID: <CACRpkdbaQjPeDKhaP75aOGtnXEf6DVVmUAdxbAP8PLSAJPSdAQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: mvebu: add additional variant for standalone CP115
+Date:   Tue, 27 Aug 2019 09:50:47 +0200
+Message-ID: <CACRpkdZ+zSCSc9Q40=_+K0kfZ4evuOTAShVYWYvuSeOfgkxZng@mail.gmail.com>
+Subject: Re: [PATCH 0/3] CP115 pinctrl support
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Cc:     Yan Markman <ymarkman@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Gregory Clement <gregory.clement@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -71,28 +75,24 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Grzegorz Jaszczyk <jaz@semihalf.com>,
         Marcin Wojtas <mw@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Yan Markman <ymarkman@marvell.com>
+        Stefan Chulski <stefanc@marvell.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 5, 2019 at 12:16 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Sat, Aug 24, 2019 at 1:33 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> Linus Walleij <linus.walleij@linaro.org> wrote on Thu, 15 Aug 2019
 
-> From: Grzegorz Jaszczyk <jaz@semihalf.com>
+> > OK then maybe I am a bit impatient.
 >
-> With CP115 standalone modules, all MPP configuration are
-> possible. Handle this new possibility thanks to the new
-> "marvell,cp115-standalone-pinctrl" compatible property.
->
-> Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
-> [<miquel.raynal@bootlin.com>: mention the new compatible in the
-> commit log]
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Actually Gregory is on vacation until September, so if we still are in
+> time for this merge window I suppose you can take it.
 
-Patch applied.
+OK I applied the patches.
+
+If someone is upset we can always revert them in the -rc phase.
 
 Yours,
 Linus Walleij
