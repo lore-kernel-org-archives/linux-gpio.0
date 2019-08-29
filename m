@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 246FAC3A5A6
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ED9C3A59F
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F2C2339E
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B39A021726
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KIgEPVQp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nyzgyb8c"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NuoCifD9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ONmK8JYi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbfH2SfB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Aug 2019 14:35:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59502 "EHLO
+        id S1727986AbfH2Shn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Aug 2019 14:37:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38144 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2SfB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 14:35:01 -0400
+        with ESMTP id S1727899AbfH2Shn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 14:37:43 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2F1F9686A4; Thu, 29 Aug 2019 18:12:28 +0000 (UTC)
+        id C49C16919A; Thu, 29 Aug 2019 18:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567103699;
-        bh=rS68WLR481l1COMdQ2jk/qCVOqr85DyICDhl53r3iQE=;
+        s=default; t=1567103861;
+        bh=MUMclASLiTgy4Lbihfd3RsX39V5B/DtoaCtXU9g4+3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KIgEPVQpEQaxoE3SnjaRFx8tjgi/VAre9a+7+dnPGm1pH33cptaNhOKvLnwXrDPNl
-         n2ciXi0FlxHIXKhmpXomZfU3sdQErwalP1QvJMOJzSXb1/mSl34lV0+Kn6hs9MDVFl
-         J4WHpPK4W1+xbMpsiyOnXx+0vn0U7WOBng0fr2Dc=
+        b=NuoCifD9h0BRcu25r6h4B4ttH3U/aBPEIGWMmHlBatc/4wwSXCnrlvoMSRt+jkbSd
+         cPtucwHlcdz6nR+EoWaHBake5vl9rBx0Ipf8L/HXGGpZRgcPyKw8yT0HMICWpJt0/w
+         tGIWZYQ4tnhUswfuBIQHqSdUT7w6GSlx84AtBUGs=
 Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B8EB468997;
-        Thu, 29 Aug 2019 18:12:25 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C399D68974;
+        Thu, 29 Aug 2019 18:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567102347;
-        bh=rS68WLR481l1COMdQ2jk/qCVOqr85DyICDhl53r3iQE=;
+        s=default; t=1567102344;
+        bh=MUMclASLiTgy4Lbihfd3RsX39V5B/DtoaCtXU9g4+3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nyzgyb8c62V8KHiqGWcqXJsfpL1vdt1tW7PnmZou0JbmKQjBHnp62ZrCDdtqj2IEA
-         Np6D7cjv8U7RSZyHLXtWsDuNyOVKmdldOclcfUiZgFMJmFFXI8j5P5eos4CH/92fYf
-         HuCM5eC1yOz4ftXxDl0BHN0nE5lciYqRV4VwP6ak=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8EB468997
+        b=ONmK8JYiPgFpRzLr6v1t48svp5CLbD6iVIJE7nbQEMVc6GsQA0Jn76GnNnP9CX2Fv
+         77Tt4a+QS5qKLwGXGRNcv6LKke5h93nBQkvR5XvtygBn+Zl9fOF4v6j6UGlmeJ9LF/
+         EKcHw4i1QX5J9ESTQ4NsCq4k/QqhhwwogxeuljEU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C399D68974
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From:   Lina Iyer <ilina@codeaurora.org>
@@ -52,11 +52,10 @@ To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
         linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         bjorn.andersson@linaro.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, rnayak@codeaurora.org,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC 09/14] drivers: pinctrl: msm: fix use of deprecated gpiolib APIs
-Date:   Thu, 29 Aug 2019 12:11:58 -0600
-Message-Id: <20190829181203.2660-10-ilina@codeaurora.org>
+        linux-gpio@vger.kernel.org, rnayak@codeaurora.org
+Subject: [PATCH RFC 07/14] genirq: Introduce irq_chip_get/set_parent_state calls
+Date:   Thu, 29 Aug 2019 12:11:56 -0600
+Message-Id: <20190829181203.2660-8-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190829181203.2660-1-ilina@codeaurora.org>
 References: <20190829181203.2660-1-ilina@codeaurora.org>
@@ -67,60 +66,97 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace gpiochip_irqchip_add() and gpiochip_set_chained_irqchip() calls
-by populating the gpio_irq_chip data structures instead.
+From: Maulik Shah <mkshah@codeaurora.org>
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+On certain QTI chipsets some GPIOs are direct-connect interrupts
+to the GIC.
+
+Even when GPIOs are not used for interrupt generation and interrupt
+line is disabled, it does not prevent interrupt to get pending at
+GIC_ISPEND. When drivers call enable_irq unwanted interrupt occures.
+
+Introduce irq_chip_get/set_parent_state calls to clear pending irq
+which can get called within irq_enable of child irq chip to clear
+any pending irq before enabling.
+
+Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ include/linux/irq.h |  6 ++++++
+ kernel/irq/chip.c   | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7f35c196bb3e..76e8528e4d0a 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1027,7 +1027,19 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
- 	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index fb301cf29148..7853eb9301f2 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -610,6 +610,12 @@ extern int irq_chip_pm_put(struct irq_data *data);
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ extern void handle_fasteoi_ack_irq(struct irq_desc *desc);
+ extern void handle_fasteoi_mask_irq(struct irq_desc *desc);
++extern int irq_chip_set_parent_state(struct irq_data *data,
++				     enum irqchip_irq_state which,
++				     bool val);
++extern int irq_chip_get_parent_state(struct irq_data *data,
++				     enum irqchip_irq_state which,
++				     bool *state);
+ extern void irq_chip_enable_parent(struct irq_data *data);
+ extern void irq_chip_disable_parent(struct irq_data *data);
+ extern void irq_chip_ack_parent(struct irq_data *data);
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index b76703b2c0af..6bb5b22bb0a7 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1297,6 +1297,50 @@ EXPORT_SYMBOL_GPL(handle_fasteoi_mask_irq);
  
--	ret = gpiochip_add_data(&pctrl->chip, pctrl);
-+	chip->irq.chip = &pctrl->irq_chip;
-+	chip->irq.default_type = IRQ_TYPE_NONE;
-+	chip->irq.handler = handle_bad_irq;
-+	chip->irq.fwnode = pctrl->dev->fwnode;
-+	chip->irq.parent_handler = msm_gpio_irq_handler;
-+	chip->irq.num_parents = 1;
-+	chip->irq.parents = devm_kcalloc(pctrl->dev, 1,
-+					 sizeof(*chip->irq.parents),
-+					 GFP_KERNEL);
-+	if (!chip->irq.parents)
-+		return -ENOMEM;
+ #endif /* CONFIG_IRQ_FASTEOI_HIERARCHY_HANDLERS */
+ 
++/**
++ *	irq_chip_set_parent_state - set the state of a parent interrupt.
++ *	@data: Pointer to interrupt specific data
++ *	@which: State to be restored (one of IRQCHIP_STATE_*)
++ *	@val: Value corresponding to @which
++ *
++ */
++int irq_chip_set_parent_state(struct irq_data *data,
++			      enum irqchip_irq_state which,
++			      bool val)
++{
++	data = data->parent_data;
++	if (!data)
++		return 0;
 +
-+	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed register gpiochip\n");
- 		return ret;
-@@ -1053,20 +1065,6 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 		}
- 	}
- 
--	ret = gpiochip_irqchip_add(chip,
--				   &pctrl->irq_chip,
--				   0,
--				   handle_edge_irq,
--				   IRQ_TYPE_NONE);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to add irqchip to gpiochip\n");
--		gpiochip_remove(&pctrl->chip);
--		return -ENOSYS;
--	}
--
--	gpiochip_set_chained_irqchip(chip, &pctrl->irq_chip, pctrl->irq,
--				     msm_gpio_irq_handler);
--
- 	return 0;
- }
- 
++	if (data->chip->irq_set_irqchip_state)
++		return data->chip->irq_set_irqchip_state(data, which, val);
++
++	return 0;
++}
++EXPORT_SYMBOL(irq_chip_set_parent_state);
++
++/**
++ *	irq_chip_get_parent_state - get the state of a parent interrupt.
++ *	@data: Pointer to interrupt specific data
++ *	@which: one of IRQCHIP_STATE_* the caller wants to know
++ *	@state: a pointer to a boolean where the state is to be stored
++ *
++ */
++int irq_chip_get_parent_state(struct irq_data *data,
++			      enum irqchip_irq_state which,
++			      bool *state)
++{
++	data = data->parent_data;
++	if (!data)
++		return 0;
++
++	if (data->chip->irq_get_irqchip_state)
++		return data->chip->irq_get_irqchip_state(data, which, state);
++
++	return 0;
++}
++EXPORT_SYMBOL(irq_chip_get_parent_state);
++
+ /**
+  * irq_chip_enable_parent - Enable the parent interrupt (defaults to unmask if
+  * NULL)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
