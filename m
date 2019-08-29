@@ -2,122 +2,93 @@ Return-Path: <SRS0=jEL7=WZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E873BC3A5A6
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95658C3A5A3
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01642166E
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567103583;
-	bh=hGzTm4jDH5Y0WsNa/Vw17G8zXJmTDBmqLYC2f/tuNCw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=15oFdaOYkg7M5MI4AAZxIdeH+jJi3QxPgx9xQgvBXoTe5d9WKxOBMduGoA1gkJdFu
-	 vRqxDCtUIu5uo9+hueN7WA7XT2e29ZIfRfc0+sm9oF7VRn/q1OHXsh5j20Cfoj+nQI
-	 w0Z5ljqYXtyUhKIGK/9QGl1AkRIAMmebrIQ5BPcY=
+	by mail.kernel.org (Postfix) with ESMTP id 6C09921874
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:33:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ejFquLtQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="COkHEyYb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfH2SN4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Aug 2019 14:13:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728614AbfH2SNz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:13:55 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A648B2189D;
-        Thu, 29 Aug 2019 18:13:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102434;
-        bh=hGzTm4jDH5Y0WsNa/Vw17G8zXJmTDBmqLYC2f/tuNCw=;
+        id S1729393AbfH2SdT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Aug 2019 14:33:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54764 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728460AbfH2SdT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 14:33:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 54E1C675E8; Thu, 29 Aug 2019 18:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567103598;
+        bh=VsK0OWT4NrTuulRjb3e+y0lwEFWmdZz0LJdwLaeX5m8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2I5O4I7XPWdZrxGnB79Q0cuI7Ohcghxw11BRpyfnx8JOTFRh3FrsPOzfFRD9T/HAX
-         gY8MRhqk5KIZ8pNECmB958Tqp1zMkzPfVTZ49pVAWc5cLw3UMSlSQpw7/yIJZiUVrY
-         q1wRbRLc/k7+1wn0cMhd8GYn23VHB5Z8wbcQkhys=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 23/76] gpio: Fix build error of function redefinition
-Date:   Thu, 29 Aug 2019 14:12:18 -0400
-Message-Id: <20190829181311.7562-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
-References: <20190829181311.7562-1-sashal@kernel.org>
+        b=ejFquLtQhxvoaLkFyTBOPDf2aHwbiabfhzMxIJjCa2QUGTBw5V+NNzhT7+B88xXNh
+         WvhAGcx3o5AV9JD3WNw+8GTA0559qRsi40sNmQBIpRcmxKMtei221TSU8lcdMi9MJj
+         r/5SBVZ+jpi9mHSe4RRAYBVc6YD/XcvFpQmOooTw=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B1CB686B7;
+        Thu, 29 Aug 2019 18:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567102356;
+        bh=VsK0OWT4NrTuulRjb3e+y0lwEFWmdZz0LJdwLaeX5m8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=COkHEyYbgqarmuN0Zt5gpdNFOQq5sGO5AUQwqSo5TY2zr8p3RUVC70IVq4yMSFlon
+         YHiXCVcgVsgmxi92xn0RnpqPoEu9Mkg30jL5LnKGnZXSEVcZeB/dpaqRSbqI7j0s6u
+         D1Ga0+ftGLMnRmszB4PaH1PY55ZRZ8xU3laV9aN0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B1CB686B7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
+        linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
+        linux-gpio@vger.kernel.org, rnayak@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RFC 14/14] arm64: defconfig: enable PDC interrupt controller for Qualcomm SDM845
+Date:   Thu, 29 Aug 2019 12:12:03 -0600
+Message-Id: <20190829181203.2660-15-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190829181203.2660-1-ilina@codeaurora.org>
+References: <20190829181203.2660-1-ilina@codeaurora.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+Enable PDC interrupt controller for SDM845 devices. The interrupt
+controller can detect wakeup capable interrupts when the SoC is in a low
+power state.
 
-[ Upstream commit 68e03b85474a51ec1921b4d13204782594ef7223 ]
-
-when do randbuilding, I got this error:
-
-In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190731123814.46624-1-yuehaibing@huawei.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- include/linux/gpio.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 39745b8bdd65d..b3115d1a7d494 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -240,30 +240,6 @@ static inline int irq_to_gpio(unsigned irq)
- 	return -EINVAL;
- }
- 
--static inline int
--gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--		       unsigned int gpio_offset, unsigned int pin_offset,
--		       unsigned int npins)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline int
--gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline void
--gpiochip_remove_pin_ranges(struct gpio_chip *chip)
--{
--	WARN_ON(1);
--}
--
- static inline int devm_gpio_request(struct device *dev, unsigned gpio,
- 				    const char *label)
- {
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0e58ef02880c..310b6048054a 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -729,6 +729,7 @@ CONFIG_ARCH_R8A77970=y
+ CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77990=y
+ CONFIG_ARCH_R8A77995=y
++CONFIG_QCOM_PDC=y
+ CONFIG_ROCKCHIP_PM_DOMAINS=y
+ CONFIG_ARCH_TEGRA_132_SOC=y
+ CONFIG_ARCH_TEGRA_210_SOC=y
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
