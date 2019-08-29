@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A94C3A5A6
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 14:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A499C3A59F
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 14:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57BFF23404
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 14:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D6C622CED
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 14:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="goztYIZL"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JVWTA4rK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfH2Oia (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Aug 2019 10:38:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52617 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbfH2OiO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 10:38:14 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t17so3998272wmi.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2019 07:38:13 -0700 (PDT)
+        id S1728122AbfH2Oik (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Aug 2019 10:38:40 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:32920 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727908AbfH2OiK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 10:38:10 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r17so4315267wme.0
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2019 07:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0MCSm3PwhLeVZkLTF5crXAvat1wv6lwOmpNcM2aNtkA=;
-        b=goztYIZL91fhNd7Q0e26K36T37XhDMhY9r1mWBqLUP77R6Fca/IWYIh+pU/sYypGqo
-         AIG/cl+IQsJe92KLYVP7WYP+kzkACZsg7acw0iy+0WZx20r844FMHvhbeOKMJMv/dhP9
-         9u74rEDU8/G1ig3+CkThjhsIivLAjuuwAx7sWCga3Rd+lrYBmBgJvR0GvuzZxKjMHpt3
-         2z2HfVRae22htdzMQrUZx+GKJ+yvVnsBwQJf9J34KxztRFUCbnTCI3NZoNbexHBsqm8u
-         07vKriwVFgPbjcGmcHNRWIhhOl7N8L8er8KugnPooYnDy99GFGGcfC/UVPfNEEUFCQrr
-         Y1qg==
+        bh=qlsO4luZGA7xdDBq4p1qMUU3oONF/sHFPT7E7FVYQM0=;
+        b=JVWTA4rK9yfsAnkd3/S2TmsnSXoQp9poW2HhblLsu22DFOsV+yqUFeLk2fRTnYl0lC
+         u5SIGOt47o5hojZpQvhjh2PHkLq+5PLZAYvyidjM2zQRRpJBCUNXkcGQMREulGvG1rH/
+         V991n+oPSv1cCNWA+XxrEMXwmIRz8gaDu8sAnBmby7W4XcugWL7Bd/gJAmH6vBE9SdB4
+         NgU1MKfTZ9+pBL6jFkWH3yvbid1FPef5dqdfQA5zi8JKQ8EhfHehDnv38o5d4mFWN5RB
+         02yOrR7VTBYCpmBfgl4fObQfg6UnXq8UTOgNfMl7Lv1diu5S7ygDetAcUUBoLFnOii+P
+         mZMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0MCSm3PwhLeVZkLTF5crXAvat1wv6lwOmpNcM2aNtkA=;
-        b=OcwugYkTVr1ySm8KWE8HaHwu6Q4cn9CYBbqn6MTcZV+S2WOkEc475OVjNBNewUFwdT
-         jlb01rzhh77lvA2L7iN1Dfca0jVBXOQF0B/OAwLaEvZhlR2X6thDKt7TQUL0adbZF33z
-         750C67Xr//692xTbGdAhHu4xNAfWYf4rXEcdbNINtwAmMIcaYkXbXJq3werrEvwPYGKI
-         tyEuKiX6lBRsBDzqTSIJAiSUg5PRWYL3hfv2wVw0bRTizPVlBneajZMOFVz1gxAqebOs
-         h0G61fJyTcRjc3bqcs6lu4aCbfrCi55sUSU3+Sbidj3vAPz5y+C1Snm/MyjirC7WgSDB
-         1MJQ==
-X-Gm-Message-State: APjAAAUccOopFaSxEytaRKuLfyvX/r+WHrx1yJjqmGPxGusGOlU3kXyA
-        wdXLYf5ZJTgxl4Hmka98KWhHPw==
-X-Google-Smtp-Source: APXvYqx9ZRM6jA7Xi+MPZwFdPZ5Ui7XDERLRN1q9Q5CY6ZlmVljwQAixjqmpTApxKlfRhibyItWZGQ==
-X-Received: by 2002:a05:600c:254e:: with SMTP id e14mr1004275wma.150.1567089492368;
-        Thu, 29 Aug 2019 07:38:12 -0700 (PDT)
+        bh=qlsO4luZGA7xdDBq4p1qMUU3oONF/sHFPT7E7FVYQM0=;
+        b=eOwBs+APEACBM0vQHXvsump4azTD0zs3784LxiyYcymkuKSBIdSZj/v21gqwEXRGR8
+         PvfOAvLMvLn9s78VeqrFRJpfILaHMHuVcdhqd1rcTbR3wZ3a34Xu93EY9ZxADt1dwnkc
+         JHRlZcDfXpqT1znxqQEgyf4iB5RhWgFT82H0ZpaeKiY5FwFJtycF3dJ/nyQw2chjzVjb
+         yw4yf/fvQkdJJ5IxsNWn+7J0tJ3MWN/YrOQ9gEhREgU4n9XQNWw7zVXKcB4qOAFEnItf
+         jC6LJrBIPoqbSiAetxznwmdiw7Z9OnYu/5LNixVxmq6zL6xcuizYgeCkQDfwsog3IRz0
+         Hqlg==
+X-Gm-Message-State: APjAAAUTZXC05NlUu8Jc+WQQpCI6wc/eh4mbaW2h+MSL5totndxc9QCW
+        Iy/TLqkeppAZWHWRNbrarP49jw==
+X-Google-Smtp-Source: APXvYqwqhVBmVgrfpSIbnESiSa5F2MHb7ql3NpNi0FVVtwKiErBDLaoIJzfK/GhBfhv8sCTxpxQkaQ==
+X-Received: by 2002:a1c:750f:: with SMTP id o15mr12108340wmc.131.1567089489097;
+        Thu, 29 Aug 2019 07:38:09 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id g15sm3241925wrp.29.2019.08.29.07.38.11
+        by smtp.gmail.com with ESMTPSA id g15sm3241925wrp.29.2019.08.29.07.38.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 07:38:11 -0700 (PDT)
+        Thu, 29 Aug 2019 07:38:08 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -65,9 +65,9 @@ To:     Jonathan Corbet <corbet@lwn.net>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 8/9] gpio: xgene: use devm_platform_ioremap_resource_nocache()
-Date:   Thu, 29 Aug 2019 16:37:41 +0200
-Message-Id: <20190829143742.24726-9-brgl@bgdev.pl>
+Subject: [PATCH 5/9] gpio: em: use devm_platform_ioremap_resource_nocache()
+Date:   Thu, 29 Aug 2019 16:37:38 +0200
+Message-Id: <20190829143742.24726-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190829143742.24726-1-brgl@bgdev.pl>
 References: <20190829143742.24726-1-brgl@bgdev.pl>
@@ -86,41 +86,56 @@ platform_get_resource().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-xgene.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-em.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index 2918363884de..559b8e53c2e0 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -155,7 +155,6 @@ static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
- 
- static int xgene_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index a87951293aaa..0f4f5e11278a 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -269,7 +269,7 @@ static void em_gio_irq_domain_remove(void *data)
+ static int em_gio_probe(struct platform_device *pdev)
  {
--	struct resource *res;
- 	struct xgene_gpio *gpio;
- 	int err = 0;
+ 	struct em_gio_priv *p;
+-	struct resource *io[2], *irq[2];
++	struct resource *irq[2];
+ 	struct gpio_chip *gpio_chip;
+ 	struct irq_chip *irq_chip;
+ 	const char *name = dev_name(&pdev->dev);
+@@ -284,25 +284,21 @@ static int em_gio_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
+ 	spin_lock_init(&p->sense_lock);
  
-@@ -165,16 +164,9 @@ static int xgene_gpio_probe(struct platform_device *pdev)
- 		goto err;
+-	io[0] = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	io[1] = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	irq[0] = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	irq[1] = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+ 
+-	if (!io[0] || !io[1] || !irq[0] || !irq[1]) {
+-		dev_err(&pdev->dev, "missing IRQ or IOMEM\n");
++	if (!irq[0] || !irq[1]) {
++		dev_err(&pdev->dev, "missing IRQ resources\n");
+ 		return -EINVAL;
  	}
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		err = -EINVAL;
--		goto err;
--	}
--
--	gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
--							resource_size(res));
--	if (!gpio->base) {
--		err = -ENOMEM;
-+	gpio->base = devm_platform_ioremap_resource_nocache(pdev, 0);
-+	if (IS_ERR(gpio->base)) {
-+		err = PTR_ERR(gpio->base);
- 		goto err;
- 	}
+-	p->base0 = devm_ioremap_nocache(&pdev->dev, io[0]->start,
+-					resource_size(io[0]));
+-	if (!p->base0)
+-		return -ENOMEM;
++	p->base0 = devm_platform_ioremap_resource_nocache(pdev, 0);
++	if (IS_ERR(p->base0))
++		return PTR_ERR(p->base0);
  
+-	p->base1 = devm_ioremap_nocache(&pdev->dev, io[1]->start,
+-				   resource_size(io[1]));
+-	if (!p->base1)
+-		return -ENOMEM;
++	p->base1 = devm_platform_ioremap_resource_nocache(pdev, 1);
++	if (IS_ERR(p->base1))
++		return PTR_ERR(p->base1);
+ 
+ 	if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios)) {
+ 		dev_err(&pdev->dev, "Missing ngpios OF property\n");
 -- 
 2.21.0
 
