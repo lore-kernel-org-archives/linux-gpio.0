@@ -2,168 +2,186 @@ Return-Path: <SRS0=jEL7=WZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06522C3A59F
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8246C3A59F
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEECF20578
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567103220;
-	bh=mbc88SK90w/+Uoyl1A5Z9fHXLSXvvuFhUGHwFq5VEjA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q//89E85nWic+lf+B0JNVcU2nyDfZgcu0t8yvMnGxnKit90ivQhYvbBFR9LaWml0Q
-	 BNlQyPvfqIc+8Xe78LZKNe5aCam/q8Jpo6X7p5MiEJApWY4lDV+Pe2G5eYXu5Je0yl
-	 dBKw1g4j8lOeIiqyolVzhPXV4DCrJ/5BQaG813is=
+	by mail.kernel.org (Postfix) with ESMTP id BCC72205C9
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Aug 2019 18:28:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hnGcdSvC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MmrHriln"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbfH2S0y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Aug 2019 14:26:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728558AbfH2SPm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:42 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D2D42342C;
-        Thu, 29 Aug 2019 18:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102541;
-        bh=mbc88SK90w/+Uoyl1A5Z9fHXLSXvvuFhUGHwFq5VEjA=;
+        id S1729337AbfH2S2f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Aug 2019 14:28:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39694 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728503AbfH2S2D (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Aug 2019 14:28:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 58621694DF; Thu, 29 Aug 2019 18:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567103282;
+        bh=KRYbwxgKTx0pR8Tqhajtg5Ur7vEwP9WSyPmjMrZBHXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPxdlt4jc51i344ngRHxG5qcsbiAkd3xYeNa04aHazXAwxq1rwWkEKyE8j323ii7S
-         OyKjyxYreIXbPwZkqhKsdXkLScthARpfWsUlt/3YAxv9S3749QEhbayuSf6f16CP/i
-         CboIi1Pnpn4y3wotVCICF8d8EJW9B/Jo+JdCMmcM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Sasha Levin <sashal@kernel.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 75/76] gpio: Fix irqchip initialization order
-Date:   Thu, 29 Aug 2019 14:13:10 -0400
-Message-Id: <20190829181311.7562-75-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
-References: <20190829181311.7562-1-sashal@kernel.org>
+        b=hnGcdSvCulgmGYcKBDX+L6qvVWpB7Tj4AKhIg50ejHFTE4PF+O02odcPl41KOYt1i
+         CX5C6TPZv3SvFRuo9neluaQBV/nedJ5X31p2y98ZV+8D4qz4QS0ptz2z6wzyNWpkzq
+         ZCFIapZgIxtyWLwQTOf+081XBG6udfIky0and/Hk=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 425D068A3E;
+        Thu, 29 Aug 2019 18:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567102351;
+        bh=KRYbwxgKTx0pR8Tqhajtg5Ur7vEwP9WSyPmjMrZBHXw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MmrHrilnyHUHaYN4DJEQd+ldJQ3LIfwLHvfXQdJNkGHkO3PVjMEEqGB20uBdQ1awO
+         vQGLC1BmIZuEWcwldfti6dex6n6lTNkCb/wU9ZjH7c89p081ABfJzQf6ykbVtOqCWP
+         uUQQ8aamVcyufnyPyQXo0auGiU0pc4D6kGEDw+8A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 425D068A3E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
+        linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
+        linux-gpio@vger.kernel.org, rnayak@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RFC 11/14] drivers: pinctrl: sdm845: add PDC wakeup interrupt map for GPIOs
+Date:   Thu, 29 Aug 2019 12:12:00 -0600
+Message-Id: <20190829181203.2660-12-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190829181203.2660-1-ilina@codeaurora.org>
+References: <20190829181203.2660-1-ilina@codeaurora.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+Add interrupt parents for wakeup capable GPIOs for Qualcomm SDM845 SoC.
 
-[ Upstream commit 48057ed1840fde9239b1e000bea1a0a1f07c5e99 ]
-
-The new API for registering a gpio_irq_chip along with a
-gpio_chip has a different semantic ordering than the old
-API which added the irqchip explicitly after registering
-the gpio_chip.
-
-Move the calls to add the gpio_irq_chip *last* in the
-function, so that the different hooks setting up OF and
-ACPI and machine gpio_chips are called *before* we try
-to register the interrupts, preserving the elder semantic
-order.
-
-This cropped up in the PL061 driver which used to work
-fine with no special ACPI quirks, but started to misbehave
-using the new API.
-
-Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
-Reported-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20190820080527.11796-1-linus.walleij@linaro.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/gpio/gpiolib.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-sdm845.c | 83 ++++++++++++++++++++++++++-
+ 1 file changed, 82 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4f333d6f2e230..42f9e00ff4d1b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1371,21 +1371,13 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (status)
- 		goto err_remove_from_list;
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+index 39f498c09906..5f43dabcd8eb 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
+  */
  
--	status = gpiochip_irqchip_init_valid_mask(chip);
--	if (status)
--		goto err_remove_from_list;
--
- 	status = gpiochip_alloc_valid_mask(chip);
- 	if (status)
--		goto err_remove_irqchip_mask;
--
--	status = gpiochip_add_irqchip(chip, lock_key, request_key);
--	if (status)
--		goto err_free_gpiochip_mask;
-+		goto err_remove_from_list;
+ #include <linux/acpi.h>
+@@ -1282,6 +1282,84 @@ static const int sdm845_acpi_reserved_gpios[] = {
+ 	0, 1, 2, 3, 81, 82, 83, 84, -1
+ };
  
- 	status = of_gpiochip_add(chip);
- 	if (status)
--		goto err_remove_chip;
-+		goto err_free_gpiochip_mask;
- 
- 	status = gpiochip_init_valid_mask(chip);
- 	if (status)
-@@ -1411,6 +1403,14 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	machine_gpiochip_add(chip);
- 
-+	status = gpiochip_irqchip_init_valid_mask(chip);
-+	if (status)
-+		goto err_remove_acpi_chip;
++static const struct msm_gpio_wakeirq_map sdm845_pdc_map[] = {
++	{1, 30},
++	{3, 31},
++	{5, 32},
++	{10, 33},
++	{11, 34},
++	{20, 35},
++	{22, 36},
++	{24, 37},
++	{26, 38},
++	{30, 39},
++	{31, 117},
++	{32, 41},
++	{34, 42},
++	{36, 43},
++	{37, 44},
++	{38, 45},
++	{39, 46},
++	{40, 47},
++	{41, 115},
++	{43, 49},
++	{44, 50},
++	{46, 51},
++	{48, 52},
++	{49, 118},
++	{52, 54},
++	{53, 55},
++	{54, 56},
++	{56, 57},
++	{57, 58},
++	{58, 59},
++	{59, 60},
++	{60, 61},
++	{61, 62},
++	{62, 63},
++	{63, 64},
++	{64, 65},
++	{66, 66},
++	{68, 67},
++	{71, 68},
++	{73, 69},
++	{77, 70},
++	{78, 71},
++	{79, 72},
++	{80, 73},
++	{84, 74},
++	{85, 75},
++	{86, 76},
++	{88, 77},
++	{89, 116},
++	{91, 79},
++	{92, 80},
++	{95, 81},
++	{96, 82},
++	{97, 83},
++	{101, 84},
++	{103, 85},
++	{104, 86},
++	{115, 90},
++	{116, 91},
++	{117, 92},
++	{118, 93},
++	{119, 94},
++	{120, 95},
++	{121, 96},
++	{122, 97},
++	{123, 98},
++	{124, 99},
++	{125, 100},
++	{127, 102},
++	{128, 103},
++	{129, 104},
++	{130, 105},
++	{132, 106},
++	{133, 107},
++	{145, 108},
++};
 +
-+	status = gpiochip_add_irqchip(chip, lock_key, request_key);
-+	if (status)
-+		goto err_remove_irqchip_mask;
+ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.pins = sdm845_pins,
+ 	.npins = ARRAY_SIZE(sdm845_pins),
+@@ -1290,6 +1368,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.groups = sdm845_groups,
+ 	.ngroups = ARRAY_SIZE(sdm845_groups),
+ 	.ngpios = 151,
++	.wakeirq_map = sdm845_pdc_map,
++	.nwakeirq_map = ARRAY_SIZE(sdm845_pdc_map),
 +
- 	/*
- 	 * By first adding the chardev, and then adding the device,
- 	 * we get a device node entry in sysfs under
-@@ -1422,21 +1422,21 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (gpiolib_initialized) {
- 		status = gpiochip_setup_dev(gdev);
- 		if (status)
--			goto err_remove_acpi_chip;
-+			goto err_remove_irqchip;
- 	}
- 	return 0;
+ };
  
-+err_remove_irqchip:
-+	gpiochip_irqchip_remove(chip);
-+err_remove_irqchip_mask:
-+	gpiochip_irqchip_free_valid_mask(chip);
- err_remove_acpi_chip:
- 	acpi_gpiochip_remove(chip);
- err_remove_of_chip:
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
--err_remove_chip:
--	gpiochip_irqchip_remove(chip);
- err_free_gpiochip_mask:
- 	gpiochip_free_valid_mask(chip);
--err_remove_irqchip_mask:
--	gpiochip_irqchip_free_valid_mask(chip);
- err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_del(&gdev->list);
+ static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
