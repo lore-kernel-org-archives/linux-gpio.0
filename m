@@ -1,103 +1,141 @@
-Return-Path: <SRS0=uNKk=W2=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=huSS=W3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C86FC3A59B
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Aug 2019 18:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8E6C41514
+	for <linux-gpio@archiver.kernel.org>; Sat, 31 Aug 2019 03:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E82623429
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Aug 2019 18:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF9C23717
+	for <linux-gpio@archiver.kernel.org>; Sat, 31 Aug 2019 03:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=typeblog-net.20150623.gappssmtp.com header.i=@typeblog-net.20150623.gappssmtp.com header.b="FxDkvpiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfH3SRE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Aug 2019 14:17:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:7946 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbfH3SRD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 30 Aug 2019 14:17:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 11:17:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="382093729"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Aug 2019 11:17:00 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i3lSF-0002tl-7k; Fri, 30 Aug 2019 21:16:59 +0300
-Date:   Fri, 30 Aug 2019 21:16:59 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Peter Cai <peter@typeblog.net>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S1728246AbfHaDKd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Aug 2019 23:10:33 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33698 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbfHaDKc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Aug 2019 23:10:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n190so4461647pgn.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Aug 2019 20:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=typeblog-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xPp/KNeXkBz5eBYg4mT+UA0qSZaP/9dyi5AxdOhW8oY=;
+        b=FxDkvpiLmDCdVySmdKZFxU+2EWG20fKrRnf810YGsm3sKyNqJj1MWnVW0tk2eCnr3i
+         GLP+gnBwlz7OLbQitK8znNiv1RsFw6mxfxKzg/HaE4ObLZZ4iQZ8EBIAu2fKDwc6ZNy4
+         Fjoa89AzJ9MtWSGUjfmL4LuEyg/dkT/67EkioOiqmp2oWovIKYae/Athutb2V3Sz9GBJ
+         8v+Wy05IzpzJG9ctYb3A3G2xy4zUWzrynpWZx4O7enZAlazh7RTyiKqfRd7tOvHpkl3m
+         Zyt403oqlfbqEw3cJfLUGC7TjLFzICr1l2cy6Jr/7q4bJWHpJIQCq04Y+nthKCJqfpn8
+         jMWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xPp/KNeXkBz5eBYg4mT+UA0qSZaP/9dyi5AxdOhW8oY=;
+        b=kNaaLaR4cF2fou7uoaR+HbPPEENWDO3GhZ5KXeE1aOQ6AQg2A3+Rks5qTo9lZINLDL
+         jLV+jS6U3Fi7S88KA2H/ihoXQW0Nz1SPlIqhqcquHso/d4zR+wlfb6L9RBukM/nuYUzg
+         2uOV3RRgwa+f/HIY2RX8ckW3633sFYVOF4wS7S3qmEwvsfknNCvWusgpIaT36BqupaNv
+         bnQ1+j2cr6uMzb60GLO4TzLr1ds/oL0N++iYnXqtTocM9smn1qzRfq1uB+/rOPLDT9Wh
+         mc3tO7tHzGHvtFPLRSz0ZVs/0FgMZ48y5ti6Eg2nLpxbr/QAlFF0DxqFe+0uSNzPrxNr
+         gP+g==
+X-Gm-Message-State: APjAAAXHILuuFtEH3sODzeg8qPWjpp8GNAKbiN1YfV7aSUTCnhNqW0Al
+        MDMFZmYRS1H+jUo4nj3Lkx7YNw==
+X-Google-Smtp-Source: APXvYqyleC9XvInNiTuUuZU4vpeR5UtTD2SFLPqm9Q3cOcEE/uZaNhwkLgxs2UsAggMgWosJ1+NyAQ==
+X-Received: by 2002:a65:6406:: with SMTP id a6mr15168119pgv.393.1567221031768;
+        Fri, 30 Aug 2019 20:10:31 -0700 (PDT)
+Received: from peter-pc.home ([91.207.174.229])
+        by smtp.gmail.com with ESMTPSA id 185sm10961454pff.54.2019.08.30.20.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 20:10:30 -0700 (PDT)
+From:   Peter Cai <peter@typeblog.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Peter Cai <peter@typeblog.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Bastien Nocera <hadess@hadess.net>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH 2/2] touchscreen: goodix: define GPIO mapping for GPD P2
- Max
-Message-ID: <20190830181659.GO2680@smile.fi.intel.com>
-References: <20190830000024.20384-1-peter@typeblog.net>
- <20190830000024.20384-2-peter@typeblog.net>
- <20190830115505.GX2680@smile.fi.intel.com>
- <CA+Zf_0etfu7282TQ4wYE8tOrhh2Je4aV4Dz5tgC_wt7=FMAidA@mail.gmail.com>
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [PATCH v2 1/2] gpio: acpi: add quirk to override GpioInt polarity
+Date:   Sat, 31 Aug 2019 11:09:14 +0800
+Message-Id: <20190831030916.13172-1-peter@typeblog.net>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+Zf_0etfu7282TQ4wYE8tOrhh2Je4aV4Dz5tgC_wt7=FMAidA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:15:27PM +0800, Peter Cai wrote:
-> On Fri, Aug 30, 2019, 7:55 PM Andy Shevchenko <
-> andriy.shevchenko@linux.intel.com> wrote:
+On GPD P2 Max, the firmware could not reset the touch panel correctly.
+The kernel needs to take on the job instead, but the GpioInt definition
+in DSDT specifies ActiveHigh while the GPIO pin should actually be
+ActiveLow.
 
-> > I guess most of these #ifdef:s makes code less readable for exchange of
-> saving
-> few bytes in the module footprint.
-> 
-> Well since they can only be used when ACPI is supported
+We need to override the polarity defined by DSDT. The GPIO driver
+already allows defining polarity in acpi_gpio_params, but the option is
+not applied to GpioInt.
 
-> (devm_acpi_dev_add_driver_gpios does not exist without ACPI defined, thus
-> the last guard must exist),
+This patch adds a new quirk that enables the polarity specified in
+acpi_gpio_params to also be applied to GpioInt.
 
-This is not correct.
+Signed-off-by: Peter Cai <peter@typeblog.net>
+---
 
-> if they were not guarded then we would be left
-> with a bunch of unused variables warnings when building without ACPI which
-> doesn't seem good.
+v2: rebased to gpio/for-next, moved quirk out of the gpioint
+conditional.
+---
+ drivers/gpio/gpiolib-acpi.c   | 9 +++++++++
+ include/linux/gpio/consumer.h | 6 ++++++
+ 2 files changed, 15 insertions(+)
 
-Good / no-good is only matter of few dozens of bytes here and there to be saved.
-
-> Should we use __maybe_unused here instead of #ifdef guards?
-
-No, it won't make sense, because the structures will be part of
-_add_driver_gpio() call, due to which compiler likely can't recognize unused
-structures. However, you may try with warnings enabled `make W=1`.
-
-> > Comma at the end?
-> 
-> I was trying to follow the style of this driver but it doesn't seem to be
-> really consistent within itself. Another dmi_system_id definition in the
-> same file mixed both styles so I was kind of confused.
-
-I see. So, this is for Dmitry's preferences.
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index fdee8afa5339..ab16ea61a8fa 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -603,6 +603,15 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
+ 			lookup->info.polarity = lookup->active_low;
+ 		}
++
++		/*
++		 * Override the polarity specified by GpioInt if
++		 * ACPI_GPIO_QUIRK_OVERRIDE_POLARITY is set.
++		 */
++		if (lookup->info.quirks & ACPI_GPIO_QUIRK_OVERRIDE_POLARITY) {
++			dev_warn(&lookup->info.adev->dev, FW_BUG "Incorrect polarity specified by GpioInt, overriding.\n");
++			lookup->info.polarity = lookup->active_low;
++		}
+ 	}
+ 
+ 	return 1;
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index b70af921c614..7e9f24ebb085 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -622,6 +622,12 @@ struct acpi_gpio_mapping {
+  * get GpioIo type explicitly, this quirk may be used.
+  */
+ #define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
++/*
++ * Use the GPIO polarity (ActiveHigh / ActiveLow) from acpi_gpio_params
++ * for GpioInt as well. The default behavior is to use the one specified
++ * by GpioInt, which can be incorrect on some devices.
++ */
++#define ACPI_GPIO_QUIRK_OVERRIDE_POLARITY	BIT(2)
+ 
+ 	unsigned int quirks;
+ };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.23.0
 
