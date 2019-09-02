@@ -2,158 +2,179 @@ Return-Path: <SRS0=QqMn=W5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BEEC3A59E
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Sep 2019 10:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17688C3A59E
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Sep 2019 12:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07E20217D7
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Sep 2019 10:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E229A20820
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Sep 2019 12:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567427060;
+	bh=+PCQb92RoAs5c8tkI7VuDYMnwlubDXILnGsLd8kXyNM=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=wTMw22erSe1ZQ9LMeOVdlbPryIGlR44o6Sn1cCo4ULkF4Kh+RQlzvtpommrt+x8ya
+	 be+C12z8Xi6C8qYmHDVh/TujZr5fwshSdkzYYbLgOeadiLjVeGL+qZEcLJeIUi4sHy
+	 fJuT9Kfm6WJgTLSDIYVRlW93Sa4F89F1+k7wxNnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfIBKEV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 Sep 2019 06:04:21 -0400
-Received: from mga09.intel.com ([134.134.136.24]:21331 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729560AbfIBKEU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:04:20 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 03:04:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
-   d="scan'208";a="382753520"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Sep 2019 03:04:17 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i4jC3-0008Hw-IJ; Mon, 02 Sep 2019 13:04:15 +0300
-Date:   Mon, 2 Sep 2019 13:04:15 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Peter Cai <peter@typeblog.net>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S1731167AbfIBMYT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 Sep 2019 08:24:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49596 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729893AbfIBMYS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Sep 2019 08:24:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=oiBbowp/nc4jLB0rGwW6B211FgROjAwMe8fO/k0vtP4=; b=jDftagniYNft
+        sizqWELp6chDsXiRL76YDnqT4CjErTM5I2OyFWM8Imdm6hTRnwyqvKykql135kvQYj5IfuEq4UI9d
+        /JZ6DK37EkRh3j18IKTgXzlobtvuvQi2z27YZdDdbxMvPUB87Mwt8u7BSkH9vi4+ccxgW32loG/Zi
+        xJLpc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i4lNO-0003Cd-Ap; Mon, 02 Sep 2019 12:24:06 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D15402742CCB; Mon,  2 Sep 2019 13:24:05 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc:     Hartley Sweeten <hsweeten@visionengravers.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] touchscreen: goodix: define GPIO mapping for GPD
- P2 Max
-Message-ID: <20190902100415.GX2680@smile.fi.intel.com>
-References: <20190831030916.13172-1-peter@typeblog.net>
- <20190831030916.13172-2-peter@typeblog.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190831030916.13172-2-peter@typeblog.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-spi@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
+        Mark Brown <broonie@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, stable@vger.kernel.org
+Subject: Applied "spi: ep93xx: Repair SPI CS lookup tables" to the spi tree
+In-Reply-To: <20190831180402.10008-1-alexander.sverdlin@gmail.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190902122405.D15402742CCB@ypsilon.sirena.org.uk>
+Date:   Mon,  2 Sep 2019 13:24:05 +0100 (BST)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 11:09:15AM +0800, Peter Cai wrote:
-> The firmware of GPD P2 Max could not handle panel resets although code
-> is present in DSDT. The kernel needs to take on this job instead, but
-> the DSDT does not provide _DSD, rendering kernel helpless when trying to
-> find the respective GPIO pins.
-> 
-> Fortunately, this time GPD has proper DMI vendor / product strings that
-> we could match against. We simply apply an acpi_gpio_mapping table when
-> GPD P2 Max is matched.
-> 
-> Additionally, the DSDT definition of the irq pin specifies a wrong
-> polarity. The new quirk introduced in the previous patch
-> (ACPI_GPIO_QUIRK_OVERRIDE_POLARITY) is applied to correct this.
+The patch
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+   spi: ep93xx: Repair SPI CS lookup tables
 
-though one comment below.
+has been applied to the spi tree at
 
-> 
-> Signed-off-by: Peter Cai <peter@typeblog.net>
-> ---
-> 
-> v2: removed '#ifdef CONFIG_ACPI' as per suggestion. The #ifdef guards
-> for CONFIG_DMI is kept for consistency with the other dmi_system_id
-> definition in the same file.
-> ---
->  drivers/input/touchscreen/goodix.c | 31 ++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-> index 5178ea8b5f30..df476f7dcd95 100644
-> --- a/drivers/input/touchscreen/goodix.c
-> +++ b/drivers/input/touchscreen/goodix.c
-> @@ -144,6 +144,31 @@ static const struct dmi_system_id rotated_screen[] = {
->  	{}
->  };
->  
-> +static const struct acpi_gpio_params irq_gpios_default = { 0, 0, false };
-> +static const struct acpi_gpio_params reset_gpios_default = { 1, 0, false };
-> +static const struct acpi_gpio_mapping gpio_mapping_force_irq_active_high[] = {
-> +	{ "irq-gpios", &irq_gpios_default, 1, ACPI_GPIO_QUIRK_OVERRIDE_POLARITY },
-> +	{ "reset-gpios", &reset_gpios_default, 1 },
-> +	{}
-> +};
-> +
-> +/*
-> + * Devices that need acpi_gpio_mapping to function correctly
-> + */
-> +static const struct dmi_system_id need_gpio_mapping[] = {
-> +#if defined(CONFIG_DMI) && defined(CONFIG_X86)
-> +	{
-> +		.ident = "GPD P2 Max",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "GPD"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "P2 MAX")
-> +		},
-> +		.driver_data = &gpio_mapping_force_irq_active_high
-> +	},
-> +#endif
-> +	{}
-> +};
-> +
->  /**
->   * goodix_i2c_read - read data from a register of the i2c slave device.
->   *
-> @@ -795,6 +820,12 @@ static int goodix_ts_probe(struct i2c_client *client,
->  {
->  	struct goodix_ts_data *ts;
->  	int error;
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
 
-> +	struct dmi_system_id *dmi_match;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I guess it should be const as kbuild bot complained on v1.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-And perhaps you want to keep reverse xmas tree order in definition block:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-	const struct dmi_system_id *dmi_match;
-	struct goodix_ts_data *ts;
-	int error;
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> +
-> +	dmi_match = dmi_first_match(need_gpio_mapping);
-> +	if (dmi_match)
-> +		devm_acpi_dev_add_driver_gpios(&client->dev,
-> +					       dmi_match->driver_data);
->  
->  	dev_dbg(&client->dev, "I2C Address: 0x%02x\n", client->addr);
->  
-> -- 
-> 2.23.0
-> 
+Thanks,
+Mark
 
+From 4fbc485324d2975c54201091dfad0a7dd4902324 Mon Sep 17 00:00:00 2001
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Date: Sat, 31 Aug 2019 20:04:02 +0200
+Subject: [PATCH] spi: ep93xx: Repair SPI CS lookup tables
+
+The actual device name of the SPI controller being registered on EP93xx is
+"spi0" (as seen by gpiod_find_lookup_table()). This patch fixes all
+relevant lookup tables and the following failure (seen on EDB9302):
+
+ep93xx-spi ep93xx-spi.0: failed to register SPI master
+ep93xx-spi: probe of ep93xx-spi.0 failed with error -22
+
+Fixes: 1dfbf334f1236 ("spi: ep93xx: Convert to use CS GPIO descriptors")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Lukasz Majewski <lukma@denx.de>
+Link: https://lore.kernel.org/r/20190831180402.10008-1-alexander.sverdlin@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm/mach-ep93xx/edb93xx.c       | 2 +-
+ arch/arm/mach-ep93xx/simone.c        | 2 +-
+ arch/arm/mach-ep93xx/ts72xx.c        | 4 ++--
+ arch/arm/mach-ep93xx/vision_ep9307.c | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-ep93xx/edb93xx.c b/arch/arm/mach-ep93xx/edb93xx.c
+index 1f0da76a39de..7b7280c21ee0 100644
+--- a/arch/arm/mach-ep93xx/edb93xx.c
++++ b/arch/arm/mach-ep93xx/edb93xx.c
+@@ -103,7 +103,7 @@ static struct spi_board_info edb93xx_spi_board_info[] __initdata = {
+ };
+ 
+ static struct gpiod_lookup_table edb93xx_spi_cs_gpio_table = {
+-	.dev_id = "ep93xx-spi.0",
++	.dev_id = "spi0",
+ 	.table = {
+ 		GPIO_LOOKUP("A", 6, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+diff --git a/arch/arm/mach-ep93xx/simone.c b/arch/arm/mach-ep93xx/simone.c
+index e2658e22bba1..8a53b74dc4b2 100644
+--- a/arch/arm/mach-ep93xx/simone.c
++++ b/arch/arm/mach-ep93xx/simone.c
+@@ -73,7 +73,7 @@ static struct spi_board_info simone_spi_devices[] __initdata = {
+  * v1.3 parts will still work, since the signal on SFRMOUT is automatic.
+  */
+ static struct gpiod_lookup_table simone_spi_cs_gpio_table = {
+-	.dev_id = "ep93xx-spi.0",
++	.dev_id = "spi0",
+ 	.table = {
+ 		GPIO_LOOKUP("A", 1, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+diff --git a/arch/arm/mach-ep93xx/ts72xx.c b/arch/arm/mach-ep93xx/ts72xx.c
+index 582e06e104fd..e0e1b11032f1 100644
+--- a/arch/arm/mach-ep93xx/ts72xx.c
++++ b/arch/arm/mach-ep93xx/ts72xx.c
+@@ -267,7 +267,7 @@ static struct spi_board_info bk3_spi_board_info[] __initdata = {
+  * goes through CPLD
+  */
+ static struct gpiod_lookup_table bk3_spi_cs_gpio_table = {
+-	.dev_id = "ep93xx-spi.0",
++	.dev_id = "spi0",
+ 	.table = {
+ 		GPIO_LOOKUP("F", 3, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+@@ -316,7 +316,7 @@ static struct spi_board_info ts72xx_spi_devices[] __initdata = {
+ };
+ 
+ static struct gpiod_lookup_table ts72xx_spi_cs_gpio_table = {
+-	.dev_id = "ep93xx-spi.0",
++	.dev_id = "spi0",
+ 	.table = {
+ 		/* DIO_17 */
+ 		GPIO_LOOKUP("F", 2, "cs", GPIO_ACTIVE_LOW),
+diff --git a/arch/arm/mach-ep93xx/vision_ep9307.c b/arch/arm/mach-ep93xx/vision_ep9307.c
+index a88a1d807b32..cbcba3136d74 100644
+--- a/arch/arm/mach-ep93xx/vision_ep9307.c
++++ b/arch/arm/mach-ep93xx/vision_ep9307.c
+@@ -242,7 +242,7 @@ static struct spi_board_info vision_spi_board_info[] __initdata = {
+ };
+ 
+ static struct gpiod_lookup_table vision_spi_cs_gpio_table = {
+-	.dev_id = "ep93xx-spi.0",
++	.dev_id = "spi0",
+ 	.table = {
+ 		GPIO_LOOKUP_IDX("A", 6, "cs", 0, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("A", 7, "cs", 1, GPIO_ACTIVE_LOW),
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.20.1
 
