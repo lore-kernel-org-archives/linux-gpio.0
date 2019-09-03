@@ -2,121 +2,131 @@ Return-Path: <SRS0=yBxi=W6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35799C3A5A5
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Sep 2019 06:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7930CC3A5A2
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Sep 2019 12:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A48A206B8
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Sep 2019 06:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E3A822CF7
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Sep 2019 12:02:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4AVnwpG"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="i/Sun/KH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfICG7h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Sep 2019 02:59:37 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36005 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfICG7h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2019 02:59:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so8595522pgm.3
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Sep 2019 23:59:37 -0700 (PDT)
+        id S1728288AbfICMCT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 3 Sep 2019 08:02:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42827 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfICMCT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Sep 2019 08:02:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b16so17162171wrq.9
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2019 05:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qa2NPAU3nUxhMhka8HdV81hTcVfR5ad6LZDKEEK+E8I=;
-        b=Z4AVnwpG4rHHCb7eTykmNN4YGIgNaMlnQTD+N+iPSXwRNBG+coPsaxg9Nwq3x3Wkte
-         JCHjLySZ867EN8Z2AeH8mah4+X/bfHodXgETIrb6E8bFU1qOSlzBzdGA8su+8NqyXJ7K
-         /3jFMSUF+Ifu0X4x6KC8cd0sWy/R5HQfish+yqAxdg6g9mILJfKfcYRmZoaR6kqKl2NE
-         OAxL+RStVT3/50mXjXBmVm15Ds7yLg6B6JGku8l830FhcL2s/SO460iHPmeT6QEDd3hk
-         UsjMoNdmj54+trhaGlxTcXQjdM4m3hp2R+nCJCBGUvoipZrokyX7GzGL3xTvz9OMoDDD
-         uabg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vDvNVSEQfxyPsOTRETdn1/7ddH0aEL19s1+a1DtNqk8=;
+        b=i/Sun/KHt6IzDh0/nQYAtXEAtwZjEW1h8TY9G+2fABt9EOg0EK2mBmrrU+IByXTUAd
+         FQSTnufY8c8Yvh6/1Fg8OZdl5E2XsnHHscgvoTnZfviKc9iSgw1a2rCn85Q3kTSzDyds
+         13QSuhsCJHc2xJM8jqrJgt4H+Ho0MXA+zuJQ8k4qBnWwUg6u8MYS4tRmyddf+YUiLbk3
+         5ymg17t1w/09NlyxptaaB18Ez3wyoXEM5DnH/OShaaF42HLqiAVdafrGgk66oWdPYI8t
+         t1KiYYZ0D9BX3wBKbndF6vEA3NVrm7SIEpkYzs8VW6qdcBZ5UJKSRAZaQI4n80mPgRdc
+         7X8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Qa2NPAU3nUxhMhka8HdV81hTcVfR5ad6LZDKEEK+E8I=;
-        b=MOZKoKj6X8tS8u6BnhYRkAGm6g5R6LwFwUj4R9YITpOF4b7YGD4w2ZcfShwmuSzEXP
-         W24Dlbmj/OAOHEnRq8cZWtWJvZBqS3sQ5SauMbKstgIzu/oPLHVz8supKChPNrlGeJwr
-         9vfYKSS5w6JjnEK8rSOW3grwrwGzWa0QMcRhVeLlPaOShJRnWsJ4+Lv2jM1riW02lP/7
-         er9X4ZXA7l2Zoldy+et+bY0QhIAhk/pqMlCiD3O9Pv30GADsJ4YBGqMQt0otH2yClqjC
-         25VdTA5xoalT43R7SHqp5rx+cQZsE1Yp1zmPgL3jCr+UVuHHut4nOwLwRqMC84ir5j7h
-         K2rQ==
-X-Gm-Message-State: APjAAAVPOp6fiElMqxOcQr1e/uL3VegSjdKXDODkXck/Tv+/kMXn7eSR
-        gNuPQCQnyywN6g796t5TpTu6iQ==
-X-Google-Smtp-Source: APXvYqy06dfUmL6YeJyX0gzRHXOV+gw16shOwg0WfImzMkX6z1TQmab0bN6NRdoWpCgaaX3XisBOAw==
-X-Received: by 2002:a63:8dc9:: with SMTP id z192mr28152038pgd.151.1567493976851;
-        Mon, 02 Sep 2019 23:59:36 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id b18sm18820190pfi.160.2019.09.02.23.59.33
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Sep 2019 23:59:36 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     stable@vger.kernel.org, linus.walleij@linaro.org,
-        natechancellor@gmail.com
-Cc:     linux-gpio@vger.kernel.org, arnd@arndb.de, baolin.wang@linaro.org,
-        orsonzhai@gmail.com, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: [BACKPORT 4.14.y 5/8] pinctrl: sprd: Use define directive for sprd_pinconf_params values
-Date:   Tue,  3 Sep 2019 14:59:11 +0800
-Message-Id: <8c7e95c293e81412a1dadc3c4376bafb45fefeeb.1567492316.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1567492316.git.baolin.wang@linaro.org>
-References: <cover.1567492316.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vDvNVSEQfxyPsOTRETdn1/7ddH0aEL19s1+a1DtNqk8=;
+        b=TDQ/zA+HDdKrzyTPJq7YQ+eLzNAgdyb7jYF7Ak79f2DsNl8kJV0Ynp4725hhTi6mKe
+         v5uZQuXSNjJHAeL315ObwEttaZ4mkTybPwyesni6BovNnYPi95f7Ktrmvev45BYKIV0d
+         hre0N+qx4kRulUYrs3ypGeHRL60lt3xdb09yQqd7joFmyX8NPkLPeZKtQAvWPuvteTDJ
+         d22x0oyZgFqQja/5N5xHIv2e9zpJr7PyC6LTcm2Vo5GvuNjiQ4wKsve4Ch+InFZN4Apo
+         kipyAeZDwp1JM5EKj8u728dlBt1CEjVi7jKp6dw+/K4P1F5L5JtIbANF2AgpJTyqctQS
+         bEhQ==
+X-Gm-Message-State: APjAAAWVx5V4LJsP3sRz2Nsx/R+s5EbFUyjXZdUrvoVC7U+m7zLqSVL9
+        X4R+IlLDVK+MtuaKozXlfysf5MlZoPY=
+X-Google-Smtp-Source: APXvYqziPzppD6VL5U2OKJrKgYhTDEJWlIc2LB67FUlc+nCqmjMsAzLeNVzW/uz3DsR6fLnB4LGjnQ==
+X-Received: by 2002:a05:6000:49:: with SMTP id k9mr16560701wrx.21.1567512137200;
+        Tue, 03 Sep 2019 05:02:17 -0700 (PDT)
+Received: from debian-brgl.home (lfbn-1-7087-108.w90-116.abo.wanadoo.fr. [90.116.255.108])
+        by smtp.gmail.com with ESMTPSA id u6sm17029173wrr.26.2019.09.03.05.02.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 05:02:16 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [GIT PULL] gpio: updates for v5.4
+Date:   Tue,  3 Sep 2019 14:02:14 +0200
+Message-Id: <20190903120214.16375-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Clang warns when one enumerated type is implicitly converted to another:
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
-from enumeration type 'enum sprd_pinconf_params' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
-        ~                ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
-from enumeration type 'enum sprd_pinconf_params' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
-        ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
+are available in the Git repository at:
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/138
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/pinctrl/sprd/pinctrl-sprd.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-v5.4-updates-for-linus
 
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 6352991..83958bd 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -159,10 +159,8 @@ struct sprd_pinctrl {
- 	struct sprd_pinctrl_soc_info *info;
- };
- 
--enum sprd_pinconf_params {
--	SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
--	SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
--};
-+#define SPRD_PIN_CONFIG_CONTROL		(PIN_CONFIG_END + 1)
-+#define SPRD_PIN_CONFIG_SLEEP_MODE	(PIN_CONFIG_END + 2)
- 
- static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
- 				       const char *name)
--- 
-1.7.9.5
+for you to fetch changes up to f2ee73147a3f23cc4b032a76b5677b4b8441ba74:
 
+  gpio: lpc32xx: allow building on non-lpc32xx targets (2019-08-12 09:10:00 +0200)
+
+----------------------------------------------------------------
+gpio: updates for v5.4
+
+- use a helper variable for &pdev->dev in gpio-em
+- tweak the ifdefs in GPIO headers
+- fix function links in HTML docs
+- remove an unneeded error message from ixp4xx
+- use the optional clk_get in gpio-mxc instead of checking the return value
+- a couple improvements in pca953x
+- allow to build gpio-lpc32xx on non-lpc32xx targets
+
+----------------------------------------------------------------
+Andy Shevchenko (4):
+      gpio: pca953x: Switch to use device_get_match_data()
+      gpio: pca953x: Use GENMASK() consistently
+      gpio: pca953x: Remove explicit comparison with 0
+      gpio: pca953x: Drop %s for constant string literals
+
+Anson Huang (1):
+      gpio: mxc: Use devm_clk_get_optional instead of devm_clk_get
+
+Arnd Bergmann (1):
+      gpio: lpc32xx: allow building on non-lpc32xx targets
+
+Bartosz Golaszewski (1):
+      gpio: em: use a helper variable for &pdev->dev
+
+Ding Xiang (1):
+      gpio: ixp4xx: remove redundant dev_err message
+
+Jeremy Cline (1):
+      Documentation: gpio: fix function links in the HTML docs
+
+Masahiro Yamada (1):
+      gpio: remove less important #ifdef around declarations
+
+ Documentation/driver-api/gpio/driver.rst |  16 ++---
+ arch/arm/configs/lpc32xx_defconfig       |   1 +
+ drivers/gpio/Kconfig                     |   7 ++
+ drivers/gpio/Makefile                    |   2 +-
+ drivers/gpio/gpio-em.c                   |  37 +++++-----
+ drivers/gpio/gpio-ixp4xx.c               |   4 +-
+ drivers/gpio/gpio-lpc32xx.c              | 118 ++++++++++++++++++-------------
+ drivers/gpio/gpio-mxc.c                  |   9 +--
+ drivers/gpio/gpio-pca953x.c              |  70 +++++++++---------
+ include/linux/gpio/driver.h              |  27 +++----
+ 10 files changed, 149 insertions(+), 142 deletions(-)
