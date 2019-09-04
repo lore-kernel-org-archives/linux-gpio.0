@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A73FC41514
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B59C3A5A8
 	for <linux-gpio@archiver.kernel.org>; Wed,  4 Sep 2019 12:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8E622DBF
+	by mail.kernel.org (Postfix) with ESMTP id 6950822CED
 	for <linux-gpio@archiver.kernel.org>; Wed,  4 Sep 2019 12:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbfIDMRB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Sep 2019 08:17:01 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59058 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729727AbfIDMRB (ORCPT
+        id S1729727AbfIDMRC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Sep 2019 08:17:02 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36962 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729146AbfIDMRB (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Sep 2019 08:17:01 -0400
 Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id xQGz2000S05gfCL01QGzjV; Wed, 04 Sep 2019 14:17:00 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id xQGz2000P05gfCL01QGz5s; Wed, 04 Sep 2019 14:17:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i5UDb-0001ez-Fq; Wed, 04 Sep 2019 14:16:59 +0200
+        id 1i5UDb-0001f4-I3; Wed, 04 Sep 2019 14:16:59 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i5UDb-0000h1-Eo; Wed, 04 Sep 2019 14:16:59 +0200
+        id 1i5UDb-0000h7-GB; Wed, 04 Sep 2019 14:16:59 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: r8a77990: Rename AVB_AVTP_{MATCH,CAPTURE} pin functions
-Date:   Wed,  4 Sep 2019 14:16:56 +0200
-Message-Id: <20190904121658.2617-2-geert+renesas@glider.be>
+Subject: [PATCH 3/3] Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit31 when using SIM0_D"
+Date:   Wed,  4 Sep 2019 14:16:58 +0200
+Message-Id: <20190904121658.2617-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190904121658.2617-1-geert+renesas@glider.be>
 References: <20190904121658.2617-1-geert+renesas@glider.be>
@@ -44,112 +45,72 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+This reverts commit e167d723e1a472d252e5c4baf823b77ce5543b05.
 
-The Hardware Manual Errata for Rev. 1.50 of April 10, 2019 renamed IPSR2
-register bit[23:20] value H'3 and register bit[27:24] value H'3 from
-AVB_AVTP_MATCH_A resp. AVB_AVTP_CAPTURE_A to AVB_AVTP_MATCH resp.
-AVB_AVTP_CAPTURE_A.
+According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of Aug
+24, 2018, the SEL_SIMCARD_{0,1} definition was to be deleted.  However,
+this errata merely fixed an accidental double definition in the Hardware
+User's Manual Rev. 1.00.  The real definition is still present in later
+revisions of the manual (Rev. 1.50 and Rev. 2.00).
 
-Update the R-Car E3 pin control driver to reflect this.
+Hence revert the commit to recover the definition.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Reword, reference errata]
+Based on a patch in the BSP by Takeshi Kihara
+<takeshi.kihara.df@renesas.com>.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Do we need a SH_PFC_PIN_GROUP_ALIAS() for backwards compatibility?
-There are no users of the "avb_avtp_match_a" and "avb_avtp_capture_a"
-pin groups in upstream DTS files, so I would say no.
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 32 +++++++++++++--------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 2dfb8d9cfda126e4..2a6de2125bbf38b3 100644
+index 010fc0a6aba65428..c926a59dd21ceadc 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -232,8 +232,8 @@
- #define IP2_11_8	FM(AVB_MDC)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_15_12	FM(BS_N)		FM(PWM0_A)		FM(AVB_MAGIC)		FM(VI4_CLK)		F_(0, 0)		FM(TX3_C)	F_(0, 0)	FM(VI5_CLK_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_19_16	FM(RD_N)		FM(PWM1_A)		FM(AVB_LINK)		FM(VI4_FIELD)		F_(0, 0)		FM(RX3_C)	FM(FSCLKST2_N_A) FM(VI5_DATA0_B) F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2_23_20	FM(RD_WR_N)		FM(SCL7_A)		FM(AVB_AVTP_MATCH_A)	FM(VI4_VSYNC_N)		FM(TX5_B)		FM(SCK3_C)	FM(PWM5_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2_27_24	FM(EX_WAIT0)		FM(SDA7_A)		FM(AVB_AVTP_CAPTURE_A)	FM(VI4_HSYNC_N)		FM(RX5_B)		FM(PWM6_A)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2_23_20	FM(RD_WR_N)		FM(SCL7_A)		FM(AVB_AVTP_MATCH)	FM(VI4_VSYNC_N)		FM(TX5_B)		FM(SCK3_C)	FM(PWM5_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2_27_24	FM(EX_WAIT0)		FM(SDA7_A)		FM(AVB_AVTP_CAPTURE)	FM(VI4_HSYNC_N)		FM(RX5_B)		FM(PWM6_A)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_31_28	FM(A0)			FM(IRQ0)		FM(PWM2_A)		FM(MSIOF3_SS1_B)	FM(VI5_CLK_A)		FM(DU_CDE)	FM(HRX3_D)	FM(IERX)	FM(QSTB_QHE)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_3_0		FM(A1)			FM(IRQ1)		FM(PWM3_A)		FM(DU_DOTCLKIN1)	FM(VI5_DATA0_A)		FM(DU_DISP_CDE) FM(SDA6_B)	FM(IETX)	FM(QCPV_QDE)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_7_4		FM(A2)			FM(IRQ2)		FM(AVB_AVTP_PPS)	FM(VI4_CLKENB)		FM(VI5_DATA1_A)		FM(DU_DISP)	FM(SCL6_B)	F_(0, 0)	FM(QSTVB_QVE)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-@@ -634,7 +634,7 @@ static const u16 pinmux_data[] = {
+@@ -448,6 +448,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ #define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
  
- 	PINMUX_IPSR_GPSR(IP2_23_20,		RD_WR_N),
- 	PINMUX_IPSR_MSEL(IP2_23_20,		SCL7_A,		SEL_I2C7_0),
--	PINMUX_IPSR_GPSR(IP2_23_20,		AVB_AVTP_MATCH_A),
-+	PINMUX_IPSR_GPSR(IP2_23_20,		AVB_AVTP_MATCH),
- 	PINMUX_IPSR_GPSR(IP2_23_20,		VI4_VSYNC_N),
- 	PINMUX_IPSR_GPSR(IP2_23_20,		TX5_B),
- 	PINMUX_IPSR_MSEL(IP2_23_20,		SCK3_C,		SEL_SCIF3_2),
-@@ -642,7 +642,7 @@ static const u16 pinmux_data[] = {
+ /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
++#define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
+ #define MOD_SEL1_30		FM(SEL_SSI2_0)			FM(SEL_SSI2_1)
+ #define MOD_SEL1_29		FM(SEL_TIMER_TMU_0)		FM(SEL_TIMER_TMU_1)
+ #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
+@@ -469,6 +470,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
  
- 	PINMUX_IPSR_GPSR(IP2_27_24,		EX_WAIT0),
- 	PINMUX_IPSR_MSEL(IP2_27_24,		SDA7_A,		SEL_I2C7_0),
--	PINMUX_IPSR_GPSR(IP2_27_24,		AVB_AVTP_CAPTURE_A),
-+	PINMUX_IPSR_GPSR(IP2_27_24,		AVB_AVTP_CAPTURE),
- 	PINMUX_IPSR_GPSR(IP2_27_24,		VI4_HSYNC_N),
- 	PINMUX_IPSR_MSEL(IP2_27_24,		RX5_B,		SEL_SCIF5_1),
- 	PINMUX_IPSR_MSEL(IP2_27_24,		PWM6_A,		SEL_PWM6_0),
-@@ -1524,22 +1524,22 @@ static const unsigned int avb_avtp_pps_mux[] = {
- 	AVB_AVTP_PPS_MARK,
- };
+ #define PINMUX_MOD_SELS	\
+ \
++			MOD_SEL1_31 \
+ MOD_SEL0_30_29		MOD_SEL1_30 \
+ 			MOD_SEL1_29 \
+ MOD_SEL0_28		MOD_SEL1_28 \
+@@ -1197,7 +1199,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		RIF0_D1_A,	SEL_DRIF0_0),
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		SDA1_B,		SEL_I2C1_1),
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		TCLK2_B,	SEL_TIMER_TMU_1),
+-	PINMUX_IPSR_GPSR(IP13_19_16,		SIM0_D_A),
++	PINMUX_IPSR_MSEL(IP13_19_16,		SIM0_D_A,	SEL_SIMCARD_0),
  
--static const unsigned int avb_avtp_match_a_pins[] = {
--	/* AVB_AVTP_MATCH_A */
-+static const unsigned int avb_avtp_match_pins[] = {
-+	/* AVB_AVTP_MATCH */
- 	RCAR_GP_PIN(2, 24),
- };
+ 	PINMUX_IPSR_GPSR(IP13_23_20,		MLB_DAT),
+ 	PINMUX_IPSR_MSEL(IP13_23_20,		TX0_B,		SEL_SCIF0_1),
+@@ -1265,7 +1267,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP15_15_12,		TPU0TO2),
+ 	PINMUX_IPSR_MSEL(IP15_15_12,		SDA1_D,		SEL_I2C1_3),
+ 	PINMUX_IPSR_MSEL(IP15_15_12,		FSO_CFE_1_N_B,	SEL_FSO_1),
+-	PINMUX_IPSR_GPSR(IP15_15_12,		SIM0_D_B),
++	PINMUX_IPSR_MSEL(IP15_15_12,		SIM0_D_B,	SEL_SIMCARD_1),
  
--static const unsigned int avb_avtp_match_a_mux[] = {
--	AVB_AVTP_MATCH_A_MARK,
-+static const unsigned int avb_avtp_match_mux[] = {
-+	AVB_AVTP_MATCH_MARK,
- };
- 
--static const unsigned int avb_avtp_capture_a_pins[] = {
--	/* AVB_AVTP_CAPTURE_A */
-+static const unsigned int avb_avtp_capture_pins[] = {
-+	/* AVB_AVTP_CAPTURE */
- 	RCAR_GP_PIN(2, 25),
- };
- 
--static const unsigned int avb_avtp_capture_a_mux[] = {
--	AVB_AVTP_CAPTURE_A_MARK,
-+static const unsigned int avb_avtp_capture_mux[] = {
-+	AVB_AVTP_CAPTURE_MARK,
- };
- 
- /* - CAN ------------------------------------------------------------------ */
-@@ -3784,8 +3784,8 @@ static const struct {
- 		SH_PFC_PIN_GROUP(avb_phy_int),
- 		SH_PFC_PIN_GROUP(avb_mii),
- 		SH_PFC_PIN_GROUP(avb_avtp_pps),
--		SH_PFC_PIN_GROUP(avb_avtp_match_a),
--		SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+		SH_PFC_PIN_GROUP(avb_avtp_match),
-+		SH_PFC_PIN_GROUP(avb_avtp_capture),
- 		SH_PFC_PIN_GROUP(can0_data),
- 		SH_PFC_PIN_GROUP(can1_data),
- 		SH_PFC_PIN_GROUP(can_clk),
-@@ -4061,8 +4061,8 @@ static const char * const avb_groups[] = {
- 	"avb_phy_int",
- 	"avb_mii",
- 	"avb_avtp_pps",
--	"avb_avtp_match_a",
--	"avb_avtp_capture_a",
-+	"avb_avtp_match",
-+	"avb_avtp_capture",
- };
- 
- static const char * const can0_groups[] = {
+ 	PINMUX_IPSR_GPSR(IP15_19_16,		SSI_SDATA6),
+ 	PINMUX_IPSR_MSEL(IP15_19_16,		HRTS2_N_A,	SEL_HSCIF2_0),
+@@ -4961,8 +4963,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
+ 				   1, 2, 2, 2, 1, 1, 2, 1, 4),
+ 			     GROUP(
+-		/* RESERVED 31 */
+-		0, 0,
++		MOD_SEL1_31
+ 		MOD_SEL1_30
+ 		MOD_SEL1_29
+ 		MOD_SEL1_28
 -- 
 2.17.1
 
