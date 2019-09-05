@@ -2,68 +2,69 @@ Return-Path: <SRS0=e2Ov=XA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D78C3A5AB
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Sep 2019 10:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F767C3A5A5
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Sep 2019 11:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99ABB2184B
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Sep 2019 10:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2987C2173B
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Sep 2019 11:02:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="oueS6yjC"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="AjzaPfFs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbfIEKS1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Sep 2019 06:18:27 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43772 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732708AbfIEKS1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Sep 2019 06:18:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y8so2046043wrn.10
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Sep 2019 03:18:25 -0700 (PDT)
+        id S2387964AbfIELC3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Sep 2019 07:02:29 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:52020 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731215AbfIELC3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Sep 2019 07:02:29 -0400
+Received: by mail-wm1-f47.google.com with SMTP id k1so2278541wmi.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Sep 2019 04:02:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=Vkus2YB9Gq4Rdedu25N4tcGW59OKmoy2Ah1JDfv9mlo=;
-        b=oueS6yjCQ+VmyOsonJNKwyTxvd6TWB1kky4Qf7LJ3cpBoaEogbOCqaj8DsATvqC2F/
-         rI+uSVzZ9gxARtASMx0R+CX4KxKX1cdk11eAlL0xKq4lI+aUD293kef+aySG0SZZTls1
-         R/zr7JN4zoHZ1WvLtjHZnuum5MHcYuRAVOkXeJ1/p0xZOCMCwNldI1wi83AhUUukbEcB
-         1Kh7KW1ietlqklEbTw+CX5EGZ2pfHUBZL67VtFetiaXFsXpMvw9vFAvqv0lYFpsruzAH
-         wDPgc0UldaTLSEvHXalK9CCzlR03tsbFjDhFbaO1A/te1EsgLpUbDoq7HswsWqEZJy8G
-         w6xg==
+        bh=LVzsaDVy8WD8lZaeEMLp/0wRYK72Cg6EMs/d7xpBaH4=;
+        b=AjzaPfFsx3Pb1egxA3PwyTYs7FEm6nxUn9J13tL5thR+IGuqyGiejqxtZOAXLqsKHT
+         wx5DF/rGg3q5Lo9LfQDTNJRrYw3LseKuLkaNSgf2qIbW/w577h/rfd8kV+GxMfTtkOVN
+         ftF+WwZxyo2hN3/Jrk8o+VED4zASxsa0s/lzrvOoKWZV88ex0ohP8WhG7kv9XY3x3PbF
+         2owB2dp6Vf/vcRme5O1pu9TbO7jCG3VUlw+ipbqbzRPncfZqULiSQsDjgpWg9qoYqphi
+         8PBAYjjDmlC6BLA7PJDIe8e9eeFNnH1C4l3z47z0COvJts4bkl3wWLBfw4Xoh+zBXHxl
+         daAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=Vkus2YB9Gq4Rdedu25N4tcGW59OKmoy2Ah1JDfv9mlo=;
-        b=SevtVSdP3P26s739UqbnqkKYEffmK3HfSUXjkGiQ3vTZVmYEkBWXuFvPB8Nw4nQL3Y
-         6VOm1EA5dpYuk82h5wZSM0sjDnm66Z8Hb6rhQk8gyumbqCK6f1Q+h4NqQsUa5bxYOPIn
-         xJwVnfeQsLZYyZ5yCdj9bKYdQDcVwftcfIB7uwppx7uluZvnJ8Nzz2pALRIsx3m4jMVN
-         B0GR3YVjfEek/cgkyNDqRTPQaNxq2eNQe+v+xXTCBGlomFJpWOyntSPJPG07wkcOMCyG
-         5OPRjLGUpjx1tbo/MfIXfL4/0ChgeBQdtDNljbHvTthp1kSek7pjsdQ0jXEFYz+jokRl
-         vcaQ==
-X-Gm-Message-State: APjAAAWFY4Vv7H4JCKUHzZXJv+0rdeaMOmOrCUQr8iRVzPN0uVOrkKVW
-        4lU+8tARz13TVYiDhK35uzugTEw+Cjzbdw==
-X-Google-Smtp-Source: APXvYqw8GMZmCB4rFs83AzPHEo4DtD49TxP+fpDhPgAMUu5fA+MwvCDf3clw39zA9rOcgQ9LKnikqQ==
-X-Received: by 2002:a5d:504d:: with SMTP id h13mr1931341wrt.342.1567678704774;
-        Thu, 05 Sep 2019 03:18:24 -0700 (PDT)
+        bh=LVzsaDVy8WD8lZaeEMLp/0wRYK72Cg6EMs/d7xpBaH4=;
+        b=mjRn+m0tdVimCbjNwJcO0uljbOdwhT+3nBAYLmxNM6OUdQUvSsIvePI6E2J+3ymT+D
+         sViGGCN5ARfTt7MbEB19m5Fwu6+LVAJqphDfFvG62bM8DJZugUTF6RZJmTwtgwK73B0/
+         xjE/tXWNVFOAvDa9ra+35Qrf/ipB7XMj5kZ4z2VHqlMbp69Hp958HWSaUYt2maRH3jDp
+         tPaCmXWebjNiFwGcbh2QDPAHIcJIrOP7odMuPqdckcmnjBdXXs/QqbsLkeAplf0vksCd
+         D6ZCKaAmPKRLp3pS/bLw7SjUP8VB5lk+CyMPkAaJR2ACyuEmNQNsK5Tmmyi6ObtI0oqp
+         YZQw==
+X-Gm-Message-State: APjAAAUQXhUyF0Rx2jihdoK7ryYtc1rE7cIdZaV6qZGcMteX5YyIULZx
+        VGvweLNG/3KWc9DAvdme8IPCfZscKbfUOA==
+X-Google-Smtp-Source: APXvYqwbDVQAUfXSeSe2+YKI0rQUvFjDiIueXNlo9kVyBmk1y0w0kCrgCQd27N9aXjOBc3B7iVxlDw==
+X-Received: by 2002:a1c:9c52:: with SMTP id f79mr2509470wme.89.1567681347383;
+        Thu, 05 Sep 2019 04:02:27 -0700 (PDT)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id n8sm3305452wma.7.2019.09.05.03.18.23
+        by smtp.gmail.com with ESMTPSA id j22sm3437895wre.45.2019.09.05.04.02.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 03:18:23 -0700 (PDT)
-Message-ID: <5d70e0ef.1c69fb81.86288.f74a@mx.google.com>
-Date:   Thu, 05 Sep 2019 03:18:23 -0700 (PDT)
+        Thu, 05 Sep 2019 04:02:25 -0700 (PDT)
+Message-ID: <5d70eb41.1c69fb81.48ae2.f83a@mx.google.com>
+Date:   Thu, 05 Sep 2019 04:02:25 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.3-rc7-67-g0481c073211c
+X-Kernelci-Kernel: v5.3-rc7-63-g151a41014bff
 X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: build
-X-Kernelci-Branch: for-next
-Subject: linusw/for-next build: 6 builds: 3 failed, 3 passed, 3 errors,
- 4 warnings (v5.3-rc7-67-g0481c073211c)
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: devel
+Subject: linusw/devel boot: 4 boots: 0 failed,
+ 4 passed (v5.3-rc7-63-g151a41014bff)
 To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,120 +72,20 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next build: 6 builds: 3 failed, 3 passed, 3 errors, 4 warnings (=
-v5.3-rc7-67-g0481c073211c)
+linusw/devel boot: 4 boots: 0 failed, 4 passed (v5.3-rc7-63-g151a41014bff)
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/v5.3-rc7-67-g0481c073211c/
+Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/devel/ke=
+rnel/v5.3-rc7-63-g151a41014bff/
+Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
+5.3-rc7-63-g151a41014bff/
 
 Tree: linusw
-Branch: for-next
-Git Describe: v5.3-rc7-67-g0481c073211c
-Git Commit: 0481c073211c5fa98f97d3c798f2d104008ce286
+Branch: devel
+Git Describe: v5.3-rc7-63-g151a41014bff
+Git Commit: 151a41014bff92f353263cadc051435dc9c3258e
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
 git/
-Built: 6 unique architectures
-
-Build Failures Detected:
-
-arm64:
-    defconfig: (gcc-8) FAIL
-
-arm:
-    multi_v7_defconfig: (gcc-8) FAIL
-
-mips:
-    32r2el_defconfig: (gcc-8) FAIL
-
-Errors and Warnings Detected:
-
-arc:
-    nsim_hs_defconfig (gcc-8): 2 warnings
-
-arm64:
-    defconfig (gcc-8): 1 error
-
-arm:
-    multi_v7_defconfig (gcc-8): 1 error, 1 warning
-
-mips:
-    32r2el_defconfig (gcc-8): 1 error, 1 warning
-
-riscv:
-
-x86_64:
-
-Errors summary:
-
-    3    drivers/gpio/gpiolib.c:1402:2: error: 'status' undeclared (first u=
-se in this function); did you mean 'kstatfs'?
-
-Warnings summary:
-
-    3    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-    1    drivers/dma/imx-dma.c:542:6: warning: this statement may fall thro=
-ugh [-Wimplicit-fallthrough=3D]
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 sectio=
-n mismatches
-
-Errors:
-    drivers/gpio/gpiolib.c:1402:2: error: 'status' undeclared (first use in=
- this function); did you mean 'kstatfs'?
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section mis=
-matches
-
-Errors:
-    drivers/gpio/gpiolib.c:1402:2: error: 'status' undeclared (first use in=
- this function); did you mean 'kstatfs'?
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 FAIL, 1 error, 1 warning, 0 secti=
-on mismatches
-
-Errors:
-    drivers/gpio/gpiolib.c:1402:2: error: 'status' undeclared (first use in=
- this function); did you mean 'kstatfs'?
-
-Warnings:
-    drivers/dma/imx-dma.c:542:6: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
-
----------------------------------------------------------------------------=
------
-nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
+Tested: 2 unique boards, 2 SoC families, 1 build out of 6
 
 ---
 For more info write to <info@kernelci.org>
