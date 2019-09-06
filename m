@@ -2,33 +2,32 @@ Return-Path: <SRS0=Rjm5=XB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFB7C00307
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 106A2C43140
 	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 08:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DD520842
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 08:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7DB4206A1
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 08:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391779AbfIFIpo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Sep 2019 04:45:44 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:50672 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391680AbfIFIpo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Sep 2019 04:45:44 -0400
+        id S2391708AbfIFIpq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Sep 2019 04:45:46 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:57806 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391743AbfIFIpp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Sep 2019 04:45:45 -0400
 Received: from ramsan ([84.194.98.4])
-        by andre.telenet-ops.be with bizsmtp
-        id y8lh2000405gfCL018lhM0; Fri, 06 Sep 2019 10:45:41 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id y8lg2001605gfCL068lhD2; Fri, 06 Sep 2019 10:45:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i69sD-0003NA-0D; Fri, 06 Sep 2019 10:45:41 +0200
+        id 1i69sC-0003N0-Te; Fri, 06 Sep 2019 10:45:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i69sC-0005hC-VA; Fri, 06 Sep 2019 10:45:40 +0200
+        id 1i69sC-0005h3-SO; Fri, 06 Sep 2019 10:45:40 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
@@ -37,9 +36,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] gpio: devres: Switch to EXPORT_SYMBOL_GPL()
-Date:   Fri,  6 Sep 2019 10:45:39 +0200
-Message-Id: <20190906084539.21838-5-geert+renesas@glider.be>
+Subject: [PATCH 1/4] gpio: of: Make of_get_named_gpiod_flags() private
+Date:   Fri,  6 Sep 2019 10:45:36 +0200
+Message-Id: <20190906084539.21838-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190906084539.21838-1-geert+renesas@glider.be>
 References: <20190906084539.21838-1-geert+renesas@glider.be>
@@ -48,146 +47,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Change all exported symbols for managed GPIO functions from
-EXPORT_SYMBOL() to EXPORT_SYMBOL_GPL(), like is used for their
-non-managed counterparts.
+Since commit f626d6dfb7098525 ("gpio: of: Break out OF-only code"),
+there are no more users of of_get_named_gpiod_flags() outside
+gpiolib-of.c.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-The only exception was gpiod_get_from_of_node(), as everything in
-drivers/gpio/gpiolib-of.c used EXPORT_SYMBOL(), until the previous
-patch.
----
- drivers/gpio/gpiolib-devres.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpio/gpiolib-of.c | 2 +-
+ drivers/gpio/gpiolib-of.h | 7 -------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 0acc2cc6e868fdef..98e3c20d9730e66a 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -59,7 +59,7 @@ struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index b034abe59f287bff..4c6b366cb7bd5cd0 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -223,7 +223,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+  * value on the error condition. If @flags is not NULL the function also fills
+  * in flags for the GPIO.
+  */
+-struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
++static struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 		     const char *propname, int index, enum of_gpio_flags *flags)
  {
- 	return devm_gpiod_get_index(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL(devm_gpiod_get);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get);
- 
- /**
-  * devm_gpiod_get_optional - Resource-managed gpiod_get_optional()
-@@ -77,7 +77,7 @@ struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
+ 	struct of_phandle_args gpiospec;
+diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
+index 454d1658ee2d45fb..9768831b1fe2f25b 100644
+--- a/drivers/gpio/gpiolib-of.h
++++ b/drivers/gpio/gpiolib-of.h
+@@ -11,8 +11,6 @@ struct gpio_desc *of_find_gpio(struct device *dev,
+ 			       const char *con_id,
+ 			       unsigned int idx,
+ 			       unsigned long *lookupflags);
+-struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+-		   const char *list_name, int index, enum of_gpio_flags *flags);
+ int of_gpiochip_add(struct gpio_chip *gc);
+ void of_gpiochip_remove(struct gpio_chip *gc);
+ int of_gpio_get_count(struct device *dev, const char *con_id);
+@@ -25,11 +23,6 @@ static inline struct gpio_desc *of_find_gpio(struct device *dev,
  {
- 	return devm_gpiod_get_index_optional(dev, con_id, 0, flags);
+ 	return ERR_PTR(-ENOENT);
  }
--EXPORT_SYMBOL(devm_gpiod_get_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_optional);
- 
- /**
-  * devm_gpiod_get_index - Resource-managed gpiod_get_index()
-@@ -127,7 +127,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_index);
- 
- /**
-  * devm_gpiod_get_from_of_node() - obtain a GPIO from an OF node
-@@ -182,7 +182,7 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_from_of_node);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
- 
- /**
-  * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
-@@ -239,7 +239,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_fwnode_get_index_gpiod_from_child);
-+EXPORT_SYMBOL_GPL(devm_fwnode_get_index_gpiod_from_child);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-@@ -268,7 +268,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index_optional(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_index_optional);
- 
- /**
-  * devm_gpiod_get_array - Resource-managed gpiod_get_array()
-@@ -303,7 +303,7 @@ struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
- 
- 	return descs;
- }
--EXPORT_SYMBOL(devm_gpiod_get_array);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_array);
- 
- /**
-  * devm_gpiod_get_array_optional - Resource-managed gpiod_get_array_optional()
-@@ -328,7 +328,7 @@ devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
- 
- 	return descs;
- }
--EXPORT_SYMBOL(devm_gpiod_get_array_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_array_optional);
- 
- /**
-  * devm_gpiod_put - Resource-managed gpiod_put()
-@@ -344,7 +344,7 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
- 	WARN_ON(devres_release(dev, devm_gpiod_release, devm_gpiod_match,
- 		&desc));
- }
--EXPORT_SYMBOL(devm_gpiod_put);
-+EXPORT_SYMBOL_GPL(devm_gpiod_put);
- 
- /**
-  * devm_gpiod_unhinge - Remove resource management from a gpio descriptor
-@@ -374,7 +374,7 @@ void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
- 	/* Anything else we should warn about */
- 	WARN_ON(ret);
- }
--EXPORT_SYMBOL(devm_gpiod_unhinge);
-+EXPORT_SYMBOL_GPL(devm_gpiod_unhinge);
- 
- /**
-  * devm_gpiod_put_array - Resource-managed gpiod_put_array()
-@@ -390,7 +390,7 @@ void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs)
- 	WARN_ON(devres_release(dev, devm_gpiod_release_array,
- 			       devm_gpiod_match_array, &descs));
- }
--EXPORT_SYMBOL(devm_gpiod_put_array);
-+EXPORT_SYMBOL_GPL(devm_gpiod_put_array);
- 
- 
- 
-@@ -444,7 +444,7 @@ int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
- 
- 	return 0;
- }
--EXPORT_SYMBOL(devm_gpio_request);
-+EXPORT_SYMBOL_GPL(devm_gpio_request);
- 
- /**
-  *	devm_gpio_request_one - request a single GPIO with initial setup
-@@ -474,7 +474,7 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
- 
- 	return 0;
- }
--EXPORT_SYMBOL(devm_gpio_request_one);
-+EXPORT_SYMBOL_GPL(devm_gpio_request_one);
- 
- /**
-  *      devm_gpio_free - free a GPIO
-@@ -492,4 +492,4 @@ void devm_gpio_free(struct device *dev, unsigned int gpio)
- 	WARN_ON(devres_release(dev, devm_gpio_release, devm_gpio_match,
- 		&gpio));
- }
--EXPORT_SYMBOL(devm_gpio_free);
-+EXPORT_SYMBOL_GPL(devm_gpio_free);
+-static inline struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+-		   const char *list_name, int index, enum of_gpio_flags *flags)
+-{
+-	return ERR_PTR(-ENOENT);
+-}
+ static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
+ static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+ static inline int of_gpio_get_count(struct device *dev, const char *con_id)
 -- 
 2.17.1
 
