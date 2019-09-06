@@ -2,103 +2,105 @@ Return-Path: <SRS0=Rjm5=XB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593A0C43331
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 10:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E78FC43331
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 10:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3156C20854
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 10:08:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zq8Ne7Js"
+	by mail.kernel.org (Postfix) with ESMTP id 33F8A2084F
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Sep 2019 10:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfIFKIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Sep 2019 06:08:06 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37284 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfIFKIG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Sep 2019 06:08:06 -0400
-Received: by mail-lf1-f66.google.com with SMTP id w67so4530805lff.4
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Sep 2019 03:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kms00KK7xrS9j+PsdEtET2aQsT/1Gao5klx1Mqds7jQ=;
-        b=zq8Ne7JsEEGIlolTC72WD2gU+yulL5Z37xCsgdxRMmarme3nTBLwX6Oi1JpoCMlNz+
-         LKSv6l3Cy0N9Qmkhl9rquqV0oemNLId+tXo36ACBxiDpuAEaFasxZjd/dmhy62uWqK0q
-         wZDlMYlRXdhTbsEz/Enk4Nk2XoZvHPPXHS8qZgcYPzLMIV4kB6gsEXBQZiPtL5NT9cuV
-         PvVVNDNYOoG+BNNV2Pi1gKwxJwy0976bRloh2OwXGm+RjsoOyr99yRCK1425ZvMVm76m
-         dr+I6KiO9wAiv+Cn1jqsLhH74G2J0ectZAq7hAMYfLalxIa98oYGIrlXSA9dQYzGAPo0
-         BDQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kms00KK7xrS9j+PsdEtET2aQsT/1Gao5klx1Mqds7jQ=;
-        b=g3OvbvIt+kQuL9E0yNvF99PPVoQL/BlHyYlsooR7u82LlOoNwgHK9BCnAYuXq3Q/j2
-         KP3mHikwdkwFKh8MxH0dX4JyN/DOjHLDAdUCSnw/lvuVPpiIgQj90sPU8yc+aA+mAobP
-         4rjlF69SdM4leNF5sRwiCEua7gxYF1b/63KZzoJsBlcpV0wUovqNA+hf2AmxQk8vekKP
-         LTiW6x3NUTjGG2ohPnmHm/HPb15h8wEYVAqq0eoTKF7i4ljN9bJregQPTCtDyg9c9RBh
-         ZsBcLn+Wflc/U7CLMDAP/Wbd+/eO95pSY7dQdV3GGPWcU5XPjumNL3sCR8zhx+4FXLZo
-         aqiA==
-X-Gm-Message-State: APjAAAX7Zjw3osSYahVxRWwGWKIR8H46p6ZOQ4T25TYCl/yAEPdXO+o7
-        DIz5VesFhfZuHOGZfwgJrKTpXrqJhG5uOgKS
-X-Google-Smtp-Source: APXvYqzogTs2/j47DUcbrtgTISHABSnGzXlTpfF1Ms/EkTC+iWdJIClgWqOBuBrGx+j9KBLF4YRxGw==
-X-Received: by 2002:ac2:5483:: with SMTP id t3mr5834863lfk.39.1567764484348;
-        Fri, 06 Sep 2019 03:08:04 -0700 (PDT)
-Received: from localhost.localdomain ([185.122.190.73])
-        by smtp.gmail.com with ESMTPSA id h21sm846481ljg.34.2019.09.06.03.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 03:08:03 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: Fix further merge errors
-Date:   Fri,  6 Sep 2019 12:08:01 +0200
-Message-Id: <20190906100801.5752-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        id S1729831AbfIFKmd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Sep 2019 06:42:33 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:47261 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbfIFKmd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Sep 2019 06:42:33 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id BE71F240004;
+        Fri,  6 Sep 2019 10:42:30 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 12:42:24 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Claudiu.Beznea@microchip.com" <Claudiu.Beznea@microchip.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] pinctrl: at91-pio4: implement .get_multiple and
+ .set_multiple
+Message-ID: <20190906104224.GG21254@piout.net>
+References: <20190905144849.24882-1-alexandre.belloni@bootlin.com>
+ <2261eadf98584d13a490f2abd8777d4a@AcuMS.aculab.com>
+ <20190906091212.GF21254@piout.net>
+ <b010053340ef48dfa244ff48c8decd38@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b010053340ef48dfa244ff48c8decd38@AcuMS.aculab.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The previous merge of v5.3-rc7 was struggle enough, now it
-gave rise to new errors and now I fix those too.
+On 06/09/2019 09:46:02+0000, David Laight wrote:
+> From: Alexandre Belloni
+> > Sent: 06 September 2019 10:12
+> > On 06/09/2019 09:05:36+0000, David Laight wrote:
+> > > From: Alexandre Belloni
+> > > > Implement .get_multiple and .set_multiple to allow reading or setting
+> > > > multiple pins simultaneously. Pins in the same bank will all be switched at
+> > > > the same time, improving synchronization and performances.
+> > >
+> > > Actually it won't 'improve synchronisation', instead it will lead to
+> > > random synchronisation errors and potential metastability if one
+> > > pin is used as a clock and another as data, or if the code is reading
+> > > a free-flowing counter.
+> > >
+> > 
+> > It does improve gpio switching synchronisation when they are in the same
+> > bank as it will remove the 250ns delay. Of course, if you need this
+> > delay between clk and data, then the consumer driver should ensure the
+> > delay is present.
+> 
+> With multiple requests the output pin changes will always be in the
+> same order and will be separated by (say) 250ns.
+> This is a guaranteed synchronisation.
+> 
+> If you change multiple pins with the same 'iowrite()' then the pins
+> will change at approximately the same time.
+> But the actual order will depend on internal device delays (which
+> may depend on the actual silicon and temperature).
+> You then have to take account of varying track lengths and the
+> target devices input stage properties before knowing which change
+> arrives first.
+> The delays might be sub-nanosecond, but they matter if you are
+> talking about synchronisation.
+> 
 
-Fixes: 151a41014bff ("Merge tag 'v5.3-rc7' into devel")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+And my point is that this means that your gpio consumer driver is buggy
+if it doesn't do multiple requests if it requires a delay between two
+pin changes.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5b351f87c50a..56d0898d94aa 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1399,12 +1399,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	machine_gpiochip_add(chip);
- 
--	status = gpiochip_irqchip_init_valid_mask(chip);
--	if (status)
-+	ret = gpiochip_irqchip_init_valid_mask(chip);
-+	if (ret)
- 		goto err_remove_acpi_chip;
- 
--	status = gpiochip_add_irqchip(chip, lock_key, request_key);
--	if (status)
-+	ret = gpiochip_add_irqchip(chip, lock_key, request_key);
-+	if (ret)
- 		goto err_remove_irqchip_mask;
- 
- 	/*
+> IIRC both SMBus and I2C now quote 0ns setup time.
+> Changing both clock and data with the same IOW isn't enough to
+> guarantee this.
+> (In practise the I2C setup time required by a device is probably
+> slightly negative (In order to support 0ns inputs) so a very small
+> -ve setup will (mostly) work.)
+
+I'm not sure what is your point exactly as this patch doesn't break any
+existing use cases.
+
 -- 
-2.21.0
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
