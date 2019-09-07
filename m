@@ -2,116 +2,98 @@ Return-Path: <SRS0=pe4K=XC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF439C43331
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Sep 2019 05:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0374C43331
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Sep 2019 17:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FAAA2178F
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Sep 2019 05:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DA7D21835
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Sep 2019 17:39:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="osXmdLCt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItY/6wsp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388663AbfIGFfp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Sep 2019 01:35:45 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:55659 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfIGFfo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Sep 2019 01:35:44 -0400
-Received: by mail-wm1-f47.google.com with SMTP id g207so8440790wmg.5
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Sep 2019 22:35:43 -0700 (PDT)
+        id S1728603AbfIGRjX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 7 Sep 2019 13:39:23 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37470 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728507AbfIGRjW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Sep 2019 13:39:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b10so4683888plr.4;
+        Sat, 07 Sep 2019 10:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=NCP5L2QMRDLrDZwuv3f9dzPdC31cq4Egw09oaKf8hC0=;
-        b=osXmdLCt/covXhcOdLUqjEuOf7IKxyAMw2W2B1FyggZkOSesR3dyMhz9NTP98W1LgT
-         iQH03iHM13r5t3vNJgXh/chYWiObv/AVHVgLX/j3egtJDFZb3CuTy7BycZOAfMZHczxs
-         KwCT97QSns7JTrZ0YNPosFST+eAIZQugVBurcbXneAK7VFZ+WzUa1ZaxTfemAjI6sZ0/
-         tIVYfX4ES0ww/24ItEfQdOgrUGc4kQ/cagvfJjxap+ckUGgHiSvI4vQe/Itrk+xrlK8b
-         iBIalzjUkVgadqiqW5+S2Gor1lZ7iPNoYLgJ17dISQQgGrf8uVWWRrk9XJ+HSvbWAibL
-         i3sA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2KMuFO88h4dqtRFksVWPbsERLEItvuarbLDPbK83xVg=;
+        b=ItY/6wspleVE4P1m5L5CmpSqDmbYqq6dHJW4Hb6JuBMBOU0ybKcuOD2Se+gc5wWc3F
+         dTCFsjnotuqe8pG72zgtHuLBRnE+TyewhmyrKY3TpzQdWD7dtPLK9GeC1jTxm4dyF0EI
+         38QfZ+CCRclUYUwZw+nJfz5DVkXMsBQwU7DyVNTPzk+1BM7Gsf29EX039Qg5U1Q+schx
+         dY6G+xKM3EQD9wzGaI23xvQ7mctqWCWOI8zUOikylk2jGKo+pho1z3E70ebMup1+OBsW
+         cmIzLJcJluQG3s/MaSL6p/8JpBHsivGAsnHt72d4XUNjoqcwfRa8tAF/ykJMFkT9ngF3
+         zhNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=NCP5L2QMRDLrDZwuv3f9dzPdC31cq4Egw09oaKf8hC0=;
-        b=TFa1Ien5+nGR2yGgPd/SFzU8MhCoD8LTMdCwjk9goBYkuDsWOUjBcGLsBIHVsbuiql
-         aM8dK1YAhVtOqdHHVB+f+BhHvfFLrAHV1H4h7YiJAPE2UKgj5NBgcaSzVXRbZZ/4fL0G
-         Uz2NBJaxEKzHLGVlAjGLbWi/IRM6gnoeNUcFI25u0gCnnbgdDnGS1YIcWbu3F4kl0jMp
-         IwP3EXU5GG+OcNSstoSxqhuf0FneozawovhopS9cX16bSOVa1jZ2ZOpshp6nObW40XPR
-         Xe+A09Gin9TtxMD5yjzJ9QNoTx7TFijgVnu8EdrBKnegzdcA/vWOg7Vmo0sfuZhaigan
-         aqgg==
-X-Gm-Message-State: APjAAAVwlUZWgoRybnRQf74OuiCB++gGicDp+59DGez3X0VZWF6rA8Nq
-        NQurzHsL9kcKQ+Fvcsyo+P+RZqGNlXwbtQ==
-X-Google-Smtp-Source: APXvYqxDiBL4MgObRpJ3oclFZxYfBsL2J0SpdtahD7FIHl5kBv/ztD2tpmB35AGMenIV0LtKPZuELA==
-X-Received: by 2002:a1c:a984:: with SMTP id s126mr10550627wme.26.1567834542827;
-        Fri, 06 Sep 2019 22:35:42 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f66sm10496289wmg.2.2019.09.06.22.35.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Sep 2019 22:35:42 -0700 (PDT)
-Message-ID: <5d7341ae.1c69fb81.48a8c.1eb7@mx.google.com>
-Date:   Fri, 06 Sep 2019 22:35:42 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2KMuFO88h4dqtRFksVWPbsERLEItvuarbLDPbK83xVg=;
+        b=tcvqOHd3d5WyYk/4xPSxKhnPzspK1jjLnblGWG8HwnBfk23h20dPoKmI2Ru8oV3vpI
+         P3Pi8D0xxtVlh85NNJsptOeN2j+JwbtPClq/M0BrM54T7FRLibElu5J5w5FS5DDHiHGr
+         csQ+MU/JfqOnYilIRSXjkFjKTo9NMOHZn2kWqDbDBVobCFZ4q9uTmkUjaUceKB0mlrW0
+         28RWhPlmoyxeA+GD4FakP1rp6sAa47Hnx8ATwTHrHC5PfI4hSffUwYF/Kx7jFrpHHLPO
+         eEQaU+80okWBFAP4SS9fmDwiBNp+BpVxVE61sDJw3zcI5kCL7eOalrPfSvTXSg0dmBVC
+         SfWQ==
+X-Gm-Message-State: APjAAAX0cWPJ+aQ3uOuBlFP4911o6QgPFMdvymecgBryEhVtb/rqGdiE
+        j51YI4MKwVuHNph6qO4dO9vvcjVx
+X-Google-Smtp-Source: APXvYqxTlLwakNL8qZirgYaEuHGK3Wx/zUjUZAjYDnBi9JJvc7O/JkuWz9bLtdF/Q/4I0F3+HS5Nlw==
+X-Received: by 2002:a17:902:461:: with SMTP id 88mr14851087ple.296.1567877962086;
+        Sat, 07 Sep 2019 10:39:22 -0700 (PDT)
+Received: from SD ([106.222.7.162])
+        by smtp.gmail.com with ESMTPSA id p11sm10886343pff.136.2019.09.07.10.39.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2019 10:39:21 -0700 (PDT)
+Date:   Sat, 7 Sep 2019 23:09:10 +0530
+From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: remove explicit comparison with 0
+Message-ID: <20190907173910.GA9547@SD>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.3-rc7-64-gfbdf8d4bef49
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: devel
-Subject: linusw/devel boot: 51 boots: 1 failed,
- 49 passed with 1 untried/unknown (v5.3-rc7-64-gfbdf8d4bef49)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel boot: 51 boots: 1 failed, 49 passed with 1 untried/unknown (v5=
-.3-rc7-64-gfbdf8d4bef49)
+No need to compare return value with 0. In case of non-zero
+return value, the if condition will be true.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/devel/ke=
-rnel/v5.3-rc7-64-gfbdf8d4bef49/
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.3-rc7-64-gfbdf8d4bef49/
+This makes intent a bit more clear to the reader.
+"if (x) then", compared to "if (x is not zero) then".
 
-Tree: linusw
-Branch: devel
-Git Describe: v5.3-rc7-64-gfbdf8d4bef49
-Git Commit: fbdf8d4bef4917713e7ec2fc006041a2b449605a
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 43 unique boards, 14 SoC families, 3 builds out of 6
-
-Boot Regressions Detected:
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8:
-          sun7i-a20-cubietruck:
-              lab-baylibre: new failure (last pass: v5.3-rc1-47-gf6a7053ddc=
-f1)
-
-arm64:
-
-    defconfig:
-        gcc-8:
-          meson-gxl-s805x-p241:
-              lab-baylibre: new failure (last pass: v5.3-rc1-58-g8a6abcd04e=
-4c)
-
-Boot Failure Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            sun7i-a20-cubietruck: 1 failed lab
-
+Signed-off-by: Saiyam Doshi <saiyamdoshi.in@gmail.com>
 ---
-For more info write to <info@kernelci.org>
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index edc1ea68db20..847cb0c522d0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -851,7 +851,7 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 	}
+ 
+ 	ret = kfifo_put(&le->events, ge);
+-	if (ret != 0)
++	if (ret)
+ 		wake_up_poll(&le->wait, EPOLLIN);
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.20.1
+
