@@ -2,81 +2,100 @@ Return-Path: <SRS0=XsiZ=XF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7689C3A5A2
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Sep 2019 10:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0781C4740A
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Sep 2019 14:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB64321019
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Sep 2019 10:35:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PxhAh1UA"
+	by mail.kernel.org (Postfix) with ESMTP id AFD182081B
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Sep 2019 14:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388874AbfIJKfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Sep 2019 06:35:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36912 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388708AbfIJKfl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2019 06:35:41 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y5so5069363lji.4
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Sep 2019 03:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E17t9nsKObBUkkD0LBm1VvJsFUJUtomTh2F3C0pWBBg=;
-        b=PxhAh1UA8/oxprqJ7vDTf4uNmw227REjjRYuMyrolLKKSoSEgnh4cKGRvvpCuVjjZb
-         nTf7VTzl9FGS0WkPSHPqToRkOt3u2EibIaVFUW8xSBHs1O7BFylaxXmkkalSa4Dcv3kv
-         GeRRA1HkVQnhC57raCgO4fm2Q0GBaeVgUUDJN6J4gkSDMaK8RRJOGehAOe2aP/7eT+CY
-         yIh+DdshLaahOo1WDyvWvwyUT/vIZ4HZKeqFUhnDxTUBD7VRITghxXud1IRCNRvZTWwk
-         fAzO9tOPqPBORXMLoL5lreJqxy3KytBYbFw+u4cND0CPJF1jE9kZyw01WLVi/pq0YY7G
-         e8pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E17t9nsKObBUkkD0LBm1VvJsFUJUtomTh2F3C0pWBBg=;
-        b=FB67s7O70phDqo5lzD2hDGeIxcsxXpL/63mAvNaPQXuzVeHARBEdc0aFgnd77IMv/a
-         unlYknoX/+hSbLDkH0ufUfboAWkQIWAjuSr5oW5292ZTfc1j7d5qRq7LHRS0r/vw4AMz
-         zI/3J5UoHdj79GjFPE1LEK5Y8O8EIw2qQUv0hteIDmdsoWjrBwvJ7ZTPkXOzFTMRPCBa
-         XUR3rJIiIT+2LFkdhPH+VTnTi8IWF0RhShZT7jG2/mMFuKHMGniSX8BKutpgLCbg1aaY
-         pjKhuwYv5vRjzyY0bjxqyYbswWSP4lUDgj2GNpXT3S7EiwUnTOa/3tUeKVsiy8BbKNVp
-         Q+4A==
-X-Gm-Message-State: APjAAAVqHgMsQLp+YAtlO3Sh5SpfI+P8bzrWd5wwA1iihwQauYJn9tyR
-        gtm0EX3cmnxGDNIgDlFYzdxSdrW/flZIh99ZQ0PdPQ==
-X-Google-Smtp-Source: APXvYqwqbMlISNGBlmWQOwOUdX589aFpzFerGxuMZYnIj10DzE+NZDz4XIlI/VUYIt+UMAnE5LjH+X7ugc3++ZUFV/o=
-X-Received: by 2002:a05:651c:1108:: with SMTP id d8mr11399051ljo.180.1568111737980;
- Tue, 10 Sep 2019 03:35:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904172624.GA76617@dtor-ws>
-In-Reply-To: <20190904172624.GA76617@dtor-ws>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Sep 2019 11:35:26 +0100
-Message-ID: <CACRpkdbc70pp=SwvxGTDq=-K3ofinQJuVVymFf8ere3_f_+qqA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: acpi: make acpi_can_fallback_to_crs() static
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1731905AbfIJOPg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Sep 2019 10:15:36 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:52556 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfIJOPg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Sep 2019 10:15:36 -0400
+Received: from ramsan ([84.194.98.4])
+        by laurent.telenet-ops.be with bizsmtp
+        id zqFW2000k05gfCL01qFWtr; Tue, 10 Sep 2019 16:15:34 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i7gva-0001al-HK; Tue, 10 Sep 2019 16:15:30 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i7gva-0005Tv-F5; Tue, 10 Sep 2019 16:15:30 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: htc-egpio: Remove unused exported htc_egpio_get_wakeup_irq()
+Date:   Tue, 10 Sep 2019 16:15:29 +0200
+Message-Id: <20190910141529.21030-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 6:26 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+This function was never used upstream, and is a relic of the original
+handhelds.org code the htc-egpio driver was based on.
 
-> It is not used outside gpiolib-acpi.c module, so there is no need to
-> export it.
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpio-htc-egpio.c                | 14 --------------
+ include/linux/platform_data/gpio-htc-egpio.h |  3 ---
+ 2 files changed, 17 deletions(-)
 
-Patch applied with the ACKs.
+diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
+index 9d3ac51a765c1405..6eb56f7ab9c94e73 100644
+--- a/drivers/gpio/gpio-htc-egpio.c
++++ b/drivers/gpio/gpio-htc-egpio.c
+@@ -118,20 +118,6 @@ static void egpio_handler(struct irq_desc *desc)
+ 	}
+ }
+ 
+-int htc_egpio_get_wakeup_irq(struct device *dev)
+-{
+-	struct egpio_info *ei = dev_get_drvdata(dev);
+-
+-	/* Read current pins. */
+-	u16 readval = egpio_readw(ei, ei->ack_register);
+-	/* Ack/unmask interrupts. */
+-	ack_irqs(ei);
+-	/* Return first set pin. */
+-	readval &= ei->irqs_enabled;
+-	return ei->irq_start + ffs(readval) - 1;
+-}
+-EXPORT_SYMBOL(htc_egpio_get_wakeup_irq);
+-
+ static inline int egpio_pos(struct egpio_info *ei, int bit)
+ {
+ 	return bit >> ei->reg_shift;
+diff --git a/include/linux/platform_data/gpio-htc-egpio.h b/include/linux/platform_data/gpio-htc-egpio.h
+index 9a3e78082883f366..eaefba0b6465b48c 100644
+--- a/include/linux/platform_data/gpio-htc-egpio.h
++++ b/include/linux/platform_data/gpio-htc-egpio.h
+@@ -50,7 +50,4 @@ struct htc_egpio_platform_data {
+ 	int                   num_chips;
+ };
+ 
+-/* Determine the wakeup irq, to be called during early resume */
+-extern int htc_egpio_get_wakeup_irq(struct device *dev);
+-
+ #endif
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
