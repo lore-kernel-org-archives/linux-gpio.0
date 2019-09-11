@@ -2,88 +2,131 @@ Return-Path: <SRS0=tTco=XG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8236EC5ACAE
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 10:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9E5C5ACAE
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 10:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 557F021479
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 10:05:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F472089F
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 10:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5WLEtD0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TMKfNNgZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfIKKFD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Sep 2019 06:05:03 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44714 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbfIKKFB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2019 06:05:01 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q11so1015725lfc.11
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Sep 2019 03:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aEBAvzyvKwKy4+z0icRgfRVKXYXcNb1iM7EN7yrDUow=;
-        b=b5WLEtD03nLPtyVSE+wLZn9h7qijVtAN+cYaeN6IYy+aFGDtEbDuL/gYsMMM/a/5ed
-         Bm/8bSgVFY582J67Cdazp0Jc7/0Ip0JtCwnp1Jwa0sBRHurYKd3AFT/MOoX9EgKmv7Wt
-         THm606K5uucv2RO6R7HvnwPXo9zNI5/SCpU50YcpK5nYOIZ/jeKlZyT4JwA91pyBCRGY
-         76K3WnTq/FQ1cFtQhenLCpIb3UROTl/67IWPqHB+hXeomfMlanRc/zaQHe3r5hBODnQq
-         lVYiLeCNz+Ewk8X+yoLY0VvEITQNeFzHI7YN8tMAZaUuIjZtJqEzFplZ9DoSsXHDz63B
-         er6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aEBAvzyvKwKy4+z0icRgfRVKXYXcNb1iM7EN7yrDUow=;
-        b=V5nHNpHSMChqySPD7J+7Mr4Eh0vY2E0ivJfj6CT7t+MxFgQkFt3S8h+QxujkuQ2YcJ
-         wVJ4sl6XYzlNrTrmdQgLup0/Iu3FsSGE785+V42R9ll8nKC50y2low3iBozd+OV7tnm7
-         dJrK+OwRyihcp5fFDN4zM5O9mGHAKCTInIpzFFBRL6UwwW+5J5MY3Aiuk97Sz160VWhS
-         DbGiYEcO58S5S5q1N8JSPUoU5c7/otJw4c6AY1VFJdc362huZfrGpRhCkiiYWvCeFomT
-         G8Z3/Ago5i9yz1CVYlyaKg61Q7FCRPPRTLxbWrKi5DN+f5jYlcpGmZncYaN1j5w3VuH0
-         AFlQ==
-X-Gm-Message-State: APjAAAUzDbnWCDxH4NB+L2VIvzFXaDv4GGYq2ElWJpM5xcVPUO7YrcGH
-        RAFP3V8U7zwU1Pb05VP8lzYFL/s7PSKNCmaO53tC3w==
-X-Google-Smtp-Source: APXvYqyC+pv5N0Vcj+RE52xkcBxAzDFKvxknvjpMo7X5lxTEnajzZlDFTx5W6vtzY7meOzprM4Zolus/zI1aT2yhpaQ=
-X-Received: by 2002:a19:117:: with SMTP id 23mr23845320lfb.115.1568196299188;
- Wed, 11 Sep 2019 03:04:59 -0700 (PDT)
+        id S1727408AbfIKKKZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Sep 2019 06:10:25 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:56982 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfIKKKZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2019 06:10:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hn2x8HbV7ojQpyUDVHHPLV53AHNfyJ+GzzuAB0pB4kw=; b=TMKfNNgZA4dRN9kS51bLL7CcG
+        NrJYUfh++qO+I3D9nO9IXN1brtM1SxmJqNkcEeGaeMeP6cQst1L+/Km10QPq+cM5dlkSwFAiCvrOr
+        JQoBJ2ELWWX1NAB3DZQ3bE97hBy71SqHsFOGzNBuMNNDz247c+ES2IDbhPJzKrSPYXqABBBj8izNQ
+        QDTtJDvGXOxCwVUzcLtZ0pEo8pAFgNZI5Wqb+CApQ7fhP5x++rqI16zyg1PMTHottvEK2Z7luxbca
+        M9v49J9f7wtievzsDKI2Gwqv1QxcgyG3V4DxrmCnTVOps/xuTQatUoKM+89PqQ07kcbs4ttNtAZRB
+        RagWu2CIg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42318)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i7zZr-0005hn-Lb; Wed, 11 Sep 2019 11:10:19 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i7zZo-0003rs-W7; Wed, 11 Sep 2019 11:10:17 +0100
+Date:   Wed, 11 Sep 2019 11:10:16 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH 04/11] net: phylink: switch to using
+ fwnode_gpiod_get_index()
+Message-ID: <20190911101016.GW13294@shell.armlinux.org.uk>
+References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
+ <20190911075215.78047-5-dmitry.torokhov@gmail.com>
+ <20190911092514.GM2680@smile.fi.intel.com>
+ <20190911093914.GT13294@shell.armlinux.org.uk>
+ <20190911094619.GN2680@smile.fi.intel.com>
+ <20190911094929.GV13294@shell.armlinux.org.uk>
+ <20190911095511.GB108334@dtor-ws>
 MIME-Version: 1.0
-References: <20190906062623.13354-1-rashmica.g@gmail.com>
-In-Reply-To: <20190906062623.13354-1-rashmica.g@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Sep 2019 11:04:47 +0100
-Message-ID: <CACRpkdZvBHk65Vs93YbrTR92-8o0SgtUUWMBXeABQH0PZwpRxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] gpio/aspeed: Fix incorrect number of banks
-To:     Rashmica Gupta <rashmica.g@gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-aspeed@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911095511.GB108334@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 7:26 AM Rashmica Gupta <rashmica.g@gmail.com> wrote:
+On Wed, Sep 11, 2019 at 02:55:11AM -0700, Dmitry Torokhov wrote:
+> On Wed, Sep 11, 2019 at 10:49:29AM +0100, Russell King - ARM Linux admin wrote:
+> > On Wed, Sep 11, 2019 at 12:46:19PM +0300, Andy Shevchenko wrote:
+> > > On Wed, Sep 11, 2019 at 10:39:14AM +0100, Russell King - ARM Linux admin wrote:
+> > > > On Wed, Sep 11, 2019 at 12:25:14PM +0300, Andy Shevchenko wrote:
+> > > > > On Wed, Sep 11, 2019 at 12:52:08AM -0700, Dmitry Torokhov wrote:
+> > > > > > Instead of fwnode_get_named_gpiod() that I plan to hide away, let's use
+> > > > > > the new fwnode_gpiod_get_index() that mimics gpiod_get_index(), bit
+> > > > > > works with arbitrary firmware node.
+> > e > > 
+> > > > > I'm wondering if it's possible to step forward and replace
+> > > > > fwnode_get_gpiod_index by gpiod_get() / gpiod_get_index() here and
+> > > > > in other cases in this series.
+> > > > 
+> > > > No, those require a struct device, but we have none.  There are network
+> > > > drivers where there is a struct device for the network complex, but only
+> > > > DT nodes for the individual network interfaces.  So no, gpiod_* really
+> > > > doesn't work.
+> > > 
+> > > In the following patch the node is derived from struct device. So, I believe
+> > > some cases can be handled differently.
+> > 
+> > phylink is not passed a struct device - it has no knowledge what the
+> > parent device is.
+> > 
+> > In any case, I do not have "the following patch".
+> 
+> Andy is talking about this one:
+> 
+> diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+> index ce940871331e..9ca51d678123 100644
+> --- a/drivers/net/phy/mdio_bus.c
+> +++ b/drivers/net/phy/mdio_bus.c
+> @@ -46,8 +46,8 @@ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
+> 
+>         /* Deassert the optional reset signal */
+>         if (mdiodev->dev.of_node)
+> -               gpiod = fwnode_get_named_gpiod(&mdiodev->dev.of_node->fwnode,
+> -                                              "reset-gpios", 0,
+>                                                GPIOD_OUT_LOW,
+> +               gpiod = fwnode_gpiod_get_index(&mdiodev->dev.of_node->fwnode,
+> +                                              "reset", 0, GPIOD_OUT_LOW,
+>                                                "PHY reset");
+> Here if we do not care about "PHY reset" label, we could use
+> gpiod_get(&mdiodev->dev, "reset", GPIOD_OUT_LOW).
 
-> The current calculation for the number of GPIO banks is only correct if
-> the number of GPIOs is a multiple of 32 (if there were 31 GPIOs we would
-> currently say there are 0 banks, which is incorrect).
->
-> Fixes: 361b79119a4b7 ('gpio: Add Aspeed driver')
->
-> Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Here, you have a struct device, so yes, it's possible.
 
-Patch applied.
+Referring back to my comment, notice that I said we have none for the
+phylink case, so it's not possible there.
 
-Yours,
-Linus Walleij
+I'm not sure why Andy replied the way he did, unless he mis-read my
+comment.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
