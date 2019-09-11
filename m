@@ -8,66 +8,62 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86549ECDE27
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 07:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE30ECDE27
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 07:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DBC52168B
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 07:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C5A2168B
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Sep 2019 07:53:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMBQ3dMr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rqnkc1X9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfIKHw1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Sep 2019 03:52:27 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38595 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbfIKHw0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2019 03:52:26 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h195so13156976pfe.5;
-        Wed, 11 Sep 2019 00:52:25 -0700 (PDT)
+        id S1727151AbfIKHwZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Sep 2019 03:52:25 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40404 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfIKHwY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Sep 2019 03:52:24 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x127so13140282pfb.7;
+        Wed, 11 Sep 2019 00:52:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h88MG2l81eiTdjzgkHJX15BXFcOh2ckomfV8YTYTFjU=;
-        b=kMBQ3dMrsESr7TwZqim8jjaa2hJp3u+maVECjThf5KhPmfb7HZ0562mIg/dkSgsVxB
-         3zrz+6cT+bL8lNKexFDcv2CaCY0wdX3vkNNsRx0n4ZA5wy1kbIQA4fGgOB9LoYC2qePn
-         7WAX7Bypv/lPCEDSe1GjQUDCz8hgB6NeWoK7+SUS6c9rC/QgmVqb6uVbTZ9ot0DNS8xB
-         3K71OrksDrXb/BQLz72jnm8oD17ZgqzsD7lnxAl1rEBPMG4EwWyidqWv2IpquIsoDpUK
-         gdc6qbMTi7Ea3Qx3M2opHAnaOBUYjZcnVwdj93ugzTXBHL3J9TBb3GyCzr9YdyNFI/2A
-         TOTw==
+        bh=51aUTOSnvcLQf+P79cmPrM9loBkdI6A9ZLwOiaZPzyo=;
+        b=rqnkc1X9ZeB2/DP9qO/oHLGiURvCmamjolmF3Fi+jRUhdmjxd3j34i69Fyl6VjDFnA
+         ckXXTEUt99zUl9YchvNhE2apQQ+Y3I0yPxw5Fmq8Geza5q+WP5LqsCZV00vAUrCjqehi
+         qEJXvvFMePJG8Xm3mpQ/Uw8FM6RokIJG85+U4CD2LuiiCU5GLyhWCz0nmdHzutNV46HV
+         4Ju4ywnPItQl21foHDgKVubG/IAric4zSBh5isuJpuSSNlaa61tU/PW8AKBrW7uhAsEv
+         WZ12EYycqLndOS7mr9pO8oFHcknnPVDkERR9rCncABQrqVY9j/X4yh/dGF3b95UIdV4q
+         +33g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h88MG2l81eiTdjzgkHJX15BXFcOh2ckomfV8YTYTFjU=;
-        b=imN6+G68ryW8N/vCInbN/6PJQEpzSnZ7axeu46/Wzb4/cELt6P+iMX5WkfAO9nhl1C
-         Qwn7ykTGLrOJ6BMiG8wF8XDuJ90hh6F5a9dfm7w0a6nPJsd1Wurk05tMxW8SYVahClnB
-         mTl1JJ87jAvubd4O6P2CXKc/1nAhlfRzphcysJE1bygH5alcas5qTGnCONRyEuLtaWAy
-         twM2hAvpA5Q/tfXWXJFnYXFpfsTQkQnUislEKRd35YgoxlCBnhbXc4FqPvpmE2TD0wT/
-         X0vUYzdsblEKkBEw7ub44lEO3Mp3B7UkFqCiQ1R/RvLJ/SIc71jfjEOoNTicKzbyh4jo
-         6ZVg==
-X-Gm-Message-State: APjAAAV38PXueuqMZoGSCTff40aRfe5etwaP0w626qeU07ckNLB9xD0d
-        YUj7RJs6HAg0p1jAXJUuvA0=
-X-Google-Smtp-Source: APXvYqwONOjWAlEXKobnYjYWQs5FrHnxNtmzqbN8TPKlC8jUIXa+3WVHFQ4DniPtIjcy4gPeDdwkIg==
-X-Received: by 2002:a17:90a:b63:: with SMTP id 90mr3979456pjq.96.1568188345092;
-        Wed, 11 Sep 2019 00:52:25 -0700 (PDT)
+        bh=51aUTOSnvcLQf+P79cmPrM9loBkdI6A9ZLwOiaZPzyo=;
+        b=C5Fyy5SH9WPGVFxAx967elc2tH17PTqa0Wlg1qRN/pM23AOb/PWR9l0RYjtMiyJTs4
+         81jBG69DqCyYvhThpjI9D4FMDncT5U18+Yj6NW3Z6ZgKV2f95tKZZU7BFuzOfr/r6hQS
+         4zleC7aPPQ+4JfEIzJWdkAtE50DKl/Th1Lu3N8TuJiR1wg72H8/yxOqCfRNuQAaaeqgC
+         bEWCvPpcppJ5vCz/Yyc4eMpPZbfOZbFzU1Bt22CVe3+0m5K7EIy4odvwgQsUv+A5idRz
+         Ctbcyq5dDok2irVN/VFqlSt3acLsJhwgK6NEl1W+HahX9wiR5TJ+xc+/MKv337fRWYDB
+         DGzQ==
+X-Gm-Message-State: APjAAAXaoh4IPpq0FS4eXTNqkzRnG8tQh0yiuUI01sbvgS5zWC93r9Ph
+        3Rta4XUSX56jUPhonaHJYHc=
+X-Google-Smtp-Source: APXvYqwwsqargbsvdE+AwGvCGluX6ER3qn1ywDXmPbRRF3Tq0baH5IbrPOldSSRvHdB6bkMY9+ApPg==
+X-Received: by 2002:a17:90a:b88b:: with SMTP id o11mr4084973pjr.42.1568188342330;
+        Wed, 11 Sep 2019 00:52:22 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id u2sm8582445pgp.66.2019.09.11.00.52.23
+        by smtp.gmail.com with ESMTPSA id u2sm8582445pgp.66.2019.09.11.00.52.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 00:52:23 -0700 (PDT)
+        Wed, 11 Sep 2019 00:52:20 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org
-Subject: [PATCH 04/11] net: phylink: switch to using fwnode_gpiod_get_index()
-Date:   Wed, 11 Sep 2019 00:52:08 -0700
-Message-Id: <20190911075215.78047-5-dmitry.torokhov@gmail.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 02/11] gpiolib: introduce devm_fwnode_gpiod_get_index()
+Date:   Wed, 11 Sep 2019 00:52:06 -0700
+Message-Id: <20190911075215.78047-3-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
 In-Reply-To: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
 References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
@@ -78,31 +74,150 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Instead of fwnode_get_named_gpiod() that I plan to hide away, let's use
-the new fwnode_gpiod_get_index() that mimics gpiod_get_index(), bit
-works with arbitrary firmware node.
+devm_fwnode_get_index_gpiod_from_child() is too long, besides the fwnode
+in question does not have to be a child of device node. Let's rename it
+to devm_fwnode_gpiod_get_index() and keep the old name for compatibility
+for now.
+
+Also let's add a devm_fwnode_gpiod_get() wrapper as majority of the
+callers need a single GPIO.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/net/phy/phylink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib-devres.c | 19 ++++++++--------
+ include/linux/gpio/consumer.h | 41 ++++++++++++++++++++++++++---------
+ 2 files changed, 40 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index a45c5de96ab1..14b608991445 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -168,8 +168,8 @@ static int phylink_parse_fixedlink(struct phylink *pl,
- 			pl->link_config.pause |= MLO_PAUSE_ASYM;
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index 0acc2cc6e868..190ce7c43b4e 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -185,12 +185,11 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+ EXPORT_SYMBOL(devm_gpiod_get_from_of_node);
  
- 		if (ret == 0) {
--			desc = fwnode_get_named_gpiod(fixed_node, "link-gpios",
--						      0, GPIOD_IN, "?");
-+			desc = fwnode_gpiod_get_index(fixed_node, "link", 0,
-+						      GPIOD_IN, "?");
+ /**
+- * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
+- *					    device's child node
++ * devm_fwnode_gpiod_get_index - get a GPIO descriptor from a given node
+  * @dev:	GPIO consumer
++ * @fwnode:	firmware node containing GPIO reference
+  * @con_id:	function within the GPIO consumer
+  * @index:	index of the GPIO to obtain in the consumer
+- * @child:	firmware node (child of @dev)
+  * @flags:	GPIO initialization flags
+  * @label:	label to attach to the requested GPIO
+  *
+@@ -200,11 +199,11 @@ EXPORT_SYMBOL(devm_gpiod_get_from_of_node);
+  * On successful request the GPIO pin is configured in accordance with
+  * provided @flags.
+  */
+-struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+-						const char *con_id, int index,
+-						struct fwnode_handle *child,
+-						enum gpiod_flags flags,
+-						const char *label)
++struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
++					      struct fwnode_handle *fwnode,
++					      const char *con_id, int index,
++					      enum gpiod_flags flags,
++					      const char *label)
+ {
+ 	char prop_name[32]; /* 32 is max size of property name */
+ 	struct gpio_desc **dr;
+@@ -224,7 +223,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+ 					    gpio_suffixes[i]);
  
- 			if (!IS_ERR(desc))
- 				pl->link_gpio = desc;
+-		desc = fwnode_get_named_gpiod(child, prop_name, index, flags,
++		desc = fwnode_get_named_gpiod(fwnode, prop_name, index, flags,
+ 					      label);
+ 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+ 			break;
+@@ -239,7 +238,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 
+ 	return desc;
+ }
+-EXPORT_SYMBOL(devm_fwnode_get_index_gpiod_from_child);
++EXPORT_SYMBOL(devm_fwnode_gpiod_get_index);
+ 
+ /**
+  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index b70af921c614..dc0ddcd30515 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -176,11 +176,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 					 const char *propname, int index,
+ 					 enum gpiod_flags dflags,
+ 					 const char *label);
+-struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+-						const char *con_id, int index,
+-						struct fwnode_handle *child,
+-						enum gpiod_flags flags,
+-						const char *label);
++struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
++					      struct fwnode_handle *child,
++					      const char *con_id, int index,
++					      enum gpiod_flags flags,
++					      const char *label);
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
+@@ -531,6 +531,29 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
++static inline
++struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
++					      struct fwnode_handle *fwnode,
++					      const char *con_id, int index,
++					      enum gpiod_flags flags,
++					      const char *label)
++{
++	return ERR_PTR(-ENOSYS);
++}
++
++#endif /* CONFIG_GPIOLIB */
++
++static inline
++struct gpio_desc *devm_fwnode_gpiod_get(struct device *dev,
++					struct fwnode_handle *fwnode,
++					const char *con_id,
++					enum gpiod_flags flags,
++					const char *label)
++{
++	return devm_fwnode_gpiod_get_index(dev, fwnode, con_id, 0,
++					   flags, label);
++}
++
+ static inline
+ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 						const char *con_id, int index,
+@@ -538,11 +561,10 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 						enum gpiod_flags flags,
+ 						const char *label)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return devm_fwnode_gpiod_get_index(dev, child, con_id, index,
++					   flags, label);
+ }
+ 
+-#endif /* CONFIG_GPIOLIB */
+-
+ static inline
+ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+ 						   const char *con_id,
+@@ -550,8 +572,7 @@ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+ 						   enum gpiod_flags flags,
+ 						   const char *label)
+ {
+-	return devm_fwnode_get_index_gpiod_from_child(dev, con_id, 0, child,
+-						      flags, label);
++	return devm_fwnode_gpiod_get_index(dev, child, con_id, 0, flags, label);
+ }
+ 
+ #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_OF_GPIO)
 -- 
 2.23.0.162.g0b9fbb3734-goog
 
