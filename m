@@ -2,224 +2,104 @@ Return-Path: <SRS0=KInp=XI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE15C4CEC8
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 03:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACA5C49ED7
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 08:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E582168B
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 03:22:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rmgYQxJ4"
+	by mail.kernel.org (Postfix) with ESMTP id EC35E20717
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 08:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbfIMDWt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Sep 2019 23:22:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42580 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfIMDWt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Sep 2019 23:22:49 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w22so17198010pfi.9;
-        Thu, 12 Sep 2019 20:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Qe2h9NfhcUmoPESIDtsAXWHsKPsyhEADzKG8omWLqSM=;
-        b=rmgYQxJ4cZAskQbfVPERybuMb0Dl9tUFzioHbDqTUtIEWrauDr0t5m1UgZTnf+SyKf
-         /iM4v1a6CukTZFa9dnGIMNKmuIFiK0cUlC3XxPwhjGxNv9BHQ1HR+LUBGuqmXi3MUwBx
-         M71xyAjYpdnCmS8/vCfac5bu91xvWlDhbYfjkoRiSVamtNz71B37w3qHvP/e5L20a9AG
-         n9Zw98X8RMPbe4PEXbJV6ZxP4O0uAz/SLE1JUCjxNLt1k43j3mG5l2K5Md2mISjSSjhV
-         i1jGrn29gEcdqGfW2GvlqHR48nIU+p0YbffPJW5X8E5+MhvY7uPuycGUbqS5clc71/T/
-         DsTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Qe2h9NfhcUmoPESIDtsAXWHsKPsyhEADzKG8omWLqSM=;
-        b=YnPVlfnLxcvo/IjBE+28adLTGcmMvZ6jAHcPw4cEsN6oiTtHSrmvFwbgQV2+DSGakY
-         oHAvvwAHFWY1TcrdhsFYadHpIUHzsulsWt1ANNDSdIO2iQtncrkMFPUYRXRmBbv2mEfO
-         L7Zk1v24zohPMErVQ6kM0hb1IulDdF34+i5oKgmue5OlOcC871pCNHowE8gigA05DBgx
-         Fps7Icn5ggB025QfaCOyGEhlaGd9U2/B+/63H32h/WRrZbiO+wZKa9WyYRf4lu7I3ehn
-         m+CfT5Of5/xU+/3r6l5hep5ReT+iBBt/41l9uTZrsL2/5QWNeYkbWzBeCbvKtY7+FDQL
-         0DSA==
-X-Gm-Message-State: APjAAAVX7wL1YnBDjnmNrKhm2IRdTVeQncdGjc6Jk7HjEpMNz4xOJUkO
-        kS1AdqJGeEc7a5+LFYVot6Un8usvumY=
-X-Google-Smtp-Source: APXvYqwnCcBzoRXJqlbD5UgaqK1idemNl6UNFB40/cc29W2d/CmEtBZh8z6Ik+hdu8CCyUxb/W3Fnw==
-X-Received: by 2002:a63:c107:: with SMTP id w7mr40148025pgf.283.1568344966677;
-        Thu, 12 Sep 2019 20:22:46 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id b2sm8060936pfd.81.2019.09.12.20.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 20:22:45 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+        id S2387482AbfIMISM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Sep 2019 04:18:12 -0400
+Received: from mga11.intel.com ([192.55.52.93]:62430 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387480AbfIMISM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 13 Sep 2019 04:18:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 01:18:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,500,1559545200"; 
+   d="scan'208";a="200920538"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 13 Sep 2019 01:18:07 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 13 Sep 2019 11:18:07 +0300
+Date:   Fri, 13 Sep 2019 11:18:07 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 2/2] gpiolib: introduce fwnode_gpiod_get_index()
-Date:   Thu, 12 Sep 2019 20:22:39 -0700
-Message-Id: <20190913032240.50333-3-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
-In-Reply-To: <20190913032240.50333-1-dmitry.torokhov@gmail.com>
-References: <20190913032240.50333-1-dmitry.torokhov@gmail.com>
+Cc:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v1 0/2] pinctrl: Add new pinctrl/GPIO driver
+Message-ID: <20190913081807.GB27291@lahna.fi.intel.com>
+References: <cover.1568274587.git.rahul.tanwar@linux.intel.com>
+ <CACRpkdb7bPo7oH9w5OhAsOoQXx=MWjJELd5JvBt3R1sPdMjnpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb7bPo7oH9w5OhAsOoQXx=MWjJELd5JvBt3R1sPdMjnpw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This introduces fwnode_gpiod_get_index() that iterates through common gpio
-suffixes when trying to locate a GPIO within a given firmware node.
+On Thu, Sep 12, 2019 at 11:11:32AM +0100, Linus Walleij wrote:
+> Hi Rahul,
+> 
+> thanks for your patches!
+> 
+> On Thu, Sep 12, 2019 at 8:59 AM Rahul Tanwar
+> <rahul.tanwar@linux.intel.com> wrote:
+> 
+> > This series is to add pinctrl & GPIO controller driver for a new SoC.
+> > Patch 1 adds pinmux & GPIO controller driver.
+> > Patch 2 adds the dt bindings document & include file.
+> >
+> > Patches are against Linux 5.3-rc5 at below Git tree:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+> 
+> OK nice, I think you need to include Mika Westerberg on this review
+> as well, because I think he likes to stay on top of all things intel
+> in pin control. (Also included two other Intel folks in Finland who usually
+> take an interest in these things.)
 
-We also switch devm_fwnode_gpiod_get_index() to call
-fwnode_gpiod_get_index() instead of iterating through GPIO suffixes on
-its own.
+Thanks Linus for looping me in.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Even if this is not directly based on the stuff we have under
+drivers/pinctrl/intel/*, I have a couple of comments. I don't have this
+patch series in my inbox so I'm commenting here.
 
----
+Since the driver name is equilibrium I suggest you to name
+intel_pinctrl_driver and the like (probe, remove) to follow that
+convention to avoid confusing this with the Intel pinctrl drivers under
+drivers/pinctrl/intel/*.
 
-Changes in v2:
-- rebased on top of Linus W devel branch
-- added Andy's Reviewed-by
+Maybe use eqbr prefix so then intel_pinctrl_driver becomes
+eqbr_pinctrl_driver and so on. Also all the structures like
+intel_pinctrl_drv_data should be changed accordingly.
 
- drivers/gpio/gpiolib-devres.c | 16 +-----------
- drivers/gpio/gpiolib.c        | 48 +++++++++++++++++++++++++++++++++++
- include/linux/gpio/consumer.h | 13 ++++++++++
- 3 files changed, 62 insertions(+), 15 deletions(-)
+Ditto for:
 
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 9a0475c87f95..4421be09b960 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -205,29 +205,15 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 					      enum gpiod_flags flags,
- 					      const char *label)
- {
--	char prop_name[32]; /* 32 is max size of property name */
- 	struct gpio_desc **dr;
- 	struct gpio_desc *desc;
--	unsigned int i;
- 
- 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
- 			  GFP_KERNEL);
- 	if (!dr)
- 		return ERR_PTR(-ENOMEM);
- 
--	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
--		if (con_id)
--			snprintf(prop_name, sizeof(prop_name), "%s-%s",
--					    con_id, gpio_suffixes[i]);
--		else
--			snprintf(prop_name, sizeof(prop_name), "%s",
--					    gpio_suffixes[i]);
--
--		desc = fwnode_get_named_gpiod(fwnode, prop_name, index, flags,
--					      label);
--		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
--			break;
--	}
-+	desc = fwnode_gpiod_get_index(fwnode, con_id, index, flags, label);
- 	if (IS_ERR(desc)) {
- 		devres_free(dr);
- 		return desc;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 158e327a1285..11a6f4777436 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4317,6 +4317,54 @@ static int platform_gpio_count(struct device *dev, const char *con_id)
- 	return count;
- }
- 
-+/**
-+ * fwnode_gpiod_get_index - obtain a GPIO from firmware node
-+ * @fwnode:	handle of the firmware node
-+ * @con_id:	function within the GPIO consumer
-+ * @index:	index of the GPIO to obtain for the consumer
-+ * @flags:	GPIO initialization flags
-+ * @label:	label to attach to the requested GPIO
-+ *
-+ * This function can be used for drivers that get their configuration
-+ * from opaque firmware.
-+ *
-+ * The function properly finds the corresponding GPIO using whatever is the
-+ * underlying firmware interface and then makes sure that the GPIO
-+ * descriptor is requested before it is returned to the caller.
-+ *
-+ * Returns:
-+ * On successful request the GPIO pin is configured in accordance with
-+ * provided @flags.
-+ *
-+ * In case of error an ERR_PTR() is returned.
-+ */
-+struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
-+					 const char *con_id, int index,
-+					 enum gpiod_flags flags,
-+					 const char *label)
-+{
-+	struct gpio_desc *desc;
-+	char prop_name[32]; /* 32 is max size of property name */
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
-+		if (con_id)
-+			snprintf(prop_name, sizeof(prop_name), "%s-%s",
-+					    con_id, gpio_suffixes[i]);
-+		else
-+			snprintf(prop_name, sizeof(prop_name), "%s",
-+					    gpio_suffixes[i]);
-+
-+		desc = fwnode_get_named_gpiod(fwnode, prop_name, index, flags,
-+					      label);
-+		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
-+			break;
-+	}
-+
-+	return desc;
-+}
-+EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
-+
- /**
-  * gpiod_count - return the number of GPIOs associated with a device / function
-  *		or -ENOENT if no GPIO has been assigned to the requested function
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index dc0ddcd30515..5215fdba6b9a 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -176,6 +176,10 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname, int index,
- 					 enum gpiod_flags dflags,
- 					 const char *label);
-+struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
-+					 const char *con_id, int index,
-+					 enum gpiod_flags flags,
-+					 const char *label);
- struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 					      struct fwnode_handle *child,
- 					      const char *con_id, int index,
-@@ -531,6 +535,15 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+static inline
-+struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
-+					 const char *con_id, int index,
-+					 enum gpiod_flags flags,
-+					 const char *label)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- static inline
- struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 					      struct fwnode_handle *fwnode,
--- 
-2.23.0.237.gc6a4ce50a0-goog
+MODULE_DESCRIPTION("Intel Pinctrl Driver for LGM SoC");
 
+I think better would be:
+
+MODULE_DESCRIPTION("Pinctrl Driver for LGM SoC (Equilibrium)");
+
+Anyway you get the idea :)
