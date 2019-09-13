@@ -1,91 +1,97 @@
-Return-Path: <SRS0=vueL=XH=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=KInp=XI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1B8C4CEC6
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Sep 2019 17:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C31C4CEC7
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 03:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211572081B
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Sep 2019 17:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6640D2075C
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 03:22:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="0o0cl7rV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gq0/8HV9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387592AbfILR2k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Sep 2019 13:28:40 -0400
-Received: from mail-wm1-f43.google.com ([209.85.128.43]:51510 "EHLO
-        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387586AbfILR2k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Sep 2019 13:28:40 -0400
-Received: by mail-wm1-f43.google.com with SMTP id 7so921153wme.1
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Sep 2019 10:28:38 -0700 (PDT)
+        id S1726099AbfIMDWo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Sep 2019 23:22:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37419 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfIMDWo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Sep 2019 23:22:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c17so6755120pgg.4;
+        Thu, 12 Sep 2019 20:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=LYtMXN3yF5ICrVK6QleYka57GXiWtzFP8xZkuyz8yLY=;
-        b=0o0cl7rV+xqGciQJZ6qX0f60jsXbAhvuT2DE4wJoZBy3IaA95UsCFMQLBVN9CVuoLG
-         ESIF/qdZiO6iilNCmQbLk8ALU+SYrch3R0w+XzuahtRy/a74+6XIrg4g3qIliHd1O0iy
-         PhoMrosFVoFVmDANtt07TmqmrjQ84x/VQbLHU8x57KVxGxpE98lZ6FdKUi8oYlWtHrZq
-         JtDreXA4wG4quqWFF10vApRjd2wzOyZMBaZxdOwnYgg+hkfpImlQ/9vvk3niCAiuUsyS
-         eZZzH4IjUPZfysrwrPvhoS781Krp4D1B2xITkZcjrrGMjyqMoLW5j1/kE2zL4FRePRnb
-         H+nw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mq3uEQUSbTsyi612FRhgkMJIVMuNd8+2nTcH+ZUp44U=;
+        b=Gq0/8HV9ZJFm98E/55dcvt7PbBQWsjnj6H3fSoM6mmyNhFxKsdwg8JqHQRTeWdf7d2
+         UZcD3feViQF5lAJH4PXoD3KbmjCeQtcIaaa98SNo6jESF8dQ6hxgj3bzRPr5xHR9YOoT
+         nM1zts/CIUouiCp12Tptw9w9AwIc9ThpwqbaymF9UX3gejveOg7PeqqaBoFPoAiz11Km
+         ub5qbwoj79GWKCVY9kRBpESD8KDfLrYtCfipdmItona6HU9FrHouZz/gE77ORzxUMGLe
+         jc+zX4HttZWiK13aEr7+bZxGFSYcoDL2NbnPdcg2Mb28aLL5ycQ3Wcg3WYUys3ifYgj4
+         NXng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=LYtMXN3yF5ICrVK6QleYka57GXiWtzFP8xZkuyz8yLY=;
-        b=I3QfQMAC/9FDEjOeH5QzvuB/cr97mvjPIl/JC8FTevGY7V7qLD+QJuZBnhrkAowgIP
-         KjUOinwvuaV3NzIvocnc2LYKE2ni57nbkTRz772KvQh4z9VB+8l9tyJ7RzGF/3vsTbJQ
-         eKTztj+Wx9/vbL5rBf2Y+v+HrHC4PpwJeeofZi6lEhCtpKTQRwT+MXmEXCL/4xI6nkY2
-         Z3UxY1mWE4dYpj+2Cu8gUl+akO6e7mZkcVOtfae31ajJqEZJ2rQ+QZw3V9ZfGijAMjtF
-         dBfCK9CzAjK96TKb82wwFQ21y3bX5ciyyfBQILDCaVF62b2fgiozMT3IPT2S49GRF+Tg
-         SUvw==
-X-Gm-Message-State: APjAAAVYNlwuOtprGW3cf/kk7F9/dsq6xm7H1hDVHLOQF7Jsh5CtJhso
-        XSpzCUen5RHiF0sy3fmh89b+Q0Q4x9RZWA==
-X-Google-Smtp-Source: APXvYqyFtP/8eoke9fvLzck9eKmRwM+5Wrm3x0RtBmWk5rHqYWG+Fx638C88n5zHuudL/pLoc93cuw==
-X-Received: by 2002:a05:600c:307:: with SMTP id q7mr966474wmd.6.1568309317693;
-        Thu, 12 Sep 2019 10:28:37 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id i14sm3790060wra.78.2019.09.12.10.28.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Sep 2019 10:28:37 -0700 (PDT)
-Message-ID: <5d7a8045.1c69fb81.f36c0.347f@mx.google.com>
-Date:   Thu, 12 Sep 2019 10:28:37 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mq3uEQUSbTsyi612FRhgkMJIVMuNd8+2nTcH+ZUp44U=;
+        b=rfLBGKeGnIeqfWJ4sWuB33z+oVkU40KOwmRGLzXMlpxMtt/YCtEPU7KWxpFssUXz88
+         wi7V+1+e1lqoXEhZHRPA359lLj5BwMEeq/dz1xj7wR21qXlEvnqiQtBOT99BRY7j2TxH
+         lR84wtYCWBFifJooH/YwgMtj6yE9COgtpnLQVxT/Mp9tUIdTa9ykecPtSvLtIiggFQfQ
+         GCZOpPNtVvV4rAel7xkEfXjf7H0Gd6csmwCr7fhgsbVvzjmKwEFTOOlwhBOazbfRaDgp
+         RFMAIyJ7P4+JkRa4y38vqE14hkwxjyIdu58Ttx1TERUYwV8DfrctPsafj+9HLgh0qL4y
+         68Gw==
+X-Gm-Message-State: APjAAAVDCei9rtyDpzRElORYAaqufD1i7QnkSWhcZ+Ca6W70JXQyJNDh
+        6N5TGR9zVymCi5Lqw5SgV5g=
+X-Google-Smtp-Source: APXvYqzGDU2p00rpKHHpgR0XKyIcdSAHlLJt1ols4C1Zo9DYgvfKJg2Rw8JMt0Hp+WH0ePmJorpdUA==
+X-Received: by 2002:a17:90a:25a9:: with SMTP id k38mr2660559pje.12.1568344963350;
+        Thu, 12 Sep 2019 20:22:43 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b2sm8060936pfd.81.2019.09.12.20.22.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 20:22:42 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/2] Add support for software nodes to gpiolib
+Date:   Thu, 12 Sep 2019 20:22:37 -0700
+Message-Id: <20190913032240.50333-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.3-rc7-85-g11c43bb022b3
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: devel
-Subject: linusw/devel boot: 48 boots: 0 failed,
- 48 passed (v5.3-rc7-85-g11c43bb022b3)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel boot: 48 boots: 0 failed, 48 passed (v5.3-rc7-85-g11c43bb022b3)
+This is a part of the larger series previously posted at
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/devel/ke=
-rnel/v5.3-rc7-85-g11c43bb022b3/
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.3-rc7-85-g11c43bb022b3/
+https://lore.kernel.org/linux-gpio/20190911075215.78047-1-dmitry.torokhov@gmail.com
 
-Tree: linusw
-Branch: devel
-Git Describe: v5.3-rc7-85-g11c43bb022b3
-Git Commit: 11c43bb022b373d2fdb84950ebf1911362f3f010
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 42 unique boards, 15 SoC families, 3 builds out of 6
+that was rebased on top of linux-gpio devel branch.
 
----
-For more info write to <info@kernelci.org>
+Changes in v2:
+- switched export to be EXPORT_SYMBOL_GPL to match the new export
+  markings for the rest of GPIO devres functions
+- rebased on top of Linus W devel branch
+- added Andy's Reviewed-by
+
+Dmitry Torokhov (2):
+  gpiolib: introduce devm_fwnode_gpiod_get_index()
+  gpiolib: introduce fwnode_gpiod_get_index()
+
+ drivers/gpio/gpiolib-devres.c | 33 ++++++---------------
+ drivers/gpio/gpiolib.c        | 48 +++++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h | 54 ++++++++++++++++++++++++++++-------
+ 3 files changed, 101 insertions(+), 34 deletions(-)
+
+-- 
+2.23.0.237.gc6a4ce50a0-goog
+
