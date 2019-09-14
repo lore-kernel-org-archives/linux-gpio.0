@@ -1,97 +1,97 @@
-Return-Path: <SRS0=KInp=XI=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Y7I7=XJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB32C4CEC5
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 22:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71CCC49ED6
+	for <linux-gpio@archiver.kernel.org>; Sat, 14 Sep 2019 08:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E2A214DA
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Sep 2019 22:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7617206A4
+	for <linux-gpio@archiver.kernel.org>; Sat, 14 Sep 2019 08:18:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qm+YCF3O";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GFIEJjp8"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="XEmvtN9t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389915AbfIMV7p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Sep 2019 17:59:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfIMV7o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Sep 2019 17:59:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CE3616044E; Fri, 13 Sep 2019 21:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568411983;
-        bh=r9VU5NwhhErW5lihrBpuQhz4eshG9uEvbjR5J9Nhdt8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qm+YCF3O1Adn77QKMX8qd0IODgk1ZQDBXznpdHZ0x2htiOfXvFzUXbpwgJhBAFq3I
-         8EJ2XmypNXXYfvqfaxeBYCHQCM4ECjl1+NFYpL78zCU8OZGNQknY/uUoRchILtH3wX
-         XDD8IwOFexv9i7To4T7fp8mIxg6OqEsShtRIYmhk=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6129A602C3;
-        Fri, 13 Sep 2019 21:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568411982;
-        bh=r9VU5NwhhErW5lihrBpuQhz4eshG9uEvbjR5J9Nhdt8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GFIEJjp8j+bneKliC31btEKLSZwnGe3eXjbJG3hIXNXMpuVLMcFCMlsBejou94j7z
-         SC6QgsqyH1PKyrV/OIXoj/5jsyvz1skcQTfpnFrdZgylFwAQv5iKvdpgnS6P6pvoNf
-         ERVF9zxlbeUcIPxhfNP+5qRB+Hk5tVfr3UB5DZk0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6129A602C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     swboyd@chromium.org, evgreen@chromium.org, maz@kernel.org,
-        linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC v2 01/14] irqdomain: add bus token DOMAIN_BUS_WAKEUP
-Date:   Fri, 13 Sep 2019 15:59:09 -0600
-Message-Id: <1568411962-1022-2-git-send-email-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
-References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
+        id S1727184AbfINISn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 14 Sep 2019 04:18:43 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:36206 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfINISn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Sep 2019 04:18:43 -0400
+Received: by mail-io1-f50.google.com with SMTP id b136so67877352iof.3
+        for <linux-gpio@vger.kernel.org>; Sat, 14 Sep 2019 01:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zYArlTblKp7qw3ypTNSHe+V1MY+vVcUDKYbqMHtoAws=;
+        b=XEmvtN9tMqaFzPKwaZmuNR6xwRPFIrUeuM0rIp5MMcJwP56KHHHz6rzfjiOB7DDw30
+         KLKPsthYta1EZduadNUmrnoafXqHbLdcEnlFezwlRWolm9MtmjWpHdwQgVygou0n6LV3
+         oK7GLma8+7cUGp3az+e42FFaeJdiGkUG5741hpKriUSrpgbnknoAf2zYZWuOGUBnePVm
+         9o/lddsDsfVrBC/rol5t78agseKXu3le6/MyyQzxDdqRj1bZwlQY+ujcwoSee4K5mvrg
+         6iBtUQQH+BselJbQXZqtcD+0cxJTdneesmUbWMsNdsMrE5ezo+INuKvIHjSVXZkjYCny
+         ZElA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zYArlTblKp7qw3ypTNSHe+V1MY+vVcUDKYbqMHtoAws=;
+        b=SoYIsHss9wkTY2rUCu9bR96FxKbxRE8NoZG+UfJKtwQmbg/2Dx6z8yBvBHMsumsVTu
+         1smXiJhPXFI+BULW7jQ1wzQtA998tZbbm9YTQWMBWMB+he+u/qVgYZyM6l4c39wWzJuc
+         tfvD2jY6qYy/YDin8cCgDMSWTH4KvIs1DHmT95KISJNklGYwv7EM5asU/F1URsXbO+il
+         /hMWbwW6xPsXLbtMFwPxDqdwzeu6bgONpOljcWoIIbEI3aeGVgJKdkEC9ZdYMMCR3402
+         c6ZIwYFD2cOpji+NuKhCykl+CRBkDbm5JGPrJUqiDHbE2PrVeLCZROLJs/mCOUxslHS4
+         E6Eg==
+X-Gm-Message-State: APjAAAUlXamI/x49TXr9PaVtSIFNei3o/ivUO4FqalZFXPQyc4I9b76S
+        vPSVX5tUg/f9/UTFy2B+4qaO8oBbEMnoNaSeMfyCrw==
+X-Google-Smtp-Source: APXvYqxVormL8rfbB1X5lO0j4qFp2MQnJn4M5F88KN8mAHIxdApldNO6jSYjPboO2NPgZ8RWExiTHrbknGPcZlTG+ao=
+X-Received: by 2002:a6b:7408:: with SMTP id s8mr4967449iog.287.1568449121150;
+ Sat, 14 Sep 2019 01:18:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <08ac3d50-ae2b-060f-0210-4be213b6c97c@korgrd.com>
+ <CAMRc=Md9yD6U+_BAEY_pB1vdri6oZuMLwAhvDuAgpee_bQEpVA@mail.gmail.com>
+ <CAEf4M_B2RXbv-B2fsU-15iF56bO0_K--UeSdmdXHqgYNjCTbYw@mail.gmail.com> <CACRpkda_oXz0Dv064MiHrctmmPHca3B8LotiHUd8Z3TAuwVLcQ@mail.gmail.com>
+In-Reply-To: <CACRpkda_oXz0Dv064MiHrctmmPHca3B8LotiHUd8Z3TAuwVLcQ@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Sat, 14 Sep 2019 10:18:30 +0200
+Message-ID: <CAMRc=MdooA26agpg5tUcfcV-0BvHq2fSqih+8kcd5AENE-FQ0Q@mail.gmail.com>
+Subject: Re: [libgpiod] hopefully simple question regarding pull-up/down control
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Drew Fustini <pdp7pdp7@gmail.com>,
+        Bill Barton <peabody@korgrd.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-A single controller can handle normal interrupts and wake-up interrupts
-independently, with a different numbering space. It is thus crucial to
-allow the driver for such a controller discriminate between the two.
+czw., 12 wrz 2019 o 11:27 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> On Wed, Sep 11, 2019 at 12:19 AM Drew Fustini <pdp7pdp7@gmail.com> wrote:
+> > On Fri, Feb 1, 2019 at 4:07 PM Bartosz Golaszewski <brgl@bgdev.pl> wrot=
+e:
+> > > As for your question: it's in the pipeline, but it's not a trivial
+> > > task. We first need to implement the kernel part, then define a
+> > > future-proof kernel-to-user-space interface and then implement the
+> > > support in libgpiod. For now it's impossible to enable configurable
+> > > pull-up/down resistors from user-space.
+> >
+> > Hello, I'm curious if there has been any further development towards
+> > being able to control pull up or pull down through libgpiod.
+>
+> I met with Drew yesterdat and we decided he will take a stab at fixing
+> this for the benefit of all Adafruits etc.
+>
+> Yours,
+> Linus Walleij
 
-A simple way to do so is to tag the wake-up irqdomain with a "bus token"
-that indicates the wake-up domain. This slightly abuses the notion of
-bus, but also radically simplifies the design of such a driver. Between
-two evils, we choose the least damaging.
+Awesome! Let me know if I can help. I'll make sure this gets supported
+in libgpiod as soon as we have an interface exposed by the kernel.
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- include/linux/irqdomain.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 07ec8b3..cc846ab 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -83,6 +83,7 @@ enum irq_domain_bus_token {
- 	DOMAIN_BUS_IPI,
- 	DOMAIN_BUS_FSL_MC_MSI,
- 	DOMAIN_BUS_TI_SCI_INTA_MSI,
-+	DOMAIN_BUS_WAKEUP,
- };
- 
- /**
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Bart
