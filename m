@@ -2,47 +2,49 @@ Return-Path: <SRS0=xT3B=XM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47093C4CEC9
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98B1C4CED0
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D17021881
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5EA32189D
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404174AbfIQGWg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Sep 2019 02:22:36 -0400
+        id S2404245AbfIQGWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Sep 2019 02:22:48 -0400
 Received: from mail-sz.amlogic.com ([211.162.65.117]:11520 "EHLO
         mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403814AbfIQGWg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 02:22:36 -0400
+        with ESMTP id S2404225AbfIQGWs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 02:22:48 -0400
 X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 02:22:35 EDT
 Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
  (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 17 Sep 2019
- 14:08:26 +0800
+ 14:08:27 +0800
 From:   Qianggui Song <qianggui.song@amlogic.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         <linux-gpio@vger.kernel.org>
 CC:     Qianggui Song <qianggui.song@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Carlo Caione <carlo@caione.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
         Hanjie Lin <hanjie.lin@amlogic.com>,
         Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 0/3] pinctrl: meson-a1: add pinctrl driver
-Date:   Tue, 17 Sep 2019 14:07:19 +0800
-Message-ID: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
+Subject: [PATCH 3/3] arm64: dts: meson: a1: add pinctrl controller support
+Date:   Tue, 17 Sep 2019 14:07:22 +0800
+Message-ID: <1568700442-18540-4-git-send-email-qianggui.song@amlogic.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
+References: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.28.8.19]
@@ -51,32 +53,51 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patchset adds Pin controller driver support for Meson-A1 Soc
-which shares the same register layout of pinmux with previous
-Meson-G12A, however there is difference for gpio and pin config
-registers in A1.
+add peripheral pinctrl controller to a1 soc
 
-This patchset is based on A1 DTBv4[1].
+Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-[1] https://lore.kernel.org/linux-amlogic/1568276370-54181-1-git-send-email-jianxin.pan@amlogic.com
-
-Qianggui Song (3):
-  pinctrl: add compatible for Amlogic Meson A1 pin controller
-  pinctrl: meson-a1: add pinctrl driver for Meson A1 Soc
-  arm64: dts: meson: a1: add pinctrl controller support
-
- .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   1 +
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |  18 +
- drivers/pinctrl/meson/Kconfig                      |   6 +
- drivers/pinctrl/meson/Makefile                     |   1 +
- drivers/pinctrl/meson/pinctrl-meson-a1.c           | 942 +++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.c              |   8 +-
- drivers/pinctrl/meson/pinctrl-meson.h              |   9 +
- include/dt-bindings/gpio/meson-a1-gpio.h           |  73 ++
- 8 files changed, 1056 insertions(+), 2 deletions(-)
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-a1.c
- create mode 100644 include/dt-bindings/gpio/meson-a1-gpio.h
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+index 7210ad0..0965259 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+@@ -5,6 +5,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/gpio/meson-a1-gpio.h>
+ 
+ / {
+ 	compatible = "amlogic,a1";
+@@ -74,6 +75,23 @@
+ 			#size-cells = <2>;
+ 			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x1000000>;
+ 
++			periphs_pinctrl: pinctrl@0400 {
++				compatible = "amlogic,meson-a1-periphs-pinctrl";
++				#address-cells = <2>;
++				#size-cells = <2>;
++				ranges;
++
++				gpio: bank@0400 {
++					reg = <0x0 0x0400 0x0 0x003c>,
++					      <0x0 0x0480 0x0 0x0118>;
++					reg-names = "mux", "gpio";
++					gpio-controller;
++					#gpio-cells = <2>;
++					gpio-ranges = <&periphs_pinctrl 0 0 62>;
++				};
++
++			};
++
+ 			uart_AO: serial@1c00 {
+ 				compatible = "amlogic,meson-gx-uart",
+ 					     "amlogic,meson-ao-uart";
 -- 
 1.9.1
 
