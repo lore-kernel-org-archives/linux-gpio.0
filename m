@@ -2,119 +2,161 @@ Return-Path: <SRS0=xT3B=XM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B90C49ED7
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 00:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B6BC4CECD
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF324214D9
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 00:22:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVYTowaL"
+	by mail.kernel.org (Postfix) with ESMTP id 5304B21897
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 06:22:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbfIQAWM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Sep 2019 20:22:12 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36505 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfIQAWM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Sep 2019 20:22:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id m29so970995pgc.3;
-        Mon, 16 Sep 2019 17:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gHvCS0WVH6nxYtiVa7cmozt6ck7gFLQffDaRFaPUffg=;
-        b=JVYTowaLIzs55a08OwW7+1LUrzAWD08aN31/PaXOCbf6VJrKyRw4oxkO/HMDjDR2Ss
-         VHJccL1WXw1Ard7nTI5inozA2xt6smVM7TWC0xWkmOUizHgkmg2IxsTHXbmBRn7U9MaG
-         sqC8VPO3gCq40qVaeqVxB9vl67T+JNzolQGp7v86oNyTji1s6fXImtuUNR6vP0yVQA/q
-         y+PxowdPxsSw0cY2njZ6lrxTEd1a7SFUHK63b5NDecQDSzmdrsIjn9QcIhvEGPJ30yko
-         udvbDp0GzntKTVqq5pmxkwTz0ePE4jzL9WXbpT3+yprF7IQfOcPDo1gaMVWn/LyZKt1B
-         OikA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gHvCS0WVH6nxYtiVa7cmozt6ck7gFLQffDaRFaPUffg=;
-        b=mWHu0eLdfb/F0z61wTshFvLlkd+8e3oo0L2k3qCS8oCF37BpahDRSiTj+of/UfWTq8
-         3NaUHcr3UhBrubwHFR1XdCWG9CcO8sRj2fhkmpxLtSeOSDMgFpHIk23APkuK6t/03t0c
-         UkyfuQOsArdXV6sVk8FUjr9oTyAE+1fCI87tGxYArb9ORAFyyWbNA0yo2WLsRRlUL8Y/
-         Z2M1VdCGRMEdjc+XmSnhNlQACV5vEEZzIQs+NzoHb6niDyrULOfB5/G+eF/d8scb0Bxh
-         35/nYR+krQyvSh4VNzoHy5RUrN06eBOF1BMO0KmkIZQIhpSZF+sKLcxVBDHKkYPuGH2w
-         X8Hw==
-X-Gm-Message-State: APjAAAVJyPuRra5x3c7C1xWo4nrpCG/382wIsD421RQq9o62jZWH/ZhY
-        dw8hNcc8C6PH825hB1/hNAo=
-X-Google-Smtp-Source: APXvYqzJ6FqLP4djoh9LqAiR2iEtYD5Kkz7MksbyKf2l/vz2NaL/A51k9HEdd9SWkQezPbEFKC3CUg==
-X-Received: by 2002:a17:90b:f15:: with SMTP id br21mr2033808pjb.101.1568679730699;
-        Mon, 16 Sep 2019 17:22:10 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id q204sm288345pfq.176.2019.09.16.17.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 17:22:09 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 17:22:07 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        id S2404198AbfIQGWj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Sep 2019 02:22:39 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:11520 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404179AbfIQGWi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 02:22:38 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 02:22:35 EDT
+Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 17 Sep 2019
+ 14:08:27 +0800
+From:   Qianggui Song <qianggui.song@amlogic.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Qianggui Song <qianggui.song@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH 00/11] Add support for software nodes to gpiolib
-Message-ID: <20190917002207.GJ237523@dtor-ws>
-References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
- <CACRpkdb=s67w2DCGubhbLQTtxpWtiW8S1MECMO4cvec=bF6OdA@mail.gmail.com>
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 1/3] pinctrl: add compatible for Amlogic Meson A1 pin controller
+Date:   Tue, 17 Sep 2019 14:07:20 +0800
+Message-ID: <1568700442-18540-2-git-send-email-qianggui.song@amlogic.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
+References: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb=s67w2DCGubhbLQTtxpWtiW8S1MECMO4cvec=bF6OdA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.19]
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 10:55:47AM +0100, Linus Walleij wrote:
-> On Wed, Sep 11, 2019 at 8:52 AM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> 
-> > If we agree in principle, I would like to have the very first 3 patches
-> > in an immutable branch off maybe -rc8 so that it can be pulled into
-> > individual subsystems so that patches switching various drivers to
-> > fwnode_gpiod_get_index() could be applied.
-> 
-> I think it seems a bit enthusiastic to have non-GPIO subsystems
-> pick up these changes this close to the merge window so my plan
-> is to merge patches 1.2.3 (1 already merged) and then you could
-> massage the other subsystems in v5.4-rc1.
-> 
-> But if other subsystems say "hey we want do fix this in like 3 days"
-> then I'm game for an immutable branch as well.
+Add new compatible name for Amlogic's Meson-A1 pin controller
+add a dt-binding header file which document the detail pin names.
 
-No, if it is still has a chance for -rc1 then I'm good. I was thinking
-if it does not go into -rc1 I could convince some of them merge a
-targeted immutable branch off -rc8 or 5.3 final and then apply patches
-relevant to their subsystems so we do not have to wait till 5.6 to land
-everything.
+Signed-off-by: Qianggui Song <qianggui.song@amlogic.com>
+Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+---
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |  1 +
+ include/dt-bindings/gpio/meson-a1-gpio.h           | 73 ++++++++++++++++++++++
+ 2 files changed, 74 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/meson-a1-gpio.h
 
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+index 10dc4f7..0aff1f2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+@@ -15,6 +15,7 @@ Required properties for the root node:
+ 		      "amlogic,meson-axg-aobus-pinctrl"
+ 		      "amlogic,meson-g12a-periphs-pinctrl"
+ 		      "amlogic,meson-g12a-aobus-pinctrl"
++		      "amlogic,meson-a1-periphs-pinctrl"
+  - reg: address and size of registers controlling irq functionality
+ 
+ === GPIO sub-nodes ===
+diff --git a/include/dt-bindings/gpio/meson-a1-gpio.h b/include/dt-bindings/gpio/meson-a1-gpio.h
+new file mode 100644
+index 0000000..40e57a5
+--- /dev/null
++++ b/include/dt-bindings/gpio/meson-a1-gpio.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
++ * Author: Qianggui Song <qianggui.song@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_MESON_A1_GPIO_H
++#define _DT_BINDINGS_MESON_A1_GPIO_H
++
++#define GPIOP_0		0
++#define GPIOP_1		1
++#define GPIOP_2		2
++#define GPIOP_3		3
++#define GPIOP_4		4
++#define GPIOP_5		5
++#define GPIOP_6		6
++#define GPIOP_7		7
++#define GPIOP_8		8
++#define GPIOP_9		9
++#define GPIOP_10	10
++#define GPIOP_11	11
++#define GPIOP_12	12
++#define GPIOB_0		13
++#define GPIOB_1		14
++#define GPIOB_2		15
++#define GPIOB_3		16
++#define GPIOB_4		17
++#define GPIOB_5		18
++#define GPIOB_6		19
++#define GPIOX_0		20
++#define GPIOX_1		21
++#define GPIOX_2		22
++#define GPIOX_3		23
++#define GPIOX_4		24
++#define GPIOX_5		25
++#define GPIOX_6		26
++#define GPIOX_7		27
++#define GPIOX_8		28
++#define GPIOX_9		29
++#define GPIOX_10	30
++#define GPIOX_11	31
++#define GPIOX_12	32
++#define GPIOX_13	33
++#define GPIOX_14	34
++#define GPIOX_15	35
++#define GPIOX_16	36
++#define GPIOF_0		37
++#define GPIOF_1		38
++#define GPIOF_2		39
++#define GPIOF_3		40
++#define GPIOF_4		41
++#define GPIOF_5		42
++#define GPIOF_6		43
++#define GPIOF_7		44
++#define GPIOF_8		45
++#define GPIOF_9		46
++#define GPIOF_10	47
++#define GPIOF_11	48
++#define GPIOF_12	49
++#define GPIOA_0		50
++#define GPIOA_1		51
++#define GPIOA_2		52
++#define GPIOA_3		53
++#define GPIOA_4		54
++#define GPIOA_5		55
++#define GPIOA_6		56
++#define GPIOA_7		57
++#define GPIOA_8		58
++#define GPIOA_9		59
++#define GPIOA_10	60
++#define GPIOA_11	61
++
++#endif /* _DT_BINDINGS_MESON_A1_GPIO_H */
 -- 
-Dmitry
+1.9.1
+
