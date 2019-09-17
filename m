@@ -2,42 +2,40 @@ Return-Path: <SRS0=xT3B=XM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4702C4CEC9
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 10:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7F1C4CECE
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 10:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE3C21897
+	by mail.kernel.org (Postfix) with ESMTP id E728B21925
 	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 10:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfIQK7J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726873AbfIQK7J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 17 Sep 2019 06:59:09 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57071 "EHLO
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57431 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfIQK7I (ORCPT
+        with ESMTP id S1726918AbfIQK7I (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 06:59:08 -0400
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iABCK-0006HM-Uq; Tue, 17 Sep 2019 12:59:04 +0200
+        id 1iABCK-0006HK-Uq; Tue, 17 Sep 2019 12:59:04 +0200
 Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iABCK-0000Nw-Hg; Tue, 17 Sep 2019 12:59:04 +0200
+        id 1iABCK-0000Na-Gu; Tue, 17 Sep 2019 12:59:04 +0200
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, support.opensource@diasemi.com,
         Adam.Thomson.Opensource@diasemi.com
 Cc:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH 2/3] mfd: da9062: add support for the DA9062 GPIOs in the core
-Date:   Tue, 17 Sep 2019 12:59:01 +0200
-Message-Id: <20190917105902.445-3-m.felsch@pengutronix.de>
+Subject: [PATCH 0/3] Add DA9062 GPIO support
+Date:   Tue, 17 Sep 2019 12:58:59 +0200
+Message-Id: <20190917105902.445-1-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190917105902.445-1-m.felsch@pengutronix.de>
-References: <20190917105902.445-1-m.felsch@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
@@ -49,50 +47,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the da9062 GPIO's aren't available. The patch adds the support
-to make these available by adding a gpio device with the corresponding
-irq resources. Furthermore the patch fixes a minor style issue for the
-onkey device.
+Hi,
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
- drivers/mfd/da9062-core.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+this series adds the PMIC mfd GPIO support. In addition to the other
+DA90* implementations it adds a small helper function which can be used
+by the other da9062 drivers. Also instead of setting the GPIO input
+logic statically to active-low as the da9052/53 drivers do we extract
+the logic from the device tree.
 
-diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index e69626867c26..5290bdc0ddcd 100644
---- a/drivers/mfd/da9062-core.c
-+++ b/drivers/mfd/da9062-core.c
-@@ -233,6 +233,14 @@ static struct resource da9062_onkey_resources[] = {
- 	DEFINE_RES_NAMED(DA9062_IRQ_ONKEY, 1, "ONKEY", IORESOURCE_IRQ),
- };
- 
-+static struct resource da9062_gpio_resources[] = {
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI0, 1, "GPI0", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI1, 1, "GPI1", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI2, 1, "GPI2", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI3, 1, "GPI3", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI4, 1, "GPI4", IORESOURCE_IRQ),
-+};
-+
- static const struct mfd_cell da9062_devs[] = {
- 	{
- 		.name		= "da9062-core",
-@@ -266,7 +274,13 @@ static const struct mfd_cell da9062_devs[] = {
- 		.name		= "da9062-onkey",
- 		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
- 		.resources	= da9062_onkey_resources,
--		.of_compatible = "dlg,da9062-onkey",
-+		.of_compatible	= "dlg,da9062-onkey",
-+	},
-+	{
-+		.name		= "da9062-gpio",
-+		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
-+		.resources	= da9062_gpio_resources,
-+		.of_compatible	= "dlg,da9062-gpio",
- 	},
- };
- 
+Regards,
+  Marco
+
+Marco Felsch (3):
+  dt-bindings: mfd: da9062: add gpio bindings
+  mfd: da9062: add support for the DA9062 GPIOs in the core
+  gpio: da9062: add driver support
+
+ .../devicetree/bindings/gpio/gpio-da9062.txt  |  26 ++
+ .../devicetree/bindings/mfd/da9062.txt        |   3 +
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-da9062.c                    | 265 ++++++++++++++++++
+ drivers/mfd/da9062-core.c                     |  16 +-
+ include/linux/mfd/da9062/gpio.h               |  13 +
+ 7 files changed, 334 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-da9062.txt
+ create mode 100644 drivers/gpio/gpio-da9062.c
+ create mode 100644 include/linux/mfd/da9062/gpio.h
+
 -- 
 2.20.1
 
