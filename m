@@ -1,118 +1,151 @@
-Return-Path: <SRS0=xT3B=XM=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=oWbr=XN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EAFC4CEC9
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 21:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF3FC4CECD
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Sep 2019 02:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895BA2171F
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Sep 2019 21:50:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LucnLAvs";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e9PVkqaC"
+	by mail.kernel.org (Postfix) with ESMTP id ABBAB21855
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Sep 2019 02:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfIQVuY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Sep 2019 17:50:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35526 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfIQVuX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 17:50:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4BFB160767; Tue, 17 Sep 2019 21:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568757022;
-        bh=+bL3Z3Y6Hl+C8MixFa02sCzsCPEv0bSGIE8FlarpAD8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LucnLAvs8c/a4VPdqBtIeaYQh0PZTAR2nm7XpcSuPUokuG86a76YQclF3twIDmrSp
-         vC79sFw8HFGl4AyO/ceqwgeGYfrnyTu6fRK8t5AxtYLDQrnRjzlxxdtjnxnPbsQv7E
-         HLeRVzSMDDs9TZocDCx+Ii9gW13Pn22eaLupuDAk=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F12960767;
-        Tue, 17 Sep 2019 21:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568757021;
-        bh=+bL3Z3Y6Hl+C8MixFa02sCzsCPEv0bSGIE8FlarpAD8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e9PVkqaCJJO0YMqwe3jsNEicNdxouQtoYWnqdXy3te9d5yDe/6oHUZUQ2C5sAfk6C
-         M3mYJ/Kkle2a7MZbfKh3TbRsFO6qSOtTH/108NZ3Kww17HmyM1bJPNmC6LJcbmX/ZU
-         RHPYsUM0UGBdYuom3CfytQRGQlYZ2t2W19Tv6jyc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F12960767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Tue, 17 Sep 2019 15:50:20 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>, evgreen@chromium.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        mkshah@codeaurora.org, linux-gpio@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org, maz@kernel.org,
-        sibis@codeaurora.org
-Subject: Re: [PATCH RFC 05/14] dt-bindings/interrupt-controller: pdc: add SPI
- config register
-Message-ID: <20190917215020.GA15853@codeaurora.org>
-References: <20190829181203.2660-1-ilina@codeaurora.org>
- <20190829181203.2660-6-ilina@codeaurora.org>
- <5d6d1b72.1c69fb81.ee88.efcf@mx.google.com>
- <102c9268-c4ce-6133-3b0a-67c2fcba1e7a@arm.com>
- <20190903170722.GA31716@codeaurora.org>
- <5d71a247.1c69fb81.2146f.7ed2@mx.google.com>
- <20190913195326.GA3293@codeaurora.org>
+        id S1727416AbfIRCjR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Sep 2019 22:39:17 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43113 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727264AbfIRCjR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Sep 2019 22:39:17 -0400
+X-UUID: 85dc673ca7c147bd80e7adf6878c3347-20190918
+X-UUID: 85dc673ca7c147bd80e7adf6878c3347-20190918
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 498736375; Wed, 18 Sep 2019 10:39:11 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 18 Sep 2019 10:39:07 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 18 Sep 2019 10:39:07 +0800
+From:   Light Hsieh <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v5 2/5] pinctrl: mediatek: Supporting driving setting without  mapping current to register value
+Date:   Wed, 18 Sep 2019 10:39:05 +0800
+Message-ID: <1568774348-24363-2-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1568774348-24363-1-git-send-email-light.hsieh@mediatek.com>
+References: <1568774348-24363-1-git-send-email-light.hsieh@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190913195326.GA3293@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Adding Sibi
+Mediatek's smarphone project actual usage does need to know current value
+(in mA) in procedure of finding the best driving setting.
+The steps in the procedure is like as follow:
 
-On Fri, Sep 13 2019 at 13:53 -0600, Lina Iyer wrote:
->Sorry, I couldn't get to this earlier.
->
->On Thu, Sep 05 2019 at 18:03 -0600, Stephen Boyd wrote:
->>Quoting Lina Iyer (2019-09-03 10:07:22)
->>>On Mon, Sep 02 2019 at 07:58 -0600, Marc Zyngier wrote:
->>>>On 02/09/2019 14:38, Rob Herring wrote:
->>>>> On Thu, Aug 29, 2019 at 12:11:54PM -0600, Lina Iyer wrote:
->>>These are not GIC registers but located on the PDC interface to the GIC.
->>>They may or may not be secure access controlled, depending on the SoC.
->>>
->>
->>It looks like it falls under this "mailbox" device which is really the
->>catch all bucket for bits with no home besides they're related to the
->>apps CPUs/subsystem.
->>
->Thanks for pointing to this.
->>	apss_shared: mailbox@17990000 {
->>		compatible = "qcom,sdm845-apss-shared";
->>		reg = <0 0x17990000 0 0x1000>;
->But this doesn't seem correct. The registers in this page are all not
->mailbox door bell registers. We should restrict the space allocated to
->the mbox to 0xC or something, definitely, not the whole page. They all
->cannot be treated as a mailbox registers.
->>		#mbox-cells = <1>;
->>	};
->>
->>Can you point to this node with a phandle and then parse the reg
->>property out of it to use in the scm readl/writel APIs? Maybe it can be
->>a two cell property with <&apps_shared 0xf0> to indicate the offset to
->>the registers to read/write? In non-secure mode presumably we need to
->>also write these registers? Good news is that there's a regmap for this
->>driver already, so maybe that can be acquired from the pdc driver.
->>
->The register space collection seems to be mix of different types of
->application processor registers that should probably not be grouped up
->under one subsystem. A single regmap doesn't seem correct either.
->
->-- Lina
+1. set driving setting field in setting register as 0, measure waveform,
+   perform test, and etc.
+2. set driving setting field in setting register as 1, measure waveform,
+   perform test, and etc.
+...
+n. set driving setting field in setting register as n-1, measure
+   waveform, perform test, and etc.
+Check the results of steps 1~n and adopt the setting that get best result.
+
+This procedure does need to know the mapping between current to register
+value.
+Therefore, setting driving without mapping current is more pratical for
+Mediatek's smartphone usage.
+
+---
+ drivers/pinctrl/mediatek/pinctrl-mt6765.c        |  4 ++--
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 21 +++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  5 +++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c         |  1 +
+ 4 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6765.c b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
+index 32451e8..e024ebc 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt6765.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt6765.c
+@@ -1077,8 +1077,8 @@
+ 	.bias_disable_get = mtk_pinconf_bias_disable_get,
+ 	.bias_set = mtk_pinconf_bias_set,
+ 	.bias_get = mtk_pinconf_bias_get,
+-	.drive_set = mtk_pinconf_drive_set_rev1,
+-	.drive_get = mtk_pinconf_drive_get_rev1,
++	.drive_set = mtk_pinconf_drive_set_direct_val,
++	.drive_get = mtk_pinconf_drive_get_direct_val,
+ 	.adv_pull_get = mtk_pinconf_adv_pull_get,
+ 	.adv_pull_set = mtk_pinconf_adv_pull_set,
+ };
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 4687f63..23a9529 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -607,6 +607,27 @@ int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
+ 	return 0;
+ }
+ 
++/* Revision direct value */
++int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, u32 arg)
++{
++	int err;
++
++	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV, arg);
++
++	return err;
++}
++
++int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, int *val)
++{
++	int err;
++
++	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV, val);
++
++	return err;
++}
++
+ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+ 			     const struct mtk_pin_desc *desc, bool pullup,
+ 			     u32 arg)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+index 1b7da42..b3bada0 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+@@ -288,6 +288,11 @@ int mtk_pinconf_drive_set_rev1(struct mtk_pinctrl *hw,
+ int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
+ 			       const struct mtk_pin_desc *desc, int *val);
+ 
++int mtk_pinconf_drive_set_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, u32 arg);
++int mtk_pinconf_drive_get_direct_val(struct mtk_pinctrl *hw,
++			       const struct mtk_pin_desc *desc, int *val);
++
+ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
+ 			     const struct mtk_pin_desc *desc, bool pullup,
+ 			     u32 arg);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 28b4951..71c94b2 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -964,3 +964,4 @@ static int mtk_paris_pinctrl_resume(struct device *device)
+ 	.suspend_noirq = mtk_paris_pinctrl_suspend,
+ 	.resume_noirq = mtk_paris_pinctrl_resume,
+ };
++
+-- 
+1.8.1.1.dirty
+
