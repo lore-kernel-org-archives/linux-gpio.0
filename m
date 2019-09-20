@@ -1,71 +1,73 @@
-Return-Path: <SRS0=wEma=XO=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=pS20=XP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18547C3A5A6
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Sep 2019 21:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195FFC49ED7
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Sep 2019 12:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB97218AF
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Sep 2019 21:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568928639;
-	bh=rAudkxjrnojRjWhOlu8DRJL856WKEG2t48JP9yKb3yI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=WVtsfWDQDJuDjPvIX8bWwMWoPMRNBjVMjbq3RKVFr8oZ/J8V3BlJR6AzTr98N3uqB
-	 xOYhPB4fyHg6zOJr2qa8za+BfNlA7L4WXeYp14pocIjkCEk2NniP89nITi/fUdNdfe
-	 ZpODkGjHJCh8pRRMuhkhjbiCQijSL8UrGtHFogD0=
+	by mail.kernel.org (Postfix) with ESMTP id DB22820665
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Sep 2019 12:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404879AbfISVaj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 19 Sep 2019 17:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404864AbfISVag (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 19 Sep 2019 17:30:36 -0400
-Subject: Re: [GIT PULL] pin control bulk changes for v5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568928635;
-        bh=rAudkxjrnojRjWhOlu8DRJL856WKEG2t48JP9yKb3yI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jxHW4Se9LcGxu6mpWsLYUnWu3qlaeVKRC9oL4FZyz+zSypP7cqu8SaAm1fK7tcEOV
-         7UMu+t6nW3xTLcBP5J32TgvauSOKyoHoHNUaXT66UlGS6A+BEatxrQp/br51i5g7qI
-         EBN7+0gHKjtA83HdWMtyzPjpT5/pWWUR9IOYy1K8=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-References: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v5.4-1
-X-PR-Tracked-Commit-Id: cb0438e4436085d89706b5ccfce4d5da531253de
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3c2edc36a77420d8be05d656019dbc8c31535992
-Message-Id: <156892863593.30913.11813652033877690149.pr-tracker-bot@kernel.org>
-Date:   Thu, 19 Sep 2019 21:30:35 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
+        id S2408830AbfITMUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 20 Sep 2019 08:20:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47652 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408804AbfITMUg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Sep 2019 08:20:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iBHtm-0006GF-AQ; Fri, 20 Sep 2019 12:20:30 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        YueHaibing <yuehaibing@huawei.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
+Date:   Fri, 20 Sep 2019 14:20:30 +0200
+Message-Id: <20190920122030.14340-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 19 Sep 2019 23:07:51 +0200:
+From: Colin Ian King <colin.king@canonical.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.4-1
+The call to pinctrl_count_index_with_args checks for a -EINVAL return
+however this function calls pinctrl_get_list_and_count and this can
+return -ENOENT. Rather than check for a specific error, fix this by
+checking for any error return to catch the -ENOENT case.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3c2edc36a77420d8be05d656019dbc8c31535992
+Addresses-Coverity: ("Improper use of negative")
+Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index e5e7f1f22813..b522ca010332 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -496,7 +496,7 @@ static int ti_iodelay_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 
+ 	rows = pinctrl_count_index_with_args(np, name);
+-	if (rows == -EINVAL)
++	if (rows < 0)
+ 		return rows;
+ 
+ 	*map = devm_kzalloc(iod->dev, sizeof(**map), GFP_KERNEL);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1
+
