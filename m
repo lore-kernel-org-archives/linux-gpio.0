@@ -2,145 +2,100 @@ Return-Path: <SRS0=AgI4=XT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C57C432C1
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22E3C432C1
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 19:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8746C2054F
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344566;
-	bh=/P72MjB8XhN4/ZZi1bmLbv5QAnQz2BwhA6RjE5T6u/4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O4i//Y9Ygo/2vr3CVjdcqRg5v2Y1gl8+AtGPTzYpOtNJSbZANIe56cF81LgqWhZwt
-	 8iTReKtA4rgV6pWt0AOn0l9V5NpgWKEhXxCg9TzwBnSEJSMQp+cwfdpD0vU2VHH2ND
-	 KdXjUUiJxXrD9raYn1zmUD2Tk//DCX5v8zGYytt8=
+	by mail.kernel.org (Postfix) with ESMTP id D5616214DA
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 19:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfIXRCO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Sep 2019 13:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632842AbfIXQm5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:57 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D91521783;
-        Tue, 24 Sep 2019 16:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343376;
-        bh=/P72MjB8XhN4/ZZi1bmLbv5QAnQz2BwhA6RjE5T6u/4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ReUInaZOcC6IEgmX09uszfo5IrdYC6kMnPwLz/+6clJFuuyP0ZhSRBTW0ntct8gnG
-         FkKPTYD++drYDWZOeDuK/vwkLDGmEYXwnIDCZPXjCVKFcae4PJCzuuBfs+A+u5yIFd
-         kpDkaiYVyFFKtgL6DHBll5hoLlSLTZ4wTB1nodw8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
+        id S2436827AbfIXTC0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Sep 2019 15:02:26 -0400
+Received: from atlmailgw1.ami.com ([63.147.10.40]:45895 "EHLO
+        atlmailgw1.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436864AbfIXTC0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Sep 2019 15:02:26 -0400
+X-AuditID: ac1060b2-791ff700000017bd-ff-5d8a68404e3e
+Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by atlmailgw1.ami.com (Symantec Messaging Gateway) with SMTP id 08.08.06077.0486A8D5; Tue, 24 Sep 2019 15:02:24 -0400 (EDT)
+Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
+ atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 24 Sep 2019 15:02:24 -0400
+From:   Hongwei Zhang <hongweiz@ami.com>
+To:     Andrew Jeffery <andrew@aj.id.au>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 25/87] pinctrl: stmfx: update pinconf settings
-Date:   Tue, 24 Sep 2019 12:40:41 -0400
-Message-Id: <20190924164144.25591-25-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
-References: <20190924164144.25591-1-sashal@kernel.org>
+        <linux-gpio@vger.kernel.org>, Joel Stanley <joel@jms.id.au>
+CC:     Hongwei Zhang <hongweiz@ami.com>, <devicetree@vger.kernel.org>,
+        <linux-aspeed@lists.ozlabs.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Doug Anderson <armlinux@m.disordat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [v1, 0/1] gpio: dts: aspeed: Add SGPIO driver 
+Date:   Tue, 24 Sep 2019 15:02:19 -0400
+Message-ID: <1569351740-6285-1-git-send-email-hongweiz@ami.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.16.98.93]
+X-Brightmail-Tracker: H4sIAAAAAAAAA01RbUgTYRznubvdztHsuoQeVoosjCjSVqGPJKVEcB/F+lSJHnm50XzpfCnr
+        g8sy3coaZmhruiUbkY2sDXHMhjbFlshsrcxe7G1BoyBbapKbvbgR+O33yv8HfwpnDISMUpVX
+        80I5p5aTEsJGF+u35Sp1hdubLRAZe20kcgUo9Of7AEALgwYRWmodFaMGzxiJ5jrHCGQa8YlQ
+        ZGIJR23RWxiyBydF6NwdH44cpihAAZeRRJ5rboCsL/wYmvmhxVCje0SMpto0JHK/nQW5Sezz
+        JpeYtXXZABuY9ONsZLEVsDNTjWLWHx7FWXuPlmTfTD4gWW9HhGD13UOAdVjq2YmOm4BdOjsv
+        Zr3tCwQ7a0/JX31IklPCq1W1vJCxp1iitFraQGULeSrQ+AvXgNeEDiRQkN4Fr3Z/+YclFEO7
+        MBjubMHiZBjAi94QuZwi6U3Q7TDGjCT6CoBmY2eM4HSfCPYPNYiWU2vpLGgKBmKYoNPg/L3R
+        GJbSe6Gzz0vG76XAlz4tHtfXwMfXP8V24DSED0OhmM7QyfCVJ4jF86nw8+UgoQeJhhUVw4qK
+        GWA9gOGq1WWcSl16UpHOlanSj1aU2UH8f3YnOO/P8gCMAh4AKVyeJDVs0BUy0hKu7jQvVBQJ
+        NWq+ygPWU4R8nfS27ecRhi7lqvnjPF/JC/9djEqQacDwxoxexpk8cUx4ZzloLowmfG0/PJix
+        g8scNhE3dHefmMc/fNT7Cuqd2vL8tCZZbZQKrrogO3NpwDVtPZCdkmidy1lUhkBX2Dq+uWUq
+        /H48kr4vdXd2c10IZNa0Wi9mPRM08Gnl2KOtuvt5I+4T7umdClfRt/0Kx+/2vIL+WTlRpeQU
+        W3ChivsLN7AWs60CAAA=
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Alexandre Torgue <alexandre.torgue@st.com>
+Hello,
 
-[ Upstream commit a502b343ebd0eab38f3cb33fbb84011847cf5aac ]
+This short series introduce the Kconfig, Makefile, and dts for the 
+Aspeed AST2500 SGPIO controller. This is the last patch set.
+Please review.
 
-According to the following tab (coming from STMFX datasheet), updates
-have to done in stmfx_pinconf_set function:
+[v1]: Initial commit
 
--"type" has to be set when "bias" is configured as "pull-up or pull-down"
--PIN_CONFIG_DRIVE_PUSH_PULL should only be used when gpio is configured as
- output. There is so no need to check direction.
+The related SGPIO driver has been accepted and merged into v5.4:
+_http://patchwork.ozlabs.org/patch/1150357/
 
-DIR | TYPE | PUPD | MFX GPIO configuration
-----|------|------|---------------------------------------------------
-1   | 1    | 1    | OUTPUT open drain with internal pull-up resistor
-----|------|------|---------------------------------------------------
-1   | 1    | 0    | OUTPUT open drain with internal pull-down resistor
-----|------|------|---------------------------------------------------
-1   | 0    | 0/1  | OUTPUT push pull no pull
-----|------|------|---------------------------------------------------
-0   | 1    | 1    | INPUT with internal pull-up resistor
-----|------|------|---------------------------------------------------
-0   | 1    | 0    | INPUT with internal pull-down resistor
-----|------|------|---------------------------------------------------
-0   | 0    | 1    | INPUT floating
-----|------|------|---------------------------------------------------
-0   | 0    | 0    | analog (GPIO not used, default setting)
+The related SGPM pinmux dt-binding document, dts, and pinctrl driver
+updates have been accepted and merged:
+_http://patchwork.ozlabs.org/patch/1110210/
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Link: https://lore.kernel.org/r/1564053416-32192-1-git-send-email-amelie.delaunay@st.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/pinctrl-stmfx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Thanks!
+Hongwei Zhang (1):
+  gpio: dts: aspeed: Add SGPIO driver
 
-diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
-index d3332da356372..31b6e511670fc 100644
---- a/drivers/pinctrl/pinctrl-stmfx.c
-+++ b/drivers/pinctrl/pinctrl-stmfx.c
-@@ -296,29 +296,29 @@ static int stmfx_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
- 		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			if (ret)
-+				return ret;
-+			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+			if (ret)
-+				return ret;
- 			ret = stmfx_pinconf_set_pupd(pctl, pin, 0);
- 			if (ret)
- 				return ret;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
--			break;
--		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
--		case PIN_CONFIG_DRIVE_PUSH_PULL:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
+ arch/arm/Kconfig                 |  2 ++
+ arch/arm/boot/dts/aspeed-g5.dtsi | 16 +++++++++++++++-
+ drivers/gpio/Kconfig             |  8 ++++++++
+ drivers/gpio/Makefile            |  1 +
+ 4 files changed, 26 insertions(+), 1 deletion(-)
+
 -- 
-2.20.1
+2.7.4
 
