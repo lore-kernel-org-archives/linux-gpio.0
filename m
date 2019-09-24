@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5ACC432C1
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 16:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73533C4320D
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 16:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B460222C7
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 16:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA1B21D7A
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Sep 2019 16:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343917;
-	bh=Rx6N0Sztt597jJ0U1M8H59Tn/bYkHwhyjGXmagEO2vU=;
+	s=default; t=1569344036;
+	bh=P5yrhEzdFdo0qVfMiA38Ip22G1j0H8ar9SlOTwIHjD0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UA/z/XZnksctln6RudLUOYU0GPupTikrtQzTcR9t/Hq+LX3rOXJXYRHRqUBg1zU9t
-	 sDHH0weS8eo84ci+BjJR5jV09ScPiIBCrUrF7GBDx8y3iM9+y3FWFQl2qX+x5otjw/
-	 IC/fVnzvVCw8CittUSeLnJoupHM49rwdhCLLK41k=
+	b=mB+9y3PdtwJ+pMkTets8N/+eYVkbqNZc/Q31H5xjVFM2yv0K9I2tXll4w2CzQPTv1
+	 Hfxkp9p+yaC5d9k56rj1BgJmz7zAeXeKnEfmqQmWXvWnNUzscbnSyazGuQ7OEYokks
+	 MEpVsppSTD1HIi9S9tz3VP0OWYELbqL7ByQQDoDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441562AbfIXQv4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:51:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45424 "EHLO mail.kernel.org"
+        id S2406917AbfIXQxu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:53:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405125AbfIXQvz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:51:55 -0400
+        id S2441689AbfIXQwf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:52:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 209DD21D80;
-        Tue, 24 Sep 2019 16:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8A0921D7A;
+        Tue, 24 Sep 2019 16:52:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343915;
-        bh=Rx6N0Sztt597jJ0U1M8H59Tn/bYkHwhyjGXmagEO2vU=;
+        s=default; t=1569343954;
+        bh=P5yrhEzdFdo0qVfMiA38Ip22G1j0H8ar9SlOTwIHjD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kRwBLW6VBb1dVvz6GVff5X5UaQJ2Wc4k+NLwaGtYyZ0niNHKFe9rMCrvR67Rz3+8X
-         hUIyGeQKqa0RSYr6MZLTGTVOX+jh1B5eUufBwU++ewn8CO3qP8wOi1CMajN6596zRm
-         n7Q7oL0aCccBmyzWZY352qWLieCgdekFcoUMyQ28=
+        b=GGSWaGbvL7igcFJGvDhPJOVJSBCRmWgQU1hMIev6GKlqHmC8dkTSDU2Y0FJzrX+UM
+         Yh3cGwDNdjfrQlaqTSN0jzJ0RQhsp04ywNVp+GC3JQz2f/0eeVaPqKiEyddqFFOery
+         DmA6DT2zCP/E5LO4AOVOcXhVSJAC1KDsQEPI5LMs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
@@ -46,12 +46,12 @@ Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/19] pinctrl: tegra: Fix write barrier placement in pmx_writel
-Date:   Tue, 24 Sep 2019 12:51:23 -0400
-Message-Id: <20190924165130.28625-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 09/14] pinctrl: tegra: Fix write barrier placement in pmx_writel
+Date:   Tue, 24 Sep 2019 12:52:07 -0400
+Message-Id: <20190924165214.28857-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924165130.28625-1-sashal@kernel.org>
-References: <20190924165130.28625-1-sashal@kernel.org>
+In-Reply-To: <20190924165214.28857-1-sashal@kernel.org>
+References: <20190924165214.28857-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,13 +79,13 @@ Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvi
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+ drivers/pinctrl/pinctrl-tegra.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 277622b4b6fb9..1d9f63e954c71 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 0fd7fd2b0f72c..a30e967d75c2a 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
 @@ -52,7 +52,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
  
  static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
