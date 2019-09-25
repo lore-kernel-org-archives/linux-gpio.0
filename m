@@ -2,72 +2,94 @@ Return-Path: <SRS0=4jtw=XU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3FCC432C1
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Sep 2019 08:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39419C432C1
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Sep 2019 09:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 006B12082F
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Sep 2019 08:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBDC214D9
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Sep 2019 09:52:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="va8yIct1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442854AbfIYIqI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Sep 2019 04:46:08 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:33787 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442828AbfIYIqI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Sep 2019 04:46:08 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id F39941C001B;
-        Wed, 25 Sep 2019 08:46:05 +0000 (UTC)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 1/5] dt-bindings: Add Xylon vendor prefix
-Date:   Wed, 25 Sep 2019 10:45:51 +0200
-Message-Id: <20190925084555.147771-2-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190925084555.147771-1-paul.kocialkowski@bootlin.com>
-References: <20190925084555.147771-1-paul.kocialkowski@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1731769AbfIYJwv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Sep 2019 05:52:51 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43538 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbfIYJwu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Sep 2019 05:52:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v27so2896074pgk.10
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Sep 2019 02:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TV3RT1yNKXy5j0AoE4e6keZibU6Zrl0Z4HmWZXehpjw=;
+        b=va8yIct1jAIbfCuT/3sEP4exm22IQ2TSwWZP2+TsQD7Czgf2QXVgxepvptPTgLoifq
+         5r/FRHyIQOdjDoO5V+eirOa4qQ5m5BXLaK0Jc+RM6BD8Edgv9isDVFsB3SwVDyL/+8mW
+         s6axDG4Eti4ok2rYzMLd/40V9QkKJEHTx+7q/KUEWYKzi84PeWgSjNOMUYp2EGX7VEdn
+         daIsmeq4cDoSg85xqv9HhaCnxKuPz2KJBDNiSb8+6It47l89jyS3m7xe/EhL8qnfHRx7
+         JJnNtE22qP4BEFxoOCaOPhlXs2Wh8b8y8tYKZda6+/4/ZMa0oNQbDPQcjzVrutR+SOFO
+         IuKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TV3RT1yNKXy5j0AoE4e6keZibU6Zrl0Z4HmWZXehpjw=;
+        b=ZY1dHMRvELYrI1Z4OGPCQ5fHLke3dDEZJbuPySF7s9BEJpPS0s4hFxWkH2aEx0QcZe
+         hQ2524cTJie+22PyagYM4EUz17vG+NaJ8me5zovz4dZehEh8/XkaGjgnfp22a1ehldq6
+         bqchzEsscNT6JBCoqIkd2s+vtfGDURVTY0H/oH2yWTxiZb907EwPqP7y/NF7bo3FilkX
+         LrKJS+A7WOcpWjPO3598tnfoV5Pay4A7kcStGCC/aZMGVh4A5rc3mdJ46cyftxOjIX/5
+         tY8ts84zzgeZokYXUEWrb1wUbauOsbO0OyTWufHuH5U4gMGH7WFWTW0Y86f7cDgLdeew
+         Pg6A==
+X-Gm-Message-State: APjAAAXBpIFy+8F6EWcpqtFF0lLYgcQ6GlCwNBT8AIWAEXq6JHDSafAT
+        WNSp3kf1u2xXxTdopSTVWdBXgAwzC7rN3A==
+X-Google-Smtp-Source: APXvYqxAi3M7mauapLMsR6LDIGh2upipMbm+6rwiwwDaLqwegdnLSJD1q1FWwqTsxI1Xn5NqnSB2mQ==
+X-Received: by 2002:a63:d908:: with SMTP id r8mr8046960pgg.263.1569405167866;
+        Wed, 25 Sep 2019 02:52:47 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id p20sm4037221pgj.47.2019.09.25.02.52.43
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 25 Sep 2019 02:52:46 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     stable@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+        linus.walleij@linaro.org, natechancellor@gmail.com, sre@kernel.org
+Cc:     longman@redhat.com, linux-gpio@vger.kernel.org,
+        david@lechnology.com, linux-pm@vger.kernel.org, arnd@arndb.de,
+        baolin.wang@linaro.org, orsonzhai@gmail.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: [BACKPORT 4.19.y 0/3] Candidates from Spreadtrum 4.14 product kernel
+Date:   Wed, 25 Sep 2019 17:52:26 +0800
+Message-Id: <cover.1569404757.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Xylon is an electronics company that produces FPGA hardware block designs
-optimized for Xilinx FPGAs.
+With Arnd's script [1] help, I found some bugfixes in Spreadtrum 4.14 product
+kernel, but missing in v4.19.75:
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+513e1073d52e locking/lockdep: Add debug_locks check in __lock_downgrade()
+957063c92473 pinctrl: sprd: Use define directive for sprd_pinconf_params values
+87a2b65fc855 power: supply: sysfs: ratelimit property read error message
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 29dcc6f8a64a..6c9913244e4c 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1036,6 +1036,8 @@ patternProperties:
-     description: Xilinx
-   "^xunlong,.*":
-     description: Shenzhen Xunlong Software CO.,Limited
-+  "^xylon,.*":
-+    description: Xylon
-   "^yones-toptech,.*":
-     description: Yones Toptech Co., Ltd.
-   "^ysoft,.*":
+[1] https://lore.kernel.org/lkml/20190322154425.3852517-19-arnd@arndb.de/T/
+
+David Lechner (1):
+  power: supply: sysfs: ratelimit property read error message
+
+Nathan Chancellor (1):
+  pinctrl: sprd: Use define directive for sprd_pinconf_params values
+
+Waiman Long (1):
+  locking/lockdep: Add debug_locks check in __lock_downgrade()
+
+ drivers/pinctrl/sprd/pinctrl-sprd.c       |    6 ++----
+ drivers/power/supply/power_supply_sysfs.c |    3 ++-
+ kernel/locking/lockdep.c                  |    3 +++
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+
 -- 
-2.23.0
+1.7.9.5
 
