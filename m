@@ -2,112 +2,81 @@ Return-Path: <SRS0=Ys0p=XV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21369C432C2
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 08:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0FAC352AA
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 12:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D0E222BE
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 08:14:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KKTeV+/j"
+	by mail.kernel.org (Postfix) with ESMTP id 30EF0208C3
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 12:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfIZIOj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Sep 2019 04:14:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37126 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfIZIOi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Sep 2019 04:14:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q8EMNj095953;
-        Thu, 26 Sep 2019 08:14:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=YDRRpVAtUWoOxNUyo4YRN1dH81wF4V8OciFyOM/bsSc=;
- b=KKTeV+/j14MDSdEkpTJ/hZYSgcx0pcAf0UfV7cef+vW8nQfVg2di0XL69sZfOoRPtse5
- Kh5DErxoBhAXXWUnwZZIWnLhaeGqg7WevuDWzOMTJsL0gy6YWIgGvgoX7GvJSU2d3wJE
- 2GQNzCGcy5B+DX4e/sdHW8QFOmshI27/7wqJ5j+4ZHXmQPubXV9AOkPH7GeVDyOtXJ7C
- Mquxjf2fp4sNUF9XUL5wNCpjWWkJT3V+U8P26Q2yBAh87SiCGQU05jkWHV0kNq5Nbcg7
- SJmglC8HVYdsLMIkBHCrEqwMQ9pqU9zi5grHgLSutLhVfNMVdzgUhEAe2mORwLkS4T9Z og== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2v5btqa041-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 08:14:35 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q88fFR130879;
-        Thu, 26 Sep 2019 08:14:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2v82tmp2ck-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 08:14:34 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8Q8EY9u022413;
-        Thu, 26 Sep 2019 08:14:34 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Sep 2019 01:14:33 -0700
-Date:   Thu, 26 Sep 2019 11:14:26 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Ray Jui <rjui@broadcom.com>,
-        Yendapally Reddy Dhananjaya Reddy 
-        <yendapally.reddy@broadcom.com>
-Cc:     Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ns2: Fix off by one bugs in ns2_pinmux_enable()
-Message-ID: <20190926081426.GB2332@mwanda>
+        id S1726418AbfIZMa4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Sep 2019 08:30:56 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36550 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfIZMa4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Sep 2019 08:30:56 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k20so1913238oih.3;
+        Thu, 26 Sep 2019 05:30:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y3b68w/pTPo2DCO6zay3jptE46Sk1GZsE/h59dkZ0Zw=;
+        b=GxqzckqW/57zG2WTfqjZJzX9BmIIrU02vkEwhX+XiXlb8v4G62GCWEWaFYrf6g61xv
+         DQbX798MkGW36Il8dDKLokMCHhUtZDiE2zqnCzDVpBm/Ah9A1ZKLbp47DHznwmhoTkVx
+         2Iuc7CmaiG0bB16SrnhLQ/gPg9I1Q4WbtPjrpdgplsMpXHFySdIUgNxGiFsba/mI1AR4
+         qWOVO5H/+W6kqhgbZpqca8mdtRo9A5HzYUMy+YL2s2XWtZBHStOtWxNE9fSeuPlmFLur
+         naXXZxIsNjjOVf6awFHSYoSGIiDrnDRiR9dIlPGNXm3kgRgxwWeIlo+dLCcwRjLg3SDd
+         fTdg==
+X-Gm-Message-State: APjAAAUW4QdeO10xX8jHhGtnrjTSN2NZibZ4VF61wdpzdmE5fgReqAFS
+        c9j2LJ+MbpbUDwU55RxM2y2HMOx+/zpjyC2PZ8c=
+X-Google-Smtp-Source: APXvYqwybBOXw1S7CoEiYB1tzxMTGZVXYkC5r/isn14EZrLeRd+TtNYxRqQomjPaqsJ2KiEJEBOYa3xjj1G3G3nI4hk=
+X-Received: by 2002:aca:cdc7:: with SMTP id d190mr2356068oig.148.1569501053979;
+ Thu, 26 Sep 2019 05:30:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=955
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909260080
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909260081
+References: <1569245268-61920-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1569245268-61920-1-git-send-email-biju.das@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 26 Sep 2019 14:30:42 +0200
+Message-ID: <CAMuHMdXZ9Ntwqynz_t+Xi+5c36ppzt0E1Pp3sFF4wW1nABXVzw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add DT binding for r8a774b1
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pinctrl->functions[] array has pinctrl->num_functions elements and
-the pinctrl->groups[] array is the same way.  These are set in
-ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
-read one element beyond the end of the array.
+On Mon, Sep 23, 2019 at 3:28 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document Renesas' RZ/G2N (R8A774B1) GPIO blocks compatibility within the
+> relevant dt-bindings.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-index 2bf6af7df7d9..9fabc451550e 100644
---- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
-@@ -640,8 +640,8 @@ static int ns2_pinmux_enable(struct pinctrl_dev *pctrl_dev,
- 	const struct ns2_pin_function *func;
- 	const struct ns2_pin_group *grp;
- 
--	if (grp_select > pinctrl->num_groups ||
--		func_select > pinctrl->num_functions)
-+	if (grp_select >= pinctrl->num_groups ||
-+		func_select >= pinctrl->num_functions)
- 		return -EINVAL;
- 
- 	func = &pinctrl->functions[func_select];
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
