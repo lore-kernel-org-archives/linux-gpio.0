@@ -1,111 +1,113 @@
-Return-Path: <SRS0=Ys0p=XV=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=VCro=XW=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC113C352AC
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 16:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8E6C4360C
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Sep 2019 01:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0034222C9
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Sep 2019 16:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=pensando.io header.i=@pensando.io header.b="y3h5OT0U"
+	by mail.kernel.org (Postfix) with ESMTP id 9CAE8206B7
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Sep 2019 01:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569546805;
+	bh=7qtojZp5zJHlXpkEO8yCgrlaXTzo4YIuiYBry43Vq+U=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=zXeQX3T1bOH8D5EeBJwHcTvddyFPq4D6ZsGJR7r12LUAE80kNkaZsq7ONFFOQJNTR
+	 TeuUK3BFsvJdUtfcKCTA6ZUVIXdNiKSVsTnMmxMBLtdN4Y/kGYTBsL0TgXEcpr6GpR
+	 /ET35GU4zjwNqlgDX+Fr8bNVOAD4SU3i/4+zdCNs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfIZQaC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Sep 2019 12:30:02 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37605 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfIZQaB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Sep 2019 12:30:01 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u20so1536570plq.4
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Sep 2019 09:30:00 -0700 (PDT)
+        id S1725808AbfI0BNZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Sep 2019 21:13:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46189 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfI0BNY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Sep 2019 21:13:24 -0400
+Received: by mail-io1-f67.google.com with SMTP id c6so11685500ioo.13
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Sep 2019 18:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pensando.io; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=iUBOjyHfuR7bXfhhUiHsxfKRvIQzrO86xTAr8Ifre0Q=;
-        b=y3h5OT0UmQqXJi0n0rBvqkcTo+13EdxQBhESuHKUhhUdt4HIIcVQewbszw7316Jbj3
-         B26hOzlkXv8XsgeN5pGs7wsfUu35kRVDjdfbd80Cz2QkLIg0M3MsvsJVJdd9QD5RXeiy
-         6UEhQ9sxyZ6zQojKZM8g8YSAiU0HmfS6EeGLmm2G3M5zDUXby8glVotg/+s3ve95UAlT
-         DAQ0U/ntgxEnEPfGxe+68Qz99D7tUdj8cjDtGb+44i81+8OKBcckxrd+3wvZeL0MsCVS
-         GUydrXVlNXeNeT9yD3EB7dKB2lMU1zF3uY6+lKZ9hv2ld2NLoMT31L6wdQwnvoc03z5L
-         JHDg==
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vEE9lOyJedYGEKwzVDnKuOkrG0RTwYW04dLMK0cfVNI=;
+        b=aewx8DaVgi2IdGL01e4RMmtoymyhqnU1GKAbN4jN+2MeIAH5LDTe27X9hTI4aQQZ6v
+         9TRC9vcS29nS6XOnSEfGzgsIU6hpszM9EamSBK20+M5v1RzMXAoG5eM5ccdafnaMZgsC
+         j7Jiv/gSplXSNatW+xjRZG6YvpXWe+QvxtcNc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=iUBOjyHfuR7bXfhhUiHsxfKRvIQzrO86xTAr8Ifre0Q=;
-        b=SdDqsnpXo3zgyN+ap6l1hovjnuTXXtHi00xoT/NSR3QWt9j9FrcnhxhbTpwrkBvMT7
-         h6h8qWX0zLt5cYxz4e5ZvUY3F1E8WhVqh1bBgYjvr5uN5sCOiuc5IWP1J/I1mYWVsuWK
-         yRhr0NrEUDMG1fEDQxVNWYjiQT0UolBBmGEiYdDGDjRAJ0Uo8ZDqU7KyGnDbWFUJw1QQ
-         WtDPzyYtxznTNwuFiv1LlPDKxf6TN19S0DeAqbO/nw/R/7h8Bck5/NNJ0I+kxi2HlhEG
-         IR7o5eL46ZX/MnNlRI8iw8oZoQ4ya1Bp8/ZwpqLBtumHvcieGR43BaBpu2viMaf76UVH
-         LyMA==
-X-Gm-Message-State: APjAAAXxNh6GX409/+5XlzPbhOuI9QBdTlZAAt9NCAtoLwzJcsYSSvys
-        Os8GqcPjQeHhtl6S6qdhHquwaA==
-X-Google-Smtp-Source: APXvYqzWSovEndvhpUlPPG2KWsLiHc/5J0wB0jU8KW7kk3lkOzlRWdHFYbFHIpUg2H8EkpfjsR5P5g==
-X-Received: by 2002:a17:902:8a88:: with SMTP id p8mr4822043plo.152.1569515400373;
-        Thu, 26 Sep 2019 09:30:00 -0700 (PDT)
-Received: from Shannons-MacBook-Pro.local (static-50-53-47-17.bvtn.or.frontiernet.net. [50.53.47.17])
-        by smtp.gmail.com with ESMTPSA id e127sm3547209pfe.37.2019.09.26.09.29.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 09:29:59 -0700 (PDT)
-Subject: Re: [PATCH 1/3] docs: fix some broken references
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        corbet@lwn.net
-Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pensando Drivers <drivers@pensando.io>,
-        Steve French <sfrench@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-mips@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-riscv@lists.infradead.org
-References: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
-From:   Shannon Nelson <snelson@pensando.io>
-Message-ID: <81dc41d5-606a-7638-1d11-4fe53e9c2a7f@pensando.io>
-Date:   Thu, 26 Sep 2019 09:29:56 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vEE9lOyJedYGEKwzVDnKuOkrG0RTwYW04dLMK0cfVNI=;
+        b=K0W0U0MNaf6olDfi5N+I6ylMqSj/VC3vRyWn1wzw/gmc16c5xPVNReXnTJRRlqoAAK
+         k99EsofwlVa4HpvbfjG7M+NiG2XgWb6oNVE0JjGEuIQMiJ5J9HQv0N0yPEfMcZeDEQsR
+         dY3XhSRkuNO2i6dz5F6M528tFdGz7N7jWudiFzMs602LzlA+NKiy2tibrea0qobrGrq3
+         QrRO0BcR44cptUGae3C0B3KSf5mEkaB5ICtPZDsiYJ9JzJdfd8jQriR/JcQwWMSMLlaa
+         VaxB1604qzmsxmJ7mlozJYg1PC7M47Ulb/6RFwPeA+4Zgl+mRIBqbHQqKiGPup6Yh2CN
+         6TMw==
+X-Gm-Message-State: APjAAAU4TEXd7tRyAhlOQLwFpW1feh3Ky2m8abnut2Xo0zSADm5jAfX4
+        B02XZAX+HZ99uZg5iiacODHd6g==
+X-Google-Smtp-Source: APXvYqyi25JQWLz5zuPdbjoyS7rTFaHfpEmPpxHwSsRTBjT+rhIcseiZPcgjtZuZTSP2Nu6zbDvXAw==
+X-Received: by 2002:a92:1685:: with SMTP id 5mr2085408ilw.81.1569546804169;
+        Thu, 26 Sep 2019 18:13:24 -0700 (PDT)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id z5sm1717813ioh.23.2019.09.26.18.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 18:13:23 -0700 (PDT)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, --cc=linux-kselftest@vger.kernel.org
+Subject: [PATCH] tools: gpio: Use !building_out_of_srctree to determine srctree
+Date:   Thu, 26 Sep 2019 19:13:21 -0600
+Message-Id: <20190927011321.4612-1-skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 9/24/19 6:01 AM, Mauro Carvalho Chehab wrote:
-> There are a number of documentation files that got moved or
-> renamed. update their references.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+make TARGETS=gpio kselftest fails with:
 
->   drivers/net/ethernet/pensando/ionic/ionic_if.h            | 4 ++--
+Makefile:23: tools/build/Makefile.include: No such file or directory
 
-Acked-by: Shannon Nelson <snelson@pensando.io>
+When the gpio tool make is invoked from tools Makefile, srctree is
+cleared and the current logic check for srctree equals to empty
+string to determine srctree location from CURDIR.
+
+When the build in invoked from selftests/gpio Makefile, the srctree
+is set to "." and the same logic used for srctree equals to empty is
+needed to determine srctree.
+
+Check building_out_of_srctree undefined as the condition for both
+cases to fix "make TARGETS=gpio kselftest" build failure.
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+---
+ tools/gpio/Makefile | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 6ecdd1067826..1178d302757e 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -3,7 +3,11 @@ include ../scripts/Makefile.include
+ 
+ bindir ?= /usr/bin
+ 
+-ifeq ($(srctree),)
++# This will work when gpio is built in tools env. where srctree
++# isn't set and when invoked from selftests build, where srctree
++# is set to ".". building_out_of_srctree is undefined for in srctree
++# builds
++ifndef building_out_of_srctree
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+ endif
+-- 
+2.20.1
 
