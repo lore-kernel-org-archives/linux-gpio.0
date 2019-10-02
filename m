@@ -2,102 +2,151 @@ Return-Path: <SRS0=5fb4=X3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB00ECE58B
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 12:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62B9C352AA
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 12:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65B221920
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 12:28:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNLKx8UP"
+	by mail.kernel.org (Postfix) with ESMTP id 796632133F
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 12:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570020144;
+	bh=NLDQQjTMKStTfy+mmZiFdDPpDbYYwDq97K+fyh0rmQA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=RO8i+70fnzC+Q+AdKjIhysGXY5nUSp48D7418jVOR+c7zKN9tu7z8Etn1/LSNozkK
+	 LCCPEjAQm4wK8uVHtHCq664Zk9l1zg3T7FYVyIw+QrCxDMAktnkCheExFEGLjTODt4
+	 udJaDJt4zBrvRyuenMRIj20OE0G0I+dZ0wCqRHN4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfJBM2d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Oct 2019 08:28:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43919 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJBM2c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2019 08:28:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q17so19436519wrx.10;
-        Wed, 02 Oct 2019 05:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iB2sFoZ4x2KF5IYNHgeqY98wXl2bB2JULeTFtyoqdVY=;
-        b=ZNLKx8UP+ukUsboEbPQ9oqLgg5M+37mex1mpr0SgaI7zjToRbmdCJL/chPAEK2r7t8
-         C+RcBU7oQnbO3L1hTZQh1VyMX84xXmn0x8g7AskW0bydPo29O2lwBgM9BeNJiMt7gaS7
-         LtCbNGe/ttaTfoTsJSOmpLgAJLVJ7mpN5r3h18HtAYcsB5NqjcgFF1yFZ9FvmXOIhxAm
-         1MxDJ7tO9pJbc4JQ8iR/yPEsCNibvlX1qtkuBUWdy6aJHG4CkqIbqb+V+84d3R5bsmoe
-         sDx7f/mMbJ6cF7dCarqOe47Quscz7UkGw/gZywhaYNS/7p6JBvKDCe0bbruzj3MEXMRy
-         2tlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iB2sFoZ4x2KF5IYNHgeqY98wXl2bB2JULeTFtyoqdVY=;
-        b=E8tcBQ6lyFYE0z3JyOT1cT/Bgc194gfYXxSrFLZnHENJjrNz2Ijr9mgmTvanMcmLgs
-         qvPIH6L5rKKzPpmhxkGCVNMunQuR3U4+g4lCHaJuDE3QikN/dAMpfidmgej7UBcnxYXq
-         c8yhdhWsg36bVdUYmTdrPVNYayH3WqNj6h3724+nRQnwGs5Y+emoWuhckIBZQR2fJd3Z
-         jEEmej1F2QBBv4/Cf7RoOd9BVX1DFI3LgOoGADQcGnuCW/+2clFWp860wnWLGdTGqPKI
-         KCaPoNOzFDkbQCyhebPt8recsiTexB8AmRdTCOszf/TYQwmlvVUUSVqdwY4/P2N0uAGO
-         8kOA==
-X-Gm-Message-State: APjAAAVWUbix6mCYosiAjDRWTB69Pz3baQGdU6UKJJJba2d6nCyRFzs3
-        w1iyx5KVIbR84BwLezjxgUk=
-X-Google-Smtp-Source: APXvYqylRlhdhO5L5gTZTUh+KEGBPZYsf15BqzctBqRpCy2v75DzIQkOOs8h+NZd8ePk6530OH8SlA==
-X-Received: by 2002:adf:f112:: with SMTP id r18mr2493221wro.88.1570019309276;
-        Wed, 02 Oct 2019 05:28:29 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id h17sm10777194wme.6.2019.10.02.05.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 05:28:28 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Timo Alho <talho@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] gpio: max77620: Do not allocate IRQs upfront
-Date:   Wed,  2 Oct 2019 14:28:24 +0200
-Message-Id: <20191002122825.3948322-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191002122825.3948322-1-thierry.reding@gmail.com>
-References: <20191002122825.3948322-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726325AbfJBMmY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Oct 2019 08:42:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbfJBMmX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:42:23 -0400
+Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7EB02133F;
+        Wed,  2 Oct 2019 12:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570020142;
+        bh=NLDQQjTMKStTfy+mmZiFdDPpDbYYwDq97K+fyh0rmQA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dJnxXL+yQ7XMCepN6ICMOHC9GiR/ws2fcKtNxQRw+uZysq57qIxRjdAP2/IoFE6oI
+         ANUY12euHdOugmdy82+lhqZTOif3n9gul2YuV0qp4hzjK7Ok6+KjDCwIp6tDEa9uWL
+         vh4FKjOByYAVdPWEfWeMGoCFNi+Qs3vzuq8jRtyI=
+From:   Will Deacon <will@kernel.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [RESEND PATCH] pinctrl: devicetree: Avoid taking direct reference to device name string
+Date:   Wed,  2 Oct 2019 13:42:06 +0100
+Message-Id: <20191002124206.22928-1-will@kernel.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+When populating the pinctrl mapping table entries for a device, the
+'dev_name' field for each entry is initialised to point directly at the
+string returned by 'dev_name()' for the device and subsequently used by
+'create_pinctrl()' when looking up the mappings for the device being
+probed.
 
-regmap_add_irq_chip() will try to allocate all of the IRQ descriptors
-upfront if passed a non-zero irq_base parameter. However, the intention
-is to allocate IRQ descriptors on an as-needed basis if possible. Pass 0
-instead of -1 to fix that use-case.
+This is unreliable in the presence of calls to 'dev_set_name()', which may
+reallocate the device name string leaving the pinctrl mappings with a
+dangling reference. This then leads to a use-after-free every time the
+name is dereferenced by a device probe:
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+  | BUG: KASAN: invalid-access in strcmp+0x20/0x64
+  | Read of size 1 at addr 13ffffc153494b00 by task modprobe/590
+  | Pointer tag: [13], memory tag: [fe]
+  |
+  | Call trace:
+  |  __kasan_report+0x16c/0x1dc
+  |  kasan_report+0x10/0x18
+  |  check_memory_region
+  |  __hwasan_load1_noabort+0x4c/0x54
+  |  strcmp+0x20/0x64
+  |  create_pinctrl+0x18c/0x7f4
+  |  pinctrl_get+0x90/0x114
+  |  devm_pinctrl_get+0x44/0x98
+  |  pinctrl_bind_pins+0x5c/0x450
+  |  really_probe+0x1c8/0x9a4
+  |  driver_probe_device+0x120/0x1d8
+
+Follow the example of sysfs, and duplicate the device name string before
+stashing it away in the pinctrl mapping entries.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Elena Petrova <lenaptr@google.com>
+Tested-by: Elena Petrova <lenaptr@google.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/gpio/gpio-max77620.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/devicetree.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index faf86ea9c51a..c58b56e5291e 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -304,7 +304,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 88ddbb2e30de..9721ad30c541 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -29,6 +29,13 @@ struct pinctrl_dt_map {
+ static void dt_free_map(struct pinctrl_dev *pctldev,
+ 		     struct pinctrl_map *map, unsigned num_maps)
+ {
++	int i;
++
++	for (i = 0; i < num_maps; ++i) {
++		kfree_const(map[i].dev_name);
++		map[i].dev_name = NULL;
++	}
++
+ 	if (pctldev) {
+ 		const struct pinctrl_ops *ops = pctldev->desc->pctlops;
+ 		if (ops->dt_free_map)
+@@ -63,7 +70,13 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
  
- 	ret = devm_regmap_add_irq_chip(&pdev->dev, chip->rmap, gpio_irq,
--				       IRQF_ONESHOT, -1,
-+				       IRQF_ONESHOT, 0,
- 				       &max77620_gpio_irq_chip,
- 				       &chip->gpio_irq_data);
- 	if (ret < 0) {
+ 	/* Initialize common mapping table entry fields */
+ 	for (i = 0; i < num_maps; i++) {
+-		map[i].dev_name = dev_name(p->dev);
++		const char *devname;
++
++		devname = kstrdup_const(dev_name(p->dev), GFP_KERNEL);
++		if (!devname)
++			goto err_free_map;
++
++		map[i].dev_name = devname;
+ 		map[i].name = statename;
+ 		if (pctldev)
+ 			map[i].ctrl_dev_name = dev_name(pctldev->dev);
+@@ -71,10 +84,8 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 
+ 	/* Remember the converted mapping table entries */
+ 	dt_map = kzalloc(sizeof(*dt_map), GFP_KERNEL);
+-	if (!dt_map) {
+-		dt_free_map(pctldev, map, num_maps);
+-		return -ENOMEM;
+-	}
++	if (!dt_map)
++		goto err_free_map;
+ 
+ 	dt_map->pctldev = pctldev;
+ 	dt_map->map = map;
+@@ -82,6 +93,10 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 	list_add_tail(&dt_map->node, &p->dt_maps);
+ 
+ 	return pinctrl_register_map(map, num_maps, false);
++
++err_free_map:
++	dt_free_map(pctldev, map, num_maps);
++	return -ENOMEM;
+ }
+ 
+ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
 -- 
-2.23.0
+2.23.0.444.g18eeb5a265-goog
 
