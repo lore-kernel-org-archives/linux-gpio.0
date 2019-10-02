@@ -2,87 +2,82 @@ Return-Path: <SRS0=5fb4=X3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8ADC35280
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 14:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243D5ECE58A
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 14:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B27C21D7B
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 14:14:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ilkRM8va"
+	by mail.kernel.org (Postfix) with ESMTP id EFE9421920
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 14:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570025961;
+	bh=rw9MrtOgI7xrq7l0tzTxB9DjVFRvpvUedKklfBn1tlw=;
+	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
+	b=z8CyQCN4/edh3tARqNj+TWPxdIo20JIIC8zSLF+qSeIBbARzJP8FtK5DEgkDtFuGK
+	 o8oCXb8m1YMfJrzdhB68HY2+Jv8lO0a7Lw+8cjxK4IAn/aq8JPQZpwUnOwePsikmOF
+	 //KlBCydLUn52PBK0hWDbwcVj7uJbhGs7Piy4UHU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbfJBOOV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Oct 2019 10:14:21 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:32776 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJBOOV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2019 10:14:21 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y127so12890775lfc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2019 07:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YSiUzt3JXZb0IC+ZVBGuvSJ/+rDdVM63Z1A1szs7rdc=;
-        b=ilkRM8vaZA8829y8IvPYiIFThq9Mi4w9Q0Q3zhOnNmRrAbNRkTOLv7rt5D6EU8bfey
-         aP1Ge6qo4+IE/ABHWmKoaG0/I2+7DrvquFwHurdp/K4DXAv4NiuvPOUgJ1Ba9wGG2zw5
-         ToC26zCHM9enkrHsXfjmBnFQmobM6hncQFXGSKP1DRwfLtRBfevpvCPsaR+oVdGy1uis
-         hmeGbu95vQkmTFk56R0xrz/5+t5sMQUtuF9J20V5qDIr75WwyEqs0R8HyDQvFZlOTJdk
-         DkGSTxAH1u3ce4YCTW2xmMU1xPR+u+OsnshGvHStVTxYO4zU0b8rLcHRZGlLX8EgUOsS
-         rkpA==
+        id S1728091AbfJBOTU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Oct 2019 10:19:20 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35393 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728198AbfJBOTT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2019 10:19:19 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w2so15150023qkf.2;
+        Wed, 02 Oct 2019 07:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YSiUzt3JXZb0IC+ZVBGuvSJ/+rDdVM63Z1A1szs7rdc=;
-        b=i7eOUv4VvAk+oFRXEUL/HQ3ReWxn/sGA4ao5BJHjRqa428kIIJGnuxUyhvTy6o8zE0
-         Rpv0plzTya+KTYbeB+KfjkJFHLhA1jk5hH5g5ErrMnYvgyFYHqJJJ55qAy8qw4it3L0S
-         LHQRq1RKMCzyVtP6gyxUc2rgY4rgVlpPEGI9PjC2P1YXFHeeWsviI1pI3dYloESTKkH8
-         /dzwTWhORqFlnvh1HVTQ9LpCRrpD6HI1eoArr3rjnLjuaPdfNxTn//xy0/3Tf6cGhlgc
-         px4v6hdUQC/64Gyq7l+okl/y8EDJIAU5hDtAGdG/Mr+Lgh3nlwDTJ/7IKbCt4Fyg7YA4
-         nVJg==
-X-Gm-Message-State: APjAAAX5/2raB408de7wvedDHMrLvzoU/ijH3fQKVzx7K+S8+A+OCGvj
-        GDpOTnN1P+P3WPrk0/nR2d1/i/q7oyByrn0RlZJUeHznZ6o=
-X-Google-Smtp-Source: APXvYqw7r0YowzXU3GakJsnGLHQbh6ms2tFEx3BHQgx6K16rF6Kuk1aX3F0zSGBcT+PCdy/GwTTU1r5+FeESit4kqDI=
-X-Received: by 2002:ac2:46ee:: with SMTP id q14mr2348160lfo.152.1570025659320;
- Wed, 02 Oct 2019 07:14:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191001095800.28966-1-brgl@bgdev.pl>
-In-Reply-To: <20191001095800.28966-1-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 2 Oct 2019 16:14:07 +0200
-Message-ID: <CACRpkdb5=CW3mGsUMfRXdUc+f5LKj+9arcXLhy_xxZmbJixUMw@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio: fixes for v5.4-rc2
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:date:from:subject:references
+         :in-reply-to:cc:cc:to;
+        bh=gLUrmfx/jj76Kop2N5IqJrGqd6xXvr5f/fK/MvQJB5I=;
+        b=VuEm2Vv8ba/YaIAYitXJEHRyOrxeh0s/x1+En6Y7V5yJ8pXbHJIvHfoDsTXmZ9la7I
+         Ip0ZIa7OtHQF0iSrjJzjc/Xx8X3ehVI8jWogaUPtk7khQCW0syTacLWsmdmhqD2HWtYN
+         kcweY82GHXdNGphB7db9+E0aq3vTN7kPfG0zCZoRmZlLJiyt96LxgDqttXzjjT2nhQl8
+         SrAm6ou3NXWu/j8RJLwosiU7YuX0efQ5hBxCXJeQ7/4vdGDAKGZwusvxjXOcjMVZZ/Bd
+         Xp7jPjCLfqntp4Y2WjP9MNL0kTWazHB2eaDG7PeSfScDgL0eNs2m37cZ+iqEnbYeuQL3
+         mjsQ==
+X-Gm-Message-State: APjAAAWnhf8yqqIyhXbSYYJ3dzEbRW3rFX9Zy18Eluj6tjw92SivUEMk
+        HGJNM+rsv1sExRZBg4AYsg==
+X-Google-Smtp-Source: APXvYqxGYsVpZYl54CE+HZk8nSduDUYyC53TCANmYaAFwMF5Fj5/Lc2c1Gtmf2OXKhtDuLsnn2jmBw==
+X-Received: by 2002:a37:8382:: with SMTP id f124mr3895023qkd.218.1570025958532;
+        Wed, 02 Oct 2019 07:19:18 -0700 (PDT)
+Received: from localhost ([132.205.230.8])
+        by smtp.gmail.com with ESMTPSA id j17sm14577297qta.0.2019.10.02.07.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 07:19:17 -0700 (PDT)
+Message-ID: <5d94b1e5.1c69fb81.483f1.b3cc@mx.google.com>
+Date:   Wed, 02 Oct 2019 09:19:14 -0500
+From:   Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add DT binding for r8a774b1
+References: <1569245268-61920-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1569245268-61920-1-git-send-email-biju.das@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+To:     Biju Das <biju.das@bp.renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 11:58 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Mon, 23 Sep 2019 14:27:48 +0100, Biju Das wrote:
+> Document Renesas' RZ/G2N (R8A774B1) GPIO blocks compatibility within the
+> relevant dt-bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-> this is the previous PR rebased on top of v5.4-rc1. Please pull.
->
-> Bart
->
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
->
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-v5.4-rc2-fixes-for-linus
->
-> for you to fetch changes up to e91aafcb51f3c5001ae76c3ee027beb0b8506447:
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thanks! Pulled in for fixes!
-
-Yours,
-Linus Walleij
