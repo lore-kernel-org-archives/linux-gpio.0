@@ -1,117 +1,92 @@
-Return-Path: <SRS0=5fb4=X3=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=R7Pu=X4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CBEC4360C
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 23:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D3DC4360C
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Oct 2019 00:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1C4222BE
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Oct 2019 23:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26781222C4
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Oct 2019 00:03:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Mf3QWc+S"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="K4uihTor"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfJBX3k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Oct 2019 19:29:40 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46716 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbfJBX3j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2019 19:29:39 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q5so451012pfg.13
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Oct 2019 16:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=mfYTRE2wrHnGHdzN9pNRX0i1wlfEpry7vj/JNYrQ7CY=;
-        b=Mf3QWc+S+bv5pPGAm5l5TcASwdcoob1IpAJzIYmCUhXcHc9GZtCIr3XT5pjbAuSPTS
-         AWmeLFS3b+jY913B1ysUu3DmViojEU2i9R/tFiFtAV+95O7xfx1ymyUlCoel6td6Eh1e
-         Aeti9QCjKm2ld4obHKXX8u4j/MNnSQabQF1YY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=mfYTRE2wrHnGHdzN9pNRX0i1wlfEpry7vj/JNYrQ7CY=;
-        b=oxTLp8OtcdJCSvOSDmKYAjFkOhuYVxHxDPbTxMw/HS4OdKLOVMuVEIv5LMn4FHWL61
-         Pm9P28yoG/1s3bTKlJ6EwdZ3/1kFjSfYLKnkKNt7S6CvWGWJYO1r1rNXdQFmzDeca5H4
-         sjhR95a+RnTKKMrSxhfi24HxI6P56nsYV+dwVy5+BerIWxnFdQRtxNnPmPQrCsSR0Tb3
-         WYdpnMzNG2Xq+ZLlLqOE7QcBGdvIQ8xcYslKva2e9uesPn3L8/VQq7TuDG9Vnhxzv1Fd
-         fsfO5rkonlkvR5V4OavI+aJKJp/6xvSmYJ5c3uhbH3KtJajgFqQs/HSiogqUQaIt22NH
-         z9kw==
-X-Gm-Message-State: APjAAAVNLjQdrAg6mlpZ+pVQYuZzqaVmDJPzs6pWTbz+FDjubWJjvPG2
-        PcVVqkTVx5mpXgWNfBs/WCd1tZt/wjmz+A==
-X-Google-Smtp-Source: APXvYqwb1v+OFwGH/X+Zf8U8nxSjb6n41/d9STpAf2augV7Q8TlFtC9GLo/vHrIL44A4Hqi6BErSww==
-X-Received: by 2002:a63:e14:: with SMTP id d20mr6038229pgl.33.1570058977001;
-        Wed, 02 Oct 2019 16:29:37 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id l72sm342214pjb.7.2019.10.02.16.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 16:29:36 -0700 (PDT)
-Subject: Re: [PATCH] pinctrl: iproc: improve error handling
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
+        id S1729300AbfJCADT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Oct 2019 20:03:19 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:55782 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729220AbfJCADQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Oct 2019 20:03:16 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 95A36891AC;
+        Thu,  3 Oct 2019 13:03:13 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1570060993;
+        bh=iUvA3HctFAZbLaG023LjBql2W+ZBQfiEqjeVbF2OMeI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=K4uihTorKxE0T+IhKkM9Ri1yc2NhJIFE2zA/QLUImn6J2VPyvKBHT4anq5dgXcP/S
+         c6QZry8JLXjQ88O6zL3+SbauIfUyRCq/cFyvGMSedncjAVFvgLuoqRFkbdYjl+1rA/
+         u0BTNGyYgQ7KsZY7xiZ3cAv6WcnoHhfSpW6NEj/OxaYi/xanidPEwYwQJ04xHD3thi
+         QYZ9LGTrhvJzTXQcXPdQE/oQpUumc2Xnp3eOxooLSYWAKnZxWwX8v1x66V9KWgJwM6
+         /j5VGjTOE1ab9QIVBqPve2SbO4ch3e3Nedg15YYHPSlTeeiKod4YdwPzwwS8XPHTiR
+         N5BRy3iwm8x+A==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d953ac20000>; Thu, 03 Oct 2019 13:03:14 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 4A36C13EEC9;
+        Thu,  3 Oct 2019 13:03:17 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 729E228003E; Thu,  3 Oct 2019 13:03:13 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
         bcm-kernel-feedback-list@broadcom.com,
         rayagonda.kokatanur@broadcom.com, li.jin@broadcom.com
 Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20191002220034.2034-1-chris.packham@alliedtelesis.co.nz>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <045d67e2-5618-3742-5519-c4fb9518c118@broadcom.com>
-Date:   Wed, 2 Oct 2019 16:29:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 2/2] pinctrl: iproc: use unique name for irq chip
+Date:   Thu,  3 Oct 2019 13:03:10 +1300
+Message-Id: <20191003000310.17099-3-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191003000310.17099-1-chris.packham@alliedtelesis.co.nz>
+References: <20191003000310.17099-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-In-Reply-To: <20191002220034.2034-1-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Chris,
+Use the dev_name(dev) for the irqc->name so that we get unique names
+when we have multiple instances of this driver.
 
-On 2019-10-02 3:00 p.m., Chris Packham wrote:
-> platform_get_irq() can return an error code. Allow for this when getting
-> the irq.
-Above matches change in 1st line of commit.  Please add a Fixes: tag
-for such fix.
->    While we're here use the dev_name(dev) for the irqc->name so
-> that we get unique names when we have multiple instances of this driver.
-The dev_name change should be in a different commit to keep things
-bisectable.
->
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> Noticed this while debugging another problem.
->
->   drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-> index 6f7d3a2f2e97..c24d49d436ce 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-> @@ -853,12 +853,12 @@ static int iproc_gpio_probe(struct platform_device *pdev)
->   
->   	/* optional GPIO interrupt support */
->   	irq = platform_get_irq(pdev, 0);
-> -	if (irq) {
-> +	if (irq > 0) {
->   		struct irq_chip *irqc;
->   		struct gpio_irq_chip *girq;
->   
->   		irqc = &chip->irqchip;
-> -		irqc->name = "bcm-iproc-gpio";
-> +		irqc->name = dev_name(dev);
->   		irqc->irq_ack = iproc_gpio_irq_ack;
->   		irqc->irq_mask = iproc_gpio_irq_mask;
->   		irqc->irq_unmask = iproc_gpio_irq_unmask;
-Thanks,
-Scott
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/b=
+cm/pinctrl-iproc-gpio.c
+index 8971fc54e974..c24d49d436ce 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -858,7 +858,7 @@ static int iproc_gpio_probe(struct platform_device *p=
+dev)
+ 		struct gpio_irq_chip *girq;
+=20
+ 		irqc =3D &chip->irqchip;
+-		irqc->name =3D "bcm-iproc-gpio";
++		irqc->name =3D dev_name(dev);
+ 		irqc->irq_ack =3D iproc_gpio_irq_ack;
+ 		irqc->irq_mask =3D iproc_gpio_irq_mask;
+ 		irqc->irq_unmask =3D iproc_gpio_irq_unmask;
+--=20
+2.23.0
+
