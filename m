@@ -2,86 +2,90 @@ Return-Path: <SRS0=Y/fG=X5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C594C47404
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Oct 2019 22:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFFFC4360C
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Oct 2019 22:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42147215EA
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Oct 2019 22:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D3020873
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Oct 2019 22:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qbrJI1nS"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="J1fyH+Mi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfJDWO2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 4 Oct 2019 18:14:28 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33507 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730367AbfJDWO2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Oct 2019 18:14:28 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y127so5526471lfc.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Oct 2019 15:14:26 -0700 (PDT)
+        id S1726669AbfJDWzY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 4 Oct 2019 18:55:24 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40805 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfJDWzY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Oct 2019 18:55:24 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h4so195341wrv.7
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Oct 2019 15:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S8mPVffMcLGte/wHbtTKmdFyoHNnsyDaHZetmGYETyI=;
-        b=qbrJI1nS7K2Rd321FJnk6g/mCczAUiwrknzRclj4Ij1aTcpmviFEYrfD0bKA/tr6F+
-         92kQ3oj4e6DANBZ1g4S+Z2SaNunY0/B0+WMh6sjxkeKvdI9ZL7BYHLqC+xf6ahRkbkHC
-         Y4kOqhN6PadJfxjDZY2BVnZSbJ6q8Zk5/1eDJZ60H8AvaTlzhRXkd6WBMfkyCJIZCF4I
-         sj0HLAoUoAmgwfy1odnZQalxEUZnfZUZotctVciJcG0IYdkDAAUUDVPPEA0+lVOqk08s
-         nHpbsoTlSwvca3bjTfZox6FD74uthGrjxcHRB9+ACZ7D6Re8IuqZy0lyim9cAug6FoMg
-         nZrg==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=YfRhZiMeq1yXFMfNcs4GaPZqOt8cJ/kkN3vPBsnNvb4=;
+        b=J1fyH+Mie9NXxlO7keplwGWqXgZl4+EvETUTVHC7WdrWhEgoHK5oE7lBw6rrIQgOPa
+         TkfzJizEOrVXq5v5H5CfJCzkqWPLg36vkI2psQiUp6ZdnTgLldbizdVELkSFmE+fG0Wk
+         8RuxezBTOZzdLB/FbQmDfp74/V4CFlAcB+foO7NcM67Kx7IHKytIayFaGMPKcaM36Rfs
+         0qarBu7IET9BLEtH7JZIadLVmj5okqvr+tcH017WSWXxme+dOpsuHCYuEsExhRY9mDtB
+         i+H5V1zcp3BN4u6C9R1IsSe+GKy54oOnShsG+Pp+/jKSZ8ZjEo770t2n0qTenaOu3Z4i
+         pwGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S8mPVffMcLGte/wHbtTKmdFyoHNnsyDaHZetmGYETyI=;
-        b=jTUPUedOhnXHrXBzNRh79bWcB7jJNJCn2Z1qJknVoF48xzFEGqbju4BXljpFwrKSp5
-         W6mZ49XwDHgyQcXVg4BnIirhOFqgouQQUd9mV4LeS0RSDA5+yc09wXlIayWcvYXEyrsr
-         GW+85erqqVTQftFyMELfK/Em4MhUf5Qou2265BIjrZgqZoHYQtS5AkDi5KtcwAxQOxq6
-         oQwXLKrwHeJgubdQJVJdVpKcj9Y92+yn7qwW2dSkpD4hPsfbHDS3tDG1I26SBe1PbItd
-         l2SkphM0fnT4w1fzg3YbGUiKAyJEE1j4oiTexQGqSBXBoS8yrFuq6Dm59IXVURbL2gNA
-         cCqA==
-X-Gm-Message-State: APjAAAUGfLcmHcCT1sZuBcmEVAXnZxdp1MQAlS+avQYW7Bue+ZxKwbV7
-        x8qRnZPwO5hHs2oH2lq2wbd2uur/zjRDU2m4BUG0bg==
-X-Google-Smtp-Source: APXvYqw6p3u0Nbk4EtKVZWVGxvJpwkNNralIapsPdyvTLc9k8feinsifqMxclwSQkxsfBTi9SQax5JQ1oEWvQP3L9ng=
-X-Received: by 2002:a19:14f:: with SMTP id 76mr9883809lfb.92.1570227265893;
- Fri, 04 Oct 2019 15:14:25 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=YfRhZiMeq1yXFMfNcs4GaPZqOt8cJ/kkN3vPBsnNvb4=;
+        b=rYrBCpQqSnZZ8hAq27hA3SH5fe5MOaYkJOt3hpE3gUBA2rCrdbZR2LpPZPFQowzOKs
+         XdP4cq9FMktAY+thUwGt1bVHwIm8GUfaN1OWs7I4fJISfRKPileb9p/t3+4t8iEXrqhu
+         8c1lkVcLgjuEyf98pEwH+o7flvSV2qQm+U07e5KMf6FiBcboBhntH8e8X2L9BhnO7eZc
+         D9jkQ1tXUc/dQHLey6MbTih8re89K9ZUD/Fy3lvIk/5e1bmCLiF6IdAAxgaCdm9j/UUp
+         rmt3YlJEEbbLcEignrE3H/SZwu1ra8hgKSznl2enlmpTZRnChFUK1uWfFz0jAVZUXIOp
+         G6Bw==
+X-Gm-Message-State: APjAAAXE9fzS/reiLyJGlcak2ZRM9+UrAfaz+sUstbGCUR+ko2LIf6Ef
+        BUbZB2VFOpPBlmZXRtJs7yR8+LBRhNXlIA==
+X-Google-Smtp-Source: APXvYqw4N1ovATCdDXls+uF5RP1gecenBohDJefkTpDuxfWEFvpm0OrqnUT0dlSEwQKqQJoQoHPA5A==
+X-Received: by 2002:adf:9b81:: with SMTP id d1mr12274558wrc.157.1570229722417;
+        Fri, 04 Oct 2019 15:55:22 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id c9sm7889802wrt.7.2019.10.04.15.55.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Oct 2019 15:55:21 -0700 (PDT)
+Message-ID: <5d97cdd9.1c69fb81.b78c8.5b8c@mx.google.com>
+Date:   Fri, 04 Oct 2019 15:55:21 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190926081426.GB2332@mwanda>
-In-Reply-To: <20190926081426.GB2332@mwanda>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 5 Oct 2019 00:14:14 +0200
-Message-ID: <CACRpkdY6f5MX16cJL--D3O=_4us=vXEF6vWfRpd+ju8T_JsE0Q@mail.gmail.com>
-Subject: Re: [PATCH] ns2: Fix off by one bugs in ns2_pinmux_enable()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ray Jui <rjui@broadcom.com>,
-        Yendapally Reddy Dhananjaya Reddy 
-        <yendapally.reddy@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v5.4-rc1-9-gff8baf289f37
+X-Kernelci-Tree: linusw
+X-Kernelci-Branch: for-next
+Subject: linusw/for-next boot: 38 boots: 0 failed,
+ 38 passed (v5.4-rc1-9-gff8baf289f37)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 10:14 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+linusw/for-next boot: 38 boots: 0 failed, 38 passed (v5.4-rc1-9-gff8baf289f=
+37)
 
-> The pinctrl->functions[] array has pinctrl->num_functions elements and
-> the pinctrl->groups[] array is the same way.  These are set in
-> ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
-> read one element beyond the end of the array.
->
-> Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/for-next=
+/kernel/v5.4-rc1-9-gff8baf289f37/
+Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
+l/v5.4-rc1-9-gff8baf289f37/
 
-Patch applied with Scott's ACK.
+Tree: linusw
+Branch: for-next
+Git Describe: v5.4-rc1-9-gff8baf289f37
+Git Commit: ff8baf289f37efb0c90ce2de1ea9a9f6feea30d5
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Tested: 35 unique boards, 13 SoC families, 3 builds out of 6
 
-Yours,
-Linus Walleij
+---
+For more info write to <info@kernelci.org>
