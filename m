@@ -2,243 +2,102 @@ Return-Path: <SRS0=gkZY=YA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8CDECE596
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56ACC47404
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B326D2070B
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570453414;
-	bh=nj4kW52DRZbuhF5KkN4YQuIRid23RCw2jI7hILCuuVM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=S2heddMy2v5Htol2BH9GJk6yZ2jh4WIao6CGCJHOiNgZWZROXvQVQVxVSr/t+Tjhp
-	 QZI2azopi93rXrb5lct/j4vxsuUKt+TI1hxAYjNgJZ6vkn2b9ye3gDYHp0McKF+UPo
-	 7GmI6d0qUaZpvsG48MgaZ/5OYCDGmvZKqWv9kbN4=
+	by mail.kernel.org (Postfix) with ESMTP id ACE60206BB
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:44:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="yQAdvBHo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfJGNDe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Oct 2019 09:03:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49472 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbfJGND1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 09:03:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lL/kh/qetVtVFXgFRF0qXSp3surLNTIc1iBbd+ByaZQ=; b=qPccM/3wNlPs
-        8GZTMxt0kTf4crWhQcXJwkeXYagLlgk4SCpjv5urre1quXHpkzKG0HTuYek0W6WBYw6BEzLG/u+k4
-        voS0kHQEJJudGqRXWnuwImisOw5UlGJ0uIHSjl9q23EzCHS/hwEKRl9eUJx8DDWZK0fpNG0HtliT3
-        W1y58=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHSfc-0003Sz-Qd; Mon, 07 Oct 2019 13:03:24 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3D0D9274162F; Mon,  7 Oct 2019 14:03:24 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        id S1728170AbfJGNod (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Oct 2019 09:44:33 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7940 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727442AbfJGNoc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 09:44:32 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97DfgGa028132;
+        Mon, 7 Oct 2019 15:44:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=iGH7FTmB/qEZDe7wAQErzy1jp41QX8/5E3SOIpqUc3Q=;
+ b=yQAdvBHoXCZfxbEwha7pnFyVfOgVvJibetR3AHJI9Kl0BNofay1EXEtNlVPl6bihNpTW
+ VmEiVCinmAb69Npwnz3ZhXjfjeKweY6SrFx19vy6lLidg2cg1112WaWNnb5lM2FbBNXl
+ IImKL66v1n700al6VylD4aXwz3wut1813d0uPAf4LYk6ghYYly43DtNh0O1bRv6rONzh
+ V4mdury8JvTwNgdkT8Qo/yUBMRH2Kwyiod/pWzjMJ0qiYeMYujkj8yiI16wb/EquwntV
+ VnYPubYr88KeEOttFEKVV/EI85hKsS/L3HxNH+jR5e7enDipeSRjWka0I9zTMdcWmZPu bQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vegxvjk6p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Oct 2019 15:44:14 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11598100039;
+        Mon,  7 Oct 2019 15:44:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F3C7A2B8A5E;
+        Mon,  7 Oct 2019 15:44:13 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Oct 2019 15:44:13
+ +0200
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Applied "gpiolib: introduce devm_fwnode_gpiod_get_index()" to the regulator tree
-In-Reply-To:  <20190913032240.50333-2-dmitry.torokhov@gmail.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191007130324.3D0D9274162F@ypsilon.sirena.org.uk>
-Date:   Mon,  7 Oct 2019 14:03:24 +0100 (BST)
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <linux-usb@vger.kernel.org>
+Subject: [PATCH 3/3] dt-bindings: usb: generic-ehci: Add "companion" entry
+Date:   Mon, 7 Oct 2019 15:44:10 +0200
+Message-ID: <20191007134410.10337-4-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191007134410.10337-1-alexandre.torgue@st.com>
+References: <20191007134410.10337-1-alexandre.torgue@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-07_02:2019-10-07,2019-10-07 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The patch
+"companion" entry is present in "generic.txt" usb binding file. This commit
+adds it also in generic-ehci yaml binding.
 
-   gpiolib: introduce devm_fwnode_gpiod_get_index()
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 2d2f116d69c127099553afe0d87cf9c0bbe2759e Mon Sep 17 00:00:00 2001
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 12 Sep 2019 20:22:38 -0700
-Subject: [PATCH] gpiolib: introduce devm_fwnode_gpiod_get_index()
-
-devm_fwnode_get_index_gpiod_from_child() is too long, besides the fwnode
-in question does not have to be a child of device node. Let's rename it
-to devm_fwnode_gpiod_get_index() and keep the old name for compatibility
-for now.
-
-Also let's add a devm_fwnode_gpiod_get() wrapper as majority of the
-callers need a single GPIO.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Link: https://lore.kernel.org/r/20190913032240.50333-2-dmitry.torokhov@gmail.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib-devres.c | 19 ++++++++--------
- include/linux/gpio/consumer.h | 41 ++++++++++++++++++++++++++---------
- 2 files changed, 40 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 98e3c20d9730..9a0475c87f95 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -185,12 +185,11 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
- EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
+diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+index 059f6ef1ad4a..f89897fe2df6 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+@@ -63,6 +63,11 @@ properties:
+     description:
+       Set this flag to force EHCI reset after resume.
  
- /**
-- * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
-- *					    device's child node
-+ * devm_fwnode_gpiod_get_index - get a GPIO descriptor from a given node
-  * @dev:	GPIO consumer
-+ * @fwnode:	firmware node containing GPIO reference
-  * @con_id:	function within the GPIO consumer
-  * @index:	index of the GPIO to obtain in the consumer
-- * @child:	firmware node (child of @dev)
-  * @flags:	GPIO initialization flags
-  * @label:	label to attach to the requested GPIO
-  *
-@@ -200,11 +199,11 @@ EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
-  * On successful request the GPIO pin is configured in accordance with
-  * provided @flags.
-  */
--struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
--						const char *con_id, int index,
--						struct fwnode_handle *child,
--						enum gpiod_flags flags,
--						const char *label)
-+struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
-+					      struct fwnode_handle *fwnode,
-+					      const char *con_id, int index,
-+					      enum gpiod_flags flags,
-+					      const char *label)
- {
- 	char prop_name[32]; /* 32 is max size of property name */
- 	struct gpio_desc **dr;
-@@ -224,7 +223,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 			snprintf(prop_name, sizeof(prop_name), "%s",
- 					    gpio_suffixes[i]);
- 
--		desc = fwnode_get_named_gpiod(child, prop_name, index, flags,
-+		desc = fwnode_get_named_gpiod(fwnode, prop_name, index, flags,
- 					      label);
- 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
- 			break;
-@@ -239,7 +238,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL_GPL(devm_fwnode_get_index_gpiod_from_child);
-+EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_index);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index b70af921c614..dc0ddcd30515 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -176,11 +176,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname, int index,
- 					 enum gpiod_flags dflags,
- 					 const char *label);
--struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
--						const char *con_id, int index,
--						struct fwnode_handle *child,
--						enum gpiod_flags flags,
--						const char *label);
-+struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
-+					      struct fwnode_handle *child,
-+					      const char *con_id, int index,
-+					      enum gpiod_flags flags,
-+					      const char *label);
- 
- #else /* CONFIG_GPIOLIB */
- 
-@@ -531,6 +531,29 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+static inline
-+struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
-+					      struct fwnode_handle *fwnode,
-+					      const char *con_id, int index,
-+					      enum gpiod_flags flags,
-+					      const char *label)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
++  companion:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++     Phandle of a companion.
 +
-+#endif /* CONFIG_GPIOLIB */
-+
-+static inline
-+struct gpio_desc *devm_fwnode_gpiod_get(struct device *dev,
-+					struct fwnode_handle *fwnode,
-+					const char *con_id,
-+					enum gpiod_flags flags,
-+					const char *label)
-+{
-+	return devm_fwnode_gpiod_get_index(dev, fwnode, con_id, 0,
-+					   flags, label);
-+}
-+
- static inline
- struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 						const char *con_id, int index,
-@@ -538,11 +561,10 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 						enum gpiod_flags flags,
- 						const char *label)
- {
--	return ERR_PTR(-ENOSYS);
-+	return devm_fwnode_gpiod_get_index(dev, child, con_id, index,
-+					   flags, label);
- }
+   phys: true
  
--#endif /* CONFIG_GPIOLIB */
--
- static inline
- struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
- 						   const char *con_id,
-@@ -550,8 +572,7 @@ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
- 						   enum gpiod_flags flags,
- 						   const char *label)
- {
--	return devm_fwnode_get_index_gpiod_from_child(dev, con_id, 0, child,
--						      flags, label);
-+	return devm_fwnode_gpiod_get_index(dev, child, con_id, 0, flags, label);
- }
- 
- #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_OF_GPIO)
+ required:
 -- 
-2.20.1
+2.17.1
 
