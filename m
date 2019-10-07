@@ -2,137 +2,77 @@ Return-Path: <SRS0=gkZY=YA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8983AECE58C
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5C9C47404
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 14:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F23C206BB
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 13:44:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="CnGVHQae"
+	by mail.kernel.org (Postfix) with ESMTP id 27C4320867
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 14:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfJGNob (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Oct 2019 09:44:31 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59256 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727324AbfJGNob (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 09:44:31 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97DaVte022434;
-        Mon, 7 Oct 2019 15:44:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=az9dy2ktIqgkk5jYrhMqsSlUq7PYeTVraawDvBq1iLs=;
- b=CnGVHQae22DWj2D5/tu8rSKxqi4JNXRIxWp0XLbbq5xjzm2RXXSbZ4iIvwplKPNrv230
- fKI78F6XCb+wQyH1F6e4hg+6k2ZdIkscyK8AeZAW9gMDXMKEpKFAeBFihXQN8VI5lJvk
- oh2nw0YlWlj3EPpOanF76JOjN5I3a8EZY7BMl/Jzvh8ZzRTI/y5OQrs5U9qEcsLcWqmn
- zQjhNcws1CySwI2zYgpWe9jpmppa41dsYguiBmAXosTwXqV0B+VxzsOuFsYEHM4SLbmz
- boVgsDQATUufm+/VX4p7ojXZcahoEOYjf6IAluuhirtEfpP+qf6FtguBxt4xWaSc78e2 yw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vegn0jns0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Oct 2019 15:44:13 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C652D100038;
-        Mon,  7 Oct 2019 15:44:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BA4502B8A5E;
-        Mon,  7 Oct 2019 15:44:12 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Oct 2019 15:44:12
- +0200
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727744AbfJGOGC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Oct 2019 10:06:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50516 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbfJGOGC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 10:06:02 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iHTeC-0001ld-4b; Mon, 07 Oct 2019 14:06:00 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <linux-usb@vger.kernel.org>
-Subject: [PATCH 1/3] dt-bindings: arm: stm32: Add missing STM32 boards
-Date:   Mon, 7 Oct 2019 15:44:08 +0200
-Message-ID: <20191007134410.10337-2-alexandre.torgue@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191007134410.10337-1-alexandre.torgue@st.com>
-References: <20191007134410.10337-1-alexandre.torgue@st.com>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: rzn1: array reg_drive static, makes object smaller
+Date:   Mon,  7 Oct 2019 15:05:59 +0100
+Message-Id: <20191007140559.11840-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-07_02:2019-10-07,2019-10-07 signatures=0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This commit documents missing STM32 boards:
+From: Colin Ian King <colin.king@canonical.com>
 
--STM32MCU: F429 disco/eval, F469-disco, F746 disco/eval, F769 disco,
-H743 disco/eval.
+Don't populate the array reg_drive on the stack but instead make it
+static. Makes the object code smaller by 32 bytes.
 
--STM32MPU: MP157 dk1/dk2/ed1/ev1.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  31991	  15696	      0	  47687	   ba47	drivers/pinctrl/pinctrl-rzn1.o
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  31863	  15792	      0	  47655	   ba27	drivers/pinctrl/pinctrl-rzn1.o
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-index 4d194f1eb03a..1fcf306bd2d1 100644
---- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-+++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-@@ -13,19 +13,38 @@ properties:
-   compatible:
-     oneOf:
-       - items:
-+          - enum:
-+              - st,stm32f429i-disco
-+              - st,stm32429i-eval
-           - const: st,stm32f429
--
-       - items:
-+          - enum:
-+              - st,stm32f469i-disco
-           - const: st,stm32f469
--
-       - items:
-+          - enum:
-+              - st,stm32f746-disco
-+              - st,stm32746g-eval
-           - const: st,stm32f746
--
-       - items:
-+          - enum:
-+              - st,stm32f769-disco
-+          - const: st,stm32f769
-+      - items:
-+          - enum:
-+              - st,stm32h743i-disco
-+              - st,stm32h743i-eval
-           - const: st,stm32h743
--
-       - items:
-           - enum:
-               - arrow,stm32mp157a-avenger96 # Avenger96
-+              - st,stm32mp157c-ed1
-+              - st,stm32mp157a-dk1
-+              - st,stm32mp157c-dk2
-+
-+          - const: st,stm32mp157
-+      - items:
-+          - const: st,stm32mp157c-ev1
-+          - const: st,stm32mp157c-ed1
-           - const: st,stm32mp157
- ...
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-rzn1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
+index 0f6f8a10a53a..39538d40dbf3 100644
+--- a/drivers/pinctrl/pinctrl-rzn1.c
++++ b/drivers/pinctrl/pinctrl-rzn1.c
+@@ -487,7 +487,7 @@ static int rzn1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
+ {
+ 	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+-	const u32 reg_drive[4] = { 4, 6, 8, 12 };
++	static const u32 reg_drive[4] = { 4, 6, 8, 12 };
+ 	u32 pull, drive, l1mux;
+ 	u32 l1, l2, arg = 0;
+ 
 -- 
-2.17.1
+2.20.1
 
