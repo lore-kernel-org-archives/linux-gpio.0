@@ -2,313 +2,78 @@ Return-Path: <SRS0=gkZY=YA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D611C47404
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 08:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F5BECE58D
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 12:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 480A52084B
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 08:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0836D21655
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 12:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbfJGIwF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Oct 2019 04:52:05 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33793 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbfJGIwE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 04:52:04 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iHOkK-0007nf-9h; Mon, 07 Oct 2019 10:52:00 +0200
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iHOkJ-0005Yo-EW; Mon, 07 Oct 2019 10:51:59 +0200
-Date:   Mon, 7 Oct 2019 10:51:59 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-Subject: Re: [PATCH 3/3] gpio: da9062: add driver support
-Message-ID: <20191007085159.uo366hmos6zk2ops@pengutronix.de>
-References: <20190917105902.445-1-m.felsch@pengutronix.de>
- <20190917105902.445-4-m.felsch@pengutronix.de>
- <CACRpkdbbmVo3hem1xFqtmq9-htg9+QUXQpZoSyffdTZQ5kUo5Q@mail.gmail.com>
+        id S1727536AbfJGMXi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Oct 2019 08:23:38 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45186 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfJGMXi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 08:23:38 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 41so10729585oti.12;
+        Mon, 07 Oct 2019 05:23:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sjGjU81BF4BU4Tpv6JoGP9zx2zLgEveBDC6zBeCPJfM=;
+        b=QqThq1WOhA1Rc88p949I5S4ZZvPIpOH3j88shzovFwrMGHUiUKQ1FrxkP0d6kgbO4r
+         r3EF4bmjKG515snMVnGtVAoJr2YYUBgw40sCMAqbclp7rQ3EeARMN3M4Jv7vHiRUiDUD
+         DAVGKJoP0jO3dNtS6xKLcve7AY9Z43PU8lVIP7f/lH+ZTkHu6i9q37Zd81arnCW3ZfsY
+         zEbY4hHlLUKuRG4reoJ/Z47qvo+RF2FXD52clzzomnFwBZSt5iR/juZ6tYO1a6jaIu6h
+         WH+iNg9tU6JQro5Ls4o3i3gRq+rn4B/29C7KhXJYaZfnfSYhZumcNbYzD6SUltnGNKaj
+         NnZQ==
+X-Gm-Message-State: APjAAAXkg22Fwf6xoYGWxJlGCiNlPMEIwp7lfaVYMbyXOv/Yfjefbi1d
+        bi/KdXBHHAkvOvqlBmXlXZQNoz2NqcAZ5aOm/iWkl1lx
+X-Google-Smtp-Source: APXvYqwrsMhuaKmEC6atgG+qyrsZ5tlgmWbokMDoanrskwv+CgFup11sxZv5HMO4kDOESENX7TeRI9bNvctN3Bwmbq8=
+X-Received: by 2002:a9d:730d:: with SMTP id e13mr1265787otk.145.1570451017714;
+ Mon, 07 Oct 2019 05:23:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbbmVo3hem1xFqtmq9-htg9+QUXQpZoSyffdTZQ5kUo5Q@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:17:16 up 142 days, 14:35, 94 users,  load average: 0.01, 0.03,
- 0.06
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+References: <20190930145804.30497-1-chris.brandt@renesas.com>
+In-Reply-To: <20190930145804.30497-1-chris.brandt@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Oct 2019 14:23:26 +0200
+Message-ID: <CAMuHMdWUq8hroJxZb=8aJVCSjUEyDJS_X8NbEUti54jJZYsj=g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: rza2: Fix gpio name typos
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Sep 30, 2019 at 4:58 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Fix apparent copy/paste errors that were overlooked in the original driver.
+>   "P0_4" -> "PF_4"
+>   "P0_3" -> "PG_3"
+>
+> Fixes: b59d0e782706 ("pinctrl: Add RZ/A2 pin and gpio controller")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-thanks for you feedback.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v5.5.
 
-On 19-10-04 21:27, Linus Walleij wrote:
-> On Tue, Sep 17, 2019 at 12:59 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> 
-> > The DA9062 is a mfd pmic device which supports 5 GPIOs. The GPIOs can
-> > be used as input, output or have a special use-case.
-> >
-> > The patch adds the support for the normal input/output use-case.
-> >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> 
-> Nice to get this covered!
-> 
-> > +#define DA9062_TYPE(offset)            (4 * (offset % 2))
-> > +#define DA9062_PIN_SHIFT(offset)       (4 * (offset % 2))
-> > +#define DA9062_PIN_ALTERNATE           0x00 /* gpio alternate mode */
-> 
-> The there is pin control related to the DA9062, we should put the driver
-> in drivers/pinctrl/pinctrl-da9062.c from day one.
+Gr{oetje,eeting}s,
 
-Mh.. didn't checked the pinctrl framework and assumed that this place is
-just fine due to the existing da9052/5 drivers which have an alternate
-mode too.
-
-> I am not saying you have to implement pin control from scratch, just
-> have it there and look at sibling drivers to make sure we don't
-> screw something up for also adding pin control later on.
-
-I will check the pinctrl framework. Maybe I will have upcoming question.
-
-> > +int da9062_gpio_get_hwgpio(struct gpio_desc *desc)
-> > +{
-> > +       return gpio_chip_hwgpio(desc);
-> > +}
-> > +EXPORT_SYMBOL_GPL(da9062_gpio_get_hwgpio);
-> 
-> I would have to look at the other patch to see why this is needed.
-> Normally other drivers should just have their GPIOs assigned
-> like anyone else, no shortcuts into the hardware offsets
-> like this.
-
-I saw your comments on the other patch. As you mentioned in the other
-patche it is better to have a api within the gpiolib. I will add this
-api within the other patch series.
-
-> > +static int da9062_gpio_get(struct gpio_chip *gc, unsigned int offset)
-> > +{
-> > +       struct da9062_gpio *gpio = gpiochip_get_data(gc);
-> > +       struct regmap *regmap = gpio->da9062->regmap;
-> > +       int gpio_dir, val;
-> > +       int ret;
-> > +
-> > +       gpio_dir = da9062_gpio_get_pin_mode(regmap, offset);
-> 
-> This includes other things than the direction of the pin so call
-> the variable gpio_mode or something rather than gpio_dir.
-
-Okay, I will change that.
-
-> > +       if (gpio_dir < 0)
-> > +               return gpio_dir;
-> > +
-> > +       switch (gpio_dir) {
-> > +       case DA9062_PIN_ALTERNATE:
-> > +               return -ENOTSUPP;
-> 
-> This is fine for now. Toss in a comment that we may add pin muxing
-> later.
-> 
-> > +static int da9062_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-> 
-> Same comments as above.
-
-Okay.
-
-> > +static int da9062_gpio_direction_input(struct gpio_chip *gc,
-> > +                                      unsigned int offset)
-> > +{
-> > +       struct da9062_gpio *gpio = gpiochip_get_data(gc);
-> > +       struct regmap *regmap = gpio->da9062->regmap;
-> > +       struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
-> > +       unsigned int gpi_type;
-> > +       int ret;
-> > +
-> > +       ret = da9062_gpio_set_pin_mode(regmap, offset, DA9062_PIN_GPI);
-> > +       if (ret)
-> > +               return ret;
-> 
-> Fair enough.
-> 
-> > +       /*
-> > +        * If the gpio is active low we should set it in hw too. No worries
-> > +        * about gpio_get() because we read and return the gpio-level. So the
-> > +        * gpiolob active_low handling is still correct.
-> 
-> gpiolib?
-
-Thanks for covering that.
-
-> > +        *
-> > +        * 0 - active low, 1 - active high
-> > +        */
-> > +       gpi_type = !gpiod_is_active_low(desc);
-> > +       return regmap_update_bits(regmap, DA9062AA_GPIO_0_1 + (offset >> 1),
-> > +                               DA9062AA_GPIO0_TYPE_MASK << DA9062_TYPE(offset),
-> > +                               gpi_type << DA9062_TYPE(offset));
-> > +}
-> 
-> So this does not affect the value out set by da9062_gpio_set()?
-
-Please check [1] table 54, the datasheet says it is only gpi
-(gpio-input). So I assume it doesn't affect out values.
-
-[1] https://www.dialog-semiconductor.com/sites/default/files/da9062-a_datasheet_2v3.pdf
-
-Unfortunately the other gpio-da90* drivers sets this as active low hard
-within the driver. I wanted to avoid this here since it isn't always
-true.
-
-> What is the electrical effect of this then, really? To me that seems like
-> something that is mostly going to be related to how interrupts
-> trigger (like whether to trig on rising or falling edge) and then it
-> should really be in the .set_type() callback, should it not?
-
-Not only interrupts.. The dialog pmics has a lot of options to use this
-pins e.g. you can set it as voltage-selection input. You saw the patches
-I made for the regulator :)
-
-> > +static int da9062_gpio_direction_output(struct gpio_chip *gc,
-> > +                                       unsigned int offset, int value)
-> > +{
-> > +       /* Push-Pull / Open-Drain options are configured during set_config */
-> > +       da9062_gpio_set(gc, offset, value);
-> > +
-> > +       return 0;
-> > +}
-> 
-> You probably want to make sure to clear the active low bit in this function,
-> right?
-
-Nope, as I mentioned above this is only input related. If we can trust
-the datasheet.
-
-> > +static int da9062_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-> > +                                 unsigned long config)
-> > +{
-> > +       struct da9062_gpio *gpio = gpiochip_get_data(gc);
-> > +       struct regmap *regmap = gpio->da9062->regmap;
-> > +       int gpio_dir;
-> 
-> Name this gpio_mode
-
-okay.
-
-> > +       switch (pinconf_to_config_param(config)) {
-> > +       case PIN_CONFIG_BIAS_PULL_DOWN:
-> > +               /* PD only if pin is input */
-> 
-> Info from datasheet? Electrical limitation? Add to comment!
-
-Okay, I will add more comments.
-
-> > +               gpio_dir = da9062_gpio_get_pin_mode(regmap, offset);
-> > +               if (gpio_dir < 0)
-> > +                       return -EINVAL;
-> > +               else if (gpio_dir != DA9062_PIN_GPI)
-> > +                       return -ENOTSUPP;
-> > +               return regmap_update_bits(regmap, DA9062AA_CONFIG_K,
-> > +                                         BIT(offset), BIT(offset));
-> > +       case PIN_CONFIG_BIAS_PULL_UP:
-> > +               /* PU only if pin is output open-drain */
-> 
-> Dito.
-
-Here too.
-
-> > +               gpio_dir = da9062_gpio_get_pin_mode(regmap, offset);
-> > +               if (gpio_dir < 0)
-> > +                       return -EINVAL;
-> > +               else if (gpio_dir != DA9062_PIN_GPO_OD)
-> > +                       return -ENOTSUPP;
-> > +               return regmap_update_bits(regmap, DA9062AA_CONFIG_K,
-> > +                                         BIT(offset), BIT(offset));
-> > +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> > +               return da9062_gpio_set_pin_mode(regmap, offset,
-> > +                                               DA9062_PIN_GPO_OD);
-> > +       case PIN_CONFIG_DRIVE_PUSH_PULL:
-> > +               return da9062_gpio_set_pin_mode(regmap, offset,
-> > +                                               DA9062_PIN_GPO_PP);
-> > +       default:
-> > +               return -ENOTSUPP;
-> > +       }
-> 
-> Overall very nice use of this callback.
-> 
-> > +static int da9062_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
-> > +{
-> > +       struct da9062_gpio *gpio = gpiochip_get_data(gc);
-> > +       struct da9062 *da9062 = gpio->da9062;
-> > +
-> > +       return regmap_irq_get_virq(da9062->regmap_irq,
-> > +                                  DA9062_IRQ_GPI0 + offset);
-> > +}
-> 
-> That's interesting. I never saw that before. It's fine, I guess,
-> I can't figure out whether these slow expanders could be set as
-> hierarchical though, what do you think? Saw a comment on this
-> from Bartosz as well. But I generally trust his comment on that
-> it should be fine unless you have subnodes (i.e. hierarchy).
-
-This v1 had a hierarchy.. but I changed that upon Bartosz comments. So
-there is no hierarchy in the next version.
-
-> > +++ b/include/linux/mfd/da9062/gpio.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2019 Pengutronix, Marco Felsch <kernel@pengutronix.de>
-> > + */
-> > +
-> > +#ifndef __MFD_DA9062_GPIO_H__
-> > +#define __MFD_DA9062_GPIO_H__
-> > +
-> > +struct gpio_desc;
-> > +
-> > +int da9062_gpio_get_hwgpio(struct gpio_desc *desc);
-> > +
-> > +#endif /* __MFD_DA9062_GPIO_H__ */
-> 
-> So I'm sceptical about this and it needs a very good motivation.
-
-I will change it to have a common api call as you mentioned it in
-the regulator-patch series.
-
-Regards,
-  Marco
-
-> Yours,
-> Linus Walleij
-> 
+                        Geert
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
