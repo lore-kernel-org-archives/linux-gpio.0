@@ -1,155 +1,115 @@
-Return-Path: <SRS0=gkZY=YA=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=BogI=YB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6D2ECE58C
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 17:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360C9C4360C
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60883206C0
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Oct 2019 17:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC1A20659
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hZW2x0sX"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="ZrpVFpTO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZPUKBnkC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfJGRK5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Oct 2019 13:10:57 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35649 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728048AbfJGRK5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Oct 2019 13:10:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p30so6509161pgl.2
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Oct 2019 10:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=nIO6O9ahSz9V8fOp+W/95V7uzxghRqzih625nuEdwR0=;
-        b=hZW2x0sX8IHEsBdGXbQ7dhAyaFiXvbS0sfin1r0QdfUN0ohP/3mUrNCKIFJgBPRG48
-         ezy9APJy0R1jKr69irFMCUBON0svtdadAaeXk0fE48899dvlcrRE4mnke7FpcnZlAVW+
-         gKD78Sdfwo3tX/dmlwT8JVIOas4+wU9P/Ys80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=nIO6O9ahSz9V8fOp+W/95V7uzxghRqzih625nuEdwR0=;
-        b=BHdussbMD7dtGhUG3cVUPPikbx8wYHVQOB0PcoiYCL1Xdqb6yfq2+9djc4lhJPEKDW
-         2h2hnbhA0gGRKpqtB5MB66BPPf93LIQJ0kKuyXOEe9UkrWCdNDCDwMZD6d1ERU21Hkwz
-         oC7HJWE/pLMCoOPDX6PEgUXJQxtUI29IUyN2NKfBeOWYbnSsG2UhmVCyqHFAXhQWSHmn
-         HlF/xk+ft33kMWwIjVyBUeDcCCZZyzRmETtWs+Uyc2DgMhwEHKHnUqHMFL2t0bkwgEub
-         CIxSdVhdofzChdUPepDmFr18FkF1eApOzks/Fu4zXLYuc8QD5Pdwt7R33AF8ImnxfAVV
-         zsbA==
-X-Gm-Message-State: APjAAAUYuJbU9SvE3xVua9fMltlqgbKTmyi3S660T/h08rUfWt5IGYaH
-        knlwgONrw9BAQ1UKYcWjoBEQXQ==
-X-Google-Smtp-Source: APXvYqyHrGt6RhHocknkFK2phK2rTRMyH7SfeP1YDq+8SfupmWTWQyHmhMhYdbC1a+Oq5/qjUN4W9Q==
-X-Received: by 2002:a63:68e:: with SMTP id 136mr11613874pgg.18.1570468256741;
-        Mon, 07 Oct 2019 10:10:56 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id e6sm16243153pfl.146.2019.10.07.10.10.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 10:10:55 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] pinctrl: iproc: use unique name for irq chip
-To:     Marc Zyngier <maz@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        rayagonda.kokatanur@broadcom.com, li.jin@broadcom.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20191003000310.17099-1-chris.packham@alliedtelesis.co.nz>
- <20191003000310.17099-3-chris.packham@alliedtelesis.co.nz>
- <CAMuHMdV7syxxtnHEcgFBrf5DLo-M_71tZFWHHQ6kTO=2A1eVhg@mail.gmail.com>
- <86blutdlap.wl-maz@kernel.org>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <44510e8c-4e9b-603f-2c26-19db9121d68c@broadcom.com>
-Date:   Mon, 7 Oct 2019 10:10:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729990AbfJHEl1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Oct 2019 00:41:27 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:49007 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729973AbfJHEl1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 00:41:27 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 9CE865B5D;
+        Tue,  8 Oct 2019 00:41:25 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 08 Oct 2019 00:41:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=0/MbfkSuw2RSJPd8KBeC7Wk9MN
+        1nZHnVaswofQbs1mU=; b=ZrpVFpTOOLUr64sBh7etgDbjoWGm7uCK3yDAPlhTue
+        hLYVj4Q7KB00soEftml2+GO0mjtlHc1jE3ORfpSoyNFs8iR03ZA7u9L4HkMUkaF2
+        NpPYt2Sot552QifGSTnFPHnvJSsEZNqCxh9wwIbLswhNWNp5NMqb7Dl8bATnzgKc
+        cyD5uTSls3dogAM49fhc10Cgtv5AM3AT/r1NIToOKanZPWeFwvzaWPMcvnCNCP7Z
+        B0KUzXMYqxazq8lgauk/78f6UagvrWpS3GvoXQSmhW89eI+UKbgfUaoXk3AXFAiy
+        GrKwp2y6SX4BGj9WDapX8Pl+H0+yihKaVnN3cw7ewkJg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=0/MbfkSuw2RSJPd8K
+        BeC7Wk9MN1nZHnVaswofQbs1mU=; b=ZPUKBnkCxSpI5JwzWHuQ8agTBBVhyk6S0
+        IMNDSRWriNuK47GmfmHCUcQ+sHtDukbA5muJ092G68mDmXD8NYjTwX+ugpshWqoq
+        +roaDR4gJYJpzsVdRH5OeXJLVLz5RFsQ3QyiszYv3TOYtItTMLT209nAw++R4mNW
+        UBArhO4pPdp3UjLlKjD5GmkBuqrB/OvN1LZY+jl5j7nVckmj6ffSJzn0PZ4JvlZX
+        K29uSm1KsRXxvrkUeER7gqhuWVYWlg+SLJaFgVlvdZZNIbt89FPpFCKKhIbULxEr
+        EBvclIAsiuJ6pyBlDg6bOhffa9j2l2YcpvsVqG7SkTQUrufYJ0IMw==
+X-ME-Sender: <xms:bxOcXc8BvFgpyiyHvHbWz-06VU0PAXJEWfQ7BgYam9zVYgtSgsgsgg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheekgdekgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
+    ugdrrghuqeenucfkphepvddtvddrkedurddukedrfedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:bxOcXTWzME8ZicGT72q9I2QUqe8fd9ggwqvj8eDT20M2QM4q12FNpA>
+    <xmx:bxOcXRp7VOgsL6egZy3dbIkNPugOaxDFyd-c6Mubf_HF2aYsDnZ8WA>
+    <xmx:bxOcXSonE1u_8X41nSABIqcihVA7uvgsLJ_HJwwUXgsrgE1q-aVBmg>
+    <xmx:dROcXTJNQq3E_kvFO-nAbGSVguYjon4iMcZkIR7lCi8vMtaoUhHdfQ>
+Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2F35D80064;
+        Tue,  8 Oct 2019 00:41:15 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-gpio@vger.kernel.org
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, linux-aspeed@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, johnny_huang@aspeedtech.com,
+        ryanchen.aspeed@gmail.com
+Subject: [PATCH 0/7] pinctrl: Fixes for AST2600 support
+Date:   Tue,  8 Oct 2019 15:11:46 +1030
+Message-Id: <20191008044153.12734-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <86blutdlap.wl-maz@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hello,
 
+This series resolves several issues found in testing by Johnny Huang from
+ASPEED, who also contributed the patches to fix them. We'll have more patches
+from him in the near future (which I'm pretty happy about).
 
-On 2019-10-07 1:14 a.m., Marc Zyngier wrote:
-> On Mon, 07 Oct 2019 08:30:50 +0100,
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> Hi Chris,
->>
->> CC MarcZ
->>
->> On Thu, Oct 3, 2019 at 2:03 AM Chris Packham
->> <chris.packham@alliedtelesis.co.nz> wrote:
->>> Use the dev_name(dev) for the irqc->name so that we get unique names
->>> when we have multiple instances of this driver.
->>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->> A while ago, Marc Zyngier pointed out that the irq_chip .name field
->> should contain the device's class name, not the instance's name.
->> Hence the current code is correct?
-> Thanks Geert for looping me in. The main reasons why I oppose this
-> kind of "let's show as much information as we can in /proc/interrupts"
-> are:
->
-> - It clutters the output badly: the formatting of this file, which is
->    bad enough when you have a small number of CPUs, becomes unreadable
->    when you have a large number of them *and* stupidly long strings
->    that only make sense on a given platform.
->
-> - Like it or not, /proc is ABI. We don't change things randomly there
->    without a good reason, and debugging isn't one of them.
->
-> - Debug information belongs to debugfs, where we already have plenty
->    of stuff (see CONFIG_GENERIC_IRQ_DEBUGFS). I'd rather we improve
->    this infrastructure if needed, rather than add platform specific
->    hacks.
->
-> </rant>
->
-> Thanks,
->
-> 	M.
-Thanks Marc/Geert.  Sounds like we should drop patch 2 from series.
->
->> See also "[PATCH 0/4] irqchip: renesas: Use proper irq_chip name and parent"
->> (https://lore.kernel.org/lkml/20190607095858.10028-1-geert+renesas@glider.be/)
->> Note that the irqchip patches in that series have been applied; the gpio
->> patches haven't been applied yet.
->>
->>> --- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
->>> +++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
->>> @@ -858,7 +858,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
->>>                  struct gpio_irq_chip *girq;
->>>
->>>                  irqc = &chip->irqchip;
->>> -               irqc->name = "bcm-iproc-gpio";
->>> +               irqc->name = dev_name(dev);
->>>                  irqc->irq_ack = iproc_gpio_irq_ack;
->>>                  irqc->irq_mask = iproc_gpio_irq_mask;
->>>                  irqc->irq_unmask = iproc_gpio_irq_unmask;
->> Gr{oetje,eeting}s,
->>
->>                          Geert
->>
->> -- 
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But
->> when I'm talking to journalists I just say "programmer" or something like that.
->>                                  -- Linus Torvalds
->>
+The major issue resolved is the way I grouped the eMMC pins. What I had was
+ugly and I want to get rid of it before the binding is solidified with the 5.4
+release.
+
+The remaining fixes are minor issues that stem from lack of documentation or
+understanding on my part, and at least one brain-fart.
+
+Please review!
+
+Andrew
+
+Andrew Jeffery (4):
+  dt-bindings: pinctrl: aspeed-g6: Rework SD3 function and groups
+  pinctrl: aspeed-g6: Sort pins for sanity
+  pinctrl: aspeed-g6: Fix I2C14 SDA description
+  pinctrl: aspeed-g6: Make SIG_DESC_CLEAR() behave intuitively
+
+Johnny Huang (3):
+  pinctrl: aspeed-g6: Fix I3C3/I3C4 pinmux configuration
+  pinctrl: aspeed-g6: Fix UART13 group pinmux
+  pinctrl: aspeed-g6: Rename SD3 to EMMC and rework pin groups
+
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |  86 ++++++------
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c    | 124 ++++++++----------
+ drivers/pinctrl/aspeed/pinmux-aspeed.h        |   3 +-
+ 3 files changed, 98 insertions(+), 115 deletions(-)
+
+-- 
+2.20.1
 
