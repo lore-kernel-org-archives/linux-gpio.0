@@ -2,173 +2,124 @@ Return-Path: <SRS0=BogI=YB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69239C10F14
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 06:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA300C10F14
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 09:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A28120867
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 06:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B14B820815
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 09:00:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdaGCCLd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vm/asU4U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbfJHGPT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Oct 2019 02:15:19 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35374 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729375AbfJHGPT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 02:15:19 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 205so10200730pfw.2
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Oct 2019 23:15:19 -0700 (PDT)
+        id S1729772AbfJHJAM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Oct 2019 05:00:12 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43065 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728866AbfJHJAL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 05:00:11 -0400
+Received: by mail-lj1-f196.google.com with SMTP id n14so16622262ljj.10
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Oct 2019 02:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IJPZbTEV9HDZellgSjhi2Dk1XARAVp6fQJrNqwnUEgg=;
-        b=LdaGCCLdIRLOLCjmB92mh1lYyrFEZ1v5FmVqC1HjKOaF7sSepw1t+fc8aKV03yAZs9
-         xl4y1/1O/mESFBB0LENcK6F8LcznMxxuJGqdBzFjXKAbwDgNz5NEJnyAwM/HKgzbHi2R
-         zZ5lN9FIY+rlIKtqATEGIp9tVQTDYdo3J1D9XOcRkz8Syp+fJBT8hyH2ulB09v0HBxj3
-         5go8XKWKI3xZA4uX+ZYe/uAeOrAS+vcgUuUaiFyCqe3gfdHnydQDVPHobd4CNK51vmGC
-         KeIAIt6pkTiwz2itquL7cWtFbh9O72vgJmc2092vW73QbixiD/ALs4fU8qOOd/wAexwE
-         WKCQ==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=teTMW0xTyzGadnBpOLviUKelFXzH4FksSl8RfVfYuKY=;
+        b=vm/asU4UhgzlA6XukbK82YQmiDr8qpfhHjhcnzyBapIdRLd9rciZKGg5MriVpzRyAh
+         mIu4O3/xhoB65peMKtP12+lkvrHtuV/4wGepNNAoLnrDojQPxIXyYgiWXWEW4cO241aS
+         qp/j5NDvGOl3E9/1kM4hFF1/6IZ/HtrrSyhcBI3RdPa/RLd0X4e1loMf4SErlTe5VBYV
+         12UsQtsCEsOk9le9OTRBPNsu1kuVPB1CSlclimaTd9xeth6fv+eng9FtnoUQ2MqRpzMI
+         P4hjCwN23uOlKeXSKM8+ggN6A/Dl4brIETBj9jDh4Ezl0jW4PTsftStyAO1NLM2stkLo
+         6y7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IJPZbTEV9HDZellgSjhi2Dk1XARAVp6fQJrNqwnUEgg=;
-        b=Dzn1eZGhAoopXDq6KgUL6+PXtKnXvBQNoOsZsj5/VkcaBb08nXjXn2r32+uGi6ypp6
-         CJWRFaclZJqD3Z9S5dMn4oKj6ltHf/Dg4E+Pf1erC3X9IggMtkTIIDujgmlYzk6FU0JK
-         zj1wodb3iwD1XEAU5rv6r25E0xNCe1DZ+OL5owDWcjpQDiiDVkNu6HBkw+nbl12l7tlo
-         VmGenxlzSca0mSdxfb60f6e9VhlQwJz6UsxKOsRPhR7605YsTnidxkl3HOIo69CKCRSG
-         oPc+PnyIxm7QPbzNvSISVqO5LDlZ4Gdr5gpkxeE1+ufMaIFkdvtfZWSKu+LAoONvciYc
-         hCAw==
-X-Gm-Message-State: APjAAAXorylgptXnr5L/vAo3VDc3C67+v+4Kr2eii9B0E0nJJi+7o+2L
-        N3W8xlOq9No20z0R43M8Jms=
-X-Google-Smtp-Source: APXvYqzMfljCaC8saDXCAek+JBgmpfXqTqBTsz6EDXDWmbXgefM0u64aXrL2+XVnALeOt+gHmM/QOw==
-X-Received: by 2002:a17:90a:f311:: with SMTP id ca17mr3631287pjb.112.1570515318408;
-        Mon, 07 Oct 2019 23:15:18 -0700 (PDT)
-Received: from sol (220-235-84-126.dyn.iinet.net.au. [220.235.84.126])
-        by smtp.gmail.com with ESMTPSA id ce16sm1051338pjb.29.2019.10.07.23.15.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Oct 2019 23:15:17 -0700 (PDT)
-Date:   Tue, 8 Oct 2019 14:15:12 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Drew Fustini <drew@pdp7.com>
-Cc:     linux-gpio@vger.kernel.org, brgl@bgdev.pl,
-        linus.walleij@linaro.org, thomas.petazzoni@bootlin.com
-Subject: Re: [RFC] gpio: expose pull-up/pull-down line flags to userspace
-Message-ID: <20191008061512.GA19956@sol>
-References: <20190921102522.8970-1-drew@pdp7.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=teTMW0xTyzGadnBpOLviUKelFXzH4FksSl8RfVfYuKY=;
+        b=AaHQCa4AnkNqQq4WrIki/qEDwExnk6U+JXS93emOWNmt93xOrqH90LPn+ln20PJaYJ
+         XCmhSdShsJ7E5eis0gkhsw3yH7OlRXYzNVteC8JAT/oLqM8ibVnksqPReghavJ2A9ooo
+         hqtyFetrSGP+HLGx0ZR1QeEdR5yR94dgNqgugWTF9O4L00KM0UmLi+7TXnomxlnh8mn3
+         VEgByEe56hVmotv7bpTgwx85YdDy9q7f7VORv0eyYbXTbJ7SSJc7V7QBnh/SFP2jFFbw
+         eXl6i7S9QyQ+5UKIyTOnq/fQ+mypDBt6FoQuoef6qdr2olvRXC+SE/kKJG+QNWqga6zr
+         hVSQ==
+X-Gm-Message-State: APjAAAUfWK1jGLOSHkEzXq/OCLUvTI10cOYx7f8XmieUwZNMYxDKLUw6
+        Z6EUO8NB+rJS7TV1uKKugawOZIJK9d4KTj+FTSX8U4QypIKgIA==
+X-Google-Smtp-Source: APXvYqw9fWGADAgVJEmFIATdDVbXmdaqmYVxjYl4JLUOWELQrCpjiffIUikAvMGhadt+AKiLWWY/NgqaUfqnTPWEw3I=
+X-Received: by 2002:a2e:5dc3:: with SMTP id v64mr21693733lje.118.1570525209710;
+ Tue, 08 Oct 2019 02:00:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190921102522.8970-1-drew@pdp7.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 8 Oct 2019 10:59:58 +0200
+Message-ID: <CACRpkdYnnZnOko4q+NmLwdKeObT--f8Xgv+e+fBLLXUAWqh7bg@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for the v5.4 series
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Sep 21, 2019 at 12:25:23PM +0200, Drew Fustini wrote:
-> Add pull-up/pull-down flags to the gpio line get and
-> set ioctl() calls.  Use cases include a push button
-> that does not have an external resistor.
-> 
-> Addition use cases described by Limor Fried (ladyada) of
-> Adafruit in this PR for Adafruit_Blinka Python lib:
-> https://github.com/adafruit/Adafruit_Blinka/pull/59
-> 
-> Signed-off-by: Drew Fustini <drew@pdp7.com>
-> ---
->  drivers/gpio/gpiolib.c    | 12 ++++++++++++
->  include/uapi/linux/gpio.h |  4 ++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index d9074191edef..9da1093cc7f5 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -427,6 +427,8 @@ struct linehandle_state {
->  	(GPIOHANDLE_REQUEST_INPUT | \
->  	GPIOHANDLE_REQUEST_OUTPUT | \
->  	GPIOHANDLE_REQUEST_ACTIVE_LOW | \
-> +	GPIOHANDLE_REQUEST_PULL_UP | \
-> +	GPIOHANDLE_REQUEST_PULL_DOWN | \
->  	GPIOHANDLE_REQUEST_OPEN_DRAIN | \
->  	GPIOHANDLE_REQUEST_OPEN_SOURCE)
->  
-> @@ -598,6 +600,10 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
->  			set_bit(FLAG_OPEN_DRAIN, &desc->flags);
->  		if (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)
->  			set_bit(FLAG_OPEN_SOURCE, &desc->flags);
-> +		if (lflags & GPIOHANDLE_REQUEST_PULL_DOWN)
-> +			set_bit(FLAG_PULL_DOWN, &desc->flags);
-> +		if (lflags & GPIOHANDLE_REQUEST_PULL_UP)
-> +			set_bit(FLAG_PULL_UP, &desc->flags);
->  
->  		ret = gpiod_set_transitory(desc, false);
->  		if (ret < 0)
-> @@ -1102,6 +1108,10 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
->  			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_SOURCE |
->  					   GPIOLINE_FLAG_IS_OUT);
-> +		if (test_bit(FLAG_PULL_DOWN, &desc->flags))
-> +			lineinfo.flags |= GPIOLINE_FLAG_PULL_DOWN;
-> +		if (test_bit(FLAG_PULL_UP, &desc->flags))
-> +			lineinfo.flags |= GPIOLINE_FLAG_PULL_UP;
->  
->  		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
->  			return -EFAULT;
-> @@ -2475,6 +2485,8 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
->  		clear_bit(FLAG_REQUESTED, &desc->flags);
->  		clear_bit(FLAG_OPEN_DRAIN, &desc->flags);
->  		clear_bit(FLAG_OPEN_SOURCE, &desc->flags);
-> +		clear_bit(FLAG_PULL_UP, &desc->flags);
-> +		clear_bit(FLAG_PULL_DOWN, &desc->flags);
->  		clear_bit(FLAG_IS_HOGGED, &desc->flags);
->  		ret = true;
->  	}
-> diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-> index 4ebfe0ac6c5b..c2d1f7d908d6 100644
-> --- a/include/uapi/linux/gpio.h
-> +++ b/include/uapi/linux/gpio.h
-> @@ -33,6 +33,8 @@ struct gpiochip_info {
->  #define GPIOLINE_FLAG_ACTIVE_LOW	(1UL << 2)
->  #define GPIOLINE_FLAG_OPEN_DRAIN	(1UL << 3)
->  #define GPIOLINE_FLAG_OPEN_SOURCE	(1UL << 4)
-> +#define GPIOLINE_FLAG_PULL_UP	(1UL << 5)
-> +#define GPIOLINE_FLAG_PULL_DOWN	(1UL << 6)
->  
->  /**
->   * struct gpioline_info - Information about a certain GPIO line
-> @@ -62,6 +64,8 @@ struct gpioline_info {
->  #define GPIOHANDLE_REQUEST_ACTIVE_LOW	(1UL << 2)
->  #define GPIOHANDLE_REQUEST_OPEN_DRAIN	(1UL << 3)
->  #define GPIOHANDLE_REQUEST_OPEN_SOURCE	(1UL << 4)
-> +#define GPIOHANDLE_REQUEST_PULL_UP	(1UL << 5)
-> +#define GPIOHANDLE_REQUEST_PULL_DOWN	(1UL << 6)
->  
->  /**
->   * struct gpiohandle_request - Information about a GPIO handle request
-> -- 
-> 2.20.1
-> 
-Sorry for the late feedback, but I'm still not sure whether this patch
-is on track to be applied or not.  I had thought not, at least not yet,
-but just in case...
+Hi Linus,
 
-You have added the flags to linehandle_create, but not lineevent_create.
-Given that your primary use case is push buttons, isn't the event request
-at least as important as the handle request?  Even ignoring your use
-case, I'd add them to lineevent_create just to maintain symmetry.
+some GPIO fixes collected since the merge window,
+3 for stable, 2 driver fixes.
 
-Also, is it valid to set PULL_UP and PULL_DOWN simulaneously?
-I would think not, but I could be wrong.
-If not then that combination should be rejected with EINVAL.
+Details in the signed tag.
 
-Cheers,
-Kent.
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.4-2
+
+for you to fetch changes up to fffa6af94894126994a7600c6f6f09b892e89fa9:
+
+  gpio: max77620: Use correct unit for debounce times (2019-10-04
+23:58:10 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.4 series:
+
+- Don't clear FLAG_IS_OUT when emulating open drain/source in
+  gpiolib.
+- Fix up the usage of nonexclusive GPIO descriptors from device
+  trees.
+- Fix the incorrect IEC offset when toggling trigger edge in
+  the Spreadtrum driver.
+- Use the correct unit for debounce settings in the MAX77620
+  driver.
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpiolib: don't clear FLAG_IS_OUT when emulating open-drain/open-source
+
+Bruce Chen (1):
+      gpio: eic: sprd: Fix the incorrect EIC offset when toggling
+
+Linus Walleij (1):
+      Merge tag 'gpio-v5.4-rc2-fixes-for-linus' of
+git://git.kernel.org/.../brgl/linux into fixes
+
+Marco Felsch (1):
+      gpio: fix getting nonexclusive gpiods from DT
+
+Thierry Reding (1):
+      gpio: max77620: Use correct unit for debounce times
+
+ drivers/gpio/gpio-eic-sprd.c |  7 ++++---
+ drivers/gpio/gpio-max77620.c |  6 +++---
+ drivers/gpio/gpiolib-of.c    |  2 +-
+ drivers/gpio/gpiolib.c       | 27 +++++++++++++++++++--------
+ 4 files changed, 27 insertions(+), 15 deletions(-)
