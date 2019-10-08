@@ -2,63 +2,66 @@ Return-Path: <SRS0=BogI=YB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360C9C4360C
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B08CC4360C
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEC1A20659
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 010942196E
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 04:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="ZrpVFpTO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZPUKBnkC"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="bLl54rP1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NKMT+W9+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729990AbfJHEl1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Oct 2019 00:41:27 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:49007 "EHLO
+        id S1730030AbfJHEl3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Oct 2019 00:41:29 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:56379 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729973AbfJHEl1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 00:41:27 -0400
+        by vger.kernel.org with ESMTP id S1729973AbfJHEl2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 00:41:28 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 9CE865B5D;
-        Tue,  8 Oct 2019 00:41:25 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id B90DCEDE;
+        Tue,  8 Oct 2019 00:41:27 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 08 Oct 2019 00:41:25 -0400
+  by compute4.internal (MEProxy); Tue, 08 Oct 2019 00:41:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=0/MbfkSuw2RSJPd8KBeC7Wk9MN
-        1nZHnVaswofQbs1mU=; b=ZrpVFpTOOLUr64sBh7etgDbjoWGm7uCK3yDAPlhTue
-        hLYVj4Q7KB00soEftml2+GO0mjtlHc1jE3ORfpSoyNFs8iR03ZA7u9L4HkMUkaF2
-        NpPYt2Sot552QifGSTnFPHnvJSsEZNqCxh9wwIbLswhNWNp5NMqb7Dl8bATnzgKc
-        cyD5uTSls3dogAM49fhc10Cgtv5AM3AT/r1NIToOKanZPWeFwvzaWPMcvnCNCP7Z
-        B0KUzXMYqxazq8lgauk/78f6UagvrWpS3GvoXQSmhW89eI+UKbgfUaoXk3AXFAiy
-        GrKwp2y6SX4BGj9WDapX8Pl+H0+yihKaVnN3cw7ewkJg==
+        :to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=M6CdlY9WjEBXg
+        l7K1ZF2GhMiCG6h+wPB9CjXBLMviWo=; b=bLl54rP1u4xHD/H3AHONF++eW/FSr
+        HJS6jSOAZ+cdoKdPwiEeVRH8Qhuf4gghBpXcj2TEKpp3janpJmjn4nNXe0dDYFlX
+        f5Xymlt1rmvf58lkUbSL/e113iNzJs4b/QQN1SQSC7WqFhqESvsmMXLwvlMPlFFO
+        B0s2rSfwXj/pZMQj4WDaMt6Rv78TUz4oxIRphUsY6UpcRSXhpbdnjzI+qCzRJ0tf
+        vNMiGdQYja0OZz70UcylnuythvIb1L43+AjT2Jmvhr2oP9K0qTwQQK92k/AlEikR
+        7SBqyGSrtw5wO0iPVQCoFbqRUa7iWoMynZWSnkJvK8qtB8Ic1oUdT6i/A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=0/MbfkSuw2RSJPd8K
-        BeC7Wk9MN1nZHnVaswofQbs1mU=; b=ZPUKBnkCxSpI5JwzWHuQ8agTBBVhyk6S0
-        IMNDSRWriNuK47GmfmHCUcQ+sHtDukbA5muJ092G68mDmXD8NYjTwX+ugpshWqoq
-        +roaDR4gJYJpzsVdRH5OeXJLVLz5RFsQ3QyiszYv3TOYtItTMLT209nAw++R4mNW
-        UBArhO4pPdp3UjLlKjD5GmkBuqrB/OvN1LZY+jl5j7nVckmj6ffSJzn0PZ4JvlZX
-        K29uSm1KsRXxvrkUeER7gqhuWVYWlg+SLJaFgVlvdZZNIbt89FPpFCKKhIbULxEr
-        EBvclIAsiuJ6pyBlDg6bOhffa9j2l2YcpvsVqG7SkTQUrufYJ0IMw==
-X-ME-Sender: <xms:bxOcXc8BvFgpyiyHvHbWz-06VU0PAXJEWfQ7BgYam9zVYgtSgsgsgg>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=M6CdlY9WjEBXgl7K1ZF2GhMiCG6h+wPB9CjXBLMviWo=; b=NKMT+W9+
+        Os55z9FwiSq0QonnwU6VQvCPgKndMFZMhNr0kjwJB6K30yv1eHADzGSdJQh3e8fV
+        e409Wz4AUpHSro4HRSNd7pBWpaXmJfVfPLueuw/EU5X3pVQJZIpRC9b3SaCJhHn3
+        QLHsxTfsjDVQ4wiyE48Mnadr2bS4QmOHcSqBqQKkgKwUp0uo+uw8UifmUDbzKynC
+        pEfJE0zDCtcvJBkDtcGtkgJtr2ZEMXVYeNroIEYuNcE1aUu7vRp7Ciwd9uQQrpMt
+        GKGxPhB2LC7C0AqfVRVpy9Za/gcgopzHcUnuj0OnChxe2p6D1jhpFE6jRQ3PSC9n
+        23eLGJynzNPfZA==
+X-ME-Sender: <xms:dxOcXYmstCkt2rtLMtnqE9puVxu0Xb5-b0nFiOItEibpAPRz2NaN6g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheekgdekgecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
-    ugdrrghuqeenucfkphepvddtvddrkedurddukedrfedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:bxOcXTWzME8ZicGT72q9I2QUqe8fd9ggwqvj8eDT20M2QM4q12FNpA>
-    <xmx:bxOcXRp7VOgsL6egZy3dbIkNPugOaxDFyd-c6Mubf_HF2aYsDnZ8WA>
-    <xmx:bxOcXSonE1u_8X41nSABIqcihVA7uvgsLJ_HJwwUXgsrgE1q-aVBmg>
-    <xmx:dROcXTJNQq3E_kvFO-nAbGSVguYjon4iMcZkIR7lCi8vMtaoUhHdfQ>
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
+    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
+    rdhiugdrrghuqeenucfkphepvddtvddrkedurddukedrfedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgep
+    td
+X-ME-Proxy: <xmx:dxOcXSuWD19ivJcEz6PBr-UmMVLXja6Q9ispfp3kpGvq6DDevZusDw>
+    <xmx:dxOcXedSYJc1rnU6OlpflsnJI7IK1D9WD5pK4RlWqC24LdYiAHgEcg>
+    <xmx:dxOcXSzkXCss4r-AiE7-_X5lXzW8xr5WMB7Ew3W1wN8ItQOChR0Z-A>
+    <xmx:dxOcXRIWUAWTXBvGtYAUlNXxZFqNPinxlluIYaBdSOxLRwm5Yw-ktw>
 Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2F35D80064;
-        Tue,  8 Oct 2019 00:41:15 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 16FD780062;
+        Tue,  8 Oct 2019 00:41:23 -0400 (EDT)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     linux-gpio@vger.kernel.org
 Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -66,10 +69,12 @@ Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, johnny_huang@aspeedtech.com,
         ryanchen.aspeed@gmail.com
-Subject: [PATCH 0/7] pinctrl: Fixes for AST2600 support
-Date:   Tue,  8 Oct 2019 15:11:46 +1030
-Message-Id: <20191008044153.12734-1-andrew@aj.id.au>
+Subject: [PATCH 2/7] pinctrl: aspeed-g6: Sort pins for sanity
+Date:   Tue,  8 Oct 2019 15:11:48 +1030
+Message-Id: <20191008044153.12734-3-andrew@aj.id.au>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191008044153.12734-1-andrew@aj.id.au>
+References: <20191008044153.12734-1-andrew@aj.id.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -77,39 +82,90 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+Some pins crept in that weren't ordered in the list.
 
-This series resolves several issues found in testing by Johnny Huang from
-ASPEED, who also contributed the patches to fix them. We'll have more patches
-from him in the near future (which I'm pretty happy about).
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-The major issue resolved is the way I grouped the eMMC pins. What I had was
-ugly and I want to get rid of it before the binding is solidified with the 5.4
-release.
-
-The remaining fixes are minor issues that stem from lack of documentation or
-understanding on my part, and at least one brain-fart.
-
-Please review!
-
-Andrew
-
-Andrew Jeffery (4):
-  dt-bindings: pinctrl: aspeed-g6: Rework SD3 function and groups
-  pinctrl: aspeed-g6: Sort pins for sanity
-  pinctrl: aspeed-g6: Fix I2C14 SDA description
-  pinctrl: aspeed-g6: Make SIG_DESC_CLEAR() behave intuitively
-
-Johnny Huang (3):
-  pinctrl: aspeed-g6: Fix I3C3/I3C4 pinmux configuration
-  pinctrl: aspeed-g6: Fix UART13 group pinmux
-  pinctrl: aspeed-g6: Rename SD3 to EMMC and rework pin groups
-
- .../pinctrl/aspeed,ast2600-pinctrl.yaml       |  86 ++++++------
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c    | 124 ++++++++----------
- drivers/pinctrl/aspeed/pinmux-aspeed.h        |   3 +-
- 3 files changed, 98 insertions(+), 115 deletions(-)
-
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+index 648ddb7f038a..ff208b7c75a8 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
+@@ -1574,6 +1574,8 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(A3),
+ 	ASPEED_PINCTRL_PIN(AA11),
+ 	ASPEED_PINCTRL_PIN(AA12),
++	ASPEED_PINCTRL_PIN(AA16),
++	ASPEED_PINCTRL_PIN(AA17),
+ 	ASPEED_PINCTRL_PIN(AA23),
+ 	ASPEED_PINCTRL_PIN(AA24),
+ 	ASPEED_PINCTRL_PIN(AA25),
+@@ -1585,6 +1587,8 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(AB11),
+ 	ASPEED_PINCTRL_PIN(AB12),
+ 	ASPEED_PINCTRL_PIN(AB15),
++	ASPEED_PINCTRL_PIN(AB16),
++	ASPEED_PINCTRL_PIN(AB17),
+ 	ASPEED_PINCTRL_PIN(AB18),
+ 	ASPEED_PINCTRL_PIN(AB19),
+ 	ASPEED_PINCTRL_PIN(AB22),
+@@ -1602,6 +1606,7 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(AC11),
+ 	ASPEED_PINCTRL_PIN(AC12),
+ 	ASPEED_PINCTRL_PIN(AC15),
++	ASPEED_PINCTRL_PIN(AC16),
+ 	ASPEED_PINCTRL_PIN(AC17),
+ 	ASPEED_PINCTRL_PIN(AC18),
+ 	ASPEED_PINCTRL_PIN(AC19),
+@@ -1619,6 +1624,7 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(AD12),
+ 	ASPEED_PINCTRL_PIN(AD14),
+ 	ASPEED_PINCTRL_PIN(AD15),
++	ASPEED_PINCTRL_PIN(AD16),
+ 	ASPEED_PINCTRL_PIN(AD19),
+ 	ASPEED_PINCTRL_PIN(AD20),
+ 	ASPEED_PINCTRL_PIN(AD22),
+@@ -1634,8 +1640,11 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(AE12),
+ 	ASPEED_PINCTRL_PIN(AE14),
+ 	ASPEED_PINCTRL_PIN(AE15),
++	ASPEED_PINCTRL_PIN(AE16),
+ 	ASPEED_PINCTRL_PIN(AE18),
+ 	ASPEED_PINCTRL_PIN(AE19),
++	ASPEED_PINCTRL_PIN(AE25),
++	ASPEED_PINCTRL_PIN(AE26),
+ 	ASPEED_PINCTRL_PIN(AE7),
+ 	ASPEED_PINCTRL_PIN(AE8),
+ 	ASPEED_PINCTRL_PIN(AF10),
+@@ -1643,6 +1652,8 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(AF12),
+ 	ASPEED_PINCTRL_PIN(AF14),
+ 	ASPEED_PINCTRL_PIN(AF15),
++	ASPEED_PINCTRL_PIN(AF24),
++	ASPEED_PINCTRL_PIN(AF25),
+ 	ASPEED_PINCTRL_PIN(AF7),
+ 	ASPEED_PINCTRL_PIN(AF8),
+ 	ASPEED_PINCTRL_PIN(AF9),
+@@ -1792,17 +1803,6 @@ static struct pinctrl_pin_desc aspeed_g6_pins[ASPEED_G6_NR_PINS] = {
+ 	ASPEED_PINCTRL_PIN(Y3),
+ 	ASPEED_PINCTRL_PIN(Y4),
+ 	ASPEED_PINCTRL_PIN(Y5),
+-	ASPEED_PINCTRL_PIN(AB16),
+-	ASPEED_PINCTRL_PIN(AA17),
+-	ASPEED_PINCTRL_PIN(AB17),
+-	ASPEED_PINCTRL_PIN(AE16),
+-	ASPEED_PINCTRL_PIN(AC16),
+-	ASPEED_PINCTRL_PIN(AA16),
+-	ASPEED_PINCTRL_PIN(AD16),
+-	ASPEED_PINCTRL_PIN(AF25),
+-	ASPEED_PINCTRL_PIN(AE26),
+-	ASPEED_PINCTRL_PIN(AE25),
+-	ASPEED_PINCTRL_PIN(AF24),
+ };
+ 
+ static const struct aspeed_pin_group aspeed_g6_groups[] = {
 -- 
 2.20.1
 
