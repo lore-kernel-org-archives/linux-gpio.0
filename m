@@ -2,69 +2,87 @@ Return-Path: <SRS0=BogI=YB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC85C10F14
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 18:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3B3C4360C
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 20:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBED8206C0
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 18:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570557621;
-	bh=UsDaocAr1E5NE0v3z5+39cBBWvPqJFEjZxqwbjo/Mxk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=wwmoNWJOJQZNxbnI9huizSgxgtAoDxZtgG42vrLCqGcGRGnzLgwE6EcoIMLcRbo8m
-	 4DWsm3EMCLTNZCY4EM6NSxms0HvCk25YL44LA9BJoHHAAdaw5+P9Dz7ryxC9Fk07dB
-	 IWo6xdIBp0wqPcXyYC+2BshZFdpAB0cRSqCEL5co=
+	by mail.kernel.org (Postfix) with ESMTP id 648D321871
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Oct 2019 20:40:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gz43DLAp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729805AbfJHSAM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Oct 2019 14:00:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfJHSAM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 8 Oct 2019 14:00:12 -0400
-Subject: Re: [GIT PULL] GPIO fixes for the v5.4 series
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570557611;
-        bh=UsDaocAr1E5NE0v3z5+39cBBWvPqJFEjZxqwbjo/Mxk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iudHz0pm25AbclNF5qE6ZwKE7sltXVOSR+WWIT8aACneJrxe6lq7iMMb8xHgJXVDw
-         tBqHqijxIGxQox7cBJ6HzlfVaJvAdHVrJWc0RNOUUeQrwOmoosQpNcor79RWapO3Is
-         QKEl9qzUlVp5YRd1mZ0Ngs78APG88FKd/xKCbTEM=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdYnnZnOko4q+NmLwdKeObT--f8Xgv+e+fBLLXUAWqh7bg@mail.gmail.com>
-References: <CACRpkdYnnZnOko4q+NmLwdKeObT--f8Xgv+e+fBLLXUAWqh7bg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdYnnZnOko4q+NmLwdKeObT--f8Xgv+e+fBLLXUAWqh7bg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.4-2
-X-PR-Tracked-Commit-Id: fffa6af94894126994a7600c6f6f09b892e89fa9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d5001955c281c014a3af6d1559db40b5756ad89a
-Message-Id: <157055761194.21274.1648893737131642776.pr-tracker-bot@kernel.org>
-Date:   Tue, 08 Oct 2019 18:00:11 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        id S1730950AbfJHUkX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Oct 2019 16:40:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55028 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730523AbfJHUkW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Oct 2019 16:40:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IG1PVwMtQAM28tfOpPtpmdlnReR0UstRu9NVxRsy1Jk=; b=Gz43DLApZQtRZIbtPg1nD6SGm
+        35zFAXuI6KC35Dy5Ms8F2kjxI0uvqyt9UaCdlSrS4SsTPyEp1Gnf/GD3BdnuWinJU84hvDYgm7Gzj
+        OHLAd/U8Qz8kzAh4FJUOTwd9CV9u+k/3jET6jHYR/aH1CwRRw+yQhc+5QQGdt3pJmLBaDSfe2wELq
+        a1vlmVu3vhty/1yXXcnykwEMR1Tz98in9jUrtvAnWxDF2xiC2gTbFNaBHLRP78J4cdmPJGfoUkbMn
+        QNOsVxI/h0KHDZagTuovvTg8z+hU60GcMa2SdOQVzOje/Te5Na2SrzvX+b1Yiu3z9rqu7RRlKdMf9
+        pw/1/eWEg==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHwHO-0003r9-G9; Tue, 08 Oct 2019 20:40:22 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] gpio: fix kernel-doc for of_gpio_need_valid_mask()
+Message-ID: <6c5d22c8-6e27-3314-9c46-701d932b11a6@infradead.org>
+Date:   Tue, 8 Oct 2019 13:40:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue, 8 Oct 2019 10:59:58 +0200:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.4-2
+Fix kernel-doc for of_gpio_need_valid_mask().
+Fixes this warning and uses correct Return: format.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d5001955c281c014a3af6d1559db40b5756ad89a
+../drivers/gpio/gpiolib-of.c:92: warning: Excess function parameter 'dev' description in 'of_gpio_need_valid_mask'
 
-Thank you!
+Fixes: f626d6dfb709 ("gpio: of: Break out OF-only code")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/gpio/gpiolib-of.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+--- linux-next-20191008.orig/drivers/gpio/gpiolib-of.c
++++ linux-next-20191008/drivers/gpio/gpiolib-of.c
+@@ -84,8 +84,9 @@ static struct gpio_desc *of_xlate_and_ge
+ /**
+  * of_gpio_need_valid_mask() - figure out if the OF GPIO driver needs
+  * to set the .valid_mask
+- * @dev: the device for the GPIO provider
+- * @return: true if the valid mask needs to be set
++ * @gc: the target gpio_chip
++ *
++ * Return: true if the valid mask needs to be set
+  */
+ bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ {
+
