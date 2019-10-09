@@ -2,208 +2,202 @@ Return-Path: <SRS0=BoMB=YC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F69ECE58D
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 13:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56708ECE58D
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 13:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE02D206B6
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 13:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239D82133F
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 13:22:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0BNwJf4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbfJINHr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Oct 2019 09:07:47 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:64754 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730858AbfJINHr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Oct 2019 09:07:47 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: M8Q5Fo46EoMAbsYto3jBLDpfJPLyo8ifAQOzavgD9PehgmpKz0cCFCKNiBdWD/S+0pz2PeZcCm
- RSHMhITZ0gSPKzZAklVAVDx3NihwbrwBqhxtyJTfhxgvNMDktmf07VXBbrbP6qDIartnoc8cZ1
- /uZpTiV/DhFhQw+J/f54YBXh2qWjxfiiVDZgr/H9QIZauThRzXEjrJeZwJPBlRLcMgdDhfxGSj
- +YXO280Gw4lbS6Z1IYlT2Bl/ncWVJ074pygk2jYVdCuX4wGhmPsWHnxc9vqzSqyOah/8uGermf
- ILM=
-X-IronPort-AV: E=Sophos;i="5.67,276,1566889200"; 
-   d="scan'208";a="50800272"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Oct 2019 06:07:46 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 9 Oct 2019 06:07:45 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Wed, 9 Oct 2019 06:07:45 -0700
-Date:   Wed, 9 Oct 2019 15:07:53 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] pinctrl: at91: Pass irqchip when adding gpiochip
-Message-ID: <20191009130752.mt24stq6ok2wzmgc@M43218.corp.atmel.com>
-Mail-Followup-To: Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-References: <20191001130645.8350-1-linus.walleij@linaro.org>
+        id S1731184AbfJINWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Oct 2019 09:22:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55137 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbfJINWr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Oct 2019 09:22:47 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p7so2589425wmp.4
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Oct 2019 06:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7F96pWJHeSMlYdx4G9ZjnlaLCkvOK4Ullao3dee71uE=;
+        b=N0BNwJf4aa/J+ji6F6IqMOUCqvEzeKt43pSjd05UfkukdDKtJhjza+1kUuya6aeZya
+         TnVLCW4XniPTN8pY0lgIWYq94yJ/oGCpkOfwhMR89olzNR79MPDUUtweDPXXHfJIeCwf
+         b35e/u8+a6BJlNm7oOzQ+FuVIL++dmG7XAbr626WeTOYqgaz1m8iruuGY7oF7qukLY0I
+         Ao+szSXk5zY+S7LvLC8gI3/qOGz+ej6Wl64lRdSQhyThn/j8k3xiXIZu7ZygETEhMjqA
+         nPsZnAUU2zWRmquUK1TM0/gmoztBpTm/CdJxvX/6chQlzbU8voS8pJ2xUc5F9srlwZOg
+         pH8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=7F96pWJHeSMlYdx4G9ZjnlaLCkvOK4Ullao3dee71uE=;
+        b=RnEU8eUZGvnIXbUBJvCrKXV5/b9EpvybdhzgeyKzdjnCH+M4P043QtTHrEL2N4ijls
+         3sRXiLBSEeT9xt6RLIxdJ1FcaCGhTLNrWXqhR248GgeJ18sbgZ4WkXo9Zqt6oFqYOTRp
+         SAsXf/lgSBQxyw/dMlhQdrC0hV9M/jnqco6E6tzd8NSvLfX9oKLTOhIMkd3MgfKAZ+UY
+         FuDc0vvk2E9p4eBeapkYlIN5aEbYevTjF3iHDLPuedPUxBCGKnnLs7Uhw/R9bTVaJhTk
+         Ush+htveV6nUL9uVrc3G0mbC34C5N7datAY3nafksVtYE6zsVoIXXIlZFSDv9ZPPSwD6
+         0qWA==
+X-Gm-Message-State: APjAAAWHqPhUL3YWWM+ZQgMp6OhuGY+31HlKyGpYVMu/CDLiAuhoD9mc
+        6yE40RAys8gpmDoB8ByMyl0=
+X-Google-Smtp-Source: APXvYqwGCiS49phxvHcrZgNBDiqmWujEm/DWsCG9D0VAzr/2EmfOZQeDIY8dysGP9mq3orWvFBFliA==
+X-Received: by 2002:a1c:1901:: with SMTP id 1mr2644689wmz.28.1570627365673;
+        Wed, 09 Oct 2019 06:22:45 -0700 (PDT)
+Received: from x1.fritz.box ([2001:16b8:5c80:ac01:2d69:222e:6eca:3415])
+        by smtp.gmail.com with ESMTPSA id r65sm2818891wmr.9.2019.10.09.06.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 06:22:44 -0700 (PDT)
+From:   Drew Fustini <drew@pdp7.com>
+To:     brgl@bgdev.pl
+Cc:     linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        warthog618@gmail.com, Drew Fustini <drew@pdp7.com>
+Subject: [PATCH] libgpoiod: add pull-up/pull-down flags for gpio lines
+Date:   Wed,  9 Oct 2019 15:19:03 +0200
+Message-Id: <20191009131901.16782-1-drew@pdp7.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191001130645.8350-1-linus.walleij@linaro.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 03:06:45PM +0200, Linus Walleij wrote:
-> 
-> We need to convert all old gpio irqchips to pass the irqchip
-> setup along when adding the gpio_chip. For more info see
-> drivers/gpio/TODO.
-> 
-> For chained irqchips this is a pretty straight-forward
-> conversion: at91 is a little bit special since it registers
-> up to 3 gpio_chips with the same parent handler, but just
-> passing girq->parent_handler and the parent on the first
-> of them should cut it.
-> 
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
+Add pull-up and pull-down flags to libgpiod now that libgpio in the kernel
+supports these flags for linehandle_create() and lineevent_create().
 
-By the way, tested with a sama5d3_xplained board.
+Signed-off-by: Drew Fustini <drew@pdp7.com>
+---
+ bindings/cxx/gpiod.hpp        |  4 ++++
+ bindings/cxx/line_bulk.cpp    |  4 ++++
+ bindings/python/gpiodmodule.c | 14 ++++++++++++++
+ include/gpiod.h               |  4 ++++
+ lib/core.c                    |  8 ++++++++
+ 5 files changed, 34 insertions(+)
 
-Thanks
+diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
+index 13b4d5b..0e53e89 100644
+--- a/bindings/cxx/gpiod.hpp
++++ b/bindings/cxx/gpiod.hpp
+@@ -233,6 +233,10 @@ struct line_request
+ 	/**< The line is an open-source port. */
+ 	GPIOD_API static const ::std::bitset<32> FLAG_OPEN_DRAIN;
+ 	/**< The line is an open-drain port. */
++	GPIOD_API static const ::std::bitset<32> FLAG_PULL_UP;
++	/**< The line is has a configurable pull-up resistor */
++	GPIOD_API static const ::std::bitset<32> FLAG_PULL_DOWN;
++	/**< The line is has a configurable pull-down resistor */
+ 
+ 	::std::string consumer;
+ 	/**< Consumer name to pass to the request. */
+diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
+index 8369930..7e583ba 100644
+--- a/bindings/cxx/line_bulk.cpp
++++ b/bindings/cxx/line_bulk.cpp
+@@ -14,6 +14,8 @@ namespace gpiod {
+ const ::std::bitset<32> line_request::FLAG_ACTIVE_LOW("001");
+ const ::std::bitset<32> line_request::FLAG_OPEN_SOURCE("010");
+ const ::std::bitset<32> line_request::FLAG_OPEN_DRAIN("100");
++const ::std::bitset<32> line_request::FLAG_PULL_UP("101");
++const ::std::bitset<32> line_request::FLAG_PULL_DOWN("111");
+ 
+ namespace {
+ 
+@@ -38,6 +40,8 @@ const ::std::map<::std::bitset<32>, int, bitset_cmp> reqflag_mapping = {
+ 	{ line_request::FLAG_ACTIVE_LOW,	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, },
+ 	{ line_request::FLAG_OPEN_DRAIN,	GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN, },
+ 	{ line_request::FLAG_OPEN_SOURCE,	GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE, },
++	{ line_request::FLAG_PULL_UP,	GPIOD_LINE_REQUEST_FLAG_PULL_UP, },
++	{ line_request::FLAG_PULL_DOWN,	GPIOD_LINE_REQUEST_FLAG_PULL_DOWN, },
+ };
+ 
+ } /* namespace */
+diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.c
+index 69edbbc..75f33ba 100644
+--- a/bindings/python/gpiodmodule.c
++++ b/bindings/python/gpiodmodule.c
+@@ -60,6 +60,8 @@ enum {
+ 	gpiod_LINE_REQ_FLAG_OPEN_DRAIN		= GPIOD_BIT(0),
+ 	gpiod_LINE_REQ_FLAG_OPEN_SOURCE		= GPIOD_BIT(1),
+ 	gpiod_LINE_REQ_FLAG_ACTIVE_LOW		= GPIOD_BIT(2),
++	gpiod_LINE_REQ_FLAG_PULL_UP		= GPIOD_BIT(3),
++	gpiod_LINE_REQ_FLAG_PULL_DOWN		= GPIOD_BIT(4),
+ };
+ 
+ enum {
+@@ -1032,6 +1034,10 @@ static void gpiod_MakeRequestConfig(struct gpiod_line_request_config *conf,
+ 		conf->flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE;
+ 	if (flags & gpiod_LINE_REQ_FLAG_ACTIVE_LOW)
+ 		conf->flags |= GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW;
++	if (flags & gpiod_LINE_REQ_FLAG_PULL_UP)
++		conf->flags |= GPIOD_LINE_REQUEST_FLAG_PULL_UP;
++	if (flags & gpiod_LINE_REQ_FLAG_PULL_DOWN)
++		conf->flags |= GPIOD_LINE_REQUEST_FLAG_PULL_DOWN;
+ }
+ 
+ PyDoc_STRVAR(gpiod_LineBulk_request_doc,
+@@ -2396,6 +2402,14 @@ static gpiod_ModuleConst gpiod_ModuleConsts[] = {
+ 		.name = "LINE_REQ_FLAG_ACTIVE_LOW",
+ 		.value = gpiod_LINE_REQ_FLAG_ACTIVE_LOW,
+ 	},
++	{
++		.name = "LINE_REQ_FLAG_PULL_UP",
++		.value = gpiod_LINE_REQ_FLAG_PULL_UP,
++	},
++	{
++		.name = "LINE_REQ_FLAG_PULL_DOWN",
++		.value = gpiod_LINE_REQ_FLAG_PULL_DOWN,
++	},
+ 	{ }
+ };
+ 
+diff --git a/include/gpiod.h b/include/gpiod.h
+index 9860ea8..0fe8abd 100644
+--- a/include/gpiod.h
++++ b/include/gpiod.h
+@@ -792,6 +792,10 @@ enum {
+ 	/**< The line is an open-source port. */
+ 	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW	= GPIOD_BIT(2),
+ 	/**< The active state of the line is low (high is the default). */
++	GPIOD_LINE_REQUEST_FLAG_PULL_UP	= GPIOD_BIT(3),
++	/**< The line can be configured for pull-up resistor */
++	GPIOD_LINE_REQUEST_FLAG_PULL_DOWN	= GPIOD_BIT(4),
++	/**< The line can be configured for pull-down resistor */
+ };
+ 
+ /**
+diff --git a/lib/core.c b/lib/core.c
+index a04514e..f13c752 100644
+--- a/lib/core.c
++++ b/lib/core.c
+@@ -494,6 +494,10 @@ static int line_request_values(struct gpiod_line_bulk *bulk,
+ 		req.flags |= GPIOHANDLE_REQUEST_OPEN_SOURCE;
+ 	if (config->flags & GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW)
+ 		req.flags |= GPIOHANDLE_REQUEST_ACTIVE_LOW;
++	if (config->flags & GPIOD_LINE_REQUEST_FLAG_PULL_UP)
++		req.flags |= GPIOHANDLE_REQUEST_PULL_UP;
++	if (config->flags & GPIOD_LINE_REQUEST_FLAG_PULL_DOWN)
++		req.flags |= GPIOHANDLE_REQUEST_PULL_DOWN;
+ 
+ 	if (config->request_type == GPIOD_LINE_REQUEST_DIRECTION_INPUT)
+ 		req.flags |= GPIOHANDLE_REQUEST_INPUT;
+@@ -556,6 +560,10 @@ static int line_request_event_single(struct gpiod_line *line,
+ 		req.handleflags |= GPIOHANDLE_REQUEST_OPEN_SOURCE;
+ 	if (config->flags & GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW)
+ 		req.handleflags |= GPIOHANDLE_REQUEST_ACTIVE_LOW;
++	if (config->flags & GPIOD_LINE_REQUEST_FLAG_PULL_UP)
++		req.handleflags |= GPIOHANDLE_REQUEST_PULL_UP;
++	if (config->flags & GPIOD_LINE_REQUEST_FLAG_PULL_DOWN)
++		req.handleflags |= GPIOHANDLE_REQUEST_PULL_DOWN;
+ 
+ 	if (config->request_type == GPIOD_LINE_REQUEST_EVENT_RISING_EDGE)
+ 		req.eventflags |= GPIOEVENT_REQUEST_RISING_EDGE;
+-- 
+2.20.1
 
-Ludovic
-
-> ---
->  drivers/pinctrl/pinctrl-at91.c | 47 ++++++++++++++++------------------
->  1 file changed, 22 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index d6e7e9f0ddec..117075b5798f 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1723,9 +1723,11 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
->  	struct at91_gpio_chip   *prev = NULL;
->  	struct irq_data		*d = irq_get_irq_data(at91_gpio->pioc_virq);
->  	struct irq_chip		*gpio_irqchip;
-> -	int ret, i;
-> +	struct gpio_irq_chip	*girq;
-> +	int i;
->  
-> -	gpio_irqchip = devm_kzalloc(&pdev->dev, sizeof(*gpio_irqchip), GFP_KERNEL);
-> +	gpio_irqchip = devm_kzalloc(&pdev->dev, sizeof(*gpio_irqchip),
-> +				    GFP_KERNEL);
->  	if (!gpio_irqchip)
->  		return -ENOMEM;
->  
-> @@ -1747,33 +1749,30 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
->  	 * handler will perform the actual work of handling the parent
->  	 * interrupt.
->  	 */
-> -	ret = gpiochip_irqchip_add(&at91_gpio->chip,
-> -				   gpio_irqchip,
-> -				   0,
-> -				   handle_edge_irq,
-> -				   IRQ_TYPE_NONE);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "at91_gpio.%d: Couldn't add irqchip to gpiochip.\n",
-> -			at91_gpio->pioc_idx);
-> -		return ret;
-> -	}
-> +	girq = &at91_gpio->chip.irq;
-> +	girq->chip = gpio_irqchip;
-> +	girq->default_type = IRQ_TYPE_NONE;
-> +	girq->handler = handle_edge_irq;
->  
-> -	/* The top level handler handles one bank of GPIOs, except
-> +	/*
-> +	 * The top level handler handles one bank of GPIOs, except
->  	 * on some SoC it can handle up to three...
->  	 * We only set up the handler for the first of the list.
->  	 */
->  	gpiochip_prev = irq_get_handler_data(at91_gpio->pioc_virq);
->  	if (!gpiochip_prev) {
-> -		/* Then register the chain on the parent IRQ */
-> -		gpiochip_set_chained_irqchip(&at91_gpio->chip,
-> -					     gpio_irqchip,
-> -					     at91_gpio->pioc_virq,
-> -					     gpio_irq_handler);
-> +		girq->parent_handler = gpio_irq_handler;
-> +		girq->num_parents = 1;
-> +		girq->parents = devm_kcalloc(&pdev->dev, 1,
-> +					     sizeof(*girq->parents),
-> +					     GFP_KERNEL);
-> +		if (!girq->parents)
-> +			return -ENOMEM;
-> +		girq->parents[0] = at91_gpio->pioc_virq;
->  		return 0;
->  	}
->  
->  	prev = gpiochip_get_data(gpiochip_prev);
-> -
->  	/* we can only have 2 banks before */
->  	for (i = 0; i < 2; i++) {
->  		if (prev->next) {
-> @@ -1903,6 +1902,10 @@ static int at91_gpio_probe(struct platform_device *pdev)
->  	range->npins = chip->ngpio;
->  	range->gc = chip;
->  
-> +	ret = at91_gpio_of_irq_setup(pdev, at91_chip);
-> +	if (ret)
-> +		goto gpiochip_add_err;
-> +
->  	ret = gpiochip_add_data(chip, at91_chip);
->  	if (ret)
->  		goto gpiochip_add_err;
-> @@ -1910,16 +1913,10 @@ static int at91_gpio_probe(struct platform_device *pdev)
->  	gpio_chips[alias_idx] = at91_chip;
->  	gpio_banks = max(gpio_banks, alias_idx + 1);
->  
-> -	ret = at91_gpio_of_irq_setup(pdev, at91_chip);
-> -	if (ret)
-> -		goto irq_setup_err;
-> -
->  	dev_info(&pdev->dev, "at address %p\n", at91_chip->regbase);
->  
->  	return 0;
->  
-> -irq_setup_err:
-> -	gpiochip_remove(chip);
->  gpiochip_add_err:
->  clk_enable_err:
->  	clk_disable_unprepare(at91_chip->clock);
-> -- 
-> 2.21.0
-> 
-> 
