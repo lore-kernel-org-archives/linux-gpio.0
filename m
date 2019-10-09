@@ -7,34 +7,37 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC429C47404
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 16:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EEDC47404
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 16:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 874D421848
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 16:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F9B721848
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 16:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731145AbfJIQqV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Oct 2019 12:46:21 -0400
-Received: from mga06.intel.com ([134.134.136.31]:9910 "EHLO mga06.intel.com"
+        id S1731417AbfJIQvT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Oct 2019 12:51:19 -0400
+Received: from mga05.intel.com ([192.55.52.43]:51308 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731083AbfJIQqU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 9 Oct 2019 12:46:20 -0400
+        id S1731192AbfJIQvS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Oct 2019 12:51:18 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 09:46:20 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 09:51:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,276,1566889200"; 
-   d="scan'208";a="200185146"
+   d="scan'208";a="345414479"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Oct 2019 09:46:19 -0700
+  by orsmga004.jf.intel.com with ESMTP; 09 Oct 2019 09:51:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 6C58016A; Wed,  9 Oct 2019 19:46:18 +0300 (EEST)
+        id DCBEB16A; Wed,  9 Oct 2019 19:51:15 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     andy.shevchenko@gmail.com, Linux GPIO <linux-gpio@vger.kernel.org>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: [GIT PULL] intel-gpio for 5.4-2
-Date:   Wed,  9 Oct 2019 19:46:13 +0300
-Message-Id: <20191009164618.76442-1-andriy.shevchenko@linux.intel.com>
+Date:   Wed,  9 Oct 2019 19:50:51 +0300
+Message-Id: <20191009165056.76580-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
