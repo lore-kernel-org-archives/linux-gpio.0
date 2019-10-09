@@ -2,90 +2,222 @@ Return-Path: <SRS0=BoMB=YC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2265C47404
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 17:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64827C47404
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 17:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A810920B7C
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 17:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32F3E218AC
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Oct 2019 17:15:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vU5nENGi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbfJIRJY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Oct 2019 13:09:24 -0400
-Received: from mga04.intel.com ([192.55.52.120]:26159 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731375AbfJIRJX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:09:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Oct 2019 10:09:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,277,1566889200"; 
-   d="scan'208";a="206918443"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Oct 2019 10:09:19 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iIFSf-00036t-U0; Wed, 09 Oct 2019 20:09:17 +0300
-Date:   Wed, 9 Oct 2019 20:09:17 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        preid@electromag.com.au, Lukas Wunner <lukas@wunner.de>,
-        sean.nyekjaer@prevas.dk, morten.tiljeset@prevas.dk,
+        id S1731812AbfJIRPP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Oct 2019 13:15:15 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:41340 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730490AbfJIRPP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Oct 2019 13:15:15 -0400
+Received: by mail-yb1-f193.google.com with SMTP id 206so979811ybc.8;
+        Wed, 09 Oct 2019 10:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qFx5e6sekWj4cSXabcHlK2m6teGcz5rYDUsYdjC+rrw=;
+        b=vU5nENGi+96qwP1zXySRiWdFjmgbqu2wz/Nv/G+uJKJJ3evWwp5yKBdbAOYOxR1UD6
+         02e0fvSrnPTf7cs9XAocBH5tfFvYAD8DjRLbupbDBxhqDO1OnyL0+YkJOZJ78rYIuDkv
+         4lHksmb169tCjBIbSMDL/SXap1/9ySx+oH7+ANVrRMaxo6Z8e8hlkvhRqH9aJvh0tyXE
+         O8OC4U47zNrp1IPyOfx9kyFntLDoj3vwq3s2lkMmrk0n6z46+gIjoW4Xjo/uPQWtzRz3
+         Tkr5VXvUolO44bthr8sCq3XyND0NpqFKhBnozXvK/qa7maJKhSBEnwQ5UtCvBGg6SWgz
+         ZYVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qFx5e6sekWj4cSXabcHlK2m6teGcz5rYDUsYdjC+rrw=;
+        b=Sx7xgE8EFtXsp2M7Rlpy7G8JpN8sX7Z6Rw4B3fvSLCjjWZ2WFVJAs493RNmbMyaxbS
+         hf+wctYISSgjLnmgnJqiNMHlfyvTTefqzXwSPrklvo/83NIcXq5JDGp0Sh5rPloXJ594
+         WrBJWOnFtT/fETTV5XVSVWutAz7QMMdR9PR4Bywxr9XO7GXdm96sH1zMxfhM57CVI4FW
+         GNYEYT2/EJ1ZOcmQNB+wqvppdJcfP3i6Pr91hrrBbi1GBVnvPuO0v9nTXIuvJBqHhlK+
+         zF3dUmPEGrtE5zTdT2cXi9XFhadobp9/vdeDogSI7mRZ4LARZKRMuPKECwT+Fcl58b4P
+         flpA==
+X-Gm-Message-State: APjAAAXOQrIn2eqickt56oYXwmkcIHT0Jpu89FyZ5+Hy9GnbtSC8u0ek
+        3shajPKLFVZIV+WqANftOE8=
+X-Google-Smtp-Source: APXvYqyo/6BM6QV7w2AEso0LDLVV9QJhxnkgkXCJdqwwCDn8k8vz3H54P9dTdCDOoxtGL1DTt4y1QA==
+X-Received: by 2002:a25:49c7:: with SMTP id w190mr2853099yba.140.1570641313477;
+        Wed, 09 Oct 2019 10:15:13 -0700 (PDT)
+Received: from localhost.localdomain (072-189-084-142.res.spectrum.com. [72.189.84.142])
+        by smtp.gmail.com with ESMTPSA id r63sm743292ywg.36.2019.10.09.10.15.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2019 10:15:11 -0700 (PDT)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        akpm@linux-foundation.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v17 01/14] bitops: Introduce the for_each_set_clump8 macro
-Message-ID: <20191009170917.GG32742@smile.fi.intel.com>
-References: <cover.1570633189.git.vilhelm.gray@gmail.com>
- <893c3b4f03266c9496137cc98ac2b1bd27f92c73.1570633189.git.vilhelm.gray@gmail.com>
- <CAK7LNATgW7bXUmqV=3QAaJ0Qu73Kox-TgDCQJb=s0=mwewSCUg@mail.gmail.com>
+Subject: [PATCH v18 01/14] bitops: Introduce the for_each_set_clump8 macro
+Date:   Wed,  9 Oct 2019 13:14:37 -0400
+Message-Id: <893c3b4f03266c9496137cc98ac2b1bd27f92c73.1570641097.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1570641097.git.vilhelm.gray@gmail.com>
+References: <cover.1570641097.git.vilhelm.gray@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATgW7bXUmqV=3QAaJ0Qu73Kox-TgDCQJb=s0=mwewSCUg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 01:28:08AM +0900, Masahiro Yamada wrote:
-> On Thu, Oct 10, 2019 at 12:27 AM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> >
-> > This macro iterates for each 8-bit group of bits (clump) with set bits,
-> > within a bitmap memory region. For each iteration, "start" is set to the
-> > bit offset of the found clump, while the respective clump value is
-> > stored to the location pointed by "clump". Additionally, the
-> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> > respectively get and set an 8-bit value in a bitmap memory region.
+This macro iterates for each 8-bit group of bits (clump) with set bits,
+within a bitmap memory region. For each iteration, "start" is set to the
+bit offset of the found clump, while the respective clump value is
+stored to the location pointed by "clump". Additionally, the
+bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+respectively get and set an 8-bit value in a bitmap memory region.
 
-> Why is the return type "unsigned long" where you know
-> it return the 8-bit value ?
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Suggested-by: Lukas Wunner <lukas@wunner.de>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ include/asm-generic/bitops/find.h | 17 +++++++++++++++
+ include/linux/bitmap.h            | 35 +++++++++++++++++++++++++++++++
+ include/linux/bitops.h            |  5 +++++
+ lib/find_bit.c                    | 14 +++++++++++++
+ 4 files changed, 71 insertions(+)
 
-Because bitmap API operates on unsigned long type. This is not only
-consistency, but for sake of flexibility in case we would like to introduce
-more calls like clump16 or so.
-
-Same comment for the rest.
-
+diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
+index 8a1ee10014de..9fdf21302fdf 100644
+--- a/include/asm-generic/bitops/find.h
++++ b/include/asm-generic/bitops/find.h
+@@ -80,4 +80,21 @@ extern unsigned long find_first_zero_bit(const unsigned long *addr,
+ 
+ #endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
+ 
++/**
++ * find_next_clump8 - find next 8-bit clump with set bits in a memory region
++ * @clump: location to store copy of found clump
++ * @addr: address to base the search on
++ * @size: bitmap size in number of bits
++ * @offset: bit offset at which to start searching
++ *
++ * Returns the bit offset for the next set clump; the found clump value is
++ * copied to the location pointed by @clump. If no bits are set, returns @size.
++ */
++extern unsigned long find_next_clump8(unsigned long *clump,
++				      const unsigned long *addr,
++				      unsigned long size, unsigned long offset);
++
++#define find_first_clump8(clump, bits, size) \
++	find_next_clump8((clump), (bits), (size), 0)
++
+ #endif /*_ASM_GENERIC_BITOPS_FIND_H_ */
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 90528f12bdfa..761fab5b60a7 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -66,6 +66,8 @@
+  *  bitmap_allocate_region(bitmap, pos, order)  Allocate specified bit region
+  *  bitmap_from_arr32(dst, buf, nbits)          Copy nbits from u32[] buf to dst
+  *  bitmap_to_arr32(buf, src, nbits)            Copy nbits from buf to u32[] dst
++ *  bitmap_get_value8(map, start)               Get 8bit value from map at start
++ *  bitmap_set_value8(map, value, start)        Set 8bit value to map at start
+  *
+  * Note, bitmap_zero() and bitmap_fill() operate over the region of
+  * unsigned longs, that is, bits behind bitmap till the unsigned long
+@@ -488,6 +490,39 @@ static inline void bitmap_from_u64(unsigned long *dst, u64 mask)
+ 		dst[1] = mask >> 32;
+ }
+ 
++/**
++ * bitmap_get_value8 - get an 8-bit value within a memory region
++ * @map: address to the bitmap memory region
++ * @start: bit offset of the 8-bit value; must be a multiple of 8
++ *
++ * Returns the 8-bit value located at the @start bit offset within the @src
++ * memory region.
++ */
++static inline unsigned long bitmap_get_value8(const unsigned long *map,
++					      unsigned long start)
++{
++	const size_t index = BIT_WORD(start);
++	const unsigned long offset = start % BITS_PER_LONG;
++
++	return (map[index] >> offset) & 0xFF;
++}
++
++/**
++ * bitmap_set_value8 - set an 8-bit value within a memory region
++ * @map: address to the bitmap memory region
++ * @value: the 8-bit value; values wider than 8 bits may clobber bitmap
++ * @start: bit offset of the 8-bit value; must be a multiple of 8
++ */
++static inline void bitmap_set_value8(unsigned long *map, unsigned long value,
++				     unsigned long start)
++{
++	const size_t index = BIT_WORD(start);
++	const unsigned long offset = start % BITS_PER_LONG;
++
++	map[index] &= ~(0xFF << offset);
++	map[index] |= value << offset;
++}
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* __LINUX_BITMAP_H */
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index cf074bce3eb3..fb94a10f7853 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -40,6 +40,11 @@ extern unsigned long __sw_hweight64(__u64 w);
+ 	     (bit) < (size);					\
+ 	     (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
+ 
++#define for_each_set_clump8(start, clump, bits, size) \
++	for ((start) = find_first_clump8(&(clump), (bits), (size)); \
++	     (start) < (size); \
++	     (start) = find_next_clump8(&(clump), (bits), (size), (start) + 8))
++
+ static inline int get_bitmask_order(unsigned int count)
+ {
+ 	int order;
+diff --git a/lib/find_bit.c b/lib/find_bit.c
+index 5c51eb45178a..e35a76b291e6 100644
+--- a/lib/find_bit.c
++++ b/lib/find_bit.c
+@@ -214,3 +214,17 @@ EXPORT_SYMBOL(find_next_bit_le);
+ #endif
+ 
+ #endif /* __BIG_ENDIAN */
++
++unsigned long find_next_clump8(unsigned long *clump, const unsigned long *addr,
++			       unsigned long size, unsigned long offset)
++{
++	offset = find_next_bit(addr, size, offset);
++	if (offset == size)
++		return size;
++
++	offset = round_down(offset, 8);
++	*clump = bitmap_get_value8(addr, offset);
++
++	return offset;
++}
++EXPORT_SYMBOL(find_next_clump8);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.23.0
 
