@@ -2,92 +2,77 @@ Return-Path: <SRS0=lu8F=YD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41FCC4360C
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Oct 2019 14:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81C2C10F14
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Oct 2019 17:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11A3206B6
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Oct 2019 14:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB24D21929
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Oct 2019 17:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbfJJOQs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Oct 2019 10:16:48 -0400
-Received: from mga14.intel.com ([192.55.52.115]:10239 "EHLO mga14.intel.com"
+        id S1726453AbfJJR2e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Oct 2019 13:28:34 -0400
+Received: from ms.lwn.net ([45.79.88.28]:60706 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfJJOQs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:16:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Oct 2019 07:16:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,280,1566889200"; 
-   d="scan'208";a="223978843"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Oct 2019 07:16:46 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iIZFF-0007TN-Fc; Thu, 10 Oct 2019 17:16:45 +0300
-Date:   Thu, 10 Oct 2019 17:16:45 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     zhengbin <zhengbin13@huawei.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: merrifield: Remove set but not used variable
- 'irq_base'
-Message-ID: <20191010141645.GX32742@smile.fi.intel.com>
-References: <1570715529-110344-1-git-send-email-zhengbin13@huawei.com>
+        id S1725862AbfJJR2d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 10 Oct 2019 13:28:33 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 7CBEE2BD;
+        Thu, 10 Oct 2019 17:28:31 +0000 (UTC)
+Date:   Thu, 10 Oct 2019 11:28:30 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Shannon Nelson <snelson@pensando.io>,
+        Pensando Drivers <drivers@pensando.io>,
+        Steve French <sfrench@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-mips@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/3] docs: fix some broken references
+Message-ID: <20191010112830.11ce7007@lwn.net>
+In-Reply-To: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
+References: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1570715529-110344-1-git-send-email-zhengbin13@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 09:52:09PM +0800, zhengbin wrote:
+On Tue, 24 Sep 2019 10:01:28 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Side note below.
+> There are a number of documentation files that got moved or
+> renamed. update their references.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-> -	irq_base = readl(base);
-> +	readl(base);
+I've applied this set, thanks.
 
-Ouch! Not all cases are flush material of posted writes.
-
-
-The below:
-
-func(...)
-{
-	void __iomem *addr = x->y;
-	...
-
-	writel(z, addr);
-	...
-	readl(addr);
-}
-
-is fine to do like your bot did, but
-
-func1(...)
-{
-	void __iomem *addr = x->y;
-	...
-	readl(addr);
-}
-
-often is not okay and probably the error somewhere else.
-
-Please, consider to fix you bot.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+jon
