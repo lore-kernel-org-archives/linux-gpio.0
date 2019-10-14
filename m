@@ -2,116 +2,108 @@ Return-Path: <SRS0=RHvV=YH=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B03C4CECE
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Oct 2019 15:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98965ECE587
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Oct 2019 15:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5226921882
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Oct 2019 15:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F772133F
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Oct 2019 15:53:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="hCyh88la"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733294AbfJNPSe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Oct 2019 11:18:34 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52411 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732397AbfJNPSe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2019 11:18:34 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id CEDBA60012;
-        Mon, 14 Oct 2019 15:18:32 +0000 (UTC)
-Date:   Mon, 14 Oct 2019 17:18:32 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] pinctrl: ocelot: Pass irqchip when adding gpiochip
-Message-ID: <20191014151832.GN3125@piout.net>
-References: <20191002114454.9684-1-linus.walleij@linaro.org>
+        id S1730565AbfJNPxr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Oct 2019 11:53:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:47017 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfJNPxr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Oct 2019 11:53:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o18so20287185wrv.13
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Oct 2019 08:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0t1OM4slpGn/FciwgvtR1ItjOGOzF2p73EE7Lk2KZOE=;
+        b=hCyh88laFReOQinVzQBy5MUAHRpJ2PKFi2cIw4C+dRkEimuPFJ8pmqwr1cqICMU94a
+         cNLShzKyyXte63Zf3TmFKzQx1yGoIOzv4O5HPpJhNEhKvkhqdztOcpsDR8QBEuwkL3qq
+         kKL3BHve8OMiMMhlJxq2E1Qsw1eGldVeRwIBLjrQ2KvOSsGR+FM5sQ1Cfzjq5AMoDqjP
+         JrnyLnnkCVdrR1dBpBdPamSrN5lSj8blwq/tF0CsJEaBY2xsJp5klubXhb2d54mcHaPj
+         gVo72sAMiQUODCnJhvr/L8H2SeM7e56YElxPH4vWc3Q4ec2mHgTmugBFDZlofQaIkqNP
+         2naw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0t1OM4slpGn/FciwgvtR1ItjOGOzF2p73EE7Lk2KZOE=;
+        b=iY3uLDR/7YtlShai4OXh06rwYq42xHyevEM9T32aRZQmSoRIYG7zWYwTuyO24MU6RK
+         quoxsXx3o7cdDuyzI1PoHtp5III4ZcO21wcTZBgPumw4gaYbR4zBBP8ZXnV3Qx4uQy45
+         xNk2yXB8vNNXLt5zOlkITQw8PZ2jca3Y0z6HiCRbP4OSlzFu1UPmIxFGJni1D/gcfo5N
+         PtFP3IWbGiajKi9nd2OKKZAKEnLMDsf2WktsLUY/6Iug+U+1FNPWuLAptfz3A8RCpZhv
+         lu2pv4/NPLHxfwjnmKCyBWd4oyXg3cpHHyUkbP/iP6sB4z/Jq6t77qkvC1wbjz/ta7XD
+         iTnQ==
+X-Gm-Message-State: APjAAAWhQ8ZAweOx5ZhKv3z6+OTCAYe73/unAYU6Z1qU8Mx9t4BdckaJ
+        GqZ1BbGBQQzF6upEe7z6G9DxXw==
+X-Google-Smtp-Source: APXvYqxBUAz0ltyZJGC9OKxGG3rjoJlKk1X9BzHdCHfcDtM+FNNfeISw9xtUdr+NCPM9Hbr8tlTEMQ==
+X-Received: by 2002:a5d:540d:: with SMTP id g13mr22534688wrv.8.1571068425381;
+        Mon, 14 Oct 2019 08:53:45 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id 5sm17984836wrk.86.2019.10.14.08.53.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2019 08:53:44 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-gpio@vger.kernel.org, stable@vger.kernel.org,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5.3] gpio: fix getting nonexclusive gpiods from DT
+Date:   Mon, 14 Oct 2019 17:53:41 +0200
+Message-Id: <20191014155341.13145-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002114454.9684-1-linus.walleij@linaro.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 02/10/2019 13:44:54+0200, Linus Walleij wrote:
-> We need to convert all old gpio irqchips to pass the irqchip
-> setup along when adding the gpio_chip. For more info see
-> drivers/gpio/TODO.
-> 
-> For chained irqchips this is a pretty straight-forward
-> conversion.
-> 
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-> ---
->  drivers/pinctrl/pinctrl-ocelot.c | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-> index fb76fb2e9ea5..eb3dd0d46d6c 100644
-> --- a/drivers/pinctrl/pinctrl-ocelot.c
-> +++ b/drivers/pinctrl/pinctrl-ocelot.c
-> @@ -736,6 +736,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
->  				    struct ocelot_pinctrl *info)
->  {
->  	struct gpio_chip *gc;
-> +	struct gpio_irq_chip *girq;
->  	int ret, irq;
->  
->  	info->gpio_chip = ocelot_gpiolib_chip;
-> @@ -747,22 +748,26 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
->  	gc->of_node = info->dev->of_node;
->  	gc->label = "ocelot-gpio";
->  
-> -	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
-> -	if (ret)
-> -		return ret;
-> -
->  	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
->  	if (irq <= 0)
->  		return irq;
->  
-> -	ret = gpiochip_irqchip_add(gc, &ocelot_irqchip, 0, handle_edge_irq,
-> -				   IRQ_TYPE_NONE);
-> +	girq = &gc->irq;
-> +	girq->chip = &ocelot_irqchip;
-> +	girq->parent_handler = ocelot_irq_handler;
-> +	girq->num_parents = 1;
-> +	girq->parents = devm_kcalloc(&pdev->dev, 1, sizeof(*girq->parents),
-> +				     GFP_KERNEL);
-> +	if (!girq->parents)
-> +		return -ENOMEM;
-> +	girq->parents[0] = irq;
-> +	girq->default_type = IRQ_TYPE_NONE;
-> +	girq->handler = handle_edge_irq;
-> +
-> +	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
->  	if (ret)
->  		return ret;
->  
-> -	gpiochip_set_chained_irqchip(gc, &ocelot_irqchip, irq,
-> -				     ocelot_irq_handler);
-> -
->  	return 0;
->  }
->  
-> -- 
-> 2.21.0
-> 
+Since commit ec757001c818 ("gpio: Enable nonexclusive gpiods from DT
+nodes") we are able to get GPIOD_FLAGS_BIT_NONEXCLUSIVE marked gpios.
+Currently the gpiolib uses the wrong flags variable for the check. We
+need to check the gpiod_flags instead of the of_gpio_flags else we
+return -EBUSY for GPIOD_FLAGS_BIT_NONEXCLUSIVE marked and requested
+gpiod's.
 
+Fixes: ec757001c818 gpio: Enable nonexclusive gpiods from DT nodes
+Cc: stable@vger.kernel.org
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+[Bartosz: the function was moved to gpiolib-of.c so updated the patch]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+[Bartosz: backported to v5.3.y]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d9074191edef..e4203c1eb869 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4303,7 +4303,7 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+ 	transitory = flags & OF_GPIO_TRANSITORY;
+ 
+ 	ret = gpiod_request(desc, label);
+-	if (ret == -EBUSY && (flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
++	if (ret == -EBUSY && (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
+ 		return desc;
+ 	if (ret)
+ 		return ERR_PTR(ret);
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.23.0
+
