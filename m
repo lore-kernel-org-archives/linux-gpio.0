@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEC3C10F14
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Oct 2019 08:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE8CC10F14
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Oct 2019 09:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6335021848
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Oct 2019 08:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05BFE217F9
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Oct 2019 09:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbfJOIg7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Oct 2019 04:36:59 -0400
-Received: from lucky1.263xmail.com ([211.157.147.134]:48808 "EHLO
+        id S1728376AbfJOJRP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Oct 2019 05:17:15 -0400
+Received: from lucky1.263xmail.com ([211.157.147.135]:52474 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbfJOIg6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Oct 2019 04:36:58 -0400
-Received: from localhost (unknown [192.168.167.97])
-        by lucky1.263xmail.com (Postfix) with ESMTP id E0D254640C;
-        Tue, 15 Oct 2019 16:36:52 +0800 (CST)
+        with ESMTP id S1725815AbfJOJRP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Oct 2019 05:17:15 -0400
+Received: from localhost (unknown [192.168.167.235])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 9C86645E09;
+        Tue, 15 Oct 2019 17:17:10 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
 X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P25378T140653736490752S1571128611740140_;
-        Tue, 15 Oct 2019 16:36:53 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P31702T139879414421248S1571131030242699_;
+        Tue, 15 Oct 2019 17:17:11 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <a164980249f6313d1ae2b1bbeea0409b>
+X-UNIQUE-TAG: <6f4ff25618f2263670538bb75275f38c>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -45,8 +45,8 @@ To:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Jianqun Xu <jay.xu@rock-chips.com>
 Subject: [PATCH v3 0/2] pinctrl: rockchip: support rk3308 SoC
-Date:   Tue, 15 Oct 2019 16:36:48 +0800
-Message-Id: <20191015083650.7337-1-jay.xu@rock-chips.com>
+Date:   Tue, 15 Oct 2019 17:17:06 +0800
+Message-Id: <20191015091708.7934-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
