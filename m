@@ -2,95 +2,85 @@ Return-Path: <SRS0=IWnn=YJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50039FA3728
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 14:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F52FA3728
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 285DE21848
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 14:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87185218DE
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VTvgClYQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dnhcrGZB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405683AbfJPOAj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Oct 2019 10:00:39 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45800 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405621AbfJPOAj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2019 10:00:39 -0400
-Received: by mail-qk1-f193.google.com with SMTP id z67so22787642qkb.12
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Oct 2019 07:00:39 -0700 (PDT)
+        id S2393767AbfJPOB7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Oct 2019 10:01:59 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33691 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388087AbfJPOB6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2019 10:01:58 -0400
+Received: by mail-qt1-f193.google.com with SMTP id r5so36281481qtd.0
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Oct 2019 07:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gqml278NTu5znyLj4o9Te22EdTDlURV2Qw1cIDtLTt4=;
-        b=VTvgClYQ4A/Fh9y5c/hd9xtq28k1VhkkJC6Lae1lj1lS9CSeatI4xJUFt7aVOZWMpC
-         c70NFA/b7hFsue6/wOXLILAIv1rMEqDmIBvWLgw6pEyTOArvK00uv3y2ezSbJfK//Mo4
-         i5r/NkgWwB3lrYFwN5LcQ2tCGu8aeZgWrDRUWzHNOOQGwGamIoEpvEQqymVoEvVUbbPM
-         BMHUwKj6KZhVgqPx3JZOk8L73cAWjLzEeo4NDhHQfPwLXBPLSaQKGY3a2evpL/0tLBHW
-         9QGKALZPSodLHlZ5Ia7E3FjNomYdIpr+7Yb013hif8sY1MGNRGE4+poi7QzFf+5L98II
-         qPDQ==
+        bh=n8D7GWcuR2D5yJzftWOZuP7OGBCEWQ2Nv8330rDKYmg=;
+        b=dnhcrGZBhMNzuT4xbNGse9Hi6m6R2P2mJfVUllKARjVw5I1IW3bUBIJF21X9ghv2r/
+         l5+mWeKlT4khiAo6ircZ+0ZuvkISZ8dApHcl1Q71Bx+w2BNGt5VmQQjXumuOa4zPGbmI
+         wTcWoKyjSg/Sc6nU9+wu1fKFR8lMlNb/E6/rjfVkl2A5qICOPD1DKkWovrK+FfuS9x/L
+         J87kjFpH9ZS7cTjHjxUh5sfXeA02Ie2+Z4eqov/c7Mn+uwfqn+H6uGCMrMLaw7fEQJJd
+         9e9Rk/jBQmCMkwQsqV0QVgsn01zsABYHdS2AMEVh9jWyvGN2ligVIeAjdOnc05dELJYq
+         1QcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gqml278NTu5znyLj4o9Te22EdTDlURV2Qw1cIDtLTt4=;
-        b=BEeeqnox29c2bLklyPBYUR+NqQTMOU824XToIR8AYt5F2HJFioY/wwgOVOGBqfGdKV
-         Ebzv9AjVRHdozISPmyJCWos+pDRmL5f/2Nek/0sf8oow+Egp4oPFPESKjSNpdK2vB1Oa
-         dnEWBTFkKiaUbM5ug0/lNHEIGBPa7UYJcoJzsGL4nTVHZdv5udC3k1rmksKOuBH3zRB4
-         IrJ+EtShB0JEjZd/vqxXpPDPJ4s0vNos2POQI7aZw8ULiAJn2S4qV9pdvlaoXo5ytoHf
-         omD9pE0aWJU5rAthz6e1So19COB4CgIZLNiGU8rE8x4ZclZTvKJoRbczOYlY/Pm4vouV
-         DkQg==
-X-Gm-Message-State: APjAAAXeqBCLVqTZjP6rzQhha+z8P8WlIjQtkoEbQ1zwLFloMRIJNR9O
-        DL+O4mfu8PPqXsDTL/7qK/ngCxXctTwls06vir1ZmQ==
-X-Google-Smtp-Source: APXvYqxE/W8Wym2zPEoThfzgBl+Y8q8y0M/tZiDg5SGuXU2OGToGJCLrZSvaS15buTSq1qqdW86Kkg/8vbhVY6QMYW4=
-X-Received: by 2002:a05:620a:34b:: with SMTP id t11mr38547340qkm.213.1571234438671;
- Wed, 16 Oct 2019 07:00:38 -0700 (PDT)
+        bh=n8D7GWcuR2D5yJzftWOZuP7OGBCEWQ2Nv8330rDKYmg=;
+        b=Mn1+yCmlYVEklIsuxabTxnD0yvmMWVj3mbA1ZVOBrWvgRKywO5gpI+wSd/1GPsOhub
+         QEj8QNv0NTx3hAGe1EeW9rrYdY3CPoK6X2dj8QRqfTIeEQT1UKj8nniOz9OI3EOYg4r4
+         s30d9tk1xbsVU355/bkGAPvPikEJ/pFj4Ht0QShNxFH6qY4ve5IcLZJIoO6B3tPQ0Zpm
+         Y5NG74SOeZ6nQ+Z2AoRgzEVxUJ+0dm7K71z/eKc6CiHyOIfnOC3ljxFsxXKIqEbGUblb
+         VRtj/4hcn3OEhrqY56rVEixDbYLX+Tpt33ffYf0ZEvr35AyuzNw3j4OX2MU1vOnf80Wm
+         LGNw==
+X-Gm-Message-State: APjAAAXhXVD6ki2oKIndu6ErS8xAWB9/chHjp+zFiGwhSF5/5qZtnF3s
+        vrLPRms24FczfrzDyNypgrHkazIziype1+gBdAh8ag==
+X-Google-Smtp-Source: APXvYqwFAoVique9IlI8XVI03OPafdgTa5LZeWmuVfGHhzZH0lbDGYUovz4iroQEJzuT6Oha6I6BaIQz57cvrFNMpAk=
+X-Received: by 2002:ac8:2a38:: with SMTP id k53mr13452139qtk.387.1571234517898;
+ Wed, 16 Oct 2019 07:01:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191008044153.12734-1-andrew@aj.id.au> <CACRpkda5cWaA7R3XzyiERCCgwUrjnXd+wCBeKvt-wtjex7wNDg@mail.gmail.com>
- <2de90789-c374-4821-89f9-5d5f01e7d2d6@www.fastmail.com>
-In-Reply-To: <2de90789-c374-4821-89f9-5d5f01e7d2d6@www.fastmail.com>
+References: <8ae52263b0625c416461821c457e6789b67170b6.1571228451.git.baolin.wang@linaro.org>
+In-Reply-To: <8ae52263b0625c416461821c457e6789b67170b6.1571228451.git.baolin.wang@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 16 Oct 2019 16:00:26 +0200
-Message-ID: <CACRpkdbmbyNmW8tL_L0agBajomPybXsjn9ix_F5-B3fZnfuW9A@mail.gmail.com>
-Subject: Re: [PATCH 0/7] pinctrl: Fixes for AST2600 support
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Johnny Huang <johnny_huang@aspeedtech.com>,
-        Ryan Chen <ryanchen.aspeed@gmail.com>
+Date:   Wed, 16 Oct 2019 16:01:46 +0200
+Message-ID: <CACRpkdb6iGs=+EksqfTxuyiO3PBXpuVMOPhp3fFCJ8tqZ=-8gg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sprd: Add CM4 sleep mode support
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>, bruce.chen@unisoc.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 1:42 PM Andrew Jeffery <andrew@aj.id.au> wrote:
+On Wed, Oct 16, 2019 at 2:24 PM Baolin Wang <baolin.wang@linaro.org> wrote:
 
-> I was hoping to get them into the 5.4 fixes branch: I consider them all fixes
-
-OK I moved them all to fixes.
-
-> > I need a shortlist of anything that should go into v5.4 if anything.
+> From: Bruce Chen <bruce.chen@unisoc.com>
 >
-> IMO all of them should go into 5.4, as above.
+> For the new Spreadtrum pin controller, it expands 6bits to describe the
+> pin sleep mode with adding one CM4_SLEEP mode, which means the pin sleep
+> related configuration will be loaded automatically by hardware when the
+> CM4 system goes into deep sleep mode.
+>
+> Signed-off-by: Bruce Chen <bruce.chen@unisoc.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-OK
-
->  It's there something I can do in the future to communicate this better?
-
-Nah it is a complicated process, things need to be done manually
-at times, overly obsessing with process is counterproductive.
+Patch applied.
 
 Yours,
 Linus Walleij
