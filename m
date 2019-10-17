@@ -2,94 +2,139 @@ Return-Path: <SRS0=r7H/=YK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0302FA3743
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E78EFA3735
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A754220854
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F179E20854
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502588AbfJQMsZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:48:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4205 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502586AbfJQMsZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:25 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 244A2DE6D269943AC0B1;
-        Thu, 17 Oct 2019 20:48:23 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:16 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
-        <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
-        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-        <jesper.nilsson@axis.com>, <lars.persson@axis.com>,
-        <ludovic.desroches@microchip.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <baruch@tkos.co.il>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@axis.com>, <linux-oxnas@groups.io>,
+        id S1732191AbfJQMvu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Oct 2019 08:51:50 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:58270 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfJQMvu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Oct 2019 08:51:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id AEC73184A3;
+        Thu, 17 Oct 2019 14:51:46 +0200 (CEST)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id ORlrqU7P1kMl; Thu, 17 Oct 2019 14:51:45 +0200 (CEST)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id E39721816A;
+        Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C696B1E075;
+        Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B191E1E074;
+        Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Received: from lnxjespern3.se.axis.com (lnxjespern3.se.axis.com [10.88.4.8])
+        by thoth.se.axis.com (Postfix) with ESMTP id 97D0F2F9F;
+        Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Received: by lnxjespern3.se.axis.com (Postfix, from userid 363)
+        id 92A7C800E1; Thu, 17 Oct 2019 14:51:43 +0200 (CEST)
+Date:   Thu, 17 Oct 2019 14:51:43 +0200
+From:   Jesper Nilsson <jesper.nilsson@axis.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+        "afaerber@suse.de" <afaerber@suse.de>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "rjui@broadcom.com" <rjui@broadcom.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Jesper Nilsson <jespern@axis.com>,
+        Lars Persson <larper@axis.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@axis.com>,
+        "linux-oxnas@groups.io" <linux-oxnas@groups.io>,
+        "linux-renesas-soc@vger.kernel.org" 
         <linux-renesas-soc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <vz@mleia.com>, <narmstrong@baylibre.com>,
-        <geert+renesas@glider.be>, <daniel@zonque.org>,
-        <haojian.zhuang@gmail.com>, <wens@csie.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 06/30] pinctrl: nsp: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:16 +0800
-Message-ID: <20191017122640.22976-7-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "vz@mleia.com" <vz@mleia.com>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "daniel@zonque.org" <daniel@zonque.org>,
+        "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>,
+        "wens@csie.org" <wens@csie.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "agross@kernel.org" <agross@kernel.org>
+Subject: Re: [PATCH -next 27/30] pinctrl: artpec6: use
+ devm_platform_ioremap_resource() to simplify code
+Message-ID: <20191017125143.yxhwy6lvzfhle7ey@axis.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
+ <20191017122640.22976-28-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017122640.22976-28-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Thu, Oct 17, 2019 at 02:26:37PM +0200, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/bcm/pinctrl-nsp-mux.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-index 87618a4..3756fc9 100644
---- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-@@ -571,8 +571,7 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pinctrl);
- 	spin_lock_init(&pinctrl->lock);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pinctrl->base0))
- 		return PTR_ERR(pinctrl->base0);
- 
-@@ -586,8 +585,7 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	pinctrl->base2 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base2 = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(pinctrl->base2))
- 		return PTR_ERR(pinctrl->base2);
- 
+> ---
+>  drivers/pinctrl/pinctrl-artpec6.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+> index e3239cf..986e04a 100644
+> --- a/drivers/pinctrl/pinctrl-artpec6.c
+> +++ b/drivers/pinctrl/pinctrl-artpec6.c
+> @@ -936,7 +936,6 @@ static void artpec6_pmx_reset(struct artpec6_pmx *pmx)
+>  static int artpec6_pmx_probe(struct platform_device *pdev)
+>  {
+>  	struct artpec6_pmx *pmx;
+> -	struct resource *res;
+>  
+>  	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+>  	if (!pmx)
+> @@ -944,8 +943,7 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+>  
+>  	pmx->dev = &pdev->dev;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	pmx->base = devm_ioremap_resource(&pdev->dev, res);
+> +	pmx->base = devm_platform_ioremap_resource(pdev, 0);
+>  
+>  	if (IS_ERR(pmx->base))
+>  		return PTR_ERR(pmx->base);
+> -- 
+> 2.7.4
+> 
+> 
+
+/^JN - Jesper Nilsson
 -- 
-2.7.4
-
-
+               Jesper Nilsson -- jesper.nilsson@axis.com
