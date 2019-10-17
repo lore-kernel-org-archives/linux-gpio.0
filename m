@@ -4,26 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A45FA3742
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98A3FA3749
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B256A21835
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F715214E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502931AbfJQMuQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:50:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60540 "EHLO huawei.com"
+        id S2502685AbfJQMso (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Oct 2019 08:48:44 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60332 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502714AbfJQMsx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:53 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AD6FDC47F83DD0B94E51;
-        Thu, 17 Oct 2019 20:48:46 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:36 +0800
+        id S2502681AbfJQMsn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:48:43 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AED7093E256819B6443D;
+        Thu, 17 Oct 2019 20:48:38 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 20:48:29 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -41,9 +42,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 14/30] pinctrl: at91: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:24 +0800
-Message-ID: <20191017122640.22976-15-yuehaibing@huawei.com>
+Subject: [PATCH -next 11/30] pinctrl: msm: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:21 +0800
+Message-ID: <20191017122640.22976-12-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -61,31 +62,23 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-at91.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 117075b..0472f3d 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1811,7 +1811,6 @@ static const struct of_device_id at91_gpio_of_match[] = {
- static int at91_gpio_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct resource *res;
- 	struct at91_gpio_chip *at91_chip = NULL;
- 	struct gpio_chip *chip;
- 	struct pinctrl_gpio_range *range;
-@@ -1839,8 +1838,7 @@ static int at91_gpio_probe(struct platform_device *pdev)
- 		goto err;
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 763da0b..62fcae9 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1150,8 +1150,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 				return PTR_ERR(pctrl->regs[i]);
+ 		}
+ 	} else {
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		pctrl->regs[0] = devm_ioremap_resource(&pdev->dev, res);
++		pctrl->regs[0] = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(pctrl->regs[0]))
+ 			return PTR_ERR(pctrl->regs[0]);
  	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	at91_chip->regbase = devm_ioremap_resource(&pdev->dev, res);
-+	at91_chip->regbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(at91_chip->regbase)) {
- 		ret = PTR_ERR(at91_chip->regbase);
- 		goto err;
 -- 
 2.7.4
 
