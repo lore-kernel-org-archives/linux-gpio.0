@@ -4,27 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD98AFA3736
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64624FA3737
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A468721835
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3913521D7F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502750AbfJQMs6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:48:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4244 "EHLO huawei.com"
+        id S2502818AbfJQMtQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Oct 2019 08:49:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4213 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502730AbfJQMs5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:57 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8F65D54DF1C5E52328C9;
-        Thu, 17 Oct 2019 20:48:53 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:46 +0800
+        id S2502812AbfJQMtP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:49:15 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4030555D330CE5AF0614;
+        Thu, 17 Oct 2019 20:49:12 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 20:49:01 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -42,9 +41,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 18/30] pinctrl: da850-pupd: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:28 +0800
-Message-ID: <20191017122640.22976-19-yuehaibing@huawei.com>
+Subject: [PATCH -next 24/30] pinctrl: digicolor: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:34 +0800
+Message-ID: <20191017122640.22976-25-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -62,29 +61,31 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-da850-pupd.c | 4 +---
+ drivers/pinctrl/pinctrl-digicolor.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-da850-pupd.c b/drivers/pinctrl/pinctrl-da850-pupd.c
-index d06f13a..5a0a1f2 100644
---- a/drivers/pinctrl/pinctrl-da850-pupd.c
-+++ b/drivers/pinctrl/pinctrl-da850-pupd.c
-@@ -146,14 +146,12 @@ static int da850_pupd_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index 7e1ceee..ff702cf 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -270,7 +270,6 @@ static int dc_gpiochip_add(struct dc_pinmap *pmap, struct device_node *np)
+ static int dc_pinctrl_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct da850_pupd_data *data;
--	struct resource *res;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
+ 	struct dc_pinmap *pmap;
+-	struct resource *r;
+ 	struct pinctrl_pin_desc *pins;
+ 	struct pinctrl_desc *pctl_desc;
+ 	char *pin_names;
+@@ -281,8 +280,7 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
+ 	if (!pmap)
  		return -ENOMEM;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->base = devm_ioremap_resource(dev, res);
-+	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base)) {
- 		dev_err(dev, "Could not map resource\n");
- 		return PTR_ERR(data->base);
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pmap->regs = devm_ioremap_resource(&pdev->dev, r);
++	pmap->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pmap->regs))
+ 		return PTR_ERR(pmap->regs);
+ 
 -- 
 2.7.4
 
