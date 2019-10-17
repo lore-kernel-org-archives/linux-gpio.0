@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D6EFA3737
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0302FA3743
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA45320854
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A754220854
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:50:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502559AbfJQMsT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:48:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4241 "EHLO huawei.com"
+        id S2502588AbfJQMsZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Oct 2019 08:48:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4205 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502554AbfJQMsT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:19 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DB37F1BC907B28B1DAF3;
-        Thu, 17 Oct 2019 20:48:15 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:08 +0800
+        id S2502586AbfJQMsZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:48:25 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 244A2DE6D269943AC0B1;
+        Thu, 17 Oct 2019 20:48:23 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 20:48:16 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -42,9 +42,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 03/30] pinctrl: cygnus-mux: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:13 +0800
-Message-ID: <20191017122640.22976-4-yuehaibing@huawei.com>
+Subject: [PATCH -next 06/30] pinctrl: nsp: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:16 +0800
+Message-ID: <20191017122640.22976-7-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -62,39 +62,33 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/bcm/pinctrl-cygnus-mux.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-index dcab220..4344c57 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-@@ -940,7 +940,6 @@ static int cygnus_mux_log_init(struct cygnus_pinctrl *pinctrl)
- static int cygnus_pinmux_probe(struct platform_device *pdev)
- {
- 	struct cygnus_pinctrl *pinctrl;
--	struct resource *res;
- 	int i, ret;
- 	struct pinctrl_pin_desc *pins;
- 	unsigned num_pins = ARRAY_SIZE(cygnus_pins);
-@@ -953,15 +952,13 @@ static int cygnus_pinmux_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 87618a4..3756fc9 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -571,8 +571,7 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
  	platform_set_drvdata(pdev, pinctrl);
  	spin_lock_init(&pinctrl->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
 +	pinctrl->base0 = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pinctrl->base0)) {
- 		dev_err(&pdev->dev, "unable to map I/O space\n");
+ 	if (IS_ERR(pinctrl->base0))
  		return PTR_ERR(pinctrl->base0);
+ 
+@@ -586,8 +585,7 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  	}
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	pinctrl->base1 = devm_ioremap_resource(&pdev->dev, res);
-+	pinctrl->base1 = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(pinctrl->base1)) {
- 		dev_err(&pdev->dev, "unable to map I/O space\n");
- 		return PTR_ERR(pinctrl->base1);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	pinctrl->base2 = devm_ioremap_resource(&pdev->dev, res);
++	pinctrl->base2 = devm_platform_ioremap_resource(pdev, 2);
+ 	if (IS_ERR(pinctrl->base2))
+ 		return PTR_ERR(pinctrl->base2);
+ 
 -- 
 2.7.4
 
