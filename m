@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20803FA373D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A1CFA3735
 	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC2C214E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E8AF21835
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502894AbfJQMtg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2502798AbfJQMtg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 17 Oct 2019 08:49:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33442 "EHLO huawei.com"
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4214 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502853AbfJQMtY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:49:24 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0D1196BE06B500DCD430;
-        Thu, 17 Oct 2019 20:49:22 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:49:11 +0800
+        id S2502816AbfJQMt1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Oct 2019 08:49:27 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0E55BFE9EB7A70E105A5;
+        Thu, 17 Oct 2019 20:49:24 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 20:49:16 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -42,9 +42,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 28/30] pinctrl: actions: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:38 +0800
-Message-ID: <20191017122640.22976-29-yuehaibing@huawei.com>
+Subject: [PATCH -next 30/30] pinctrl: iproc: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:40 +0800
+Message-ID: <20191017122640.22976-31-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -62,31 +62,23 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/actions/pinctrl-owl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-index 5dfe718..5a0c8e8 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.c
-+++ b/drivers/pinctrl/actions/pinctrl-owl.c
-@@ -915,7 +915,6 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
- int owl_pinctrl_probe(struct platform_device *pdev,
- 				struct owl_pinctrl_soc_data *soc_data)
- {
--	struct resource *res;
- 	struct owl_pinctrl *pctrl;
- 	int ret, i;
- 
-@@ -923,8 +922,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
- 	if (!pctrl)
- 		return -ENOMEM;
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index 4d7d908..831a931 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -795,8 +795,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
+ 	chip->dev = dev;
+ 	platform_set_drvdata(pdev, chip);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pctrl->base = devm_ioremap_resource(&pdev->dev, res);
-+	pctrl->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pctrl->base))
- 		return PTR_ERR(pctrl->base);
- 
+-	chip->base = devm_ioremap_resource(dev, res);
++	chip->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(chip->base)) {
+ 		dev_err(dev, "unable to map I/O memory\n");
+ 		return PTR_ERR(chip->base);
 -- 
 2.7.4
 
