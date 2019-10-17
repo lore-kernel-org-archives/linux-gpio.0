@@ -1,119 +1,177 @@
-Return-Path: <SRS0=IWnn=YJ=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=r7H/=YK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE5FA3728
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 23:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BAAFA3728
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 03:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C64421925
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Oct 2019 23:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B9B721925
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Oct 2019 03:11:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="fKdKzNRo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="omb7k96+"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="m7MNOAAR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406101AbfJPXZv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Oct 2019 19:25:51 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:59849 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726595AbfJPXZv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Oct 2019 19:25:51 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E4BBF71D9;
-        Wed, 16 Oct 2019 19:25:49 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 16 Oct 2019 19:25:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=PyvonOcPHFz8rKcmNUUFHGzSVRwDPRH
-        8KZMA87K8oiQ=; b=fKdKzNRokgPjUVrX9f1xJPPL5FlrS4plG8on1QguhO/iuAm
-        Lo5Bj90672xyJdYbVyUa3VgU+Y+2HxL9CkP0vDPDXqrFPk+HkdlPyJ4zBZOv6xbR
-        AC06UzWdsdc6mXOjcwLUnmdpUOsjkr4FOvdCxovZ3hqBTA0w1TGdN2G30G0VO3RL
-        y+DaHnPWZIefPFmx6XBoejbEezNpp+qPUdeq4tbizZE0+K4cemSW7YXaAZ1uQ9J6
-        8Va/knlMgkD3GnObd56nZ5XAmwW1JTMe+VDA8wFrthzeujiwezQhlsCJ5LH0EZHV
-        ajOg3EZJo/sEcpxTujDRiODK+6fjOKw7+beFf4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=PyvonO
-        cPHFz8rKcmNUUFHGzSVRwDPRH8KZMA87K8oiQ=; b=omb7k96+2VHVf6VjCeeafg
-        0siHqz/O6s1Oy7hU2nmQ2wlCw8vd3jsuThXLkkCGtgONeG8jLeNFNxXPzZe7+OKn
-        T/7e/jEO//cUsQpRyq8dul+GAUJ3agO093ZnPtkKuf73btmkch0y6Efs/TIK6gtP
-        kVQZpB24Tnqbs+4tnsWgzLDWBwGCUPly78dIr64T4MDegNqzj2pE8BaAug0Fm8OK
-        bv6VUc/RuGRqXlPU+DPQzz2eLqBkn0NHbCZFSNi670PzweDU9nYRrT+Od8LsXGTL
-        dx07/zq5jEtosWNBfLbr8XI27LOg+bN/6TW0mlO2mGuCSkWtAjN9cFveoc2MyShw
-        ==
-X-ME-Sender: <xms:_aanXUngCArMrXAA7-s9c4Qrm5auYWXdza9M0WOYns1PrME8q-OgOQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrjeeigddvtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:_aanXSOwracCb3LzQKBJVZOovmxxNA0-0f4Zw9_sMVL51RQo6XuC5g>
-    <xmx:_aanXat8h366CpTcUuN8cE1t1VuiwpVN_HSoPB3fEVwg1In-bqXS2w>
-    <xmx:_aanXVw3N8k8rS7lIIEsu9nO1S99HVu_3B09uTkoA1XFM6F3kpdcWQ>
-    <xmx:_aanXTz6edeXMD7h5uZtGS_XNOlxgfyiI49h0Dnq5VCKKbB13GyWCg>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id E351AE00BE; Wed, 16 Oct 2019 19:25:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-360-g7dda896-fmstable-20191004v2
-Mime-Version: 1.0
-Message-Id: <5fc76c3b-4727-4c4b-88a1-59c9618ccb30@www.fastmail.com>
-In-Reply-To: <CACRpkdbmbyNmW8tL_L0agBajomPybXsjn9ix_F5-B3fZnfuW9A@mail.gmail.com>
-References: <20191008044153.12734-1-andrew@aj.id.au>
- <CACRpkda5cWaA7R3XzyiERCCgwUrjnXd+wCBeKvt-wtjex7wNDg@mail.gmail.com>
- <2de90789-c374-4821-89f9-5d5f01e7d2d6@www.fastmail.com>
- <CACRpkdbmbyNmW8tL_L0agBajomPybXsjn9ix_F5-B3fZnfuW9A@mail.gmail.com>
-Date:   Thu, 17 Oct 2019 09:56:45 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Joel Stanley" <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Johnny Huang" <johnny_huang@aspeedtech.com>,
-        "Ryan Chen" <ryanchen.aspeed@gmail.com>
-Subject: Re: [PATCH 0/7] pinctrl: Fixes for AST2600 support
-Content-Type: text/plain
+        id S2407519AbfJQDLC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Oct 2019 23:11:02 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:48890 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733277AbfJQDLB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Oct 2019 23:11:01 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2DC4C891AB;
+        Thu, 17 Oct 2019 16:10:58 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1571281858;
+        bh=RSNYgN3xa7Wn9y39HNKCBoTixs9Vyw+6lp44Vh1/gxU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=m7MNOAARevCrchHDWRurTIPyJPZa82fuDTngXhggE7Lis79i0qwy1kVwTRTYFpOaB
+         kMQgjLKd37/93Ys2iI5BmZ7SpmI20DYGD2W55nFh9dGhK1z1CsZQD+VFbsSm30JLNO
+         hYQj8TRt7dFefXQEQxSxhx893/dmQCkpLFQWgME+Bf5GmO91SAZ1JIP90GYQjbEXqC
+         64CQzEgFLH3c6jdf4lsXH7oDGEB801k1CMKWh/DZdw2k8wW07CRRXNPkk6mvlo4x6Q
+         mIn7d6XK1fjlMhvyZRlhIdEAOk5rHwhEO0RbGLiK4ToWU57vuS6OKBkEcIBoQJsssT
+         yWdOGw7qSHkOQ==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5da7dbc20001>; Thu, 17 Oct 2019 16:10:58 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 1BC8D13EEB6;
+        Thu, 17 Oct 2019 16:11:02 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 08B05280059; Thu, 17 Oct 2019 16:10:58 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 1/2] dt-bindings: gpio: brcm: Add bindings for xgs-iproc
+Date:   Thu, 17 Oct 2019 16:10:50 +1300
+Message-Id: <20191017031051.20366-2-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191017031051.20366-1-chris.packham@alliedtelesis.co.nz>
+References: <20191017031051.20366-1-chris.packham@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+This GPIO controller is present on a number of Broadcom switch ASICs
+with integrated SoCs. It is similar to the nsp-gpio and iproc-gpio
+blocks but different enough to require a separate driver.
 
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-On Thu, 17 Oct 2019, at 00:30, Linus Walleij wrote:
-> On Wed, Oct 16, 2019 at 1:42 PM Andrew Jeffery <andrew@aj.id.au> wrote:
-> 
-> > I was hoping to get them into the 5.4 fixes branch: I consider them all fixes
-> 
-> OK I moved them all to fixes.
+Notes:
+    Changes in v2:
+    - Document as DT schema
+    - Include ngpios, #gpio-cells and gpio-controller properties
 
-Thanks.
+ .../bindings/gpio/brcm,xgs-iproc.yaml         | 83 +++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc=
+.yaml
 
-> 
-> > > I need a shortlist of anything that should go into v5.4 if anything.
-> >
-> > IMO all of them should go into 5.4, as above.
-> 
-> OK
-> 
-> >  It's there something I can do in the future to communicate this better?
-> 
-> Nah it is a complicated process, things need to be done manually
-> at times, overly obsessing with process is counterproductive.
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml b=
+/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml
+new file mode 100644
+index 000000000000..71998551209e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/brcm,xgs-iproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom XGS iProc GPIO controller
++
++maintainers:
++  - Chris Packham <chris.packham@alliedtelesis.co.nz>
++
++description: |
++  This controller is the Chip Common A GPIO present on a number of Broad=
+com
++  switch ASICs with integrated SoCs.
++
++properties:
++  compatible:
++    enum:
++      - brcm,iproc-gpio-cca
++
++  reg:
++    minItems: 2
++    maxItems: 2
++    description:
++      The first region defines the base I/O address containing
++      the GPIO controller registers. The second region defines
++      the I/O address containing the Chip Common A interrupt
++      registers.
++
++  gpio-controller: true
++
++  '#gpio-cells':
++      const: 2
++
++  ngpios:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 32
++
++  interrupt-controller:
++    type: boolean
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-controller
++
++allOf:
++ - if:
++     properties:
++       interrupt-controller:
++         contains:
++           const: true
++   then:
++     required:
++       - interrupts
++       - '#interrupt-cells'
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    gpio@18000060 {
++        compatible =3D "brcm,iproc-gpio-cca";
++        #gpio-cells =3D <2>;
++        reg =3D <0x18000060 0x50>,
++              <0x18000000 0x50>;
++        ngpios =3D <12>;
++        gpio-controller;
++        interrupt-controller;
++        #interrupt-cells =3D <2>;
++        interrupts =3D <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++    };
++
++
++...
+--=20
+2.23.0
 
-No worries, happy to carry on as is.
-
-Andrew
