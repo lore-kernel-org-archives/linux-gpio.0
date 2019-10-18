@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36675CA9EA0
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Oct 2019 22:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F33CA9EA9
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Oct 2019 22:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02083222C2
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Oct 2019 22:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3FD32246A
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Oct 2019 22:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571436830;
-	bh=/tDzpcVlYPUykGvZzZFMA0ytYIsAYipqOHOn2ds+2O4=;
+	s=default; t=1571436955;
+	bh=5IFpmLN3JhJf8ksQjkcKwGvyr/g/pPEKDHGq8xP3mCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P8yGsTvrFkA7ADuV7j0Dm4f9gwFF+C6doiI1LedwlWPShwCfikcMnWIGGXm0qePkz
-	 rfPcyjJOXPM1biBTX4lPBKVXRijrdFwYsn31m4RkoTtCqFJpBny/kw9IOa7PzyrvUM
-	 /9ZeUQH8T6BOqh2tdmnFI3jl8Oi1Isw5V+LqhdaA=
+	b=ghFbEEDdCEn48gKJ6mjkMYAixZ3HNBohhZXPlQzg2hxoj8SRulXBifdxByq0XoArd
+	 LPjiAVsNzinEOSqQ3mlLbID/SdPvUPcZs/NIWmVFxwNiCL1zW2fVX/EJXLwDqWKKBU
+	 BYOipH2CGlVW9BMAAslhjUQnsrptrkbTJLPueldE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403845AbfJRWNl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Oct 2019 18:13:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42394 "EHLO mail.kernel.org"
+        id S1727646AbfJRWPq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Oct 2019 18:15:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389221AbfJRWJq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:09:46 -0400
+        id S2388182AbfJRWIs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:08:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9BAD22474;
-        Fri, 18 Oct 2019 22:09:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56F9C2245D;
+        Fri, 18 Oct 2019 22:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436585;
-        bh=/tDzpcVlYPUykGvZzZFMA0ytYIsAYipqOHOn2ds+2O4=;
+        s=default; t=1571436528;
+        bh=5IFpmLN3JhJf8ksQjkcKwGvyr/g/pPEKDHGq8xP3mCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pFHBFobVg0uoCj9+/VX5o8ZWZARumiN993iT/1HLlhABtlAm1zL8gB1sgPYx3jyi5
-         drZbMtqlGhFhRmDtCyuVvbNd+qCIN+bE8asCfnnkTmUWU9nDs4Vnj4IeOIdz/mBhAm
-         e0hdzMrHZ9JGCS/VKPzw9NHZfJzpBGJl/ygrHypE=
+        b=gKO0VqrvB3UfYKARiQd6tGtgNONCfyDJp69nOiryubCogJhN9qSu7FHE/RsoAq4tF
+         37ehvCNBRw6sgE6RuS5xHVJJWoOE6vkgfpBb+pyGWei05Q0g7Dh7zKxmqchw+WExsY
+         MrIAFpVMkxD42DezC0O5rsfKujbjL0nEjsgr3pIY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Thierry Reding <treding@nvidia.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 14/29] gpio: max77620: Use correct unit for debounce times
-Date:   Fri, 18 Oct 2019 18:09:05 -0400
-Message-Id: <20191018220920.10545-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 34/56] gpio: max77620: Use correct unit for debounce times
+Date:   Fri, 18 Oct 2019 18:07:31 -0400
+Message-Id: <20191018220753.10002-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018220920.10545-1-sashal@kernel.org>
-References: <20191018220920.10545-1-sashal@kernel.org>
+In-Reply-To: <20191018220753.10002-1-sashal@kernel.org>
+References: <20191018220753.10002-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index b46b436cb97fe..4fe0be5aa2945 100644
+index 538bce4b5b427..ac6c1c0548b69 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -167,13 +167,13 @@ static int max77620_gpio_set_debounce(struct gpio_chip *gc,
+@@ -163,13 +163,13 @@ static int max77620_gpio_set_debounce(struct max77620_gpio *mgpio,
  	case 0:
  		val = MAX77620_CNFG_GPIO_DBNC_None;
  		break;
