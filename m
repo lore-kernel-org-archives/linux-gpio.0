@@ -1,274 +1,153 @@
-Return-Path: <SRS0=EKNF=YM=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=p9R3=YN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D568CA9EAB
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Oct 2019 16:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2236CA9EA0
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Oct 2019 14:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346A620869
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Oct 2019 16:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A713921897
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Oct 2019 14:43:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xldzWlYe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLEni6ab"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfJSQFV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 19 Oct 2019 12:05:21 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33924 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfJSQFV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Oct 2019 12:05:21 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k7so4371300pll.1
-        for <linux-gpio@vger.kernel.org>; Sat, 19 Oct 2019 09:05:20 -0700 (PDT)
+        id S1726426AbfJTOnt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 20 Oct 2019 10:43:49 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44288 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726390AbfJTOnt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Oct 2019 10:43:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e10so6047218pgd.11
+        for <linux-gpio@vger.kernel.org>; Sun, 20 Oct 2019 07:43:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=if4J4OgwfiN0nuHNDveKFrieOk+JvNfoIIbUEv3+cXc=;
-        b=xldzWlYehnsHSzax+Grwy/OCfGyxfdF8CbYr7b5ajVBIXZjHn6/qNlENK/bDIMTjOv
-         cbURxz6Jm1NBffNfDppnKGHp+ZYngR70NwwOXubKE028F4xXO+Yl76sPnermpnzdFFzc
-         VAixnrTLSu+hOsxu26ni+2ZUnna9z1JbPN1jCb/0i6C/kS835njSSP2H92Z7qewxkOre
-         mJB2vZ8lzOxEz/5t6fLjK8z98+1taapj+2e+z8+sLIYw+/VxQiu6Za/Z9wOXLbQsLblp
-         gWnybt9VK1UdBx3eHz7x0iV0qsEhsFN2pU/pys2rACoNFcT8MluntRujrQjYkDIISG25
-         i3yQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Zn993W+tz15EU+ukFNn5G4Vxb6wOfPnjiHrwIVw9ew=;
+        b=HLEni6ab825ZtsPPNBKPYraDr5IYfiJJDtLRd/9yTxXCrXnBUfs2uPEpLjCLb3GBE/
+         1g3U8OtPbLFsAw5hUMHDxAlsIfGpkryqs9mWw4tnYutOscoFZUW5K7QJ1Lti0gKQw/qn
+         TGKR/cquTutihGVRMokqlMSoINu5Pg5eQnrdcYks8u7miSNmqpjOJ+8sJ3hyT2TBRJs+
+         xA+BW6AnyqmY930qEYiwQXDLO25Qtx//9jrD8kj1BXu4C+fmCK5EeqkIogm4AAdaCpKq
+         8H4Q+1gtMaH3qVigysns0Nc6vK2QkcT6sU2cS+bPtyPNc/2qhqk7ppO6NChDQ06L1EGl
+         iYdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=if4J4OgwfiN0nuHNDveKFrieOk+JvNfoIIbUEv3+cXc=;
-        b=modH4EmqkcsRYvZzNi5WtEkrA030CbB8icHFjyO5/GWFk4VFpx6o3+eroY27yGjOW+
-         F3c1HDzOvj7UYTAFuMyJ3luM3jvU9Z8cozhY59tkSUrJQa1oLIlePB64p+o3MdnNookE
-         sex7xnVvMijB2AM4u9cD+POjh2J3Z4sleWpQ8ZOy20DuEe1x1XY68PYFT3dU0M0eKQ0R
-         N86/el45B95nOcwaUyqjCWlpW4aZ/7D0kcULj5AF5lpk9/XhdwLnt3vu8OMZulA8GM08
-         8SI/Z/cPNGBq/C9gwYvLTGYN2KlgL+4yddIw0eIG/bnZ0SrL9GauUb8BVB+D14ALD3pV
-         EnAg==
-X-Gm-Message-State: APjAAAV+zaX/wxRZcbZj9brjx4v6tJABtyqgUxJTgvn3O4HTIEhby066
-        iEXQ9DrcANdMp1MIOPFskuR3
-X-Google-Smtp-Source: APXvYqzxTyoVM/nCPhOi4590sHGLCt9a7zfWKZa1YFUHhDMOloiiBNQLsoPqoinoRGsW+JQAVUD7gg==
-X-Received: by 2002:a17:902:aa41:: with SMTP id c1mr10283530plr.153.1571501119997;
-        Sat, 19 Oct 2019 09:05:19 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:1f:c4d3:81c6:faf1:b3a2:6750])
-        by smtp.gmail.com with ESMTPSA id m19sm8557620pjl.28.2019.10.19.09.05.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 19 Oct 2019 09:05:19 -0700 (PDT)
-Date:   Sat, 19 Oct 2019 21:35:13 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-unisoc@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>
-Subject: Re: [PATCH v2 3/4] gpio: Add RDA Micro GPIO controller support
-Message-ID: <20191019160513.GA17631@Mani-XPS-13-9360>
-References: <20191015173026.9962-1-manivannan.sadhasivam@linaro.org>
- <20191015173026.9962-4-manivannan.sadhasivam@linaro.org>
- <CACRpkdZRY138RAf8N2xGam89r66ik2vW44OZx0bDcCt4P2GBLA@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Zn993W+tz15EU+ukFNn5G4Vxb6wOfPnjiHrwIVw9ew=;
+        b=svPvwCSK+VtW4lMUzil8rWRf7zpAi4Ad0GO2f7HVoTcLoHeyIY9wqXMiHMLm1S33tq
+         x419op3wHEf9Yrp8xh/4RUKNrXo/wRczXTQmOlBaBe71Q3V6/jiKQkflHrEOcOPMbG55
+         qRU4faPTu0tWMToMojOyrCcrWC7gI4QsWngFkuuCbD7K/nxqZ53GX/A4ORgoecqgU+AT
+         CnyKACgBKVhHvWzzmXux75jvPAOb4AvaP23ZYx7PjlRgXvi021n6ire9/7T67O7OTJam
+         QAp0OfCpIqm9XXVR0BVWpAJhmj7mBCR4cjdwsmKyyTtbkDAskFiBHKugi/tB6V/VfmmE
+         FPTg==
+X-Gm-Message-State: APjAAAVLlwOB4Orh8+Fa7sKG48M/Z1NGaxP8Ea5dwJJBSKXcjKmS8lJ6
+        eZKsum1NRyfETliyfr0uKpT0x2cSqAp+hw==
+X-Google-Smtp-Source: APXvYqyS27TERnyZt+5F9TSS3kUXo/YWsAz/j+9PgQqREcwJIOf47FLqbntphtcnxc/NIfX/gWxEmQ==
+X-Received: by 2002:a65:6203:: with SMTP id d3mr3570848pgv.272.1571582627740;
+        Sun, 20 Oct 2019 07:43:47 -0700 (PDT)
+Received: from sol.lan (220-235-109-115.dyn.iinet.net.au. [220.235.109.115])
+        by smtp.gmail.com with ESMTPSA id w14sm14671842pge.56.2019.10.20.07.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2019 07:43:47 -0700 (PDT)
+From:   Kent Gibson <warthog618@gmail.com>
+To:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
+        linus.walleij@linaro.org, bamv2005@gmail.com
+Cc:     drew@pdp7.com, Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH v3 0/5] gpio: expose line bias flags to userspace
+Date:   Sun, 20 Oct 2019 22:42:33 +0800
+Message-Id: <20191020144238.14080-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZRY138RAf8N2xGam89r66ik2vW44OZx0bDcCt4P2GBLA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The major change from v2 is the change to three separate flags rather 
+than encoding four possible values into a two bit field.
 
-Thanks for the review! Please see comments inline.
+I expect more work is required.  While I was initially satisfied with the 
+patch, I have noticed a few deficiencies that I'm uncertain on how to 
+best resolve:
 
-On Wed, Oct 16, 2019 at 02:41:32PM +0200, Linus Walleij wrote:
-> Hi Manivannan!
-> 
-> Thanks for your patch!
-> 
-> On Tue, Oct 15, 2019 at 7:30 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> > Add support for GPIO controller from RDA Micro.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Please use a little bit more verbose commit message, who
-> made this hardware and what is it for. If you know!
-> 
+There is no sanity checking on bias flag combinations, they are passed 
+through unaltered to the pinctrl driver.  I'd add sanity checks, but I'm 
+unsure which combinations are invalid.
 
-okay.
+The setting of bias is performed by gpio_set_bias, which is hooked into 
+gpiod_direction_input and gpiod_direction_output.  It extends the setting
+of bias that was already present in gpiod_direction_input.
+In keeping with the existing behaviour, the bias is set on a best-effort
+basis - no error is returned to the user if an error is returned by the
+pinctrl driver.  Returning an error makes sense to me, particularly for 
+the uAPI, but that conflicts with the existing gpiod_direction_input
+behaviour. So leave as best-effort, change gpiod_direction_input 
+behaviour, or restructure to support both behaviours?
 
-> > +config GPIO_RDA
-> > +       bool "RDA Micro GPIO controller support"
-> > +       depends on ARCH_RDA || COMPILE_TEST
-> > +       depends on OF_GPIO
-> > +       select GPIOLIB_IRQCHIP
-> 
-> select GPIO_GENERIC
-> 
+Also, the gpio_set_bias is hooked into gpiod_direction_output, which is 
+fine for the uAPI, but perhaps it should be hooked into 
+gpiod_direction_output_raw_commit?  Or the setting of direction 
+and bias should be decoupled?
 
-hmm.. I don't think this driver can use it. Please see the justification
-below.
+And now the actual blurb...
 
-> > +#include <linux/bitops.h>
-> 
-> Do you need this or just <linux/bits.h>?
-> 
+This series adds gross control of pull-up/pull-down to the GPIO uAPI.
+Gross control means enabling and disabling of bias functionality,
+not finer grained control such as setting biasing impedances.
 
-I need this for for_each_set_bit() macro.
+The support allows both input and output lines to have any one of the
+following biases applied as part of the line handle or event request:
+ 0. As Is - bias is left alone.  This is the default for ABI compatibility.
+ 1. Bias Disable - bias is explicitly disabled.
+ 2. Pull Down - pull-down bias is enabled.
+ 3. Pull Up - pull-up bias is enabled.
 
-> > +#define RDA_GPIO_OEN_VAL               0x00
-> > +#define RDA_GPIO_OEN_SET_OUT           0x04
-> > +#define RDA_GPIO_OEN_SET_IN            0x08
-> > +#define RDA_GPIO_VAL                   0x0c
-> > +#define RDA_GPIO_SET                   0x10
-> > +#define RDA_GPIO_CLR                   0x14
-> > +#define RDA_GPIO_INT_CTRL_SET          0x18
-> > +#define RDA_GPIO_INT_CTRL_CLR          0x1c
-> > +#define RDA_GPIO_INT_CLR               0x20
-> > +#define RDA_GPIO_INT_STATUS            0x24
-> 
-> This is a very clear cut MMIO GPIO so use GPIO_GENERIC with this
-> hardware.
-> 
+The biases are set via three flags, BIAS_DISABLE, BIAS_PULL_DOWN
+and BIAS_PULL_UP.  These map directly to the similarly named 
+pinctrl pin_config_param flags.
+As Is corresponds to none of the flags being set.
 
-So, I'd be happy to use gpio-mmio driver if applicable. In fact, I looked into
-that while starting to write this driver since most of the `set*` APIs are
-like dups. But one thing which blocked me was, `gpio_get` API.
+The setting of biases on output lines may seem odd, but is to allow for
+utilisation of internal pull-up/pull-down on open drain and open source
+outputs, where supported in hardware.
 
-As you can see in this driver, there are 2 separate registers needs to be
-read in order to get the value. RDA_GPIO_VAL needs to be read when the pin
-is in input state and RDA_GPIO_SET needs to be read when the pin is in output
-state.
+Patches are against Bart's gpio/for-next branch[1].
 
-The MMIO driver relies on a single `dat` register to read the GPIO state and
-this won't fit for this driver and hence my justification for not using it.
+The patch has been successfully tested against gpio-mockup, and 
+on a Raspberry Pi, in both cases using the feature/pud branch of my Go 
+gpiod library[2], as libgpiod still requires updating to match.
 
-> > +static void rda_gpio_update(struct gpio_chip *chip, unsigned int offset,
-> > +                           u16 reg, int val)
-> 
-> Maybe keep this if it saves code from the IRQ callbacks,
-> inline it to register writes if it doesn't get called much.
-> 
+Patch 1 adds support to line handle requests.
+Patch 2 adds support to line event requests and restricts bias settings 
+to lines explicitly requested as inputs.
+Patch 3 adds pull-up/down support to the gpio-mockup for uAPI testing.
+Patch 4 adds support for disabling bias.
+Patch 5 adds support for setting bias on output lines.
 
-It is being called from multiple places, so I'd like to keep it as a normal
-function.
+Drew Fustini (1):
+  gpio: expose pull-up/pull-down line flags to userspace
 
-> > +static int rda_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-> > +static int rda_gpio_direction_output(struct gpio_chip *chip,
-> > +                                    unsigned int offset, int value)
-> > +static int rda_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> > +static void rda_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-> 
-> This can all be replaces by select GPIO_GENERIC and passing
-> the right offsets into bgpio_init(). Look at for example
-> gpio-ftgpio010.c and the documentation for bgpio_init()
-> in gpio-mmio.c for help.
-> 
-> This will also implement get/set_multiple for you for
-> free!
-> 
-> > +static void rda_gpio_irq_mask(struct irq_data *data)
-> > +static void rda_gpio_irq_ack(struct irq_data *data)
-> 
-> Looks good
-> 
-> > +static int rda_gpio_set_irq(struct gpio_chip *chip, u32 offset,
-> > +                           unsigned int flow_type)
-> 
-> Maybe _setup_irq()? Not sure, just that the name doesn't
-> obviously imply how it is used as it is called from two
-> places.
-> 
+Kent Gibson (4):
+  gpiolib: add support for pull up/down to lineevent_create
+  gpio: mockup: add set_config to support pull up/down
+  gpiolib: add support for disabling line bias
+  gpiolib: add support for bias output lines
 
-Well, this routine sets the irq_type. But it has multiple usecase.
-Like, it is being used to unmask as irq and also to set irq type.
-So to be in a equillibrium state, I went for rda_gpio_set_irq().
+ drivers/gpio/gpio-mockup.c | 94 ++++++++++++++++++++++++--------------
+ drivers/gpio/gpiolib.c     | 65 +++++++++++++++++++++++---
+ drivers/gpio/gpiolib.h     |  1 +
+ include/uapi/linux/gpio.h  |  6 +++
+ 4 files changed, 126 insertions(+), 40 deletions(-)
 
-> The rest of the IRQ code looks good!
-> 
-> > +static int rda_gpio_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device_node *np = pdev->dev.of_node;
-> > +       struct gpio_irq_chip *irq_chip;
-> 
-> Since irq_chip is the name of a struct in the kernel I usually
-> just call this "girq" as in "GPIO irq chip".
-> 
+-- 
+2.23.0
 
-Ah, a name change again... will do ;-)
-
-> > +       struct rda_gpio *rda_gpio;
-> > +       u32 ngpios;
-> > +       int ret;
-> 
-> Create a struct device *dev = &pdev->dev; helper variable
-> to make the following code easier to read. (The pointer
-> &pdev->dev is used in many places...)
-> 
-
-okay.
-
-> > +       /*
-> > +        * Not all ports have interrupt capability. For instance, on
-> > +        * RDA8810PL, GPIOC doesn't support interrupt. So we must handle
-> > +        * those also.
-> > +        */
-> > +       rda_gpio->irq = platform_get_irq(pdev, 0);
-> > +
-> > +       rda_gpio->base = devm_platform_ioremap_resource(pdev, 0);
-> > +       if (IS_ERR(rda_gpio->base))
-> > +               return PTR_ERR(rda_gpio->base);
-> > +
-> > +       spin_lock_init(&rda_gpio->lock);
-> > +
-> > +       rda_gpio->chip.label = dev_name(&pdev->dev);
-> > +       rda_gpio->chip.ngpio = ngpios;
-> > +       rda_gpio->chip.base = -1;
-> > +       rda_gpio->chip.parent = &pdev->dev;
-> > +       rda_gpio->chip.of_node = np;
-> > +       rda_gpio->chip.get = rda_gpio_get;
-> > +       rda_gpio->chip.set = rda_gpio_set;
-> > +       rda_gpio->chip.direction_input = rda_gpio_direction_input;
-> > +       rda_gpio->chip.direction_output = rda_gpio_direction_output;
-> > +
-> > +       if (rda_gpio->irq >= 0) {
-> > +               rda_gpio->irq_chip.name = "rda-gpio",
-> > +               rda_gpio->irq_chip.irq_ack = rda_gpio_irq_ack,
-> > +               rda_gpio->irq_chip.irq_mask = rda_gpio_irq_mask,
-> > +               rda_gpio->irq_chip.irq_unmask = rda_gpio_irq_unmask,
-> > +               rda_gpio->irq_chip.irq_set_type = rda_gpio_irq_set_type,
-> > +               rda_gpio->irq_chip.flags = IRQCHIP_SKIP_SET_WAKE,
-> > +
-> > +               irq_chip = &rda_gpio->chip.irq;
-> > +               irq_chip->chip = &rda_gpio->irq_chip;
-> > +               irq_chip->handler = handle_bad_irq;
-> > +               irq_chip->default_type = IRQ_TYPE_NONE;
-> > +               irq_chip->parent_handler = rda_gpio_irq_handler;
-> > +               irq_chip->parent_handler_data = rda_gpio;
-> > +               irq_chip->num_parents = 1;
-> > +               irq_chip->parents = &rda_gpio->irq;
-> 
-> That works but ... please devm_kzalloc() like the other drivers
-> do:
-> 
-> girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
->                                      GFP_KERNEL);
->         if (!girq->parents) {
->                 ret = -ENOMEM;
-> (...)
-> 
-> Unless you have a real good reason to optimize it. I just
-> want it to follow the pattern since I want to minimize
-> cognitive stress for the maintainers. (Me.)
-> 
-
-no issues for me, will do.
-
-Thanks,
-Mani
-
-> Yours,
-> Linus Walleij
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
+[2] https://github.com/warthog618/gpiod.git
