@@ -2,99 +2,150 @@ Return-Path: <SRS0=75sK=YP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12578CA9EB7
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 03:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A076CCA9EA0
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D14214B2
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 03:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716E120679
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gw5pYitu"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DZOLMbbW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbfJVDLZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Oct 2019 23:11:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43660 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730662AbfJVDLZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Oct 2019 23:11:25 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l24so4109993pgh.10
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Oct 2019 20:11:24 -0700 (PDT)
+        id S2388522AbfJVInc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Oct 2019 04:43:32 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55229 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388571AbfJVInc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Oct 2019 04:43:32 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so16197057wmp.4
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2019 01:43:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PIlmvXzQARRZSFQcj9hlQ++qeOiYHuF/aGs6hLa1i4g=;
-        b=gw5pYitu7VtFW8vNRWT/RXk3nHiCyZjqmVr0esL4JUt9xcYxfjVxwrbvbWNSRTO1gm
-         arsRhXxudFCQ9dH+qXVK9dblii5OGKs1497U2gBTVSM3FnHfhKabGWSzVA3iJoUOpw8L
-         /yNurWUNxTmQkTKzaamPJwcCUT5vb0bBC9OVYh8SnloWe5EEh2vahGJySrP6ZZ8l47eT
-         jgHY3TaNPtLTeO5GlnMVXpNdkJ2khsvlJ24j3qysfQHZ5xfVnjxkpjdgLIjYsftSaIu1
-         tagzwVJFgCwa9+9G0Q7jS1URMPi8lS4x4wcIQ67MNRVKrJsnAV9y1QpYbtB1SAaKxN/1
-         Rlvg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pZPH7ezKf53/QBMw5BxZ096M4gSklQo/Sa/IUAzrHtk=;
+        b=DZOLMbbWoSzuUITLHQgA1LWlfomVlIuZYFkL4f0ogePF721BvXMWzLC2KLDfCOSMQX
+         07qFmvF+kn0YAlG6RYk54w1luE8PD5W0RYri3EiHp5bTYkyVhJ/Q7Jkj/wKdw4aThGAC
+         cmQcYzemSHsXxF3hRvUxQfcK5wUKBhs9k6nH5HzR52D4XagKAErSiPqZ/kD/hYgmKuUJ
+         /3RoAMML78OadDGsiF8BJ5Ffme8j8U6folglUeM8rYqVDSOhqgHh3giHvm1gkMHYuV1x
+         XOGkVfQVH2+2wD0Lt9k5UwwIO3hbpBNUy2t5KD9eib2RwqmJHf7wY6dAaNT+29bbBe/2
+         wQ1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PIlmvXzQARRZSFQcj9hlQ++qeOiYHuF/aGs6hLa1i4g=;
-        b=In2eVDABAO7L75WOXvoIkucFWdB+0YU05/JnLGAsI5mY6moqK/Lezyf/ZfxlgZAX+w
-         4heC0QY5QSpTEx37tcvBdqUnuUGnyLtGeenBxXacWj624YkzPCHWhu9ulwdtKSuUWzwW
-         UAijUpjO0t1+r3fkDD9JRN/HUzJzQ9+JWulcmj5Ngy3IuqQYT8rZRVbSwjlyvWteJT/i
-         aaL15/Osfhj/cstumi6bYeKlC9TJ8Mx0BqrFoxhSeSX2O4aMs3VZUA5X7WpskIgVM+qc
-         5mP4qJkhLwIApEOXjdOJYLRKTGwDXkJG9/aBvwEaICfbOJf5QHcVfLsn30NRlOxf/qVv
-         JCTg==
-X-Gm-Message-State: APjAAAXc7dmo+798TGx1i0eStGdRn3GhlIPTl6V0xt/PugkHhWLpTY8K
-        Kdn1wDujhh6Bbv/wf/Yx2LQ=
-X-Google-Smtp-Source: APXvYqzgy7m5BMtqq4nwc/spVAK4pWq89Ei7FsdHZagpJyQ68ehBp1dDKiocL0lp0MaJ2vxUhVpivw==
-X-Received: by 2002:a17:90a:d347:: with SMTP id i7mr1797310pjx.30.1571713883963;
-        Mon, 21 Oct 2019 20:11:23 -0700 (PDT)
-Received: from sol (220-235-109-115.dyn.iinet.net.au. [220.235.109.115])
-        by smtp.gmail.com with ESMTPSA id m13sm16189310pgi.22.2019.10.21.20.11.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 20:11:23 -0700 (PDT)
-Date:   Tue, 22 Oct 2019 11:11:17 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Drew Fustini <drew@pdp7.com>
-Subject: Re: [PATCH v2 5/6] gpiolib: disable bias on inputs when pull up/down
- are both set
-Message-ID: <20191022031117.GA11438@sol>
-References: <20191014130425.GC28012@sol>
- <CAMRc=Md75GmWhi+KBtVTeLJ=efB6cDr8dxsEbZ2A6vc4z6LAwA@mail.gmail.com>
- <20191015005849.GA7970@sol>
- <CAMRc=Mf-NVGFjLOgYwtmBvyZ5pu3E0NmGZ91t4aAYZLe8w8rJQ@mail.gmail.com>
- <20191016010104.GA8083@sol>
- <20191017050647.GA21551@sol>
- <CAMRc=Mdc4yVHP=LGgdujW8FbETadM1jFMeARBP-531Yoo-un-w@mail.gmail.com>
- <20191018101306.GB16347@sol>
- <CAMRc=Md8CH-YTcDGhF7ODZTLO0hvE47XhaHFsXEe4ebcM-28uQ@mail.gmail.com>
- <20191021231456.GA3374@sol>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pZPH7ezKf53/QBMw5BxZ096M4gSklQo/Sa/IUAzrHtk=;
+        b=S2PNXdxnpIaLKECDGYRDdvSFn2QttC/VsD2/h8wkf4MKRl7GVnU5Yj1j1v3vpR6h5W
+         IabdJN5pRkAbnFcC4xWVAeE9znKmYuEiITdKlq7zxN+xldDwuhkzjHOMcpBVHs/tlf8I
+         vi1w5UlLXugSmY161RA4o3QAmtmRAE9IbRTqUqwODot/YQ26tPppXnetqTs7TgtGsvZ9
+         rX7Hoy4zFEJIo7tDF3t+YXYIGMXrllYKwsCWQ4ocJ5FT0wn6nMK+HF/+VmVfT+0xucw4
+         c9YqKLGcuhJChkhukkJRMyL85wWadOy3IDYCfZLcMkieMGhJZMydV5KkgR5w7Bh+ERXn
+         UtPA==
+X-Gm-Message-State: APjAAAVgnzgO3FMEHFwODrUi5UnV1QA1fJA6CctLMw9mM3pdPXdl+3m4
+        w54HNymvKnpeq1cES2hFhamPPQ==
+X-Google-Smtp-Source: APXvYqypXQIXucGUA5pJLdWx/haak2b2SxfPC52Zaw+ESaa0qFsAO8OKx29Ka6dpUstCBehaWxg85w==
+X-Received: by 2002:a1c:4e:: with SMTP id 75mr1981857wma.104.1571733809364;
+        Tue, 22 Oct 2019 01:43:29 -0700 (PDT)
+Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
+        by smtp.gmail.com with ESMTPSA id q25sm477231wra.3.2019.10.22.01.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2019 01:43:28 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [RESEND PATCH v3 6/8] drivers: provide devm_platform_ioremap_resource_byname()
+Date:   Tue, 22 Oct 2019 10:43:16 +0200
+Message-Id: <20191022084318.22256-7-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191022084318.22256-1-brgl@bgdev.pl>
+References: <20191022084318.22256-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021231456.GA3374@sol>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 07:14:56AM +0800, Kent Gibson wrote:
-> 
-> The updated C and CXX tests pass. The one problem I have is getting 
-> the Python tests running - they can't import gpiomockup, though I've
-> built and installed everything.  Not sure what I'm missing there.
-> 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Sorted - the python bindings get installed into site-packages, but
-Debian/Ubuntu doesn't look there, so needed to manually set my
-PYTHONPATH. 
-The extended Python tests are now passing against v3 as well.
+Provide a variant of devm_platform_ioremap_resource() that allows to
+lookup resources from platform devices by name rather than by index.
 
-Cheers,
-Kent.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../driver-api/driver-model/devres.rst        |  1 +
+ drivers/base/platform.c                       | 20 +++++++++++++++++++
+ include/linux/platform_device.h               |  3 +++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
+index 480b78ca3871..4ab193319d8c 100644
+--- a/Documentation/driver-api/driver-model/devres.rst
++++ b/Documentation/driver-api/driver-model/devres.rst
+@@ -319,6 +319,7 @@ IOMAP
+   devm_ioremap_resource_wc()
+   devm_platform_ioremap_resource() : calls devm_ioremap_resource() for platform device
+   devm_platform_ioremap_resource_wc()
++  devm_platform_ioremap_resource_byname()
+   devm_iounmap()
+   pcim_iomap()
+   pcim_iomap_regions()	: do request_region() and iomap() on multiple BARs
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 177010c27516..5cdd72a9e186 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -95,6 +95,26 @@ void __iomem *devm_platform_ioremap_resource_wc(struct platform_device *pdev,
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+ 	return devm_ioremap_resource_wc(&pdev->dev, res);
+ }
++
++/**
++ * devm_platform_ioremap_resource_byname - call devm_ioremap_resource for
++ *					   a platform device, retrieve the
++ *					   resource by name
++ *
++ * @pdev: platform device to use both for memory resource lookup as well as
++ *	  resource management
++ * @name: name of the resource
++ */
++void __iomem *
++devm_platform_ioremap_resource_byname(struct platform_device *pdev,
++				      const char *name)
++{
++	struct resource *res;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
++	return devm_ioremap_resource(&pdev->dev, res);
++}
++EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+ #endif /* CONFIG_HAS_IOMEM */
+ 
+ static int __platform_get_irq(struct platform_device *dev, unsigned int num)
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 74cecb919e5c..43fe441a98ea 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -60,6 +60,9 @@ devm_platform_ioremap_resource(struct platform_device *pdev,
+ extern void __iomem *
+ devm_platform_ioremap_resource_wc(struct platform_device *pdev,
+ 				  unsigned int index);
++extern void __iomem *
++devm_platform_ioremap_resource_byname(struct platform_device *pdev,
++				      const char *name);
+ extern int platform_get_irq(struct platform_device *, unsigned int);
+ extern int platform_get_irq_optional(struct platform_device *, unsigned int);
+ extern int platform_irq_count(struct platform_device *);
+-- 
+2.23.0
+
