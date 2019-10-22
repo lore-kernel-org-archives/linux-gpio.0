@@ -4,31 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12843CA9EB7
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA99CA9EB9
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AD6206C2
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D1A206C2
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732555AbfJVR32 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Oct 2019 13:29:28 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50509 "EHLO mga17.intel.com"
+        id S2388383AbfJVR3c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Oct 2019 13:29:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29854 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfJVR32 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 22 Oct 2019 13:29:28 -0400
+        id S2388135AbfJVR3b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 22 Oct 2019 13:29:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:27 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:31 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
-   d="scan'208";a="281360689"
+   d="scan'208";a="203706927"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 22 Oct 2019 10:29:24 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Oct 2019 10:29:28 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id EE4F83AB; Tue, 22 Oct 2019 20:29:23 +0300 (EEST)
+        id 30E7E47A; Tue, 22 Oct 2019 20:29:24 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -39,9 +40,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         William Breathitt Gray <vilhelm.gray@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 04/11] lib/test_bitmap: Rename exp to exp1 to avoid ambiguous name
-Date:   Tue, 22 Oct 2019 20:29:15 +0300
-Message-Id: <20191022172922.61232-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 09/11] gpio: pca953x: Use input from regs structure in pca953x_irq_pending()
+Date:   Tue, 22 Oct 2019 20:29:20 +0300
+Message-Id: <20191022172922.61232-10-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
 References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
@@ -52,96 +53,27 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-One function is using exp as local variable.
-Avoid ambiguous naming by rename global one to exp1.
+While PCA_PCAL is defined for PCA953X type only, we still may use
+an offset of the input from regs structure for sake of consistency.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- lib/test_bitmap.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index 38f923411ada..6b70166ac960 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -247,7 +247,7 @@ struct test_bitmap_parselist{
- 	const int flags;
- };
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 5eee66269a0c..7a57304b5c31 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -686,7 +686,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
+ 			return false;
  
--static const unsigned long exp[] __initconst = {
-+static const unsigned long exp1[] __initconst = {
- 	BITMAP_FROM_U64(1),
- 	BITMAP_FROM_U64(2),
- 	BITMAP_FROM_U64(0x0000ffff),
-@@ -271,29 +271,29 @@ static const unsigned long exp2[] __initconst = {
- static const struct test_bitmap_parselist parselist_tests[] __initconst = {
- #define step (sizeof(u64) / sizeof(unsigned long))
+ 		/* Check latched inputs and clear interrupt status */
+-		ret = pca953x_read_regs(chip, PCA953X_INPUT, cur_stat);
++		ret = pca953x_read_regs(chip, chip->regs->input, cur_stat);
+ 		if (ret)
+ 			return false;
  
--	{0, "0",			&exp[0], 8, 0},
--	{0, "1",			&exp[1 * step], 8, 0},
--	{0, "0-15",			&exp[2 * step], 32, 0},
--	{0, "16-31",			&exp[3 * step], 32, 0},
--	{0, "0-31:1/2",			&exp[4 * step], 32, 0},
--	{0, "1-31:1/2",			&exp[5 * step], 32, 0},
--	{0, "0-31:1/4",			&exp[6 * step], 32, 0},
--	{0, "1-31:1/4",			&exp[7 * step], 32, 0},
--	{0, "0-31:4/4",			&exp[8 * step], 32, 0},
--	{0, "1-31:4/4",			&exp[9 * step], 32, 0},
--	{0, "0-31:1/4,32-63:2/4",	&exp[10 * step], 64, 0},
--	{0, "0-31:3/4,32-63:4/4",	&exp[11 * step], 64, 0},
--	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp[11 * step], 64, 0},
-+	{0, "0",			&exp1[0], 8, 0},
-+	{0, "1",			&exp1[1 * step], 8, 0},
-+	{0, "0-15",			&exp1[2 * step], 32, 0},
-+	{0, "16-31",			&exp1[3 * step], 32, 0},
-+	{0, "0-31:1/2",			&exp1[4 * step], 32, 0},
-+	{0, "1-31:1/2",			&exp1[5 * step], 32, 0},
-+	{0, "0-31:1/4",			&exp1[6 * step], 32, 0},
-+	{0, "1-31:1/4",			&exp1[7 * step], 32, 0},
-+	{0, "0-31:4/4",			&exp1[8 * step], 32, 0},
-+	{0, "1-31:4/4",			&exp1[9 * step], 32, 0},
-+	{0, "0-31:1/4,32-63:2/4",	&exp1[10 * step], 64, 0},
-+	{0, "0-31:3/4,32-63:4/4",	&exp1[11 * step], 64, 0},
-+	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp1[11 * step], 64, 0},
- 
- 	{0, "0-31:1/4,32-63:2/4,64-95:3/4,96-127:4/4",	exp2, 128, 0},
- 
- 	{0, "0-2047:128/256", NULL, 2048, PARSE_TIME},
- 
--	{0, "",				&exp[12 * step], 8, 0},
--	{0, "\n",			&exp[12 * step], 8, 0},
--	{0, ",,  ,,  , ,  ,",		&exp[12 * step], 8, 0},
--	{0, " ,  ,,  , ,   ",		&exp[12 * step], 8, 0},
--	{0, " ,  ,,  , ,   \n",		&exp[12 * step], 8, 0},
-+	{0, "",				&exp1[12 * step], 8, 0},
-+	{0, "\n",			&exp1[12 * step], 8, 0},
-+	{0, ",,  ,,  , ,  ,",		&exp1[12 * step], 8, 0},
-+	{0, " ,  ,,  , ,   ",		&exp1[12 * step], 8, 0},
-+	{0, " ,  ,,  , ,   \n",		&exp1[12 * step], 8, 0},
- 
- 	{-EINVAL, "-1",	NULL, 8, 0},
- 	{-EINVAL, "-0",	NULL, 8, 0},
-@@ -374,7 +374,7 @@ static void __init test_bitmap_parselist_user(void)
- 	__test_bitmap_parselist(1);
- }
- 
--#define EXP1_IN_BITS	(sizeof(exp) * 8)
-+#define EXP1_IN_BITS	(sizeof(exp1) * 8)
- 
- static void __init test_bitmap_arr32(void)
- {
-@@ -385,9 +385,9 @@ static void __init test_bitmap_arr32(void)
- 	memset(arr, 0xa5, sizeof(arr));
- 
- 	for (nbits = 0; nbits < EXP1_IN_BITS; ++nbits) {
--		bitmap_to_arr32(arr, exp, nbits);
-+		bitmap_to_arr32(arr, exp1, nbits);
- 		bitmap_from_arr32(bmap2, arr, nbits);
--		expect_eq_bitmap(bmap2, exp, nbits);
-+		expect_eq_bitmap(bmap2, exp1, nbits);
- 
- 		next_bit = find_next_bit(bmap2,
- 				round_up(nbits, BITS_PER_LONG), nbits);
 -- 
 2.23.0
 
