@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE313CA9EB9
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193D8CA9EA0
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46F821929
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D3121906
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 08:44:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="N+EZgZF8"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Msg6F/Gx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388618AbfJVInw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Oct 2019 04:43:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35520 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388518AbfJVIn3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Oct 2019 04:43:29 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 14so8631201wmu.0
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2019 01:43:29 -0700 (PDT)
+        id S2388042AbfJVIoC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Oct 2019 04:44:02 -0400
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:39062 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388166AbfJVIn1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Oct 2019 04:43:27 -0400
+Received: by mail-wm1-f42.google.com with SMTP id r141so5696756wme.4
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2019 01:43:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lF0rxmNWyqU1JeqNwoctp95mlhu+5uGfp5ZbeCzqTpo=;
-        b=N+EZgZF8RQP5/8GqOnG3JYNlg3vedBnTgEWesw5+MnrBsb0HMrss3o+obg9jmM3hi+
-         JXazfzwRpHztMHjSymlPadeAkotn0I5y3bD6/akHpBFxgp6o1iJXM+FpZLaAn1IM4a6X
-         7KpyUpaSPIr64+24miNqMyZfyxQqt8PHIEGs+mUOU2sH6WwGrQ8qDsfacOCHGeAOXTsd
-         TVlF5wpAyHuWshufzjRmJDYHwkzTvwy9aCn/Luazg9uhP5T0WpXn6OfTB7+biPvzpbxV
-         nlSRtGDKaZROzrEelkFmzhrr6K+OnBDzB2ZWHbl0BemOjuAyLkdrf1z3w/a8T4a8aNPl
-         zhgA==
+        bh=A4wzsYdI/UBS/hDiEwuJ9S9NtfpinD6pNSX/pGZnoi0=;
+        b=Msg6F/GxlqK4EM7T+PrzjdhF/JFDQ4NXZ1hU5I/y5yZ/4dJFfBBnblwHelqpqcUYOd
+         PFBHVXpVlIk3IWP5+/fsBS4wkO7+b/nxCT0E6ltu1iy3MJi/G79dZ8YkP0Ny2nWzC1Tp
+         Qb4VIkmH878+v2cOTA3Swa1fepWES/rHu9kBiBcREYPwPwvkkp7dNFXKsWeaW6X3MR0k
+         Dlr5CrZZL5jCYnIT3kV+8O+ZCycLlH6RnxhihfZ0qTf8MRRm1kxBeVzi9JmdAc5DYGum
+         cMW+IwnfT6kUt3FIKQsRgp1nuGUccEmIgcpaW7VKKq4s4uP5B+YHi3DHFQiqewmRENNR
+         oAEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lF0rxmNWyqU1JeqNwoctp95mlhu+5uGfp5ZbeCzqTpo=;
-        b=DOxMpX8tyz+mHh5nUB/6os7v9OgyISD+AUDA4lUQEZrLLiTPRgI/D11TZK+gmajvlV
-         5CNVSFY4i5ZYEbF1f01pjH9UzXLhdG0gdFZwvGMKrFOijGsUYb4Ud9Ao6bJLpkTJl1Xi
-         J8tDRdQdTYPkeRfxMZjfkL5g6yV/zcoCrRtb6Xqh8ghpFDfalflnDz53k6m0Cdwzw/i0
-         DC2JUZRYMYPXgQQlTnAcZ3FA6TvaFhNuFaTTqunV0SICloDuk4nzzpVxwSHw5pswkyEo
-         u+uiwGiSv+d2HqWVm/nMcRSvKhxgLM+GBYyUqsjLa6sIUXlOCOiZnVjCJoKLVVjf1Zdd
-         XjRw==
-X-Gm-Message-State: APjAAAXzJTDEur4cb/oxbWS6+1TMf56SVuBhuwXykMWdUl2skEXdeyVH
-        5bDvseHw4DNA5ywcuojpdMBckg==
-X-Google-Smtp-Source: APXvYqztDYYsnFdiDGD+fiyY6ct9bi/pTDXqTQExcOzyynd+wJCuOrmecP003ynHnveZyqfhkGb9ng==
-X-Received: by 2002:a1c:7e57:: with SMTP id z84mr1960221wmc.84.1571733808309;
-        Tue, 22 Oct 2019 01:43:28 -0700 (PDT)
+        bh=A4wzsYdI/UBS/hDiEwuJ9S9NtfpinD6pNSX/pGZnoi0=;
+        b=GBcvw9PfapUN+ygZPJySsH1FVZuY0rqkJSxDNCr2/tk6yWwwcd7lur0HsUarNPcZ0m
+         A9Ve/AlH3OE46B5u30U2nH+gVi5lWPyCcLE+PNIIB1HJMdM0CX34UE9DdXhO6oB1Gwjb
+         HSnErHeIrqEkhKxDiiDgHh99Cja8a8Xz/hXW8VmfWuYQq4fnCj2nnLkymkFR/9aXE6l2
+         i96qQ1satcce4gjErh52IViUyvDzrLgXSO18XTjqzCatUP+ahq5j9sNxJK458WiYtvB6
+         PNW9pt08BqhM7deDrTDsGrHxt+QlNn049VJilhO0gXSpFyzt5ikS59mL/oXk38Dx40s0
+         fiAw==
+X-Gm-Message-State: APjAAAW7i1Q3pA9vfBxekyj2UOddQViVggLeQ6GBscKmg748yO82Dutt
+        lsOcxyESgen+4KUPvY6ZfZXDPw==
+X-Google-Smtp-Source: APXvYqz1TkesZOhWeSBN/HwWQwxqaB7FjLPheJGtDtKbbjD4OSgqbrYOeUQBZVOE7iQrQzDyw6Xf4g==
+X-Received: by 2002:a1c:2c88:: with SMTP id s130mr2007920wms.66.1571733804304;
+        Tue, 22 Oct 2019 01:43:24 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id q25sm477231wra.3.2019.10.22.01.43.27
+        by smtp.gmail.com with ESMTPSA id q25sm477231wra.3.2019.10.22.01.43.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2019 01:43:27 -0700 (PDT)
+        Tue, 22 Oct 2019 01:43:23 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -63,9 +63,9 @@ To:     Jonathan Corbet <corbet@lwn.net>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v3 5/8] misc: sram: use devm_platform_ioremap_resource_wc()
-Date:   Tue, 22 Oct 2019 10:43:15 +0200
-Message-Id: <20191022084318.22256-6-brgl@bgdev.pl>
+Subject: [RESEND PATCH v3 1/8] Documentation: devres: add missing entry for devm_platform_ioremap_resource()
+Date:   Tue, 22 Oct 2019 10:43:11 +0200
+Message-Id: <20191022084318.22256-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191022084318.22256-1-brgl@bgdev.pl>
 References: <20191022084318.22256-1-brgl@bgdev.pl>
@@ -78,71 +78,27 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Use the new devm_platform_ioremap_resource_wc() helper instead of
-devm_ioremap_wc() combinded with a call to platform_get_resource().
-Also use devm_platform_ioremap_resource() where applicable.
+devm_platform_ioremap_resource() should be documented in devres.rst.
+Add the missing entry.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/misc/sram.c | 28 ++++++++--------------------
- 1 file changed, 8 insertions(+), 20 deletions(-)
+ Documentation/driver-api/driver-model/devres.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
-index f30448bf3a63..6c1a23cb3e8c 100644
---- a/drivers/misc/sram.c
-+++ b/drivers/misc/sram.c
-@@ -340,8 +340,6 @@ static const struct of_device_id sram_dt_ids[] = {
- static int sram_probe(struct platform_device *pdev)
- {
- 	struct sram_dev *sram;
--	struct resource *res;
--	size_t size;
- 	int ret;
- 	int (*init_func)(void);
- 
-@@ -351,25 +349,14 @@ static int sram_probe(struct platform_device *pdev)
- 
- 	sram->dev = &pdev->dev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(sram->dev, "found no memory resource\n");
--		return -EINVAL;
--	}
--
--	size = resource_size(res);
--
--	if (!devm_request_mem_region(sram->dev, res->start, size, pdev->name)) {
--		dev_err(sram->dev, "could not request region for resource\n");
--		return -EBUSY;
--	}
--
- 	if (of_property_read_bool(pdev->dev.of_node, "no-memory-wc"))
--		sram->virt_base = devm_ioremap(sram->dev, res->start, size);
-+		sram->virt_base = devm_platform_ioremap_resource(pdev, 0);
- 	else
--		sram->virt_base = devm_ioremap_wc(sram->dev, res->start, size);
--	if (!sram->virt_base)
--		return -ENOMEM;
-+		sram->virt_base = devm_platform_ioremap_resource_wc(pdev, 0);
-+	if (IS_ERR(sram->virt_base)) {
-+		dev_err(&pdev->dev, "could not map SRAM registers\n");
-+		return PTR_ERR(sram->virt_base);
-+	}
- 
- 	sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
- 					  NUMA_NO_NODE, NULL);
-@@ -382,7 +369,8 @@ static int sram_probe(struct platform_device *pdev)
- 	else
- 		clk_prepare_enable(sram->clk);
- 
--	ret = sram_reserve_regions(sram, res);
-+	ret = sram_reserve_regions(sram,
-+			platform_get_resource(pdev, IORESOURCE_MEM, 0));
- 	if (ret)
- 		goto err_disable_clk;
- 
+diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
+index a100bef54952..8e3087662daf 100644
+--- a/Documentation/driver-api/driver-model/devres.rst
++++ b/Documentation/driver-api/driver-model/devres.rst
+@@ -316,6 +316,7 @@ IOMAP
+   devm_ioremap_nocache()
+   devm_ioremap_wc()
+   devm_ioremap_resource() : checks resource, requests memory region, ioremaps
++  devm_platform_ioremap_resource() : calls devm_ioremap_resource() for platform device
+   devm_iounmap()
+   pcim_iomap()
+   pcim_iomap_regions()	: do request_region() and iomap() on multiple BARs
 -- 
 2.23.0
 
