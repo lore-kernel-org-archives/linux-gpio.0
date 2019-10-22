@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC56CA9EB7
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FE0CA9EBA
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E04206C2
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B118206C2
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Oct 2019 17:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388688AbfJVR3k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Oct 2019 13:29:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:35678 "EHLO mga18.intel.com"
+        id S2388205AbfJVR3a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Oct 2019 13:29:30 -0400
+Received: from mga05.intel.com ([192.55.52.43]:52034 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388216AbfJVR3a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S2388135AbfJVR3a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 22 Oct 2019 13:29:30 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:30 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Oct 2019 10:29:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,217,1569308400"; 
-   d="scan'208";a="209761690"
+   d="scan'208";a="209721741"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 22 Oct 2019 10:29:27 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 22 Oct 2019 10:29:27 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 29040410; Tue, 22 Oct 2019 20:29:24 +0300 (EEST)
+        id 0F7423F2; Tue, 22 Oct 2019 20:29:24 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -39,9 +39,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         William Breathitt Gray <vilhelm.gray@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 08/11] gpio: pca953x: Remove redundant variable and check in IRQ handler
-Date:   Tue, 22 Oct 2019 20:29:19 +0300
-Message-Id: <20191022172922.61232-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 06/11] lib/test_bitmap: Fix comment about this file
+Date:   Tue, 22 Oct 2019 20:29:17 +0300
+Message-Id: <20191022172922.61232-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
 References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
@@ -52,40 +52,25 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We always will have at least one iteration of the loop due to
-pending being guaranteed to be non-zero. That is, we may remove
-extra variable and check in the IRQ handler.
+This test case file is about bitmap API, and not printf() facility.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/test_bitmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 10b669b8f27d..5eee66269a0c 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -740,7 +740,6 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
- 	struct pca953x_chip *chip = devid;
- 	u8 pending[MAX_BANK];
- 	u8 level;
--	unsigned nhandled = 0;
- 	int i;
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index 449d0882b488..4544847cf81e 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Test cases for printf facility.
++ * Test cases for bitmap API.
+  */
  
- 	if (!pca953x_irq_pending(chip, pending))
-@@ -752,11 +751,10 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
- 			handle_nested_irq(irq_find_mapping(chip->gpio_chip.irq.domain,
- 							level + (BANK_SZ * i)));
- 			pending[i] &= ~(1 << level);
--			nhandled++;
- 		}
- 	}
- 
--	return (nhandled > 0) ? IRQ_HANDLED : IRQ_NONE;
-+	return IRQ_HANDLED;
- }
- 
- static int pca953x_irq_setup(struct pca953x_chip *chip,
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 -- 
 2.23.0
 
