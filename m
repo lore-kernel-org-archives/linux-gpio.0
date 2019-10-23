@@ -2,72 +2,86 @@ Return-Path: <SRS0=f4Yc=YQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7BACA9EB6
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 13:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AD4CA9EB6
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 14:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC922173B
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 13:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70B721906
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 14:10:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2NK+E0j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389786AbfJWNcH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:32:07 -0400
-Received: from mga17.intel.com ([192.55.52.151]:6610 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389224AbfJWNcH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:32:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 06:32:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,221,1569308400"; 
-   d="scan'208";a="349394460"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2019 06:32:05 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8FB9B1CC; Wed, 23 Oct 2019 16:32:04 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] pinctrl: cherryview: Fix spelling mistake in the comment
-Date:   Wed, 23 Oct 2019 16:32:03 +0300
-Message-Id: <20191023133203.61681-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
+        id S1733186AbfJWOKx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Oct 2019 10:10:53 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:34203 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732167AbfJWOKw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2019 10:10:52 -0400
+Received: by mail-vs1-f66.google.com with SMTP id d3so13878151vsr.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Oct 2019 07:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fG37TgkjRgodwOFImG22RhwIkrCCrAzjQbxW8lk57aA=;
+        b=D2NK+E0jUEC6S8U5LXxwgNzVFeiIChH36mUSdgsJZx4/1Q0yUsGFQ91kDxfv6nmUdo
+         d73pvbw5WW0VT366SU5S69b9U1t/ZLipm/28Q5/rXMHI3/fuMNLkJwXwQFb8iJvGBbTp
+         olEDcFDWzo9IU8jfTj7YpKqO9uSrNl8b8wFkuHZh0nfE73ZGxqA+Smbbav8zQh4iUY+6
+         jWGV2W3ThEDm0sRQunB/wKmyPNdiZLPvXGPL1nEp0en1JoDwjSOihiN0fl5YYT+GM5wQ
+         5G1Njjcy+15KJjhQ80PzwazP1lK8UnlMulZozbwZM3Crn+yZ5OPbifcFN8T90x+mfgO1
+         0+NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fG37TgkjRgodwOFImG22RhwIkrCCrAzjQbxW8lk57aA=;
+        b=d4vfHhrQ+0aFvxSvBAbzgHH/1WDlYhG57nEaG5O/COzcIl1/821yfW11H3DgeXlHKE
+         v2FCQy+Hn4fXF7L5wnJ3p64kcgfBKNiFUcUGTQdG0FPb1/y0S6Mk6285J23lbMB7MwkV
+         urQG8k7oqEoPupGoiLne0XUkUrSEtcfyjD/tZ47bAqJWBWlCCYJIaPFPZ7ZyVPqjDhEo
+         Ebo3B3Vsmv6IwFIEG0iubvdDwvQHSHbsuGP4JXcdOUPdgV7a9Epue+lsz/XcuBdhk1Qn
+         whA1x+AneLI+dizBYCevVOhLq2ZneRpDdXU4+RMTcq6+wvlsdhIoqRnF3GECnjp2hLBb
+         engA==
+X-Gm-Message-State: APjAAAUMr6JrGtK5Ba+vzQE7ZuPy9TDZA9bhUINd/XMeVPoRdnBc38oH
+        2arwVzvXcg/tnD1SipyN+NIN8D1DTfTXV2oOr5xhZg==
+X-Google-Smtp-Source: APXvYqyBN27XhVntB3JqKmKsl042MmlixEPkG6vgrf/n1wSvy5PQikVfBPMGE09acfAUnJ/mSqYDFU/nehFejtIl/LE=
+X-Received: by 2002:a67:7944:: with SMTP id u65mr5866520vsc.10.1571839851606;
+ Wed, 23 Oct 2019 07:10:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20191022172922.61232-1-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 23 Oct 2019 16:10:40 +0200
+Message-ID: <CACRpkdYdfaLBgw=dGAK+xyhX3ru9SYa+QPNyAWJD4Y=BbfxUKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] gpio: pca953x: Convert to bitmap (extended) API
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Yury Norov <yury.norov@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-One spelling mistake is being fixed: benerate -> generate.
-It is a complimentary fix to the commit 505485a83c55 ("pinctrl:
-cherryview fixed typo in comment").
+On Tue, Oct 22, 2019 at 7:29 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> While converting gpio-pca953x driver to bitmap API, I noticed that we have
+> no function to replace bits.
+>
+> So, that's how patch 7 appears.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index c31266e70559..5af6b20f7334 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -377,7 +377,7 @@ static const struct chv_community southwest_community = {
- 	.gpio_ranges = southwest_gpio_ranges,
- 	.ngpio_ranges = ARRAY_SIZE(southwest_gpio_ranges),
- 	/*
--	 * Southwest community can benerate GPIO interrupts only for the
-+	 * Southwest community can generate GPIO interrupts only for the
- 	 * first 8 interrupts. The upper half (8-15) can only be used to
- 	 * trigger GPEs.
- 	 */
--- 
-2.23.0
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Nice, I see that Andrew picked up the patches so no action required
+from my side I guess? Else poke me.
+
+Yours,
+Linus Walleij
