@@ -2,32 +2,32 @@ Return-Path: <SRS0=f4Yc=YQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BC7CA9EBD
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A721CA9EBC
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F3F21872
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04B4E21906
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391341AbfJWMaA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S2391343AbfJWMaA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 23 Oct 2019 08:30:00 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:37370 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391336AbfJWMaA (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:46774 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388042AbfJWMaA (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2019 08:30:00 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id H0Vy2100b05gfCL060VysK; Wed, 23 Oct 2019 14:29:58 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id H0Vy2100b05gfCL010Vyd5; Wed, 23 Oct 2019 14:29:58 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFm2-0000pA-KE; Wed, 23 Oct 2019 14:29:58 +0200
+        id 1iNFm2-0000oy-Hw; Wed, 23 Oct 2019 14:29:58 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFm2-0003FE-JD; Wed, 23 Oct 2019 14:29:58 +0200
+        id 1iNFm2-0003F6-Gb; Wed, 23 Oct 2019 14:29:58 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -36,144 +36,62 @@ Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] pinctrl: sh-pfc: r8a7796: Add R8A77961 PFC support
-Date:   Wed, 23 Oct 2019 14:29:55 +0200
-Message-Id: <20191023122955.12420-4-geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] pinctrl: sh-pfc: Add r8a77961 support
+Date:   Wed, 23 Oct 2019 14:29:52 +0200
+Message-Id: <20191023122955.12420-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023122955.12420-1-geert+renesas@glider.be>
-References: <20191023122955.12420-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the Pin Function Controller in the R-Car M3-W+
-(R8A77961) SoC.
+	Hi all,
 
-R-Car M3-W+ is pin compatible with R-Car M3-W (R8A77960), which allows
-for both SoCs to share a driver.
+This patch series adds support for the Pin Function Controller in the
+Renesas R-Car M3-W+ (R8A77961) SoC.  As R-Car M3-W+ is very similar to
+R-Car M3-W (R8A77960), the existing driver for R-Car M3-W is updated to
+handle both.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-v2:
+To avoid confusion between R-Car M3-W and M3-W+, the existing config
+symbol for M3-W is renamed to PINCTRL_PFC_R8A77960 in a dependency-free
+way, and references to r8a7796 are updated.
+
+Changes compared to v1[1]:
+  - Split in per-subsystem series,
   - Add Reviewed-by, Tested-by,
-  - Move r8a7796_pinmux_info rename to a prerequisite patch.
----
- drivers/pinctrl/sh-pfc/Kconfig       |  4 ++++
- drivers/pinctrl/sh-pfc/Makefile      |  1 +
- drivers/pinctrl/sh-pfc/core.c        |  6 ++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 29 +++++++++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/sh_pfc.h      |  1 +
- 5 files changed, 40 insertions(+), 1 deletion(-)
+  - Rename PINCTRL_PFC_R8A7796,
+  - Update r8a7796 references,
 
-diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
-index 93d6034be4ff63f2..28d66e7cb098863b 100644
---- a/drivers/pinctrl/sh-pfc/Kconfig
-+++ b/drivers/pinctrl/sh-pfc/Kconfig
-@@ -28,6 +28,7 @@ config PINCTRL_SH_PFC
- 	select PINCTRL_PFC_R8A7794 if ARCH_R8A7794
- 	select PINCTRL_PFC_R8A7795 if ARCH_R8A7795
- 	select PINCTRL_PFC_R8A77960 if ARCH_R8A77960 || ARCH_R8A7796
-+	select PINCTRL_PFC_R8A77961 if ARCH_R8A77961
- 	select PINCTRL_PFC_R8A77965 if ARCH_R8A77965
- 	select PINCTRL_PFC_R8A77970 if ARCH_R8A77970
- 	select PINCTRL_PFC_R8A77980 if ARCH_R8A77980
-@@ -120,6 +121,9 @@ config PINCTRL_PFC_R8A7795
- config PINCTRL_PFC_R8A77960
- 	bool "R-Car M3-W pin control support" if COMPILE_TEST
- 
-+config PINCTRL_PFC_R8A77961
-+	bool "R-Car M3-W+ pin control support" if COMPILE_TEST
-+
- config PINCTRL_PFC_R8A77965
- 	bool "R-Car M3-N pin control support" if COMPILE_TEST
- 
-diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
-index e3594cd2620386af..3bc05666e1a6652e 100644
---- a/drivers/pinctrl/sh-pfc/Makefile
-+++ b/drivers/pinctrl/sh-pfc/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_PINCTRL_PFC_R8A7794)	+= pfc-r8a7794.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7795)	+= pfc-r8a7795.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7795)	+= pfc-r8a7795-es1.o
- obj-$(CONFIG_PINCTRL_PFC_R8A77960)	+= pfc-r8a7796.o
-+obj-$(CONFIG_PINCTRL_PFC_R8A77961)	+= pfc-r8a7796.o
- obj-$(CONFIG_PINCTRL_PFC_R8A77965)	+= pfc-r8a77965.o
- obj-$(CONFIG_PINCTRL_PFC_R8A77970)	+= pfc-r8a77970.o
- obj-$(CONFIG_PINCTRL_PFC_R8A77980)	+= pfc-r8a77980.o
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index e3292abd6c9456f8..2959623e9b724f40 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -591,6 +591,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
- 		.data = &r8a77960_pinmux_info,
- 	},
- #endif
-+#ifdef CONFIG_PINCTRL_PFC_R8A77961
-+	{
-+		.compatible = "renesas,pfc-r8a77961",
-+		.data = &r8a77961_pinmux_info,
-+	},
-+#endif
- #ifdef CONFIG_PINCTRL_PFC_R8A77965
- 	{
- 		.compatible = "renesas,pfc-r8a77965",
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 9de2909c7ad9dff0..a2496baca85d23f8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * R8A7796 processor support - PFC hardware block.
-+ * R8A7796 (R-Car M3-W/W+) support - PFC hardware block.
-  *
-  * Copyright (C) 2016-2019 Renesas Electronics Corp.
-  *
-@@ -6236,3 +6236,30 @@ const struct sh_pfc_soc_info r8a77960_pinmux_info = {
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
- #endif
-+
-+#ifdef CONFIG_PINCTRL_PFC_R8A77961
-+const struct sh_pfc_soc_info r8a77961_pinmux_info = {
-+	.name = "r8a77961_pfc",
-+	.ops = &r8a7796_pinmux_ops,
-+	.unlock_reg = 0xe6060000, /* PMMR */
-+
-+	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
-+
-+	.pins = pinmux_pins,
-+	.nr_pins = ARRAY_SIZE(pinmux_pins),
-+	.groups = pinmux_groups.common,
-+	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
-+		ARRAY_SIZE(pinmux_groups.automotive),
-+	.functions = pinmux_functions.common,
-+	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
-+		ARRAY_SIZE(pinmux_functions.automotive),
-+
-+	.cfg_regs = pinmux_config_regs,
-+	.drive_regs = pinmux_drive_regs,
-+	.bias_regs = pinmux_bias_regs,
-+	.ioctrl_regs = pinmux_ioctrl_regs,
-+
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
-+};
-+#endif
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index a7eb527fdc60ae25..640d2a4cb838804f 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -321,6 +321,7 @@ extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7795_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7795es1_pinmux_info;
- extern const struct sh_pfc_soc_info r8a77960_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a77961_pinmux_info;
- extern const struct sh_pfc_soc_info r8a77965_pinmux_info;
- extern const struct sh_pfc_soc_info r8a77970_pinmux_info;
- extern const struct sh_pfc_soc_info r8a77980_pinmux_info;
+I intend to queue this series in sh-pfc-for-v5.5.
+
+Thanks for your comments!
+
+[1] "[PATCH/RFC 00/19] arm64: dts: renesas: Initial support for R-Car M3-W+"
+    https://lore.kernel.org/linux-renesas-soc/20191007102332.12196-1-geert+renesas@glider.be/
+
+Geert Uytterhoeven (3):
+  dt-bindings: pinctrl: sh-pfc: Document r8a77961 support
+  pinctrl: sh-pfc: Rename PINCTRL_PFC_R8A7796 to PINCTRL_PFC_R8A77960
+  pinctrl: sh-pfc: r8a7796: Add R8A77961 PFC support
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt  |  3 +-
+ drivers/pinctrl/sh-pfc/Kconfig                |  8 +++--
+ drivers/pinctrl/sh-pfc/Makefile               |  3 +-
+ drivers/pinctrl/sh-pfc/core.c                 | 10 ++++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c          | 33 +++++++++++++++++--
+ drivers/pinctrl/sh-pfc/sh_pfc.h               |  3 +-
+ 6 files changed, 50 insertions(+), 10 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
