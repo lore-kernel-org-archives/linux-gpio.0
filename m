@@ -2,88 +2,62 @@ Return-Path: <SRS0=SOgY=YR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0FFCA9EBD
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2543DCA9EAF
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 08:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B04120684
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:48:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="MEGIZDU8"
+	by mail.kernel.org (Postfix) with ESMTP id EE2DA20684
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 08:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406158AbfJXAsV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Oct 2019 20:48:21 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58339 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405491AbfJXAsU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2019 20:48:20 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id DDCB4806A8;
-        Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1571878097;
-        bh=bWxQWGDdDIXjwP+uossCQGN3ASh7mBW21CgA8eHWdRI=;
-        h=From:To:Cc:Subject:Date;
-        b=MEGIZDU8xWNROqowDzvJuQ2tZSo2JvBwRhtEBrgzQP90+fvOQ/WLZaG0DX0JC878D
-         9/uF4Uhd273Lziay1j7WIroL649J7acYj8+j4nkf1CQ27vvuBYE8a49EKqzc2/wWUR
-         pGaK3cuM7kW6ZKOH1kx+U2C54HXmxi0TnT+Mpmn60wO/QXKCQj5XE6NFFjKqgBLcum
-         2V1W8ryLlfetrkz8MeenGFn4JUlX8xS066EidXqAeaG4OpIA64VpTUE0xb90r6KPlV
-         cKesx9lTOBu2krlzuTr12O2uv35PcziR/8TKIiZ2/h0QhRcwf6seusf2m8UJdvqwSZ
-         iBvxH1aJ6ZLkg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5db0f4d10000>; Thu, 24 Oct 2019 13:48:17 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id CEC6E13ED56;
-        Thu, 24 Oct 2019 13:48:21 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 9DE4428005C; Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
-        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3 0/2] gpio: brcm: XGS iProc GPIO driver
-Date:   Thu, 24 Oct 2019 13:48:13 +1300
-Message-Id: <20191024004816.5539-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.23.0
+        id S2438009AbfJXIHR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Oct 2019 04:07:17 -0400
+Received: from mga01.intel.com ([192.55.52.88]:2177 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfJXIHR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 24 Oct 2019 04:07:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2019 01:07:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,224,1569308400"; 
+   d="scan'208";a="210101915"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 24 Oct 2019 01:07:14 -0700
+Received: by lahna (sSMTP sendmail emulation); Thu, 24 Oct 2019 11:07:13 +0300
+Date:   Thu, 24 Oct 2019 11:07:13 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1] pinctrl: cherryview: Fix spelling mistake in the
+ comment
+Message-ID: <20191024080713.GO2819@lahna.fi.intel.com>
+References: <20191023133203.61681-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191023133203.61681-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is ported this from Broadcom's XLDK (now heavily modified). There se=
-em to
-be 3 different IP blocks for 3 separate banks of GPIOs in the iProc chips=
-.
+On Wed, Oct 23, 2019 at 04:32:03PM +0300, Andy Shevchenko wrote:
+> One spelling mistake is being fixed: benerate -> generate.
+> It is a complimentary fix to the commit 505485a83c55 ("pinctrl:
+> cherryview fixed typo in comment").
+> 
+> Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
 
-I've dropped everything except support for the Chip Common A GPIO
-controller because the other blocks actually seem to be supportable with
-other drivers. The driver itself is halfway between pinctrl-nsp-gpio.c
-and pinctrl-iproc-gpio.c.
+I don't think fixes tag is needed for trivial typo fixes like this.
 
-Chris Packham (2):
-  dt-bindings: gpio: brcm: Add bindings for xgs-iproc
-  gpio: Add xgs-iproc driver
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
- .../bindings/gpio/brcm,xgs-iproc.yaml         |  70 ++++
- drivers/gpio/Kconfig                          |   9 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-xgs-iproc.c                 | 321 ++++++++++++++++++
- 4 files changed, 401 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc=
-.yaml
- create mode 100644 drivers/gpio/gpio-xgs-iproc.c
-
---=20
-2.23.0
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
