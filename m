@@ -2,101 +2,167 @@ Return-Path: <SRS0=SOgY=YR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B254CA9EB9
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4BACA9EB9
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA8F2053B
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37C8320856
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Oct 2019 00:48:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="AGwSn3nb"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="o8wsuhOq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392822AbfJXAYg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Oct 2019 20:24:36 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41239 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392153AbfJXAYg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2019 20:24:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p4so23965028wrm.8
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Oct 2019 17:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=Ep0ySInQEZmIC0e8w0ranwBVwwdkzK/aUPZVCBsTEgk=;
-        b=AGwSn3nbDilpUFIl70XzbTXP3c9wEpRmNaqH+JFTsFDgwGtci8jJAr3zG1voGrfYEB
-         OnkKJytmXl9YdBAXzgEfPA8wdxMwdqee9CaxhNs0hL8f0z4jcWw/osoYVOaIoLwsuAm5
-         H4npvnRHqrBAKTgT8RVFinFiiXAM579vJY6zBJvVRz8WyJy5YqsKBDEBxxn7tHGH7ALd
-         bz841uosbx90cPH3fvup/NcOaX7i0x/F39XABmrORpvOUvbrBDIUiNNpRK0SPDZ3Bg1r
-         gAmoL+tCtDkkEp7Pslf5PUBV1MoqQmuXZh8VDOHKutqFuP0woNHW20XC3GZ+Ll3VB93o
-         +D6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=Ep0ySInQEZmIC0e8w0ranwBVwwdkzK/aUPZVCBsTEgk=;
-        b=pOdORyjEUlsuhF85szBPYy5Xrll0oR9TcFosRxwuMYL6yjHgTLqzofFP/vA5b+tB7z
-         Q3lTx0rp/mMKuH47r41MhxznVtI+CNSbwbAFkU3kcqRyMjKyXa9soMsIY6qIsdJ25LLk
-         eJ22+5zgRxERvfCqguMQJ4d2vemnPDMDUb23i/22ZE58xOI/np8lX7v+BGZv7obQAW9S
-         NvNpJ2MDotRGUu+/Rqa2pX1PZj3XoQTfjRKQD77R7NpxK1tJlg0Pczh9MtEhTpnTKsZI
-         QRuUCh2CzOU+yfCQVY6z3kNyZjrw1fT/kvYfhiDKSU0s0SF1kteWiNc/SnjmI6369Mj9
-         hnEA==
-X-Gm-Message-State: APjAAAUbIe+LfPoPJNgvsDjuCl503EfierSZqdIMIiUDML+WR+I05Q8S
-        GwDAH50wIVB3ZxK4Jnf7k7nrFro6DJRgng==
-X-Google-Smtp-Source: APXvYqwapssgCF3WwqfW5XqhXG/XcEtD8n1A9y/Qs2J6Mnzo+w8RnQvKlXzHYOiA8MKm+ctCxh+LTQ==
-X-Received: by 2002:a05:6000:1252:: with SMTP id j18mr1120395wrx.23.1571876672320;
-        Wed, 23 Oct 2019 17:24:32 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id u1sm34194461wru.90.2019.10.23.17.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 17:24:31 -0700 (PDT)
-Message-ID: <5db0ef3f.1c69fb81.f3321.d580@mx.google.com>
-Date:   Wed, 23 Oct 2019 17:24:31 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2405405AbfJXAsV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Oct 2019 20:48:21 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58341 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405954AbfJXAsV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Oct 2019 20:48:21 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id EFDDE886BF;
+        Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1571878097;
+        bh=Hjx2JI6pureQLHmmNJuUqkEbwbT6++g9hZ8eI416dYQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=o8wsuhOqs9YZLRGHDdAoCPKI29xyQ+qobp3y3jXloW/HQqA1NzOxdGNw+L18XdZ+c
+         GHxfTuNmGAvgiPhaT6XOb1QqKXnq2sKQb2f8hHpfWkXM0smjXb8KTLjwloXGbISDxV
+         5U0sWZJDZu9bAieprmNsN3IsOhcDoJ2gZe/S2o5Odhv2YJ3HQdMU78PQFA5UN9vh+k
+         K8Ef34z3QpukxDXYvXtfxrwNO5LSxvfEmveWEg/XtFlH/Qfc/MgDkJw8/Ym6DNLGDd
+         JyO9r0UNtbof5KXzewAwiHEZwv8vA8G96SSxs4yFUvGRW/FLfxdv6ZJZV4vYGeinjd
+         uYjjYZkaJXROw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5db0f4d10001>; Thu, 24 Oct 2019 13:48:17 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 0202A13ED56;
+        Thu, 24 Oct 2019 13:48:22 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id C5D8128005C; Thu, 24 Oct 2019 13:48:17 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 1/2] dt-bindings: gpio: brcm: Add bindings for xgs-iproc
+Date:   Thu, 24 Oct 2019 13:48:14 +1300
+Message-Id: <20191024004816.5539-2-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191024004816.5539-1-chris.packham@alliedtelesis.co.nz>
+References: <20191024004816.5539-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v5.4-rc1-25-gfe12e94375da
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: devel
-Subject: linusw/devel boot: 34 boots: 0 failed,
- 32 passed with 2 untried/unknown (v5.4-rc1-25-gfe12e94375da)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+x-atlnz-ls: pat
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel boot: 34 boots: 0 failed, 32 passed with 2 untried/unknown (v5=
-.4-rc1-25-gfe12e94375da)
+This GPIO controller is present on a number of Broadcom switch ASICs
+with integrated SoCs. It is similar to the nsp-gpio and iproc-gpio
+blocks but different enough to require a separate driver.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/devel/ke=
-rnel/v5.4-rc1-25-gfe12e94375da/
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.4-rc1-25-gfe12e94375da/
-
-Tree: linusw
-Branch: devel
-Git Describe: v5.4-rc1-25-gfe12e94375da
-Git Commit: fe12e94375da34d62f7d5556161ce7629212ff80
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 32 unique boards, 12 SoC families, 3 builds out of 6
-
-Boot Regressions Detected:
-
-arm64:
-
-    defconfig:
-        gcc-8:
-          meson-gxl-s905x-khadas-vim:
-              lab-baylibre: new failure (last pass: v5.4-rc1-12-g698b8eeaed=
-72)
-
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
-For more info write to <info@kernelci.org>
+
+Notes:
+    Changes in v3:
+    - incorporate review comments from Rob and Bart
+   =20
+    Changes in v2:
+    - Document as DT schema
+    - Include ngpios, #gpio-cells and gpio-controller properties
+
+ .../bindings/gpio/brcm,xgs-iproc.yaml         | 70 +++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc=
+.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml b=
+/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml
+new file mode 100644
+index 000000000000..ec1fd3a64aa2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/brcm,xgs-iproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom XGS iProc GPIO controller
++
++maintainers:
++  - Chris Packham <chris.packham@alliedtelesis.co.nz>
++
++description: |
++  This controller is the Chip Common A GPIO present on a number of Broad=
+com
++  switch ASICs with integrated SoCs.
++
++properties:
++  compatible:
++    const: brcm,iproc-gpio-cca
++
++  reg:
++    items:
++      - description: the I/O address containing the GPIO controller
++                     registers.
++      - description: the I/O address containing the Chip Common A interr=
+upt
++                     registers.
++
++  gpio-controller: true
++
++  '#gpio-cells':
++      const: 2
++
++  ngpios:
++    minimum: 0
++    maximum: 32
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-controller
++
++dependencies:
++  interrupt-controller: [ interrupts ]
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    gpio@18000060 {
++        compatible =3D "brcm,iproc-gpio-cca";
++        #gpio-cells =3D <2>;
++        reg =3D <0x18000060 0x50>,
++              <0x18000000 0x50>;
++        ngpios =3D <12>;
++        gpio-controller;
++        interrupt-controller;
++        #interrupt-cells =3D <2>;
++        interrupts =3D <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
++    };
++
++
++...
+--=20
+2.23.0
+
