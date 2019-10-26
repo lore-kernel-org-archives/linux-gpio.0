@@ -1,93 +1,94 @@
-Return-Path: <SRS0=M7M+=YS=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=pSDK=YT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89799CA9EA0
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Oct 2019 21:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C217CA9EBD
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Oct 2019 00:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA992084C
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Oct 2019 21:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D146F206DD
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Oct 2019 00:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572039511;
-	bh=kkY9CJSVSCZ7AA+Vcz+XkBNZQKqOhTLbR5oSqIuEaQo=;
+	s=default; t=1572049231;
+	bh=6Quw9Pg9H67ojcuZquXb4Jqb+yj8ZZ9zsXnYQsI/hx0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WeV7kDSyBG6Eah58d/piBMMIDyCIxbjeMHtML0aAXnspYakP0eKBrbkyJFnZ6GWe8
-	 rxPc4YNTK1hKWfUhe0uMMk+eYxwhIpDus8UBgSKs0TFxSk22w81ay9vjF2nxEm9VNx
-	 5SjHYpuym2J4NdIqEapevsHJxhtfJ1AgZ5DicZtQ=
+	b=IvxsUFizTS6wQTIk5DEMg5AfJ/nXIJmNFw9Ktg4o+6RHrDxJ7NE+CZ+fi2EOuc6DG
+	 VZjlWdyaWNnlG59X/AiFyXy88HBmg4drIXPzOySK+BFinGob5E56cpqtMMkyLNvLoO
+	 MGJKaDoZO6Zk/CT9Qz0W1RyJb3vV6LKfi+/MVb2k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbfJYVia (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Oct 2019 17:38:30 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34691 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfJYVia (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Oct 2019 17:38:30 -0400
-Received: by mail-oi1-f194.google.com with SMTP id 83so2580563oii.1
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Oct 2019 14:38:30 -0700 (PDT)
+        id S1725907AbfJZAUb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Oct 2019 20:20:31 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46138 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfJZAUb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Oct 2019 20:20:31 -0400
+Received: by mail-oi1-f195.google.com with SMTP id c2so2721536oic.13;
+        Fri, 25 Oct 2019 17:20:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AJg4z4K6dKxVgKfiKrGLtK6h9eZ9S7nIhf+xHWhd+KI=;
-        b=ZLu/tgT0LpAye8ILfCW1a21D5MsM5sc+eUmfYfPaH2lqPwXcPHx3HezamSR+4igiXJ
-         yeL/Rle+ftppmMVLabdI+Bw6czt9KZDuIz/OEYnqy+UKKOXVVJBFpt5uenaq49ARnDXL
-         P+7FB671WNjD/IhsxuQ0YK8Z1was1LqMSouHSSs2NHY7/iEuuGNyuYmFK9QjS6JRyyOe
-         iW3tMM59mkQQ8+7jGhbQ97TmPH+o43Vql2AJGdn43toXQmDSoe+z52V2wmYbUPvnrQwm
-         UXPjEVV9qkPF9HMfMzLVkKsVjSb8CLfTvGQ5Kp0PbCZQeaZsDuFFripSwoQmt75VLSNF
-         qmjQ==
-X-Gm-Message-State: APjAAAUDKT4yNLemOh506bHNnLZ6ob84gzYdxclInCx7fkaQj4vsqLXI
-        7rqYasaypPxU+WOBpYofIg==
-X-Google-Smtp-Source: APXvYqyKKYeDsz6d6MNdmrfb3ZN68gpOWy77zXJ2XZq2BotysCtHUYhMQnG5QT0oNOeKsX0d+R1ZrQ==
-X-Received: by 2002:aca:5691:: with SMTP id k139mr4909601oib.54.1572039509694;
-        Fri, 25 Oct 2019 14:38:29 -0700 (PDT)
+        bh=xFaVplPix3RECfmw0mP26wLx1h1GSiIqpWNBxTGaapo=;
+        b=AxjjHQ5msHHdkFoPF3zPtrJ9CSTlRyoEVhjaEknKxNqU8DNhiSmj/TEP23XW6uETUr
+         1yNDRvp0BEQkQd4a+ft1DOPTGGwSBfxGQVlYs37x4Vic+cx0hRA3nlcvLAUuQotR2N7R
+         VcPC5IyIHYlqW7QJOPPtE7HwKOrk5gJsP79oy4kQa5JniDBtCckhw0GsCTuREM3v9Udy
+         tL0TcJSNvBcsMkaB1d38PfwY7jlybyylgEuYqqeN7yL6pSDRU7/UjTLT0Oi3sb3OPllo
+         1UlaGLcpuuyuW29QcS78SWgxq3znnSreZP6CZ61vgqOJ2ho7jtEw4Q046twydoDm0Z5/
+         mINQ==
+X-Gm-Message-State: APjAAAXTljrdMeg39U2A6PjIfdcv3jC3Su7EUQqCkINc5hrHmxSJMJ2m
+        Ny+yq7krE/hu+LfIeFQ4Pw==
+X-Google-Smtp-Source: APXvYqzpqk2Jv5TqpJClrIhi+vYwGvPQet1RBJ9Lrp4ewD+6Q8fdl9123Lp4ED+xjPhOJnmC5HuodQ==
+X-Received: by 2002:aca:7543:: with SMTP id q64mr4340495oic.95.1572049230274;
+        Fri, 25 Oct 2019 17:20:30 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k24sm894477oic.29.2019.10.25.14.38.29
+        by smtp.gmail.com with ESMTPSA id t12sm1250767otq.61.2019.10.25.17.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 14:38:29 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:38:28 -0500
+        Fri, 25 Oct 2019 17:20:29 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 19:20:29 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     linus.walleij@linaro.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: Convert Allwinner Pin
- Controller to a schema
-Message-ID: <20191025213828.GA30637@bogus>
-References: <20191022160806.42971-1-mripard@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: sh-pfc: Document r8a77961
+ support
+Message-ID: <20191026002029.GA11965@bogus>
+References: <20191023122955.12420-1-geert+renesas@glider.be>
+ <20191023122955.12420-2-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191022160806.42971-1-mripard@kernel.org>
+In-Reply-To: <20191023122955.12420-2-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 22 Oct 2019 18:08:06 +0200, Maxime Ripard wrote:
-> The Allwinner SoCs have a pin controller supported in Linux, with a
-> matching Device Tree binding.
+On Wed, 23 Oct 2019 14:29:53 +0200, Geert Uytterhoeven wrote:
+> Add DT binding documentation for the Pin Function Controller in the
+> Renesas R-Car M3-W+ (R8A77961) SoC.
 > 
-> Now that we have the DT validation in place, let's convert the device tree
-> bindings for that controller over to a YAML schemas.
+> Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
+> avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
 > 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
-> 
-> Changes from v1:
->   - Add a description for the interrupts
->   - Put limits on the number of input-debounce items
->   - Remove the vcc-p.-supply type
->   - Fix the supplies description
+> v2:
+>   - Add Reviewed-by,
+>   - Update R-Car M3-W references.
 > ---
->  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml  | 243 ++++++++++++++++++
->  .../pinctrl/allwinner,sunxi-pinctrl.txt       | 164 ------------
->  2 files changed, 243 insertions(+), 164 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+>  .../devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt        | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
