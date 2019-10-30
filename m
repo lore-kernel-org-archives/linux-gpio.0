@@ -2,256 +2,115 @@ Return-Path: <SRS0=1LiQ=YX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF850CA9EC7
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Oct 2019 14:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CA4CA9EC5
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Oct 2019 14:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95AEC2087E
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Oct 2019 14:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0DD20578
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Oct 2019 14:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572445002;
-	bh=FxBktFl0oulqQ+MFFJk9NjGwWP/+kFywlmwp/cRDfSA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=xATdlpcE824DJplCrs+8SksEzHTW97MftZ7+KGrYb61J5RtHG3/vTiO4Vt4SaqeuZ
-	 rKnq2k+Gjajaq+Fz7Z90TCZTRwS1DKrknEyV0aT52IkQsoqTid/lfrfKUceUmS2//B
-	 2VATo7cZSWXi24EbsuO8CXAEhd1X0sv0qq5CE+io=
+	s=default; t=1572445067;
+	bh=5mkGcP2WEwjWYjEFxVfk1OeHzCHQXe8iz/K+tKvtbEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=khrhvELLeCqWdok61fr6zZytynyZwFqsPomHdUhv0IA9Z+oLTdqcBE3DOhofl6M8B
+	 Lzaj9xrKfQTsvJYAuFbJdrVP+fkP/ZIcbe3eKQ1hgVFMtkXSPeF2FIuOg6OP/tA4Pu
+	 BqOGPH+bmbor7qWfuk3M2iqnIPXFfctIA8ZzvtEw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfJ3OQm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Oct 2019 10:16:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40800 "EHLO
+        id S1726321AbfJ3ORn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Oct 2019 10:17:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42550 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfJ3OQm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Oct 2019 10:16:42 -0400
+        with ESMTP id S1726096AbfJ3ORn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Oct 2019 10:17:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=heA0qH4A3CJhukQ4aM3sFmsJPa3nS4YlchNqlSQ664E=; b=UhdcZ6V/giMa
-        d8C9nGEadlTzI+GYecA53opw1rSh5hI5KWh2joudWvjwSPSa0pMm+7kejLvPIrsZRr7/VzBals7yU
-        DDaDihtPWj8kk3NTw64nRtTQha3+Rp4/00Khj/u6fhKR7vibFhJryHcUzdUGwN7ekpXU6/z32KF6S
-        ThITY=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5mkGcP2WEwjWYjEFxVfk1OeHzCHQXe8iz/K+tKvtbEE=; b=Wlr5WeIMFCk8/pi7ka8smGkye
+        mE4m6j9f6OBbLCh8aBdQD32ul7wZF8oGzSa2ehLosTFnwBmqp9Ik3ELdSF9VdXDMnBeFh22poJebF
+        QTyeTEZIdT0p4b2L47NrdRyRPOdsqy9KiuokalQv/X9t1Rke161XIcB+u1SnP20GVFS90=;
 Received: from [195.11.164.221] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1iPom4-0005D0-Km; Wed, 30 Oct 2019 14:16:36 +0000
+        id 1iPon2-0005Ek-Vv; Wed, 30 Oct 2019 14:17:37 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 48056D020AA; Wed, 30 Oct 2019 14:16:36 +0000 (GMT)
+        id 9C399D020A6; Wed, 30 Oct 2019 14:17:36 +0000 (GMT)
+Date:   Wed, 30 Oct 2019 14:17:36 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: txx9: Convert to use GPIO descriptors" to the spi tree
-In-Reply-To: <20191030073832.24038-1-linus.walleij@linaro.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20191030141636.48056D020AA@fitzroy.sirena.org.uk>
-Date:   Wed, 30 Oct 2019 14:16:36 +0000 (GMT)
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
+Message-ID: <20191030141736.GN4568@sirena.org.uk>
+References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
+ <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
+ <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dp9QYJgVRVEW2bsm"
+Content-Disposition: inline
+In-Reply-To: <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com>
+X-Cookie: Keep out of the sunlight.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The patch
 
-   spi: txx9: Convert to use GPIO descriptors
+--dp9QYJgVRVEW2bsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the spi tree at
+On Wed, Oct 30, 2019 at 03:32:09PM +0200, Peter Ujfalusi wrote:
+> On 30/10/2019 15.12, Rob Herring wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+> > Why can't we just add a shared flag like we have for interrupts?
+> > Effectively, we have that for resets too, it's just hardcoded in the
+> > the drivers.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> This would be kind of the same thing what the
+> GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
+> fixed-regulators afaik.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+The theory with that was that any usage of this would need the
+higher level code using the GPIO to cooperate so they didn't step
+on each other's toes so the GPIO code should just punt to it.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> But let's say that a board design will pick two components (C1 and C2)
+> and use the same GPIO line to enable them. We already have the drivers
+> for them and they are used in boards already.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+This is basically an attempt to make a generic implementation of
+that cooperation for simple cases.
 
-Thanks,
-Mark
+--dp9QYJgVRVEW2bsm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-From c8b348dd86091daa3496a6dc8c0777b78c9683a6 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 30 Oct 2019 08:38:32 +0100
-Subject: [PATCH] spi: txx9: Convert to use GPIO descriptors
+-----BEGIN PGP SIGNATURE-----
 
-This converts the TXX9 SPI driver to use GPIO descriptors
-to control the GPIO chip selects.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl25m38ACgkQJNaLcl1U
+h9DOmwf+JLW+Mnv1zxmPd4I5WIvRwdka4+X5vKvVEQGfkcbkvBPGj0jBL3B4GEKz
+vjCpNmVnfgc6KlvwsGqEsyKo5Hxo5ZmXJlbVpKw0zFjCGuj4hVQsMrvu7zz8dCRn
+LZOP/iKwPUHrpQ5F5vBURBc6gjj97WqAg3w0RdqCe0gJehqYrV9ulo28wB5pv8Cz
+2IHQ21/bOkpu3caVGJO0+LevtN+s2qVY4gYo0tRTQI9XbDGcarivPJr0AVvle9qi
+5QX0Jdfj84F5cu0f8I29G9Zk0i887OqJ0iKA5k2mUojkho+57hZY87TJ0KZZTh9o
+SIS+L6vhF2qKKYb54Unpp4jMS83pvw==
+=BRXS
+-----END PGP SIGNATURE-----
 
-As the driver was clearly (ab)using the device tree "reg"
-property to offset into the global GPIO chip we have to
-add a hack to counter the hack: add a 1-to-1 chip select
-to GPIO offset mapping for all 16 lines on the TXX9 GPIO
-chip. The details are described in a largeish comment
-in the patch.
-
-We do not need to set up the GPIO as output any more since
-the core will take care of this, as well as it will handle
-the polarity inversion semantics.
-
-Cc: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20191030073832.24038-1-linus.walleij@linaro.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-txx9.c | 75 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 58 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
-index 83daaa597acc..3606232f190f 100644
---- a/drivers/spi/spi-txx9.c
-+++ b/drivers/spi/spi-txx9.c
-@@ -26,7 +26,8 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
-+#include <linux/gpio/consumer.h>
- 
- 
- #define SPI_FIFO_SIZE 4
-@@ -79,7 +80,7 @@ struct txx9spi {
- 	void __iomem *membase;
- 	int baseclk;
- 	struct clk *clk;
--	int last_chipselect;
-+	struct gpio_desc *last_chipselect;
- 	int last_chipselect_val;
- };
- 
-@@ -95,20 +96,22 @@ static void txx9spi_wr(struct txx9spi *c, u32 val, int reg)
- static void txx9spi_cs_func(struct spi_device *spi, struct txx9spi *c,
- 		int on, unsigned int cs_delay)
- {
--	int val = (spi->mode & SPI_CS_HIGH) ? on : !on;
--
-+	/*
-+	 * The GPIO descriptor will track polarity inversion inside
-+	 * gpiolib.
-+	 */
- 	if (on) {
- 		/* deselect the chip with cs_change hint in last transfer */
--		if (c->last_chipselect >= 0)
--			gpio_set_value(c->last_chipselect,
-+		if (c->last_chipselect)
-+			gpiod_set_value(c->last_chipselect,
- 					!c->last_chipselect_val);
--		c->last_chipselect = spi->chip_select;
--		c->last_chipselect_val = val;
-+		c->last_chipselect = spi->cs_gpiod;
-+		c->last_chipselect_val = on;
- 	} else {
--		c->last_chipselect = -1;
-+		c->last_chipselect = NULL;
- 		ndelay(cs_delay);	/* CS Hold Time */
- 	}
--	gpio_set_value(spi->chip_select, val);
-+	gpiod_set_value(spi->cs_gpiod, on);
- 	ndelay(cs_delay);	/* CS Setup Time / CS Recovery Time */
- }
- 
-@@ -119,12 +122,6 @@ static int txx9spi_setup(struct spi_device *spi)
- 	if (!spi->max_speed_hz)
- 		return -EINVAL;
- 
--	if (gpio_direction_output(spi->chip_select,
--			!(spi->mode & SPI_CS_HIGH))) {
--		dev_err(&spi->dev, "Cannot setup GPIO for chipselect.\n");
--		return -EINVAL;
--	}
--
- 	/* deselect chip */
- 	spin_lock(&c->lock);
- 	txx9spi_cs_func(spi, c, 0, (NSEC_PER_SEC / 2) / spi->max_speed_hz);
-@@ -319,6 +316,47 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
- 	return 0;
- }
- 
-+/*
-+ * Chip select uses GPIO only, further the driver is using the chip select
-+ * numer (from the device tree "reg" property, and this can only come from
-+ * device tree since this i MIPS and there is no way to pass platform data) as
-+ * the GPIO number. As the platform has only one GPIO controller (the txx9 GPIO
-+ * chip) it is thus using the chip select number as an offset into that chip.
-+ * This chip has a maximum of 16 GPIOs 0..15 and this is what all platforms
-+ * register.
-+ *
-+ * We modernized this behaviour by explicitly converting that offset to an
-+ * offset on the GPIO chip using a GPIO descriptor machine table of the same
-+ * size as the txx9 GPIO chip with a 1-to-1 mapping of chip select to GPIO
-+ * offset.
-+ *
-+ * This is admittedly a hack, but it is countering the hack of using "reg" to
-+ * contain a GPIO offset when it should be using "cs-gpios" as the SPI bindings
-+ * state.
-+ */
-+static struct gpiod_lookup_table txx9spi_cs_gpio_table = {
-+	.dev_id = "spi0",
-+	.table = {
-+		GPIO_LOOKUP_IDX("TXx9", 0, "cs", 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 1, "cs", 1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 2, "cs", 2, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 3, "cs", 3, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 4, "cs", 4, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 5, "cs", 5, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 6, "cs", 6, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 7, "cs", 7, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 8, "cs", 8, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 9, "cs", 9, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 10, "cs", 10, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 11, "cs", 11, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 12, "cs", 12, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 13, "cs", 13, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 14, "cs", 14, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("TXx9", 15, "cs", 15, GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
-+
- static int txx9spi_probe(struct platform_device *dev)
- {
- 	struct spi_master *master;
-@@ -372,12 +410,14 @@ static int txx9spi_probe(struct platform_device *dev)
- 	if (ret)
- 		goto exit;
- 
--	c->last_chipselect = -1;
-+	c->last_chipselect = NULL;
- 
- 	dev_info(&dev->dev, "at %#llx, irq %d, %dMHz\n",
- 		 (unsigned long long)res->start, irq,
- 		 (c->baseclk + 500000) / 1000000);
- 
-+	gpiod_add_lookup_table(&txx9spi_cs_gpio_table);
-+
- 	/* the spi->mode bits understood by this driver: */
- 	master->mode_bits = SPI_CS_HIGH | SPI_CPOL | SPI_CPHA;
- 
-@@ -386,6 +426,7 @@ static int txx9spi_probe(struct platform_device *dev)
- 	master->transfer = txx9spi_transfer;
- 	master->num_chipselect = (u16)UINT_MAX; /* any GPIO numbers */
- 	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
-+	master->use_gpio_descriptors = true;
- 
- 	ret = devm_spi_register_master(&dev->dev, master);
- 	if (ret)
--- 
-2.20.1
-
+--dp9QYJgVRVEW2bsm--
