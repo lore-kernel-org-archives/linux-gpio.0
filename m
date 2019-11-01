@@ -2,190 +2,168 @@ Return-Path: <SRS0=ClVC=YZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D80DCA9ED1
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Nov 2019 12:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C943CA9ECF
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Nov 2019 13:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0694B218DE
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Nov 2019 12:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2566321835
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Nov 2019 13:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572615982;
+	bh=lswMlSOEv3IVKL2o6g/0/MZB83V2bKNcQKcLhOteMKY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Zo+CG2c6PMH1jaOHi5XNpXfTnqyRcEpSCFe+s8DtaOOGVvgjGQkd3Z03MnXe9iUzX
+	 u2DLLju+ToFdKmct0YfbbXof31yQzaRKex5ypI5ly4yCh7olBhinmqRGu8b+DYxEO8
+	 ad0IRonG07V2CE26tcEAanYND7cCO7yGHf3/F1yA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbfKAMw4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Nov 2019 08:52:56 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:49036 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfKAMw4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Nov 2019 08:52:56 -0400
-X-AuditID: c0a8fbf4-199ff70000001fa6-d2-5dbc2aa53110
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id C5.21.08102.5AA2CBD5; Fri,  1 Nov 2019 13:52:53 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Fri, 1 Nov 2019 13:52:47 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "robh@kernel.org" <robh@kernel.org>
-CC:     "broonie@kernel.org" <broonie@kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
- bindings
-Thread-Topic: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
- bindings
-Thread-Index: AQHVimAFYId2ZTjVIEaonX+EqNqiYKdqDi6AgACrYYCAB0C9AIAA18IAgAC3QYCAASXjgIAAUsuAgAE/BIA=
-Date:   Fri, 1 Nov 2019 12:52:47 +0000
-Message-ID: <a8acd74fa9c6abc8c2daea9f016d035a1ef87b02.camel@fi.rohmeurope.com>
-References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-         <0182df3c49c6c804ee20ef32fc4b85b50ff45fca.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-         <ed0b2aa8-8a70-0341-4ecf-8959f37c53bd@ti.com>
-         <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
-         <20191029193440.GA1812@bogus>
-         <3e0f0943cd599cae544bd7a7a49dded46d57a604.camel@fi.rohmeurope.com>
-         <CAL_JsqJgnYqv1q=wf++5FOX-niRWQ=H9wWYgUKy+z=H933Qraw@mail.gmail.com>
-         <1e3901d1c7c26f4dbbc1de78b607b92bf9ddc098.camel@fi.rohmeurope.com>
-         <CAL_JsqJ6kmZyfXtZy_gz_6sxgK2CTXKTcpARkaf462QiwJXYZA@mail.gmail.com>
-In-Reply-To: <CAL_JsqJ6kmZyfXtZy_gz_6sxgK2CTXKTcpARkaf462QiwJXYZA@mail.gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D1B100E89854D443B41E0D8A2EE8345A@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1727297AbfKANqV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Nov 2019 09:46:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727296AbfKANqV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 1 Nov 2019 09:46:21 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C43E6217D9;
+        Fri,  1 Nov 2019 13:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572615979;
+        bh=lswMlSOEv3IVKL2o6g/0/MZB83V2bKNcQKcLhOteMKY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2VkCgmkJqOKWH5d+9KDukIcRTAHgjVukLo7+WnDE3TtykYaRb7rHNveONlNIa8z7C
+         Wvf1s2hGqg8xK0DzjTHvWERd5B6QiJWEpQb02QETpjyRKih31rBLTX7nsrqGZryAfR
+         nhqGnY7r7catGAEwdtg/1KASZ0QhIN/rBtzM7asA=
+Received: by mail-qt1-f182.google.com with SMTP id g50so13011584qtb.4;
+        Fri, 01 Nov 2019 06:46:19 -0700 (PDT)
+X-Gm-Message-State: APjAAAWegAhA0MSmZ56hns4n8acGINgkS5bridDXXvlZhRaj0c6Ie/jc
+        HWSteslGUTa/Kp8rUhF6fL4v6jMTPkJM0eM0PA==
+X-Google-Smtp-Source: APXvYqzSxs3/lKPGNsJo7QmVk87af0sBuK78lFCb7LPwSTyRxmDlUk2yWUVGBizpA0SlPdiVCwhtvME32ugnV3l7tjA=
+X-Received: by 2002:ac8:458c:: with SMTP id l12mr84256qtn.300.1572615978901;
+ Fri, 01 Nov 2019 06:46:18 -0700 (PDT)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0gUURTHuTOzs9fH1Li6edUKXQJT6CFF3SjCDwUThfQmos3GnHatdddm
-        d6WsD2JUuklmlNqi9nLL1LS2wrLtgWjmFoXkk7LaTMkIK3pa4jbjVPrl3nPP//zO/3w4F5Ka
-        fjoSppltgmjmTTo6kLpf+ds9yxXv0c8d9kXjirYONT48dEGNv5Z5KXzS95bGp5ueqPCRR9dV
-        +PmNKxR+9a0Z4O/tuQQ+MXKRwJ/zX6rwtdMjAD9rKKXxjQ+1AD+obqexq6uNwKWuhxRu8y7H
-        vd5mGvs9N9V4tPMqlajlasprAPex+6CaK6/Zx91y9qo5d1Uezb3o9NBcS3c9wRWXDxNcZfUP
-        NffFPX114OagJSm8LXNdmsE8Z+m2IOP37JCMoUV7il+9VmWDK9gBAiBi56PanlzCAQKhhu0A
-        qLeoHSiPFoDuv/GTDgAhzS5Bjh61DISxsehstY+Ua0i2EqKRYichC6HsetRUVwSUog3o7tH8
-        v3EKKjhUMgZT7Az0+3gnKccMm4QKnn2mFLMuCl3K89KyEMCuQf7SwbEiwE5DedlDYwYkG47c
-        Az9UytgsqvA8JZVYiwb7Rv/mdejOsI+ShybZOFTXMEcJE1F5VYzSJQadOOJTKyOEoNZTb6lj
-        YIpzgoFzHHaOw84JsHMCfAaoqgBK59NMBt4mJMwWBfts0WJMl67tlnQ3UBbm603gb1zRCAgI
-        GkEEJHRaJvPhbb1mUoolda+RtxqTRbtJsDYCBEldGFNfK2lMKr83SxAt/6QoSOnCmVhfoV7D
-        yl67BCFDEP+pUyHUISZnpkevCREFg7BnR5rJNi4TMEBuHhgZZhXMqYLI223GZHk7kq3SeshS
-        sOSbKOOMNYNPl7IK6gUJ8Nhg2TkStlZVSGdTmescqaHMFrMQGc44ZICVAaPd/N/uPQiHQBfK
-        tMVJarD0d/53ey8ZEZLRxqEG2cjGj0uR2WBxbu2UyymHdg/Edqx983j/r6zYkeX5Bf6S83nR
-        zUkzc+LmLdDvWjWq3dSfay4q/LTshccwP8K3NqenPjrreEnd5c6oPlXlQFdU0MLD8ZN2/lpp
-        N13ferC1O2YB9EVp77X0b3GIA6Cp8OeXYNdHU2bogXcnIya/e7SlPcswejdpX3DfRh1lNfIJ
-        8aRo5f8Aql9TvfgDAAA=
+References: <20191030120440.3699-1-peter.ujfalusi@ti.com> <CAL_JsqK-eqoyU7RWiVXMpPZ8BfT8a0WB47756s8AUtyOqbkPXA@mail.gmail.com>
+ <5bca4eb6-6379-394f-c95e-5bbbba5308f1@ti.com> <20191030141736.GN4568@sirena.org.uk>
+ <f9c181d1-5e0c-5e82-a740-f4e97822604f@ti.com> <CAL_JsqJ4WdaRvmZcjQG-jVyOOeKZX9fn1WcQZGWfUPqwunQCFw@mail.gmail.com>
+ <1258a5bf-a829-d47a-902f-bf2c3db07513@ti.com>
+In-Reply-To: <1258a5bf-a829-d47a-902f-bf2c3db07513@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 1 Nov 2019 08:46:06 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+V0oAdVCaW+S12CUa4grCJhZD8OGDeu=0ohcGgxOkPVg@mail.gmail.com>
+Message-ID: <CAL_Jsq+V0oAdVCaW+S12CUa4grCJhZD8OGDeu=0ohcGgxOkPVg@mail.gmail.com>
+Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DQpPbiBUaHUsIDIwMTktMTAtMzEgYXQgMTI6NTAgLTA1MDAsIFJvYiBIZXJyaW5nIHdyb3RlOg0K
-PiBPbiBUaHUsIE9jdCAzMSwgMjAxOSBhdCA3OjU0IEFNIFZhaXR0aW5lbiwgTWF0dGkNCj4gPE1h
-dHRpLlZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gT24gV2Vk
-LCAyMDE5LTEwLTMwIGF0IDE0OjIyIC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4gPiA+IE9u
-IFdlZCwgT2N0IDMwLCAyMDE5IGF0IDM6MjcgQU0gVmFpdHRpbmVuLCBNYXR0aQ0KPiA+ID4gPE1h
-dHRpLlZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+ID4gPiA+IE9uIFR1ZSwg
-MjAxOS0xMC0yOSBhdCAxNDozNCAtMDUwMCwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+ID4gPiA+ID4g
-T24gRnJpLCBPY3QgMjUsIDIwMTkgYXQgMDU6NDk6MTdBTSArMDAwMCwgVmFpdHRpbmVuLCBNYXR0
-aSANCj4gPiAuLi53aGljaCBicmluZ3MgbWUgaGVyZS4gSSBsb29rZWQgYXQgdGhlDQo+ID4gRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzIGZvbGRlciBhbmQgZGlkIHJlYWQgdGhlICd3
-cml0aW5nLQ0KPiA+IGJpbmRpbmdzLnR4dCcgYW5kICdzdWJtaXR0aW5nLXBhdGNoZXMudHh0JyBm
-cm9tIHRoZXJlLiBUaGVuIEkgYWxzbw0KPiA+IGNoZWNrZWQgdGhlIERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS91c2FnZS1tb2RlbC50eHQgTm9uZSBvZiB3aGljaA0KPiA+IGhlbHBlZCBtZSBvdXQu
-IEkgZGlkIGFsc28gb3BlbiB0aGUgJ3dyaXRpbmctc2NoZW1hLnJzdCcgYnV0IEkNCj4gPiBkaWRu
-J3QNCj4gPiByZWFkIGl0IGNhcmVmdWxseSBlbm91Z2guIFByb2JhYmx5IGJlY2F1c2UgSSB0aG91
-Z2h0IGFmdGVyIHJlYWRpbmcNCj4gPiB0aGUNCj4gPiBvcGVuaW5nIGNoYXB0ZXIgdGhhdCB0aGlz
-IGRlc2NyaWJlZCBob3cgdG8gZG8gYWN0dWFsIGR0cyBpbiB5YW1sLg0KPiANCj4gVGhpbmdzIGFy
-ZSBhIGJpdCBzY2F0dGVyZWQgYXJvdW5kIEknbGwgYWRtaXQuIEkgZmVlbCBsaWtlIHdlIG5lZWQg
-YQ0KPiAnc3RhcnQgaGVyZScsIGJ1dCB0aGUgY2hhbGxlbmdlIGlzIHBlb3BsZSBoYXZlIGRpZmZl
-cmVudCBzdGFydGluZw0KPiBwb2ludHMuDQoNCmNyb3NzLXJlZmVyZW5jaW5nPyA9KQ0KDQpJIGd1
-ZXNzIHRoYXQgaWYgeWFtbCBpcyB3aGF0IGlzIGV4cGVjdGVkIHRvIGJlIHVzZWQgYXMgcGF0Y2gg
-Zm9ybWF0LA0KdGhlbiB3ZSBzaG91bGQgcHJvYmFibHkgbWVudGlvbiB0aGlzIGluIHN1Ym1pdHRp
-bmctcGF0Y2hlcy50eHQgYW5kDQp3cml0aW5nLWJpbmRpbmdzLnR4dC4gQWN0eXVhbGx5LCBJIHRo
-aW5rIHRoYXQgd3JpdGluZy1iaW5kaW5ncy50eHQNCmNvdWxkIGJlIGNvbWJpbmVkIHdpdGggd3Jp
-dGluZy1zY2hlbWEucnN0IC0gdGhleSBhcmUgYWJvdXQgdGhlIHNhbWUNCnRoaW5nLCByaWdodD8N
-Cg0KPiA+ID4gVGhlcmUgaXMgc29tZSBub3Rpb24gdG8gY29udmVydCB0aGUgRFQgc3BlYyB0byBz
-Y2hlbWEgYW5kIHRoZW4NCj4gPiA+IGdlbmVyYXRlIHRoZSBzcGVjIGZyb20gdGhlIHNjaGVtYS4g
-VGFrZSBwcm9wZXJ0aWVzLCB0aGVpciB0eXBlLA0KPiA+ID4gYW5kDQo+ID4gPiBkZXNjcmlwdGlv
-bnMgYW5kIHB1dCB0aGF0IGJhY2sgaW50byB0YWJsZXMgZm9yIGV4YW1wbGUuIFdvdWxkDQo+ID4g
-PiBsb3ZlIHRvDQo+ID4gPiBoYXZlIHNvbWVvbmUgd29yayBvbiB0aGF0LiA6KQ0KPiA+IA0KPiA+
-IEkgYW0gZ2xhZCB0byBoZWFyIHlvdSBoYXZlIGRldmVsb3BlZCAvIGFyZSBkZXZlbG9waW5nIHN1
-Y2ggdG9vbGluZy4NCj4gDQo+IFRCQywgSSBoYXZlIG5vdCBhbmQgYW0gbm90LiBJdCdzIGp1c3Qg
-YW4gaWRlYS4gVGhlcmUncyBiZWVuIG5vdGhpbmcNCj4gZG9uZSBiZXlvbmQgZXhwZXJpbWVudGlu
-ZyBpZiByU1QgY291bGQgYmUgZW1iZWRkZWQgaW50byB5YW1sLg0KPiANCj4gPiBJDQo+ID4gcmVh
-bGx5IGFwcHJlY2lhdGUgaXQuIFdoYXQgY29tZXMgdG8gZ2l2aW5nIGEgaGVscGluZyBoYW5kIC0g
-SSdkDQo+ID4gYmV0dGVyDQo+ID4gdG8gc3RpY2sgdGhlIHNpbXBsZSBDIGRyaXZlcnMgZm9yIG5v
-dyA7KSBCdXQgaWYgSSBldmVyIGdldCB0aGUNCj4gPiBmZWVsaW5nDQo+ID4gdGhhdCBJIGRvbid0
-IGtub3cgd2hhdCB0byBkbyBJJ2xsIGtlZXAgdGhpcyBpbiBtaW5kIDpdIExldCBtZSBkbw0KPiA+
-IHNvbWUNCj4gPiBjYWxjdWx1cy4uLiBPbmx5IDExIHllYXJzIGFuZCBteSB5b3VuZ2VzdCBzb24g
-d2lsbCBwcm9iYWJseSBsZWF2ZQ0KPiA+IG91cg0KPiA+IGhvdXNlIC0gZG8geW91IHRoaW5rIDIw
-MzAgaXMgYSBiaXQgdG9vIGxhdGU/IEp1c3QgbGV0IG1lIGtub3cgaWYNCj4gPiB0aGlzDQo+ID4g
-aXMgc3RpbGwgcmVsZXZhbnQgdGhlbiAtIGFuZCBJJ2xsIGJ1eSB5b3UgYSBiZWVyIG9yIHdyaXRl
-IGEgdG9vbA0KPiA+IChvZg0KPiA+IHNvbWUga2luZCkgeEQNCj4gDQo+IEkndmUgc2NoZWR1bGVk
-IHlvdSBpbiBmb3IgMjAzMC4gOikNCg0KRmluZS4gTGV0J3Mgc2VlIGlmIGl0IGlzIGEgYmVlciBv
-ciBhIHRvb2wgdGhlbiA6XQ0KDQo+ID4gTWVhbndoaWxlLi4uIEkgaGF2ZSB0cmllZCB0byBjb252
-ZXJ0IHRoZSBCRDcxODI4IERUIGRvYyBmcm9tIHRoZQ0KPiA+IFJGQw0KPiA+IHBhdGNoIHRvIHlh
-bWwgLSBhbmQgSSBhbSBoYXZpbmcgaGFyZCB0aW1lLiBFc3BlY2lhbGx5IHdpdGggdGhlDQo+ID4g
-cmVndWxhdG9ycyBub2RlIC0gd2hpY2ggSSB3b3VsZCBsaWtlIHRvIHBsYWNlIGluDQo+ID4gRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3JlZ3VsYXRvci9yb2htLGJkNzE4MjgtDQo+
-ID4gcmVndWxhdG9yLnlhbWwNCj4gPiANCj4gPiBNeSBwcm9ibGVtIGlzIHRoZQ0KPiA+IHJlZ3Vs
-YXRvcnMgew0KPiA+IGJ1Y2sxOiBCVUNLMSB7DQo+ID4gICAgICAgICAgICAgICAgICAgICByZWd1
-bGF0b3ItbmFtZSA9ICJidWNrMSI7DQo+ID4gICAgICAgICAgICAgICAgICAgICByZWd1bGF0b3It
-bWluLW1pY3Jvdm9sdCA9IDw1MDAwMDA+Ow0KPiA+ICAgICAgICAgICAgICAgICAgICAgcmVndWxh
-dG9yLW1heC1taWNyb3ZvbHQgPSA8MjAwMDAwMD47DQo+ID4gICAgICAgICAgICAgICAgICAgICBy
-ZWd1bGF0b3ItcmFtcC1kZWxheSA9IDwyNTAwPjsNCj4gPiAgICAgICAgICAgICAgICAgICAgIHJv
-aG0sZHZzLXJ1bmx2bC1jdHJsOw0KPiA+ICAgICAgICAgICAgICAgICAgICAgcm9obSxkdnMtcnVu
-bGV2ZWwwLXZvbHRhZ2UgPSA8NTAwMDAwPjsNCj4gPiAgICAgICAgICAgICAgICAgICAgIHJvaG0s
-ZHZzLXJ1bmxldmVsMS12b2x0YWdlID0gPDUwNjI1MD47DQo+ID4gICAgICAgICAgICAgICAgICAg
-ICByb2htLGR2cy1ydW5sZXZlbDItdm9sdGFnZSA9IDw1MTI1MDA+Ow0KPiA+ICAgICAgICAgICAg
-ICAgICAgICAgcm9obSxkdnMtcnVubGV2ZWwzLXZvbHRhZ2UgPSA8NTE4NzUwPjsNCj4gPiAgICAg
-ICAgICAgICAgICAgICAgIHJlZ3VsYXRvci1ib290LW9uOw0KPiA+ICAgICB9Ow0KPiA+ICAgICAu
-Li4NCj4gPiB9Ow0KPiA+IG5vZGUgd2hpY2ggb25seSBjb250YWlucyBCVUNLWCBhbmQgTERPWCBz
-dWItbm9kZXMuIEl0IGhhcyBubyBvd24NCj4gPiBwcm9wZXJ0aWVzLg0KPiA+IA0KPiA+IEZyb20g
-TUZEIHlhbWwgSSBkaWQgdHJ5Og0KPiA+IA0KPiA+ICAgcmVndWxhdG9yczoNCj4gPiAgICAgJHJl
-ZjogLi4vcmVndWxhdG9yL3JvaG0sYmQ3MTgyOC1yZWd1bGF0b3IueWFtbA0KPiA+ICAgICBkZXNj
-cmlwdGlvbjoNCj4gPiAgICAgICBMaXN0IG9mIGNoaWxkIG5vZGVzIHRoYXQgc3BlY2lmeSB0aGUg
-cmVndWxhdG9ycy4NCj4gPiANCj4gPiBhbmQgaW4gcm9obSxiZDcxODI4LXJlZ3VsYXRvci55YW1s
-DQo+ID4gDQo+ID4gSSB0cmllZCBkb2luZzoNCj4gPiANCj4gPiBwYXR0ZXJuUHJvcGVydGllczoN
-Cj4gPiAgICJeQlVDS1sxLTddJCI6DQo+ID4gICAgIHR5cGU6IG9iamVjdA0KPiA+ICAgICBkZXNj
-cmlwdGlvbjoNCj4gPiAgICAgICBQcm9wZXJ0aWVzIGZvciBzaW5nbGUgcmVndWxhdG9yLg0KPiA+
-ICAgICBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAgLi4uDQo+ID4gDQo+ID4gYnV0IHRoaXMgZmFp
-bHMgdmFsaWRhdGlvbiBhcyBwcm9wZXJ0aWVzOiBpcyBub3QgZ2l2ZW4uDQo+ID4gDQo+ID4gW212
-YWl0dGluQGxvY2FsaG9zdCBsaW51eF0kIGR0LWRvYy12YWxpZGF0ZQ0KPiA+IERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZWd1bGF0b3Ivcm9obSxiZDcxODI4LQ0KPiA+IHJlZ3Vs
-YXRvci55YW1sDQo+ID4gL2hvbWUvbXZhaXR0aW4vdG9ydmFsZHMvbGludXgvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3JlZw0KPiA+IHVsYXQNCj4gPiBvci9yb2htLGJkNzE4Mjgt
-cmVndWxhdG9yLnlhbWw6ICdwcm9wZXJ0aWVzJyBpcyBhIHJlcXVpcmVkIHByb3BlcnR5DQo+ID4g
-DQo+ID4gSWYgSSB0cnkgYW5kIGFkZDoNCj4gPiANCj4gPiBwcm9wZXJ0aWVzOg0KPiA+ICAgZm9v
-OiB0cnVlDQo+ID4gDQo+ID4gcGF0dGVyblByb3BlcnRpZXM6DQo+ID4gICAgICJeQlVDS1sxLTdd
-JCI6DQo+ID4gICAgICAgdHlwZTogb2JqZWN0DQo+ID4gICAgICAgZGVzY3JpcHRpb246DQo+ID4g
-ICAgICAgICBQcm9wZXJ0aWVzIGZvciBzaW5nbGUgcmVndWxhdG9yLg0KPiA+ICAgICAgIHByb3Bl
-cnRpZXM6DQo+ID4gICAgICAgICAuLi4NCj4gDQo+IFRoYXQncyBhIGNhc2Ugb2YgbmVlZGluZyB0
-byBhZGp1c3QgdGhlIG1ldGEtc2NoZW1hICh0aGUgc2NoZW1hIHRoYXQNCj4gY2hlY2tzIHRoZSBz
-Y2hlbWFzKS4gSXQncyBhIGJpdCBvdmVybHkgcmVzdHJpY3RpdmUganVzdCB0byB0cnkgdG8NCj4g
-Y29udGFpbiB3aGF0J3MgYWxsb3dlZC4gSSd2ZSBmaXhlZCBpdCBub3cuIFVwZGF0ZSBkdHNjaGVt
-YSBhbmQgaXQNCj4gc2hvdWxkIHdvcmsgbm93Lg0KDQpUaGFua3MuIEF0IGxlYXN0IHRoZSBtYWtl
-IGR0X2JpbmRpbmdfY2hlY2sgcGFzc2VkIG5vdy4gZHQtZG9jLXZhbGlkYXRlDQppcyBub3QgYWJs
-ZSB0byBsb2NhdGUgdGhlIHJlZ3VsYXRvci55YW1sIGFuZCBlcnJvcnMgb3V0IC0gYnV0IGl0IGRv
-ZXMNCm5vIGxvbmdlciBjb21wbGFpbiBhYm91dCBtaXNzaW5nICdwcm9wZXJ0aWVzOicuDQoNCj4g
-QlRXLCB3aGF0IHlvdSB3aWxsIGFsc28gbmVlZCBpcyB0byByZWZlcmVuY2UgdGhlIGNvbW1vbiBz
-Y2hlbWE6DQo+IA0KPiAiXkJVQ0tbMS03XSQiOg0KPiAgIHR5cGU6IG9iamVjdA0KPiAgIGFsbE9m
-Og0KPiAgICAgLSAkcmVmOiByZWd1bGF0b3IueWFtbCMNCj4gICBwcm9wZXJ0aWVzOg0KPiAgICBy
-b2htLGR2cy1ydW5sdmwtY3RybDoNCj4gICAgICB0eXBlOiBib29sZWFuDQo+ICAgICAgZGVzY3Jp
-cHRpb246IC4uLg0KPiAgICAuLi4NCg0KVGhhbmtzIGZvciB0aGUgcG9pbnRlcnMgOykgSSBqdXN0
-IHN1Ym1pdHRlZCB0aGUgUkZDIHYzIDopDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0KDQo=
+On Thu, Oct 31, 2019 at 3:00 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrot=
+e:
+>
+>
+>
+> On 30/10/2019 20.49, Rob Herring wrote:
+> > On Wed, Oct 30, 2019 at 9:30 AM Peter Ujfalusi <peter.ujfalusi@ti.com> =
+wrote:
+> >>
+> >>
+> >>
+> >> On 30/10/2019 16.17, Mark Brown wrote:
+> >>> On Wed, Oct 30, 2019 at 03:32:09PM +0200, Peter Ujfalusi wrote:
+> >>>> On 30/10/2019 15.12, Rob Herring wrote:
+> >>>
+> >>>>> Why can't we just add a shared flag like we have for interrupts?
+> >>>>> Effectively, we have that for resets too, it's just hardcoded in th=
+e
+> >>>>> the drivers.
+> >>>
+> >>>> This would be kind of the same thing what the
+> >>>> GPIOD_FLAGS_BIT_NONEXCLUSIVE does, which was a quick workaround for
+> >>>> fixed-regulators afaik.
+> >>>
+> >>> The theory with that was that any usage of this would need the
+> >>> higher level code using the GPIO to cooperate so they didn't step
+> >>> on each other's toes so the GPIO code should just punt to it.
+> >>
+> >> But from the client driver point of view a GPIO is still GPIO and if t=
+he
+> >> components are unrelated then it is hard to patch things together from
+> >> the top.
+> >
+> > You can't escape a driver being aware. If a driver depends on that
+> > GPIO to actually be set to states the driver says, then it can't be
+> > guaranteed to work. For example, maybe the driver assumes the device
+> > is in reset state after toggling reset and doesn't work if not in
+> > reset state. The driver has to be aware no matter what you do in DT.
+>
+> That's true for some device, but it is also true that some can not
+> tolerate being reset without them knowing it.
+
+You mean a reset when the driver is not loaded would not work? How
+could that ever work? I don't think you can have any reset control in
+the drivers in that case.
+
+> If all users of the shared GPIO have full control over it then they can
+> just toggle it whatever way they want. How would a regulator, codec,
+> amplifier would negotiate on what to do with the shared GPIO?
+>
+> Another not uncommon setup is when the two components needs different lev=
+el:
+> C1: ENABLE is high active
+> C2: RESET is high active
+>
+> To enable C1, the GPIO should be high. To enable C2 the GPIO must be low.
+> In the board one of the branch of the shared GPIO needs (and have) a
+> logic inverter.
+>
+> If they both control the same GPIO then they must have requested it with
+> different GPIO_ACTIVE_ since the drivers are written according to chip
+> spec, so C1 sets the GPIO to 1, C2 sets it to 0, the inversion for one
+> of them must happen in gpio core, right?
+
+No, drivers are written to set the state to active/inactive. The DT
+GPIO_ACTIVE_ flags can depend on an inverter being present (BTW, there
+was a recent attempt to do an inverter binding).
+
+
+> It should be possible to add pass-through mode for gpio-shared so that
+> all requests would propagate to the root GPIO if that's what needed for
+> some setups.
+>
+> That way the gpio-shared would nicely handle the GPIO inversions, would
+> be able to handle cases to avoid unwanted reset/enable of components or
+> allow components to be ninja-reset.
+
+What does ninja-reset mean?
+
+> I think it would be possible to add gpiod_is_shared(struct gpio_desc
+> *desc) so users can check if the GPIO is shared - it would only return
+> true if the gpio-shared is not in pass-through mode so they can know
+> that the state they see on their gpio desc is not necessary matching
+> with reality.
+> Probably another gpiod_shared_get_root_value() to fetch the root's state?
+>
+> I intentionally not returning that in the driver as clients might skip a
+> gpio_set_value() seeing that the GPIO line is already in a state they
+> would want it, but that would not register their needs for the level.
+>
+> - P=C3=A9ter
+>
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
