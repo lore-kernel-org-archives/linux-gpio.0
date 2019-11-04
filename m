@@ -1,187 +1,120 @@
-Return-Path: <SRS0=suty=Y3=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=+Cm1=Y4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E794CCA9EB0
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Nov 2019 23:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B22CA9EB0
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Nov 2019 00:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BC72086D
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 Nov 2019 23:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9358321D71
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Nov 2019 00:18:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="exeeI7rG"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="uLNjZDL9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfKCXhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 3 Nov 2019 18:37:10 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39918 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbfKCXhK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Nov 2019 18:37:10 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t26so10135828wmi.4
-        for <linux-gpio@vger.kernel.org>; Sun, 03 Nov 2019 15:37:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=2H3ia01ThYRbEakqKtgnAIFUf6n0AnJ0mLz0tWf833A=;
-        b=exeeI7rGQ0qP8G5mYDjdKrW9AYzvjfiphL77yQPvAI6QtkUyOPVaLw6nsZCojwYlhC
-         0NBO9pHsT7h09Dks+2ZF78dgIrG3LgFegUbjAISMjUFetnY4xwRmJXzFgablI2/1S8Hk
-         sNmWB3jtkAjf+gRzzjvGfidddqAr4bbqw3y3Hw51q3KurEdPD3D+EQcBHlRM0Uux8LBt
-         ElrjnBtML3vB7ekk0WZ6pHxVDcGEFhLrTVB3h+lSBj+DM41hb8UsWYWCGQFRrrCXr53N
-         Rv1A2ooThILZHC8AbdpmxglqA9H6AKOR2Nm06p+iNCPxW2ObecjNWnf8P2/2ypxyC8NL
-         Myxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=2H3ia01ThYRbEakqKtgnAIFUf6n0AnJ0mLz0tWf833A=;
-        b=UXS4QM4im+KRRPPZjUvkksPlmtMFSvx76p+LxZZZfUAJrcEylIir1STATqlt+CbnlK
-         mNR+rpNY4BA5r3Ywf7GrRjSB/RxOkGkp45ioR1ZIDORHeNRRxXdMioG2eVrijJ73P1WF
-         zANfMoL1buWKrnON6XJtHTF3ex5x+JwuD3+qy8HpiOaXgZnRPhQxJwS0MY1FpVmrA7QJ
-         ncLxBXhmcoPUyBYsu7M+73UEVzlB6wpMYlvjaLZYbj/nDg/eijfUn5CLlCbWE3wgfQD5
-         JGSRjWWGZnQmPFTRiB77iZ+/PGTTiFupZJBdHA9jTYXoXWpNfJr6Be2NEe/4pW+MJNvC
-         vXiA==
-X-Gm-Message-State: APjAAAXSjf9jQPJUipeoogXRx1X5d+uE8rddYP+C3CZpJ5ad3TWoNhTq
-        0Wv0hDAeCvaRXbFxr/5j4id00VstYCcCtg==
-X-Google-Smtp-Source: APXvYqyaNW5o/Mg4/SMcO5LAesnKaPD+OIm+gDUU9/2zOItRuFw8pKOCiKLOSoNblg4M46fUGLkCFg==
-X-Received: by 2002:a7b:c642:: with SMTP id q2mr12802051wmk.169.1572824226848;
-        Sun, 03 Nov 2019 15:37:06 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id x205sm20278956wmb.5.2019.11.03.15.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2019 15:37:06 -0800 (PST)
-Message-ID: <5dbf64a2.1c69fb81.bca31.14f1@mx.google.com>
-Date:   Sun, 03 Nov 2019 15:37:06 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        id S1728468AbfKDAS1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 3 Nov 2019 19:18:27 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43395 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728459AbfKDAS0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Nov 2019 19:18:26 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CD48C891A9;
+        Mon,  4 Nov 2019 13:18:22 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1572826702;
+        bh=Ww5LQFHvbo1fwdgP1bkCVCNF1HEAuKW3lV2I1m2dQwE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=uLNjZDL9Q4LJ7STNSwyA9ewHBZvwq80xe3ly/mU2sXD2NLQlsWv85cDVNdk0Ezv9I
+         YtQC/28PkfNB8iR06X067h0iVWhGvlYWmSh/BxbhJojfIwFuYUZQ4rGBydZa9PxLBf
+         mju8AV8yKCavZhmTu2AlyHujzl4W6cCF5QQKrqy3SxXzzoB/YZYL/rD96z0o2P6qam
+         Au58QP6hbvNr2+AcDZnqZYLiA0ZaIXlwxS97djAMr26qhyzr80PAgXfniKUy+DAnA+
+         Jl0HVdWBQFG07eQXdZGQA1hpIg8kUAZph5oNLWpmw7NZT/CL+vEcy+Qtoe2Vam8fUa
+         nOftw1uzS39nw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5dbf6e4a0002>; Mon, 04 Nov 2019 13:18:21 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 6864B13EF97;
+        Mon,  4 Nov 2019 13:18:18 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 927DD28005D; Mon,  4 Nov 2019 13:18:19 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v3 2/2] pinctrl: bcm: nsp: implement get_direction
+Date:   Mon,  4 Nov 2019 13:18:19 +1300
+Message-Id: <20191104001819.2300-3-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191104001819.2300-1-chris.packham@alliedtelesis.co.nz>
+References: <20191104001819.2300-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: for-next
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.4-rc4-34-gb0983a8bbfb4
-Subject: linusw/for-next build: 6 builds: 0 failed, 6 passed,
- 5 warnings (v5.4-rc4-34-gb0983a8bbfb4)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+x-atlnz-ls: pat
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next build: 6 builds: 0 failed, 6 passed, 5 warnings (v5.4-rc4-3=
-4-gb0983a8bbfb4)
+The get_direction api is strongly recommended to be implemented. In fact
+if it is not implemented gpio-hogs will not get the correct direction.
+Add an implementation of get_direction for the nsp-gpio driver.
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/v5.4-rc4-34-gb0983a8bbfb4/
-
-Tree: linusw
-Branch: for-next
-Git Describe: v5.4-rc4-34-gb0983a8bbfb4
-Git Commit: b0983a8bbfb45d16760b34c23436a3d9b5834dbf
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 6 unique architectures
-
-Warnings Detected:
-
-arc:
-    nsim_hs_defconfig (gcc-8): 2 warnings
-
-arm64:
-
-arm:
-    multi_v7_defconfig (gcc-8): 3 warnings
-
-mips:
-
-riscv:
-
-x86_64:
-
-
-Warnings summary:
-
-    2    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-    1    depmod: WARNING: /home/buildslave/workspace/workspace/kernel-build=
-/linux/build/_modules_/lib/modules/5.4.0-rc4/kernel/drivers/usb/storage/uas=
-.ko needs unknown symbol usb_stor_sense_invalidCDB
-    1    depmod: WARNING: /home/buildslave/workspace/workspace/kernel-build=
-/linux/build/_modules_/lib/modules/5.4.0-rc4/kernel/drivers/usb/storage/uas=
-.ko needs unknown symbol usb_stor_adjust_quirks
-    1    WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
-
-Section mismatches summary:
-
-    1    WARNING: vmlinux.o(.data+0xbe400): Section mismatch in reference f=
-rom the variable bcm_iproc_gpio_driver to the (unknown reference) .init.rod=
-ata:(unknown)
-    1    WARNING: vmlinux.o(.data+0x829f0): Section mismatch in reference f=
-rom the variable bcm_iproc_gpio_driver to the variable .init.rodata:bcm_ipr=
-oc_gpio_of_match
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
-Section mismatches:
-    WARNING: vmlinux.o(.data+0x829f0): Section mismatch in reference from t=
-he variable bcm_iproc_gpio_driver to the variable .init.rodata:bcm_iproc_gp=
-io_of_match
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sec=
-tion mismatches
-
-Warnings:
-    WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
-    depmod: WARNING: /home/buildslave/workspace/workspace/kernel-build/linu=
-x/build/_modules_/lib/modules/5.4.0-rc4/kernel/drivers/usb/storage/uas.ko n=
-eeds unknown symbol usb_stor_sense_invalidCDB
-    depmod: WARNING: /home/buildslave/workspace/workspace/kernel-build/linu=
-x/build/_modules_/lib/modules/5.4.0-rc4/kernel/drivers/usb/storage/uas.ko n=
-eeds unknown symbol usb_stor_adjust_quirks
-
-Section mismatches:
-    WARNING: vmlinux.o(.data+0xbe400): Section mismatch in reference from t=
-he variable bcm_iproc_gpio_driver to the (unknown reference) .init.rodata:(=
-unknown)
-
----------------------------------------------------------------------------=
------
-nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
-For more info write to <info@kernelci.org>
+
+Notes:
+    Changes in v3:
+    - add revew from Florian
+    Changes in v2:
+    - New
+
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm=
+/pinctrl-nsp-gpio.c
+index 45ae29b22548..bed0124388c0 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+@@ -297,6 +297,19 @@ static int nsp_gpio_direction_output(struct gpio_chi=
+p *gc, unsigned gpio,
+ 	return 0;
+ }
+=20
++static int nsp_gpio_get_direction(struct gpio_chip *gc, unsigned gpio)
++{
++	struct nsp_gpio *chip =3D gpiochip_get_data(gc);
++	unsigned long flags;
++	int val;
++
++	raw_spin_lock_irqsave(&chip->lock, flags);
++	val =3D nsp_get_bit(chip, REG, NSP_GPIO_OUT_EN, gpio);
++	raw_spin_unlock_irqrestore(&chip->lock, flags);
++
++	return !val;
++}
++
+ static void nsp_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
+ {
+ 	struct nsp_gpio *chip =3D gpiochip_get_data(gc);
+@@ -641,6 +654,7 @@ static int nsp_gpio_probe(struct platform_device *pde=
+v)
+ 	gc->free =3D gpiochip_generic_free;
+ 	gc->direction_input =3D nsp_gpio_direction_input;
+ 	gc->direction_output =3D nsp_gpio_direction_output;
++	gc->get_direction =3D nsp_gpio_get_direction;
+ 	gc->set =3D nsp_gpio_set;
+ 	gc->get =3D nsp_gpio_get;
+=20
+--=20
+2.23.0
+
