@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA6CC5DF62
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBB5C5DF60
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97290217F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02699217F5
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbfKEUgD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Nov 2019 15:36:03 -0500
-Received: from mga04.intel.com ([192.55.52.120]:41970 "EHLO mga04.intel.com"
+        id S1729773AbfKEUgF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Nov 2019 15:36:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56275 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727095AbfKEUgD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 5 Nov 2019 15:36:03 -0500
+        id S1727821AbfKEUgF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 5 Nov 2019 15:36:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:36:02 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:36:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="376818796"
+   d="scan'208";a="205105312"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2019 12:36:00 -0800
+  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2019 12:36:03 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B0ECF115; Tue,  5 Nov 2019 22:35:59 +0200 (EET)
+        id F1598458; Tue,  5 Nov 2019 22:35:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -36,10 +36,10 @@ To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Hans de Goede <hdegoede@redhat.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/7] gpiolib: No need to call gpiochip_remove_pin_ranges() twice
-Date:   Tue,  5 Nov 2019 22:35:52 +0200
-Message-Id: <20191105203557.78562-3-andriy.shevchenko@linux.intel.com>
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 7/7] pinctrl: baytrail: Pass irqchip when adding gpiochip
+Date:   Tue,  5 Nov 2019 22:35:57 +0200
+Message-Id: <20191105203557.78562-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0.rc1
 In-Reply-To: <20191105203557.78562-1-andriy.shevchenko@linux.intel.com>
 References: <20191105203557.78562-1-andriy.shevchenko@linux.intel.com>
@@ -50,82 +50,103 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-of_gpiochip_add(), when fails, calls gpiochip_remove_pin_ranges().
+We need to convert all old gpio irqchips to pass the irqchip
+setup along when adding the gpio_chip. For more info see
+drivers/gpio/TODO.
 
-ADD:
-  gpiochip_add_data_with_key() ->
-    of_gpiochip_add() -> (ERROR path)
-      gpiochip_remove_pin_ranges()
+For chained irqchips this is a pretty straight-forward conversion.
 
-At the same time of_gpiochip_remove() calls exactly the above mentioned
-function unconditionally and so does gpiochip_remove().
-
-REMOVE:
-  gpiochip_remove() ->
-    gpiochip_remove_pin_ranges()
-    of_gpiochip_remove() ->
-      gpiochip_remove_pin_ranges()
-
-Since gpiochip_remove() calls gpiochip_remove_pin_ranges() unconditionally,
-we have duplicate call to the same function when it's not necessary.
-
-Move gpiochip_remove_pin_ranges() from of_gpiochip_add() to gpiochip_add()
-to avoid duplicate calls and be consistent with the explicit call in
-gpiochip_remove().
-
-Fixes: e93fa3f24353 ("gpiolib: remove duplicate pin range code")
-Depends-on: f7299d441a4d ("gpio: of: Fix of_gpiochip_add() error path")
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-of.c | 5 +----
- drivers/gpio/gpiolib.c    | 3 ++-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 43 ++++++++++++++----------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 0380a1d6b660..bd06743a5d7c 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -885,16 +885,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 	of_node_get(chip->of_node);
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index b4d0e945e8c2..1234fe5f2a27 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1450,9 +1450,9 @@ static void byt_init_irq_valid_mask(struct gpio_chip *chip,
+ 	 */
+ }
  
- 	ret = of_gpiochip_scan_gpios(chip);
+-static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
++static int byt_gpio_irq_init_hw(struct gpio_chip *chip)
+ {
+-	struct gpio_chip *gc = &vg->chip;
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	struct device *dev = &vg->pdev->dev;
+ 	void __iomem *reg;
+ 	u32 base, value;
+@@ -1476,7 +1476,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 
+ 		value = readl(reg);
+ 		if (value & BYT_DIRECT_IRQ_EN) {
+-			clear_bit(i, gc->irq.valid_mask);
++			clear_bit(i, chip->irq.valid_mask);
+ 			dev_dbg(dev, "excluding GPIO %d from IRQ domain\n", i);
+ 		} else if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i)) {
+ 			byt_gpio_clear_triggering(vg, i);
+@@ -1504,6 +1504,8 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 				"GPIO interrupt error, pins misconfigured. INT_STAT%u: 0x%08x\n",
+ 				base / 32, value);
+ 	}
++
++	return 0;
+ }
+ 
+ static int byt_gpio_add_pin_ranges(struct gpio_chip *chip)
+@@ -1542,26 +1544,31 @@ static int byt_gpio_probe(struct byt_gpio *vg)
+ 	if (!vg->saved_context)
+ 		return -ENOMEM;
+ #endif
+-	ret = devm_gpiochip_add_data(&vg->pdev->dev, gc, vg);
 -	if (ret) {
-+	if (ret)
- 		of_node_put(chip->of_node);
--		gpiochip_remove_pin_ranges(chip);
+-		dev_err(&vg->pdev->dev, "failed adding byt-gpio chip\n");
+-		return ret;
 -	}
  
- 	return ret;
- }
+ 	/* set up interrupts  */
+ 	irq_rc = platform_get_resource(vg->pdev, IORESOURCE_IRQ, 0);
+ 	if (irq_rc && irq_rc->start) {
+-		byt_gpio_irq_init_hw(vg);
+-		ret = gpiochip_irqchip_add(gc, &byt_irqchip, 0,
+-					   handle_bad_irq, IRQ_TYPE_NONE);
+-		if (ret) {
+-			dev_err(&vg->pdev->dev, "failed to add irqchip\n");
+-			return ret;
+-		}
++		struct gpio_irq_chip *girq;
++
++		girq = &gc->irq;
++		girq->chip = &byt_irqchip;
++		girq->init_hw = byt_gpio_irq_init_hw;
++		girq->parent_handler = byt_gpio_irq_handler;
++		girq->num_parents = 1;
++		girq->parents = devm_kcalloc(&vg->pdev->dev, 1,
++					     sizeof(*girq->parents),
++					     GFP_KERNEL);
++		if (!girq->parents)
++			return -ENOMEM;
++		girq->parents[0] = (unsigned int)irq_rc->start;
++		girq->default_type = IRQ_TYPE_NONE;
++		girq->handler = handle_bad_irq;
++	}
  
- void of_gpiochip_remove(struct gpio_chip *chip)
- {
--	gpiochip_remove_pin_ranges(chip);
- 	of_node_put(chip->of_node);
- }
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a13f656c3034..aaf9c0a74c38 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1448,6 +1448,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
- err_free_gpiochip_mask:
-+	gpiochip_remove_pin_ranges(chip);
- 	gpiochip_free_valid_mask(chip);
- err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -1503,8 +1504,8 @@ void gpiochip_remove(struct gpio_chip *chip)
- 	gdev->chip = NULL;
- 	gpiochip_irqchip_remove(chip);
- 	acpi_gpiochip_remove(chip);
--	gpiochip_remove_pin_ranges(chip);
- 	of_gpiochip_remove(chip);
-+	gpiochip_remove_pin_ranges(chip);
- 	gpiochip_free_valid_mask(chip);
- 	/*
- 	 * We accept no more calls into the driver from this point, so
+-		gpiochip_set_chained_irqchip(gc, &byt_irqchip,
+-					     (unsigned)irq_rc->start,
+-					     byt_gpio_irq_handler);
++	ret = devm_gpiochip_add_data(&vg->pdev->dev, gc, vg);
++	if (ret) {
++		dev_err(&vg->pdev->dev, "failed adding byt-gpio chip\n");
++		return ret;
+ 	}
+ 
+ 	return ret;
 -- 
 2.24.0.rc1
 
