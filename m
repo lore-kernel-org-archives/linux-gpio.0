@@ -2,33 +2,33 @@ Return-Path: <SRS0=+xOq=Y5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B95BC5DF60
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4D1C47E49
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C1E217F5
+	by mail.kernel.org (Postfix) with ESMTP id 75DDA21A49
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 20:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbfKEUgD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726368AbfKEUgD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 5 Nov 2019 15:36:03 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56275 "EHLO mga05.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:56505 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfKEUgC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1725806AbfKEUgC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 5 Nov 2019 15:36:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:36:02 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2019 12:36:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,271,1569308400"; 
-   d="scan'208";a="195954281"
+   d="scan'208";a="402111876"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 05 Nov 2019 12:36:00 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 05 Nov 2019 12:36:00 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9BE84FC; Tue,  5 Nov 2019 22:35:59 +0200 (EET)
+        id C525514E; Tue,  5 Nov 2019 22:35:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -36,10 +36,12 @@ To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Hans de Goede <hdegoede@redhat.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [RESEND][PATCH v2 0/7] gpiolib: fix GPIO <-> pin mapping registration
-Date:   Tue,  5 Nov 2019 22:35:50 +0200
-Message-Id: <20191105203557.78562-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/7] gpio: merrifield: Add GPIO <-> pin mapping ranges via callback
+Date:   Tue,  5 Nov 2019 22:35:54 +0200
+Message-Id: <20191105203557.78562-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0.rc1
+In-Reply-To: <20191105203557.78562-1-andriy.shevchenko@linux.intel.com>
+References: <20191105203557.78562-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -47,52 +49,100 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is the ordering fix for GPIO <-> pin mapping registration to allow
-delegation of IRQ chip to the GPIO library. Two drivers are actually converted
-to use the new callback followed by switching to use of irqchip structure
-inside gpiochip.
+When IRQ chip is instantiated via GPIO library flow, the few functions,
+in particular the ACPI event registration mechanism, on some of ACPI based
+platforms expect that the pin ranges are initialized to that point.
 
-The series has been tested on Merrifield device (though no AEI) and on Thinkpad
-10 where 4 events are registered, one of which has reasonable amount of
-interrupts coming from battery.
+Add GPIO <-> pin mapping ranges via callback in the GPIO library flow.
 
-First two patches are definitely good for v5.4 cycle (and have Fixes tag) while
-the rest can be applied for v5.5 if I didn't miss anything. So, they can go like
-patches 1-3 -> v5.4 (gpio/fixes) and to gpio/for-next and to pinctrl/for-next
-patches 4-5 -> v5.5 (gpio/for-next)
-patches 6-7 -> v5.5 (pinctrl/for-next)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-merrifield.c | 43 ++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
-Perhaps it would require to wait next v5.4 rc in order to avoid dependency
-issues.
-
-Changelog v2 (resent):
-- fixed cover letter
-- resent with ML included
-
-Changelog v2:
-- added fixes tag to the first patch
-- reworked commit message for the second patch
-- added baytrail conversion
-- tested on ThinkPad 10
-
-Andy Shevchenko (6):
-  gpiolib: No need to call gpiochip_remove_pin_ranges() twice
-  gpiolib: Introduce ->add_pin_ranges() callback
-  gpio: merrifield: Add GPIO <-> pin mapping ranges via callback
-  gpio: merrifield: Pass irqchip when adding gpiochip
-  pinctrl: baytrail: Add GPIO <-> pin mapping ranges via callback
-  pinctrl: baytrail: Pass irqchip when adding gpiochip
-
-Linus Walleij (1):
-  gpiolib: Switch order of valid mask and hw init
-
- drivers/gpio/gpio-merrifield.c           | 76 ++++++++++++++----------
- drivers/gpio/gpiolib-of.c                |  5 +-
- drivers/gpio/gpiolib.c                   | 19 +++++-
- drivers/pinctrl/intel/pinctrl-baytrail.c | 64 ++++++++++++--------
- include/linux/gpio/driver.h              |  5 ++
- 5 files changed, 107 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 3302125e5265..e96d8e517e26 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -393,14 +393,36 @@ static const char *mrfld_gpio_get_pinctrl_dev_name(struct mrfld_gpio *priv)
+ 	return name;
+ }
+ 
+-static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++static int mrfld_gpio_add_pin_ranges(struct gpio_chip *chip)
+ {
++	struct mrfld_gpio *priv = gpiochip_get_data(chip);
+ 	const struct mrfld_gpio_pinrange *range;
+ 	const char *pinctrl_dev_name;
++	unsigned int i;
++	int retval;
++
++	pinctrl_dev_name = mrfld_gpio_get_pinctrl_dev_name(priv);
++	for (i = 0; i < ARRAY_SIZE(mrfld_gpio_ranges); i++) {
++		range = &mrfld_gpio_ranges[i];
++		retval = gpiochip_add_pin_range(&priv->chip,
++						pinctrl_dev_name,
++						range->gpio_base,
++						range->pin_base,
++						range->npins);
++		if (retval) {
++			dev_err(priv->dev, "failed to add GPIO pin range\n");
++			return retval;
++		}
++	}
++
++	return 0;
++}
++
++static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
+ 	struct mrfld_gpio *priv;
+ 	u32 gpio_base, irq_base;
+ 	void __iomem *base;
+-	unsigned int i;
+ 	int retval;
+ 
+ 	retval = pcim_enable_device(pdev);
+@@ -441,30 +463,16 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	priv->chip.base = gpio_base;
+ 	priv->chip.ngpio = MRFLD_NGPIO;
+ 	priv->chip.can_sleep = false;
++	priv->chip.add_pin_ranges = mrfld_gpio_add_pin_ranges;
+ 
+ 	raw_spin_lock_init(&priv->lock);
+ 
+-	pci_set_drvdata(pdev, priv);
+ 	retval = devm_gpiochip_add_data(&pdev->dev, &priv->chip, priv);
+ 	if (retval) {
+ 		dev_err(&pdev->dev, "gpiochip_add error %d\n", retval);
+ 		return retval;
+ 	}
+ 
+-	pinctrl_dev_name = mrfld_gpio_get_pinctrl_dev_name(priv);
+-	for (i = 0; i < ARRAY_SIZE(mrfld_gpio_ranges); i++) {
+-		range = &mrfld_gpio_ranges[i];
+-		retval = gpiochip_add_pin_range(&priv->chip,
+-						pinctrl_dev_name,
+-						range->gpio_base,
+-						range->pin_base,
+-						range->npins);
+-		if (retval) {
+-			dev_err(&pdev->dev, "failed to add GPIO pin range\n");
+-			return retval;
+-		}
+-	}
+-
+ 	retval = gpiochip_irqchip_add(&priv->chip, &mrfld_irqchip, irq_base,
+ 				      handle_bad_irq, IRQ_TYPE_NONE);
+ 	if (retval) {
+@@ -477,6 +485,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	gpiochip_set_chained_irqchip(&priv->chip, &mrfld_irqchip, pdev->irq,
+ 				     mrfld_irq_handler);
+ 
++	pci_set_drvdata(pdev, priv);
+ 	return 0;
+ }
+ 
 -- 
 2.24.0.rc1
 
