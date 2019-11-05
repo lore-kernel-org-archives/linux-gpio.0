@@ -2,102 +2,68 @@ Return-Path: <SRS0=+xOq=Y5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F39C5DF60
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 18:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A93C5DF60
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 19:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD6F217F5
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 18:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB4921882
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Nov 2019 19:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572979749;
-	bh=sBXW7Y3XWS5oCMwqXlYFhhF/4022KiBmqq6Jnn0h16s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OWeeeiTHqSEu8s7VfzlCGTJrfnEQWp+SXnFXJxpQewBbDaahmLjBMbaE3E1UG5cT/
-	 79sajb7j9nw6WzGbNiSMbPZgwmlqFhSBkZxQuNTmXDxQih0cmn3z9kPjSuwkDjNcBq
-	 ytwqFUfityKyq+9w6QckpC9edNxWF+81BpFH09II=
+	s=default; t=1572980711;
+	bh=ExLIsxZ9XZ/yP3aRH72tp0VxpEpuivnzsowuENnLwDQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=2LjvezrWVaqw1o4W1ITmmIcU3qkqADQHwa/Sgc46Izw4gpbdeh7kdph5Kbk7swDR/
+	 SlOyRT/xfhOaWWiDNpI5v922REYZzn1IGp7krOCKLLN2kTHeHmXF6o1KcyDKFpbOAu
+	 hv04kCM9XqOTZ1S85OMT8UEnZz7wzi0zXlWXycoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390482AbfKEStG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Nov 2019 13:49:06 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34198 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389861AbfKEStG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Nov 2019 13:49:06 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l202so18522730oig.1;
-        Tue, 05 Nov 2019 10:49:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qj5LiYO9Gp8VVa5aloZ7icPxyBMoZMvJD6YekkOcDko=;
-        b=DZh4DBB6PGYD9EHe8SNxx49+3hErp897GlDbAOarx4jIEVk3pbY4yFS47UNf4UkZOU
-         8pwl4bDqk72chY5FoevbkCSSZmZFIyWsiO8okHJ9z5mpQibVynwYzLFzhWF5bq5uzbtb
-         pRFsUb1IMVeArStTGYqSFoCzVgMoH/lPwhjE+vAsv5MjHtaKba2no6mkSGn4THxHPHgj
-         gaxC6LGbgJUAL2afyeB6gUB/yH99DIji7oFW5yry2ZKP7d0Y7E60BNW2SiidNvccSxSs
-         05vS1e+h3aKyUMUJ7fjyK+oRu+AjgzW+OqMCPiypwwip7D+r+hY+GQPRyeUUXsi+sTYq
-         16bg==
-X-Gm-Message-State: APjAAAWZMzHiLH+kqZc2XN9E5D/zea4QUiIp+hLhMRHECF32OR5JXnNb
-        MI7sIIfx/Kz/oEq+CFboj42HXvY=
-X-Google-Smtp-Source: APXvYqyrkBUlvV4cInkJ0w/GC7dlp4bZRcgeBsiVsjLD/Uy3nlwd90V6BQaJ97S30Z3HKKwFfh/7vw==
-X-Received: by 2002:aca:a842:: with SMTP id r63mr394336oie.118.1572979745545;
-        Tue, 05 Nov 2019 10:49:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u18sm2530972otq.31.2019.11.05.10.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 10:49:04 -0800 (PST)
-Date:   Tue, 5 Nov 2019 12:49:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 08/11] dt-bindings: pinctrl: qcom-wcd934x: Add
- bindings for gpio
-Message-ID: <20191105184903.GA4709@bogus>
-References: <20191029112700.14548-1-srinivas.kandagatla@linaro.org>
- <20191029112700.14548-9-srinivas.kandagatla@linaro.org>
- <CACRpkdYc-3Nk7VGj8mAjaM4C0dc_X7ZOK0cptW2Sr+kKwvyFVg@mail.gmail.com>
- <4f0e22ab-6aa1-2ed1-a85b-fb66531e0b2a@linaro.org>
- <CACRpkda2CdbPe7jsomZSxdJ1wE65OmNYDsZNj1OmfzdvG4kWng@mail.gmail.com>
- <502c64dd-a249-bb2c-7bc5-8c66fa66be35@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <502c64dd-a249-bb2c-7bc5-8c66fa66be35@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390800AbfKETFF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Nov 2019 14:05:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390514AbfKETFF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 5 Nov 2019 14:05:05 -0500
+Subject: Re: [GIT PULL] GPIO fixes for v5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572980704;
+        bh=ExLIsxZ9XZ/yP3aRH72tp0VxpEpuivnzsowuENnLwDQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=kiV+lHrl4FEHRKKW9chhdGJPc/cJFmXWbYna8RrG5fwZE3QyyE9JrK05vFDWrKmyk
+         t8qczFhSDyt2sPtFKwrxL3ozzt0dBQvCBvBBNle8sHet88Sb1RzpnGFOniLRac5uQw
+         YtQXAJ2dCnAdJ3lf1AyLFboH6dZ0cuR1ie5gV+3g=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdZrum7MrNCMS9jaLb0OEMEjHu+xZaL9AbsqyLEz+m97YA@mail.gmail.com>
+References: <CACRpkdZrum7MrNCMS9jaLb0OEMEjHu+xZaL9AbsqyLEz+m97YA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdZrum7MrNCMS9jaLb0OEMEjHu+xZaL9AbsqyLEz+m97YA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ tags/gpio-v5.4-4
+X-PR-Tracked-Commit-Id: 1173c3c28abfc3d7b7665db502280ba9322320e6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7111fa1151e3c66cde3a94250bda72d7144419ff
+Message-Id: <157298070437.13819.5219173279870399946.pr-tracker-bot@kernel.org>
+Date:   Tue, 05 Nov 2019 19:05:04 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 01:27:45PM +0000, Srinivas Kandagatla wrote:
-> 
-> 
-> On 05/11/2019 13:25, Linus Walleij wrote:
-> > On Mon, Nov 4, 2019 at 10:35 AM Srinivas Kandagatla
-> > <srinivas.kandagatla@linaro.org>  wrote:
-> > 
-> > > This controller just has Output enable bits, No pin control properties.
-> > > 
-> > > As you suggested I can move this to drivers/gpio in next version.
-> > OK perfect, thanks!
-> > 
-> > NB: this probably also affects the compatible-string which contains
-> > "pinctrl*" right?
-> Yes, I will suffix it with "-gpio" instead.
+The pull request you sent on Tue, 5 Nov 2019 16:00:04 +0100:
 
-Not a discussion we should be having because you should name this after 
-what's in the chip documentation not the OS subsystem it happens to land 
-in.
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.4-4
 
-Rob
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7111fa1151e3c66cde3a94250bda72d7144419ff
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
