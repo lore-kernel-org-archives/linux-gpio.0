@@ -2,162 +2,80 @@ Return-Path: <SRS0=BWJe=Y6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDB9C5DF66
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43105C5DF66
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 15:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8C5217F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 101902187F
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 15:47:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DhaNTbRV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731691AbfKFOsf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Nov 2019 09:48:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:8775 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729430AbfKFOsf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Nov 2019 09:48:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:48:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="214266649"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2019 06:48:33 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 52A9B458; Wed,  6 Nov 2019 16:48:30 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        id S1727028AbfKFPrW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Nov 2019 10:47:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44026 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727631AbfKFPrW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Nov 2019 10:47:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573055241;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=NmN4OJBBm35WbMBR7Y/Z8itvsVjEWg72ApTODlVnx+A=;
+        b=DhaNTbRVME6yeZmCKaGIq7phiWA9uS3Jd7RWo2UZxw3g9PcdDb56AqI1qbJjqZ7HfAkeqn
+        if7eG8VfexhRs4kpW4i9BsslEEhicxKdHwK2Ao/SeJOmUzmdzDu7UTmRiUMyeEHSYsXxiP
+        vqaNhhpSZ9Piw5/UxEb7wiSE6VZ28lQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-202-3bAqftt6OiWXQB1TR-Z_Ug-1; Wed, 06 Nov 2019 10:47:19 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EA1C8017E0;
+        Wed,  6 Nov 2019 15:47:18 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-167.ams2.redhat.com [10.36.116.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0125E5D70E;
+        Wed,  6 Nov 2019 15:47:16 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 7/8] pinctrl: lynxpoint: Convert unsigned to unsigned int
-Date:   Wed,  6 Nov 2019 16:48:28 +0200
-Message-Id: <20191106144829.32275-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.0.rc1
-In-Reply-To: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
-References: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH v2 0/3] pinctrl: cherryview: Pass irqchip when adding gpiochip
+Date:   Wed,  6 Nov 2019 16:47:12 +0100
+Message-Id: <20191106154715.155596-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: 3bAqftt6OiWXQB1TR-Z_Ug-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Simple type conversion with no functional change implied.
+Hi All,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 24 +++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Here is v2 of my series for Cherry Trail devices to pass the irqchip when
+adding the gpiochip instead of registering it separately. Similar to how
+this is done for Bay Trail devices in Andy's recent series:
+"[RESEND][PATCH v2 0/7] gpiolib: fix GPIO <-> pin mapping registration".
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index d3065b5a5f75..49dcdc2c205d 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -80,7 +80,7 @@ struct lp_gpio {
-  * LP94_CONFIG2 (gpio 94) ...
-  */
- 
--static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned offset,
-+static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned int offset,
- 				 int reg)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
-@@ -96,7 +96,7 @@ static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned offset,
- 	return lg->regs + reg + reg_offset;
- }
- 
--static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
-+static int lp_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
-@@ -121,7 +121,7 @@ static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
- 
--static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
-+static void lp_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *conf2 = lp_gpio_reg(chip, offset, LP_CONFIG2);
-@@ -132,7 +132,7 @@ static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	pm_runtime_put(lg->dev);
- }
- 
--static int lp_irq_type(struct irq_data *d, unsigned type)
-+static int lp_irq_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct lp_gpio *lg = gpiochip_get_data(gc);
-@@ -169,13 +169,13 @@ static int lp_irq_type(struct irq_data *d, unsigned type)
- 	return 0;
- }
- 
--static int lp_gpio_get(struct gpio_chip *chip, unsigned offset)
-+static int lp_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	return !!(ioread32(reg) & IN_LVL_BIT);
- }
- 
--static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-+static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
-@@ -191,7 +191,7 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	raw_spin_unlock_irqrestore(&lg->lock, flags);
- }
- 
--static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-+static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
-@@ -204,8 +204,8 @@ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
- 
--static int lp_gpio_direction_output(struct gpio_chip *chip,
--				      unsigned offset, int value)
-+static int lp_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
-+				    int value)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
-@@ -239,7 +239,7 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
- 		pending = ioread32(reg) & ioread32(ena);
- 
- 		for_each_set_bit(pin, &pending, 32) {
--			unsigned irq;
-+			unsigned int irq;
- 
- 			/* Clear before handling so we don't lose an edge */
- 			iowrite32(BIT(pin), reg);
-@@ -299,7 +299,7 @@ static int lp_gpio_irq_init_hw(struct gpio_chip *chip)
- {
- 	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	void __iomem *reg;
--	unsigned base;
-+	unsigned int base;
- 
- 	for (base = 0; base < lg->chip.ngpio; base += 32) {
- 		/* disable gpio pin interrupts */
-@@ -371,7 +371,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 					     GFP_KERNEL);
- 		if (!girq->parents)
- 			return -ENOMEM;
--		girq->parents[0] = (unsigned)irq_rc->start;
-+		girq->parents[0] = (unsigned int)irq_rc->start;
- 		girq->default_type = IRQ_TYPE_NONE;
- 		girq->handler = handle_bad_irq;
- 	}
--- 
-2.24.0.rc1
+Note this series depends on that series as well as on the cherryview change=
+s
+currently queued in pinctrl/intel.git/for-next .
+
+Changes in v2:
+- Add kerndoc comments for new chv_pinctrl struct members
+
+Regards,
+
+Hans
 
