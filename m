@@ -2,119 +2,173 @@ Return-Path: <SRS0=BWJe=Y6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23D7C5DF63
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BE0C5DF63
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D9B217F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C255217F4
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfKFO07 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Nov 2019 09:26:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62136 "EHLO mga04.intel.com"
+        id S1731608AbfKFOsd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Nov 2019 09:48:33 -0500
+Received: from mga11.intel.com ([192.55.52.93]:26747 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726945AbfKFO07 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Nov 2019 09:26:59 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726945AbfKFOsc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 6 Nov 2019 09:48:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:26:58 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:48:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="377062806"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 06 Nov 2019 06:26:56 -0800
-Received: from andy by smile with local (Exim 4.93-RC1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iSMGt-0004JY-LA; Wed, 06 Nov 2019 16:26:55 +0200
-Date:   Wed, 6 Nov 2019 16:26:55 +0200
+   d="scan'208";a="201117588"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Nov 2019 06:48:30 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 127C6115; Wed,  6 Nov 2019 16:48:30 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: Add Terra Pad 1061 to the
- run_edge_events_on_boot_blacklist
-Message-ID: <20191106142655.GD32742@smile.fi.intel.com>
-References: <20191106115109.119346-1-hdegoede@redhat.com>
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/8] pinctrl: lynxpoint: Use raw_spinlock for locking
+Date:   Wed,  6 Nov 2019 16:48:23 +0200
+Message-Id: <20191106144829.32275-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.0.rc1
+In-Reply-To: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
+References: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106115109.119346-1-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 12:51:09PM +0100, Hans de Goede wrote:
-> The Terra Pad 1061 has the usual micro-USB-B id-pin handler, but instead
-> of controlling the actual micro-USB-B it turns the 5V boost for the
-> tablet's USB-A connector and its keyboard-cover connector off.
-> 
-> The actual micro-USB-B connector on the tablet is wired for charging only,
-> and its id pin is *not* connected to the GPIO which is used for the
-> (broken) id-pin event handler in the DSDT.
-> 
-> While at it not only add a comment why the Terra Pad 1061 is on the
-> blacklist, but also fix the missing comment for the Minix Neo Z83-4 entry.
+The Intel Lynxpoint pinctrl driver implements irqchip callbacks which are
+called with desc->lock raw_spinlock held. In mainline this is fine because
+spinlock resolves to raw_spinlock. However, running the same code in -rt
+we will get a BUG() asserted.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This is because in -rt spinlocks are preemptible so taking the driver
+private spinlock in irqchip callbacks causes might_sleep() to trigger.
 
-Thanks!
+In order to keep -rt happy but at the same time make sure that register
+accesses get serialized, convert the driver to use raw_spinlock instead.
 
-> 
-> Fixes: 61f7f7c8f978 ("gpiolib: acpi: Add gpiolib_acpi_run_edge_events_on_boot option and blacklist")
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 2911dd6f2625..5372652c38eb 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -1307,11 +1307,28 @@ late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
->  
->  static const struct dmi_system_id run_edge_events_on_boot_blacklist[] = {
->  	{
-> +		/*
-> +		 * The Minix Neo Z83-4 has a micro-USB-B id-pin handler for
-> +		 * a non existing micro-USB-B connector which puts the HDMI
-> +		 * DDC pins in GPIO mode, breaking HDMI support.
-> +		 */
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "MINIX"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
->  		}
->  	},
-> +	{
-> +		/*
-> +		 * The Terra Pad 1061 has a micro-USB-B id-pin handler, which
-> +		 * instead of controlling the actual micro-USB-B turns the 5V
-> +		 * boost for its USB-A connector off. The actual micro-USB-B
-> +		 * connector is wired for charging only.
-> +		 */
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Wortmann_AG"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "TERRA_PAD_1061"),
-> +		}
-> +	},
->  	{} /* Terminating entry */
->  };
->  
-> -- 
-> 2.23.0
-> 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 28 +++++++++++------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index e9e47c0d5be7..6467095523cc 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -47,7 +47,7 @@
+ struct lp_gpio {
+ 	struct gpio_chip	chip;
+ 	struct platform_device	*pdev;
+-	spinlock_t		lock;
++	raw_spinlock_t		lock;
+ 	unsigned long		reg_base;
+ };
+ 
+@@ -144,7 +144,7 @@ static int lp_irq_type(struct irq_data *d, unsigned type)
+ 	if (hwirq >= lg->chip.ngpio)
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 	value = inl(reg);
+ 
+ 	/* set both TRIG_SEL and INV bits to 0 for rising edge */
+@@ -164,7 +164,7 @@ static int lp_irq_type(struct irq_data *d, unsigned type)
+ 		value |= TRIG_SEL_BIT | INT_INV_BIT;
+ 
+ 	outl(value, reg);
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -181,14 +181,14 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 
+ 	if (value)
+ 		outl(inl(reg) | OUT_LVL_BIT, reg);
+ 	else
+ 		outl(inl(reg) & ~OUT_LVL_BIT, reg);
+ 
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+@@ -197,9 +197,9 @@ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 	outl(inl(reg) | DIR_BIT, reg);
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -213,9 +213,9 @@ static int lp_gpio_direction_output(struct gpio_chip *chip,
+ 
+ 	lp_gpio_set(chip, offset, value);
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 	outl(inl(reg) & ~DIR_BIT, reg);
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -266,9 +266,9 @@ static void lp_irq_enable(struct irq_data *d)
+ 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 	outl(inl(reg) | BIT(hwirq % 32), reg);
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static void lp_irq_disable(struct irq_data *d)
+@@ -279,9 +279,9 @@ static void lp_irq_disable(struct irq_data *d)
+ 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&lg->lock, flags);
++	raw_spin_lock_irqsave(&lg->lock, flags);
+ 	outl(inl(reg) & ~BIT(hwirq % 32), reg);
+-	spin_unlock_irqrestore(&lg->lock, flags);
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static struct irq_chip lp_irqchip = {
+@@ -345,7 +345,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
+ 		return -EBUSY;
+ 	}
+ 
+-	spin_lock_init(&lg->lock);
++	raw_spin_lock_init(&lg->lock);
+ 
+ 	gc = &lg->chip;
+ 	gc->label = dev_name(dev);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.24.0.rc1
 
