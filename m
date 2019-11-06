@@ -2,43 +2,42 @@ Return-Path: <SRS0=BWJe=Y6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD528C5DF65
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8BAC47E49
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC93217F4
+	by mail.kernel.org (Postfix) with ESMTP id E87862187F
 	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 14:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbfKFOsd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728712AbfKFOsd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 6 Nov 2019 09:48:33 -0500
-Received: from mga18.intel.com ([134.134.136.126]:8956 "EHLO mga18.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:45533 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729430AbfKFOsd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726945AbfKFOsd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 6 Nov 2019 09:48:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:48:32 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 06:48:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,275,1569308400"; 
-   d="scan'208";a="285681069"
+   d="scan'208";a="192484618"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2019 06:48:30 -0800
+  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2019 06:48:30 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 089516A; Wed,  6 Nov 2019 16:48:29 +0200 (EET)
+        id 1793F14E; Wed,  6 Nov 2019 16:48:30 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/8] pinctrl: lynxpoint: Move GPIO driver to pin controller folder
-Date:   Wed,  6 Nov 2019 16:48:22 +0200
-Message-Id: <20191106144829.32275-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/8] pinctrl: lynxpoint: Correct amount of pins
+Date:   Wed,  6 Nov 2019 16:48:24 +0200
+Message-Id: <20191106144829.32275-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0.rc1
 In-Reply-To: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
 References: <20191106144829.32275-1-andriy.shevchenko@linux.intel.com>
@@ -49,99 +48,55 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Move Lynxpoint GPIO driver under Intel pin control umbrella
-for further transformation to a real pin control driver.
+When we count from 0 it's possible to get into off-by-one error.
+That's what had happened to this driver. So, correct amount of pins
+and related typos in the code.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- MAINTAINERS                                            |  1 -
- drivers/gpio/Kconfig                                   |  8 --------
- drivers/gpio/Makefile                                  |  1 -
- drivers/pinctrl/intel/Kconfig                          | 10 ++++++++++
- drivers/pinctrl/intel/Makefile                         |  1 +
- .../intel/pinctrl-lynxpoint.c}                         |  0
- 6 files changed, 11 insertions(+), 10 deletions(-)
- rename drivers/{gpio/gpio-lynxpoint.c => pinctrl/intel/pinctrl-lynxpoint.c} (100%)
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1378491c223c..9b71250e3014 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8325,7 +8325,6 @@ S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git
- F:	drivers/gpio/gpio-ich.c
- F:	drivers/gpio/gpio-intel-mid.c
--F:	drivers/gpio/gpio-lynxpoint.c
- F:	drivers/gpio/gpio-merrifield.c
- F:	drivers/gpio/gpio-ml-ioh.c
- F:	drivers/gpio/gpio-pch.c
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8adffd42f8cb..6923142fd874 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -335,14 +335,6 @@ config GPIO_LPC32XX
- 	  Select this option to enable GPIO driver for
- 	  NXP LPC32XX devices.
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index 6467095523cc..ebc523233df4 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -18,9 +18,9 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
  
--config GPIO_LYNXPOINT
--	tristate "Intel Lynxpoint GPIO support"
--	depends on ACPI && X86
--	select GPIOLIB_IRQCHIP
--	help
--	  driver for GPIO functionality on Intel Lynxpoint PCH chipset
--	  Requires ACPI device enumeration code to set up a platform device.
--
- config GPIO_MB86S7X
- 	tristate "GPIO support for Fujitsu MB86S7x Platforms"
- 	help
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 34eb8b2b12dd..55b2b645391e 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -76,7 +76,6 @@ obj-$(CONFIG_GPIO_LP873X)		+= gpio-lp873x.o
- obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LPC18XX)		+= gpio-lpc18xx.o
- obj-$(CONFIG_GPIO_LPC32XX)		+= gpio-lpc32xx.o
--obj-$(CONFIG_GPIO_LYNXPOINT)		+= gpio-lynxpoint.o
- obj-$(CONFIG_GPIO_MADERA)		+= gpio-madera.o
- obj-$(CONFIG_GPIO_MAX3191X)		+= gpio-max3191x.o
- obj-$(CONFIG_GPIO_MAX7300)		+= gpio-max7300.o
-diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
-index c091eb2f0aeb..260193c453b0 100644
---- a/drivers/pinctrl/intel/Kconfig
-+++ b/drivers/pinctrl/intel/Kconfig
-@@ -42,6 +42,16 @@ config PINCTRL_MERRIFIELD
- 	  interface that allows configuring of SoC pins and using them as
- 	  GPIOs.
+-/* LynxPoint chipset has support for 94 gpio pins */
++/* LynxPoint chipset has support for 95 GPIO pins */
  
-+config PINCTRL_LYNXPOINT
-+	tristate "Intel Lynxpoint pinctrl and GPIO driver"
-+	depends on ACPI
-+	select GPIOLIB
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Lynxpoint is the PCH of Intel Haswell. This pinctrl driver
-+	  provides an interface that allows configuring of PCH pins and
-+	  using them as GPIOs.
-+
- config PINCTRL_INTEL
- 	tristate
- 	select PINMUX
-diff --git a/drivers/pinctrl/intel/Makefile b/drivers/pinctrl/intel/Makefile
-index 5e92aba018ac..541b94cfe398 100644
---- a/drivers/pinctrl/intel/Makefile
-+++ b/drivers/pinctrl/intel/Makefile
-@@ -13,5 +13,6 @@ obj-$(CONFIG_PINCTRL_ELKHARTLAKE)	+= pinctrl-elkhartlake.o
- obj-$(CONFIG_PINCTRL_GEMINILAKE)	+= pinctrl-geminilake.o
- obj-$(CONFIG_PINCTRL_ICELAKE)		+= pinctrl-icelake.o
- obj-$(CONFIG_PINCTRL_LEWISBURG)		+= pinctrl-lewisburg.o
-+obj-$(CONFIG_PINCTRL_LYNXPOINT)		+= pinctrl-lynxpoint.o
- obj-$(CONFIG_PINCTRL_SUNRISEPOINT)	+= pinctrl-sunrisepoint.o
- obj-$(CONFIG_PINCTRL_TIGERLAKE)		+= pinctrl-tigerlake.o
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-similarity index 100%
-rename from drivers/gpio/gpio-lynxpoint.c
-rename to drivers/pinctrl/intel/pinctrl-lynxpoint.c
+-#define LP_NUM_GPIO	94
++#define LP_NUM_GPIO	95
+ 
+ /* Bitmapped register offsets */
+ #define LP_ACPI_OWNED	0x00 /* Bitmap, set by bios, 0: pin reserved for ACPI */
+@@ -54,11 +54,11 @@ struct lp_gpio {
+ /*
+  * Lynxpoint gpios are controlled through both bitmapped registers and
+  * per gpio specific registers. The bitmapped registers are in chunks of
+- * 3 x 32bit registers to cover all 94 gpios
++ * 3 x 32bit registers to cover all 95 GPIOs
+  *
+  * per gpio specific registers consist of two 32bit registers per gpio
+- * (LP_CONFIG1 and LP_CONFIG2), with 94 gpios there's a total of
+- * 188 config registers.
++ * (LP_CONFIG1 and LP_CONFIG2), with 95 GPIOs there's a total of
++ * 190 config registers.
+  *
+  * A simplified view of the register layout look like this:
+  *
+@@ -67,7 +67,7 @@ struct lp_gpio {
+  * LP_ACPI_OWNED[94:64] gpio ownerships for gpios 63-94
+  * ...
+  * LP_INT_ENABLE[31:0] ...
+- * LP_INT_ENABLE[63:31] ...
++ * LP_INT_ENABLE[63:32] ...
+  * LP_INT_ENABLE[94:64] ...
+  * LP0_CONFIG1 (gpio 0) config1 reg for gpio 0 (per gpio registers)
+  * LP0_CONFIG2 (gpio 0) config2 reg for gpio 0
 -- 
 2.24.0.rc1
 
