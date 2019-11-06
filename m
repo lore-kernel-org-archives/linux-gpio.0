@@ -2,470 +2,572 @@ Return-Path: <SRS0=BWJe=Y6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC83C5DF63
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 20:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15390C48BC2
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 22:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9333214D8
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 20:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2EE2166E
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Nov 2019 22:15:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="di92SvI3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbfKFUjj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Nov 2019 15:39:39 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40159 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbfKFUjj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Nov 2019 15:39:39 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iSS5Y-00014e-NM; Wed, 06 Nov 2019 21:39:36 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iSS5X-0003Ig-JR; Wed, 06 Nov 2019 21:39:35 +0100
-Date:   Wed, 6 Nov 2019 21:39:35 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Add Maxim MAX7313 PWM support
-Message-ID: <20191106203935.fptq4lhrlfggtt2o@pengutronix.de>
-References: <20191106112613.9246-1-miquel.raynal@bootlin.com>
+        id S1732687AbfKFWPo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Nov 2019 17:15:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53687 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfKFWPn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Nov 2019 17:15:43 -0500
+Received: by mail-wm1-f67.google.com with SMTP id x4so5900956wmi.3
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Nov 2019 14:15:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=UJA8WLNvHF2SOQyoAUNEJnqpP8T7iPhqxJV3li4veHI=;
+        b=di92SvI3LMsnBt6xF2BmlXVE1w1cdJnhOlG5G8hJlFqKA7/8sOmHtlK8hxGva3wmL1
+         vcjEp4LQkBCoI0RIe42kv+5AaPMQxo/tKmnRlqCH1XrBZRa8xhpnDAB2K2qFI+MTK6tV
+         ny+h+IVPe3VEeMyGTKWKXjNuox7GhpqCsM0C39Q6a6Z3QMheUhpLJeEMKZidxRxeqN+M
+         6D/gwmzBHtwsQ/fHqCEa+wI2w2LnaOTgghI4WcBN6gJRwQA0NZ5/C+WpkdEAmXwHpAJM
+         aFAH40G8uRir6Qb99akHSfNiajDuITSQU9CNFe30ljV8Y02spI6N/MkZjekzOx1/h5C0
+         3JSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=UJA8WLNvHF2SOQyoAUNEJnqpP8T7iPhqxJV3li4veHI=;
+        b=ZtZmlHPpnWcNFr/i9XwX9ZYgqZjb/0dfJpavvD0jf0c0VE1unslb+35te2tXGGKpHL
+         phzYnjQQAa8P+dtnGkIjNqrMkUBYuwfu/bv2KlJApzQT7vBSq9Bk4X/sJLY1A95W6BtR
+         sjKvTJpmenZqLhY9p3dp8vVQ8fxyKy+vQ8dOP/Utq7aXEq8sYJ0lON6mFGPK/Pvccio+
+         FlDdpsFFD5q3gmjVt3duLbJ1dkkm+dehqxCVWExR054cz6xUTXHSz8A+luwE7/RKei1R
+         AFLS2DD0nQIES0l/Y8P/UMnLQILgsaG3FnQr4CK062CHEMutf7XUlUqsvSM7hZTGx3Ts
+         8tcA==
+X-Gm-Message-State: APjAAAUqcVmAgKNqRTGX+akJWjUjejAwqP8OyI5Q95l4c4zVupPsMEQ7
+        K3MtHFCkFRplYffWubcApXjEWw==
+X-Google-Smtp-Source: APXvYqyECvVmmIIC5UbODcf22HZ3p6bEl9Vc4Wq7qeDGxU86K6w55cauMs/ByiLViyMrUVZAc6zQzg==
+X-Received: by 2002:a1c:5fc4:: with SMTP id t187mr4853909wmb.142.1573078539057;
+        Wed, 06 Nov 2019 14:15:39 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id j63sm4667484wmj.46.2019.11.06.14.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 14:15:38 -0800 (PST)
+Message-ID: <5dc3460a.1c69fb81.bfae4.adf1@mx.google.com>
+Date:   Wed, 06 Nov 2019 14:15:38 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191106112613.9246-1-miquel.raynal@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Tree: next
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: next-20191106
+Subject: next/master boot bisection: next-20191106 on r8a7795-salvator-x
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org,
+        Scott Branden <scott.branden@broadcom.com>,
+        khilman@baylibre.com, enric.balletbo@collabora.com,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Scott Branden <sbranden@broadcom.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Ray Jui <rjui@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-On Wed, Nov 06, 2019 at 12:26:13PM +0100, Miquel Raynal wrote:
-> The MAX7313 chip is fully compatible with the PCA9535 on its basic
-> functions but can also manage the intensity on each of its ports with
-> PWM. Each output is independent and may be tuned with 16 values (4
-> bits per output). The period is always 32kHz, only the duty-cycle may
-> be changed. One can use any output as GPIO or PWM.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
-> 
-> Changes in v2:
-> * Removed the hardcoding of PWM_CHANNELS, changed the code to use the
->   number of GPIO lines which is programatically known.
-> * Used per pwm_device chip data to store the GPIO descriptors instead
->   of having a static array of GPIO descriptors in the private PWM
->   structure. It also enhanced the readability.
-> * Rename an offset variable: s/off/shift/.
-> * The default PWM state is now static low instead of input.
-> * Used the GPIO as regular consumer thanks to the stored GPIO
->   descriptors to "make it more idiomatic" (requested by Thierry).
-> * Used gpiochip_request_own_desc() instead of
->   gpio_to_desc()/gpiod_request(). This prevented the build issue and
->   an additional dependency that would have requested a DEPENDS ON line
->   in Kconfig.
-> * Enhanced the return line of max7313_pwm_probe().
-> 
->  drivers/gpio/gpio-pca953x.c | 236 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 234 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index de5d1383f28d..f90ab9e6a741 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -12,18 +12,22 @@
->  #include <linux/bits.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/gpio/consumer.h>
-> +#include <linux/gpio/machine.h>
->  #include <linux/i2c.h>
->  #include <linux/init.h>
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_data/pca953x.h>
-> +#include <linux/pwm.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  
->  #include <asm/unaligned.h>
->  
-> +#include "gpiolib.h"
-> +
->  #define PCA953X_INPUT		0x00
->  #define PCA953X_OUTPUT		0x01
->  #define PCA953X_INVERT		0x02
-> @@ -63,11 +67,18 @@
->  
->  #define PCA_INT			BIT(8)
->  #define PCA_PCAL		BIT(9)
-> +#define MAX_PWM			BIT(10)
->  #define PCA_LATCH_INT		(PCA_PCAL | PCA_INT)
->  #define PCA953X_TYPE		BIT(12)
->  #define PCA957X_TYPE		BIT(13)
->  #define PCA_TYPE_MASK		GENMASK(15, 12)
->  
-> +#define MAX7313_MASTER		0x0E
-> +#define MAX7313_CONFIGURATION	0x0F
-> +#define MAX7313_INTENSITY	0x10
-> +
-> +#define MAX7313_GLOB_INTENSITY	BIT(2)
-> +
->  #define PCA_CHIP_TYPE(x)	((x) & PCA_TYPE_MASK)
->  
->  static const struct i2c_device_id pca953x_id[] = {
-> @@ -93,7 +104,7 @@ static const struct i2c_device_id pca953x_id[] = {
->  
->  	{ "max7310", 8  | PCA953X_TYPE, },
->  	{ "max7312", 16 | PCA953X_TYPE | PCA_INT, },
-> -	{ "max7313", 16 | PCA953X_TYPE | PCA_INT, },
-> +	{ "max7313", 16 | PCA953X_TYPE | PCA_INT | MAX_PWM, },
->  	{ "max7315", 8  | PCA953X_TYPE | PCA_INT, },
->  	{ "max7318", 16 | PCA953X_TYPE | PCA_INT, },
->  	{ "pca6107", 8  | PCA953X_TYPE | PCA_INT, },
-> @@ -118,6 +129,14 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
->  
->  #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
->  
-> +#define PWM_PER_REG 2
-> +#define PWM_BITS_PER_REG (8 / PWM_PER_REG)
-> +#define PWM_INTENSITY_MASK GENMASK(PWM_BITS_PER_REG - 1, 0)
-> +
-> +#define PWM_PERIOD_NS 31250
-> +#define PWM_DC_STATES 16
-> +#define PWM_OFFSET_NS (PWM_PERIOD_NS / PWM_DC_STATES)
-> +
->  struct pca953x_reg_config {
->  	int direction;
->  	int output;
-> @@ -139,6 +158,11 @@ static const struct pca953x_reg_config pca957x_regs = {
->  	.invert = PCA957X_INVRT,
->  };
->  
-> +struct max7313_pwm {
-> +	struct pwm_chip chip;
-> +	unsigned int used;
-> +};
-> +
->  struct pca953x_chip {
->  	unsigned gpio_start;
->  	struct mutex i2c_lock;
-> @@ -161,6 +185,8 @@ struct pca953x_chip {
->  	struct regulator *regulator;
->  
->  	const struct pca953x_reg_config *regs;
-> +
-> +	struct max7313_pwm pwm;
->  };
->  
->  static int pca953x_bank_shift(struct pca953x_chip *chip)
-> @@ -241,8 +267,16 @@ static bool pca953x_check_register(struct pca953x_chip *chip, unsigned int reg,
->  static bool pca953x_readable_register(struct device *dev, unsigned int reg)
->  {
->  	struct pca953x_chip *chip = dev_get_drvdata(dev);
-> +	unsigned int bank_sz = chip->driver_data & PCA_GPIO_MASK;
->  	u32 bank;
->  
-> +	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE &&
-> +	    chip->driver_data & MAX_PWM) {
-> +		if (reg >= MAX7313_MASTER &&
-> +		    reg < (MAX7313_INTENSITY + bank_sz))
-> +			return true;
-> +	}
-> +
->  	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
->  		bank = PCA953x_BANK_INPUT | PCA953x_BANK_OUTPUT |
->  		       PCA953x_BANK_POLARITY | PCA953x_BANK_CONFIG;
-> @@ -264,8 +298,16 @@ static bool pca953x_readable_register(struct device *dev, unsigned int reg)
->  static bool pca953x_writeable_register(struct device *dev, unsigned int reg)
->  {
->  	struct pca953x_chip *chip = dev_get_drvdata(dev);
-> +	unsigned int bank_sz = chip->driver_data & PCA_GPIO_MASK;
->  	u32 bank;
->  
-> +	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE &&
-> +	    chip->driver_data & MAX_PWM) {
-> +		if (reg >= MAX7313_MASTER &&
-> +		    reg < (MAX7313_INTENSITY + bank_sz))
-> +			return true;
-> +	}
-> +
->  	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
->  		bank = PCA953x_BANK_OUTPUT | PCA953x_BANK_POLARITY |
->  			PCA953x_BANK_CONFIG;
-> @@ -886,6 +928,193 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
->  	return ret;
->  }
->  
-> +/* PWM specific methods */
-> +
-> +static struct max7313_pwm *to_max7313_pwm(struct pwm_chip *chip)
-> +{
-> +	return container_of(chip, struct max7313_pwm, chip);
-> +}
-> +
-> +static struct pca953x_chip *to_pca953x(struct max7313_pwm *chip)
-> +{
-> +	return container_of(chip, struct pca953x_chip, pwm);
-> +}
-> +
-> +static int max7313_pwm_set_intensity(struct pca953x_chip *chip,
-> +				     unsigned int idx, u8 duty_cycle)
-> +{
-> +	/* Duty-cycle is in the range [1;16] while registers expect [0;15] */
-> +	u8 intensity = (duty_cycle - 1) & PWM_INTENSITY_MASK;
-> +	unsigned int reg, shift;
-> +	u8 val, mask;
-> +	int ret;
-> +
-> +	reg = MAX7313_INTENSITY + (idx / PWM_PER_REG);
-> +	shift = (idx % PWM_PER_REG) ? PWM_BITS_PER_REG : 0;
-> +
-> +	mask = PWM_INTENSITY_MASK << shift;
-> +	val = intensity << shift;
-> +
-> +	mutex_lock(&chip->i2c_lock);
-> +	ret = regmap_write_bits(chip->regmap, reg, mask, val);
-> +	mutex_unlock(&chip->i2c_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * For a given PWM channel, when the blink phase 0 bit is set, the intensity
-> + * range is only [1/16;16/16]. With this range, a static low output is
-> + * physically not possible. When the blink phase 0 bit is cleared, the intensity
-> + * range is [15/16;0/16] which then allows a static low output but not a static
-> + * high output.
-> + *
-> + * In this driver we choose to set the blink phase 0 bit by default, hence we
-> + * can slide from a low output to a fully high output without glitch. However,
-> + * the only way to get a static low output is by clearing the blink phase 0 bit,
-> + * and by changing the intensity value to its maximum (as, at this moment,
-> + * intensity is reversed). There is no way to atomically flip the register *and*
-> + * change the PWM value at the same time so this will produce a small glitch.
-> + */
-> +static int max7313_pwm_set_state(struct pca953x_chip *chip,
-> +				 struct pwm_device *pwm_device,
-> +				 unsigned int duty_cycle)
-> +{
-> +	int ret;
-> +
-> +	/* A null duty_cycle will invert the phase */
-> +	ret = gpiod_direction_output(pwm_get_chip_data(pwm_device), duty_cycle);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Maximize the low time in case of static low state */
-> +	if (!duty_cycle)
-> +		duty_cycle = PWM_DC_STATES;
-> +
-> +	return max7313_pwm_set_intensity(chip, pwm_device->hwpwm, duty_cycle);
-> +}
-> +
-> +static int max7313_pwm_request(struct pwm_chip *pwm_chip,
-> +			       struct pwm_device *pwm_device)
-> +{
-> +	struct gpio_desc *desc = pwm_get_chip_data(pwm_device);
-> +	struct max7313_pwm *pwm = to_max7313_pwm(pwm_chip);
-> +	struct pca953x_chip *chip = to_pca953x(pwm);
-> +	int ret;
-> +
-> +	if (desc)
-> +		return -EBUSY;
-> +
-> +	desc = gpiochip_request_own_desc(&chip->gpio_chip, pwm_device->hwpwm,
-> +					 "max7313-pwm", GPIO_ACTIVE_HIGH,
-> +					 GPIOD_OUT_LOW);
-> +	if (IS_ERR(desc))
-> +		return PTR_ERR(desc);
+next/master boot bisection: next-20191106 on r8a7795-salvator-x
 
-Would it make sense to add an error message here?
+Summary:
+  Start:      dcd34bd23418 Add linux-next specific files for 20191106
+  Details:    https://kernelci.org/boot/id/5dc298b459b514acf8138e34
+  Plain log:  https://storage.kernelci.org//next/master/next-20191106/arm64=
+/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/boot-r8a7795-salvat=
+or-x.txt
+  HTML log:   https://storage.kernelci.org//next/master/next-20191106/arm64=
+/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/boot-r8a7795-salvat=
+or-x.html
+  Result:     6a41b6c5fc20 gpio: Add xgs-iproc driver
 
-> +	pwm_set_chip_data(pwm_device, desc);
-> +
-> +	ret = max7313_pwm_set_state(chip, pwm_device, 0);
-> +	if (ret)
-> +		goto free_gpiod;
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-And here?
+Parameters:
+  Tree:       next
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  Branch:     master
+  Target:     r8a7795-salvator-x
+  CPU arch:   arm64
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Test suite: boot
 
-> +
-> +	/*
-> +	 * Set master intensity to the maximum level to let individual outputs
-> +	 * the greatest flexibility range. Also enables the internal oscillator.
-> +	 */
-> +	if (!pwm->used) {
-> +		mutex_lock(&chip->i2c_lock);
-> +		ret = regmap_write_bits(chip->regmap, MAX7313_MASTER,
-> +					PWM_INTENSITY_MASK << PWM_BITS_PER_REG,
-> +					PWM_INTENSITY_MASK << PWM_BITS_PER_REG);
-> +		mutex_unlock(&chip->i2c_lock);
-> +		if (ret)
-> +			goto free_gpiod;
-> +	}
-> +
-> +	pwm->used++;
-> +
-> +	return 0;
-> +
-> +free_gpiod:
-> +	gpiochip_free_own_desc(desc);
-> +	pwm_set_chip_data(pwm_device, NULL);
-> +
-> +	return ret;
-> +}
-> +
-> +static void max7313_pwm_free(struct pwm_chip *pwm_chip,
-> +			     struct pwm_device *pwm_device)
-> +{
-> +	struct gpio_desc *desc = pwm_get_chip_data(pwm_device);
-> +	struct max7313_pwm *pwm = to_max7313_pwm(pwm_chip);
-> +	struct pca953x_chip *chip = to_pca953x(pwm);
-> +
-> +	max7313_pwm_set_state(chip, pwm_device, 0);
-> +	pwm->used--;
-> +
-> +	/* Disable the internal oscillator if no channel is in use */
-> +	if (!pwm->used) {
-> +		mutex_lock(&chip->i2c_lock);
-> +		regmap_write_bits(chip->regmap, MAX7313_MASTER,
-> +				  PWM_INTENSITY_MASK << PWM_BITS_PER_REG, 0);
-> +		mutex_unlock(&chip->i2c_lock);
-> +	}
+Breaking commit found:
 
-This might race against max7313_pwm_request(). Consider .used being 1.
+---------------------------------------------------------------------------=
+----
+commit 6a41b6c5fc20abced88fa0eed42ae5e5cb70b280
+Author: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Date:   Fri Oct 25 09:27:03 2019 +1300
 
-	CPU 1						CPU2
+    gpio: Add xgs-iproc driver
+    =
 
-	in max7313_pwm_request() checks
-	pwm->used, sees it being 1 and so doesn't
-	set intensity
+    This driver supports the Chip Common A GPIO controller present on a
+    number of Broadcom switch ASICs with integrated SoCs. The controller is
+    similar to the pinctrl-nsp-gpio and pinctrl-iproc-gpio blocks but
+    different enough that a separate driver is required.
+    =
 
-							in max7313_pwm_free() decreases
-							pwm->used to 0 and so unsets
-							max intensity
+    This has been ported from Broadcom's XLDK 5.0.3 retaining only the CCA
+    support (pinctrl-iproc-gpio covers CCB).
+    =
 
-        pwm->used++;
+    Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+    Link: https://lore.kernel.org/r/20191024202703.8017-3-chris.packham@all=
+iedtelesis.co.nz
+    Acked-by: Scott Branden <scott.branden@broadcom.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8ec1f041c98d..e9516393c971 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -155,6 +155,15 @@ config GPIO_BCM_KONA
+ 	help
+ 	  Turn on GPIO support for Broadcom "Kona" chips.
+ =
+
++config GPIO_BCM_XGS_IPROC
++	tristate "BRCM XGS iProc GPIO support"
++	depends on OF_GPIO && (ARCH_BCM_IPROC || COMPILE_TEST)
++	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
++	default ARCH_BCM_IPROC
++	help
++	  Say yes here to enable GPIO support for Broadcom XGS iProc SoCs.
++
+ config GPIO_BRCMSTB
+ 	tristate "BRCMSTB GPIO support"
+ 	default y if (ARCH_BRCMSTB || BMIPS_GENERIC)
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 84e05701f500..34eb8b2b12dd 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -35,6 +35,7 @@ obj-$(CONFIG_GPIO_ASPEED)		+=3D gpio-aspeed.o
+ obj-$(CONFIG_GPIO_ASPEED_SGPIO)		+=3D gpio-aspeed-sgpio.o
+ obj-$(CONFIG_GPIO_ATH79)		+=3D gpio-ath79.o
+ obj-$(CONFIG_GPIO_BCM_KONA)		+=3D gpio-bcm-kona.o
++obj-$(CONFIG_GPIO_BCM_XGS_IPROC)	+=3D gpio-xgs-iproc.o
+ obj-$(CONFIG_GPIO_BD70528)		+=3D gpio-bd70528.o
+ obj-$(CONFIG_GPIO_BD9571MWV)		+=3D gpio-bd9571mwv.o
+ obj-$(CONFIG_GPIO_BRCMSTB)		+=3D gpio-brcmstb.o
+diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
+new file mode 100644
+index 000000000000..a3fdd95cc9e6
+--- /dev/null
++++ b/drivers/gpio/gpio-xgs-iproc.c
+@@ -0,0 +1,321 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2017 Broadcom
++ */
++
++#include <linux/gpio/driver.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++
++#define IPROC_CCA_INT_F_GPIOINT		BIT(0)
++#define IPROC_CCA_INT_STS		0x20
++#define IPROC_CCA_INT_MASK		0x24
++
++#define IPROC_GPIO_CCA_DIN		0x0
++#define IPROC_GPIO_CCA_DOUT		0x4
++#define IPROC_GPIO_CCA_OUT_EN		0x8
++#define IPROC_GPIO_CCA_INT_LEVEL	0x10
++#define IPROC_GPIO_CCA_INT_LEVEL_MASK	0x14
++#define IPROC_GPIO_CCA_INT_EVENT	0x18
++#define IPROC_GPIO_CCA_INT_EVENT_MASK	0x1C
++#define IPROC_GPIO_CCA_INT_EDGE		0x24
++
++struct iproc_gpio_chip {
++	struct irq_chip irqchip;
++	struct gpio_chip gc;
++	spinlock_t lock;
++	struct device *dev;
++	void __iomem *base;
++	void __iomem *intr;
++};
++
++static inline struct iproc_gpio_chip *
++to_iproc_gpio(struct gpio_chip *gc)
++{
++	return container_of(gc, struct iproc_gpio_chip, gc);
++}
++
++static void iproc_gpio_irq_ack(struct irq_data *d)
++{
++	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
++	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
++	int pin =3D d->hwirq;
++	unsigned long flags;
++	u32 irq =3D d->irq;
++	u32 irq_type, event_status =3D 0;
++
++	spin_lock_irqsave(&chip->lock, flags);
++	irq_type =3D irq_get_trigger_type(irq);
++	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
++		event_status |=3D BIT(pin);
++		writel_relaxed(event_status,
++			       chip->base + IPROC_GPIO_CCA_INT_EVENT);
++	}
++	spin_unlock_irqrestore(&chip->lock, flags);
++}
++
++static void iproc_gpio_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
++	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
++	int pin =3D d->hwirq;
++	unsigned long flags;
++	u32 irq =3D d->irq;
++	u32 int_mask, irq_type, event_mask;
++
++	spin_lock_irqsave(&chip->lock, flags);
++	irq_type =3D irq_get_trigger_type(irq);
++	event_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
++	int_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
++
++	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
++		event_mask |=3D 1 << pin;
++		writel_relaxed(event_mask,
++			       chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
++	} else {
++		int_mask |=3D 1 << pin;
++		writel_relaxed(int_mask,
++			       chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
++	}
++	spin_unlock_irqrestore(&chip->lock, flags);
++}
++
++static void iproc_gpio_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
++	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
++	int pin =3D d->hwirq;
++	unsigned long flags;
++	u32 irq =3D d->irq;
++	u32 irq_type, int_mask, event_mask;
++
++	spin_lock_irqsave(&chip->lock, flags);
++	irq_type =3D irq_get_trigger_type(irq);
++	event_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
++	int_mask =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
++
++	if (irq_type & IRQ_TYPE_EDGE_BOTH) {
++		event_mask &=3D ~BIT(pin);
++		writel_relaxed(event_mask,
++			       chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
++	} else {
++		int_mask &=3D ~BIT(pin);
++		writel_relaxed(int_mask,
++			       chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
++	}
++	spin_unlock_irqrestore(&chip->lock, flags);
++}
++
++static int iproc_gpio_irq_set_type(struct irq_data *d, u32 type)
++{
++	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
++	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
++	int pin =3D d->hwirq;
++	unsigned long flags;
++	u32 irq =3D d->irq;
++	u32 event_pol, int_pol;
++	int ret =3D 0;
++
++	spin_lock_irqsave(&chip->lock, flags);
++	switch (type & IRQ_TYPE_SENSE_MASK) {
++	case IRQ_TYPE_EDGE_RISING:
++		event_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EDGE);
++		event_pol &=3D ~BIT(pin);
++		writel_relaxed(event_pol, chip->base + IPROC_GPIO_CCA_INT_EDGE);
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		event_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EDGE);
++		event_pol |=3D BIT(pin);
++		writel_relaxed(event_pol, chip->base + IPROC_GPIO_CCA_INT_EDGE);
++		break;
++	case IRQ_TYPE_LEVEL_HIGH:
++		int_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
++		int_pol &=3D ~BIT(pin);
++		writel_relaxed(int_pol, chip->base + IPROC_GPIO_CCA_INT_LEVEL);
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		int_pol =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
++		int_pol |=3D BIT(pin);
++		writel_relaxed(int_pol, chip->base + IPROC_GPIO_CCA_INT_LEVEL);
++		break;
++	default:
++		/* should not come here */
++		ret =3D -EINVAL;
++		goto out_unlock;
++	}
++
++	if (type & IRQ_TYPE_LEVEL_MASK)
++		irq_set_handler_locked(irq_get_irq_data(irq), handle_level_irq);
++	else if (type & IRQ_TYPE_EDGE_BOTH)
++		irq_set_handler_locked(irq_get_irq_data(irq), handle_edge_irq);
++
++out_unlock:
++	spin_unlock_irqrestore(&chip->lock, flags);
++
++	return ret;
++}
++
++static irqreturn_t iproc_gpio_irq_handler(int irq, void *data)
++{
++	struct gpio_chip *gc =3D (struct gpio_chip *)data;
++	struct iproc_gpio_chip *chip =3D to_iproc_gpio(gc);
++	int bit;
++	unsigned long int_bits =3D 0;
++	u32 int_status;
++
++	/* go through the entire GPIOs and handle all interrupts */
++	int_status =3D readl_relaxed(chip->intr + IPROC_CCA_INT_STS);
++	if (int_status & IPROC_CCA_INT_F_GPIOINT) {
++		u32 event, level;
++
++		/* Get level and edge interrupts */
++		event =3D
++		    readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT_MASK);
++		event &=3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_EVENT);
++		level =3D readl_relaxed(chip->base + IPROC_GPIO_CCA_DIN);
++		level ^=3D readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL);
++		level &=3D
++		    readl_relaxed(chip->base + IPROC_GPIO_CCA_INT_LEVEL_MASK);
++		int_bits =3D level | event;
++
++		for_each_set_bit(bit, &int_bits, gc->ngpio)
++			generic_handle_irq(irq_linear_revmap(gc->irq.domain, bit));
++	}
++
++	return int_bits ? IRQ_HANDLED : IRQ_NONE;
++}
++
++static int iproc_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev =3D &pdev->dev;
++	struct device_node *dn =3D pdev->dev.of_node;
++	struct iproc_gpio_chip *chip;
++	u32 num_gpios;
++	int irq, ret;
++
++	chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->dev =3D dev;
++	platform_set_drvdata(pdev, chip);
++	spin_lock_init(&chip->lock);
++
++	chip->base =3D devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(chip->base))
++		return PTR_ERR(chip->base);
++
++	ret =3D bgpio_init(&chip->gc, dev, 4,
++			 chip->base + IPROC_GPIO_CCA_DIN,
++			 chip->base + IPROC_GPIO_CCA_DOUT,
++			 NULL,
++			 chip->base + IPROC_GPIO_CCA_OUT_EN,
++			 NULL,
++			 0);
++	if (ret) {
++		dev_err(dev, "unable to init GPIO chip\n");
++		return ret;
++	}
++
++	chip->gc.label =3D dev_name(dev);
++	if (of_property_read_u32(dn, "ngpios", &num_gpios))
++		chip->gc.ngpio =3D num_gpios;
++
++	irq =3D platform_get_irq(pdev, 0);
++	if (irq > 0) {
++		struct gpio_irq_chip *girq;
++		struct irq_chip *irqc;
++		u32 val;
++
++		irqc =3D &chip->irqchip;
++		irqc->name =3D dev_name(dev);
++		irqc->irq_ack =3D iproc_gpio_irq_ack;
++		irqc->irq_mask =3D iproc_gpio_irq_mask;
++		irqc->irq_unmask =3D iproc_gpio_irq_unmask;
++		irqc->irq_set_type =3D iproc_gpio_irq_set_type;
++
++		chip->intr =3D devm_platform_ioremap_resource(pdev, 1);
++		if (IS_ERR(chip->intr))
++			return PTR_ERR(chip->intr);
++
++		/* Enable GPIO interrupts for CCA GPIO */
++		val =3D readl_relaxed(chip->intr + IPROC_CCA_INT_MASK);
++		val |=3D IPROC_CCA_INT_F_GPIOINT;
++		writel_relaxed(val, chip->intr + IPROC_CCA_INT_MASK);
++
++		/*
++		 * Directly request the irq here instead of passing
++		 * a flow-handler to gpiochip_set_chained_irqchip,
++		 * because the irq is shared.
++		 */
++		ret =3D devm_request_irq(dev, irq, iproc_gpio_irq_handler,
++				       IRQF_SHARED, chip->gc.label, &chip->gc);
++		if (ret) {
++			dev_err(dev, "Fail to request IRQ%d: %d\n", irq, ret);
++			return ret;
++		}
++
++		girq =3D &chip->gc.irq;
++		girq->chip =3D irqc;
++		/* This will let us handle the parent IRQ in the driver */
++		girq->parent_handler =3D NULL;
++		girq->num_parents =3D 0;
++		girq->parents =3D NULL;
++		girq->default_type =3D IRQ_TYPE_NONE;
++		girq->handler =3D handle_simple_irq;
++	}
++
++	ret =3D devm_gpiochip_add_data(dev, &chip->gc, chip);
++	if (ret) {
++		dev_err(dev, "unable to add GPIO chip\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int __exit iproc_gpio_remove(struct platform_device *pdev)
++{
++	struct iproc_gpio_chip *chip;
++
++	chip =3D platform_get_drvdata(pdev);
++	if (!chip)
++		return -ENODEV;
++
++	if (chip->intr) {
++		u32 val;
++
++		val =3D readl_relaxed(chip->intr + IPROC_CCA_INT_MASK);
++		val &=3D ~IPROC_CCA_INT_F_GPIOINT;
++		writel_relaxed(val, chip->intr + IPROC_CCA_INT_MASK);
++	}
++
++	return 0;
++}
++
++static const struct of_device_id bcm_iproc_gpio_of_match[] __initconst =3D=
+ {
++	{ .compatible =3D "brcm,iproc-gpio-cca" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, bcm_iproc_gpio_of_match);
++
++static struct platform_driver bcm_iproc_gpio_driver =3D {
++	.driver =3D {
++		.name =3D "iproc-xgs-gpio",
++		.owner =3D THIS_MODULE,
++		.of_match_table =3D bcm_iproc_gpio_of_match,
++	},
++	.probe =3D iproc_gpio_probe,
++	.remove =3D iproc_gpio_remove,
++};
++
++module_platform_driver(bcm_iproc_gpio_driver);
++
++MODULE_DESCRIPTION("XGS IPROC GPIO driver");
++MODULE_LICENSE("GPL v2");
+---------------------------------------------------------------------------=
+----
 
 
-> +	gpiochip_free_own_desc(desc);
-> +	pwm_set_chip_data(pwm_device, NULL);
-> +}
-> +
-> +static int max7313_pwm_apply(struct pwm_chip *pwm_chip,
-> +			     struct pwm_device *pwm_device,
-> +			     const struct pwm_state *state)
-> +{
-> +	struct max7313_pwm *pwm = to_max7313_pwm(pwm_chip);
-> +	struct pca953x_chip *chip = to_pca953x(pwm);
-> +	unsigned int duty_cycle;
-> +
-> +	if (!state->enabled || !state->period || !state->duty_cycle)
+Git bisection log:
 
-!state->period cannot happen.
-
-> +		duty_cycle = 0;
-> +	else
-> +		/* Convert the duty-cycle to be in the [1;16] range */
-> +		duty_cycle = DIV_ROUND_UP(state->duty_cycle * PWM_DC_STATES,
-> +					  state->period);
-
-Also it seems the PWM's period (31250 ns) is fixed and unchecked here. Please
-refuse requests with .period < 31250 and try to implement .duty_cycle instead
-of proportions. (Also please round down duty_cycle instead of up.)
-
-> +	return max7313_pwm_set_state(chip, pwm_device, duty_cycle);
-
-Does changing the duty_cycle complete the currently running period?
-
-> +}
-
-You need to check for state->polarity, too.
-
-> +static const struct pwm_ops max7313_pwm_ops = {
-> +	.request = max7313_pwm_request,
-> +	.free = max7313_pwm_free,
-> +	.apply = max7313_pwm_apply,
-
-Please implement .get_state().
-
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static int max7313_pwm_probe(struct device *dev,
-> +			     struct pca953x_chip *chip)
-> +{
-> +	struct max7313_pwm *pwm = &chip->pwm;
-> +	struct pwm_chip *pwm_chip = &pwm->chip;
-> +	int ret;
-> +
-> +	if (!(chip->driver_data & MAX_PWM))
-> +		return 0;
-> +
-> +	pwm_chip->dev = dev;
-> +	pwm_chip->ops = &max7313_pwm_ops;
-> +	pwm_chip->npwm = chip->gpio_chip.ngpio;
-> +	pwm_chip->base = -1;
-> +
-> +	/* Disable global control */
-> +	mutex_lock(&chip->i2c_lock);
-> +	ret = regmap_write_bits(chip->regmap, MAX7313_CONFIGURATION,
-> +				MAX7313_GLOB_INTENSITY, 0);
-
-Does this affect the gpio functionality?
-
-> +	mutex_unlock(&chip->i2c_lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return pwmchip_add(pwm_chip);
-> +}
-> +
->  static const struct of_device_id pca953x_dt_ids[];
->  
->  static int pca953x_probe(struct i2c_client *client,
-> @@ -1018,6 +1247,9 @@ static int pca953x_probe(struct i2c_client *client,
->  			dev_warn(&client->dev, "setup failed, %d\n", ret);
->  	}
->  
-> +	if (IS_ENABLED(CONFIG_PWM))
-> +		return max7313_pwm_probe(&client->dev, chip);
-> +
->  	return 0;
->  
->  err_exit:
-> @@ -1162,7 +1394,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
->  
->  	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
->  	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
-> -	{ .compatible = "maxim,max7313", .data = OF_953X(16, PCA_INT), },
-> +	{ .compatible = "maxim,max7313", .data = OF_953X(16, PCA_INT | MAX_PWM), },
->  	{ .compatible = "maxim,max7315", .data = OF_953X( 8, PCA_INT), },
->  	{ .compatible = "maxim,max7318", .data = OF_953X(16, PCA_INT), },
->  
-> -- 
-> 2.20.1
-> 
-> 
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [26bc672134241a080a83b2ab9aa8abede8d30e1c] Merge tag 'for-linus-201=
+9-11-05' of git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux
+git bisect good 26bc672134241a080a83b2ab9aa8abede8d30e1c
+# bad: [dcd34bd234181ec74f081c7d0025204afe6b213e] Add linux-next specific f=
+iles for 20191106
+git bisect bad dcd34bd234181ec74f081c7d0025204afe6b213e
+# good: [8bb6f79f15d1a0f9471c06f68da0b4a270b575cf] Merge remote-tracking br=
+anch 'crypto/master'
+git bisect good 8bb6f79f15d1a0f9471c06f68da0b4a270b575cf
+# good: [18a88f87d4eb404ac5cd4f208fa7228df183e64f] Merge remote-tracking br=
+anch 'battery/for-next'
+git bisect good 18a88f87d4eb404ac5cd4f208fa7228df183e64f
+# good: [cfe4391e1d4ced7a82819919fe1afa458e2c33f1] Merge remote-tracking br=
+anch 'thunderbolt/next'
+git bisect good cfe4391e1d4ced7a82819919fe1afa458e2c33f1
+# good: [6df9adf95b9d756bef44c3bf0c4410f7b72cfe61] Merge remote-tracking br=
+anch 'rpmsg/for-next'
+git bisect good 6df9adf95b9d756bef44c3bf0c4410f7b72cfe61
+# bad: [9548912f77a91a1151b4988d214e005c892cf5f5] Merge remote-tracking bra=
+nch 'pidfd/for-next'
+git bisect bad 9548912f77a91a1151b4988d214e005c892cf5f5
+# bad: [f93f33542dfed02f4fd0029e220dff1221f6d8ea] Merge remote-tracking bra=
+nch 'y2038/y2038'
+git bisect bad f93f33542dfed02f4fd0029e220dff1221f6d8ea
+# bad: [175736ba4340069619b568081e810187bbee9f74] Merge remote-tracking bra=
+nch 'pinctrl/for-next'
+git bisect bad 175736ba4340069619b568081e810187bbee9f74
+# good: [66ee1973603572e4258b08b8737490833f8172bc] Merge tag 'sh-pfc-for-v5=
+.5-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-dri=
+vers into devel
+git bisect good 66ee1973603572e4258b08b8737490833f8172bc
+# good: [fe12e94375da34d62f7d5556161ce7629212ff80] Merge tag 'gpio-v5.5-upd=
+ates-for-linus-part-1' of git://git.kernel.org/pub/scm/linux/kernel/git/brg=
+l/linux into devel
+git bisect good fe12e94375da34d62f7d5556161ce7629212ff80
+# bad: [4b3a4463c3f63ee2f8168953a8ac7a0aea05d37e] Merge remote-tracking bra=
+nch 'gpio-brgl/gpio/for-next'
+git bisect bad 4b3a4463c3f63ee2f8168953a8ac7a0aea05d37e
+# bad: [6a41b6c5fc20abced88fa0eed42ae5e5cb70b280] gpio: Add xgs-iproc driver
+git bisect bad 6a41b6c5fc20abced88fa0eed42ae5e5cb70b280
+# good: [d57eb825e0dc6f0b5be78251d69cbf1bdd1db622] gpio: Add RDA Micro GPIO=
+ controller support
+git bisect good d57eb825e0dc6f0b5be78251d69cbf1bdd1db622
+# good: [1dfc462a54386d8467ff427ef900f553e2e470e3] dt-bindings: gpio: brcm:=
+ Add bindings for xgs-iproc
+git bisect good 1dfc462a54386d8467ff427ef900f553e2e470e3
+# first bad commit: [6a41b6c5fc20abced88fa0eed42ae5e5cb70b280] gpio: Add xg=
+s-iproc driver
+---------------------------------------------------------------------------=
+----
