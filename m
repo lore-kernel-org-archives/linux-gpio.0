@@ -2,87 +2,218 @@ Return-Path: <SRS0=FEQb=Y7=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68C5C5DF61
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Nov 2019 08:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCFBC5DF61
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Nov 2019 09:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847F921D7B
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Nov 2019 08:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iCIsC9jQ"
+	by mail.kernel.org (Postfix) with ESMTP id BDDC02178F
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Nov 2019 09:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfKGIde (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Nov 2019 03:33:34 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42860 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfKGIde (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Nov 2019 03:33:34 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n5so1244499ljc.9
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Nov 2019 00:33:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=8ek09VPNO3gzdUGFBF3TCaBfdeVrnQreDy75VidkR8k=;
-        b=iCIsC9jQ0h7fRCERESyv7qHVa1VfMPNIEi6ybyNfm3mavXJ2bKPuVK0YJFbRRfKZ5v
-         F2jxkUIuVnnrLRXc30fmGVSe+EtmGaIDStPjPgRXYZtT8qAsMvN5UUh/dH4F/iBn09Io
-         /ekD7tQMfPbsAzKmdNB0OxxY5eN7Xib8Y7ehxvjYMBU3ER43wCykG+8vJKSqWsSlngWC
-         v3YzvI2L1pproqIJwQ1QQRr3zd0kiLd842yuaOWhtttnkGgeCZV3e9wChplDJSWbkbER
-         /hE9xlN4GhQ4HAPt0PmwmwX4L+nEKFpKVavCUUuUXXizUn1DsMgr+RaFhRzDuhV3r5SB
-         3tOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=8ek09VPNO3gzdUGFBF3TCaBfdeVrnQreDy75VidkR8k=;
-        b=IbabdW5biKewsSSRiAI6ab5Ce1+fl5yEm/+x3NOdi+aHddnNZDUopcoaWRcs0yVDcH
-         CjQs+XfRepmaBe+Yh/1+VK2jMr0QVic33pUM1XvGf2p64NBuHHlSNgFiAR8gKPcdDllP
-         DabAnZVVZNaZdrB3xpjGwe31J+7gGiXK+5MW2qtabvY6D56PY4cF9VPyNSIkIhmjUH9n
-         XwsASedZhbSbfeojM7Zh57A9HSrAXkp56dcmQEdLwmv8RjJOGVX4NdVPgB6ZfNZ46NPr
-         WaamspiTbNvYXBle50jTQPK7DictoNuRmg6i7aKYeSV0rExOGoC80BFXJ1yd6/1OX+kY
-         C1HA==
-X-Gm-Message-State: APjAAAW7C3pFZQ1VMAoYlG3nuWTiy04/F3BPFWZBN5Wzf92/dwhfE2WP
-        08ZPf3+a8bSUji3Ue4UcBDXd5L1Cl9rJf0t3fcI+ettLS5Y=
-X-Google-Smtp-Source: APXvYqy3fnhxCS+cSxF49rMSA9qUAdNpF3G5sfzA0e4O7PW8nFLwtb24eO1HlsGaUciuxkXxiUvyYeQ+C+p37lsomlA=
-X-Received: by 2002:a2e:9a12:: with SMTP id o18mr1393623lji.191.1573115612016;
- Thu, 07 Nov 2019 00:33:32 -0800 (PST)
+        id S1727519AbfKGJHU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Nov 2019 04:07:20 -0500
+Received: from mga12.intel.com ([192.55.52.136]:3962 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726800AbfKGJHU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 7 Nov 2019 04:07:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2019 01:07:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,277,1569308400"; 
+   d="scan'208";a="205618822"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 07 Nov 2019 01:07:13 -0800
+Received: from andy by smile with local (Exim 4.93-RC1)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1iSdl2-0001eW-PM; Thu, 07 Nov 2019 11:07:12 +0200
+Date:   Thu, 7 Nov 2019 11:07:12 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
+Subject: Re: [PATCH v4 1/2] pinctrl: Add pinmux & GPIO controller driver for
+ a new SoC
+Message-ID: <20191107090712.GV32742@smile.fi.intel.com>
+References: <cover.1573111648.git.rahul.tanwar@linux.intel.com>
+ <63273c2b9ad14dae2b74e27e679da4d60a67d284.1573111648.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-References: <cover.1573029228.git.matti.vaittinen@fi.rohmeurope.com> <42f40109e2926bca197b30fd9624c609653b23e5.1573029228.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <42f40109e2926bca197b30fd9624c609653b23e5.1573029228.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Nov 2019 09:33:20 +0100
-Message-ID: <CACRpkdZWhN94dd=5vPH+oqdKb69FXdXV_szJEanuX18MNsnxSg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: Use new GPIO_LINE_DIRECTION
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63273c2b9ad14dae2b74e27e679da4d60a67d284.1573111648.git.rahul.tanwar@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 9:54 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
+On Thu, Nov 07, 2019 at 03:36:44PM +0800, Rahul Tanwar wrote:
+> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
+> controls pin multiplexing & configuration including GPIO functions selection &
+> GPIO attributes configuration.
+> 
+> This IP is not based on & does not have anything in common with Chassis
+> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
+> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
+> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
+> 
+> Add a new GPIO & pin control framework based driver for this IP.
 
-> It's hard for occasional GPIO code reader/writer to know if values 0/1
-> equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
-> GPIO_LINE_DIRECTION_OUT to help them out.
->
-> NOTE - for gpio-amd-fch and gpio-bd9571mwv:
-> This commit also changes the return value for direction get to equal 1
-> for direction INPUT. Prior this commit these drivers might have
-> returned some other positive value but 1 for INPUT.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Scott Branden <scott.branden@broadcom.com>
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Reviewed-by: Michal Simek <michal.simek@xilinx.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> +static void eqbr_gpio_mask_ack_irq(struct irq_data *d)
+> +{
+> +	eqbr_gpio_disable_irq(d);
+> +	eqbr_gpio_ack_irq(d);
 
-Patch applied.
+Potential race?
 
-Yours,
-Linus Walleij
+> +}
+
+> +static int eqbr_pinmux_set_mux(struct pinctrl_dev *pctldev,
+> +			       unsigned int selector, unsigned int group)
+> +{
+> +	struct eqbr_pinctrl_drv_data *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +	struct function_desc *func;
+> +	struct group_desc *grp;
+> +	unsigned int *pinmux;
+> +	int i;
+> +
+> +	func = pinmux_generic_get_function(pctldev, selector);
+> +	if (!func)
+> +		return -EINVAL;
+> +
+> +	grp = pinctrl_generic_get_group(pctldev, group);
+> +	if (!grp)
+> +		return -EINVAL;
+> +
+> +	pinmux = grp->data;
+
+> +	for (i = 0; i < grp->num_pins; i++)
+> +		eqbr_set_pin_mux(pctl, pinmux[i], grp->pins[i]);
+
+What if in the middle of the loop mux of one of the pins be changed by parallel
+thread?
+
+> +	return 0;
+> +}
+
+> +static int eqbr_pinmux_gpio_request(struct pinctrl_dev *pctldev,
+> +				    struct pinctrl_gpio_range *range,
+> +				    unsigned int pin)
+> +{
+> +	struct eqbr_pinctrl_drv_data *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+
+> +	/* 0 mux is reserved for GPIO */
+
+Perhaps
+
+#define EQBR_GPIO_MODE	0
+
+?
+
+> +	return eqbr_set_pin_mux(pctl, 0, pin);
+> +}
+
+> +	for (i = 0; i < npins; i++) {
+> +		ret = eqbr_pinconf_set(pctldev, pins[i], configs, num_configs);
+> +		if (ret)
+> +			return ret;
+
+What if in the middle of the loop settings of one of the pins be changed by
+parallel thread?
+
+> +	}
+
+> +static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+> +{
+> +	struct device *dev = drvdata->dev;
+> +	struct device_node *node = dev->of_node;
+> +	unsigned int *pinmux, pin_id, pinmux_id;
+> +	struct group_desc group;
+> +	struct device_node *np;
+> +	struct property *prop;
+> +	int j, err;
+> +
+> +	for_each_child_of_node(node, np) {
+> +		prop = of_find_property(np, "groups", NULL);
+> +		if (!prop)
+> +			continue;
+> +
+> +		group.num_pins = of_property_count_u32_elems(np, "pins");
+> +		if (group.num_pins < 0) {
+
+> +			dev_err(dev, "No pins in the group: %s\n",
+> +				prop->name);
+
+It is perfectly one line. The idea of if (!foo) pattern in the loop to make
+code occupy less LOCs along with increased readability.
+
+> +			return -EINVAL;
+> +		}
+> +		group.name = prop->value;
+
+> +		group.pins = devm_kcalloc(dev, group.num_pins,
+> +					  sizeof(*(group.pins)), GFP_KERNEL);
+> +		pinmux = devm_kcalloc(dev, group.num_pins,
+> +				      sizeof(*pinmux), GFP_KERNEL);
+
+These can be rearranged.
+
+> +
+> +		if (!group.pins || !pinmux)
+> +			return -ENOMEM;
+> +		for (j = 0; j < group.num_pins; j++) {
+
+> +			if (of_property_read_u32_index(np, "pins",
+> +						       j, &pin_id)) {
+
+One line.
+
+And so on...
+
+> +				dev_err(dev, "Group %s: Read intel pins id failed\n",
+> +					group.name);
+> +				return -EINVAL;
+> +			}
+> +			if (pin_id >= drvdata->pctl_desc.npins) {
+> +				dev_err(dev, "Group %s: Invalid pin ID, idx: %d, pin %u\n",
+> +					group.name, j, pin_id);
+> +				return -EINVAL;
+> +			}
+> +			group.pins[j] = pin_id;
+> +			if (of_property_read_u32_index(np, "pinmux",
+> +						       j, &pinmux_id)) {
+> +				dev_err(dev, "Group %s: Read intel pinmux id failed\n",
+> +					group.name);
+> +				return -EINVAL;
+> +			}
+> +			pinmux[j] = pinmux_id;
+> +		}
+> +
+> +		err = pinctrl_generic_add_group(drvdata->pctl_dev, group.name,
+> +						group.pins, group.num_pins,
+> +						pinmux);
+> +		if (err < 0) {
+> +			dev_err(dev, "Failed to register group %s\n",
+> +				group.name);
+> +			return err;
+> +		}
+> +		memset(&group, 0, sizeof(group));
+> +		pinmux = NULL;
+> +	}
+> +
+> +	return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
