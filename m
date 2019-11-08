@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8A5FC6196
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 11:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D4BFA372C
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 11:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899AD222C2
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 11:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFF93222C5
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 11:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573213122;
-	bh=b8J4MxCR33d36gDUpia1X9tMWmKY6k0ovzSnBa1tW+E=;
+	s=default; t=1573213335;
+	bh=9fAtqds1VzPCxVoMPO2Bw4wJHGDRYIONBHw1nr1WOKQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IXq/SsYqewtE/GOXXIX5UcaRwBXfZpU7Z1LGmz+eQs2fDXeieBdcz32u7hpEloacX
-	 FWrZd4PJBiWGdRK4/tUL5RzFJopN6JFCvU+ACTjZoznGug+pGjzeFRh1Ji5NNxsP7m
-	 ltj8TjR402fcJIqiW1Td0VwBiKngk9AzSkrk5I4s=
+	b=QbMrOgJ8sxC813rqpgIvoxWgxXm1dCMsZV8cF5N6Q6KjTd25TBJHfQ7BIVpvsL3Lg
+	 lOFQs49puqZ9NCqtBj+9HxnDeV/G2vQrXGwVBv0KeoGCZPeU0Sm+52or+SX8VlKxnh
+	 FeG/Fir8GH0NgB62zVBM2GRUM89uKLh48FqSvWKw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732780AbfKHLil (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Nov 2019 06:38:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51584 "EHLO mail.kernel.org"
+        id S2389829AbfKHLmO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Nov 2019 06:42:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732752AbfKHLij (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:38:39 -0500
+        id S1733210AbfKHLmJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:42:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0834420869;
-        Fri,  8 Nov 2019 11:38:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDBF2222D4;
+        Fri,  8 Nov 2019 11:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213118;
-        bh=b8J4MxCR33d36gDUpia1X9tMWmKY6k0ovzSnBa1tW+E=;
+        s=default; t=1573213328;
+        bh=9fAtqds1VzPCxVoMPO2Bw4wJHGDRYIONBHw1nr1WOKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z20l18vjnP1kOM49pgk7tZQfaK5ADDSl+8yIU6Gxg4/lsYzGdENXUDOGCBE5cK/0J
-         FBI7P4xkf91V1q21MRj2oXr156rcX88k2PTqvHvZJXhV+1537r1FT9ZTwQJtt+c1t9
-         LdLa/0pv5ZYkHbk9c3RGzHt10DvDjp1jBAB3ph7M=
+        b=x11rAGNtCGzynWS8RquHYTqkOsjakeAU1mQ6GSELTZZg7+Y3RuyxGGh5/KRctVpC8
+         98pSZ1piwcQw4mgnWkzQVvyb/j5gbCCGdnlhzTCW5BBpSCL0zt9m+lx2o0gVYBRf0C
+         vS0yiQsfP83Cbvi7gS70HZrCu5SpBxqOhIcl82tY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Cercueil <paul@crapouillou.net>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 038/205] pinctrl: ingenic: Probe driver at subsys_initcall
-Date:   Fri,  8 Nov 2019 06:35:05 -0500
-Message-Id: <20191108113752.12502-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 170/205] pinctrl: at91-pio4: fix has_config check in atmel_pctl_dt_subnode_to_map()
+Date:   Fri,  8 Nov 2019 06:37:17 -0500
+Message-Id: <20191108113752.12502-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
 References: <20191108113752.12502-1-sashal@kernel.org>
@@ -58,30 +59,68 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 556a36a71ed80e17ade49225b58513ea3c9e4558 ]
+[ Upstream commit b97760ae8e3dc8bb91881c13425a0bff55f2bd85 ]
 
-Using postcore_initcall() makes the driver try to initialize way too
-early.
+Smatch complains about this condition:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+	if (has_config && num_pins >= 1)
+
+The "has_config" variable is either uninitialized or true.  The
+"num_pins" variable is unsigned and we verified that it is non-zero on
+the lines before so we know "num_pines >= 1" is true.  Really, we could
+just check "num_configs" directly and remove the "has_config" variable.
+
+Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 628817c40e3bb..a5accffbc8c91 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -847,4 +847,4 @@ static int __init ingenic_pinctrl_drv_register(void)
- {
- 	return platform_driver_register(&ingenic_pinctrl_driver);
- }
--postcore_initcall(ingenic_pinctrl_drv_register);
-+subsys_initcall(ingenic_pinctrl_drv_register);
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index ef7ab208b951e..9e2f3738bf3ec 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -493,7 +493,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	unsigned num_pins, num_configs, reserve;
+ 	unsigned long *configs;
+ 	struct property	*pins;
+-	bool has_config;
+ 	u32 pinfunc;
+ 	int ret, i;
+ 
+@@ -509,9 +508,6 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		return ret;
+ 	}
+ 
+-	if (num_configs)
+-		has_config = true;
+-
+ 	num_pins = pins->length / sizeof(u32);
+ 	if (!num_pins) {
+ 		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
+@@ -524,7 +520,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	 * map for each pin.
+ 	 */
+ 	reserve = 1;
+-	if (has_config && num_pins >= 1)
++	if (num_configs)
+ 		reserve++;
+ 	reserve *= num_pins;
+ 	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps, num_maps,
+@@ -547,7 +543,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
+ 					  group, func);
+ 
+-		if (has_config) {
++		if (num_configs) {
+ 			ret = pinctrl_utils_add_map_configs(pctldev, map,
+ 					reserved_maps, num_maps, group,
+ 					configs, num_configs,
 -- 
 2.20.1
 
