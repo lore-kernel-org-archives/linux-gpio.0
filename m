@@ -2,104 +2,223 @@ Return-Path: <SRS0=igvf=ZA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC62C5DF60
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 12:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBB8C5DF60
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 12:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 918FA222CF
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 12:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573214760;
-	bh=HIUUz2JP1Dlj/ZRB9S59Oi8may8POQY+554i6BYD2nM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ut4kXROQxNRakoZasv0XNGmHoHHKNlvnIUa2Qn/Z2x3INqSE2QFKMdDmqKHzYSP3b
-	 xPqUlNeFwBPOUv1JHDsDe0jyn/n2MsXrHZSfmmyVy3mchXP7TY6+otoyRztcDmnE1J
-	 Tw2mMbC5py8cYImZaJyVveKbAOXAvv2pUOwEtIMQ=
+	by mail.kernel.org (Postfix) with ESMTP id 891BA21924
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Nov 2019 12:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390212AbfKHMFz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Nov 2019 07:05:55 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58504 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732305AbfKHMFz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Nov 2019 07:05:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u1LSxi/xCIm7BKmi90jrl3S/RxiU2mUU9mchFDPyUmk=; b=wvPi+97JaYr5DNz3EiEYA8J1B
-        86NnGoS8DUz4donPwa6uIK0Uh/VQnx7asQLshI9hePIgRQnLk6IDsNzfQMwbGo108UXP4p4RpUAWo
-        uxPeOBGlRcjfUpV2/TkglWeRMWvv4sKtKaZJ7A5ygAf95Tl9ZuqOPJYMbv6xznlW3zjEs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iT31S-0007Cx-Fg; Fri, 08 Nov 2019 12:05:50 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 959772740C6C; Fri,  8 Nov 2019 12:05:49 +0000 (GMT)
-Date:   Fri, 8 Nov 2019 12:05:49 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-spi@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 124/205] gpio: of: Handle SPI chipselect
- legacy bindings
-Message-ID: <20191108120549.GA5532@sirena.co.uk>
-References: <20191108113752.12502-1-sashal@kernel.org>
- <20191108113752.12502-124-sashal@kernel.org>
+        id S2389148AbfKHLlF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Nov 2019 06:41:05 -0500
+Received: from mga04.intel.com ([192.55.52.120]:37523 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389136AbfKHLlE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:41:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2019 03:41:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,281,1569308400"; 
+   d="scan'208";a="205970904"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2019 03:40:59 -0800
+Received: from andy by smile with local (Exim 4.93-RC1)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1iT2dO-0002lG-IF; Fri, 08 Nov 2019 13:40:58 +0200
+Date:   Fri, 8 Nov 2019 13:40:58 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
+Subject: Re: [PATCH v5 1/2] pinctrl: Add pinmux & GPIO controller driver for
+ a new SoC
+Message-ID: <20191108114058.GE32742@smile.fi.intel.com>
+References: <cover.1573196057.git.rahul.tanwar@linux.intel.com>
+ <890db37db56e7e49e83b9fa03903bf3482c624c7.1573196057.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191108113752.12502-124-sashal@kernel.org>
-X-Cookie: Life is like a simile.
+In-Reply-To: <890db37db56e7e49e83b9fa03903bf3482c624c7.1573196057.git.rahul.tanwar@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Fri, Nov 08, 2019 at 05:42:22PM +0800, Rahul Tanwar wrote:
+> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
+> controls pin multiplexing & configuration including GPIO functions selection &
+> GPIO attributes configuration.
+> 
+> This IP is not based on & does not have anything in common with Chassis
+> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
+> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
+> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
+> 
+> Add a new GPIO & pin control framework based driver for this IP.
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +static void eqbr_gpio_enable_irq(struct irq_data *d)
+> +{
+> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +	struct eqbr_gpio_ctrl *gctrl = gpiochip_get_data(gc);
+> +	unsigned int offset = irqd_to_hwirq(d);
+> +	unsigned long flags;
+> +
 
-On Fri, Nov 08, 2019 at 06:36:31AM -0500, Sasha Levin wrote:
-> From: Linus Walleij <linus.walleij@linaro.org>
->=20
-> [ Upstream commit 6953c57ab1721ce57914fc5741d0ce0568756bb0 ]
->=20
-> The SPI chipselects are assumed to be active low in the current
-> binding, so when we want to use GPIO descriptors and handle
-> the active low/high semantics in gpiolib, we need a special
-> parsing quirk to deal with this.
+> +	gc->direction_input(gc, offset);
 
-This stuff is *incredibly* fragile, are we sure this isn't manifiesting
-in later kernels as a result of some other fix or cleanup exposing
-issues and won't break without that fixup?  I loose track of all the
-GPIO stuff.
+Does this any IO?
+If so, between above and below a window of possible race.
+Ditto for all other functions that do something similar.
 
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	raw_spin_lock_irqsave(&gctrl->lock, flags);
+> +	writel(BIT(offset), gctrl->membase + GPIO_IRNRNSET);
+> +	raw_spin_unlock_irqrestore(&gctrl->lock, flags);
+> +}
 
------BEGIN PGP SIGNATURE-----
+> +		ret = bgpio_init(&gctrl->chip, dev, gctrl->bank->nr_pins / 8,
+> +				 gctrl->membase + GPIO_IN,
+> +				 gctrl->membase + GPIO_OUTSET,
+> +				 gctrl->membase + GPIO_OUTCLR,
+> +				 gctrl->membase + GPIO_DIR,
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3FWhwACgkQJNaLcl1U
-h9D6VAf/aQvUCk5KwmYDafiih+sMdQS5rdG1M0qIchk9PsPJfHsAk/+c+Alwdcq5
-VFhvlX/FDZspFImn1yh2S+YblDxd084LRo3bC/aLlzt5BC3hLBRQoqR3np12R/6B
-sE1WLP9j1G85zUpvCluxCodf5QUPeijr5ByW+L7q70Dmovx8YI8EsNMG7ady8drc
-9sdnO+kpoLizkvJDPsSY67RcxSHmD3gdxq28Bsnc8q2HuHq545Ypip8EicHP1ptX
-Mt+D5+kjLIztZssCVjpYK8Vssqm6kSiz8Acaq7MShBSAo6pVvdDU2cNoLmGXyezg
-R4EkfCZITRI4doWFNGv5hshc54GSng==
-=lio8
------END PGP SIGNATURE-----
+> +				 NULL,
+> +				 0);
 
---/9DWx/yDrRhgMJTb--
+One line?
+
+> +static int get_drv_cur(void __iomem *mem, unsigned int offset)
+> +{
+> +	unsigned int idx = offset / DRV_CUR_PINS; /* 0-15, 16-31 per register*/
+> +	unsigned int val;
+> +
+> +	val = readl(mem + REG_DRCC(idx));
+
+> +	offset %= DRV_CUR_PINS;
+
+From style point of view is better to have
+	... foo = offset / X;
+	... bar = offset % X;
+
+directly in definition block. Moreover, for example, on x86 it might be
+converted by compiler to single idiv call in assembly that returns in
+(eax, edx) both values at once.
+
+> +	val = PARSE_DRV_CURRENT(val, offset);
+> +
+> +	return val;
+> +}
+
+> +	if (!(bank->aval_pinmap & BIT(offset))) {
+> +		dev_err(pctl->dev,
+> +			"PIN: %u is not valid, pinbase: %u, bitmap: %u\n",
+> +			pin, bank->pin_base, bank->aval_pinmap);
+> +		return -ENODEV;
+> +	}
+
+Looks like aval_pinmap is NIH of valid_mask bitmap in GPIO library.
+Can you check if it suits your purposes?
+
+> +static bool is_func_exist(struct eqbr_pmx_func *funcs, const char *name,
+> +			 unsigned int nr_funcs, unsigned int *idx)
+> +{
+> +	int i;
+> +
+
+> +	if (!funcs || !nr_funcs)
+> +		return false;
+
+nr_funcs check is a dup of the one in for loop.
+
+> +	for (i = 0; i < nr_funcs; i++) {
+
+> +		if (funcs[i].name && (strcmp(funcs[i].name, name) == 0) ) {
+
+An extra space, but you may use !strcmp() and make it shorter without redundant
+parentheses.
+
+> +			*idx = i;
+> +			return true;
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+
+> +		switch (op) {
+> +			case OP_COUNT_NR_FUNCS:
+
+case goes usually on the same column as switch.
+
+> +				if (!is_func_exist(funcs, fn_name,
+> +						   *nr_funcs, &fid))
+> +					*nr_funcs = *nr_funcs + 1;
+> +				break;
+> +
+> +			case OP_ADD_FUNCS:
+> +				if (!is_func_exist(funcs, fn_name,
+> +						   *nr_funcs, &fid))
+> +					funcs[i].name = fn_name;
+> +				break;
+> +
+> +			case OP_COUNT_NR_FUNC_GRPS:
+> +				if (is_func_exist(funcs, fn_name,
+> +						  *nr_funcs, &fid))
+> +					funcs[fid].nr_groups++;
+> +				break;
+> +
+> +			case OP_ADD_FUNC_GRPS:
+> +				if (is_func_exist(funcs, fn_name,
+> +						  *nr_funcs, &fid)) {
+
+> +					for(j=0;
+
+Other style issueS.
+
+> +					    j < funcs[fid].nr_groups;
+> +					    j++) {
+> +						if (!funcs[fid].groups[j])
+> +							break;
+> +					}
+> +					funcs[fid].groups[j] = prop->value;
+> +				}
+> +				break;
+> +
+> +			default:
+> +				return -EINVAL;
+
+> +
+
+Redundant blank line.
+
+> +		}
+
+> +	for (i = 0; i < nr_funcs; i++) {
+> +		if (funcs[i].nr_groups) {
+
+	if (!foo)
+		continue;
+?
+
+> +			funcs[i].groups = devm_kcalloc(dev, funcs[i].nr_groups,
+> +						       sizeof(*(funcs[i].groups)),
+> +						       GFP_KERNEL);
+> +			if (!funcs[i].groups)
+> +				return -ENOMEM;
+> +		}
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
