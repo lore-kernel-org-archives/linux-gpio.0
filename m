@@ -2,119 +2,150 @@ Return-Path: <SRS0=6H8w=ZC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CC0C43331
-	for <linux-gpio@archiver.kernel.org>; Sun, 10 Nov 2019 00:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AF2C17443
+	for <linux-gpio@archiver.kernel.org>; Sun, 10 Nov 2019 03:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDCAD20842
-	for <linux-gpio@archiver.kernel.org>; Sun, 10 Nov 2019 00:26:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B2L4v7kV"
+	by mail.kernel.org (Postfix) with ESMTP id 0CF4A222CF
+	for <linux-gpio@archiver.kernel.org>; Sun, 10 Nov 2019 03:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573355526;
+	bh=qccNVmZMxv5kQtq0rUpntk6zxaeEGhRVlDuYNiPXVyU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Wc1bxALwwuWLqL0dnuzh96Z7Ww4Z9f6Dk4ul/KSYNW/SRcd7DnsDuRT4llXjEQ7/t
+	 AG38VAXqmieoVk/DTWLIj9lDJ92YkpfU09ag2nxYW7/Rxhr7osxh+vtaUQHIlKLybl
+	 sJmLlOzgPfK73l3GNPSsxE4cw8Y7LJLftFpWEJyo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfKJA0k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 9 Nov 2019 19:26:40 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41784 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbfKJA0k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Nov 2019 19:26:40 -0500
-Received: by mail-lj1-f196.google.com with SMTP id m9so9991290ljh.8
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Nov 2019 16:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=kNdZCj9DxVSyJ54jFBc2LZR95Z/ZrF07viZLOlvp5Oo=;
-        b=B2L4v7kV4XR3aAFp2SwaJgfqWPhwTPGC+uzshrMX/vej+uxLd8WPOm5+A5M3P4GM+x
-         WzkjBm1nLbaPI5JMlolB/vz76ZUR/XswHCNN323qePpp4sAYrWbD5RzQVeaq2CtEqVBx
-         NiILr228Ny1GzAWhf8zSoOT9EDr305jVgTZCBYlOD2GuGhoWiX1eALyP10A9/cFBP8Dk
-         WMQ6L0DWG6IcILnaaqqddLB7h3eZAsxJFiyiJ5X33v8+eaT1XjuXApUwE6dosJgqaQsS
-         7ZZfwsf0zjglOK/gX4v0LKXE4gSeaG29HHxYuXyo7x/8BC211LMUY9dWp6DicutHhBvO
-         VsgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=kNdZCj9DxVSyJ54jFBc2LZR95Z/ZrF07viZLOlvp5Oo=;
-        b=EkyTf8sTalSPxRVr1QP41pxhIaEDZz8yfn4jTMcj0ecPZdy/RT0QWCJ2rrOp1FhJdx
-         mYvsuUW5j3ar7ufbhJsxERlLElZs8cYnmDdSbAaruzyXtSwseZBVC2XooOJHeiOtJhNj
-         9+JgO5IexMDmdIz8FuWI5CNFvrWwd7YdmotVfGP2q5xfPvRVI6rFD+e+PEeZWALsjWPm
-         BqteAvjVyc2XuGvCZZ4rtrActYB6O4rR8TIuMrzJyBEpjr8H1E3uAsNRtJ2L9YZQXwSa
-         M2papDIl/sTjs0uSoSdzmVmAaU2g0qfM4l84CQA/A2iESWbXzJXNOdrE8LbWuv58AAY/
-         4UOA==
-X-Gm-Message-State: APjAAAUguXhbCcJutggvTAPJdgEWgjbmZwCNsMocjf0e1c/Z9mhWu2LI
-        fVW+NkVF58ieFCb/iUgRKvhNRcKQJKs58iWOtAeu3w==
-X-Google-Smtp-Source: APXvYqwwaWtPuF8fF5ikvLI1b9nFQd7zXD5T43bCvBvGUWGON/qsxJ1TDidLoXKq3/SN2x1D7qqx1ozVfJ5eB9hKBcI=
-X-Received: by 2002:a2e:9a12:: with SMTP id o18mr11484420lji.191.1573345598170;
- Sat, 09 Nov 2019 16:26:38 -0800 (PST)
+        id S1727229AbfKJDME (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 9 Nov 2019 22:12:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbfKJCnY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:43:24 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A43F21D7E;
+        Sun, 10 Nov 2019 02:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573353804;
+        bh=qccNVmZMxv5kQtq0rUpntk6zxaeEGhRVlDuYNiPXVyU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HyUSeRVPniONhFotUQaMv0PP4WWSbqi/gOefp1bhvDkrm4XtSTA94NBl3VmIOQtKH
+         kRGFzJyuQ28uHxxPBPqcWU2HFEsf5ogc1bDYDIzA1ZpTb+fAS1e6eAu9cOwlMpYBAu
+         56XsRtIEwj0P6KSdJlPWruOoNuW6FwrNgt6J0fS0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 102/191] gpiolib: Fix gpio_direction_* for single direction GPIOs
+Date:   Sat,  9 Nov 2019 21:38:44 -0500
+Message-Id: <20191110024013.29782-102-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
+References: <20191110024013.29782-1-sashal@kernel.org>
 MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 10 Nov 2019 01:26:26 +0100
-Message-ID: <CACRpkdaomX3PGdf9LPvi+S2yzTCs0f-G+TJkdfo=5HcoOJjehg@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v5.4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-some late pin control fixes, mostly Intel stuff.
+[ Upstream commit ae9847f48a4b4bff0335da20be63ac84d94eb54c ]
 
-Details in the signed tag and the commits!
+GPIOs with no programmable direction are not required to implement
+direction_output nor direction_input.
 
-Please pull it in!
+If we try to set an output direction on an output-only GPIO or input
+direction on an input-only GPIO simply return 0.
 
-Yours,
-Linus Walleij
+This allows this single direction GPIO to be used by libgpiod.
 
-The following changes since commit d6d5df1db6e9d7f8f76d2911707f7d5877251b02:
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpiolib.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-  Linux 5.4-rc5 (2019-10-27 13:19:19 -0400)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 565ab945698ca..b81a27c7f89c4 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2541,19 +2541,27 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+ int gpiod_direction_input(struct gpio_desc *desc)
+ {
+ 	struct gpio_chip	*chip;
+-	int			status = -EINVAL;
++	int			status = 0;
+ 
+ 	VALIDATE_DESC(desc);
+ 	chip = desc->gdev->chip;
+ 
+-	if (!chip->get || !chip->direction_input) {
++	if (!chip->get && chip->direction_input) {
+ 		gpiod_warn(desc,
+-			"%s: missing get() or direction_input() operations\n",
++			"%s: missing get() and direction_input() operations\n",
+ 			__func__);
+ 		return -EIO;
+ 	}
+ 
+-	status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	if (chip->direction_input) {
++		status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	} else if (chip->get_direction &&
++		  (chip->get_direction(chip, gpio_chip_hwgpio(desc)) != 1)) {
++		gpiod_warn(desc,
++			"%s: missing direction_input() operation\n",
++			__func__);
++		return -EIO;
++	}
+ 	if (status == 0)
+ 		clear_bit(FLAG_IS_OUT, &desc->flags);
+ 
+@@ -2575,16 +2583,28 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+ {
+ 	struct gpio_chip *gc = desc->gdev->chip;
+ 	int val = !!value;
+-	int ret;
++	int ret = 0;
+ 
+-	if (!gc->set || !gc->direction_output) {
++	if (!gc->set && !gc->direction_output) {
+ 		gpiod_warn(desc,
+-		       "%s: missing set() or direction_output() operations\n",
++		       "%s: missing set() and direction_output() operations\n",
+ 		       __func__);
+ 		return -EIO;
+ 	}
+ 
+-	ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	if (gc->direction_output) {
++		ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	} else {
++		if (gc->get_direction &&
++		    gc->get_direction(gc, gpio_chip_hwgpio(desc))) {
++			gpiod_warn(desc,
++				"%s: missing direction_output() operation\n",
++				__func__);
++			return -EIO;
++		}
++		gc->set(gc, gpio_chip_hwgpio(desc), val);
++	}
++
+ 	if (!ret)
+ 		set_bit(FLAG_IS_OUT, &desc->flags);
+ 	trace_gpio_value(desc_to_gpio(desc), 0, val);
+-- 
+2.20.1
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v5.4-3
-
-for you to fetch changes up to 63e006c107ff4235d2a8fd52704f283d23642537:
-
-  pinctrl: stmfx: fix valid_mask init sequence (2019-11-07 10:06:46 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for v5.4:
-
-- Fix glitch risks in the Intel GPIO
-
-- Fix the Intel Cherryview valid irq mask calculation.
-
-- Allocate the Intel Cherryview irqchip dynamically.
-
-- Fix the valid mask init sequency on the ST STMFX driver.
-
-----------------------------------------------------------------
-Amelie Delaunay (1):
-      pinctrl: stmfx: fix valid_mask init sequence
-
-Andy Shevchenko (2):
-      pinctrl: intel: Avoid potential glitches if pin is in GPIO mode
-      pinctrl: cherryview: Allocate IRQ chip dynamic
-
-Hans de Goede (1):
-      pinctrl: cherryview: Fix irq_valid_mask calculation
-
-Linus Walleij (1):
-      Merge tag 'intel-pinctrl-fixes-v5.4-2' of
-git://git.kernel.org/.../pinctrl/intel into fixes
-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 26 +++++++++++++-------------
- drivers/pinctrl/intel/pinctrl-intel.c      | 21 ++++++++++++++++++++-
- drivers/pinctrl/pinctrl-stmfx.c            | 14 --------------
- 3 files changed, 33 insertions(+), 28 deletions(-)
