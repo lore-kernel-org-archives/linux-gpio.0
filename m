@@ -1,142 +1,268 @@
-Return-Path: <SRS0=RHs+=ZD=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=wuuX=ZE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5887C43331
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Nov 2019 19:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F42CC43331
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Nov 2019 08:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0418222C2
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Nov 2019 19:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062A32084F
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Nov 2019 08:17:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kti4Xqbd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CCIKVj49"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ALH9+NeB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfKKShs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Nov 2019 13:37:48 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49524 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728893AbfKKShp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Nov 2019 13:37:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E7F7D60F40; Mon, 11 Nov 2019 18:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573497463;
-        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kti4XqbdrQfRjqyR/k/Xny8Sb0xtKtDh1D3IZqqkBWb5xWvg+wQqdIJqZHwXihIhc
-         PP/E99tj4XKhLGPKvShQANy20h4r2YeA4de5RLgEzbdHe1GbxE6mAjUHe/A+LCs8td
-         mU/GHTayXswE5ngA9/blI9wj0zEDC+iSQbDuMgAY=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B643602EE;
-        Mon, 11 Nov 2019 18:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573497460;
-        bh=XUkpMv4++eaCLngkRhw1OHredjSZzbrBaEaI/2OxE7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CCIKVj49JlSCWHldgpmCB4IXhwNUaHHiNm5k6jIRWgDZVugsSUC8R1s7h2Mz1ZCsf
-         5lnoABiZDh9Qs36KSbNKgzk5Nte+p3XnHPr5lDmSPuekBBSB+t7v0kAfyUTaFl+OjP
-         EWvdgpv61XulzSMrBvfQ+X5+gMoYvPKOCMmok6p4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B643602EE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 11 Nov 2019 11:37:38 -0700
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     evgreen@chromium.org, linus.walleij@linaro.org, maz@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/14] dt-bindings/interrupt-controller: pdc: add
- SPI config register
-Message-ID: <20191111183738.GJ16900@codeaurora.org>
-References: <1568411962-1022-1-git-send-email-ilina@codeaurora.org>
- <1568411962-1022-7-git-send-email-ilina@codeaurora.org>
- <5d92829e.1c69fb81.d860a.9096@mx.google.com>
- <5da6b849.1c69fb81.a9b04.1b9f@mx.google.com>
- <20191105205832.GE16900@codeaurora.org>
- <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
+        id S1726960AbfKLIRB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Nov 2019 03:17:01 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39296 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfKLIRB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Nov 2019 03:17:01 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAC8Gjm6025887;
+        Tue, 12 Nov 2019 02:16:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1573546605;
+        bh=2n5mPfXtYjCF6KIhG3w6bUOkPbS8t6LOO+ZQz0AqIfM=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=ALH9+NeB9iP6g4QEMYImh0zbYNaSOOT05sLnFvfdWfLLwsmMudNw8uHUM3b0dMyTU
+         25Wc0bRIU3h8nTe6YSN0pD0AaDZwFB+ZHKqQC2N1vp1z9OOO7ru2ii3IF07JIw5Gmm
+         CbX4SWA/ucJxe7yTDNhi7JDuaM+fjVDzg0aQfsA0=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAC8GjlZ104706
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Nov 2019 02:16:45 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 12
+ Nov 2019 02:16:27 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 12 Nov 2019 02:16:27 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAC8GeaZ034062;
+        Tue, 12 Nov 2019 02:16:40 -0600
+Subject: Re: [RFC 0/2] gpio: Support for shared GPIO lines on boards
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Grant Likely <glikely@secretlab.ca>
+CC:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+References: <20191030114530.872-1-peter.ujfalusi@ti.com>
+ <CACRpkdbw9MVrQMSgVMenSqAOiti1pAy4d2LvWY-ssx9dhzWEcw@mail.gmail.com>
+ <8bd0f286-dc54-72a6-0aaf-2dc7b9972883@ti.com>
+Message-ID: <34f04bc5-ce80-ba3e-3b8b-00dfc3d54964@ti.com>
+Date:   Tue, 12 Nov 2019 10:17:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <5dc219a0.1c69fb81.f5014.42d2@mx.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8bd0f286-dc54-72a6-0aaf-2dc7b9972883@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 05 2019 at 17:53 -0700, Stephen Boyd wrote:
->Quoting Lina Iyer (2019-11-05 12:58:32)
->> On Tue, Oct 15 2019 at 00:27 -0600, Stephen Boyd wrote:
->> >
->> >I had another idea the other day. Maybe a better approach would be to
->> >make the mailbox or SCM code an interrupt controller with the
->> >appropriate functions to poke the bits necessary to make the interrupts
->> >work. Then we can make it a chip in the hierarchy between the GIC and
->> >PDC and make the interrupts call through from PDC to GIC. The locking
->> >could be handled in each respective driver if necessary, and otherwise
->> >we don't have to use a regmap or remap the same registers (except we may
->> >need to describe if the parent is the mailbox node or the scm fimware
->> >node).
->> >
->> Wouldn't that be a stretch to image the SCM register write  or a random
->> register write as an interrupt controller? But I agree that it solves
->> the issue of determining whether we want to use SCM or regmap.
->
->As far as I can tell it's similar to PDC which is basically a gate on
->the line from a dedicated chip pad or a GPIO pad that lets the interrupt
->flow through to the GIC or not. Isn't this yet another hardware block on
->those paths that control the edge type or something?
->
+Hi,
+
+On 08/11/2019 13.21, Peter Ujfalusi wrote:
+> Hi Linus,
+> 
+> On 01/11/2019 17.56, Linus Walleij wrote:
+>> Hi folks,
 >>
->> But, we would still need to add syscon to the mailbox and then regmap
->> the registers for the interrupt contoller.
->
->I'm saying that we can make the mailbox driver an interrupt controller
->driver too. Or if that doesn't work, we can map the region twice in each
->driver with ioremap and cross fingers that they don't touch the same
->register at the same time. It sounds like that is the case. We won't be
->able to fancily reserve the register region and map it in one function
->call, but maybe that can be fixed by limiting the size or offset that is
->reserved for each driver manually based on the same register property
->that's described in DT. Basically, one node in DT
->
-> mailbox@f00 {
->   reg = <0xf00 0x1000>;
-> };
->
->And then each driver will ioremap() the whole register region that's
->parsed from DT but each driver will mark sub-regions as reserved for the
->respective driver. That way we don't have to worry about using a regmap
->here and we'll still know what drivers are using what regions of IO in
->/proc/iomem.
+>> cutting all the discussions in this thread
+> 
+> the mail got disconnected from the thread and almost missed it ;)
+> 
+>> we need to see the bigger
+>> pattern:
+>>
+>> On GPIO rails
+>>
+>> People want "something like rails" for GPIO. In power supplies
+>> and thus the regulator subsystem, rails are connected to many
+>> logical endpoints.
+>>
+>> - The suggested inverter bindings would be effectively an
+>>   inverter on a GPIO rail.
+>>
+>> - This suggestion would be equal to many power consumers
+>>   on a rail, such as the usecase of shared gpio-enable lines in
+>>   the regulator subsystem already provides.
+>>
+>> The former seems to have been identified as solveable for the
+>> userspace that needed it and absorbed into the drafts for a
+>> virtualized GPIO controller. (Aggregating and creating a new
+>> virtual GPIO chip for some select physical GPIO lines.)
+>>
+>> I haven't seen an exact rationale from the DT community as
+>> to why these things should not be modeled, but as can be
+>> clearly seen in
+>> Documentation/devicetree/bindings/regulator/regulator.yaml
+>> the "rail abstraction" from the regulator subsystem which
+>> is in effect struct regulation_constraints and it sibling
+>> struct regulator_init_data is not in the DT bindings, instead
+>> this is encoded as properties in the regulator itself, so this
+>> is pretty consistent: the phandle from regulator to consumer
+>> *is* the rail.
+>>
+>> This goes back to Rajendras initial DT regulator support code
+>> see:
+>> git log -p 69511a452e6d
+>>
+>> So it would be logical then to just have:
+>>
+>> - More than one phandle taking the same GPIO line
+>> - Figure this situation out in the gpiolib OF core
+>> - Resolve the manageability of the situation (same
+>>   consumer flags etc)
+>> - Instantiate a kernel component as suggested,
+>>   mediating requests.
+>> - Handle it from there.
+>>
+>> So:
+>>
+>> gpio: gpio-controller@0 {
+>>         compatible = "foo,gpio";
+>>         gpio-controller;
+>>         #gpio-cells = <2>;
+>> };
+>>
+>> consumer-a {
+>>        compatible = "foo,consumer-a";
+>>        rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+>> };
+>>
+>> consumer-b {
+>>        compatible = "foo,consumer-b";
+>>        rst-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+>> };
+> 
+> Should be fine I think.
+> Again, I would trust the board design to take into consideration of the
+> consumer's needs when sharing the same GPIO line for any purpose.
+> 
+>> Hi kernel: figure it out.
+>>
+>> From this point the kernel driver(s) have to figure it out.
+>>
+>> I don't think this requires any changes to the DT bindings
+>> other than perhaps spelling out that if you link more than one
+>> phandle to a GPIO line, magic will happen. (We should probably
+>> make very verbose dmesg prints about this magic.)
+> 
+> To start with I would let GPIO core to allow requesting the same GPIO
+> line by multiple consumers all the time.
+> 
+> If the flags for the gpio_request does not contain
+> GPIOD_FLAGS_BIT_NONEXCLUSIVE (probably we can have another define for
+> BIT(4) as GPIOD_FLAGS_BIT_MIGHT_BE_SHARED?) then print with dev_warn()
+> to get the attention of the developer that all users of the shared GPIO
+> line must be checked and change the current dev_info() to dev_dbg() when
+> the flag is provided.
+> 
+> When the consumer drivers are checked (and modified if needed) that they
+> behave OK in this situation we can snap the
+> GPIOD_FLAGS_BIT_MIGHT_BE_SHARED to silence the warning.
+> 
+>> This is enough to start with. After that we can discuss adding
+>> flags and constraint properties to a certain GPIO line if
+>> need be. (That will be a big discussion as well, as we haven't
+>> even figured out how to assign default values to individual
+>> GPIO lines yet.)
+> 
+> Not sure how the core would refcount things, but to align with what Rob
+> was saying about the misleading API naming:
+> gpiod_set_value(priv->en_gpio, 1/0) against the DT's
+> GPIO_ACTIVE_HIGH/LOW of the line's active state we might want to have:
+> gpiod_assert(priv->en_gpio);
+> gpiod_deassert(priv->en_gpio);
+> 
+> Basically assert would set the level to the active state defined by the
+> DT. deassert would, well, de-assert the active state.
+> 
+> gpiod_deassert() would be equivalent to Philipp's
+> gpiod_politely_suggest_value()
+> 
+> Gradually drivers can be moved to this API pair from gpiod_set_value()
+> when it makes sense.
+> The current gpiod_set_* would operate like as it is right now by not
+> asking politely a level, whatever it is.
+> 
+> Hrm, probably both gpiod_assert() and gpiod_deassert() should be polite
+> when asking for level change?
+> 
+> If all consumers of the shared line is using gpiod_assert/deassert, then
+> the core should 'protect' the raw level of the gpiod_assert() calls.
 
-Marc: What do you think of Stephen's idea? Summarizing my understanding
-below -
+Well, this is not going to work either. The core must know what level it
+needs to 'protect'.
 
-We need to set an addition register for GPIOs that are routed to PDC and
-the register may need to be written using a SCM call (SDM845) or written
-from Linux (SDM855). The idea proposed here is -
-Create multiple irqchips, one for each type of register access and then
-put them in hierarchy based on the target.
+If we have two devices, both is enabled when their RST/ENABLE pin is
+high, but D1 documents it's RST line as low active reset (low=reset,
+high=enabled), D2 documents it's ENABLE line as high active (low=reset,
+high=enabled).
 
-SDM845:
-TLMM  --> PDC  --> PDC-SCM-IF  --> GIC
+dpiod_assert() would want to set the line low for D1 and high for D2 as
+per how we supposed to interpret the GPIO bindings.
 
-SDM855:
-TLMM  --> PDC  --> PDC-LNX-IF  --> GIC
+> At the end we will see drivers converted to assert/deassert API when a
+> developer faces issues that they use shared GPIO line on a board.
+> 
+> gpiod_get should also use the polite version when setting the initial
+> level most likely.
+> 
+> Another thing is that currently gpio core does not have refcounting and
+> most of the client drivers treat it like that. It is perfectly fine to
+> gpiod_get(priv->en_gpio,1);
+> gpiod_get(priv->en_gpio,1);
+> gpiod_get(priv->en_gpio,1);
+> gpiod_get(priv->en_gpio,0);
+> 
+> at the last call the GPIO value is going to be set to 0 no matter if it
+> was set to 1 three times prior, but I guess this can be worked out when
+> the driver(s) are converted to assert/deassert.
 
-The hierarchy would be explicit from the DT. So we would not have to
-worry about figuring out using a property in DT or resource name. (May
-be we can use a compatible instead?). The use of reserved_resource(),
-suggested by Stephen, would help avoid other drivers writing to this
-register which is part of a generic dump area for one-off registers.
+Another thing which came to my mind is that the gpiod_get's are also
+need to be refcounted to make sure that when used by different drivers
+and one of them is removed the GPIO is still usable by the remaining
+users (and to remove the constraints placed by the removed module).
 
---Lina
+So convert things to look more like the regulator core than what we have
+atm?
+But the difference is that in regulators we protect the enabled state
+(if anyone needs the given regulator on then it is on), but in GPIO the
+level we might want to protect is either high or low depending on the
+users of the shared line.
+If the devices enabled when the line is high -> protect high
+If devices enabled when the line is low -> protect low
+
+All of this can be handled with the RFC gpio-shared driver and
+representation of the hardware in DT...
+
+> - Péter
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
