@@ -2,101 +2,91 @@ Return-Path: <SRS0=m41j=ZF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EBDC43331
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 01:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7A6C17440
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 02:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7BB222C1
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 01:44:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gx9/4wLy"
+	by mail.kernel.org (Postfix) with ESMTP id F044721783
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 02:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573610615;
+	bh=mwos+MVeoqtMRotueUyVTiTBMiid/z7oNgxPt77TpPs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=MYL2zqxRoMhfM0M18qZ8cURtV/D3GAHvwidvGpVQu94vDHRU8kFuDyA7+frxdkhPg
+	 SaJA6ecCNwRLV8mS5kBQtCurn/41Afek6S0Uw7Boug1gxNGOBSPMhZkbABTf7DWfw9
+	 SDlqUeCBlb9vmwTQbrjJcqyp8UbEa6MIABBEqSR4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfKMBov (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Nov 2019 20:44:51 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39188 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfKMBou (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Nov 2019 20:44:50 -0500
-Received: by mail-lj1-f194.google.com with SMTP id p18so632304ljc.6
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2019 17:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TSetjMkcf4RpuPYXlFbAM0zaTljwaDUanV3PLKAWDpw=;
-        b=Gx9/4wLyPBmCchNwrslkyoWt00c+XPhTBrtJRbJaQthp30BZrJ0iqN1q5jOKigdLIS
-         TMxaZcP9iVEuxOhzinjmVT4Y+80rqdy7XN8YBtK5Qk4XgW1U2Ufoqy7Hl0+O+r5FJvH9
-         pUgtMI6o2fbew8jPafNEBEyf1Tg8exaG55ESxXy2zs39Cs7lXPuCo5XJ2wMcLTBXLh9K
-         uVhlE/lDu7PjVrlKD44Ue2/cUaYZPWvzGIB1lD/IvAa6uHvVHad+s/h+fzg4fkGk0wBM
-         vPbXsSCVEAgA441J0C4I8L2Kjb8/VCG2MSDx1mb1AJYo89N0gRRF43oy9qBv5J5w7dNP
-         ARlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TSetjMkcf4RpuPYXlFbAM0zaTljwaDUanV3PLKAWDpw=;
-        b=BQ5/x4cFqtYSfGWFRM59pDdzI/7EuzjYR2lQRim1pFUBGOVvaGboszCKRxlm3adlXv
-         NGJ+lAnYD5xIy8KcCzXsCALXjsZdtPlekIgB+3aVrFeKimbrhJjzJdJHPEeyENooZsZi
-         lzuIChTp9CI0xYRzIMN7x4ceGoDTbv6+S0a1l5s7TxbO+ttDlAeWuUar1U0e5UK6jwSz
-         UDNtNHe1e7KbGgjGCVcG7WczdA4ZuBP3FnXQghX74FXvz08INYoSjQf2Web3liQcTbL4
-         IWgHRVGIxb2/tuWUIuphGDh19nm+IIx7Q8VikHgdCZvnx6vQ1PXrsRbtjpwO7LMZFOvu
-         lnzA==
-X-Gm-Message-State: APjAAAXU/3JweWo9sZ/T0vhdL9B38en40Vc5E+6/FChksyk2Zg9D+pa5
-        c/Jnp5XfYkrci5UlRmhAya7c0w==
-X-Google-Smtp-Source: APXvYqwCX2MBzMEReXX1xV3jUFGB08L4MJtEtvR5BzsZ84X6TT2Gnq8chd6RudqzVPTvjBW857cnqQ==
-X-Received: by 2002:a05:651c:87:: with SMTP id 7mr506151ljq.20.1573609487372;
-        Tue, 12 Nov 2019 17:44:47 -0800 (PST)
-Received: from localhost.bredbandsbolaget (c-79c8225c.014-348-6c756e10.bbcust.telenor.se. [92.34.200.121])
-        by smtp.gmail.com with ESMTPSA id n19sm190440lfl.85.2019.11.12.17.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 17:44:46 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        id S1729744AbfKMCD0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Nov 2019 21:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731018AbfKMCCo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:02:44 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC97D21783;
+        Wed, 13 Nov 2019 02:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573610563;
+        bh=mwos+MVeoqtMRotueUyVTiTBMiid/z7oNgxPt77TpPs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MCHI+8skZmQMg1ltZuDkoKVyN+x5KRoWYdh7A4z3CuM4oDesYVzJQnu8oodltpr6i
+         aZN/leBK1fFCI9u8IxCVT8QfPuwMvue05nWPp0Q00ibyTUDohH+7VdEq6UjAa/NUnl
+         aFVB66ZTRZ/mzrWX7rV2waUTK3VTZrXH4AxSG7QQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] spi: fsl-cpm: Correct the free:ing
-Date:   Wed, 13 Nov 2019 02:44:42 +0100
-Message-Id: <20191113014442.12100-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 42/48] gpio: syscon: Fix possible NULL ptr usage
+Date:   Tue, 12 Nov 2019 21:01:25 -0500
+Message-Id: <20191113020131.13356-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191113020131.13356-1-sashal@kernel.org>
+References: <20191113020131.13356-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The fsl_spi_cpm_free() function does not make the same
-checks as the error path in fsl_spi_cpm_init() leading
-to crashes on error.
+From: Marek Vasut <marex@denx.de>
 
-Cc: Fabio Estevam <festevam@gmail.com>
-Reported-by: Christophe Leroy <christophe.leroy@c-s.fr>
+[ Upstream commit 70728c29465bc4bfa7a8c14304771eab77e923c7 ]
+
+The priv->data->set can be NULL while flags contains GPIO_SYSCON_FEAT_OUT
+and chip->set is valid pointer. This happens in case the controller uses
+the default GPIO setter. Always use chip->set to access the setter to avoid
+possible NULL pointer dereferencing.
+
+Signed-off-by: Marek Vasut <marex@denx.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-fsl-cpm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-syscon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-fsl-cpm.c b/drivers/spi/spi-fsl-cpm.c
-index 858f0544289e..54ad0ac121e5 100644
---- a/drivers/spi/spi-fsl-cpm.c
-+++ b/drivers/spi/spi-fsl-cpm.c
-@@ -392,7 +392,8 @@ void fsl_spi_cpm_free(struct mpc8xxx_spi *mspi)
- 	dma_unmap_single(dev, mspi->dma_dummy_rx, SPI_MRBLR, DMA_FROM_DEVICE);
- 	dma_unmap_single(dev, mspi->dma_dummy_tx, PAGE_SIZE, DMA_TO_DEVICE);
- 	cpm_muram_free(cpm_muram_offset(mspi->tx_bd));
--	cpm_muram_free(cpm_muram_offset(mspi->pram));
-+	if (!(mspi->flags & SPI_CPM1))
-+		cpm_muram_free(cpm_muram_offset(mspi->pram));
- 	fsl_spi_free_dummy_rx();
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 7b25fdf648023..f579938552cc5 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -127,7 +127,7 @@ static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
+ 				   BIT(offs % SYSCON_REG_BITS));
+ 	}
+ 
+-	priv->data->set(chip, offset, val);
++	chip->set(chip, offset, val);
+ 
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(fsl_spi_cpm_free);
 -- 
-2.21.0
+2.20.1
 
