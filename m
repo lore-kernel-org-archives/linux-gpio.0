@@ -4,43 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE391C33C8C
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 19:05:29 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04508206D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F9C432C3
 	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 19:05:30 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 1CC89206D5
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 19:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fxu7lzTS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvBQIzWE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfKMTF3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Nov 2019 14:05:29 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24227 "EHLO
+        id S1728487AbfKMTFa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Nov 2019 14:05:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50560 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728218AbfKMTF3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Nov 2019 14:05:29 -0500
+        with ESMTP id S1728431AbfKMTFa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Nov 2019 14:05:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573671927;
+        s=mimecast20190719; t=1573671929;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pK/vDTHcF7cffC1B2k5lTx4jazBXkvA83XQJeDIM16o=;
-        b=fxu7lzTSz4vr8s0FyXjxKnAuhjCpCqqNM1hjeJNj0uWK7au+ttnxnf3eMaCf7PCtnRR2db
-        2OgoW399LKhXJSwJDsIiwVU1m4THVt1+dRa1K2TtSsiZaUYJitmfOcQWt9DG+Wwdw68Qo9
-        w5kbf84CQoj8YNfeOo/wXbcO6wTDdMs=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WsjVbhAU3RZUlTZg0KMR6VNBY0LJs0DeOvWZgA764Ac=;
+        b=JvBQIzWEMJWi0TrngElP07ua/QdXEMmIlG7d9QrPsid8gQQPP+2Xfpu+6i0S39BnnSjWhU
+        f0a4VbiMzteijsx7p4TVp749J+o0DGZh8K6RbIvrOWB0YLDhuj7PkvvhdDn/gwjl+wLIIL
+        z0o0S77c6oMde8zSLosE9FTuGZ3XI5A=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-219-nKJgUtLsOmONDIfCu-MrsQ-1; Wed, 13 Nov 2019 14:05:24 -0500
+ us-mta-427-VgnOlNPyPLqFW87wghexJQ-1; Wed, 13 Nov 2019 14:05:28 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 18A9F183B50A;
-        Wed, 13 Nov 2019 19:05:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8BA091005500;
+        Wed, 13 Nov 2019 19:05:26 +0000 (UTC)
 Received: from shalem.localdomain.com (ovpn-116-143.ams2.redhat.com [10.36.116.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1497100EBCC;
-        Wed, 13 Nov 2019 19:05:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1892C100EBCC;
+        Wed, 13 Nov 2019 19:05:24 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -48,12 +49,14 @@ To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: [PATCH v3 1/3] pinctrl: cherryview: Split out irq hw-init into a separate helper function
-Date:   Wed, 13 Nov 2019 20:05:18 +0100
-Message-Id: <20191113190520.305410-1-hdegoede@redhat.com>
+Subject: [PATCH v3 3/3] pinctrl: cherryview: Pass irqchip when adding gpiochip
+Date:   Wed, 13 Nov 2019 20:05:20 +0100
+Message-Id: <20191113190520.305410-3-hdegoede@redhat.com>
+In-Reply-To: <20191113190520.305410-1-hdegoede@redhat.com>
+References: <20191113190520.305410-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: nKJgUtLsOmONDIfCu-MrsQ-1
+X-MC-Unique: VgnOlNPyPLqFW87wghexJQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -62,89 +65,109 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Split out irq hw-init into a separate chv_gpio_irq_init_hw() function.
-This is a preparation patch for passing the irqchip when adding the
-gpiochip.
+We need to convert all old gpio irqchips to pass the irqchip
+setup along when adding the gpio_chip. For more info see
+drivers/gpio/TODO.
+
+For chained irqchips this is a pretty straight-forward conversion.
 
 Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
 Changes in v2:
-- Add kerneldoc for chv_pinctrl.need_valid_mask struct member
-
-Changes in v3:
-- Check for pctrl->chip.irq.init_valid_mask instead of storing the result
-  of the dmi check in a new need_valid_mask pctrl struct member
+- Add kerneldoc for chv_pinctrl.irq struct member
 ---
- drivers/pinctrl/intel/pinctrl-cherryview.c | 45 +++++++++++++---------
- 1 file changed, 27 insertions(+), 18 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 42 +++++++++++-----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/i=
 ntel/pinctrl-cherryview.c
-index dff2a81250b6..3c6c6d69d92d 100644
+index dd7d48614b7b..0d8a993f0cee 100644
 --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
 +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1555,6 +1555,32 @@ static void chv_init_irq_valid_mask(struct gpio_chip=
- *chip,
- =09}
- }
+@@ -149,6 +149,7 @@ struct chv_pin_context {
+  * @chip: GPIO chip in this pin controller
+  * @irqchip: IRQ chip in this pin controller
+  * @regs: MMIO registers
++ * @irq: Our parent irq
+  * @intr_lines: Stores mapping between 16 HW interrupt wires and GPIO
+  *=09=09offset (in GPIO number space)
+  * @community: Community this pinctrl instance represents
+@@ -165,6 +166,7 @@ struct chv_pinctrl {
+ =09struct gpio_chip chip;
+ =09struct irq_chip irqchip;
+ =09void __iomem *regs;
++=09unsigned int irq;
+ =09unsigned intr_lines[16];
+ =09const struct chv_community *community;
+ =09u32 saved_intmask;
+@@ -1617,16 +1619,25 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl=
+, int irq)
+ =09chip->add_pin_ranges =3D chv_gpio_add_pin_ranges;
+ =09chip->parent =3D pctrl->dev;
+ =09chip->base =3D -1;
+-=09if (need_valid_mask)
+-=09=09chip->irq.init_valid_mask =3D chv_init_irq_valid_mask;
 =20
-+static int chv_gpio_irq_init_hw(struct gpio_chip *chip)
-+{
-+=09struct chv_pinctrl *pctrl =3D gpiochip_get_data(chip);
-+
-+=09/*
-+=09 * The same set of machines in chv_no_valid_mask[] have incorrectly
-+=09 * configured GPIOs that generate spurious interrupts so we use
-+=09 * this same list to apply another quirk for them.
-+=09 *
-+=09 * See also https://bugzilla.kernel.org/show_bug.cgi?id=3D197953.
-+=09 */
-+=09if (!pctrl->chip.irq.init_valid_mask) {
-+=09=09/*
-+=09=09 * Mask all interrupts the community is able to generate
-+=09=09 * but leave the ones that can only generate GPEs unmasked.
-+=09=09 */
-+=09=09chv_writel(GENMASK(31, pctrl->community->nirqs),
-+=09=09=09   pctrl->regs + CHV_INTMASK);
-+=09}
-+
-+=09/* Clear all interrupts */
-+=09chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
-+
-+=09return 0;
-+}
-+
- static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- {
- =09const struct chv_gpio_pinrange *range;
-@@ -1589,24 +1615,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl,=
+-=09ret =3D devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+-=09if (ret) {
+-=09=09dev_err(pctrl->dev, "Failed to register gpiochip\n");
+-=09=09return ret;
+-=09}
++=09pctrl->irq =3D irq;
++=09pctrl->irqchip.name =3D "chv-gpio";
++=09pctrl->irqchip.irq_startup =3D chv_gpio_irq_startup;
++=09pctrl->irqchip.irq_ack =3D chv_gpio_irq_ack;
++=09pctrl->irqchip.irq_mask =3D chv_gpio_irq_mask;
++=09pctrl->irqchip.irq_unmask =3D chv_gpio_irq_unmask;
++=09pctrl->irqchip.irq_set_type =3D chv_gpio_irq_type;
++=09pctrl->irqchip.flags =3D IRQCHIP_SKIP_SET_WAKE;
+=20
+-=09chv_gpio_irq_init_hw(chip);
++=09chip->irq.chip =3D &pctrl->irqchip;
++=09if (need_valid_mask)
++=09=09chip->irq.init_valid_mask =3D chv_init_irq_valid_mask;
++=09chip->irq.init_hw =3D chv_gpio_irq_init_hw;
++=09chip->irq.parent_handler =3D chv_gpio_irq_handler;
++=09chip->irq.num_parents =3D 1;
++=09chip->irq.parents =3D &pctrl->irq;
++=09chip->irq.default_type =3D IRQ_TYPE_NONE;
++=09chip->irq.handler =3D handle_bad_irq;
+=20
+ =09if (!need_valid_mask) {
+ =09=09irq_base =3D devm_irq_alloc_descs(pctrl->dev, -1, 0,
+@@ -1637,18 +1648,9 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl,=
  int irq)
  =09=09}
  =09}
 =20
--=09/*
--=09 * The same set of machines in chv_no_valid_mask[] have incorrectly
--=09 * configured GPIOs that generate spurious interrupts so we use
--=09 * this same list to apply another quirk for them.
--=09 *
--=09 * See also https://bugzilla.kernel.org/show_bug.cgi?id=3D197953.
--=09 */
--=09if (!need_valid_mask) {
--=09=09/*
--=09=09 * Mask all interrupts the community is able to generate
--=09=09 * but leave the ones that can only generate GPEs unmasked.
--=09=09 */
--=09=09chv_writel(GENMASK(31, pctrl->community->nirqs),
--=09=09=09   pctrl->regs + CHV_INTMASK);
--=09}
+-=09pctrl->irqchip.name =3D "chv-gpio";
+-=09pctrl->irqchip.irq_startup =3D chv_gpio_irq_startup;
+-=09pctrl->irqchip.irq_ack =3D chv_gpio_irq_ack;
+-=09pctrl->irqchip.irq_mask =3D chv_gpio_irq_mask;
+-=09pctrl->irqchip.irq_unmask =3D chv_gpio_irq_unmask;
+-=09pctrl->irqchip.irq_set_type =3D chv_gpio_irq_type;
+-=09pctrl->irqchip.flags =3D IRQCHIP_SKIP_SET_WAKE;
 -
--=09/* Clear all interrupts */
--=09chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
-+=09chv_gpio_irq_init_hw(chip);
+-=09ret =3D gpiochip_irqchip_add(chip, &pctrl->irqchip, 0,
+-=09=09=09=09   handle_bad_irq, IRQ_TYPE_NONE);
++=09ret =3D devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+ =09if (ret) {
+-=09=09dev_err(pctrl->dev, "failed to add IRQ chip\n");
++=09=09dev_err(pctrl->dev, "Failed to register gpiochip\n");
+ =09=09return ret;
+ =09}
 =20
- =09if (!need_valid_mask) {
- =09=09irq_base =3D devm_irq_alloc_descs(pctrl->dev, -1, 0,
+@@ -1662,8 +1664,6 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, =
+int irq)
+ =09=09}
+ =09}
+=20
+-=09gpiochip_set_chained_irqchip(chip, &pctrl->irqchip, irq,
+-=09=09=09=09     chv_gpio_irq_handler);
+ =09return 0;
+ }
+=20
 --=20
 2.23.0
 
