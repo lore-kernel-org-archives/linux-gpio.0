@@ -2,91 +2,222 @@ Return-Path: <SRS0=m41j=ZF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804FDC17441
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 02:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D027CC43331
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 03:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511FD222C1
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 02:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573611542;
-	bh=EYGUwQYilh4pekqnanWVL0ztc04HiI88xFpbAfHhJyE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z0FWkWppvxbFahXTWMcrKnrZoKe9W22C9yRW0e04+imUjOUphyxJOv6hW+D3yTAJM
-	 SSqLKLOjqes1TeTXQRXBAvbn11rgeE4+hU02M0/BTgaO0JMljFSZklFX7aqWC+xcF+
-	 uh26onOScN7MWcc7+2SbBj0QHz9PzWMJhIKFEhaM=
+	by mail.kernel.org (Postfix) with ESMTP id AE299222C9
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Nov 2019 03:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbfKMBza (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Nov 2019 20:55:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47156 "EHLO mail.kernel.org"
+        id S1727036AbfKMDzc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Nov 2019 22:55:32 -0500
+Received: from mga01.intel.com ([192.55.52.88]:52064 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729119AbfKMBz3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:55:29 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66F0722470;
-        Wed, 13 Nov 2019 01:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610129;
-        bh=EYGUwQYilh4pekqnanWVL0ztc04HiI88xFpbAfHhJyE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SlGhVcLxHQNAjPQpHGBSi4u1KQYLT33gxNHoB3B39tUBGT2uQjFQHeUo7zlBc2KYd
-         /aH5pRJm/L+RBM8u+HQDr8FFqcXnDgBftxt8SoBleQfeWq2zWCPzo7BYP8+s7nlP19
-         5MOh5N7wNzNMLZLeCFLTAi3Nm9VBnQSRgDRFAH0Y=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 179/209] gpio: syscon: Fix possible NULL ptr usage
-Date:   Tue, 12 Nov 2019 20:49:55 -0500
-Message-Id: <20191113015025.9685-179-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
-References: <20191113015025.9685-1-sashal@kernel.org>
+        id S1726936AbfKMDzc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 12 Nov 2019 22:55:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2019 19:55:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,299,1569308400"; 
+   d="scan'208";a="194543002"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 12 Nov 2019 19:55:31 -0800
+Received: from [10.226.38.118] (rtanwar-mobl.gar.corp.intel.com [10.226.38.118])
+        by linux.intel.com (Postfix) with ESMTP id DBE89580372;
+        Tue, 12 Nov 2019 19:55:28 -0800 (PST)
+Subject: Re: [PATCH v6 1/2] pinctrl: Add pinmux & GPIO controller driver for a
+ new SoC
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
+References: <cover.1573455324.git.rahul.tanwar@linux.intel.com>
+ <d15b8cf13882902444e33c616d78c06c6b5fdc7b.1573455324.git.rahul.tanwar@linux.intel.com>
+ <20191111111808.GO32742@smile.fi.intel.com>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <7e9ca877-7d7b-3ae6-8a22-adde1fdae929@linux.intel.com>
+Date:   Wed, 13 Nov 2019 11:55:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191111111808.GO32742@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 70728c29465bc4bfa7a8c14304771eab77e923c7 ]
+Hi Andy,
 
-The priv->data->set can be NULL while flags contains GPIO_SYSCON_FEAT_OUT
-and chip->set is valid pointer. This happens in case the controller uses
-the default GPIO setter. Always use chip->set to access the setter to avoid
-possible NULL pointer dereferencing.
+On 11/11/2019 7:18 PM, Andy Shevchenko wrote:
+> On Mon, Nov 11, 2019 at 06:11:29PM +0800, Rahul Tanwar wrote:
+>> Intel Lightning Mountain SoC has a pinmux controller & GPIO controller IP which
+>> controls pin multiplexing & configuration including GPIO functions selection &
+>> GPIO attributes configuration.
+>>
+>> This IP is not based on & does not have anything in common with Chassis
+>> specification. The pinctrl drivers under pinctrl/intel/* are all based upon
+>> Chassis spec compliant pinctrl IPs. So this driver doesn't fit & can not use
+>> pinctrl framework under pinctrl/intel/* and it requires a separate new driver.
+>>
+>> Add a new GPIO & pin control framework based driver for this IP.
+> Looking again into this DT parsing and at other drivers, can't you utilize pin
+> control framework better?
+>
+> I see some drivers are using
+> 	pinctrl_utils_add_map_mux()
+> among other calls.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-syscon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+pinctrl_utils_add_map_mux() is already used in the driver via below
+generic op:
 
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 87c18a5445137..7f3da34c78746 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -122,7 +122,7 @@ static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
- 				   BIT(offs % SYSCON_REG_BITS));
- 	}
- 
--	priv->data->set(chip, offset, val);
-+	chip->set(chip, offset, val);
- 
- 	return 0;
- }
--- 
-2.20.1
+pinctrl_ops.dt_node_to_map = pinconf_generic_dt_node_map_all
+
+Please see call graph of pinconf_generic_dt_node_map_all() where it 
+eventually invokes pinctrl_utils_add_map_mux(). 
+
+Drivers where you see explicit usage of pinctrl_utils_add_map_mux() 
+are not using GENERIC_PINCONF of core framework.
+
+Since we are using all possible core framework provided generic ops, 
+so i think utilization of pin control framework should already be 
+maximized.
+
+
+> Some comments below as well.
+>
+>> +	writel(pmx, mem + (offset << 2));
+> 	offset * 4
+> looks more naturally here. Applies to other similar cases if any.
+
+Noted.
+
+>> +	val = readl(mem + REG_DRCC(idx));
+>> +	val = PARSE_DRV_CURRENT(val, pin_offset);
+>> +
+>> +	return val;
+> Can be
+> 	return PARSE_DRV_CURRENT(readl(mem + REG_DRCC(idx)), pin_offset);
+>
+> but it's up to you.
+
+Agree, will update.
+
+>> +static int eqbr_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>> +			    unsigned long *configs, unsigned int num_configs)
+>> +{
+>> +	struct eqbr_pinctrl_drv_data *pctl = pinctrl_dev_get_drvdata(pctldev);
+>> +	struct eqbr_gpio_ctrl *gctrl;
+>> +	enum pin_config_param param;
+>> +	struct eqbr_pin_bank *bank;
+>> +	unsigned int val, offset;
+>> +	struct gpio_chip *gc;
+>> +	unsigned long flags;
+>> +	void __iomem *mem;
+>> +	u32 regval, mask;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < num_configs; i++) {
+>> +		param = pinconf_to_config_param(configs[i]);
+>> +		val = pinconf_to_config_argument(configs[i]);
+>> +
+>> +		bank = find_pinbank_via_pin(pctl, pin);
+>> +		if (!bank) {
+>> +			dev_err(pctl->dev,
+>> +				"Couldn't find pin bank for pin %u\n", pin);
+>> +			return -ENODEV;
+>> +		}
+>> +		mem = bank->membase;
+>> +		offset = pin - bank->pin_base;
+>> +
+>> +		switch (param) {
+>> +		case PIN_CONFIG_BIAS_PULL_UP:
+>> +			mem += REG_PUEN;
+>> +			val &= 0x1;
+> Unneeded if use standard pattern (see below).
+>
+>> +			mask = BIT(offset);
+>> +			break;
+>> +		case PIN_CONFIG_BIAS_PULL_DOWN:
+>> +			mem += REG_PDEN;
+>> +			val &= 0x1;
+> Ditto.
+>
+>> +			mask = BIT(offset);
+>> +			break;
+>> +		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+>> +			mem += REG_OD;
+>> +			val &= 0x1;
+> Ditto.
+>
+>> +			mask = BIT(offset);
+>> +			break;
+>> +		case PIN_CONFIG_DRIVE_STRENGTH:
+>> +			mem += REG_DRCC(offset / DRV_CUR_PINS);
+>> +			offset = (offset % DRV_CUR_PINS) << 1;
+>> +			val &= 0x3;
+> Ditto.
+>
+>> +			mask = GENMASK(offset + 1, offset);
+> GENMASK() badly works with non-constants. Better
+>
+> 			mask = GENMASK(1, 0) << offset;
+
+Noted.
+
+>> +			break;
+>> +		case PIN_CONFIG_SLEW_RATE:
+>> +			mem += REG_SRC;
+>> +			val &= 0x1;
+> Ditto.
+>
+>> +			mask = BIT(offset);
+>> +			break;
+>> +		case PIN_CONFIG_OUTPUT_ENABLE:
+>> +			gctrl = get_gpio_ctrls_via_bank(pctl, bank);
+>> +			if (!gctrl) {
+>> +				dev_err(pctl->dev, "Failed to find gpio via bank pinbase: %u, pin: %u\n",
+>> +					bank->pin_base, pin);
+>> +				return -ENODEV;
+>> +			}
+>> +			gc = &gctrl->chip;
+>> +			gc->direction_output(gc, offset, 0);
+>> +			continue;
+>> +		default:
+>> +			return -ENOTSUPP;
+>> +		}
+>> +
+>> +		raw_spin_lock_irqsave(&pctl->lock, flags);
+>> +		regval = readl(mem);
+>> +		regval = (regval & ~mask) | (val << offset);
+> Standard pattern is to apply mask here:
+> 		regval = (regval & ~mask) | ((val << offset) & mask);
+
+Agree. In-fact, i had proposed to you exact same pattern earlier but
+it was in a different function call so i guess it was not that obvious.
+Will change, thanks.
+
+>> +		writel(regval, mem);
+>> +		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +			dev_dbg(dev, "Group %s: not function binded!\n",
+>> +				(char *)prop->value);
+> Do you need casting here?
+
+I think yes, to avoid compiler warning..
+
+Regards,
+Rahul
 
