@@ -2,97 +2,92 @@ Return-Path: <SRS0=vzOO=ZG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3423C33C9A
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD522C432C3
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F38206F0
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98006206CC
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JAEX+gBm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d6rd8ElG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OWtGNSoK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfKNSfl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Nov 2019 13:35:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55686 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfKNSfk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2019 13:35:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 56296613BE; Thu, 14 Nov 2019 18:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573756539;
-        bh=XquyuQfB91e7bn6lPpm0Lbdv5e0EOYKYUsj1XyHNfvE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JAEX+gBmfI2kLBD7BaLvoY5Et8AbB1BrksNtJOjmKgVLv6cSY53WLfNetVsAYnsT/
-         TS/q/e3kF2F5jxGZTNwfsI/QxKkulbuTGKnszQBVrk0ZFrAA6XxdHyb7+kK2JZIkbu
-         eNqtzSCmmYpV5qCZ+o272N6RN9RGExOcuxs+PKWY=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7CB0D60FBB;
-        Thu, 14 Nov 2019 18:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573756535;
-        bh=XquyuQfB91e7bn6lPpm0Lbdv5e0EOYKYUsj1XyHNfvE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6rd8ElGstGfxVny9JyYXujWx4iS+aDN70IVuiIhJ0MZa/Sc6rkg9ToV9vWvFTxDC
-         6oOUKjwwe8CxISPNwM4W9ykY924tdf6z80/Rns8NUDAaYY9/CNpZXNPr5+vSBf6gjg
-         Le8j1wCHe2LqrprQx+85AfzF2s8lY3IcXEoQyXJ4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CB0D60FBB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     swboyd@chromium.org, maz@kernel.org, linus.walleij@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     evgreen@chromium.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH 01/12] irqdomain: add bus token DOMAIN_BUS_WAKEUP
-Date:   Thu, 14 Nov 2019 11:35:10 -0700
-Message-Id: <1573756521-27373-2-git-send-email-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573756521-27373-1-git-send-email-ilina@codeaurora.org>
-References: <1573756521-27373-1-git-send-email-ilina@codeaurora.org>
+        id S1726598AbfKNSn6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Nov 2019 13:43:58 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:32809 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfKNSn5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2019 13:43:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t5so7836565ljk.0
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2019 10:43:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0akErYpVPfvA95ks+ZVK153tf+Gz8y9EaErbWtVlmI4=;
+        b=OWtGNSoKK0V3J02veluyxQWSi82ISrP2cFU0v00xGFsDqP5uCRLsRSU12PZN0pHXZe
+         NSPvOXGxGPVUJXT5FpEfQXPlxEJvx4b3IXbSJf3sb49wtuP2ZjmMfdgaTAeONOtAj8Zm
+         6aaMq0yT1w5IJhuiFyl9BIpNQtjyeS8Uc2cDKpsPHGxgP8I5rtUnAaCEfu6BxdDkTGYo
+         Matdu/uURSvuMhjmGnKat+vRucBCB9EgwsOJYFuPbHDpPY/icndFOXScl7kM9M3IXU9B
+         P+BtwbcSht22xxU2k83z3ZCHHMKuYD47Tw4rCY6bHywGS8TCqM+RTa5d/b+2Dkp3OvoU
+         gxqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0akErYpVPfvA95ks+ZVK153tf+Gz8y9EaErbWtVlmI4=;
+        b=TaCQfui63LhmiieJ1fN/s2A8Xzs6nmf5oXHK8XzMK7k+6WKEJA8Efjrx1GKwyg0RTF
+         u71hOUAYxuVb14ApaMvyLFrUuvpY74ssdPn5eE2vNBKqOoSYlgK2TPx8EOgJ2n+dE/zA
+         3PGa+CncjnUf/phj3V785a9UIMKmJVo92k21B8zTW553xWdLGV1AoV6n8UTK3FYcmDTy
+         /J9yThBCtD2jXCps2cr1FKFTTB9iUCt0OrFeI79nmSfj/kZ50DyAFjZXutZEXSl8uVEN
+         QRni1joMqca+0kNN9g6n+vCeNtERCBXs1bfs5CIo24NKC5Iw5Q2xTptUO61xoI/UiG5p
+         YwEA==
+X-Gm-Message-State: APjAAAV6FHg0v+ZBEJNINIeGwVjKDsYx3NFK2hciL38lDfqqXIDv2yL0
+        Qir6zL70G6CRTyjkZrAh99bVcI01om0u5pGeJWw+Gg==
+X-Google-Smtp-Source: APXvYqztdULr6zBxq7zLFJnIfqPSSqTjnXCgz4FraVOChcfBeCHK0oETCJeBhuCVU21yNsx8uAJjJ9A8j+SNA4YTOKE=
+X-Received: by 2002:a2e:5c46:: with SMTP id q67mr7506336ljb.42.1573757036127;
+ Thu, 14 Nov 2019 10:43:56 -0800 (PST)
+MIME-Version: 1.0
+References: <1573756521-27373-1-git-send-email-ilina@codeaurora.org> <1573756521-27373-9-git-send-email-ilina@codeaurora.org>
+In-Reply-To: <1573756521-27373-9-git-send-email-ilina@codeaurora.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 14 Nov 2019 19:43:44 +0100
+Message-ID: <CACRpkdYZoAnFno630Fxazz_Kvz4fEmKd-wohprdQqeM44f3tAg@mail.gmail.com>
+Subject: Re: [PATCH 08/12] drivers: pinctrl: msm: setup GPIO chip in hierarchy
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>, Marc Zyngier <maz@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-A single controller can handle normal interrupts and wake-up interrupts
-independently, with a different numbering space. It is thus crucial to
-allow the driver for such a controller discriminate between the two.
+On Thu, Nov 14, 2019 at 7:35 PM Lina Iyer <ilina@codeaurora.org> wrote:
 
-A simple way to do so is to tag the wake-up irqdomain with a "bus token"
-that indicates the wake-up domain. This slightly abuses the notion of
-bus, but also radically simplifies the design of such a driver. Between
-two evils, we choose the least damaging.
+> Some GPIOs are marked as wakeup capable and are routed to another
+> interrupt controller that is an always-domain and can detect interrupts
+> even most of the SoC is powered off. The wakeup interrupt controller
+> wakes up the GIC and replays the interrupt at the GIC.
+>
+> Setup the TLMM irqchip in hierarchy with the wakeup interrupt controller
+> and ensure the wakeup GPIOs are handled correctly.
+>
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- include/linux/irqdomain.h | 1 +
- 1 file changed, 1 insertion(+)
+This looks finished, and elegant.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 583e7ab..3c340db 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -83,6 +83,7 @@ enum irq_domain_bus_token {
- 	DOMAIN_BUS_IPI,
- 	DOMAIN_BUS_FSL_MC_MSI,
- 	DOMAIN_BUS_TI_SCI_INTA_MSI,
-+	DOMAIN_BUS_WAKEUP,
- };
- 
- /**
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Yours,
+Linus Walleij
