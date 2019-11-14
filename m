@@ -2,117 +2,118 @@ Return-Path: <SRS0=vzOO=ZG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EAFC43141
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 10:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ECCC432C3
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 10:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075AA206EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 10:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D7BE206F0
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 10:26:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L/TZ0qUi"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BY2TQILJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbfKNKNt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Nov 2019 05:13:49 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37171 "EHLO
+        id S1727031AbfKNK0I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Nov 2019 05:26:08 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:39688 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725977AbfKNKNt (ORCPT
+        by vger.kernel.org with ESMTP id S1726115AbfKNK0I (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Nov 2019 05:13:49 -0500
+        Thu, 14 Nov 2019 05:26:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573726428;
+        s=mimecast20190719; t=1573727167;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=a53Ydq+aH2LKzD//Y+TJ+HSP6hOxvXXCC2aTaMVmZ58=;
-        b=L/TZ0qUiJ5ASJ2D5tcaADsoXV269kcevS9yf/QWkq7ZzXPVADcaBpNtOxM0nZQh9Mk7JGr
-        wUwNTDAadfzOgyJuXyMJcIu3s6wdFLjhEcKvr/XFtT4ojLchSxvk1pXmtmBaMttYsLkdbT
-        /hcjEjQB1aKj+MqLp9yj4z3uZeVPVUI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-103-DtN82zYnNAe-YTzMYG5ksg-1; Thu, 14 Nov 2019 05:13:45 -0500
-Received: by mail-wm1-f72.google.com with SMTP id y14so3630162wmi.4
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2019 02:13:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vSmHParZB6JYehXtY9NprOwMmU6fr0JasU3pThGPyJk=;
-        b=olPV/HcDhiOoqk+XOo/0rPzQh2S31uuM7gaHacjmHWt+0uTHNBS5wtm2dkMsE7UMhW
-         5cHUMtVBKqY6fyhcl6KhqaysPnwH1O7dTmEGHkT4nzQ0uspZY+5knK35xpGygdrZiHPD
-         ExYkf1/CZvHfMSXomSikyeuljwwAXk6VVX5Y4YIUPtK8uajSzn7La1LGkpLOgLeljNa5
-         12ElC1BEDoRZCbXend9rpB0tnzbUzMb+0oH3A4rU1u/BJCRReAti7DKXxfYQd5pOKuTi
-         l/3caw7MPX029K+2NhWCni6HA/m1LSPFVSdPO0HxsxvXc0JZhWrCNYfBY+c3S6miA8tL
-         wcKw==
-X-Gm-Message-State: APjAAAWeLlPa6gtGnmF7JsTUpr1SE/T7PS3PXhCt8WdRHo5otAs5R2c7
-        /dFtCPwAfUqiZfSHWsNq93T8a1DvEAjlzz9gVFNFiE/0tl57E+GVkkv0N6sUU4jD5gAbQcWeDTw
-        hqF+uRCKMdB9FOsZ+4BE4Lw==
-X-Received: by 2002:a5d:67ce:: with SMTP id n14mr7238684wrw.67.1573726423928;
-        Thu, 14 Nov 2019 02:13:43 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwdVuoOYYF8UVn4I7LrvyeuyRdpSl0NauUCG6q6YdjAsL6J80NmVO8yGSeFa8MWanIWyn0gDQ==
-X-Received: by 2002:a5d:67ce:: with SMTP id n14mr7238667wrw.67.1573726423698;
-        Thu, 14 Nov 2019 02:13:43 -0800 (PST)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id a11sm5778358wmh.40.2019.11.14.02.13.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 02:13:42 -0800 (PST)
-Subject: Re: [PATCH] gpiolib: acpi: Print pin number on
- acpi_gpiochip_alloc_event errors
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <20191018195208.94405-1-hdegoede@redhat.com>
- <20191021091124.GK32742@smile.fi.intel.com>
- <f3294033-8105-8c26-a8e2-3ced55276fdb@redhat.com>
- <20191021132345.GT32742@smile.fi.intel.com>
+        bh=13HbaFrPIsJtwRdpwF/J8JmziMwdkA+udMLvORazA1U=;
+        b=BY2TQILJ+4RI8l1HQ2P9UKPMY6pYH0E7TlC6u8gcY3vhrLvkYJ/oztb/pgrXNV7TtHFAsZ
+        fp5BD8T6zg1A2byRkhsSKzQEw/Ije8bxYGNiUb8nnJOF9idHcWLmZ9s3VzObVgP1i2gGis
+        tJqCOazQ/p9hsjMYR+mH/w/oJh3EOHg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-288-quqh6LWiNGGnHFM5tDDMEw-1; Thu, 14 Nov 2019 05:26:05 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6A8E818A3EC0;
+        Thu, 14 Nov 2019 10:26:04 +0000 (UTC)
+Received: from shalem.localdomain.com (unknown [10.36.118.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F2B3053C28;
+        Thu, 14 Nov 2019 10:26:02 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <9fb1f06c-b641-f2f4-fa60-8bad57cf87d2@redhat.com>
-Date:   Thu, 14 Nov 2019 11:13:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH v2 2/2] gpiolib: acpi: Make acpi_gpiochip_alloc_event always return AE_OK
+Date:   Thu, 14 Nov 2019 11:26:00 +0100
+Message-Id: <20191114102600.34558-2-hdegoede@redhat.com>
+In-Reply-To: <20191114102600.34558-1-hdegoede@redhat.com>
+References: <20191114102600.34558-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191021132345.GT32742@smile.fi.intel.com>
-Content-Language: en-US
-X-MC-Unique: DtN82zYnNAe-YTzMYG5ksg-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: quqh6LWiNGGnHFM5tDDMEw-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+acpi_gpiochip_alloc_event is used to loop over all _AEI resources, if
+we fail to bind an event handler to one of them, that is not a reason to
+not try the other resources.
 
-On 21-10-2019 15:23, Andy Shevchenko wrote:
-> On Mon, Oct 21, 2019 at 02:52:13PM +0200, Hans de Goede wrote:
->> On 21-10-2019 11:11, Andy Shevchenko wrote:
->>> On Fri, Oct 18, 2019 at 09:52:08PM +0200, Hans de Goede wrote:
->>>> Print pin number on acpi_gpiochip_alloc_event errors, to help debuggin=
-g
->>>> these.
->>>
->>> I'm not sure which one is better decimal or hex, perhaps Mika can help =
-me, in any case
->>
->> They are listed as hex in the dis-assembled DSTD.
->=20
-> Oh, now I noticed the potential issue. The pin can be 16-bit, you pring h=
-ere
-> only for the case when we have evname. Maybe do something similar in thes=
-e
-> messages? Print event name for pin inside byte range and value otherwise?
+This commit modifies acpi_gpiochip_alloc_event to always return AE_OK,
+so that we will always try to add an event handler for all _AEI resources.
 
-I'm preparing a v2 now, together with another related, less cosmetic patch.
-I will switch to a 16 bit printf format for v2.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-This is a new patch in v2 of this patch-set
+---
+ drivers/gpio/gpiolib-acpi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Regards,
-
-Hans
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 473c3b7508af..d30e57dc755c 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -194,6 +194,7 @@ static void acpi_gpiochip_request_irqs(struct acpi_gpio=
+_chip *acpi_gpio)
+ =09=09acpi_gpiochip_request_irq(acpi_gpio, event);
+ }
+=20
++/* Always returns AE_OK so that we keep looping over the resources */
+ static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
+ =09=09=09=09=09     void *context)
+ {
+@@ -233,7 +234,7 @@ static acpi_status acpi_gpiochip_alloc_event(struct acp=
+i_resource *ares,
+ =09=09dev_err(chip->parent,
+ =09=09=09"Failed to request GPIO for pin 0x%04X, err %ld\n",
+ =09=09=09pin, PTR_ERR(desc));
+-=09=09return AE_ERROR;
++=09=09return AE_OK;
+ =09}
+=20
+ =09ret =3D gpiochip_lock_as_irq(chip, pin);
+@@ -293,7 +294,7 @@ static acpi_status acpi_gpiochip_alloc_event(struct acp=
+i_resource *ares,
+ fail_free_desc:
+ =09gpiochip_free_own_desc(desc);
+=20
+-=09return AE_ERROR;
++=09return AE_OK;
+ }
+=20
+ /**
+--=20
+2.23.0
 
