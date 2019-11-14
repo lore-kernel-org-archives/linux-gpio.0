@@ -2,62 +2,54 @@ Return-Path: <SRS0=vzOO=ZG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD522C432C3
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBA6C432C3
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98006206CC
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FB852071B
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 Nov 2019 18:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OWtGNSoK"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fdjfXYcI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n85C23Ij"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfKNSn6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 Nov 2019 13:43:58 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32809 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfKNSn5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2019 13:43:57 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t5so7836565ljk.0
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2019 10:43:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0akErYpVPfvA95ks+ZVK153tf+Gz8y9EaErbWtVlmI4=;
-        b=OWtGNSoKK0V3J02veluyxQWSi82ISrP2cFU0v00xGFsDqP5uCRLsRSU12PZN0pHXZe
-         NSPvOXGxGPVUJXT5FpEfQXPlxEJvx4b3IXbSJf3sb49wtuP2ZjmMfdgaTAeONOtAj8Zm
-         6aaMq0yT1w5IJhuiFyl9BIpNQtjyeS8Uc2cDKpsPHGxgP8I5rtUnAaCEfu6BxdDkTGYo
-         Matdu/uURSvuMhjmGnKat+vRucBCB9EgwsOJYFuPbHDpPY/icndFOXScl7kM9M3IXU9B
-         P+BtwbcSht22xxU2k83z3ZCHHMKuYD47Tw4rCY6bHywGS8TCqM+RTa5d/b+2Dkp3OvoU
-         gxqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0akErYpVPfvA95ks+ZVK153tf+Gz8y9EaErbWtVlmI4=;
-        b=TaCQfui63LhmiieJ1fN/s2A8Xzs6nmf5oXHK8XzMK7k+6WKEJA8Efjrx1GKwyg0RTF
-         u71hOUAYxuVb14ApaMvyLFrUuvpY74ssdPn5eE2vNBKqOoSYlgK2TPx8EOgJ2n+dE/zA
-         3PGa+CncjnUf/phj3V785a9UIMKmJVo92k21B8zTW553xWdLGV1AoV6n8UTK3FYcmDTy
-         /J9yThBCtD2jXCps2cr1FKFTTB9iUCt0OrFeI79nmSfj/kZ50DyAFjZXutZEXSl8uVEN
-         QRni1joMqca+0kNN9g6n+vCeNtERCBXs1bfs5CIo24NKC5Iw5Q2xTptUO61xoI/UiG5p
-         YwEA==
-X-Gm-Message-State: APjAAAV6FHg0v+ZBEJNINIeGwVjKDsYx3NFK2hciL38lDfqqXIDv2yL0
-        Qir6zL70G6CRTyjkZrAh99bVcI01om0u5pGeJWw+Gg==
-X-Google-Smtp-Source: APXvYqztdULr6zBxq7zLFJnIfqPSSqTjnXCgz4FraVOChcfBeCHK0oETCJeBhuCVU21yNsx8uAJjJ9A8j+SNA4YTOKE=
-X-Received: by 2002:a2e:5c46:: with SMTP id q67mr7506336ljb.42.1573757036127;
- Thu, 14 Nov 2019 10:43:56 -0800 (PST)
-MIME-Version: 1.0
-References: <1573756521-27373-1-git-send-email-ilina@codeaurora.org> <1573756521-27373-9-git-send-email-ilina@codeaurora.org>
-In-Reply-To: <1573756521-27373-9-git-send-email-ilina@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Nov 2019 19:43:44 +0100
-Message-ID: <CACRpkdYZoAnFno630Fxazz_Kvz4fEmKd-wohprdQqeM44f3tAg@mail.gmail.com>
-Subject: Re: [PATCH 08/12] drivers: pinctrl: msm: setup GPIO chip in hierarchy
-To:     Lina Iyer <ilina@codeaurora.org>
+        id S1726474AbfKNS5S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 Nov 2019 13:57:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35050 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfKNS5R (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Nov 2019 13:57:17 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0B29C60F90; Thu, 14 Nov 2019 18:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573757837;
+        bh=kGHHDhxFcB0ua6Q2kIcueqlm1c4XucBEKXaw5BAbH1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fdjfXYcIIGY0JvsTFSlxLE3edoVnATJC6OW93Xb8sc1V6oJ8Azc/qw9LkU8/GHWKA
+         SKmHT90OnQBIEIh0qzM0rf9UjoyzbXbZVjy7wWWFj3q+5y+Hlh0jJ6iioSNHNfWJwC
+         ZeeeF0ACyVf+OWWALgdHG/HLrQiewyJV5FR8FIkU=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2584B60EE9;
+        Thu, 14 Nov 2019 18:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573757836;
+        bh=kGHHDhxFcB0ua6Q2kIcueqlm1c4XucBEKXaw5BAbH1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n85C23IjABwJpR203kWCymv2uXERPyhSyVy6Q2OJ0iKVLKD5bHz3lvsgm5PaXBdGp
+         9VyMrayg7ZML1W8ickZKOjD/db7J4zHN5qZ5wc3aBTc6RtiDcix/dPWqQs1FGKb2YB
+         44gr6NjcRzgUmTjWy7WMXWDsRM/UFVecpXbpSdpI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2584B60EE9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Thu, 14 Nov 2019 11:57:15 -0700
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Stephen Boyd <swboyd@chromium.org>, Marc Zyngier <maz@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Evan Green <evgreen@chromium.org>,
@@ -67,27 +59,38 @@ Cc:     Stephen Boyd <swboyd@chromium.org>, Marc Zyngier <maz@kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Andy Gross <agross@kernel.org>,
         Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 08/12] drivers: pinctrl: msm: setup GPIO chip in hierarchy
+Message-ID: <20191114185715.GC18786@codeaurora.org>
+References: <1573756521-27373-1-git-send-email-ilina@codeaurora.org>
+ <1573756521-27373-9-git-send-email-ilina@codeaurora.org>
+ <CACRpkdYZoAnFno630Fxazz_Kvz4fEmKd-wohprdQqeM44f3tAg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYZoAnFno630Fxazz_Kvz4fEmKd-wohprdQqeM44f3tAg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 7:35 PM Lina Iyer <ilina@codeaurora.org> wrote:
-
-> Some GPIOs are marked as wakeup capable and are routed to another
-> interrupt controller that is an always-domain and can detect interrupts
-> even most of the SoC is powered off. The wakeup interrupt controller
-> wakes up the GIC and replays the interrupt at the GIC.
+On Thu, Nov 14 2019 at 11:47 -0700, Linus Walleij wrote:
+>On Thu, Nov 14, 2019 at 7:35 PM Lina Iyer <ilina@codeaurora.org> wrote:
 >
-> Setup the TLMM irqchip in hierarchy with the wakeup interrupt controller
-> and ensure the wakeup GPIOs are handled correctly.
+>> Some GPIOs are marked as wakeup capable and are routed to another
+>> interrupt controller that is an always-domain and can detect interrupts
+>> even most of the SoC is powered off. The wakeup interrupt controller
+>> wakes up the GIC and replays the interrupt at the GIC.
+>>
+>> Setup the TLMM irqchip in hierarchy with the wakeup interrupt controller
+>> and ensure the wakeup GPIOs are handled correctly.
+>>
+>> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 >
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>This looks finished, and elegant.
+>Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+Thanks Linus.
 
-This looks finished, and elegant.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+-- Lina
