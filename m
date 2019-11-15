@@ -2,85 +2,81 @@ Return-Path: <SRS0=05vI=ZH=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC23C432C3
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 15:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829B3C432C3
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 15:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BAC2073A
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 15:48:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pic7rPYc"
+	by mail.kernel.org (Postfix) with ESMTP id 64E5B206D3
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 15:58:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfKOPsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 Nov 2019 10:48:11 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41649 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbfKOPsK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2019 10:48:10 -0500
-Received: by mail-lf1-f66.google.com with SMTP id j14so8351429lfb.8
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Nov 2019 07:48:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tKS6rtCZj8IaErcUrjRP92Wgp74E5JlJ2MHPseDiEWo=;
-        b=Pic7rPYcvUsXNNtxBunu7WIK/Gtn4aqprOS1rk1gJIxywYezckGtII0nqrTVIGPXBu
-         7MsWQumzkSuy4YEAkpMGQAplLbZ60ovggZ1uzw1W5aSK5lHxgNC2Wgh4POqh0FUZjHyN
-         3tLPOHQNm0o9KZCS/W8rM7+FhMHSaLHt0pi2HExHuH450Gp4nOnsgb9ldXtZktmZXuHr
-         hXfZXQlO6pzFI32s5eowebPHMceoXvtHTNZ5+x6iFaDAL1kwPjpoiesNixWvmRnUnpyQ
-         06YbbNurlYG5puRjR/FlE7wEHtrep1feCMKcoSmeBgzheWPwwYyiZqcFqusneo1YmGJB
-         3RDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tKS6rtCZj8IaErcUrjRP92Wgp74E5JlJ2MHPseDiEWo=;
-        b=Hz+MF1rDIqUuwCQkgeryFio6uKMGhaKA07JfZ4eC2d+CYAOfu9JjbWC6emaIIEyW/s
-         JFT4NwnHJlC/PcM2J/qCbHOv2rO091mLp3ekw6XfsVbRe+oKgVFQU3NQadLTBqnD1+0w
-         0jcxWXtQcuNSw6XtbbA7PL/XMq8/z18OUJa1j3yuRPzSfj5T4T7bkYfBYQyAEcUlKhL6
-         nW/HCoNN4aC4r2VAD8MrJEsUmYjYiSOqGsgwgjomVFZTsGRCuqut6gHyqd+csMZMv9cZ
-         FwqejaLpLLV1EENGLoUrZswe29bVki5nlF7TYWwG8+V/hUIIKRRMGWr/bHZHuq+5Pbqc
-         lpgQ==
-X-Gm-Message-State: APjAAAVB+1BywKqf7SBgaqXK2AX4bTDHCS0bjwyRgqAjEUvlGc0RSn0G
-        HMwceUk1tMIRQxa4KH9wfHCZnnxtOD4iSgMdG4ulDA==
-X-Google-Smtp-Source: APXvYqyZoqBIeRRXE6Tp+xEkPnpvBKDFdlWGPub1qxgpSvfSx0sWfBaGbFbMN2YsYEXanF1TNEKAivdJG/k7sxcjKQk=
-X-Received: by 2002:a19:651b:: with SMTP id z27mr11532990lfb.117.1573832888693;
- Fri, 15 Nov 2019 07:48:08 -0800 (PST)
+        id S1727589AbfKOP6Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 15 Nov 2019 10:58:16 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:39511 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfKOP6Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2019 10:58:16 -0500
+X-Originating-IP: 90.66.177.178
+Received: from localhost (lfbn-1-2888-178.w90-66.abo.wanadoo.fr [90.66.177.178])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 515674000B;
+        Fri, 15 Nov 2019 15:58:13 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH] pinctrl: armada-37xx: Fix irq mask access in armada_37xx_irq_set_type()
+Date:   Fri, 15 Nov 2019 16:57:52 +0100
+Message-Id: <20191115155752.2562-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191114102600.34558-1-hdegoede@redhat.com>
-In-Reply-To: <20191114102600.34558-1-hdegoede@redhat.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 15 Nov 2019 16:47:57 +0100
-Message-ID: <CACRpkdZ6otZOsN++qTm1ZBPxSmd=T5NcyZKYfWDScuB1YrHiFA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpiolib: acpi: Print pin number on
- acpi_gpiochip_alloc_event errors
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 11:26 AM Hans de Goede <hdegoede@redhat.com> wrote:
+As explained in the following commit a9a1a4833613 ("pinctrl:
+armada-37xx: Fix gpio interrupt setup") the armada_37xx_irq_set_type()
+function can be called before the initialization of the mask field.
 
-> Print pin number and error-code on acpi_gpiochip_alloc_event errors,
-> to help debugging these.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v2:
-> -Take into account that pin-number may be 16 bits
-> -Also log the error-code
+That means that we can't use this field in this function and need to
+workaround it using hwirq.
 
-Patch applied.
+Fixes: 30ac0d3b0702 ("pinctrl: armada-37xx: Add edge both type gpio irq support")
+Cc: stable@vger.kernel.org
+Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 9df4277a16be..aa9dcde0f069 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -595,10 +595,10 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
+ 		regmap_read(info->regmap, in_reg, &in_val);
+ 
+ 		/* Set initial polarity based on current input level. */
+-		if (in_val & d->mask)
+-			val |= d->mask;		/* falling */
++		if (in_val & BIT(d->hwirq % GPIO_PER_REG))
++			val |= BIT(d->hwirq % GPIO_PER_REG);	/* falling */
+ 		else
+-			val &= ~d->mask;	/* rising */
++			val &= ~(BIT(d->hwirq % GPIO_PER_REG));	/* rising */
+ 		break;
+ 	}
+ 	default:
+-- 
+2.24.0
+
