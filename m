@@ -1,144 +1,80 @@
-Return-Path: <SRS0=05vI=ZH=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=6v+K=ZI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57245C432C3
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 22:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE93C432C3
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 10:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1E420732
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 Nov 2019 22:18:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VGmQ1K7F";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iF5D4BOf"
+	by mail.kernel.org (Postfix) with ESMTP id D988520715
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 10:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573900204;
+	bh=yl/cYpx77L/dpEwrIHtDzmW79epJ3t48buZXTLpOo50=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=mpGFQo8XddRcCjO2mlzwEQ6LYY7OUGwuHWbuzdOIHkc4iCYSlBsLpeGLZGISfsv/3
+	 O/etNpqU/JXNyMWuuYG6uj2r8NW4BlZMSoZCnhwZZVka5jvoiaWwMPGj9fiKgIfy8/
+	 Oyd4y7b5Nah0Si3mm+Z2hlzSO9WX3ZG9gnpuczBw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfKOWRo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 Nov 2019 17:17:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46954 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfKOWRo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Nov 2019 17:17:44 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A93A61014; Fri, 15 Nov 2019 22:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573856263;
-        bh=rmZinge5w6gjaDHKRPidnrksPAgCHn23PPmPFuiXXd4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VGmQ1K7FCAASln3tmjDg6eAp5zSzIHt84dpr7NlsZ/0+NP0UKKItp3PqDPAIY8uRR
-         nHh7tgdahr5uFubq4UTnJE6X2bIF7VUkHACr6Qx30/fPGdntnBlAz5n+Srrh9QAifQ
-         CEL1Zbmxc0Hg/DBtbhhd/LQWuUncsuyl+d9MKvQo=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11B8660C4B;
-        Fri, 15 Nov 2019 22:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573856262;
-        bh=rmZinge5w6gjaDHKRPidnrksPAgCHn23PPmPFuiXXd4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iF5D4BOfd9nPpRTZfwrrhmnjdzUWjPiESY1DfvLrDWukWCyUEr10Se+N9sCAjwKG6
-         cj2xE7N6vNQ7f75P5w7yNF2BnnFsgG5WrqS0uHdd8EN/KoLcQm8aJipOj5U86evPB7
-         TBO/owBok/W/+g+ogF4VNdqwiy6A2xr/a7sAZTvk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11B8660C4B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     swboyd@chromium.org, maz@kernel.org, linus.walleij@linaro.org,
-        bjorn.andersson@linaro.org
-Cc:     evgreen@chromium.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 00/12] Support wakeup capable GPIOs
-Date:   Fri, 15 Nov 2019 15:11:43 -0700
-Message-Id: <1573855915-9841-1-git-send-email-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1726794AbfKPKaD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 16 Nov 2019 05:30:03 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:56797 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726748AbfKPKaD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 16 Nov 2019 05:30:03 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=big-swifty.misterjones.org)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iVvL5-0001ib-A3; Sat, 16 Nov 2019 11:29:59 +0100
+Date:   Sat, 16 Nov 2019 10:30:03 +0000
+Message-ID: <86bltcxges.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     swboyd@chromium.org, linus.walleij@linaro.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mkshah@codeaurora.org, linux-gpio@vger.kernel.org,
+        agross@kernel.org, dianders@chromium.org
+Subject: Re: [PATCH v2 00/12] Support wakeup capable GPIOs
+In-Reply-To: <1573855915-9841-1-git-send-email-ilina@codeaurora.org>
+References: <1573855915-9841-1-git-send-email-ilina@codeaurora.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: ilina@codeaurora.org, swboyd@chromium.org, linus.walleij@linaro.org, bjorn.andersson@linaro.org, evgreen@chromium.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, mkshah@codeaurora.org, linux-gpio@vger.kernel.org, agross@kernel.org, dianders@chromium.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+On Fri, 15 Nov 2019 22:11:43 +0000,
+Lina Iyer <ilina@codeaurora.org> wrote:
+> 
+> Hi,
+> 
+> Here is the spin of the series with the review comments addressed and
+> Reviewed-by tags added. Thanks all for your reviews.
+> 
+> Andy/Bjorn, would you pull patches 10-12 in your tree? Marc would be
+> pulling the patches 1-9 into the irqchip tree.
 
-Here is the spin of the series with the review comments addressed and
-Reviewed-by tags added. Thanks all for your reviews.
+Applied 1-9 with some minor subject refactoring and series reordering,
+and pushed out in irq/irqchip-next. Any late change, please provide
+fixes on top of that branch.
 
-Andy/Bjorn, would you pull patches 10-12 in your tree? Marc would be
-pulling the patches 1-9 into the irqchip tree.
+Thanks,
 
-Thanks.
+	M.
 
---Lina
-
----
-Changes in v2:
-	- Address review comments
-	- Added Reviewed-by tags
-
-Changes in v1[7]:
-	- Address review comments
-	- Add Reviewed-by tags
-	- Drop SPI config patches
-	- Rebase on top of Rajendra's PDC changes [6]
-
-Changes in RFC v2[5]:
-        - Address review comments #3, #4, #6, #7, #8, #9, #10
-        - Rebased on top of linux-next GPIO latest patches [1],[3],[4]
-        - Increase PDC max irqs in #2 (avoid merge conflicts with
-          downstream)
-        - Add Reviewed-by #5
-
-
-[1].
-https://lore.kernel.org/linux-gpio/20190808123242.5359-1-linus.walleij@linaro.org/
-[2].
-https://lkml.org/lkml/2019/5/7/1173
-[3].
-https://lore.kernel.org/r/20190819084904.30027-1-linus.walleij@linaro.org
-[4].
-https://lore.kernel.org/r/20190724083828.7496-1-linus.walleij@linaro.org
-[5].
-https://lore.kernel.org/linux-gpio/5da6b849.1c69fb81.a9b04.1b9f@mx.google.com/t/
-[6].
-https://lore.kernel.org/linux-arm-msm/d622482d92059533f03b65af26c69b9b@www.loen.fr/
-[7].
-https://lore.kernel.org/linux-gpio/5dcefdfd.1c69fb81.c5332.fbe0@mx.google.com/T/#t
-
-Lina Iyer (10):
-  irqdomain: add bus token DOMAIN_BUS_WAKEUP
-  drivers: irqchip: qcom-pdc: update max PDC interrupts
-  drivers: irqchip: pdc: Do not toggle IRQ_ENABLE during mask/unmask
-  drivers: irqchip: add PDC irqdomain for wakeup capable GPIOs
-  of: irq: document properties for wakeup interrupt parent
-  drivers: pinctrl: msm: setup GPIO chip in hierarchy
-  drivers: pinctrl: sdm845: add PDC wakeup interrupt map for GPIOs
-  arm64: dts: qcom: add PDC interrupt controller for SDM845
-  arm64: dts: qcom: setup PDC as the wakeup parent for TLMM on SDM845
-  arm64: defconfig: enable PDC interrupt controller for Qualcomm SDM845
-
-Maulik Shah (2):
-  genirq: Introduce irq_chip_get/set_parent_state calls
-  drivers: irqchip: pdc: Add irqchip set/get state calls
-
- .../bindings/interrupt-controller/interrupts.txt   |  12 ++
- arch/arm64/boot/dts/qcom/sdm845.dtsi               |  10 ++
- arch/arm64/configs/defconfig                       |   1 +
- drivers/irqchip/qcom-pdc.c                         | 147 +++++++++++++++++++--
- drivers/pinctrl/qcom/pinctrl-msm.c                 | 112 +++++++++++++++-
- drivers/pinctrl/qcom/pinctrl-msm.h                 |  14 ++
- drivers/pinctrl/qcom/pinctrl-sdm845.c              |  23 +++-
- include/linux/irq.h                                |   6 +
- include/linux/irqdomain.h                          |   1 +
- include/linux/soc/qcom/irq.h                       |  34 +++++
- kernel/irq/chip.c                                  |  44 ++++++
- 11 files changed, 388 insertions(+), 16 deletions(-)
- create mode 100644 include/linux/soc/qcom/irq.h
-
---
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+-- 
+Jazz is not dead, it just smells funny.
