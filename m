@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADE5C33C8C
-	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 15:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7292FC432C3
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64DAB2184B
-	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 15:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463A420815
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573919763;
-	bh=tHz6rQfVRrlihB6AmfT2FhFCw8KS4l93N13Y6nXzowU=;
+	s=default; t=1573920038;
+	bh=X6ttkquxGdzmq27hYfoMMXPCacDoaTT04oI9WcFh5Pc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cIRoChTHOUM5iXYcqEMs9TBmdCrnVXe5pKD+JvkicGimVYJcJcp5qqidw5J5vygGL
-	 pCCDdSIz1NW34Eio0K4LJeM3sXlq4gXzfOwNeZu3phMCNkO6lsTyK1XkXuMQdMjznX
-	 LvFH7YvDJs0I1zvcZFlTTjT+RcMYVpLGdPg/kKPA=
+	b=gAZjVjqwU+47C+3FdTJhwU63uKgZBxa+0zkdLKI4R6tnRDarefeNFLztXShFW5wt8
+	 KSD3AaeG0RDeinUmmmB0qOYDFesNUe+6522CoTIIou4Xv8xrmi/p/yD3lNYL7FF1E/
+	 g9X2I56zGZIaVn1IdP21b6C+REe/g8gOHfo4qKc4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbfKPPz6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 16 Nov 2019 10:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
+        id S1730406AbfKPQAc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 16 Nov 2019 11:00:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731627AbfKPPzd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:55:33 -0500
+        id S1731243AbfKPPx2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:53:28 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A25B92192D;
-        Sat, 16 Nov 2019 15:55:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 451B4218AE;
+        Sat, 16 Nov 2019 15:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919732;
-        bh=tHz6rQfVRrlihB6AmfT2FhFCw8KS4l93N13Y6nXzowU=;
+        s=default; t=1573919607;
+        bh=X6ttkquxGdzmq27hYfoMMXPCacDoaTT04oI9WcFh5Pc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2IAX7hRBOK7uSI/oP6sQi5n53JJ4J0oPkmMsnH4Yi1pI35Kqqta3nDxeg0GuFUn/r
-         NlE5bTLz7v0LSbn8pKMjJ7wQqcI8DnII5IgF5SwY2BQwVYHrFjc4cS5C9KnErDBafa
-         bVOM2dowvxDrj78cdBcijEqYyJ+g1hA4wsJPkcHw=
+        b=gJksCEI3kuresVOsIdiuwgmu6RXuq0csfUXLxNgJWlsMm49XXHs1a/DyP+Z1/SHwD
+         gPesiBgyCkXavG9PN4VC3oz/nDhmYUQS8tQXFEFZ3dm+eMi09bmXGadRNvdgu3n2Jn
+         q5v1hEIE3289pKIwhZW5f1/ebwRZSSaIZGGmkcSU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Masney <masneyb@onstation.org>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 74/77] pinctrl: qcom: spmi-gpio: fix gpio-hog related boot issues
-Date:   Sat, 16 Nov 2019 10:53:36 -0500
-Message-Id: <20191116155339.11909-74-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 95/99] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
+Date:   Sat, 16 Nov 2019 10:50:58 -0500
+Message-Id: <20191116155103.10971-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116155339.11909-1-sashal@kernel.org>
-References: <20191116155339.11909-1-sashal@kernel.org>
+In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
+References: <20191116155103.10971-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,60 +60,65 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Brian Masney <masneyb@onstation.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 149a96047237574b756d872007c006acd0cc6687 ]
+[ Upstream commit cd8a145a066a1a3beb0ae615c7cb2ee4217418d7 ]
 
-When attempting to setup up a gpio hog, device probing would repeatedly
-fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
-between the gpio and pinctrl frameworks. If the gpio-ranges property is
-present in device tree, then the gpio framework will handle the gpio pin
-registration and eliminate the circular dependency.
+Clang warns when one enumerated type is implicitly converted to another:
 
-See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-gpio-hog related boot issues") for a detailed commit message that
-explains the issue in much more detail. The code comment in this commit
-came from Christian's commit.
+drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+        ~               ^~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+macro 'PCONFDUMP'
+        .param = a, .display = b, .format = c, .has_arg = d     \
+                 ^
+2 warnings generated.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-zynq.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 4ea810cafaac6..913b2604d3454 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -793,10 +793,23 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 		goto err_chip;
- 	}
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index e0ecffcbe11f6..f8b54cfc90c7d 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -967,15 +967,12 @@ enum zynq_io_standards {
+ 	zynq_iostd_max
+ };
  
--	ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0, npins);
--	if (ret) {
--		dev_err(dev, "failed to add pin range\n");
--		goto err_range;
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(dev->of_node, "gpio-ranges")) {
-+		ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0,
-+					     npins);
-+		if (ret) {
-+			dev_err(dev, "failed to add pin range\n");
-+			goto err_range;
-+		}
- 	}
+-/**
+- * enum zynq_pin_config_param - possible pin configuration parameters
+- * @PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
++/*
++ * PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
+  *	this parameter (on a custom format) tells the driver which alternative
+  *	IO standard to use.
+  */
+-enum zynq_pin_config_param {
+-	PIN_CONFIG_IOSTANDARD = PIN_CONFIG_END + 1,
+-};
++#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
  
- 	return 0;
+ static const struct pinconf_generic_params zynq_dt_params[] = {
+ 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
 -- 
 2.20.1
 
