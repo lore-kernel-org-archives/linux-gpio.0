@@ -2,51 +2,51 @@ Return-Path: <SRS0=6v+K=ZI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9873C43215
-	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE68BC432C3
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20FD20815
-	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8DCD2089D
+	for <linux-gpio@archiver.kernel.org>; Sat, 16 Nov 2019 16:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573920038;
-	bh=FnI+fa6RYHCzzLqSE6NIcC3D6jU/xkVbeou+UhqK7sc=;
+	s=default; t=1573920046;
+	bh=McwXrVVkytzj+hSaqm76kPsOnhihjhaT2aayiNsJ2Nc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pZbijZzI6Fqhu9qYXzndhGS2axk5ZWLw6ni7hR2qxGWJpYKacziWs/unxq6YQwBUe
-	 ZutB1k3V2fgLq5Nfqcb5MQ+Q2tU/VcOqEKS2svXN483N2G9nkTvhNtgt4Ul5uRijk9
-	 eQAqFd591LaGF3B+PLxSxeGg5sOhFl3Ra+ZWt5fI=
+	b=l9MOuf4MmusDa9zp4FYoN2Z7yRf4oxNQDwVKdPgc9NQm+FwiqASja9BPp8Gne3vfa
+	 IatWKhztFXGSNnxsSxF/QIGANVDXNXJduDaG03UDCBJUG+xDq3jojUxbKEqwXqaOlF
+	 jZIbl+e6kgWApFzL4vYqW1kJK4D9vaHRZ2QIt2wI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbfKPPx2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 16 Nov 2019 10:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34512 "EHLO mail.kernel.org"
+        id S1730132AbfKPQAl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 16 Nov 2019 11:00:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730404AbfKPPx1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:53:27 -0500
+        id S1731236AbfKPPx0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:53:26 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE2B218A3;
-        Sat, 16 Nov 2019 15:53:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0447E21479;
+        Sat, 16 Nov 2019 15:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1573919606;
-        bh=FnI+fa6RYHCzzLqSE6NIcC3D6jU/xkVbeou+UhqK7sc=;
+        bh=McwXrVVkytzj+hSaqm76kPsOnhihjhaT2aayiNsJ2Nc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wV1CWVE3BQF2YUqnoeOYq77Lauqq3WErBXxnASyOhPv+bj8RUP6y/uQahGPuqlSOE
-         iqHudthPocz8AFUHqVm+qoXCqK259KQgoLs5YpSW+gekPA/Pe5n5s2KeqNNX5VagD3
-         oKYxZwOrAlhOOlMaB6Lss+tVo8TuTjiiRcprqzqQ=
+        b=TI980767vBqJTey+THTVG2FJYGe0sncom1GLyCS6US7w9LPkjYwbNGNS+hBrbc1+k
+         on/q+Mmuqywlc2zVdJzOax1RiPsgHXXryFZVd7iJtBAWOjycztNdyv7+E4pnNJiuqr
+         8VXzJin5vq6Y3iF+UVvlBgwKLHVnz5dpWb/so3nY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Brian Masney <masneyb@onstation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.9 94/99] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
-Date:   Sat, 16 Nov 2019 10:50:57 -0500
-Message-Id: <20191116155103.10971-94-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 93/99] pinctrl: qcom: spmi-gpio: fix gpio-hog related boot issues
+Date:   Sat, 16 Nov 2019 10:50:56 -0500
+Message-Id: <20191116155103.10971-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
 References: <20191116155103.10971-1-sashal@kernel.org>
@@ -59,63 +59,60 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Brian Masney <masneyb@onstation.org>
 
-[ Upstream commit f24bfb39975c241374cadebbd037c17960cf1412 ]
+[ Upstream commit 149a96047237574b756d872007c006acd0cc6687 ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+When attempting to setup up a gpio hog, device probing would repeatedly
+fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
+between the gpio and pinctrl frameworks. If the gpio-ranges property is
+present in device tree, then the gpio framework will handle the gpio pin
+registration and eliminate the circular dependency.
 
-drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
-        ~                          ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
-        ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-macro 'PCONFDUMP'
-        .param = a, .display = b, .format = c, .has_arg = d     \
-                 ^
-2 warnings generated.
+See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+gpio-hog related boot issues") for a detailed commit message that
+explains the issue in much more detail. The code comment in this commit
+came from Christian's commit.
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/140
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Brian Masney <masneyb@onstation.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-lpc18xx.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index e053f1fa55120..ab2a451f31562 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -630,14 +630,8 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
- 	LPC18XX_PIN(i2c0_sda, PIN_I2C0_SDA),
- };
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 8093afd17aa4f..69641c9e7d179 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -790,10 +790,23 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
--/**
-- * enum lpc18xx_pin_config_param - possible pin configuration parameters
-- * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
-- * 	controller.
-- */
--enum lpc18xx_pin_config_param {
--	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
--};
-+/* PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt controller */
-+#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
+-	ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0, npins);
+-	if (ret) {
+-		dev_err(dev, "failed to add pin range\n");
+-		goto err_range;
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(dev->of_node, "gpio-ranges")) {
++		ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0,
++					     npins);
++		if (ret) {
++			dev_err(dev, "failed to add pin range\n");
++			goto err_range;
++		}
+ 	}
  
- static const struct pinconf_generic_params lpc18xx_params[] = {
- 	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+ 	return 0;
 -- 
 2.20.1
 
