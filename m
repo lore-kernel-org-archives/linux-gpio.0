@@ -2,179 +2,246 @@ Return-Path: <SRS0=L63o=ZK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5284FC432C0
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Nov 2019 13:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34678C432C0
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Nov 2019 13:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C1D2071C
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Nov 2019 13:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F339D20722
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Nov 2019 13:59:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="2TVW7BlR"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LXkytG49"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfKRNxJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Nov 2019 08:53:09 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41098 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfKRNxJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2019 08:53:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 94so14524700oty.8
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Nov 2019 05:53:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=k9lIRhwgcbajhqZpOmb59aZe1C6tNWHMx4MXKAPT8GA=;
-        b=2TVW7BlRRvg/yNdEe7SXfLssjB+94AA4r2TszH5OFw5Vw6Vby5qBXcLTDWLd+utPMN
-         PdXAg5jT4eMUcI5j89HmvSLIxeplqCtmGlKvuGvcvWfNZ+rqAm3S9hHdJzI73C69c0bB
-         hu+m1eX07jbJvC4Rvl2JVRo+GfVJi6duaFFK6vRY12bANYbp3QNFUgvfsqW9BO6KxTPB
-         U6N1x06ufllwzHHl98f2EioaEbCrjveiGYb6j4CZDVUNhDu8Ao5sLC6NfKA3epRHLEdF
-         JAUuc1t17xBSuGek9QPyOb1ufKCAv9NvWwrTXPPj7DfCPhRlUJLrrYcPfaoWKaQYZm4+
-         UVjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=k9lIRhwgcbajhqZpOmb59aZe1C6tNWHMx4MXKAPT8GA=;
-        b=uVAugmyed5+nbvVmD/gn3RAkeu/Q3gOPhFzHh59SCpVUabT3I6HwMMqOKNrTgqS/Q3
-         m8GFmUYX/gUzgWLOxYGDV3HZgVJhrNZfYNZmyNt9WufYpGpXic14zI2Vj0ER5XKmbHEb
-         uNFHaRyqeCY9mAqvQ7atD1k5Fwgu5g+kqybjsbChhKqbIihx62lycD2/hxUlji0ZkPxB
-         UfwBvIro9gG30n6b8lnb7dr+UOV/pOQGoyJLcY6QCskbc+un6Pir3ZlonFoOoJArYbAQ
-         Cxf6XEgfWJWhrQbpP4Ej+1KgA1qWHscz/W4aXwsSscEZFY8EZyd0w1AXLqKiAvLBAqlP
-         9WLQ==
-X-Gm-Message-State: APjAAAUQQ7UxD1HDukRyt1ZDNjqUoY1eyoEsyI336AAxkXnT0qB0Y1cN
-        PgjO5/BWlXSSMWhNzBOgewTkHjFeHhR7IS1WYnsfuA==
-X-Google-Smtp-Source: APXvYqw5d0gyDjZipTu/2JAH+fQ8e0BTZCCpGvPXeJJmn618E2tHzMw3GZZYg7g55Oz2iFYElYb34xxZqEeSvdiWW+w=
-X-Received: by 2002:a05:6830:453:: with SMTP id d19mr11370129otc.256.1574085187557;
- Mon, 18 Nov 2019 05:53:07 -0800 (PST)
+        id S1727088AbfKRN7D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Nov 2019 08:59:03 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47292 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbfKRN7D (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Nov 2019 08:59:03 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAIDwo8A028342;
+        Mon, 18 Nov 2019 07:58:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574085530;
+        bh=M4zywV29ZtLq77cA4R+/+b3aPpMR1A6bjWsDO7FMqeI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LXkytG49vXFxHq1gUofmKC33lZbsMS8OqAdHTl1bDI30GCDQgWRbyNFun/ETpDnUb
+         xyVFXZGPQrIKnaRm7Lfpn6zfqA0eX63fM50OHPHS3k9+gT1uBbf3e+rdhniwGkaOh/
+         T0OMsQP0NNyWj6lXUmhNTiKMFnhWmZ3snkv3dnR4=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAIDwoVf027645
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Nov 2019 07:58:50 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 18
+ Nov 2019 07:58:50 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 18 Nov 2019 07:58:50 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAIDwlg7019882;
+        Mon, 18 Nov 2019 07:58:47 -0600
+Subject: Re: [RFC v2 0/2] gpio: Support for shared GPIO lines on boards
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <m.szyprowski@samsung.com>, <broonie@kernel.org>,
+        <t-kristo@ti.com>, <mripard@kernel.org>, <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>
+References: <20191030120440.3699-1-peter.ujfalusi@ti.com>
+ <3c384b40-f353-eaec-b1d6-ba74f5338ce1@metux.net>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <faf6f7e3-b64d-1e03-9e17-90b5c352cb32@ti.com>
+Date:   Mon, 18 Nov 2019 16:00:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191115144355.975-1-warthog618@gmail.com> <20191115144355.975-20-warthog618@gmail.com>
-In-Reply-To: <20191115144355.975-20-warthog618@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 18 Nov 2019 14:52:56 +0100
-Message-ID: <CAMpxmJVuw84__hhd=HVmZVMhZzeb4VuYNhC==A94QRE-vG3ZUg@mail.gmail.com>
-Subject: Re: [libgpiod] [PATCH 19/19] treewide: change "correspond with" to
- "correspond to"
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3c384b40-f353-eaec-b1d6-ba74f5338ce1@metux.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-pt., 15 lis 2019 o 15:45 Kent Gibson <warthog618@gmail.com> napisa=C5=82(a)=
-:
->
-> Trivial grammar fix. "correspond with" can mean either being in agreement
-> with, happening at the same time, or communication between parties.
-> "correspond to" is used to mean equivalance, which is the intended use
-> throughout the documentation.
->
+Hi,
 
-Thanks for this. I'm not a native English speaker, so if you see any
-other language issues, please let me know, or feel free to fix them.
+On 18/11/2019 14.15, Enrico Weigelt, metux IT consult wrote:
+> On 30.10.19 13:04, Peter Ujfalusi wrote:
+> 
+> Hi,
+> 
+>> For example any device using the same GPIO as reset/enable line can
+>> reset/enable other devices, which is not something the other device might like
+>> or can handle.
+> 
+> IMHO, for such cases, invidual drivers shouldn't fiddle w/ raw gpio's
+> directly, but be connected to (gpio-based) reset controllers or
+> regulators instead.
 
-Bart
+Which is a (linux) software abstraction of an electric wire coming out
+from the gpio (or gpo) controller then split into two (or more branch)
+and connect to external components...
 
-> Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> ---
->  bindings/python/gpiodmodule.c | 6 +++---
->  include/gpiod.h               | 2 +-
->  lib/core.c                    | 2 +-
->  tests/mockup/gpio-mockup.c    | 2 +-
->  4 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.=
-c
-> index 4949b14..74fbea3 100644
-> --- a/bindings/python/gpiodmodule.c
-> +++ b/bindings/python/gpiodmodule.c
-> @@ -1330,7 +1330,7 @@ PyDoc_STRVAR(gpiod_LineBulk_get_values_doc,
->  "get_values() -> list of integers\n"
->  "\n"
->  "Read the values of all the lines held by this LineBulk object. The inde=
-x\n"
-> -"of each value in the returned list corresponds with the index of the li=
-ne\n"
-> +"of each value in the returned list corresponds to the index of the line=
-\n"
->  "in this gpiod.LineBulk object.");
->
->  static PyObject *gpiod_LineBulk_get_values(gpiod_LineBulkObject *self,
-> @@ -1385,7 +1385,7 @@ PyDoc_STRVAR(gpiod_LineBulk_set_values_doc,
->  "\n"
->  "The number of values in the list passed as argument must be the same as=
-\n"
->  "the number of lines held by this gpiod.LineBulk object. The index of ea=
-ch\n"
-> -"value corresponds with the index of each line in the object.\n");
-> +"value corresponds to the index of each line in the object.\n");
->
->  static PyObject *gpiod_LineBulk_set_values(gpiod_LineBulkObject *self,
->                                            PyObject *args)
-> @@ -1408,7 +1408,7 @@ static PyObject *gpiod_LineBulk_set_values(gpiod_Li=
-neBulkObject *self,
->         num_vals =3D PyObject_Size(val_list);
->         if (self->num_lines !=3D num_vals) {
->                 PyErr_SetString(PyExc_TypeError,
-> -                               "Number of values must correspond with th=
-e number of lines");
-> +                               "Number of values must correspond to the =
-number of lines");
->                 return NULL;
->         }
->
-> diff --git a/include/gpiod.h b/include/gpiod.h
-> index 4053fd2..6776852 100644
-> --- a/include/gpiod.h
-> +++ b/include/gpiod.h
-> @@ -779,7 +779,7 @@ gpiod_line_bulk_num_lines(struct gpiod_line_bulk *bul=
-k)
->   *
->   * This is a variant of ::gpiod_line_bulk_foreach_line which uses an int=
-eger
->   * variable (either signed or unsigned) to store the loop state. This of=
-fset
-> - * variable is guaranteed to correspond with the offset of the current l=
-ine in
-> + * variable is guaranteed to correspond to the offset of the current lin=
-e in
->   * the bulk->lines array.
->   */
->  #define gpiod_line_bulk_foreach_line_off(bulk, line, offset)           \
-> diff --git a/lib/core.c b/lib/core.c
-> index 2e54def..54ae09c 100644
-> --- a/lib/core.c
-> +++ b/lib/core.c
-> @@ -111,7 +111,7 @@ static bool is_gpiochip_cdev(const char *path)
->
->         /*
->          * Make sure the major and minor numbers of the character device
-> -        * correspond with the ones in the dev attribute in sysfs.
-> +        * correspond to the ones in the dev attribute in sysfs.
->          */
->         snprintf(devstr, sizeof(devstr), "%u:%u",
->                  major(statbuf.st_rdev), minor(statbuf.st_rdev));
-> diff --git a/tests/mockup/gpio-mockup.c b/tests/mockup/gpio-mockup.c
-> index e3a53da..fa27bd7 100644
-> --- a/tests/mockup/gpio-mockup.c
-> +++ b/tests/mockup/gpio-mockup.c
-> @@ -333,7 +333,7 @@ EXPORT int gpio_mockup_probe(struct gpio_mockup *ctx,=
- unsigned int num_chips,
->         /*
->          * We can't assume that the order in which the mockup gpiochip
->          * devices are created will be deterministic, yet we want the
-> -        * index passed to the test_chip_*() functions to correspond with=
- the
-> +        * index passed to the test_chip_*() functions to correspond to t=
-he
->          * order in which the chips were defined in the TEST_DEFINE()
->          * macro.
->          *
-> --
-> 2.24.0
->
+> I believe, GPIO isn't the correct abstraction layer
+> for such cases: it's not even IO, just O.
+
+A GPIO pin configured as output is O ;)
+
+> Let's sit back and rethink what the driver really wants to tell in those
+> cases. For the enable lines we have:
+> 
+> a) make sure the device is enabled/powered
+> b) device does not need to be enabled/powered anymore
+> c) device must be powercycled
+> 
+> You see, it's actually tristate, which gets relevant if multiple devices
+> on one line.
+
+Yes. Things gets a bit blurry when a GPIO line is used to enable/gate
+signals from/to a chip on top of enable/disable, like muting an
+amplifier's analog output.
+
+> Now add reset lines:
+> 
+> a) force device into reset state
+> b) force device out of reset state
+> c) allow device going into reset state (but no need to force)
+> d) allow device coming out of reset state (but no need to force)
+
+I would say that coming out of reset is always forced as there is a
+reason why you want to take it out - it is going to be used.
+
+> It even gets more weird if a device can be reset or powercycled
+> externally.
+> 
+> hmm, not entirely trivial ...
+
+When we have only one user of the GPIO reset/enable line we will have a)
+and b) happening. If the GPIO is shared most likely the intention of the
+hw design dictates c) and d)
+
+>> For example a device needs to be configured after it is enabled, but some other
+>> driver would reset it while handling the same GPIO -> the device is not
+>> operational anymmore as it lost it's configuration.
+> 
+> Yeah, at least we need some signalling to the driver, so it can do the
+> necessary steps. From the driver's PoV, it's an "foreign reset".
+
+Notification callback for state change?
+
+>> With the gpio-shared gpiochip we can overcome this by giving the gpio-shared
+>> the role of making sure that the GPIO line only changes state when it will not
+>> disturb any of the clients sharing the same GPIO line.
+> 
+> How exactly do we know when such disturbance can / cannot happen ?
+> That would be depending on individual chips *and* how they're wired on
+> the board. We'd end up with some logical multiplexer, that's board
+> specific.
+> 
+> <snip>
+> 
+>> If any of the codec requests the GPIO to be high, the line will go up and will
+>> only going to be low when both of them set's their shared line to low.
+> 
+> So, if one driver request reset, all attached devices will be reset ?
+> Or if all drivers request reset, all attached devices will be reset ?
+
+The later.
+
+> Doesn't look so quite non-disturbing to me :o
+
+This is what regulators and the reset framework is doing, no?
+
+>> I have also looked at the reset framework, but again it can not be applied in a
+>> generic way for GPIOs shared for other purposes 
+> 
+> What are the exact scenarios you have in mind ?
+
+grep -R enable-gpios Documentation/devicetree/bindings/*
+
+pick two random device from the output, place it on a board with shared
+enable GPIO line.
+I know I over simplify (or complicate) the real world use.
+
+>> and all existing drivers must
+>> be converted to use the reset framework (and adding a linux only warpper on top
+>> of reset GPIOs).
+> 
+> Maybe a bit time consuming, but IMHO not difficult. We could add generic
+> helpers for creating a reset driver on a gpio. So the drivers wouldn't
+> even care about gpio itself anymore, but let the reset subsystem so it
+> all (eg. look for DT node and request corresponding gpio, etc).
+
+You mean that users would use reset_control_get_optional_shared() only
+and if there is no valid reset binding that the reset core would look
+for a gpio binding and instantiate a gpio-reset controller?
+But before instantiating it, it would look around in some list to see if
+the gpio-reset controller for the same gpio line is already exist?
+
+> IMHO, that's something we should do nevertheless, even if it's just for
+> cleaner code.
+
+I'm not sure about that.
+D1 have ENABLE pin (enable-gpios as per dt documentation),
+ if the line is high, the device is enabled, if low it is disabled.
+
+D2 have RESET pin (reset-gpios as per dt documentation),
+ if the line is high, the device is enabled, if low it is disabled.
+
+D1's driver would:
+enable-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+
+priv->reset = reset_control_get_optional_shared(dev, "enable");
+
+/* Place it to reset: ENABLE pin should be pulled low */
+reset_control_assert(priv->reset);
+/* Remove from reset: ENABLE pin should be high */
+reset_control_deassert(priv->reset);
+
+D2's driver would:
+reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+
+priv->reset = reset_control_get_optional_shared(dev, "reset");
+
+/* Place it to reset: RESET pin should be pulled low */
+reset_control_assert(priv->reset);
+/* Remove from reset: RESET pin should be high */
+reset_control_deassert(priv->reset);
+
+The reset framework must know somehow that the reset control for D1 is
+an enable type of gpio, so it must treat it as inverted polarity while
+the reset type of binding should be follow the selected active level.
+
+Then it must protect (most likely) the deasserted state: it does not
+mater if there is any assert request for the reset_control if we have
+one deassert active as at least one device must be enabled.
+
+For new dts files the virtual reset-gpio controller node can be present
+and the level of assert and deassert is told to it via the gpio binding.
+
+Something like this?
+
+> After that we could put any kind of funny logic behind the scenes (eg.
+> one could connect the reset pin to a spare uart instead of gpio, etc),
+> w/o ever touching the individual drivers.
+
+Not sure if I follow you here.
+
+On the other hand the gpio line itself can be seen as a regultator
+itself (3.3V most of the time) so in theory all GPIOs can be regulators
+as well, but regulator framework protects the >0 volt state while there
+are devices which can be enabled when the ENABLE/RST pin is pulled low.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
