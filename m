@@ -2,160 +2,264 @@ Return-Path: <SRS0=9uQN=ZM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62625C432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 13:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D800C432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39EEB21939
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 13:34:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ks3SnZ5A"
+	by mail.kernel.org (Postfix) with ESMTP id 7598122528
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730748AbfKTNe0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Nov 2019 08:34:26 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56636 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729591AbfKTNeZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2019 08:34:25 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAKDYGF9121463;
-        Wed, 20 Nov 2019 07:34:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574256856;
-        bh=f9wDMO99+Q0vqCOfNvkwoOcdSmeBsz1Nda7F4U/P5Uo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ks3SnZ5ABrvO7BtJrR1hx0K9Ur8ayPN/i82bpVIVNITvbt2XBiSxH9Cu4Nus0sIjC
-         e8FGmguGQ8DrE9goxFnw641f8SM86XxyXcAIRuyqvYf2nB01kh4n52zo2LmtaRIwAq
-         NnnaUmGon2GfbWc6xgBQ+r8SjwcGlaT+lmo+jYWI=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAKDYGr1114922
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Nov 2019 07:34:16 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 20
- Nov 2019 07:34:15 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 20 Nov 2019 07:34:15 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAKDY9Ej096098;
-        Wed, 20 Nov 2019 07:34:13 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <robh+dt@kernel.org>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <m.szyprowski@samsung.com>, <broonie@kernel.org>,
-        <mripard@kernel.org>, <p.zabel@pengutronix.de>,
-        <devicetree@vger.kernel.org>
-Subject: [RFC 1/2] dt-bindings: gpio: Document shared GPIO line usage
-Date:   Wed, 20 Nov 2019 15:34:08 +0200
-Message-ID: <20191120133409.9217-2-peter.ujfalusi@ti.com>
+        id S1730934AbfKTNhn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Nov 2019 08:37:43 -0500
+Received: from mga07.intel.com ([134.134.136.100]:44112 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729917AbfKTNhm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 20 Nov 2019 08:37:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 05:37:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,222,1571727600"; 
+   d="scan'208";a="357435827"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 20 Nov 2019 05:37:41 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 259DA236; Wed, 20 Nov 2019 15:37:40 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] pinctrl: lewisburg: Update pin list according to v1.1v6
+Date:   Wed, 20 Nov 2019 15:37:39 +0200
+Message-Id: <20191120133739.54332-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191120133409.9217-1-peter.ujfalusi@ti.com>
-References: <20191120133409.9217-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Boards might use the same GPIO line to control several external devices.
-Add section to document on how a shared GPIO pin can be described.
+Version 1.1v6 of pin list has some changes in pin names for Intel Lewisburg.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Update the driver accordingly.
+
+Note, it reveals the bug in the driver that misses two pins in GPP_L and
+has rather two extra ones. That's why the ordering of some groups is changed.
+
+Fixes: e480b745386e ("pinctrl: intel: Add Intel Lewisburg GPIO support")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- .../devicetree/bindings/gpio/gpio.txt         | 66 +++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ drivers/pinctrl/intel/pinctrl-lewisburg.c | 171 +++++++++++-----------
+ 1 file changed, 86 insertions(+), 85 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index a8895d339bfe..644e6513607c 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -228,6 +228,72 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
- 		#gpio-cells = <2>;
- 	};
+diff --git a/drivers/pinctrl/intel/pinctrl-lewisburg.c b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+index 2e06fb1464ab..7fdf4257df1e 100644
+--- a/drivers/pinctrl/intel/pinctrl-lewisburg.c
++++ b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+@@ -33,6 +33,7 @@
+ 		.npins = ((e) - (s) + 1),		\
+ 	}
  
-+On boards one GPIO line might be connected to multiple devices as reset, enable
-+or other control pins. In order to make it safer for this usage of a GPIO line
-+one can describe the shared GPIO pin.
-+
-+Each shared GPIO pin definition is represented as a child node of the GPIO
-+controller.
-+
-+Required properties:
-+- gpio-shared:	A property specifying that this child node represents a shared
-+		GPIO pin.
-+- gpios:	Store the GPIO information (id, flags, ...) for each GPIO to
-+		affect. Shall contain an integer multiple of the number of cells
-+		specified in its parent node (GPIO controller node).
-+Only one of the following properties scanned in the order shown below.
-+This means that when multiple properties are present they will be searched
-+in the order presented below and the first match is taken as the intended
-+configuration.
-+- output-low:	A property specifying to set the GPIO direction as output with
-+		the value low initially.
-+- output-high:	A property specifying to set the GPIO direction as output with
-+		the value high initially.
-+The shared GPIO line management strategy can be selected with either of the
-+following properties:
-+- refcounted-low: The line must be kept low as long as there is at least one
-+		request asking it to be low.
-+- refcounted-high: The line must be kept high as long as there is at least one
-+		request asking it to be high.
-+If neither of the refcounting strategy was selected then the shared GPIO is
-+handled as pass through. In this mode all user requests will be forwarded to the
-+shared GPIO pin without refcounting.
-+
-+Optional properties:
-+- line-name:  The GPIO label name. If not present the node name is used.
-+
-+Example of shared GPIO use:
-+
-+	qe_pio_a: gpio-controller@1400 {
-+		compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
-+		reg = <0x1400 0x18>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		line_a {
-+			gpio-shared;
-+			gpios = <5 0>;
-+			output-low;
-+			refcounted-high;
-+			line-name = "enable-for-devices";
-+		};
-+	};
-+
-+	device@0 {
-+		compatible = "some,device";
-+		enable-gpios = <&qe_pio_a 5 0>;
-+	};
-+
-+	device@1 {
-+		compatible = "some,device";
-+		enable-gpios = <&qe_pio_a 5 0>;
-+	};
-+
-+	component@0 {
-+		compatible = "some,component";
-+		select-gpios = <&qe_pio_a 5 0>;
-+	};
-+
- 2.1) gpio- and pin-controller interaction
- -----------------------------------------
- 
++/* Lewisburg */
+ static const struct pinctrl_pin_desc lbg_pins[] = {
+ 	/* GPP_A */
+ 	PINCTRL_PIN(0, "RCINB"),
+@@ -72,7 +73,7 @@ static const struct pinctrl_pin_desc lbg_pins[] = {
+ 	PINCTRL_PIN(33, "SRCCLKREQB_4"),
+ 	PINCTRL_PIN(34, "SRCCLKREQB_5"),
+ 	PINCTRL_PIN(35, "GPP_B_11"),
+-	PINCTRL_PIN(36, "GLB_RST_WARN_N"),
++	PINCTRL_PIN(36, "SLP_S0B"),
+ 	PINCTRL_PIN(37, "PLTRSTB"),
+ 	PINCTRL_PIN(38, "SPKR"),
+ 	PINCTRL_PIN(39, "GPP_B_15"),
+@@ -185,96 +186,96 @@ static const struct pinctrl_pin_desc lbg_pins[] = {
+ 	PINCTRL_PIN(141, "GBE_PCI_DIS"),
+ 	PINCTRL_PIN(142, "GBE_LAN_DIS"),
+ 	PINCTRL_PIN(143, "GPP_I_10"),
+-	PINCTRL_PIN(144, "GPIO_RCOMP_3P3"),
+ 	/* GPP_J */
+-	PINCTRL_PIN(145, "GBE_LED_0_0"),
+-	PINCTRL_PIN(146, "GBE_LED_0_1"),
+-	PINCTRL_PIN(147, "GBE_LED_1_0"),
+-	PINCTRL_PIN(148, "GBE_LED_1_1"),
+-	PINCTRL_PIN(149, "GBE_LED_2_0"),
+-	PINCTRL_PIN(150, "GBE_LED_2_1"),
+-	PINCTRL_PIN(151, "GBE_LED_3_0"),
+-	PINCTRL_PIN(152, "GBE_LED_3_1"),
+-	PINCTRL_PIN(153, "GBE_SCL_0"),
+-	PINCTRL_PIN(154, "GBE_SDA_0"),
+-	PINCTRL_PIN(155, "GBE_SCL_1"),
+-	PINCTRL_PIN(156, "GBE_SDA_1"),
+-	PINCTRL_PIN(157, "GBE_SCL_2"),
+-	PINCTRL_PIN(158, "GBE_SDA_2"),
+-	PINCTRL_PIN(159, "GBE_SCL_3"),
+-	PINCTRL_PIN(160, "GBE_SDA_3"),
+-	PINCTRL_PIN(161, "GBE_SDP_0_0"),
+-	PINCTRL_PIN(162, "GBE_SDP_0_1"),
+-	PINCTRL_PIN(163, "GBE_SDP_1_0"),
+-	PINCTRL_PIN(164, "GBE_SDP_1_1"),
+-	PINCTRL_PIN(165, "GBE_SDP_2_0"),
+-	PINCTRL_PIN(166, "GBE_SDP_2_1"),
+-	PINCTRL_PIN(167, "GBE_SDP_3_0"),
+-	PINCTRL_PIN(168, "GBE_SDP_3_1"),
++	PINCTRL_PIN(144, "GBE_LED_0_0"),
++	PINCTRL_PIN(145, "GBE_LED_0_1"),
++	PINCTRL_PIN(146, "GBE_LED_1_0"),
++	PINCTRL_PIN(147, "GBE_LED_1_1"),
++	PINCTRL_PIN(148, "GBE_LED_2_0"),
++	PINCTRL_PIN(149, "GBE_LED_2_1"),
++	PINCTRL_PIN(150, "GBE_LED_3_0"),
++	PINCTRL_PIN(151, "GBE_LED_3_1"),
++	PINCTRL_PIN(152, "GBE_SCL_0"),
++	PINCTRL_PIN(153, "GBE_SDA_0"),
++	PINCTRL_PIN(154, "GBE_SCL_1"),
++	PINCTRL_PIN(155, "GBE_SDA_1"),
++	PINCTRL_PIN(156, "GBE_SCL_2"),
++	PINCTRL_PIN(157, "GBE_SDA_2"),
++	PINCTRL_PIN(158, "GBE_SCL_3"),
++	PINCTRL_PIN(159, "GBE_SDA_3"),
++	PINCTRL_PIN(160, "GBE_SDP_0_0"),
++	PINCTRL_PIN(161, "GBE_SDP_0_1"),
++	PINCTRL_PIN(162, "GBE_SDP_1_0"),
++	PINCTRL_PIN(163, "GBE_SDP_1_1"),
++	PINCTRL_PIN(164, "GBE_SDP_2_0"),
++	PINCTRL_PIN(165, "GBE_SDP_2_1"),
++	PINCTRL_PIN(166, "GBE_SDP_3_0"),
++	PINCTRL_PIN(167, "GBE_SDP_3_1"),
+ 	/* GPP_K */
+-	PINCTRL_PIN(169, "GBE_RMIICLK"),
+-	PINCTRL_PIN(170, "GBE_RMII_TXD_0"),
+-	PINCTRL_PIN(171, "GBE_RMII_TXD_1"),
++	PINCTRL_PIN(168, "GBE_RMIICLK"),
++	PINCTRL_PIN(169, "GBE_RMII_RXD_0"),
++	PINCTRL_PIN(170, "GBE_RMII_RXD_1"),
++	PINCTRL_PIN(171, "GBE_RMII_CRS_DV"),
+ 	PINCTRL_PIN(172, "GBE_RMII_TX_EN"),
+-	PINCTRL_PIN(173, "GBE_RMII_CRS_DV"),
+-	PINCTRL_PIN(174, "GBE_RMII_RXD_0"),
+-	PINCTRL_PIN(175, "GBE_RMII_RXD_1"),
+-	PINCTRL_PIN(176, "GBE_RMII_RX_ER"),
+-	PINCTRL_PIN(177, "GBE_RMII_ARBIN"),
+-	PINCTRL_PIN(178, "GBE_RMII_ARB_OUT"),
+-	PINCTRL_PIN(179, "PE_RST_N"),
+-	PINCTRL_PIN(180, "GPIO_RCOMP_1P8_3P3"),
++	PINCTRL_PIN(173, "GBE_RMII_TXD_0"),
++	PINCTRL_PIN(174, "GBE_RMII_TXD_1"),
++	PINCTRL_PIN(175, "GBE_RMII_RX_ER"),
++	PINCTRL_PIN(176, "GBE_RMII_ARBIN"),
++	PINCTRL_PIN(177, "GBE_RMII_ARB_OUT"),
++	PINCTRL_PIN(178, "PE_RST_N"),
+ 	/* GPP_G */
+-	PINCTRL_PIN(181, "FAN_TACH_0"),
+-	PINCTRL_PIN(182, "FAN_TACH_1"),
+-	PINCTRL_PIN(183, "FAN_TACH_2"),
+-	PINCTRL_PIN(184, "FAN_TACH_3"),
+-	PINCTRL_PIN(185, "FAN_TACH_4"),
+-	PINCTRL_PIN(186, "FAN_TACH_5"),
+-	PINCTRL_PIN(187, "FAN_TACH_6"),
+-	PINCTRL_PIN(188, "FAN_TACH_7"),
+-	PINCTRL_PIN(189, "FAN_PWM_0"),
+-	PINCTRL_PIN(190, "FAN_PWM_1"),
+-	PINCTRL_PIN(191, "FAN_PWM_2"),
+-	PINCTRL_PIN(192, "FAN_PWM_3"),
+-	PINCTRL_PIN(193, "GSXDOUT"),
+-	PINCTRL_PIN(194, "GSXSLOAD"),
+-	PINCTRL_PIN(195, "GSXDIN"),
+-	PINCTRL_PIN(196, "GSXSRESETB"),
+-	PINCTRL_PIN(197, "GSXCLK"),
+-	PINCTRL_PIN(198, "ADR_COMPLETE"),
+-	PINCTRL_PIN(199, "NMIB"),
+-	PINCTRL_PIN(200, "SMIB"),
+-	PINCTRL_PIN(201, "SSATA_DEVSLP_0"),
+-	PINCTRL_PIN(202, "SSATA_DEVSLP_1"),
+-	PINCTRL_PIN(203, "SSATA_DEVSLP_2"),
+-	PINCTRL_PIN(204, "SSATAXPCIE0_SSATAGP0"),
++	PINCTRL_PIN(179, "FAN_TACH_0"),
++	PINCTRL_PIN(180, "FAN_TACH_1"),
++	PINCTRL_PIN(181, "FAN_TACH_2"),
++	PINCTRL_PIN(182, "FAN_TACH_3"),
++	PINCTRL_PIN(183, "FAN_TACH_4"),
++	PINCTRL_PIN(184, "FAN_TACH_5"),
++	PINCTRL_PIN(185, "FAN_TACH_6"),
++	PINCTRL_PIN(186, "FAN_TACH_7"),
++	PINCTRL_PIN(187, "FAN_PWM_0"),
++	PINCTRL_PIN(188, "FAN_PWM_1"),
++	PINCTRL_PIN(189, "FAN_PWM_2"),
++	PINCTRL_PIN(190, "FAN_PWM_3"),
++	PINCTRL_PIN(191, "GSXDOUT"),
++	PINCTRL_PIN(192, "GSXSLOAD"),
++	PINCTRL_PIN(193, "GSXDIN"),
++	PINCTRL_PIN(194, "GSXSRESETB"),
++	PINCTRL_PIN(195, "GSXCLK"),
++	PINCTRL_PIN(196, "ADR_COMPLETE"),
++	PINCTRL_PIN(197, "NMIB"),
++	PINCTRL_PIN(198, "SMIB"),
++	PINCTRL_PIN(199, "SSATA_DEVSLP_0"),
++	PINCTRL_PIN(200, "SSATA_DEVSLP_1"),
++	PINCTRL_PIN(201, "SSATA_DEVSLP_2"),
++	PINCTRL_PIN(202, "SSATAXPCIE0_SSATAGP0"),
+ 	/* GPP_H */
+-	PINCTRL_PIN(205, "SRCCLKREQB_6"),
+-	PINCTRL_PIN(206, "SRCCLKREQB_7"),
+-	PINCTRL_PIN(207, "SRCCLKREQB_8"),
+-	PINCTRL_PIN(208, "SRCCLKREQB_9"),
+-	PINCTRL_PIN(209, "SRCCLKREQB_10"),
+-	PINCTRL_PIN(210, "SRCCLKREQB_11"),
+-	PINCTRL_PIN(211, "SRCCLKREQB_12"),
+-	PINCTRL_PIN(212, "SRCCLKREQB_13"),
+-	PINCTRL_PIN(213, "SRCCLKREQB_14"),
+-	PINCTRL_PIN(214, "SRCCLKREQB_15"),
+-	PINCTRL_PIN(215, "SML2CLK"),
+-	PINCTRL_PIN(216, "SML2DATA"),
+-	PINCTRL_PIN(217, "SML2ALERTB"),
+-	PINCTRL_PIN(218, "SML3CLK"),
+-	PINCTRL_PIN(219, "SML3DATA"),
+-	PINCTRL_PIN(220, "SML3ALERTB"),
+-	PINCTRL_PIN(221, "SML4CLK"),
+-	PINCTRL_PIN(222, "SML4DATA"),
+-	PINCTRL_PIN(223, "SML4ALERTB"),
+-	PINCTRL_PIN(224, "SSATAXPCIE1_SSATAGP1"),
+-	PINCTRL_PIN(225, "SSATAXPCIE2_SSATAGP2"),
+-	PINCTRL_PIN(226, "SSATAXPCIE3_SSATAGP3"),
+-	PINCTRL_PIN(227, "SSATAXPCIE4_SSATAGP4"),
+-	PINCTRL_PIN(228, "SSATAXPCIE5_SSATAGP5"),
++	PINCTRL_PIN(203, "SRCCLKREQB_6"),
++	PINCTRL_PIN(204, "SRCCLKREQB_7"),
++	PINCTRL_PIN(205, "SRCCLKREQB_8"),
++	PINCTRL_PIN(206, "SRCCLKREQB_9"),
++	PINCTRL_PIN(207, "SRCCLKREQB_10"),
++	PINCTRL_PIN(208, "SRCCLKREQB_11"),
++	PINCTRL_PIN(209, "SRCCLKREQB_12"),
++	PINCTRL_PIN(210, "SRCCLKREQB_13"),
++	PINCTRL_PIN(211, "SRCCLKREQB_14"),
++	PINCTRL_PIN(212, "SRCCLKREQB_15"),
++	PINCTRL_PIN(213, "SML2CLK"),
++	PINCTRL_PIN(214, "SML2DATA"),
++	PINCTRL_PIN(215, "SML2ALERTB"),
++	PINCTRL_PIN(216, "SML3CLK"),
++	PINCTRL_PIN(217, "SML3DATA"),
++	PINCTRL_PIN(218, "SML3ALERTB"),
++	PINCTRL_PIN(219, "SML4CLK"),
++	PINCTRL_PIN(220, "SML4DATA"),
++	PINCTRL_PIN(221, "SML4ALERTB"),
++	PINCTRL_PIN(222, "SSATAXPCIE1_SSATAGP1"),
++	PINCTRL_PIN(223, "SSATAXPCIE2_SSATAGP2"),
++	PINCTRL_PIN(224, "SSATAXPCIE3_SSATAGP3"),
++	PINCTRL_PIN(225, "SSATAXPCIE4_SSATAGP4"),
++	PINCTRL_PIN(226, "SSATAXPCIE5_SSATAGP5"),
+ 	/* GPP_L */
++	PINCTRL_PIN(227, "GPP_L_0"),
++	PINCTRL_PIN(228, "EC_CSME_INTR_OUT"),
+ 	PINCTRL_PIN(229, "VISA2CH0_D0"),
+ 	PINCTRL_PIN(230, "VISA2CH0_D1"),
+ 	PINCTRL_PIN(231, "VISA2CH0_D2"),
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.24.0
 
