@@ -1,248 +1,173 @@
-Return-Path: <SRS0=9uQN=ZM=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=VJIG=ZN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5990C432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 19:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 173CFC43141
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 00:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE2520715
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Nov 2019 19:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34D52089D
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 00:34:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wii2YRqw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfKTT1x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Nov 2019 14:27:53 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:54351 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727003AbfKTT1x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:27:53 -0500
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id xAKJKFIU022295
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Nov 2019 20:20:15 +0100
-Received: from md1f2u6c.ad001.siemens.net ([139.25.68.37])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id xAKJKFQe024611;
-        Wed, 20 Nov 2019 20:20:15 +0100
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v3 1/2] gpio: sch: Add edge event support
-Date:   Wed, 20 Nov 2019 20:20:13 +0100
-Message-Id: <42ae6149a14f81fd86c5acb5bd33e987123b6bed.1574277614.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <cover.1574277614.git.jan.kiszka@siemens.com>
-References: <cover.1574277614.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1574277614.git.jan.kiszka@siemens.com>
-References: <cover.1574277614.git.jan.kiszka@siemens.com>
+        id S1726351AbfKUAev (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Nov 2019 19:34:51 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40381 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbfKUAev (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Nov 2019 19:34:51 -0500
+Received: by mail-pf1-f195.google.com with SMTP id r4so674982pfl.7
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Nov 2019 16:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=w0jc3nhu3KAWiFKWh+zpyGdVs1iUHPccdIEeVjCy13s=;
+        b=Wii2YRqwFMlbSaS+M+fPcA/HuRrG1/YoGNOOZbJpiJr1RUmYL01vr2lhEwMRyLiAK1
+         7hXIRa+ws+jm6bludi//A1ToXTwyYYLXPE8d0o+/QKnDTcAhTUrewkpMSWTiC2j3ds9l
+         rMCJFA24HkCkeKmdtpaVVLwylcspXdQQMm7c7ppCxa7UOsJwnyaAafJNc64NVsJqqEJ1
+         dgIrgI9O1XIAnsk3oVWgRHtilPBHM8zTScIS8XtGvP7vCEelvBO9cUexDKFw5+PEokZW
+         uqvLqN2tLfQG3OiyzWY73J5JYadgdzwdREW/gCbzg003r+fVfVShzVGT88SYJCSDbGFB
+         toYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=w0jc3nhu3KAWiFKWh+zpyGdVs1iUHPccdIEeVjCy13s=;
+        b=SllfwWgd2DAVhqHuLcLAb7Ew6g53VKE1BlaesCVNHuVZDXiZsYcv7A1NEbAK5K5vpq
+         eHSaLY3lFHL1VGRv3A0jzeyEeVURO+jE5WpIfLFW2pzS7w/ajkT9d6XPVRRt2syqOlNY
+         itOD55bFDM+xU4AkUnLWQCJIqqkehzBRkDn8Dq3l5f92r0Zqutb99k8JzaS7VWKgMKcw
+         Y7jR5uYbraDxhzIYwLTVyPxNnaFQsgHd8NQSGgZtTL2tORBOLxEFx15+9buY5HoXIWg9
+         MRC47zieTh4MQTZSviUK2wVTPW6W44qWXiv6F3BZCLjr1d1gc09/6mVq3jZQ8STzSIk9
+         7Jkw==
+X-Gm-Message-State: APjAAAWl9cUgSY+ZGSiafc5Vxk0ahK4iMS7rikAHN7XILzBwCkbWI8++
+        zHAC1LB4V2Lg1fWo+SjtmydJPgetRbs=
+X-Google-Smtp-Source: APXvYqw6P3KWVbWUUvauXWVrYw43IX2lXZmZ4n8GUGz8Fkb1BTyz3xhol6wzLxmxkh0TFBhzFeVJIQ==
+X-Received: by 2002:a65:67c7:: with SMTP id b7mr6207953pgs.339.1574296489448;
+        Wed, 20 Nov 2019 16:34:49 -0800 (PST)
+Received: from sol (220-235-109-115.dyn.iinet.net.au. [220.235.109.115])
+        by smtp.gmail.com with ESMTPSA id f7sm575283pfa.150.2019.11.20.16.34.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Nov 2019 16:34:48 -0800 (PST)
+Date:   Thu, 21 Nov 2019 08:34:43 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>
+Subject: Re: [libgpiod] [PATCH 11/19] API: add support for SET_CONFIG
+Message-ID: <20191121003443.GA7695@sol>
+References: <CAMpxmJXcEFO-05H-O0Kjs8Latwhh9RWos0tXzkc_C7KyEye8Yw@mail.gmail.com>
+ <20191118144825.GE27359@sol>
+ <20191119155249.GA20834@sol>
+ <CAMRc=MeG2FJeKVdKSywOT3271jA_sDfcPNHe4BzyiEgxRKtKBg@mail.gmail.com>
+ <20191120135857.GA4218@sol>
+ <CAMRc=McNdcaLJKG3TRvX08Ddwmi-V9AJUDG5zmBgqL8bwjCSYg@mail.gmail.com>
+ <20191120141353.GA5154@sol>
+ <CAMRc=MdWj_+kd2wGUoRVRSd+kq597h-jetiHMwRiOvuUi8qRQQ@mail.gmail.com>
+ <20191120143644.GA5865@sol>
+ <CAMRc=Mex6M9Mmke9ajgLcpy4-Th+GOhycjeEiM+5PMBvmA+Apw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mex6M9Mmke9ajgLcpy4-Th+GOhycjeEiM+5PMBvmA+Apw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Wed, Nov 20, 2019 at 04:18:24PM +0100, Bartosz Golaszewski wrote:
+> śr., 20 lis 2019 o 15:36 Kent Gibson <warthog618@gmail.com> napisał(a):
+> >
+> > On Wed, Nov 20, 2019 at 03:18:36PM +0100, Bartosz Golaszewski wrote:
+> > > śr., 20 lis 2019 o 15:13 Kent Gibson <warthog618@gmail.com> napisał(a):
+> > > >
+> > > > On Wed, Nov 20, 2019 at 03:08:57PM +0100, Bartosz Golaszewski wrote:
+> > > > > śr., 20 lis 2019 o 14:59 Kent Gibson <warthog618@gmail.com> napisał(a):
+> > > > > >
+> > > > > > On Wed, Nov 20, 2019 at 12:00:45PM +0100, Bartosz Golaszewski wrote:
+> > > > > > > wt., 19 lis 2019 o 16:53 Kent Gibson <warthog618@gmail.com> napisał(a):
+> > > > > > > >
+> > > > > > > > On Mon, Nov 18, 2019 at 10:48:25PM +0800, Kent Gibson wrote:
+> > > > > > > > > On Mon, Nov 18, 2019 at 02:52:04PM +0100, Bartosz Golaszewski
+> > > > > > > > > > > +
+> > > > > > > > > > > +int gpiod_line_set_flags_bulk(struct gpiod_line_bulk *bulk, int flags)
+> > > > > > > > > > > +{
+> > > > > > > > > > > +       struct gpiod_line *line;
+> > > > > > > > > > > +       int values[GPIOD_LINE_BULK_MAX_LINES];
+> > > > > > > > > > > +       unsigned int i;
+> > > > > > > > > > > +       int direction;
+> > > > > > > > > > > +
+> > > > > > > > > > > +       line = gpiod_line_bulk_get_line(bulk, 0);
+> > > > > > > > > > > +       if (line->as_is) {
+> > > > > > > > > >
+> > > > > > > > > > Can you explain the purpose of this as_is field? I'm not sure this is
+> > > > > > > > > > really needed.
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > It is there for gpiod_set_flags, which has to populate the direction
+> > > > > > > > > flags in the SET_CONFIG ioctl. The existing line->direction is
+> > > > > > > > > either input or output.  It is drawn from GPIOLINE_FLAG_IS_OUT, so
+> > > > > > > > > as-is is gets mapped to input.
+> > > > > > > > > I didn't want to change the existing line->direction, and adding the
+> > > > > > > > > as-is seemed clearer than adding another flavour of direction that
+> > > > > > > > > contained all three.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Hmmm, I think I see what you were getting at - the line->direction is the
+> > > > > > > > direction from the kernel, so it doesn't hurt to use that value to set the
+> > > > > > > > corresponding request flags - even if the original request was as-is??
+> > > > > > > >
+> > > > > > > > If that is the case then the line->as_is can be dropped throughout.
+> > > > > > > >
+> > > > > > > > Kent.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Yes, this is what I was thinking. Just need to make sure the value
+> > > > > > > from the kernel is up-to-date.
+> > > > > > >
+> > > > > >
+> > > > > > So fail if needs_update?
+> > > > > >
+> > > > > > Kent.
+> > > > >
+> > > > > I'd say: do an implicit update before setting config.
+> > > > >
+> > > >
+> > > > So gpiod_line_update if needs_update, and fail if that fails?
+> > > >
+> > > > Kent.
+> > >
+> > > Without the if - needs_update is only set if an implicit update fails
+> > > in line_maybe_update(). But in this case we need to be sure, so do it
+> > > unconditionally.
+> > >
+> >
+> > Given that line_maybe_update is called at the end of request creation, and
+> > whenever set_config is called, how can line->direction be inconsistent
+> > with the kernel state - as long as needs_update is false?
+> >
+> 
+> I don't think we should call line_maybe_update() on set_config() - in
+> this case we should call gpiod_line_update() and fail in set_config()
+> if it fails.
+> 
+> I hope that's clearer.
+> 
 
-Add the required infrastructure consisting of an irq_chip_generic with
-its irq_chip_type callbacks to enable and report edge events of the pins
-to the gpio core. The actual hook-up of the event interrupt will happen
-separately.
+Not really.  I was already shaky on the needs_update and I'm getting more
+confused about the overall needs_update handling policy by the minute.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- drivers/gpio/gpio-sch.c | 114 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 107 insertions(+), 7 deletions(-)
+Perhaps it will be more productive to go to the code.
+I'll send out what I have as v2 and we can go from there.
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index fb143f28c386..6a9c5500800c 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -18,12 +18,17 @@
- #define GEN	0x00
- #define GIO	0x04
- #define GLV	0x08
-+#define GTPE	0x0c
-+#define GTNE	0x10
-+#define GGPE	0x14
-+#define GTS	0x1c
- 
- struct sch_gpio {
- 	struct gpio_chip chip;
- 	spinlock_t lock;
- 	unsigned short iobase;
- 	unsigned short resume_base;
-+	int irq_base;
- };
- 
- static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
-@@ -79,10 +84,11 @@ static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned gpio, unsigned reg,
- static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- 	return 0;
- }
- 
-@@ -95,20 +101,22 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
- static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GLV, val);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- }
- 
- static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
- 				  int val)
- {
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	unsigned long flags;
- 
--	spin_lock(&sch->lock);
-+	spin_lock_irqsave(&sch->lock, flags);
- 	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
--	spin_unlock(&sch->lock);
-+	spin_unlock_irqrestore(&sch->lock, flags);
- 
- 	/*
- 	 * according to the datasheet, writing to the level register has no
-@@ -130,6 +138,12 @@ static int sch_gpio_get_direction(struct gpio_chip *gc, unsigned gpio_num)
- 	return sch_gpio_reg_get(sch, gpio_num, GIO);
- }
- 
-+static int sch_gpio_to_irq(struct gpio_chip *gpio, unsigned int offset)
-+{
-+	struct sch_gpio *sch = gpiochip_get_data(gpio);
-+	return sch->irq_base + offset;
-+}
-+
- static const struct gpio_chip sch_gpio_chip = {
- 	.label			= "sch_gpio",
- 	.owner			= THIS_MODULE,
-@@ -138,12 +152,70 @@ static const struct gpio_chip sch_gpio_chip = {
- 	.direction_output	= sch_gpio_direction_out,
- 	.set			= sch_gpio_set,
- 	.get_direction		= sch_gpio_get_direction,
-+	.to_irq			= sch_gpio_to_irq,
- };
- 
-+static int sch_irq_type(struct irq_data *d, unsigned int type)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct sch_gpio *sch = gc->private;
-+	unsigned int gpio_num = d->irq - sch->irq_base;
-+	unsigned long flags;
-+	int rising = 0;
-+	int falling = 0;
-+
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		rising = 1;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		falling = 1;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		rising = 1;
-+		falling = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	spin_lock_irqsave(&sch->lock, flags);
-+	sch_gpio_reg_set(sch, gpio_num, GTPE, rising);
-+	sch_gpio_reg_set(sch, gpio_num, GTNE, falling);
-+	spin_unlock_irqrestore(&sch->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void sch_irq_set_enable(struct irq_data *d, int val)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct sch_gpio *sch = gc->private;
-+	unsigned int gpio_num = d->irq - sch->irq_base;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sch->lock, flags);
-+	sch_gpio_reg_set(sch, gpio_num, GGPE, val);
-+	spin_unlock_irqrestore(&sch->lock, flags);
-+}
-+
-+static void sch_irq_mask(struct irq_data *d)
-+{
-+	sch_irq_set_enable(d, 0);
-+}
-+
-+static void sch_irq_unmask(struct irq_data *d)
-+{
-+	sch_irq_set_enable(d, 1);
-+}
-+
- static int sch_gpio_probe(struct platform_device *pdev)
- {
-+	struct irq_chip_generic *gc;
-+	struct irq_chip_type *ct;
- 	struct sch_gpio *sch;
- 	struct resource *res;
-+	int irq_base, ret;
- 
- 	sch = devm_kzalloc(&pdev->dev, sizeof(*sch), GFP_KERNEL);
- 	if (!sch)
-@@ -203,7 +275,35 @@ static int sch_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, sch);
- 
--	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
-+	if (ret)
-+		return ret;
-+
-+	irq_base = devm_irq_alloc_descs(&pdev->dev, -1, 0, sch->chip.ngpio,
-+					NUMA_NO_NODE);
-+	if (irq_base < 0)
-+		return irq_base;
-+	sch->irq_base = irq_base;
-+
-+	gc = devm_irq_alloc_generic_chip(&pdev->dev, "sch_gpio", 1, irq_base,
-+					 NULL, handle_simple_irq);
-+	if (!gc)
-+		return -ENOMEM;
-+
-+	gc->private = sch;
-+	ct = gc->chip_types;
-+
-+	ct->chip.irq_mask = sch_irq_mask;
-+	ct->chip.irq_unmask = sch_irq_unmask;
-+	ct->chip.irq_set_type = sch_irq_type;
-+
-+	ret = devm_irq_setup_generic_chip(&pdev->dev, gc,
-+					  IRQ_MSK(sch->chip.ngpio),
-+					  0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
- }
- 
- static struct platform_driver sch_gpio_driver = {
--- 
-2.16.4
-
+Cheers,
+Kent.
