@@ -2,72 +2,66 @@ Return-Path: <SRS0=VJIG=ZN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389B1C43215
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 17:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55237C432C0
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 17:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 102B6206DA
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 17:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B85F2067D
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Nov 2019 17:31:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Us9Hd7aE"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jIwW+ndR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfKURFn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Nov 2019 12:05:43 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36244 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfKURFl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Nov 2019 12:05:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n188so2653796wme.1
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Nov 2019 09:05:40 -0800 (PST)
+        id S1726722AbfKURbV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Nov 2019 12:31:21 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41541 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfKURbV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Nov 2019 12:31:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id b18so5430535wrj.8
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Nov 2019 09:31:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ni1slmKblcP7bhdBCafwyoLiq6dGHkojE+w33IiAhYs=;
-        b=Us9Hd7aEldRuCy/GB17vScL/hwvyN4isjOgJHPcWinn31uhbMPzHXFhDjC7SVEAP+0
-         cQi+kAIZd/0Y9fqZqp+uQLgld9UZ0l6evS/20UL5ykJfyPuwboBoTBDUxmdEMdh+XGtw
-         EvdfubsYSRgsh4ZgjTbh52RBaj556kYOZnZfioWkBupX1U8q3DbxEsRI7UvlOkcnVA89
-         nvrVpkoj7b5LImBkAfPiUlRar7kcoQrEyAH8qliA+Fj+YQrGYUIbatzJ3Nziq6gH9EFz
-         jCgVPD/wXWOp3EUyd88pO4rW1Gsw5MI5ZEldL99KIdrr1efzN0G4+PlRHFsDF0PPb9gU
-         zNKA==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SrOxBVxr4+WiEoXHzV4Iv6AvYqoIPt+7ktYfe7Nig5M=;
+        b=jIwW+ndRk5tc+ft82RvoxwCKGBvpuRYhAYr1MiPyjNsv2DqaG4q4EPGp6wCqbovOwW
+         HEjcUL2k7lZ0LIIhFhpGeI8qkVhJtmPeqLOwJJzIaHk/zfOx8qRhtoGeMwDte5b8LWfP
+         r4MAvga/R3x/QdKWWFlItW6TP2/opIvzz9sx043gA2d7UyVibcuRJrrwqLFX4E/XuCD/
+         8GTvvLs+b2qgVZY6VWX7jXHx2redwZetn9jVw2avp3GidRIYkN2G38jTk/rfoCaVEQiy
+         G+lv4EsI9WvEO+rMwfU+j5y8D58fOur186vwbOYpXsNhu+rCyFPqq2pC9CleYV/g9+XX
+         5e+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ni1slmKblcP7bhdBCafwyoLiq6dGHkojE+w33IiAhYs=;
-        b=ZewKltqBCkkI/O5JaOClpKPk20iaqLQqruoM5Er85wSjZ1qG8v6WRgpzFeFyAm0YTN
-         /EAnqXGuWEB5/LTezOrnq4mli/K1momDBjbmHXrCVZrfN6zVAzqPORg4xNL+nrUNWFM7
-         GEjuVaff9bk3+1EpVSv5Ndvns069dd1bqUgJMVMg4Dri8Y2OIAwwZwuuGfTdSeOg9cOy
-         RHn/P7n+XcayK/3oMleBhLUvMU5461FFFyQMo8ZxuczAYYEIaYbDOBNpWimtfuegKv4u
-         vcwMfeUodH/u6zKKa8GKgTcDd/N0ebz/ThLScuupPFj7GmT/mGLDuBwx2phdzALaTHiY
-         yW9g==
-X-Gm-Message-State: APjAAAW5dV0BM4r7wbQU6fJfH9PtOkeIkQLXxzat/rpE9ubFdRUQtyay
-        QMCIJiEzsUoP93Or8B45a8lwaA==
-X-Google-Smtp-Source: APXvYqyFBwhhDzfAVf2MIn4g4BX1O/RFfrBJPwqTyqZDbSVj0e/yeO40DOWs3aWJpcE87bhq6Pr9gA==
-X-Received: by 2002:a1c:544e:: with SMTP id p14mr10890566wmi.17.1574355939461;
-        Thu, 21 Nov 2019 09:05:39 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id i71sm4423731wri.68.2019.11.21.09.05.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SrOxBVxr4+WiEoXHzV4Iv6AvYqoIPt+7ktYfe7Nig5M=;
+        b=TwrgZiCOBPy/tqIDjRL8AL36MLgO1pp8iec30Bv4ynMKTaSOoWnMaAifySRw0nuPYW
+         DCepzguAYJVs9g8x3zk5QPU4rDwLODsX9LWB2bgOLXoPgSqhfV5Rt/nBK2LcEISJ/cGZ
+         nLyaeenEs7u6YvBPDF65+LqTkk9b8a6JM20D0Fd4sVVJXIUBI6JWgJGztp7fe1Br9KX2
+         /LokHENn1n9DtxbaNdA793XxvRnk1M9Lywz3RW/Qf6+8hLvB1qXk4dhNd3fi84vpti+K
+         eXtiuyDISUMTzAntI+TgkKT7le/yS6yFRfVpt4A+SnbX309kmC5UYgaQLkv05QbabvE4
+         ZSRA==
+X-Gm-Message-State: APjAAAUyimpASujpn++FD2erlqDfLf1miPgc50lUwbO/6p9SpIUnKEEW
+        +7h7v+e35M75BrBFZJO/xsDijDBuL/o=
+X-Google-Smtp-Source: APXvYqyPHHcsGpk8w7iWaTTKDCn77izMhY3p9LnPiUddz5inBs1bdoZj+klb5aenYpGwa1/jsAdK0A==
+X-Received: by 2002:adf:df0b:: with SMTP id y11mr11989523wrl.282.1574357478439;
+        Thu, 21 Nov 2019 09:31:18 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id k1sm4223659wrp.29.2019.11.21.09.31.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 09:05:38 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     robh@kernel.org, broonie@kernel.org, lee.jones@linaro.org,
-        linus.walleij@linaro.org
-Cc:     vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 01/12] dt-bindings: SLIMBus: add slim devices optional properties
-Date:   Thu, 21 Nov 2019 17:04:58 +0000
-Message-Id: <20191121170509.10579-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191121170509.10579-1-srinivas.kandagatla@linaro.org>
-References: <20191121170509.10579-1-srinivas.kandagatla@linaro.org>
+        Thu, 21 Nov 2019 09:31:17 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [libgpiod][PATCH] core: deprecate gpiod_needs_update()
+Date:   Thu, 21 Nov 2019 18:31:15 +0100
+Message-Id: <20191121173115.11016-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -75,47 +69,179 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds an optional SLIMBus Interface device phandle property
-that could be used by some of the SLIMBus devices.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Interface device is mostly used with devices that are dealing
-with streaming.
+This function and the logic behind have been introduced in an early
+version of libgpiod for reasons that have been long forgotten.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+When updating the line info after a line request fails, just propagate
+the error out of the request function instead of setting the internal
+needs_update variable. Drop the entire logic behind gpiod_needs_update(),
+make this routine always return false and mark it as deprecated in the
+header.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Suggested-by: Kent Gibson <warthog618@gmail.com>
 ---
- Documentation/devicetree/bindings/slimbus/bus.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/slimbus/bus.txt b/Documentation/devicetree/bindings/slimbus/bus.txt
-index 52fa6426388c..bbe871f82a8b 100644
---- a/Documentation/devicetree/bindings/slimbus/bus.txt
-+++ b/Documentation/devicetree/bindings/slimbus/bus.txt
-@@ -32,6 +32,10 @@ Required property for SLIMbus child node if it is present:
- 	 	  Product Code, shall be in lower case hexadecimal with leading
- 		  zeroes suppressed
+Kent,
+
+please take a look at this patch. I thought about it and didn't find any
+good reason to keep this function in the API, so I propose to deprecate it
+and propagate any errors from gpiod_line_update() when it's called internally
+as you suggested.
+
+ include/gpiod.h    | 31 +++++++++++--------------------
+ lib/core.c         | 30 ++++++++++++++----------------
+ tests/tests-line.c |  2 --
+ 3 files changed, 25 insertions(+), 38 deletions(-)
+
+diff --git a/include/gpiod.h b/include/gpiod.h
+index 6dfa18a..588198f 100644
+--- a/include/gpiod.h
++++ b/include/gpiod.h
+@@ -729,33 +729,24 @@ bool gpiod_line_is_open_source(struct gpiod_line *line) GPIOD_API;
+  *         returns -1 and sets the last error number.
+  *
+  * The line info is initially retrieved from the kernel by
+- * gpiod_chip_get_line(). Users can use this line to manually re-read the line
+- * info.
++ * gpiod_chip_get_line() and after every successful request. Users can use
++ * this line to manually re-read the line info.
++ *
++ * We currently have no mechanism provided by the kernel for that and for the
++ * sake of speed and simplicity of this low-level library we don't want to
++ * re-read the line info automatically everytime a property is retrieved. Any
++ * daemon using this library must track the state of lines on its own and call
++ * ::gpiod_line_update if needed.
+  */
+ int gpiod_line_update(struct gpiod_line *line) GPIOD_API;
  
-+Optional property for SLIMbus child node if it is present:
-+- slim-ifc-dev	- Should be phandle to SLIMBus Interface device.
-+		  Required for devices which deal with streams.
+ /**
+  * @brief Check if the line info needs to be updated.
+  * @param line GPIO line object.
+- * @return Returns false if the line is up-to-date. True otherwise.
+- *
+- * The line is updated by calling gpiod_line_update() from within
+- * gpiod_chip_get_line() and on every line request/release. However: an error
+- * returned from gpiod_line_update() only breaks the execution of the former.
+- * The request/release routines only set the internal needs_update flag to true
+- * and continue their execution. This routine allows to check if a line info
+- * update failed at some point and we should call gpiod_line_update()
+- * explicitly.
+- *
+- * This routine will not indicate any potential changes introduced by external
+- * actors (such as a different process requesting the line). We currently have
+- * no mechanism provided by the kernel for that and for the sake of speed and
+- * simplicity of this low-level library we don't want to re-read the line info
+- * automatically everytime a property is retrieved. Any daemon using this
+- * library must track the state of lines on its own and call
+- * ::gpiod_line_update if needed.
++ * @return Deprecated and no longer functional - always returns false.
+  */
+-bool gpiod_line_needs_update(struct gpiod_line *line) GPIOD_API;
++bool
++gpiod_line_needs_update(struct gpiod_line *line) GPIOD_API GPIOD_DEPRECATED;
+ 
+ /**
+  * @}
+diff --git a/lib/core.c b/lib/core.c
+index d79e52e..a21918c 100644
+--- a/lib/core.c
++++ b/lib/core.c
+@@ -41,7 +41,6 @@ struct gpiod_line {
+ 	bool open_drain;
+ 
+ 	int state;
+-	bool needs_update;
+ 
+ 	struct gpiod_chip *chip;
+ 	struct line_fd_handle *fd_handle;
+@@ -320,15 +319,6 @@ static int line_get_fd(struct gpiod_line *line)
+ 	return line->fd_handle->fd;
+ }
+ 
+-static void line_maybe_update(struct gpiod_line *line)
+-{
+-	int rv;
+-
+-	rv = gpiod_line_update(line);
+-	if (rv < 0)
+-		line->needs_update = true;
+-}
+-
+ struct gpiod_chip *gpiod_line_get_chip(struct gpiod_line *line)
+ {
+ 	return line->chip;
+@@ -374,9 +364,9 @@ bool gpiod_line_is_open_source(struct gpiod_line *line)
+ 	return line->open_source;
+ }
+ 
+-bool gpiod_line_needs_update(struct gpiod_line *line)
++bool gpiod_line_needs_update(struct gpiod_line *line GPIOD_UNUSED)
+ {
+-	return line->needs_update;
++	return false;
+ }
+ 
+ int gpiod_line_update(struct gpiod_line *line)
+@@ -405,8 +395,6 @@ int gpiod_line_update(struct gpiod_line *line)
+ 	strncpy(line->name, info.name, sizeof(line->name));
+ 	strncpy(line->consumer, info.consumer, sizeof(line->consumer));
+ 
+-	line->needs_update = false;
+-
+ 	return 0;
+ }
+ 
+@@ -537,7 +525,12 @@ static int line_request_values(struct gpiod_line_bulk *bulk,
+ 	gpiod_line_bulk_foreach_line(bulk, line, lineptr) {
+ 		line->state = LINE_REQUESTED_VALUES;
+ 		line_set_fd(line, line_fd);
+-		line_maybe_update(line);
 +
- SLIMbus example for Qualcomm's slimbus manager component:
++		rv = gpiod_line_update(line);
++		if (rv) {
++			gpiod_line_release_bulk(bulk);
++			return rv;
++		}
+ 	}
  
- 	slim@28080000 {
-@@ -43,8 +47,14 @@ SLIMbus example for Qualcomm's slimbus manager component:
- 		#address-cells = <2>;
- 		#size-cell = <0>;
+ 	return 0;
+@@ -577,7 +570,12 @@ static int line_request_event_single(struct gpiod_line *line,
  
-+		codec_ifd: ifd@0,0{
-+			compatible = "slim217,60";
-+			reg = <0 0>;
-+		};
+ 	line->state = LINE_REQUESTED_EVENTS;
+ 	line_set_fd(line, line_fd);
+-	line_maybe_update(line);
 +
- 		codec: wcd9310@1,0{
- 			compatible = "slim217,60";
- 			reg = <1 0>;
-+			slim-ifc-dev  = <&codec_ifd>;
- 		};
- 	};
++	rv = gpiod_line_update(line);
++	if (rv) {
++		gpiod_line_release(line);
++		return rv;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/tests/tests-line.c b/tests/tests-line.c
+index 8411132..205c622 100644
+--- a/tests/tests-line.c
++++ b/tests/tests-line.c
+@@ -78,7 +78,6 @@ GPIOD_TEST_CASE(consumer, 0, { 8 })
+ 
+ 	ret = gpiod_line_request_input(line, GPIOD_TEST_CONSUMER);
+ 	g_assert_cmpint(ret, ==, 0);
+-	g_assert_false(gpiod_line_needs_update(line));
+ 	g_assert_cmpstr(gpiod_line_consumer(line), ==, GPIOD_TEST_CONSUMER);
+ }
+ 
+@@ -101,7 +100,6 @@ GPIOD_TEST_CASE(consumer_long_string, 0, { 8 })
+ 	ret = gpiod_line_request_input(line,
+ 			"consumer string over 32 characters long");
+ 	g_assert_cmpint(ret, ==, 0);
+-	g_assert_false(gpiod_line_needs_update(line));
+ 	g_assert_cmpstr(gpiod_line_consumer(line), ==,
+ 			"consumer string over 32 charact");
+ 	g_assert_cmpuint(strlen(gpiod_line_consumer(line)), ==, 31);
 -- 
-2.21.0
+2.23.0
 
