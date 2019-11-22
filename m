@@ -2,97 +2,106 @@ Return-Path: <SRS0=WqBB=ZO=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E8AC43215
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BFEC432C3
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 07:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41C020409
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574404077;
-	bh=niKuEWpHYMiGBDyVgEHosl+UrqPkEyiUFP+M5ijO2mg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VQROz9fYOv33N4la7UGb3JwfyYIxXMTRnHbjMZAwk+UxoMlLFtQJtdo93PkkEzZO8
-	 kTfn6acbUKapVOmHQgJYWyoNS8tMBpAujLpv/84RYV19o9gk+7ih0ongYc0Cnfwvs5
-	 7FDLViDqHNpvRX4XoMLvCWH1AR+eQmPl7DH8hf04=
+	by mail.kernel.org (Postfix) with ESMTP id 6FDEA20708
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 07:35:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ApxNRYnw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfKVG1z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Nov 2019 01:27:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727535AbfKVFuU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:50:20 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA90520717;
-        Fri, 22 Nov 2019 05:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401819;
-        bh=niKuEWpHYMiGBDyVgEHosl+UrqPkEyiUFP+M5ijO2mg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iZQm0y34LmLtXoAsjl8BJ7RnQjmM0IzdqqJBqz3f/OHtT1pqzdK3886GgPtUiLNhS
-         tTOBOePtR+Lr0pZSpcqQJz8+Jw129rTS+pJmFyw4reYvLKE2GwCeZRZDP5+IEnA5Vy
-         +wbPOFheGhtoX63L0rgugRCgDfGw6yQ2gNtp9nPc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 063/219] gpio: pca953x: Fix AI overflow on PCAL6524
-Date:   Fri, 22 Nov 2019 00:46:35 -0500
-Message-Id: <20191122054911.1750-56-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
-References: <20191122054911.1750-1-sashal@kernel.org>
+        id S1726500AbfKVHfd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Nov 2019 02:35:33 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42446 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfKVHfc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2019 02:35:32 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n5so6166991ljc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Nov 2019 23:35:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tDdbFgRZ/DftFdgsbV1nBG702kIvVQNLzAtOboImYho=;
+        b=ApxNRYnw7RNF7PQvsGNN/DGujlE3iWNW2XQcseTQC8u0Pd8ru6z/ihzMNEJkIcm/re
+         /LgurCblgfHcKgzlyNijDGy8esKo60XlrWoZ1jP96DaMcmnyTswzH1mSc50dWs1F1v6p
+         DChNeXGO+KcAUNpmKRxK9PTjk3FytEiEkwFrTKUtmQOIPaecR9udfRrtBYCHvKOSuLG2
+         ZI3L5jQyEbN/4DIT8GQGcITW7ZNT+bz3gtGpbhDn5CMS9SpsMJeQ4hkPudMH7bjIeYzi
+         HG4QPdag6HJhjC3hXPzqpN3FoxrF8xrV+AgQDeJZvIllNJxedvTfZkEGoIf64zWC6KMQ
+         2lmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tDdbFgRZ/DftFdgsbV1nBG702kIvVQNLzAtOboImYho=;
+        b=YxLk07D+fjeXgfs8E7bRmsxVkplzckQeZ5Gj2RbI4iK7RTB/sz2h60imzoATt/QS4E
+         RmdT7CMS+VnDJmuTyEWmwctOg1RiIlr3kM56K5/atP5BK//N9j5sWhCHnINo+5EwJ3J1
+         RFxK8c5RFucoAQ2UvGRFbDt/EFB+Eme18nkHPke7pMIfth1XfaS0hft7zZTJqNNROcie
+         5knEcYkjQuKtrXZS4jPHeJXL57HbagkZfWsRPsTYzL8Ng1WBIsGoaQnzJSevrkbqjh3L
+         6TmUO5cgjuroQPK6sI9zfRdZISd5L9wb/T46e5hbqYNdl/PJppjLqyBW/WeBcAiVXxtn
+         empA==
+X-Gm-Message-State: APjAAAXPb+FQJLuDtf0L3OpwpVcX3gC7Z7Ybftz5Yd1ZLu7GtrFuK9nW
+        O7MX0HztrXeQXO/y6ciIYNr3uE+Se1FHCzcxQr/lKg==
+X-Google-Smtp-Source: APXvYqzL2vp/KKseaTOghvkAWrY9JxbNs0Ofv2U7rE+Ia0IND/xSVGjjfDmSUff7cjBMwjzExoBAvD7ZWm0tIyzIfVs=
+X-Received: by 2002:a2e:9784:: with SMTP id y4mr11128660lji.77.1574408130240;
+ Thu, 21 Nov 2019 23:35:30 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <cover.1573797249.git.rahul.tanwar@linux.intel.com>
+ <b59afc497e41404fea06aa48d633cba183ee944d.1573797249.git.rahul.tanwar@linux.intel.com>
+ <CACRpkdYZi-0LRjih8+2cgWZ6u-eFN5+3sW1eV2ujYRd0UBoEKQ@mail.gmail.com> <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
+In-Reply-To: <bf8396af-3ace-7463-0fef-890b2f5cc487@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 22 Nov 2019 08:35:17 +0100
+Message-ID: <CACRpkdafN-NjGNqqu_6-Qz6qWkZ4VGuBz_iyGirgUscz-Qk6VA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] dt-bindings: pinctrl: intel: Add for new SoC
+To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Marek Vasut <marek.vasut@gmail.com>
+On Fri, Nov 22, 2019 at 3:24 AM Tanwar, Rahul
+<rahul.tanwar@linux.intel.com> wrote:
 
-[ Upstream commit 92f45ebe68181c2d7f76633ffae55bc9447d62cd ]
+> Thanks. Yes, i have gone through Rob's generic pinctrl bindings patch
+> seriesand i was double minded if you should still proceed with this
+> patch or waitfor generic bindings patch to get merged.
 
-The PCAL_PINCTRL_MASK is too large. The extended register block on
-PCAL6524, which is the largest chip with this block, has the block
-limited to address range 0x40..0x7f. This is because the bit 7 in
-the command register is used for the Address Increment functionality.
+It's a compromise actually.
 
-Trim the mask to 0x60 to match the datasheet and to prevent accidental
-overwrite of the AI bit.
+It's a bit of struggle and tough sometimes since I care both
+about the kernel and the autonomy of the DT bindings
+communities.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-pca953x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We are in a transition phase to YAML bindings, and what is important
+for me as maintainer is to have developer buy-in, and
+it is more motivating for developers to work on this in-tree
+than having patches held back. I personally know how
+important it is to feel that things move forward in
+development.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index e0657fc72d31f..0232c25a15864 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -58,7 +58,7 @@
- #define PCA_GPIO_MASK		0x00FF
- 
- #define PCAL_GPIO_MASK		0x1f
--#define PCAL_PINCTRL_MASK	0xe0
-+#define PCAL_PINCTRL_MASK	0x60
- 
- #define PCA_INT			0x0100
- #define PCA_PCAL		0x0200
--- 
-2.20.1
+Now it should be a separate task on top of what we have,
+which is less stressful and gives the feeling of a bit of
+accomplishment.
 
+When the new generic YAML bindings are proven to work
+on two drivers or so I will be more demanding that people
+use them in their bindings from day 1. But we need to make
+sure it works first and that is a separate task.
+
+Yours,
+Linus Walleij
