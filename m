@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09E8C432C3
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ACDC432C0
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF34720409
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D06120717
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574404018;
-	bh=5PXEbBylnnhAkoiwvd/bOD51FRWOQedouhurN35w0Hc=;
+	s=default; t=1574404069;
+	bh=oRalRQLcvw3mDLy4hoii35OLsY/POsYuwsyEtYJ06wQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Op9oEpk4FdpSzo31PO4MzhqZ1gQyOTbjvmLyZqBL/Umh+JmAJ6iYdM6EQwqR1X0ck
-	 BcqWxA/EwnpHpbpHd5ZIVvkqx352deQCf8ckc1P6dv+XcVaB6POHn2+RD9U7Z1Jizi
-	 URLB7zksYCE+/sU2XWtd3Gd+DT0jxdKzAypDp0/Y=
+	b=1VF3gAaH175G6bi2zJH2Nm2S/quxACyOyGDk9W6CKd7vB6UBRMWy38bn02i5+0BQ1
+	 OFWhPFFNi+tAns514yYkaxYE5FyJtJRAgmpNSv6QNCrbwlLFYu+3bbJmj8w1qiWYiX
+	 Q3pxKmkLbJdvkCpm9DKXJOPjzaKapf6h/Wj9IbnM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfKVFui (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Nov 2019 00:50:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55286 "EHLO mail.kernel.org"
+        id S1727634AbfKVFuV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Nov 2019 00:50:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727804AbfKVFui (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:50:38 -0500
+        id S1727629AbfKVFuV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Nov 2019 00:50:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB61B2071C;
-        Fri, 22 Nov 2019 05:50:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C2D22070E;
+        Fri, 22 Nov 2019 05:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401837;
-        bh=5PXEbBylnnhAkoiwvd/bOD51FRWOQedouhurN35w0Hc=;
+        s=default; t=1574401820;
+        bh=oRalRQLcvw3mDLy4hoii35OLsY/POsYuwsyEtYJ06wQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SthQBrfiOcHXiyisTuX3ZoE8CR2BqRKJ4NBlYHi+BwJcW/o6rs9jf1C2CF88QEAo8
-         f6O1PWHy9mZZiSot5c1WNCrEl4Bgk+ot2r0QdlJOdd7EJu/fvegQrbI4wmw++wQSLn
-         mBBcUx99eD9xJvSWnTci29Py2po1uHjWdbTYHskI=
+        b=1/RXbXFyudwcVDMaHlK8f3+Y8RFaNLrIdjEv1N5oQGE9WoaQQV3W0doXzHMkkner6
+         e4MhI+2CINsd6+TuUOozK3gZuR4Hw+yagQslWRLz7FwUcQTFv3ukeFj8plOHyAYlBc
+         H34vC1unDNz2GPHJTFJ6VqeiSuURM/VM16DK4uuo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 078/219] gpio: raspberrypi-exp: decrease refcount on firmware dt node
-Date:   Fri, 22 Nov 2019 00:46:50 -0500
-Message-Id: <20191122054911.1750-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 064/219] gpiolib: Fix return value of gpio_to_desc() stub if !GPIOLIB
+Date:   Fri, 22 Nov 2019 00:46:36 -0500
+Message-Id: <20191122054911.1750-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -58,34 +58,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit 85af74c474b21940e88483fd48f6094145c89d97 ]
+[ Upstream commit c5510b8dafce5f3f5a039c9b262ebcae0092c462 ]
 
-We're getting a reference RPi's firmware node in order to be able to
-communicate with it's driver. We should decrease the reference count on
-the dt node after being done with it.
+If CONFIG_GPOILIB is not set, the stub of gpio_to_desc() should return
+the same type of error as regular version: NULL.  All the callers
+compare the return value of gpio_to_desc() against NULL, so returned
+ERR_PTR would be treated as non-error case leading to dereferencing of
+error value.
 
-Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Fixes: 79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-raspberrypi-exp.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/gpio/consumer.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-raspberrypi-exp.c
-index d6d36d537e373..b77ea16ffa031 100644
---- a/drivers/gpio/gpio-raspberrypi-exp.c
-+++ b/drivers/gpio/gpio-raspberrypi-exp.c
-@@ -206,6 +206,7 @@ static int rpi_exp_gpio_probe(struct platform_device *pdev)
- 	}
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 412098b24f58b..8dfd8300d9c31 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -475,7 +475,7 @@ static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
  
- 	fw = rpi_firmware_get(fw_node);
-+	of_node_put(fw_node);
- 	if (!fw)
- 		return -EPROBE_DEFER;
+ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
+ {
+-	return ERR_PTR(-EINVAL);
++	return NULL;
+ }
  
+ static inline int desc_to_gpio(const struct gpio_desc *desc)
 -- 
 2.20.1
 
