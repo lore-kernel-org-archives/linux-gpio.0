@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D89C43215
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB25C43215
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0E8B20715
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2ABF20707
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574403204;
-	bh=qiar1VaVBvPmu92UC81QiJx1uqOjg2HjOpaJCa2CW2c=;
+	s=default; t=1574403441;
+	bh=BqVsHACs9+7+lZeoAk6GX44pHVXMYXWdvDuAsqeR2SY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mUr0ng7CNzLql+QI378FWSRSCnfhRgFzI9EVc1J2XNW99zDYyIVCTVb/GS7QeZnsC
-	 yaPp/Vzj4gQUWkpZG8vN/6zB7mz/eObAN6xfBiTlI6u0jTb9+gThIVBHwq7r6ceZQt
-	 DqgoXFi9ETK2PwxDZx/NizSP+sHloFX1tGWX0HLc=
+	b=ohY0ZIXatsRFrJAd3xj9mGifjKqGF30DOe0bblvLULMb9HAoE7D3QZHX3XHDFWrIB
+	 nRUipLEUNR7zGo9TSA16SpfLgMRBrC98WJdlh7eHZ/tYz62p9KdtkaqqOx2RbauaJP
+	 eGRB1ult3W1K+hBVdSW8vtdus8nsbIRg0zCYXgJY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbfKVGNX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Nov 2019 01:13:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50588 "EHLO mail.kernel.org"
+        id S1729133AbfKVGNc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Nov 2019 01:13:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729282AbfKVGNX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Nov 2019 01:13:23 -0500
+        id S1728196AbfKVGNa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Nov 2019 01:13:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61A2E2070E;
-        Fri, 22 Nov 2019 06:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7731A20718;
+        Fri, 22 Nov 2019 06:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574403203;
-        bh=qiar1VaVBvPmu92UC81QiJx1uqOjg2HjOpaJCa2CW2c=;
+        s=default; t=1574403210;
+        bh=BqVsHACs9+7+lZeoAk6GX44pHVXMYXWdvDuAsqeR2SY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YbvKiV+S3Jc0hkCsifGqLj7xqNmWWuRIjwY0iScH0xvHxLKKzZfoalrxgJSCuIcpm
-         O9Y23X13L03PmNQT6KiiBx7EG9dwrkczoHB8AGsM6iH3LrFPhSlOJrZIo0JrCezlJ8
-         DiLx5eLGTPKXy/7a8mN3QsyGYTrHKESPtN3uJ9FM=
+        b=QA2zoasa9nNf0P/EP0RiV6UTaOkQ35TpiBU9z20pPXTtP9BupM3k6cge/T6RhgzVs
+         ontE82pjc9El0fvOXLXoSr6iUYGQ7/yUpsF9PiMjrSrteG48h4xQzu/lZ7GteB0rkZ
+         yEzJ03+IwQXu/mLNcMJV2LHi8eVG7I2Yx4HHMa4o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 19/68] gpiolib: Fix return value of gpio_to_desc() stub if !GPIOLIB
-Date:   Fri, 22 Nov 2019 01:12:12 -0500
-Message-Id: <20191122061301.4947-18-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 25/68] pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+Date:   Fri, 22 Nov 2019 01:12:18 -0500
+Message-Id: <20191122061301.4947-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122061301.4947-1-sashal@kernel.org>
 References: <20191122061301.4947-1-sashal@kernel.org>
@@ -58,37 +59,60 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit c5510b8dafce5f3f5a039c9b262ebcae0092c462 ]
+[ Upstream commit 054f2400f706327f96770219c3065b5131f8f154 ]
 
-If CONFIG_GPOILIB is not set, the stub of gpio_to_desc() should return
-the same type of error as regular version: NULL.  All the callers
-compare the return value of gpio_to_desc() against NULL, so returned
-ERR_PTR would be treated as non-error case leading to dereferencing of
-error value.
+Some values in the Peripheral Function Select Register 10 descriptor are
+shifted by one position, which may cause a peripheral function to be
+programmed incorrectly.
 
-Fixes: 79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixing this makes all HSCIF0 pins use Function 4 (value 3), like was
+already the case for the HSCK0 pin in field IP10[5:3].
+
+Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/gpio/consumer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fb0fde686cb1f..4a9838feb0866 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -398,7 +398,7 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
- 
- static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
- {
--	return ERR_PTR(-EINVAL);
-+	return NULL;
- }
- 
- static inline int desc_to_gpio(const struct gpio_desc *desc)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 9842bb1067969..c691b2e343746 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -2218,22 +2218,22 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	    /* IP10_22 [1] */
+ 		FN_CAN_CLK_A, FN_RX4_D,
+ 	    /* IP10_21_19 [3] */
+-		FN_AUDIO_CLKOUT, FN_TX1_E, FN_HRTS0_C, FN_FSE_B,
+-		FN_LCD_M_DISP_B, 0, 0, 0,
++		FN_AUDIO_CLKOUT, FN_TX1_E, 0, FN_HRTS0_C, FN_FSE_B,
++		FN_LCD_M_DISP_B, 0, 0,
+ 	    /* IP10_18_16 [3] */
+-		FN_AUDIO_CLKC, FN_SCK1_E, FN_HCTS0_C, FN_FRB_B,
+-		FN_LCD_VEPWC_B, 0, 0, 0,
++		FN_AUDIO_CLKC, FN_SCK1_E, 0, FN_HCTS0_C, FN_FRB_B,
++		FN_LCD_VEPWC_B, 0, 0,
+ 	    /* IP10_15 [1] */
+ 		FN_AUDIO_CLKB_A, FN_LCD_CLK_B,
+ 	    /* IP10_14_12 [3] */
+ 		FN_AUDIO_CLKA_A, FN_VI1_CLK_B, FN_SCK1_D, FN_IECLK_B,
+ 		FN_LCD_FLM_B, 0, 0, 0,
+ 	    /* IP10_11_9 [3] */
+-		FN_SSI_SDATA3, FN_VI1_7_B, FN_HTX0_C, FN_FWE_B,
+-		FN_LCD_CL2_B, 0, 0, 0,
++		FN_SSI_SDATA3, FN_VI1_7_B, 0, FN_HTX0_C, FN_FWE_B,
++		FN_LCD_CL2_B, 0, 0,
+ 	    /* IP10_8_6 [3] */
+-		FN_SSI_SDATA2, FN_VI1_6_B, FN_HRX0_C, FN_FRE_B,
+-		FN_LCD_CL1_B, 0, 0, 0,
++		FN_SSI_SDATA2, FN_VI1_6_B, 0, FN_HRX0_C, FN_FRE_B,
++		FN_LCD_CL1_B, 0, 0,
+ 	    /* IP10_5_3 [3] */
+ 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
+ 		FN_LCD_DON_B, 0, 0, 0,
 -- 
 2.20.1
 
