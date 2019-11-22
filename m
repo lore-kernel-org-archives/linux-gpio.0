@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC531C43215
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB89C43215
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABADE2068F
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE45A20721
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574402840;
-	bh=v/ELUbqxZyXrZuAAY7IR8tKjXYRyU+EDsOX/Vedj/xw=;
+	s=default; t=1574402853;
+	bh=zs1S8QTcATifZyvgM4wdwaUFVuzz3zhjmwNFWrMfG6c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xsRxgfn2aWu7aabMshIaNIwvc89DMelo0qPzU4R+vyfBPQUurSaJozXOzb00pOk2q
-	 lam7ResHhmMqAjqhr0+x4jp2AVXp+ILFj26pCgQvn2JVeNclyq7qLiOM+wio6OtQwB
-	 z7lSHejqIlXPq1wV0vBGLRExTgLCCFCzBhVBa6+I=
+	b=VvO4JSHO42ZRVbjR9bg9BWHMBawqmjyA6ATQfJ4Dl5C38s3EVxFE4OFk8sHCfJWLl
+	 MLX7hnHH3sCX+jN+vxdEGLFsdZHFAORNL+J8umFYgnN0+aBnYY0tfOmWSEjOH11HIs
+	 avy25PS6yuAQaTk0bEBjbycnYFfHDNbQrMceBDII=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbfKVGHM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Nov 2019 01:07:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
+        id S1729423AbfKVGB7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Nov 2019 01:01:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728629AbfKVGCD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Nov 2019 01:02:03 -0500
+        id S1729405AbfKVGB6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Nov 2019 01:01:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AFF0207FC;
-        Fri, 22 Nov 2019 06:02:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A69ED2071B;
+        Fri, 22 Nov 2019 06:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574402522;
-        bh=v/ELUbqxZyXrZuAAY7IR8tKjXYRyU+EDsOX/Vedj/xw=;
+        s=default; t=1574402517;
+        bh=zs1S8QTcATifZyvgM4wdwaUFVuzz3zhjmwNFWrMfG6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XFMhMPlf7tcqFPIyKZBHt50auTaxuTueIBK+ciTHK8QA1aDO5cVLD8jC4A+qQkfUT
-         A+OVMm7yLgEMV1U9uOsuwm6RaP/WrEixry4ZDJeDr0DXpTcbKakPyG291Jz2A4a2Va
-         O9AjMqpcPP5oAOf+sijQ8jXuTrSxP2BCYs+faD10=
+        b=nuX4lvwgL8tXT9cs6c8LHt2miDG+UR+65r4Wi7oX9tRVK5+emRdm5iyRxBYvv09wk
+         KiqZ5F25uxeg3P4XQKfxhb6meczHrlE+A8zyRHC9ldG2t/WPgJdgWIwH23yqB68Nvo
+         5lBib6zIPOKhu5sk3YsDNpYAYmraqa4uAAFoaA8Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 30/91] pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
-Date:   Fri, 22 Nov 2019 01:00:28 -0500
-Message-Id: <20191122060129.4239-29-sashal@kernel.org>
+Cc:     Martin Schiller <ms@dev.tdt.de>, John Crispin <john@phrozen.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 26/91] pinctrl: xway: fix gpio-hog related boot issues
+Date:   Fri, 22 Nov 2019 01:00:24 -0500
+Message-Id: <20191122060129.4239-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122060129.4239-1-sashal@kernel.org>
 References: <20191122060129.4239-1-sashal@kernel.org>
@@ -59,60 +58,87 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Martin Schiller <ms@dev.tdt.de>
 
-[ Upstream commit 054f2400f706327f96770219c3065b5131f8f154 ]
+[ Upstream commit 9b4924da4711674e62d97d4f5360446cc78337af ]
 
-Some values in the Peripheral Function Select Register 10 descriptor are
-shifted by one position, which may cause a peripheral function to be
-programmed incorrectly.
+This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
+related boot issues").
 
-Fixing this makes all HSCIF0 pins use Function 4 (value 3), like was
-already the case for the HSCK0 pin in field IP10[5:3].
+It fixes the issue that the gpio ranges needs to be defined before
+gpiochip_add().
 
-Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Therefore, we also have to swap the order of registering the pinctrl
+driver and registering the gpio chip.
+
+You also have to add the "gpio-ranges" property to the pinctrl device
+node to get it finally working.
+
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Acked-by: John Crispin <john@phrozen.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7734.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-xway.c | 39 +++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index 6502e676d3686..33232041ee86d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -2213,22 +2213,22 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	    /* IP10_22 [1] */
- 		FN_CAN_CLK_A, FN_RX4_D,
- 	    /* IP10_21_19 [3] */
--		FN_AUDIO_CLKOUT, FN_TX1_E, FN_HRTS0_C, FN_FSE_B,
--		FN_LCD_M_DISP_B, 0, 0, 0,
-+		FN_AUDIO_CLKOUT, FN_TX1_E, 0, FN_HRTS0_C, FN_FSE_B,
-+		FN_LCD_M_DISP_B, 0, 0,
- 	    /* IP10_18_16 [3] */
--		FN_AUDIO_CLKC, FN_SCK1_E, FN_HCTS0_C, FN_FRB_B,
--		FN_LCD_VEPWC_B, 0, 0, 0,
-+		FN_AUDIO_CLKC, FN_SCK1_E, 0, FN_HCTS0_C, FN_FRB_B,
-+		FN_LCD_VEPWC_B, 0, 0,
- 	    /* IP10_15 [1] */
- 		FN_AUDIO_CLKB_A, FN_LCD_CLK_B,
- 	    /* IP10_14_12 [3] */
- 		FN_AUDIO_CLKA_A, FN_VI1_CLK_B, FN_SCK1_D, FN_IECLK_B,
- 		FN_LCD_FLM_B, 0, 0, 0,
- 	    /* IP10_11_9 [3] */
--		FN_SSI_SDATA3, FN_VI1_7_B, FN_HTX0_C, FN_FWE_B,
--		FN_LCD_CL2_B, 0, 0, 0,
-+		FN_SSI_SDATA3, FN_VI1_7_B, 0, FN_HTX0_C, FN_FWE_B,
-+		FN_LCD_CL2_B, 0, 0,
- 	    /* IP10_8_6 [3] */
--		FN_SSI_SDATA2, FN_VI1_6_B, FN_HRX0_C, FN_FRE_B,
--		FN_LCD_CL1_B, 0, 0, 0,
-+		FN_SSI_SDATA2, FN_VI1_6_B, 0, FN_HRX0_C, FN_FRE_B,
-+		FN_LCD_CL1_B, 0, 0,
- 	    /* IP10_5_3 [3] */
- 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
- 		FN_LCD_DON_B, 0, 0, 0,
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index dd85ad1807f52..8ea1c6e2a6b2b 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1748,14 +1748,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 	}
+ 	xway_pctrl_desc.pins = xway_info.pads;
+ 
+-	/* register the gpio chip */
+-	xway_chip.parent = &pdev->dev;
+-	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to register gpio chip\n");
+-		return ret;
+-	}
+-
+ 	/* setup the data needed by pinctrl */
+ 	xway_pctrl_desc.name	= dev_name(&pdev->dev);
+ 	xway_pctrl_desc.npins	= xway_chip.ngpio;
+@@ -1777,10 +1769,33 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	/* finish with registering the gpio range in pinctrl */
+-	xway_gpio_range.npins = xway_chip.ngpio;
+-	xway_gpio_range.base = xway_chip.base;
+-	pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
++	/* register the gpio chip */
++	xway_chip.parent = &pdev->dev;
++	xway_chip.owner = THIS_MODULE;
++	xway_chip.of_node = pdev->dev.of_node;
++	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register gpio chip\n");
++		return ret;
++	}
++
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
++		/* finish with registering the gpio range in pinctrl */
++		xway_gpio_range.npins = xway_chip.ngpio;
++		xway_gpio_range.base = xway_chip.base;
++		pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
++	}
++
+ 	dev_info(&pdev->dev, "Init done\n");
+ 	return 0;
+ }
 -- 
 2.20.1
 
