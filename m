@@ -7,90 +7,85 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B1EC432C0
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Nov 2019 00:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3543AC432C0
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Nov 2019 00:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E51B20706
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Nov 2019 00:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F28EF2070E
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Nov 2019 00:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574468181;
-	bh=L/Rn5zKh6Gm3OAdVRzqCaBZfinFZcqu6wKqjac+Vl5o=;
+	s=default; t=1574470047;
+	bh=NDLfC6M/Zw0ZBHpO3gtjyF4fjrfE6+o0S1b5iBvWXxE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=afRyhhAOIrw4bHza1LHf7K4Fc855IMPlvTNXgueUc8RJ8Rw4wyqDH2YMJr7uUNiyU
-	 1ZOZ5n1OVFdges/DAtdCGC6W87WDkkJl7/x0mzyAp5VUMvKTYwKPwPV8nuVMGiLyrJ
-	 MlP9iVLFrx/6geRaxhKs82J9XGIIT/UJrGpVo3us=
+	b=WUiKGHHJqtDxllsFGPMak4NJUdCK8EEowX9xdudp5v5PXTGRbZRW4UmX6nZtyrRiT
+	 RLldr6R+epH9NblsU0c/RwGCylrA7//j1YvB3H3B4UHq4ED3vEAUmOhsSQwGKr4oSE
+	 fNdx5WIUEsyoaTJFEy13FQkdIgOp0tpRNQ7hvlDY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfKWAQU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Nov 2019 19:16:20 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46947 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfKWAQU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2019 19:16:20 -0500
-Received: by mail-yb1-f194.google.com with SMTP id v15so3404489ybp.13;
-        Fri, 22 Nov 2019 16:16:18 -0800 (PST)
+        id S1726836AbfKWAr0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Nov 2019 19:47:26 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40691 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfKWAr0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Nov 2019 19:47:26 -0500
+Received: by mail-ot1-f66.google.com with SMTP id m15so7786935otq.7;
+        Fri, 22 Nov 2019 16:47:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AWbc+0xnr2iQmZkFdWIsFKG7VK+BrYiOiqfXMahXEMs=;
-        b=cFse6kS06qpWgFGFc/5kGqC+FlJogobX8tMHPgVshR91tQWYyD77JE983EYu/piUSe
-         2p+ovUO3L6Es5pjttECNYHKT+j99cD1ErLyUogl8nODZiENOT7cApsxMJGJgCB48lM7R
-         3svF7r58IiTiTnJRCQz0GPjImunz2MZd0V2CjY+U2lctSzQqnkMrWKXjfAiKHhh7nCpy
-         PZRzpD/z8PfyXb4KSzzDsZrGxNSlZSZdCg26uQJ83PArv6iXqz9DBjgQogIrqY6kRTb+
-         mLle+KgEMKnbyx4wMnjrq9eB4yBvRZqYJj25CUt8S/a3F6O/VHQP33/xkEs+04zAYTd7
-         9XVA==
-X-Gm-Message-State: APjAAAVEvMg/s5nUniZMKcCE+DMD+KGzpGNZhy+IcObXOXy3MPLd8e1c
-        616kHkTM3KTIG3bBbi7rdw==
-X-Google-Smtp-Source: APXvYqz/sLrbRW9iMhll2c9BISO6QwOZWioWX9WaKgBH2VVlBP61QPYa8IBQnSEMMKkjvnDGqcxnsA==
-X-Received: by 2002:a25:ab87:: with SMTP id v7mr13072126ybi.329.1574468178231;
-        Fri, 22 Nov 2019 16:16:18 -0800 (PST)
-Received: from localhost ([172.58.139.180])
-        by smtp.gmail.com with ESMTPSA id n128sm2333957ywc.99.2019.11.22.16.16.16
+        bh=brIYs3WpNwPNTYUASSCYgUmn21fXdgxiC4cL9+e/ZoU=;
+        b=lJS0XmDrSSxnt9zFfqXO34rfEINyqbOAzI207zX61n7uYMuYxygohU7R/OyL0PgoR8
+         0JN9GEYfZoFrVopyXB0lk+KVN6NFJ5p+vc2jXCXBSezoJy64RFaYwHUEzzqb2cMixNfK
+         Yh3hJSCbDpcmzfphLoSPPxb5jhw1YOjDMNLCAQiX7Eht3n3i5zkc63g3K0Hvp8EDxSnO
+         eGyZD3Qt2Iy6wLbyYxpKDNhI/MQHX3TzTULPii+8Uj/+kd/oaZiuH51E0LQAZybTqgSu
+         Hdu1NiKVZtQHzHBIHhP08N4xJ1q1K4IeyVBBeeSXOq9CKo3JtHo7mdQGsUvwLpxh+JPm
+         oHhw==
+X-Gm-Message-State: APjAAAWVE0cJiaCNsoJkUGK/8R7/8IkMmJGYb2sRcsiqYNcjlsTzLQcy
+        zduNioTb0/rRQ/pRuVvsNw==
+X-Google-Smtp-Source: APXvYqw6tcGYWeMhNGOxHEWcIsKy6LxITdr43FYvOiWFOb9uG6Aw3huTBvnlV96BZiW0gQrBvZbOog==
+X-Received: by 2002:a05:6830:1af7:: with SMTP id c23mr12315972otd.247.1574470044033;
+        Fri, 22 Nov 2019 16:47:24 -0800 (PST)
+Received: from localhost (ip-70-5-93-147.ftwttx.spcsdns.net. [70.5.93.147])
+        by smtp.gmail.com with ESMTPSA id l12sm2751120oth.76.2019.11.22.16.47.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2019 16:16:17 -0800 (PST)
-Date:   Fri, 22 Nov 2019 18:15:58 -0600
+        Fri, 22 Nov 2019 16:47:23 -0800 (PST)
+Date:   Fri, 22 Nov 2019 18:47:22 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org,
-        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 09/12] dt-bindings: gpio: wcd934x: Add bindings for
- gpio
-Message-ID: <20191123001356.GA5528@bogus>
-References: <20191121170509.10579-1-srinivas.kandagatla@linaro.org>
- <20191121170509.10579-10-srinivas.kandagatla@linaro.org>
+To:     Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        paulburton@kernel.org, paul.burton@mips.com,
+        linus.walleij@linaro.org, paul@crapouillou.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, syq@debian.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: pinctrl: Add bindings for Ingenic
+ X1830.
+Message-ID: <20191123004722.GA24380@bogus>
+References: <1574317183-126374-1-git-send-email-zhouyanjie@zoho.com>
+ <1574317183-126374-4-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121170509.10579-10-srinivas.kandagatla@linaro.org>
+In-Reply-To: <1574317183-126374-4-git-send-email-zhouyanjie@zoho.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 05:05:06PM +0000, Srinivas Kandagatla wrote:
-> Qualcomm Technologies Inc WCD9340/WCD9341 Audio Codec has integrated
-> gpio controller to control 5 gpios on the chip. This patch adds
-> required device tree bindings for it.
+On Thu, 21 Nov 2019 14:19:42 +0800, Zhou Yanjie wrote:
+> Add the pinctrl bindings for the X1830 Soc from Ingenic.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 > ---
->  .../bindings/gpio/qcom,wcd934x-gpio.yaml      | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml
+> 
+> Notes:
+>     v2:
+>     New patch.
+> 
+> 	v2->v3:
+>     No change.
+> 
+>  Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-However, this should be referenced from the main file:
-
-gpio@42:
-  type: object
-  allOf:
-    - $ref: ../gpio/qcom,wcd934x-gpio.yaml#
-
-And better to move the example there to be complete.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
