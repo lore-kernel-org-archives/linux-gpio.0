@@ -2,75 +2,153 @@ Return-Path: <SRS0=plmd=ZR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C4AC432C0
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 11:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8F3C432C0
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 11:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E4C20740
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 11:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71D332068E
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 11:46:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="Z9i5A328"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfKYLdm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Nov 2019 06:33:42 -0500
-Received: from mga05.intel.com ([192.55.52.43]:60588 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfKYLdm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 25 Nov 2019 06:33:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 03:33:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,241,1571727600"; 
-   d="scan'208";a="216915188"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 25 Nov 2019 03:33:38 -0800
-Received: by lahna (sSMTP sendmail emulation); Mon, 25 Nov 2019 13:33:37 +0200
-Date:   Mon, 25 Nov 2019 13:33:37 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 2/2] gpiolib: acpi: Add honor_wakeup module-option +
- quirk mechanism
-Message-ID: <20191125113337.GQ11621@lahna.fi.intel.com>
-References: <20191122192334.61490-1-hdegoede@redhat.com>
- <20191122192334.61490-3-hdegoede@redhat.com>
+        id S1727282AbfKYLqn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Nov 2019 06:46:43 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54168 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727237AbfKYLqn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Nov 2019 06:46:43 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u18so15119192wmc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Nov 2019 03:46:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=SofJxK1Ug+c3r8cZONPRRxBArCGzN6PkhiCRwrgpvKE=;
+        b=Z9i5A328I+iNnqQQU3wvRJxjyD7VtQwlRXjSMMjFWtcDftMH2cJkPh9/2oxBx/Ajep
+         pThiizmSHc2B8FHoGkNORAPw3vzCWbqxm0fGeIogU4/E0SJezl1QAJPS0CwBK8KWHjDG
+         IaGpm703K3HiHO8YdYAO5U8FCBaEd9JGAOpOoYhGUkXceBQa0u5bdiyZXlVBPlxTuyJw
+         vnn//Ippseagqvo3jS+nRVkpY/Gc3npRs+56htjaHq5XHLyswLZG82ACMQfts/3hF6li
+         ejCkgWkljR26j6kdoPTgFI0y+/BiWR2AVU9Vhtcgigc1tO0yRfPcLlktEGTCktWlCQWy
+         J3Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=SofJxK1Ug+c3r8cZONPRRxBArCGzN6PkhiCRwrgpvKE=;
+        b=PS+lhXUfe6CfZXkRxBY/QkKtWju7pknJ/9p9kNgiTmGnvvbGSFwP8HhKk0tyOHZ1Dy
+         JdAHO27C5tfAsUGhg5HlzA7j1eBOxZqIezWtouKtPAhwxorWsCN+5dxcAwtXT442YlvY
+         9Ug10wbYZWmYEk9b0obJi96c+96hJzmISy/ia8zreFRXFIJS6xsYlSGoPMpdPlDueHXH
+         xQa3lgE7KbZ8fxHzjX1lXEylv+PYwyU382UaG81Ym0M3vxeHwEi3dWTvrLhgnRYHl5X7
+         eRQT2UqPQwRfDZQiaMm1glsB4TUPb14lKW85wBu7ADeUoShuRwJ64u5ti2TiaxJZL6te
+         aLDA==
+X-Gm-Message-State: APjAAAUTIh0lQUv0foptPadyyEWgYFKDcaJfPNnFpC8iZyMUyyfn+EqS
+        1vGUvfqujREdFSXCpu+BINRjnbQbHqKqlQ==
+X-Google-Smtp-Source: APXvYqwmCqacrAB0G0oCT2zgnhBp4HAsfGr9q9NEolo+ZE2/xTKJ8yf0RWVdH51UuQ5CJV4vfpkBSg==
+X-Received: by 2002:a7b:c207:: with SMTP id x7mr23652781wmi.40.1574682401656;
+        Mon, 25 Nov 2019 03:46:41 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e16sm10166982wrj.80.2019.11.25.03.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2019 03:46:41 -0800 (PST)
+Message-ID: <5ddbbf21.1c69fb81.b8e13.3722@mx.google.com>
+Date:   Mon, 25 Nov 2019 03:46:41 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191122192334.61490-3-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v5.4
+X-Kernelci-Tree: linusw
+X-Kernelci-Branch: fixes
+X-Kernelci-Report-Type: build
+Subject: linusw/fixes build: 6 builds: 0 failed, 6 passed, 3 warnings (v5.4)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 08:23:34PM +0100, Hans de Goede wrote:
-> On some laptops enabling wakeup on the GPIO interrupts used for ACPI _AEI
-> event handling causes spurious wakeups.
-> 
-> This commit adds a new honor_wakeup option, defaulting to true (our current
-> behavior), which can be used to disable wakeup on troublesome hardware
-> to avoid these spurious wakeups.
-> 
-> This is a workaround for an architectural problem with s2idle under Linux
-> where we do not have any mechanism to immediately go back to sleep after
-> wakeup events, other then for embedded-controller events using the standard
-> ACPI EC interface, for details see:
-> https://lore.kernel.org/linux-acpi/61450f9b-cbc6-0c09-8b3a-aff6bf9a0b3c@redhat.com/
-> 
-> One series of laptops which is not able to suspend without this workaround
-> is the HP x2 10 Cherry Trail models, this commit adds a DMI based quirk
-> which makes sets honor_wakeup to false on these models.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+linusw/fixes build: 6 builds: 0 failed, 6 passed, 3 warnings (v5.4)
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Full Build Summary: https://kernelci.org/build/linusw/branch/fixes/kernel/v=
+5.4/
+
+Tree: linusw
+Branch: fixes
+Git Describe: v5.4
+Git Commit: 219d54332a09e8d8741c1e1982f5eae56099de85
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 6 unique architectures
+
+Warnings Detected:
+
+arc:
+    nsim_hs_defconfig (gcc-8): 2 warnings
+
+arm64:
+
+arm:
+    multi_v7_defconfig (gcc-8): 1 warning
+
+mips:
+
+riscv:
+
+x86_64:
+
+
+Warnings summary:
+
+    2    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [=
+-Wcpp]
+    1    WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
+
+---------------------------------------------------------------------------=
+-----
+nsim_hs_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+    <stdin>:1511:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---
+For more info write to <info@kernelci.org>
