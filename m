@@ -8,59 +8,59 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CA7C432C0
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 14:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26720C432C0
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 14:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7D2B20740
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 14:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E6F207FD
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 Nov 2019 14:32:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qpg7XJkE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcDNoHYv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbfKYOcn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 Nov 2019 09:32:43 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39613 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728026AbfKYOcn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Nov 2019 09:32:43 -0500
-Received: by mail-pl1-f196.google.com with SMTP id o9so6588605plk.6
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Nov 2019 06:32:41 -0800 (PST)
+        id S1728149AbfKYOcq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 Nov 2019 09:32:46 -0500
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:44243 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728026AbfKYOcq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Nov 2019 09:32:46 -0500
+Received: by mail-pg1-f173.google.com with SMTP id e6so7270677pgi.11
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Nov 2019 06:32:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PIlncaimTSfQHZvL4kmfWvMsOpdgCVNotxRpp4RKGxg=;
-        b=Qpg7XJkEU6sfvtQRC2ApO/2sYurVd9vR6rwLqcbD2tkuMTWcg/QXvfGv0e/+WH4Gkc
-         fKUyOtw4bxXywt0fC4OajlcQxYHUuseUbyWTVa791YEPSmBlFA75XTMStVm7MlZ38C5S
-         ayLmKN1D9XqaSHlTJNSvtjl9wxkAS/98fZEh+rSXpWIfMmJmE8ljgfTSsPCbCciskOn1
-         oT+BJ/yv3u8VgxQo12Vz+nKjQOiGMy9Q1fUtCFKSku6ELmBmxFxBYEeCB2FC5FcxYhhZ
-         OaOpOjcbTO8Pv1Rgs+c4q+sfno/5N6rWQuINa66ivKen/pfrlrC98Zbg1UYcWVdB0XIE
-         tFvA==
+        bh=uXrx5y2WL4cxWSJZuzUd3RqNYH2UrGCBMAG2mC95Yp4=;
+        b=hcDNoHYv81K1rikuins/2OCkKstPav1ChJGOkH7RkCO99pUeXyQOTDjmpee7k11Iin
+         OvgsXWMu65Z418lqgR78/Y4henDIdvPgOAFgM9DrZfir7MFolbF81mYzHuG+91jriyxa
+         fjPqwAEE+g6fO1nqC3U0KuXuNdmdPmi+GQzZxy5tTiketJct6dWHjik7yvKH/QJSNV9n
+         ryqNGKfKkc28GLu+IjzAZrHiDjUqQp/xmkWNoB1c88zXidfeTC7/MvPyJydCNRa51xUY
+         zO0Xkz12FHs1TlErN1FGCJP4BdshMwo+3lxDSUr8He9qBUDmiw5Pf88GDG3qrK/EJy2f
+         e2pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PIlncaimTSfQHZvL4kmfWvMsOpdgCVNotxRpp4RKGxg=;
-        b=eCo0Y+wui9s7QkA2pbebUec5SUWWzPdcUbew+4Jm7R/qisTVQB3a/mw/9TJErXx17c
-         FK1r1gYUjr2h0tYqaEG7Hw1jNq6IXdL5VqiJm9s/xXkw+sJIjgkdJq6P72ugA+ERz5x2
-         lkDYtc0IsI32OQJ5gQzdmwgRMofWgB46ZwOoQB3ES7NGZiz0+36wQgUT6Ytt4Ptf1DTa
-         rmn/OfD+TFlUw0bBqNtxsV5P0BDGCWeZCweCmPlWPgY6aEmfr0yHNEeGyFdli5xsSbzm
-         i9I2MC1kYrdP72b/Lp7t3hNGBP8I4HJK+pFVAlvFB5w1QMSJOvf7iWxDBaKXyTdl9ZQE
-         Y/2w==
-X-Gm-Message-State: APjAAAXmwk0EiBLjkgMZ7/BlaikKdWt3tl1tVd1wveBw0QDFhRMpprIW
-        00WLBapcOrJ8jOhju4XelMeyGjz9QO1dfA==
-X-Google-Smtp-Source: APXvYqzLU7hA+yIYy9O6LYlTfb+Q/w39K96l8sBD0ICMU7Ny1u7VhRqnboOnAb75iLUtzoaSmrgK+g==
-X-Received: by 2002:a17:90a:c2:: with SMTP id v2mr38991992pjd.140.1574692360013;
-        Mon, 25 Nov 2019 06:32:40 -0800 (PST)
+        bh=uXrx5y2WL4cxWSJZuzUd3RqNYH2UrGCBMAG2mC95Yp4=;
+        b=iG1JIeYw4gatP5SkvSAfem2vQ7LEIQH5+FeyQG7lq4q9aWE91/tiO2bCi+GyAkVpc9
+         qNpRUl3Z5K8uF4q5yDDZi4k06F52fAZne6veE0avesZexUvAxAl71yyvvojjqPkoiZEh
+         rOkUM3sJ+S0+jf6VJSVfFk/3S4g8CmjWz9czRWwrGmD1xZv3V3oADEXSAcpGWuQkuSTg
+         wQRwt6briQtYSp0rcWlgHhAKbMk1IgvI14hu+h+vnTAC8nDe89PcEqz6OMPbW/JIcpy+
+         Onspu7kc4oyrMzZgznEFqk4OeYr22C8D1cjWczo1SadltMixAla+ikIWu48dA/rRXRx1
+         QLUQ==
+X-Gm-Message-State: APjAAAWtKOb75xHhJH6XL/TZnfR0kDTkcLCESQqr8wcGxv/pcDMDlpVC
+        DIfxjGKZu3SP6U45GY18mH3HYxJfl9FwEA==
+X-Google-Smtp-Source: APXvYqwERtnuTDozWsBq5jFt2V3kXHqbgjB/lrn5opb78tpYhgmSZ/F710u4W7UM6iTawWxfNINXfg==
+X-Received: by 2002:aa7:9804:: with SMTP id e4mr34697946pfl.21.1574692365216;
+        Mon, 25 Nov 2019 06:32:45 -0800 (PST)
 Received: from sol.lan (220-235-109-115.dyn.iinet.net.au. [220.235.109.115])
-        by smtp.gmail.com with ESMTPSA id i5sm8642100pfo.52.2019.11.25.06.32.37
+        by smtp.gmail.com with ESMTPSA id i5sm8642100pfo.52.2019.11.25.06.32.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 06:32:39 -0800 (PST)
+        Mon, 25 Nov 2019 06:32:44 -0800 (PST)
 From:   Kent Gibson <warthog618@gmail.com>
 To:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com
 Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [libgpiod][PATCH v3 01/14] core: add support for bias flags
-Date:   Mon, 25 Nov 2019 22:31:44 +0800
-Message-Id: <20191125143157.26154-2-warthog618@gmail.com>
+Subject: [libgpiod][PATCH v3 03/14] bindings: cxx: add support for bias flags
+Date:   Mon, 25 Nov 2019 22:31:46 +0800
+Message-Id: <20191125143157.26154-4-warthog618@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191125143157.26154-1-warthog618@gmail.com>
 References: <20191125143157.26154-1-warthog618@gmail.com>
@@ -71,551 +71,123 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Extend the libgpiod API to support the bias flags recently added to the
-kernel GPIO uAPI.  The core change is the addition of
-GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE, GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
-and GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN flags to be passed into
-line_request functions, and the addition of gpiod_line_bias to return the
-bias state of lines.
-
-Variants of the ctxless functions that accept an active_low flag
-are added to also accept other flags. The variant names add a "_ext"
-suffix to the name of the original function.
+Add support for bias flags in line requests and returning the line bias
+setting via a bias accessor.
 
 Based on initial work by Drew Fustini <drew@pdp7.com>.
 
 Signed-off-by: Kent Gibson <warthog618@gmail.com>
 ---
- include/gpiod.h | 183 ++++++++++++++++++++++++++++++++++++++++++++++++
- lib/core.c      |  32 ++++++---
- lib/ctxless.c   | 114 +++++++++++++++++++++++++++---
- 3 files changed, 311 insertions(+), 18 deletions(-)
+ bindings/cxx/gpiod.hpp     | 26 ++++++++++++++++++++++++++
+ bindings/cxx/line.cpp      | 19 +++++++++++++++++++
+ bindings/cxx/line_bulk.cpp |  6 ++++++
+ 3 files changed, 51 insertions(+)
 
-diff --git a/include/gpiod.h b/include/gpiod.h
-index 3fc1c0c..86c3ea9 100644
---- a/include/gpiod.h
-+++ b/include/gpiod.h
-@@ -84,6 +84,22 @@ struct gpiod_line_bulk;
-  * the need to use the gpiod_* structures or to keep track of resources.
-  */
- 
-+/**
-+ * @brief Miscellaneous GPIO flags.
-+ */
-+enum {
-+	GPIOD_CTXLESS_FLAG_OPEN_DRAIN		= GPIOD_BIT(0),
-+	/**< The line is an open-drain port. */
-+	GPIOD_CTXLESS_FLAG_OPEN_SOURCE		= GPIOD_BIT(1),
-+	/**< The line is an open-source port. */
-+	GPIOD_CTXLESS_FLAG_BIAS_DISABLE		= GPIOD_BIT(2),
-+	/**< The line has neither either pull-up nor pull-down resistor */
-+	GPIOD_CTXLESS_FLAG_BIAS_PULL_DOWN	= GPIOD_BIT(3),
-+	/**< The line has pull-down resistor enabled */
-+	GPIOD_CTXLESS_FLAG_BIAS_PULL_UP		= GPIOD_BIT(4),
-+	/**< The line has pull-up resistor enabled */
-+};
-+
- /**
-  * @brief Read current value from a single GPIO line.
-  * @param device Name, path, number or label of the gpiochip.
-@@ -95,6 +111,19 @@ struct gpiod_line_bulk;
- int gpiod_ctxless_get_value(const char *device, unsigned int offset,
- 			    bool active_low, const char *consumer) GPIOD_API;
- 
-+/**
-+ * @brief Read current value from a single GPIO line.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param offset Offset of the GPIO line.
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param flags The flags for the line.
-+ * @return 0 or 1 (GPIO value) if the operation succeeds, -1 on error.
-+ */
-+int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
-+				bool active_low, const char *consumer,
-+				int flags) GPIOD_API;
-+
- /**
-  * @brief Read current values from a set of GPIO lines.
-  * @param device Name, path, number or label of the gpiochip.
-@@ -110,6 +139,23 @@ int gpiod_ctxless_get_value_multiple(const char *device,
- 				     unsigned int num_lines, bool active_low,
- 				     const char *consumer) GPIOD_API;
- 
-+/**
-+ * @brief Read current values from a set of GPIO lines.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param offsets Array of offsets of lines whose values should be read.
-+ * @param values Buffer in which the values will be stored.
-+ * @param num_lines Number of lines, must be > 0.
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param flags The flags for the lines.
-+ * @return 0 if the operation succeeds, -1 on error.
-+ */
-+int gpiod_ctxless_get_value_multiple_ext(const char *device,
-+					 const unsigned int *offsets,
-+					 int *values, unsigned int num_lines,
-+					 bool active_low, const char *consumer,
-+					 int flags) GPIOD_API;
-+
- /**
-  * @brief Simple set value callback signature.
-  */
-@@ -133,6 +179,26 @@ int gpiod_ctxless_set_value(const char *device, unsigned int offset, int value,
- 			    gpiod_ctxless_set_value_cb cb,
- 			    void *data) GPIOD_API;
- 
-+/**
-+ * @brief Set value of a single GPIO line.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param offset The offset of the GPIO line.
-+ * @param value New value (0 or 1).
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param cb Optional callback function that will be called right after setting
-+ *           the value. Users can use this, for example, to pause the execution
-+ *           after toggling a GPIO.
-+ * @param data Optional user data that will be passed to the callback function.
-+ * @param flags The flags for the line.
-+ * @return 0 if the operation succeeds, -1 on error.
-+ */
-+int gpiod_ctxless_set_value_ext(const char *device, unsigned int offset,
-+				int value, bool active_low,
-+				const char *consumer,
-+				gpiod_ctxless_set_value_cb cb,
-+				void *data, int flags) GPIOD_API;
-+
- /**
-  * @brief Set values of multiple GPIO lines.
-  * @param device Name, path, number or label of the gpiochip.
-@@ -153,6 +219,29 @@ int gpiod_ctxless_set_value_multiple(const char *device,
- 				     gpiod_ctxless_set_value_cb cb,
- 				     void *data) GPIOD_API;
- 
-+/**
-+ * @brief Set values of multiple GPIO lines.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param offsets Array of offsets of lines the values of which should be set.
-+ * @param values Array of integers containing new values.
-+ * @param num_lines Number of lines, must be > 0.
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param cb Optional callback function that will be called right after setting
-+ *           all values. Works the same as in ::gpiod_ctxless_set_value.
-+ * @param data Optional user data that will be passed to the callback function.
-+ * @param flags The flags for the lines.
-+ * @return 0 if the operation succeeds, -1 on error.
-+ */
-+int gpiod_ctxless_set_value_multiple_ext(const char *device,
-+					 const unsigned int *offsets,
-+					 const int *values,
-+					 unsigned int num_lines,
-+					 bool active_low,
-+					 const char *consumer,
-+					 gpiod_ctxless_set_value_cb cb,
-+					 void *data, int flags) GPIOD_API;
-+
- /**
-  * @brief Event types that the ctxless event monitor can wait for.
-  */
-@@ -327,6 +416,31 @@ int gpiod_ctxless_event_monitor(const char *device, int event_type,
- 				gpiod_ctxless_event_handle_cb event_cb,
- 				void *data) GPIOD_API;
- 
-+/**
-+ * @brief Wait for events on a single GPIO line.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param event_type Type of events to listen for.
-+ * @param offset GPIO line offset to monitor.
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param timeout Maximum wait time for each iteration.
-+ * @param poll_cb Callback function to call when waiting for events.
-+ * @param event_cb Callback function to call for each line event.
-+ * @param data User data passed to the callback.
-+ * @param flags The flags for the line.
-+ * @return 0 if no errors were encountered, -1 if an error occurred.
-+ * @note The way the ctxless event loop works is described in detail in
-+ *       ::gpiod_ctxless_event_monitor_multiple - this is just a wrapper aound
-+ *       this routine which calls it for a single GPIO line.
-+ */
-+int gpiod_ctxless_event_monitor_ext(const char *device, int event_type,
-+				    unsigned int offset, bool active_low,
-+				    const char *consumer,
-+				    const struct timespec *timeout,
-+				    gpiod_ctxless_event_poll_cb poll_cb,
-+				    gpiod_ctxless_event_handle_cb event_cb,
-+				    void *data, int flags) GPIOD_API;
-+
- /**
-  * @brief Wait for events on multiple GPIO lines.
-  * @param device Name, path, number or label of the gpiochip.
-@@ -366,6 +480,47 @@ int gpiod_ctxless_event_monitor_multiple(
- 			gpiod_ctxless_event_handle_cb event_cb,
- 			void *data) GPIOD_API;
- 
-+/**
-+ * @brief Wait for events on multiple GPIO lines.
-+ * @param device Name, path, number or label of the gpiochip.
-+ * @param event_type Type of events to listen for.
-+ * @param offsets Array of GPIO line offsets to monitor.
-+ * @param num_lines Number of lines to monitor.
-+ * @param active_low The active state of this line - true if low.
-+ * @param consumer Name of the consumer.
-+ * @param timeout Maximum wait time for each iteration.
-+ * @param poll_cb Callback function to call when waiting for events. Can
-+ *                be NULL.
-+ * @param event_cb Callback function to call on event occurrence.
-+ * @param data User data passed to the callback.
-+ * @param flags The flags for the lines.
-+ * @return 0 no errors were encountered, -1 if an error occurred.
-+ * @note The poll callback can be NULL in which case the routine will fall
-+ *       back to a basic, ppoll() based callback.
-+ *
-+ * Internally this routine opens the GPIO chip, requests the set of lines for
-+ * the type of events specified in the event_type parameter and calls the
-+ * polling callback in a loop. The role of the polling callback is to detect
-+ * input events on a set of file descriptors and notify the caller about the
-+ * fds ready for reading.
-+ *
-+ * The ctxless event loop then reads each queued event from marked descriptors
-+ * and calls the event callback. Both callbacks can stop the loop at any
-+ * point.
-+ *
-+ * The poll_cb argument can be NULL in which case the function falls back to
-+ * a default, ppoll() based callback.
-+ */
-+int gpiod_ctxless_event_monitor_multiple_ext(
-+			const char *device, int event_type,
-+			const unsigned int *offsets,
-+			unsigned int num_lines, bool active_low,
-+			const char *consumer, const struct timespec *timeout,
-+			gpiod_ctxless_event_poll_cb poll_cb,
-+			gpiod_ctxless_event_handle_cb event_cb,
-+			void *data, int flags) GPIOD_API;
-+
-+
- /**
-  * @brief Determine the chip name and line offset of a line with given name.
-  * @param name The name of the GPIO line to lookup.
-@@ -658,6 +813,20 @@ enum {
- 	/**< The active state of a GPIO is active-low. */
- };
- 
-+/**
-+ * @brief Possible internal bias settings.
-+ */
-+enum {
-+	GPIOD_LINE_BIAS_AS_IS = 1,
-+	/**< The internal bias state is unknown. */
-+	GPIOD_LINE_BIAS_DISABLE,
-+	/**< The internal bias is disabled. */
-+	GPIOD_LINE_BIAS_PULL_UP,
-+	/**< The internal pull-up bias is enabled. */
-+	GPIOD_LINE_BIAS_PULL_DOWN,
-+	/**< The internal pull-down bias is enabled. */
-+};
-+
- /**
-  * @brief Read the GPIO line offset.
-  * @param line GPIO line object.
-@@ -697,6 +866,14 @@ int gpiod_line_direction(struct gpiod_line *line) GPIOD_API;
-  */
- int gpiod_line_active_state(struct gpiod_line *line) GPIOD_API;
- 
-+/**
-+ * @brief Read the GPIO line bias setting.
-+ * @param line GPIO line object.
-+ * @return Returns GPIOD_LINE_BIAS_PULL_UP, GPIOD_LINE_BIAS_PULL_DOWN,
-+ *         GPIOD_LINE_BIAS_DISABLE or GPIOD_LINE_BIAS_AS_IS.
-+ */
-+int gpiod_line_bias(struct gpiod_line *line) GPIOD_API;
-+
- /**
-  * @brief Check if the line is currently in use.
-  * @param line GPIO line object.
-@@ -787,6 +964,12 @@ enum {
+diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
+index b5a9401..2b1a6ab 100644
+--- a/bindings/cxx/gpiod.hpp
++++ b/bindings/cxx/gpiod.hpp
+@@ -233,6 +233,12 @@ struct line_request
  	/**< The line is an open-source port. */
- 	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW	= GPIOD_BIT(2),
- 	/**< The active state of the line is low (high is the default). */
-+	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE	= GPIOD_BIT(3),
-+	/**< The line has neither either pull-up nor pull-down resistor */
-+	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN	= GPIOD_BIT(4),
-+	/**< The line has pull-down resistor enabled */
-+	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP	= GPIOD_BIT(5),
-+	/**< The line has pull-up resistor enabled */
+ 	GPIOD_API static const ::std::bitset<32> FLAG_OPEN_DRAIN;
+ 	/**< The line is an open-drain port. */
++	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_DISABLE;
++	/**< The line has neither pull-up nor pull-down resistor enabled */
++	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_PULL_DOWN;
++	/**< The line has a configurable pull-down resistor enabled */
++	GPIOD_API static const ::std::bitset<32> FLAG_BIAS_PULL_UP;
++	/**< The line has a configurable pull-up resistor enabled */
+ 
+ 	::std::string consumer;
+ 	/**< Consumer name to pass to the request. */
+@@ -320,6 +326,12 @@ public:
+ 	 */
+ 	GPIOD_API int active_state(void) const;
+ 
++	/**
++	 * @brief Get current bias of this line.
++	 * @return Current bias setting.
++	 */
++	GPIOD_API int bias(void) const;
++
+ 	/**
+ 	 * @brief Check if this line is used by the kernel or other user space
+ 	 *        process.
+@@ -456,6 +468,20 @@ public:
+ 		/**< Line's active state is high. */
+ 	};
+ 
++	/**
++	 * @brief Possible bias settings.
++	 */
++	enum : int {
++		BIAS_AS_IS = 1,
++		/**< Line's bias state is unknown. */
++		BIAS_DISABLE,
++		/**< Line's internal bias is disabled. */
++		BIAS_PULL_UP,
++		/**< Line's internal pull-up bias is enabled. */
++		BIAS_PULL_DOWN,
++		/**< Line's internal pull-down bias is enabled. */
++	};
++
+ private:
+ 
+ 	line(::gpiod_line* line, const chip& owner);
+diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
+index df6eada..dd6bb6a 100644
+--- a/bindings/cxx/line.cpp
++++ b/bindings/cxx/line.cpp
+@@ -67,6 +67,25 @@ int line::active_state(void) const
+ 	return active == GPIOD_LINE_ACTIVE_STATE_HIGH ? ACTIVE_HIGH : ACTIVE_LOW;
+ }
+ 
++int line::bias(void) const
++{
++	this->throw_if_null();
++
++	int bias = ::gpiod_line_bias(this->_m_line);
++
++	switch (bias) {
++	case GPIOD_LINE_BIAS_PULL_UP:
++		return BIAS_PULL_UP;
++	case GPIOD_LINE_BIAS_PULL_DOWN:
++		return BIAS_PULL_DOWN;
++	case GPIOD_LINE_BIAS_DISABLE:
++		return BIAS_DISABLE;
++	case GPIOD_LINE_BIAS_AS_IS:
++	default:
++		return BIAS_AS_IS;
++	}
++}
++
+ bool line::is_used(void) const
+ {
+ 	this->throw_if_null();
+diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
+index c708c8b..5f1cac4 100644
+--- a/bindings/cxx/line_bulk.cpp
++++ b/bindings/cxx/line_bulk.cpp
+@@ -14,6 +14,9 @@ namespace gpiod {
+ const ::std::bitset<32> line_request::FLAG_ACTIVE_LOW(GPIOD_BIT(0));
+ const ::std::bitset<32> line_request::FLAG_OPEN_SOURCE(GPIOD_BIT(1));
+ const ::std::bitset<32> line_request::FLAG_OPEN_DRAIN(GPIOD_BIT(2));
++const ::std::bitset<32> line_request::FLAG_BIAS_DISABLE(GPIOD_BIT(3));
++const ::std::bitset<32> line_request::FLAG_BIAS_PULL_DOWN(GPIOD_BIT(4));
++const ::std::bitset<32> line_request::FLAG_BIAS_PULL_UP(GPIOD_BIT(5));
+ 
+ namespace {
+ 
+@@ -38,6 +41,9 @@ const ::std::map<::std::bitset<32>, int, bitset_cmp> reqflag_mapping = {
+ 	{ line_request::FLAG_ACTIVE_LOW,	GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, },
+ 	{ line_request::FLAG_OPEN_DRAIN,	GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN, },
+ 	{ line_request::FLAG_OPEN_SOURCE,	GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE, },
++	{ line_request::FLAG_BIAS_DISABLE,	GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE, },
++	{ line_request::FLAG_BIAS_PULL_DOWN,	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN, },
++	{ line_request::FLAG_BIAS_PULL_UP,	GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP, },
  };
  
- /**
-diff --git a/lib/core.c b/lib/core.c
-index a21918c..0465de9 100644
---- a/lib/core.c
-+++ b/lib/core.c
-@@ -36,9 +36,7 @@ struct gpiod_line {
- 	unsigned int offset;
- 	int direction;
- 	int active_state;
--	bool used;
--	bool open_source;
--	bool open_drain;
-+	__u32 info_flags;
- 
- 	int state;
- 
-@@ -349,19 +347,31 @@ int gpiod_line_active_state(struct gpiod_line *line)
- 	return line->active_state;
- }
- 
-+int gpiod_line_bias(struct gpiod_line *line)
-+{
-+	if (line->info_flags & GPIOLINE_FLAG_BIAS_DISABLE)
-+		return GPIOD_LINE_BIAS_DISABLE;
-+	if (line->info_flags & GPIOLINE_FLAG_BIAS_PULL_UP)
-+		return GPIOD_LINE_BIAS_PULL_UP;
-+	if (line->info_flags & GPIOLINE_FLAG_BIAS_PULL_DOWN)
-+		return GPIOD_LINE_BIAS_PULL_DOWN;
-+
-+	return GPIOD_LINE_BIAS_AS_IS;
-+}
-+
- bool gpiod_line_is_used(struct gpiod_line *line)
- {
--	return line->used;
-+	return line->info_flags & GPIOLINE_FLAG_KERNEL;
- }
- 
- bool gpiod_line_is_open_drain(struct gpiod_line *line)
- {
--	return line->open_drain;
-+	return line->info_flags & GPIOLINE_FLAG_OPEN_DRAIN;
- }
- 
- bool gpiod_line_is_open_source(struct gpiod_line *line)
- {
--	return line->open_source;
-+	return line->info_flags & GPIOLINE_FLAG_OPEN_SOURCE;
- }
- 
- bool gpiod_line_needs_update(struct gpiod_line *line GPIOD_UNUSED)
-@@ -388,9 +398,7 @@ int gpiod_line_update(struct gpiod_line *line)
- 						? GPIOD_LINE_ACTIVE_STATE_LOW
- 						: GPIOD_LINE_ACTIVE_STATE_HIGH;
- 
--	line->used = info.flags & GPIOLINE_FLAG_KERNEL;
--	line->open_drain = info.flags & GPIOLINE_FLAG_OPEN_DRAIN;
--	line->open_source = info.flags & GPIOLINE_FLAG_OPEN_SOURCE;
-+	line->info_flags = info.flags;
- 
- 	strncpy(line->name, info.name, sizeof(line->name));
- 	strncpy(line->consumer, info.consumer, sizeof(line->consumer));
-@@ -461,6 +469,12 @@ static __u32 line_request_flag_to_gpio_handleflag(int flags)
- 		hflags |= GPIOHANDLE_REQUEST_OPEN_SOURCE;
- 	if (flags & GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW)
- 		hflags |= GPIOHANDLE_REQUEST_ACTIVE_LOW;
-+	if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE)
-+		hflags |= GPIOHANDLE_REQUEST_BIAS_DISABLE;
-+	if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN)
-+		hflags |= GPIOHANDLE_REQUEST_BIAS_PULL_DOWN;
-+	if (flags & GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP)
-+		hflags |= GPIOHANDLE_REQUEST_BIAS_PULL_UP;
- 
- 	return hflags;
- }
-diff --git a/lib/ctxless.c b/lib/ctxless.c
-index ba85018..014475c 100644
---- a/lib/ctxless.c
-+++ b/lib/ctxless.c
-@@ -14,6 +14,26 @@
- #include <stdio.h>
- #include <string.h>
- 
-+static int ctxless_flags_to_line_request_flags(bool active_low, int flags)
-+{
-+	int req_flags = 0;
-+
-+	if (active_low)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW;
-+	if (flags & GPIOD_CTXLESS_FLAG_OPEN_DRAIN)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN;
-+	if (flags & GPIOD_CTXLESS_FLAG_OPEN_SOURCE)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE;
-+	if (flags & GPIOD_CTXLESS_FLAG_BIAS_DISABLE)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLE;
-+	if (flags & GPIOD_CTXLESS_FLAG_BIAS_PULL_UP)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP;
-+	if (flags & GPIOD_CTXLESS_FLAG_BIAS_PULL_DOWN)
-+		req_flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN;
-+
-+	return req_flags;
-+}
-+
- int gpiod_ctxless_get_value(const char *device, unsigned int offset,
- 			    bool active_low, const char *consumer)
- {
-@@ -27,16 +47,44 @@ int gpiod_ctxless_get_value(const char *device, unsigned int offset,
- 	return value;
- }
- 
-+int gpiod_ctxless_get_value_ext(const char *device, unsigned int offset,
-+				bool active_low, const char *consumer,
-+				int flags)
-+{
-+	int value, rv;
-+
-+	rv = gpiod_ctxless_get_value_multiple_ext(device, &offset, &value, 1,
-+						  active_low, consumer, flags);
-+	if (rv < 0)
-+		return rv;
-+
-+	return value;
-+}
-+
- int gpiod_ctxless_get_value_multiple(const char *device,
- 				     const unsigned int *offsets, int *values,
- 				     unsigned int num_lines, bool active_low,
- 				     const char *consumer)
-+{
-+	int rv;
-+
-+	rv = gpiod_ctxless_get_value_multiple_ext(device, offsets, values,
-+						  num_lines, active_low,
-+						  consumer, 0);
-+	return rv;
-+}
-+
-+int gpiod_ctxless_get_value_multiple_ext(const char *device,
-+					 const unsigned int *offsets,
-+					 int *values, unsigned int num_lines,
-+					 bool active_low,
-+					 const char *consumer, int flags)
- {
- 	struct gpiod_line_bulk bulk;
- 	struct gpiod_chip *chip;
- 	struct gpiod_line *line;
- 	unsigned int i;
--	int rv, flags;
-+	int rv, req_flags;
- 
- 	if (!num_lines || num_lines > GPIOD_LINE_BULK_MAX_LINES) {
- 		errno = EINVAL;
-@@ -59,9 +107,8 @@ int gpiod_ctxless_get_value_multiple(const char *device,
- 		gpiod_line_bulk_add(&bulk, line);
- 	}
- 
--	flags = active_low ? GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW : 0;
--
--	rv = gpiod_line_request_bulk_input_flags(&bulk, consumer, flags);
-+	req_flags = ctxless_flags_to_line_request_flags(active_low, flags);
-+	rv = gpiod_line_request_bulk_input_flags(&bulk, consumer, req_flags);
- 	if (rv < 0) {
- 		gpiod_chip_close(chip);
- 		return -1;
-@@ -83,17 +130,39 @@ int gpiod_ctxless_set_value(const char *device, unsigned int offset, int value,
- 						active_low, consumer, cb, data);
- }
- 
-+int gpiod_ctxless_set_value_ext(const char *device, unsigned int offset,
-+				int value, bool active_low,
-+				const char *consumer,
-+				gpiod_ctxless_set_value_cb cb,
-+				void *data, int flags)
-+{
-+	return gpiod_ctxless_set_value_multiple_ext(device, &offset, &value,
-+						    1, active_low, consumer,
-+						    cb, data, flags);
-+}
-+
- int gpiod_ctxless_set_value_multiple(const char *device,
- 				     const unsigned int *offsets,
- 				     const int *values, unsigned int num_lines,
- 				     bool active_low, const char *consumer,
- 				     gpiod_ctxless_set_value_cb cb, void *data)
-+{
-+	return gpiod_ctxless_set_value_multiple_ext(device, offsets, values,
-+						    num_lines, active_low,
-+						    consumer, cb, data, 0);
-+}
-+
-+int gpiod_ctxless_set_value_multiple_ext(
-+			const char *device, const unsigned int *offsets,
-+			const int *values, unsigned int num_lines,
-+			bool active_low, const char *consumer,
-+			gpiod_ctxless_set_value_cb cb, void *data, int flags)
- {
- 	struct gpiod_line_bulk bulk;
- 	struct gpiod_chip *chip;
- 	struct gpiod_line *line;
- 	unsigned int i;
--	int rv, flags;
-+	int rv, req_flags;
- 
- 	if (!num_lines || num_lines > GPIOD_LINE_BULK_MAX_LINES) {
- 		errno = EINVAL;
-@@ -116,10 +185,9 @@ int gpiod_ctxless_set_value_multiple(const char *device,
- 		gpiod_line_bulk_add(&bulk, line);
- 	}
- 
--	flags = active_low ? GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW : 0;
--
-+	req_flags = ctxless_flags_to_line_request_flags(active_low, flags);
- 	rv = gpiod_line_request_bulk_output_flags(&bulk, consumer,
--						  flags, values);
-+						  req_flags, values);
- 	if (rv < 0) {
- 		gpiod_chip_close(chip);
- 		return -1;
-@@ -216,6 +284,19 @@ int gpiod_ctxless_event_monitor(const char *device, int event_type,
- 						    poll_cb, event_cb, data);
- }
- 
-+int gpiod_ctxless_event_monitor_ext(const char *device, int event_type,
-+				    unsigned int offset, bool active_low,
-+				    const char *consumer,
-+				    const struct timespec *timeout,
-+				    gpiod_ctxless_event_poll_cb poll_cb,
-+				    gpiod_ctxless_event_handle_cb event_cb,
-+				    void *data, int flags)
-+{
-+	return gpiod_ctxless_event_monitor_multiple_ext(
-+			device, event_type, &offset, 1, active_low,
-+			consumer, timeout, poll_cb, event_cb, data, flags);
-+}
-+
- int gpiod_ctxless_event_monitor_multiple(
- 			const char *device, int event_type,
- 			const unsigned int *offsets,
-@@ -225,6 +306,21 @@ int gpiod_ctxless_event_monitor_multiple(
- 			gpiod_ctxless_event_poll_cb poll_cb,
- 			gpiod_ctxless_event_handle_cb event_cb,
- 			void *data)
-+{
-+	return gpiod_ctxless_event_monitor_multiple_ext(
-+			device, event_type, offsets,
-+			num_lines, active_low, consumer, timeout,
-+			poll_cb, event_cb, data, 0);
-+}
-+
-+int gpiod_ctxless_event_monitor_multiple_ext(
-+			const char *device, int event_type,
-+			const unsigned int *offsets,
-+			unsigned int num_lines, bool active_low,
-+			const char *consumer, const struct timespec *timeout,
-+			gpiod_ctxless_event_poll_cb poll_cb,
-+			gpiod_ctxless_event_handle_cb event_cb,
-+			void *data, int flags)
- {
- 	struct gpiod_ctxless_event_poll_fd fds[GPIOD_LINE_BULK_MAX_LINES];
- 	struct gpiod_line_request_config conf;
-@@ -259,7 +355,7 @@ int gpiod_ctxless_event_monitor_multiple(
- 		gpiod_line_bulk_add(&bulk, line);
- 	}
- 
--	conf.flags = active_low ? GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW : 0;
-+	conf.flags = ctxless_flags_to_line_request_flags(active_low, flags);
- 	conf.consumer = consumer;
- 
- 	if (event_type == GPIOD_CTXLESS_EVENT_RISING_EDGE) {
+ } /* namespace */
 -- 
 2.24.0
 
