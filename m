@@ -2,68 +2,100 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05CCC432C3
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 18:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1513C432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7951A20863
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 18:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574880330;
-	bh=y4tS9BY1pWrsWMwUVOTVFb1Seyjzd72/T1MBqn94aAY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=gCVUgo152z+hA8zyPcHz4RMSNeSQj+Bl+Mh0GKBs8w2UdH5Us2jcNerW1/be8Y3bB
-	 8SwS6AjG8uGFTEZtpLLrqrSdS3sIP+B5sEE8lFFbDYG690oDkh+lmbVgNYixBvdkvI
-	 r96F9KPED5IreKcEzbq5y+Kd9RFi6CTH4nE72luw=
+	by mail.kernel.org (Postfix) with ESMTP id 92EC221736
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfK0SpO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 13:45:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbfK0SpO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 27 Nov 2019 13:45:14 -0500
-Subject: Re: [GIT PULL] Bulk pin control changes for v5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574880314;
-        bh=y4tS9BY1pWrsWMwUVOTVFb1Seyjzd72/T1MBqn94aAY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Ylt+Gb8g67WZc13F3kfNscr/UzlkWBjLs/yQWOgiI5OjCYlJSVNwBFtnPHcc5vF7D
-         azDiIbFtQIeq5xjEd0TjQAtuA4oFOQW6PCFncWpVCAGxSAyZFfMz4vR5tmfiaBrnZl
-         x+LBs1CGS6YIqKj3gVUp2nfBsYURCU2Z5diwsAYc=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdZYR=5-vf29vYN-gZWRNta3axWNxMTve+hoK_ugkUhcnA@mail.gmail.com>
-References: <CACRpkdZYR=5-vf29vYN-gZWRNta3axWNxMTve+hoK_ugkUhcnA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdZYR=5-vf29vYN-gZWRNta3axWNxMTve+hoK_ugkUhcnA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v5.5-1
-X-PR-Tracked-Commit-Id: ae75b53e08b95cd189879b00f6a47cbdaab1f0eb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dc5fa4656864d3391cdf13512ffa0733ef72fcdc
-Message-Id: <157488031404.21185.17168526599505028774.pr-tracker-bot@kernel.org>
-Date:   Wed, 27 Nov 2019 18:45:14 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+        id S1733175AbfK0VRU convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 16:17:20 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33656 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732942AbfK0VMw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 16:12:52 -0500
+Received: by mail-ot1-f67.google.com with SMTP id q23so14553812otn.0;
+        Wed, 27 Nov 2019 13:12:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cImB892YXUVPGGhFezh816WamO3nmCEALpwjUr8+dkg=;
+        b=RbKyDyUvhoYEyGwnd4XwOAQk91C3qXm5+tXlUAkZ++aa7hlj0RbkYAUoEI3q0TtOFl
+         Fq7aIi7retxQwbC1yQBEbsro9vwRZ4xG2IymiU+sQ+xlqTmcNeF4ijIO+2jPcX1ZXQOj
+         sEMsJEkIyCWVgrEUcBiSNSYdc9hTzOD/23/2n2HiWEyYMxmoOq7hI7A8ZDNMfOfzjsvs
+         kHgys8t+Wp1yim9DQ9x1lK5w8w3ySJCs1Pi7YgWQGN0/axtp7XkscD4oDKYPRPV4cxeL
+         yp7a1jEhw9zvplzZXCL1EskiZtPDzUeUnUvbwWikE73VFfLoFESc1zhB+Mk14VKJPCEk
+         sLaA==
+X-Gm-Message-State: APjAAAVkP6xci/9VL1L5vjfKvYlbddXt1zIGrb1aoB21UbyJzi//TvF1
+        6VYU6a24oNQ0zJQb3jwKJD0wK8EsJNRdHnscZtc=
+X-Google-Smtp-Source: APXvYqxh3g09zK8yoW4/yyNAk1QlyeyoV8wcshHdQWMv3ezyM47GygheulvdavD9PmPbPqN6RamYKOqEfquQDCZNc+o=
+X-Received: by 2002:a9d:17ca:: with SMTP id j68mr5270571otj.250.1574889171373;
+ Wed, 27 Nov 2019 13:12:51 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1574871463.git.nishadkamdar@gmail.com> <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+ <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
+ <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de> <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
+In-Reply-To: <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Nov 2019 22:12:39 +0100
+Message-ID: <CAMuHMdUSSHvQ74c156tuhWShp05TQuSmXa-kY3HNbYj0VL_d4g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
+ License Identifier
+To:     Joe Perches <joe@perches.com>
+Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Nishad Kamdar <nishadkamdar@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Tue, 26 Nov 2019 16:00:55 +0100:
+On Wed, Nov 27, 2019 at 9:59 PM Joe Perches <joe@perches.com> wrote:
+> On Wed, 2019-11-27 at 21:55 +0100, Andreas Färber wrote:
+> > However, if we're touching these lines anyway, shouldn't we be updating
+> > the SPDX Identifier to GPL-2.0-only while at it?
+>
+> Probably better to do that with a treewide script one day.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.5-1
+Yeah... But it's already more than one year after
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dc5fa4656864d3391cdf13512ffa0733ef72fcdc
+> https://lkml.org/lkml/2018/8/16/487
 
-Thank you!
+and Documentation/process/license-rules.rst (which is the authoritive
+rule?) still hasn't been updated...
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
