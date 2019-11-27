@@ -2,117 +2,92 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EACC432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 07:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F69C432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 07:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B9D204FD
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 07:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A7042073F
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 07:58:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="S/SdAfsN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="objLnNse"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbfK0H3Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 02:29:24 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43350 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfK0H3X (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 02:29:23 -0500
-Received: by mail-ot1-f68.google.com with SMTP id l14so18256304oti.10
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2019 23:29:23 -0800 (PST)
+        id S1726281AbfK0H6e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 02:58:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41198 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbfK0H6e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 02:58:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id m4so23300123ljj.8
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Nov 2019 23:58:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=u8oUQFRZy3gf3+1yf0zkKS6+wd9DrvcbQ832mANUPWo=;
-        b=S/SdAfsNtNo4n8om7tQ8ej8pWPma3kUq5jV16c0NRtI0d+7+cBogG4aHNIEOFRIssG
-         DqNvD128D3m2Dw4hHw/EN5U0fY7Y+9+GVaZ2wbUCqpTFItYtg4m1gXzE3FX9kTacD0KE
-         EzIgZ6gTcM/+yjIjDFAg0X7QxSA48QIcYpxEor2LIp5K7ip6lECTtMlDnVT8s6nRoVp+
-         VxhuDmKkPxn3I7TnYd6R+VAn8Byx2sKZrpIKL570sT3n5WZFSaQVFQHvgbcQq0cs1w9V
-         +idjzBgwlDMcXNa06M1IXARDreMzmjRFdZ6blxE8OrCksjV71MpuuONorciuI3YLPWrM
-         CG6A==
+         :cc;
+        bh=bbcrs/kI0pTK9FOJP+Wv13rPCiF+hN+1C4Agw6T2rIU=;
+        b=objLnNseuznC0txiinrwy8QyrEZ7UyuUmwPV5oF+NR+gEsYfrAO9zBx4pXg3v02RzZ
+         66UzhBrJ4DhcGoHcDweZQR+pXwfUft7Y/5oXtR9jKLVACnNWPl6wRNPKcTRb+M4oSADb
+         hiCUuDJ3UTk5a5VtPSAYiV74J/W2qqcsFC+uClQvY7supDZ0zRvwRHWbHu2xjiOZN03K
+         e+XcZNPaJHI7ykrJwuWsLLicrxelKYjFioS+0cIW1Zsffhp+EpDOUud2r9nL4a9tQ5x2
+         Z26EfqUe/52WwFLQgEjxn71xn4bT3SIyxINqbkDXay/Gm0xxjAiaQ0499fIsMAQ5XffC
+         HBSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=u8oUQFRZy3gf3+1yf0zkKS6+wd9DrvcbQ832mANUPWo=;
-        b=OMT508USpDu8k4P1uU1FcDCESBKCaunnx65zP0xmAKgJnixGkAfcpDkp4erYslRf25
-         G85E6ax9qNoe6ADgQrhtRUX4eZezqkV8WH5O3aZi+RyOEzFMFUwDUXxpTlPs7IH6TvU3
-         jusBIvQJBLu7ZnRuzX3dGSX0VK+eK0gTcR4IWXP3UsfWxDwX/JavA98tRsI3ZwbwDYx3
-         3xwmWA9Qz07FXauuippR1O/2hbn6xfHu+8jSRPHZ80OA0wp8XA5933GizQJnx/pe85f6
-         rjRE0V0+JL92qekoXKCMHx7X+zdPRm3E6XWMx8EnhGMRyMP1X+SvpPEx5xJ2h9G+nuDh
-         7rUg==
-X-Gm-Message-State: APjAAAV09SixYB0lmiDBO8gRgzfn7IRAQ49JhegpAT/rYCtkeooXHF42
-        JeIxTtWebb/F6yd3FrFdM1cb6ULIcp4d3YVIm0Gdqw==
-X-Google-Smtp-Source: APXvYqwUJpU+ywaP4+HdQDqIrP53KyP5oXj3UgopnsUkAWzWQFz8KbbiHHCui0ide4gn0Mof0rjjgxah85RHCbxbzM8=
-X-Received: by 2002:a9d:65cd:: with SMTP id z13mr2544801oth.85.1574839762873;
- Tue, 26 Nov 2019 23:29:22 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=bbcrs/kI0pTK9FOJP+Wv13rPCiF+hN+1C4Agw6T2rIU=;
+        b=CMWEA8/nQU6K86fulFoWWT1e2E383AgKkr2+jDyImwk+rQ8Xwx3GXAxllXKVmPX741
+         +4TMfOb9e1cvhwFRPKV2vXekQBgnMWVvfnw2JcIL+uVj1HPreQaSB1PUt2BnOlJIxi4s
+         AVU7azQxRHWRgFH8N0cgu4Gw2IGeJbYW9IGX0g/NIqIVWoJHCCVtIW7qdE1mnHtVWt/3
+         0OuEuxnrMTx9ZHFGmadR2E+Q6qUEO3OHB9sitwgHvsNR9U5lviJN74NeT8jSHO1JJTlt
+         +xMB9Gh+MmOQrKHweBLmKxDXHbU91gfWfKiQjJajwAMvIPqSHX15QrjqghtD5vKEhQPX
+         xzuw==
+X-Gm-Message-State: APjAAAUe8AEt5NT9OUfmVrdwFatFDbax6HzNON0v2HIJcEg6iValHMB4
+        zjMDraqaJS4viEs5NsTKKXHZWTgr5ikQwawoBxuPNA==
+X-Google-Smtp-Source: APXvYqwXokp6S08/9H2q2tiKF4c70CagV2hXIPK2TWYczw+i5IFfpgrIPZDP3kFvcpNvJhRVZ4WRkmYWwtH3POwkE5w=
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr17213389ljm.218.1574841510592;
+ Tue, 26 Nov 2019 23:58:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20191126193027.11970-1-jcmvbkbc@gmail.com>
-In-Reply-To: <20191126193027.11970-1-jcmvbkbc@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 27 Nov 2019 08:29:12 +0100
-Message-ID: <CAMpxmJV6qCGWKadeDyJLqCDtZ3zFBQAZ0yZuWkYiy3ZqWUFGiA@mail.gmail.com>
-Subject: Re: [PATCH] drivers/gpio/gpio-xtensa: fix driver build
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     linux-xtensa@linux-xtensa.org, Chris Zankel <chris@zankel.net>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Baruch Siach <baruch@tkos.co.il>,
-        "Stable # 4 . 20+" <stable@vger.kernel.org>
+References: <CGME20191121072643epcas2p452071a503725c7764acf5084d24425b1@epcas2p4.samsung.com>
+ <001001d5a03d$05de1f70$119a5e50$@samsung.com> <CAJKOXPckbRowhCmnJfT8-DT3gYaTpDOf0wVxmxdf-tZpOyM5ew@mail.gmail.com>
+ <028901d5a3f6$e2d72310$a8856930$@samsung.com>
+In-Reply-To: <028901d5a3f6$e2d72310$a8856930$@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 27 Nov 2019 08:58:18 +0100
+Message-ID: <CACRpkdbX-RQY+0Sa6x3BFeovNb3vSkTTnZjcXDDFEyDQWms6zg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: modularize samsung pinctrl driver
+To:     Hyunki Koo <hyunki00.koo@samsung.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 26 lis 2019 o 20:30 Max Filippov <jcmvbkbc@gmail.com> napisa=C5=82(a):
->
-> Commit cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr") removed
-> {RSR,WSR}_CPENABLE from xtensa code, but did not fix up all users,
-> breaking gpio-xtensa driver build.
-> Update gpio-xtensa to use new xtensa_{get,set}_sr API.
->
-> Cc: stable@vger.kernel.org # v5.0+
-> Fixes: cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr")
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-> ---
->  drivers/gpio/gpio-xtensa.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
-> index 43d3fa5f511a..0fb2211f9573 100644
-> --- a/drivers/gpio/gpio-xtensa.c
-> +++ b/drivers/gpio/gpio-xtensa.c
-> @@ -44,15 +44,14 @@ static inline unsigned long enable_cp(unsigned long *=
-cpenable)
->         unsigned long flags;
->
->         local_irq_save(flags);
-> -       RSR_CPENABLE(*cpenable);
-> -       WSR_CPENABLE(*cpenable | BIT(XCHAL_CP_ID_XTIOP));
-> -
-> +       *cpenable =3D xtensa_get_sr(cpenable);
-> +       xtensa_set_sr(*cpenable | BIT(XCHAL_CP_ID_XTIOP), cpenable);
->         return flags;
->  }
->
->  static inline void disable_cp(unsigned long flags, unsigned long cpenabl=
-e)
->  {
-> -       WSR_CPENABLE(cpenable);
-> +       xtensa_set_sr(cpenable, cpenable);
->         local_irq_restore(flags);
->  }
->
-> --
-> 2.20.1
->
+On Tue, Nov 26, 2019 at 2:14 AM Hyunki Koo <hyunki00.koo@samsung.com> wrote:
 
-Patch applied, thanks!
+> I would like to apply GKI on the pinctrl driver
+> So I would like to cut off dependency from ARCH_EXYNOS.
 
-Bart
+If the pins need to be configured for the system to boot that needs
+to be in the big kernel image anyway. And then it should be bool.
+
+Example: to mount the root filesystem on external flash pin
+configuration needs to happen.
+
+There is a slight paradigm shift sometimes: in distribution
+kernels it might be required that necessary modules are
+included in an initramfs attached to the kernel. I do not know
+if we want to encourage that type of configuration for embedded
+ARM.
+
+Yours,
+Linus Walleij
