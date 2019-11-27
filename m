@@ -2,69 +2,66 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C2C432C3
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0BFC432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76ECF2068E
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A6B2068E
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zufUBsJm"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JBqmckjB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfK0NfZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 08:35:25 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54990 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbfK0NfY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:24 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so7101608wmj.4
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:22 -0800 (PST)
+        id S1727050AbfK0NfX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 08:35:23 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35474 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfK0NfX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:23 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n5so7526101wmc.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jMGWdghs7WZhxPpptxQGrZdPfirAzMk9gNZC1ILuwUo=;
-        b=zufUBsJmnKFAgWNU55JroU36UiAZtzn5inpDMPCItaMQMgP1jXvY45bkDH9oJzp4Uf
-         Q9wy54HQxm+xwcUJQ+pu0HrvnlahGLmUobv1C3MJZujIwX6g5yigboxCM6PnAG+LiW+M
-         k8n5nwEFhLeHvHQIgkguYxI3tyPb79O3skASJ+Ht4gscaTuonaRyjEuWAOISKeX20HLx
-         5zzbtWlDY6TqBBOzMXPq1QZhP6gGaG+VKqZ+NFv8rEEAMREmPe6rX/zoL5z6YO0dEfuk
-         6XPBhUWWxfNmAW4wIOHLrfgaubQOQwpOziG/Zd14/vIUi8LBc8d8SpYOF7aZqr/UpSiG
-         3akg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ycif2CI2BztFtL8UjZ1dZuqTWMkeyaIvGznAKKh93ok=;
+        b=JBqmckjBRNdk5FeGal9TmbFsNCpz0NQ07G92pUX8JiEGLCSEy9SUBoCFcLagnyNaGz
+         ejT2+uTlCAzCSwAS6f9Ue/oo9luJhEGTSQcBDD0cRztEOymhK9w2rmtlW11M0LQ9Tg60
+         sBPxMu0ELDbhLcWEnxJ9R4GphjlfUwDNoAcVggdcRLneL32yQMp86XQPuJCO/0doD+K0
+         iFZY+VuZ+VUR5yuIxyJ3sV6Jp0I1kdAKl+umtQWOgmv9ZGFwfzjn1vYbBupjVBPvGusx
+         npweITC1Coe8/o3vegVcHXs4JC9z77WtGpqUvGYqN4drI5J2aBVKrBXg4lYAluz3Kiux
+         5WXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jMGWdghs7WZhxPpptxQGrZdPfirAzMk9gNZC1ILuwUo=;
-        b=Gi/N+PONGqZZKvpyr+B3DVq4gTRB4N7TYw2qp+9nIjyI5n5rNVOUHND7zkMbVcOht7
-         mpBHHyb253dUXqrHNKl26gtm/fi8VSVxjuxEqZtda7xpqnBLlZUkdgsQt6rV21zVvoLy
-         fUehm/1usPOeUVXjZfsYZGiO10J3JYNn79F2CLcwALi+f3Rw+gwAQENGPVHRGV3J17wH
-         7TDwHSAwsnp7OBkI/f1lwG0rng333b8/T0ExKAw91MjWcJJB1gj4BvojAQu9sJEpMjBK
-         zjmZRaoSh4kdAicUHUJ0tPH5fkYuSU86bON0Lj7MzyfqUBvsvx7wmE43JdSekgQuejtu
-         1Iuw==
-X-Gm-Message-State: APjAAAVxJgV3cT9zZHldacDnf/e3Q5aro06jQ+PhoO7tBL/avUCaVK/X
-        5SwVFKQtehFq4sbjaXV1mPZ2lg==
-X-Google-Smtp-Source: APXvYqxyVgDbg/QQsqwSOz+dkHv/xHkBjG0vMayFRkDCiatdPitUxQ1agp0E6/MyQR1tCEeoSgAJTg==
-X-Received: by 2002:a1c:a5c8:: with SMTP id o191mr4315729wme.168.1574861722096;
-        Wed, 27 Nov 2019 05:35:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ycif2CI2BztFtL8UjZ1dZuqTWMkeyaIvGznAKKh93ok=;
+        b=aMqci4FjZUXcwZd7OQPpOdreKbMklNRJZxEFV7f93Kq4w8iKgovQBQgU/bq5gIcHal
+         2IFfepeky5ztErZS8pS1ZDkdsGYfpwO314kRPLytd/mFL0/5vobVx8gJdQTu2zq2UDXJ
+         iazO3wjB1qMg9+VF5sk//iELYSeyA66pGdp0au3goGhWfnREzrz7KPm8UEKNEbEv5pth
+         rPkT/1OxcUZ995qPNqqp3vjOOY42aKRbRVMqzkxe9RmJgGdNE8gxyrCWS8kq9Vd/04p2
+         3VztWD+nlWvB5NvfqpkxUGDUJY+Ray8paw0FaEzi+2MsF8xfsi4GlVE2kEZnnGjQyx27
+         4wTw==
+X-Gm-Message-State: APjAAAX7TIgs0+CX/VeAMVFMt1ribSh/VYa+fAiJj3OCowWaS7Fgq9RT
+        2qkk6HYTZc5pdKA8Gc9W5t7bOw==
+X-Google-Smtp-Source: APXvYqwixrHU5vJWZ49Nf+cjthWYO6mEubiUz2VlE2tDjz1h9vw98C3OFD9qZlH8Ue/mo+S6xA6iKA==
+X-Received: by 2002:a1c:39c2:: with SMTP id g185mr4345040wma.88.1574861720171;
+        Wed, 27 Nov 2019 05:35:20 -0800 (PST)
 Received: from debian-brgl.home (lfbn-1-7087-108.w90-116.abo.wanadoo.fr. [90.116.255.108])
-        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.21
+        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 05:35:21 -0800 (PST)
+        Wed, 27 Nov 2019 05:35:19 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/8] gpiolib: have a single place of calling set_config()
-Date:   Wed, 27 Nov 2019 14:35:04 +0100
-Message-Id: <20191127133510.10614-3-brgl@bgdev.pl>
+Subject: [PATCH 0/8] gpiolib: add an ioctl() for monitoring line status changes
+Date:   Wed, 27 Nov 2019 14:35:02 +0100
+Message-Id: <20191127133510.10614-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191127133510.10614-1-brgl@bgdev.pl>
-References: <20191127133510.10614-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -74,72 +71,45 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Instead of calling the gpiochip's set_config() callback directly and
-checking its existence every time - just add a new routine that performs
-this check internally. Call it in gpio_set_config() and
-gpiod_set_transitory(). Also call it in gpiod_set_debounce() and drop
-the check for chip->set() as it's irrelevant to this config option.
+When discussing the recent user-space changes with Kent and while working
+on dbus API for libgpiod I noticed that we really don't have any way of
+keeping the line info synchronized between the kernel and user-space
+processes. We can of course periodically re-read the line information or
+even do it every time we want to read a property but this isn't optimal.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpiolib.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+This series adds a new ioctl() that allows user-space to retrieve a
+file-descriptor which can then be polled for events emitted by the kernel
+when the line is requested, released or its status changed. This of course
+doesn't require the line to be requested. Multiple user-space processes
+can watch the same lines.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a31797fe78fa..72211407469f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3042,6 +3042,15 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
-  * rely on gpio_request() having been called beforehand.
-  */
- 
-+static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
-+			      enum pin_config_param mode)
-+{
-+	if (!gc->set_config)
-+		return -ENOTSUPP;
-+
-+	return gc->set_config(gc, offset, mode);
-+}
-+
- static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 			   enum pin_config_param mode)
- {
-@@ -3060,7 +3069,7 @@ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	}
- 
- 	config = PIN_CONF_PACKED(mode, arg);
--	return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
-+	return gpio_do_set_config(gc, offset, mode);
- }
- 
- static int gpio_set_bias(struct gpio_chip *chip, struct gpio_desc *desc)
-@@ -3294,15 +3303,9 @@ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- 
- 	VALIDATE_DESC(desc);
- 	chip = desc->gdev->chip;
--	if (!chip->set || !chip->set_config) {
--		gpiod_dbg(desc,
--			  "%s: missing set() or set_config() operations\n",
--			  __func__);
--		return -ENOTSUPP;
--	}
- 
- 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
--	return chip->set_config(chip, gpio_chip_hwgpio(desc), config);
-+	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_debounce);
- 
-@@ -3339,7 +3342,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
- 	packed = pinconf_to_config_packed(PIN_CONFIG_PERSIST_STATE,
- 					  !transitory);
- 	gpio = gpio_chip_hwgpio(desc);
--	rc = chip->set_config(chip, gpio, packed);
-+	rc = gpio_do_set_config(chip, gpio, packed);
- 	if (rc == -ENOTSUPP) {
- 		dev_dbg(&desc->gdev->dev, "Persistence not supported for GPIO %d\n",
- 				gpio);
+The first couple patches just fix some issues I noticed when implementing
+the new interface. Patch 7/8 provides the actual ioctl() implementation
+while patch 8/8 adds a simple user-space program to tools that can be used
+to watch the line info changes.
+
+Bartosz Golaszewski (8):
+  gpiolib: use 'unsigned int' instead of 'unsigned' in gpio_set_config()
+  gpiolib: have a single place of calling set_config()
+  gpiolib: convert the type of hwnum to unsigned int in
+    gpiochip_get_desc()
+  gpiolib: use gpiochip_get_desc() in linehandle_create()
+  gpiolib: use gpiochip_get_desc() in lineevent_create()
+  gpiolib: actually protect the line event kfifo with mutex
+  gpiolib: add new ioctl() for monitoring changes in line info
+  tools: gpio: implement gpio-watch
+
+ drivers/gpio/gpiolib.c      | 267 +++++++++++++++++++++++++++++++++---
+ drivers/gpio/gpiolib.h      |   4 +-
+ include/linux/gpio/driver.h |   3 +-
+ include/uapi/linux/gpio.h   |  36 +++++
+ tools/gpio/.gitignore       |   1 +
+ tools/gpio/Build            |   1 +
+ tools/gpio/Makefile         |  11 +-
+ tools/gpio/gpio-watch.c     | 114 +++++++++++++++
+ 8 files changed, 415 insertions(+), 22 deletions(-)
+ create mode 100644 tools/gpio/gpio-watch.c
+
 -- 
 2.23.0
 
