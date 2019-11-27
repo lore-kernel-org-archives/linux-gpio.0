@@ -2,104 +2,167 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27FDC432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 08:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC59C43215
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 08:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A688020684
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 08:26:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QZKjuOH8"
+	by mail.kernel.org (Postfix) with ESMTP id 291402084B
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 08:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbfK0I00 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 03:26:26 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42996 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbfK0I00 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 03:26:26 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n5so23396445ljc.9
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 00:26:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EtlRW7Zv5WKr6zMoDEd4iR5nTnfjs8gcond8279/uso=;
-        b=QZKjuOH8L91oMw8/x7vKUMLPdQtpLsV5zsZPR0IYNcqCjAHp48gDX95W9i/wNdgZ8V
-         FQSxbSdJUOSgrVE8/mt1FVzAK/Vkk/HO57i56yr7yNCR8S1th47E6/RZ6KM8KrXTHR5E
-         aV3AtZz7PuHu9vTfS2UMTuZI0T4JZC/JRgXH/nfek/IWZ3RyV8tczC0Yczl3As+1LHLP
-         BfyFsFDqd7kj/IiGINFzPcDnP2vhCHO5j65kVITVY0HAPI6Ca2vgv2MjLrLIE9zZK3Ch
-         IWaxu07RWI0rpa36SIK79asxwvtGc9ota2cboAbDzrQgVbA7fQWVDgXMr4v+kAKQOtDV
-         jUxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EtlRW7Zv5WKr6zMoDEd4iR5nTnfjs8gcond8279/uso=;
-        b=NufrU9bN1HOM24DQF/it6YmvJ1c0KT/Q6m0whWBx0HCxGy0FVqz8znw6mlgXjXRPLq
-         tHDC6zMao33LDn2dVI+Eg8sYlRwyNv67D70PQWGQfgloVsPoYWalw3TcN2MblahCfpMP
-         9pAEX7/9E6Y1YJVDkyt5PN1KO6+pWoK2Ko4BtdZrT+J87fetEHUmsNZ4kiSkwmOhyzuK
-         Qm/eLT0cjDdBMjm9ZVLQF6hVEc/BVOUnL/rsyKbOYk8Su/pFkxGFxtaiWCTUuUqZleks
-         n+HCZigKdlQhWLDJ3qQBOEMxS3iFaMbX2+KPmKGIU+3zqpHl2vf0dgSo62jEm58oFT6e
-         pSZQ==
-X-Gm-Message-State: APjAAAWSpiW4d7tkpj8DCqoWwTc71IWFJAneyvSS4v/Z3aIGOWg9OfBc
-        GObfxPE0+T3t53/beBzksLVEMp63PwNmAIrKIZVvhg==
-X-Google-Smtp-Source: APXvYqxXGQ2RA0UrDyenqWCR2MPe2w1V9LQ+O26pNg03ZAW5VOPpyvVm+WNSb2zDi8QrExFP6UmyToP9pnQGAyfCZo8=
-X-Received: by 2002:a2e:9699:: with SMTP id q25mr29840309lji.251.1574843183092;
- Wed, 27 Nov 2019 00:26:23 -0800 (PST)
-MIME-Version: 1.0
-References: <e9981d69-2a33-fec9-7d12-15fcb948364d@c-s.fr> <CACRpkdYLEibwyK_BGO3gsJ_aQFWZNJCky-GezHVmHfRSzD2zBg@mail.gmail.com>
- <1efb797c-e3c1-25a4-0e81-78b5bbadb355@c-s.fr> <CACRpkdYUBj+45Jr94kdERKJogVoL96JH6i85o_bVUtjmkTt19g@mail.gmail.com>
- <3c79a8b9-65e4-bfc9-d718-b8530fe1e672@c-s.fr> <b06679da-0332-2322-13f8-07307f611542@c-s.fr>
-In-Reply-To: <b06679da-0332-2322-13f8-07307f611542@c-s.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 27 Nov 2019 09:26:11 +0100
-Message-ID: <CACRpkdbOzM3X2_BMnf5eSqCt_UsnXo4eXD2fUbTLk6=Uo3gB2g@mail.gmail.com>
-Subject: Re: Boot failure with 5.4-rc5, bisected to 0f0581b24bd0 ("spi: fsl:
- Convert to use CS GPIO descriptors")
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linux-spi <linux-spi@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726876AbfK0InJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 03:43:09 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:48454 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfK0InJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 03:43:09 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id Wwiu2100X5USYZQ01wiuc6; Wed, 27 Nov 2019 09:43:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZsuU-0000xl-Oj; Wed, 27 Nov 2019 09:42:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZsuU-0004Or-Ld; Wed, 27 Nov 2019 09:42:54 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/7] dt-bindings: gpio: Add gpio-repeater bindings
+Date:   Wed, 27 Nov 2019 09:42:50 +0100
+Message-Id: <20191127084253.16356-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191127084253.16356-1-geert+renesas@glider.be>
+References: <20191127084253.16356-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 8:14 PM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
+Add Device Tree bindings for a GPIO repeater, with optional translation
+of physical signal properties.  This is useful for describing explicitly
+the presence of e.g. an inverter on a GPIO line, and was inspired by the
+non-YAML gpio-inverter bindings by Harish Jenny K N
+<harish_kandiga@mentor.com>[1].
 
-> > Digging a bit further, I see that devm_spi_register_master() fails in
-> > spi_register_controler() because ctlr->num_chipselect is 0
+Note that this is different from a GPIO Nexus Node[2], which cannot do
+physical signal property translation.
 
-Aha, I see what the problem is I think. The old code for mpc8xxx had this:
+While an inverter can be described implicitly by exchanging the
+GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags, this has its limitations.
+Each GPIO line has only a single GPIO_ACTIVE_* flag, but applies to both
+th provider and consumer sides:
+  1. The GPIO provider (controller) looks at the flags to know the
+     polarity, so it can translate between logical (active/not active)
+     and physical (high/low) signal levels.
+  2. While the signal polarity is usually fixed on the GPIO consumer
+     side (e.g. an LED is tied to either the supply voltage or GND),
+     it may be configurable on some devices, and both sides need to
+     agree.  Hence the GPIO_ACTIVE_* flag as seen by the consumer must
+     match the actual polarity.
+     There exists a similar issue with interrupt flags, where both the
+     interrupt controller and the device generating the interrupt need
+     to agree, which breaks in the presence of a physical inverter not
+     described in DT (see e.g. [3]).
 
-       ngpios = of_gpio_count(np);
-       ngpios = max(ngpios, 0);
-       if (ngpios == 0 && !spisel_boot) {
-               /*
-                * SPI w/o chip-select line. One SPI device is still permitted
-                * though.
-                */
-               pdata->max_chipselect = 1;
-               return 0;
-       }
-(...)
-      master->num_chipselect = pdata->max_chipselect;
+[1] "[PATCH V4 2/2] gpio: inverter: document the inverter bindings"
+    https://lore.kernel.org/linux-gpio/1561699236-18620-3-git-send-email-harish_kandiga@mentor.com/
 
-But the new code in the core has this:
+[2] Devicetree Specification v0.3-rc2, Section 2.5
+    https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.3-rc2
 
-    nb = gpiod_count(dev, "cs");
-    ctlr->num_chipselect = max_t(int, nb, ctlr->num_chipselect);
+[3] "[PATCH] wlcore/wl18xx: Add invert-irq OF property for physically
+    inverted IRQ"
+    https://lore.kernel.org/linux-renesas-soc/20190607172958.20745-1-erosca@de.adit-jv.com/
 
-So it relied on inspecting the device tree and set  this to 1
-if it didn't find anything.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ .../bindings/gpio/gpio-repeater.yaml          | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
 
-I will send a patch to test!
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml b/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
+new file mode 100644
+index 0000000000000000..efdee0c3be43f731
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-repeater.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: GPIO Repeater
++
++maintainers:
++  - Harish Jenny K N <harish_kandiga@mentor.com>
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++
++description:
++  This represents a repeater for one or more GPIOs, possibly including physical
++  signal property translation (e.g. polarity inversion).
++
++properties:
++  compatible:
++    const: gpio-repeater
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++  gpios:
++    description:
++      Phandle and specifier, one for each repeated GPIO.
++
++  gpio-line-names:
++    description:
++      Strings defining the names of the GPIO lines going out of the GPIO
++      controller.
++
++required:
++  - compatible
++  - "#gpio-cells"
++  - gpio-controller
++  - gpios
++
++additionalProperties: false
++
++examples:
++  # Device node describing a polarity inverter for a single GPIO
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    inverter: gpio-repeater {
++        compatible = "gpio-repeater";
++        #gpio-cells = <2>;
++        gpio-controller;
++        gpios = <&gpio 95 GPIO_ACTIVE_LOW>;
++    };
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
