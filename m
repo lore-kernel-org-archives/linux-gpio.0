@@ -2,40 +2,50 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B509C432C3
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44661C432C3
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4FC20715
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2095C20870
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730973AbfK0VdK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 16:33:10 -0500
-Received: from smtprelay0241.hostedemail.com ([216.40.44.241]:54075 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730628AbfK0VdK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:33:10 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 49DF1180020E4;
-        Wed, 27 Nov 2019 21:33:08 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: cows61_381bf37cb8f3e
-X-Filterd-Recvd-Size: 2684
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 27 Nov 2019 21:33:05 +0000 (UTC)
-Message-ID: <b2cbe247a33dd9f6c747fce180f964b88d5dc70a.camel@perches.com>
+        id S1728685AbfK0VoD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 16:44:03 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35451 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbfK0Uh7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 15:37:59 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 23so18544059otf.2;
+        Wed, 27 Nov 2019 12:37:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=14vyCpwlco5dNMekZ671HzsQ/qD/jZMl32Sz5ULoC/U=;
+        b=EXzhuoyV1OLRcuwocYrAZ7FKZEIUjtjNrYygi24X9SokyLEPz0XRMvGUmsXzJHPEsm
+         HEjGyocRwmBgOCv3NqKYx1IVM9tRQsIdHEPjm05IQVIfhAkknunCKokl0v8sHdzSl2cJ
+         qkQhhvTLVPe5s3bAlhaeh/sL21g84jTENGy/B4ISDhpZHxsnODQ2vMbdu3b8L0iseCsh
+         4zTwpXFXwAoUA+iEQHJJpAaCPZROsJuvBlOo65Nkn/9NhUoKvK7dmge+9j+OL+oL1vzI
+         Jn8v5fVJX7HNWSFy+XmU4Q07pNCriIeqUft32P+RN3GpoVmRCMLFFQI2InxLvvTiYFZl
+         DHTQ==
+X-Gm-Message-State: APjAAAUU9SGfpxDvmtC2lMC/+uldHntpWEgb3fvdJW3lrFGeUqHPEwW/
+        uP1to04+2EeUB1p0oLSN9rxkPgRIlohy+5nhEcU=
+X-Google-Smtp-Source: APXvYqyekyFnyyTzxDAaVF4lh76x3pVg0AJcETDtG/R5UDB8kyib7ugeAakdgVvr7ZJMAAkTJwIUv0P5kqimosEUmPw=
+X-Received: by 2002:a9d:2073:: with SMTP id n106mr5117337ota.145.1574887078997;
+ Wed, 27 Nov 2019 12:37:58 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1574871463.git.nishadkamdar@gmail.com> <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+In-Reply-To: <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Nov 2019 21:37:47 +0100
+Message-ID: <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
 Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
  License Identifier
-From:   Joe Perches <joe@perches.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Nishad Kamdar <nishadkamdar@gmail.com>,
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -45,47 +55,75 @@ Cc:     Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        Joe Perches <joe@perches.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-mediatek@lists.infradead.org,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 27 Nov 2019 13:32:39 -0800
-In-Reply-To: <CAMuHMdUSSHvQ74c156tuhWShp05TQuSmXa-kY3HNbYj0VL_d4g@mail.gmail.com>
-References: <cover.1574871463.git.nishadkamdar@gmail.com>
-         <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
-         <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
-         <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de>
-         <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
-         <CAMuHMdUSSHvQ74c156tuhWShp05TQuSmXa-kY3HNbYj0VL_d4g@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 2019-11-27 at 22:12 +0100, Geert Uytterhoeven wrote:
-> On Wed, Nov 27, 2019 at 9:59 PM Joe Perches <joe@perches.com> wrote:
-> > On Wed, 2019-11-27 at 21:55 +0100, Andreas Färber wrote:
-> > > However, if we're touching these lines anyway, shouldn't we be updating
-> > > the SPDX Identifier to GPL-2.0-only while at it?
-> > 
-> > Probably better to do that with a treewide script one day.
-> 
-> Yeah... But it's already more than one year after
-> 
-> > https://lkml.org/lkml/2018/8/16/487
-> 
-> and Documentation/process/license-rules.rst (which is the authoritive
-> rule?) still hasn't been updated...
+Hi Nishad,
 
-The patch still applies today...
+On Wed, Nov 27, 2019 at 5:46 PM Nishad Kamdar <nishadkamdar@gmail.com> wrote:
+> This patch corrects the SPDX License Identifier style in
+> header files related to Reneses Soc pinctrl driver.
+> It assigns explicit block comment for the SPDX License Identifier.
 
+Is it incorrect to not have an explicit block comment?
+Other recommendations have been to integrate the SPDX comment line
+into an existing comment header, if it exists....
 
+> Changes made by using a script provided by Joe Perches here:
+> https://lkml.org/lkml/2019/2/7/46.
+>
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> ---
+>  drivers/pinctrl/sh-pfc/core.h   | 4 ++--
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+> index b5b1d163e98a..5ad0ab8f9e14 100644
+> --- a/drivers/pinctrl/sh-pfc/core.h
+> +++ b/drivers/pinctrl/sh-pfc/core.h
+> @@ -1,5 +1,5 @@
+> -/* SPDX-License-Identifier: GPL-2.0
+> - *
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+>   * SuperH Pin Function Controller support.
+>   *
+>   * Copyright (C) 2012  Renesas Solutions Corp.
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> index 640d2a4cb838..fff9cbb7a0f8 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -1,5 +1,5 @@
+> -/* SPDX-License-Identifier: GPL-2.0
+> - *
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+>   * SuperH Pin Function Controller Support
+>   *
+>   * Copyright (c) 2008 Magnus Damm
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
