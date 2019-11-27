@@ -2,124 +2,149 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336D6C432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 10:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39A3C432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 11:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041072073F
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 10:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BAE420722
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 11:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="np33cXFu"
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="XHYFv6CQ";
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="b4SmBPKr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbfK0KzZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 05:55:25 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40719 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfK0KzZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 05:55:25 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y5so4066148lfy.7
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 02:55:24 -0800 (PST)
+        id S1726618AbfK0LnN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 06:43:13 -0500
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:34360 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726204AbfK0LnN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 27 Nov 2019 06:43:13 -0500
+X-Greylist: delayed 1374 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 06:43:11 EST
+Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
+        by mx07-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARBDleu016837
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 11:20:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=to : from :
+ subject : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=pp;
+ bh=HWa4Ar68jue3ZLWqjhAUXTG8w/wCmDFzSDy5Ki6zBr4=;
+ b=XHYFv6CQM0C2vG+BYJit3EtvUxyvL19iwBqIjweBlnK0ht0wQjgotpDcWlwPjwoJ/0G8
+ bb4vGIrGfC4ZFA8oL+b2Yb348Lyxp4F0u9DtWH84QlxVcnniaiEefdV5YLqOWRQzcJ6f
+ MH2l5FDxwhoNjlR4yiMVmJpmErRvAfw4iWcDOCuoTLJ9A3/Ulol1UxXSD11d8vBuxEmY
+ VyMCTxQARb8O27uHVa0mnSdnr1nhupaAyrIFaQ1OVBYZASgDunzsdgmEvusqcnTJZ7zO
+ gr1hNeagEbs5PLRC4cGAVEblW5Itnn7eM7riCtqlwpUdzzGPz+V0oTETAGWlk669/13J jA== 
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        by mx07-00252a01.pphosted.com with ESMTP id 2whd1tgbug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 11:20:15 +0000
+Received: by mail-wm1-f71.google.com with SMTP id o135so2377085wme.2
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 03:20:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jW/pZi/y7a7Ae7GsA2SiR3pv/ZpPmeNnnKBaKGvs4nQ=;
-        b=np33cXFuYCi7Ag+hHFaFtO8V12ydTEIpVr7AwOxdpDamhr66FZEHogbPxaY2lMHkN+
-         xRz1LgFIspcU1kM1iolo0TADGEVZN+2yg4XMCQ+m2Dq/AGhcb2vmvotCkdg0J10h25Wc
-         H45HfRSnu/tA3baBINT5U9E8f43ROd8AbWaWecPGDprWFF5EjfzklVi2qA/md/NVlsFd
-         Nvij3sCckbD6jm9STKjKPPOGwrnScXLbFqdP1OX0j2lbh8T3dfRNrB7RpctqDyn6Ri3R
-         Qe22NKeKIZkXbR0WIBPDf8/o8JuGTmxTi59lwk81z9MYGp69Zpg4boqIZTQvSIImmCv8
-         ReTA==
+        d=raspberrypi.org; s=google;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=HWa4Ar68jue3ZLWqjhAUXTG8w/wCmDFzSDy5Ki6zBr4=;
+        b=b4SmBPKr071hqep58I6CGdjqFmHr7d+Zb3xnPUMMRxPy8NqCP6sA2HJV6QNIRwlTHo
+         hSBFSlkxhEK0AxulPEAdFfrTCql353UsSPf+l1G9P3qRaZMJXe3UrcQEPmD1mSVNP9BX
+         UAVt8piw38dSQkkxGW7wMuLfgqTDmwvaNSdjOsJbbrtI5YDbhSVbdeGuKooaKsIo5WD+
+         pCD+nnpTITtciBX60qn65N0ngTpxdSv3nmNOc4nZa3PzmeOVQVEq2Ch7E9Ax3uBfTRVM
+         T7gvNhbt/egEybRUtEH158f1O8wfxXWC4Ulciib1AHSWmpGLZAm5qA9e46s2qtSXc4Or
+         nkXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jW/pZi/y7a7Ae7GsA2SiR3pv/ZpPmeNnnKBaKGvs4nQ=;
-        b=GEphj+fQMpkZF2I0hCcOS0//SW8hZf+H84Ji4brVwWvRcU/qTpmMoHODZnJxs6opv9
-         G5gaxT0YSh6LNGdhabtG3v+ifyjyx/mHbqVrEEhBwPG05YNqfotC9HDTRbnYY9f8D72J
-         tkts0TLPv5FjLxS9xv4XO6QJEtXyCiVV5wSj3JR0GiDRC8zfROM/nY5tYo8HrYkSQq7G
-         sF+zHB2Y6JqJACmfJfxXKs2avdVdKABPpO92qnB6LydWlc/vOzmpxfv1NRa3hUJAtHRR
-         qOG+HHF0WBi5vLicPRtyB82tR4XZUhpjcm2p1aMDoHs2cuCRVt8ck73rYXfN7pmp5cUz
-         AgnA==
-X-Gm-Message-State: APjAAAUDqBcPfNNuh3nqlz/WPw0Je9Ls25Ni5xv0TObhQA3rGXNVhvrN
-        8b9ERmJCtkxqkTBYcGLyNOq/hYrXfHQIMtYigmezrg==
-X-Google-Smtp-Source: APXvYqxSDzlsMjH492pTspJWX8yOEHID6Rg4E3k5Lzb9nw7VmCsZKMc81+9VysxjWAsiWF2Zgvf+PB4pP4qhtUsZ9NQ=
-X-Received: by 2002:ac2:4945:: with SMTP id o5mr27663867lfi.93.1574852123515;
- Wed, 27 Nov 2019 02:55:23 -0800 (PST)
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=HWa4Ar68jue3ZLWqjhAUXTG8w/wCmDFzSDy5Ki6zBr4=;
+        b=qtQLEwk+Ctv0iaIzGdxafrm50YNIVva96TDaR9lvyqZvd8dF5+hLdbgu65SWDOpg9O
+         2t9pL9mwtGwTFanm8eNl6RJCRklUCgONT1+2aR208z2v28V7trmoeGkbT2wFEV/HK55a
+         1eZsI5z40XfDil32uhJFlBSIAWpqVIGzQ3luParHkON4ukITY/yrEgTKQPMUYg4ZHeEC
+         gb8W5DmVm14RtepxgpSKjnd4z18XGr+knQN0JzvbjgPqLyJQrnL7b0ucCWLr+MxRK2EO
+         Xbu4Y/Eu3aVX3OEi8ELFgUWOYNtungZ10NRe2UmYcL/6MCg45rdwY5kxqmX16q4PagKd
+         EP2Q==
+X-Gm-Message-State: APjAAAXryplOlX+whQ/Q+T8MNYzAHozQ9ahvT3iiDIwtFclhPnPfdiql
+        4jA/SiUu3DRyvAVLn6Kn54IAEtC0yU1aM3trYDWr3LWqq10Kl6x5oi803ub0xkfE5v1tD0A0rPS
+        7bT9Jv0XQ2WyZwc4/LVXItw==
+X-Received: by 2002:adf:c611:: with SMTP id n17mr43255873wrg.317.1574853614137;
+        Wed, 27 Nov 2019 03:20:14 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxPNN4T4pLqiPWydSAPPFrH4DJqM4Gopa3hk+LasAOswaeAHhXFy+AsGhFJVFJraQtiJdUgZg==
+X-Received: by 2002:adf:c611:: with SMTP id n17mr43255833wrg.317.1574853613666;
+        Wed, 27 Nov 2019 03:20:13 -0800 (PST)
+Received: from ?IPv6:2a00:1098:3142:14:d8e5:c518:f6be:1405? ([2a00:1098:3142:14:d8e5:c518:f6be:1405])
+        by smtp.gmail.com with ESMTPSA id u16sm18674157wrr.65.2019.11.27.03.20.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 03:20:13 -0800 (PST)
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+From:   Phil Elwell <phil@raspberrypi.org>
+Subject: Multiple SPI MCP23S17s sharing a CS line
+Message-ID: <d8f95334-789e-995b-9abf-7bb15abb1daa@raspberrypi.org>
+Date:   Wed, 27 Nov 2019 11:20:12 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <e9981d69-2a33-fec9-7d12-15fcb948364d@c-s.fr> <CACRpkdYLEibwyK_BGO3gsJ_aQFWZNJCky-GezHVmHfRSzD2zBg@mail.gmail.com>
- <1efb797c-e3c1-25a4-0e81-78b5bbadb355@c-s.fr> <CACRpkdYUBj+45Jr94kdERKJogVoL96JH6i85o_bVUtjmkTt19g@mail.gmail.com>
- <3c79a8b9-65e4-bfc9-d718-b8530fe1e672@c-s.fr> <b06679da-0332-2322-13f8-07307f611542@c-s.fr>
- <CACRpkdbOzM3X2_BMnf5eSqCt_UsnXo4eXD2fUbTLk6=Uo3gB2g@mail.gmail.com>
- <582b5ccf-8993-6345-94d1-3c2fc94e4d4f@c-s.fr> <CACRpkdawu5DcCA5rnRbOe+meBPtxctL7HuWciqboOEkCHZKA7A@mail.gmail.com>
- <e6a39aba-a41b-d781-966a-647977216b87@c-s.fr> <CACRpkda-wjRm7UYsFTX_xFfNPT29U1PTMyuU4AP=WShiC_vV9g@mail.gmail.com>
- <b2925217-9cbd-2f4e-c92f-9e1c92824193@c-s.fr>
-In-Reply-To: <b2925217-9cbd-2f4e-c92f-9e1c92824193@c-s.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 27 Nov 2019 11:55:11 +0100
-Message-ID: <CACRpkdaKg45uHMZ9mz6OGkAUqYX7GzhTrjrAc1feVhn68ZXrqg@mail.gmail.com>
-Subject: Re: Boot failure with 5.4-rc5, bisected to 0f0581b24bd0 ("spi: fsl:
- Convert to use CS GPIO descriptors")
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linux-spi <linux-spi@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 11:39 AM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
-> Le 27/11/2019 =C3=A0 11:02, Linus Walleij a =C3=A9crit :
-> > On Wed, Nov 27, 2019 at 10:34 AM Christophe Leroy
-> > <christophe.leroy@c-s.fr> wrote:
-> >
-> >> In the meantime, I have tried changing "gpios" by "cs-gpios" in the
-> >> device tree, and I get the following warning:
-> > (...)
-> >> [    3.156654] WARNING: CPU: 0 PID: 1 at drivers/spi/spi-fsl-spi.c:716
-> >> fsl_spi_cs_control+0x64/0x7c
-> >
-> > That should be this one:
-> >
-> > if (WARN_ON_ONCE(!pinfo->immr_spi_cs))
-> >     return;
-> >
-> > That happens when spi->cs_gpiod is NULL so the
-> > chipselect isn't found and assigned, and the code
-> > goes on to check the native CS and find that this isn't
-> > available either and issues the warning.
->
-> That's in spi_add_device(), it is spi->cs_gpio and not spi->cs_gpiod
-> which is assigned, so spi->cs_gpiod remains NULL.
+Hi,
 
-That's weird, because when ->use_gpio_descriptors is set
-(as for this driver) the core only attempts to look up
-spi->cs_gpiods and not spi->cs_gpios, and consequently
-can only assign spi->cd_gpiod and not spi->cs_gpio:
+We have a user asking for help to construct a Device Tree overlay to use
+the GPIOs exported by multiple MCP23S17s sharing an SPI Chip Select 
+line. This is a special feature of the MCP devices whereby the SPI bus
+is treated rather like an I2C bus with each device assigned a unique
+address. His problem is in constructing gpiospecs to refer to all of the
+GPIOs.
 
-if (ctlr->use_gpio_descriptors) {
-    status =3D spi_get_gpio_descs(ctlr);
-(...)
-} else {
-(....)
-    status =3D of_spi_get_gpio_numbers(ctlr);
-}
-(...)
-/* Descriptors take precedence */
-if (ctlr->cs_gpiods)
-    spi->cs_gpiod =3D ctlr->cs_gpiods[spi->chip_select];
-else if (ctlr->cs_gpios)
-    spi->cs_gpio =3D ctlr->cs_gpios[spi->chip_select];
+The mcp23s08 driver claims to support this feature, and there is a DT
+property ("microchip,spi-present-mask") to declare which addresses are
+used buy the devices. I've spent an hour or so looking at the driver 
+code and crawling through the kernel GPIO infrastructure, and I don't 
+think it's possible. Here's my logic:
 
-So I'm a bit confused...
+1. Although all devices that are found are presented as a single SPI 
+device, they are each registered as independent gpio_chips.
 
-Yours,
-Linus Walleij
+2. A gpio_chip has (amongst other things) a pointer to is Device Tree 
+node, a number of GPIOs, and a function that translates from the 
+"gpiospec" descriptors found in the device tree to an index into the 
+GPIOs exposed by the device. Note that it doesn't include the base of a 
+range - all gpio_chips have GPIOs indexed from 0.
+
+3. The mcp23s08 doesn't specify a translation function, so it inherits 
+the default of_gpio_simple_xlate that checks that the first parameter is 
+less than the number of GPIOs the device supports, and returns it.
+
+4. When another DT node refers to a GPIO, it does so using a gpiospec. 
+This is passed to gpiochip_find, which uses 
+of_gpiochip_match_node_and_xlate to filter through all the registered 
+GPIO controllers to find one which:
+
+i) has a DT node which matches the first cell (e.g. "&gpio"),
+ii) has a translation function, and
+iii) the translation function succeeds.
+
+5. Continuing point 2, all the MCP devices that share an SPI CS/CE 
+inherit the same DT node, which means they will all pass test i). Test 
+ii) is trivially passed by all of the devices. Since they all have the 
+same translation function (of_gpiochip_match_node_and_xlate), and they 
+are all given the same gpiospec to translate, and you aren't meant to 
+mix different size variants, the sharing devices will also either all 
+pass or all fail the test iii).
+
+Therefore I think it's impossible to construct gpiospecs to refer to all 
+of the GPIOs exported by MCP23S17s in this configuration. Please explain
+where I've gone wrong.
+
+Thanks,
+
+Phil Elwell
