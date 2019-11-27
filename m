@@ -2,32 +2,32 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE77C432C0
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD56C432C3
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC855215F2
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45DE4206F0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 21:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731848AbfK0VCO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 16:02:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43338 "EHLO mx1.suse.de"
+        id S1729471AbfK0Uzn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 15:55:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40618 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731840AbfK0VCL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:02:11 -0500
+        id S1729696AbfK0Uzn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:43 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7B612AC1A;
-        Wed, 27 Nov 2019 21:02:09 +0000 (UTC)
-Subject: Re: [PATCH 1/5] pinctrl: actions: Use the correct style for SPDX
+        by mx1.suse.de (Postfix) with ESMTP id 8DE6AAC12;
+        Wed, 27 Nov 2019 20:55:40 +0000 (UTC)
+Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
  License Identifier
-To:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Sean Wang <sean.wang@kernel.org>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Kevin Hilman <khilman@baylibre.com>,
@@ -37,22 +37,24 @@ Cc:     Sean Wang <sean.wang@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joe Perches <joe@perches.com>,
         =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <cover.1574871463.git.nishadkamdar@gmail.com>
- <5b588fc885efca6efdc73869aa4b1eeeb3d6f6c5.1574871463.git.nishadkamdar@gmail.com>
+ <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+ <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
 From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
 Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <c76290a7-b9bb-7f70-e750-04fe6fdbb7e1@suse.de>
-Date:   Wed, 27 Nov 2019 22:02:08 +0100
+Message-ID: <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de>
+Date:   Wed, 27 Nov 2019 21:55:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <5b588fc885efca6efdc73869aa4b1eeeb3d6f6c5.1574871463.git.nishadkamdar@gmail.com>
+In-Reply-To: <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -61,45 +63,25 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am 27.11.19 um 17:40 schrieb Nishad Kamdar:
-> This patch corrects the SPDX License Identifier style in
-> header file related Actions Semi OWL pinctrl driver.
+Hi Geert,
 
-Owl
-
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used).
+Am 27.11.19 um 21:37 schrieb Geert Uytterhoeven:
+> On Wed, Nov 27, 2019 at 5:46 PM Nishad Kamdar <nishadkamdar@gmail.com> wrote:
+>> This patch corrects the SPDX License Identifier style in
+>> header files related to Reneses Soc pinctrl driver.
+>> It assigns explicit block comment for the SPDX License Identifier.
 > 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46.
-> 
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
-> index dae2e8363fd5..feee7ad7e27e 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.h
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
-> @@ -1,4 +1,4 @@
-> -// SPDX-License-Identifier: GPL-2.0+
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+> Is it incorrect to not have an explicit block comment?
 
-This is not a uapi or asm header, which that /* */ rule was later added
-for, I thought?
+Yes, Greg said so to me. He suggested I provide a patch against the
+documentation if the docs are not clear enough, but I didn't get around
+to it (and it's not my rule in the first place, so I'd appreciate the
+person making that rule to take care of documenting it).
 
->  /*
->   * OWL SoC's Pinctrl definitions
->   *
+However, if we're touching these lines anyway, shouldn't we be updating
+the SPDX Identifier to GPL-2.0-only while at it?
 
-Not objecting, just making sure we're not blindly refactoring code.
-
-If doing this, I suggest updating to GPL-2.0-or-later.
-
-Regards,
+Cheers,
 Andreas
 
 -- 
