@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5D1C432C3
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162DCC432C0
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2616E20722
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD67C2068E
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DQeBIB0M"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="pis+WSuj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfK0Nf3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 08:35:29 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34252 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfK0Nf2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:28 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so26713742wrr.1
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:27 -0800 (PST)
+        id S1727107AbfK0Nf1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 08:35:27 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38438 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbfK0Nf0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z19so7523722wmk.3
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p7V+xHNIyZ2oclfWUQxjk4vsWRTb0u39sFlOPPMozoc=;
-        b=DQeBIB0MbsdD5azj83qLyq5xXygJ8x270ElD+3EiUQe2zs2MUdeeLUql8faCfqh2lK
-         BeO3Kc4vdsWEorFyj3CEpadokZbQLp9jbVzasxJr1P3S4WF3iuwsf3JagZlD8GjHqqDA
-         evotXPIzeD6khCPCkAfafJ0SkPZGg8ojgICVY1mtqCFGSYWHN/4kJwvlYLTqZeDHD7l5
-         AXvgRd0xK40HFyyttyVDgNDQMbj0KF0VTukzhN2bZja856yfS5hG2oz8PVVovaYVCCtx
-         5+b43hjwsVguZWafJVrQtqQMDqgADztTM95RP6fFhFxThF/kbxssVNiyAzwBmfcTdOlj
-         AXag==
+        bh=2P46jLQH53L0bSs7wrWGmrID6nlk6qTfagoHAkQM3lw=;
+        b=pis+WSujWhUrHbUSxEjqy+CteEBYETKcGNz1PPsBUwdelFBzIJsqHC6DK6LCxi2sX5
+         8y+yxV2OxIBVMqSyDeaZkAf6oJ7UAC6ZKN+6g3sX6DvS7hjGPizDrVC0iDxjNTF4a821
+         XuCnnkb11iBH2MEQkslYBZXwZQxWEPfxAKAFL8y96rjOoJg3AcK0NCZkgutVPUgy/EBD
+         3sEV4pBB5dtkUtWSOANCeEn5AyBfXpVsF2Fj97o8Jv5N8ERtJyXA/W1LoXP2gtiX4XFc
+         90q7jYbo0M1mr1lwD7ZddtukCW2VaultR7wSKU4AijYQlCn+Tk00RfPUQUJ5gnMJm1Nd
+         JqDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p7V+xHNIyZ2oclfWUQxjk4vsWRTb0u39sFlOPPMozoc=;
-        b=ZfcLdeKdz8xN7xur2p41hgyfbh8Pr41WHuzQ6n6BLrwFu78Tb62HQnjmHFHJaXh4US
-         QIYFLligNJyWXvhO1aLJFj5q7z0l8uf7g5/UBVIvsxRAKgVVX1DpdUEBJ4+/cdk4HtDY
-         wIa/UFL8bSh4/pmbFY+Wjr5l1msjeJcC/rXTJFfJX9MyK6iOkxDSe8k1XmAhd7y3jRvN
-         kbVm4jF53tafID5M5Jmxl+yJFSkf8a97ZeZQ5k2a/X4BZZu/RPSHAd0RUOls05OXlSKE
-         A4VkYhvFRf8pSeRX4Gbp6NpdwvDlFPRZWFDfLdg/npSpazXpq6/8HoQladkAbLpG0NOP
-         qkIw==
-X-Gm-Message-State: APjAAAW0Mtfcx+tWdhFkwx9Ofg6/Q4URatvk5p5QJD9+FZwwEStL4V5k
-        MUXJzv3zeNLRfeux2J7qZWvcmw==
-X-Google-Smtp-Source: APXvYqwaKYrlokMX+NiLacauZCYl0mXZel/xbNs/uoO322ginCua9tDEtUexwnlvD3GMv1QHlyzFuw==
-X-Received: by 2002:adf:df0e:: with SMTP id y14mr39661533wrl.377.1574861727081;
-        Wed, 27 Nov 2019 05:35:27 -0800 (PST)
+        bh=2P46jLQH53L0bSs7wrWGmrID6nlk6qTfagoHAkQM3lw=;
+        b=fnCP8aXbQOyaVr4D53BQs3IYwkqXSD3CDp565km6lGgvSYeCRTULN91+nrLEaSg0eT
+         ZOjNTv5iLoJuKb+7wlNZxS61PTqCfu+sbBFfwaQxc1EusSCqJmxhnT59Ze8wJLyNobWY
+         eb1d4m0pfGwpj+3h0rIdI8+9+c8VOezgzgqVhYFJMd2G8w8rRFPi6Ue4446cfs1NSFaP
+         jbt+wOJqKU2tLHCBv+jMrvxbGaGoMqWjRny+I+7XD0V5rMg4q21oVWUBGTR2P3Ok86WR
+         UTcp37AtrT8vc2XerzB/fvbxd/hL7Ov83V7G6VQlnPeIJK/v6W+BUPgGg2slAZcqiY8R
+         PGGw==
+X-Gm-Message-State: APjAAAXvf4qtmV5WPMJXsDoVLnT1q8grS8+4gm79JEEp8J8R2/cuaImY
+        H0tnPqsxOPj6HtJZci9sP+Cq3Q==
+X-Google-Smtp-Source: APXvYqxNHEQ3gduCM+/d0RgzRf59h2m41Rc2S1Xg84Jafi8b54BlM4BnhgVxnHHx33/RmCH93xzIcw==
+X-Received: by 2002:a1c:560b:: with SMTP id k11mr4710274wmb.153.1574861723165;
+        Wed, 27 Nov 2019 05:35:23 -0800 (PST)
 Received: from debian-brgl.home (lfbn-1-7087-108.w90-116.abo.wanadoo.fr. [90.116.255.108])
-        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.25
+        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 05:35:25 -0800 (PST)
+        Wed, 27 Nov 2019 05:35:22 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/8] gpiolib: actually protect the line event kfifo with mutex
-Date:   Wed, 27 Nov 2019 14:35:08 +0100
-Message-Id: <20191127133510.10614-7-brgl@bgdev.pl>
+Subject: [PATCH 3/8] gpiolib: convert the type of hwnum to unsigned int in gpiochip_get_desc()
+Date:   Wed, 27 Nov 2019 14:35:05 +0100
+Message-Id: <20191127133510.10614-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191127133510.10614-1-brgl@bgdev.pl>
 References: <20191127133510.10614-1-brgl@bgdev.pl>
@@ -74,60 +74,73 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The read_lock mutex is supposed to prevent collisions between reading
-and writing to the line event kfifo but it's actually only taken when
-the events are being read from it. Also take the lock when adding the
-events and checking if kfifo is empty.
+gpiochip_get_desc() takes a u16 hwnum, but it turns out most users don't
+respect that and usually pass an unsigned int. Since implicit casting to
+a smaller type is dangerous - let's change the type of hwnum to unsigned
+int in gpiochip_get_desc() and in gpiochip_request_own_desc() where the
+size of hwnum is not respected either and who's a user of the former.
+
+This is safe as we then check the hwnum against the number of lines
+before proceeding in gpiochip_get_desc().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpiolib.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpio/gpiolib.c      | 5 +++--
+ drivers/gpio/gpiolib.h      | 3 ++-
+ include/linux/gpio/driver.h | 3 ++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 17796437d7be..d094b1be334d 100644
+index 72211407469f..b3ffb079e323 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -818,8 +818,10 @@ static __poll_t lineevent_poll(struct file *filep,
+@@ -140,7 +140,7 @@ EXPORT_SYMBOL_GPL(gpio_to_desc);
+  * in the given chip for the specified hardware number.
+  */
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
+-				    u16 hwnum)
++				    unsigned int hwnum)
+ {
+ 	struct gpio_device *gdev = chip->gpiodev;
  
- 	poll_wait(filep, &le->wait, wait);
+@@ -2990,7 +2990,8 @@ EXPORT_SYMBOL_GPL(gpiochip_is_requested);
+  * A pointer to the GPIO descriptor, or an ERR_PTR()-encoded negative error
+  * code on failure.
+  */
+-struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
++struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
++					    unsigned int hwnum,
+ 					    const char *label,
+ 					    enum gpio_lookup_flags lflags,
+ 					    enum gpiod_flags dflags)
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index ca9bc1e4803c..a1cbeabadc69 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -78,7 +78,8 @@ struct gpio_array {
+ 	unsigned long		invert_mask[];
+ };
  
-+	mutex_lock(&le->read_lock);
- 	if (!kfifo_is_empty(&le->events))
- 		events = EPOLLIN | EPOLLRDNORM;
-+	mutex_unlock(&le->read_lock);
+-struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
++struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
++				    unsigned int hwnum);
+ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index e2480ef94c55..4f032de10bae 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -715,7 +715,8 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
  
- 	return events;
- }
-@@ -838,7 +840,9 @@ static ssize_t lineevent_read(struct file *filep,
- 		return -EINVAL;
+ #endif /* CONFIG_PINCTRL */
  
- 	do {
-+		mutex_lock(&le->read_lock);
- 		if (kfifo_is_empty(&le->events)) {
-+			mutex_unlock(&le->read_lock);
- 			if (filep->f_flags & O_NONBLOCK)
- 				return -EAGAIN;
- 
-@@ -846,6 +850,8 @@ static ssize_t lineevent_read(struct file *filep,
- 					!kfifo_is_empty(&le->events));
- 			if (ret)
- 				return ret;
-+		} else {
-+			mutex_unlock(&le->read_lock);
- 		}
- 
- 		if (mutex_lock_interruptible(&le->read_lock))
-@@ -969,7 +975,9 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
- 		return IRQ_NONE;
- 	}
- 
-+	mutex_lock(&le->read_lock);
- 	ret = kfifo_put(&le->events, ge);
-+	mutex_unlock(&le->read_lock);
- 	if (ret)
- 		wake_up_poll(&le->wait, EPOLLIN);
- 
+-struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
++struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
++					    unsigned int hwnum,
+ 					    const char *label,
+ 					    enum gpio_lookup_flags lflags,
+ 					    enum gpiod_flags dflags);
 -- 
 2.23.0
 
