@@ -2,145 +2,96 @@ Return-Path: <SRS0=puWS=ZT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162DCC432C0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FAEC43215
 	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD67C2068E
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4675420722
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Nov 2019 13:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="pis+WSuj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbgu7pRI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfK0Nf1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Nov 2019 08:35:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38438 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfK0Nf0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id z19so7523722wmk.3
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:23 -0800 (PST)
+        id S1727217AbfK0Nfq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Nov 2019 08:35:46 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44260 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbfK0Nfq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Nov 2019 08:35:46 -0500
+Received: by mail-vs1-f66.google.com with SMTP id p6so9992737vsj.11
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2019 05:35:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2P46jLQH53L0bSs7wrWGmrID6nlk6qTfagoHAkQM3lw=;
-        b=pis+WSujWhUrHbUSxEjqy+CteEBYETKcGNz1PPsBUwdelFBzIJsqHC6DK6LCxi2sX5
-         8y+yxV2OxIBVMqSyDeaZkAf6oJ7UAC6ZKN+6g3sX6DvS7hjGPizDrVC0iDxjNTF4a821
-         XuCnnkb11iBH2MEQkslYBZXwZQxWEPfxAKAFL8y96rjOoJg3AcK0NCZkgutVPUgy/EBD
-         3sEV4pBB5dtkUtWSOANCeEn5AyBfXpVsF2Fj97o8Jv5N8ERtJyXA/W1LoXP2gtiX4XFc
-         90q7jYbo0M1mr1lwD7ZddtukCW2VaultR7wSKU4AijYQlCn+Tk00RfPUQUJ5gnMJm1Nd
-         JqDg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dx6Wkv3ySGhXS7qkfXJJNC6KphczTVFp4Ev8Iq4fldI=;
+        b=nbgu7pRIs9YzZOrtRCF+j2cEMFGx1sNFj31QpHqVahAmOam94iAL18YA9Hq58tzKek
+         0mxzxrwGSu0aFlRhUFmhqiO3jbF624J7a6WJF7VNhKwUsJ6QyL5kpQFp+pZ/8+NYQHVw
+         KazwKCDdWqXG0tQEgIHXM3MmaP0hb3SYgoa2cT+eojLzYQSkhsvZJCVGYsj0XLRGaJYL
+         gHSUGVwnTKJI+oAHmMAM23csKKMTfylhYiyHEbSueon9SVvPBvi9kwkN8qaRzkynqp6E
+         kA/cDOdIo0iqh8Ioh6eihHtQjaGCB72jlNP7TdMoW9qbTRlXBeWgX+mtUxnHBYRXrBjD
+         ieFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2P46jLQH53L0bSs7wrWGmrID6nlk6qTfagoHAkQM3lw=;
-        b=fnCP8aXbQOyaVr4D53BQs3IYwkqXSD3CDp565km6lGgvSYeCRTULN91+nrLEaSg0eT
-         ZOjNTv5iLoJuKb+7wlNZxS61PTqCfu+sbBFfwaQxc1EusSCqJmxhnT59Ze8wJLyNobWY
-         eb1d4m0pfGwpj+3h0rIdI8+9+c8VOezgzgqVhYFJMd2G8w8rRFPi6Ue4446cfs1NSFaP
-         jbt+wOJqKU2tLHCBv+jMrvxbGaGoMqWjRny+I+7XD0V5rMg4q21oVWUBGTR2P3Ok86WR
-         UTcp37AtrT8vc2XerzB/fvbxd/hL7Ov83V7G6VQlnPeIJK/v6W+BUPgGg2slAZcqiY8R
-         PGGw==
-X-Gm-Message-State: APjAAAXvf4qtmV5WPMJXsDoVLnT1q8grS8+4gm79JEEp8J8R2/cuaImY
-        H0tnPqsxOPj6HtJZci9sP+Cq3Q==
-X-Google-Smtp-Source: APXvYqxNHEQ3gduCM+/d0RgzRf59h2m41Rc2S1Xg84Jafi8b54BlM4BnhgVxnHHx33/RmCH93xzIcw==
-X-Received: by 2002:a1c:560b:: with SMTP id k11mr4710274wmb.153.1574861723165;
-        Wed, 27 Nov 2019 05:35:23 -0800 (PST)
-Received: from debian-brgl.home (lfbn-1-7087-108.w90-116.abo.wanadoo.fr. [90.116.255.108])
-        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 05:35:22 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 3/8] gpiolib: convert the type of hwnum to unsigned int in gpiochip_get_desc()
-Date:   Wed, 27 Nov 2019 14:35:05 +0100
-Message-Id: <20191127133510.10614-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191127133510.10614-1-brgl@bgdev.pl>
-References: <20191127133510.10614-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dx6Wkv3ySGhXS7qkfXJJNC6KphczTVFp4Ev8Iq4fldI=;
+        b=IoQqOO5Alb3hSe++3Ez0X2YMIHFTNvgFelQWPqeVPWDV52ncPcYshGd2RkmY/XZd9E
+         ZFKVo6GCZna+Eq9iVeZ34vS1Ig9p8HugRlNk38GnY70lthww1atm32tdBiMRbHa2ZXYz
+         hw+sFJay8WXI2nhlw2vAxhEFFrCPzRzq6wFNcvYXEodJ+YrZPlOGseEHHqLwCz/3YNwm
+         xtGB9V+SOHhqfRT7YsKzSoisQsVWN+x6IX7zhsW3lR2Au1cQPsLDDol7/RhDlem6oocw
+         5VfPgWgUQqLhPaC/YZ7MDTc4stsN2A/tnRpgxtE31Pm13ubVd3sJjrJGrUddJSNy1+/m
+         3fvg==
+X-Gm-Message-State: APjAAAX7QveP4pqYslSFrLKzoxiA4Lh54YXLxLot3+BifbBLkvMXUYqC
+        oc+WnDX+wW+jdmU+WdGnAoQCiFg0J9ssD6L/xlFTwQ==
+X-Google-Smtp-Source: APXvYqxTK7Y0dYdPsk1QLrm3GQ61nChJ51nQBQEnr2r1WJ4jId+4aZ7y6DwhtjdZzHGHtVxFBrSd3MlBXY9hpL+raRQ=
+X-Received: by 2002:a67:88c8:: with SMTP id k191mr3302354vsd.86.1574861745194;
+ Wed, 27 Nov 2019 05:35:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191127115619.20278-1-m.felsch@pengutronix.de> <20191127115619.20278-3-m.felsch@pengutronix.de>
+In-Reply-To: <20191127115619.20278-3-m.felsch@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 27 Nov 2019 14:35:33 +0100
+Message-ID: <CACRpkdYLeSjsXaG6Bg4Y2-8PW41ALn4PN7QUvp3tA7XReWrKGg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mfd: da9062: add support for the DA9062 GPIOs in
+ the core
+To:     Marco Felsch <m.felsch@pengutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Nov 27, 2019 at 12:56 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
 
-gpiochip_get_desc() takes a u16 hwnum, but it turns out most users don't
-respect that and usually pass an unsigned int. Since implicit casting to
-a smaller type is dangerous - let's change the type of hwnum to unsigned
-int in gpiochip_get_desc() and in gpiochip_request_own_desc() where the
-size of hwnum is not respected either and who's a user of the former.
+> Currently the da9062 GPIO's aren't available. The patch adds the support
+> to make these available by adding a gpio device with the corresponding
+> irq resources. Furthermore the patch fixes a minor style issue for the
+> onkey device.
+>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-This is safe as we then check the hwnum against the number of lines
-before proceeding in gpiochip_get_desc().
+This is a regmap irqchip so I guess not much to say about it.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpiolib.c      | 5 +++--
- drivers/gpio/gpiolib.h      | 3 ++-
- include/linux/gpio/driver.h | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+HOWEVER: this looks very much hierarchical does it not?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 72211407469f..b3ffb079e323 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -140,7 +140,7 @@ EXPORT_SYMBOL_GPL(gpio_to_desc);
-  * in the given chip for the specified hardware number.
-  */
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
--				    u16 hwnum)
-+				    unsigned int hwnum)
- {
- 	struct gpio_device *gdev = chip->gpiodev;
- 
-@@ -2990,7 +2990,8 @@ EXPORT_SYMBOL_GPL(gpiochip_is_requested);
-  * A pointer to the GPIO descriptor, or an ERR_PTR()-encoded negative error
-  * code on failure.
-  */
--struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
-+struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
-+					    unsigned int hwnum,
- 					    const char *label,
- 					    enum gpio_lookup_flags lflags,
- 					    enum gpiod_flags dflags)
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index ca9bc1e4803c..a1cbeabadc69 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -78,7 +78,8 @@ struct gpio_array {
- 	unsigned long		invert_mask[];
- };
- 
--struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
-+struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
-+				    unsigned int hwnum);
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned int array_size,
- 				  struct gpio_desc **desc_array,
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index e2480ef94c55..4f032de10bae 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -715,7 +715,8 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
- 
- #endif /* CONFIG_PINCTRL */
- 
--struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
-+struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
-+					    unsigned int hwnum,
- 					    const char *label,
- 					    enum gpio_lookup_flags lflags,
- 					    enum gpiod_flags dflags);
--- 
-2.23.0
+I can clearly see that regmap's irqchip does not support
+hierarchical interrupt domains, so we should just make a
+mental note somewhere that "oh yeah and then one day
+we should make regmap irqchips play well with hierarchical
+interrupts".
 
+Yours,
+Linus Walleij
