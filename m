@@ -2,99 +2,98 @@ Return-Path: <SRS0=WWry=ZV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF67C432C0
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Nov 2019 16:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CBEC432C0
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Nov 2019 16:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8247F208E4
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Nov 2019 16:50:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="RsYk7ut7"
+	by mail.kernel.org (Postfix) with ESMTP id 21C6221774
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Nov 2019 16:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfK2QuN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Nov 2019 11:50:13 -0500
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:52470 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfK2QuM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2019 11:50:12 -0500
-Received: by mail-wm1-f42.google.com with SMTP id l1so14855470wme.2
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Nov 2019 08:50:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=XVo5YHyLlzm1Skhh2TyjxmqUmLYCKNaKUsGSDVu0GJc=;
-        b=RsYk7ut7wi7WNc4tmmrcKBshFgfd5vIYHa29zEWnbxQBJcBQf62xV0ae0pVxu+kymv
-         dMKiJnUrGgE3IVlZ2f6Tbd2YMg90oGcmQwP8CU0CsKOFOZ8LIIx62jk65RUBM2n/DCnG
-         AZ5OCpbkkPOIV1j5T5uIEtP0Eeej/nu+wj2MyKinbEmTm1D/YaxT6NFd7H2aevbw9eyY
-         +FeSAo4apyzkL6rBT9Bf/MNhKqMSsMhrIr8+Pg4B97TmS/K6vpjvSg+AW+eAUK+zrhzA
-         FGzh2hK1bIzLGFojImdyUVQQw2zsTIFn485A281WMl71R0uGbarT1VZGifR9tq8/AulC
-         /yGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=XVo5YHyLlzm1Skhh2TyjxmqUmLYCKNaKUsGSDVu0GJc=;
-        b=qtKsqiZkOOigEz/sDVOp7NDKrm2VhNO0nRGK/DJvF0j0bzFxbg4cVbLD4q6KsLZpGo
-         qU2xiQSooXR397iGfkBrZ4hwMRlT12Vi9YvIJw2X12p3cHIgd+Ef2F1EteT2+hwroB4k
-         VWfHIjOaaoVehTYF4JkaMz/fcVWnppdK/jo7EEo8FfJ8MBjrwRLvBAWjkFteirJew0b5
-         naf/CVQugZzrdfLPr576js0WeWRYju6Hx6G+vBcf5UCcOfF5qZJOEilrGf+B8JeclVBP
-         iX3gveItYunZk3hqyxUm3CWoY6EeqGyYYu89oOPJjPbtcc1Lk136VXWOh3T1n+qEdwN2
-         viiQ==
-X-Gm-Message-State: APjAAAW0EWC+cQvNux0MiFt2OIYF6RDjn7/GzhASMoIjaR66xeIWxO9g
-        w9kHKR8NKaL77pp53xzfGLayuGJ7JCQQuA==
-X-Google-Smtp-Source: APXvYqzgWe1UHmiN54mua1LZfZP7eyks6oY09//BhMmVvHns0PVL5mNnY7aRIK6wfZ4T6y3j2D7kaA==
-X-Received: by 2002:a05:600c:1108:: with SMTP id b8mr28738wma.17.1575046210436;
-        Fri, 29 Nov 2019 08:50:10 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id c15sm28645969wrx.78.2019.11.29.08.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 08:50:09 -0800 (PST)
-Message-ID: <5de14c41.1c69fb81.963e6.5566@mx.google.com>
-Date:   Fri, 29 Nov 2019 08:50:09 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        id S1727091AbfK2Q6X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Nov 2019 11:58:23 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53455 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfK2Q6X (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Nov 2019 11:58:23 -0500
+Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iajb2-00013n-2k; Fri, 29 Nov 2019 17:58:20 +0100
+Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iajb1-0005MI-FN; Fri, 29 Nov 2019 17:58:19 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, support.opensource@diasemi.com,
+        Adam.Thomson.Opensource@diasemi.com
+Cc:     devicetree@vger.kernel.org, kernel@pengutronix.de,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v3 2/3] mfd: da9062: add support for the DA9062 GPIOs in the core
+Date:   Fri, 29 Nov 2019 17:58:16 +0100
+Message-Id: <20191129165817.20426-3-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191129165817.20426-1-m.felsch@pengutronix.de>
+References: <20191129165817.20426-1-m.felsch@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: fixes
-X-Kernelci-Tree: linusw
-X-Kernelci-Kernel: gpio-v5.5-1-2-gd196292990fc
-X-Kernelci-Report-Type: boot
-Subject: linusw/fixes boot: 60 boots: 0 failed,
- 59 passed with 1 conflict (gpio-v5.5-1-2-gd196292990fc)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/fixes boot: 60 boots: 0 failed, 59 passed with 1 conflict (gpio-v5.5=
--1-2-gd196292990fc)
+Currently the da9062 GPIO's aren't available. The patch adds the support
+to make these available by adding a gpio device with the corresponding
+irq resources. Furthermore the patch fixes a minor style issue for the
+onkey device.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/fixes/ke=
-rnel/gpio-v5.5-1-2-gd196292990fc/
-Full Build Summary: https://kernelci.org/build/linusw/branch/fixes/kernel/g=
-pio-v5.5-1-2-gd196292990fc/
-
-Tree: linusw
-Branch: fixes
-Git Describe: gpio-v5.5-1-2-gd196292990fc
-Git Commit: d196292990fce11fd7bb7585a782b3f4b34429e1
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 50 unique boards, 15 SoC families, 3 builds out of 6
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm64:
-    defconfig:
-        sun50i-h6-pine-h64:
-            lab-collabora: PASS (gcc-8)
-            lab-baylibre: FAIL (gcc-8)
-
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/mfd/da9062-core.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
+index e69626867c26..5290bdc0ddcd 100644
+--- a/drivers/mfd/da9062-core.c
++++ b/drivers/mfd/da9062-core.c
+@@ -233,6 +233,14 @@ static struct resource da9062_onkey_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_ONKEY, 1, "ONKEY", IORESOURCE_IRQ),
+ };
+ 
++static struct resource da9062_gpio_resources[] = {
++	DEFINE_RES_NAMED(DA9062_IRQ_GPI0, 1, "GPI0", IORESOURCE_IRQ),
++	DEFINE_RES_NAMED(DA9062_IRQ_GPI1, 1, "GPI1", IORESOURCE_IRQ),
++	DEFINE_RES_NAMED(DA9062_IRQ_GPI2, 1, "GPI2", IORESOURCE_IRQ),
++	DEFINE_RES_NAMED(DA9062_IRQ_GPI3, 1, "GPI3", IORESOURCE_IRQ),
++	DEFINE_RES_NAMED(DA9062_IRQ_GPI4, 1, "GPI4", IORESOURCE_IRQ),
++};
++
+ static const struct mfd_cell da9062_devs[] = {
+ 	{
+ 		.name		= "da9062-core",
+@@ -266,7 +274,13 @@ static const struct mfd_cell da9062_devs[] = {
+ 		.name		= "da9062-onkey",
+ 		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
+ 		.resources	= da9062_onkey_resources,
+-		.of_compatible = "dlg,da9062-onkey",
++		.of_compatible	= "dlg,da9062-onkey",
++	},
++	{
++		.name		= "da9062-gpio",
++		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
++		.resources	= da9062_gpio_resources,
++		.of_compatible	= "dlg,da9062-gpio",
+ 	},
+ };
+ 
+-- 
+2.20.1
+
