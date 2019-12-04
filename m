@@ -2,172 +2,106 @@ Return-Path: <SRS0=rqcL=Z2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5FCC2D0BE
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 19:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36F6C3F68F
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 22:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E2B2073C
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 19:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E362464F
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 22:18:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoH+UrM7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfLDTmd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Dec 2019 14:42:33 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46291 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728072AbfLDTmd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Dec 2019 14:42:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 11:42:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,278,1571727600"; 
-   d="scan'208";a="201512713"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 04 Dec 2019 11:42:31 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 42698F3; Wed,  4 Dec 2019 21:42:30 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/2] gpiolib: Fix line event handling in compatible mode
-Date:   Wed,  4 Dec 2019 21:42:28 +0200
-Message-Id: <20191204194229.64251-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.0
+        id S1728011AbfLDWSa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Dec 2019 17:18:30 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44759 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbfLDWSa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 17:18:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id x7so522664pgl.11;
+        Wed, 04 Dec 2019 14:18:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BSs1JgftpIbcW3GJF8MWlTcMQiwQH0E/9HSLGnuUhZY=;
+        b=IoH+UrM7+WlqqruX7C3JJpgZEijV/IOSpHF34r9wCRyFh/u5/f2LYJJDbEMDggvUjJ
+         bLZV3olTZQYouAz+GOHum6mi26NljoRLEhDo8bWQ3Z86HZCgoytSbSkY0sFbESM17xOf
+         4nb95E6NyUUqPevaG492AcKSuK7nGs7cGlmKo8jOLm6p9SUzEOTIW0h5uJ8jc43cT1jF
+         2aA5bnqvwjIpCA9HqdodgjHv9GtyhtSs1NEWlN7+Xlp5OYadzlg6LFzk/+8gHO/e519j
+         JNu9nfckYM5lP6RIL4v6Q/web4bYPLru538uVGnfusKimDGfrMPeWSeKoL1mJHat5EYm
+         bQwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BSs1JgftpIbcW3GJF8MWlTcMQiwQH0E/9HSLGnuUhZY=;
+        b=du5tUswdx7FLzGOv4slkh6d6Q3VMbGjupwmq/jdi9VkeAVxAQrfnNAPOLKLK6+mBLr
+         z+UjbwSJ+yP1uvaqM+ywhkMMTZCM8mNU03iL2ZLGG/Q4/fumuA6S6zE5saoR27SzY+4+
+         d6/F4ffjpgOTuh7hVmLgOPZdJ/CTmgklbhptHoTPgmR+uFQQuIeFWfgMFj4Ri6IBGsLB
+         +/EHHnN4BsjyTYM8v7/wxxiihB9YUuyWBsVlG/q+AkQB1xupfAWGJv7Np03jC6lItMxu
+         dqhMCuz+H+o8qqI5nTOsTcmGjy2BbC+RJkTRAvOVUxfuj4hrR0/MJpa/BswZhwsF7/v3
+         7aOg==
+X-Gm-Message-State: APjAAAXZv7UiSOTkyaBiY4cgdWEQtipTVLgVlRJl7JUEsamnX7fL8ce4
+        yC1AQoHWqFjoF1lpEP8N7MhK7wVAithXRnjtNvY=
+X-Google-Smtp-Source: APXvYqz0nBw+DVMCl9QmTd7VL0k2dyqyeLEhkcx2mruad872LLyUvgCc37FbvQ/MDuf7ADSYnqCNZDLv56msCKEe04g=
+X-Received: by 2002:a63:941:: with SMTP id 62mr6094824pgj.203.1575497909458;
+ Wed, 04 Dec 2019 14:18:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191204155912.17590-1-brgl@bgdev.pl> <20191204155912.17590-2-brgl@bgdev.pl>
+In-Reply-To: <20191204155912.17590-2-brgl@bgdev.pl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 5 Dec 2019 00:18:17 +0200
+Message-ID: <CAHp75Vfzk3FgZLLyNv7+sj8r-QFW57juBQV9O2VP01=c04AdKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] gpiolib: use 'unsigned int' instead of
+ 'unsigned' in gpio_set_config()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The introduced line even handling ABI in the commit
+On Wed, Dec 4, 2019 at 6:04 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Checkpatch complains about using 'unsigned' instead of 'unsigned int'.
+>
 
-  61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-missed the fact that 64-bit kernel may serve for 32-bit applications.
-In such case the very first check in the lineevent_read() will fail
-due to alignment differences.
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 21b02a0064f8..a31797fe78fa 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3042,7 +3042,7 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+>   * rely on gpio_request() having been called beforehand.
+>   */
+>
+> -static int gpio_set_config(struct gpio_chip *gc, unsigned offset,
+> +static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+>                            enum pin_config_param mode)
+>  {
+>         unsigned long config;
+> --
+> 2.23.0
+>
 
-To workaround this we do several things here:
-- put warning comment to UAPI header near to the structure description
-- derive the size of the structure in the compatible mode from its members
-- check for the size of this structure in the ->read() callback
-- return only one event in the compatible mode at a time
 
-Above mitigation will work at least with libgpiod which does one event
-at a time.
-
-Since the bug hasn't been reported earlier we assume that there is close
-to zero actual users of the compatible mode to monitor GPIO events and thus
-we might consider to rework this ABI in the future.
-
-Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.c    | 51 ++++++++++++++++++++++++++++++++++++---
- include/uapi/linux/gpio.h |  6 +++++
- 2 files changed, 54 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7340e4d0e873..134985210619 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -825,17 +825,26 @@ static __poll_t lineevent_poll(struct file *filep,
- 	return events;
- }
- 
--
- static ssize_t lineevent_read(struct file *filep,
- 			      char __user *buf,
- 			      size_t count,
- 			      loff_t *f_ps)
- {
- 	struct lineevent_state *le = filep->private_data;
-+	struct gpioevent_data event, *e = &event;
-+	/* We need size of each member to avoid endianess issues below */
-+	size_t ts_sz = sizeof(e->timestamp), id_sz = sizeof(e->id), e_sz;
- 	unsigned int copied;
- 	int ret;
- 
--	if (count < sizeof(struct gpioevent_data))
-+	/*
-+	 * In compatible mode, when kernel is 64-bit and user space is 32-bit,
-+	 * we may not tell what user wanted here when count is bigger than size
-+	 * of one event, so, we just assume that user asks for precisely one
-+	 * event.
-+	 */
-+	e_sz = in_compat_syscall() ? ts_sz + id_sz : sizeof(*e);
-+	if (count < e_sz)
- 		return -EINVAL;
- 
- 	do {
-@@ -851,7 +860,43 @@ static ssize_t lineevent_read(struct file *filep,
- 
- 		if (mutex_lock_interruptible(&le->read_lock))
- 			return -ERESTARTSYS;
--		ret = kfifo_to_user(&le->events, buf, count, &copied);
-+		if (in_compat_syscall()) {
-+			/*
-+			 * First we peek the one event and, if there is
-+			 * no error during copying to user space, skip it
-+			 * later.
-+			 */
-+			if (kfifo_peek(&le->events, e))
-+				copied = e_sz;
-+			else
-+				copied = 0;
-+
-+			/* Do not try to copy garbage to the user */
-+			ret = copied ? 0 : -EFAULT;
-+
-+			/*
-+			 * Due to endianess concerns we have to copy this
-+			 * member-by-member. Luckily there are no members
-+			 * less than 32-bit.
-+			 */
-+			if (!ret)
-+				ret = copy_to_user(buf, &e->timestamp, ts_sz);
-+			if (!ret)
-+				ret = copy_to_user(buf + ts_sz, &e->id, id_sz);
-+
-+			if (ret) {
-+				/*
-+				 * Either we have got nothing from the FIFO or
-+				 * one of copy_to_user() calls failed.
-+				 */
-+				ret = -EFAULT;
-+			} else {
-+				/* Skip peeked event if no error happened */
-+				kfifo_skip(&le->events);
-+			}
-+		} else {
-+			ret = kfifo_to_user(&le->events, buf, count, &copied);
-+		}
- 		mutex_unlock(&le->read_lock);
- 
- 		if (ret)
-diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-index 799cf823d493..054756bf6991 100644
---- a/include/uapi/linux/gpio.h
-+++ b/include/uapi/linux/gpio.h
-@@ -168,6 +168,12 @@ struct gpioevent_request {
-  * struct gpioevent_data - The actual event being pushed to userspace
-  * @timestamp: best estimate of time of event occurrence, in nanoseconds
-  * @id: event identifier
-+ *
-+ * Warning! This structure has issues in the compatible mode, when
-+ * kernel is 64-bit and user space is 32-bit, due to alignment
-+ * differences.
-+ *
-+ * It's not recommended to retrieve more than one event at a time.
-  */
- struct gpioevent_data {
- 	__u64 timestamp;
 -- 
-2.24.0
-
+With Best Regards,
+Andy Shevchenko
