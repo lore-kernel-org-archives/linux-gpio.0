@@ -2,447 +2,190 @@ Return-Path: <SRS0=rqcL=Z2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4C7C2BC73
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 10:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3926C43603
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 10:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6CE207DD
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 10:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97504205ED
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 10:12:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalray.eu header.i=@kalray.eu header.b="GXS6IijC"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="NIJKPQQU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfLDKLH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Dec 2019 05:11:07 -0500
-Received: from zimbra2.kalray.eu ([92.103.151.219]:56806 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfLDKLG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 05:11:06 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 2483D27E1615;
-        Wed,  4 Dec 2019 11:11:04 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id gvrRT0rHAEdz; Wed,  4 Dec 2019 11:11:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 5C27827E105F;
-        Wed,  4 Dec 2019 11:11:03 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 5C27827E105F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1575454263;
-        bh=kqlc+GicvRWTqiGeSKGpuPVSyUpC4IzwPGGUuISpl68=;
-        h=From:To:Date:Message-Id;
-        b=GXS6IijCHokzvT81WLifrL15YEhumVEqgNupy1qlzhwJU7414cOBS/g3xhjzQudLD
-         vDGPUNl2Paf44yvFPtBEHfvK2OqbPeJp2Tfo5kZ1Uj17oLBnpLa/U6lEOt1xwtz3lE
-         MXlucV8okAfuZ6YsarYdOBRraNyebMgiwVr+6vzw=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id G4zHnzc5Esd0; Wed,  4 Dec 2019 11:11:03 +0100 (CET)
-Received: from triton.lin.mbt.kalray.eu (unknown [192.168.37.25])
-        by zimbra2.kalray.eu (Postfix) with ESMTPSA id 45CE827E0E3A;
-        Wed,  4 Dec 2019 11:11:03 +0100 (CET)
-From:   Clement Leger <cleger@kalray.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Clement Leger <cleger@kalray.eu>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 4/5] pinctrl: dw: add pinctrl support for dwapb gpio driver
-Date:   Wed,  4 Dec 2019 11:10:38 +0100
-Message-Id: <20191204101042.4275-5-cleger@kalray.eu>
-X-Mailer: git-send-email 2.15.0.276.g89ea799
+        id S1727447AbfLDKMp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Dec 2019 05:12:45 -0500
+Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:54535
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727136AbfLDKMp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Dec 2019 05:12:45 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ehqWJCk2dHlYvVLIWVQeifBkbafBDij79VsRp9e0YaZoHEBFsP259Wv3w+VgurCgi4ctL4uAXrfAXViAFv2Jm4sNGnqxPXuQ3wZZrLmV9TXlzcGO679H1ytF3J8DQqwAH9a/aafQq7042yQ3fjP8u/CbBIxjNT0b0zPF7HfPoAtNafenKlww0E2KVPrAucTrnO+bxrH8UHycuBVHJ3IQ0xrqRF0LRPAfdUdhcYIS/gGdfWnwmgI4kHZwYfSGAFymWtRo0DzOHNjNefo3QVXFFcpB1NNmD0sI33O0AvxaZQlUBSho/gepd1MVqYTxMypRJZkwp0QZ6e8vGvPEi8THaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dSdjGvRbKcnEzwclY2plo2CqFjpQ+aQq/QA9bOEcPqE=;
+ b=BmMYbG0mj59h3/XD0WPgROcQWGZ0lIKaYBmj9UKDpd96lDF7ielIlYaOa5upMsFrGBpUB07XikgF/ySJ7AbjG0931kJYHGRK0CNV2GuAaLcWRhJeKWQI+SGaP5D9M1SdluTgKLnYOtPMCkcF/ks2kpjfIM5iUZIsdTBmkpeteMC//0voyDcj6K6m/h0+HeyWzJeEspv0aAplpjHwKRxFw4+ykWWpkdtGKzIpfQ7z+XAdRNqXc/L+8PogKKATAOKKuqyN/87u+HNrgbYKF95MZQksCs2l9AUR0fVYprgBt+VskiWjG/YOUGxdAZTr2HjERkyZj5/sI42TCr2gwdMlzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dSdjGvRbKcnEzwclY2plo2CqFjpQ+aQq/QA9bOEcPqE=;
+ b=NIJKPQQUAo0qdsrFOrNLwqM3VwVufjCVQ9aVLUyQfpZiAmY0SqlmunnQ/W22IvlVN0uMiZtlVNVHSVpDtoEcOq9hOZvqFfTSS5HZkS5qOx0quzrkXFufiL4hqvy6jst/9V4GBCWhva6gMtC/kz89vDoDMiF8KfdxgzIkUH/BoIM=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5921.eurprd04.prod.outlook.com (20.178.117.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.20; Wed, 4 Dec 2019 10:12:41 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2495.014; Wed, 4 Dec 2019
+ 10:12:41 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     "rjui@broadcom.com" <rjui@broadcom.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/2] gpio: bcm-kona: use platform_irq_count
+Thread-Topic: [PATCH v3 2/2] gpio: bcm-kona: use platform_irq_count
+Thread-Index: AQHVqoSnVgd0oV+avUOUZsuBa7eNT6epwMaAgAAAfjA=
+Date:   Wed, 4 Dec 2019 10:12:40 +0000
+Message-ID: <AM0PR04MB4481A472580A80B5244CB9C2885D0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1575451330-11112-1-git-send-email-peng.fan@nxp.com>
+ <1575451330-11112-2-git-send-email-peng.fan@nxp.com>
+ <20191204100925.sjp6cztozlm5qm6y@pengutronix.de>
+In-Reply-To: <20191204100925.sjp6cztozlm5qm6y@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b52fbaed-8deb-44bd-761e-08d778a27f68
+x-ms-traffictypediagnostic: AM0PR04MB5921:|AM0PR04MB5921:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB59211269BF2B28660EA8BCA4885D0@AM0PR04MB5921.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:569;
+x-forefront-prvs: 0241D5F98C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(39860400002)(366004)(396003)(376002)(189003)(199004)(6116002)(66574012)(11346002)(7416002)(81156014)(81166006)(2906002)(33656002)(8936002)(6916009)(102836004)(478600001)(54906003)(5660300002)(66446008)(64756008)(45080400002)(66946007)(14454004)(52536014)(66556008)(316002)(966005)(66476007)(76116006)(71200400001)(14444005)(25786009)(26005)(8676002)(186003)(71190400001)(7736002)(74316002)(6246003)(9686003)(44832011)(99286004)(305945005)(76176011)(6506007)(6306002)(4326008)(55016002)(86362001)(7696005)(3846002)(229853002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5921;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EvMbP6JFjdoJ+J27RCuOxvtBb8Dtr/VPXC0lCrZDpFj7jFcjRV7jMUA6e4bSgnmTBFZ9rsP+zwpyGGbxgYRJr82wD9hggMOzEH1y0kFCPfruBawl8y6ghxe3M3xwzQEqLHLJev5fh0kw1SxFJfUgEiyBR6lfU4UDRTLIzCKcPWp41E68q1SHsqXPnhE+iVZ0gYBh/aRKJ3K7o5QAi53EGRCfYzhdyEfUm1wVu0YX7sfznEgOEW0uZAwFB3v0DpOdljYHdNYfvmziQN2OT9y/Veii9FTmrGI9rAlrTCbfadae/msQL6Op+2PWGAbd+bEA7nBxHC4X5QsvbD/gz9SNPIIIH/22u5MvYesI6Af0FE8cnSkhTZ/VYexvXlrrlgXio+4rcbK+BcTTBptn5k1pkgaF8HL6UNLPa9lBkQ1GZRUA0wOWmf3MgxKdwi+5oeve
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b52fbaed-8deb-44bd-761e-08d778a27f68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 10:12:41.1313
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NM4BSkhEfVcqg2KkWXyYVlcuR0nocmM99VRIYVfV3dzi1B5u80DCCt6+JKILrGx7pjIkTN5vxdNWgC0cI7ekNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5921
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Synopsys designware gpio controller also has pinmuxing functionnality.
-Pinmuxing allows to choose between software and hardware mode. When
-using hardware mode, an external signal controls the pin output.
+> Subject: Re: [PATCH v3 2/2] gpio: bcm-kona: use platform_irq_count
+>=20
+> On Wed, Dec 04, 2019 at 09:24:39AM +0000, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > platform_irq_count() is the more generic way (independent of device
+> > trees) to determine the count of available interrupts. So use this
+> > instead.
+> >
+> > As platform_irq_count() might return an error code (which of_irq_count
+> > doesn't) some additional handling is necessary.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >
+> > V3:
+> >  Use %pe
+>=20
+> Great. Note that with %pe there is a dependency on commit 57f5677e535b
+> ("printf: add support for printing symbolic error names") which was appli=
+ed
+> during the current merge window.
+>=20
+> > V2:
+> >  Update commit log, and add err handling  Not tested, just code
+> > inspection
+> >
+> >
+> >  drivers/gpio/gpio-bcm-kona.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-bcm-kona.c
+> > b/drivers/gpio/gpio-bcm-kona.c index 4122683eb1f9..baee8c3f06ad
+> 100644
+> > --- a/drivers/gpio/gpio-bcm-kona.c
+> > +++ b/drivers/gpio/gpio-bcm-kona.c
+> > @@ -19,7 +19,6 @@
+> >  #include <linux/io.h>
+> >  #include <linux/gpio/driver.h>
+> >  #include <linux/of_device.h>
+> > -#include <linux/of_irq.h>
+> >  #include <linux/init.h>
+> >  #include <linux/irqdomain.h>
+> >  #include <linux/irqchip/chained_irq.h> @@ -586,11 +585,18 @@ static
+> > int bcm_kona_gpio_probe(struct platform_device *pdev)
+> >
+> >  	kona_gpio->gpio_chip =3D template_chip;
+> >  	chip =3D &kona_gpio->gpio_chip;
+> > -	kona_gpio->num_bank =3D of_irq_count(dev->of_node);
+> > -	if (kona_gpio->num_bank =3D=3D 0) {
+> > +	ret =3D platform_irq_count(pdev);
+> > +	if (!ret) {
+> >  		dev_err(dev, "Couldn't determine # GPIO banks\n");
+> >  		return -ENOENT;
+> > +	} else if (ret < 0) {
+> > +		if (ret !=3D -EPROBE_DEFER)
+> > +			dev_err(dev, "Couldn't determine GPIO banks: (%pe)\n",
+> > +				ERR_PTR(ret));
+>=20
+> I'd say drop either the colon or the parenthesis.
 
-This patch adds support for pinctrl framework in the gpio driver. This
-support is conditionned by the snps,has-pinctrl device tree property.
-Indeed, the functionnality can be detected only if the gpio IP has been
-configured using paremeters encoding which is not always present. If
-property is present, then the pinctrl will be registered and will
-allow switching to the "hw" functionnality and hence enable the
-alternate function.
+Like this?=20
++	dev_err(dev, "Couldn't determine GPIO banks: %pe\n",
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
----
- drivers/pinctrl/dw/Kconfig               |   2 +
- drivers/pinctrl/dw/pinctrl-dwapb.c       | 263 ++++++++++++++++++++++++++++++-
- include/linux/platform_data/gpio-dwapb.h |   1 +
- 3 files changed, 260 insertions(+), 6 deletions(-)
+Does it really matter?
 
-diff --git a/drivers/pinctrl/dw/Kconfig b/drivers/pinctrl/dw/Kconfig
-index 8b57c27eab1f..2bcc51813d80 100644
---- a/drivers/pinctrl/dw/Kconfig
-+++ b/drivers/pinctrl/dw/Kconfig
-@@ -4,6 +4,8 @@ config GPIO_DWAPB
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
- 	select GPIO_GENERIC
-+	select PINMUX
-+	select GENERIC_PINCONF
- 	help
- 	  Say Y or M here to build support for the Synopsys DesignWare APB
- 	  GPIO block.
-diff --git a/drivers/pinctrl/dw/pinctrl-dwapb.c b/drivers/pinctrl/dw/pinctrl-dwapb.c
-index 3750205408e3..063bc36319d7 100644
---- a/drivers/pinctrl/dw/pinctrl-dwapb.c
-+++ b/drivers/pinctrl/dw/pinctrl-dwapb.c
-@@ -25,15 +25,22 @@
- #include <linux/spinlock.h>
- #include <linux/platform_data/gpio-dwapb.h>
- #include <linux/slab.h>
-+#include <linux/pinctrl/pinmux.h>
-+
-+#include "../pinctrl-utils.h"
- 
- #define GPIO_SWPORTA_DR		0x00
- #define GPIO_SWPORTA_DDR	0x04
-+#define GPIO_SWPORTA_CTL	0x08
- #define GPIO_SWPORTB_DR		0x0c
- #define GPIO_SWPORTB_DDR	0x10
-+#define GPIO_SWPORTB_CTL	0x14
- #define GPIO_SWPORTC_DR		0x18
- #define GPIO_SWPORTC_DDR	0x1c
-+#define GPIO_SWPORTC_CTL	0x20
- #define GPIO_SWPORTD_DR		0x24
- #define GPIO_SWPORTD_DDR	0x28
-+#define GPIO_SWPORTD_CTL	0x2c
- #define GPIO_INTEN		0x30
- #define GPIO_INTMASK		0x34
- #define GPIO_INTTYPE_LEVEL	0x38
-@@ -45,11 +52,16 @@
- #define GPIO_EXT_PORTB		0x54
- #define GPIO_EXT_PORTC		0x58
- #define GPIO_EXT_PORTD		0x5c
-+#define GPIO_CONFIG_REG1	0x74
-+
-+#define GPIO_CONFIG_REG1_HW_BIT		8
-+#define GPIO_CONFIG_REG1_SINGLE_CTL_BIT	4
- 
- #define DWAPB_MAX_PORTS		4
- #define GPIO_EXT_PORT_STRIDE	0x04 /* register stride 32 bits */
- #define GPIO_SWPORT_DR_STRIDE	0x0c /* register stride 3*32 bits */
- #define GPIO_SWPORT_DDR_STRIDE	0x0c /* register stride 3*32 bits */
-+#define GPIO_SWPORT_CTL_STRIDE	0x0c /* register stride 3*32 bits */
- 
- #define GPIO_REG_OFFSET_V2	1
- 
-@@ -77,13 +89,16 @@ struct dwapb_context {
- #endif
- 
- struct dwapb_gpio_port {
--	struct gpio_chip	gc;
--	bool			is_registered;
--	struct dwapb_gpio	*gpio;
-+	struct gpio_chip		gc;
-+	bool				is_registered;
-+	struct dwapb_gpio		*gpio;
- #ifdef CONFIG_PM_SLEEP
--	struct dwapb_context	*ctx;
-+	struct dwapb_context		*ctx;
- #endif
--	unsigned int		idx;
-+	unsigned int			idx;
-+	struct pinctrl_dev		*pctl;
-+	struct pinctrl_desc		pctldesc;
-+	struct pinctrl_gpio_range	range;
- };
- 
- struct dwapb_gpio {
-@@ -97,6 +112,89 @@ struct dwapb_gpio {
- 	struct clk		*clk;
- };
- 
-+enum dwapb_gpio_func {
-+	DWAPB_GPIO_SW_FUNC = 0,
-+	DWAPB_GPIO_HW_FUNC = 1,
-+};
-+
-+#define DWAPB_PINCTRL_PIN(pin) PINCTRL_PIN(pin, "pin" #pin)
-+
-+static const struct pinctrl_pin_desc dwapb_pins[] = {
-+	DWAPB_PINCTRL_PIN(0),
-+	DWAPB_PINCTRL_PIN(1),
-+	DWAPB_PINCTRL_PIN(2),
-+	DWAPB_PINCTRL_PIN(3),
-+	DWAPB_PINCTRL_PIN(4),
-+	DWAPB_PINCTRL_PIN(5),
-+	DWAPB_PINCTRL_PIN(6),
-+	DWAPB_PINCTRL_PIN(7),
-+	DWAPB_PINCTRL_PIN(8),
-+	DWAPB_PINCTRL_PIN(9),
-+	DWAPB_PINCTRL_PIN(10),
-+	DWAPB_PINCTRL_PIN(11),
-+	DWAPB_PINCTRL_PIN(12),
-+	DWAPB_PINCTRL_PIN(13),
-+	DWAPB_PINCTRL_PIN(14),
-+	DWAPB_PINCTRL_PIN(15),
-+	DWAPB_PINCTRL_PIN(16),
-+	DWAPB_PINCTRL_PIN(17),
-+	DWAPB_PINCTRL_PIN(18),
-+	DWAPB_PINCTRL_PIN(19),
-+	DWAPB_PINCTRL_PIN(20),
-+	DWAPB_PINCTRL_PIN(21),
-+	DWAPB_PINCTRL_PIN(22),
-+	DWAPB_PINCTRL_PIN(23),
-+	DWAPB_PINCTRL_PIN(24),
-+	DWAPB_PINCTRL_PIN(25),
-+	DWAPB_PINCTRL_PIN(26),
-+	DWAPB_PINCTRL_PIN(27),
-+	DWAPB_PINCTRL_PIN(28),
-+	DWAPB_PINCTRL_PIN(29),
-+	DWAPB_PINCTRL_PIN(30),
-+	DWAPB_PINCTRL_PIN(31)
-+};
-+
-+/* One pin per group */
-+static const char * const dwapb_gpio_groups[] = {
-+	"pin0",
-+	"pin1",
-+	"pin2",
-+	"pin3",
-+	"pin4",
-+	"pin5",
-+	"pin6",
-+	"pin7",
-+	"pin8",
-+	"pin9",
-+	"pin10",
-+	"pin11",
-+	"pin12",
-+	"pin13",
-+	"pin14",
-+	"pin15",
-+	"pin16",
-+	"pin17",
-+	"pin18",
-+	"pin19",
-+	"pin20",
-+	"pin21",
-+	"pin22",
-+	"pin23",
-+	"pin24",
-+	"pin25",
-+	"pin26",
-+	"pin27",
-+	"pin28",
-+	"pin29",
-+	"pin30",
-+	"pin31"
-+};
-+
-+static const char *const dwapb_gpio_functions[] = {
-+	[DWAPB_GPIO_SW_FUNC] = "sw",
-+	[DWAPB_GPIO_HW_FUNC] = "hw",
-+};
-+
- static inline u32 gpio_reg_v2_convert(unsigned int offset)
- {
- 	switch (offset) {
-@@ -484,6 +582,151 @@ static void dwapb_irq_teardown(struct dwapb_gpio *gpio)
- 	gpio->domain = NULL;
- }
- 
-+static int dwapb_pctl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct dwapb_gpio_port *port = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return port->gc.ngpio;
-+}
-+
-+static const char *dwapb_pctl_get_group_name(struct pinctrl_dev *pctldev,
-+		unsigned selector)
-+{
-+	struct dwapb_gpio_port *port = pinctrl_dev_get_drvdata(pctldev);
-+
-+	/* Exactly one group per pin */
-+	return port->pctldesc.pins[selector].name;
-+}
-+
-+static int dwapb_pctl_get_group_pins(struct pinctrl_dev *pctldev,
-+		unsigned selector,
-+		const unsigned **pins,
-+		unsigned *num_pins)
-+{
-+	struct dwapb_gpio_port *port = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = &port->pctldesc.pins[selector].number;
-+	*num_pins = 1;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops dwapb_pctl_ops = {
-+	.get_groups_count = dwapb_pctl_get_groups_count,
-+	.get_group_name = dwapb_pctl_get_group_name,
-+	.get_group_pins = dwapb_pctl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+static int dwapb_gpio_get_function_count(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(dwapb_gpio_functions);
-+}
-+
-+static const char *dwapb_gpio_get_function_name(struct pinctrl_dev *pctldev,
-+						unsigned selector)
-+{
-+	return dwapb_gpio_functions[selector];
-+}
-+
-+static int dwapb_gpio_get_function_groups(struct pinctrl_dev *pctldev,
-+					  unsigned selector,
-+					  const char * const **groups,
-+					  unsigned * const num_groups)
-+{
-+	struct dwapb_gpio_port *port = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*groups = dwapb_gpio_groups;
-+	*num_groups = port->gc.ngpio;
-+
-+	return 0;
-+}
-+
-+static int dwapb_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
-+		unsigned group)
-+{
-+	struct dwapb_gpio_port *port = pinctrl_dev_get_drvdata(pctldev);
-+	struct dwapb_gpio *gpio = port->gpio;
-+	struct gpio_chip *gc = &port->gc;
-+	unsigned int reg_off;
-+	unsigned long flags;
-+	u32 val;
-+
-+	dev_info(gpio->dev, "Setting func %s on pin %d",
-+		dwapb_gpio_functions[selector], group);
-+
-+	reg_off = GPIO_SWPORTA_CTL + (port->idx * GPIO_SWPORT_CTL_STRIDE);
-+	spin_lock_irqsave(&gc->bgpio_lock, flags);
-+	val = dwapb_read(gpio, reg_off);
-+	if (selector == 0)
-+		val &= ~BIT(group);
-+	else
-+		val |= BIT(group);
-+	dwapb_write(gpio, reg_off, val);
-+	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-+
-+	return 0;
-+}
-+
-+static int dwapb_gpio_pmx_gpio_request(struct pinctrl_dev *pctldev,
-+				    struct pinctrl_gpio_range *range,
-+				    unsigned int pin)
-+{
-+	return dwapb_gpio_set_mux(pctldev, DWAPB_GPIO_SW_FUNC, pin);
-+}
-+
-+struct pinmux_ops dwapb_pmux_ops = {
-+	.get_functions_count = dwapb_gpio_get_function_count,
-+	.get_function_name = dwapb_gpio_get_function_name,
-+	.get_function_groups = dwapb_gpio_get_function_groups,
-+	.set_mux = dwapb_gpio_set_mux,
-+	.gpio_request_enable = dwapb_gpio_pmx_gpio_request,
-+};
-+
-+static int dwapb_gpio_add_pinctrl(struct dwapb_gpio *gpio,
-+				  struct dwapb_port_property *pp,
-+				  struct dwapb_gpio_port *port)
-+{
-+	struct pinctrl_desc *desc;
-+	struct pinctrl_gpio_range *range;
-+	int ret;
-+
-+	desc = &port->pctldesc;
-+
-+	desc->pins = dwapb_pins;
-+	desc->npins = pp->ngpio;
-+	desc->name = dev_name(gpio->dev);
-+	desc->owner = THIS_MODULE;
-+	desc->pctlops = &dwapb_pctl_ops;
-+	desc->pmxops = &dwapb_pmux_ops;
-+
-+	ret = devm_pinctrl_register_and_init(gpio->dev, &port->pctldesc, port,
-+					     &port->pctl);
-+	if (ret) {
-+		dev_err(gpio->dev, "Failed to register pinctrl device\n");
-+		return ret;
-+	}
-+
-+	ret = pinctrl_enable(port->pctl);
-+	if (ret) {
-+		dev_err(gpio->dev, "pinctrl enable failed\n");
-+		return ret;
-+	}
-+
-+	range = &port->range;
-+	range->name = dev_name(gpio->dev);
-+	range->id = port->idx;
-+	range->pin_base = 0;
-+	range->base = port->gc.base;
-+	range->npins = pp->ngpio;
-+	range->gc = &port->gc;
-+
-+	pinctrl_add_gpio_range(port->pctl, range);
-+
-+	return 0;
-+}
-+
- static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 			       struct dwapb_port_property *pp,
- 			       unsigned int offs)
-@@ -536,6 +779,12 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	else
- 		port->is_registered = true;
- 
-+	if (!err && pp->has_pinctrl) {
-+		err = dwapb_gpio_add_pinctrl(gpio, pp, port);
-+		if (err)
-+			return err;
-+	}
-+
- 	/* Add GPIO-signaled ACPI event support */
- 	if (pp->has_irq)
- 		acpi_gpiochip_request_interrupts(&port->gc);
-@@ -589,6 +838,8 @@ dwapb_gpio_get_pdata(struct device *dev)
- 			pp->ngpio = 32;
- 		}
- 
-+		pp->has_pinctrl = fwnode_property_read_bool(fwnode,
-+						"snps,has-pinctrl");
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
- 
-@@ -822,7 +1073,7 @@ static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
- 
- static struct platform_driver dwapb_gpio_driver = {
- 	.driver		= {
--		.name	= "gpio-dwapb",
-+		.name	= "pinctrl-dwapb",
- 		.pm	= &dwapb_gpio_pm_ops,
- 		.of_match_table = of_match_ptr(dwapb_of_match),
- 		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 3c606c450d05..2633bb745317 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -14,6 +14,7 @@ struct dwapb_port_property {
- 	int		irq[32];
- 	bool		has_irq;
- 	bool		irq_shared;
-+	bool		has_pinctrl;
- };
- 
- struct dwapb_platform_data {
--- 
-2.15.0.276.g89ea799
+Thanks,
+Peng.
 
+>=20
+> Best regards
+> Uwe
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig
+> |
+> Industrial Linux Solutions                 |
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fwww.
+> pengutronix.de%2F&amp;data=3D02%7C01%7Cpeng.fan%40nxp.com%7C627e1
+> 95be7f0467580f908d778a20d60%7C686ea1d3bc2b4c6fa92cd99c5c301635%
+> 7C0%7C0%7C637110509717538199&amp;sdata=3D3FuRYio8G3jtly1hWuGhJGg
+> zqaT742y%2B2H6xOwKMvJ8%3D&amp;reserved=3D0 |
