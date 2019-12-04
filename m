@@ -2,109 +2,184 @@ Return-Path: <SRS0=rqcL=Z2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4392C43603
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 18:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86150C43603
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 19:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE5E20675
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 18:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 600192073C
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 19:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfLDSsC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Dec 2019 13:48:02 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41665 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727887AbfLDSsC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 13:48:02 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1icZgq-0003fy-Ad; Wed, 04 Dec 2019 19:47:56 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1icZgo-0002Xy-Mk; Wed, 04 Dec 2019 19:47:54 +0100
-Date:   Wed, 4 Dec 2019 19:47:54 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alice Guo <alice.guo@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 1/2] gpio: mvebu: use platform_irq_count
-Message-ID: <20191204184754.5oj2xoem2v3544rx@pengutronix.de>
-References: <1575433106-16171-1-git-send-email-peng.fan@nxp.com>
- <20191204072422.vfo3mrrcaav75jv4@pengutronix.de>
- <CAMpxmJUAk5Y3mX_irTjwveaii8W=coaG0w2aWvFXUEXqHxpArQ@mail.gmail.com>
+        id S1728086AbfLDTmd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Dec 2019 14:42:33 -0500
+Received: from mga12.intel.com ([192.55.52.136]:12765 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727867AbfLDTmc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Dec 2019 14:42:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 11:42:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,278,1571727600"; 
+   d="scan'208";a="219005577"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Dec 2019 11:42:31 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 5144894; Wed,  4 Dec 2019 21:42:30 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/2] gpiolib: Make use of assign_bit() API
+Date:   Wed,  4 Dec 2019 21:42:29 +0200
+Message-Id: <20191204194229.64251-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191204194229.64251-1-andriy.shevchenko@linux.intel.com>
+References: <20191204194229.64251-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMpxmJUAk5Y3mX_irTjwveaii8W=coaG0w2aWvFXUEXqHxpArQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 05:33:04PM +0100, Bartosz Golaszewski wrote:
-> śr., 4 gru 2019 o 08:24 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > On Wed, Dec 04, 2019 at 04:20:41AM +0000, Peng Fan wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > platform_irq_count() is the more generic way (independent of
-> > > device trees) to determine the count of available interrupts. So
-> > > use this instead.
-> > >
-> > > As platform_irq_count() might return an error code (which
-> > > of_irq_count doesn't) some additional handling is necessary.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > Reviewed-and-Commit-Log-Provided-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> This is not a valid tag, but I take it as Suggested-by and Reviewed-by. :)
+We have for some time the assign_bit() API to replace open coded
 
-If you care about the validity of such tags, I suggest you take a look
-at the output of
+	if (foo)
+		set_bit(n, bar);
+	else
+		clear_bit(n, bar);
 
-	$ git rev-list v4.0..v5.4 | while read rev; do git cat-file commit $rev; done | sed -n 's/ *\(.*-by\):.*/\1/p' | sort | uniq -c | sort -n
+Use this API in GPIO library code.
 
-(which finds all tags used between 4.0 and 5.4 with its usage count).
+No functional change intended.
 
-A few of the tags (admittedly with low usage count :-) included there are:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 59 ++++++++++++++----------------------------
+ 1 file changed, 20 insertions(+), 39 deletions(-)
 
-  Badly-reviewed-by
-  Bonus-points-awarded-by
-  Compile-tested and Reviewed-by
-  Enthusiastically-Acked-by
-  Mea-culpa-by
-  \o/-by
-  Brown-paper-bag-by
-
-Best regards
-Uwe
-
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 134985210619..b332121da4b5 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -224,15 +224,15 @@ int gpiod_get_direction(struct gpio_desc *desc)
+ 		return -ENOTSUPP;
+ 
+ 	ret = chip->get_direction(chip, offset);
+-	if (ret > 0) {
+-		/* GPIOF_DIR_IN, or other positive */
++	if (ret < 0)
++		return ret;
++
++	/* GPIOF_DIR_IN or other positive, otherwise GPIOF_DIR_OUT */
++	if (ret > 0)
+ 		ret = 1;
+-		clear_bit(FLAG_IS_OUT, &desc->flags);
+-	}
+-	if (ret == 0) {
+-		/* GPIOF_DIR_OUT */
+-		set_bit(FLAG_IS_OUT, &desc->flags);
+-	}
++
++	assign_bit(FLAG_IS_OUT, &desc->flags, !ret);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_direction);
+@@ -484,15 +484,6 @@ static int linehandle_validate_flags(u32 flags)
+ 	return 0;
+ }
+ 
+-static void linehandle_configure_flag(unsigned long *flagsp,
+-				      u32 bit, bool active)
+-{
+-	if (active)
+-		set_bit(bit, flagsp);
+-	else
+-		clear_bit(bit, flagsp);
+-}
+-
+ static long linehandle_set_config(struct linehandle_state *lh,
+ 				  void __user *ip)
+ {
+@@ -514,22 +505,22 @@ static long linehandle_set_config(struct linehandle_state *lh,
+ 		desc = lh->descs[i];
+ 		flagsp = &desc->flags;
+ 
+-		linehandle_configure_flag(flagsp, FLAG_ACTIVE_LOW,
++		assign_bit(FLAG_ACTIVE_LOW, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW);
+ 
+-		linehandle_configure_flag(flagsp, FLAG_OPEN_DRAIN,
++		assign_bit(FLAG_OPEN_DRAIN, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN);
+ 
+-		linehandle_configure_flag(flagsp, FLAG_OPEN_SOURCE,
++		assign_bit(FLAG_OPEN_SOURCE, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE);
+ 
+-		linehandle_configure_flag(flagsp, FLAG_PULL_UP,
++		assign_bit(FLAG_PULL_UP, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_BIAS_PULL_UP);
+ 
+-		linehandle_configure_flag(flagsp, FLAG_PULL_DOWN,
++		assign_bit(FLAG_PULL_DOWN, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_BIAS_PULL_DOWN);
+ 
+-		linehandle_configure_flag(flagsp, FLAG_BIAS_DISABLE,
++		assign_bit(FLAG_BIAS_DISABLE, flagsp,
+ 			lflags & GPIOHANDLE_REQUEST_BIAS_DISABLE);
+ 
+ 		/*
+@@ -1561,15 +1552,11 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 		struct gpio_desc *desc = &gdev->descs[i];
+ 
+ 		if (chip->get_direction && gpiochip_line_is_valid(chip, i)) {
+-			if (!chip->get_direction(chip, i))
+-				set_bit(FLAG_IS_OUT, &desc->flags);
+-			else
+-				clear_bit(FLAG_IS_OUT, &desc->flags);
++			assign_bit(FLAG_IS_OUT,
++				   &desc->flags, !chip->get_direction(chip, i));
+ 		} else {
+-			if (!chip->direction_input)
+-				set_bit(FLAG_IS_OUT, &desc->flags);
+-			else
+-				clear_bit(FLAG_IS_OUT, &desc->flags);
++			assign_bit(FLAG_IS_OUT,
++				   &desc->flags, !chip->direction_input);
+ 		}
+ 	}
+ 
+@@ -3371,10 +3358,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ 	 * Handle FLAG_TRANSITORY first, enabling queries to gpiolib for
+ 	 * persistence state.
+ 	 */
+-	if (transitory)
+-		set_bit(FLAG_TRANSITORY, &desc->flags);
+-	else
+-		clear_bit(FLAG_TRANSITORY, &desc->flags);
++	assign_bit(FLAG_TRANSITORY, &desc->flags, transitory);
+ 
+ 	/* If the driver supports it, set the persistence state now */
+ 	chip = desc->gdev->chip;
+@@ -3830,10 +3814,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				gpio_set_open_source_value_commit(desc, value);
+ 			} else {
+ 				__set_bit(hwgpio, mask);
+-				if (value)
+-					__set_bit(hwgpio, bits);
+-				else
+-					__clear_bit(hwgpio, bits);
++				__assign_bit(hwgpio, bits, value);
+ 				count++;
+ 			}
+ 			i++;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.24.0
+
