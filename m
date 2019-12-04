@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEF1C2D0B1
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 15:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BA3C43603
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 16:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01102086D
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 15:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E2AB20866
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Dec 2019 16:01:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Vt/6D1lS"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="BBMUbwY6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfLDP7a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Dec 2019 10:59:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46711 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728595AbfLDP73 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 10:59:29 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z7so9166467wrl.13
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2019 07:59:28 -0800 (PST)
+        id S1728679AbfLDP7t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Dec 2019 10:59:49 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39859 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728671AbfLDP7t (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 10:59:49 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so9228274wrt.6
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2019 07:59:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0HHgoLgFHf2KTo5tf1P+Sd12YWIyt1YcyhSjGYkb4R8=;
-        b=Vt/6D1lS08tFWOArLQbOP8E/WEJ+/7lyTXHQCXBXklKYAc1dmvCjy97Idok02qrp+G
-         /iRmBekwSuOk5CHDHIX0jvI9QPjRJWcHhJaALqciMpbsAKzJdeoitRdEQwyUY1vktAar
-         VPIXLw0dRbLHP+AQ1WhHMfRB4wUZg0DUwOIAyaT4lNRu80JU/Zg8cJ7ElWh8qU6QzG0U
-         lmTPo0OKpqHTbbTFqeHv5gxwoVkigvqAzTDv4FJARCSJIQjwo7GRlGUMzmXyc5/41yoh
-         ZLBsvPTo+mcBLkasVIMGfTcYaaSvjx3JNS9np3G5L2MjiL5jLggwH3vYd+I84iv4PmrZ
-         HfEQ==
+        bh=3vOhxME4oM+fCXvGw9SeZO8ZtZ/Y7PIxuNLc7TEy6Us=;
+        b=BBMUbwY67rlDFQzYeKhhMrURjvq+SV00mi/aBQLu2XUm4f46pIt+flDS2ZdL34ILWA
+         DzDRxfz3Yse3rm5oSdZzFW6HbJOmk/562LaDsoSkah9MDpnNm6FirJxpYFPL19eTT5XO
+         cYgZWpYU/4cQcK2Vyv9QkBmwzwB3XE6JXTh9hU5vQ2WV1i6ExBsOUVUUh5Z9j+uOHmh4
+         f+Kvl8kbcALtFF3IEXsIDRhybsXftUPA+95fNvPhs/VZsBUY9y8HXjmpAUiWUbWxVJT8
+         7cMQILfswsNcQuk1QkzOzoHcVacLpetKWDxSOH2geHB+fbAOo159sxgUmbSf1Qjljkq6
+         kcGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0HHgoLgFHf2KTo5tf1P+Sd12YWIyt1YcyhSjGYkb4R8=;
-        b=H9bSltSMOZrLXIYtiA1fPpblKoMYXKoMsebaUcHS8rRFmos1guD9fW5VYmb+xqeDSF
-         LfIGeRoM446emBMqy6c+lrCIxHjgzs3uoF+PqZJLQGDHQTtrySD8quABVJ8ZKnkBLxDe
-         UekrHg5MXyL1pDFHKWwxcC8HU6Y5YG1GWgQSRno+rSSgW/aQKxTiAy9VY0PlOxC/THsJ
-         quZelHsC80gK4VRTQ/i8pkuIJL0s6bwknISemFjaTw7RhABa6Qs8HfVA2oNtdjAKH5Ou
-         9Hbs44J+fWuad3kKritQa7yAR7BB2vz12BDOASCzNY3/ohh1M+YDqZ2aKAnIp+OX91Gl
-         i60g==
-X-Gm-Message-State: APjAAAVB69d6gTGG+A0YC3ux2ddnkPiD0QCQW/jxA5Vzcr0EQV6h+L6q
-        PoOIwGRzdD5gG1KZaZGhOYN8wQ==
-X-Google-Smtp-Source: APXvYqx45bZ9826Rs8lcmtiIU4mfdZWsykH+a2xcXPaHAxKIcIt36IpO8A21JvhcrlmQ6H6Rwr5GQw==
-X-Received: by 2002:adf:eb89:: with SMTP id t9mr4904521wrn.5.1575475168318;
-        Wed, 04 Dec 2019 07:59:28 -0800 (PST)
+        bh=3vOhxME4oM+fCXvGw9SeZO8ZtZ/Y7PIxuNLc7TEy6Us=;
+        b=LR/u0RO9yyelPpiMYjkFlscdimI32BxBKAeGe/Z/nUBtvY+pjgwPeETArH1FYmPACu
+         8fEKreeO0gfjYHGZpB1TNyB4q07c2qEE2dFUMogXp5X/0ehWKPlbSBHZ8m6Nq7oBihEy
+         Xu5snCMBz7P6DsYKWzyh9y+p9iPMcCb23eCE1DgqzMwVYOz7lebks1qMKMpoUE7itz7P
+         K6PyOqeRvQGcA2NgQrXYdrzRtj388/RukcFyhnefkuzjE7CqRH7eV4iVJQe6yREiR2Sg
+         FqRoZ0BmpFTa76KqTQU0MpajjgTW2KnXt8nEP+HalbO8/He6h2KxfFwpfog7eOYr+luB
+         hnzA==
+X-Gm-Message-State: APjAAAX64He95+X4bJe5Ymlf4Kmdn71ELMAMEygk9Uv4Jd+C2ACqMyz/
+        ET0qD4e/vrMjvoDBq9tgDx5GsJds51U=
+X-Google-Smtp-Source: APXvYqxDIY/iXDiy3QJ88E3DR3VBqpPxQnwpJM1KGnR56oJlEtM54rx1fvuTnHc5kW24DTAt+3ceSQ==
+X-Received: by 2002:adf:dcc2:: with SMTP id x2mr4555036wrm.24.1575475186930;
+        Wed, 04 Dec 2019 07:59:46 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id u18sm8640508wrt.26.2019.12.04.07.59.27
+        by smtp.gmail.com with ESMTPSA id s10sm8769070wrw.12.2019.12.04.07.59.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:27 -0800 (PST)
+        Wed, 04 Dec 2019 07:59:45 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 08/11] gpiolib: emit a debug message when adding events to a full kfifo
-Date:   Wed,  4 Dec 2019 16:59:11 +0100
-Message-Id: <20191204155912.17590-9-brgl@bgdev.pl>
+Subject: [PATCH v2 11/11] tools: gpio: implement gpio-watch
+Date:   Wed,  4 Dec 2019 16:59:41 +0100
+Message-Id: <20191204155941.17814-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191204155912.17590-1-brgl@bgdev.pl>
-References: <20191204155912.17590-1-brgl@bgdev.pl>
+In-Reply-To: <20191204155941.17814-1-brgl@bgdev.pl>
+References: <20191204155941.17814-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -74,29 +74,183 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Currently if the line-event kfifo is full, we just silently drop any new
-events. Add a ratelimited debug message so that we at least have some
-trace in the kernel log of event overflow.
+Add a simple program that allows to test the new LINECHANGED_FD ioctl().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpiolib.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/gpio/.gitignore   |   1 +
+ tools/gpio/Build        |   1 +
+ tools/gpio/Makefile     |  11 +++-
+ tools/gpio/gpio-watch.c | 112 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 124 insertions(+), 1 deletion(-)
+ create mode 100644 tools/gpio/gpio-watch.c
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 43f90eca6d45..c89d297da270 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -975,6 +975,9 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
- 	ret = kfifo_in_spinlocked(&le->events, &ge, 1, &le->wait.lock);
- 	if (ret)
- 		wake_up_poll(&le->wait, EPOLLIN);
-+	else
-+		pr_debug_ratelimited(
-+			"%s: event FIFO is full - event dropped\n", __func__);
+diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
+index a94c0e83b209..fffd32969d62 100644
+--- a/tools/gpio/.gitignore
++++ b/tools/gpio/.gitignore
+@@ -1,4 +1,5 @@
+ gpio-event-mon
+ gpio-hammer
+ lsgpio
++gpio-watch
+ include/linux/gpio.h
+diff --git a/tools/gpio/Build b/tools/gpio/Build
+index 4141f35837db..67c7b7f6a717 100644
+--- a/tools/gpio/Build
++++ b/tools/gpio/Build
+@@ -2,3 +2,4 @@ gpio-utils-y += gpio-utils.o
+ lsgpio-y += lsgpio.o gpio-utils.o
+ gpio-hammer-y += gpio-hammer.o gpio-utils.o
+ gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
++gpio-watch-y += gpio-watch.o
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 6080de58861f..842287e42c83 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -18,7 +18,7 @@ MAKEFLAGS += -r
  
- 	return IRQ_HANDLED;
- }
+ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+ 
+-ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
++ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon gpio-watch
+ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+ 
+ all: $(ALL_PROGRAMS)
+@@ -66,6 +66,15 @@ $(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+ $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+ 
++#
++# gpio-watch
++#
++GPIO_WATCH_IN := $(OUTPUT)gpio-watch-in.o
++$(GPIO_WATCH_IN): prepare FORCE
++	$(Q)$(MAKE) $(build)=gpio-watch
++$(OUTPUT)gpio-watch: $(GPIO_WATCH_IN)
++	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
++
+ clean:
+ 	rm -f $(ALL_PROGRAMS)
+ 	rm -f $(OUTPUT)include/linux/gpio.h
+diff --git a/tools/gpio/gpio-watch.c b/tools/gpio/gpio-watch.c
+new file mode 100644
+index 000000000000..69aee43655ae
+--- /dev/null
++++ b/tools/gpio/gpio-watch.c
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * gpio-watch - monitor unrequested lines for property changes using the
++ *              character device
++ *
++ * Copyright (C) 2019 BayLibre SAS
++ * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
++ */
++
++#include <ctype.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/gpio.h>
++#include <poll.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <unistd.h>
++
++static bool isnumber(const char *str)
++{
++	size_t sz = strlen(str);
++	int i;
++
++	for (i = 0; i < sz; i++) {
++		if (!isdigit(str[i]))
++			return false;
++	}
++
++	return true;
++}
++
++int main(int argc, char **argv)
++{
++	struct gpioline_info_changed chg;
++	struct gpioline_info req;
++	struct pollfd pfd;
++	int fd, i, j, ret;
++	char *event;
++	ssize_t rd;
++
++	if (argc < 3)
++		goto err_usage;
++
++	fd = open(argv[1], O_RDWR | O_CLOEXEC);
++	if (fd < 0) {
++		perror("unable to open gpiochip");
++		return EXIT_FAILURE;
++	}
++
++	for (i = 0, j = 2; i < argc - 2; i++, j++) {
++		if (!isnumber(argv[j]))
++			goto err_usage;
++
++		memset(&req, 0, sizeof(req));
++		req.line_offset = atoi(argv[j]);
++
++		ret = ioctl(fd, GPIO_GET_LINEINFO_WATCH_IOCTL, &req);
++		if (ret) {
++			perror("unable to set up line watch");
++			return EXIT_FAILURE;
++		}
++	}
++
++	pfd.fd = fd;
++	pfd.events = POLLIN | POLLPRI;
++
++	for (;;) {
++		ret = poll(&pfd, 1, 5000);
++		if (ret < 0) {
++			perror("error polling the linechanged fd");
++			return EXIT_FAILURE;
++		} else if (ret > 0) {
++			memset(&chg, 0, sizeof(chg));
++			rd = read(pfd.fd, &chg, sizeof(chg));
++			if (rd < 0 || rd != sizeof(chg)) {
++				if (rd != sizeof(chg))
++					errno = EIO;
++
++				perror("error reading line change event");
++				return EXIT_FAILURE;
++			}
++
++			switch (chg.event_type) {
++			case GPIOLINE_CHANGED_REQUESTED:
++				event = "requested";
++				break;
++			case GPIOLINE_CHANGED_RELEASED:
++				event = "released";
++				break;
++			case GPIOLINE_CHANGED_CONFIG:
++				event = "config changed";
++				break;
++			default:
++				fprintf(stderr,
++					"invalid event type received from the kernel\n");
++				return EXIT_FAILURE;
++			}
++
++			printf("line %u: %s at %llu\n",
++			       chg.info.line_offset, event, chg.timestamp);
++		}
++	}
++
++	return 0;
++
++err_usage:
++	printf("%s: <gpiochip> <line0> <line1> ...\n", argv[0]);
++	return EXIT_FAILURE;
++}
 -- 
 2.23.0
 
