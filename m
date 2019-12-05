@@ -2,113 +2,128 @@ Return-Path: <SRS0=gGya=Z3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4B0C43603
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 17:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F8FC2D0C0
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 21:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3862221835
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 17:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C8920707
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 21:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575580017;
+	bh=0BjwXnBxJCjxAOFHsj6kbOG0NMYoOT/Yq6sWwXI4xwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YJUTzEN/aoB/J6WoNVlTC+m2YLB5wkK8Yx2bpq/+fRxbOFtyoi2bHplSuBFudRi5E
+	 y8qZsJaUyO3rmKBFaTs6mPgXNZxoLFUXj3YxI78iMzT7pDtQ/+5m5TQ4EivI86Fibz
+	 zRokxdJAr4cxYnzVWlzM99wvLIAx3BeESzFTQ3WM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfLERuB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Dec 2019 12:50:01 -0500
-Received: from mga04.intel.com ([192.55.52.120]:12488 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729396AbfLERuB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:50:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 09:50:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,282,1571727600"; 
-   d="scan'208";a="214249189"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 09:49:59 -0800
-Received: from andy by smile with local (Exim 4.93-RC5)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1icvGJ-0002dr-6A; Thu, 05 Dec 2019 19:49:59 +0200
-Date:   Thu, 5 Dec 2019 19:49:59 +0200
-From:   "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>
-To:     "Stanimir, Vasile-Laurentiu" 
-        <Vasile-Laurentiu.Stanimir@windriver.com>
-Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpiolib-acpi: Set gpiod flags for ACPI GPIO resources
- based on pullup and polarity
-Message-ID: <20191205174959.GW32742@smile.fi.intel.com>
-References: <D4218E93E3D74741B4028993B2A8DBE0534BF84B@ALA-MBD.corp.ad.wrs.com>
- <20191202130553.GG32742@smile.fi.intel.com>
- <D4218E93E3D74741B4028993B2A8DBE0534BF86E@ALA-MBD.corp.ad.wrs.com>
- <20191202140804.GK32742@smile.fi.intel.com>
- <D4218E93E3D74741B4028993B2A8DBE0534C01E5@ALA-MBD.corp.ad.wrs.com>
- <20191204140834.GP32742@smile.fi.intel.com>
+        id S1729892AbfLEVG4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Dec 2019 16:06:56 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42505 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729145AbfLEVG4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Dec 2019 16:06:56 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 66so3890328otd.9;
+        Thu, 05 Dec 2019 13:06:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kfZJgMdMZnEWqYp4l6MRhDa+lgrmX+5UPFpYfdvrZFQ=;
+        b=SoZxAsjeHAmoEf4nNdWHdNcH1eSxQGcAMlZkojEugsfwFP+PMHN/5fG+rRd+a6QsrN
+         UZ2nSGHtgB7j38V6j9TPs0jIXrA+Q5OOtGsGzONxVQ+ynCqo2IadyilFgPosg3/gOxdf
+         3VEQNi8ZiUF0J5ebBwjKwSVnI1m2V/fb8mcJFHJJz5VZSTeZbTV0nOK1nLiSW1ghecYD
+         /flwLufgKqBJxGPODZgph7WUClg+7YA1/B3cJsgJ2UGN4Qxyfg9Ma3+VFf8vsxZlveMq
+         0WbZLwUoPFak+8xVRRFjNI2Gvm8RxNzKG0Q3uoWlDgAn4m8Ds/4u1RwXhKM2C0/9CGja
+         C50A==
+X-Gm-Message-State: APjAAAVKlfEd2gTkmkWLBWw8xtEUxm7kwBuU/TsAzv72M3BjbzhHMyv2
+        7TT0vK57ZYd3gRo5ej7OQA==
+X-Google-Smtp-Source: APXvYqz+giNRZ8MeXlmxtPAkMj15JPvC0Xm4AbR1+kfJ6wADHeXGxnfrjZfPcXGkJATVHVwmwkF53w==
+X-Received: by 2002:a9d:75c7:: with SMTP id c7mr2839523otl.181.1575580014993;
+        Thu, 05 Dec 2019 13:06:54 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r25sm3819723otk.22.2019.12.05.13.06.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 13:06:54 -0800 (PST)
+Date:   Thu, 5 Dec 2019 15:06:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v3 4/7] dt-bindings: gpio: Add gpio-repeater bindings
+Message-ID: <20191205210653.GA29969@bogus>
+References: <20191127084253.16356-1-geert+renesas@glider.be>
+ <20191127084253.16356-5-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191204140834.GP32742@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20191127084253.16356-5-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 04:08:34PM +0200, andriy.shevchenko@linux.intel.com wrote:
-> On Tue, Dec 03, 2019 at 03:24:57PM +0000, Stanimir, Vasile-Laurentiu wrote:
-> > On Mon, Dec 02, 2019 at 01:44:04PM +0000, Stanimir, Vasile-Laurentiu wrote:
-> > > On Mon, Dec 02, 2019 at 12:36:47PM +0000, Stanimir, Vasile-Laurentiu wrote:
-
-> > The pin itself is a reset pin that must (as defined by rfc2119) be asserted during Linux boot (it controls
-> >  the reset logic of a soc external device), the polarity is active low, which is why it's configured with a PullDown. 
+On Wed, Nov 27, 2019 at 09:42:50AM +0100, Geert Uytterhoeven wrote:
+> Add Device Tree bindings for a GPIO repeater, with optional translation
+> of physical signal properties.  This is useful for describing explicitly
+> the presence of e.g. an inverter on a GPIO line, and was inspired by the
+> non-YAML gpio-inverter bindings by Harish Jenny K N
+> <harish_kandiga@mentor.com>[1].
 > 
-> And here is the issue AFAICS. The Active low should be configured with PullUp
-> and set to whatever BIOS wants.
+> Note that this is different from a GPIO Nexus Node[2], which cannot do
+> physical signal property translation.
 
-I stand corrected:
-whatever -> active state
+It can't? Why not? The point of the passthru mask is to not do 
+translation of flags, but without it you are always doing translation of 
+cells.
 
-So, basically BIOS settings in ACPI and in hardware should be in align.
-Otherwise it's badly created / configured BIOS.
-
-> Correct me if I'm wrong, but code does the following in
-> the properly configured DSDT:
 > 
-> 0/ (not OS) firmware prepares ACPI DSDT with parameters (see 2/) and sets pin
->    to active state - electrical low;
-> 1/ we request GPIO via gpiod_get(..., GPIOD_ASIS);
-> 2/ ACPI provides: IoOutput + Active Low + PullUp;
-> 3/ above is translated to GPIO flags = GPIOD_OUT_HIGH and look up flags =
->    GPIO_PULL_UP | GPIO_ACTIVE_LOW;
-> 4/ ...which calls gpiod_direction_output() with value = 1 and being inverted
->    to 0 due to Active Low in the descriptor flags;
-> 5/ 0, i.e. electrically low signal, comes out from the SoC (compare
->    with 0/ above).
+> While an inverter can be described implicitly by exchanging the
+> GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags, this has its limitations.
+> Each GPIO line has only a single GPIO_ACTIVE_* flag, but applies to both
+> th provider and consumer sides:
+>   1. The GPIO provider (controller) looks at the flags to know the
+>      polarity, so it can translate between logical (active/not active)
+>      and physical (high/low) signal levels.
+>   2. While the signal polarity is usually fixed on the GPIO consumer
+>      side (e.g. an LED is tied to either the supply voltage or GND),
+>      it may be configurable on some devices, and both sides need to
+>      agree.  Hence the GPIO_ACTIVE_* flag as seen by the consumer must
+>      match the actual polarity.
+>      There exists a similar issue with interrupt flags, where both the
+>      interrupt controller and the device generating the interrupt need
+>      to agree, which breaks in the presence of a physical inverter not
+>      described in DT (see e.g. [3]).
+
+Adding an inverted flag as I've suggested would also solve this issue.
+
 > 
-> If it's not, we need to fix a root cause of it.
+> [1] "[PATCH V4 2/2] gpio: inverter: document the inverter bindings"
+>     https://lore.kernel.org/linux-gpio/1561699236-18620-3-git-send-email-harish_kandiga@mentor.com/
 > 
-> > Also we discussed here about using IoRestrictionNone/IoRestrictionNonePreserve as a potential solution to 
-> > this problem, but this is a pure output pin, so that didn't seem right to us either.
-> > 
-> > In the end the main question, no matter the use case,  is how an active low pin, that's being 
-> > asserted from BIOS, should be configured in the DSDT to be correctly represented by the code.
-> > The patch was the result of not finding any solution to the problem above. Speaking strictly of the 
-> > patch it should solve the problem of this case of active-low pins. 
-
-> P.S. Before we are going further we need to see the dmesg when
-> CONFIG_DEBUG_GPIO is set along with GpioIo() macro and corresponding
-> _DSD() excerpts from DSDT.
-
-You can send it privately if something is not okay to share (though I don't see
-such in this case).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> [2] Devicetree Specification v0.3-rc2, Section 2.5
+>     https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.3-rc2
+> 
+> [3] "[PATCH] wlcore/wl18xx: Add invert-irq OF property for physically
+>     inverted IRQ"
+>     https://lore.kernel.org/linux-renesas-soc/20190607172958.20745-1-erosca@de.adit-jv.com/
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
