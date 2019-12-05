@@ -2,81 +2,103 @@ Return-Path: <SRS0=gGya=Z3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07139C43603
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 03:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F4BC43603
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 03:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CB1214B2
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 03:01:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79212206DB
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Dec 2019 03:42:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MBJ6tQQa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbfLEDBi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Dec 2019 22:01:38 -0500
-Received: from mga17.intel.com ([192.55.52.151]:38152 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbfLEDBi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Dec 2019 22:01:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 19:01:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,279,1571727600"; 
-   d="scan'208";a="223484568"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga002.jf.intel.com with ESMTP; 04 Dec 2019 19:01:35 -0800
-From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
-To:     linus.walleij@linaro.org
-Cc:     rdunlap@infradead.org, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Subject: [PATCH 1/1] pinctrl: Modify Kconfig to fix linker error
-Date:   Thu,  5 Dec 2019 11:01:31 +0800
-Message-Id: <ba937f271d1a2173828a2325990d62cb36d61595.1575514110.git.rahul.tanwar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1575514110.git.rahul.tanwar@linux.intel.com>
+        id S1728560AbfLEDmK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Dec 2019 22:42:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41214 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbfLEDmK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Dec 2019 22:42:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SKEwuU9LCubrqhiHixUVqpCy0ldQIv/3sUOUcM8nBDs=; b=MBJ6tQQaMPWzRiQjX2yRpygbf
+        dvad/n2hXUp0+K09ULooMF6cSihWeH2kJRB60ogr1YNLs9/viLrQWIS+d1LxNt/9Om0oIbiXoJ+o7
+        YQ4Af4KYLDE26Fwm4OygR4iCXtTmZaUkommbO2x9E22SJqTPSpaISZ0UsZrQem8NQ9pRvKo2+HnDK
+        H+lExL6upZhDp2pLLd/ikAOwm1moJBrui4it/dj5tOoaXx0rhWH8sGeDpNOvMFU9u5KN7e/Dah5A0
+        y2BxrelEtJEAvm07pNJfqR63/7BNDW9pQPPMQmLxUjQthY4vvvMRnmHZEiIUW0zJ6Z1ZZpql4FE3b
+        JSw1lDxXA==;
+Received: from [2601:1c0:6280:3f0::3deb]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ici1p-0006RO-1Q; Thu, 05 Dec 2019 03:42:09 +0000
+Subject: Re: [PATCH 1/1] pinctrl: Modify Kconfig to fix linker error
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        linus.walleij@linaro.org
+Cc:     sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <cover.1575514110.git.rahul.tanwar@linux.intel.com>
-In-Reply-To: <cover.1575514110.git.rahul.tanwar@linux.intel.com>
-References: <cover.1575514110.git.rahul.tanwar@linux.intel.com>
+ <ba937f271d1a2173828a2325990d62cb36d61595.1575514110.git.rahul.tanwar@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b92f1c7c-efdb-340d-dbfa-2a083732d8fb@infradead.org>
+Date:   Wed, 4 Dec 2019 19:42:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <ba937f271d1a2173828a2325990d62cb36d61595.1575514110.git.rahul.tanwar@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix below linker error
+On 12/4/19 7:01 PM, Rahul Tanwar wrote:
+> Fix below linker error
+> 
+>     ld: drivers/pinctrl/pinctrl-equilibrium.o: in function
+>     `pinconf_generic_dt_node_to_map_all':
+>     pinctrl-equilibrium.c:(.text+0xb): undefined reference
+>     to `pinconf_generic_dt_node_to_map'
+> 
+> Caused by below commit
+> 
+>     1948d5c51dba ("pinctrl: Add pinmux & GPIO controller driver for a new SoC")
+> 
+> by adding 'depends on OF' in Kconfig driver entry.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>>
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 
-    ld: drivers/pinctrl/pinctrl-equilibrium.o: in function
-    `pinconf_generic_dt_node_to_map_all':
-    pinctrl-equilibrium.c:(.text+0xb): undefined reference
-    to `pinconf_generic_dt_node_to_map'
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Caused by below commit
 
-    1948d5c51dba ("pinctrl: Add pinmux & GPIO controller driver for a new SoC")
+Thanks.
 
-by adding 'depends on OF' in Kconfig driver entry.
+> ---
+>  drivers/pinctrl/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 3bfbf2ff6e2b..ba0cad4bd072 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -422,6 +422,7 @@ config PINCTRL_TB10X
+>  
+>  config PINCTRL_EQUILIBRIUM
+>  	tristate "Generic pinctrl and GPIO driver for Intel Lightning Mountain SoC"
+> +	depends on OF
+>  	select PINMUX
+>  	select PINCONF
+>  	select GPIOLIB
+> 
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>>
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
----
- drivers/pinctrl/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 3bfbf2ff6e2b..ba0cad4bd072 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -422,6 +422,7 @@ config PINCTRL_TB10X
- 
- config PINCTRL_EQUILIBRIUM
- 	tristate "Generic pinctrl and GPIO driver for Intel Lightning Mountain SoC"
-+	depends on OF
- 	select PINMUX
- 	select PINCONF
- 	select GPIOLIB
 -- 
-2.11.0
+~Randy
 
