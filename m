@@ -1,128 +1,127 @@
-Return-Path: <SRS0=qfnU=Z4=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=DwHp=Z5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E32FC43603
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Dec 2019 21:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAE2C43603
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Dec 2019 01:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C34C24676
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Dec 2019 21:20:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDD92064B
+	for <linux-gpio@archiver.kernel.org>; Sat,  7 Dec 2019 01:07:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0eyOvDV4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vnGHB43i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbfLFVUy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Dec 2019 16:20:54 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40989 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfLFVUy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Dec 2019 16:20:54 -0500
-Received: by mail-io1-f68.google.com with SMTP id z26so8767968iot.8
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Dec 2019 13:20:54 -0800 (PST)
+        id S1726400AbfLGBHq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Dec 2019 20:07:46 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42516 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfLGBHp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Dec 2019 20:07:45 -0500
+Received: by mail-pg1-f195.google.com with SMTP id i5so4164130pgj.9
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Dec 2019 17:07:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8mnXgPaScBnr46TzaGLXmqKZ0PVzrE5M2Q6iH8H72FI=;
-        b=0eyOvDV4bCLLomF/wyhQ652/636EWvdSnKPbbpWNWDB+rCsgfAo8nb37krB51Zx3ky
-         6gJVw6phTfePlGP+NWoxiiGo7cPFl8S0ZWdKwUcWiCG0a0SK3FB3OQhsnhC2yeSBEEUw
-         /6YMhNZ8Nc4XKgJovonlIFCiiJnhEF0LdE+UZnkWZ81dHjgW2BC12NUMvtxGeESiTqWf
-         cdG9R85Y+v5vSgU8IgywKWCQPTjV5WQIxZgRETTmuvET/8RlfvuX7oCgk2qu0+Fut8dA
-         hWzIJkwF9I38Uu5JwOZ2vRaw+iLpB3YxLMwWrkAS1h7HYzKvVOoosVFjwysifFzyhmAZ
-         xHPQ==
+        d=google.com; s=20161025;
+        h=date:from:subject:in-reply-to:cc:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jgPnL+5CfrvgeIvrxi5m1URbPq9UfCHRkF3knFWgGMo=;
+        b=vnGHB43imTN0QjS6hkVorlkKBz9FeRi7coqQYKVSZrNzu/moiA3L0lN/rlICiyRZHJ
+         Mh53ovWyz5PC6CNMvZVO7WD6S1sTZ6O5LGg+ugmfR6s7ghr/zccdDSRcdHvZVCHtN7vk
+         +MzaGgY460pFTYKZdZiU7yd9ELl1QotycSPLtwCk/MTZObu2SBttSveckWvIQRTPRJDb
+         VYkI+7gPM5D0vkj3UthTfXLDDaaf2wdIiaP37tRn3NR00CjhJJIC0ncgx/AYpOOCXfST
+         dbTRMxmf0dzFCZwJ4u5YxSgKZvnIl2uYwBkXhuvQHoEXnEj9IYeGoFnA8p/d1a5RZMQi
+         KScw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8mnXgPaScBnr46TzaGLXmqKZ0PVzrE5M2Q6iH8H72FI=;
-        b=XmxJr/lZ87WgEjqilZmXjVjIBs5wYFCcDp98HeaPhiTtGSpU83hNuYAk9wRx6tLoHV
-         SNM3NsWVxkUbD4ijmMPE3YvT9pZwSo1+gMZSW0dmI6wS31BKG99Ir4w9jODbe5pT2WmG
-         Xdgkcl/rJ9IPcrJa4OKjE2M9ByINbaQnPZbMT2O8nypFKZ+KBikYzrV2nZMfHwn/PMiN
-         2eqa+byqIfutYvOfH7pw+zUO7+Hhwx/WcOjxXc95N8bayACmBDgdxCIFy52xx8SnpKkv
-         aCnQ8YLPBpa+yMUZwqrE/swcofWVPud9Ggpk/MyrxnmmUHr8dQG5FRMYxjWipbjUrW81
-         h7SQ==
-X-Gm-Message-State: APjAAAXRxdqca1CdtOHaJkrMXH2wfiuAnk8nJZYTAOngxnTPbBICwLdm
-        o/KgLY0tywSFF598NVVYzhtMr/LYPmrbCrpGz4N8FQ==
-X-Google-Smtp-Source: APXvYqxQG/MFm0NLPU4pZANlC1CFo68XRWkNDIeyGZqw4l+RAF1ncBBDqqw2FfVcYZKh042PzFTvHrU+6yIkRe55Z1I=
-X-Received: by 2002:a5e:9314:: with SMTP id k20mr7393244iom.6.1575667253892;
- Fri, 06 Dec 2019 13:20:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20191204155941.17814-1-brgl@bgdev.pl> <CAHp75VdiAtHtdrUP2EmLULh86oO37ha8si10gFKYRavXCEwRRQ@mail.gmail.com>
- <CAMpxmJVXVVVMPA_hRbs3mUsFs=s_VtQK9SvvYK3Xc5X27NPTKw@mail.gmail.com>
- <CAHp75VfXc88Fa6=zs=9iToz27QdXHqRCDPQwBPs2P-rsBF8nHw@mail.gmail.com>
- <CAMRc=Me4xWsQggmr=BvJrA9-FnPkxFkOYsRTsSXCtyNwFnsHNw@mail.gmail.com> <CAHp75VfzP8-0wKmPTTKYe+fc6=r_4sVcJPyOsM8YTuH=i4rxmA@mail.gmail.com>
-In-Reply-To: <CAHp75VfzP8-0wKmPTTKYe+fc6=r_4sVcJPyOsM8YTuH=i4rxmA@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 6 Dec 2019 22:20:42 +0100
-Message-ID: <CAMRc=MfxteQDmeZn_Et0uFs2cPvLGpJ5BTeBOn37o=2Oo_eU=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] gpiolib: add new ioctl() for monitoring changes
- in line info
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:date:from:subject:in-reply-to:cc:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=jgPnL+5CfrvgeIvrxi5m1URbPq9UfCHRkF3knFWgGMo=;
+        b=lZdXvmn6U7tq6jRsByQxRYY88PgH9u/y4XOmcy9W5HGHDHp6n2Pe8wr0pc2N4JHJWm
+         ABzBmCmcaqHT/xvfrg3vi+tOuwVJyEawy4d1V/KPlGBfmAbYRUC9h+cNOcc2NOH3Bmc9
+         w6jJh6YwRCv9qsI3NVuXYQEa0kLX+VLfixw5ojgo4uxRvFrxqUFEuyb/X5SiYa543FPk
+         9E0zWWF4x+wnM5aZ6Nl6jQ//KUsQyd5pu0bbXYQeuc/QdJpDXpVyetCYJtsWtfnoPB7G
+         HoiElz/oFdUWqXNWu2Z43bFIyJUkbKx2czz8PS+aVfr+6nV0EJ0xrEVdZITukIz9l0xQ
+         /40w==
+X-Gm-Message-State: APjAAAVohpPB4m4M83g01EM+pZ41p23YZsRUui3f482O8IKktg+LN1+Z
+        SemOBTEKfyCsUSs1DjDzuwi5Eg==
+X-Google-Smtp-Source: APXvYqw+i60gFlnrvD0Dor+Sp0d2gAyk8B4gXSdQsjoxvzXIiXKLyW9wvw9NoSdBgAup/UtS8uprIg==
+X-Received: by 2002:a62:be12:: with SMTP id l18mr10004721pff.206.1575680865151;
+        Fri, 06 Dec 2019 17:07:45 -0800 (PST)
+Received: from localhost ([2620:0:1000:2514:7f69:cd98:a2a2:a03d])
+        by smtp.gmail.com with ESMTPSA id y128sm17328385pfg.17.2019.12.06.17.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2019 17:07:44 -0800 (PST)
+Date:   Fri, 06 Dec 2019 17:07:44 -0800 (PST)
+X-Google-Original-Date: Fri, 06 Dec 2019 16:33:00 PST (-0800)
+From:   Palmer Dabbelt <palmerdabbelt@google.com>
+X-Google-Original-From: Palmer Dabbelt <palmer@dabbelt.com>
+Subject:     RE: [PATCH v3 5/6] gpio: sifive: Add GPIO driver for SiFive SoCs
+In-Reply-To: <208a63e8819b84f9dc03f270f2606294@www.loen.fr>
+CC:     yash.shah@sifive.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net,
+        bmeng.cn@gmail.com, Atish Patra <Atish.Patra@wdc.com>,
+        sagar.kadam@sifive.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com
+To:     maz@kernel.org
+Message-ID: <mhng-be0f81d1-78d1-4e9c-8dae-1344635fbbb7@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-czw., 5 gru 2019 o 18:02 Andy Shevchenko <andy.shevchenko@gmail.com> napisa=
-=C5=82(a):
+On Fri, 29 Nov 2019 01:12:10 PST (-0800), maz@kernel.org wrote:
+> On 2019-11-29 06:27, Yash Shah wrote:
+>>> -----Original Message-----
+>>> From: Linus Walleij <linus.walleij@linaro.org>
+>>> Sent: 28 November 2019 17:50
+>>> To: Yash Shah <yash.shah@sifive.com>
+>>> Cc: bgolaszewski@baylibre.com; robh+dt@kernel.org;
+>>> mark.rutland@arm.com; palmer@dabbelt.com; Paul Walmsley ( Sifive)
+>>> <paul.walmsley@sifive.com>; aou@eecs.berkeley.edu;
+>>> tglx@linutronix.de;
+>>> jason@lakedaemon.net; maz@kernel.org; bmeng.cn@gmail.com;
+>>> atish.patra@wdc.com; Sagar Kadam <sagar.kadam@sifive.com>; linux-
+>>> gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>>> riscv@lists.infradead.org; linux-kernel@vger.kernel.org; Sachin
+>>> Ghadi
+>>> <sachin.ghadi@sifive.com>
+>>> Subject: Re: [PATCH v3 5/6] gpio: sifive: Add GPIO driver for SiFive
+>>> SoCs
+>>>
+>>> On Mon, Nov 25, 2019 at 6:58 AM Yash Shah <yash.shah@sifive.com>
+>>> wrote:
+>>>
+>>> > Adds the GPIO driver for SiFive RISC-V SoCs.
+>>> >
+>>> > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+>>> > [Atish: Various fixes and code cleanup]
+>>> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>>> > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+>>>
+>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>
+>>> I suppose Marc will merge all patches into the irqchip tree as they
+>>> are logically
+>>> dependent? If you want the GPIO bindings and this driver directly
+>>> merged
+>>> (no deps) then I can do that as well.
+>>
+>> Yes, the GPIO driver have logical dependency on irqchip patches. It
+>> is best if Marc merges all the patches into the irqchip tree.
+>>
+>> @Marc Zyngier, Are you going to merge all the patches into the
+>> irqchip tree?
 >
-> On Thu, Dec 5, 2019 at 3:47 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > czw., 5 gru 2019 o 11:27 Andy Shevchenko <andy.shevchenko@gmail.com> na=
-pisa=C5=82(a):
-> > > On Thu, Dec 5, 2019 at 11:42 AM Bartosz Golaszewski
-> > > <bgolaszewski@baylibre.com> wrote:
-> > > > =C5=9Br., 4 gru 2019 o 23:34 Andy Shevchenko <andy.shevchenko@gmail=
-.com> napisa=C5=82(a):
-> > > > > On Wed, Dec 4, 2019 at 6:03 PM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> > > So, the test cases, I can imagine of, should include (k - kernel, u -=
- user):
-> > > - 64k-64u: LE and BE
-> > > - 64k-32u: LE and BE
-> > > - 32k-32u: LE and BE
-> >
-> > I usually use qemu VMs built with yocto for testing but I don't see
-> > any way of creating a 32-bit user-space with 64-bit kernel. Any ideas
-> > on how to prepare a testing environment?
->
-> In my case it's very easy. I do
-> - compile kernel as 64-bit separately;
-> - compile initramfs of Buildroot distro with external kernel build provid=
-ed.
->
+> I'm happy to pick this up, but that's definitely 5.6 material as
+> I stopped collecting new 5.5 features a couple of weeks ago.
 
-Any specific config options are needed on x86-64 kernel to use 32-bit
-user-space? I'm not well versed in x86 architectures, that's why I'm
-asking. I built a 32-bit userspace qemu image with yocto and then
-manually built a 64-bit kernel. I tried running it but I'm getting a
-kernel panic when the rootfs is being mounted.
-
-On a different note: why would endianness be an issue here? 32-bit
-variables with 64-bit alignment should still be in the same place in
-memory, right?
-
-Any reason not to use __packed for this structure and not deal with
-this whole compat mess?
-
-I also noticed that my change will only allow user-space to read one
-event at a time which seems to be a regression with regard to the
-current implementation. I probably need to address this too.
-
-Bart
-
-> That's setup in which I observed the issue.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+Thanks!
