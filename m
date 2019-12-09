@@ -2,97 +2,112 @@ Return-Path: <SRS0=IJzy=Z7=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEAEC43603
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 16:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D9FC43603
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 18:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6123920828
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 16:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575909604;
-	bh=uv1fy3aSeIQ7rJzpy5V/DLW82MMG9uYITIIpJ5h5OTs=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IR3nDzErpsN2UWUVBhMAmYJDqXyoJ6+7Axyamp18eJJfpqFaEb7khmcSomLiWVeod
-	 bP0qg6wclHELtttlwGEEjggmBbGBh7UHqMB3UAhT5Ai7rDgZM1mXezI9N5arAzb7Da
-	 wPrZHu3selcgQ9YlTjNkrM1tJtkzzAfmVA0rDyYU=
+	by mail.kernel.org (Postfix) with ESMTP id A4A7220836
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 18:40:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="jeOGNh1P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfLIQkB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Dec 2019 11:40:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38756 "EHLO mail.kernel.org"
+        id S1726408AbfLISkx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Dec 2019 13:40:53 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:48569 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfLIQkA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:40:00 -0500
-Received: from localhost.localdomain (unknown [194.230.155.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3360E207FD;
-        Mon,  9 Dec 2019 16:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575909600;
-        bh=uv1fy3aSeIQ7rJzpy5V/DLW82MMG9uYITIIpJ5h5OTs=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Nna6OCN+pK1kLg9sei8otb/FlJesosiNwrTYRa1BlxpiqW3VWnf5E8R25yHTNimQv
-         +JIPxqXtk+Ojj5EtH7un+sj/OeEeYvXLWoTLYV/5X6nr0MqwSbd5N06s0Q6WrdohXP
-         GCoiWOwaopKKqAit1lgrxtQ8AJJLymisBt7U1UBc=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        id S1726265AbfLISkx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:40:53 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 47WsQL1kDfzCS;
+        Mon,  9 Dec 2019 19:38:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1575916698; bh=mP4IVsF26GolA/qoisGsW9KuB5321gAdX6Kb63gtye0=;
+        h=Date:From:Subject:To:Cc:From;
+        b=jeOGNh1PmUYaOWnTMdS5bJGwov6KUqbN4Z/HZPr59kqzhJHrCrEwSzxRDtj+yqOGp
+         oJ2HwCpZn8AERqQq/JerhZh8EXVm8iZmlUKyQ3kBqjl5vfnktoY99713MWmbCaM6sz
+         k6LOkBaCixjpzwHTUVdTDjkmsOF0mtqIDXjwMPzmhpn1hXfmTdRp/dqlLM47wJj55I
+         giYnSukMPAF2PFzVrIG9qGoZedCyryiBcd34LYuy7+rTKHHhTnfbkCee97huTmKZ3G
+         5vBK0XHn/nmGy8EljwFT1a9FCjZeUEQLzDIh0F9jF6jIyVN8uLBUS6W81xqdhLeOF9
+         UMGgxLIeh+btQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Mon, 09 Dec 2019 19:40:50 +0100
+Message-Id: <56d2568cd45a13c738e2804d04348566a8ee8d03.1575916778.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH] gpio: add gpiod_toggle_active_low()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] pinctrl: samsung: Clarify the option titles/names
-Date:   Mon,  9 Dec 2019 17:39:37 +0100
-Message-Id: <20191209163937.8156-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191209163937.8156-1-krzk@kernel.org>
-References: <20191209163937.8156-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The config options toggle Samsung Exynos SoCs pinctrl drivers, not the
-driver data.  Clarify this in the option title/name and also make it
-consistent with other Samsung entries.  No functional change.
+Add possibility to toggle active-low flag of a gpio descriptor. This is
+useful for compatibility code, where defaults are inverted vs DT gpio
+flags or the active-low flag is taken from elsewhere.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/pinctrl/samsung/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c        | 11 +++++++++++
+ include/linux/gpio/consumer.h |  7 +++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index cbf1ce48fddb..779c0e9eca3f 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -8,7 +8,7 @@ config PINCTRL_SAMSUNG
- 	select PINCONF
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9913886ede90..6130691e2047 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3363,6 +3363,17 @@ int gpiod_is_active_low(const struct gpio_desc *desc)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_is_active_low);
  
- config PINCTRL_EXYNOS
--	bool "Pinctrl driver data for Samsung EXYNOS SoCs"
-+	bool "Pinctrl common driver part for Samsung Exynos SoCs"
- 	depends on OF && GPIOLIB
- 	depends on ARCH_EXYNOS || ARCH_S5PV210 || COMPILE_TEST
- 	select PINCTRL_SAMSUNG
-@@ -16,11 +16,11 @@ config PINCTRL_EXYNOS
- 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
++/**
++ * gpiod_toggle_active_low - toggle whether a GPIO is active-low or not
++ * @desc: the gpio descriptor to change
++ */
++void gpiod_toggle_active_low(struct gpio_desc *desc)
++{
++	VALIDATE_DESC_VOID(desc);
++	change_bit(FLAG_ACTIVE_LOW, &desc->flags);
++}
++EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
++
+ /* I/O calls are only valid after configuration completed; the relevant
+  * "is this a valid GPIO" error checks should already have been done.
+  *
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 5215fdba6b9a..bf2d017dd7b7 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -158,6 +158,7 @@ int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
  
- config PINCTRL_EXYNOS_ARM
--	bool "ARMv7-specific pinctrl driver data for Exynos" if COMPILE_TEST
-+	bool "ARMv7-specific pinctrl driver for Samsung Exynos SoCs" if COMPILE_TEST
- 	depends on PINCTRL_EXYNOS
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
+ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
++void gpiod_toggle_active_low(struct gpio_desc *desc);
  
- config PINCTRL_EXYNOS_ARM64
--	bool "ARMv8-specific pinctrl driver data for Exynos" if COMPILE_TEST
-+	bool "ARMv8-specific pinctrl driver for Samsung Exynos SoCs" if COMPILE_TEST
- 	depends on PINCTRL_EXYNOS
+ int gpiod_is_active_low(const struct gpio_desc *desc);
+ int gpiod_cansleep(const struct gpio_desc *desc);
+@@ -483,6 +484,12 @@ static inline int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ 	return -ENOSYS;
+ }
  
- config PINCTRL_S3C24XX
++static inline void gpiod_toggle_active_low(struct gpio_desc *desc)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(desc);
++}
++
+ static inline int gpiod_is_active_low(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
 -- 
-2.17.1
+2.20.1
 
