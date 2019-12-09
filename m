@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC96C2D0C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA313C3F68F
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B37C2077B
+	by mail.kernel.org (Postfix) with ESMTP id 7C6D42080D
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfLINJc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Dec 2019 08:09:32 -0500
-Received: from mga09.intel.com ([134.134.136.24]:48019 "EHLO mga09.intel.com"
+        id S1727482AbfLINJd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Dec 2019 08:09:33 -0500
+Received: from mga04.intel.com ([192.55.52.120]:15274 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbfLINJc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727522AbfLINJc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Mon, 9 Dec 2019 08:09:32 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 05:09:32 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 05:09:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
-   d="scan'208";a="210103578"
+   d="scan'208";a="219976299"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Dec 2019 05:09:30 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 09 Dec 2019 05:09:31 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8D7577A2; Mon,  9 Dec 2019 15:09:27 +0200 (EET)
+        id CC279907; Mon,  9 Dec 2019 15:09:27 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 09/24] pinctrl: lynxpoint: Keep pointer to struct device instead of its container
-Date:   Mon,  9 Dec 2019 15:09:11 +0200
-Message-Id: <20191209130926.86483-10-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 14/24] pinctrl: lynxpoint: Move lp_irq_type() closer to IRQ related routines
+Date:   Mon,  9 Dec 2019 15:09:16 +0200
+Message-Id: <20191209130926.86483-15-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191209130926.86483-1-andriy.shevchenko@linux.intel.com>
 References: <20191209130926.86483-1-andriy.shevchenko@linux.intel.com>
@@ -48,79 +48,128 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is no need to keep pointer to struct platform_device, which is container
-of struct device, because the latter is what have been used everywhere outside
-of ->probe() path. In any case we may derive pointer to the container when
-needed.
+Consolidate IRQ routines for better maintenance.
+
+While here, rename lp_irq_type() to lp_irq_set_type() to be in align
+with a callback name.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 88 +++++++++++------------
+ 1 file changed, 44 insertions(+), 44 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index 3ac95f9d6a7f..1d5f5053fe14 100644
+index 83b5b2590778..19e8f8f1f7aa 100644
 --- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
 +++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -48,7 +48,7 @@
- 
- struct lp_gpio {
- 	struct gpio_chip	chip;
--	struct platform_device	*pdev;
-+	struct device		*dev;
- 	raw_spinlock_t		lock;
- 	unsigned long		reg_base;
- };
-@@ -106,11 +106,11 @@ static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
- 	unsigned long acpi_use = lp_gpio_reg(chip, offset, LP_ACPI_OWNED);
- 	u32 value;
- 
--	pm_runtime_get(&lg->pdev->dev); /* should we put if failed */
-+	pm_runtime_get(lg->dev); /* should we put if failed */
- 
- 	/* Fail if BIOS reserved pin for ACPI use */
- 	if (!(inl(acpi_use) & BIT(offset % 32))) {
--		dev_err(&lg->pdev->dev, "gpio %d reserved for ACPI\n", offset);
-+		dev_err(lg->dev, "gpio %d reserved for ACPI\n", offset);
- 		return -EBUSY;
- 	}
- 
-@@ -121,7 +121,7 @@ static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
- 	value = inl(reg);
- 	if ((value & USE_SEL_MASK) != USE_SEL_GPIO) {
- 		outl((value & USE_SEL_MASK) | USE_SEL_GPIO, reg);
--		dev_warn(&lg->pdev->dev, FW_BUG "pin %u forcibly reconfigured as GPIO\n", offset);
-+		dev_warn(lg->dev, FW_BUG "pin %u forcibly reconfigured as GPIO\n", offset);
- 	}
- 
- 	/* enable input sensing */
-@@ -139,7 +139,7 @@ static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	/* disable input sensing */
- 	outl(inl(conf2) | GPINDIS_BIT, conf2);
- 
--	pm_runtime_put(&lg->pdev->dev);
-+	pm_runtime_put(lg->dev);
+@@ -152,49 +152,6 @@ static void lp_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ 	pm_runtime_put(lg->dev);
  }
  
- static int lp_irq_type(struct irq_data *d, unsigned type)
-@@ -341,7 +341,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 	if (!lg)
- 		return -ENOMEM;
+-static int lp_irq_type(struct irq_data *d, unsigned int type)
+-{
+-	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct lp_gpio *lg = gpiochip_get_data(gc);
+-	u32 hwirq = irqd_to_hwirq(d);
+-	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_CONFIG1);
+-	unsigned long flags;
+-	u32 value;
+-
+-	if (hwirq >= lg->chip.ngpio)
+-		return -EINVAL;
+-
+-	raw_spin_lock_irqsave(&lg->lock, flags);
+-	value = ioread32(reg);
+-
+-	/* set both TRIG_SEL and INV bits to 0 for rising edge */
+-	if (type & IRQ_TYPE_EDGE_RISING)
+-		value &= ~(TRIG_SEL_BIT | INT_INV_BIT);
+-
+-	/* TRIG_SEL bit 0, INV bit 1 for falling edge */
+-	if (type & IRQ_TYPE_EDGE_FALLING)
+-		value = (value | INT_INV_BIT) & ~TRIG_SEL_BIT;
+-
+-	/* TRIG_SEL bit 1, INV bit 0 for level low */
+-	if (type & IRQ_TYPE_LEVEL_LOW)
+-		value = (value | TRIG_SEL_BIT) & ~INT_INV_BIT;
+-
+-	/* TRIG_SEL bit 1, INV bit 1 for level high */
+-	if (type & IRQ_TYPE_LEVEL_HIGH)
+-		value |= TRIG_SEL_BIT | INT_INV_BIT;
+-
+-	iowrite32(value, reg);
+-
+-	if (type & IRQ_TYPE_EDGE_BOTH)
+-		irq_set_handler_locked(d, handle_edge_irq);
+-	else if (type & IRQ_TYPE_LEVEL_MASK)
+-		irq_set_handler_locked(d, handle_level_irq);
+-
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
+-	return 0;
+-}
+-
+ static int lp_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
+@@ -311,13 +268,56 @@ static void lp_irq_disable(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
  
--	lg->pdev = pdev;
-+	lg->dev = dev;
- 	platform_set_drvdata(pdev, lg);
++static int lp_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct lp_gpio *lg = gpiochip_get_data(gc);
++	u32 hwirq = irqd_to_hwirq(d);
++	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_CONFIG1);
++	unsigned long flags;
++	u32 value;
++
++	if (hwirq >= lg->chip.ngpio)
++		return -EINVAL;
++
++	raw_spin_lock_irqsave(&lg->lock, flags);
++	value = ioread32(reg);
++
++	/* set both TRIG_SEL and INV bits to 0 for rising edge */
++	if (type & IRQ_TYPE_EDGE_RISING)
++		value &= ~(TRIG_SEL_BIT | INT_INV_BIT);
++
++	/* TRIG_SEL bit 0, INV bit 1 for falling edge */
++	if (type & IRQ_TYPE_EDGE_FALLING)
++		value = (value | INT_INV_BIT) & ~TRIG_SEL_BIT;
++
++	/* TRIG_SEL bit 1, INV bit 0 for level low */
++	if (type & IRQ_TYPE_LEVEL_LOW)
++		value = (value | TRIG_SEL_BIT) & ~INT_INV_BIT;
++
++	/* TRIG_SEL bit 1, INV bit 1 for level high */
++	if (type & IRQ_TYPE_LEVEL_HIGH)
++		value |= TRIG_SEL_BIT | INT_INV_BIT;
++
++	iowrite32(value, reg);
++
++	if (type & IRQ_TYPE_EDGE_BOTH)
++		irq_set_handler_locked(d, handle_edge_irq);
++	else if (type & IRQ_TYPE_LEVEL_MASK)
++		irq_set_handler_locked(d, handle_level_irq);
++
++	raw_spin_unlock_irqrestore(&lg->lock, flags);
++
++	return 0;
++}
++
+ static struct irq_chip lp_irqchip = {
+ 	.name = "LP-GPIO",
+ 	.irq_mask = lp_irq_mask,
+ 	.irq_unmask = lp_irq_unmask,
+ 	.irq_enable = lp_irq_enable,
+ 	.irq_disable = lp_irq_disable,
+-	.irq_set_type = lp_irq_type,
++	.irq_set_type = lp_irq_set_type,
+ 	.flags = IRQCHIP_SKIP_SET_WAKE,
+ };
  
- 	io_rc = platform_get_resource(pdev, IORESOURCE_IO, 0);
-@@ -385,7 +385,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 		girq->init_hw = lp_gpio_irq_init_hw;
- 		girq->parent_handler = lp_gpio_irq_handler;
- 		girq->num_parents = 1;
--		girq->parents = devm_kcalloc(&pdev->dev, girq->num_parents,
-+		girq->parents = devm_kcalloc(dev, girq->num_parents,
- 					     sizeof(*girq->parents),
- 					     GFP_KERNEL);
- 		if (!girq->parents)
 -- 
 2.24.0
 
