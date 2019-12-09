@@ -2,285 +2,114 @@ Return-Path: <SRS0=IJzy=Z7=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B0EC2D0C4
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A48C43603
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34B82073D
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3116520663
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Dec 2019 13:16:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fluep6Cy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbfLINJg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Dec 2019 08:09:36 -0500
-Received: from mga18.intel.com ([134.134.136.126]:29136 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727639AbfLINJg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:09:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 05:09:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,294,1571727600"; 
-   d="scan'208";a="206887943"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 09 Dec 2019 05:09:33 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 06DAC993; Mon,  9 Dec 2019 15:09:28 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 19/24] pinctrl: lynxpoint: Reuse struct intel_pinctrl in the driver
-Date:   Mon,  9 Dec 2019 15:09:21 +0200
-Message-Id: <20191209130926.86483-20-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191209130926.86483-1-andriy.shevchenko@linux.intel.com>
-References: <20191209130926.86483-1-andriy.shevchenko@linux.intel.com>
+        id S1726687AbfLINQa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Dec 2019 08:16:30 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35522 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbfLINQ1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Dec 2019 08:16:27 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g17so16180197wro.2
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Dec 2019 05:16:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=6JKjS8ULGOzUFR7zV+Ndftoq/ev83XREiug0BBdNIeE=;
+        b=Fluep6Cy08Kzg9mPraMCdGJvXYVj7EnADOl1PYagnYKgrHsKt1Xsp9NRKUB+ooeph/
+         vP1+nnfyracffXp6R4IWPuaA7oCZWLkd6UpAvbwPT8oMhZKdDaZDYxR8YyhaW5CtdN0/
+         jQMOwkxHx0EfxlhkGxlS4Wm+dDO/tKc/uQdzSCJyN6rnJNfK3QiH4T3LcvbHymztIO/X
+         exCokdFITCA6+DJkwR6Z7p+pwf7cFCKcyxsQ3LPAyLO9rtDkjaFip8op45XbbJ62+Bnv
+         YtOSlyoy1OXRn487KoaySckqJh++QDJvxdhmXQLOe1XR0g1/u96bV0K5wTZYTF2bPDLS
+         2i4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6JKjS8ULGOzUFR7zV+Ndftoq/ev83XREiug0BBdNIeE=;
+        b=BS5Ydm+a920al+7hTvDLJf9fndCn4LwCoDwT2Q+0vu2xSdidRw21sKtVIuZRKLAxMa
+         MqY841ShOST7IGDRpmuXHGkGtwh9Ho26oJi0euIMZ8o/sbC7qdKodtkdiJG7j7NANN0j
+         7YqtH2QkE/WjaRd83wLIY4W2BR/O0P7a1SxMrz9m5odlkZ1DO+dU4GGgsIdAMV9aRDXl
+         zRUHWTLpE2xXQlcBd4KRXBAFJw+IaS1tQwlAxsnrFtF03bCH2JTr4MG8RLbOdanVaPuT
+         9tMp9LGxZm98Eo3WGM+T3lrrV9oZFCW4efOFqpwftNkmAZMQnvwjhVFlctpeFuIZ1HM7
+         YZAg==
+X-Gm-Message-State: APjAAAUJoKMETMeSMjLZocgm9M9d4OBX/lKUHxDX45pk60d4HgU3eMtr
+        aaxlPsQm3izRrRdvbxadpQmSfg==
+X-Google-Smtp-Source: APXvYqyfJb9ulY7eYGRni5x1EoiZ65N/w4IbXiFtTbTgqXufBVfAXngFIBRVWJ/guKS6mVh9b6EFmQ==
+X-Received: by 2002:adf:8041:: with SMTP id 59mr2019145wrk.257.1575897385263;
+        Mon, 09 Dec 2019 05:16:25 -0800 (PST)
+Received: from dell ([2.27.35.145])
+        by smtp.gmail.com with ESMTPSA id d8sm26935218wre.13.2019.12.09.05.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 05:16:24 -0800 (PST)
+Date:   Mon, 9 Dec 2019 13:16:18 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     robh@kernel.org, broonie@kernel.org, linus.walleij@linaro.org,
+        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 03/12] mfd: wcd934x: add support to wcd9340/wcd9341
+ codec
+Message-ID: <20191209131618.GL3468@dell>
+References: <20191121170509.10579-1-srinivas.kandagatla@linaro.org>
+ <20191121170509.10579-4-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191121170509.10579-4-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We may use now available struct intel_pinctrl in the driver.
-No functional change implied.
+On Thu, 21 Nov 2019, Srinivas Kandagatla wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 84 ++++++++++++++++-------
- 1 file changed, 60 insertions(+), 24 deletions(-)
+> Qualcomm WCD9340/WCD9341 Codec is a standalone Hi-Fi audio codec IC.
+> 
+> This codec has integrated SoundWire controller, pin controller and
+> interrupt controller.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Change since v3:
+>  Fixed lowcase usage of wcd934x as suggested by Lee.
+>  Updated few if checks as recommended.
+>  add defines for SLIM devic and Instance ID of WCD934x
+>  Updated device name and compatible for gpio controller driver.
+> 
+>  drivers/mfd/Kconfig                   |  12 +
+>  drivers/mfd/Makefile                  |   1 +
+>  drivers/mfd/wcd934x.c                 | 306 +++++++++++++++
+>  include/linux/mfd/wcd934x/registers.h | 531 ++++++++++++++++++++++++++
+>  include/linux/mfd/wcd934x/wcd934x.h   |  31 ++
+>  5 files changed, 881 insertions(+)
+>  create mode 100644 drivers/mfd/wcd934x.c
+>  create mode 100644 include/linux/mfd/wcd934x/registers.h
+>  create mode 100644 include/linux/mfd/wcd934x/wcd934x.h
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index ea46bd64226d..5a8c77c8306b 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -168,13 +168,6 @@ static const struct intel_pinctrl_soc_data lptlp_soc_data = {
- #define GPINDIS_BIT	BIT(2) /* disable input sensing */
- #define GPIWP_BIT	(BIT(0) | BIT(1)) /* weak pull options */
- 
--struct lp_gpio {
--	struct gpio_chip	chip;
--	struct device		*dev;
--	raw_spinlock_t		lock;
--	void __iomem		*regs;
--};
--
- /*
-  * Lynxpoint gpios are controlled through both bitmapped registers and
-  * per gpio specific registers. The bitmapped registers are in chunks of
-@@ -204,12 +197,34 @@ struct lp_gpio {
-  * LP94_CONFIG2 (gpio 94) ...
-  */
- 
-+static struct intel_community *lp_get_community(struct intel_pinctrl *lg,
-+						unsigned int pin)
-+{
-+	struct intel_community *comm;
-+	int i;
-+
-+	for (i = 0; i < lg->ncommunities; i++) {
-+		comm = &lg->communities[i];
-+		if (pin < comm->pin_base + comm->npins && pin >= comm->pin_base)
-+			return comm;
-+	}
-+
-+	return NULL;
-+}
-+
- static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned int offset,
- 				 int reg)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
-+	struct intel_community *comm;
- 	int reg_offset;
- 
-+	comm = lp_get_community(lg, offset);
-+	if (!comm)
-+		return NULL;
-+
-+	offset -= comm->pin_base;
-+
- 	if (reg == LP_CONFIG1 || reg == LP_CONFIG2)
- 		/* per gpio specific config registers */
- 		reg_offset = offset * 8;
-@@ -217,10 +232,10 @@ static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned int offset,
- 		/* bitmapped registers */
- 		reg_offset = (offset / 32) * 4;
- 
--	return lg->regs + reg + reg_offset;
-+	return comm->regs + reg_offset + reg;
- }
- 
--static bool lp_gpio_acpi_use(struct lp_gpio *lg, unsigned int pin)
-+static bool lp_gpio_acpi_use(struct intel_pinctrl *lg, unsigned int pin)
- {
- 	void __iomem *acpi_use;
- 
-@@ -233,7 +248,7 @@ static bool lp_gpio_acpi_use(struct lp_gpio *lg, unsigned int pin)
- 
- static int lp_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	void __iomem *conf2 = lp_gpio_reg(chip, offset, LP_CONFIG2);
- 	u32 value;
-@@ -259,7 +274,7 @@ static int lp_gpio_request(struct gpio_chip *chip, unsigned int offset)
- 
- static void lp_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *conf2 = lp_gpio_reg(chip, offset, LP_CONFIG2);
- 
- 	/* disable input sensing */
-@@ -276,7 +291,7 @@ static int lp_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 
- static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
- 
-@@ -292,7 +307,7 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- 
- static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
- 
-@@ -306,7 +321,7 @@ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- static int lp_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
- 				    int value)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
- 
-@@ -333,7 +348,7 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
- {
- 	struct irq_data *data = irq_desc_get_irq_data(desc);
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct lp_gpio *lg = gpiochip_get_data(gc);
-+	struct intel_pinctrl *lg = gpiochip_get_data(gc);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	void __iomem *reg, *ena;
- 	unsigned long pending;
-@@ -360,7 +375,7 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
- static void lp_irq_ack(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = gpiochip_get_data(gc);
-+	struct intel_pinctrl *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_STAT);
- 	unsigned long flags;
-@@ -381,7 +396,7 @@ static void lp_irq_mask(struct irq_data *d)
- static void lp_irq_enable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = gpiochip_get_data(gc);
-+	struct intel_pinctrl *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -394,7 +409,7 @@ static void lp_irq_enable(struct irq_data *d)
- static void lp_irq_disable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = gpiochip_get_data(gc);
-+	struct intel_pinctrl *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -407,7 +422,7 @@ static void lp_irq_disable(struct irq_data *d)
- static int lp_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = gpiochip_get_data(gc);
-+	struct intel_pinctrl *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_CONFIG1);
- 	unsigned long flags;
-@@ -466,7 +481,7 @@ static struct irq_chip lp_irqchip = {
- 
- static int lp_gpio_irq_init_hw(struct gpio_chip *chip)
- {
--	struct lp_gpio *lg = gpiochip_get_data(chip);
-+	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg;
- 	unsigned int base;
- 
-@@ -484,18 +499,32 @@ static int lp_gpio_irq_init_hw(struct gpio_chip *chip)
- 
- static int lp_gpio_probe(struct platform_device *pdev)
- {
--	struct lp_gpio *lg;
-+	const struct intel_pinctrl_soc_data *soc;
-+	struct intel_pinctrl *lg;
- 	struct gpio_chip *gc;
- 	struct resource *io_rc, *irq_rc;
- 	struct device *dev = &pdev->dev;
- 	void __iomem *regs;
-+	unsigned int i;
- 	int ret;
- 
-+	soc = (const struct intel_pinctrl_soc_data *)device_get_match_data(dev);
-+	if (!soc)
-+		return -ENODEV;
-+
- 	lg = devm_kzalloc(dev, sizeof(*lg), GFP_KERNEL);
- 	if (!lg)
- 		return -ENOMEM;
- 
- 	lg->dev = dev;
-+	lg->soc = soc;
-+
-+	lg->ncommunities = lg->soc->ncommunities;
-+	lg->communities = devm_kcalloc(dev, lg->ncommunities,
-+				       sizeof(*lg->communities), GFP_KERNEL);
-+	if (!lg->communities)
-+		return -ENOMEM;
-+
- 	platform_set_drvdata(pdev, lg);
- 
- 	io_rc = platform_get_resource(pdev, IORESOURCE_IO, 0);
-@@ -510,7 +539,14 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 		return -EBUSY;
- 	}
- 
--	lg->regs = regs;
-+	for (i = 0; i < lg->soc->ncommunities; i++) {
-+		struct intel_community *comm = &lg->communities[i];
-+
-+		*comm = lg->soc->communities[i];
-+
-+		comm->regs = regs;
-+		comm->pad_regs = regs + 0x100;
-+	}
- 
- 	raw_spin_lock_init(&lg->lock);
- 
-@@ -578,7 +614,7 @@ static int lp_gpio_runtime_resume(struct device *dev)
- 
- static int lp_gpio_resume(struct device *dev)
- {
--	struct lp_gpio *lg = dev_get_drvdata(dev);
-+	struct intel_pinctrl *lg = dev_get_drvdata(dev);
- 	void __iomem *reg;
- 	int i;
- 
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-2.24.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
