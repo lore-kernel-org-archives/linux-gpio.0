@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14041C43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66575C2D0BF
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA376205C9
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7FE214AF
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576013069;
-	bh=5h334oil8b9BE4AdJTlzTqznOyqxlcpwG2PSJfE1q/M=;
+	s=default; t=1576013081;
+	bh=dC6fjqGh654ZZLwYjdy87ftZ5dG/h1Xx9eEY+r9Uk6Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NR0pyUduawTZXYpEEo0XX/tiJbCCNyIfT03h+Ce9uljVIJ9LSotNHWOJzajdAV7is
-	 P4ATpClcRPdoommcXuuXiI5yA2fMAtQWYPFVxANudqQMtYTlA7T1twv8b9VBPA1VxW
-	 y8Kbukve5svjpfL5ork9u/GO9B1kZmJK7VaTRpxA=
+	b=hqsDevXZcXYofjW01m0Hj6o41KD6xuc4Food9XTAgaWGTvaip5Ov8CRwUvMpc+NLC
+	 QG2kfxRZCblrqlwW8IkfhqQZE/Cyw99m5J2whQsfyo6v/59mi4AGook+D2h7J1aluD
+	 0mu/qLS2IOMqF0VoBG4cxOhs7G/XFQbS8u7DbaCQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfLJVYT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:24:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32930 "EHLO mail.kernel.org"
+        id S1727958AbfLJVYa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 16:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbfLJVKw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727506AbfLJVKw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 10 Dec 2019 16:10:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64F49246B8;
-        Tue, 10 Dec 2019 21:10:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22B3E246AF;
+        Tue, 10 Dec 2019 21:10:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012252;
-        bh=5h334oil8b9BE4AdJTlzTqznOyqxlcpwG2PSJfE1q/M=;
+        s=default; t=1576012251;
+        bh=dC6fjqGh654ZZLwYjdy87ftZ5dG/h1Xx9eEY+r9Uk6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pUCOdgqTth2aLjqeG59ORYdRBHUGC/PE6+VnOZ1R73MOUc8TXNwYgv7ke9BxHXsTt
-         MulKs78mtWP+dYl18iw1l4DTtwvrm5tlWziT4z+P0GlLpMMxyZMDLuzlABGXLtTF+s
-         HK03i+sFaXUKHlC2jdbT4945LOQg9Qc7W7nxm5k0=
+        b=1CmsVIdVGPBbLbliVtnUKOlLgY6ihmRnVqACPBbdMKv9P7yKDxieqet1UZ0tHniLU
+         SU+w8iLDYxIyWrv63iKU+VasR0zrBfD1ceyHSVCrTG1+MHYMvfV5nW+aJKNzVimm3I
+         yip71i/qS9alvx1+OrqDgxZgmKddLo8hwDLeYlrY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 199/350] pinctrl: amd: fix __iomem annotation in amd_gpio_irq_handler()
-Date:   Tue, 10 Dec 2019 16:05:04 -0500
-Message-Id: <20191210210735.9077-160-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 198/350] pinctrl: qcom: sc7180: Add missing tile info in SDC_QDSD_PINGROUP/UFS_RESET
+Date:   Tue, 10 Dec 2019 16:05:03 -0500
+Message-Id: <20191210210735.9077-159-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
 References: <20191210210735.9077-1-sashal@kernel.org>
@@ -58,48 +61,69 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-[ Upstream commit 10ff58aa3c2e2a093b6ad615a7e3d8bb0dc613e5 ]
+[ Upstream commit 81898a44f288607cb3b11a42aed6efb646891c19 ]
 
-The regs pointer in amd_gpio_irq_handler() should have __iomem
-on it, so add that to fix the following sparse warnings:
+The SDC_QDSD_PINGROUP/UFS_RESET macros are missing the .tile info needed to
+calculate the right register offsets. Adding them here and also
+adjusting the offsets accordingly.
 
-drivers/pinctrl/pinctrl-amd.c:555:14: warning: incorrect type in assignment (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:555:14:    expected unsigned int [usertype] *regs
-drivers/pinctrl/pinctrl-amd.c:555:14:    got void [noderef] <asn:2> *base
-drivers/pinctrl/pinctrl-amd.c:563:34: warning: incorrect type in argument 1 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:563:34:    expected void const volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:563:34:    got unsigned int [usertype] *
-drivers/pinctrl/pinctrl-amd.c:580:34: warning: incorrect type in argument 1 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:580:34:    expected void const volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:580:34:    got unsigned int [usertype] *
-drivers/pinctrl/pinctrl-amd.c:587:25: warning: incorrect type in argument 2 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:587:25:    expected void volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:587:25:    got unsigned int [usertype] *
+Fixes: f2ae04c45b1a ("pinctrl: qcom: Add SC7180 pinctrl driver")
 
-Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
-Link: https://lore.kernel.org/r/20191022151154.5986-1-ben.dooks@codethink.co.uk
+Reported-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Link: https://lore.kernel.org/r/20191021141507.24066-1-rnayak@codeaurora.org
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-amd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-sc7180.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 2c61141519f80..eab078244a4c3 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -540,7 +540,8 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 	irqreturn_t ret = IRQ_NONE;
- 	unsigned int i, irqnr;
- 	unsigned long flags;
--	u32 *regs, regval;
-+	u32 __iomem *regs;
-+	u32  regval;
- 	u64 status, mask;
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7180.c b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+index 6399c8a2bc22c..d6cfad7417b1c 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7180.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+@@ -77,6 +77,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
++		.tile = SOUTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = pull,			\
+ 		.drv_bit = drv,				\
+@@ -102,6 +103,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
++		.tile = SOUTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = 3,				\
+ 		.drv_bit = 0,				\
+@@ -1087,14 +1089,14 @@ static const struct msm_pingroup sc7180_groups[] = {
+ 	[116] = PINGROUP(116, WEST, qup04, qup04, _, _, _, _, _, _, _),
+ 	[117] = PINGROUP(117, WEST, dp_hot, _, _, _, _, _, _, _, _),
+ 	[118] = PINGROUP(118, WEST, _, _, _, _, _, _, _, _, _),
+-	[119] = UFS_RESET(ufs_reset, 0x97f000),
+-	[120] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x97a000, 15, 0),
+-	[121] = SDC_QDSD_PINGROUP(sdc1_clk, 0x97a000, 13, 6),
+-	[122] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x97a000, 11, 3),
+-	[123] = SDC_QDSD_PINGROUP(sdc1_data, 0x97a000, 9, 0),
+-	[124] = SDC_QDSD_PINGROUP(sdc2_clk, 0x97b000, 14, 6),
+-	[125] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x97b000, 11, 3),
+-	[126] = SDC_QDSD_PINGROUP(sdc2_data, 0x97b000, 9, 0),
++	[119] = UFS_RESET(ufs_reset, 0x7f000),
++	[120] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x7a000, 15, 0),
++	[121] = SDC_QDSD_PINGROUP(sdc1_clk, 0x7a000, 13, 6),
++	[122] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x7a000, 11, 3),
++	[123] = SDC_QDSD_PINGROUP(sdc1_data, 0x7a000, 9, 0),
++	[124] = SDC_QDSD_PINGROUP(sdc2_clk, 0x7b000, 14, 6),
++	[125] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x7b000, 11, 3),
++	[126] = SDC_QDSD_PINGROUP(sdc2_data, 0x7b000, 9, 0),
+ };
  
- 	/* Read the wake status */
+ static const struct msm_pinctrl_soc_data sc7180_pinctrl = {
 -- 
 2.20.1
 
