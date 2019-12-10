@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7CDC2D0BF
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDF5C00454
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 22:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B92205C9
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63DDE2053B
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 22:03:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576014718;
-	bh=GnQbOwM7WkzyvqqeFRk9acVA5AeQFUGfQbjYtec5xoM=;
+	s=default; t=1576015410;
+	bh=O0fYVVir9x2NlIxa2pfU57UP2BYcxFpxhpdNby5zruQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kSyAMb6J6VamuyebKafKs64hdWivece19uU/hx7c+5xjz6ah/kMYTCREggssY6a1X
-	 cADV821BYdY8dvxJzyYwrMMskuX97nw2r9Q/+Y29dk9kMJBTegT7G7O3Y5Yrtn5rqO
-	 O3rGFMQBTg7zwR2bschDF261BQmf1ngeUKduhPL4=
+	b=t0ehOxoiHQROUAuzNwlFQz3wYybjaCjRsIcAxQNDFNWEdR2UYz34txFTa2DUdBcLM
+	 IMiXo2/o8eNgvdPCpkfn+HnS9qTiG7+SsqJy0Gz6YtwT6jwMSj8WRLcO/dBm2gqk30
+	 ROLnRMDxjNza+1yM4JA5IzON8hAM7hdO5PlGZCxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfLJVHw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54538 "EHLO mail.kernel.org"
+        id S1727791AbfLJWD2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 17:03:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbfLJVHv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:07:51 -0500
+        id S1727740AbfLJWD2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:03:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05D1924687;
-        Tue, 10 Dec 2019 21:07:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B29920637;
+        Tue, 10 Dec 2019 22:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576012070;
-        bh=GnQbOwM7WkzyvqqeFRk9acVA5AeQFUGfQbjYtec5xoM=;
+        s=default; t=1576015407;
+        bh=O0fYVVir9x2NlIxa2pfU57UP2BYcxFpxhpdNby5zruQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VTEUGOKU25fTWTWQF7JWWomEJ0g9ENTjGODQaBtDXkX6pO8NiHG4J6LQ1ydbU3WeF
-         uG7i2SYyK1Nhw12dZuSUodywjpMRXklVsofWpc9M2AHXPlH/dnfzYhjd/D9J/k9so6
-         djxKyY+6jif6x46XKOxrB+T4lMF8/4LecHgZ6eNc=
+        b=DIf3hpuSy1wES3OxDF+2Z3GJjcmMI/ZrHyv94HTbZmK4GwES1llmpXRxuSBd5XgFW
+         m99zJoN5WBKperGjvX9sEcYAQPrGkbqOiS5CH4O2hSnhWH6Qrrm5RapkWEjX6OZPQN
+         Gl5RbJS0dYVVh90jY3X0LYAtEb2hx07wacT18Tvs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Will Deacon <will@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Elena Petrova <lenaptr@google.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 051/350] pinctrl: devicetree: Avoid taking direct reference to device name string
-Date:   Tue, 10 Dec 2019 16:02:36 -0500
-Message-Id: <20191210210735.9077-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 021/130] pinctrl: devicetree: Avoid taking direct reference to device name string
+Date:   Tue, 10 Dec 2019 17:01:12 -0500
+Message-Id: <20191210220301.13262-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
-References: <20191210210735.9077-1-sashal@kernel.org>
+In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
+References: <20191210220301.13262-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -106,10 +106,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 5d6d8b1e90620..dbaacde1b36af 100644
+index c4aa411f5935b..3a7c2d6e4d5f6 100644
 --- a/drivers/pinctrl/devicetree.c
 +++ b/drivers/pinctrl/devicetree.c
-@@ -29,6 +29,13 @@ struct pinctrl_dt_map {
+@@ -40,6 +40,13 @@ struct pinctrl_dt_map {
  static void dt_free_map(struct pinctrl_dev *pctldev,
  		     struct pinctrl_map *map, unsigned num_maps)
  {
@@ -123,7 +123,7 @@ index 5d6d8b1e90620..dbaacde1b36af 100644
  	if (pctldev) {
  		const struct pinctrl_ops *ops = pctldev->desc->pctlops;
  		if (ops->dt_free_map)
-@@ -63,7 +70,13 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+@@ -74,7 +81,13 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
  
  	/* Initialize common mapping table entry fields */
  	for (i = 0; i < num_maps; i++) {
@@ -138,7 +138,7 @@ index 5d6d8b1e90620..dbaacde1b36af 100644
  		map[i].name = statename;
  		if (pctldev)
  			map[i].ctrl_dev_name = dev_name(pctldev->dev);
-@@ -71,10 +84,8 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+@@ -82,10 +95,8 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
  
  	/* Remember the converted mapping table entries */
  	dt_map = kzalloc(sizeof(*dt_map), GFP_KERNEL);
@@ -151,7 +151,7 @@ index 5d6d8b1e90620..dbaacde1b36af 100644
  
  	dt_map->pctldev = pctldev;
  	dt_map->map = map;
-@@ -82,6 +93,10 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+@@ -93,6 +104,10 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
  	list_add_tail(&dt_map->node, &p->dt_maps);
  
  	return pinctrl_register_map(map, num_maps, false);
