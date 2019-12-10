@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53F6C43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BD5C00454
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85226205C9
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEAB5205C9
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576013190;
-	bh=cXy8ZML0fsnWkhNXvFU3jBh1336ClxUKiYLWUWD3YtA=;
+	s=default; t=1576013658;
+	bh=WjS0Tq7OrsE2NjIqEF56Rkua9+801ORAczYUD93TxZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xwVrsWuPXiGBmqAABdgHfd+dvXTg9KcY+MfTJX2WQyJ4pRZHvaYE6SBH8/nXqqYmA
-	 337bglowL39qY3V8dI45CyFpFWrHCO3YkaGASIRwIlizZ7EUDcuF0HOYfaJyx+lGWb
-	 b8CZW4lNCzWFMknUHddMIwQ6GlNeERRapmE50z80=
+	b=gJN6GeMjaeKROSnA+uKwX7lIBvyHAi8F3ORhMjXrtUNF2fPXQheFVvoj7i0U3SW92
+	 GJIO+yavgClMFP6i/7oOfrh1bRR4r6YFT0E12xTIbv//HiM6+E8k4Wkhsay0afeIyn
+	 W75T0A2dBW8RH/Dar3s+6n+jMY4S5JtK5cssuSxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbfLJVZk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:25:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56962 "EHLO mail.kernel.org"
+        id S1729985AbfLJVeR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 16:34:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbfLJVZj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:25:39 -0500
+        id S1729186AbfLJVeQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:34:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD5E214D8;
-        Tue, 10 Dec 2019 21:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDB14206D5;
+        Tue, 10 Dec 2019 21:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013138;
-        bh=cXy8ZML0fsnWkhNXvFU3jBh1336ClxUKiYLWUWD3YtA=;
+        s=default; t=1576013655;
+        bh=WjS0Tq7OrsE2NjIqEF56Rkua9+801ORAczYUD93TxZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=isRUARWdhpkEZX4k5nVvHQZFOX4MnIoRar0tkhSKqa/b5pvID+vvhQSf3xYifY8hd
-         Ygu7IaMkHC71E+2X7InhnLp8Tv7eWp2pa4XTL4QRXk7WNpr5MweruNrpzYCagEQx4e
-         L2rr0duoYxbPtaeFR94XNDPE7HlJ5AnEYNXB/SW8=
+        b=XM1SM7OR4N2HiIuBZ7j0H1uUwoUrMwW6fFtKe0p8Pa7yjBBFbWQGcESpYKy2ecSTV
+         I8VHyoXUH8mB2NzfaetPPmi2UuUgRF1rZV6X9lha8duA+HkMewycdCjls6ngQrMOWH
+         lEH2Dg4hXPr9NHRar+rVBK8M7KHrULH5xnCgb+PY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 022/292] Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit30 when using SSI_SCK2 and SSI_WS2"
-Date:   Tue, 10 Dec 2019 16:20:41 -0500
-Message-Id: <20191210212511.11392-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 094/177] pinctrl: sh-pfc: sh7734: Fix duplicate TCLK1_B
+Date:   Tue, 10 Dec 2019 16:30:58 -0500
+Message-Id: <20191210213221.11921-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210212511.11392-1-sashal@kernel.org>
-References: <20191210212511.11392-1-sashal@kernel.org>
+In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
+References: <20191210213221.11921-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -61,101 +61,60 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 3672bc7093434621c83299ef27ea3b3225a67600 ]
+[ Upstream commit 884caadad128efad8e00c1cdc3177bc8912ee8ec ]
 
-This reverts commit e87882eb9be10b2b9e28156922c2a47d877f5db4.
+The definitions for bit field [19:18] of the Peripheral Function Select
+Register 3 were accidentally copied from bit field [20], leading to
+duplicates for the TCLK1_B function, and missing TCLK0, CAN_CLK_B, and
+ET0_ETXD4 functions.
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of Aug
-24, 2018, the SEL_SSI2_{0,1} definition was to be deleted.  However,
-this errata merely fixed an accidental double definition in the Hardware
-User's Manual Rev. 1.00.  The real definition is still present in later
-revisions of the manual (Rev. 1.50 and Rev. 2.00).
+Fix this by adding the missing GPIO_FN_CAN_CLK_B and GPIO_FN_ET0_ETXD4
+enum values, and correcting the functions.
 
-Hence revert the commit to recover the definition.
-
-Based on a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
-
+Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Link: https://lore.kernel.org/r/20190904121658.2617-3-geert+renesas@glider.be
+Link: https://lore.kernel.org/r/20191024131308.16659-1-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/sh/include/cpu-sh4/cpu/sh7734.h | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c  | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 2dfb8d9cfda12..3808409cab385 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -448,6 +448,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
- 
- /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
-+#define MOD_SEL1_30		FM(SEL_SSI2_0)			FM(SEL_SSI2_1)
- #define MOD_SEL1_29		FM(SEL_TIMER_TMU_0)		FM(SEL_TIMER_TMU_1)
- #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
- #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
-@@ -468,7 +469,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- 
- #define PINMUX_MOD_SELS	\
- \
--MOD_SEL0_30_29 \
-+MOD_SEL0_30_29		MOD_SEL1_30 \
- 			MOD_SEL1_29 \
- MOD_SEL0_28		MOD_SEL1_28 \
- MOD_SEL0_27_26 \
-@@ -1058,7 +1059,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_27_24,		RIF0_CLK_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		SCL2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		TCLK1_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_GPSR(IP10_27_24,		SSI_SCK2_B),
-+	PINMUX_IPSR_MSEL(IP10_27_24,		SSI_SCK2_B,	SEL_SSI2_1),
- 	PINMUX_IPSR_GPSR(IP10_27_24,		TS_SCK0),
- 
- 	PINMUX_IPSR_GPSR(IP10_31_28,		SD0_WP),
-@@ -1067,7 +1068,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_31_28,		RIF0_D0_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		SDA2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		TCLK2_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_GPSR(IP10_31_28,		SSI_WS2_B),
-+	PINMUX_IPSR_MSEL(IP10_31_28,		SSI_WS2_B,	SEL_SSI2_1),
- 	PINMUX_IPSR_GPSR(IP10_31_28,		TS_SDAT0),
- 
- 	/* IPSR11 */
-@@ -1085,13 +1086,13 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_MSEL(IP11_11_8,		RX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_MSEL(IP11_11_8,		HRX1_A,		SEL_HSCIF1_0),
--	PINMUX_IPSR_GPSR(IP11_11_8,		SSI_SCK2_A),
-+	PINMUX_IPSR_MSEL(IP11_11_8,		SSI_SCK2_A,	SEL_SSI2_0),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		RIF1_SYNC),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		TS_SCK1),
- 
- 	PINMUX_IPSR_MSEL(IP11_15_12,		TX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		HTX1_A),
--	PINMUX_IPSR_GPSR(IP11_15_12,		SSI_WS2_A),
-+	PINMUX_IPSR_MSEL(IP11_15_12,		SSI_WS2_A,	SEL_SSI2_0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		RIF1_D0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		TS_SDAT1),
- 
-@@ -4957,11 +4958,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL0_1_0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
--			     GROUP(2, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1,
--				   2, 2, 2, 1, 1, 2, 1, 4),
-+			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
-+				   1, 2, 2, 2, 1, 1, 2, 1, 4),
- 			     GROUP(
--		/* RESERVED 31, 30 */
--		0, 0, 0, 0,
-+		/* RESERVED 31 */
-+		0, 0,
-+		MOD_SEL1_30
- 		MOD_SEL1_29
- 		MOD_SEL1_28
- 		/* RESERVED 27 */
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7734.h b/arch/sh/include/cpu-sh4/cpu/sh7734.h
+index 96f0246ad2f2b..82b63208135ae 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7734.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7734.h
+@@ -134,7 +134,7 @@ enum {
+ 	GPIO_FN_EX_WAIT1, GPIO_FN_SD1_DAT0_A, GPIO_FN_DREQ2, GPIO_FN_CAN1_TX_C,
+ 		GPIO_FN_ET0_LINK_C, GPIO_FN_ET0_ETXD5_A,
+ 	GPIO_FN_EX_WAIT0, GPIO_FN_TCLK1_B,
+-	GPIO_FN_RD_WR, GPIO_FN_TCLK0,
++	GPIO_FN_RD_WR, GPIO_FN_TCLK0, GPIO_FN_CAN_CLK_B, GPIO_FN_ET0_ETXD4,
+ 	GPIO_FN_EX_CS5, GPIO_FN_SD1_CMD_A, GPIO_FN_ATADIR, GPIO_FN_QSSL_B,
+ 		GPIO_FN_ET0_ETXD3_A,
+ 	GPIO_FN_EX_CS4, GPIO_FN_SD1_WP_A, GPIO_FN_ATAWR, GPIO_FN_QMI_QIO1_B,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 33232041ee86d..3eccc9b3ca84a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -1453,7 +1453,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+ 	GPIO_FN(ET0_ETXD2_A),
+ 	GPIO_FN(EX_CS5), GPIO_FN(SD1_CMD_A), GPIO_FN(ATADIR), GPIO_FN(QSSL_B),
+ 	GPIO_FN(ET0_ETXD3_A),
+-	GPIO_FN(RD_WR), GPIO_FN(TCLK1_B),
++	GPIO_FN(RD_WR), GPIO_FN(TCLK0), GPIO_FN(CAN_CLK_B), GPIO_FN(ET0_ETXD4),
+ 	GPIO_FN(EX_WAIT0), GPIO_FN(TCLK1_B),
+ 	GPIO_FN(EX_WAIT1), GPIO_FN(SD1_DAT0_A), GPIO_FN(DREQ2),
+ 		GPIO_FN(CAN1_TX_C), GPIO_FN(ET0_LINK_C), GPIO_FN(ET0_ETXD5_A),
+@@ -1949,7 +1949,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	    /* IP3_20 [1] */
+ 		FN_EX_WAIT0, FN_TCLK1_B,
+ 	    /* IP3_19_18 [2] */
+-		FN_RD_WR, FN_TCLK1_B, 0, 0,
++		FN_RD_WR, FN_TCLK0, FN_CAN_CLK_B, FN_ET0_ETXD4,
+ 	    /* IP3_17_15 [3] */
+ 		FN_EX_CS5, FN_SD1_CMD_A, FN_ATADIR, FN_QSSL_B,
+ 		FN_ET0_ETXD3_A, 0, 0, 0,
 -- 
 2.20.1
 
