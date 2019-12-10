@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DE8C43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 11:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F42C2D0C4
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 11:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD0920726
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 11:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C47020726
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 11:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=sifive.com header.i=@sifive.com header.b="qQxbrYM3"
+	dkim=pass (1024-bit key) header.d=sifive.com header.i=@sifive.com header.b="Dl+YJlqM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfLJLMS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 06:12:18 -0500
-Received: from mail-dm6nam10on2040.outbound.protection.outlook.com ([40.107.93.40]:6238
+        id S1727327AbfLJLMX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 06:12:23 -0500
+Received: from mail-dm6nam10on2051.outbound.protection.outlook.com ([40.107.93.51]:57249
         "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727018AbfLJLMR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:12:17 -0500
+        id S1726915AbfLJLMW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 06:12:22 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IZgKU5Qwaxa0Rq8RN0lRD2uXsA7jozOKb+Wc8i+VtfzRd1VJ4+EooB+exvKnzxrkq1QFmlZUNwfjw4knx6UZJ5QPQbqSf9LXz4jq5D8LfiZN3qnJDRe3rHyzWFH/ym7OKOKoVf57M5kmCN5YonjVoX/ia3ir1CvS0ZEmr7zmgpqLJWrOBDEywldweCq7pv+N5TOZ7qguCRbplph7GSJ9EuCqNOD9KluzGI3Vx4o+VPn1yDeTPU34EnQXnWlUSN3bWk1pdir9rr6xoWOsYuoRWvRW9a89fc91kxWf/iaDOqE4I8hZQQZ9mKPhb+tDn6/xkrTNYS36UVXn4CdomoZrJw==
+ b=f/924dGlmzSsKUbkEIQZrk/M+wlHqI1zTGwcWh7gMF3RALYfBqQl8MEmh3T9r3Qvj/Vs7KfKdpmUByuvqPxTm4OdgQoyqnEAihk2tE+fZDLqCV4KrdAF/4EL2eorvz/sY4mHQbwaZsq7zJO9xX1ehiiKDEcR7PTKvthGYaHdhII5CZhb8QDX5ZU+2b6h5n488fOWFT2WGRRCiv4FMVMIb1/NzrY0nq02sGs2uxx6nXRxQJM/B2Y0+A7TwqELZx1eJGBYcVH+tdXRoCENNWGqZ2g8cSvQ2XgpGUDWGVcouYOP6gZHWKIihtF0/8M8ZxhEolpQpoXEDzlqGEb0yIfXSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YbCalaTn2X7HF4eRtvgddainZMNLa53BndvIrXNSIWM=;
- b=CU+vbEvlN974++ikVC9Bo61UmwUvinnCqq3q+SUV/bwc5NHqTvPA90yJbR8qFZe4JswuUb2XBObC2Fl92LpQq/FNI2KXrT+k/KTI1UlPDhgYSMtD54gbkN+xYOnpECGVXKHxbinxty7TA4iiUFNnH+DmW55msOpP/PxQLp5YFtgN3OepuJj8x2mkTqMd3U5CPfOV51a11ysCVvHuIKeqbcysnLhEmYqeU0I2jAKA2lHZ69IvPnO4Agh2a1FRCidmPXP8iqGOeVffD3h9gDOoAxA0xF5ZAw4s4SrXKqDWGTz670Y/lXtnQoankb33S+PRua2WvQwTAC1wmK/PxRInng==
+ bh=URfawLSEXkGQGbpLHsV8ZsdnEVngNhvRhQXP7gJgttc=;
+ b=OPaoAjYGwaIEPKnmtl2x67Ji4qMjsKaWCoD76Dsj13/7WWblT0UuaI20sse1eTnfizvhC1+RlpFQMpafnoJg/DOgDy1RwoU9pqd5LQk4XoKOYteMt6wHj0Jv76yn2xAEf8OMIzF1U8GENJweBTJC4vK01U8NFlKLx65IG7A7cYOeqtvlE5T3Ergr92PV25721407zYMPFHGdOzJlwv6JUC8Bjv86/xoyfqRmdOHIgyxsEITKHILFqfZS+3pg9S0S7v8sG4+FvS55QHOyoaeGmIiAxb7YGlDEXpOoWQcuuyAFUC7sUy2BPMpos+F94wD7B1TZV9tyVzfd9pEghrS+DA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=sifive.com; dmarc=pass action=none header.from=sifive.com;
  dkim=pass header.d=sifive.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YbCalaTn2X7HF4eRtvgddainZMNLa53BndvIrXNSIWM=;
- b=qQxbrYM3VMr8uChXawMgU/us8WnmKTrxnD5Kou57ZmgaTLzhc2thyh8WzZGjPRt5+pGJprOJD+jAYbE/oTgns42K1a2wi4FAOmTqvrcYsoAYNP600AK3x2IecsDJCnjP85EfuFK/YQgk0O4W9qe6j6+Sa3OM8ILKxYBxktrzF6M=
+ bh=URfawLSEXkGQGbpLHsV8ZsdnEVngNhvRhQXP7gJgttc=;
+ b=Dl+YJlqMYDyCQeiNDpaTt2Z6mAbSqkdkNCPccGT3fHuO/VdoaMwD/vi0x2Pd85r+h7HcPRAoXf8Vc2b5R78pbCfLQkwuE2zpRE+dT6LWzAL3pIENLEnpqHaNACLleKbA7L3x8vXMVtXEdf90PA1v14JkGhbG2rUpkcL7ybAlisE=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=yash.shah@sifive.com; 
 Received: from CH2PR13MB3368.namprd13.prod.outlook.com (52.132.246.90) by
  CH2PR13MB3656.namprd13.prod.outlook.com (20.180.4.204) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.14; Tue, 10 Dec 2019 11:11:44 +0000
+ 15.20.2538.14; Tue, 10 Dec 2019 11:11:57 +0000
 Received: from CH2PR13MB3368.namprd13.prod.outlook.com
  ([fe80::eccb:16ac:e897:85d5]) by CH2PR13MB3368.namprd13.prod.outlook.com
  ([fe80::eccb:16ac:e897:85d5%3]) with mapi id 15.20.2538.012; Tue, 10 Dec 2019
- 11:11:44 +0000
+ 11:11:57 +0000
 From:   Yash Shah <yash.shah@sifive.com>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, mark.rutland@arm.com, palmer@dabbelt.com,
@@ -57,9 +57,9 @@ Cc:     aou@eecs.berkeley.edu, tglx@linutronix.de, jason@lakedaemon.net,
         devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com,
         Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH v4 1/6] genirq: introduce irq_domain_translate_onecell
-Date:   Tue, 10 Dec 2019 16:41:09 +0530
-Message-Id: <1575976274-13487-2-git-send-email-yash.shah@sifive.com>
+Subject: [PATCH v4 3/6] irqchip: sifive: Support hierarchy irq domain
+Date:   Tue, 10 Dec 2019 16:41:11 +0530
+Message-Id: <1575976274-13487-4-git-send-email-yash.shah@sifive.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1575976274-13487-1-git-send-email-yash.shah@sifive.com>
 References: <1575976274-13487-1-git-send-email-yash.shah@sifive.com>
@@ -68,90 +68,104 @@ X-ClientProxiedBy: PN1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM
  (2603:1096:c00:c::14) To CH2PR13MB3368.namprd13.prod.outlook.com
  (2603:10b6:610:2c::26)
 MIME-Version: 1.0
-Received: from dhananjayk-PowerEdge-R620.open-silicon.com (114.143.65.226) by PN1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c00:c::14) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Tue, 10 Dec 2019 11:11:39 +0000
+Received: from dhananjayk-PowerEdge-R620.open-silicon.com (114.143.65.226) by PN1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c00:c::14) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Tue, 10 Dec 2019 11:11:51 +0000
 X-Mailer: git-send-email 2.7.4
 X-Originating-IP: [114.143.65.226]
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8228d1a2-39fb-4756-38cc-08d77d61bd71
+X-MS-Office365-Filtering-Correlation-Id: 807eb966-698b-429a-50c1-08d77d61c51b
 X-MS-TrafficTypeDiagnostic: CH2PR13MB3656:
 X-LD-Processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH2PR13MB3656CF4A1F58D4DEAC4B415A8C5B0@CH2PR13MB3656.namprd13.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
+X-Microsoft-Antispam-PRVS: <CH2PR13MB3656909CC0EFA8738F9502A88C5B0@CH2PR13MB3656.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
 X-Forefront-PRVS: 02475B2A01
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39850400004)(366004)(136003)(346002)(376002)(199004)(189003)(36756003)(66476007)(1006002)(107886003)(52116002)(6666004)(66946007)(6506007)(26005)(956004)(316002)(2616005)(81166006)(8936002)(81156014)(16526019)(186003)(8676002)(44832011)(6636002)(5660300002)(86362001)(6486002)(7416002)(66556008)(6512007)(4326008)(478600001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR13MB3656;H:CH2PR13MB3368.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: sifive.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XHRUh+TyfD8O0J13qczc8vdv91+bw/fvj0g6GLx42eVbjH5cal7IpuOajTg260yF4fRrEPC3NYakrCPUyyApA2SL8fkWDvqrISBa7KrQHseIUXE66CYHvvsDL2AzGgcEZlNDbaf48LYPKiU5EVhEMDqtet4KIQa8yFr60HKcWZMW+21aJ0ul9Mkinfi6OMLemu2DcU8U7XBIdLSy0qmsV6Z25fcgqy6zA55hdQX6ioonT5M9HQTVnzBDZxTIoIxxf9qLf3wQieFQJWAmtBnDqc+ZmdkriyOfUCLk8Oi1k5I1qlbStxVYWrhJpxH/rWqI2RdJbotlBwZ2hB7Fhb9IPDhVHBJvGxMY2HJWnJsNdSs8q+MIi4kh4Vs4e86AjqnsQQAlKcoBF9WKHRFvbtU+F/5zAxN+yg7t9z5b1M28JxX60hkaGnjeThzaZVfsgZ9F
+X-Microsoft-Antispam-Message-Info: YlMOvGtZpnZ+vd0WnuN2FTIMoG2GpdZV1caA84O5XpOPXg/BTTalQ/MrLTU9VzUI+yhucCpAxnFllsaqGUsSPe/oCJtHMw/wimZXO5b8ckpBYsivYtgMpuzL02vDYPA5UR3tliTCvNnR23QPrkBE6SqdfniCJUrivrRGHIPXRtWfaEt/uNIEIUeoz0xoThAZAZr6x5Inx7ccto5FanVxNDR3B0lzC07qUb57+vV+w6r1lsIhiUhN/tLTmu02AD9E2XYoL5qiGmGnHCVTHNZ13D1MHFwUeyptJPGiA7xtTZYN3Iix8mukJTS8xwv5lP+0wzpCSl/lam2SltsGhQYwcOnwjW1cjurya2CJDP0Ga2Ufv1pw7GhYVdS0xNA+a2Azm6GxOjHtfusdppWcU7PwKt9TkMRfFrwLtEJn9PCVmQ3HUnli+Xyi4nIKJi++M324
 X-OriginatorOrg: sifive.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8228d1a2-39fb-4756-38cc-08d77d61bd71
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2019 11:11:44.1946
+X-MS-Exchange-CrossTenant-Network-Message-Id: 807eb966-698b-429a-50c1-08d77d61c51b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2019 11:11:57.0404
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HOvu+lzzAoOJBYfbEd7kZExGsJMSDwucYOHgIgptRG+Nf0PM0DHI7Ybl1BVy/7Gmv8MfgBlZnob8bO109oyhrg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: SCWMLczCMN1WS+ybokw/ini7TsULxp2byl0X0gH15Xci8FfwEiTeirgF1Nl7Et6H1ZYcYz+XWt/Y3HsaWXi+/Q==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3656
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a new function irq_domain_translate_onecell() that is to be used as
-the translate function in struct irq_domain_ops.
+Add support for hierarchy irq domains. This is needed as pre-requisite for
+gpio-sifive driver.
 
 Signed-off-by: Yash Shah <yash.shah@sifive.com>
 ---
- include/linux/irqdomain.h |  5 +++++
- kernel/irq/irqdomain.c    | 17 +++++++++++++++++
- 2 files changed, 22 insertions(+)
+ drivers/irqchip/Kconfig           |  1 +
+ drivers/irqchip/irq-sifive-plic.c | 30 ++++++++++++++++++++++++++----
+ 2 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 583e7ab..cad9eb8 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -426,6 +426,11 @@ int irq_domain_translate_twocell(struct irq_domain *d,
- 				 unsigned long *out_hwirq,
- 				 unsigned int *out_type);
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index ccbb897..a398552 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -488,6 +488,7 @@ endmenu
+ config SIFIVE_PLIC
+ 	bool "SiFive Platform-Level Interrupt Controller"
+ 	depends on RISCV
++	select IRQ_DOMAIN_HIERARCHY
+ 	help
+ 	   This enables support for the PLIC chip found in SiFive (and
+ 	   potentially other) RISC-V systems.  The PLIC controls devices
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index 7d0a12f..1592ef2 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -154,15 +154,37 @@ static struct irq_chip plic_chip = {
+ static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 			      irq_hw_number_t hwirq)
+ {
+-	irq_set_chip_and_handler(irq, &plic_chip, handle_fasteoi_irq);
+-	irq_set_chip_data(irq, NULL);
++	irq_domain_set_info(d, irq, hwirq, &plic_chip, d->host_data,
++			    handle_fasteoi_irq, NULL, NULL);
+ 	irq_set_noprobe(irq);
+ 	return 0;
+ }
  
-+int irq_domain_translate_onecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type);
-+
- /* IPI functions */
- int irq_reserve_ipi(struct irq_domain *domain, const struct cpumask *dest);
- int irq_destroy_ipi(unsigned int irq, const struct cpumask *dest);
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 132672b..cf57d87d 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -987,6 +987,23 @@ const struct irq_domain_ops irq_domain_simple_ops = {
- EXPORT_SYMBOL_GPL(irq_domain_simple_ops);
- 
- /**
-+ * irq_domain_translate_onecell() - Generic translate for direct one cell
-+ * bindings
-+ */
-+int irq_domain_translate_onecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type)
++static int plic_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
++				 unsigned int nr_irqs, void *arg)
 +{
-+	if (WARN_ON(fwspec->param_count < 1))
-+		return -EINVAL;
-+	*out_hwirq = fwspec->param[0];
-+	*out_type = IRQ_TYPE_NONE;
++	int i, ret;
++	irq_hw_number_t hwirq;
++	unsigned int type;
++	struct irq_fwspec *fwspec = arg;
++
++	ret = irq_domain_translate_onecell(domain, fwspec, &hwirq, &type);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < nr_irqs; i++) {
++		ret = plic_irqdomain_map(domain, virq + i, hwirq + i);
++		if (ret)
++			return ret;
++	}
++
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(irq_domain_translate_onecell);
 +
-+/**
-  * irq_domain_translate_twocell() - Generic translate for direct two cell
-  * bindings
-  *
+ static const struct irq_domain_ops plic_irqdomain_ops = {
+-	.map		= plic_irqdomain_map,
+-	.xlate		= irq_domain_xlate_onecell,
++	.translate	= irq_domain_translate_onecell,
++	.alloc		= plic_irq_domain_alloc,
++	.free		= irq_domain_free_irqs_top,
+ };
+ 
+ static struct irq_domain *plic_irqdomain;
 -- 
 2.7.4
 
