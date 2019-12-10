@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8104CC2D0BF
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F62C00454
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D7A2073B
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA387205C9
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576014074;
-	bh=2R0mPyrgd4pHuVmxqCqvyHK2IuUqsDFeNl816UwA9kE=;
+	s=default; t=1576014363;
+	bh=RbX6+Z4jCo6nzQ+Vy1qb12MbVoi1m5ZYQ4/pNJpUm9o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qDyESwKFY2RypguMZQX8yInn9380sLuPQ+m0MUTKFOZvVXDMCBdCXSWK/uqrry7BS
-	 x49gcxzKYsSBc1xdEz5R9JAdPveYrzljSW5PVplKIlJbDdyjgjY5HyhCmG0OkjO/go
-	 iA/Fc+6AxPz3K/ndHkVt6mKEWUeeexkPQoV1o/Go=
+	b=vBosFzG7tmogldpgIZ84uXk+0TW1OAKIwXZbb77oO3yZfZxerfazZ7Bt7wkNaH/Lt
+	 eZNABJ41UPMdWC5qT7EdXJEVC2XA4/cTnAsMajk8rFXUzl4y9V3UzkW0xiXIBLK10p
+	 DU+MRKLM1Zwn8WRLs5txa/47TJ9lvuNgpJXJYC1A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbfLJVeV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:34:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39366 "EHLO mail.kernel.org"
+        id S1729743AbfLJVqD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 16:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730010AbfLJVeU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:34:20 -0500
+        id S1729498AbfLJVcv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:32:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89972208C3;
-        Tue, 10 Dec 2019 21:34:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDFC7207FF;
+        Tue, 10 Dec 2019 21:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576013660;
-        bh=2R0mPyrgd4pHuVmxqCqvyHK2IuUqsDFeNl816UwA9kE=;
+        s=default; t=1576013570;
+        bh=RbX6+Z4jCo6nzQ+Vy1qb12MbVoi1m5ZYQ4/pNJpUm9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gpIykhyLXJZbrRI6C56SX4mU+NGe2cAfHhFtKrbXG4splc/pFAVush9R1Ru4nwc2E
-         aQyzl0beHkVTw+tm2Ts/o5rRMP5RC0dNN+JIL8PxtwKOkbFGy1V7rOIKAHCTpr/mi6
-         PVHp/qJPMUlqX/OKVTKcfziDy8jGSUPb+mXPUBbQ=
+        b=c8h4SHkzpaB0jqrCSnFLfA5cBZWHc3Lc/Ysr0CFcRNPPaz4UrgY/fJxtO2qwii5yb
+         wQBqxPdtzRadXX5RcYOjpwmWQxD4+rNeCHTXrgOCdbPGL2NyQTqM8IQ946fyXQausl
+         yHZjuIfhs0yO1S6zIIBHxmvAXtWDhcZxHpg2WfTE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+Cc:     Will Deacon <will@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Elena Petrova <lenaptr@google.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 098/177] pinctrl: amd: fix __iomem annotation in amd_gpio_irq_handler()
-Date:   Tue, 10 Dec 2019 16:31:02 -0500
-Message-Id: <20191210213221.11921-98-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 024/177] pinctrl: devicetree: Avoid taking direct reference to device name string
+Date:   Tue, 10 Dec 2019 16:29:48 -0500
+Message-Id: <20191210213221.11921-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191210213221.11921-1-sashal@kernel.org>
 References: <20191210213221.11921-1-sashal@kernel.org>
@@ -58,48 +59,109 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit 10ff58aa3c2e2a093b6ad615a7e3d8bb0dc613e5 ]
+[ Upstream commit be4c60b563edee3712d392aaeb0943a768df7023 ]
 
-The regs pointer in amd_gpio_irq_handler() should have __iomem
-on it, so add that to fix the following sparse warnings:
+When populating the pinctrl mapping table entries for a device, the
+'dev_name' field for each entry is initialised to point directly at the
+string returned by 'dev_name()' for the device and subsequently used by
+'create_pinctrl()' when looking up the mappings for the device being
+probed.
 
-drivers/pinctrl/pinctrl-amd.c:555:14: warning: incorrect type in assignment (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:555:14:    expected unsigned int [usertype] *regs
-drivers/pinctrl/pinctrl-amd.c:555:14:    got void [noderef] <asn:2> *base
-drivers/pinctrl/pinctrl-amd.c:563:34: warning: incorrect type in argument 1 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:563:34:    expected void const volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:563:34:    got unsigned int [usertype] *
-drivers/pinctrl/pinctrl-amd.c:580:34: warning: incorrect type in argument 1 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:580:34:    expected void const volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:580:34:    got unsigned int [usertype] *
-drivers/pinctrl/pinctrl-amd.c:587:25: warning: incorrect type in argument 2 (different address spaces)
-drivers/pinctrl/pinctrl-amd.c:587:25:    expected void volatile [noderef] <asn:2> *addr
-drivers/pinctrl/pinctrl-amd.c:587:25:    got unsigned int [usertype] *
+This is unreliable in the presence of calls to 'dev_set_name()', which may
+reallocate the device name string leaving the pinctrl mappings with a
+dangling reference. This then leads to a use-after-free every time the
+name is dereferenced by a device probe:
 
-Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
-Link: https://lore.kernel.org/r/20191022151154.5986-1-ben.dooks@codethink.co.uk
+  | BUG: KASAN: invalid-access in strcmp+0x20/0x64
+  | Read of size 1 at addr 13ffffc153494b00 by task modprobe/590
+  | Pointer tag: [13], memory tag: [fe]
+  |
+  | Call trace:
+  |  __kasan_report+0x16c/0x1dc
+  |  kasan_report+0x10/0x18
+  |  check_memory_region
+  |  __hwasan_load1_noabort+0x4c/0x54
+  |  strcmp+0x20/0x64
+  |  create_pinctrl+0x18c/0x7f4
+  |  pinctrl_get+0x90/0x114
+  |  devm_pinctrl_get+0x44/0x98
+  |  pinctrl_bind_pins+0x5c/0x450
+  |  really_probe+0x1c8/0x9a4
+  |  driver_probe_device+0x120/0x1d8
+
+Follow the example of sysfs, and duplicate the device name string before
+stashing it away in the pinctrl mapping entries.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Elena Petrova <lenaptr@google.com>
+Tested-by: Elena Petrova <lenaptr@google.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20191002124206.22928-1-will@kernel.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-amd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/devicetree.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index cd7a5d95b499a..b1ffdd3f6d076 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -544,7 +544,8 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 	irqreturn_t ret = IRQ_NONE;
- 	unsigned int i, irqnr;
- 	unsigned long flags;
--	u32 *regs, regval;
-+	u32 __iomem *regs;
-+	u32  regval;
- 	u64 status, mask;
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 2969ff3162c35..177ee1136e349 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -40,6 +40,13 @@ struct pinctrl_dt_map {
+ static void dt_free_map(struct pinctrl_dev *pctldev,
+ 		     struct pinctrl_map *map, unsigned num_maps)
+ {
++	int i;
++
++	for (i = 0; i < num_maps; ++i) {
++		kfree_const(map[i].dev_name);
++		map[i].dev_name = NULL;
++	}
++
+ 	if (pctldev) {
+ 		const struct pinctrl_ops *ops = pctldev->desc->pctlops;
+ 		if (ops->dt_free_map)
+@@ -74,7 +81,13 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
  
- 	/* Read the wake status */
+ 	/* Initialize common mapping table entry fields */
+ 	for (i = 0; i < num_maps; i++) {
+-		map[i].dev_name = dev_name(p->dev);
++		const char *devname;
++
++		devname = kstrdup_const(dev_name(p->dev), GFP_KERNEL);
++		if (!devname)
++			goto err_free_map;
++
++		map[i].dev_name = devname;
+ 		map[i].name = statename;
+ 		if (pctldev)
+ 			map[i].ctrl_dev_name = dev_name(pctldev->dev);
+@@ -82,10 +95,8 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 
+ 	/* Remember the converted mapping table entries */
+ 	dt_map = kzalloc(sizeof(*dt_map), GFP_KERNEL);
+-	if (!dt_map) {
+-		dt_free_map(pctldev, map, num_maps);
+-		return -ENOMEM;
+-	}
++	if (!dt_map)
++		goto err_free_map;
+ 
+ 	dt_map->pctldev = pctldev;
+ 	dt_map->map = map;
+@@ -93,6 +104,10 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 	list_add_tail(&dt_map->node, &p->dt_maps);
+ 
+ 	return pinctrl_register_map(map, num_maps, false);
++
++err_free_map:
++	dt_free_map(pctldev, map, num_maps);
++	return -ENOMEM;
+ }
+ 
+ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
 -- 
 2.20.1
 
