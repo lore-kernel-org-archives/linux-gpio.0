@@ -2,88 +2,136 @@ Return-Path: <SRS0=dTlw=2A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F81C43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 20:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D299FC43603
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE51820652
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 20:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A639224680
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Dec 2019 21:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576011940;
+	bh=cNL+w5hmyJtoWwvZWcLJMvw4ijDgt/IQp22TT2F5qTw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Yj+/IvZF/P9r2WD3QdAk+mKa8dCE1XZN60IjBuDze8plkHVzGqMgg3WOiAL/jrZbC
+	 3FOCVWAicDgG54eK1qP2v5ghhzesFxxqW6iCsZItsyXVFsotjiCtH/Ra1tPZCG6UXR
+	 BcREhVj/NRHgmxxpVboCLv0EdWA8FhP/7zNoXfv8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfLJU3A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 15:29:00 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:46139 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJU3A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Dec 2019 15:29:00 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N8GdE-1hjJuA0Kdk-014Ebs; Tue, 10 Dec 2019 21:28:46 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hongwei Zhang <hongweiz@ami.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: aspeed: avoid return type warning
-Date:   Tue, 10 Dec 2019 21:28:31 +0100
-Message-Id: <20191210202842.2546758-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1727419AbfLJVEi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 16:04:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727403AbfLJVEi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:04:38 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E501524684;
+        Tue, 10 Dec 2019 21:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576011877;
+        bh=cNL+w5hmyJtoWwvZWcLJMvw4ijDgt/IQp22TT2F5qTw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=h32rXEU4/NbMNr4UU1xCdOw/LqkZD42tvb/LH/fCPFtcHC298Rs5bFFPqx8K2CIsH
+         +KoOBOe94ffzP9SvJBY6bwoP3hxDEWWCWXn6fmza5CXCxU8eJCOhTU3UK7yMZw6woe
+         s+e5Bh25E3srr8KVzxAKYCojL1PJjoyi+SxC49qI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 029/350] Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit31 when using SIM0_D"
+Date:   Tue, 10 Dec 2019 15:58:41 -0500
+Message-Id: <20191210210402.8367-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210210402.8367-1-sashal@kernel.org>
+References: <20191210210402.8367-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:wVxlXYdoiPhUAJZhlt2X1D7PcABmLjxtergfMBgekFChQe6tWpZ
- I8w8dAsL3MhlxAzx3aJut0o8lNQ+huDa+/03lMKZtybCPmqB0AJTOBwNTfynmFBoPF8q11X
- 0fl7rzVQ5Q2JVM39J6A/ntiE4ZYpUnCxy8/sdi3n7INo3/32jvI6513Rf/7/e+EF6ypwqMw
- 7jpgkIgG3VV33LgyN3ZHw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Y4ivtR1MltI=:StSJ9oDv/HYfCyShHA3Kln
- HJlWZ7FKH4rMnxsdZ2nBl/UW6bh5gdRtvDC7vF0RXZcURVmMYONqK3dKQBoPqnUs6OhRdRvaV
- fGRHQlH3Z4dy1+lh4Usamimlb50nX1pL7c9XXCvkaICeUSQb8GGTdQvjgtx7F0KKDME5TkrrG
- vcp+5d7zxDK4UzkAyOGGEsZkm8a7Lb7eAXSdnHsCYArnYzOVliIUeGcAHVK0/Lu0TCj5hXX7X
- fVbLVxTGXu+UAWIRrGCHtKxuOwtL/a7TQA1fFTMG2QD/PtZ/3n/g9rWSL6dwcbLFmZmqxJnIQ
- chErrX1bOl0U93KPojuBe+zu9gXC02JfzeqL5MrH61EibZylCVWR3xu+FHuLkjaZmXNiDycMn
- 6y3zUNhipDojd9jN3Um/lKDi7Cq7OaHbPTDsQGqV8HeUeOcz0OBgMOaASpgoXrWskpkHBWmyW
- TzqkRJsMdb9nxCuAeOdozIL6fP3g8bdnCo3mnXrwKSU03CIdxjC6swqjGA71WzxIz1NzjJoC9
- bCf2p/keV+p7B2b37XKapDRGpDbzrdWy0dSwsYqsF4VuPQWtjRLV3YGHbMocgckkIOG3yWaHn
- 54sLNcUWiHO80jq9qRFMPmG8nldxRxceGtieFYJ4M4LfP+q+X+oQSgrnq2xZgRNd4/QvaKGji
- ApkJsGJbhOaXlkdON4aoL2l6aixNE6Gdh14opggsVlJaKt5rkxyIDWFhyuFzXyuSMnFMBnACj
- SARPLDbBB6oLHVI2K3Xe4enmJcz10DTzP2urQVQvpLd+8OHImMx1O7a3tHAPP9GV1e9RE4ZY/
- PeTepEbRI5+/RQ+0bq+NqBLvowYmvTpaLLeP5M1fc3LBgWW32wURRueAs/HhIgpuXzvt6f/OG
- eMl+mUJZ38GzOcZdS6EQ==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-gcc has a hard time tracking whether BUG_ON(1) ends
-execution or not:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-drivers/gpio/gpio-aspeed-sgpio.c: In function 'bank_reg':
-drivers/gpio/gpio-aspeed-sgpio.c:112:1: error: control reaches end of non-void function [-Werror=return-type]
+[ Upstream commit 7666dfd533d4c55733037775d47a8e3551b341a2 ]
 
-Use the simpler BUG() that gcc knows cannot continue.
+This reverts commit e167d723e1a472d252e5c4baf823b77ce5543b05.
 
-Fixes: f8b410e3695a ("gpio: aspeed-sgpio: Rename and add Kconfig/Makefile")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of Aug
+24, 2018, the SEL_SIMCARD_{0,1} definition was to be deleted.  However,
+this errata merely fixed an accidental double definition in the Hardware
+User's Manual Rev. 1.00.  The real definition is still present in later
+revisions of the manual (Rev. 1.50 and Rev. 2.00).
+
+Hence revert the commit to recover the definition.
+
+Based on a patch in the BSP by Takeshi Kihara
+<takeshi.kihara.df@renesas.com>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Link: https://lore.kernel.org/r/20190904121658.2617-4-geert+renesas@glider.be
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-aspeed-sgpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
-index 7e99860ca447..8319812593e3 100644
---- a/drivers/gpio/gpio-aspeed-sgpio.c
-+++ b/drivers/gpio/gpio-aspeed-sgpio.c
-@@ -107,7 +107,7 @@ static void __iomem *bank_reg(struct aspeed_sgpio *gpio,
- 		return gpio->base + bank->irq_regs + GPIO_IRQ_STATUS;
- 	default:
- 		/* acturally if code runs to here, it's an error case */
--		BUG_ON(1);
-+		BUG();
- 	}
- }
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+index 3808409cab385..5200dadd6b3ef 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+@@ -448,6 +448,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ #define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
  
+ /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
++#define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
+ #define MOD_SEL1_30		FM(SEL_SSI2_0)			FM(SEL_SSI2_1)
+ #define MOD_SEL1_29		FM(SEL_TIMER_TMU_0)		FM(SEL_TIMER_TMU_1)
+ #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
+@@ -469,6 +470,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ 
+ #define PINMUX_MOD_SELS	\
+ \
++			MOD_SEL1_31 \
+ MOD_SEL0_30_29		MOD_SEL1_30 \
+ 			MOD_SEL1_29 \
+ MOD_SEL0_28		MOD_SEL1_28 \
+@@ -1197,7 +1199,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		RIF0_D1_A,	SEL_DRIF0_0),
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		SDA1_B,		SEL_I2C1_1),
+ 	PINMUX_IPSR_MSEL(IP13_19_16,		TCLK2_B,	SEL_TIMER_TMU_1),
+-	PINMUX_IPSR_GPSR(IP13_19_16,		SIM0_D_A),
++	PINMUX_IPSR_MSEL(IP13_19_16,		SIM0_D_A,	SEL_SIMCARD_0),
+ 
+ 	PINMUX_IPSR_GPSR(IP13_23_20,		MLB_DAT),
+ 	PINMUX_IPSR_MSEL(IP13_23_20,		TX0_B,		SEL_SCIF0_1),
+@@ -1265,7 +1267,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP15_15_12,		TPU0TO2),
+ 	PINMUX_IPSR_MSEL(IP15_15_12,		SDA1_D,		SEL_I2C1_3),
+ 	PINMUX_IPSR_MSEL(IP15_15_12,		FSO_CFE_1_N_B,	SEL_FSO_1),
+-	PINMUX_IPSR_GPSR(IP15_15_12,		SIM0_D_B),
++	PINMUX_IPSR_MSEL(IP15_15_12,		SIM0_D_B,	SEL_SIMCARD_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP15_19_16,		SSI_SDATA6),
+ 	PINMUX_IPSR_MSEL(IP15_19_16,		HRTS2_N_A,	SEL_HSCIF2_0),
+@@ -4961,8 +4963,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
+ 				   1, 2, 2, 2, 1, 1, 2, 1, 4),
+ 			     GROUP(
+-		/* RESERVED 31 */
+-		0, 0,
++		MOD_SEL1_31
+ 		MOD_SEL1_30
+ 		MOD_SEL1_29
+ 		MOD_SEL1_28
 -- 
-2.20.0
+2.20.1
 
