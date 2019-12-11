@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CE6C47409
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 15:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C095CC43603
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 15:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6EA22527
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 15:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9759022B48
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 15:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576078773;
-	bh=J/qoveuYteBmsPJjOkskLUfNQQIkAnrf3tL2OcDzgJs=;
+	s=default; t=1576078913;
+	bh=OSuoJBffl0SPH/noodNnIxyPimiT8MXfS1RUd1KxZGI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZEVXDLG/6vGjLrdZF7v2TetXrG+L2mb8UtIaxKAxt1M+6q684j9pFyRQPFMYZONVO
-	 SWV2POsXMLwVmZlQb58CryMLbGg+CZykGlk7UIHFGmw+sctTOKIeKU6VbiLMe8qh//
-	 N5aCndRAT6iElIsJc0kPnG4dKwN8oWhbOH6734FA=
+	b=sOAb5JA04Zb6RaIlYOYOHSAuUNuonP/azGJrdaJqwW/JmBTeAmwVQ0N7SHt8wAPut
+	 OebTha7FYC/ufiPij7n+0Yf5cDidXA/DZdSLm9/jNppkZiXXQHdESET1oJOxWPf8iS
+	 Yk0+ZQkRHaCvIcgb3PNoW9thdK7zm1GDiaDHjPrk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388543AbfLKPjR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:39:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49440 "EHLO mail.kernel.org"
+        id S1733179AbfLKPlx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Dec 2019 10:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388467AbfLKPir (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:38:47 -0500
+        id S2387485AbfLKP1x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72C3C21556;
-        Wed, 11 Dec 2019 15:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3CAB24658;
+        Wed, 11 Dec 2019 15:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078726;
-        bh=J/qoveuYteBmsPJjOkskLUfNQQIkAnrf3tL2OcDzgJs=;
+        s=default; t=1576078072;
+        bh=OSuoJBffl0SPH/noodNnIxyPimiT8MXfS1RUd1KxZGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rhliA7fcQ8CDMRIMigowKZlZ335RKJcw4EXugKsyLV36H4E4SF1loLLJiw4OE09pt
-         uSjMBkF0MbMbWcTnO7bA17M0XEPyo+GG4EHLOzqcbJ27QBqhGPHsY17Y8vQ+iRO7U3
-         vacONmGsiGvZSp84PGeweu1Aaf6O7F/KhpiV5Ir0=
+        b=pUAjufWTK/DNMOXE0SyUr4hAyul5CBdyU2e5H9VWUze82+FTbOMorzquUOow7B3JY
+         36OE2FMNHgAruP489clMgCwvkykwkY+pZtobEa8Dr5uUubF7QmpbPVHXZXgSXERW78
+         bE9L1tgqHFMkz/AGYqlskHIrem7rzXbAxvzSiSX0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
         Michael Walle <michael@walle.cc>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 30/37] gpio: mpc8xxx: Don't overwrite default irq_set_type callback
-Date:   Wed, 11 Dec 2019 10:38:06 -0500
-Message-Id: <20191211153813.24126-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 63/79] gpio: mpc8xxx: Don't overwrite default irq_set_type callback
+Date:   Wed, 11 Dec 2019 10:26:27 -0500
+Message-Id: <20191211152643.23056-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211153813.24126-1-sashal@kernel.org>
-References: <20191211153813.24126-1-sashal@kernel.org>
+In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -94,10 +94,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 9e02cb6afb0bb..ce6e15167d0b2 100644
+index c8673a5d94122..3f10f9599f2cb 100644
 --- a/drivers/gpio/gpio-mpc8xxx.c
 +++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -409,7 +409,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+@@ -348,7 +348,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
  	 * It's assumed that only a single type of gpio controller is available
  	 * on the current machine, so overwriting global data is fine.
  	 */
@@ -105,8 +105,8 @@ index 9e02cb6afb0bb..ce6e15167d0b2 100644
 +	if (devtype->irq_set_type)
 +		mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
  
- 	gc->direction_output = devtype->gpio_dir_out ?: mpc8xxx_gpio_dir_out;
- 	gc->get = devtype->gpio_get ?: mpc8xxx_gpio_get;
+ 	if (devtype->gpio_dir_out)
+ 		gc->direction_output = devtype->gpio_dir_out;
 -- 
 2.20.1
 
