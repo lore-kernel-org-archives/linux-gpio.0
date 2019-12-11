@@ -2,94 +2,126 @@ Return-Path: <SRS0=UY75=2B=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A62C2D0BF
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 02:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79BFC43603
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 04:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EC9220836
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 02:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76332073B
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 04:28:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="pWnAxCl4"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C4F7mO5R";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Fxtfaq5N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfLKClO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Dec 2019 21:41:14 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:27735 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbfLKCk6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:40:58 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47Xh4k56Xjz5F;
-        Wed, 11 Dec 2019 03:40:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1576032055; bh=x3MUuU0TTk4NVDu60Q9m0xNK1f0k/ifJulmoJP3sWMQ=;
-        h=Date:From:Subject:To:Cc:From;
-        b=pWnAxCl4umvjSVlm81F+0heStwLn1rgt4s7hjrkw33x79NdEpZiSVMev0rTJOwqoo
-         mOr8XYVUpQ9fl+N1hcH2uJbPJ5+aOZZydgtsPXYseKwKu5yPzayQUcfA4Ch/c6wUHi
-         s/ce5vRvKrMqG1B9xA8Xv5BZ7ItXb05sk1KBQ0Cot9p1j/Pronk+0EqkJM8zUBc938
-         0f8fB7+VCL/LFale0QzJrcLu4rFIkPXS+Qs4FJKff+yWvG64ZeiJM2AWyER66is6Lk
-         Za5cdVnw0QMeiEoie+Nxm42w6kLaEbpJlz8Y4mB4bbXDvNDH1CiTs/d7euJDKE1iwP
-         IEkAJCpKjtXkA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Wed, 11 Dec 2019 03:40:54 +0100
-Message-Id: <cover.1576031636.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 0/4] mmc: simplify WP/CD GPIO handling
+        id S1726908AbfLKE2K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Dec 2019 23:28:10 -0500
+Received: from a27-185.smtp-out.us-west-2.amazonses.com ([54.240.27.185]:43648
+        "EHLO a27-185.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726783AbfLKE2K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Dec 2019 23:28:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1576038488;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=gMk9WhWup2884Y7Eo+6uMfgKSR+xyScM8bYv0/IBWzo=;
+        b=C4F7mO5R6jt5HkyItD+RlNdRrRcmWnYUZZUadKOZn2hVh54WZDmJC9pZfkoZIFAf
+        fkJnJ7Bbr7ACd2Bpvw//sTwp1Ozdta/rXbwZeBWhnyJ1FS17rG7mb+9Lt04BjMQVuoQ
+        BOdYHWkVZq9dDlY42SuZaWC1ljiaWjijZH5Z+gnY=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1576038488;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+        bh=gMk9WhWup2884Y7Eo+6uMfgKSR+xyScM8bYv0/IBWzo=;
+        b=Fxtfaq5Naf79sqyWqcdnegdfwveUJRlOQhj/KWcDRM/arzDNVEb9tRYsZkNnjidI
+        hgue9wFQhKqIg+8k1tqr8o0XFC9gTTcFgX3swxvm0IIdxv+dS+DnU76Dx1M8BqGexZh
+        ICT9tz/tYeyDIlI7NQq0XmkFFED8/8jiJ/LFlng0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6703AC8F10C
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH] pinctrl: qcom: sc7180: Add new qup functions
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     LinusW <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>
+References: <0101016eef165cd0-26845355-ff75-416e-99a2-0c4434e18b76-000000@us-west-2.amazonses.com>
+ <CAD=FV=XAhSWOOPrHpuhjObi0UpKaeaD4TX1yhTh64cy39E1wyQ@mail.gmail.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <0101016ef336d9c4-d9f221c4-bd59-41e0-a2ba-403880da148d-000000@us-west-2.amazonses.com>
+Date:   Wed, 11 Dec 2019 04:28:08 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     linux-mmc@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAD=FV=XAhSWOOPrHpuhjObi0UpKaeaD4TX1yhTh64cy39E1wyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SES-Outgoing: 2019.12.11-54.240.27.185
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series removes convoluted handling of inverted CD and WP lines in
-SD/MMC host drivers when using GPIOs.
 
-First patch adds an API: gpiod_toggle_active_low() that switches line
-inversion flag in the gpiod structure. Next two patches modify MMC
-host's WP and CD initialization to apply all the inversions onto
-gpiod's active-low flag. Final patch removes now-unused argument from
-init functions.
+On 12/10/2019 11:14 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Dec 10, 2019 at 1:14 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>>
+>> on sc7180 we have cases where multiple functions from the same
+>> qup instance share the same pin. This is true for qup02/04/11 and qup13.
+>> Add new function names to distinguish which qup function to use.
+>>
+>> Reported-by: Stephen Boyd <swboyd@chromium.org>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+>>   drivers/pinctrl/qcom/pinctrl-sc7180.c | 60 +++++++++++++++++++++++------------
+>>   1 file changed, 40 insertions(+), 20 deletions(-)
+> 
+> Two overall issues:
+> 
+> 1. I think you also need to update the device tree bindings, so this
+> should be a 2-patch series.  Those list all possible values for
+> "function" so you need to update.
 
-x86 allyesconfig build-tested. 
+yes, I will include the bindings update patch when I repost.
 
-v2: move argument removal in sdhci-esdhc-imx.c to last patch
+> 
+> 2. It would be nice if you mentioned in the commit message that this
+> will break i2c usage on these QUPs for anyone using old device tree
+> files.  That shouldn't be a problem (AKA no need to provide backward
+> compatibility) since I think the main sc7180.dtsi hasn't landed
+> anywhere yet, but if anyone pulled an early patch from the list it
+> would be good to give them a heads up in your commit message.
 
-Michał Mirosław (4):
-  gpio: add gpiod_toggle_active_low()
-  mmc: rework wp-gpio handling
-  mmc: rework cd-gpio handling
-  mmc: remove mmc_gpiod_request_*(invert_gpio)
+Sure, will update the commit msg accordingly.
 
- drivers/gpio/gpiolib-of.c          | 21 -------------------
- drivers/gpio/gpiolib.c             | 11 ++++++++++
- drivers/mmc/core/host.c            | 33 ++++++++----------------------
- drivers/mmc/core/slot-gpio.c       | 31 ++++++++++------------------
- drivers/mmc/host/davinci_mmc.c     |  4 ++--
- drivers/mmc/host/mmc_spi.c         |  4 ++--
- drivers/mmc/host/mmci.c            |  4 ++--
- drivers/mmc/host/pxamci.c          | 12 +++++------
- drivers/mmc/host/s3cmci.c          |  4 ++--
- drivers/mmc/host/sdhci-acpi.c      |  2 +-
- drivers/mmc/host/sdhci-esdhc-imx.c | 15 +++++++-------
- drivers/mmc/host/sdhci-pci-core.c  |  4 ++--
- drivers/mmc/host/sdhci-sirf.c      |  2 +-
- drivers/mmc/host/sdhci-spear.c     |  2 +-
- drivers/mmc/host/tmio_mmc_core.c   |  2 +-
- include/linux/gpio/consumer.h      |  7 +++++++
- include/linux/mmc/slot-gpio.h      |  5 ++---
- 17 files changed, 67 insertions(+), 96 deletions(-)
+> 
+>> @@ -976,8 +996,8 @@ static const struct msm_pingroup sc7180_groups[] = {
+>>          [3] = PINGROUP(3, SOUTH, qup01, sp_cmu, dbg_out, qdss_cti, _, _, _, _, _),
+>>          [4] = PINGROUP(4, NORTH, sdc1_tb, _, qdss_cti, _, _, _, _, _, _),
+>>          [5] = PINGROUP(5, NORTH, sdc2_tb, _, _, _, _, _, _, _, _),
+>> -       [6] = PINGROUP(6, NORTH, qup11, qup11, _, _, _, _, _, _, _),
+>> -       [7] = PINGROUP(7, NORTH, qup11, qup11, ddr_bist, _, _, _, _, _, _),
+>> +       [6] = PINGROUP(6, NORTH, qup11_i2c, qup11_uart, _, _, _, _, _, _, _),
+>> +       [7] = PINGROUP(7, NORTH, qup11_i2c, qup11_uart, ddr_bist, _, _, _, _, _, _),
+> 
+> You probably have a more complete document than I have.  ...but the
+> one I'm looking at shows that for pins 6/7 only i2c is available, not
+> UART.  Said another way: I see QUP1_L0[1] and QUP1_L1[1] on Func1 but
+> I don't see anything on Func2.  Of course, my document also doesn't
+> include "ddr_bist", so maybe it's just incomplete.
+
+yes, I can confirm I do see QUP1_L2[1] and QUP1_L3[1] on Func2 for gpio 6/7
+in my doc.
+
+Thanks for the review.
 
 -- 
-2.20.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
