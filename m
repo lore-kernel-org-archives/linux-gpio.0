@@ -2,109 +2,117 @@ Return-Path: <SRS0=UY75=2B=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65717C2D0C6
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 16:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F367C43603
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 16:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0CA24654
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 16:09:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LsiNBM/F"
+	by mail.kernel.org (Postfix) with ESMTP id 37D1E21556
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Dec 2019 16:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576080625;
+	bh=XebHkKGdyvyJe9x4eWTtKYtITQBxEm2abSNYs2wk4TQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=tJpKWyfatTeWy2QxCjO0jh4U5OxOLB4GBdB7jw3iLwy9XVGOPBwtkf/2Fq3pJo1lJ
+	 sgJWI89khiwDjxMZybs8vp57LO0liQ26JigOykhUY45+ZCEBpFT2ALMs99/j4fIZlS
+	 Y1UIqCsea5EQ6y/nvZoZrNUPEdsgY3ib3hEJys10=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbfLKQJ0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Dec 2019 11:09:26 -0500
-Received: from mail-qk1-f169.google.com ([209.85.222.169]:42785 "EHLO
-        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731051AbfLKPMH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Dec 2019 10:12:07 -0500
-Received: by mail-qk1-f169.google.com with SMTP id z14so9572924qkg.9
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Dec 2019 07:12:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WlPM/YHVMJ7UCNl2eZLZOOG7aVPUieazQLzoHK/wCZI=;
-        b=LsiNBM/FsroUH4smxOe1imJV4dPcZjb/uHGn+Wp31XCVd43g7vuF8y4w5pRvcYNC4r
-         jY/uuxrKwpkAat4JElPjEbk+rOvoOsicLYRuwsQ9ytI207UUE2yzykSwgdQGU9F8heK4
-         UwWYU7vhDeX1bKZEDkOZ7KisnriznV/JJvfP6gf/42u7Zjv0TCNY5UU1P2ZvrryxaxoK
-         +241GcARrddlBC0jKJbGmyXF5wzVmDIgK3IIACyX3jBr0SwcaN/64JYIP1v+vuPZRnbm
-         zdHjj4UzOu/qg7rNSgv9ode5CE+QnvUGEQ8+cqIFM7iBryLajgFrXNkMthY8yhYBdQGy
-         4r1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WlPM/YHVMJ7UCNl2eZLZOOG7aVPUieazQLzoHK/wCZI=;
-        b=oK0EUD/KIkV815hcHiPCLvURzIvDBGCSL3ZqlPrOu6wqP7V4xLPtWT1bV/6LUU4StI
-         P8qOif7Y2k9hA5onHKW3nQ6n9TGDIUIFBreVJ7D1fHL8wHQJg51QU9x2sBR0hvcHqax3
-         UT89mEuJPl7dsEvtRmuaT9QX4SMXMJjWNyp2kd90amIHXGy9nImOXjv1ZNmm75Qe2WyL
-         /Lu/sDyB5v+kPhpNiGf1d+0+A+z0PFRJsWh4B7Lx5for50qnA7mCPlwWhivjzyUWcdIk
-         v1WMZvDKU6IzGkfPhBQllFvFvLfGMr1NvfdKScdpRGzdpc3lu5clAc/Y1OktVzR8Bj7Q
-         dOng==
-X-Gm-Message-State: APjAAAWsU6m4ic9rIgrbiHNsdfA3+sLoycaDMPdLMR7ai0himnh6re74
-        mp/wh9tIVHVuoBrSbz0aB/occ+DyfERE7RGfSEmNbw==
-X-Google-Smtp-Source: APXvYqxl1xrD4MtXqbrkFEiz63zdtPszg9xDvbfcvPrJS6Orq2Hc5A0XCKwVf/iGCeYME1nlObxILIrr6uNtuDv8SYQ=
-X-Received: by 2002:a05:620a:136e:: with SMTP id d14mr3035585qkl.263.1576077126350;
- Wed, 11 Dec 2019 07:12:06 -0800 (PST)
+        id S1731016AbfLKPL6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Dec 2019 10:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731012AbfLKPL6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:11:58 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A86AB2173E;
+        Wed, 11 Dec 2019 15:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576077117;
+        bh=XebHkKGdyvyJe9x4eWTtKYtITQBxEm2abSNYs2wk4TQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JcAB0e/CbI8YBwYoehpJzcMMFVSJPlxthIpWlIb3ITPx+a2Tq5j2G4L/Vb03IY/BK
+         uOeT37i8wuZBPoLb2EPNMu5evyRJ1QuYPSv/ts5OuXA5fVOivSCB/funX9BkxPu/Vq
+         XCWSglvn6f+fJtDDx57aIGAQp1a4N4eM+StGtKt0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 006/134] gpio: mxc: Only get the second IRQ when there is more than one IRQ
+Date:   Wed, 11 Dec 2019 10:09:42 -0500
+Message-Id: <20191211151150.19073-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
+References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20191203192305.31722-1-jsavitz@redhat.com>
-In-Reply-To: <20191203192305.31722-1-jsavitz@redhat.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 11 Dec 2019 16:11:55 +0100
-Message-ID: <CAMpxmJXNXJKMqPiJrKXtJ0GXxVjvv61aSgDHeX_p2TWTphsUFQ@mail.gmail.com>
-Subject: Re: [libgpiod] bindings: python: fix segfault when calling Line.request()
-To:     Joel Savitz <jsavitz@redhat.com>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>,
-        fedora-rpi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 3 gru 2019 o 20:24 Joel Savitz <jsavitz@redhat.com> napisa=C5=82(a):
->
-> When Line.request() is called without the required 'consumer=3Dvalue'
-> argument, the module attempts access an empty dictionary object
-> resulting in a segfault. This patch avoids such access when the
-> dictionary is empty and maintains the current design where the
-> LineBulk object is responsible for validation of arguments.
->
-> Signed-off-by: Joel Savitz <jsavitz@redhat.com>
-> ---
->  bindings/python/gpiodmodule.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.=
-c
-> index 2f6ef51..ae7e1cc 100644
-> --- a/bindings/python/gpiodmodule.c
-> +++ b/bindings/python/gpiodmodule.c
-> @@ -434,8 +434,12 @@ static PyObject *gpiod_Line_request(gpiod_LineObject=
- *self,
->         gpiod_LineBulkObject *bulk_obj;
->         int rv;
->
-> -       def_val =3D PyDict_GetItemString(kwds, "default_val");
-> -       def_vals =3D PyDict_GetItemString(kwds, "default_vals");
-> +       if (PyDict_Size(kwds) > 0) {
-> +               def_val =3D PyDict_GetItemString(kwds, "default_val");
-> +               def_vals =3D PyDict_GetItemString(kwds, "default_vals");
-> +       } else {
-> +               def_val =3D def_vals =3D NULL;
-> +       }
->
->         if (def_val && def_vals) {
->                 PyErr_SetString(PyExc_TypeError,
-> --
-> 2.23.0
->
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Applied to master and 1.4.x stable.
+[ Upstream commit c8f3d144004dd3f471ffd414690d15a005e4acd6 ]
 
-Thanks,
-Bartosz
+On some of i.MX SoCs like i.MX8QXP, there is ONLY one IRQ for each
+GPIO bank, so it is better to check the IRQ count before getting
+second IRQ to avoid below error message during probe:
+
+[    1.070908] gpio-mxc 5d080000.gpio: IRQ index 1 not found
+[    1.077420] gpio-mxc 5d090000.gpio: IRQ index 1 not found
+[    1.083766] gpio-mxc 5d0a0000.gpio: IRQ index 1 not found
+[    1.090122] gpio-mxc 5d0b0000.gpio: IRQ index 1 not found
+[    1.096470] gpio-mxc 5d0c0000.gpio: IRQ index 1 not found
+[    1.102804] gpio-mxc 5d0d0000.gpio: IRQ index 1 not found
+[    1.109144] gpio-mxc 5d0e0000.gpio: IRQ index 1 not found
+[    1.115475] gpio-mxc 5d0f0000.gpio: IRQ index 1 not found
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-mxc.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 7907a87558662..c77d474185f31 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -411,6 +411,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mxc_gpio_port *port;
++	int irq_count;
+ 	int irq_base;
+ 	int err;
+ 
+@@ -426,9 +427,15 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(port->base))
+ 		return PTR_ERR(port->base);
+ 
+-	port->irq_high = platform_get_irq(pdev, 1);
+-	if (port->irq_high < 0)
+-		port->irq_high = 0;
++	irq_count = platform_irq_count(pdev);
++	if (irq_count < 0)
++		return irq_count;
++
++	if (irq_count > 1) {
++		port->irq_high = platform_get_irq(pdev, 1);
++		if (port->irq_high < 0)
++			port->irq_high = 0;
++	}
+ 
+ 	port->irq = platform_get_irq(pdev, 0);
+ 	if (port->irq < 0)
+-- 
+2.20.1
+
