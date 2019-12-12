@@ -2,41 +2,39 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4931AC00454
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87534C2D0C9
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AADD2173E
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFD02173E
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfLLQE1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 11:04:27 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34517 "EHLO
+        id S1729618AbfLLQE2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 11:04:28 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57359 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729550AbfLLQEW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 11:04:22 -0500
+        with ESMTP id S1729719AbfLLQEV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 11:04:21 -0500
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0003cX-KD; Thu, 12 Dec 2019 17:04:17 +0100
+        id 1ifQwr-0003cW-KD; Thu, 12 Dec 2019 17:04:17 +0100
 Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0004LB-2j; Thu, 12 Dec 2019 17:04:17 +0100
+        id 1ifQwr-0004L9-24; Thu, 12 Dec 2019 17:04:17 +0100
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     support.opensource@diasemi.com, lee.jones@linaro.org,
         robh+dt@kernel.org, linus.walleij@linaro.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, kernel@pengutronix.de
-Subject: [RESEND PATCH v3 1/3] dt-bindings: mfd: da9062: add gpio bindings
-Date:   Thu, 12 Dec 2019 17:04:11 +0100
-Message-Id: <20191212160413.15232-2-m.felsch@pengutronix.de>
+Subject: [RESEND PATCH v3 0/3] Add DA9062 GPIO support
+Date:   Thu, 12 Dec 2019 17:04:10 +0100
+Message-Id: <20191212160413.15232-1-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191212160413.15232-1-m.felsch@pengutronix.de>
-References: <20191212160413.15232-1-m.felsch@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
@@ -48,48 +46,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add gpio device documentation to make the da9062 gpios available for
-users.
+Hi,
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
-Changelog:
+this update address all comments made on [1], for further details see
+the patch based changelog.
 
-v2:
-- remove sub-node documentation
-- squash gpio properties into mfd documentation
----
- Documentation/devicetree/bindings/mfd/da9062.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I resend this v3 since I forgot to add the MFD maintainers on the To:.
+Please can you review the MFD part?
 
-diff --git a/Documentation/devicetree/bindings/mfd/da9062.txt b/Documentation/devicetree/bindings/mfd/da9062.txt
-index edca653a5777..089a28bc77a4 100644
---- a/Documentation/devicetree/bindings/mfd/da9062.txt
-+++ b/Documentation/devicetree/bindings/mfd/da9062.txt
-@@ -13,6 +13,7 @@ da9062-rtc              :               : Real-Time Clock
- da9062-onkey            :               : On Key
- da9062-watchdog         :               : Watchdog Timer
- da9062-thermal          :               : Thermal
-+da9062-gpio             :               : GPIOs
- 
- The DA9061 PMIC consists of:
- 
-@@ -38,6 +39,15 @@ Required properties:
- See Documentation/devicetree/bindings/interrupt-controller/interrupts.txt for
- further information on IRQ bindings.
- 
-+Optional properties:
-+
-+- gpio-controller : Marks the device as a gpio controller.
-+- #gpio-cells     : Should be two. The first cell is the pin number and the
-+                    second cell is used to specify the gpio polarity.
-+
-+See Documentation/devicetree/bindings/gpio/gpio.txt for further information on
-+GPIO bindings.
-+
- Sub-nodes:
- 
- - regulators : This node defines the settings for the LDOs and BUCKs.
+Regards,
+  Marco
+
+[1] https://patchwork.ozlabs.org/cover/1201549/
+
+Marco Felsch (3):
+  dt-bindings: mfd: da9062: add gpio bindings
+  mfd: da9062: add support for the DA9062 GPIOs in the core
+  pinctrl: da9062: add driver support
+
+ .../devicetree/bindings/mfd/da9062.txt        |  10 +
+ MAINTAINERS                                   |   1 +
+ drivers/mfd/da9062-core.c                     |  16 +-
+ drivers/pinctrl/Kconfig                       |  12 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-da9062.c              | 297 ++++++++++++++++++
+ 6 files changed, 336 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/pinctrl-da9062.c
+
 -- 
 2.20.1
 
