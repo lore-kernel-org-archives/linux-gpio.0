@@ -2,75 +2,88 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B93C43603
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 09:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5E5C2D0CA
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 09:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D5C22527
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 09:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A3A22527
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 09:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576143532;
+	bh=YiBHRvmzqwP2Wcik2ucd5vLbYHnFu3fPz1cXkn7qxfY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=tBXS7jDtN1oJ7eQhiDRHZRTnjijy2jswoB1glJOwbY74tjeN8cWBq5zr80TH5EGfP
+	 sQFFfuQJUwe78deAE9bZLlywE6HQeJqBEQ1BOTgGsoeBlzdv0CCBGaQHeH8cfDVUvz
+	 dZwMwQkbi4Ev0qITgdyolxi/lRb4FHTni1/oQxEM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfLLJaX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 04:30:23 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7676 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbfLLJaX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Dec 2019 04:30:23 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CBF2CE826BD3C26BC609;
-        Thu, 12 Dec 2019 17:30:20 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 12 Dec 2019 17:30:13 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <tomasz.figa@gmail.com>, <krzk@kernel.org>,
-        <s.nawrocki@samsung.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] pinctrl: samsung: fix build error without CONFIG_OF_GPIO
-Date:   Thu, 12 Dec 2019 17:27:26 +0800
-Message-ID: <20191212092726.41027-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728546AbfLLJiv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 04:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728329AbfLLJit (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Dec 2019 04:38:49 -0500
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05FE52173E;
+        Thu, 12 Dec 2019 09:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576143529;
+        bh=YiBHRvmzqwP2Wcik2ucd5vLbYHnFu3fPz1cXkn7qxfY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bXrka/lB2G+PKc73Fwbd0Cfp/zQWZGY5Qz1X1NztoqumrJjBf+Yny9ObSeBmb9ww9
+         S9BA5Y3M7rBSUEqBtLbgixO3oYaKf0Zpjjyc13hZOounJN5qxo1Rf1FYzih03/V9bU
+         mBJoMwttf4ouaDkFIrTRReMO0OyiNLPa44eAGEkk=
+Received: by mail-lf1-f41.google.com with SMTP id r14so1174890lfm.5;
+        Thu, 12 Dec 2019 01:38:48 -0800 (PST)
+X-Gm-Message-State: APjAAAWMtM20YyZmGJFMDMv+0AWY5EccPS0uxzy9OiehGHgX2wjvdN0Y
+        fAOT57yiTP55U0oWBcrsRjEJtPbba7HeqKfXkiM=
+X-Google-Smtp-Source: APXvYqyu6b08O6ZGMeq8/kKx/orBKXWk5tK9GegZevaZ2Ce3P9wKAHrRq/kEDZ52TNvDve1nfF/peti7vg4C6vQePZ0=
+X-Received: by 2002:a05:6512:1dd:: with SMTP id f29mr5132078lfp.106.1576143527223;
+ Thu, 12 Dec 2019 01:38:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20191212092726.41027-1-chenzhou10@huawei.com>
+In-Reply-To: <20191212092726.41027-1-chenzhou10@huawei.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 12 Dec 2019 10:38:35 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPexCjtPB03kKLzLK+4LdrM1_qNstMa4cJW19OpHsN59eg@mail.gmail.com>
+Message-ID: <CAJKOXPexCjtPB03kKLzLK+4LdrM1_qNstMa4cJW19OpHsN59eg@mail.gmail.com>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: fix build error without CONFIG_OF_GPIO
+To:     Chen Zhou <chenzhou10@huawei.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com,
+        linux-gpio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If CONFIG_OF_GPIO is n, build fails:
+On Thu, 12 Dec 2019 at 10:30, Chen Zhou <chenzhou10@huawei.com> wrote:
+>
+> If CONFIG_OF_GPIO is n, build fails:
+>
+> drivers/pinctrl/samsung/pinctrl-samsung.c: In function samsung_gpiolib_register:
+> drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: struct gpio_chip has no member named of_node
+>    gc->of_node = bank->of_node;
+>
+> Use #ifdef to guard this.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-drivers/pinctrl/samsung/pinctrl-samsung.c: In function samsung_gpiolib_register:
-drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: struct gpio_chip has no member named of_node
-   gc->of_node = bank->of_node;
+I was thinking about adding OF_GPIO but I could not trigger such case
+as you mention. How can I reproduce this?
 
-Use #ifdef to guard this.
+Anyway, the select/dependencies in Kconfig should be fixed up -
+PINCTRL_SAMSUNG should depend on OF and GPIOLIB.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f26574e..5c29ad8 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -966,7 +966,9 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
- 		gc->base = bank->grange.base;
- 		gc->ngpio = bank->nr_pins;
- 		gc->parent = &pdev->dev;
-+#ifdef CONFIG_OF_GPIO
- 		gc->of_node = bank->of_node;
-+#endif
- 		gc->label = bank->name;
- 
- 		ret = devm_gpiochip_add_data(&pdev->dev, gc, bank);
--- 
-2.7.4
-
+Best regards,
+Krzysztof
