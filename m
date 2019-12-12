@@ -2,82 +2,164 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5BFC43603
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF169C43603
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2179214AF
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A957D214AF
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:33:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbfLLN3j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 08:29:39 -0500
-Received: from mga04.intel.com ([192.55.52.120]:53169 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729170AbfLLN3i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Dec 2019 08:29:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 05:29:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,306,1571727600"; 
-   d="scan'208";a="216284707"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2019 05:29:35 -0800
-Received: from andy by smile with local (Exim 4.93-RC7)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1ifOX9-0003tz-GO; Thu, 12 Dec 2019 15:29:35 +0200
-Date:   Thu, 12 Dec 2019 15:29:35 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com, Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Use new GPIO direction defines for intel pinctrl
-Message-ID: <20191212132935.GL32742@smile.fi.intel.com>
-References: <cover.1576132131.git.matti.vaittinen@fi.rohmeurope.com>
- <20191212112135.GE2110480@lahna.fi.intel.com>
+        id S1729430AbfLLNdh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 08:33:37 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40342 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729302AbfLLNdh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 08:33:37 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 6so410540oix.7;
+        Thu, 12 Dec 2019 05:33:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B1c5GbpC2qZV4XZL32ReXMmOl4Gf9Xdye7e43MFMR8g=;
+        b=ir+J4KCiAPAkjvp0ky7CL/fRvOfMW0Zm7o6v1rXeaVUwDUxF+C9TNjXpn/BysOxlk7
+         jJoVe5vx7/SBDPPYb7u1VhtIifglsrR+YblRpsrivUjYZYP9lccjXlwbyfruFgZBi8qa
+         FG80TRt7j8ounLnQC3UpkFKEVH/R6a6/IJHuA+ChO6JBMQ5umQTxLXd46SyztwKTsBUj
+         +kXOZseOs9sI5AUoKcO2Vr3PN/+LrB6oxo5jqQKIwFy3+s96Uop2ypSNkqKzDZ5/i3KZ
+         6oaJR4CsJthXtHp5SJYfNYltMOJyuTE6WmZQV9n85PdWWAtrg0fWq9yUp/ixquWJprKb
+         WHPA==
+X-Gm-Message-State: APjAAAVhFittvr2zZoo96SeXv2x9q8StI17TKbAhNdj1Uu3I2nzUKQ7u
+        HaYg40oYzoh4JCwP1mVESs5PZCWVAVuwNI6D3Tk=
+X-Google-Smtp-Source: APXvYqyZrB81syD0Ce6WwALcSofZswA84PMJGyV785ydrh5qmd3i1ZIC8I8AuxCcmSbHRH3rYOaGved6PnxX/cMztls=
+X-Received: by 2002:aca:4e87:: with SMTP id c129mr4645921oib.153.1576157615510;
+ Thu, 12 Dec 2019 05:33:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212112135.GE2110480@lahna.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191127084253.16356-1-geert+renesas@glider.be>
+ <20191127084253.16356-3-geert+renesas@glider.be> <CACRpkdYyY0eGipdK6ixZxLtdJ5px=U2mOa79VZb00NEEAEL=6g@mail.gmail.com>
+In-Reply-To: <CACRpkdYyY0eGipdK6ixZxLtdJ5px=U2mOa79VZb00NEEAEL=6g@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Dec 2019 14:33:24 +0100
+Message-ID: <CAMuHMdVL2w=DzOHTh-Tq6NZLTNUKxUneMi3wX71Z83mdsy3LTA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] gpiolib: Add support for gpiochipN-based table lookup
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 01:21:35PM +0200, Mika Westerberg wrote:
-> On Thu, Dec 12, 2019 at 08:33:54AM +0200, Matti Vaittinen wrote:
-> > We added definitions for GPIO line directions here:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?id=9208b1e77d6e8e9776f34f46ef4079ecac9c3c25
-> > 
-> > Let's use them on Intel pincontrollers too.
-> > 
-> > Changes for v2:
-> >   - Replaced ternary operator with if() for better readability
-> > 
-> > ---
-> > 
-> > Matti Vaittinen (3):
-> >   pinctrl: pinctrl-intel: Use GPIO direction definitions
-> >   pinctrl: pinctrl-cherryview: Use GPIO direction definitions
-> >   pinctrl: pinctrl-baytrail: Use GPIO direction definitions
-> 
-> Andy, please pick these up with my,
-> 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Hi Linus,
 
-Pushed to my review and testing queue, thanks!
+On Thu, Dec 12, 2019 at 2:20 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Nov 27, 2019 at 9:43 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > Currently GPIO controllers can only be referred to by label in GPIO
+> > lookup tables.
+> >
+> > Add support for looking them up by "gpiochipN" name, with "N" either the
+> > corresponding GPIO device's ID number, or the GPIO controller's first
+> > GPIO number.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> What the commit message is missing is a rationale, why is this needed?
+
+Right. To be added: so they can be looked up in the GPIO lookup table
+using either the chip's label, or the "gpiochipN" name.
+
+> > If this is rejected, the GPIO Aggregator documentation must be updated.
+> >
+> > The second variant is currently used by the legacy sysfs interface only,
+> > so perhaps the chip->base check should be dropped?
+>
+> Anything improving the sysfs is actively discouraged by me.
+> If it is just about staying compatible it is another thing.
+
+OK, so N must be the corresponding GPIO device's ID number.
+
+> > +static int gpiochip_match_id(struct gpio_chip *chip, void *data)
+> > +{
+> > +       int id = (uintptr_t)data;
+> > +
+> > +       return id == chip->base || id == chip->gpiodev->id;
+> > +}
+> >  static struct gpio_chip *find_chip_by_name(const char *name)
+> >  {
+> > -       return gpiochip_find((void *)name, gpiochip_match_name);
+> > +       struct gpio_chip *chip;
+> > +       int id;
+> > +
+> > +       chip = gpiochip_find((void *)name, gpiochip_match_name);
+> > +       if (chip)
+> > +               return chip;
+> > +
+> > +       if (!str_has_prefix(name, GPIOCHIP_NAME))
+> > +               return NULL;
+> > +
+> > +       if (kstrtoint(name + strlen(GPIOCHIP_NAME), 10, &id))
+> > +               return NULL;
+> > +
+> > +       return gpiochip_find((void *)(uintptr_t)id, gpiochip_match_id);
+>
+> Isn't it easier to just  augment the existing match function to
+> check like this:
+>
+> static int gpiochip_match_name(struct gpio_chip *chip, void *data)
+> {
+>         const char *name = data;
+>
+>         if (!strcmp(chip->label, name))
+>                return 0;
+
+return true;
+
+>         return !strcmp(dev_name(&chip->gpiodev->dev), name);
+> }
+
+Oh, didn't think of using dev_name() on the gpiodev.
+Yes, with the chip->base check removed, the code can be simplified.
+
+Or just
+
+        return !strcmp(chip->label, name) ||
+               !strcmp(dev_name(&chip->gpiodev->dev), name);
+
+> We should I guess also add some kerneldoc to say we first
+> match on the label and second on dev_name().
+
+OK.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
