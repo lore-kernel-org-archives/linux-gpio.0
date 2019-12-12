@@ -2,33 +2,33 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4621C3F68F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA94C2D0C8
 	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 10:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3DB5206DA
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 10:26:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1A83214D8
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 10:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfLLK0K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 05:26:10 -0500
-Received: from mga11.intel.com ([192.55.52.93]:2192 "EHLO mga11.intel.com"
+        id S1728492AbfLLK0J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 05:26:09 -0500
+Received: from mga09.intel.com ([134.134.136.24]:57202 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728410AbfLLK0K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:26:10 -0500
+        id S1728521AbfLLK0J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:26:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 02:26:08 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 02:26:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,305,1571727600"; 
-   d="scan'208";a="211074510"
+   d="scan'208";a="363927445"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Dec 2019 02:26:06 -0800
+  by orsmga004.jf.intel.com with ESMTP; 12 Dec 2019 02:26:06 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 388E012A; Thu, 12 Dec 2019 12:26:04 +0200 (EET)
+        id 6619324C; Thu, 12 Dec 2019 12:26:05 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -36,10 +36,12 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         hdegoede@redhat.com
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 0/5] pinctrl: baytrail: Clean up (part 3)
-Date:   Thu, 12 Dec 2019 12:25:52 +0200
-Message-Id: <20191212102557.87754-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/5] pinctrl: baytrail: Use local variable to keep device pointer
+Date:   Thu, 12 Dec 2019 12:25:56 +0200
+Message-Id: <20191212102557.87754-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191212102557.87754-1-andriy.shevchenko@linux.intel.com>
+References: <20191212102557.87754-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -47,34 +49,78 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is a part 3 of clean up pin control driver for Intel Baytrail.
-After this applied the driver will use all available data structures
-from pinctrl-intel.h header.
+Use local variable to keep device pointer in order to increase readability
+of the driver.
 
-Note, that patch which exposes common pin control data structrure for drivers
-will be used by Lynxpoint as well.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-This has been tested on the tablet with SD card detection and buttons pressed.
-
-Based on our pinctrl/intel for-next branch.
-
-Andy Shevchenko (5):
-  pinctrl: baytrail: Move IRQ valid mask initialization to a dedicated
-    callback
-  pinctrl: intel: Share struct intel_pinctrl for wider use
-  pinctrl: baytrail: Keep pointer to struct device instead of its
-    container
-  pinctrl: baytrail: Use local variable to keep device pointer
-  pinctrl: baytrail: Reuse struct intel_pinctrl in the driver
-
- drivers/pinctrl/intel/pinctrl-baytrail.c | 272 +++++++++++------------
- drivers/pinctrl/intel/pinctrl-intel.c    |  35 +--
- drivers/pinctrl/intel/pinctrl-intel.h    |  44 ++++
- 3 files changed, 173 insertions(+), 178 deletions(-)
-
-
-base-commit: ab68b220e81fd03383c0d9e1a87b51f9bbe4db77
-
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index bd33b39082d9..ca5e394fca4e 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1604,15 +1604,16 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct intel_pinctrl_soc_data *soc_data = NULL;
+ 	const struct intel_pinctrl_soc_data **soc_table;
++	struct device *dev = &pdev->dev;
+ 	struct acpi_device *acpi_dev;
+ 	struct byt_gpio *vg;
+ 	int i, ret;
+ 
+-	acpi_dev = ACPI_COMPANION(&pdev->dev);
++	acpi_dev = ACPI_COMPANION(dev);
+ 	if (!acpi_dev)
+ 		return -ENODEV;
+ 
+-	soc_table = (const struct intel_pinctrl_soc_data **)device_get_match_data(&pdev->dev);
++	soc_table = (const struct intel_pinctrl_soc_data **)device_get_match_data(dev);
+ 
+ 	for (i = 0; soc_table[i]; i++) {
+ 		if (!strcmp(acpi_dev->pnp.unique_id, soc_table[i]->uid)) {
+@@ -1624,25 +1625,25 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+ 	if (!soc_data)
+ 		return -ENODEV;
+ 
+-	vg = devm_kzalloc(&pdev->dev, sizeof(*vg), GFP_KERNEL);
++	vg = devm_kzalloc(dev, sizeof(*vg), GFP_KERNEL);
+ 	if (!vg)
+ 		return -ENOMEM;
+ 
+-	vg->dev = &pdev->dev;
++	vg->dev = dev;
+ 	ret = byt_set_soc_data(vg, soc_data);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to set soc data\n");
++		dev_err(dev, "failed to set soc data\n");
+ 		return ret;
+ 	}
+ 
+ 	vg->pctl_desc		= byt_pinctrl_desc;
+-	vg->pctl_desc.name	= dev_name(&pdev->dev);
++	vg->pctl_desc.name	= dev_name(dev);
+ 	vg->pctl_desc.pins	= vg->soc_data->pins;
+ 	vg->pctl_desc.npins	= vg->soc_data->npins;
+ 
+-	vg->pctl_dev = devm_pinctrl_register(&pdev->dev, &vg->pctl_desc, vg);
++	vg->pctl_dev = devm_pinctrl_register(dev, &vg->pctl_desc, vg);
+ 	if (IS_ERR(vg->pctl_dev)) {
+-		dev_err(&pdev->dev, "failed to register pinctrl driver\n");
++		dev_err(dev, "failed to register pinctrl driver\n");
+ 		return PTR_ERR(vg->pctl_dev);
+ 	}
+ 
+@@ -1651,7 +1652,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, vg);
+-	pm_runtime_enable(&pdev->dev);
++	pm_runtime_enable(dev);
+ 
+ 	return 0;
+ }
 -- 
 2.24.0
 
