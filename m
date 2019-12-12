@@ -2,69 +2,198 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16D7C43603
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 11:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1649C43603
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A29227BF
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 11:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C2472173E
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:19:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="dyv/sil0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbfLLLVk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 06:21:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:4991 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728871AbfLLLVk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:21:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 03:21:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,305,1571727600"; 
-   d="scan'208";a="220672957"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 12 Dec 2019 03:21:36 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 12 Dec 2019 13:21:35 +0200
-Date:   Thu, 12 Dec 2019 13:21:35 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Use new GPIO direction defines for intel pinctrl
-Message-ID: <20191212112135.GE2110480@lahna.fi.intel.com>
-References: <cover.1576132131.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1729331AbfLLNTj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 08:19:39 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29330 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729226AbfLLNTi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Dec 2019 08:19:38 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCDDJYx014316;
+        Thu, 12 Dec 2019 14:19:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=6dFALIytdiWHCJs7gqw1uZksbU9qtK+Y0O8KRqQs4MA=;
+ b=dyv/sil0Oa/uzuOkR6wmPS3bzmi1Z960Hej2hMpSzRuSzC4jzFMRS1iKgvA4/IypO++k
+ alde2yVZev88Hf3miIaYQCvQR+JOxppDkdqac6YhICnX4F3mDV8WIkfDawern9uP/vnA
+ qUlRa1N3WOyH19+QnO9Bb4QLd6MVWT0hirj9+qc/LMo4JdUnUxN2/sVrluUe03uVoMCX
+ U0YCrcaU+83oDOagHYJv9HMHbPg1uEZdE/wWE8Gh6t/kg0aArGBJJYGT7J4JlLr9VuiE
+ 1mE4zuemJF05Tnw7VrOpfiJUBY+9dYfGdS+bz6S6fmuN4/W7vl/S5827wkZZ+yxbfXK5 mg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wtfqh9pm0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Dec 2019 14:19:32 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 16DE510002A;
+        Thu, 12 Dec 2019 14:19:28 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 018D522061F;
+        Thu, 12 Dec 2019 14:19:28 +0100 (CET)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 12 Dec
+ 2019 14:19:27 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Thu, 12 Dec 2019 14:19:27 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] pinctrl: Enforce device links
+Thread-Topic: [PATCH] pinctrl: Enforce device links
+Thread-Index: AQHVsNrX6t+hwmnu80OZRREtsWvnUKe2axWA
+Date:   Thu, 12 Dec 2019 13:19:27 +0000
+Message-ID: <5483ee2d-9c31-66c2-1008-fcd6551523fb@st.com>
+References: <20191212101134.42420-1-linus.walleij@linaro.org>
+ <CAPDyKFrGECTVnP+qWgA2n-TKxW2AcyLCr1hqyEOp83XcK=1OpA@mail.gmail.com>
+In-Reply-To: <CAPDyKFrGECTVnP+qWgA2n-TKxW2AcyLCr1hqyEOp83XcK=1OpA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5351B235661DE74E93AB4E8C18602282@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1576132131.git.matti.vaittinen@fi.rohmeurope.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-12_03:2019-12-12,2019-12-12 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 08:33:54AM +0200, Matti Vaittinen wrote:
-> We added definitions for GPIO line directions here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?id=9208b1e77d6e8e9776f34f46ef4079ecac9c3c25
-> 
-> Let's use them on Intel pincontrollers too.
-> 
-> Changes for v2:
->   - Replaced ternary operator with if() for better readability
-> 
-> ---
-> 
-> Matti Vaittinen (3):
->   pinctrl: pinctrl-intel: Use GPIO direction definitions
->   pinctrl: pinctrl-cherryview: Use GPIO direction definitions
->   pinctrl: pinctrl-baytrail: Use GPIO direction definitions
-
-Andy, please pick these up with my,
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+DQpPbiAxMi8xMi8xOSAxMTo1NiBBTSwgVWxmIEhhbnNzb24gd3JvdGU6DQo+ICsgQmVuamFtaW4N
+Cj4NCj4gT24gVGh1LCAxMiBEZWMgMjAxOSBhdCAxMToxMSwgTGludXMgV2FsbGVpaiA8bGludXMu
+d2FsbGVpakBsaW5hcm8ub3JnPiB3cm90ZToNCj4+IEluc3RlYWQgb2Ygb3B0LWluIGRldmljZSBs
+aW5rcywgZW5mb3JjZSBpdCBhY3Jvc3MgdGhlIGJvYXJkLg0KPj4gRXZlcnlvbmUgcHJvYmFibHkg
+bmVlZHMgdGhpcyBhbnl3YXksIGxlc3QgcnVudGltZVtfcG1dIHN1c3BlbmQNCj4+IG9yZGVyIHdp
+bGwgYmUgaGFwaGF6YXJkLg0KPj4NCj4+IENjOiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsLmou
+d3lzb2NraUBpbnRlbC5jb20+DQo+PiBDYzogVWxmIEhhbnNzb24gPHVsZi5oYW5zc29uQGxpbmFy
+by5vcmc+DQo+PiBTaWduZWQtb2ZmLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxp
+bmFyby5vcmc+DQo+PiAtLS0NCj4+IEFzIHRoZXJlIGlzIG5vIHByb2dyZXNzIG9uIG9wdGluZyBp
+biBkcml2ZXJzIGZvciB0aGlzIHdlIGNhbiBqdXN0DQo+PiBlbmZvcmNlIGl0Lg0KPj4NCj4+IEkg
+YW0gYSBiaXQgY29uY2VybmVkIHRoYXQgd2l0aCBldmVyeSBwaW4gY29udHJvbCBzdGF0ZSBjaGFu
+Z2UgdGhlDQo+PiBsaW5rIHJlZmVyZW5jZSBjb3VudCB3aWxsIGp1c3QgZ28gdXAsIGJ1dCBkb2Vz
+IGl0IHJlYWxseSBtYXR0ZXI/DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9waW5jdHJsL2NvcmUuYyAg
+ICAgICAgICAgICAgICB8IDI1ICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0NCj4+ICAgZHJpdmVy
+cy9waW5jdHJsL3BpbmN0cmwtc3RtZnguYyAgICAgICB8ICAxIC0NCj4+ICAgZHJpdmVycy9waW5j
+dHJsL3N0bTMyL3BpbmN0cmwtc3RtMzIuYyB8ICAxIC0NCj4+ICAgaW5jbHVkZS9saW51eC9waW5j
+dHJsL3BpbmN0cmwuaCAgICAgICB8ICA1IC0tLS0tDQo+PiAgIDQgZmlsZXMgY2hhbmdlZCwgMTQg
+aW5zZXJ0aW9ucygrKSwgMTggZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvcGluY3RybC9jb3JlLmMgYi9kcml2ZXJzL3BpbmN0cmwvY29yZS5jDQo+PiBpbmRleCAyYmJk
+OGVlOTM1MDcuLjFkMmNkZWViYjMxNiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9j
+b3JlLmMNCj4+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9jb3JlLmMNCj4+IEBAIC0xMjIwLDE1ICsx
+MjIwLDYgQEAgc3RydWN0IHBpbmN0cmxfc3RhdGUgKnBpbmN0cmxfbG9va3VwX3N0YXRlKHN0cnVj
+dCBwaW5jdHJsICpwLA0KPj4gICB9DQo+PiAgIEVYUE9SVF9TWU1CT0xfR1BMKHBpbmN0cmxfbG9v
+a3VwX3N0YXRlKTsNCj4+DQo+PiAtc3RhdGljIHZvaWQgcGluY3RybF9saW5rX2FkZChzdHJ1Y3Qg
+cGluY3RybF9kZXYgKnBjdGxkZXYsDQo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0
+cnVjdCBkZXZpY2UgKmNvbnN1bWVyKQ0KPj4gLXsNCj4+IC0gICAgICAgaWYgKHBjdGxkZXYtPmRl
+c2MtPmxpbmtfY29uc3VtZXJzKQ0KPj4gLSAgICAgICAgICAgICAgIGRldmljZV9saW5rX2FkZChj
+b25zdW1lciwgcGN0bGRldi0+ZGV2LA0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBETF9GTEFHX1BNX1JVTlRJTUUgfA0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBETF9GTEFHX0FVVE9SRU1PVkVfQ09OU1VNRVIpOw0KPj4gLX0NCj4+IC0NCj4+ICAgLyoqDQo+
+PiAgICAqIHBpbmN0cmxfY29tbWl0X3N0YXRlKCkgLSBzZWxlY3QvYWN0aXZhdGUvcHJvZ3JhbSBh
+IHBpbmN0cmwgc3RhdGUgdG8gSFcNCj4+ICAgICogQHA6IHRoZSBwaW5jdHJsIGhhbmRsZSBmb3Ig
+dGhlIGRldmljZSB0aGF0IHJlcXVlc3RzIGNvbmZpZ3VyYXRpb24NCj4+IEBAIC0xMjc2LDggKzEy
+NjcsMjAgQEAgc3RhdGljIGludCBwaW5jdHJsX2NvbW1pdF9zdGF0ZShzdHJ1Y3QgcGluY3RybCAq
+cCwgc3RydWN0IHBpbmN0cmxfc3RhdGUgKnN0YXRlKQ0KPj4gICAgICAgICAgICAgICAgICB9DQo+
+Pg0KPj4gICAgICAgICAgICAgICAgICAvKiBEbyBub3QgbGluayBob2dzIChjaXJjdWxhciBkZXBl
+bmRlbmN5KSAqLw0KPj4gLSAgICAgICAgICAgICAgIGlmIChwICE9IHNldHRpbmctPnBjdGxkZXYt
+PnApDQo+PiAtICAgICAgICAgICAgICAgICAgICAgICBwaW5jdHJsX2xpbmtfYWRkKHNldHRpbmct
+PnBjdGxkZXYsIHAtPmRldik7DQo+PiArICAgICAgICAgICAgICAgaWYgKHAgIT0gc2V0dGluZy0+
+cGN0bGRldi0+cCkgew0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgLyoNCj4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAqIENyZWF0ZSBhIGRldmljZSBsaW5rIHRvIHRoZSBjb25zdW1lciBz
+dWNoIHRoYXQNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAqIGl0IHdpbGwgZW5mb3JjZSB0
+aGF0IHJ1bnRpbWUgUE0gc3VzcGVuZC9yZXN1bWUNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAqIGlzIGRvbmUgZmlyc3Qgb24gY29uc3VtZXJzIGJlZm9yZSB3ZSBnZXQgdG8NCj4+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAqIHRoZSBwaW4gY29udHJvbGxlciBpdHNlbGYuIEFzIHNvbWUg
+ZGV2aWNlcyBnZXQNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAqIHRoZWlyIHBpbiBjb250
+cm9sIHN0YXRlIGV2ZW4gYmVmb3JlIHByb2JlKCkgaXQgaXMNCj4+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAqIGltcG9ydGFudCB0byB1c2UgRExfRkxBR19BVVRPUkVNT1ZFX0NPTlNVTUVSLg0K
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICovDQo+PiArICAgICAgICAgICAgICAgICAgICAg
+ICBkZXZpY2VfbGlua19hZGQocC0+ZGV2LA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHNldHRpbmctPnBjdGxkZXYtPmRldiwNCj4+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBETF9GTEFHX1BNX1JVTlRJTUUgfA0KPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERMX0ZMQUdfQVVUT1JFTU9WRV9DT05TVU1F
+Uik7DQo+IEkgdW5kZXJzdGFuZCBETF9GTEFHX1BNX1JVTlRJTUUgaXMgdXNlZCBldmVuIHByaW9y
+ICRzdWJqZWN0IHBhdGNoLCBidXQNCj4gY291bGQgeW91IHBsZWFzZSBleHBsYWluIHNvbWUgb2Yg
+dGhlIHJlYXNvbnMgYmVoaW5kIHRoYXQ/DQo+DQo+IEluIHJlZ2FyZHMgdG8gYWRkaW5nIGEgbmV3
+IGxpbmsgZXZlcnkgdGltZSB5b3UgY29tbWl0L3NlbGVjdCBhIG5ldw0KPiBzdGF0ZSwgdGhhdCBz
+b3VuZHMgd3JvbmcgdG8gbWUuIFdoeSBhcmUgd2UgZG9pbmcgdGhpcz8NCg0KSWYgYSBsaW5rIGFs
+cmVhZHkgZXhpc3RzIGl0IHdpbGwgbm90IGFkZCBuZXcgb25lIHNvIGl0IHNhZmUgZm9yIG1lLg0K
+DQo+DQo+IEluc3RlYWQsIGRvbid0IHlvdSB3YW50IHRvIGFkZCBhIGxpbmsgd2hlbiB0aGUgY29u
+c3VtZXIgbG9va3MgdXAgdGhlDQo+IHBpbmN0cmwgY29va2llL2hhbmRsZSAoZGV2bV9waW5jdHJs
+X2dldCgpKSwgdGh1cyB3aGVuIGNyZWF0ZV9waW5jdHJsKCkNCj4gaXMgY2FsbGVkPw0KQmVjYXVz
+ZSBpdCB3YXMgdGhlIG9ubHkgcGxhY2UgSSBhZGQgZm91bmQgd2hlcmUgSSBnZXQgYSB0aGUgc2Ft
+ZQ0KdGltZSBwb2ludGVycyBvbiB0aGUgY29uc3VtZXIgYW5kIHRoZSBwcm9kdWNlciBkZXZpY2Vz
+Lg0KDQo+DQo+IEFkZGl0aW9uYWxseSwgSSBkaWRuJ3QgZmluZCBhbnkgcGxhY2Ugd2hlcmUgdGhl
+IGxpbmsgaXMgcmVtb3ZlZC4gSQ0KPiBsb29rcyBsaWtlIHRoYXQgc2hvdWxkIGhhcHBlbiB3aGVu
+IHRoZSBjb25zdW1lciBkcm9wcyB0aGUgcmVmZXJlbmNlDQo+IGZvciB0aGUgcGluY3RybCBjb29r
+aWUsIG5vPw0KDQpUaGUgbGluayBpcyBhdXRvbWF0aWNhbGx5IHJlbW92ZWQgd2hlbiB0aGUgY29u
+c3VtZXIgZGV2aWNlIGlzIGRlbGV0ZWQNCg0KdGhhbmtzIHRvIERMX0ZMQUdfQVVUT1JFTU9WRV9D
+T05TVU1FUiBmbGFnLg0KDQpCZW5qYW1pbg0KDQo+DQo+PiArICAgICAgICAgICAgICAgfQ0KPj4g
+ICAgICAgICAgfQ0KPj4NCj4+ICAgICAgICAgIHAtPnN0YXRlID0gc3RhdGU7DQo+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3RtZnguYyBiL2RyaXZlcnMvcGluY3RybC9w
+aW5jdHJsLXN0bWZ4LmMNCj4+IGluZGV4IDE2NzIzNzk3ZmE3Yy4uNDMwNmI4NDQ0MTg4IDEwMDY0
+NA0KPj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3RtZnguYw0KPj4gKysrIGIvZHJp
+dmVycy9waW5jdHJsL3BpbmN0cmwtc3RtZnguYw0KPj4gQEAgLTYzOCw3ICs2MzgsNiBAQCBzdGF0
+aWMgaW50IHN0bWZ4X3BpbmN0cmxfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
+Cj4+ICAgICAgICAgIHBjdGwtPnBjdGxfZGVzYy5waW5zID0gc3RtZnhfcGluczsNCj4+ICAgICAg
+ICAgIHBjdGwtPnBjdGxfZGVzYy5ucGlucyA9IEFSUkFZX1NJWkUoc3RtZnhfcGlucyk7DQo+PiAg
+ICAgICAgICBwY3RsLT5wY3RsX2Rlc2Mub3duZXIgPSBUSElTX01PRFVMRTsNCj4+IC0gICAgICAg
+cGN0bC0+cGN0bF9kZXNjLmxpbmtfY29uc3VtZXJzID0gdHJ1ZTsNCj4+DQo+PiAgICAgICAgICBy
+ZXQgPSBkZXZtX3BpbmN0cmxfcmVnaXN0ZXJfYW5kX2luaXQocGN0bC0+ZGV2LCAmcGN0bC0+cGN0
+bF9kZXNjLA0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHBjdGwsICZwY3RsLT5wY3RsX2Rldik7DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJs
+L3N0bTMyL3BpbmN0cmwtc3RtMzIuYyBiL2RyaXZlcnMvcGluY3RybC9zdG0zMi9waW5jdHJsLXN0
+bTMyLmMNCj4+IGluZGV4IDJkNWUwNDM1YWYwYS4uZWM1OWE1ODYwMGNlIDEwMDY0NA0KPj4gLS0t
+IGEvZHJpdmVycy9waW5jdHJsL3N0bTMyL3BpbmN0cmwtc3RtMzIuYw0KPj4gKysrIGIvZHJpdmVy
+cy9waW5jdHJsL3N0bTMyL3BpbmN0cmwtc3RtMzIuYw0KPj4gQEAgLTE0MzksNyArMTQzOSw2IEBA
+IGludCBzdG0zMl9wY3RsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+PiAg
+ICAgICAgICBwY3RsLT5wY3RsX2Rlc2Mub3duZXIgPSBUSElTX01PRFVMRTsNCj4+ICAgICAgICAg
+IHBjdGwtPnBjdGxfZGVzYy5waW5zID0gcGluczsNCj4+ICAgICAgICAgIHBjdGwtPnBjdGxfZGVz
+Yy5ucGlucyA9IHBjdGwtPm5waW5zOw0KPj4gLSAgICAgICBwY3RsLT5wY3RsX2Rlc2MubGlua19j
+b25zdW1lcnMgPSB0cnVlOw0KPj4gICAgICAgICAgcGN0bC0+cGN0bF9kZXNjLmNvbmZvcHMgPSAm
+c3RtMzJfcGNvbmZfb3BzOw0KPj4gICAgICAgICAgcGN0bC0+cGN0bF9kZXNjLnBjdGxvcHMgPSAm
+c3RtMzJfcGN0cmxfb3BzOw0KPj4gICAgICAgICAgcGN0bC0+cGN0bF9kZXNjLnBteG9wcyA9ICZz
+dG0zMl9wbXhfb3BzOw0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcGluY3RybC9waW5j
+dHJsLmggYi9pbmNsdWRlL2xpbnV4L3BpbmN0cmwvcGluY3RybC5oDQo+PiBpbmRleCA3Y2UyMzQ1
+MGExY2IuLmM2MTU5ZjA0MWY0ZSAxMDA2NDQNCj4+IC0tLSBhL2luY2x1ZGUvbGludXgvcGluY3Ry
+bC9waW5jdHJsLmgNCj4+ICsrKyBiL2luY2x1ZGUvbGludXgvcGluY3RybC9waW5jdHJsLmgNCj4+
+IEBAIC0xMjIsMTAgKzEyMiw2IEBAIHN0cnVjdCBwaW5jdHJsX29wcyB7DQo+PiAgICAqICAgICB0
+aGUgaGFyZHdhcmUgZGVzY3JpcHRpb24NCj4+ICAgICogQGN1c3RvbV9jb25mX2l0ZW1zOiBJbmZv
+cm1hdGlvbiBob3cgdG8gcHJpbnQgQHBhcmFtcyBpbiBkZWJ1Z2ZzLCBtdXN0IGJlDQo+PiAgICAq
+ICAgICB0aGUgc2FtZSBzaXplIGFzIHRoZSBAY3VzdG9tX3BhcmFtcywgaS5lLiBAbnVtX2N1c3Rv
+bV9wYXJhbXMNCj4+IC0gKiBAbGlua19jb25zdW1lcnM6IElmIHRydWUgY3JlYXRlIGEgZGV2aWNl
+IGxpbmsgYmV0d2VlbiBwaW5jdHJsIGFuZCBpdHMNCj4+IC0gKiAgICAgY29uc3VtZXJzIChpLmUu
+IHRoZSBkZXZpY2VzIHJlcXVlc3RpbmcgcGluIGNvbnRyb2wgc3RhdGVzKS4gVGhpcyBpcw0KPj4g
+LSAqICAgICBzb21ldGltZXMgbmVjZXNzYXJ5IHRvIGFzY2VydGFpbiB0aGUgcmlnaHQgc3VzcGVu
+ZC9yZXN1bWUgb3JkZXIgZm9yDQo+PiAtICogICAgIGV4YW1wbGUuDQo+PiAgICAqLw0KPj4gICBz
+dHJ1Y3QgcGluY3RybF9kZXNjIHsNCj4+ICAgICAgICAgIGNvbnN0IGNoYXIgKm5hbWU7DQo+PiBA
+QCAtMTQwLDcgKzEzNiw2IEBAIHN0cnVjdCBwaW5jdHJsX2Rlc2Mgew0KPj4gICAgICAgICAgY29u
+c3Qgc3RydWN0IHBpbmNvbmZfZ2VuZXJpY19wYXJhbXMgKmN1c3RvbV9wYXJhbXM7DQo+PiAgICAg
+ICAgICBjb25zdCBzdHJ1Y3QgcGluX2NvbmZpZ19pdGVtICpjdXN0b21fY29uZl9pdGVtczsNCj4+
+ICAgI2VuZGlmDQo+PiAtICAgICAgIGJvb2wgbGlua19jb25zdW1lcnM7DQo+PiAgIH07DQo+Pg0K
+Pj4gICAvKiBFeHRlcm5hbCBpbnRlcmZhY2UgdG8gcGluIGNvbnRyb2xsZXIgKi8NCj4+IC0tDQo+
+PiAyLjIzLjANCj4+DQo+IEtpbmQgcmVnYXJkcw0KPiBVZmZl
