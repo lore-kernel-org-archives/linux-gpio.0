@@ -2,77 +2,111 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87534C2D0C9
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B3CC43603
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFD02173E
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A252A21655
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 16:08:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bX0qcXCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729618AbfLLQE2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 11:04:28 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57359 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729719AbfLLQEV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 11:04:21 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0003cW-KD; Thu, 12 Dec 2019 17:04:17 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ifQwr-0004L9-24; Thu, 12 Dec 2019 17:04:17 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     support.opensource@diasemi.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de
-Subject: [RESEND PATCH v3 0/3] Add DA9062 GPIO support
-Date:   Thu, 12 Dec 2019 17:04:10 +0100
-Message-Id: <20191212160413.15232-1-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
+        id S1729705AbfLLQIu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 11:08:50 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43201 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729739AbfLLQIu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 11:08:50 -0500
+Received: by mail-qt1-f194.google.com with SMTP id b3so2683114qti.10
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2019 08:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6xL5oHx6JhfySW6vNlCWxSH0U7ZkAzHSyw1I4MBhOBU=;
+        b=bX0qcXCfrctzXDS/zTTqs6TEaaJAU5p5CsU4r/5/bKGYfQYofP2Ae0gBQel5/wwdh0
+         iJ2cx1hOBcJw2uT6qMHTzMHRo5U9ndec/mh1nW0E/oy3kDUHngJDaI5a6Mt6QDB7Zh3O
+         dyjAz+ug5qnFQxQ4IZoRP5rMghfhGc8NldSweIlVJQmGdoxJpU7aUh0qRmlziBJnQ/fk
+         u4pmrr77wEOXvqc2gbXJ3o/0AbdNr9l2Y6k4PNoxH0z8nDQuxY9GR6ta87xJ75rBJUzs
+         umrKZYrpChkC2N72J/mQTVKQbOj0TPfkwPb9o2seXvtOtZkLELyaLh/6USr4/sHNARPF
+         WpgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6xL5oHx6JhfySW6vNlCWxSH0U7ZkAzHSyw1I4MBhOBU=;
+        b=SZbWh3Ch11lEF1DpX02DmjlIN6EZN5hf062j8RFG/IYKOeaO2/TBpMj+Weu3UrmTCz
+         fhETrWZqVavEnMoH3bmmpXS6FYAHBdWxis/dcgLhtH6QCZMvSOh1FBLb9d9tv5jg5mq7
+         9f9qcTDTGEx/7PVaFoAgbUxSJOQQGA5+AgJOpcBBcTfGZ0nUq+6tHulrHPnloWvQljB9
+         wgxSrA6i2asQaRt688Do8NP7wuC9ne2AndYmIXZxYS0Z8p5BZgXFvm0WzlHSJwR6P3zG
+         I543e0QzMZWpX1+4QzrHn9O2/x8+Pizg/krMcYYBbMug24PSWz2Xv+K/kumJmK1rvmc2
+         aqug==
+X-Gm-Message-State: APjAAAWAASDSOa2Ze6+Av0mLpQJuBQpg7O668xoWRqXW1uFDmz4i8cot
+        HxlRdKMsu0Df80I7YLIY++ltGjK211lz+ofAN74cyA==
+X-Google-Smtp-Source: APXvYqyHX+4gkmFrb0PetZfIRJsKK01/Htm4j9k5//KWMeGY8spRtLpR1itsFlTDdkQHvk5JZswQdyreZWZAfH/iR44=
+X-Received: by 2002:ac8:6784:: with SMTP id b4mr7837731qtp.27.1576166929494;
+ Thu, 12 Dec 2019 08:08:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+References: <1575352925-17271-1-git-send-email-peng.fan@nxp.com>
+ <CACRpkdaTLVNXd+-j_gkOfKnTk02XaZiMA_XxUeM0_4zZ_F-=ug@mail.gmail.com> <CACRpkdYjCnx46kOuWXMZFme3emm1TugqjQPDctakOppAeCZvZg@mail.gmail.com>
+In-Reply-To: <CACRpkdYjCnx46kOuWXMZFme3emm1TugqjQPDctakOppAeCZvZg@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 12 Dec 2019 17:08:38 +0100
+Message-ID: <CAMpxmJX73eufsaXzFjkb2S9Adztv7PqDEhBSDHfmbB_+VGrXEw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: mvebu: use platform_irq_count
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "rjui@broadcom.com" <rjui@broadcom.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+czw., 12 gru 2019 o 16:31 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> On Thu, Dec 12, 2019 at 4:29 PM Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+> >
+> > On Tue, Dec 3, 2019 at 7:04 AM Peng Fan <peng.fan@nxp.com> wrote:
+> >
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Use platform_irq_count to replace of_irq_count
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >
+> > > V1:
+> > >  Code inspection, not tested
+> >
+> > Patch applied.
+>
+> Oops dropped again now that I see there are comments on
+> 2/2 that warrants a v2 of this as well.
+>
+> Yours,
+> Linus Walleij
 
-this update address all comments made on [1], for further details see
-the patch based changelog.
+Linus,
 
-I resend this v3 since I forgot to add the MFD maintainers on the To:.
-Please can you review the MFD part?
+FYI I picked up v3 of this series into my tree.
 
-Regards,
-  Marco
-
-[1] https://patchwork.ozlabs.org/cover/1201549/
-
-Marco Felsch (3):
-  dt-bindings: mfd: da9062: add gpio bindings
-  mfd: da9062: add support for the DA9062 GPIOs in the core
-  pinctrl: da9062: add driver support
-
- .../devicetree/bindings/mfd/da9062.txt        |  10 +
- MAINTAINERS                                   |   1 +
- drivers/mfd/da9062-core.c                     |  16 +-
- drivers/pinctrl/Kconfig                       |  12 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-da9062.c              | 297 ++++++++++++++++++
- 6 files changed, 336 insertions(+), 1 deletion(-)
- create mode 100644 drivers/pinctrl/pinctrl-da9062.c
-
--- 
-2.20.1
-
+Bart
