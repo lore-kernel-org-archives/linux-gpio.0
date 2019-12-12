@@ -2,86 +2,146 @@ Return-Path: <SRS0=akrU=2C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99409C00454
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBCCC3F68F
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7688A214AF
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B910F2077B
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Dec 2019 13:40:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DRzJQiVQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbfLLNdj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Dec 2019 08:33:39 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:58871 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729392AbfLLNdh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 08:33:37 -0500
-Received: from orion.localdomain ([77.9.34.244]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MNssA-1iLYQh28cK-00OGBN; Thu, 12 Dec 2019 14:33:35 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH] drivers: gpio: remove unneeded MODULE_VERSION() usage
-Date:   Thu, 12 Dec 2019 14:33:06 +0100
-Message-Id: <20191212133306.24663-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:nGScxsI31qjcFratt33awZfiv+S6hopX8qziDv7bYFGHmgATF4u
- eBNSVnxWJa1MrB6bRN9e4C++w3HWI1U25+D1ZB0fkGXaLCwJZibr/OTF3pVHI5fhriNPbGT
- 9arMHUBNyes+l1evqc/XlLwBCyrksfX7tNxNpLD3BEvivSjyXXSNXE9ADp3DLzrrN08NyWK
- ieKdZ/M3DJXCHN2j4IY/Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:w/gr4XqYkPg=:I2rUN0t5cf6127LfNeTd5T
- IFeZ5H+xKT6rLv5lcgK7CMmzzlr/omHuc9GH/rBANg0mY6gbm9lQEIrrgMI8OuDYlDe1IhH8a
- HqIVTZCLL8ouKazF7S5lmpanh9NDT2I8rOULQEVLuR5/raKN5v+xfas96CToque/P5hxbrR03
- X8HMeU2ClaTr2Gh0cfte8eOTMnO8C5PMQfq4CDL+NLH8XcSlLM/II2e/6spdTzgf8kjPZ/akH
- ABIu1b0Fcf4u+g00WJTZchCEAIgaeHOZhxosWabGozXwVSMRyaRHydGqHUZI0eRLgnOpti0Gu
- V7wvxLk5Iy4WScg+orLjz1dpHzJuRA85CYZprzGhQ0Hmk406BiimPCIbDUgR+wpVvW+pj9dWI
- 3RWu70CSIdhp/UmcOMelPsW7xeXJkRuIK/ML5Cb0wilLiG9Z2ung+VGcV+PDhhecLA0tMxEKW
- lz5VDE3WSqrz0L9Ik9r+71/GcMgY38ADQCoskQf2BL04QKwtFMbZ1ZyyBgny+B6l9FNUOyVkI
- U66RT+sIKtlo2egkQRH7uofxG0TLwYXgHKH+ulzrag2tMce2bWLlzPQrD1PlTNyinAhr1Qrok
- wlyTWDD+0ajdKmAsOzXVx/8O314NnO7n635Hpe9NlUJvHYzf+LFPxEZLGumat9ZSKu8UfLJ+N
- HqG+fcWzp9iNDbM8RF2v/p5Flbzca9ZXTZyZhwXWnWjvN+v//IZmGPM5CXfpOrHRhmwWofa9B
- afKbBdFeodfS/yfeVuy9UzU52qmqBm5GwLVCpO1ePLcg4QDcc8Uwlgo4MEzConnFKmBdSIVtK
- bqex9jxLAhMfFuBOSzUtuRNdUSBwCtbkEo0qe9WXHuXz/3ess4enFmOlOp1qa7QtN3+VltBrm
- uK5j2pSTsXAIQuLGz1Qg==
+        id S1729460AbfLLNks (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Dec 2019 08:40:48 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35033 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729457AbfLLNks (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Dec 2019 08:40:48 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j6so2351585lja.2
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Dec 2019 05:40:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7PbHPLSXQGj0yJrSH192TMtAaxNo5rw41NetJ/dcUfw=;
+        b=DRzJQiVQg/nQ/ASUfL3q6cDwUxWJ56eQnZWGgR+JOoveYSxcv7+j9kjbi9XlxA1AEO
+         A02/XOPXYlK843ecHoWeaRH53jfl/cx5u3XSjbfE6QXM6s9uUsm05zfWWRKxADesDQaV
+         PnpOe4EYjBF5MZNs5FNBPAYxERQpmPL1TeloXm3jpv3+AB/lT3PvU4ZBj/VaARR4vYaR
+         uJAZHSCgQIgMRkQV60ebT26TmXAs0cOXjT+DYySEPkfd4IKU4kJpTPp6/Mka/ayB4hXZ
+         fNwhN8IIW0TkBhIE6JdShsrKJP3KtegCAZBZzOcTXVPJ7RuZIJLfrFV04K8VZIFI/qoI
+         sOeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7PbHPLSXQGj0yJrSH192TMtAaxNo5rw41NetJ/dcUfw=;
+        b=sogVm77wFFrwQq38WXAZxVnaWjahlhE2sRQhwqe9xNQpvG4YYB5X8QcSQJVMLX98fb
+         IzJTTjqU2SjSPjW8ErQt5fON+7v69T/kd7jLGgpWcC8NwxyP3AmjIf1K04gzjZLo0MNo
+         oHeH5IG7C3DcDWk+DEBaWwcnaM//VHB8IG9samTL/CPO/0rqabgIRaHEFNhx1f9cpUCe
+         2ucPBmXca24PMWaZ2160yTssjB6CHOIPI0Op0L3DM4JQZHFbgcap8wBoS9EY4JOkIzUv
+         CEeBvgz9IfmiDOjVFQyu0H7ovw2T271bpqd8Ck7EKzjJSAGecjKxFA3X4FLfH0mLvog6
+         +dIQ==
+X-Gm-Message-State: APjAAAUM/xGvkOmTGti33zh/2WSihEqYr/daUbEjOqkREEGCUd6GpBsw
+        u+36URuLCJBCMVSoFFHiUjqjN7glTRMbSiK+9eBlAg==
+X-Google-Smtp-Source: APXvYqz4WIPVD6RaEfzhjt2nRL8Q3ReinXWMfS2taUKWfU1ppqbKjrPvuAhDEVOow4IVqRo34vof7KNX/xH9rfQS/Dc=
+X-Received: by 2002:a2e:9ec4:: with SMTP id h4mr6024597ljk.77.1576158044254;
+ Thu, 12 Dec 2019 05:40:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20191127084253.16356-1-geert+renesas@glider.be> <20191127084253.16356-4-geert+renesas@glider.be>
+In-Reply-To: <20191127084253.16356-4-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Dec 2019 14:40:29 +0100
+Message-ID: <CACRpkdZs0_VvfpE34bgrMtBVeamCsq6BaqfyJc1tyvWCornSUw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] gpiolib: Add support for GPIO line table lookup
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove MODULE_VERSION(), as it isn't needed at all: the only version
-making sense is the kernel version.
+On Wed, Nov 27, 2019 at 9:43 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/gpio/gpio-sama5d2-piobu.c | 1 -
- drivers/gpio/gpio-tb10x.c         | 1 -
- 2 files changed, 2 deletions(-)
+> Currently GPIOs can only be referred to by GPIO controller and offset in
+> GPIO lookup tables.
+>
+> Add support for looking them up by line name.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-piobu.c
-index b04c561f3280..4d47b2c41186 100644
---- a/drivers/gpio/gpio-sama5d2-piobu.c
-+++ b/drivers/gpio/gpio-sama5d2-piobu.c
-@@ -244,7 +244,6 @@ static struct platform_driver sama5d2_piobu_driver = {
- 
- module_platform_driver(sama5d2_piobu_driver);
- 
--MODULE_VERSION("1.0");
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("SAMA5D2 PIOBU controller driver");
- MODULE_AUTHOR("Andrei Stefanescu <andrei.stefanescu@microchip.com>");
-diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-index 5e375186f90e..866201cf5f65 100644
---- a/drivers/gpio/gpio-tb10x.c
-+++ b/drivers/gpio/gpio-tb10x.c
-@@ -243,4 +243,3 @@ static struct platform_driver tb10x_gpio_driver = {
- module_platform_driver(tb10x_gpio_driver);
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("tb10x gpio.");
--MODULE_VERSION("0.0.1");
--- 
-2.11.0
+OK I see what you want to do...
 
+> +               if (p->chip_hwnum == (u16)-1) {
+
+If you want to use this then use:
+
+if (p->chip_hwnum == U16_MAX)
+
+from <linux/limits.h>
+
+> +                       desc = gpio_name_to_desc(p->chip_label);
+> +                       if (desc) {
+> +                               *flags = p->flags;
+> +                               return desc;
+> +                       }
+> +
+> +                       dev_warn(dev, "cannot find GPIO line %s, deferring\n",
+> +                                p->chip_label);
+> +                       return ERR_PTR(-EPROBE_DEFER);
+> +               }
+> +
+>                 chip = find_chip_by_name(p->chip_label);
+>
+>                 if (!chip) {
+> diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
+> index 1ebe5be05d5f81fa..84c1c097e55eefaf 100644
+> --- a/include/linux/gpio/machine.h
+> +++ b/include/linux/gpio/machine.h
+> @@ -31,7 +31,7 @@ enum gpio_lookup_flags {
+>   */
+>  struct gpiod_lookup {
+>         const char *chip_label;
+> -       u16 chip_hwnum;
+> +       u16 chip_hwnum;                 /* if -1, chip_label is named line */
+
+/* if U16_MAX then chip_label is the named line we are looking for */
+
+But the member name "chip_label" is completely abused with this
+setup, it should then be renamed as part of the patch set to something
+like chip_label_or_line_name so it is clear what it is or
+just name it "const char *key".
+
+But I'm not entirely convinced about reusing the existing
+struct gpio_lookup for this.
+
+What about constructing a new lookup struct specifically for this?
+I understand it is more work, but will that not be more
+maintainable and readable?
+
+Yours,
+Linus Walleij
