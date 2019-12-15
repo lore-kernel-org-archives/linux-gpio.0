@@ -2,45 +2,48 @@ Return-Path: <SRS0=cfAZ=2F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06607C43603
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9332FC2D0CA
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0BF020726
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60AFB2467E
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OJYW3YG4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIxvXaIz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726148AbfLOQiT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 15 Dec 2019 11:38:19 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51844 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726136AbfLOQiT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 11:38:19 -0500
+        id S1726537AbfLOQiZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Dec 2019 11:38:25 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51795 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726536AbfLOQiZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 15 Dec 2019 11:38:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576427897;
+        s=mimecast20190719; t=1576427904;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=0xv0+3tSKNk/ps0C2flwuIl5hdVqRnVV8Q2tM73ssjw=;
-        b=OJYW3YG4KvPdhXAHFuqUGXGE7ZcrxGQZAJABdcuJF51hj98ibC2eM12R5eiFUY4g00rQab
-        VhZXKJcQML4766C7uXOs5aKgNECQKK/HFyc4wum7y/ES08L+NyRnqsVnD75NIeYb+N7K1e
-        ME0TymY6eUqyV/eh83tvb0zIZXwBK5I=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4jsQeTa9+tKAcks/nLyZi1gT8Q5NqYoTibMwTcABwCY=;
+        b=PIxvXaIzlq6WhpPdwXtWkR+8/mAMRnFZzLX6BJsA3zaFJly4/nAlOKICietyireCdc1ok2
+        mYiG87GULvi/5z13t6YgYWSv3VYePNQ+iXKUD1mpLD7KCmMLFocG91aWqmkyzbwgcp/KTt
+        pQKMYmhlKkX1BHlwZepfnptpCJGpLFw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-5CKBZr4SNwe0EMgtsxAapA-1; Sun, 15 Dec 2019 11:38:16 -0500
-X-MC-Unique: 5CKBZr4SNwe0EMgtsxAapA-1
+ us-mta-203-MbXVefckNIaFhU7aH_IJYA-1; Sun, 15 Dec 2019 11:38:22 -0500
+X-MC-Unique: MbXVefckNIaFhU7aH_IJYA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 30625477;
-        Sun, 15 Dec 2019 16:38:14 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0ABAB107ACC4;
+        Sun, 15 Dec 2019 16:38:21 +0000 (UTC)
 Received: from shalem.localdomain.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 08C605D9C9;
-        Sun, 15 Dec 2019 16:38:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A4345D9C9;
+        Sun, 15 Dec 2019 16:38:18 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
@@ -52,9 +55,11 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         intel-gfx <intel-gfx@lists.freedesktop.org>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org
-Subject: [PATCH 0/5] drm/i915/dsi: Control panel and backlight enable GPIOs from VBT
-Date:   Sun, 15 Dec 2019 17:38:05 +0100
-Message-Id: <20191215163810.52356-1-hdegoede@redhat.com>
+Subject: [PATCH 3/5] drm/i915/dsi: Init panel-enable GPIO to low when the LCD is initially off
+Date:   Sun, 15 Dec 2019 17:38:08 +0100
+Message-Id: <20191215163810.52356-4-hdegoede@redhat.com>
+In-Reply-To: <20191215163810.52356-1-hdegoede@redhat.com>
+References: <20191215163810.52356-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Content-Transfer-Encoding: quoted-printable
@@ -63,46 +68,89 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi All,
+When the LCD has not been turned on by the firmware/GOP, because e.g. the
+device was booted with an external monitor connected over HDMI, we should
+not turn on the panel-enable GPIO when we request it.
 
-This is a new (completely rewritten) version of my patches to make the
-i915 code control the SoC panel- and backlight-enable GPIOs on Bay Trail
-devices when the VBT indicates that the SoC should be used for backlight
-control. This fixes the panel not lighting up on various devices when
-booted with a HDMI monitor connected, in which case the firmware skips
-initializing the panel as it inits the HDMI instead.
+Turning on the panel-enable GPIO when we request it, means we turn it on
+too early in the init-sequence, which causes some panels to not correctly
+light up.
 
-This series has been tested on; and fixes this issue on; the following mo=
-dels:
+This commits adds a panel_is_on parameter to intel_dsi_vbt_gpio_init()
+and makes intel_dsi_vbt_gpio_init() set the initial GPIO value accordingl=
+y.
 
-Peaq C1010
-Point of View MOBII TAB-P800W
-Point of View MOBII TAB-P1005W
-Terra Pad 1061
-Thundersoft TST178
-Yours Y8W81
+This fixes the panel not lighting up on a Thundersoft TST168 tablet when
+booted with an external monitor connected over HDMI.
 
-Linus, this series starts with the already discussed pinctrl change to
-export the function to unregister a pinctrl-map. We can either merge this
-through drm-intel, or you could pick it up and then provide an immutable
-branch with it for merging into drm-intel-next. Which option do you prefe=
-r?
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/gpu/drm/i915/display/intel_dsi.h     | 2 +-
+ drivers/gpu/drm/i915/display/intel_dsi_vbt.c | 7 +++----
+ drivers/gpu/drm/i915/display/vlv_dsi.c       | 2 +-
+ 3 files changed, 5 insertions(+), 6 deletions(-)
 
-Lee, I know you don't like this, but unfortunately this series introcudes
-some (other) changes to drivers/mfd/intel_soc_pmic_core.c. The GPIO subsy=
-s
-allows only one mapping-table per consumer, so in hindsight adding the co=
-de
-which adds the mapping for the PMIC panel-enable pin to the PMIC mfd driv=
-er
-was a mistake, as the PMIC code is a provider where as mapping-tables are
-per consumer. The 4th patch fixes this by moving the mapping-table to the
-i915 code, so that we can also add mappings for some of the pins on the S=
-oC
-itself. Since this whole series makes change to the i915 code I plan to
-merge this mfd change to the drm-intel tree.
-
-Regards,
-
-Hans
+diff --git a/drivers/gpu/drm/i915/display/intel_dsi.h b/drivers/gpu/drm/i=
+915/display/intel_dsi.h
+index de7e51cd3460..675771ea91aa 100644
+--- a/drivers/gpu/drm/i915/display/intel_dsi.h
++++ b/drivers/gpu/drm/i915/display/intel_dsi.h
+@@ -203,7 +203,7 @@ void bxt_dsi_reset_clocks(struct intel_encoder *encod=
+er, enum port port);
+=20
+ /* intel_dsi_vbt.c */
+ bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi, u16 panel_id);
+-void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi);
++void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_=
+on);
+ void intel_dsi_vbt_gpio_cleanup(struct intel_dsi *intel_dsi);
+ void intel_dsi_vbt_exec_sequence(struct intel_dsi *intel_dsi,
+ 				 enum mipi_seq seq_id);
+diff --git a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c b/drivers/gpu/d=
+rm/i915/display/intel_dsi_vbt.c
+index 5352e8c9eca5..027970348b22 100644
+--- a/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
++++ b/drivers/gpu/drm/i915/display/intel_dsi_vbt.c
+@@ -688,17 +688,16 @@ bool intel_dsi_vbt_init(struct intel_dsi *intel_dsi=
+, u16 panel_id)
+  * On some BYT/CHT devs some sequences are incomplete and we need to man=
+ually
+  * control some GPIOs.
+  */
+-void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi)
++void intel_dsi_vbt_gpio_init(struct intel_dsi *intel_dsi, bool panel_is_=
+on)
+ {
+ 	struct drm_device *dev =3D intel_dsi->base.base.dev;
+ 	struct drm_i915_private *dev_priv =3D to_i915(dev);
+ 	struct mipi_config *mipi_config =3D dev_priv->vbt.dsi.config;
++	enum gpiod_flags flags =3D panel_is_on ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW=
+;
+=20
+ 	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
+ 	    (mipi_config->pwm_blc =3D=3D PPS_BLC_PMIC)) {
+-		intel_dsi->gpio_panel =3D
+-			gpiod_get(dev->dev, "panel", GPIOD_OUT_HIGH);
+-
++		intel_dsi->gpio_panel =3D gpiod_get(dev->dev, "panel", flags);
+ 		if (IS_ERR(intel_dsi->gpio_panel)) {
+ 			DRM_ERROR("Failed to own gpio for panel control\n");
+ 			intel_dsi->gpio_panel =3D NULL;
+diff --git a/drivers/gpu/drm/i915/display/vlv_dsi.c b/drivers/gpu/drm/i91=
+5/display/vlv_dsi.c
+index 178d0fffba5b..e86e4a11e199 100644
+--- a/drivers/gpu/drm/i915/display/vlv_dsi.c
++++ b/drivers/gpu/drm/i915/display/vlv_dsi.c
+@@ -1910,7 +1910,7 @@ void vlv_dsi_init(struct drm_i915_private *dev_priv=
+)
+=20
+ 	vlv_dphy_param_init(intel_dsi);
+=20
+-	intel_dsi_vbt_gpio_init(intel_dsi);
++	intel_dsi_vbt_gpio_init(intel_dsi, current_mode !=3D NULL);
+=20
+ 	drm_connector_init(dev, connector, &intel_dsi_connector_funcs,
+ 			   DRM_MODE_CONNECTOR_DSI);
+--=20
+2.23.0
 
