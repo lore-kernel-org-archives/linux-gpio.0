@@ -2,108 +2,142 @@ Return-Path: <SRS0=cfAZ=2F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782BCC43603
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948B2C43603
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 20:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53747206E0
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OECtxzRj"
+	by mail.kernel.org (Postfix) with ESMTP id 787742467A
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 20:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfLOSbk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 15 Dec 2019 13:31:40 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42592 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfLOSbj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 13:31:39 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e28so4242745ljo.9;
-        Sun, 15 Dec 2019 10:31:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pJpJsdQ2YtTH6nu1Avkb9OWQxXwS0eSkzuTedWw0wzA=;
-        b=OECtxzRjr3i8KK8Sx4kBdHFFatddwjCrYJBMoz/f5fc2dHM276Y2bip6GV1eHnCUqa
-         aacw+T1Uo0Ft4EegS7TcMDSfknwrG8RYG5TpFErd4OWkwwluMHxAAwmucCxcpU57Za+Q
-         cNFKvt2YW/vMPrp5m+3ugcPpwR6rmaf6g5QgZOL4dAXK8fhhprbvefMQNTWCLeTb/i5n
-         17XFj4R44a7TyiTSoC9HhszDi6Nj76+UFodIs0HuL9VJYepAUJ22ih8o0ueYzLc4sRzI
-         XYT5iNCpw1LX/mWaHqCIsdmv7F8D58KXTnQ5HfXcIeLseCoOVHXFnZ3EqSIpx1R/hs0S
-         O5ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pJpJsdQ2YtTH6nu1Avkb9OWQxXwS0eSkzuTedWw0wzA=;
-        b=MvwsJXq1o0zaY+md34zfB7Cc/aOu0MkDh2pKTAWs8MQCcTc7avWgcfyk0Ka8L25S6o
-         39Z6eezK2HQQNCOA+Irk7dRcE05ALok5kuY2Z84mlRQcQIdmia+HdZiQUSopyMnU1hov
-         cclDrwJxSfeVsuT7WGKAKhCQrz4MPxatfn3+lg911EIy8puNoAbIUIRJuDYPLsmQ7ARx
-         Hl+nKQ5zQFjuUnz7ql2CyN1dKclZbwnArHJOs9TiW0emDdqyl+DLcA3GccTmJdWre64K
-         CWlzySz4jW1i4ZuzkJba84zjr4uARWamDKt+oasFgQKafw0wHkfEu/DrWpqYog1faUGU
-         seHw==
-X-Gm-Message-State: APjAAAVtsxVfoqlC+xK5sZVrLPmBRWIcWJddh4PVO1CMaPAaWZhUujQ3
-        TKJeOCs08FOh8iVWh096V/c=
-X-Google-Smtp-Source: APXvYqxRywx9Bm9sJE5wb3QBUbnF8bl4vnzWBM9c3XS3SduylB0SM0M0FGNl5sZ1Jer5c7GwR9hLOQ==
-X-Received: by 2002:a2e:9684:: with SMTP id q4mr17252373lji.242.1576434697498;
-        Sun, 15 Dec 2019 10:31:37 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id v2sm8814277ljv.70.2019.12.15.10.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 10:31:37 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
-Date:   Sun, 15 Dec 2019 21:30:45 +0300
-Message-Id: <20191215183047.9414-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191215183047.9414-1-digetx@gmail.com>
-References: <20191215183047.9414-1-digetx@gmail.com>
+        id S1726260AbfLOU1X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Dec 2019 15:27:23 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:51232 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbfLOU1X (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 15 Dec 2019 15:27:23 -0500
+Received: from [192.168.178.200] (p57BC9BBE.dip0.t-ipconnect.de [87.188.155.190])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 0143A2E79BE;
+        Sun, 15 Dec 2019 20:20:57 +0000 (UTC)
+Subject: Re: [PATCH 07/10] i2c: Add driver for AD242x bus controller
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lee.jones@linaro.org, lars@metafoo.de,
+        pascal.huerst@gmail.com
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-9-daniel@zonque.org>
+ <64adf5d7-754a-f1da-aa9b-11579c5a2780@lucaceresoli.net>
+ <20191212163315.GA3932@kunai>
+From:   Daniel Mack <daniel@zonque.org>
+Autocrypt: addr=daniel@zonque.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <482316ef-775a-cb7b-015e-e00463503e6b@zonque.org>
+Date:   Sun, 15 Dec 2019 21:27:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20191212163315.GA3932@kunai>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is no point in using old-style raw accessors, the generic accessors
-do the same thing and also take into account CPU endianness. Tegra SoCs do
-not support big-endian mode in the upstream kernel, but let's switch away
-from the outdated things anyway, just to keep code up-to-date.
+Hi,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for the review!
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 6fdfe4c5303e..f6a382fbd12d 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -96,12 +96,12 @@ struct tegra_gpio_info {
- static inline void tegra_gpio_writel(struct tegra_gpio_info *tgi,
- 				     u32 val, u32 reg)
- {
--	__raw_writel(val, tgi->regs + reg);
-+	writel_relaxed(val, tgi->regs + reg);
- }
- 
- static inline u32 tegra_gpio_readl(struct tegra_gpio_info *tgi, u32 reg)
- {
--	return __raw_readl(tgi->regs + reg);
-+	return readl_relaxed(tgi->regs + reg);
- }
- 
- static unsigned int tegra_gpio_compose(unsigned int bank, unsigned int port,
--- 
-2.24.0
+On 12/12/2019 5:33 pm, Wolfram Sang wrote:
+> Hi Luca,
+> 
+> thanks for the review!
+> 
+>> good, but I think there's a problem in this function. A "normal"
+>> master_xfer function issues a repeated start between one msg and the
+>> next one, at least in the typical case where all msgs have the same
+>> slave address. Your implementation breaks repeated start. At first sight
+>> we might need more complex code here to coalesce all consecutive msgs
+>> with the same address into a single i2c_transfer() call.
+> 
+> Note that it is by far the standard case that all messages in a transfer
+> have the same client address (99,999%?). But technically, this is not a
+> requirement and the repeated start on the bus is totally independent of
+> the addresses used. It is just a master wanting to send without being
+> interrupted by another master.
 
+I'm not quite sure I understand.
+
+Let's assume the following setup. An i2c client (some driver code) is
+sending a list of messages to the a2b xfer function, which in turn is
+logically connected to a 'real' i2c bus master that'll put the data on
+the wire.
+
+The a2b code has to tell the 'master node' the final destination of the
+payload by programming registers on its primary i2c address, and then
+forwards the messages to its secondary i2c address. The layout of the
+messages don't change, and neither do the flags; i2c messages are being
+sent as i2c messages, except their addresses are changed, a bit like NAT
+in networking. That procedure is described on page 3-4 of the TRM,
+"Remote Peripheral I2C Accesses".
+
+The 'real' i2c master that handles the hardware bus is responsible for
+adding start conditions, and as the messages as such are untouched, I
+believe it should do the right thing. The code in my xfer functions
+merely suppresses reprogramming remote addresses by remembering the last
+one that was used, but that is independent of the start conditions on
+the wire.
+
+Maybe I'm missing anything. Could you provide an example that explains
+in which case this approach would leads to issues?
+
+
+Thanks,
+Daniel
