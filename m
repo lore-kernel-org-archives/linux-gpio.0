@@ -2,58 +2,59 @@ Return-Path: <SRS0=cfAZ=2F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10490C43603
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C59AC43603
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B412467A
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EED3C206E0
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 18:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkwSUYiP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhUiZUfk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfLOSbj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 15 Dec 2019 13:31:39 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34859 "EHLO
+        id S1726559AbfLOSbm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Dec 2019 13:31:42 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42859 "EHLO
         mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbfLOSbj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 13:31:39 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 15so2658787lfr.2;
-        Sun, 15 Dec 2019 10:31:37 -0800 (PST)
+        with ESMTP id S1726148AbfLOSbl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 13:31:41 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so2629634lfl.9;
+        Sun, 15 Dec 2019 10:31:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/9qAg3wIzZX204w336ZHZqBn5SnmZdVi95LKDsqCbyM=;
-        b=lkwSUYiPHAC4G9NADQvaEBv60Qi/rxBiNW1AbvFYHLwpHH67llWOavJBIznQ0r3tWo
-         rjYuHrcwu3sVVZqa3bOT03gpPKfClh7tAFnJhtjzzWsJryxi1AttRgFcTaemZkWQdtyV
-         yvVc2YOx+fGc6NUtmTy86/8LsCtmsU1jqEgkrKcatMCbCgO/Bfc53TehbPYQ3MUnEtOs
-         ZRcWLmiy7P/A626LocHxMjBtleSFYJ+UNBLVb6Kn77sZuwojRg1Wxd57YZGvy237JVmv
-         vmKW6byXh3Pmtw+89qZdAwkGMnghNucF3sXuaHMEfLloh4XNVCNn0md6quLUkPi/5LtD
-         p5cg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8WGNb8baWMu/OjrhEBuLnEY4Hx1XajfUZ1YMdab/qoo=;
+        b=NhUiZUfkbwUwbh36Oycqj68dNdHAqfRHuVjH7dBuSS4W0MHBmL2vWQpIzIQP1uik3F
+         9S3id+ouVBS2uAJOuNP0kjhWFgL+wGb0zHoIETs9bO7zg3tR9bz75YFilmacFi+7wB9G
+         N4SgoJUKeRHIYqILHaytlv4hmb3o+xuOFxQFt/0+ofoQXSMinlNobF+j5E0t4wDYUiHR
+         NlrKnewXJk6IG5DxKd4k7fmkxiJUdPFfzmzSuJYWNYOS1ppy9sjCUJ0QWRw8025Bm6TJ
+         KlH1edT8CCNVq3CHOzUsQEl6N8eOMG0Hecv9oBHTOCqQMZsptTgoens3d7iN5BlKrOwt
+         jqPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/9qAg3wIzZX204w336ZHZqBn5SnmZdVi95LKDsqCbyM=;
-        b=BxRiqnn0wzVL+g2VGV7iLQtzlgKz5tULDLQM6Efc0LvYm6VpjZsZlWKfPhCKp8sU/D
-         fe5pidjronEG798BmtXrHUAy6/pZucLkt9rsBHzw8N9ZBQZp0aZQJbTPuuuBNoIF/1ZO
-         xvsDaLNKkJUypInjW4k6JVR8Py46f3Kgktz4MDfy3g49F08sISszisIajFXWM6WitovH
-         OTgUaPs1wHnYpaM4kd/6oNy8wpuUgKzv3srqjUT7MYVRtoiJ1ZA78RP3KlSJ//J26j9D
-         bangicZIQW2KKlgEAk22QE/+PxC0l+Mk4a47a//Q/YRm0oeGe3sNgx4uGyiBrSxatV6/
-         TWvQ==
-X-Gm-Message-State: APjAAAUvGaUbaPhPx+/Sc1UJcwRbAq+pOdh65B/xE5tChpOg3osRzaJb
-        LVAs4ZDe4Zh1n74GUXo5JY8=
-X-Google-Smtp-Source: APXvYqx1dXuxnTq/sTimnff9Ol5ZtwNphjRWSMJORXLq6H0GIgzqx3IhNXEtmatxvK+rsd1sQ6P/Vg==
-X-Received: by 2002:a19:8842:: with SMTP id k63mr14556166lfd.90.1576434696640;
-        Sun, 15 Dec 2019 10:31:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8WGNb8baWMu/OjrhEBuLnEY4Hx1XajfUZ1YMdab/qoo=;
+        b=blEnD34zGsLishrifzwFYljc2qDOkY5gUK1sHgWLXkM12cejQa9Vdt5ZrmSqHh9OLu
+         ldR80+C+Bm5He3aepVNqgF7fEHRq5wVsw593cHHkd5ETjGwxziy8XvB+EdOteMDsSpGl
+         ZWg8sU4FDfMRt08rXkN27GE6WclbclMX0Y9X9xG5OW19j2VqIk1TL/GSlNSdukcuaGXj
+         Rt7wRgGZgZ64MGPr0qGugsjqqibcvhzYFyQnOl4urrw/iPvH3qj7vTDmmWf3Nh9BTlGJ
+         gkzHOq+1px1CelXX4tjnGgCCewlAqkrOi63HlLc/rHaVRFMIpCGXGK81ENqtcyF7syMI
+         Bm6Q==
+X-Gm-Message-State: APjAAAWdOmLxggiQpcYwpUVbgdlpWRh9Lky6TC/DEYI/i2DiU7xdQBsh
+        /gOj+9ZoYJZINF2bQedbCNI=
+X-Google-Smtp-Source: APXvYqwAC+Ah7tQUHeZ3RPhMRnv+9rucKa6WFL204I6PVLtkjBFpZRQhumIjSBoL7UkDyziyacPSaQ==
+X-Received: by 2002:ac2:5983:: with SMTP id w3mr14711498lfn.137.1576434699420;
+        Sun, 15 Dec 2019 10:31:39 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id v2sm8814277ljv.70.2019.12.15.10.31.35
+        by smtp.gmail.com with ESMTPSA id v2sm8814277ljv.70.2019.12.15.10.31.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 10:31:35 -0800 (PST)
+        Sun, 15 Dec 2019 10:31:38 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -61,10 +62,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/3] Tegra GPIO: Minor code clean up
-Date:   Sun, 15 Dec 2019 21:30:44 +0300
-Message-Id: <20191215183047.9414-1-digetx@gmail.com>
+Subject: [PATCH v1 3/3] gpio: tegra: Use NOIRQ phase for suspend/resume
+Date:   Sun, 15 Dec 2019 21:30:47 +0300
+Message-Id: <20191215183047.9414-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191215183047.9414-1-digetx@gmail.com>
+References: <20191215183047.9414-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -72,23 +75,67 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+All GPIO interrupts are disabled during of the NOIRQ suspend/resume
+phase, thus there is no need to manually disable the interrupts. This
+patch doesn't fix any problem, this is just a minor clean-up.
 
-I was investigating why CPU hangs during of GPIO driver suspend and in
-the end it turned out that it is a Broadcom WiFi driver problem because
-it keeps OOB wake-interrupt enabled while WLAN interface is DOWN and this
-may cause a bit weird CPU hang on writing to INT_ENB register during of
-GPIO driver suspend. Meanwhile I also noticed that a few things could be
-improved in the driver, that's what this small series addresses.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpio/gpio-tegra.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-Dmitry Osipenko (3):
-  gpio: tegra: Use generic readl_relaxed/writel_relaxed accessors
-  gpio: tegra: Properly handle irq_set_irq_wake() error
-  gpio: tegra: Use NOIRQ phase for suspend/resume
-
- drivers/gpio/gpio-tegra.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 4790dfec7758..acb99eff9939 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -416,11 +416,8 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+ static int tegra_gpio_resume(struct device *dev)
+ {
+ 	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+-	unsigned long flags;
+ 	unsigned int b, p;
+ 
+-	local_irq_save(flags);
+-
+ 	for (b = 0; b < tgi->bank_count; b++) {
+ 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+ 
+@@ -448,17 +445,14 @@ static int tegra_gpio_resume(struct device *dev)
+ 		}
+ 	}
+ 
+-	local_irq_restore(flags);
+ 	return 0;
+ }
+ 
+ static int tegra_gpio_suspend(struct device *dev)
+ {
+ 	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+-	unsigned long flags;
+ 	unsigned int b, p;
+ 
+-	local_irq_save(flags);
+ 	for (b = 0; b < tgi->bank_count; b++) {
+ 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+ 
+@@ -488,7 +482,7 @@ static int tegra_gpio_suspend(struct device *dev)
+ 					  GPIO_INT_ENB(tgi, gpio));
+ 		}
+ 	}
+-	local_irq_restore(flags);
++
+ 	return 0;
+ }
+ 
+@@ -562,7 +556,7 @@ static inline void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
+ #endif
+ 
+ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
+ static int tegra_gpio_probe(struct platform_device *pdev)
 -- 
 2.24.0
 
