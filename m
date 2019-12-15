@@ -2,206 +2,120 @@ Return-Path: <SRS0=cfAZ=2F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA43DC2D0D0
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DD8C43603
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 17:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97BC324671
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 16:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C2520726
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Dec 2019 17:23:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LVC0VZiV"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="GWQWscFp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfLOQiY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 15 Dec 2019 11:38:24 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:33358 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfLOQiY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 11:38:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576427903;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NsIe1TfjjC87ebbQQq7mTKvBvH+3/E1pCLvaqhaVSFE=;
-        b=LVC0VZiVtpgiLkvECHv/KisX1pK5nYglWqUBMZYu4tcqpA1qKvbYFO6ri9ozvnqS1CdDRA
-        l7N2PeJ5b/zCGV5gWbyw9Ah+CeZmfzBS3CuTAMlh+s6WxfruQ3uGW8JsrDBhCDqHSp4jVE
-        PPSeEuNDMPjj0BO3OBG7eCyfQHZtgi0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-2-TKwW9ClKPaOf1IQHm2C17Q-1; Sun, 15 Dec 2019 11:38:18 -0500
-X-MC-Unique: TKwW9ClKPaOf1IQHm2C17Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7720EDB60;
-        Sun, 15 Dec 2019 16:38:16 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74B7E5D9C9;
-        Sun, 15 Dec 2019 16:38:14 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 1/5] pinctrl: Export pinctrl_unregister_mappings
-Date:   Sun, 15 Dec 2019 17:38:06 +0100
-Message-Id: <20191215163810.52356-2-hdegoede@redhat.com>
-In-Reply-To: <20191215163810.52356-1-hdegoede@redhat.com>
-References: <20191215163810.52356-1-hdegoede@redhat.com>
+        id S1726219AbfLORXo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Dec 2019 12:23:44 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:45198 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbfLORXo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Dec 2019 12:23:44 -0500
+Received: by mail-wr1-f50.google.com with SMTP id j42so203018wrj.12
+        for <linux-gpio@vger.kernel.org>; Sun, 15 Dec 2019 09:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=6SqT/AYzkwuNzESZSpWuR+jEBd1oGfFwX6NMZfB/Nno=;
+        b=GWQWscFpOSV7ixCbj4LkYp1MOiTZrhKjQTkUgD2Yz3wPDkyfhkaaA+yXganfciCyLt
+         wodkgx2G1neJ4mVnk2Nfh1wvM9XULWrvdmPwFmnaORn/2/EWdYTV0dbtqALIr5x+GiYX
+         nKbJtBDXEE14HScbbUt5Jiyx8GmQvdvnu2IJLUy7+OdAQGPQxOi3MExkdLKztgfoOFAC
+         YK8jxeaTfu2zEuNGrUnvOBDAKPLHT0TmVQ7rvUe/luwBj3HvVIFcgUVdaU8oPgIlcPYz
+         R8Ng9frrofKYWAqcPOI5a8w1GjdU5r1OILLvBI+n/IuU5+K++WtHuTE+Neq0G1e6753p
+         La7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=6SqT/AYzkwuNzESZSpWuR+jEBd1oGfFwX6NMZfB/Nno=;
+        b=VM+93mI7njQthwfg0SrmXNYmvb38zPLtbCwhZpbbIhetRX9ZOXmAVKpnPZY3Zjmm7E
+         svYHQISG+NlI144b4vLPRckKMjwiHP7bZxd1UAbBSRoTnpI6IjRtpNDMD6VPqN84B8cz
+         egsxCKcuWW4XGKCa3iZyB4hW5hIOZpIJwG0Jc2ex3DRLRzCaeDK7hDN5ZbXk9eXKhiv5
+         uMbyIYegkDS71urOvm+s152gxvjpL79K58rXsxAJRaGihk6eR7z6ljmyV4VjVrXl98vu
+         YDBFp63Aw51IceyGTGYOQ/RdnCYWOlZ3ufYHbNpDcwykI7Y1rojQG4Wiv+sLu52l+n5B
+         vm7Q==
+X-Gm-Message-State: APjAAAWg7wDkBjqPpgUA8HeXuGfkLtYutW7FCNH8V7DdAUd1jfzhZ3z9
+        sdky+eA9MTftsBiCSBc2yiyaCajG6FI=
+X-Google-Smtp-Source: APXvYqwOSgpBVTNWHJvJsLnAs17s6Fl5LsFgDeDq4RvCMHWVI0mMFqpN/yfkclyVu93S20RfiviCFA==
+X-Received: by 2002:a5d:4cc9:: with SMTP id c9mr24908245wrt.70.1576430622013;
+        Sun, 15 Dec 2019 09:23:42 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id g7sm18541660wrq.21.2019.12.15.09.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2019 09:23:41 -0800 (PST)
+Message-ID: <5df66c1d.1c69fb81.ec96d.01ea@mx.google.com>
+Date:   Sun, 15 Dec 2019 09:23:41 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v5.5-rc1-18-g65115d1733b4
+X-Kernelci-Tree: linusw
+X-Kernelci-Branch: for-next
+Subject: linusw/for-next build: 5 builds: 0 failed,
+ 5 passed (v5.5-rc1-18-g65115d1733b4)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Rename pinctrl_unregister_map to pinctrl_unregister_mappings so that
-its naming matches its pinctrl_register_mappings counter-part and
-export it.
+linusw/for-next build: 5 builds: 0 failed, 5 passed (v5.5-rc1-18-g65115d173=
+3b4)
 
-The purpose of this patch is to allow non-dt platforms to register
-pinctrl mappings from code which is build as a module, which requires
-being able to unregister the mapping when the module is unloaded to
-avoid dangling pointers; and to avoid registering the mapping multiple
-times, when the module gets reloaded later.
+Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
+l/v5.5-rc1-18-g65115d1733b4/
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Tree: linusw
+Branch: for-next
+Git Describe: v5.5-rc1-18-g65115d1733b4
+Git Commit: 65115d1733b469fc7026115b319541b8887b12b5
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 5 unique architectures
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
 ---
- drivers/pinctrl/core.c          | 11 ++++++++++-
- drivers/pinctrl/core.h          |  3 ++-
- drivers/pinctrl/devicetree.c    |  2 +-
- include/linux/pinctrl/machine.h |  5 +++++
- 4 files changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 2bbd8ee93507..c98f8cc9c7ca 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1431,6 +1431,7 @@ int pinctrl_register_map(const struct pinctrl_map *=
-maps, unsigned num_maps,
- 		return -ENOMEM;
-=20
- 	maps_node->num_maps =3D num_maps;
-+	maps_node->dup =3D dup;
- 	if (dup) {
- 		maps_node->maps =3D kmemdup(maps, sizeof(*maps) * num_maps,
- 					  GFP_KERNEL);
-@@ -1463,7 +1464,12 @@ int pinctrl_register_mappings(const struct pinctrl=
-_map *maps,
- }
- EXPORT_SYMBOL_GPL(pinctrl_register_mappings);
-=20
--void pinctrl_unregister_map(const struct pinctrl_map *map)
-+/**
-+ * pinctrl_unregister_mappings() - unregister a set of pin controller ma=
-ppings
-+ * @maps: the pincontrol mappings table passed to pinctrl_register_mappi=
-ngs()
-+ *	when registering the mappings.
-+ */
-+void pinctrl_unregister_mappings(const struct pinctrl_map *map)
- {
- 	struct pinctrl_maps *maps_node;
-=20
-@@ -1471,6 +1477,8 @@ void pinctrl_unregister_map(const struct pinctrl_ma=
-p *map)
- 	list_for_each_entry(maps_node, &pinctrl_maps, node) {
- 		if (maps_node->maps =3D=3D map) {
- 			list_del(&maps_node->node);
-+			if (maps_node->dup)
-+				kfree(maps_node->maps);
- 			kfree(maps_node);
- 			mutex_unlock(&pinctrl_maps_mutex);
- 			return;
-@@ -1478,6 +1486,7 @@ void pinctrl_unregister_map(const struct pinctrl_ma=
-p *map)
- 	}
- 	mutex_unlock(&pinctrl_maps_mutex);
- }
-+EXPORT_SYMBOL_GPL(pinctrl_unregister_mappings);
-=20
- /**
-  * pinctrl_force_sleep() - turn a given controller device into sleep sta=
-te
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
-index 7f34167a0405..cba38ef13b1d 100644
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -175,11 +175,13 @@ struct pin_desc {
-  * @node: mapping table list node
-  * @maps: array of mapping table entries
-  * @num_maps: the number of entries in @maps
-+ * @dup: has the mapping table been memdup-ed by us?
-  */
- struct pinctrl_maps {
- 	struct list_head node;
- 	const struct pinctrl_map *maps;
- 	unsigned num_maps;
-+	bool dup;
- };
-=20
- #ifdef CONFIG_GENERIC_PINCTRL_GROUPS
-@@ -238,7 +240,6 @@ pinctrl_find_gpio_range_from_pin_nolock(struct pinctr=
-l_dev *pctldev,
-=20
- int pinctrl_register_map(const struct pinctrl_map *maps, unsigned num_ma=
-ps,
- 			 bool dup);
--void pinctrl_unregister_map(const struct pinctrl_map *map);
-=20
- extern int pinctrl_force_sleep(struct pinctrl_dev *pctldev);
- extern int pinctrl_force_default(struct pinctrl_dev *pctldev);
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 674920daac26..a1925962a3e2 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -51,7 +51,7 @@ void pinctrl_dt_free_maps(struct pinctrl *p)
- 	struct pinctrl_dt_map *dt_map, *n1;
-=20
- 	list_for_each_entry_safe(dt_map, n1, &p->dt_maps, node) {
--		pinctrl_unregister_map(dt_map->map);
-+		pinctrl_unregister_mappings(dt_map->map);
- 		list_del(&dt_map->node);
- 		dt_free_map(dt_map->pctldev, dt_map->map,
- 			    dt_map->num_maps);
-diff --git a/include/linux/pinctrl/machine.h b/include/linux/pinctrl/mach=
-ine.h
-index ddd1b2773431..e987dc9fd2af 100644
---- a/include/linux/pinctrl/machine.h
-+++ b/include/linux/pinctrl/machine.h
-@@ -153,6 +153,7 @@ struct pinctrl_map {
-=20
- extern int pinctrl_register_mappings(const struct pinctrl_map *map,
- 				unsigned num_maps);
-+extern void pinctrl_unregister_mappings(const struct pinctrl_map *map);
- extern void pinctrl_provide_dummies(void);
- #else
-=20
-@@ -162,6 +163,10 @@ static inline int pinctrl_register_mappings(const st=
-ruct pinctrl_map *map,
- 	return 0;
- }
-=20
-+static inline void pinctrl_unregister_mappings(const struct pinctrl_map =
-*map)
-+{
-+}
-+
- static inline void pinctrl_provide_dummies(void)
- {
- }
---=20
-2.23.0
-
+For more info write to <info@kernelci.org>
