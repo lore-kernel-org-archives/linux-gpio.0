@@ -2,112 +2,102 @@ Return-Path: <SRS0=Awkk=2G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFC0C43603
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Dec 2019 12:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2F9C43603
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Dec 2019 12:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4ED206CB
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Dec 2019 12:16:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACbNbFsw"
+	by mail.kernel.org (Postfix) with ESMTP id C86D8206CB
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Dec 2019 12:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfLPMQd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Dec 2019 07:16:33 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:42311 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbfLPMQc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Dec 2019 07:16:32 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d8so1979379uak.9
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Dec 2019 04:16:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g6hMK4zvmiSQXDEVIro/DLpNW8Dnq2eeAYZqmv+C7n4=;
-        b=ACbNbFswU1bSLXpKw7frBiJCD6yT6A648nS5mwhOnzZ/oCoWad3p+XghmD1WWzlVJm
-         txMzHtwXkBDWokJ/qZ+h2NJNPo9VbjuBgNeD2ooLabCNucUnCK0laHcbbaDut7vIo027
-         DGIbWg5yK8l48N2llclSO2ZAL85UBWtMaooZlHhG8lnHmOvHVcS+QEgB/B532FqJdWQh
-         Ud6qSt1MTC7AD4yTbOkjMO5VSHEg7XmLrE6VGezhugDqk9s7SNpN9mJC+dL9rWjyTL+v
-         ag2YGxtfHBMl2JzSpFfkRk+npQR6zGCl2dRnuhF+/nv3CFHdQT4l5R3tgcRsFnEci7bQ
-         ONyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g6hMK4zvmiSQXDEVIro/DLpNW8Dnq2eeAYZqmv+C7n4=;
-        b=PdaOTw2X1/WxBTv4yoy+3margdk+ge1+N8uCZhoaGEC1c3vHQHQASbHbp88jbBdNqi
-         fI+w9S4d+UlSbVA9DOK+NFfu+rjsZs1+0jRwWOw/oTM522Z6m6sa0LFlmbXK7Eioc2Vh
-         ZW5a9KW+xlIStrDplXPMLTdicdjm3dCb1NmA+giLwknmd9It9eyQITAa058tSr+cB5un
-         MLmHdYpPBkXXJthWVT51NShCaYVlFoo5vo3wKmm8ShpmH2kDqARzwOlgrclVQexKHPb0
-         a+zG0nHM59jDDN3lBO0t5oYH+iXwDh2DQ0O8RK50BwitUtrLAxXn8OUticfn52oV6sTZ
-         YCgg==
-X-Gm-Message-State: APjAAAVyDk63+NQ3XnnkY8buRm/mN5EpRNEqyu3YxQ5wjxsSIQ7RpSwb
-        j+fZAgZ/sYt4YFGULhP5JqxeBus1qhL7RLtaILTdhr9gUE4BNQ==
-X-Google-Smtp-Source: APXvYqxgrIn4al26ZnFpKqCL0TxyFBEwhX8AWXeCD4bBS7Ttf4sGA8fJ1Pg64Ke5L5GoUz3YDXkMxfaBaYcspaOS/YE=
-X-Received: by 2002:ab0:1c0a:: with SMTP id a10mr22825812uaj.140.1576498591580;
- Mon, 16 Dec 2019 04:16:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20191215163810.52356-1-hdegoede@redhat.com> <CACRpkdarJ5chDfgc5F=ntzG1pw7kchtzp0Upp+OH9CH6WLnvXw@mail.gmail.com>
- <1474a983-3e22-d59b-255a-edd3a41f0967@redhat.com>
-In-Reply-To: <1474a983-3e22-d59b-255a-edd3a41f0967@redhat.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 16 Dec 2019 13:16:20 +0100
-Message-ID: <CACRpkdaYgpY=Anem00tPS=HPCD5XUrfWmWjvPkszggnHCpgK2Q@mail.gmail.com>
-Subject: Re: [PATCH 0/5] drm/i915/dsi: Control panel and backlight enable
- GPIOs from VBT
+        id S1727486AbfLPMSp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Dec 2019 07:18:45 -0500
+Received: from mga02.intel.com ([134.134.136.20]:45921 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727481AbfLPMSp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:18:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 04:18:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,321,1571727600"; 
+   d="scan'208";a="266240411"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Dec 2019 04:18:41 -0800
+Received: from andy by smile with local (Exim 4.93-RC7)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1igpKi-0006VZ-Up; Mon, 16 Dec 2019 14:18:40 +0200
+Date:   Mon, 16 Dec 2019 14:18:40 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
 To:     Hans de Goede <hdegoede@redhat.com>
 Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         intel-gfx <intel-gfx@lists.freedesktop.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 0/5] drm/i915/dsi: Control panel and backlight enable
+ GPIOs from VBT
+Message-ID: <20191216121840.GS32742@smile.fi.intel.com>
+References: <20191215163810.52356-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191215163810.52356-1-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 12:11 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On Sun, Dec 15, 2019 at 05:38:05PM +0100, Hans de Goede wrote:
+> Hi All,
+> 
+> This is a new (completely rewritten) version of my patches to make the
+> i915 code control the SoC panel- and backlight-enable GPIOs on Bay Trail
+> devices when the VBT indicates that the SoC should be used for backlight
+> control. This fixes the panel not lighting up on various devices when
+> booted with a HDMI monitor connected, in which case the firmware skips
+> initializing the panel as it inits the HDMI instead.
+> 
+> This series has been tested on; and fixes this issue on; the following models:
+> 
+> Peaq C1010
+> Point of View MOBII TAB-P800W
+> Point of View MOBII TAB-P1005W
+> Terra Pad 1061
+> Thundersoft TST178
+> Yours Y8W81
+> 
+> Linus, this series starts with the already discussed pinctrl change to
+> export the function to unregister a pinctrl-map. We can either merge this
+> through drm-intel, or you could pick it up and then provide an immutable
+> branch with it for merging into drm-intel-next. Which option do you prefer?
+> 
+> Lee, I know you don't like this, but unfortunately this series introcudes
+> some (other) changes to drivers/mfd/intel_soc_pmic_core.c. The GPIO subsys
+> allows only one mapping-table per consumer, so in hindsight adding the code
+> which adds the mapping for the PMIC panel-enable pin to the PMIC mfd driver
+> was a mistake, as the PMIC code is a provider where as mapping-tables are
+> per consumer. The 4th patch fixes this by moving the mapping-table to the
+> i915 code, so that we can also add mappings for some of the pins on the SoC
+> itself. Since this whole series makes change to the i915 code I plan to
+> merge this mfd change to the drm-intel tree.
 
-> Ugh, taking one last look at the "pinctrl: Export pinctrl_unregister_mappings"
-> patch it is no good, sorry.
+FWIW, Lee, I believe there will be no (significant) changes in the driver Hans
+touched. For the record it seems only Hans is touching drivers for old Intel
+platforms (such as Baytrail and Cherryview).
 
-Ooops!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> Linus, can you please drop this from your -next ?
 
-Sure, done.
-
-> So I see 2 options:
-> 1) Add an orig_map member to maps_node and use that in the comparison,
-> this is IMHO somewhat ugly
->
-> 2) Add a new pinctrl_register_mappings_no_dup helper and document in
-> pinctrl_unregister_mappings kdoc that it can only be used together
-> with the no_dup variant.
->
-> I believe that 2 is by far the best option. Linus do you agree or
-> do you have any other suggestions?
-
-What about (3) look for all calls to pinctrl_register_mappings()
-in the kernel.
-
-Hey it is 2 places in total:
-arch/arm/mach-u300/core.c:      pinctrl_register_mappings(u300_pinmux_map,
-drivers/pinctrl/cirrus/pinctrl-madera-core.c:           ret =
-pinctrl_register_mappings(pdata->gpio_configs,
-
-Delete  __initdata from the u300 table, the other one seems
-safe. Fold this into your patch.
-
-Go with the original idea.
-
-Yours,
-Linus Walleij
