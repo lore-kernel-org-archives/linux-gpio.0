@@ -2,140 +2,230 @@ Return-Path: <SRS0=v31l=2H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0564BC43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 12:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D5BC2D0D2
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 12:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D895320716
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 12:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F6A21835
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 12:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576586371;
+	bh=4lc/ehSQDI9aWx5ZLmJtKG/CFsG3TglET/wIcWT4JM8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=K9GDJ1HTeZKaOvYHZ7Kjg5M6iNemr+Dn4/U467gtpnnfwCpMJMsKRpEhLJYh8+2ZR
+	 mz/PXf09XQGF7OU3HzCXGEKmEvk8sUR2+TohQZeB0Ua3A86nb+pHkAV7DCxgxdfFJF
+	 NLiz2LHe6rpC6Nb6ONZgC/iGII/H1AofXBPT0Nko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbfLQMb3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Dec 2019 07:31:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45109 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfLQMb3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2019 07:31:29 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ihC0V-0005OG-Hy; Tue, 17 Dec 2019 13:31:19 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ihC0S-0006OI-I9; Tue, 17 Dec 2019 13:31:16 +0100
-Date:   Tue, 17 Dec 2019 13:31:16 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
- selection documentation
-Message-ID: <20191217123116.GB29666@pengutronix.de>
-References: <20191210094144.mxximpuouchy3fqu@pengutronix.de>
- <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
- <20191212161019.GF4310@sirena.org.uk>
- <20191212162152.5uu3feacduetysq7@pengutronix.de>
- <20191212165124.GJ4310@sirena.org.uk>
- <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
- <AM5PR1001MB09941005A47B603805D3C53280510@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191217090034.GD31182@pengutronix.de>
- <AM5PR1001MB099460B2D291644F088707BA80500@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM5PR1001MB099460B2D291644F088707BA80500@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 13:21:27 up 110 days, 35 min, 93 users,  load average: 0.98, 1.01,
- 1.03
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        id S1728160AbfLQMja (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Dec 2019 07:39:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:35638 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728051AbfLQMj3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:39:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CBD6328;
+        Tue, 17 Dec 2019 04:39:28 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98D8C3F718;
+        Tue, 17 Dec 2019 04:39:27 -0800 (PST)
+Date:   Tue, 17 Dec 2019 12:39:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Dan Murphy <dmurphy@ti.com>, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        matti.vaittinen@fi.rohmeurope.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        mazziesaccount@gmail.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Applied "dt-bindings: regulator: Document ROHM BD71282 regulator bindings" to the regulator tree
+In-Reply-To: <0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+Message-Id: <applied-0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+X-Patchwork-Hint: ignore
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 19-12-17 09:53, Adam Thomson wrote:
-> On 17 December 2019 09:01, Marco Felsch wrote:
-> 
-> > > > The enabel control signal is always available, please check [1] table
-> > > > 63. There is a mux in front of the enable pin so:
-> > > >
-> > > >              +-------------
-> > > >  Seq. |\     |   Regulator
-> > > >  GPI1 | \    |
-> > > >  GPI2 | | -- > Enable
-> > > >  GPI3 | /    |
-> > > >       |/     .
-> > > >              .
-> > > >              .
-> > > >
-> > > > Adam please correct me if this is wrong.
-> > >
-> > > Yes the register can always be configured regardless of the associated pin
-> > > configuration, but if say GPIO1 was configured as a GPO but a regulator was
-> > > configured to use GPIO1 as its GPI control mechanism, the output signal from
-> > > GPIO1 would be ignored, the sequencer control would not have any effect and
-> > > you're simply left with manual I2C control. Really we shouldn't be getting into
-> > > that situation though. If a GPIO is to be used as a regulator control signal
-> > > then it should be marked as such and I don't think we should be able to use that
-> > > pin for anything other than regulator control.
-> > 
-> > I see, so we have to guarantee that the requested gpio is configured as
-> > input. This can be done by:
-> 
-> This is one of the reasons I thought this was better suited to being done in the
-> pinctrl/pinmux side. If you configure the GPIO as for regulator control then
-> the code can automatically configure the GPIO for input. That doesn't then need
-> to be in the regulator driver.
+The patch
 
-I still don't prefer that way.. pls check my arguments I already made
-and I don't wanna repeat it again.
+   dt-bindings: regulator: Document ROHM BD71282 regulator bindings
 
-> But yes we wouldn't really want to configure a regulator to be controlled via a
-> GPI when it's configured as a GPO as it makes no sense.
+has been applied to the regulator tree at
 
-Okay, so the check is all we need to hardening the driver against wrong
-usage :)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
 
-Regards,
-  Marco
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> 
-> > 
-> >   if (gpi->flags & FLAG_IS_OUT)
-> >   	return -EINVAL;
-> > 
-> > Regards,
-> >   Marco
-> 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 84a867c078136887dea64fa6e336333b657bc6a1 Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Wed, 11 Dec 2019 11:35:57 +0200
+Subject: [PATCH] dt-bindings: regulator: Document ROHM BD71282 regulator
+ bindings
+
+Document ROHM BD71828 PMIC regulator device tree bindings.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Link: https://lore.kernel.org/r/0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../regulator/rohm,bd71828-regulator.yaml     | 107 ++++++++++++++++++
+ 1 file changed, 107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml b/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+new file mode 100644
+index 000000000000..71ce032b8cf8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/rohm,bd71828-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BD71828 Power Management Integrated Circuit regulators
++
++maintainers:
++  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
++
++description: |
++  This module is part of the ROHM BD71828 MFD device. For more details
++  see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml.
++
++  The regulator controller is represented as a sub-node of the PMIC node
++  on the device tree.
++
++  Regulator nodes should be named to BUCK_<number> and LDO_<number>.
++  The valid names for BD71828 regulator nodes are
++  BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7
++  LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
++
++patternProperties:
++  "^LDO[1-7]$":
++    type: object
++    allOf:
++      - $ref: regulator.yaml#
++    description:
++      Properties for single LDO regulator.
++
++    properties:
++      regulator-name:
++        pattern: "^ldo[1-7]$"
++        description:
++          should be "ldo1", ..., "ldo7"
++
++  "^BUCK[1-7]$":
++    type: object
++    allOf:
++      - $ref: regulator.yaml#
++    description:
++      Properties for single BUCK regulator.
++
++    properties:
++      regulator-name:
++        pattern: "^buck[1-7]$"
++        description:
++          should be "buck1", ..., "buck7"
++
++      rohm,dvs-run-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "RUN" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-idle-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "IDLE" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-suspend-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "SUSPEND" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-lpsr-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "LPSR" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++        # Supported default DVS states:
++        #     buck       |    run     |   idle    | suspend  | lpsr
++        #--------------------------------------------------------------
++        # 1, 2, 6, and 7 | supported  | supported | supported (*)
++        #--------------------------------------------------------------
++        # 3, 4, and 5    |                    supported (**)
++        #--------------------------------------------------------------
++        #
++        #(*)  LPSR and SUSPEND states use same voltage but both states have own
++        #     enable /
++        #     disable settings. Voltage 0 can be specified for a state to make
++        #     regulator disabled on that state.
++        #
++        #(**) All states use same voltage but have own enable / disable
++        #     settings. Voltage 0 can be specified for a state to make
++        #     regulator disabled on that state.
++
++    required:
++      - regulator-name
++  additionalProperties: false
++additionalProperties: false
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.20.1
+
