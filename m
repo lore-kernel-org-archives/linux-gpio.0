@@ -2,66 +2,107 @@ Return-Path: <SRS0=v31l=2H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5364DC2D0CD
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7B4C43603
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 20:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12BF22176D
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 602202146E
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 20:38:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SWfYOp7v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfLQTyJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Dec 2019 14:54:09 -0500
-Received: from mga02.intel.com ([134.134.136.20]:22025 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfLQTyH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:54:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 11:54:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
-   d="scan'208";a="389942477"
-Received: from vramados-mobl.amr.corp.intel.com (HELO [10.254.1.250]) ([10.254.1.250])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 11:54:05 -0800
-Subject: Re: [alsa-devel] [PATCH 00/10] mfd: Add support for Analog Devices
- A2B transceiver
-To:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
-        lee.jones@linaro.org
-References: <20191209183511.3576038-1-daniel@zonque.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
-Date:   Tue, 17 Dec 2019 13:29:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728118AbfLQUiZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Dec 2019 15:38:25 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44418 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbfLQUiZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Dec 2019 15:38:25 -0500
+Received: by mail-io1-f66.google.com with SMTP id b10so12549705iof.11
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2019 12:38:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bf4DW07ux663sZ7zB+kziR4YNNMjqy9A2bO2qaVQs7c=;
+        b=SWfYOp7v2Gbzvj0oex2xBcjnDjxUg4jBwLcNA8Lj7Y20hF7uJS8Z+wqqD+6oKZME9U
+         3p6Hh+fBlmoE58Y8glJzGHG3nV2ShrZXJI8oFnXr40yYSDt+Y/Yu67GPHgbuOPgKcRLa
+         F3Wu2wWaSCDep6oSq/EtkLx/PZFaVr9IF38mE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bf4DW07ux663sZ7zB+kziR4YNNMjqy9A2bO2qaVQs7c=;
+        b=AnayGsi/xDc4TGABUhxSuQ1zx/wkHx5KkBdzTao0rOVBsho+Ad9SrsO6HL1VVo8Hng
+         fJ5DQLRfGHPA9yQGca5qPYRWJh74q5FsevwUpP4/8pk0NpTK3aATz4dogPtgerJS77ea
+         I5BgJeCcok3MEwH+hHKemS1jut7o77oJRPw6k2CIUu2CNV4//BCtmH32qfKo6Ph9c/Af
+         OfKHkCRoVDFZ0OSxerKd7CZLOeqh8XS0RyIBmIBRNmxB2XhtCIh110xkpd0sH3rGN4FT
+         JELQAdiGgj8AqNf6wqT5ABqXsp2VzbSEYC0tYI3DH61LkwTU/e9Tzdkm8fwiw4Ftz1lU
+         e/Pg==
+X-Gm-Message-State: APjAAAXVjTk16LBNFeDFfcWqRbTwbEZ/+4BKVsfjjLzuTM1x1Q9YBxgv
+        UpsJEmGbjMMLghc76nPKnImmvcDetEk=
+X-Google-Smtp-Source: APXvYqwFTbSzTrbRnmNXl5Q8BOQl89gdpmfOyy6vmEC989EPlrhLfA0ne8jpFI5DM81v3tVjFaoapw==
+X-Received: by 2002:a5d:94c4:: with SMTP id y4mr5290361ior.163.1576615104131;
+        Tue, 17 Dec 2019 12:38:24 -0800 (PST)
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com. [209.85.166.181])
+        by smtp.gmail.com with ESMTPSA id v17sm7162216ilh.12.2019.12.17.12.38.22
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 12:38:22 -0800 (PST)
+Received: by mail-il1-f181.google.com with SMTP id t8so760742iln.4
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2019 12:38:22 -0800 (PST)
+X-Received: by 2002:a92:ca90:: with SMTP id t16mr4548825ilo.218.1576615101966;
+ Tue, 17 Dec 2019 12:38:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191209183511.3576038-1-daniel@zonque.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1572419178-5750-1-git-send-email-mkshah@codeaurora.org> <1572419178-5750-3-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1572419178-5750-3-git-send-email-mkshah@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 17 Dec 2019 12:38:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Wkte6aEy_dbNDBgAFimJd6kRPXN1v05K94qoVOaHiCzQ@mail.gmail.com>
+Message-ID: <CAD=FV=Wkte6aEy_dbNDBgAFimJd6kRPXN1v05K94qoVOaHiCzQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sc7180: Add wakeup parent for TLMM
+To:     Maulik Shah <mkshah@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        LinusW <linus.walleij@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Bjorn / Andy,
 
-> Transceivers can both receive and provide audio, and streams can be
-> routed from one node to any other, including many others. The tricky
-> bit is how to expose the audio routing in DT in a sane way.
-> The way it is implemented here, the slave nodes specify the number of
-> slots they each consume and generate, and which thereof they forward
-> from one side to the other. This mimics the internal register
-> structure and should allow for even exotic setups.
+On Wed, Oct 30, 2019 at 12:07 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+> Specify wakeup parent irqchip for sc7180 TLMM.
+>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-It was my understanding that the A2B bus is bidirectional but with 
-separate time windows allocated for host->device and device->host 
-transmission. The wording seems to hint at device-to-device 
-communication but I wonder if this is really what you meant.
+I see that Linus W. applied patch #1:
+
+https://lore.kernel.org/r/CACRpkdY9ETQRHn7x2D2XVLZ810Uo1cPQxMBqTy5LnrORRNjTVw@mail.gmail.com
+
+...so I think this patch is ready to go.
+
+FWIW, feel free to add:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
