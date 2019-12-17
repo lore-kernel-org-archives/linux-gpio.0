@@ -6,38 +6,45 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B84C43603
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A124DC43603
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC4E2176D
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CAF62465E
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbfLQTgn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Dec 2019 14:36:43 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:41634 "EHLO mail.bugwerft.de"
+        id S1727802AbfLQTyB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Dec 2019 14:54:01 -0500
+Received: from mga02.intel.com ([134.134.136.20]:22025 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbfLQTgn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:36:43 -0500
-Received: from [192.168.178.106] (pD95EF574.dip0.t-ipconnect.de [217.94.245.116])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 2FC83281AEB;
-        Tue, 17 Dec 2019 19:30:17 +0000 (UTC)
-Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
+        id S1727492AbfLQTyB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Dec 2019 14:54:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 11:54:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
+   d="scan'208";a="389942445"
+Received: from vramados-mobl.amr.corp.intel.com (HELO [10.254.1.250]) ([10.254.1.250])
+  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 11:53:59 -0800
+Subject: Re: [alsa-devel] [PATCH 06/10] mfd: Add core driver for AD242x A2B
+ transceivers
+To:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
+        lee.jones@linaro.org
 References: <20191209183511.3576038-1-daniel@zonque.org>
- <20191209183511.3576038-8-daniel@zonque.org> <20191217133952.GJ18955@dell>
- <20191217134617.GK18955@dell>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <ff062a37-e07d-3d6c-7fa5-9e6dc74b1aa9@zonque.org>
-Date:   Tue, 17 Dec 2019 20:36:40 +0100
+ <20191209183511.3576038-8-daniel@zonque.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c3885b01-e6ec-1b67-6e48-69e3fc40bb62@linux.intel.com>
+Date:   Tue, 17 Dec 2019 13:16:04 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191217134617.GK18955@dell>
+In-Reply-To: <20191209183511.3576038-8-daniel@zonque.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -46,29 +53,79 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Lee,
 
-On 12/17/19 2:46 PM, Lee Jones wrote:
-> One thing I should mention upfront; there is too much code "doing
-> things" in here for it to be an MFD.  MFDs don't care about; syncs,
-> slots, TDM, inverting lines, upstreams, downstreams, etc etc etc.
-> Anything remotely technical or functional, the code that "does things"
-> should be moved out to the relevant areas.  In the case of this
-> device, that's looking like one of the Audio related subsystems.
+> +config MFD_AD242X
+> +	bool "Analog Devices AD242x A2B support"
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	depends on I2C=y && OF
 
-Okay, that's good to know.
+is there a specific reason why I2C needs to be built-in (as opposed to 'm')?
 
-I in fact considered that when I started working on it; after all, A2B 
-stands for "automotive audio bus". The reason why I didn't do it was the 
-fact that these devices certainly do have multiple functions, where 
-audio is just one of them, and there needs to be a 'top-level' layer 
-that enables all these functions and does the node discovery etc. Hence 
-I thought it's cleaner to separate things that way.
+> +/* See Table 3-2 in the datasheet */
 
-I can move things over to the ASoC layer for the next iteration, and 
-then maybe also merge the codec driver with the baseline drivers. Let's 
-see how this looks like then.
+is the datasheet public? I thought it was only available under NDA.
+
+> +	master->sync_clk = devm_clk_get(dev, "sync");
+> +	if (IS_ERR(master->sync_clk)) {
+> +		ret = PTR_ERR(master->sync_clk);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to get sync clk: %d\n", ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	if (of_property_read_u32(dev->of_node, "clock-frequency",
+> +				 &master->sync_clk_rate)) {
+> +		ret = clk_set_rate(master->sync_clk, master->sync_clk_rate);
+
+shouldn't you check the rate before setting it?
+
+> +		if (ret < 0) {
+> +			dev_err(dev, "Cannot set sync clock rate: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	master->sync_clk_rate = clk_get_rate(master->sync_clk);
+> +	if (master->sync_clk_rate != 44100 && master->sync_clk_rate != 48000) {
+> +		dev_err(dev, "SYNC clock rate %d is invalid\n",
+> +			master->sync_clk_rate);
+> +		return -EINVAL;
+> +	}
+
+this is a bit odd, you set the rate in case there is a property but get 
+it anyways. the last block could be an else?
+
+> +
+> +	ret = clk_prepare_enable(master->sync_clk);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to enable sync clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Master node setup */
+> +
+> +	ret = regmap_write(regmap, AD242X_CONTROL,
+> +			   AD242X_CONTROL_MSTR | AD242X_CONTROL_SOFTRST);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ad242x_wait_for_irq(master, &master->run_completion, 10);
+
+what is 10?
 
 
-Thanks,
-Daniel
+> +static int ad242x_master_remove(struct i2c_client *i2c)
+> +{
+> +	struct ad242x_master *master = i2c_get_clientdata(i2c);
+> +
+> +	if (master->sync_clk)
+> +		clk_disable_unprepare(master->sync_clk);
+
+earlier you tested for IS_ERR(master->sync_clk)?
+
+> +	for (i = 0; i < 4; i++) {
+
+what is 4? 4 hops?
+
