@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B48DC43603
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 15:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0904C43603
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 15:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8B621582
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 15:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879F6206CB
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 15:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n4CnIRpg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CElXgf2K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfLRPJt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Dec 2019 10:09:49 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36110 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfLRPJt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Dec 2019 10:09:49 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so2540803ljg.3;
-        Wed, 18 Dec 2019 07:09:48 -0800 (PST)
+        id S1727417AbfLRP2Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Dec 2019 10:28:16 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33685 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLRP2P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Dec 2019 10:28:15 -0500
+Received: by mail-lj1-f196.google.com with SMTP id p8so2631096ljg.0;
+        Wed, 18 Dec 2019 07:28:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HhJbWUsWwTIyi0nz4fJwHURTxI1Rw4XYrR+51bn6K04=;
-        b=n4CnIRpgiWYaPqhrTGDqoNhiTBR0o5Z4TZgEmVJjUqrcxs/eZ/RmRLpYvIVEjSMOuw
-         zj7m3K6IjnEBCb0Znun9ZsDmmSn1LRVTajc0FgbgZMrc6WGWZUMFHAASKtM7AI1xdD+x
-         B0nJEXFCWymrx5jxZ+vCYGBdE/nRahl8x+0BZNk01+p865de/TDTBDKa2Er4pnzvhxN5
-         4+pmsqRkwZVO5VdTu6YWuFDTYVudquuDrwZkO5oJ4rXj00ugbbpz86t8pTfa/P+Y0w4X
-         BQfClWxwjmtj/ejYcqXHblGAqzIUXUWDmAtlo7XoQtG4Mro9KTRTQm3w/ajdp+uV8l0r
-         NDrg==
+        bh=NGB0Bht5iuAhGYY8+BK8lXynDdbbH0NCySaOeUZsF9Q=;
+        b=CElXgf2Klb0noNFucfG1GDOjLqnMBNcOXXqZdVOK6xOVs3KX9bggRS09lL5rsfFVtm
+         yXEywA9e5CfLlR0B2XhQyzUMJ9L83+aaXAO4v/mxfrwtQF/J8vTUouACtLVHSTq/RSMI
+         gUHTSBrg2ZvU8dy7xidG8UQptYGyBozEXoeaA8KCoDSpGSc+SC+eh9AqZXixC3d0Ic5d
+         N4I9FKec8Z/VeCi6whOwWsTE2jHgM2Pm/DvHM9lFERLNdaQtzoAU+O+sCqgb8MTXN59Z
+         KyLnvt3x+fgtbmF6b0dGBbUmXrUmbhL+DHQBY+MSpQrIULmHt2ZfnM7GpTDUMwQgEJr/
+         72Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HhJbWUsWwTIyi0nz4fJwHURTxI1Rw4XYrR+51bn6K04=;
-        b=nekby59T0NtauZtOpEYXpBaZMnkGLfTitnriXgRZ8eDMAVKmKrRYuIT5/dEgXMoN/J
-         67R3Fl/7Dt7dGXISGr9P5IrXmtXi+AlGIwJQf/UntEkUTlUF/wPvuE2C4yy/4DsTKSx1
-         pYZX8lBgBJrl4NzPwzLt67kzFfb67hlvRb4ElH7u432kDTH6w1mdr1SFaII/YughiNJz
-         6LqUW8wGXshRqcP+aadZnYMbiG0L5C41t+z19BxxgQEomwWQR7zlXMXlr1TC2Kpx2ylM
-         iLx71TLcsvoMqwRxewsMORXhRktfYanvO/KOcokkLJ5sjQO8GTkrOqNDQbRIgooUaUlm
-         TyjA==
-X-Gm-Message-State: APjAAAU9MQGjgn4/ZpQLMCAmxASQ4UeQ9hc8jp3C9ZfzdssLbVMDVpQv
-        h847/MZMXI6cN6za2tovO5NHAhxUI0GFkOnMhKY=
-X-Google-Smtp-Source: APXvYqxcQGEJtnYA9Dox6wkCmoNhgi0nQlVxmrljxdbiXh66FZxbDmoKUQbvXOU6f+M6uubdRb2209sGGo+XVq9qTo4=
-X-Received: by 2002:a2e:814e:: with SMTP id t14mr2079402ljg.149.1576681787440;
- Wed, 18 Dec 2019 07:09:47 -0800 (PST)
+        bh=NGB0Bht5iuAhGYY8+BK8lXynDdbbH0NCySaOeUZsF9Q=;
+        b=h+h6jrwsgx4Gkzchzgf3CTKNwFtgQgoaYk1RFuOrMHoBcz0aT0NnA0IdUNZ/oKqDIY
+         RL/gas4D/ulPLQFJrpRcM2Thw3q8X70rl/WcZmk4w6dHK1zB+pQzSRTA3A8MttMB/bU0
+         6huI79G1C0nZUkNFdiGvZXIjxLrCOCJpv/ERVfpJqyfyhJoFYCjVS61CFjnX/Lt+/n6s
+         Vp3dq18bfK5ChvdRk7erCQY6aGZg7/QnXx0FecDxAeg5YflkiYLv3gBSiFuQZWnlALqY
+         rANoEBeD1Klurz/9u6vkA+vfah4zdo5KtOs1tRe+vxDeFJzpReoLujAp/VIoY2bvSLtv
+         12vw==
+X-Gm-Message-State: APjAAAW0/iQKkWLoj1JblRdeeqWX2ZP9GKRwQuT8XcxIaRbZgnzfNrc6
+        qZlbUdXQQoR9dZSNNNnunfEc+km6sOPK6Ts5NNI=
+X-Google-Smtp-Source: APXvYqwRXR6SYoiNPvwbThVTZFiIWXv19mPiee7yYheOO2EF59zuRJmhpBpkJVuauhHrW8NUK5B5sny+ZKnji/BawQc=
+X-Received: by 2002:a2e:6e10:: with SMTP id j16mr2223416ljc.202.1576682892704;
+ Wed, 18 Dec 2019 07:28:12 -0800 (PST)
 MIME-Version: 1.0
 References: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
  <CAOMZO5DeA24EUjr-E=V=tGNaZ7UkOEi+F5-kEBqEB288DSNSoA@mail.gmail.com>
  <AM0PR04MB4481B3EAB2DDC42A137E8AAB88530@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <CAOMZO5BK0Pa6Aw6n7Tf+C6+Fg15WNbEUOzKCQTaWqTUu6yoPjA@mail.gmail.com> <20191218145955.GE26938@lunn.ch>
-In-Reply-To: <20191218145955.GE26938@lunn.ch>
+ <CAOMZO5BK0Pa6Aw6n7Tf+C6+Fg15WNbEUOzKCQTaWqTUu6yoPjA@mail.gmail.com>
+ <20191218145955.GE26938@lunn.ch> <CAOMZO5BibF5A9sw=fLr3DXLf9LXYdxWy=aK7KCE3L0bt5eX+9Q@mail.gmail.com>
+In-Reply-To: <CAOMZO5BibF5A9sw=fLr3DXLf9LXYdxWy=aK7KCE3L0bt5eX+9Q@mail.gmail.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 18 Dec 2019 12:09:42 -0300
-Message-ID: <CAOMZO5BibF5A9sw=fLr3DXLf9LXYdxWy=aK7KCE3L0bt5eX+9Q@mail.gmail.com>
+Date:   Wed, 18 Dec 2019 12:28:07 -0300
+Message-ID: <CAOMZO5BOv2e2_NWHxXRQk0v6Q10FgKLQO-HvTgi5oF_bwUEphg@mail.gmail.com>
 Subject: Re: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
 To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     Peng Fan <peng.fan@nxp.com>,
@@ -78,22 +79,14 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andrew,
+On Wed, Dec 18, 2019 at 12:09 PM Fabio Estevam <festevam@gmail.com> wrote:
 
-On Wed, Dec 18, 2019 at 12:00 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> Yes, I think that returning the error like:
 
-> Hi Fabio
+s/returning/printing
+
+> dev_err(dev, "Couldn't determine irq count: %d\n", nr_irq_parent);
 >
-> Look closer. This is not about returning an error, it is about
-> printing an error.
+> would make the code cleaner.
 >
-> I think the API could better. A %ie formatter would make a lot of
-> sense, so avoiding the ERR_PTR().
-
-Yes, I think that returning the error like:
-
-dev_err(dev, "Couldn't determine irq count: %d\n", nr_irq_parent);
-
-would make the code cleaner.
-
-Maybe just a matter of taste though ;-)
+> Maybe just a matter of taste though ;-)
