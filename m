@@ -2,117 +2,105 @@ Return-Path: <SRS0=uBUl=2I=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49097C43603
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 14:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A3EC43603
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 14:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E91B218AC
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 14:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71068218AC
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 14:25:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tVAIlo8S"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PbfrBKd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfLROBy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Dec 2019 09:01:54 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38641 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbfLROBy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Dec 2019 09:01:54 -0500
-Received: by mail-vs1-f65.google.com with SMTP id v12so1434292vsv.5
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Dec 2019 06:01:54 -0800 (PST)
+        id S1727108AbfLROZB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Dec 2019 09:25:01 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54241 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfLROZA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Dec 2019 09:25:00 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m24so2032676wmc.3
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Dec 2019 06:24:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nWpZ8hAd7FUovUz3VnEeC9jKUVwXFStq4OLlcUe32fk=;
-        b=tVAIlo8SBCEWTUL6sbCZVxY5xl1m14gicgIkuld11jK7G5ONmMleDzHNwIK33DUi70
-         cDk/Y7PgO0/R6yhq9tXzGNeXH4Q1M0Ajamh5wxpIPfCDcbCDgcLD+Djq15Dl72Ad0k9z
-         CLmEBpXHiEQjd/SzN4W4f9JIPcclme1w1+YgVTL8QY7czFHk2tn9I27FU2xBoKSid3wb
-         TxVYK/9aj9dD+ZjTG7IXhPPoO99FTRYhGBYdTMEcj+VE4lYTQn1gtCYRSdf2P49X68kx
-         9f0rXjru96p+slgnvel8TE/JtCATu38U6xMPWipb6hM1LLjo89QNsPF3xC3YVQ2PwSGP
-         K+/g==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nn/KRQfGAOpLMIozgAkS2/UpT2LQKqzYyFnIUYqjdc8=;
+        b=PbfrBKd7sk9jBy/VZfBGda7e0Ya/uc2qye9uZ6reXavLIvkJZsL0c0fBVYvb/fYaU+
+         Z1rg0BV/imcaTobRWfopvly992mCM8lBvzu4VfZ3AhC6Xzdt89X6ZTRq0P9vfci7w3jD
+         51rV+7mTtgVQHvCBV2Y4anxsAQ4p5ADldJW822ArxwfH2LvvsU/izUNsvD/J72y5pWlj
+         cNPNhzatgjMpw6cIx4ieqH60n2HIZX5MvvL1GeKt+84Ya6sHH1mDCfxkrytdtDuBdoZV
+         m6mdbu+3g0RcBPpRvR/9JH81yWCG+8YiVIXxG4SpkRPoPB8YzbQiN76DaQthIn78WUp5
+         W1Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nWpZ8hAd7FUovUz3VnEeC9jKUVwXFStq4OLlcUe32fk=;
-        b=juxhBqhTHHs4j7EWTijCmQtX2+XCSNiCvXNzxtQk4aKMIda4mwQKVg/PI/cQ6s8EEt
-         i7bhXjenC0iWfi+hTOpB1muyUvXpZCHimrXQjr11pQsNhJWDFy5P/p8IOA7vzOCByNE8
-         4nck9KuA6yd1rthE0N7CIDW+vOo6m6DFiGehKRlj74FCBBltV9+wWUP+mNjP4ZXXH3Uv
-         ccwe/eVV7zjZUjAR1pMVhnZ2IdG5YiyfViXv1JW5arfuf7kDp+cj6rywbiUEEAXnKJsd
-         rFyqGYK2gehy6kdJjeTT8o/aXrd5+1ZYVJUCN6KvDJrGSu3wkSX9z4VefS4kAO424hIm
-         saGg==
-X-Gm-Message-State: APjAAAVRAGXvfpjORdONotMjjq4CMJu4Fu6P5x+Vb1Y+ksCHzw2yBsf/
-        IELV3fpnWNqr5NweoDFw8S2K7mws2xa5MqorcJrYEw==
-X-Google-Smtp-Source: APXvYqzkFH1g+PqryFVGtuG+lac1yFJaK7FtgFUUP582cfTjMgRsbmSAikWTkyPuUzV8Z+ThYeg5wJ031sxAgsbSxkM=
-X-Received: by 2002:a67:ff82:: with SMTP id v2mr1450518vsq.35.1576677713314;
- Wed, 18 Dec 2019 06:01:53 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1576031636.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1576031636.git.mirq-linux@rere.qmqm.pl>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 18 Dec 2019 15:01:17 +0100
-Message-ID: <CAPDyKFp62ZVzNeReNmk3NWeqjWVoOVFj9BYQza9nU=E-iDvvVg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] mmc: simplify WP/CD GPIO handling
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nn/KRQfGAOpLMIozgAkS2/UpT2LQKqzYyFnIUYqjdc8=;
+        b=avAYNUOXyXU7kuFYbEbQZEOeLZz4ctrSLcrvCM4f2e2K44lXiYTlwCIi4r1dez9zHv
+         F9O6vbzMkqG9RzA00qr3gmf1hHM1c2+4ptKTQjzVbav3u1jnEzWEuHqOLKXLMSMbRMsa
+         Yuwj6+dhGq64naSed9/owYSZ/Fk1oQZhCbldPBqLG+3jGNDgdArV02c5UVo81xnFQ0Og
+         X5fHqmxG0cdwFWV8W5Hpe6KHZCO7nxJQsNDiGA7nMa9hanIfwZmFbO+hpVqwdIejHHaS
+         cCSf0xwowKZLEhpygxZYzsusFyihJIiy/ZHxLA0ulqjemrF/qZpYxSVSNvvXfkOdL19B
+         UIxA==
+X-Gm-Message-State: APjAAAWFyyL1RFkVYWZ19Xp1gphdsEv+tSuq3CR3XJoo0P0F8VU7uz1Z
+        qEjhZhouhb7NU5Ub/NjwLQMliA==
+X-Google-Smtp-Source: APXvYqwszVHo6nOMtIewbPrWCdR1DqzwDIGQNIivQBNDUYmC62l7fg2aYmk4Pjt7PiWlt8XyemZZHw==
+X-Received: by 2002:a1c:1fc5:: with SMTP id f188mr3808523wmf.55.1576679098584;
+        Wed, 18 Dec 2019 06:24:58 -0800 (PST)
+Received: from debian-brgl.home (amontpellier-652-1-53-230.w109-210.abo.wanadoo.fr. [109.210.44.230])
+        by smtp.gmail.com with ESMTPSA id x11sm2889981wre.68.2019.12.18.06.24.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 06:24:58 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [libgpiod][PATCH 0/7] teach libgpiod to read multiple line events at once
+Date:   Wed, 18 Dec 2019 15:24:42 +0100
+Message-Id: <20191218142449.10957-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 11 Dec 2019 at 03:40, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qm=
-qm.pl> wrote:
->
-> This series removes convoluted handling of inverted CD and WP lines in
-> SD/MMC host drivers when using GPIOs.
->
-> First patch adds an API: gpiod_toggle_active_low() that switches line
-> inversion flag in the gpiod structure. Next two patches modify MMC
-> host's WP and CD initialization to apply all the inversions onto
-> gpiod's active-low flag. Final patch removes now-unused argument from
-> init functions.
->
-> x86 allyesconfig build-tested.
->
-> v2: move argument removal in sdhci-esdhc-imx.c to last patch
->
-> Micha=C5=82 Miros=C5=82aw (4):
->   gpio: add gpiod_toggle_active_low()
->   mmc: rework wp-gpio handling
->   mmc: rework cd-gpio handling
->   mmc: remove mmc_gpiod_request_*(invert_gpio)
->
->  drivers/gpio/gpiolib-of.c          | 21 -------------------
->  drivers/gpio/gpiolib.c             | 11 ++++++++++
->  drivers/mmc/core/host.c            | 33 ++++++++----------------------
->  drivers/mmc/core/slot-gpio.c       | 31 ++++++++++------------------
->  drivers/mmc/host/davinci_mmc.c     |  4 ++--
->  drivers/mmc/host/mmc_spi.c         |  4 ++--
->  drivers/mmc/host/mmci.c            |  4 ++--
->  drivers/mmc/host/pxamci.c          | 12 +++++------
->  drivers/mmc/host/s3cmci.c          |  4 ++--
->  drivers/mmc/host/sdhci-acpi.c      |  2 +-
->  drivers/mmc/host/sdhci-esdhc-imx.c | 15 +++++++-------
->  drivers/mmc/host/sdhci-pci-core.c  |  4 ++--
->  drivers/mmc/host/sdhci-sirf.c      |  2 +-
->  drivers/mmc/host/sdhci-spear.c     |  2 +-
->  drivers/mmc/host/tmio_mmc_core.c   |  2 +-
->  include/linux/gpio/consumer.h      |  7 +++++++
->  include/linux/mmc/slot-gpio.h      |  5 ++---
->  17 files changed, 67 insertions(+), 96 deletions(-)
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Applied for next, thanks!
+In v2 of my series adding the line status watch I introduced a regression
+that made it impossible to read more than one event at the same time. This
+is because I use libgpiod for testing and it doesn't allow to read more
+than one event from user-space.
 
-Kind regards
-Uffe
+This series adds this missing functionality so that we can test v3 and avoid
+this problem.
+
+Bartosz Golaszewski (7):
+  core: use gpiod_line_event_get_fd() in gpiod_line_event_read()
+  core: provide functions for reading multiple line events at once
+  tests: event: extend test coverage for reading multiple line events at
+    once
+  bindings: cxx: provide a method for reading multiple line events
+  bindings: cxx: tests: add a test-case for reading multiple line events
+  bindings: python: add a method for reading multiple line events
+  bindings: python: tests: add a test-case for reading multiple line
+    events
+
+ bindings/cxx/gpiod.hpp                 |  7 +++
+ bindings/cxx/line.cpp                  | 45 +++++++++++---
+ bindings/cxx/tests/tests-event.cpp     | 31 ++++++++++
+ bindings/python/gpiodmodule.c          | 57 ++++++++++++++++++
+ bindings/python/tests/gpiod_py_test.py | 22 +++++++
+ include/gpiod.h                        | 25 ++++++++
+ lib/core.c                             | 68 ++++++++++++++++-----
+ tests/tests-event.c                    | 83 ++++++++++++++++++++++++++
+ 8 files changed, 314 insertions(+), 24 deletions(-)
+
+-- 
+2.23.0
+
