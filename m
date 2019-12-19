@@ -1,88 +1,85 @@
-Return-Path: <SRS0=uBUl=2I=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=bVYD=2J=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF14C43603
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 21:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A654C43603
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 02:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E55521D7D
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Dec 2019 21:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576706075;
-	bh=mcExDNILq8pM3LFd+v9d9c6foCOXsxQ1T0oFahqbRh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OuR1bpuPmWRJIRiZmRt/iHrpZ2tpH1mClAIOQ/qk2YXq1SQRAn26mRlGJNFw5FpBM
-	 v5SowhPuQw3cfVZLblG+yoYmDl5jB2Hw1HX4Kh1843jEy4hDSmV8xAPUDqdjMX4gqE
-	 NDz6KLqJvM4fMDs2vgrZ2qSc1xHSfDr13J5DsPg4=
+	by mail.kernel.org (Postfix) with ESMTP id 13AF3227BF
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 02:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbfLRVyf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Dec 2019 16:54:35 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46058 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfLRVye (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Dec 2019 16:54:34 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v10so1984385oiv.12;
-        Wed, 18 Dec 2019 13:54:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4RebbRKcBu8o8r+u/BBh/JSYzRJPnaXsDajYWgLnYyw=;
-        b=uJ0Hv9qmpjjQ4C8wtscrrjYcMCBe7piHv0j76Zuy0ocRkLCFPUNvXUHVeYV3o29eGr
-         4Yo09EtaBGO7ONXr1FOBBOCbvt2pDV3Qye1rk0VTvtV2nzObJhWurWhFW/LIe+qodJu7
-         oES7PiRwMnzMts2bdqZRFyg9TZpCOY3T+vtmeAsXOEkoV4s2l8p6/7hDCaxNz1DuY8ec
-         YDIYjWh32KU/iZGHtduh+13QJsH8lw3fi3xdzuuYNNnvYjR8lCP6HE0HGZYP7xyjVEc8
-         Y5Y+Oz9A5ctNndUWe8uJV394NhISkJ7IEXR7+wb3wIf4z2RUgdzOO9/t+E5HHn/caJ7U
-         trNA==
-X-Gm-Message-State: APjAAAVnjCZHIob9SWehSolCN+/AB6ZZJajAoyfcBoWZyaGomH4nqjvI
-        VgA6xdMYxKDxgsSnhi08jA==
-X-Google-Smtp-Source: APXvYqwZrcJhNxjx6lo9XtXroFdtRIESqHQuSWgDp6/7eHy2HGyZGdP4rPahMSQLRpcY8klzgrhuug==
-X-Received: by 2002:aca:5490:: with SMTP id i138mr1620807oib.34.1576706073981;
-        Wed, 18 Dec 2019 13:54:33 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k5sm1276825otp.33.2019.12.18.13.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:54:33 -0800 (PST)
-Date:   Wed, 18 Dec 2019 15:54:32 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     support.opensource@diasemi.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [RESEND PATCH v3 1/3] dt-bindings: mfd: da9062: add gpio bindings
-Message-ID: <20191218215432.GA23682@bogus>
-References: <20191212160413.15232-1-m.felsch@pengutronix.de>
- <20191212160413.15232-2-m.felsch@pengutronix.de>
+        id S1726895AbfLSCue (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Dec 2019 21:50:34 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8147 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726463AbfLSCud (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Dec 2019 21:50:33 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 86CAE7DB640449C6FB7B;
+        Thu, 19 Dec 2019 10:50:31 +0800 (CST)
+Received: from linux-lmwb.huawei.com (10.175.103.112) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 19 Dec 2019 10:50:20 +0800
+From:   Ma Feng <mafeng.ma@huawei.com>
+To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        "Gregory Clement" <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ma Feng <mafeng.ma@huawei.com>
+Subject: [PATCH] pinctrl: armada-37xx: Remove unneeded semicolon
+Date:   Thu, 19 Dec 2019 10:51:05 +0800
+Message-ID: <1576723865-111331-1-git-send-email-mafeng.ma@huawei.com>
+X-Mailer: git-send-email 2.6.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212160413.15232-2-m.felsch@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.103.112]
+X-CFilter-Loop: Reflected
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 12 Dec 2019 17:04:11 +0100, Marco Felsch wrote:
-> Add gpio device documentation to make the da9062 gpios available for
-> users.
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
-> Changelog:
-> 
-> v2:
-> - remove sub-node documentation
-> - squash gpio properties into mfd documentation
-> ---
->  Documentation/devicetree/bindings/mfd/da9062.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+Fixes coccicheck warning:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:736:2-3: Unneeded semicolon
+drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:803:2-3: Unneeded semicolon
+
+Fixes: commit 5715092a458c ("pinctrl: armada-37xx: Add gpio support")
+       commit 2f227605394b ("pinctrl: armada-37xx: Add irqchip support")
+
+Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index aa9dcde..9f0b3d3 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -733,7 +733,7 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 			ret = 0;
+ 			break;
+ 		}
+-	};
++	}
+ 	if (ret) {
+ 		dev_err(dev, "no gpio-controller child node\n");
+ 		return ret;
+@@ -800,7 +800,7 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+ 			ret = 0;
+ 			break;
+ 		}
+-	};
++	}
+ 	if (ret)
+ 		return ret;
+
+--
+2.6.2
+
