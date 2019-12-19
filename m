@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0A3C2D0D1
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 17:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DEBC43603
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 17:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B292467E
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 17:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D7DA24680
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 17:16:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="oOE+JHQM"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="fJGiH31V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfLSRPm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 19 Dec 2019 12:15:42 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54833 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfLSRPl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Dec 2019 12:15:41 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b19so6230290wmj.4
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Dec 2019 09:15:40 -0800 (PST)
+        id S1726982AbfLSRPj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 19 Dec 2019 12:15:39 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38120 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbfLSRPj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Dec 2019 12:15:39 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u2so6446088wmc.3
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Dec 2019 09:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZKnof9NnGnWaz5Wg5PNLvyOb/wEdh4vzWoDXW3CwsIs=;
-        b=oOE+JHQMOaM2l1QZYogpzJH6M7Wn3Dp2n5HfS+vV9Nr7K85412tv8ZdYFI1dhaCtDD
-         ++YFBXokMGS6KEFagBjki2uJesGJIgREumCwOdU9e2+v21zYxDYi2U8oPDVG9OcEm7/i
-         xZbd3W+OlbjSLaOzwMM2rg3rETgaiRzWxf9onnmMPPKOYf+Fe3x2+WcKN39U/41wTmpN
-         ZkTueFGigG84uc7joqvVY9tmyOgWWcddHiPhSXHcJ81j3fA/cY7nD4CWzX8cGrIWM/Y7
-         XOxgbm7YkMD+lLRoLBtBdyIuSKEUDAOf64BBogI3nIhsGUCAWX4zLuZHfvutISOK+xBT
-         fTlg==
+        bh=evGr6fE++6g6GFFfppzZpmdFKXc03gQbrsBnrRpXkt4=;
+        b=fJGiH31Vt13rJnJqTXwPwU+EtINEb85MW7y7grTb0ZaBou/agTnZVxjXD2Cypieuxu
+         LJ/eLk+xT+uYj1+JMTShUVFgXKOYPzx7PvysYSqC2NMnQTBRmkODTp3536+Cas6F385z
+         akTEC/muN+Ftaw2mIcXd7wRET1KlWQJ4RunrYHpyGMBNsRTnbLTYzbnidXQrJJIfWsVx
+         ppN9h5wYG4eKW3kA1Ecx37f6ggPWqdhbD6W8rLoejke5CaXxjP318dSfH+KSsmD8+HoD
+         jDcbsG9Adnhi9Ofr3bkZyek/WiqGrXI39CnMFqtM4jZpZYAK+nhqzz0lzvKcSuiqoCop
+         mf3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZKnof9NnGnWaz5Wg5PNLvyOb/wEdh4vzWoDXW3CwsIs=;
-        b=ZVOUySxI0KlfKq21d7zieRz7NAqXnoomw0Np60CaVZArZMO+jrftxiJ0qLepG7va4f
-         W2pE63hqiKgeXSq3OUSoVcQVOSy84Pf9qgq0VsTcYVfECLTc/L8FBQ9XZ36EPqG1QeYT
-         a8vbDaRfQOaLrqYcW9K8sRoFN1muDR2SlCyaxic00gbp8qKW+qeRMVbPUNk32LlB386d
-         uC3IFtVKBdv631haAx65cdH4klwWAKPTyMJde20lz5ShQMftxl9DC+WdoLPA9182c/hO
-         UqIdaLIZ7TYlJ7IzIzAesGHowC3jYfJNMJGX5WJhpFp+c1yOorPsNpjaeamW6TqoKpgU
-         nGzQ==
-X-Gm-Message-State: APjAAAUZEJ6N2DX19VPVh+9wbe+UHY9h9UGF8YbXdPzGG2fySXVvTUdD
-        nYpfQ50Wbt5KdR++cEkROsWAKg==
-X-Google-Smtp-Source: APXvYqxyed9XQDWxCA7f59327N+KYa5GAs0nDM+2pUGQ5XO2gXAyJSlmK01+XGMkzke8l8r38BZI+w==
-X-Received: by 2002:a1c:6404:: with SMTP id y4mr11340453wmb.143.1576775739740;
-        Thu, 19 Dec 2019 09:15:39 -0800 (PST)
+        bh=evGr6fE++6g6GFFfppzZpmdFKXc03gQbrsBnrRpXkt4=;
+        b=pXcZfrvud33WuFwHRx5kdO4UwfuzAPbK9DTimz2TzVl9I2h69Y2Le4rXsWHBNwMCoC
+         rmFuYLYKmWkBHkyBPLOu0uoetQABnMmqV2O4rtVWYO7Sc2J+2LCg2C6xNI+wlQmRO/vE
+         JiYs1EzVgH8p9fAmpeZqiSVoFUA3wYEWr6hg43i0E44nJL30tPQYUXoe6DaSvgfDN/Dq
+         yabeYRHXlqtQ8A4QcK5wMS/8Vv/kD18VctiQsDDECrxt1+T32yrNKUwtzmKB/ePA1nP0
+         qK6RKDAoA+V++Tm2wF3K2eAbCSfapvRUR8JCb6vDMPhu4K0G0csSXNas0+R1ucaXkm+F
+         mNGQ==
+X-Gm-Message-State: APjAAAV7+CLey5JT8ohFZMHyynRUgK8ecwYUC5pGgiyoO6rvO2G+jjRA
+        SBJhVUPCrmuobvlPoC90BkjJLQ==
+X-Google-Smtp-Source: APXvYqxS6MMzWyPCAcmckrozGtdlIRco9JhBrCYeknCV2Mx6N+bMCxx10LvlimrWqswtG2UTKJaozw==
+X-Received: by 2002:a05:600c:2148:: with SMTP id v8mr11810672wml.111.1576775737398;
+        Thu, 19 Dec 2019 09:15:37 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id q6sm7401428wrx.72.2019.12.19.09.15.38
+        by smtp.gmail.com with ESMTPSA id q6sm7401428wrx.72.2019.12.19.09.15.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 09:15:39 -0800 (PST)
+        Thu, 19 Dec 2019 09:15:36 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -62,9 +62,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 04/13] gpiolib: use gpiochip_get_desc() in linehandle_create()
-Date:   Thu, 19 Dec 2019 18:15:19 +0100
-Message-Id: <20191219171528.6348-5-brgl@bgdev.pl>
+Subject: [PATCH v3 02/13] gpiolib: have a single place of calling set_config()
+Date:   Thu, 19 Dec 2019 18:15:17 +0100
+Message-Id: <20191219171528.6348-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191219171528.6348-1-brgl@bgdev.pl>
 References: <20191219171528.6348-1-brgl@bgdev.pl>
@@ -77,37 +77,73 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Unduplicate the ngpio check by simply calling gpiochip_get_desc() and
-checking its return value.
+Instead of calling the gpiochip's set_config() callback directly and
+checking its existence every time - just add a new routine that performs
+this check internally. Call it in gpio_set_config() and
+gpiod_set_transitory(). Also call it in gpiod_set_debounce() and drop
+the check for chip->set() as it's irrelevant to this config option.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/gpio/gpiolib.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b3ffb079e323..6ef55cc1188b 100644
+index a31797fe78fa..72211407469f 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -678,14 +678,13 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 	/* Request each GPIO */
- 	for (i = 0; i < handlereq.lines; i++) {
- 		u32 offset = handlereq.lineoffsets[i];
--		struct gpio_desc *desc;
-+		struct gpio_desc *desc = gpiochip_get_desc(gdev->chip, offset);
+@@ -3042,6 +3042,15 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+  * rely on gpio_request() having been called beforehand.
+  */
  
--		if (offset >= gdev->ngpio) {
--			ret = -EINVAL;
-+		if (IS_ERR(desc)) {
-+			ret = PTR_ERR(desc);
- 			goto out_free_descs;
- 		}
++static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
++			      enum pin_config_param mode)
++{
++	if (!gc->set_config)
++		return -ENOTSUPP;
++
++	return gc->set_config(gc, offset, mode);
++}
++
+ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 			   enum pin_config_param mode)
+ {
+@@ -3060,7 +3069,7 @@ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 	}
  
--		desc = &gdev->descs[offset];
- 		ret = gpiod_request(desc, lh->label);
- 		if (ret)
- 			goto out_free_descs;
+ 	config = PIN_CONF_PACKED(mode, arg);
+-	return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
++	return gpio_do_set_config(gc, offset, mode);
+ }
+ 
+ static int gpio_set_bias(struct gpio_chip *chip, struct gpio_desc *desc)
+@@ -3294,15 +3303,9 @@ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ 
+ 	VALIDATE_DESC(desc);
+ 	chip = desc->gdev->chip;
+-	if (!chip->set || !chip->set_config) {
+-		gpiod_dbg(desc,
+-			  "%s: missing set() or set_config() operations\n",
+-			  __func__);
+-		return -ENOTSUPP;
+-	}
+ 
+ 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
+-	return chip->set_config(chip, gpio_chip_hwgpio(desc), config);
++	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_debounce);
+ 
+@@ -3339,7 +3342,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ 	packed = pinconf_to_config_packed(PIN_CONFIG_PERSIST_STATE,
+ 					  !transitory);
+ 	gpio = gpio_chip_hwgpio(desc);
+-	rc = chip->set_config(chip, gpio, packed);
++	rc = gpio_do_set_config(chip, gpio, packed);
+ 	if (rc == -ENOTSUPP) {
+ 		dev_dbg(&desc->gdev->dev, "Persistence not supported for GPIO %d\n",
+ 				gpio);
 -- 
 2.23.0
 
