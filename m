@@ -1,110 +1,121 @@
-Return-Path: <SRS0=bVYD=2J=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Y++B=2K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828F8C43603
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 22:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103BFC43603
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Dec 2019 02:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC482465E
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Dec 2019 22:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13F124682
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Dec 2019 02:49:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ExS6UmAq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLSWVf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 19 Dec 2019 17:21:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:45120 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbfLSWVe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:21:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 14:21:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,333,1571727600"; 
-   d="scan'208";a="267347305"
-Received: from dmulla-mobl.amr.corp.intel.com (HELO [10.254.112.28]) ([10.254.112.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Dec 2019 14:21:32 -0800
-Subject: Re: [alsa-devel] [PATCH v6 02/11] mfd: wcd934x: add support to
- wcd9340/wcd9341 codec
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc:     robh@kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        devicetree@vger.kernel.org, spapothi@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
- <20191219103153.14875-3-srinivas.kandagatla@linaro.org>
- <af48cd71-fa1a-dbc5-0e88-e315ea13c28c@linux.intel.com>
- <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <4492b71e-9923-365c-f22c-3766e2d5bae2@linux.intel.com>
-Date:   Thu, 19 Dec 2019 14:05:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727063AbfLTCtr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 19 Dec 2019 21:49:47 -0500
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:55528 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfLTCtr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Dec 2019 21:49:47 -0500
+Received: by mail-wm1-f50.google.com with SMTP id q9so7433319wmj.5
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Dec 2019 18:49:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=sAd1xoGXJNT86GanjyzYXDNJTuJ1zgICiu4tFUWDIYc=;
+        b=ExS6UmAq5uvmPU/OlRhTortPBP0h7VLdm6+r/e8ilcs+YAh2PAmZjTOjj6j1FGTGgV
+         /jk6hFK3J8zQ1bObyhoEBV0Vz8JQsrFObH9BcIupsjZnoDF/SXwcLwJp0GvzC+iwK3C6
+         uencGFbKBe8QIMuZHPmtyWcvH6V+wWIl0k2XxZIBe6u4dVISGXpmOXfZkEE4vvTwrDsP
+         /3BM0I1NfUROWoh6pxvdz58kIGMpTXRXspnfbJCtLQ5j0An71GvEDyUapWAAiYI6oDbV
+         xWXU59cu3p0/42Pf7NAaWYYzAPsBIsFVhPKXee/QTqCbMx8r+LEcQA1Jd2xX7O8aQ5N0
+         /Esw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=sAd1xoGXJNT86GanjyzYXDNJTuJ1zgICiu4tFUWDIYc=;
+        b=ULsXbU3RG+zFQnhE/OChUAHVtSBocyGuTxuNJC7PiAwwozuNmBXknHYNk+7coEhRz5
+         nw+ZA9g+zwqZgsEbx38Rr9i8w+d1iyweXbcNJpqz0KP0Ped/Sq6/E7r4x6Sa9+AVQmEW
+         TSBoFp/7MTQv2IhEsFHtFdug3+GMqwOlHj54wHNwwOydu9keZznF0ds9VHOPapOJyDD+
+         aBljVYOH5vUL0yXFIMg+OXd1Bg6n/ZY7C7Prw4xELF2nl3yfz0PwiWGCG6EVWvfCEaJF
+         Ba6eXu7wpQ1c4XUl6vSzLQ43NJ82UuTgle6a4q39Vm425r/bWur5mZ+d4aZwvQMxD4cc
+         BBIA==
+X-Gm-Message-State: APjAAAV+ZNro8GI8cF+xabL6VT3g1pyYE7uUIJ/4ti+wlSOrfsmBKXMq
+        SVpn+Y/vRv5SsgC2CGP4XAcpDOUp/AKo9w==
+X-Google-Smtp-Source: APXvYqwhxOxRN5wX1rO6OYuLYkk3jjIMBWAQ6Kb42xNC2Tj9fNjjQ/39M+5bjNaXWq0x4hsArEJRKg==
+X-Received: by 2002:a1c:9814:: with SMTP id a20mr13063386wme.94.1576810185191;
+        Thu, 19 Dec 2019 18:49:45 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id m3sm8033104wrs.53.2019.12.19.18.49.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 18:49:44 -0800 (PST)
+Message-ID: <5dfc36c8.1c69fb81.ae2a.896c@mx.google.com>
+Date:   Thu, 19 Dec 2019 18:49:44 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v5.5-rc1-20-g06c4fc5eda6b
+X-Kernelci-Tree: linusw
+X-Kernelci-Branch: for-next
+Subject: linusw/for-next build: 5 builds: 0 failed,
+ 5 passed (v5.5-rc1-20-g06c4fc5eda6b)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+linusw/for-next build: 5 builds: 0 failed, 5 passed (v5.5-rc1-20-g06c4fc5ed=
+a6b)
 
+Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
+l/v5.5-rc1-20-g06c4fc5eda6b/
 
->> It was my understanding that in SLIMbus the Linux devices are created 
->> at probe time, and when the device reports present this 
->> 'device_status' callback is used to notify the codec driver of a 
->> change. The rationale for this was that the codec driver may control 
->> power switches/gpios that are necessary for the device to appear on 
->> the bus.
-> 
-> We use same rational here to power switch and flip reset pins in device 
-> probe to power up the actual SLIMBus device in device probe.
-> 
-> Only difference here is that the actual SLIMBus device itself is 
-> represented as many child devices based on there functionality.
-> 
-> SLIMBus parent device in this case is MFD device which is created at 
-> probe time. However child devices for that device like gpio controller, 
-> codec, clock controller and soundwire controller are created only after 
-> the device is enumerated on the bus. Before that none of these devices 
-> will be in a position to talk on the bus.
-> 
-> 
->>
->> This argument was used to require an change in the SoundWire 
->> implementation, so we followed this model of creating devices at probe 
->> time based on information reported by ACPI/DT, and used the 
->> 'update_status' callback when the device is present on the bus (which 
->> may happen after a delay or controlled by an external power switch). 
->> This approach can lead to 'ghost devices' described in firmware but 
->> not populated in hardware, and power management opens on how long a 
->> bus needs to remain active if no devices report present.
->>
->> What I understand from the code above is that the devices are actually 
->> created when the SLIMbus device reports PRESENT, which seems a 180 
->> degree change in directions?
->>
-> Note these are the child devices of the MFD SLIMBus device.
+Tree: linusw
+Branch: for-next
+Git Describe: v5.5-rc1-20-g06c4fc5eda6b
+Git Commit: 06c4fc5eda6bce50e3995e436db6aa7fb5bc56eb
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 5 unique architectures
 
-Ah ok. I guess the creation of those child devices when the parent 
-SLIMbus device reports PRESENT initially if fine, it's the part where 
-you remove them if the device loses sync or gets powered off which is 
-odd. And I guess technically you could still have race conditions where 
-a child device starts a transaction just as the parent is no longer 
-attached to the bus.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
->> I would however not remove the devices when the status is down but 
->> only on an explicit .remove.
-> 
-> Am open for suggestions but I would not like the child devices to talk 
-> on the bus once the SLIMbus device is down! Only way to ensure or make 
-> it silent is to remove.
+Detailed per-defconfig build reports:
 
-it's as if you are missing a mechanism to forward the parent status to 
-the children so use remove() for lack of a better solution?
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---
+For more info write to <info@kernelci.org>
