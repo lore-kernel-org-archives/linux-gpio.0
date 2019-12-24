@@ -2,214 +2,149 @@ Return-Path: <SRS0=5ujB=2O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60F8C2D0CF
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 07:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EC9C2D0CF
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A341A2071A
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 07:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577173606;
-	bh=1BJxrvDxsrR7VIQZMUVHbOxilZxPHKLhLbtnCYK0wCI=;
-	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=GvzvP/eseKc7xcVJc+tpF0RZNVAgRzpOWNvJti/uddIAjJ0geJNVgvXITpVjjd/kp
-	 0y9XIGwBJogY9dxR47TrArjQRPM1I9MyjlmyboGXLA9PVU5wB5XyB7hobJ1sdlsMxH
-	 3ZqrjPicwG2DMdTkPlUtIsjF5OqRhUPyuvZSwQ5I=
+	by mail.kernel.org (Postfix) with ESMTP id EE258206B7
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:07:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Qz/h66Ir"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfLXHql (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Dec 2019 02:46:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726910AbfLXHqk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:46:40 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1589220706;
-        Tue, 24 Dec 2019 07:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577173599;
-        bh=1BJxrvDxsrR7VIQZMUVHbOxilZxPHKLhLbtnCYK0wCI=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=JdfRkv/iA1GPjKltY9g+b6rJwS1+cIxjN0vr48ttnpmYMEX8QPn5meFCchbWv1huh
-         l5/CLVEWnsvGvfxUOH+WSJj1UElcjrFHTrpxVoM+UwvZIgbLRtqAKwkA5RoQzbHRTr
-         W3VvVkpDVzCB4m2PWvDaoMi4Nd5r5ZrjumyhIS7s=
-Content-Type: text/plain; charset="utf-8"
+        id S1726214AbfLXMHT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Dec 2019 07:07:19 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33564 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfLXMHT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Dec 2019 07:07:19 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b6so19700553wrq.0
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Dec 2019 04:07:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Abw3Db9iMH8wWhh+IDkbLs69tg1ME9SDU22oNHYrzR8=;
+        b=Qz/h66IrLIF4Fcmb3e1ODN/0yYQzwSQH++GHM9fEx84pbRAAkPKg4xKocbT3ujlTLY
+         naDpqvGbZGj3rQLy0I2I9D2HK36T/PYPuWCs15fkIhUohM2V/L3CNlLnxM0QgjQ74KIs
+         lo48jThm4y1Vrlr+KznVyh6YhvV2a1tR15v90voBwKfI4Yq992aH5fvzQTij5GxdVVoB
+         lR3ckRCSK8yUylM7gUREp6y6lO8MMU/tB2RUz/b8hMZbK0rjRdlm7IIkLwrBDxs3t+Qo
+         SnUnuibRTtO71RDkrq4q7igz215l0XNhGIrP7NsVy4DqKp9kEYRtP4OqrB4c8Loes1hC
+         xukg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Abw3Db9iMH8wWhh+IDkbLs69tg1ME9SDU22oNHYrzR8=;
+        b=HmAGLbPYTSz8Gjqm4yBpxErJaiMMK/c/6/GpG/2juP5rvxzSReuaBkdrBbJZKv52UP
+         E5qGM4d/ImXis/CxrZUp1j7PylxGNJxfabso8q++1jHHwzi4xX2A1W/0KnVLrm24tqlQ
+         oAGqUQvrA4guyBHWc6LkavCPDsZOnmuBAzq/poh1Up0qwnMlD3oM70RiXl7ZmZM/TLE9
+         sNcCmNGGTVg6MfgeqFKnVzqtAE94S+op0S5O2Sf6nznS8PS9UugAs83sJudReFyBtMtz
+         OpKVa3oGh7fSoWsYg0M2tY9HFv/hJzXFK4l7ijfHBSImZBzZLDibCae0NfX86or8KKA+
+         fTxw==
+X-Gm-Message-State: APjAAAXvvZMj4FP5OLo4YABW1WPfK+6ZGsoH2Iwn9ZyDGioinEu7JJYZ
+        jKqo7xh97IxXc7FJEYtMK0/eGw==
+X-Google-Smtp-Source: APXvYqwkFPfJnprWc1Wds4pqUWoD8acoWyG6lTAat+TgSv1F582jJnbbnZs0wAh1s1krF5zNe+sUrw==
+X-Received: by 2002:adf:ef49:: with SMTP id c9mr34448875wrp.292.1577189236920;
+        Tue, 24 Dec 2019 04:07:16 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id s10sm23829210wrw.12.2019.12.24.04.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Dec 2019 04:07:16 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 00/13] gpiolib: add an ioctl() for monitoring line status changes
+Date:   Tue, 24 Dec 2019 13:06:56 +0100
+Message-Id: <20191224120709.18247-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191209183511.3576038-11-daniel@zonque.org>
-References: <20191209183511.3576038-1-daniel@zonque.org> <20191209183511.3576038-11-daniel@zonque.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, broonie@kernel.org,
-        lee.jones@linaro.org, lars@metafoo.de, pascal.huerst@gmail.com,
-        Daniel Mack <daniel@zonque.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Daniel Mack <daniel@zonque.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] clk: Add support for AD242x clock output providers
-User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 23:46:38 -0800
-Message-Id: <20191224074639.1589220706@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Quoting Daniel Mack (2019-12-09 10:35:10)
-> diff --git a/drivers/clk/clk-ad242x.c b/drivers/clk/clk-ad242x.c
-> new file mode 100644
-> index 000000000000..201789d8f174
-> --- /dev/null
-> +++ b/drivers/clk/clk-ad242x.c
-> @@ -0,0 +1,231 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/clk.h>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Is this include used?
+When discussing the recent user-space changes with Kent and while working
+on dbus API for libgpiod I noticed that we really don't have any way of
+keeping the line info synchronized between the kernel and user-space
+processes. We can of course periodically re-read the line information or
+even do it every time we want to read a property but this isn't optimal.
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
+This series adds a new ioctl() that allows user-space to set up a watch on
+the GPIO chardev file-descriptor which can then be polled for events
+emitted by the kernel when the line is requested, released or its status
+changed. This of course doesn't require the line to be requested. Multiple
+user-space processes can watch the same lines.
 
-Is this include used?
+This series also includes a variety of minor tweaks & fixes for problems
+discovered during development. For instance it addresses a race-condition
+in current line event fifo.
 
-> +#include <linux/mfd/ad242x.h>
+v1: https://lkml.org/lkml/2019/11/27/327
 
-Any way we can avoid this build dependency? Maybe just put defines in
-this driver that deals with the clk bits of the device?
+v1 -> v2:
+- rework the main patch of the series: re-use the existing file-descriptor
+  associated with an open character device
+- add a patch adding a debug message when the line event kfifo is full and
+  we're discarding another event
+- rework the locking mechanism for lineevent kfifo: reuse the spinlock
+  from the waitqueue structure
+- other minor changes
 
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/adi,ad242x.h>
-> +
-> +#define AD242X_NUM_CLKS 2
-> +
-> +struct ad242x_clk_hw {
-> +       struct clk_hw hw;
-> +       struct clk_init_data init;
+v2 -> v3:
+- added patches providing new implementation for some kfifo macros
+- fixed a regression in the patch reworking the line event fifo: reading
+  multiple events is now still possible
+- reworked the structure for new ioctl: it's now padded such that there
+  be no alignment issues if running a 64-bit kernel on 32-bit userspace
+- fixed a bug where one process could disable the status watch of another
+- use kstrtoul() instead of atoi() in gpio-watch for string validation
 
-Do we need to keep around this init data after probe? I'd rather leave
-this out.
+v3 -> v4:
+- removed a binary file checked in by mistake
+- drop __func__ from debug messages
+- restructure the code in the notifier call
+- add comments about the alignment of the new uAPI structure
+- remove a stray new line that doesn't belong in this series
+- tested the series on 32-bit user-space with 64-bit kernel
 
-> +       struct ad242x_node *node;
+Bartosz Golaszewski (13):
+  gpiolib: use 'unsigned int' instead of 'unsigned' in gpio_set_config()
+  gpiolib: have a single place of calling set_config()
+  gpiolib: convert the type of hwnum to unsigned int in
+    gpiochip_get_desc()
+  gpiolib: use gpiochip_get_desc() in linehandle_create()
+  gpiolib: use gpiochip_get_desc() in lineevent_create()
+  gpiolib: use gpiochip_get_desc() in gpio_ioctl()
+  kfifo: provide noirqsave variants of spinlocked in and out helpers
+  kfifo: provide kfifo_is_empty_spinlocked()
+  gpiolib: rework the locking mechanism for lineevent kfifo
+  gpiolib: emit a debug message when adding events to a full kfifo
+  gpiolib: provide a dedicated function for setting lineinfo
+  gpiolib: add new ioctl() for monitoring changes in line info
+  tools: gpio: implement gpio-watch
 
-What's the point of this structure? Can we use dev->parent->regmap and
-just store the struct regmap pointer here instead of using this custom
-struct?
+ drivers/gpio/gpiolib.c      | 397 +++++++++++++++++++++++++++---------
+ drivers/gpio/gpiolib.h      |   4 +-
+ include/linux/gpio/driver.h |   3 +-
+ include/linux/kfifo.h       |  73 +++++++
+ include/uapi/linux/gpio.h   |  30 +++
+ tools/gpio/.gitignore       |   1 +
+ tools/gpio/Build            |   1 +
+ tools/gpio/Makefile         |  11 +-
+ tools/gpio/gpio-watch.c     |  99 +++++++++
+ 9 files changed, 515 insertions(+), 104 deletions(-)
+ create mode 100644 tools/gpio/gpio-watch.c
 
-> +       u8 reg;
-> +};
-> +
-> +struct ad242x_clk_driver_data {
-> +       struct ad242x_clk_hw hw[AD242X_NUM_CLKS];
+-- 
+2.23.0
 
-If this is the only drvdata, then I'd prefer just the array and not
-another struct so we can have clarity.
-
-> +};
-> +
-> +static inline struct ad242x_clk_hw *to_ad242x_clk(struct clk_hw *hw)
-> +{
-> +       return container_of(hw, struct ad242x_clk_hw, hw);
-> +}
-> +
-[...]
-> +
-> +static long ad242x_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                                 unsigned long *parent_rate)
-> +{
-> +       unsigned long pll_rate =3D *parent_rate * 2048UL;
-> +       unsigned long prediv, div;
-> +
-> +       if (rate > pll_rate / 4 || rate < pll_rate / 1024UL)
-> +               return -EINVAL;
-
-This callback should round the rate to something valid. If the rate is
-larger than pll_rate / 4 then it should clamp to be the highest rate
-supported. Likewise for something slow.
-
-> +
-> +       ad242x_do_div(rate, pll_rate, &prediv, &div);
-> +
-> +       return pll_rate / (prediv * div);
-> +}
-> +
-[...]
-> +
-> +static struct clk_hw *
-> +ad242x_of_clk_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +       struct ad242x_clk_driver_data *drvdata =3D data;
-> +       unsigned int idx =3D clkspec->args[0];
-> +
-> +       return &drvdata->hw[idx].hw;
-
-It looks quite a bit like of_clk_hw_onecell_get(). Can that be used? Or
-at least check for out of bounds and return failure?
-
-> +}
-> +
-> +static int ad242x_clk_probe(struct platform_device *pdev)
-> +{
-> +       const char *clk_names[AD242X_NUM_CLKS] =3D { "clkout1", "clkout2"=
- };
-> +       u8 regs[AD242X_NUM_CLKS] =3D { AD242X_CLK1CFG, AD242X_CLK2CFG };
-> +       struct ad242x_clk_driver_data *drvdata;
-> +       struct device *dev =3D &pdev->dev;
-> +       const char *sync_clk_name;
-> +       struct ad242x_node *node;
-> +       int i, ret;
-> +
-> +       if (!dev->of_node)
-> +               return -ENODEV;
-
-Please drop this. It's not useful.
-
-> +
-> +       drvdata =3D devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +       if (!drvdata)
-> +               return -ENOMEM;
-> +
-> +       node =3D dev_get_drvdata(dev->parent);
-
-Add a NULL check on node?
-
-> +       sync_clk_name =3D ad242x_master_get_clk_name(node->master);
-> +
-> +       for (i =3D 0; i < AD242X_NUM_CLKS; i++) {
-> +               const char *name;
-> +
-> +               if (of_property_read_string_index(dev->of_node,
-> +                                                 "clock-output-names",
-> +                                                 i, &name) =3D=3D 0)
-> +                       drvdata->hw[i].init.name =3D name;
-> +               else
-> +                       drvdata->hw[i].init.name =3D clk_names[i];
-
-Do you need unique names? Or can you generate psuedo unique names based
-on the device name and clk number?
-
-> +
-> +               drvdata->hw[i].reg =3D regs[i];
-> +               drvdata->hw[i].init.ops =3D &ad242x_clk_ops;
-> +               drvdata->hw[i].init.num_parents =3D 1;
-> +               drvdata->hw[i].init.parent_names =3D &sync_clk_name;
-> +               drvdata->hw[i].hw.init =3D &drvdata->hw[i].init;
-> +               drvdata->hw[i].node =3D node;
-> +
-> +               ret =3D devm_clk_hw_register(dev, &drvdata->hw[i].hw);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
-> +
-> +       return devm_of_clk_add_hw_provider(dev, ad242x_of_clk_get, drvdat=
-a);
-> +}
