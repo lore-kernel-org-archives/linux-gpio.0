@@ -2,102 +2,114 @@ Return-Path: <SRS0=5ujB=2O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252ECC2D0CF
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FADC2D0CF
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF00120706
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87494206B7
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:08:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="E6T59StL"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xE/k+Zm3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfLXMHU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Dec 2019 07:07:20 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35444 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbfLXMHU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Dec 2019 07:07:20 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so2355253wmb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Dec 2019 04:07:18 -0800 (PST)
+        id S1726314AbfLXMIx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Dec 2019 07:08:53 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41595 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfLXMIx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Dec 2019 07:08:53 -0500
+Received: by mail-io1-f66.google.com with SMTP id c16so15402594ioo.8
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Dec 2019 04:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GO3zXMZimp5dVxXCLQ2FW62+17mQ9omxCxnoqXW9B+A=;
-        b=E6T59StLaXs/q74XsZyplYGF+eHEQ2/kAL+qf3Z4NWGYiyRvJgyO4BvGCvS1Vu2a41
-         RBv83RYJc/LjSIguLNmztjayizflhtnhyzdcHW0Vzc6o6N1xqUz+v0i3F30xm4YOxR28
-         qMdFeeh8nJLe4VVftFrzhLffpu+pAkPgjQ/yexM5rWZdqB8w7chMxbxOEAQZArfV22BB
-         94sw52DNaZ1jQsQodMv5OHEIMrSJrY/Vm/a8xPXriGj/jS/KOujG4R+44xs4aKRey/VR
-         0kjakXh2oYMGiKEsRrplc0Tnk1GEjLIghYXZHboTDLccLYM1vpebSFd9g2fqMBD/uHvY
-         bWBA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kMEJ1g3awjiJois5IXlpJaY3/3SmKKn3MhVIUyIiwUc=;
+        b=xE/k+Zm3ZFRXndkfMspOBt5kR1YvFrSN0e2ynu/Wmd5Vds0tGvSKoLQ568kSJzlK+9
+         HM79XkYELPxySMdzErmPeFL+NY4dFv+zPRPCRw/alakoh4B9QoqXIHE79Awa475DyLqq
+         nyQ8jHyCpVmjoQTFe+9AhGTec4hJUJI+seEwGF+Xa85edEgT3Gb8OP03MI8rSI8wwaGx
+         RSYDy/qI4U0s/5cuRns5hsx4Be65/Lq53Sf3zVLf66C1l6K6oIVNA9zJgTASGFqua8ez
+         abXcCTTESsZT+6aWnJPDOflcO8DcUXVO/O3w4H1fU4AjyM/D8jnVGheLVhrC0ytMjZPY
+         xmPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GO3zXMZimp5dVxXCLQ2FW62+17mQ9omxCxnoqXW9B+A=;
-        b=bL/73Z7bOalmf6oW/wYCX9RMf0m7eIZ3FG6nv8GXC0RxLXCRcq3pydyN+L6OQYCCQ2
-         tl/wzQfqMULJRINFsWjJnzdVc1qAZJR6KrXSdv6kIoSf3lXxe9x7lAGh+IsvwpmabBXF
-         RbFPQaV8fHe4kUBuz2xvu1ePp6tylSapqm3KQxIzcvcuLUrF0+jEXwtNWpuqESVRxR95
-         hlJkSwNrF0iRYfIJ8vgpH6f+2oryIW2ARvz0aMsMpjjnUAfrMVdswUz8c7ZBJsgtIWpO
-         pGwP5j9EZvU5WxlwxBs75X2tJk7B6a1C/dKLqVZ5oaGjMglcAAQJaHarQ+nbYPSys9K7
-         6upg==
-X-Gm-Message-State: APjAAAXydhlcXHCotpA0PcctCOBAqrxHo1joQSlIwbLMPTk2Ryn9nPQ5
-        uNR4mUkd9+9gn2J4Bt6aNF12/Q==
-X-Google-Smtp-Source: APXvYqy+hB4nZIysuBUiCvcu3BMLslJ/SswWIrfJ7nUG2VAsvcMTUmMXlaruuKmhqBbyCJHHE0/FHQ==
-X-Received: by 2002:a1c:5444:: with SMTP id p4mr3917068wmi.33.1577189238229;
-        Tue, 24 Dec 2019 04:07:18 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id s10sm23829210wrw.12.2019.12.24.04.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 04:07:17 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kMEJ1g3awjiJois5IXlpJaY3/3SmKKn3MhVIUyIiwUc=;
+        b=sLvCD7WIGs55141WzmXyle2cUVcaRMZ/PtGar3dTR3t8P6mCrWTrzxe0UNvgVvRlut
+         NwD/b2M97xp1OG3mh31NzH3AsBA4t7QFUnNBENAeOmbdgmBCli3MKYSsT8rehxd3nvr6
+         TNaPTNdq4iRI0Y5WZkZwClit+dYiALIXRvYbtJBqkAN5sxav/ilA9KeshbSQeGvFBd2r
+         +qF/Di8hOpYJbvua1njw42QXFIwiEnq88pu0JgDsYWgUyZBMioEfdhYsg39CB79eO1IV
+         dWOgLHsivJOR+YH9ta+fo0m7TrMZOXmr4Nb3qXpFgZePL1TpApRyJDqUZBbybcLT5kHi
+         Ef2Q==
+X-Gm-Message-State: APjAAAXLC/1UXoqI6w7le6kjosSpFpQd99Y4f7ni2UsEzOlJuJBpZ3cE
+        mvaEnt4CGQ0EvSR56DsWYdoUbMsY0pdqUnOs6SPbbA==
+X-Google-Smtp-Source: APXvYqxS+n0uInOSHMsGQsOz7Vzo/DR0J0T9yDlisU6t8kWtggEJGnzpV5dEMdZJxeAAxYkBedY3EBh4JBiwBUrJ13o=
+X-Received: by 2002:a02:40e:: with SMTP id 14mr27133228jab.102.1577189332324;
+ Tue, 24 Dec 2019 04:08:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20191219171528.6348-1-brgl@bgdev.pl> <20191219171528.6348-13-brgl@bgdev.pl>
+ <CAHp75VeMEngXiFmvTrsW7UZMz0ppR-W-J4D1xU+qKGfLXkG3kg@mail.gmail.com>
+In-Reply-To: <CAHp75VeMEngXiFmvTrsW7UZMz0ppR-W-J4D1xU+qKGfLXkG3kg@mail.gmail.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
+Date:   Tue, 24 Dec 2019 13:08:41 +0100
+Message-ID: <CAMRc=MdCQkooyMLH8E2uX8+gT7h8VsXnvv0oXvCstb=vjHJ8WA@mail.gmail.com>
+Subject: Re: [PATCH v3 12/13] gpiolib: add new ioctl() for monitoring changes
+ in line info
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v4 01/13] gpiolib: use 'unsigned int' instead of 'unsigned' in gpio_set_config()
-Date:   Tue, 24 Dec 2019 13:06:57 +0100
-Message-Id: <20191224120709.18247-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191224120709.18247-1-brgl@bgdev.pl>
-References: <20191224120709.18247-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+czw., 19 gru 2019 o 19:17 Andy Shevchenko <andy.shevchenko@gmail.com>
+napisa=C5=82(a):
+>
+> On Thu, Dec 19, 2019 at 7:17 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Currently there is no way for user-space to be informed about changes
+> > in status of GPIO lines e.g. when someone else requests the line or its
+> > config changes. We can only periodically re-read the line-info. This
+> > is fine for simple one-off user-space tools, but any daemon that provid=
+es
+> > a centralized access to GPIO chips would benefit hugely from an event
+> > driven line info synchronization.
+> >
+> > This patch adds a new ioctl() that allows user-space processes to reuse
+> > the file descriptor associated with the character device for watching
+> > any changes in line properties. Every such event contains the updated
+> > line information.
+> >
+> > Currently the events are generated on three types of status changes: wh=
+en
+> > a line is requested, when it's released and when its config is changed.
+> > The first two are self-explanatory. For the third one: this will only
+> > happen when another user-space process calls the new SET_CONFIG ioctl()
+> > as any changes that can happen from within the kernel (i.e.
+> > set_transitory() or set_debounce()) are of no interest to user-space.
+>
+> > -       } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL) {
+> > +       } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL ||
+> > +                  cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL) {
+>
+> Wouldn't be better for maintenance to have them separated from the day 1?
+>
 
-Checkpatch complains about using 'unsigned' instead of 'unsigned int'.
+I think this would lead to a lot of code duplication. I left it as it is is=
+ v4.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 9913886ede90..e5d101ee9ada 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3042,7 +3042,7 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
-  * rely on gpio_request() having been called beforehand.
-  */
- 
--static int gpio_set_config(struct gpio_chip *gc, unsigned offset,
-+static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 			   enum pin_config_param mode)
- {
- 	unsigned long config;
--- 
-2.23.0
-
+Bart
