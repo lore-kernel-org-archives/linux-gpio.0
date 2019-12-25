@@ -1,135 +1,90 @@
-Return-Path: <SRS0=5ujB=2O=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Lzxl=2P=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3938C2D0CF
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838F4C2D0DA
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Dec 2019 08:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AFE4206B7
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Dec 2019 12:11:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="LQExxefK"
+	by mail.kernel.org (Postfix) with ESMTP id 5E65D20643
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Dec 2019 08:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfLXML7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Dec 2019 07:11:59 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33249 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfLXML6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Dec 2019 07:11:58 -0500
-Received: by mail-io1-f65.google.com with SMTP id z8so18983298ioh.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Dec 2019 04:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RO+QoJTwJvstR4vxoRapKAeNA3k9sx2u+8ySGBZQxoY=;
-        b=LQExxefK/OVgLrEUxkZNiO+irKJnfHoaEhw0z8H9ZlZ/OezxnI66InN9NeG3m7khTf
-         zn+QOAEzZ2hs3WN4uySVVQp+Dcgf3wxs20xosS/3PNHGcRestxtQKXCPkzXpis/ll7xI
-         Krq1vb3WSx0S6A//4iC98x1WoEbeZZ9e2LZeiI53YZA8XvqervWU57O4SbMdctpczrvx
-         5nerCH8cpApHjmV5w+bjRyeZrkkN4a4JwmmDUzk59TcX4EHFplensGsg6diJObZa8t7z
-         +Q1VmFzasSdQzzmJkIyctydC8tXQz49rCdJj53BTB93gv44abx0h+w+oO03wzSVKDzp4
-         T2xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RO+QoJTwJvstR4vxoRapKAeNA3k9sx2u+8ySGBZQxoY=;
-        b=m5edDhl1H8UaRfPpCmVKYxT4blDDqr/z+a2IkCrbHw8MWc0V9aNr2Fhh21zxns1P+W
-         a9POzuyUAU0rPUqVM6Y7SIOfByW8Mn7VAWRsNyR+lEfqtu19zPjFCf7+p/MKTPgsma9A
-         ZON32TrlPN2OeieoqBmjRaQVvyqF4UqPxQVeiKStRWNU+k/JgH/DfRyFtDQ9ivRpz2n8
-         TdPoJJXP4Na7luSk6ukLf6PlqR4vypxCsi/fISmBTEi/Vny88pKgT2xqf0qUH2f45IW4
-         qOeBRp0RA2sAd7hluVTx8zNBP/QLZO6ntZiX8NHRNdcVY+QVPvR76YRfcGRJxs/k3tV5
-         JNug==
-X-Gm-Message-State: APjAAAWJUs/haVgM1+GCcm0ww6gKg6xHkxBZaHEgCpQTR1jMUHETg0Uu
-        yoDQ9M0X7YNn8U/1wKDDYrpcL134Ojpefoi3myB0UA==
-X-Google-Smtp-Source: APXvYqyRUIlQlvRTkEbv4XWYLqu+eBhc7er4wiK6jXNG3uZKapzufZ6N8VYu3U/ZmPEvkjbtbwW2Mi7YhGnSzCDIEfQ=
-X-Received: by 2002:a6b:fc0c:: with SMTP id r12mr22548960ioh.189.1577189518168;
- Tue, 24 Dec 2019 04:11:58 -0800 (PST)
+        id S1726185AbfLYIUf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Dec 2019 03:20:35 -0500
+Received: from mail01.vodafone.es ([217.130.24.71]:6410 "EHLO
+        mail01.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfLYIUe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Dec 2019 03:20:34 -0500
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Dec 2019 03:20:33 EST
+IronPort-SDR: ioyLoO0DhPTfCzgg+SHUFozyO+a8RP5R1admDg7VrA3FFSFMZmzKRbN1PFyyVPdOi8HyDdkdBp
+ WBDhaQXMR3Sw==
+IronPort-PHdr: =?us-ascii?q?9a23=3AippbDh8JQ+YbWP9uRHKM819IXTAuvvDOBiVQ1K?=
+ =?us-ascii?q?B30uscTK2v8tzYMVDF4r011RmVBN6dsagfwLWO+4nbGkU4qa6bt34DdJEeHz?=
+ =?us-ascii?q?Qksu4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPER?=
+ =?us-ascii?q?vjKwV1Ov71GonPhMiryuy+4ZLebxhGiTanf79+Mhu7oQrTu8UKnIBvNrs/xh?=
+ =?us-ascii?q?zVr3VSZu9Y33loJVWdnxb94se/4ptu+DlOtvwi6sBNT7z0c7w3QrJEAjsmNX?=
+ =?us-ascii?q?s15NDwuhnYUQSP/HocXX4InRdOHgPI8Qv1Xpb1siv9q+p9xCyXNtD4QLwoRT?=
+ =?us-ascii?q?iv6bpgRRn1gykFKjE56nnahMJwgqJBvhyvpAFxzIHIb4+aL/d+YqHQcs8GSW?=
+ =?us-ascii?q?ZdQspdSSpMCZ68YYsVCOoBOP5VoY/nqFATtxW+HwisBObuyj9Uh3/2w7c12P?=
+ =?us-ascii?q?kmHAHawQwgG84BsHXJo9rvL6cfSuW1w7PJzTXHdf9WxSny6IzWfRA5u/6DQa?=
+ =?us-ascii?q?h8cdLNyUQ2EQ7Ok1aeqZT9Mj+Ly+gAsXKX4/duWO6zkWIrtQ58riKhy8osjI?=
+ =?us-ascii?q?TCm5gbxUre9SpjxYY4Pdi4SElmbtG6CJZQrCSaN5duQsMlXmFopD42yr0Ytp?=
+ =?us-ascii?q?6/eygH0JEnyATea/yDaYiH/BbjWPqeLDtimnJlf6+wiAy88UinzO3zSNO430?=
+ =?us-ascii?q?hRriZdk9nMsG4C1wDL58SZV/dw/F2t1SuB2gzP8O1IP085mbDVJpMh2rIwk4?=
+ =?us-ascii?q?AcsUXHHi/4gkX2i6qWe104+ui17+TofrTmqYKGOI9vkQz+N74hms27AegiLg?=
+ =?us-ascii?q?gBQWyb9vqk1LL54UL1Wq1KjuEunqnDrJ/aPdgbprK+AwJN1oYj6hC/Dyqp0d?=
+ =?us-ascii?q?gBknkHNFNFeBWcgoj3NFHBPur4Ae28g1uyijdrwe7JPrn7DpXKNHjDn+SpQb?=
+ =?us-ascii?q?Eo709a1Rp2wshe4LpKBbwbZvH+QEn8sJrfFBBqCQGsx/fbD4BZ38smQ2OKA7?=
+ =?us-ascii?q?OYLqqa5VuB/vguJuiQZZEctS3VOf8l4PvnjHt/lEJLLoez2p5CTHnwJu5nJk?=
+ =?us-ascii?q?SFYGTlyoMdDGMBvwY3V8TvgVyGFyJeY3uqVql6/i1tW9HuNpvKWo342O/J5y?=
+ =?us-ascii?q?y8BJADPm0=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GEKgBkGQNelyMYgtllgkQBGAEBgns?=
+ =?us-ascii?q?3GyASk0JUBnUdihKFM4N8FYYaDIFbDQEBAQEBNQIBAYRAgiIkOBMCAw0BAQU?=
+ =?us-ascii?q?BAQEBAQUEAQECEAEBAQEBCBYGhXNCAQwBgWsihBeBA4EsgwOCUymtEhoChSO?=
+ =?us-ascii?q?EcoE2AYwYGnmBB4FEgjKFAgESAWyFIQSNRSGIS2GXfoI+BJYwDYIpAYw4A4J?=
+ =?us-ascii?q?UiRGnIoI3VYELgQpxTTiBchmBHU8YDY0sji1AgRYQAk+FQIdcgjIBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2GEKgBkGQNelyMYgtllgkQBGAEBgns3GyASk0JUBnUdi?=
+ =?us-ascii?q?hKFM4N8FYYaDIFbDQEBAQEBNQIBAYRAgiIkOBMCAw0BAQUBAQEBAQUEAQECE?=
+ =?us-ascii?q?AEBAQEBCBYGhXNCAQwBgWsihBeBA4EsgwOCUymtEhoChSOEcoE2AYwYGnmBB?=
+ =?us-ascii?q?4FEgjKFAgESAWyFIQSNRSGIS2GXfoI+BJYwDYIpAYw4A4JUiRGnIoI3VYELg?=
+ =?us-ascii?q?QpxTTiBchmBHU8YDY0sji1AgRYQAk+FQIdcgjIBAQ?=
+X-IronPort-AV: E=Sophos;i="5.69,353,1571695200"; 
+   d="scan'208";a="298594790"
+Received: from mailrel04.vodafone.es ([217.130.24.35])
+  by mail01.vodafone.es with ESMTP; 25 Dec 2019 09:15:29 +0100
+Received: (qmail 32157 invoked from network); 25 Dec 2019 04:33:51 -0000
+Received: from unknown (HELO 192.168.1.88) (seigo@[217.217.179.17])
+          (envelope-sender <tulcidas@mail.telepac.pt>)
+          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
+          for <linux-gpio@vger.kernel.org>; 25 Dec 2019 04:33:51 -0000
+Date:   Wed, 25 Dec 2019 05:33:42 +0100 (CET)
+From:   La Primitiva <tulcidas@mail.telepac.pt>
+Reply-To: La Primitiva <laprimitivaes@zohomail.eu>
+To:     linux-gpio@vger.kernel.org
+Message-ID: <2745360.259361.1577248422442.JavaMail.javamailuser@localhost>
+Subject: Take home 750,000 Euros this end of year
 MIME-Version: 1.0
-References: <20191218142449.10957-1-brgl@bgdev.pl> <20191218142449.10957-4-brgl@bgdev.pl>
- <20191219133502.GA12028@firefly> <CAMpxmJVXgx-zduPT4pAFJw3QFFCb=7f3aXB-rhd2uXuKYefTSg@mail.gmail.com>
- <20191219140518.GA12078@firefly> <CAMRc=MdKhLpBsDjcwM4JfFkUmx_VFAjfxNrMFWUBsc8ZWO49Ow@mail.gmail.com>
- <20191219143631.GA12100@firefly> <CAMRc=McXP7g=XCYZiOhmXR_WLvYgT2aJ76E=S-uq5NMzjj_6kw@mail.gmail.com>
-In-Reply-To: <CAMRc=McXP7g=XCYZiOhmXR_WLvYgT2aJ76E=S-uq5NMzjj_6kw@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 24 Dec 2019 13:11:47 +0100
-Message-ID: <CAMRc=McZ6iz4cZUBEBXMBxY5fJACKZmPcO9Mba0BjxW2ETPkKA@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH 3/7] tests: event: extend test coverage for
- reading multiple line events at once
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-czw., 19 gru 2019 o 17:19 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
-a):
->
-> czw., 19 gru 2019 o 15:36 Kent Gibson <warthog618@gmail.com> napisa=C5=82=
-(a):
-> >
-> > > > >
-> > > > > I'm not sure I understand. We can't have two event fd's for the s=
-ame
-> > > > > line. Or are you thinking about setting up a second line, generat=
-ing
-> > > > > events on it and consuming them so that we can rely on the timing=
- to
-> > > > > make sure the events were registered for the first one too?
-> > > > >
-> > > >
-> > > > I was thinking of two event fds on the one line, and you are
-> > > > correct, there can only be one, so that wont work.
-> > > > Wrt using two lines, I'm not sure ordering can be guaranteed as you
-> > > > end up with two separate debugfs writes...
-> > > >
-> > >
-> > > Yeah I gave it a spin and it turns out it's not reliable - some event=
-s
-> > > still get dropped albeit less than without any syncing. The usleep()
-> > > calls are still better than this. Any other ideas? I agree this is no=
-t
-> > > optimal, but couldn't come up with anything else.
-> > >
-> >
-> > The two options I can think of are getting the debugfs write
-> > to block until the simulated interrupt has been serviced, or adding a
-> > multi-line set to the mockup so the two lines can be set simultaneously=
-.
-> > I'm not sure the first is possible.
-> > And the second wont help if it results in two interrupts unless the
-> > order the interrupts are serviced is guaranteed.
-> > Either way it seems like a whole lot of work just to remove the sleeps,
-> > so the sleeps seem like a reasonable workaround :(.
-> >
->
-> Now when I looked at gpio-mockup again I'm under the impression that
-> the interrupt should be fired from the set() callback, not from the
-> debugfs write callback. But this is a minor detail and it won't help
-> here.
->
-> Anyway, I'm really not sure how to do it any differently. We can also
-> be less strict in user-space - we can schedule, let's say, 16 events
-> without sleeps and not really verify the number of read events - just
-> check if it's bigger than 1 and that what we read are actual events
-> (valid event_type).
->
-> Bart
+Attn: Email User,
 
-If there are no other issues, I'll apply this series as is (with some
-comments explaining why we do this). We can improve the tests later
-once we have something better in place in the kernel. For now - they
-are pretty stable, I've been running them a lot and never saw an issue
-with missed events.
+You have won, you are to reply back with your name and phone number for
+claim.
 
-Bart
+La Primitiva
+
+
+
+
+----------------------------------------------------
+This email was sent by the shareware version of Postman Professional.
+
