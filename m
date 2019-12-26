@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F98C2D0DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D395FC2D0DD
 	for <linux-gpio@archiver.kernel.org>; Thu, 26 Dec 2019 12:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AA4B21582
+	by mail.kernel.org (Postfix) with ESMTP id A477B21569
 	for <linux-gpio@archiver.kernel.org>; Thu, 26 Dec 2019 12:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="YRphy+Jg"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="goPlTYUU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfLZMNB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Dec 2019 07:13:01 -0500
-Received: from mail-eopbgr760077.outbound.protection.outlook.com ([40.107.76.77]:27970
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1726806AbfLZMMu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Dec 2019 07:12:50 -0500
+Received: from mail-dm6nam10on2050.outbound.protection.outlook.com ([40.107.93.50]:50081
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726741AbfLZMMv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Dec 2019 07:12:51 -0500
+        id S1726706AbfLZMMu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Dec 2019 07:12:50 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=by1HFqwVqF0i0sLJ8hGxe/rN+j5Nsawu0FtBCjg2wzJfFzVzb6tpZChAYPHtzO61sYsL7CRlvA/45I6Z+bZERkEguNLNJEcDZSrhBc5jH3qKocHIH3kVzitdomS5fioriXwxDWyGnpGebnaiHHq1JFr0R5ijVw8yXaKq3GgmFJhb2zoZ6pUAR0zwDbT1HHDXEe8X9QPjDdj5c1X36vUefA+BufGrTJPEyEA/UDGHHWrVJ8wXhW2kIyDrJrCH/Odwd/QHmo0cXlVoBG3swdtOopKAjLzytBPzWLfzEC/eH/9s+xdF/rSKrSiXjIJbiHxgku38YWA0H63nSt+G4OwX+Q==
+ b=dcaUR4RRjsgmiZ7RL24ZPsOdZPDksfb/u++mgqBq85k3dCoOOSlA/QJFEK+FHYqNxHJQkSUFDOV0lqPSiX82EEPjqJShn6dLZPr5kJysXa3eHKjKXogZabGns1i19yca5sGSxc0ReMu3r5sjkelZmkRoRx5WVjo2O7O2ElK0pxo4to2ovZOeLRMWYsakvwUBnPCX2i7SNcHKNiiYkt/I4RB083ZG6GsT0ShxAGObM+UMa0hke55hCkiaZsZrFjaamCxjOLlfi20hA0JCFyiN+szE9SXvIGVXfWUPgSVr5UaklAfxEY9/kOeUrV3vUTqxBk3wFa8IOOrrlpnVIQSTBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=umcrtBgyCudVsyLsfPcgtAt4lldqfqah1ewJVSCjbqg=;
- b=FVK8osbeuNxWp+HebJN0tHc3piJzY0dY8ks9WtARlWLXE4zAa2Z+10ZOoWxXjd4l0Ts9cRbr40S8Sl6gZRYRZKeAuN2AeR4iKOXQdt2uANkOEa5icZwQYtrSHh3SrMaXE75tbBRbLlQnw5kSN8XUuYvjzgTWg/6nXopC8VnG5vEpYb+Htcv1iPbU0PiIDOAQy+v5x7CELOQSlE1flpDh+Lmvd9cIkq1BMR2TRdXYmfaB9BX4PIXMfyhFTTFugTVGfL+HP3tvBk6tHI3rVAR90nXFGOoFJ54X33gdPPFqYOY2zQNIO1b4VMZvrYJ79GxjSZvoa8rXjxXXFiEI4javDg==
+ bh=GklJFrMzQVMm4jnGo6isE2E2T26F0WppHCWthHoA48Y=;
+ b=XEwydRac1uCZ2QLJHVI7Sy0EKQaQAMoK9I+bGQ0XVQBnHxThA8a3OFLyyH0JuIZWhpXMrSFm/sHzc9n51LIxHFEoNGku4VS5MbrQ4Kogx7/416bGdxzBqsgiKzteE8PwAgDkkL0oJIJqEoo+dG8IDnci2cysmdbQsJpm147leY72bwnytQ7ZQ2OET8LXOsPuGbn1Ly+qMCZ/6NVT0n/CHT588ywMLu8Gpn6PfdSU7gvOOqtgkPhVPYHRhtwwB6ZjrY4ccCUssfcf7JT9fvqqW9TZ5YGMtp7eIPvIPxCDDPLJBDNOcs2cWXVGtwou398GjeK70qGSQac74a1vR06+Jw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
  dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
@@ -36,18 +36,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=umcrtBgyCudVsyLsfPcgtAt4lldqfqah1ewJVSCjbqg=;
- b=YRphy+JgfgFXLdTjKtX5Bb9hDuaKfZZaJ4BFCCwW1HaMJdHbuyemkv7GrOrzxRO1cIZ2QVmdutYxTPsuXTBOBm/EbA4y9HxQOl6fCPN/m0Cwvfqw/wjeekAXrnFB6VGHyDHWjul+QG+HRsTqRE68GaFEhPv80ic79pm00ltFYUw=
-Received: from SN4PR0201CA0015.namprd02.prod.outlook.com
- (2603:10b6:803:2b::25) by DM5PR02MB3735.namprd02.prod.outlook.com
- (2603:10b6:4:af::36) with Microsoft SMTP Server (version=TLS1_2,
+ bh=GklJFrMzQVMm4jnGo6isE2E2T26F0WppHCWthHoA48Y=;
+ b=goPlTYUUf2c/ciCaT+JRxJWlM8WfysBLLP28y8yPFtScGK811V0fZkA6cD07/QyG4w3qngojJ02l/+hKpWw7hkrti3ruT/pLO7BdWa5Mgnbi/3X3JmJM+9xhwUUeGoA09YC5WkNphd5ttgLdxXkz+CU0Ir3r9w7yGJmk6yjnMwc=
+Received: from CH2PR02CA0010.namprd02.prod.outlook.com (2603:10b6:610:4e::20)
+ by DM5PR02MB2315.namprd02.prod.outlook.com (2603:10b6:3:4f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.15; Thu, 26 Dec
- 2019 12:12:48 +0000
-Received: from CY1NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by SN4PR0201CA0015.outlook.office365.com
- (2603:10b6:803:2b::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.14 via Frontend
- Transport; Thu, 26 Dec 2019 12:12:48 +0000
+ 2019 12:12:47 +0000
+Received: from SN1NAM02FT006.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::205) by CH2PR02CA0010.outlook.office365.com
+ (2603:10b6:610:4e::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend
+ Transport; Thu, 26 Dec 2019 12:12:47 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
@@ -56,32 +56,32 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT053.mail.protection.outlook.com (10.152.74.165) with Microsoft SMTP
+ SN1NAM02FT006.mail.protection.outlook.com (10.152.72.68) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2559.14
  via Frontend Transport; Thu, 26 Dec 2019 12:12:47 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1ikS0V-0003KG-6c; Thu, 26 Dec 2019 04:12:47 -0800
+        id 1ikS0U-0003KD-SD; Thu, 26 Dec 2019 04:12:46 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1ikS0Q-0007xv-3L; Thu, 26 Dec 2019 04:12:42 -0800
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBQCCdmx023033;
-        Thu, 26 Dec 2019 04:12:39 -0800
+        id 1ikS0P-0007xv-Op; Thu, 26 Dec 2019 04:12:41 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBQCCVuN003147;
+        Thu, 26 Dec 2019 04:12:31 -0800
 Received: from [10.140.6.6] (helo=xhdappanad40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1ikS0M-0007v9-W2; Thu, 26 Dec 2019 04:12:39 -0800
+        id 1ikS0F-0007v9-6p; Thu, 26 Dec 2019 04:12:31 -0800
 From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         michal.simek@xilinx.com, shubhrajyoti.datta@xilinx.com
 Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, git@xilinx.com
-Subject: [PATCH 7/8] gpio: zynq: Add pmc gpio support
-Date:   Thu, 26 Dec 2019 17:42:17 +0530
-Message-Id: <1577362338-28744-8-git-send-email-srinivas.neeli@xilinx.com>
+Subject: [PATCH 4/8] devicetree-binding: Add pmc gpio node
+Date:   Thu, 26 Dec 2019 17:42:14 +0530
+Message-Id: <1577362338-28744-5-git-send-email-srinivas.neeli@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1577362338-28744-1-git-send-email-srinivas.neeli@xilinx.com>
 References: <1577362338-28744-1-git-send-email-srinivas.neeli@xilinx.com>
@@ -90,27 +90,27 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(107886003)(356004)(6666004)(36756003)(316002)(81166006)(478600001)(2616005)(8676002)(81156014)(4326008)(6636002)(8936002)(2906002)(7696005)(70206006)(44832011)(336012)(5660300002)(186003)(70586007)(9786002)(26005)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB3735;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(136003)(376002)(346002)(199004)(189003)(7696005)(70206006)(44832011)(426003)(336012)(8936002)(2906002)(70586007)(186003)(9786002)(5660300002)(26005)(356004)(6666004)(316002)(36756003)(4744005)(81156014)(8676002)(4326008)(81166006)(6636002)(478600001)(2616005)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2315;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 29ecf231-7596-4e0c-8b3b-08d789fcebd9
-X-MS-TrafficTypeDiagnostic: DM5PR02MB3735:
-X-Microsoft-Antispam-PRVS: <DM5PR02MB3735CAB15373925951D5CBE0AF2B0@DM5PR02MB3735.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 35784080-9262-4627-74c6-08d789fceb9f
+X-MS-TrafficTypeDiagnostic: DM5PR02MB2315:
+X-Microsoft-Antispam-PRVS: <DM5PR02MB2315756AA589DD422E230DF2AF2B0@DM5PR02MB2315.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:773;
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
 X-Forefront-PRVS: 02638D901B
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Kren1gaaiadNzj9OL0zHDWILMc6g1kj5+Z3EzaVarGmyXjrz9xgsGSLbejLnV/cUHeBlFHEs1BKyUnSkZI+s2RYEHwv+wp2v2EMpzbClTokm+HxRpm0uvSt/M/YznHGNFdfnOu3tQxm9OXykC87z+tcRC72NZJ5N9UGpJqGj6N51NYFxQFiO3HFRsAARv7+aVqdpzlBKoHWNhDVqJnzOvGk7JqATIti7Gjz4G6mgYU+wICifHROldHt6HVmIpGJJXKQheV2pILRCBCYxrk98Jix5XeyU9b5/A9pjIwPX/QVdD5/uXCfjGMWj88j6XU2uihRnd+dE19i+rX6e9wiZOStIgO32mKjlcNdUCXxVT3bV6XtbAwQiILSOWgVpL/wB0wZ2QENqP6t8DBaCQGET6panyQMht+F/XdvxCaUr3w1uwiStbDcBktZTa+QEH5gz
+X-Microsoft-Antispam-Message-Info: wIkSVr0TfdeWFp6p0Rogv3E0lAAfMDmg1lA9Ge9TmHDSg1mvNGp5oUP1wVyjsbkQSoDuuybtVjbTEDUJTtKlZhtj1yRuBGbc9NIfhJB0afPqbgpPESYy6Ss4gfPL2mqS0bIAZUSSv1d9SBkCqWo3a2rKRRgJ+Aj0tcXbfEjo2aJGWJ5IJBCiY+Gd/1P+oIrfBUS8+SozzGUvy6ZgzkwkLSSURhwEkQ1NPCEpNLQiObOVPY0Pr5jPxG607nw/98EMG6uZzg7m/7WhsqreTohjBzDdzDHupJE98hcdC9S3x4g2kUYY0HSTk/ZHLm9mSNe90f0y6KRu6eljvtXhZhR3y/oZ3jSBbaTcsKzXUrIKg5A1NQyZFMjddBiSWy4BxIys9sK1H7D5rYoyvKfy08pKBHvP/sRuLjlI3B2qTYb7wB0g3/RoohYD4Y5OSaK3Bzgh
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Dec 2019 12:12:47.6600
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Dec 2019 12:12:47.2953
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29ecf231-7596-4e0c-8b3b-08d789fcebd9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35784080-9262-4627-74c6-08d789fceb9f
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3735
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2315
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -118,58 +118,26 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-Add PMC gpio support.
-Only bank 0,1, 3 and 4 are connected to the multiplexed Input output
-pins. Bank 0 and 1 to mio and bank 3 and 4 to extended multiplexed input
-output pins.
+Add the pmc gpio node to the device tree.
 
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/gpio/gpio-zynq.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/gpio/gpio-zynq.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 04e7a993be8b..674416a40117 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -23,6 +23,7 @@
- #define ZYNQ_GPIO_MAX_BANK	4
- #define ZYNQMP_GPIO_MAX_BANK	6
- #define VERSAL_GPIO_MAX_BANK	4
-+#define PMC_GPIO_MAX_BANK	5
- #define VERSAL_UNUSED_BANKS	2
- 
- #define ZYNQ_GPIO_BANK0_NGPIO	32
-@@ -815,6 +816,20 @@ static const struct zynq_platform_data versal_gpio_def = {
- 	.bank_max[3] = 57, /* Bank 3 is connected to FMIOs (32 pins) */
- };
- 
-+static const struct zynq_platform_data pmc_gpio_def = {
-+	.label = "pmc_gpio",
-+	.ngpio = 116,
-+	.max_bank = PMC_GPIO_MAX_BANK,
-+	.bank_min[0] = 0,
-+	.bank_max[0] = 25, /* 0 to 25 are connected to MIOs (26 pins) */
-+	.bank_min[1] = 26,
-+	.bank_max[1] = 51, /* Bank 1 are connected to MIOs (26 pins) */
-+	.bank_min[3] = 52,
-+	.bank_max[3] = 83, /* Bank 3 is connected to EMIOs (32 pins) */
-+	.bank_min[4] = 84,
-+	.bank_max[4] = 115, /* Bank 4 is connected to EMIOs (32 pins) */
-+};
-+
- static const struct zynq_platform_data zynqmp_gpio_def = {
- 	.label = "zynqmp_gpio",
- 	.quirks = GPIO_QUIRK_DATA_RO_BUG,
-@@ -853,6 +868,7 @@ static const struct of_device_id zynq_gpio_of_match[] = {
- 	{ .compatible = "xlnx,zynq-gpio-1.0", .data = &zynq_gpio_def },
- 	{ .compatible = "xlnx,zynqmp-gpio-1.0", .data = &zynqmp_gpio_def },
- 	{ .compatible = "xlnx,versal-gpio-1.0", .data = &versal_gpio_def },
-+	{ .compatible = "xlnx,pmc-gpio-1.0", .data = &pmc_gpio_def },
- 	{ /* end of table */ }
- };
- MODULE_DEVICE_TABLE(of, zynq_gpio_of_match);
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
+index 4806d846c0fc..f693e82b4c0f 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 			    parameters (unused)
+ - compatible		: Should be "xlnx,zynq-gpio-1.0" or
+ 			  "xlnx,zynqmp-gpio-1.0" or "xlnx,versal-gpio-1.0
++			  or "xlnx,pmc-gpio-1.0
+ - clocks		: Clock specifier (see clock bindings for details)
+ - gpio-controller	: Marks the device node as a GPIO controller.
+ - interrupts		: Interrupt specifier (see interrupt bindings for
 -- 
 2.7.4
 
