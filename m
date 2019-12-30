@@ -2,122 +2,239 @@ Return-Path: <SRS0=q8K/=2U=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D82C2D0C2
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Dec 2019 13:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF20FC2D0D3
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Dec 2019 13:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733A220730
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Dec 2019 13:31:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qr8gscKl"
+	by mail.kernel.org (Postfix) with ESMTP id 9584F20718
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Dec 2019 13:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfL3Nbe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Dec 2019 08:31:34 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:38472 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfL3Nbe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Dec 2019 08:31:34 -0500
-Received: by mail-vk1-f193.google.com with SMTP id d17so8284475vke.5
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Dec 2019 05:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oNV29BbOxXflnyWwf2B0CxiU+GnStWQ9JexGoMU2XlI=;
-        b=Qr8gscKlr0x3QNw5/UG6H6605ovPfe83GBn13tR7j85Yiotg6vbGAc1/tYVxW65w0L
-         3xl6SGCq8hQeq6d7jVn4qp1kIrjC8SkkiXZFfcbKzWAaWEjzfo8yGnqrEnJcJYiM+y+i
-         us4nfaGrq0lxpSiObbP+DPDDLtAUNSsUJn09U15Fci3PnTJR8ci02QxipCMwiT6GjX2N
-         i3xkh3nQXNM9sVBkVc3H52Gu+FjKxaWE7ZoeNrANH8TMk4JCUjzVVyXtS0xbalYg9luG
-         iQSHCzMwwHJNQORoT1anC7Mi3ybsVxNdecXs2n2wNnLcwqOqx9nfJoj9YAbKGj/k7rsm
-         gY2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oNV29BbOxXflnyWwf2B0CxiU+GnStWQ9JexGoMU2XlI=;
-        b=o87M8/40iIORwEhrN5Q+mJbdXYtkndtKUbHKMUgdOc8sKPGQB6tVeST3e2CmpCDaiw
-         FuUIpJzWhQro2edadBmOEZbgKrhDzlDlnD80J00gk1bG/kKR/sSqu7+QW9GDo8LKNhJ8
-         l4YjOFausYNiGW5EOZPoSe9D86kavku8aNhJL0rHh9r261lubESrESbAGC6fGAq0umVq
-         k1K6zNiBahcKd0RoI+bfBfdl6tSgXtwPruQWHmeuxxQiFx6qTWupwGutcYbijtoN1gLE
-         5U3TJ+W7OfJokoREk67SqQscjiLF5mIC1yjjW0am+ZJJE8iGk5jhBhMSIiRhCrQK7VQ9
-         RWfQ==
-X-Gm-Message-State: APjAAAUjbzS53l9cv9m4d7JLDfWGK7iQd5hQD6wALp/POoocKAoFL17B
-        eTseFiNF5uGEneW0Zlox/GpouSpBqrMbTciaBb39sg==
-X-Google-Smtp-Source: APXvYqxFag2CvxhfF9l68e0E6H1HTPVbDP+2WETnXmzv5qTwFtUcF8TJWRh54oESNBk460c12mL7WeiqbGkL+w36S/8=
-X-Received: by 2002:a05:6122:1065:: with SMTP id k5mr38200538vko.14.1577712693691;
- Mon, 30 Dec 2019 05:31:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20191216205122.1850923-1-hdegoede@redhat.com> <20191216205122.1850923-2-hdegoede@redhat.com>
-In-Reply-To: <20191216205122.1850923-2-hdegoede@redhat.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 30 Dec 2019 14:31:22 +0100
-Message-ID: <CACRpkdaXFSJVkWJGzsVcvbUA9gpgP0Vbkwf1H-HWw8s35R9XYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] pinctrl: Allow modules to use pinctrl_[un]register_mappings
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727465AbfL3NjH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Dec 2019 08:39:07 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:37018 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbfL3NjA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Dec 2019 08:39:00 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id kDeu2100B5USYZQ01DeuGj; Mon, 30 Dec 2019 14:38:57 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ilvG2-0001h6-KK; Mon, 30 Dec 2019 14:38:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ilvG2-0001Xs-IR; Mon, 30 Dec 2019 14:38:54 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/2] gpio: of: Add DT overlay support for GPIO hogs
+Date:   Mon, 30 Dec 2019 14:38:52 +0100
+Message-Id: <20191230133852.5890-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191230133852.5890-1-geert+renesas@glider.be>
+References: <20191230133852.5890-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 9:51 PM Hans de Goede <hdegoede@redhat.com> wrote:
+As GPIO hogs are configured at GPIO controller initialization time,
+adding/removing GPIO hogs in DT overlays does not work.
 
-> Currently only the drivers/pinctrl/devicetree.c code allows registering
-> pinctrl-mappings which may later be unregistered, all other mappings
-> are assumed to be permanent.
->
-> Non-dt platforms may also want to register pinctrl mappings from code which
-> is build as a module, which requires being able to unregister the mapping
-> when the module is unloaded to avoid dangling pointers.
->
-> To allow unregistering the mappings the devicetree code uses 2 internal
-> functions: pinctrl_register_map and pinctrl_unregister_map.
->
-> pinctrl_register_map allows the devicetree code to tell the core to
-> not memdup the mappings as it retains ownership of them and
-> pinctrl_unregister_map does the unregistering, note this only works
-> when the mappings where not memdupped.
->
-> The only code relying on the memdup/shallow-copy done by
-> pinctrl_register_mappings is arch/arm/mach-u300/core.c this commit
-> replaces the __initdata with const, so that the shallow-copy is no
-> longer necessary.
->
-> After that we can get rid of the internal pinctrl_unregister_map function
-> and just use pinctrl_register_mappings directly everywhere.
->
-> This commit also renames pinctrl_unregister_map to
-> pinctrl_unregister_mappings so that its naming matches its
-> pinctrl_register_mappings counter-part and exports it.
->
-> Together these 2 changes will allow non-dt platform code to
-> register pinctrl-mappings from modules without breaking things on
-> module unload (as they can now unregister the mapping on unload).
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Add support for GPIO hogs described in DT overlays by registering an OF
+reconfiguration notifier, to handle the addition and removal of GPIO hog
+subnodes to/from a GPIO controller device node.
 
-This v2 works fine for me, I applied it to this immutable branch in the
-pinctrl tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-pinctrl-unreg-mappings
+Note that when a GPIO hog device node is being removed, its "gpios"
+properties is no longer available, so we have to keep track of which
+node a hog belongs to, which is done by adding a pointer to the hog's
+device node to struct gpio_desc.
 
-And pulled that into the pinctrl "devel" branch for v5.6.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpiolib-of.c | 84 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib-of.h |  2 +
+ drivers/gpio/gpiolib.c    | 14 +++++--
+ drivers/gpio/gpiolib.h    |  3 ++
+ 4 files changed, 100 insertions(+), 3 deletions(-)
 
-Please pull this immutable branch into the Intel DRM tree and apply
-the rest of the stuff on top!
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index dfae797846bb746b..89a6138ac0a4b506 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -649,6 +649,10 @@ static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
+ 		ret = gpiod_hog(desc, name, lflags, dflags);
+ 		if (ret < 0)
+ 			return ret;
++
++#ifdef CONFIG_OF_DYNAMIC
++		desc->hog = hog;
++#endif
+ 	}
+ 
+ 	return 0;
+@@ -676,11 +680,91 @@ static int of_gpiochip_scan_gpios(struct gpio_chip *chip)
+ 			of_node_put(np);
+ 			return ret;
+ 		}
++
++		of_node_set_flag(np, OF_POPULATED);
+ 	}
+ 
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_OF_DYNAMIC
++/**
++ * of_gpiochip_remove_hog - Remove all hogs in a hog device node
++ * @chip:	gpio chip to act on
++ * @hog:	device node describing the hogs
++ */
++static void of_gpiochip_remove_hog(struct gpio_chip *chip,
++				   struct device_node *hog)
++{
++	struct gpio_desc *descs = chip->gpiodev->descs;
++	unsigned int i;
++
++	for (i = 0; i < chip->ngpio; i++) {
++		if (test_bit(FLAG_IS_HOGGED, &descs[i].flags) &&
++		    descs[i].hog == hog)
++			gpiochip_free_own_desc(&descs[i]);
++	}
++}
++
++static int of_gpiochip_match_node(struct gpio_chip *chip, void *data)
++{
++	return chip->gpiodev->dev.of_node == data;
++}
++
++static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
++{
++	return gpiochip_find(np, of_gpiochip_match_node);
++}
++
++static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
++			  void *arg)
++{
++	struct of_reconfig_data *rd = arg;
++	struct gpio_chip *chip;
++	int ret;
++
++	switch (of_reconfig_get_state_change(action, arg)) {
++	case OF_RECONFIG_CHANGE_ADD:
++		if (!of_property_read_bool(rd->dn, "gpio-hog"))
++			return NOTIFY_OK;	/* not for us */
++
++		if (of_node_test_and_set_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;
++
++		chip = of_find_gpiochip_by_node(rd->dn->parent);
++		if (chip == NULL)
++			return NOTIFY_OK;	/* not for us */
++
++		ret = of_gpiochip_add_hog(chip, rd->dn);
++		if (ret < 0) {
++			pr_err("%s: failed to add hogs for %pOF\n", __func__,
++			       rd->dn);
++			of_node_clear_flag(rd->dn, OF_POPULATED);
++			return notifier_from_errno(ret);
++		}
++		break;
++
++	case OF_RECONFIG_CHANGE_REMOVE:
++		if (!of_node_check_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;	/* already depopulated */
++
++		chip = of_find_gpiochip_by_node(rd->dn->parent);
++		if (chip == NULL)
++			return NOTIFY_OK;	/* not for us */
++
++		of_gpiochip_remove_hog(chip, rd->dn);
++		of_node_clear_flag(rd->dn, OF_POPULATED);
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++struct notifier_block gpio_of_notifier = {
++	.notifier_call = of_gpio_notify,
++};
++#endif /* CONFIG_OF_DYNAMIC */
++
+ /**
+  * of_gpio_simple_xlate - translate gpiospec to the GPIO number and flags
+  * @gc:		pointer to the gpio_chip structure
+diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
+index 9768831b1fe2f25b..ed26664f153782fc 100644
+--- a/drivers/gpio/gpiolib-of.h
++++ b/drivers/gpio/gpiolib-of.h
+@@ -35,4 +35,6 @@ static inline bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ }
+ #endif /* CONFIG_OF_GPIO */
+ 
++extern struct notifier_block gpio_of_notifier;
++
+ #endif /* GPIOLIB_OF_H */
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bff5ac774d870b67..ef12cfcaf0962c1c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2952,6 +2952,9 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 		clear_bit(FLAG_PULL_DOWN, &desc->flags);
+ 		clear_bit(FLAG_BIAS_DISABLE, &desc->flags);
+ 		clear_bit(FLAG_IS_HOGGED, &desc->flags);
++#ifdef CONFIG_OF_DYNAMIC
++		desc->hog = NULL;
++#endif
+ 		ret = true;
+ 	}
+ 
+@@ -5145,10 +5148,15 @@ static int __init gpiolib_dev_init(void)
+ 	if (ret < 0) {
+ 		pr_err("gpiolib: failed to allocate char dev region\n");
+ 		bus_unregister(&gpio_bus_type);
+-	} else {
+-		gpiolib_initialized = true;
+-		gpiochip_setup_devs();
++		return ret;
+ 	}
++
++	gpiolib_initialized = true;
++	gpiochip_setup_devs();
++
++	if (IS_ENABLED(CONFIG_OF_DYNAMIC))
++		WARN_ON(of_reconfig_notifier_register(&gpio_of_notifier));
++
+ 	return ret;
+ }
+ core_initcall(gpiolib_dev_init);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index a4a759920faa48ab..7af9931e8572304a 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -118,6 +118,9 @@ struct gpio_desc {
+ 	const char		*label;
+ 	/* Name of the GPIO */
+ 	const char		*name;
++#ifdef CONFIG_OF_DYNAMIC
++	struct device_node	*hog;
++#endif
+ };
+ 
+ int gpiod_request(struct gpio_desc *desc, const char *label);
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
