@@ -2,91 +2,78 @@ Return-Path: <SRS0=OlfQ=2Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5622EC3F68F
-	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 12:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4613C2D0C2
+	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 19:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E3E21734
-	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 12:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4AD722B48
+	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 19:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbgADMDJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 4 Jan 2020 07:03:09 -0500
-Received: from mga18.intel.com ([134.134.136.126]:19358 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbgADMDJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 4 Jan 2020 07:03:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2020 04:03:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,394,1571727600"; 
-   d="scan'208";a="214717996"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 04 Jan 2020 04:03:05 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ini93-0009qt-B6; Sat, 04 Jan 2020 20:03:05 +0800
-Date:   Sat, 4 Jan 2020 20:02:16 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     kbuild-all@lists.01.org, sricharan@codeaurora.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
-        sivaprak@codeaurora.org
-Subject: Re: [PATCH 2/2] clk: qcom: Add ipq6018 Global Clock Controller
- support
-Message-ID: <202001041937.BBQYk2aO%lkp@intel.com>
-References: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578050744-3761-3-git-send-email-sricharan@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1726135AbgADToI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 4 Jan 2020 14:44:08 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:46973 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgADToH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 4 Jan 2020 14:44:07 -0500
+Received: from orion.localdomain ([95.114.65.70]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MPowd-1j1nSY1V7j-00MvYn; Sat, 04 Jan 2020 20:44:05 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: gpiolib: fix confusing indention
+Date:   Sat,  4 Jan 2020 20:43:34 +0100
+Message-Id: <20200104194334.12237-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:VSnHjBtowquaHDz3s11P22E7IDcTUzcZ9mINbE5EWAKNnSN92s7
+ hx/bspigrYp2d8V0TUrbtMbd6F/R+3i/25QY/9V52vwxxShJqEhYzSarR9qowqL9dHR6j9c
+ pZFAbf6KCPwW2RulXZGTLhNLWI5AW8fyU9QdrKG4eSu9QtGDxFrJwAIlZAJWQHrPnJOVGI+
+ s8uQcvblKparC48NREwUQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1q/hc+k8g1s=:ee7gVCzko2TTX5bG6IC675
+ tdffMwREnVE0smBQCp1D8VfuR4LTv3yyzmFDjhtUv6f8KNwU/Y7EWpDNh/tW07Tqtj5qPC7WM
+ 1aCCoDs8hqIabqa60ObCg5IXN/fChOdz7T9R11hSY/9gqYbkWUB7z7qQhrW/FtxdbsbxaTd96
+ 1nsnETd29ezGzV0eTfsAr23/YFkLdv9Zt2jh/1IY0dyo51IDJ7JHrh9McsDxuejuIbeig2guk
+ xF3GPJzrPfIrP6Gw6Hdnd8R5J/dndtLjN6FkS9kS2lEDZ7tk6FLyW4Z8cP+b+WjPsui0wHCQR
+ AEMkijUB+2qP0MLWIoSaH5Aj4bzye6kivmTyzCbvO4ZR5LW0GyDNP9Lz/JEOklukcMgmakDd0
+ kYcm8McCINnQgR7ujOCpCJ3uU8ZqW8DeFXQpOTT/7BRXiKyEa/LHSqbCjBuaODYz84yyv2LuA
+ n4JMnlPU0uh4O4jMA0nx70hD+abRHMP1Vxv0xsVczQhvFD7hTfFEbNrazNJpvW1+JN5iSoHqB
+ DU14f2ejvm71UqJ2UzicFT/7XFMPnQSCxqZrZ/pxZd2liRZLl79AEPaV6OTLwQeqfin5YMZwV
+ kEPCGSDcEVTJ5WXLx0v04Or4chfdtnnzm7UNTFLgmr65+vLmJNlCXAMmAyrnu4/x7QUvT3bPQ
+ Ya0p7C5gk1RsE7CuMY3stmPdEm82R8Le4we0RbmSlHowLgQwMmmwkWtUGJ6AazGE+7GJmNXZR
+ 7LqrLc23tZFLjplwPGpkwi83fEPUHvKw00MCpTyci2qVodc6PwQNpmff+y0p0hSpPt+X+Gk+o
+ DburMAEJq5aWnAH+ClxId3TIXYL7RHloZVAau43VuqkmspUq7qYjgn5iBnEDJGQ14ExoKUqBh
+ YMUJUhBMEHo48m68LIug==
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Sricharan,
+There's a confusing indention in gpiochip_add_data_with_key(), which
+could be misinterpreted on a quick walkthrough. Fixing this in order
+to improve code readability a bit.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v5.5-rc4 next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Sricharan-R/Add-Global-clock-controller-support-for-IPQ6018/20200104-133041
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-129-g341daf20-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/qcom/gcc-ipq6018.c:2623:17: sparse: sparse: symbol 'lpass_core_axim_clk_src' was not declared. Should it be static?
->> drivers/clk/qcom/gcc-ipq6018.c:2642:17: sparse: sparse: symbol 'lpass_snoc_cfg_clk_src' was not declared. Should it be static?
->> drivers/clk/qcom/gcc-ipq6018.c:2661:17: sparse: sparse: symbol 'lpass_q6_axim_clk_src' was not declared. Should it be static?
->> drivers/clk/qcom/gcc-ipq6018.c:2674:17: sparse: sparse: symbol 'ftbl_rbcpr_wcss_clk_src' was not declared. Should it be static?
->> drivers/clk/qcom/gcc-ipq6018.c:2680:17: sparse: sparse: symbol 'rbcpr_wcss_clk_src' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 3fa2f4d3cdce..d77695cc82ef 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1447,7 +1447,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	if (chip->ngpio > FASTPATH_NGPIO)
+ 		chip_warn(chip, "line cnt %u is greater than fast path cnt %u\n",
+-		chip->ngpio, FASTPATH_NGPIO);
++			  chip->ngpio, FASTPATH_NGPIO);
+ 
+ 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
+ 	if (!gdev->label) {
+-- 
+2.11.0
+
