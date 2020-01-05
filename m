@@ -1,146 +1,74 @@
-Return-Path: <SRS0=OlfQ=2Z=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=s/df=22=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F8AC32771
-	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 21:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE452C33C9A
+	for <linux-gpio@archiver.kernel.org>; Sun,  5 Jan 2020 06:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB95421734
-	for <linux-gpio@archiver.kernel.org>; Sat,  4 Jan 2020 21:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83DC121775
+	for <linux-gpio@archiver.kernel.org>; Sun,  5 Jan 2020 06:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578173707;
-	bh=7+jGGHJV6qP+A3Z9vIGvn7koJ+D4zh6a+42XTDGlfAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=orRYi1eXpQ+dkA7mlsW7NSqqxtOaMBrwNVI4YtkY+ASaRrsBPg8MWosY1lT3ulph/
-	 irdFhI/EEeU6a9uOHZlzYhgIpgBZBT7V+dyWp631BvH9W9QL9oiaVh9lSFN/NFxXJA
-	 8LwWwdPjKgmBT57UEyvFBaNqB9hwWZKQWGlQVl+o=
+	s=default; t=1578207564;
+	bh=Dz8BMkWPePwNlSRW+VsrOys9MKhbsKCrsIWV/XdLeuw=;
+	h=In-Reply-To:References:Subject:To:From:Date:List-ID:From;
+	b=Ij/HZgvyHE/4hWwlze6Io4o1i2iz4Nm4R8v9H8OEBYjAq2R1BdyfWvGdkyp79f8nH
+	 ejrBksHme1v9OlC7S+nHAbGuDzQf6o9FOae++tNyDqI1hHZlsGF0xHEoA9gs/HmdW5
+	 L0seBphny5xqm4KIx5iENhGX5qSydx4kQ53sC3T0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgADVfH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 4 Jan 2020 16:35:07 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:42901 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbgADVfH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 4 Jan 2020 16:35:07 -0500
-Received: by mail-il1-f193.google.com with SMTP id t2so24032294ilq.9
-        for <linux-gpio@vger.kernel.org>; Sat, 04 Jan 2020 13:35:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E086cLVBXwQ6vOtP7yO03NEZ/tAJB2ltt2lzCZgTgEA=;
-        b=D22RouaQpJkxq7kKSJQ/iv4aTbV3TAVX4VevGXNgKn058gpTMLdAQ6uUXuEnC/ILyX
-         r4QN6CU84nq8ny8NtQsrUcWo6iPeq51M5iAKW4apVipCenJpvfArQWt05LfQoHWhEWlR
-         BhGlN43HlAagGfujoN5oNHKIQ6fdsiNVd7UYOSxT+RAnUzwyJtL4kr+CD2d9q2k4rzq+
-         UJDhoZ4tkHUk4ldMmEcJNfvG8ii7AURP7KsuZpoCkwjrzCO1MBVR1PI0N163MUnYfjB4
-         uLhQJcVuovGt7znGyRPjj9dmAKo/1FO4X5vK/Apu8XuWWa1OS6BgM8E1HFfvWh7sENV0
-         MSuQ==
-X-Gm-Message-State: APjAAAU1IxUjWYZwg0hSXB9zPj4Osf9cPtoPrYBZtakMh9BHqvWg6W/4
-        sNepK/lwou+W6o9sptWlwuWF2tE=
-X-Google-Smtp-Source: APXvYqwtflYX6XohhHPAxjBLfhFP8b18sSzpboCOQlfMgx5pqvskOttLB0QtpC7kEVnDahVJDFQ94w==
-X-Received: by 2002:a92:8dda:: with SMTP id w87mr79806375ill.55.1578173705812;
-        Sat, 04 Jan 2020 13:35:05 -0800 (PST)
-Received: from rob-hp-laptop ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id q1sm22416757ils.60.2020.01.04.13.35.05
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2020 13:35:05 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2219b7
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Sat, 04 Jan 2020 14:33:32 -0700
-Date:   Sat, 4 Jan 2020 14:33:32 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        mark.rutland@arm.com, s.hauer@pengutronix.de,
-        catalin.marinas@arm.com, will@kernel.org,
-        bjorn.andersson@linaro.org, olof@lixom.net, maxime@cerno.tech,
-        leonard.crestez@nxp.com, dinguyen@kernel.org,
-        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2 1/3] dt-bindings: imx: Add pinctrl binding doc for
- i.MX8MP
-Message-ID: <20200104213332.GA19211@bogus>
-References: <1577342743-25885-1-git-send-email-Anson.Huang@nxp.com>
+        id S1725897AbgAEG7U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 5 Jan 2020 01:59:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725785AbgAEG7U (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 5 Jan 2020 01:59:20 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A548207FD;
+        Sun,  5 Jan 2020 06:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578207559;
+        bh=Dz8BMkWPePwNlSRW+VsrOys9MKhbsKCrsIWV/XdLeuw=;
+        h=In-Reply-To:References:Subject:To:From:Date:From;
+        b=o3Hd5C5hc7S50UyYcrHmiXYihlPT19KyrK8iG0dwWfVqn0kJU4wElPsL6mL16zaSW
+         bVk+IOsIoByWDis6bhcO8OofVb+14c6xWfWrSMhkXyc9U1AHbSvC6NaNRoAI2AVCL5
+         ZrRsrzrLz/BfJM/fSGMs8px2gBP0f7s13xKFDAAE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577342743-25885-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1578050744-3761-1-git-send-email-sricharan@codeaurora.org>
+References: <1578050744-3761-1-git-send-email-sricharan@codeaurora.org>
+Subject: Re: [PATCH 0/2] Add Global clock controller support for IPQ6018
+To:     agross@kernel.org, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, robh+dt@kernel.org,
+        sivaprak@codeaurora.org, sricharan@codeaurora.org
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Sat, 04 Jan 2020 22:59:18 -0800
+Message-Id: <20200105065919.4A548207FD@mail.kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 02:45:41PM +0800, Anson Huang wrote:
-> Add binding doc for i.MX8MP pinctrl driver.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No changes.
-> ---
->  .../bindings/pinctrl/fsl,imx8mp-pinctrl.txt        |  38 +
+Quoting Sricharan R (2020-01-03 03:25:42)
+> The IPQ6018 is Qualcomm\u2019s 802.11ax SoC for Routers,
+> Gateways and Access Points.
+>=20
+> This series adds Global clock controller support for ipq6018.
 
-Please make this a DT schema.
+Can you fold the fixes in?
 
->  arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     | 931 +++++++++++++++++++++
->  2 files changed, 969 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.txt
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.txt
-> new file mode 100644
-> index 0000000..619104b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.txt
-> @@ -0,0 +1,38 @@
-> +* Freescale IMX8MP IOMUX Controller
-> +
-> +Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-> +for common binding part and usage.
-> +
-> +Required properties:
-> +- compatible: "fsl,imx8mp-iomuxc"
-> +- reg: should contain the base physical address and size of the iomuxc
-> +  registers.
-> +
-> +Required properties in sub-nodes:
-> +- fsl,pins: each entry consists of 6 integers and represents the mux and config
-> +  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
-> +  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-> +  <arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h>. The last integer CONFIG is
-> +  the pad setting value like pull-up on this pin. Please refer to i.MX8M Plus
-> +  Reference Manual for detailed CONFIG settings.
-> +
-> +Examples:
-> +
-> +&uart1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_uart1>;
-> +};
-> +
-> +iomuxc: pinctrl@30330000 {
-> +        compatible = "fsl,imx8mp-iomuxc";
-> +        reg = <0x30330000 0x10000>;
-> +
-> +	pinctrl_uart1: uart1grp {
+>=20
+> The patches were a part of https://patchwork.kernel.org/cover/11303075/,
+> now moved it outside based on Stephen's suggestion.
 
-In particular, define some node naming pattern that you can match on. 
-Perhaps "grp$" works.
+Thanks, but I still got the other pinctrl patches :(
 
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_UART1_RXD__UART1_DCE_RX    0x140
-> +			MX8MP_IOMUXC_UART1_TXD__UART1_DCE_TX    0x140
-> +			MX8MP_IOMUXC_UART3_RXD__UART1_DCE_CTS   0x140
-> +			MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS   0x140
-> +		>;
-> +	};
-> +};
