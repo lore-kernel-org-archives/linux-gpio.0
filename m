@@ -2,142 +2,120 @@ Return-Path: <SRS0=ahNV=24=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D80BC33C9E
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ECAC33CA1
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F93F2072A
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kT/gskwV"
+	by mail.kernel.org (Postfix) with ESMTP id 9B21821744
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578402557;
+	bh=JWgOAWwn4GHGTz+b1aG9ABeA7KGl5XxZGbF13/zr4j8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1vBppwBqbJx1TbJnCD9Tt5iNUJMaRMhrp8Mqx66yhi2XnlI2G8Egq+ITm5VvBkcZs
+	 Afr6XGByNlV5o3CKqzizcqvN0AHDXt1YEPtuwBMvIIVhyE4QYxWgCoPkyX7egbyLKF
+	 Upeg4KtnHDtZ75ZjMwH4OU9Th8XYA5OfsdR/aVoU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbgAGNJK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jan 2020 08:09:10 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:34828 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbgAGNJI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 08:09:08 -0500
-Received: by mail-wr1-f42.google.com with SMTP id g17so53824154wro.2
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2020 05:09:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nT9BtMpP3rVSAKnjxKAWmSKBNURpP6V+aXle8yg5Oj0=;
-        b=kT/gskwVQaYtPacWxisTNOdjeZ02Fchdla9uUAdtL+pjp25BP78f5U9Qmfzyz1p5Sh
-         ew1s+3kig4PWGT0vapCJGh6o73uU/2MAgsyS6FzbGJV0/HyaJjnTJz/NtCvNMCshig0j
-         X2NBmFHuKqXGWro+MC4e/CLTJRNWjN/Is3fWOouplWxAyfh7LIQCQPhgdGRnsabhC/5p
-         L+FogJDvGmAy4+o0uhqcuyHIMwJVbYMTvjZKf5aXelqTB5XtBAZi+yhhYjE3SZ0m37XJ
-         8T9Zs+k3+k7TfZ7gp0vu+/INSQ/evd0zhppLA6XgUcwV0AhNjjxyZEUEqU7nLrKf+wcs
-         3hLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nT9BtMpP3rVSAKnjxKAWmSKBNURpP6V+aXle8yg5Oj0=;
-        b=D1G6vh5qIP2GsaSOY821SWjnC+2MPP3too1kumFaIg30vjHmqwZKYFIzsPSv6rxI5E
-         SCtZRj2/aDpfxyL2jfm+wDTlzv8U6o1loRZxasNDzn39dhhie+sUa+ivHnI68qmEH7g5
-         d54ilfdRvplgQijx+ix3gWC+SxeJwUZdl/8bqJ+9yZoCLsS6M+gFvN98DDdQCtmZxxs0
-         qupj3D7edyZZ80XwEkotGqY/vdru0mC6XQIczJLcgOw1X4OMN4ij8mg3o1TuZfwNIHdM
-         Lkqe4m1ub8Na+OXrVCLdWw1SQxRmkP4xIwCER35WhTy/4RgnrfHfgwwjuCM0VGt8ZTLB
-         Mdcg==
-X-Gm-Message-State: APjAAAXRwdC+i+mSMEAdQPY1Ou8eZ3f2JfEjOAYBJX3x6S2Xzr8u5Z1y
-        7p4e/zr2UMbP6WAsuyeLwwREHw==
-X-Google-Smtp-Source: APXvYqxttENx/9O3T41IE34zb2g4P0hFFOZO5gZe8gaTKfCLyHIx/ob0InWWWjitUCuimNSjGRWkZw==
-X-Received: by 2002:adf:fa12:: with SMTP id m18mr105006068wrr.309.1578402545458;
-        Tue, 07 Jan 2020 05:09:05 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id b18sm7287035wru.50.2020.01.07.05.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 05:09:04 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc:     robh@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, spapothi@codeaurora.org,
-        bgoswami@codeaurora.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 1/2] dt-bindings: gpio: wcd934x: Add bindings for gpio
-Date:   Tue,  7 Jan 2020 13:08:43 +0000
-Message-Id: <20200107130844.20763-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200107130844.20763-1-srinivas.kandagatla@linaro.org>
-References: <20200107130844.20763-1-srinivas.kandagatla@linaro.org>
+        id S1728113AbgAGNJP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jan 2020 08:09:15 -0500
+Received: from foss.arm.com ([217.140.110.172]:57516 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728109AbgAGNJO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 7 Jan 2020 08:09:14 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F226631B;
+        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 571BF3F703;
+        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
+Date:   Tue, 7 Jan 2020 13:09:11 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "andrew@aj.id.au" <andrew@aj.id.au>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
+ selection documentation
+Message-ID: <20200107130911.GD4877@sirena.org.uk>
+References: <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
+ <20191212161019.GF4310@sirena.org.uk>
+ <20191212162152.5uu3feacduetysq7@pengutronix.de>
+ <20191212165124.GJ4310@sirena.org.uk>
+ <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
+ <20191216114454.GB4161@sirena.org.uk>
+ <20191217073533.GC31182@pengutronix.de>
+ <20191217125832.GF4755@sirena.org.uk>
+ <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
+Content-Disposition: inline
+In-Reply-To: <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
+X-Cookie: Will Rogers never met you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Qualcomm Technologies Inc WCD9340/WCD9341 Audio Codec has integrated
-gpio controller to control 5 gpios on the chip. This patch adds
-required device tree bindings for it.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- .../bindings/gpio/qcom,wcd934x-gpio.yaml      | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml
+--mSxgbZZZvrAyzONB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml b/Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml
-new file mode 100644
-index 000000000000..32a566ec3558
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/qcom,wcd934x-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: WCD9340/WCD9341 GPIO controller
-+
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description: |
-+  Qualcomm Technologies Inc WCD9340/WCD9341 Audio Codec has integrated
-+  gpio controller to control 5 gpios on the chip.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,wcd9340-gpio
-+      - qcom,wcd9341-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    wcdgpio: gpio@42 {
-+        compatible = "qcom,wcd9340-gpio";
-+        reg = <0x042 0x2>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+    };
-+
-+...
--- 
-2.21.0
+On Tue, Jan 07, 2020 at 09:36:54AM +0100, Marco Felsch wrote:
+> On 19-12-17 12:58, Mark Brown wrote:
 
+> > This doesn't say anything about how the GPIO input is expected to be
+> > controlled, for voltage setting any runtime control would need to be
+> > done by the driver and it sounds like that's all that can be controlled.
+> > The way this reads I'd expect one use of this to be for fast voltage
+> > setting for example (you could even combine that with suspend sequencing
+> > using the internal sequencer if you mux back to the sequencer during
+> > suspend).
+
+> The input signal is routed trough the da9062 gpio block to the
+> regualtors. You can't set any voltage value using a gpio instead you
+> decide which voltage setting is applied. The voltage values for
+> runtime/suspend comes from the dt-data. No it's not just a fast
+> switching option imagine the system suspend case where the cpu and soc
+> voltage can be reduced to a very low value. Older soc's like the imx6
+> signaling this state by a hard wired gpio line because the soc and
+> cpu cores don't work properly on such low voltage values. This is
+> my use case and I can't use the sequencer.
+
+My point is that I can't tell any of this from the description.
+
+--mSxgbZZZvrAyzONB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4UgvYACgkQJNaLcl1U
+h9AmOwf/dQI3hnspOymA8BdYOaCtzXhoiVJeMde8RKleUyfpqEoLvele7bnhJvxP
+66E8RM0aDJk6N+Jc5KzXO1mb1JWFhiGQM92q3NXPczpOyvgl/zl0UwKMnqHnj4nd
+/vDVfa60zDKTbUCS12us1kwgJNtHVRiFb8DX+9W3zSONqE5QIeNjmMMoL4EaPwJb
+clCtLm7jBckZinNOefKS6M2eElpRFFhtRON7EsaDqObH2xTP9aSNb9PEYCBy3nHq
+Cr6gYbC0cwgXL29ayf/aRtx3o9/DTC4LIAfAPZvGjDMN5vgYm3bznZKWmVzgR2Pd
+1fQ0J3Dh032Q/8ZTkaceklgsT1uGJg==
+=uLVS
+-----END PGP SIGNATURE-----
+
+--mSxgbZZZvrAyzONB--
