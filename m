@@ -2,120 +2,97 @@ Return-Path: <SRS0=ahNV=24=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ECAC33CA1
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D411FC33C8C
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B21821744
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578402557;
-	bh=JWgOAWwn4GHGTz+b1aG9ABeA7KGl5XxZGbF13/zr4j8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1vBppwBqbJx1TbJnCD9Tt5iNUJMaRMhrp8Mqx66yhi2XnlI2G8Egq+ITm5VvBkcZs
-	 Afr6XGByNlV5o3CKqzizcqvN0AHDXt1YEPtuwBMvIIVhyE4QYxWgCoPkyX7egbyLKF
-	 Upeg4KtnHDtZ75ZjMwH4OU9Th8XYA5OfsdR/aVoU=
+	by mail.kernel.org (Postfix) with ESMTP id A5E42208C4
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:26:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qehfjqnl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgAGNJP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jan 2020 08:09:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:57516 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbgAGNJO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Jan 2020 08:09:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F226631B;
-        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 571BF3F703;
-        Tue,  7 Jan 2020 05:09:13 -0800 (PST)
-Date:   Tue, 7 Jan 2020 13:09:11 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
- selection documentation
-Message-ID: <20200107130911.GD4877@sirena.org.uk>
-References: <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
- <20191212161019.GF4310@sirena.org.uk>
- <20191212162152.5uu3feacduetysq7@pengutronix.de>
- <20191212165124.GJ4310@sirena.org.uk>
- <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
- <20191216114454.GB4161@sirena.org.uk>
- <20191217073533.GC31182@pengutronix.de>
- <20191217125832.GF4755@sirena.org.uk>
- <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
+        id S1727658AbgAGN0U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jan 2020 08:26:20 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46641 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbgAGN0T (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 08:26:19 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f15so38829224lfl.13
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2020 05:26:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9djqwGIJf2I22OzfnRj3IuEtZ6zVvwdwNk4Hj6ZFA70=;
+        b=qehfjqnlIKGhemdvcDzaHIWgPnMIKeEq9JYcoVJcdsSy8Wat4sbe4iABBcAk+56lCq
+         n/niykJ5zW3gXIkUyKPDN2QY7xguV1vGofNnIaCmEItNPGFPAFKzl6aFKSLFUfGlhEBc
+         h83Je2A3rbiMS+3FWD3mF39kdkdMn9H0hF4C91J4sYY3P9vSbioZkYKUH/HwI8hRXNdg
+         dUWKMOcIYgJ6ExKWgP4K1ESqWNneUFp7hc00BfWmQzYO9XUdON/YZbPX4w2Ecr6ckL1J
+         j+Q4ONZ5p8qiSABW176nzeVQOcpfF9kkhO5Kr12axgHB4S9HbTwYXs7drtn3eD4Heeu/
+         UmIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9djqwGIJf2I22OzfnRj3IuEtZ6zVvwdwNk4Hj6ZFA70=;
+        b=WJqsO4smt9di29RPfo1VrDAhEG11Kiqdh4xGY/pBrZ4ijHMTf2GLbcnh9/KJt2KG4K
+         niuMVFbC+kgIt86c7BsA7JKPwdaDYMCRcykcKt5cmG5ypEZ72RDxVv+VcMvQD/iF1iZo
+         Fp4OTKBFJEQ/0mDKgTUhvW8H3J8oCopvCd+8teqTlqcYi9SVxFQBhbRs9eFt1vHc+fcd
+         IwUIisM9kVhWy80cUW+aeifrlhmbC6AdRPDjAbgsn/WrVkYdToz+7uVxQguSRa7eMMrD
+         gxdNGUk0yof/gMDXd4Nm6XRuKf/63GIKLLUfd/UiskS9ae4Q3xyQyDrPG7/ZDliTJzdC
+         142w==
+X-Gm-Message-State: APjAAAWp4TuHOVHAIrEAnWlKhnYdRY5eawHwurt+Zc37EczpXYzpt58q
+        3TKlojPpT/SMYUpcY8vFbTKO13tL7b71yjCrZfPDbQ==
+X-Google-Smtp-Source: APXvYqzkfn0LApP777P/NTsWuXQs9WqemFpwgDX6Y8xe92X1MAhfleO+4i8GW0Pi/uidnD4K7AZauJF4tdGd9SZmZZc=
+X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr58785651lfp.133.1578403577691;
+ Tue, 07 Jan 2020 05:26:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
-Content-Disposition: inline
-In-Reply-To: <20200107083654.atgbjhrnhyax2gqq@pengutronix.de>
-X-Cookie: Will Rogers never met you.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1577799707-11855-1-git-send-email-light.hsieh@mediatek.com>
+ <1577799707-11855-5-git-send-email-light.hsieh@mediatek.com>
+ <CACRpkdbto2goahTjzozi_LXXo1QNUTV1wm_rwoFOTcb36w0jkw@mail.gmail.com> <1578399400.16092.14.camel@mtkswgap22>
+In-Reply-To: <1578399400.16092.14.camel@mtkswgap22>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 14:26:06 +0100
+Message-ID: <CACRpkdYEq4FR07LyUSXRzPuQ=HXox7FJm+ABww0hvCYbHmQGkA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/6] Backward compatible to previous Mediatek's
+ bias-pull usage
+To:     Light Hsieh <light.hsieh@mediatek.com>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sean Wang <sean.wang@kernel.org>, kuohong.wang@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Jan 7, 2020 at 1:16 PM Light Hsieh <light.hsieh@mediatek.com> wrote:
 
---mSxgbZZZvrAyzONB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Use of "bias-pull-down = <MTK_PUPD_SET_R1R0_XX>" had already been
+> described in
+> Documentation/devicetree/binding/pinctrl/pinctrl-mt65xx.txt.
+> Previous MediaTek chips using pinctrl-mtk-common.c had already use such
+> binding. This is so-called backward compatibility.
+>
+> Besides, according to
+> Documentation/devicetree/binding/pinctrl/pincfg-node.yaml, bias-pull-up
+> and bias-pull-down can have an optional argument to select pull strength
+> when supported by hardware.
 
-On Tue, Jan 07, 2020 at 09:36:54AM +0100, Marco Felsch wrote:
-> On 19-12-17 12:58, Mark Brown wrote:
+That's right, I was wrong about this. This should be fine to use.
 
-> > This doesn't say anything about how the GPIO input is expected to be
-> > controlled, for voltage setting any runtime control would need to be
-> > done by the driver and it sounds like that's all that can be controlled.
-> > The way this reads I'd expect one use of this to be for fast voltage
-> > setting for example (you could even combine that with suspend sequencing
-> > using the internal sequencer if you mux back to the sequencer during
-> > suspend).
+> So, I think the propose of using "mediatek,pull-up-adv" and
+> "mediatek,pull-down-adv" is not necessary. However, I fail to stop
+> upstream of using "mediatek,pull-up-adv" and "mediatek,pull-down-adv" in
+> pinctrl-mtk-common-v2.c.
 
-> The input signal is routed trough the da9062 gpio block to the
-> regualtors. You can't set any voltage value using a gpio instead you
-> decide which voltage setting is applied. The voltage values for
-> runtime/suspend comes from the dt-data. No it's not just a fast
-> switching option imagine the system suspend case where the cpu and soc
-> voltage can be reduced to a very low value. Older soc's like the imx6
-> signaling this state by a hard wired gpio line because the soc and
-> cpu cores don't work properly on such low voltage values. This is
-> my use case and I can't use the sequencer.
+Let's see what Sean says, I am fine with the patch set in general.
 
-My point is that I can't tell any of this from the description.
-
---mSxgbZZZvrAyzONB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4UgvYACgkQJNaLcl1U
-h9AmOwf/dQI3hnspOymA8BdYOaCtzXhoiVJeMde8RKleUyfpqEoLvele7bnhJvxP
-66E8RM0aDJk6N+Jc5KzXO1mb1JWFhiGQM92q3NXPczpOyvgl/zl0UwKMnqHnj4nd
-/vDVfa60zDKTbUCS12us1kwgJNtHVRiFb8DX+9W3zSONqE5QIeNjmMMoL4EaPwJb
-clCtLm7jBckZinNOefKS6M2eElpRFFhtRON7EsaDqObH2xTP9aSNb9PEYCBy3nHq
-Cr6gYbC0cwgXL29ayf/aRtx3o9/DTC4LIAfAPZvGjDMN5vgYm3bznZKWmVzgR2Pd
-1fQ0J3Dh032Q/8ZTkaceklgsT1uGJg==
-=uLVS
------END PGP SIGNATURE-----
-
---mSxgbZZZvrAyzONB--
+Yours,
+Linus Walleij
