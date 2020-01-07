@@ -2,79 +2,99 @@ Return-Path: <SRS0=ahNV=24=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1CDC33C99
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 11:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69367C33C9E
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 11:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A123207E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 11:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CBCE214D8
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 11:50:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UgZQmucP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgAGLSk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jan 2020 06:18:40 -0500
-Received: from smtp2.axis.com ([195.60.68.18]:16517 "EHLO smtp2.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgAGLSj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Jan 2020 06:18:39 -0500
-IronPort-SDR: DgEOwWIz79dYYpoCbADPiwHBl+upSucKLsdZuNKDt92cc6JZTsbx6m2RFiWTlx7/hDcpprq75p
- O2TfvZuWbD8qkUY5KYGDirOwiI7IzonY2QQ3vLmpr66uSNSBwJ7MorrjcehHTlu40tQ2nP9idf
- YHH4vAssNjFVjJ3gTQfr6qhtoI0liCtZ8SCQmMvNSzvAaK6UA7BdIZuxOj2inKnOTPrrMnHblB
- fi4bDY1Xj9x3hKntRnt0eMwlavnWJf+SNlx6a8FrJqvPU5OxsXVSUoxo6lMXFNyY9LaRhW/gYP
- PJo=
-X-IronPort-AV: E=Sophos;i="5.69,406,1571695200"; 
-   d="scan'208";a="4004697"
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bes.se.axis.com
-Date:   Tue, 7 Jan 2020 12:18:36 +0100
-From:   Jesper Nilsson <jesper.nilsson@axis.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jesper Nilsson <jespern@axis.com>,
-        Lars Persson <larper@axis.com>,
-        linux-arm-kernel <linux-arm-kernel@axis.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: artpec6: fix __iomem on reg in set
-Message-ID: <20200107111836.uzvja6m4nb5hh56j@axis.com>
-References: <20191218101602.2442868-1-ben.dooks@codethink.co.uk>
- <20191218162616.qsxsltfsrxotzqhb@axis.com>
- <048c9653-114b-f726-44b2-9eb1d460b5b5@codethink.co.uk>
- <CACRpkdYFzHCMLj5oU5JMCkQkMZyOvM5351tpO6iEsE8e5nBZWQ@mail.gmail.com>
+        id S1727913AbgAGLuu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jan 2020 06:50:50 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39043 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbgAGLuu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 06:50:50 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l2so54393071lja.6
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2020 03:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iFsSM6vxEydUs02gD1XbE7gcNfWrUkov42GXmL/B/g4=;
+        b=UgZQmucPLWkmL6jVn+2bdRf8+0/tT1LQC8SCfASVMPN3ceCLoNrSJE96uAaxDXt/Zu
+         0Hbo5G+pbUeUM6GbbhF1YlxQarR7l4+JqZEmF5905YYykk8rHxtLD58wHt+ShBjRK912
+         LJZivrqsEFdbg4bAnOqjO2Q5Dkrwywm8kzc8yTsjFMVi37R8wmbW/DYGysjNHy4SK2V1
+         6E88aVpieRgKBp+RpdgjcTtmatxzcC+kMjHuHNsH36cRdiq/F2czCfYVTCL1xfJ+lsG+
+         W0ATtxjMQzJWiHW7Ex0twfEwGwjoh2cACHL5CRlSeBOncj4WUca2GyKrhrx05SE6vl80
+         dRmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iFsSM6vxEydUs02gD1XbE7gcNfWrUkov42GXmL/B/g4=;
+        b=KzR1jb+BPrwJbuxGKp3JUW0DEWZynC0RoBuhIUwYWMiISXwoen7Tbdiabu0AhTFm7u
+         7WY/S4gvjzYMJ/zvvX9tx127ceQraAtXdxJFLkHAweEkRfuCH+eszwFBeZNslkt2WbBM
+         QDQmQzq1cuv3dObNUIJM/qZwXYDcVjlVpsd/ianxdz05nxZsq2WjqV9tcWdkqIG6AmwB
+         +9AzugzNz9f2GjcCBv2cBdxx+4taYhb1uGjCqfI3H/92rGIUjk1GpfsRc9EU0ftI7k2z
+         5QTfLQ/ngvla95acF0mRZtnWKviWeEXeI/bUwNvJ9ta1wCs4LTKWPSb2HpwRtPNMVwTd
+         HGZQ==
+X-Gm-Message-State: APjAAAXL8o1mnj+E/lHdt9ynk4gplVeocWm4WDOoKxmZv8pf4Npk25q1
+        NYLVOZfzF1UE4K0P4V4xKHA37QFCVUByNFQ9er7+OQ==
+X-Google-Smtp-Source: APXvYqzqbaKvZ9Puh8J+kZVQvq2lpgj8PQt1Pkad+wgIKlI0vpiAAtUqurvSdYL9m9Fvp0HSudCVCKDTbQrmH6PpsH8=
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr64319128ljm.218.1578397848306;
+ Tue, 07 Jan 2020 03:50:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYFzHCMLj5oU5JMCkQkMZyOvM5351tpO6iEsE8e5nBZWQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-TM-AS-GCONF: 00
+References: <20200101145243.15912-1-hdegoede@redhat.com>
+In-Reply-To: <20200101145243.15912-1-hdegoede@redhat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 12:50:36 +0100
+Message-ID: <CACRpkdbTunsVtgGw5=ksn=cn+ZwYT_F7OhVqucaQjA1-5D8BfQ@mail.gmail.com>
+Subject: Re: [PATCH v3] pinctrl: baytrail: Replace WARN with dev_info_once
+ when setting direct-irq pin to output
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Mastykin <mastichi@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 10:39:34AM +0100, Linus Walleij wrote:
-> On Wed, Dec 18, 2019 at 6:32 PM Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> > On 18/12/2019 16:26, Jesper Nilsson wrote:
-> > > On Wed, Dec 18, 2019 at 11:16:02AM +0100, Ben Dooks (Codethink) wrote:
-> 
-> > >> -    unsigned int *reg;
-> > >> +    unsigned int __iomem *reg;
-> > >
-> > >       void __iomem *reg;
-> > >
-> > > We're using as an argument to readl()?
-> >
-> > yes, readl() shoud take an __iomem attributed pointer.
-> 
-> Shall I change it to void as well when applying?
+On Wed, Jan 1, 2020 at 3:52 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
-Please do, sorry that my comment wasn't clear above.
+> Suspending Goodix touchscreens requires changing the interrupt pin to
+> output before sending them a power-down command. Followed by wiggling
+> the interrupt pin to wake the device up, after which it is put back
+> in input mode.
+>
+> On Cherry Trail device the interrupt pin is listed as a GpioInt ACPI
+> resource so we can do this without problems as long as we release the
+> irq before changing the pin to output mode.
+>
+> On Bay Trail devices with a Goodix touchscreen direct-irq mode is used
+> in combination with listing the pin as a normal GpioIo resource. This
+> works fine, but this triggers the WARN in byt_gpio_set_direction-s output
+> path because direct-irq support is enabled on the pin.
+>
+> This commit replaces the WARN call with a dev_info_once call, fixing a
+> bunch of WARN splats in dmesg on each suspend/resume cycle.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v3:
+> - Replace WARN with a dev_info_once call, instead of dropping it
 
-> Yours,
-> Linus Walleij
+Patch applied with Mika's ACK!
 
-/^JN - Jesper Nilsson
--- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Yours,
+Linus Walleij
