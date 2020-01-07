@@ -2,146 +2,167 @@ Return-Path: <SRS0=ahNV=24=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E232C282DD
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 18:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8E2C33C9B
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 21:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38272087F
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 18:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F94B2081E
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 21:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVMsB8wh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAEhPDY8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgAGSmB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jan 2020 13:42:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26091 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728391AbgAGSmB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 13:42:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578422520;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gENCu0UbMTJ8+c3QrLGBJl46CsGhh7kSNycoBVRfXbs=;
-        b=fVMsB8whIvFAUKxuWPGaKO7/0AROiZDwzQStxGOZw7T/shAoiHSaJPiSTPDzEvhBiYiH71
-        x5TslNROZjzPWQVAich6wPa4X2AM9mtskH3fmyCnkhq0rtI1PtBFFxxz5F86yq8hnBMOs1
-        gXnetpB24KVsUFkqziKPslA/MmrrYhA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-353-k7QaNDjcPxWvvgHPyPZqHQ-1; Tue, 07 Jan 2020 13:41:59 -0500
-X-MC-Unique: k7QaNDjcPxWvvgHPyPZqHQ-1
-Received: by mail-wm1-f70.google.com with SMTP id t4so160614wmf.2
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2020 10:41:59 -0800 (PST)
+        id S1727367AbgAGV0n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jan 2020 16:26:43 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36114 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728190AbgAGV0h (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 16:26:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r19so1118511ljg.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jan 2020 13:26:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x90lifJPc4BGJ9wFpWec3cHzG5bLin4aDvSjmkt9zSM=;
+        b=BAEhPDY8si16eL8HF3/1rVLWTNeCbJndLnGusHT6nG/FVftAvGOyuE0DO/RmlDua2F
+         pHNYC/tAHTgbf+uKs/FQZHAiIOyxAAI4e1UhFL9clyoZvfJwuq7xfdwYsImIfPB7qKuc
+         N2wraSmxdYC8PBdiBL7FkHrJvXvMkwkyCWS7/WFJR/VQ2L8lEttBrURKjFGce2KolkZ5
+         v3/MGxy6u1IToVltfR4h13x2q1JO2RAOwwz1+IuQMjTfc8HeTmCrhlt+CbQ6gED+qkw3
+         qLZljC96Ya8wH57eS60zwyiWZRupcNU/sAiTK8tgm+mVz69sjIq/EHiyBIbU/iDf3akv
+         KoNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gENCu0UbMTJ8+c3QrLGBJl46CsGhh7kSNycoBVRfXbs=;
-        b=jdLo8GhgZsDZAIruWsDMeVY93bcR+WivRspVpt1KTF3C8zhF3r69eGF7EPSYxc8Eqx
-         aNd3Q34tgd0EqhhdQG9jhNNU6NcBbRo0lkOBsG5t6LSQVHd3hYesQfCjziGo6fpm99F+
-         2v+IMkHPF8F6rFiPhd3WTPINBnIkT6tNQgQKYrqKI/wGQ4M6e+t91fmh+KHsH0EUB5oH
-         8lP6pcz/qvBNw2VvaakbakHp5rUCLTcQejQU/YEdU7JS6KdUrOHr08rEDr33ppmEzNUb
-         0vjqOFMY4YxLuOOu6QdFo98sfOIrRHcRgjsHqQyXJYv+wIyPR4ak5c7gTMOczFTa+L6x
-         kalQ==
-X-Gm-Message-State: APjAAAVXh7SqwDQDS7utOiIfQtDWGRKoeXqcFp69m29N7bkMc2yxuLdw
-        HFxTakBE4zReHOWRK/NEao1Xr3qgQWjvBAUr/QRC61vXvBBsAXa4U69H329DsmX26QfWOKAFVgA
-        djo612HrSjLfbfckF2sERYg==
-X-Received: by 2002:a05:600c:2551:: with SMTP id e17mr447635wma.26.1578422518437;
-        Tue, 07 Jan 2020 10:41:58 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzpGM1svwLVg3Rk7KZDWMai3FCEe3dERy6+6LCgueZ2/2OxpDGfP5WHRBvAZG7YqRaPms0/kA==
-X-Received: by 2002:a05:600c:2551:: with SMTP id e17mr447618wma.26.1578422518223;
-        Tue, 07 Jan 2020 10:41:58 -0800 (PST)
-Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
-        by smtp.gmail.com with ESMTPSA id n3sm838121wrs.8.2020.01.07.10.41.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 10:41:57 -0800 (PST)
-Subject: Re: [PATCH resend v2 2/2] gpiolib: acpi: Add honor_wakeup
- module-option + quirk mechanism
-To:     Sasha Levin <sashal@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, stable@vger.kernel.org
-References: <20200105160357.97154-3-hdegoede@redhat.com>
- <20200107183315.A2CE320848@mail.kernel.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <45cfd73c-0372-9622-b8c3-345aece253a7@redhat.com>
-Date:   Tue, 7 Jan 2020 19:41:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        bh=x90lifJPc4BGJ9wFpWec3cHzG5bLin4aDvSjmkt9zSM=;
+        b=mYrTbJ4gpAvzujeV+5LaTJ38I6A+W2Dp8h0v7jb6lxcWDftjnS+t1T4jB81dq/UC/e
+         ESP4NEM5BrKsqkJY3mXtSpAnW+vSDEv6suB1xd8fLP9DJ//OXSc0vzl5IWblicq1lhcZ
+         0/50unXYORN/W6+8dHwCgPQBnVoDC5e5kf0xi5RGqLMi8D3BAxZ9BFPZmREdVomF/W5+
+         StnyNto+kBIEICzZ4AZCqkj9vpChkYAQb1autEpjsEtxCIfPsVR+Ty83w65fTUs5FHhF
+         EdffFjs3iIs17rXnr983OkQBMVr1CdCqByhiLabtMFWUmk3I9F6+S6EAQX/uT8qY1mn8
+         655A==
+X-Gm-Message-State: APjAAAWmuwsgMfxs31B6w8ofVZloHDlxq/MV8NzD3lNzT1Byz13T+M1R
+        jKpb90d0hIXe7Vj9h0hu/HxnNK7Cn9011A==
+X-Google-Smtp-Source: APXvYqzVu82LJ79QDMTNTmWMBaFA9t+tWmg7AVnqPF+4sR3eEoMcYveSgUVtaNUw2/17R380iRlTfQ==
+X-Received: by 2002:a2e:9e4c:: with SMTP id g12mr843721ljk.15.1578432394970;
+        Tue, 07 Jan 2020 13:26:34 -0800 (PST)
+Received: from localhost.localdomain (c-5ac9225c.014-348-6c756e10.bbcust.telenor.se. [92.34.201.90])
+        by smtp.gmail.com with ESMTPSA id h24sm317830ljl.80.2020.01.07.13.26.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 13:26:34 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: Update TODO
+Date:   Tue,  7 Jan 2020 22:24:32 +0100
+Message-Id: <20200107212432.27587-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20200107183315.A2CE320848@mail.kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Drop the completed item: hierarchical irqchip helpers. Add
+motivation for gpio descriptor refactoring. Extend the list of
+stuff to do. Minor fixups.
 
-On 07-01-2020 19:33, Sasha Levin wrote:
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a -stable tag.
-> The stable tag indicates that it's relevant for the following trees: all
-> 
-> The bot has tested the following trees: v5.4.8, v4.19.93, v4.14.162, v4.9.208, v4.4.208.
-> 
-> v5.4.8: Failed to apply! Possible dependencies:
->      a5242f4858be ("gpiolib: acpi: Turn dmi_system_id table into a generic quirk table")
-> 
-> v4.19.93: Failed to apply! Possible dependencies:
->      a5242f4858be ("gpiolib: acpi: Turn dmi_system_id table into a generic quirk table")
-> 
-> v4.14.162: Failed to apply! Possible dependencies:
->      a5242f4858be ("gpiolib: acpi: Turn dmi_system_id table into a generic quirk table")
-> 
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/TODO | 46 +++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 41 insertions(+), 5 deletions(-)
 
-Like with the previous patch adding this to 4.14 and later (which should apply cleanly once
-the previous patch is applied) , leaving the others behind should be fine.
-
-Thanks,
-
-Hans
-
-
-
-> v4.9.208: Failed to apply! Possible dependencies:
->      25e3ef894eef ("gpio: acpi: Split out acpi_gpio_get_irq_resource() helper")
->      2727315df3f5 ("gpiolib: acpi: Add Terra Pad 1061 to the run_edge_events_on_boot_blacklist")
->      61f7f7c8f978 ("gpiolib: acpi: Add gpiolib_acpi_run_edge_events_on_boot option and blacklist")
->      78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers from a late_initcall")
->      85c73d50e57e ("gpio: acpi: Add managed variant of acpi_dev_add_driver_gpios()")
->      8a146fbe1f14 ("gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set")
->      993b9bc5c47f ("gpiolib: acpi: Switch to cansleep version of GPIO library call")
->      a5242f4858be ("gpiolib: acpi: Turn dmi_system_id table into a generic quirk table")
->      ca876c7483b6 ("gpiolib-acpi: make sure we trigger edge events at least once on boot")
->      e59f5e08ece1 ("gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers")
-> 
-> v4.4.208: Failed to apply! Possible dependencies:
->      10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio lookups")
->      25e3ef894eef ("gpio: acpi: Split out acpi_gpio_get_irq_resource() helper")
->      58383c78425e ("gpio: change member .dev to .parent")
->      61f7f7c8f978 ("gpiolib: acpi: Add gpiolib_acpi_run_edge_events_on_boot option and blacklist")
->      78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers from a late_initcall")
->      85c73d50e57e ("gpio: acpi: Add managed variant of acpi_dev_add_driver_gpios()")
->      8a146fbe1f14 ("gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set")
->      993b9bc5c47f ("gpiolib: acpi: Switch to cansleep version of GPIO library call")
->      a5242f4858be ("gpiolib: acpi: Turn dmi_system_id table into a generic quirk table")
->      ca876c7483b6 ("gpiolib-acpi: make sure we trigger edge events at least once on boot")
->      e59f5e08ece1 ("gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers")
-> 
-> 
-> NOTE: The patch will not be queued to stable trees until it is upstream.
-> 
-> How should we proceed with this patch?
-> 
+diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
+index 76f8c7ff18ff..342285ecdb08 100644
+--- a/drivers/gpio/TODO
++++ b/drivers/gpio/TODO
+@@ -10,6 +10,28 @@ approach. This means that GPIO consumers, drivers and machine descriptions
+ ideally have no use or idea of the global GPIO numberspace that has/was
+ used in the inception of the GPIO subsystem.
+ 
++The number space issue is thesame as to why irq is moving away from irq
++numbers to IRQ descriptors.
++
++The underlying motivation for this is that the GPIO number space has become
++unmanageable: machine board files tend to become full of macros trying to
++establish the numberspace at compile-time, making it hard to add any numbers
++in the middle (such as if you missed a pin on a chip) without the numberspace
++breaking.
++
++Machine descriptions such as device tree or ACPI does not have a concept of the
++Linux GPIO number as those descriptions are external to the Linux kernel
++and treat GPIO lines as abstract entities.
++
++The runtime-assigned GPIO number space (what you get if you assign the GPIO
++base as -1 in struct gpio_chip) has also became unpredictable due to factors
++such as probe ordering and the introduction of -EPROBE_DEFER making probe
++ordering of independent GPIO chips essentially upredictable, as their base
++number will be assigned on a first come first serve basis.
++
++The best way to get out of the problem is to make the global GPIO numbers
++unimportant by simply not using them. GPIO descriptors deal with this.
++
+ Work items:
+ 
+ - Convert all GPIO device drivers to only #include <linux/gpio/driver.h>
+@@ -33,7 +55,7 @@ This header and helpers appeared at one point when there was no proper
+ driver infrastructure for doing simpler MMIO GPIO devices and there was
+ no core support for parsing device tree GPIOs from the core library with
+ the [devm_]gpiod_get() calls we have today that will implicitly go into
+-the device tree back-end.
++the device tree back-end. It is legacy and should not be used in new code.
+ 
+ Work items:
+ 
+@@ -59,6 +81,15 @@ Work items:
+   uses <linux/gpio/consumer.h> or <linux/gpio/driver.h> instead.
+ 
+ 
++Get rid of <linux/gpio.h>
++
++This legacy header is a one stop shop for anything GPIO is closely tied
++to the global GPIO numberspace. The endgame of the above refactorings will
++be the removal of <linux/gpio.h> and from that point only the specialized
++headers under <linux/gpio/*.h> will be used. This requires all the above to
++be completed and is expected to take a long time.
++
++
+ Collect drivers
+ 
+ Collect GPIO drivers from arch/* and other places that should be placed
+@@ -109,7 +140,7 @@ try to cover any generic kind of irqchip cascaded from a GPIO.
+ 
+   int irq; /* from platform etc */
+   struct my_gpio *g;
+-  struct gpio_irq_chip *girq
++  struct gpio_irq_chip *girq;
+ 
+   /* Set up the irqchip dynamically */
+   g->irq.name = "my_gpio_irq";
+@@ -137,9 +168,14 @@ try to cover any generic kind of irqchip cascaded from a GPIO.
+ - Look over and identify any remaining easily converted drivers and
+   dry-code conversions to gpiolib irqchip for maintainers to test
+ 
+-- Support generic hierarchical GPIO interrupts: these are for the
+-  non-cascading case where there is one IRQ per GPIO line, there is
+-  currently no common infrastructure for this.
++- Drop gpiochip_set_chained_irqchip() when all the chained irqchips
++  have been converted to the above infrastructure.
++
++- Add more infrastructure to make it possible to also pass a threaded
++  irqchip in struct gpio_irq_chip.
++
++- Drop gpiochip_irqchip_add_nested() when all the chained irqchips
++  have been converted to the above infrastructure.
+ 
+ 
+ Increase integration with pin control
+-- 
+2.23.0
 
