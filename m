@@ -6,90 +6,74 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561C6C33C8C
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F6AC33C8C
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2485220656
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CC42072A
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jan 2020 13:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbgAGNmJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jan 2020 08:42:09 -0500
-Received: from www84.your-server.de ([213.133.104.84]:53176 "EHLO
-        www84.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbgAGNmJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jan 2020 08:42:09 -0500
-X-Greylist: delayed 1564 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 08:42:08 EST
-Received: from [188.192.102.182] (helo=[192.168.0.7])
-        by www84.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <stefani@seibold.net>)
-        id 1iooiI-0003xj-OC; Tue, 07 Jan 2020 14:16:02 +0100
-Message-ID: <10721bebc81144c25e53b55c8cd086a34d4fd1f8.camel@seibold.net>
-Subject: Re: [PATCH v4 00/13] gpiolib: add an ioctl() for monitoring line
- status changes
-From:   Stefani Seibold <stefani@seibold.net>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1727880AbgAGNwU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jan 2020 08:52:20 -0500
+Received: from mga14.intel.com ([192.55.52.115]:13439 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727658AbgAGNwU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 7 Jan 2020 08:52:20 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2020 05:52:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,406,1571727600"; 
+   d="scan'208";a="225675047"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 07 Jan 2020 05:52:17 -0800
+Received: by lahna (sSMTP sendmail emulation); Tue, 07 Jan 2020 15:52:16 +0200
+Date:   Tue, 7 Jan 2020 15:52:16 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 07 Jan 2020 14:15:59 +0100
-In-Reply-To: <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
-References: <20191224120709.18247-1-brgl@bgdev.pl>
-         <CACRpkdZ_TroKCAnDWiY-jPbe0NL+ingm1pMLQLPxT1Uh78kx8g@mail.gmail.com>
-         <CAMpxmJXikLw0d1e1Eq7vVzoORz3utEBxfG6nRmkngLqezVqtuA@mail.gmail.com>
-         <CACRpkdY2NXNrAk9VY18YDeQ2WDfDfAyi4mgW26JuTPHdEOE-uQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Pass irqchip when adding gpiochip
+Message-ID: <20200107135216.GR465886@lahna.fi.intel.com>
+References: <20191229013059.495767-1-linus.walleij@linaro.org>
+ <20191230102021.GF2628@lahna.fi.intel.com>
+ <CACRpkdZONfNCPwTn=Ou7LU=+fPjDXeGGN8jkCzgRLkK2stKeNw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: stefani@seibold.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25687/Tue Jan  7 10:56:22 2020)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZONfNCPwTn=Ou7LU=+fPjDXeGGN8jkCzgRLkK2stKeNw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am Dienstag, den 07.01.2020, 13:50 +0100 schrieb Linus Walleij:
-> On Tue, Jan 7, 2020 at 11:38 AM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
-> > wt., 7 sty 2020 o 11:07 Linus Walleij <linus.walleij@linaro.org>
-> > napisał(a):
-> > > The patch set overall looks good to me, I don't understand the
-> > > kfifo
-> > > parts but I trust you on this, though we need review from a FIFO
-> > > maintainer.
-> > 
-> > Ha! This may be a problem - there doesn't seem to be one. This is
-> > why
-> > I Cc'd Greg.
+On Tue, Jan 07, 2020 at 11:32:54AM +0100, Linus Walleij wrote:
+> On Mon, Dec 30, 2019 at 11:20 AM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Sun, Dec 29, 2019 at 02:30:59AM +0100, Linus Walleij wrote:
+> > > We need to convert all old gpio irqchips to pass the irqchip
+> > > setup along when adding the gpio_chip. For more info see
+> > > drivers/gpio/TODO.
+> > >
+> > > Set up the pin ranges using the new callback.
+> >
+> > Maybe have this one split as a separate patch? Same what we do for
+> > Baytrail and Cherryview.
 > 
-> I was under the impression that KFIFO was part of the driver core.
-> Let's try to CC the actual author (Stefani Seibold) and see if the
-> mail
-> address works and if he can look at it. Or did you already talk to
-> Stefani?
-> 
-> (git blame is always my best friend in cases like this, hehe)
-> 
-> Yours,
-> Linus Walleij
+> I'm afraid to do that since splitting the semantic ordering was
+> something that broke a lot of times already, I was under the
+> impression that doing the two things (moving to the callback
+> and adding along with the gpio_chip) at the same time was
+> the only way to preserve the semantic ordering.
 
-I have looked around for the patches and I found the following patches 
+Well at least we do the same for others (add the callback in another
+patch and then pass irqchip in another) but no strong feelings. I'm fine
+with this one as well :)
 
-[PATCH v4 07/13] kfifo: provide noirqsave variants of spinlocked in and out helpers
-[PATCH v4 08/13] kfifo: provide kfifo_is_empty_spinlocked()
+> But more than anything I want someone to test it ...
 
-dated on 24 Dec 2019.
-
-Both seems to be okay. The patch is non intrusive to KFIFO adding only
-spinlock wrapper functions for the contemporary kfifo functions.
-
-So...
-
-Acked by Stefani Seibold <stefani@seibold.net>
-
-
+I quickly tested this on Whiskey Lake and SD card detection interrupt
+still works fine after this patch.
