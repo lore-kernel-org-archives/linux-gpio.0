@@ -2,125 +2,91 @@ Return-Path: <SRS0=oS3k=25=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC79C282DD
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 16:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC088C33CA2
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 17:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32AEE20692
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 16:55:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="nCfrnqH2"
+	by mail.kernel.org (Postfix) with ESMTP id 9542D20705
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 17:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgAHQzv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jan 2020 11:55:51 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36521 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729015AbgAHQzv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2020 11:55:51 -0500
-Received: by mail-il1-f194.google.com with SMTP id b15so3236642iln.3
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2020 08:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1otWToj29hMezV4JMaks8PqTBWepruh9XfV6M8TCvsU=;
-        b=nCfrnqH2TuHcWKw+gqbTFlRBtsM+1gJEXink7mJuJk0nmvtdrlFU+U/tbWkZz5lvA4
-         dh07Owg6buNjoKYNVnWOh06dY6tSCJ4FFXsMQS5xM9fY2YoZ2K8d4h0vrrk0rcKiCjDg
-         /zt7j1NoX9mNE6LKBm9rZQ0cWua+UdPI9ESaC/HRaqDM0l6Oc7Jd7kZNsC2BTgIRDFI4
-         iA+z4DrmdMyAUoIUh+NMcZ7KO4KtcZOSpubVyY/xr4AyYShePoXKrSYY/MMd1F7z27bq
-         Le9Q386olO/iPiTVvMnoWZWycMdtNI3ctdhfn+o2XKbjArzyeUB3Ou9iSd1gYdLdJO2v
-         M4GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1otWToj29hMezV4JMaks8PqTBWepruh9XfV6M8TCvsU=;
-        b=NXgcKsb5E1zKiLXYXxSy3E5O8GkPpVMYmNGCHRpV/scbxDjrP7QncV9SvIG2I/VuOS
-         3n5MNdziTGqAj8kmvvj7LZ7fNW51m1qxGPIsO+g4wJuY//9cXtJr6+k7lDUcTJQHRTtH
-         YFNE9rK2fG3M8DUOhCBEN+C6wrH6izfRN0+Bs6yirPBHzAmAacdG7bwOwHsxvdWIRP7J
-         FBAshV1prBVGXtQY1887fPH0sKF1IE5wYV+95Y1z6hrh6NAHOZuwzmjl+pve5BLj1Opc
-         L7e9ZdQtQyVnCwq5MxHYreI9owb2mK2ytu2xN95/rpGBwIiAbSY+jQIiP//vPuagTlTL
-         8swg==
-X-Gm-Message-State: APjAAAVUJpVbp2Wf9t+QQmD+TZB8Lpz/ehOBr4F7GOws47sWeP7ZDC1Z
-        gyvJWHde3f5dRjIjCBKRxWADCeD827ng1NtDmD0Kdg==
-X-Google-Smtp-Source: APXvYqwXzt3Dr3coz5H6HOpE5yRjd+aaGYWdxOg2BItU2UZbx7shuxzvTAuTgRpxCkvnNo27mF+acMycT/1lh7iRvtU=
-X-Received: by 2002:a92:8712:: with SMTP id m18mr4760361ild.40.1578502550789;
- Wed, 08 Jan 2020 08:55:50 -0800 (PST)
+        id S1727357AbgAHRmF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jan 2020 12:42:05 -0500
+Received: from mga07.intel.com ([134.134.136.100]:14891 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727125AbgAHRmE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:42:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 09:42:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,410,1571727600"; 
+   d="scan'208";a="217573630"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Jan 2020 09:42:02 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ipFLH-00067i-HT; Wed, 08 Jan 2020 19:42:03 +0200
+Date:   Wed, 8 Jan 2020 19:42:03 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Boyan Ding <boyan.j.ding@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: sunrisepoint: Add missing Interrupt Status
+ register offset
+Message-ID: <20200108174203.GE32742@smile.fi.intel.com>
+References: <20200101204120.5873-1-boyan.j.ding@gmail.com>
 MIME-Version: 1.0
-References: <20191224120709.18247-1-brgl@bgdev.pl> <20191224120709.18247-13-brgl@bgdev.pl>
- <20200108124650.GR32742@smile.fi.intel.com>
-In-Reply-To: <20200108124650.GR32742@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 8 Jan 2020 17:55:39 +0100
-Message-ID: <CAMRc=McbH7be7Y1SDO3UtSSOgYiDnHde1Au2yhsJxMcviDiJGQ@mail.gmail.com>
-Subject: Re: [PATCH v4 12/13] gpiolib: add new ioctl() for monitoring changes
- in line info
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200101204120.5873-1-boyan.j.ding@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-=C5=9Br., 8 sty 2020 o 13:46 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
->
-> On Tue, Dec 24, 2019 at 01:07:08PM +0100, Bartosz Golaszewski wrote:
-> ...
->
-> > -     } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL) {
-> > +     } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL ||
-> > +                cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL) {
->
-> What about to split the functionality to something like lineinfo_get() an=
-d...
->
-> >               struct gpioline_info lineinfo;
->
-> > -             struct gpio_desc *desc;
->
-> Hmm... Is it correct patch for this change?
+On Wed, Jan 01, 2020 at 12:41:20PM -0800, Boyan Ding wrote:
+> Commit 179e5a6114cc ("pinctrl: intel: Remove default Interrupt Status
+> offset") removes default interrupt status offset of GPIO controllers, 
+> with previous commits explicitly providing the previously default
+> offsets. However, the is_offset value in SPTH_COMMUNITY is missing,
+> preventing related irq from being properly detected and handled.
+> 
 
-Yes, because instead of declaring *desc in every branch, we declare it
-once and use it twice.
+Pushed to my review and testing queue, thanks!
 
->
-> >
-> >               if (copy_from_user(&lineinfo, ip, sizeof(lineinfo)))
-> >                       return -EFAULT;
-> > @@ -1246,11 +1260,25 @@ static long gpio_ioctl(struct file *filp, unsig=
-ned int cmd, unsigned long arg)
-> >
-> >               if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
-> >                       return -EFAULT;
-> > +
-> > +             if (cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL)
-> > +                     set_bit(desc_to_gpio(desc), priv->watched_lines);
-> > +
->
-> ...simple use
->
->         } else if (cmd =3D=3D GPIO_GET_LINEINFO_IOCTL) {
->                 return lineinfo_get();
->         } else if {cmd =3D=3D GPIO_GET_LINEINFO_WATCH_IOCTL) {
->                 ret =3D lineinfo_get()
->                 set_bit();
->                 return ret;
->         }
->
-> ?
+> Fixes: f702e0b93cdb ("pinctrl: sunrisepoint: Provide Interrupt Status register offset")
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=205745
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Boyan Ding <boyan.j.ding@gmail.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+> index 44d7f50bbc82..d936e7aa74c4 100644
+> --- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+> +++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+> @@ -49,6 +49,7 @@
+>  		.padown_offset = SPT_PAD_OWN,		\
+>  		.padcfglock_offset = SPT_PADCFGLOCK,	\
+>  		.hostown_offset = SPT_HOSTSW_OWN,	\
+> +		.is_offset = SPT_GPI_IS,		\
+>  		.ie_offset = SPT_GPI_IE,		\
+>  		.pin_base = (s),			\
+>  		.npins = ((e) - (s) + 1),		\
+> -- 
+> 2.24.0
+> 
 
-You still need to retrieve *desc outside of lineinfo_get(). I think
-it's not worth the hassle.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Bart
+
