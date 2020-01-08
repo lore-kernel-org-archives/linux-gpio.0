@@ -2,100 +2,211 @@ Return-Path: <SRS0=oS3k=25=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D54C00523
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 10:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71478C00523
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 11:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95FED206DB
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 10:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4433820673
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 11:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbgAHKsR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jan 2020 05:48:17 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43637 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727921AbgAHKsI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2020 05:48:08 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip8se-0000eb-56; Wed, 08 Jan 2020 11:48:04 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ip8sd-000159-J6; Wed, 08 Jan 2020 11:48:03 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     support.opensource@diasemi.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        Adam.Thomson.Opensource@diasemi.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-gpio@vger.kernel.org
-Subject: [PATCH v4 2/3] mfd: da9062: add support for the DA9062 GPIOs in the core
-Date:   Wed,  8 Jan 2020 11:47:45 +0100
-Message-Id: <20200108104746.1765-3-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200108104746.1765-1-m.felsch@pengutronix.de>
-References: <20200108104746.1765-1-m.felsch@pengutronix.de>
+        id S1727088AbgAHLGl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jan 2020 06:06:41 -0500
+Received: from mga11.intel.com ([192.55.52.93]:42333 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbgAHLGk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:06:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2020 03:06:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,409,1571727600"; 
+   d="scan'208";a="421415431"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Jan 2020 03:06:38 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ip9Ad-0001gj-Dp; Wed, 08 Jan 2020 13:06:39 +0200
+Date:   Wed, 8 Jan 2020 13:06:39 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v4 09/13] gpiolib: rework the locking mechanism for
+ lineevent kfifo
+Message-ID: <20200108110639.GL32742@smile.fi.intel.com>
+References: <20191224120709.18247-1-brgl@bgdev.pl>
+ <20191224120709.18247-10-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191224120709.18247-10-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the da9062 GPIO's aren't available. The patch adds the support
-to make these available by adding a gpio device with the corresponding
-irq resources. Furthermore the patch fixes a minor style issue for the
-onkey device.
+On Tue, Dec 24, 2019 at 01:07:05PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The read_lock mutex is supposed to prevent collisions between reading
+> and writing to the line event kfifo but it's actually only taken when
+> the events are being read from it.
+> 
+> Drop the mutex entirely and reuse the spinlock made available to us in
+> the waitqueue struct. Take the lock whenever the fifo is modified or
+> inspected. Drop the call to kfifo_to_user() and instead first extract
+> the new element from kfifo when the lock is taken and only then pass
+> it on to the user after the spinlock is released.
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/da9062-core.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Sounds like a plausible approach.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index e69626867c26..5290bdc0ddcd 100644
---- a/drivers/mfd/da9062-core.c
-+++ b/drivers/mfd/da9062-core.c
-@@ -233,6 +233,14 @@ static struct resource da9062_onkey_resources[] = {
- 	DEFINE_RES_NAMED(DA9062_IRQ_ONKEY, 1, "ONKEY", IORESOURCE_IRQ),
- };
- 
-+static struct resource da9062_gpio_resources[] = {
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI0, 1, "GPI0", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI1, 1, "GPI1", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI2, 1, "GPI2", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI3, 1, "GPI3", IORESOURCE_IRQ),
-+	DEFINE_RES_NAMED(DA9062_IRQ_GPI4, 1, "GPI4", IORESOURCE_IRQ),
-+};
-+
- static const struct mfd_cell da9062_devs[] = {
- 	{
- 		.name		= "da9062-core",
-@@ -266,7 +274,13 @@ static const struct mfd_cell da9062_devs[] = {
- 		.name		= "da9062-onkey",
- 		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
- 		.resources	= da9062_onkey_resources,
--		.of_compatible = "dlg,da9062-onkey",
-+		.of_compatible	= "dlg,da9062-onkey",
-+	},
-+	{
-+		.name		= "da9062-gpio",
-+		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
-+		.resources	= da9062_gpio_resources,
-+		.of_compatible	= "dlg,da9062-gpio",
- 	},
- };
- 
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/gpiolib.c | 64 +++++++++++++++++++++++-------------------
+>  1 file changed, 35 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 81d5eda4de7d..a859c0813e0d 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -788,8 +788,6 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+>   * @irq: the interrupt that trigger in response to events on this GPIO
+>   * @wait: wait queue that handles blocking reads of events
+>   * @events: KFIFO for the GPIO events
+> - * @read_lock: mutex lock to protect reads from colliding with adding
+> - * new events to the FIFO
+>   * @timestamp: cache for the timestamp storing it between hardirq
+>   * and IRQ thread, used to bring the timestamp close to the actual
+>   * event
+> @@ -802,7 +800,6 @@ struct lineevent_state {
+>  	int irq;
+>  	wait_queue_head_t wait;
+>  	DECLARE_KFIFO(events, struct gpioevent_data, 16);
+> -	struct mutex read_lock;
+>  	u64 timestamp;
+>  };
+>  
+> @@ -818,7 +815,7 @@ static __poll_t lineevent_poll(struct file *filep,
+>  
+>  	poll_wait(filep, &le->wait, wait);
+>  
+> -	if (!kfifo_is_empty(&le->events))
+> +	if (!kfifo_is_empty_spinlocked_noirqsave(&le->events, &le->wait.lock))
+>  		events = EPOLLIN | EPOLLRDNORM;
+>  
+>  	return events;
+> @@ -831,43 +828,52 @@ static ssize_t lineevent_read(struct file *filep,
+>  			      loff_t *f_ps)
+>  {
+>  	struct lineevent_state *le = filep->private_data;
+> -	unsigned int copied;
+> +	struct gpioevent_data event;
+> +	ssize_t bytes_read = 0;
+>  	int ret;
+>  
+> -	if (count < sizeof(struct gpioevent_data))
+> +	if (count < sizeof(event))
+>  		return -EINVAL;
+>  
+>  	do {
+> +		spin_lock(&le->wait.lock);
+>  		if (kfifo_is_empty(&le->events)) {
+> -			if (filep->f_flags & O_NONBLOCK)
+> +			if (bytes_read) {
+> +				spin_unlock(&le->wait.lock);
+> +				return bytes_read;
+> +			}
+> +
+> +			if (filep->f_flags & O_NONBLOCK) {
+> +				spin_unlock(&le->wait.lock);
+>  				return -EAGAIN;
+> +			}
+>  
+> -			ret = wait_event_interruptible(le->wait,
+> +			ret = wait_event_interruptible_locked(le->wait,
+>  					!kfifo_is_empty(&le->events));
+> -			if (ret)
+> +			if (ret) {
+> +				spin_unlock(&le->wait.lock);
+>  				return ret;
+> +			}
+>  		}
+>  
+> -		if (mutex_lock_interruptible(&le->read_lock))
+> -			return -ERESTARTSYS;
+> -		ret = kfifo_to_user(&le->events, buf, count, &copied);
+> -		mutex_unlock(&le->read_lock);
+> -
+> -		if (ret)
+> -			return ret;
+> -
+> -		/*
+> -		 * If we couldn't read anything from the fifo (a different
+> -		 * thread might have been faster) we either return -EAGAIN if
+> -		 * the file descriptor is non-blocking, otherwise we go back to
+> -		 * sleep and wait for more data to arrive.
+> -		 */
+> -		if (copied == 0 && (filep->f_flags & O_NONBLOCK))
+> -			return -EAGAIN;
+> +		ret = kfifo_out(&le->events, &event, 1);
+> +		spin_unlock(&le->wait.lock);
+> +		if (ret != 1) {
+> +			/*
+> +			 * This should never happen - we were holding the lock
+> +			 * from the moment we learned the fifo is no longer
+> +			 * empty until now.
+> +			 */
+> +			ret = -EIO;
+> +			break;
+> +		}
+>  
+> -	} while (copied == 0);
+> +		if (copy_to_user(buf + bytes_read, &event, sizeof(event)))
+> +			return -EFAULT;
+> +		bytes_read += sizeof(event);
+> +	} while (count >= bytes_read + sizeof(event));
+>  
+> -	return copied;
+> +	return bytes_read;
+>  }
+>  
+>  static int lineevent_release(struct inode *inode, struct file *filep)
+> @@ -969,7 +975,8 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+>  		return IRQ_NONE;
+>  	}
+>  
+> -	ret = kfifo_put(&le->events, ge);
+> +	ret = kfifo_in_spinlocked_noirqsave(&le->events, &ge,
+> +					    1, &le->wait.lock);
+>  	if (ret)
+>  		wake_up_poll(&le->wait, EPOLLIN);
+>  
+> @@ -1084,7 +1091,6 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+>  
+>  	INIT_KFIFO(le->events);
+>  	init_waitqueue_head(&le->wait);
+> -	mutex_init(&le->read_lock);
+>  
+>  	/* Request a thread to read the events */
+>  	ret = request_threaded_irq(le->irq,
+> -- 
+> 2.23.0
+> 
+
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
+
 
