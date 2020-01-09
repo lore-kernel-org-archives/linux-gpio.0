@@ -2,57 +2,58 @@ Return-Path: <SRS0=tEc5=26=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABB5C32771
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 11:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37762C32771
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 11:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D8F52072A
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 11:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3F822077B
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 11:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iXCmz/GD"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="y0zf90SH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbgAILuR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jan 2020 06:50:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40078 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728926AbgAILuQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2020 06:50:16 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so2485119wmi.5
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Jan 2020 03:50:16 -0800 (PST)
+        id S1729114AbgAILuV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jan 2020 06:50:21 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38432 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbgAILuU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2020 06:50:20 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u2so2502938wmc.3
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Jan 2020 03:50:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T6PnzdI9idiu6EFezuzKl56feV8FHs3zBjQKARno6vk=;
-        b=iXCmz/GD6icV6BUwR+s8NejDWtJHyipKyfpsBNVv3tbhIX6h902CLFDjMgx/gAXdvm
-         um4I8Llh/994qVWQB2Gn5270SBrX9/e3lAYxdBNfghKBf98YnWC+hq8F6wXSTBP9LNlR
-         lEv982AYR+8gBXC5z6oEori2KQiGR8Top14rUUf34l8FEMeZuJEBbfLSDlGvF+dOHceG
-         Q283N4yfmm/3HQNtbML4qaQBiRb1/9VInnEkKP4uFPQFFxupYzAf0lhQ4uy5yM+Xc8YN
-         /gRlUWJ7R1Htpv8+KhC+76pFkUAHItrvqq6nzrXp34WoHorKhwvJgfGtgJCqV02MoToh
-         Wk8w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FA3+2VP5jAU36J2OH+8r6uyx7DpqKu5B6mxuwntNrmg=;
+        b=y0zf90SH/xz46Ta5Z+ipALrxGQSFFIUJRsJTjVK2piTWKeLB9vzcdCQr1Kwzwmc+8j
+         T6z2lD3TbAbS34SiyDT06Tup2pQGOAwwYakLxgcUFXN0Pq1j6RcF14eEKKY5i1bEaPxE
+         FAMZpgOTj3VJNOeKSeH/hekuZgfqdjQjggdaJnrcpNNckqWAl1RSyRirM/TDJCgvWdFk
+         Ma3MifhS8C2LiHKgBCRjhL2fhMJNrhgtu+krUnd2vwbO3N3IeR3WKnhySnvD86GFYAhq
+         OaNcNFuMvFVV8a9JXDnfMJ2x6QlmDvozTVji4405hb5xNGqiHw0C/HmgvFhxuDNGqKpS
+         g0/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T6PnzdI9idiu6EFezuzKl56feV8FHs3zBjQKARno6vk=;
-        b=A3x0O+D/V14/Bzqo+jBU1ox9WP3qW8f3kN87xdS0Y0oRXrgj9dzftGbPniqWa8F2Cs
-         29sNmZEQSP3d25wpCJhgftn0hXUDKbzO3zU2m4kR2Qkc0BR2jnlEaD+/moTh8sJFNYKN
-         9XA3Kq1H/Ewn1BkqN+C7vn2b0acLg8HFjOC6pLZfi0U7BLFluzWBeWpDAZ17fp0kqbrz
-         Y0BkM2k8ZUsJd8TkPNzT2+O5wBfvVRAdKAPab/8BuHTMi/4C1TpQYdXALBBMxp+ujpJN
-         L/QVmUtUFcmnPJw9qXe9juENLn/LSdJqDRBAyonS23R+nAWhtXQ71AFXAdy4AP/DWPT2
-         nSTQ==
-X-Gm-Message-State: APjAAAWR1NXhvorYGEpg6NA9uUxuOeumAjTaqNufi78jiGQ84Gk9jYPd
-        o4G8Yizc+FfkIM0KpDuNR3q+EA==
-X-Google-Smtp-Source: APXvYqyiNTMVFMIidZLuqR91uJGVJNBraA/eWD7B18OGosvc/XDhPkAAP6W2HFvjlD02EkkOB8M0aQ==
-X-Received: by 2002:a05:600c:2283:: with SMTP id 3mr4516162wmf.100.1578570615400;
-        Thu, 09 Jan 2020 03:50:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FA3+2VP5jAU36J2OH+8r6uyx7DpqKu5B6mxuwntNrmg=;
+        b=NPugDZeMJa0Ch7TSv8j7rJZdULB0G076NxmwqG5HXrq1/WzJhPLKHFK7q+hK5yKkUU
+         ovGd3KaUvdmFCACnOqIweyLpUnsKikcqZJ6kYRi8MUnBMv2wKvhNu/q4pAY5uzyu1JV7
+         IjCWxpU10PMt4tZuyhaY+QNKggQPp9vyAl40EeF9fAQZW1V+VgT5LZ9HQN7U403zSwSL
+         P8DbcPWtW14VyaypKfO1cyRa3awQIXFmABr1VuQrDqouiyD4FUzTLBmFaRyk9gcUgSEg
+         6MumD4a02or4s2mb6U3PKSnjIRZ+dIHOD9hUuCyjajr7wkXtzgEEaoOpeeXv52pwaEnF
+         OGWg==
+X-Gm-Message-State: APjAAAXySmb8032Ham7QZVLhqCgTMSEOYw8anrvZbPZgdyFCUxdeePkQ
+        t26rSO3QhsB6bA3roA+ewrbpWQ==
+X-Google-Smtp-Source: APXvYqxv8DiI2j/pEwy6D48Ut1X97xSOn0Ai9KBCq84xPYr1GFVwPbZNpfD6u2vecLPzx+W5vx2ybg==
+X-Received: by 2002:a05:600c:290f:: with SMTP id i15mr4513441wmd.115.1578570618381;
+        Thu, 09 Jan 2020 03:50:18 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id u16sm2574979wmj.41.2020.01.09.03.50.14
+        by smtp.gmail.com with ESMTPSA id u16sm2574979wmj.41.2020.01.09.03.50.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 03:50:14 -0800 (PST)
+        Thu, 09 Jan 2020 03:50:17 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -61,10 +62,12 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 0/7] gpiolib: add an ioctl() for monitoring line status changes
-Date:   Thu,  9 Jan 2020 12:50:03 +0100
-Message-Id: <20200109115010.27814-1-brgl@bgdev.pl>
+Subject: [PATCH v5 3/7] gpiolib: rework the locking mechanism for lineevent kfifo
+Date:   Thu,  9 Jan 2020 12:50:06 +0100
+Message-Id: <20200109115010.27814-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200109115010.27814-1-brgl@bgdev.pl>
+References: <20200109115010.27814-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -74,77 +77,146 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-When discussing the recent user-space changes with Kent and while working
-on dbus API for libgpiod I noticed that we really don't have any way of
-keeping the line info synchronized between the kernel and user-space
-processes. We can of course periodically re-read the line information or
-even do it every time we want to read a property but this isn't optimal.
+The read_lock mutex is supposed to prevent collisions between reading
+and writing to the line event kfifo but it's actually only taken when
+the events are being read from it.
 
-This series adds a new ioctl() that allows user-space to set up a watch on
-the GPIO chardev file-descriptor which can then be polled for events
-emitted by the kernel when the line is requested, released or its status
-changed. This of course doesn't require the line to be requested. Multiple
-user-space processes can watch the same lines.
+Drop the mutex entirely and reuse the spinlock made available to us in
+the waitqueue struct. Take the lock whenever the fifo is modified or
+inspected. Drop the call to kfifo_to_user() and instead first extract
+the new element from kfifo when the lock is taken and only then pass
+it on to the user after the spinlock is released.
 
-This series also includes a variety of minor tweaks & fixes for problems
-discovered during development. For instance it addresses a race-condition
-in current line event fifo.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 64 +++++++++++++++++++++++-------------------
+ 1 file changed, 35 insertions(+), 29 deletions(-)
 
-First two patches add new helpers to kfifo, that are used in the later
-parts of the series.
-
-v1: https://lkml.org/lkml/2019/11/27/327
-
-v1 -> v2:
-- rework the main patch of the series: re-use the existing file-descriptor
-  associated with an open character device
-- add a patch adding a debug message when the line event kfifo is full and
-  we're discarding another event
-- rework the locking mechanism for lineevent kfifo: reuse the spinlock
-  from the waitqueue structure
-- other minor changes
-
-v2 -> v3:
-- added patches providing new implementation for some kfifo macros
-- fixed a regression in the patch reworking the line event fifo: reading
-  multiple events is now still possible
-- reworked the structure for new ioctl: it's now padded such that there
-  be no alignment issues if running a 64-bit kernel on 32-bit userspace
-- fixed a bug where one process could disable the status watch of another
-- use kstrtoul() instead of atoi() in gpio-watch for string validation
-
-v3 -> v4:
-- removed a binary file checked in by mistake
-- drop __func__ from debug messages
-- restructure the code in the notifier call
-- add comments about the alignment of the new uAPI structure
-- remove a stray new line that doesn't belong in this series
-- tested the series on 32-bit user-space with 64-bit kernel
-
-v4 -> v5:
-- dropped patches already merged upstream
-- collected review tags
-
-Bartosz Golaszewski (7):
-  kfifo: provide noirqsave variants of spinlocked in and out helpers
-  kfifo: provide kfifo_is_empty_spinlocked()
-  gpiolib: rework the locking mechanism for lineevent kfifo
-  gpiolib: emit a debug message when adding events to a full kfifo
-  gpiolib: provide a dedicated function for setting lineinfo
-  gpiolib: add new ioctl() for monitoring changes in line info
-  tools: gpio: implement gpio-watch
-
- drivers/gpio/gpiolib.c    | 351 +++++++++++++++++++++++++++++---------
- drivers/gpio/gpiolib.h    |   1 +
- include/linux/kfifo.h     |  73 ++++++++
- include/uapi/linux/gpio.h |  30 ++++
- tools/gpio/.gitignore     |   1 +
- tools/gpio/Build          |   1 +
- tools/gpio/Makefile       |  11 +-
- tools/gpio/gpio-watch.c   |  99 +++++++++++
- 8 files changed, 486 insertions(+), 81 deletions(-)
- create mode 100644 tools/gpio/gpio-watch.c
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ee5ab39d7ab7..43c96e7cdc48 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -796,8 +796,6 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+  * @irq: the interrupt that trigger in response to events on this GPIO
+  * @wait: wait queue that handles blocking reads of events
+  * @events: KFIFO for the GPIO events
+- * @read_lock: mutex lock to protect reads from colliding with adding
+- * new events to the FIFO
+  * @timestamp: cache for the timestamp storing it between hardirq
+  * and IRQ thread, used to bring the timestamp close to the actual
+  * event
+@@ -810,7 +808,6 @@ struct lineevent_state {
+ 	int irq;
+ 	wait_queue_head_t wait;
+ 	DECLARE_KFIFO(events, struct gpioevent_data, 16);
+-	struct mutex read_lock;
+ 	u64 timestamp;
+ };
+ 
+@@ -826,7 +823,7 @@ static __poll_t lineevent_poll(struct file *filep,
+ 
+ 	poll_wait(filep, &le->wait, wait);
+ 
+-	if (!kfifo_is_empty(&le->events))
++	if (!kfifo_is_empty_spinlocked_noirqsave(&le->events, &le->wait.lock))
+ 		events = EPOLLIN | EPOLLRDNORM;
+ 
+ 	return events;
+@@ -839,43 +836,52 @@ static ssize_t lineevent_read(struct file *filep,
+ 			      loff_t *f_ps)
+ {
+ 	struct lineevent_state *le = filep->private_data;
+-	unsigned int copied;
++	struct gpioevent_data event;
++	ssize_t bytes_read = 0;
+ 	int ret;
+ 
+-	if (count < sizeof(struct gpioevent_data))
++	if (count < sizeof(event))
+ 		return -EINVAL;
+ 
+ 	do {
++		spin_lock(&le->wait.lock);
+ 		if (kfifo_is_empty(&le->events)) {
+-			if (filep->f_flags & O_NONBLOCK)
++			if (bytes_read) {
++				spin_unlock(&le->wait.lock);
++				return bytes_read;
++			}
++
++			if (filep->f_flags & O_NONBLOCK) {
++				spin_unlock(&le->wait.lock);
+ 				return -EAGAIN;
++			}
+ 
+-			ret = wait_event_interruptible(le->wait,
++			ret = wait_event_interruptible_locked(le->wait,
+ 					!kfifo_is_empty(&le->events));
+-			if (ret)
++			if (ret) {
++				spin_unlock(&le->wait.lock);
+ 				return ret;
++			}
+ 		}
+ 
+-		if (mutex_lock_interruptible(&le->read_lock))
+-			return -ERESTARTSYS;
+-		ret = kfifo_to_user(&le->events, buf, count, &copied);
+-		mutex_unlock(&le->read_lock);
+-
+-		if (ret)
+-			return ret;
+-
+-		/*
+-		 * If we couldn't read anything from the fifo (a different
+-		 * thread might have been faster) we either return -EAGAIN if
+-		 * the file descriptor is non-blocking, otherwise we go back to
+-		 * sleep and wait for more data to arrive.
+-		 */
+-		if (copied == 0 && (filep->f_flags & O_NONBLOCK))
+-			return -EAGAIN;
++		ret = kfifo_out(&le->events, &event, 1);
++		spin_unlock(&le->wait.lock);
++		if (ret != 1) {
++			/*
++			 * This should never happen - we were holding the lock
++			 * from the moment we learned the fifo is no longer
++			 * empty until now.
++			 */
++			ret = -EIO;
++			break;
++		}
+ 
+-	} while (copied == 0);
++		if (copy_to_user(buf + bytes_read, &event, sizeof(event)))
++			return -EFAULT;
++		bytes_read += sizeof(event);
++	} while (count >= bytes_read + sizeof(event));
+ 
+-	return copied;
++	return bytes_read;
+ }
+ 
+ static int lineevent_release(struct inode *inode, struct file *filep)
+@@ -977,7 +983,8 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	ret = kfifo_put(&le->events, ge);
++	ret = kfifo_in_spinlocked_noirqsave(&le->events, &ge,
++					    1, &le->wait.lock);
+ 	if (ret)
+ 		wake_up_poll(&le->wait, EPOLLIN);
+ 
+@@ -1092,7 +1099,6 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+ 
+ 	INIT_KFIFO(le->events);
+ 	init_waitqueue_head(&le->wait);
+-	mutex_init(&le->read_lock);
+ 
+ 	/* Request a thread to read the events */
+ 	ret = request_threaded_irq(le->irq,
 -- 
 2.23.0
 
