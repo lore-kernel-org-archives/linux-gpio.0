@@ -1,83 +1,77 @@
-Return-Path: <SRS0=oS3k=25=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=tEc5=26=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E47C33CA1
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 23:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C14C33CA2
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 02:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52980205F4
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jan 2020 23:16:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lEUYBf67"
+	by mail.kernel.org (Postfix) with ESMTP id 3C03A2077B
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 02:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgAHXQB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jan 2020 18:16:01 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42467 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgAHXQA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jan 2020 18:16:00 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y19so3734880lfl.9
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jan 2020 15:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gKCcYU81q4CQhyTI0mi9qJLS7i/EbbS9I1LOlVm/5dc=;
-        b=lEUYBf67vAVHyo1Eknoo6gFsReT5XQ/unNS9wDkkmWf2glW7UMfnB5OhXgeS7tQPsr
-         XFRbzTLfi1YriqU33DNCFYYrj5AxkB8fFX1Ss2Z2rXb65w8JW4XR+PKSRCCftHwvyalt
-         5At8g7KMfwiSncqcNo9YJf/L6aayMhlEN2bRaBi5VfOIu/FgUI9P8x6LKPRCC3H8Ydse
-         V+ZCWg2U4SDp+uwF5clNg4GqSXk0+HSa1YB/KxYwT3Sa34WX9Xab0RuYz4lQmSEkhfti
-         s0DWVU43iR5bCQx62ziolVz0s8hQswx6CjEdOs0yEySVs+8rHF1me3Th00iwfwpBZAbK
-         90Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gKCcYU81q4CQhyTI0mi9qJLS7i/EbbS9I1LOlVm/5dc=;
-        b=ZmmJaYjLBhh2+Fn/uLbSBYBoWN2++U0KXBFZmH9wik5Ks+KaJYE6z/P0BbHa9o/kL6
-         IR9YBhFZ+61LnNsbsRTGFHT4aUVOYCcBZg6utWdq6/GmXqpKZmABKRhjipsfOPxJ65nt
-         B4tNcsyjrzfcREmwQ+YHMwPEtUvLLzoSRCV4Nlpzt41Q2JgGphRHnMmNvuEnpNcXgCBR
-         5IT1pOEKTE8nLWYAYjeXd5x93dWkJ19IFQgSa+q674T3q4jxoF1W7mp4bePw2AMaxCPz
-         ywh/6ARiGzgUVERUMY7QN1mfcC82ZOsBsfXwOGvErKwgXY0ou3s3NL4SI+6I0+QAiEgs
-         O7IQ==
-X-Gm-Message-State: APjAAAVC9lQ+t07ssH3ZPW93mP/jd5jlSdlY1m83ZBOw2dDRTMWXuDrn
-        CUJISBEQlWHuo31NbozxfPu67XHWmFdHLZr4LqwDrg==
-X-Google-Smtp-Source: APXvYqzzdkVj/8bW0xRwAAvF9Nc05RlllN9sGOIeKLvI8V/vgX08xNgP6z2D/sl05my7swY0MQVBWe0h270VVhSre/I=
-X-Received: by 2002:ac2:5e78:: with SMTP id a24mr4178532lfr.5.1578525357266;
- Wed, 08 Jan 2020 15:15:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20200108205830.21401-1-geert+renesas@glider.be>
-In-Reply-To: <20200108205830.21401-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 9 Jan 2020 00:15:46 +0100
-Message-ID: <CACRpkdYeNe=W7Ajh7SrW5s3HuB6==Qk=UK9u+FoQvr+L771Q-g@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: sh-pfc: Updates for v5.6
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727770AbgAICBP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jan 2020 21:01:15 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:51538 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726913AbgAICBP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 8 Jan 2020 21:01:15 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 51FAC1A07E9;
+        Thu,  9 Jan 2020 03:01:13 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0DC9C1A0F74;
+        Thu,  9 Jan 2020 03:01:03 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7ED15402C8;
+        Thu,  9 Jan 2020 10:00:50 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will@kernel.org, abel.vesa@nxp.com,
+        olof@lixom.net, maxime@cerno.tech, dinguyen@kernel.org,
+        leonard.crestez@nxp.com, marcin.juszkiewicz@linaro.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V5 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MP by default
+Date:   Thu,  9 Jan 2020 09:57:03 +0800
+Message-Id: <1578535023-10064-3-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1578535023-10064-1-git-send-email-Anson.Huang@nxp.com>
+References: <1578535023-10064-1-git-send-email-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 9:58 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Enable CONFIG_PINCTRL_IMX8MP by default to support i.MX8MP
+pinctrl driver.
 
-> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
->
->   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.6-tag1
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+---
+No changes.
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Pulled in to my "devel" branch, thanks!
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index d0ea0d0..d35b417 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -396,6 +396,7 @@ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_IMX8MM=y
+ CONFIG_PINCTRL_IMX8MN=y
++CONFIG_PINCTRL_IMX8MP=y
+ CONFIG_PINCTRL_IMX8MQ=y
+ CONFIG_PINCTRL_IMX8QXP=y
+ CONFIG_PINCTRL_IPQ8074=y
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
