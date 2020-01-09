@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A33C33CA1
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 09:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24563C33CA2
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 09:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B762080D
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 09:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E587720673
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jan 2020 09:19:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="W0Y7x83x"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="m4YuAG93"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbgAIJTf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jan 2020 04:19:35 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:62684 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729330AbgAIJTf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2020 04:19:35 -0500
+        id S1729445AbgAIJTx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jan 2020 04:19:53 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:63625 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729483AbgAIJTr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jan 2020 04:19:47 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578561574; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=5+GZjw2TCHeQIbwTltRSDntorXWcIHggVUbgZKjVq54=; b=W0Y7x83xyFyOxWyKJYCPmPyfS51S49Z5QOr640Da0y9PyQ2y2QQDqsD5hvPgE+0Qi7t7tCKT
- +/Xah9pSPD5WPwLb1JoZLjUORE+AnGaBrw3GSXkicrsaA9/O6PP86dLDT4H4yj7IXNbbzCXu
- 5qP+7kWo1795fnSdjFjlmar+F9k=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ s=smtp; t=1578561587; h=References: In-Reply-To: Message-Id: Date:
+ Subject: To: From: Sender;
+ bh=8q28cGrjhSMFMAwXbqIsPhh/PbRhjy2086swhnkM2fg=; b=m4YuAG93AG9krT7+Uz4c78IuNb5emtXwDhDNwZIQHj/Uqpr0vQnmsyKRKys+/8X4vXWBgzVz
+ I6SOhHYT8YO/i6D0reH3M5vNIyvGZJY8QdSDYbagzxwsoZlkgan8BOrXupvDegKWtYH5unvn
+ TtJyq/36TU6RYMO1SHMYIlssMQ4=
+X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e16f025.7fdadcbefdc0-smtp-out-n02;
- Thu, 09 Jan 2020 09:19:33 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e16f02f.7ff573a914c8-smtp-out-n02;
+ Thu, 09 Jan 2020 09:19:43 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 52271C447A9; Thu,  9 Jan 2020 09:19:32 +0000 (UTC)
+        id CAE8FC447A3; Thu,  9 Jan 2020 09:19:41 +0000 (UTC)
 Received: from srichara1-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sricharan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4756CC447A4;
-        Thu,  9 Jan 2020 09:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4756CC447A4
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8945FC447A4;
+        Thu,  9 Jan 2020 09:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8945FC447A4
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From:   Sricharan R <sricharan@codeaurora.org>
@@ -50,10 +50,9 @@ To:     agross@kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
         robh+dt@kernel.org, sivaprak@codeaurora.org,
         sricharan@codeaurora.org
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Subject: [PATCH V4 3/5] dt-bindings: qcom: Add ipq6018 bindings
-Date:   Thu,  9 Jan 2020 14:49:01 +0530
-Message-Id: <1578561543-23132-4-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH V4 5/5] arm64: defconfig: Enable qcom ipq6018 clock and pinctrl
+Date:   Thu,  9 Jan 2020 14:49:03 +0530
+Message-Id: <1578561543-23132-6-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1578561543-23132-1-git-send-email-sricharan@codeaurora.org>
 References: <1578561543-23132-1-git-send-email-sricharan@codeaurora.org>
@@ -62,48 +61,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document the new ipq6018 SOC/board device tree bindings.
+These configs are required for booting kernel in qcom
+ipq6018 boards.
 
-Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 529d924..164177e 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -28,6 +28,7 @@ description: |
-         apq8074
-         apq8084
-         apq8096
-+        ipq6018
-         ipq8074
-         mdm9615
-         msm8916
-@@ -41,6 +42,7 @@ description: |
-   The 'board' element must be one of the following strings:
- 
-         cdp
-+        cp01-c1
-         dragonboard
-         hk01
-         idp
-@@ -150,4 +152,10 @@ properties:
-           - enum:
-               - qcom,sc7180-idp
-           - const: qcom,sc7180
-+
-+      - items:
-+          - enum:
-+              - qcom,ipq6018-cp01-c1
-+          - const: qcom,ipq6018
-+
- ...
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 28fed08..5e0b696 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -405,6 +405,7 @@ CONFIG_PINCTRL_IMX8MN=y
+ CONFIG_PINCTRL_IMX8MQ=y
+ CONFIG_PINCTRL_IMX8QXP=y
+ CONFIG_PINCTRL_IPQ8074=y
++CONFIG_PINCTRL_IPQ6018=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+ CONFIG_PINCTRL_MSM8996=y
+@@ -714,6 +715,7 @@ CONFIG_QCOM_CLK_APCS_MSM8916=y
+ CONFIG_QCOM_CLK_SMD_RPM=y
+ CONFIG_QCOM_CLK_RPMH=y
+ CONFIG_IPQ_GCC_8074=y
++CONFIG_IPQ_GCC_6018=y
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_GCC_8994=y
+ CONFIG_MSM_MMCC_8996=y
 -- 
 2.7.4
