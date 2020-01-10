@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857BFC3F68F
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00682C33CA5
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 611502072E
+	by mail.kernel.org (Postfix) with ESMTP id C890D20842
 	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbgAJNTk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727445AbgAJNTk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 10 Jan 2020 08:19:40 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:41186 "EHLO
+Received: from albert.telenet-ops.be ([195.130.137.90]:41208 "EHLO
         albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbgAJNTb (ORCPT
+        with ESMTP id S1727484AbgAJNTb (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Jan 2020 08:19:31 -0500
 Received: from ramsan ([84.195.182.253])
         by albert.telenet-ops.be with bizsmtp
-        id odKU2100B5USYZQ06dKU8Y; Fri, 10 Jan 2020 14:19:28 +0100
+        id odKU2100L5USYZQ06dKU8e; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007Wt-Av; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007XE-GU; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000Ht-9r; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000IU-Fa; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/13] pinctrl: sh-pfc: checker: Add check for config register conflicts
-Date:   Fri, 10 Jan 2020 14:19:18 +0100
-Message-Id: <20200110131927.1029-5-geert+renesas@glider.be>
+Subject: [PATCH 10/13] pinctrl: sh-pfc: checker: Add bias register checks
+Date:   Fri, 10 Jan 2020 14:19:24 +0100
+Message-Id: <20200110131927.1029-11-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
 References: <20200110131927.1029-1-geert+renesas@glider.be>
@@ -44,92 +44,49 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a helper to verify that register addresses are unique, and use it to
-validate config register descriptors.
+Add checks for bias register descriptors:
+  1. Pull-up and optional pull-down register addresses must be unique,
+  2. Referred pins must exist.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/pinctrl/sh-pfc/core.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index fe11841e8ce81dbb..2edf6efe8dfe3fdf 100644
+index a1667a29dd69c3ff..b737aa5978b7daa4 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -726,8 +726,12 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
- 
- #ifdef DEBUG
-+#define SH_PFC_MAX_REGS		300
-+
- static unsigned int sh_pfc_errors __initdata = 0;
- static unsigned int sh_pfc_warnings __initdata = 0;
-+static u32 *sh_pfc_regs __initdata = NULL;
-+static u32 sh_pfc_num_regs __initdata = 0;
- 
- #define sh_pfc_err(fmt, ...)					 \
- 	do {							 \
-@@ -759,11 +763,31 @@ static bool __init same_name(const char *a, const char *b)
- 	return !strcmp(a, b);
+@@ -888,6 +888,18 @@ static void __init sh_pfc_check_drive_reg(const struct sh_pfc_soc_info *info,
+ 	}
  }
  
-+static void __init sh_pfc_check_reg(const char *drvname, u32 reg)
++static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
++					 const struct pinmux_bias_reg *bias)
 +{
 +	unsigned int i;
 +
-+	for (i = 0; i < sh_pfc_num_regs; i++)
-+		if (reg == sh_pfc_regs[i]) {
-+			sh_pfc_err("reg 0x%x conflict\n", reg);
-+			return;
-+		}
-+
-+	if (sh_pfc_num_regs == SH_PFC_MAX_REGS) {
-+		pr_warn_once("%s: Please increase SH_PFC_MAX_REGS\n", drvname);
-+		return;
-+	}
-+
-+	sh_pfc_regs[sh_pfc_num_regs++] = reg;
++	sh_pfc_check_reg(info->name, bias->puen);
++	if (bias->pud)
++		sh_pfc_check_reg(info->name, bias->pud);
++	for (i = 0; i < ARRAY_SIZE(bias->pins); i++)
++		sh_pfc_check_pin(info, bias->puen, bias->pins[i]);
 +}
 +
- static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 					const struct pinmux_cfg_reg *cfg_reg)
+ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  {
- 	unsigned int i, n, rw, fw;
- 
-+	sh_pfc_check_reg(drvname, cfg_reg->reg);
+ 	const char *drvname = info->name;
+@@ -984,6 +996,10 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	/* Check drive strength registers */
+ 	for (i = 0; info->drive_regs && info->drive_regs[i].reg; i++)
+ 		sh_pfc_check_drive_reg(info, &info->drive_regs[i]);
 +
- 	if (cfg_reg->field_width) {
- 		/* Checked at build time */
- 		return;
-@@ -794,6 +818,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	unsigned int i, j, k;
- 
- 	pr_info("Checking %s\n", drvname);
-+	sh_pfc_num_regs = 0;
- 
- 	/* Check pins */
- 	for (i = 0; i < info->nr_pins; i++) {
-@@ -868,6 +893,11 @@ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
- {
- 	unsigned int i;
- 
-+	sh_pfc_regs = kcalloc(SH_PFC_MAX_REGS, sizeof(*sh_pfc_regs),
-+			      GFP_KERNEL);
-+	if (!sh_pfc_regs)
-+		return;
-+
- 	pr_warn("Checking builtin pinmux tables\n");
- 
- 	for (i = 0; pdrv->id_table[i].name[0]; i++)
-@@ -880,6 +910,8 @@ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
- 
- 	pr_warn("Detected %u errors and %u warnings\n", sh_pfc_errors,
- 		sh_pfc_warnings);
-+
-+	kfree(sh_pfc_regs);
++	/* Check bias registers */
++	for (i = 0; info->bias_regs && info->bias_regs[i].puen; i++)
++		sh_pfc_check_bias_reg(info, &info->bias_regs[i]);
  }
  
- #else /* !DEBUG */
+ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
 -- 
 2.17.1
 
