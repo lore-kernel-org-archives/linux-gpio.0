@@ -2,70 +2,77 @@ Return-Path: <SRS0=PklQ=27=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422C8C282DD
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 00:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197EFC33CA2
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 01:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1702D2077C
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 00:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578615313;
-	bh=VAlinYDqvJEXPB8VGD9dAN5nUSMt7o+KIEP0+OFtBak=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=X51oK4UPMGEIjTOc4P9sP9e7mJUrh504+9E8gAqO6p40iHWOMUqTZfc9eexXG9ulH
-	 UDOpoLYw3ZcQczvs9mM/lqMP1hVajsBK5ynGruerlq3b8ABGWOKUCujUeiR3eYaNfc
-	 3HDHOREvujBUGmdgfeHAXuMF0/9XmhPely926RXc=
+	by mail.kernel.org (Postfix) with ESMTP id E461F2084D
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 01:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbgAJAPM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jan 2020 19:15:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36906 "EHLO mail.kernel.org"
+        id S1730662AbgAJBfA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jan 2020 20:35:00 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:45254 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730032AbgAJAPH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 9 Jan 2020 19:15:07 -0500
-Subject: Re: [GIT PULL] pin control fixes for v5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578615306;
-        bh=VAlinYDqvJEXPB8VGD9dAN5nUSMt7o+KIEP0+OFtBak=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=P3KJ2ohq7jUUvjpCGROCdmXUjrhRELnTZlkvAjNm0P/V2vWfTs7ITjrcOA26mri0G
-         q/HXOPzQ29wK1R+Fa7Uo48vRDWNKQzOLOcRMtlyMb8UtIZEBk8LWhv+6j8180382Ri
-         Vm5Wa9WbWEO6n6N8q/CCt4uv00LAkhFE9mjO27sk=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdbR2Ssr1WWfS2HZ-jd6XFgEvEsqrjVAcgPsR8RerE-xfQ@mail.gmail.com>
-References: <CACRpkdbR2Ssr1WWfS2HZ-jd6XFgEvEsqrjVAcgPsR8RerE-xfQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdbR2Ssr1WWfS2HZ-jd6XFgEvEsqrjVAcgPsR8RerE-xfQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v5.5-4
-X-PR-Tracked-Commit-Id: 35c60be220572de7d6605c4318f640d133982040
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a6a55b52a1b94bc71843d71b7194ec3d9a34ffcf
-Message-Id: <157861530658.24562.7669628739738928883.pr-tracker-bot@kernel.org>
-Date:   Fri, 10 Jan 2020 00:15:06 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Qianggui Song <qianggui.song@amlogic.com>
+        id S1730615AbgAJBfA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 9 Jan 2020 20:35:00 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 633E31A14AB;
+        Fri, 10 Jan 2020 02:34:58 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 720651A0B97;
+        Fri, 10 Jan 2020 02:34:47 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6AA27402C1;
+        Fri, 10 Jan 2020 09:34:34 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will@kernel.org, abel.vesa@nxp.com,
+        bjorn.andersson@linaro.org, olof@lixom.net, maxime@cerno.tech,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V6 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MP by default
+Date:   Fri, 10 Jan 2020 09:30:44 +0800
+Message-Id: <1578619844-22926-3-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1578619844-22926-1-git-send-email-Anson.Huang@nxp.com>
+References: <1578619844-22926-1-git-send-email-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 9 Jan 2020 22:51:04 +0100:
+Enable CONFIG_PINCTRL_IMX8MP by default to support i.MX8MP
+pinctrl driver.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.5-4
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+---
+No changes.
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a6a55b52a1b94bc71843d71b7194ec3d9a34ffcf
-
-Thank you!
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index fdbc2cd..635de88 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -402,6 +402,7 @@ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_IMX8MM=y
+ CONFIG_PINCTRL_IMX8MN=y
++CONFIG_PINCTRL_IMX8MP=y
+ CONFIG_PINCTRL_IMX8MQ=y
+ CONFIG_PINCTRL_IMX8QXP=y
+ CONFIG_PINCTRL_IPQ8074=y
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.7.4
+
