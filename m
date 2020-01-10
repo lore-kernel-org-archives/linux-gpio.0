@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DD5C33CA5
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E772DC33CAA
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974402077C
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFFA62072E
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbgAJNTf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:19:35 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37008 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727478AbgAJNTb (ORCPT
+        id S1727649AbgAJNTe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Jan 2020 08:19:34 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:46586 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbgAJNTb (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Jan 2020 08:19:31 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id odKU2100S5USYZQ01dKUsZ; Fri, 10 Jan 2020 14:19:28 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id odKU2100F5USYZQ06dKUhH; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007XH-HA; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007X9-F4; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000IY-GG; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000IO-D3; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/13] pinctrl: sh-pfc: checker: Add ioctrl register checks
-Date:   Fri, 10 Jan 2020 14:19:25 +0100
-Message-Id: <20200110131927.1029-12-geert+renesas@glider.be>
+Subject: [PATCH 08/13] pinctrl: sh-pfc: checker: Improve pin group checks
+Date:   Fri, 10 Jan 2020 14:19:22 +0100
+Message-Id: <20200110131927.1029-9-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
 References: <20200110131927.1029-1-geert+renesas@glider.be>
@@ -44,29 +44,46 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add checks for generic control register descriptors:
-  1. Register addresses must be unique.
+Improve the checks for pin group descriptors:
+  1. Introduce a local variable for the current group, to make the
+     checks easier to read,
+  2. Pin group names must be unique.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/sh-pfc/core.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index b737aa5978b7daa4..eb2b0860378407e5 100644
+index 54e433149e9bf715..4642959714f97102 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -1000,6 +1000,10 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	/* Check bias registers */
- 	for (i = 0; info->bias_regs && info->bias_regs[i].puen; i++)
- 		sh_pfc_check_bias_reg(info, &info->bias_regs[i]);
-+
-+	/* Check ioctrl registers */
-+	for (i = 0; info->ioctrl_regs && info->ioctrl_regs[i].reg; i++)
-+		sh_pfc_check_reg(drvname, info->ioctrl_regs[i].reg);
- }
+@@ -916,15 +916,22 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	}
  
- static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
+ 	for (i = 0; i < info->nr_groups; i++) {
+-		if (!info->groups[i].name) {
++		const struct sh_pfc_pin_group *group = &info->groups[i];
++
++		if (!group->name) {
+ 			sh_pfc_err("empty group %u\n", i);
+ 			continue;
+ 		}
++		for (j = 0; j < i; j++) {
++			if (same_name(group->name, info->groups[j].name))
++				sh_pfc_err("group %s: name conflict\n",
++					   group->name);
++		}
+ 		if (!refcnts[i])
+-			sh_pfc_err("orphan group %s\n", info->groups[i].name);
++			sh_pfc_err("orphan group %s\n", group->name);
+ 		else if (refcnts[i] > 1)
+ 			sh_pfc_warn("group %s referenced by %u functions\n",
+-				    info->groups[i].name, refcnts[i]);
++				    group->name, refcnts[i]);
+ 	}
+ 
+ 	kfree(refcnts);
 -- 
 2.17.1
 
