@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAADC33CA5
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F93C33CA9
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C47C2072E
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646662077C
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbgAJNTb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:19:31 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:41202 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbgAJNTb (ORCPT
+        id S1727427AbgAJNTd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Jan 2020 08:19:33 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40262 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbgAJNTb (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Jan 2020 08:19:31 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id odKU2100C5USYZQ06dKU8Z; Fri, 10 Jan 2020 14:19:28 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id odKU2100H5USYZQ01dKUaq; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007Wn-9O; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007XM-IY; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000Hm-8c; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000Ie-Hf; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/13] pinctrl: sh-pfc: checker: Add helpers for reporting
-Date:   Fri, 10 Jan 2020 14:19:16 +0100
-Message-Id: <20200110131927.1029-3-geert+renesas@glider.be>
+Subject: [PATCH 13/13] pinctrl: sh-pfc: checker: Add function GPIO checks
+Date:   Fri, 10 Jan 2020 14:19:27 +0100
+Message-Id: <20200110131927.1029-14-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
 References: <20200110131927.1029-1-geert+renesas@glider.be>
@@ -44,165 +44,71 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add helpers to report errors and warnings, and to increase the
-corresponding counters.  This simplifies callers.
+Add checks for legacy function GPIO descriptors:
+  1. Function GPIOs must have a name,
+  2. Names must be unique,
+  3. Enum ID values must be unique.
+
+This exposes bugs like those fixed in
+  - commit 884caadad128efad ("pinctrl: sh-pfc: sh7734: Fix duplicate
+    TCLK1_B"),
+  - commit 55b1cb1f03ad5eea ("pinctrl: sh-pfc: sh7264: Fix CAN function
+    GPIOs"),
+  - commit 02aeb2f21530c98f ("pinctrl: sh-pfc: sh7269: Fix CAN function
+    GPIOs"),
+  - commit db9c07272c8245a2 ("sh: sh7264: Remove bogus SSU GPIO function
+    definitions"),
+  - commit b4fba344a2930769 ("sh: sh7269: Remove bogus SSU GPIO function
+    definitions").
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 96 ++++++++++++++++-------------------
- 1 file changed, 44 insertions(+), 52 deletions(-)
+ drivers/pinctrl/sh-pfc/core.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index a565effbff12f5a9..45bdaf88819fa498 100644
+index 34d3d210c7347336..5343729574849531 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -729,6 +729,17 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- static unsigned int sh_pfc_errors __initdata = 0;
- static unsigned int sh_pfc_warnings __initdata = 0;
- 
-+#define sh_pfc_err(fmt, ...)					 \
-+	do {							 \
-+		pr_err("%s: " fmt, drvname, ##__VA_ARGS__);	\
-+		sh_pfc_errors++;				\
-+	} while (0)
-+#define sh_pfc_warn(fmt, ...)					 \
-+	do {							 \
-+		pr_warn("%s: " fmt, drvname, ##__VA_ARGS__);	\
-+		sh_pfc_warnings++;				\
-+	} while (0)
-+
- static bool __init is0s(const u16 *enum_ids, unsigned int n)
- {
- 	unsigned int i;
-@@ -751,26 +762,20 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 	}
- 
- 	for (i = 0, n = 0, rw = 0; (fw = cfg_reg->var_field_width[i]); i++) {
--		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw)) {
--			pr_warn("%s: reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
--				drvname, cfg_reg->reg, rw, rw + fw - 1);
--			sh_pfc_warnings++;
--		}
-+		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw))
-+			sh_pfc_warn("reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
-+				    cfg_reg->reg, rw, rw + fw - 1);
- 		n += 1 << fw;
- 		rw += fw;
- 	}
- 
--	if (rw != cfg_reg->reg_width) {
--		pr_err("%s: reg 0x%x: var_field_width declares %u instead of %u bits\n",
--		       drvname, cfg_reg->reg, rw, cfg_reg->reg_width);
--		sh_pfc_errors++;
--	}
-+	if (rw != cfg_reg->reg_width)
-+		sh_pfc_err("reg 0x%x: var_field_width declares %u instead of %u bits\n",
-+			   cfg_reg->reg, rw, cfg_reg->reg_width);
- 
--	if (n != cfg_reg->nr_enum_ids) {
--		pr_err("%s: reg 0x%x: enum_ids[] has %u instead of %u values\n",
--		       drvname, cfg_reg->reg, cfg_reg->nr_enum_ids, n);
--		sh_pfc_errors++;
--	}
-+	if (n != cfg_reg->nr_enum_ids)
-+		sh_pfc_err("reg 0x%x: enum_ids[] has %u instead of %u values\n",
-+			   cfg_reg->reg, cfg_reg->nr_enum_ids, n);
+@@ -802,6 +802,13 @@ static int __init __sh_pfc_check_enum(const char *drvname, u16 enum_id)
+ 	return 0;
  }
  
- static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-@@ -785,29 +790,24 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	/* Check pins */
- 	for (i = 0; i < info->nr_pins; i++) {
- 		for (j = 0; j < i; j++) {
--			if (!strcmp(info->pins[i].name, info->pins[j].name)) {
--				pr_err("%s: pin %s/%s: name conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name);
--				sh_pfc_errors++;
--			}
-+			if (!strcmp(info->pins[i].name, info->pins[j].name))
-+				sh_pfc_err("pin %s/%s: name conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name);
- 
- 			if (info->pins[i].pin != (u16)-1 &&
--			    info->pins[i].pin == info->pins[j].pin) {
--				pr_err("%s: pin %s/%s: pin %u conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name, info->pins[i].pin);
--				sh_pfc_errors++;
--			}
-+			    info->pins[i].pin == info->pins[j].pin)
-+				sh_pfc_err("pin %s/%s: pin %u conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name,
-+					   info->pins[i].pin);
- 
- 			if (info->pins[i].enum_id &&
--			    info->pins[i].enum_id == info->pins[j].enum_id) {
--				pr_err("%s: pin %s/%s: enum_id %u conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name,
--				       info->pins[i].enum_id);
--				sh_pfc_errors++;
--			}
-+			    info->pins[i].enum_id == info->pins[j].enum_id)
-+				sh_pfc_err("pin %s/%s: enum_id %u conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name,
-+					   info->pins[i].enum_id);
- 		}
++static void __init sh_pfc_check_enum(const char *drvname, const char *name,
++				     u16 enum_id)
++{
++	if (__sh_pfc_check_enum(drvname, enum_id))
++		sh_pfc_err("%s enum_id %u conflict\n", name, enum_id);
++}
++
+ static void __init sh_pfc_check_reg_enums(const char *drvname, u32 reg,
+ 					  const u16 *enums, unsigned int n)
+ {
+@@ -1012,6 +1019,24 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 				       info->data_regs[i].enum_ids,
+ 				       info->data_regs[i].reg_width);
  	}
++
++#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
++	/* Check function GPIOs */
++	for (i = 0; i < info->nr_func_gpios; i++) {
++		const struct pinmux_func *func = &info->func_gpios[i];
++
++		if (!func->name) {
++			sh_pfc_err("empty function gpio %u\n", i);
++			continue;
++		}
++		for (j = 0; j < i; j++) {
++			if (same_name(func->name, info->func_gpios[j].name))
++				sh_pfc_err("func_gpio %s: name conflict\n",
++					   func->name);
++		}
++		sh_pfc_check_enum(drvname, func->name, func->enum_id);
++	}
++#endif
+ }
  
-@@ -819,8 +819,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	for (i = 0; i < info->nr_functions; i++) {
- 		func = &info->functions[i];
- 		if (!func->name) {
--			pr_err("%s: empty function %u\n", drvname, i);
--			sh_pfc_errors++;
-+			sh_pfc_err("empty function %u\n", i);
- 			continue;
- 		}
- 		for (j = 0; j < func->nr_groups; j++) {
-@@ -833,29 +832,22 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 				}
- 			}
- 
--			if (k == info->nr_groups) {
--				pr_err("%s: function %s: group %s not found\n",
--				       drvname, func->name, func->groups[j]);
--				sh_pfc_errors++;
--			}
-+			if (k == info->nr_groups)
-+				sh_pfc_err("function %s: group %s not found\n",
-+					   func->name, func->groups[j]);
- 		}
- 	}
- 
- 	for (i = 0; i < info->nr_groups; i++) {
- 		if (!info->groups[i].name) {
--			pr_err("%s: empty group %u\n", drvname, i);
--			sh_pfc_errors++;
-+			sh_pfc_err("empty group %u\n", i);
- 			continue;
- 		}
--		if (!refcnts[i]) {
--			pr_err("%s: orphan group %s\n", drvname,
--			       info->groups[i].name);
--			sh_pfc_errors++;
--		} else if (refcnts[i] > 1) {
--			pr_warn("%s: group %s referenced by %u functions\n",
--				drvname, info->groups[i].name, refcnts[i]);
--			sh_pfc_warnings++;
--		}
-+		if (!refcnts[i])
-+			sh_pfc_err("orphan group %s\n", info->groups[i].name);
-+		else if (refcnts[i] > 1)
-+			sh_pfc_warn("group %s referenced by %u functions\n",
-+				    info->groups[i].name, refcnts[i]);
- 	}
- 
- 	kfree(refcnts);
+ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
 -- 
 2.17.1
 
