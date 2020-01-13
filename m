@@ -2,136 +2,449 @@ Return-Path: <SRS0=F1ow=3C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92F0C33CA9
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 03:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77D9C3F68F
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 03:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0DDD20661
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 03:00:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YD96E6mb"
+	by mail.kernel.org (Postfix) with ESMTP id A80C1222D9
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 03:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733142AbgAMC77 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 12 Jan 2020 21:59:59 -0500
-Received: from mail-am6eur05on2066.outbound.protection.outlook.com ([40.107.22.66]:6094
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732849AbgAMC77 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 12 Jan 2020 21:59:59 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UQ/fXNeddAEIzeBNh8nCASiiaSZvKmLrvlQ7yXA7+/bYwjmAG13eC3ggIfLXvYXG7dKzPkS9MUiXPsJlMmsjw/MlW3AvQ0nU2XLBDv7/u9f+PjKlf91eHxbqrjxSbsn2L+jCtXbG5tmEfL3ev16v9o9A83NJBoyhc7YiLoZF1Bt1oW6owaQ1846lIHWTVg9eLq+ANwhHfFsrrEtsa2bpH/Bp9jEGyI/v4dKzRe6xTgPUMLgmrhhrWdTwnD4v1MBqUoIEzVcufncXVNm8NbiI/JQPRgdkoGuc6rAtsqxpYUx0cUdj/gFv/sSJkqVd/bnzinb5gwVplM5desJSx8QSpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X1F/lRAlMXXuLd1x9KQyx7Se/qJyLkT6kNmdjQYChkE=;
- b=jEkR+Dg9koLonOB6XU0FFqqBvKv1FrDJZ1IkiwuOhv5FNXyrSWPIF6QoiMWwqk1WqtcakVW7HKhZ+Aj9FjOyogOYjMQOoeRy0Rh4J3GtqxvAknAzHBzBPMZg5IhjRulu5egVVJ2UokbM7FKVC1Se3GAPo4l4+xMlk9ajxCM1FnCA6rRKJr/rae4v7SPA01TZjUCspGmb+azwJhMDbjc/5PYPxTI0fDu64L1BRt2wejfpniXrbOr7/W8O6fbRap5kZ1cLztdLxJ5EjAFHRCD0GOgjYz9+npwVi6pmvs/+APJtT1g20jCJfM/v5djscBCdI7iXVH5GeL5UHOAiG85cTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X1F/lRAlMXXuLd1x9KQyx7Se/qJyLkT6kNmdjQYChkE=;
- b=YD96E6mbInBkU4q2xNQweLqdvjjYSsGY9+UJCkSoUozBDtqC190EoxVcaF3JVvU1J1qrTgjP1eZvVu1qdDt/VIYjJ98FyLlE4hmjip1kzUZ+ilgPWXhrR+u9BnuZjvheHQlUn3SijLFEmuoK1vJfzlIk700yoHkb7apGMNjnk5o=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3833.eurprd04.prod.outlook.com (52.134.67.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.12; Mon, 13 Jan 2020 02:59:51 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e44d:fa34:a0af:d96%5]) with mapi id 15.20.2623.015; Mon, 13 Jan 2020
- 02:59:51 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "maxime@cerno.tech" <maxime@cerno.tech>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "dinguyen@kernel.org" <dinguyen@kernel.org>,
-        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V7 1/3] dt-bindings: imx: Add pinctrl binding doc for
- i.MX8MP
-Thread-Topic: [PATCH V7 1/3] dt-bindings: imx: Add pinctrl binding doc for
- i.MX8MP
-Thread-Index: AQHVx2ymLMSOG+yTuUKcujoHYHbAfKfmlP0AgAFWx+A=
-Date:   Mon, 13 Jan 2020 02:59:50 +0000
-Message-ID: <DB3PR0402MB3916191387B9B7673AE7CA88F5350@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1578629498-26747-1-git-send-email-Anson.Huang@nxp.com>
- <20200112063125.GC27570@T480>
-In-Reply-To: <20200112063125.GC27570@T480>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 539c94f1-662b-48c7-83d6-08d797d4a870
-x-ms-traffictypediagnostic: DB3PR0402MB3833:|DB3PR0402MB3833:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB38334AA20137D3E9C2BDB1C7F5350@DB3PR0402MB3833.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 028166BF91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(39860400002)(346002)(199004)(189003)(55016002)(2906002)(8936002)(81156014)(33656002)(6506007)(8676002)(44832011)(54906003)(7696005)(81166006)(5660300002)(9686003)(6916009)(7416002)(86362001)(4326008)(4744005)(186003)(76116006)(316002)(66946007)(52536014)(66476007)(66556008)(64756008)(66446008)(478600001)(71200400001)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3833;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2hpmPUvBpe8QAldcTbPkZmzYYVOxRE9b3WM5X3WCaTDasXRHbXFjBGQ6i6MGpialIBZFoqIbdrsOdp0uTyxVZMNKi7dOxoCmoA3a+qKwqmI9ozCXmANl6Xj8ze5JdSlBDd4WFtrr5yNqrMIvcv7vMJ0T0OYWYEoaQuZpJvi7J3HqeFFkEyYpXXwutdeaKQ3AbU784ylDl+c/54/jR+f3YhvuQiapZSlfR/PRNoxSt6JaQh0XdqyUBqY9bdSWAsiqyzIApE6CLTRMbWpBMZ1icGjUnfmDR+QSUHTvgTLwwYgA0X4c0QQqMXUA5HUWW7Dv1DBR/LacaG43EThdHgE2ympEsnkc7K09i7P0eezFu4zcxqg3ZDyUL/R434AftD8/aQ33d/nTOSmabnruW8haYjvYZLUXHSJwH7ZNeo63T2sBYtnn1OA3VWBVMjVLkdRU
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 539c94f1-662b-48c7-83d6-08d797d4a870
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2020 02:59:50.9472
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SZi02F/zRLxvfuO/9i4TEegEt60eGIye0zbE0+iOOp4xKLceVQSBxAT8dQxDu7Q006aZp8fi7fSMchNLlW0+iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3833
+        id S1733064AbgAMDKZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 12 Jan 2020 22:10:25 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:44378 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733091AbgAMDKZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 12 Jan 2020 22:10:25 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C4E96200785;
+        Mon, 13 Jan 2020 04:10:22 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A537200EEA;
+        Mon, 13 Jan 2020 04:10:14 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8C298402CA;
+        Mon, 13 Jan 2020 11:10:01 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will@kernel.org,
+        bjorn.andersson@linaro.org, maxime@cerno.tech, olof@lixom.net,
+        dinguyen@kernel.org, leonard.crestez@nxp.com,
+        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V8 2/3] pinctrl: freescale: Add i.MX8MP pinctrl driver support
+Date:   Mon, 13 Jan 2020 11:06:04 +0800
+Message-Id: <1578884765-29907-2-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1578884765-29907-1-git-send-email-Anson.Huang@nxp.com>
+References: <1578884765-29907-1-git-send-email-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjcgMS8zXSBkdC1iaW5kaW5nczogaW14OiBBZGQgcGlu
-Y3RybCBiaW5kaW5nIGRvYyBmb3INCj4gaS5NWDhNUA0KPiANCj4gT24gRnJpLCBKYW4gMTAsIDIw
-MjAgYXQgMTI6MTE6MzZQTSArMDgwMCwgQW5zb24gSHVhbmcgd3JvdGU6DQo+ID4gQWRkIGJpbmRp
-bmcgZG9jIGZvciBpLk1YOE1QIHBpbmN0cmwgZHJpdmVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IEFi
-ZWwgVmVzYSA8YWJlbC52ZXNhQG54cC5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5n
-IDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlcyBzaW5jZSBWNjoNCj4gPiAJ
-LSB1c2UgImdycCQiIGluc3RlYWQgb2YgIi1ncnAkIjsNCj4gPiAJLSB1c2Ugc3BhY2UgaW5zdGVh
-ZCBvZiB0YWIgZm9yICJyZWYkIjsNCj4gPiAJLSBhZGQgbWlzc2VkICJyZWciIHByb3BlcnR5Ow0K
-PiA+IAktIHJlbW92ZSB0aGUgIm1heEl0ZW0iIGZvciAiZnNsLHBpbnMiIHRvIGF2b2lkIGJ1aWxk
-IHdhcm5pbmcsIGFzIHRoZQ0KPiBpdGVtIG51bWJlciBpcyBjaGFuZ2FibGUuDQo+ID4gLS0tDQo+
-ID4gIC4uLi9iaW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg4bXAtcGluY3RybC55YW1sICAgICAgIHwg
-IDY5ICsrDQo+ID4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1waW5mdW5j
-LmggICAgIHwgOTMxDQo+ICsrKysrKysrKysrKysrKysrKysrKw0KPiANCj4gSSBrbm93IHRoZSBi
-aW5kaW5nIGRvYyByZWZlcnMgdG8gdGhpcyBpbXg4bXAtcGluZnVuYy5oLiAgQnV0IHRoZSBvbmx5
-DQo+IHVzZXIgb2YgdGhlIGhlYWRlciBpcyBpbXg4bXAgZHRzLCBzbyB0aGUgaGVhZGVyIHNob3Vs
-ZCBiZSBwYXJ0IG9mIGR0cw0KPiBzZXJpZXMsIHdoaWxlIHRoaXMgYmluZGluZyBkb2MgcGF0Y2gg
-d2lsbCBiZSBzZW50IHZpYSBwaW5jdHJsIHN1YnN5c3RlbQ0KPiB0cmVlLg0KDQpPSywgSSB3aWxs
-IG1vdmUgdGhlIGhlYWRlciBmaWxlIHRvIERUIHBhdGNoIHNlcmllcyBhbmQgc2VuZCBhIFY4IHBh
-dGNoIHNldA0KDQpUaGFua3MsDQpBbnNvbi4NCg0K
+Add the pinctrl driver support for i.MX8MP.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+---
+No changes.
+---
+ drivers/pinctrl/freescale/Kconfig          |   7 +
+ drivers/pinctrl/freescale/Makefile         |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx8mp.c | 345 +++++++++++++++++++++++++++++
+ 3 files changed, 353 insertions(+)
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mp.c
+
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index 3ea9ce3..de775a8 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -137,6 +137,13 @@ config PINCTRL_IMX8MN
+ 	help
+ 	  Say Y here to enable the imx8mn pinctrl driver
+ 
++config PINCTRL_IMX8MP
++	bool "IMX8MP pinctrl driver"
++	depends on ARCH_MXC && ARM64
++	select PINCTRL_IMX
++	help
++	  Say Y here to enable the imx8mp pinctrl driver
++
+ config PINCTRL_IMX8MQ
+ 	bool "IMX8MQ pinctrl driver"
+ 	depends on ARCH_MXC && ARM64
+diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
+index 78e9140..0ebd3af 100644
+--- a/drivers/pinctrl/freescale/Makefile
++++ b/drivers/pinctrl/freescale/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
+ obj-$(CONFIG_PINCTRL_IMX7ULP)	+= pinctrl-imx7ulp.o
+ obj-$(CONFIG_PINCTRL_IMX8MM)	+= pinctrl-imx8mm.o
+ obj-$(CONFIG_PINCTRL_IMX8MN)	+= pinctrl-imx8mn.o
++obj-$(CONFIG_PINCTRL_IMX8MP)	+= pinctrl-imx8mp.o
+ obj-$(CONFIG_PINCTRL_IMX8MQ)	+= pinctrl-imx8mq.o
+ obj-$(CONFIG_PINCTRL_IMX8QM)	+= pinctrl-imx8qm.o
+ obj-$(CONFIG_PINCTRL_IMX8QXP)	+= pinctrl-imx8qxp.o
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mp.c b/drivers/pinctrl/freescale/pinctrl-imx8mp.c
+new file mode 100644
+index 0000000..e3f644c
+--- /dev/null
++++ b/drivers/pinctrl/freescale/pinctrl-imx8mp.c
+@@ -0,0 +1,345 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 NXP
++ */
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/platform_device.h>
++
++#include "pinctrl-imx.h"
++
++enum imx8mp_pads {
++	MX8MP_IOMUXC_RESERVE0 = 0,
++	MX8MP_IOMUXC_RESERVE1 = 1,
++	MX8MP_IOMUXC_RESERVE2 = 2,
++	MX8MP_IOMUXC_RESERVE3 = 3,
++	MX8MP_IOMUXC_RESERVE4 = 4,
++	MX8MP_IOMUXC_GPIO1_IO00 = 5,
++	MX8MP_IOMUXC_GPIO1_IO01 = 6,
++	MX8MP_IOMUXC_GPIO1_IO02 = 7,
++	MX8MP_IOMUXC_GPIO1_IO03 = 8,
++	MX8MP_IOMUXC_GPIO1_IO04 = 9,
++	MX8MP_IOMUXC_GPIO1_IO05 = 10,
++	MX8MP_IOMUXC_GPIO1_IO06 = 11,
++	MX8MP_IOMUXC_GPIO1_IO07 = 12,
++	MX8MP_IOMUXC_GPIO1_IO08 = 13,
++	MX8MP_IOMUXC_GPIO1_IO09 = 14,
++	MX8MP_IOMUXC_GPIO1_IO10 = 15,
++	MX8MP_IOMUXC_GPIO1_IO11 = 16,
++	MX8MP_IOMUXC_GPIO1_IO12 = 17,
++	MX8MP_IOMUXC_GPIO1_IO13 = 18,
++	MX8MP_IOMUXC_GPIO1_IO14 = 19,
++	MX8MP_IOMUXC_GPIO1_IO15 = 20,
++	MX8MP_IOMUXC_ENET_MDC = 21,
++	MX8MP_IOMUXC_ENET_MDIO = 22,
++	MX8MP_IOMUXC_ENET_TD3 = 23,
++	MX8MP_IOMUXC_ENET_TD2 = 24,
++	MX8MP_IOMUXC_ENET_TD1 = 25,
++	MX8MP_IOMUXC_ENET_TD0 = 26,
++	MX8MP_IOMUXC_ENET_TX_CTL = 27,
++	MX8MP_IOMUXC_ENET_TXC = 28,
++	MX8MP_IOMUXC_ENET_RX_CTL = 29,
++	MX8MP_IOMUXC_ENET_RXC = 30,
++	MX8MP_IOMUXC_ENET_RD0 = 31,
++	MX8MP_IOMUXC_ENET_RD1 = 32,
++	MX8MP_IOMUXC_ENET_RD2 = 33,
++	MX8MP_IOMUXC_ENET_RD3 = 34,
++	MX8MP_IOMUXC_SD1_CLK = 35,
++	MX8MP_IOMUXC_SD1_CMD = 36,
++	MX8MP_IOMUXC_SD1_DATA0 = 37,
++	MX8MP_IOMUXC_SD1_DATA1 = 38,
++	MX8MP_IOMUXC_SD1_DATA2 = 39,
++	MX8MP_IOMUXC_SD1_DATA3 = 40,
++	MX8MP_IOMUXC_SD1_DATA4 = 41,
++	MX8MP_IOMUXC_SD1_DATA5 = 42,
++	MX8MP_IOMUXC_SD1_DATA6 = 43,
++	MX8MP_IOMUXC_SD1_DATA7 = 44,
++	MX8MP_IOMUXC_SD1_RESET_B = 45,
++	MX8MP_IOMUXC_SD1_STROBE = 46,
++	MX8MP_IOMUXC_SD2_CD_B = 47,
++	MX8MP_IOMUXC_SD2_CLK = 48,
++	MX8MP_IOMUXC_SD2_CMD = 49,
++	MX8MP_IOMUXC_SD2_DATA0 = 50,
++	MX8MP_IOMUXC_SD2_DATA1 = 51,
++	MX8MP_IOMUXC_SD2_DATA2 = 52,
++	MX8MP_IOMUXC_SD2_DATA3 = 53,
++	MX8MP_IOMUXC_SD2_RESET_B = 54,
++	MX8MP_IOMUXC_SD2_WP = 55,
++	MX8MP_IOMUXC_NAND_ALE = 56,
++	MX8MP_IOMUXC_NAND_CE0_B = 57,
++	MX8MP_IOMUXC_NAND_CE1_B = 58,
++	MX8MP_IOMUXC_NAND_CE2_B = 59,
++	MX8MP_IOMUXC_NAND_CE3_B = 60,
++	MX8MP_IOMUXC_NAND_CLE = 61,
++	MX8MP_IOMUXC_NAND_DATA00 = 62,
++	MX8MP_IOMUXC_NAND_DATA01 = 63,
++	MX8MP_IOMUXC_NAND_DATA02 = 64,
++	MX8MP_IOMUXC_NAND_DATA03 = 65,
++	MX8MP_IOMUXC_NAND_DATA04 = 66,
++	MX8MP_IOMUXC_NAND_DATA05 = 67,
++	MX8MP_IOMUXC_NAND_DATA06 = 68,
++	MX8MP_IOMUXC_NAND_DATA07 = 69,
++	MX8MP_IOMUXC_NAND_DQS = 70,
++	MX8MP_IOMUXC_NAND_RE_B = 71,
++	MX8MP_IOMUXC_NAND_READY_B = 72,
++	MX8MP_IOMUXC_NAND_WE_B = 73,
++	MX8MP_IOMUXC_NAND_WP_B = 74,
++	MX8MP_IOMUXC_SAI5_RXFS = 75,
++	MX8MP_IOMUXC_SAI5_RXC = 76,
++	MX8MP_IOMUXC_SAI5_RXD0 = 77,
++	MX8MP_IOMUXC_SAI5_RXD1 = 78,
++	MX8MP_IOMUXC_SAI5_RXD2 = 79,
++	MX8MP_IOMUXC_SAI5_RXD3 = 80,
++	MX8MP_IOMUXC_SAI5_MCLK = 81,
++	MX8MP_IOMUXC_SAI1_RXFS = 82,
++	MX8MP_IOMUXC_SAI1_RXC = 83,
++	MX8MP_IOMUXC_SAI1_RXD0 = 84,
++	MX8MP_IOMUXC_SAI1_RXD1 = 85,
++	MX8MP_IOMUXC_SAI1_RXD2 = 86,
++	MX8MP_IOMUXC_SAI1_RXD3 = 87,
++	MX8MP_IOMUXC_SAI1_RXD4 = 88,
++	MX8MP_IOMUXC_SAI1_RXD5 = 89,
++	MX8MP_IOMUXC_SAI1_RXD6 = 90,
++	MX8MP_IOMUXC_SAI1_RXD7 = 91,
++	MX8MP_IOMUXC_SAI1_TXFS = 92,
++	MX8MP_IOMUXC_SAI1_TXC = 93,
++	MX8MP_IOMUXC_SAI1_TXD0 = 94,
++	MX8MP_IOMUXC_SAI1_TXD1 = 95,
++	MX8MP_IOMUXC_SAI1_TXD2 = 96,
++	MX8MP_IOMUXC_SAI1_TXD3 = 97,
++	MX8MP_IOMUXC_SAI1_TXD4 = 98,
++	MX8MP_IOMUXC_SAI1_TXD5 = 99,
++	MX8MP_IOMUXC_SAI1_TXD6 = 100,
++	MX8MP_IOMUXC_SAI1_TXD7 = 101,
++	MX8MP_IOMUXC_SAI1_MCLK = 102,
++	MX8MP_IOMUXC_SAI2_RXFS = 103,
++	MX8MP_IOMUXC_SAI2_RXC = 104,
++	MX8MP_IOMUXC_SAI2_RXD0 = 105,
++	MX8MP_IOMUXC_SAI2_TXFS = 106,
++	MX8MP_IOMUXC_SAI2_TXC = 107,
++	MX8MP_IOMUXC_SAI2_TXD0 = 108,
++	MX8MP_IOMUXC_SAI2_MCLK = 109,
++	MX8MP_IOMUXC_SAI3_RXFS = 110,
++	MX8MP_IOMUXC_SAI3_RXC = 111,
++	MX8MP_IOMUXC_SAI3_RXD = 112,
++	MX8MP_IOMUXC_SAI3_TXFS = 113,
++	MX8MP_IOMUXC_SAI3_TXC = 114,
++	MX8MP_IOMUXC_SAI3_TXD = 115,
++	MX8MP_IOMUXC_SAI3_MCLK = 116,
++	MX8MP_IOMUXC_SPDIF_TX = 117,
++	MX8MP_IOMUXC_SPDIF_RX = 118,
++	MX8MP_IOMUXC_SPDIF_EXT_CLK = 119,
++	MX8MP_IOMUXC_ECSPI1_SCLK = 120,
++	MX8MP_IOMUXC_ECSPI1_MOSI = 121,
++	MX8MP_IOMUXC_ECSPI1_MISO = 122,
++	MX8MP_IOMUXC_ECSPI1_SS0 = 123,
++	MX8MP_IOMUXC_ECSPI2_SCLK = 124,
++	MX8MP_IOMUXC_ECSPI2_MOSI = 125,
++	MX8MP_IOMUXC_ECSPI2_MISO = 126,
++	MX8MP_IOMUXC_ECSPI2_SS0 = 127,
++	MX8MP_IOMUXC_I2C1_SCL = 128,
++	MX8MP_IOMUXC_I2C1_SDA = 129,
++	MX8MP_IOMUXC_I2C2_SCL = 130,
++	MX8MP_IOMUXC_I2C2_SDA = 131,
++	MX8MP_IOMUXC_I2C3_SCL = 132,
++	MX8MP_IOMUXC_I2C3_SDA = 133,
++	MX8MP_IOMUXC_I2C4_SCL = 134,
++	MX8MP_IOMUXC_I2C4_SDA = 135,
++	MX8MP_IOMUXC_UART1_RXD = 136,
++	MX8MP_IOMUXC_UART1_TXD = 137,
++	MX8MP_IOMUXC_UART2_RXD = 138,
++	MX8MP_IOMUXC_UART2_TXD = 139,
++	MX8MP_IOMUXC_UART3_RXD = 140,
++	MX8MP_IOMUXC_UART3_TXD = 141,
++	MX8MP_IOMUXC_UART4_RXD = 142,
++	MX8MP_IOMUXC_UART4_TXD = 143,
++	MX8MP_IOMUXC_HDMI_DDC_SCL = 144,
++	MX8MP_IOMUXC_HDMI_DDC_SDA = 145,
++	MX8MP_IOMUXC_HDMI_CEC = 146,
++	MX8MP_IOMUXC_HDMI_HPD = 147,
++};
++
++/* Pad names for the pinmux subsystem */
++static const struct pinctrl_pin_desc imx8mp_pinctrl_pads[] = {
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_RESERVE0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_RESERVE1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_RESERVE2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_RESERVE3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_RESERVE4),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO00),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO01),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO02),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO03),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO04),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO05),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO06),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO07),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO08),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO09),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO10),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO11),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO12),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO13),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO14),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_GPIO1_IO15),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_MDC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_MDIO),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TD3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TD2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TD1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TX_CTL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_TXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RX_CTL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RD1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RD2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ENET_RD3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_CLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_CMD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA4),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA5),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA6),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_DATA7),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_RESET_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD1_STROBE),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_CD_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_CLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_CMD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_DATA0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_DATA1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_DATA2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_DATA3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_RESET_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SD2_WP),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_ALE),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_CE0_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_CE1_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_CE2_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_CE3_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_CLE),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA00),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA01),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA02),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA03),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA04),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA05),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA06),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DATA07),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_DQS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_RE_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_READY_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_WE_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_NAND_WP_B),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXD1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXD2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_RXD3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI5_MCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD4),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD5),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD6),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_RXD7),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD1),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD2),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD3),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD4),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD5),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD6),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_TXD7),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI1_MCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_RXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_RXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_RXD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_TXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_TXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_TXD0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI2_MCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_RXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_RXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_RXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_TXFS),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_TXC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_TXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SAI3_MCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SPDIF_TX),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SPDIF_RX),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_SPDIF_EXT_CLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI1_SCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI1_MOSI),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI1_MISO),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI1_SS0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI2_SCLK),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI2_MOSI),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI2_MISO),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_ECSPI2_SS0),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C1_SCL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C1_SDA),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C2_SCL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C2_SDA),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C3_SCL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C3_SDA),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C4_SCL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_I2C4_SDA),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART1_RXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART1_TXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART2_RXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART2_TXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART3_RXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART3_TXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART4_RXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_UART4_TXD),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_HDMI_DDC_SCL),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_HDMI_DDC_SDA),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_HDMI_CEC),
++	IMX_PINCTRL_PIN(MX8MP_IOMUXC_HDMI_HPD),
++};
++
++static const struct imx_pinctrl_soc_info imx8mp_pinctrl_info = {
++	.pins = imx8mp_pinctrl_pads,
++	.npins = ARRAY_SIZE(imx8mp_pinctrl_pads),
++	.gpr_compatible = "fsl,imx8mp-iomuxc-gpr",
++};
++
++static const struct of_device_id imx8mp_pinctrl_of_match[] = {
++	{ .compatible = "fsl,imx8mp-iomuxc", .data = &imx8mp_pinctrl_info, },
++	{ /* sentinel */ }
++};
++
++static int imx8mp_pinctrl_probe(struct platform_device *pdev)
++{
++	return imx_pinctrl_probe(pdev, &imx8mp_pinctrl_info);
++}
++
++static struct platform_driver imx8mp_pinctrl_driver = {
++	.driver = {
++		.name = "imx8mp-pinctrl",
++		.of_match_table = of_match_ptr(imx8mp_pinctrl_of_match),
++	},
++	.probe = imx8mp_pinctrl_probe,
++};
++
++static int __init imx8mp_pinctrl_init(void)
++{
++	return platform_driver_register(&imx8mp_pinctrl_driver);
++}
++arch_initcall(imx8mp_pinctrl_init);
+-- 
+2.7.4
+
