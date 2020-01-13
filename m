@@ -2,184 +2,179 @@ Return-Path: <SRS0=F1ow=3C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B5DC33CB0
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 12:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CAAC33CA9
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 17:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7832084D
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 12:10:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUIejq+F"
+	by mail.kernel.org (Postfix) with ESMTP id 46FF9207FF
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jan 2020 17:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578937122;
+	bh=BukZKWNlxC+JwXLqOoHMayChsb+HPTO4K7l59x2xb2s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kfxXke9ieT1aKQXGO1cHwcwNXvS6qvFUApVZtn2knbKns9kuJPOyjKgDJfgHV7x5Y
+	 1eu7J2I+kbhpbX0hSTPU+iXltHBac5RnWZyZN4KiuWhZcxLTCqm5puNAsLDRP+weQA
+	 TaTcaOUmd/RkSLXyqVY4Jiv1NjhP1lwbylGsM1dY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgAMMK4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jan 2020 07:10:56 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41170 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbgAMMKx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jan 2020 07:10:53 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c9so8296957wrw.8
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2020 04:10:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WBfLyLnxB/57Tfgm5ZKZyPtCmfHaakxN3M7SxJ598pA=;
-        b=gUIejq+FCx8Kd6HvjLMU8Nn1XtbcJ8M/jb0ryLOxB4/zVBuKYX4Af8SLra9eJs4rcB
-         mghg3QF8PPQNWvjwOAiVdwcSKLrvUlD57Ufq0i7SOK/qR+0UNHRDR60OFB5lvntqzNTu
-         cu/o0c5QoHplbht9CBc/FT8dE/Qs9MJ/hHR+zNX6ciZxIM+gEzATdOQ6DekDQYvxm+Hq
-         coYzl5K4gougiM/zugUm0SpSjhtHCDP5PDewrpJ7SkFqDI7kQoZhX7RBBi+Kp8J/QRj8
-         b9h5efbNYhOIsDtIFMb0+S+PQKoOuQsMHi34A9odAr2wmItf2LEGgYfuYCF0f/xhMBSL
-         mEyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WBfLyLnxB/57Tfgm5ZKZyPtCmfHaakxN3M7SxJ598pA=;
-        b=VDdA2FUyycrmeySGs63BzwWcFfHHIVAIJdLVI8Y+7a2ebmmAhLRd+GzgnRvsPq/VE6
-         8xIwmgwMFTq72g40ZdAtdq+6Rs62e/97K+amUBsV/tK+QITbsTkvOyL+CyVQg0KR7ZZk
-         w7mG7bvE14YpHZJIhGnidgRw/Sq2P0/jJVzFrn7WeRiJr8MPz5sS+e8UDIYjQVOtssmZ
-         7fxfEw+VyP1UXLzM68PbVyrw4/tnZaFFcw9bIVZJtOAcMmovFD3130FJZje9dwU0WdiS
-         P5iROSkmY9MUaVY3hjgEGBSMjRBa2ZNPnnHsSaMb1KAuBfQ3ctnpcnyiDIqZLRdPgUhu
-         /9cQ==
-X-Gm-Message-State: APjAAAXb3tvRkRnvtbgIx7qC5ZdNoEnLDKPMAyEQX705ZqganN01aTXT
-        GIsQ7zpJkpTF1pAF+skX0ghh2A==
-X-Google-Smtp-Source: APXvYqwEQVVqvqvjsj+6jgiSXpHXeqdDkCbyvYTNsbrb9Hsh7vYWqFLAsxhpBg00+gIiid7GIRicMQ==
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr18025079wro.310.1578917449742;
-        Mon, 13 Jan 2020 04:10:49 -0800 (PST)
-Received: from dell ([95.147.198.95])
-        by smtp.gmail.com with ESMTPSA id s3sm14052259wmh.25.2020.01.13.04.10.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 04:10:49 -0800 (PST)
-Date:   Mon, 13 Jan 2020 12:11:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v8 08/12] regulator: bd718x7: Split driver to common and
- bd718x7 specific parts
-Message-ID: <20200113121109.GG5414@dell>
-References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <20200107124124.GI14821@dell>
- <32f8fa4201ae99df64e7a39c6a69be2bef179f7b.camel@fi.rohmeurope.com>
- <20200113105301.GF5414@dell>
- <ab72ce13d008a0d5e9cd753b87fe397953210f70.camel@fi.rohmeurope.com>
+        id S1728650AbgAMRil (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jan 2020 12:38:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728633AbgAMRil (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Jan 2020 12:38:41 -0500
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A80012081E;
+        Mon, 13 Jan 2020 17:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578937120;
+        bh=BukZKWNlxC+JwXLqOoHMayChsb+HPTO4K7l59x2xb2s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RUYgfHXRk8+M0dS1OS29Cv9nL6I6NxkyTZUnDDVcWiEvSUG3+0Gw7dIpWSlGfySkz
+         oFsfgZWidxVqOh4gA9/THmZmv6hzMmteJltwDXkTh+SEPKNgkz1zcmEY09kmTn3T8c
+         B+TpykPpdJR2O383fl8iii04+LNQITclltFneS8Q=
+Received: by mail-qt1-f175.google.com with SMTP id d18so9788589qtj.10;
+        Mon, 13 Jan 2020 09:38:40 -0800 (PST)
+X-Gm-Message-State: APjAAAXUbtL/oTX5zF2ZoeIUYQ5uQBJdqsVqWORT2AZT6F0H7CvKQ8sv
+        JsmC/jkiLYG5QhWYg3/uf8KPitaWTcjw6nBdFQ==
+X-Google-Smtp-Source: APXvYqz8ZpzCIdEqPnB6Xb4WCqJl6WDzcbEbT8Lk9bxvnLRfjwOfbd5b9X315eomLEuZjxSWd9Ult4Ze9/2TwzIblrk=
+X-Received: by 2002:ac8:5513:: with SMTP id j19mr15214178qtq.143.1578937119737;
+ Mon, 13 Jan 2020 09:38:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab72ce13d008a0d5e9cd753b87fe397953210f70.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191218062024.25475-1-rahul.tanwar@linux.intel.com>
+In-Reply-To: <20191218062024.25475-1-rahul.tanwar@linux.intel.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 13 Jan 2020 11:38:28 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKi0K5Db5CGk7AKqwHML3J8uD5AK8mjoGtiTupr41K_fQ@mail.gmail.com>
+Message-ID: <CAL_JsqKi0K5Db5CGk7AKqwHML3J8uD5AK8mjoGtiTupr41K_fQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: intel: Update to use generic bindings
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        yixin zhu <yixin.zhu@linux.intel.com>, qi-ming.wu@intel.com,
+        cheol.yong.kim@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 13 Jan 2020, Vaittinen, Matti wrote:
+On Wed, Dec 18, 2019 at 12:20 AM Rahul Tanwar
+<rahul.tanwar@linux.intel.com> wrote:
+>
+> Kernel 5.5 adds generic pin mux & cfg node schema. Update pinctrl bindings
+> for LGM to use these newly added schemas. Also, rename filename to match
+> the compatible string.
+>
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> ---
+>  .../devicetree/bindings/pinctrl/intel,lgm-io.yaml  |  76 ++++++++++++++
+>  .../bindings/pinctrl/intel,lgm-pinctrl.yaml        | 116 ---------------------
+>  2 files changed, 76 insertions(+), 116 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/intel,lgm-pinctrl.yaml
 
-> Hello Lee,
-> 
-> On Mon, 2020-01-13 at 10:53 +0000, Lee Jones wrote:
-> > On Wed, 08 Jan 2020, Vaittinen, Matti wrote:
-> > 
-> > > Hello Lee,
-> > > 
-> > > On Tue, 2020-01-07 at 12:41 +0000, Lee Jones wrote:
-> > > > On Mon, 30 Dec 2019, Matti Vaittinen wrote:
-> > > > 
-> > > > > Few ROHM PMICs allow setting the voltage states for different
-> > > > > system states
-> > > > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via
-> > > > > SoC
-> > > > > specific
-> > > > > mechanisms. bd718x7 driver implemented device-tree parsing
-> > > > > functions for
-> > > > > these state specific voltages. The parsing functions can be re-
-> > > > > used 
-> > > > > by
-> > > > > other ROHM chip drivers like bd71828. Split the generic
-> > > > > functions
-> > > > > from
-> > > > > bd718x7-regulator.c to rohm-regulator.c and export them for
-> > > > > other
-> > > > > modules
-> > > > > to use.
-> > > > > 
-> > > > > Signed-off-by: Matti Vaittinen <
-> > > > > matti.vaittinen@fi.rohmeurope.com>
-> > > > > Acked-by: Mark Brown <broonie@kernel.org>
-> > > > > ---
-> > 
-> > [...]
-> > 
-> > > > > +#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
-> > > > > +int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config
-> > > > > *dvs,
-> > > > > +				  struct device_node *np,
-> > > > > +				  const struct regulator_desc
-> > > > > *desc,
-> > > > > +				  struct regmap *regmap);
-> > > > 
-> > > > Does these really need to live in the parent's header file?
-> > > 
-> > > I don't know what would be a better place?
-> > 
-> > You don't have a regulator header file?
-> > 
-> > It seems over-kill to create one for this, so leave it as is.
-> > 
-> > > > What other call-sites are there?
-> > > 
-> > > After this series the bd718x7-regulator.c and bd71828-regulator.c
-> > > are
-> > > the in-tree drivers using these. rohm-regulator.c is implementing
-> > > them.
-> > > And I hope we see yet another driver landing in later this year. 
-> > > 
-> > > Anyways, I will investigate if I can switch this to some common
-> > > (not
-> > > rohm specific) DT bindings at some point (I've scheduled this study
-> > > to
-> > > March) - If I can then they should live in regulator core headers.
-> > > 
-> > > But changing the existing properties should again be own set of
-> > > patches
-> > > and I'd prefer doing that work independently of this series and not
-> > > delaying the BD71828 due to not-yet-evaluated bd718x7 property
-> > > changes.
-> > 
-> > That's fine.
-> 
-> Glad to hear :) By the way, I already sent the v9 ;)
+Pretty sure I've said on multiple occasions to run 'make
+dt_binding_check'... Linux-next is broken by this (and others).
 
-It's in my queue.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+> new file mode 100644
+> index 000000000000..a386fb520510
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/pinctrl/intel,lgm-io.yaml#
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Drop 'bindings' from the path.
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Intel Lightning Mountain SoC pinmux & GPIO controller binding
+> +
+> +maintainers:
+> +  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> +
+> +description: |
+> +  Pinmux & GPIO controller controls pin multiplexing & configuration including
+> +  GPIO function selection & GPIO attributes configuration.
+> +
+> +allOf:
+> +  - $ref: pincfg-node.yaml#
+> +  - $ref: pinmux-node.yaml#
+
+This 'allOf' is at the wrong level...
+
+> +
+> +properties:
+> +  compatible:
+> +    const: intel,lgm-io
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +# Client device subnode's properties
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+
+...It should be here.
+
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +
+> +    properties:
+> +      function: true
+> +      group: true
+> +      pins: true
+> +      pinmux: true
+> +      bias-pull-up: true
+> +      bias-pull-down: true
+> +      drive-strength: true
+> +      slew-rate: true
+> +      drive-open-drain: true
+> +      output-enable: true
+> +
+> +    required:
+> +      - function
+> +      - group
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Pinmux controller node
+> +  - |
+> +    pinctrl: pinctrl@e2880000 {
+> +        compatible = "intel,lgm-io";
+> +        reg = <0xe2880000 0x100000>;
+> +
+> +        uart0-pins {
+> +             pins = <64>, /* UART_RX0 */
+> +                    <65>; /* UART_TX0 */
+> +             function = "CONSOLE_UART0";
+> +             pinmux = <1>,
+> +                      <1>;
+> +             groups = "CONSOLE_UART0";
+
+'groups' is not a defined property. Should be 'group'.
+
+> +          };
+> +    };
+> +
+> +...
