@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C40C32771
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5881C32771
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFFB2081E
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20982187F
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbgAOSPx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Jan 2020 13:15:53 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:53994 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729279AbgAOSPp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2020 13:15:45 -0500
+        id S1729214AbgAOSPp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Jan 2020 13:15:45 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:38988 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729208AbgAOSPk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2020 13:15:40 -0500
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id qiFR2100W5USYZQ01iFRmd; Wed, 15 Jan 2020 19:15:43 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id qiFR2100Y5USYZQ06iFRqv; Wed, 15 Jan 2020 19:15:37 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1irnCP-00012W-F4; Wed, 15 Jan 2020 19:15:25 +0100
+        id 1irnCP-00012d-IT; Wed, 15 Jan 2020 19:15:25 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1irnCP-000692-Cf; Wed, 15 Jan 2020 19:15:25 +0100
+        id 1irnCP-00069F-GU; Wed, 15 Jan 2020 19:15:25 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -46,9 +46,9 @@ Cc:     Alexander Graf <graf@amazon.com>,
         linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/5] gpiolib: Add support for gpiochipN-based table lookup
-Date:   Wed, 15 Jan 2020 19:15:19 +0100
-Message-Id: <20200115181523.23556-2-geert+renesas@glider.be>
+Subject: [PATCH v4 4/5] docs: gpio: Add GPIO Aggregator documentation
+Date:   Wed, 15 Jan 2020 19:15:22 +0100
+Message-Id: <20200115181523.23556-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200115181523.23556-1-geert+renesas@glider.be>
 References: <20200115181523.23556-1-geert+renesas@glider.be>
@@ -57,52 +57,147 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently GPIO controllers can only be referred to by label in GPIO
-lookup tables.
-
-Add support for looking them up by "gpiochipN" name, with "N" the
-corresponding GPIO device's ID number.
+Document the GPIO Aggregator, and the two typical use-cases.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
 v4:
   - Add Reviewed-by,
-  - Drop support for legacy sysfs interface based name matching,
-  - Replace complex custom matching by a simple additional check in the
-    existing gpiochip_match_name() function,
-  - Add kerneldoc() for find_chip_by_name(), documenting matching order.
+  - Drop controversial GPIO repeater,
+  - Clarify industrial control use case,
+  - Fix typo s/communicated/communicate/,
+  - Replace abstract frobnicator example by concrete door example with
+    gpio-line-names,
 
 v3:
   - New.
 ---
- drivers/gpio/gpiolib.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ .../admin-guide/gpio/gpio-aggregator.rst      | 102 ++++++++++++++++++
+ Documentation/admin-guide/gpio/index.rst      |   1 +
+ 2 files changed, 103 insertions(+)
+ create mode 100644 Documentation/admin-guide/gpio/gpio-aggregator.rst
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 9fd2dfb658546159..114325b366ae33d5 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1738,9 +1738,18 @@ static int gpiochip_match_name(struct gpio_chip *chip, void *data)
- {
- 	const char *name = data;
+diff --git a/Documentation/admin-guide/gpio/gpio-aggregator.rst b/Documentation/admin-guide/gpio/gpio-aggregator.rst
+new file mode 100644
+index 0000000000000000..954ed568b0b833b3
+--- /dev/null
++++ b/Documentation/admin-guide/gpio/gpio-aggregator.rst
+@@ -0,0 +1,102 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++
++GPIO Aggregator
++===============
++
++The GPIO Aggregator allows to aggregate GPIOs, and expose them as a new
++gpio_chip.  This supports the following use cases.
++
++
++Aggregating GPIOs using Sysfs
++-----------------------------
++
++GPIO controllers are exported to userspace using /dev/gpiochip* character
++devices.  Access control to these devices is provided by standard UNIX file
++system permissions, on an all-or-nothing basis: either a GPIO controller is
++accessible for a user, or it is not.
++
++The GPIO Aggregator allows access control for individual GPIOs, by aggregating
++them into a new gpio_chip, which can be assigned to a group or user using
++standard UNIX file ownership and permissions.  Furthermore, this simplifies and
++hardens exporting GPIOs to a virtual machine, as the VM can just grab the full
++GPIO controller, and no longer needs to care about which GPIOs to grab and
++which not, reducing the attack surface.
++
++Aggregated GPIO controllers are instantiated and destroyed by writing to
++write-only attribute files in sysfs.
++
++    /sys/bus/platform/drivers/gpio-aggregator/
++
++	"new_device" ...
++		Userspace may ask the kernel to instantiate an aggregated GPIO
++		controller by writing a string describing the GPIOs to
++		aggregate to the "new_device" file, using the format
++
++		.. code-block:: none
++
++		    [<gpioA>] [<gpiochipB> <offsets>] ...
++
++		Where:
++
++		    "<gpioA>" ...
++			    is a GPIO line name,
++
++		    "<gpiochipB>" ...
++			    is a GPIO chip label or name, and
++
++		    "<offsets>" ...
++			    is a comma-separated list of GPIO offsets and/or
++			    GPIO offset ranges denoted by dashes.
++
++		Example: Instantiate a new GPIO aggregator by aggregating GPIO
++		19 of "e6052000.gpio" and GPIOs 20-21 of "gpiochip2" into a new
++		gpio_chip:
++
++		.. code-block:: bash
++
++		    echo 'e6052000.gpio 19 gpiochip2 20-21' > new_device
++
++	"delete_device" ...
++		Userspace may ask the kernel to destroy an aggregated GPIO
++		controller after use by writing its device name to the
++		"delete_device" file.
++
++		Example: Destroy the previously-created aggregated GPIO
++		controller "gpio-aggregator.0":
++
++		.. code-block:: bash
++
++		    echo gpio-aggregator.0 > delete_device
++
++
++Generic GPIO Driver
++-------------------
++
++The GPIO Aggregator can also be used as a generic driver for a simple
++GPIO-operated device described in DT, without a dedicated in-kernel driver.
++This is useful in industrial control, and is not unlike e.g. spidev, which
++allows to communicate with an SPI device from userspace.
++
++Binding a device to the GPIO Aggregator is performed either by modifying the
++gpio-aggregator driver, or by writing to the "driver_override" file in Sysfs.
++
++Example: If "door" is a GPIO-operated device described in DT, using its own
++compatible value::
++
++        door {
++                compatible = "myvendor,mydoor";
++
++                gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>,
++                        <&gpio2 20 GPIO_ACTIVE_LOW>;
++		gpio-line-names = "open", "lock";
++        };
++
++it can be bound to the GPIO Aggregator by either:
++
++1. Adding its compatible value to ``gpio_aggregator_dt_ids[]``,
++2. Binding manually using "driver_override":
++
++.. code-block:: bash
++
++    echo gpio-aggregator > /sys/bus/platform/devices/door/driver_override
++    echo door > /sys/bus/platform/drivers/gpio-aggregator/bind
+diff --git a/Documentation/admin-guide/gpio/index.rst b/Documentation/admin-guide/gpio/index.rst
+index a244ba4e87d5398a..ef2838638e967777 100644
+--- a/Documentation/admin-guide/gpio/index.rst
++++ b/Documentation/admin-guide/gpio/index.rst
+@@ -7,6 +7,7 @@ gpio
+ .. toctree::
+     :maxdepth: 1
  
--	return !strcmp(chip->label, name);
-+	return !strcmp(chip->label, name) ||
-+	       !strcmp(dev_name(&chip->gpiodev->dev), name);
- }
++    gpio-aggregator
+     sysfs
  
-+/**
-+ * find_chip_by_name() - Find a specific gpio_chip by name
-+ * @name: Name to match
-+ *
-+ * Return a reference to a gpio_chip that matches the passed name.
-+ * This function first tries matching on the gpio_chip's label, followed by
-+ * matching on dev_name() of the corresponding gpio_device.
-+ */
- static struct gpio_chip *find_chip_by_name(const char *name)
- {
- 	return gpiochip_find((void *)name, gpiochip_match_name);
+ .. only::  subproject and html
 -- 
 2.17.1
 
