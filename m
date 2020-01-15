@@ -2,74 +2,93 @@ Return-Path: <SRS0=xfSe=3E=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0B0C33CB1
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 16:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE05BC33CB3
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A046F24656
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 16:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BABC82187F
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgAOQ3V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Jan 2020 11:29:21 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35761 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgAOQ3V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2020 11:29:21 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1irlXg-0004mW-B5; Wed, 15 Jan 2020 17:29:16 +0100
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1irlXf-0003Us-Nz; Wed, 15 Jan 2020 17:29:15 +0100
-Date:   Wed, 15 Jan 2020 17:29:15 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     support.opensource@diasemi.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        Adam.Thomson.Opensource@diasemi.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] pinctrl: da9062: add driver support
-Message-ID: <20200115162915.ccudevxvre3v5c3d@pengutronix.de>
-References: <20200108104746.1765-1-m.felsch@pengutronix.de>
- <20200108104746.1765-4-m.felsch@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200108104746.1765-4-m.felsch@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 17:28:40 up 61 days,  7:47, 54 users,  load average: 0.00, 0.02,
- 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        id S1729212AbgAOSPj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Jan 2020 13:15:39 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36694 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729076AbgAOSPj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jan 2020 13:15:39 -0500
+Received: from ramsan ([84.195.182.253])
+        by laurent.telenet-ops.be with bizsmtp
+        id qiFR2100K5USYZQ01iFRFT; Wed, 15 Jan 2020 19:15:37 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1irnCP-00012j-K6; Wed, 15 Jan 2020 19:15:25 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1irnCP-00069I-HY; Wed, 15 Jan 2020 19:15:25 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 5/5] MAINTAINERS: Add GPIO Aggregator section
+Date:   Wed, 15 Jan 2020 19:15:23 +0100
+Message-Id: <20200115181523.23556-6-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200115181523.23556-1-geert+renesas@glider.be>
+References: <20200115181523.23556-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Add a maintainership section for the GPIO Aggregator, covering
+documentation and driver source code.
 
-On 20-01-08 11:47, Marco Felsch wrote:
-> The DA9062 is a mfd pmic device which supports 5 GPIOs. The GPIOs can
-> be used as input, output or have a special use-case.
-> 
-> The patch adds the support for the normal input/output use-case.
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - Drop controversial GPIO repeater,
 
-Is it possible to get this into 5.6?
+v3:
+  - New.
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Regards,
-  Marco
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 74533d307d67321a..a28e25fd6a0c169f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7091,6 +7091,13 @@ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
+ F:	drivers/gpio/gpiolib-acpi.c
+ F:	drivers/gpio/gpiolib-acpi.h
+ 
++GPIO AGGREGATOR
++M:	Geert Uytterhoeven <geert+renesas@glider.be>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	Documentation/admin-guide/gpio/gpio-aggregator.rst
++F:	drivers/gpio/gpio-aggregator.c
++
+ GPIO IR Transmitter
+ M:	Sean Young <sean@mess.org>
+ L:	linux-media@vger.kernel.org
+-- 
+2.17.1
 
