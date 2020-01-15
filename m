@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D53C33C9E
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 01:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82ECC33C9E
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 01:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378C92467D
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 01:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841942467D
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jan 2020 01:43:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbgAOBnb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Jan 2020 20:43:31 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:55416 "EHLO inva020.nxp.com"
+        id S1728928AbgAOBne (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Jan 2020 20:43:34 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55650 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbgAOBnb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:43:31 -0500
+        id S1728844AbgAOBne (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Jan 2020 20:43:34 -0500
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F238E1A0563;
-        Wed, 15 Jan 2020 02:43:28 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 416E51A147B;
+        Wed, 15 Jan 2020 02:43:32 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E69071A145E;
-        Wed, 15 Jan 2020 02:43:19 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5FCDD1A1477;
+        Wed, 15 Jan 2020 02:43:23 +0100 (CET)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 13ADE40285;
-        Wed, 15 Jan 2020 09:43:09 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7B9A1402BB;
+        Wed, 15 Jan 2020 09:43:12 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
         stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
@@ -38,104 +38,41 @@ To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V9 1/3] dt-bindings: imx: Add pinctrl binding doc for i.MX8MP
-Date:   Wed, 15 Jan 2020 09:39:06 +0800
-Message-Id: <1579052348-32167-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V9 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MP by default
+Date:   Wed, 15 Jan 2020 09:39:08 +0800
+Message-Id: <1579052348-32167-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1579052348-32167-1-git-send-email-Anson.Huang@nxp.com>
+References: <1579052348-32167-1-git-send-email-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add binding doc for i.MX8MP pinctrl driver.
+Enable CONFIG_PINCTRL_IMX8MP by default to support i.MX8MP
+pinctrl driver.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes since V8:
-	- the lisence should be GPL-2.0
+No change
 ---
- .../bindings/pinctrl/fsl,imx8mp-pinctrl.yaml       | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
-new file mode 100644
-index 0000000..2e31e12
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mp-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale IMX8MP IOMUX Controller
-+
-+maintainers:
-+  - Anson Huang <Anson.Huang@nxp.com>
-+
-+description:
-+  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+  for common binding part and usage.
-+
-+properties:
-+  compatible:
-+    const: fsl,imx8mp-iomuxc
-+
-+  reg:
-+    maxItems: 1
-+
-+# Client device subnode's properties
-+patternProperties:
-+  'grp$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+
-+    properties:
-+      fsl,pins:
-+        allOf:
-+          - $ref: /schemas/types.yaml#/definitions/uint32-array
-+        description:
-+          each entry consists of 6 integers and represents the mux and config
-+          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-+          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-+          be found in <arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h>. The last
-+          integer CONFIG is the pad setting value like pull-up on this pin. Please
-+          refer to i.MX8M Plus Reference Manual for detailed CONFIG settings.
-+
-+    required:
-+      - fsl,pins
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  # Pinmux controller node
-+  - |
-+    iomuxc: pinctrl@30330000 {
-+        compatible = "fsl,imx8mp-iomuxc";
-+        reg = <0x30330000 0x10000>;
-+
-+        pinctrl_uart2: uart2grp {
-+            fsl,pins = <
-+                0x228 0x488 0x5F0 0x0 0x6	0x49
-+                0x228 0x488 0x000 0x0 0x0	0x49
-+            >;
-+        };
-+    };
-+
-+...
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index d0ea0d0..d35b417 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -396,6 +396,7 @@ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_IMX8MM=y
+ CONFIG_PINCTRL_IMX8MN=y
++CONFIG_PINCTRL_IMX8MP=y
+ CONFIG_PINCTRL_IMX8MQ=y
+ CONFIG_PINCTRL_IMX8QXP=y
+ CONFIG_PINCTRL_IPQ8074=y
 -- 
 2.7.4
 
