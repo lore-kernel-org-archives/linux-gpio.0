@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F566C33CB7
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0239C33CAF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4622473B
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A4F24736
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196589;
-	bh=lUlCwCexTDZ3NR5DpiFBuA6C6iX4HlYozf/mvEvlh3o=;
+	s=default; t=1579196593;
+	bh=gnYA85kEZLHbdN2eow52QotnrLQTfl4ilnRJYkvJBRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QwO/M9YMTaVEk0AztkHdoBENFbxLQpXb8xOJ8o1eSLpvnWdAD6525wQEyyHPTycm6
-	 x7WR0qGe8iB2LF9527c0zZlHxyYvXykAWLZ9EvI/IF1Q5CbRbjMtDtDNWIfNOL9mmW
-	 4FyPQ6r7KFTTaSYa9RxgQv6nOrVLY9EnIXBqwaAI=
+	b=uKszsQaaBcyd4ZM8Nfm0vL6TscEwTj1L7J7t3mx9tzLtB1MwV8dCJ8tlXyFDZ8fx8
+	 OTdznKPFYfjqP+LaP3yn/D7uZmW32KpizPIU2F1X0Zm3EdzEFuykjHmEScISoNpSgU
+	 OCj508VdIWxEO4l4gVAXLYvhx9gqa6yCIAS74GyQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393875AbgAPRnI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:43:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33000 "EHLO mail.kernel.org"
+        id S2393883AbgAPRnM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:43:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393862AbgAPRnG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:06 -0500
+        id S2405870AbgAPRnL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:43:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCCAE24718;
-        Thu, 16 Jan 2020 17:43:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBF512469C;
+        Thu, 16 Jan 2020 17:43:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196585;
-        bh=lUlCwCexTDZ3NR5DpiFBuA6C6iX4HlYozf/mvEvlh3o=;
+        s=default; t=1579196590;
+        bh=gnYA85kEZLHbdN2eow52QotnrLQTfl4ilnRJYkvJBRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gn8jDO7tK8qCN8K8umtt1Y++z2tyFGfcfcTTjtAosjyWRuRLNqmT/7GnKeKxrZ/BY
-         +I/25Zj1FU7ZqiQl/K2NJymKYKNzhifHYIJ9PZ3AB4ag8vRSCMNqJasecTSSTRpKuZ
-         DZbg8vCPxUu5+0TpJzroSiV+F3JRuYqY2ttTGMR0=
+        b=K3DaNa6y0smWn8e9dvToAmKNVMytfPTZDhxZPePUsocobS1Yab0HSfKznuJMFxkXC
+         Ee1OgzcJAyUdbLMfJ0rUyVZ9TuAMVZtmPfOqdkv/1Fs5glUmNd+wVrr5tJI5vFlDmm
+         6TRfE67StUEtjBee8Xh0zVyeiOYFY+VF/CwMEJX4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 010/174] pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
-Date:   Thu, 16 Jan 2020 12:40:07 -0500
-Message-Id: <20200116174251.24326-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 014/174] pinctrl: sh-pfc: r8a7794: Remove bogus IPSR9 field
+Date:   Thu, 16 Jan 2020 12:40:11 -0500
+Message-Id: <20200116174251.24326-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -61,31 +61,32 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b ]
+[ Upstream commit 6a6c195d98a1a5e70faa87f594d7564af1dd1bed ]
 
-The lcd0_data24_1_pins[] array contains the LCD0 D1[2-5] pin numbers,
-but the lcd0_data24_1_mux[] array lacks the corresponding pin marks.
+The Peripheral Function Select Register 9 contains 12 fields, but the
+variable field descriptor contains a 13th bogus field of 3 bits.
 
-Fixes: 06c7dd866da70f6c ("sh-pfc: r8a7740: Add LCDC0 and LCDC1 pin groups and functions")
+Fixes: 43c4436e2f1890a7 ("pinctrl: sh-pfc: add R8A7794 PFC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index aa7c346dff6d..bc2ee07fa92f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -2155,6 +2155,7 @@ static const unsigned int lcd0_data24_1_mux[] = {
- 	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
- 	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
- 	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
-+	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
- 	LCD0_D16_MARK, LCD0_D17_MARK, LCD0_D18_PORT163_MARK,
- 	LCD0_D19_PORT162_MARK, LCD0_D20_PORT161_MARK, LCD0_D21_PORT158_MARK,
- 	LCD0_D22_PORT160_MARK, LCD0_D23_PORT159_MARK,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 086f6798b129..3b79e893b5ed 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -4046,7 +4046,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_AVB_MDC, FN_SSI_SDATA6_B, 0, 0, }
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("IPSR9", 0xE6060044, 32,
+-			     1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3) {
++			     1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3) {
+ 		/* IP9_31 [1] */
+ 		0, 0,
+ 		/* IP9_30_28 [3] */
 -- 
 2.20.1
 
