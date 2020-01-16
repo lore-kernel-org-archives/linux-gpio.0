@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B258C3F68F
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1369C33CAF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06914206E6
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781A62072E
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579201701;
-	bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+	s=default; t=1579202002;
+	bh=rTDm/veJoLoQMJHrPCBBDxWNnrNUsb4DdzTNHkeOL3g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x7JAL8KTwhEKmF15JS2EQvgWNv8P/aHAl8fflRO842pM5yRPz8tlds6u/3vhTxSDc
-	 MHCCSa9HfKudYOejWsZndUsl5XDAGa4WosCEuo7UbWzAeIA14/Z9rzbIBCd0dVxGaB
-	 b2iLPJo3R+yGcexTHtk5PHSFtdi1UGaXSHZrdemI=
+	b=o3CvexOjs17SYqVsB7ifQhz54cT2LrvXGcYAzpRJcideJW2hE1q27k1gsGdewf43Z
+	 RQT5ntt9Bd+3VIFP6nSg9tQAybqKs6JIgYMvfSN8DJIYeP0U/Ipkd2I0O+CqGnHBug
+	 +ipsQvN0FANSL3pqZHp5mNkUuZuBPOoWgG28DLEo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387986AbgAPRBE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:01:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51618 "EHLO mail.kernel.org"
+        id S2389229AbgAPTNU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 14:13:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387981AbgAPRBD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:03 -0500
+        id S2387398AbgAPQ5A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8DAC20728;
-        Thu, 16 Jan 2020 17:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECE2721D56;
+        Thu, 16 Jan 2020 16:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194062;
-        bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+        s=default; t=1579193819;
+        bh=rTDm/veJoLoQMJHrPCBBDxWNnrNUsb4DdzTNHkeOL3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rhn7f5d7BK9xyxAuDI38B20k/1+fVbw3LWM+nrnTv3J58nqMb6iizwQTCkHoxoVJP
-         jqXqJGDkQleRD8cTpmZHCemqF0oqY4bHzsY2/WmOBZ0X9d8OI7hII65ftTgCGJUMME
-         dN4AWSYn10YXEN4+JMB5VN9xXW0yCoglTNTkiyIE=
+        b=JNJ/nwXwffK5/nq8vtxUXBVk8UK/BW2J2WUgXTOxoe1N6d+qCPyKypVnpepXR1qM7
+         iCm8mL3gU6wQzuYK4qTPS3mbiHbdpdDu7ZOJ4Oy/MekDLkKRFOyIj/FbhZPWAziFrb
+         2zUejo8wDkRtwFM/nwMmYH20P8YhIWceehariz7Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 174/671] pinctrl: sh-pfc: emev2: Add missing pinmux functions
-Date:   Thu, 16 Jan 2020 11:51:23 -0500
-Message-Id: <20200116165940.10720-57-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 079/671] pinctrl: sh-pfc: sh7734: Remove bogus IPSR10 value
+Date:   Thu, 16 Jan 2020 11:45:10 -0500
+Message-Id: <20200116165502.8838-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
+In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
+References: <20200116165502.8838-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -61,78 +61,38 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
+[ Upstream commit 4d374bacd7c9665179f9752a52d5d602c45d8190 ]
 
-The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
-but no pinmux functions refer to them, hence they can not be selected.
+The IP10[5:3] field in Peripheral Function Select Register 10 has a
+width of 3 bits, i.e. it allows programming one out of 8 different
+configurations.
+However, 9 values are provided instead of 8, overflowing into the
+subsequent field in the register, and thus breaking the configuration of
+the latter.
 
-Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+Fix this by dropping a bogus zero value.
+
+Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04d7df6..eafd8edbcbe9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
- 	"dtv_b",
- };
- 
-+static const char * const err_rst_reqb_groups[] = {
-+	"err_rst_reqb",
-+};
-+
-+static const char * const ext_clki_groups[] = {
-+	"ext_clki",
-+};
-+
- static const char * const iic0_groups[] = {
- 	"iic0",
- };
-@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
- 	"yuv3",
- };
- 
-+static const char * const lowpwr_groups[] = {
-+	"lowpwr",
-+};
-+
- static const char * const ntsc_groups[] = {
- 	"ntsc_clk",
- 	"ntsc_data",
-@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
- 	"pwm1",
- };
- 
-+static const char * const ref_clko_groups[] = {
-+	"ref_clko",
-+};
-+
- static const char * const sd_groups[] = {
- 	"sd_cki",
- };
-@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(cam),
- 	SH_PFC_FUNCTION(cf),
- 	SH_PFC_FUNCTION(dtv),
-+	SH_PFC_FUNCTION(err_rst_reqb),
-+	SH_PFC_FUNCTION(ext_clki),
- 	SH_PFC_FUNCTION(iic0),
- 	SH_PFC_FUNCTION(iic1),
- 	SH_PFC_FUNCTION(jtag),
- 	SH_PFC_FUNCTION(lcd),
-+	SH_PFC_FUNCTION(lowpwr),
- 	SH_PFC_FUNCTION(ntsc),
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(ref_clko),
- 	SH_PFC_FUNCTION(sd),
- 	SH_PFC_FUNCTION(sdi0),
- 	SH_PFC_FUNCTION(sdi1),
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 05ccb27f7781..c691e5e9d9de 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -2231,7 +2231,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_LCD_CL1_B, 0, 0,
+ 	    /* IP10_5_3 [3] */
+ 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
+-		FN_LCD_DON_B, 0, 0, 0,
++		FN_LCD_DON_B, 0, 0,
+ 	    /* IP10_2_0 [3] */
+ 		FN_SSI_SCK23, FN_VI1_4_B, FN_RX1_D, FN_FCLE_B,
+ 		FN_LCD_DATA15_B, 0, 0, 0 }
 -- 
 2.20.1
 
