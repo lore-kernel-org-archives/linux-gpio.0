@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530FFC33CB6
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C40C3F68F
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263FE24681
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC58D2469C
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579197502;
-	bh=3asVv0LkAlodZ0h3jq+2rgSq3Ucakva943Q5z9tTdW8=;
+	s=default; t=1579197503;
+	bh=ula/axhpgqbW6VnDC7/ZBD5oh5V4mW5kS71pmEs39M8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VQJ8jHZ8G2VHOJEKfhOxkokHMf1W1HMJ+dIa1HyBGNLB5Qpxuk8JqD3/sKhzecrt1
-	 U3VU7zlMdIk/EFuLEzrt8G6mcu8OOsR7x+farIZMFAjhWOhgFpivTFU0JVimjgpZhB
-	 mSD+KJmRjjeikxSOcYjOhWCADeb2+XZqtnLHPEgo=
+	b=w6KfIfQZ0oUqLQEjdgkfDvgBHBbV7G2eTK/iaj0rbCpXT2bhFgiBp1CB3zkV+Kr3D
+	 WbJbyUhx5cmrUnXTtYfD53FNsP3F1h4I0ySgfdmuDsY19ed8SNoRNL2ocei59NIKeS
+	 Dd2KeeO/6P++Jd/vJGBit+1UF2oRyzXxCIyBEBQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390956AbgAPR6Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:58:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33184 "EHLO mail.kernel.org"
+        id S2405868AbgAPRnK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:43:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393889AbgAPRnN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:13 -0500
+        id S2405855AbgAPRnK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:43:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49B6024725;
-        Thu, 16 Jan 2020 17:43:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD82324695;
+        Thu, 16 Jan 2020 17:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196593;
-        bh=3asVv0LkAlodZ0h3jq+2rgSq3Ucakva943Q5z9tTdW8=;
+        s=default; t=1579196589;
+        bh=ula/axhpgqbW6VnDC7/ZBD5oh5V4mW5kS71pmEs39M8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q3QuC2JKD6rs7pHRgFt56JnbCYrcJW9MPz59DPlXlfsySGrrWjEgTjzJ5d/i6idfP
-         oEIWaYabanjciSFPFQK1ShHT/Ltu6PhpsLlSA3v2x3gsEoWj2Kl8FIksq4bgbDZDvQ
-         cfemRKkMXZI4Ykr7WtFpwNf+4HYZukw0zRfMxuNc=
+        b=E1QL5pvlzdbd+Ucc1pI2r7i9Tz/4VAHjF7oJBXtVQSeYOwFMdGWs/IX+ZU99tRarv
+         8vnWBF/sWlqu8OTFVHMi+2i5AUYQTvw9Earw9E31a38h6VSwTxhTcI7vO+xWldnSfg
+         n6OXALCaMadEr9RwUL2EfF/LR/4Ecg4H4vOQ9o7k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 016/174] pinctrl: sh-pfc: sh7269: Add missing PCIOR0 field
-Date:   Thu, 16 Jan 2020 12:40:13 -0500
-Message-Id: <20200116174251.24326-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 013/174] pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+Date:   Thu, 16 Jan 2020 12:40:10 -0500
+Message-Id: <20200116174251.24326-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -61,35 +61,33 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9540cbdfcd861caf67a6f0e4bb7f46d41c4aad86 ]
+[ Upstream commit 124cde98f856b6206b804acbdec3b7c80f8c3427 ]
 
-The Port C I/O Register 0 contains 7 reserved bits, but the descriptor
-contains only dummy configuration values for 6 reserved bits, thus
-breaking the configuration of all subsequent fields in the register.
+The tpu4_to3_mux[] array contains the TPU4TO3 pin mark, but the
+tpu4_to3_pins[] array lacks the corresponding pin number.
 
-Fix this by adding the two missing configuration values.
+Add the missing pin number, for non-GPIO pin F26.
 
-Fixes: f5e811f2a43117b2 ("sh-pfc: Add sh7269 pinmux support")
+Fixes: 5da4eb049de803c7 ("sh-pfc: sh73a0: Add TPU pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7269.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-index a50d22bef1f4..cfdb4fc177c3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-@@ -2119,7 +2119,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	},
- 
- 	{ PINMUX_CFG_REG("PCIOR0", 0xfffe3852, 16, 1) {
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 		PC8_IN, PC8_OUT,
- 		PC7_IN, PC7_OUT,
- 		PC6_IN, PC6_OUT,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index 6a69c8c5d943..ea5da5dcad2c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -2672,6 +2672,7 @@ static const unsigned int tpu4_to2_mux[] = {
+ };
+ static const unsigned int tpu4_to3_pins[] = {
+ 	/* TO */
++	PIN_NUMBER(6, 26),
+ };
+ static const unsigned int tpu4_to3_mux[] = {
+ 	TPU4TO3_MARK,
 -- 
 2.20.1
 
