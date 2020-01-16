@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70471C33CBA
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A32C33CB6
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF8D20684
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D2962467E
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195262;
-	bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
+	s=default; t=1579195359;
+	bh=QGsiU+u5Ni+a2mgblIM6INl9p21+IYQkMFGB7cMcRf4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ea21iVn19A3QYx1o8KyQGPDBhAr3pw1amVV5GswfmzIg0s4f8c6qoEgS8ASPgCsqz
-	 5fV7N6/+CYdj3YdyKaQ9pUGcOgZuAay/k1BiyQUQygDf4buD9QWp8qrUWvZQ7VIA4H
-	 VCo4YKk6QQH5SQ5nXo1raRWkoQLJmIV9kbJd4lxQ=
+	b=LXTf/icvSR51zqBtEs58SwK9JAaLvRPl75H4/6is6QGkS0Kzn/x6dHAwsAgfRrwyQ
+	 4AJl3otkFmtjooILtr5TD8QU2qE+7jM3nfOBVdJWT+rdZxrxHWroTppdZDS2+EmLLj
+	 lENOUBqNxBezNuj0hvtcX+tG/vdfUYGIg+imBnjo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390730AbgAPRRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:17:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44000 "EHLO mail.kernel.org"
+        id S2390181AbgAPRWe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:22:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391292AbgAPRRx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:17:53 -0500
+        id S2390764AbgAPRNb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:13:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 531FD246AF;
-        Thu, 16 Jan 2020 17:17:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F145F246AA;
+        Thu, 16 Jan 2020 17:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195072;
-        bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
+        s=default; t=1579194811;
+        bh=QGsiU+u5Ni+a2mgblIM6INl9p21+IYQkMFGB7cMcRf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PycV3U/JYG06UbsAUCcQHNTJP0V1I7fztaTw+O+I87suysZerD0enRyebygbXUNOD
-         bmENc1/ZYkwrHFePqgBwzDpYJ6lQjQsWpd6WHUDB9K6mauxwvjXyFUlxHImcWJiunW
-         +mQFCEi51j5KGAYAFgbkrmKtReYZKhXLQNyux3UU=
+        b=fjUq/BIw48N8Yk1Zk4rxe0/4rOSqDZ72IySqsRLbibKe6B4sUC/3Mv4h6wVvRhPJc
+         qc84L3cvNV5ctaRb4bvOlzFCTZd2APwy+ocnmPME/YyZneAgSyX8q3wFsnh6wT8LT0
+         gtDLdbRjUbLYnzoQ39/vFJP5Hi7Eyb/k6rDNjd3I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 024/371] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
-Date:   Thu, 16 Jan 2020 12:11:32 -0500
-Message-Id: <20200116171719.16965-24-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 618/671] pinctl: ti: iodelay: fix error checking on pinctrl_count_index_with_args call
+Date:   Thu, 16 Jan 2020 12:04:16 -0500
+Message-Id: <20200116170509.12787-355-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116171719.16965-1-sashal@kernel.org>
-References: <20200116171719.16965-1-sashal@kernel.org>
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,34 +59,39 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
+[ Upstream commit 5ff8aca906f3a7a7db79fad92f2a4401107ef50d ]
 
-The gether_gmii_mux[] array contains the REF125CK pin mark, but the
-gether_gmii_pins[] array lacks the corresponding pin number.
+The call to pinctrl_count_index_with_args checks for a -EINVAL return
+however this function calls pinctrl_get_list_and_count and this can
+return -ENOENT. Rather than check for a specific error, fix this by
+checking for any error return to catch the -ENOENT case.
 
-Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Addresses-Coverity: ("Improper use of negative")
+Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190920122030.14340-1-colin.king@canonical.com
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index 35f436bcb849..d8077065636e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -1982,7 +1982,7 @@ static const unsigned int gether_gmii_pins[] = {
- 	 */
- 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
- 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
--	205, 163, 206, 207,
-+	205, 163, 206, 207, 158,
- };
- static const unsigned int gether_gmii_mux[] = {
- 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 8782c348ebe9..4eda888b4d04 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -496,7 +496,7 @@ static int ti_iodelay_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 
+ 	rows = pinctrl_count_index_with_args(np, name);
+-	if (rows == -EINVAL)
++	if (rows < 0)
+ 		return rows;
+ 
+ 	*map = devm_kzalloc(iod->dev, sizeof(**map), GFP_KERNEL);
 -- 
 2.20.1
 
