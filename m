@@ -2,301 +2,174 @@ Return-Path: <SRS0=pjQz=3F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9CCC33CB1
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 07:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D72C33CB1
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 08:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3529720663
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 07:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB82B20748
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 08:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="YqcS4ShZ"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZxJfN5oe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbgAPHs7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 02:48:59 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:15392 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726827AbgAPHs7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 02:48:59 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579160938; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=LeX5HX3rkYH2PnvSEJOJKoKg9DCtPQiRr5VOCPlPpMY=; b=YqcS4ShZeop9cR2TUSJY5FPnNT95/we2co5ikg8I3k4bQHD5ZRkqtE2WCw2w4X7HJZQIlfb4
- XxiW7wFTXAHnnAuwoGSeoQPsjKvneK8J+XYPoaahGfG7+AVIqAxk2x0i1WFFl211bMo9/Koq
- p3fU8UiUZCQR8AjfgUMgfimeL3I=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e201568.7f29deef7180-smtp-out-n02;
- Thu, 16 Jan 2020 07:48:56 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7BD42C4479F; Thu, 16 Jan 2020 07:48:55 +0000 (UTC)
-Received: from [192.168.1.8] (unknown [171.76.62.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2D392C43383;
-        Thu, 16 Jan 2020 07:48:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D392C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH V4 1/5] dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl
- bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        sivaprak@codeaurora.org,
-        Rajkumar Ayyasamy <arajkuma@codeaurora.org>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-References: <1578561543-23132-1-git-send-email-sricharan@codeaurora.org>
- <1578561543-23132-2-git-send-email-sricharan@codeaurora.org>
- <20200113224931.GA1297@bogus>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <6c5a0e35-b02c-ad52-bae9-ce05c64e98ee@codeaurora.org>
-Date:   Thu, 16 Jan 2020 13:18:47 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20200113224931.GA1297@bogus>
-Content-Type: text/plain; charset=utf-8
+        id S1726684AbgAPI2a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 03:28:30 -0500
+Received: from mail-eopbgr60048.outbound.protection.outlook.com ([40.107.6.48]:37205
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726812AbgAPI2a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 03:28:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iX2sSFO9PJCN0RiiLy/UD9A5u2NnTzXmVZ0u1EeKpTMhDx+ouIjbdmboTNzuft1q2mRpX9ZZRhC5tNlMtIF/UJhTivY5dsEVyL/fqHzjFdLEXVJvnz9nuSgEUYrrcEwNmlO/V/c08dAnejmuN1G+FxKvYd6R6CBmcDJuIHsb73N7Eedx/b/BAqGI6KCtu1qmne2sZC88W2Y2s+7kqJV+p8uMGyx89Oc7/i0jjAcq/odAVAC1isiarTX42Ld3DDXCvGewFT0XzFmb45UFDyxpPsD0iA9TR6c3VOutMGKyVXIKqf6Lz7hYu3P5bdizRVffrfHYpbyFXRrLQpcNSp5QRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EANhXmSVmRlHjC42A3Enh7V7U6f0NI9Sb0cusnW0ng0=;
+ b=RXuK7V5mRRhMmqGZbQKEKFzxeCHm2+fuMSyKBLMI97re4PokR4reyD4MMePswGrNxnB0HXWxTHlZQMivXNm/7IME0u3pJIDxZ0nZHSFse4llrT8KoN0fzCW3kvMYy1bwPSCcQVeB4aBeCyfY2i/L29d1+Q4JTUsByehet7RvPFm2aPm3TdN9dF56MqTlhxGHlrR2HmZEzhGd7RMU8EE7tF3ICI3vRqGq/gtFd2jLsuQef8U954qsfQZMA6Q4XMccdu6Q73YimBkryopiP5zmDs+KpqWc6cIIG4HbzKkGg0vLKd0UgL3odwCwcfUMSn/PnF5U79PNd4NppDXqLGismQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EANhXmSVmRlHjC42A3Enh7V7U6f0NI9Sb0cusnW0ng0=;
+ b=ZxJfN5oemAw7lkRPgQ4D2VtufVIN1VEwv7zrPluPtEde9Y3KxRTjh53VojzkLeum3ujiuL/ubJxGd2g0XNsXHbaqXQ2sdLHyvKlG+HNsT7aAb+5++4W7qPMYdGw1r1WPhAyqn2HrwllmnRtTkhG8ZyevZKOqvtspgWYK9i7Ydo8=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5698.eurprd04.prod.outlook.com (20.178.118.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.12; Thu, 16 Jan 2020 08:28:23 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2623.018; Thu, 16 Jan 2020
+ 08:28:23 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
+Thread-Topic: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
+Thread-Index: AQHVtaDOy35Q6KpKLESPO8UEr8sdH6ftIitQ
+Date:   Thu, 16 Jan 2020 08:28:23 +0000
+Message-ID: <AM0PR04MB448174E1DE647E9F2F65106988360@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e5c18318-3b3a-4827-e00e-08d79a5e0d56
+x-ms-traffictypediagnostic: AM0PR04MB5698:|AM0PR04MB5698:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5698915F081B12570F3A4D6D88360@AM0PR04MB5698.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 02843AA9E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(396003)(39860400002)(346002)(366004)(189003)(199004)(9686003)(316002)(66446008)(64756008)(66556008)(71200400001)(5660300002)(86362001)(7696005)(66476007)(478600001)(8676002)(6506007)(66946007)(52536014)(55016002)(8936002)(7416002)(76116006)(54906003)(2906002)(110136005)(26005)(81156014)(81166006)(33656002)(186003)(44832011)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5698;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ftJWQfmdURHj2gXcAuHxjL853T9R7cKCB8JlQrrf993bAqf5NveqkBgOjBYIaD3UoAS+8PdC3LU35FyO0QinHApXIt+Z6Xb7gNL3AH93enmkWUIK7R9qJeihrgRHgBVRx/nF6vt2y4+47XMjM3mr2HdVsgLcbyD0c9tUASX9BVqU/UrOufismWtuP40Ur+kCqSXYxh0tWONlPnFm1p1sc/MxVs1FbzQISJfsXN/Y3PTh728gYAgZEf1TkxmGVORukRnwLz29cmTByqs12+RBYnLYMywTsvPxE9KIBAsMF/scRAnNrtOTmEqQmbz4zxuzk7pRQ7gBU90VZSQnL7xKeAk+TuuI76BEAhMU1FwNcvafua2N/yqsduT2sV2LGi17iKaVXXHLt+DvQg7vPv4UT05ixkjqrU0d54T1OcW0jQPv+VsNnA88dX/6Re1bXrBR
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5c18318-3b3a-4827-e00e-08d79a5e0d56
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 08:28:23.6845
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: y0opulALU5yj+y//e58fZzxMkYFgWTmLuWvLNzDatUMOLyvXyg9aLK22GHkzdYzLtSrIpEuLxxpOxnyuTpPy4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5698
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
-  Thanks for the review, fixed all below comments and posted V5.
+Hi Linus,
 
+> Subject: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
 
-On 1/14/2020 4:19 AM, Rob Herring wrote:
-> On Thu, Jan 09, 2020 at 02:48:59PM +0530, Sricharan R wrote:
->> Add device tree binding Documentation details for ipq6018
->> pinctrl driver.
->>
->> Co-developed-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->> [V4]
->>   * cleaned-up schema as per Rob's comments.
->>   * Ran make dt_binding_check and no issues.
->>
->>  .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     | 140 +++++++++++++++++++++
->>  1 file changed, 140 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->> new file mode 100644
->> index 0000000..68c3c8c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->> @@ -0,0 +1,140 @@
->> +# SPDX-License-Identifier: GPL-2.0-or-later
-> 
-> Dual license please.
-> 
-> (GPL-2.0-only or BSD-2-Clause)
->
+Would you pick this patch up?
 
- ok, fixed in V5
- 
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq6018-pinctrl.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Technologies, Inc. IPQ6018 TLMM block
->> +
->> +maintainers:
->> +  - Sricharan R <sricharan@codeaurora.org>
->> +
->> +description: |
->> +  This binding describes the Top Level Mode Multiplexer block found in the
->> +  IPQ6018 platform.
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,ipq6018-pinctrl
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    description: Specifies the TLMM summary IRQ
->> +    maxItems: 1
->> +
->> +  interrupt-controller: true
->> +
->> +  '#interrupt-cells':
->> +    description:
->> +      Specifies the PIN numbers and Flags, as defined in defined in
->> +      include/dt-bindings/interrupt-controller/irq.h
->> +    const: 2
->> +
->> +  gpio-controller: true
->> +
->> +  '#gpio-cells':
->> +    description: Specifying the pin number and flags, as defined in
->> +      include/dt-bindings/gpio/gpio.h
->> +    const: 2
->> +
->> +  gpio-ranges:
->> +    description: Documentation/devicetree/bindings/gpio/gpio.txt
->> +    maxItems: 1
->> +
->> +#PIN CONFIGURATION NODES
->> +patternProperties:
->> +  '-pins$':
->> +    type: object
->> +    description:
->> +      Pinctrl node's client devices use subnodes for desired pin configuration.
->> +      Client device subnodes use below standard properties.
->> +    allOf:
->> +      - $ref: "/schemas/pinctrl/pincfg-node.yaml"
->> +
->> +    properties:
->> +      pins:
->> +        description:
->> +          List of gpio pins affected by the properties specified in this
->> +          subnode.
->> +        allOf:
->> +          - $ref: "/schemas/types.yaml#/definitions/string"
-> 
-> No need for type ref as the common binding does this.
->
+Per Uwe, this v1 patch use %pe is better that v2 use %d.
 
- ok. fixed in V5.
+Thanks,
+Peng.
 
- 
->> +          - enum: ['gpio$', sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd,
->> +            sdc2_data, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
->> +            qdsd_data3]
->> +
->> +      function:
->> +        description:
->> +          Specify the alternative function to be configured for the specified
->> +          pins.
->> +        allOf:
->> +          - $ref: "/schemas/types.yaml#/definitions/string"
-> 
-> Same here.
->
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> platform_irq_count() and platform_get_irq() is the more generic way
+> (independent of device trees) to determine the count of available interru=
+pts.
+> So use this instead.
+>=20
+> As platform_irq_count() might return an error code (which of_irq_count
+> doesn't) some additional handling is necessary.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> index aa9dcde0f069..cc66a6429a06 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> -#include <linux/of_irq.h>
+>  #include <linux/pinctrl/pinconf-generic.h>  #include
+> <linux/pinctrl/pinconf.h>  #include <linux/pinctrl/pinctrl.h> @@ -739,7
+> +738,14 @@ static int armada_37xx_irqchip_register(struct platform_device
+> *pdev,
+>  		return ret;
+>  	}
+>=20
+> -	nr_irq_parent =3D of_irq_count(np);
+> +	nr_irq_parent =3D platform_irq_count(pdev);
+> +	if (nr_irq_parent < 0) {
+> +		if (nr_irq_parent !=3D -EPROBE_DEFER)
+> +			dev_err(dev, "Couldn't determine irq count: %pe\n",
+> +				ERR_PTR(nr_irq_parent));
+> +		return nr_irq_parent;
+> +	}
+> +
+>  	spin_lock_init(&info->irq_lock);
+>=20
+>  	if (!nr_irq_parent) {
+> @@ -776,7 +782,7 @@ static int armada_37xx_irqchip_register(struct
+> platform_device *pdev,
+>  	if (!girq->parents)
+>  		return -ENOMEM;
+>  	for (i =3D 0; i < nr_irq_parent; i++) {
+> -		int irq =3D irq_of_parse_and_map(np, i);
+> +		int irq =3D platform_get_irq(pdev, i);
+>=20
+>  		if (irq < 0)
+>  			continue;
+> --
+> 2.16.4
 
- ok, fixed in V5.
-
- 
->> +          - enum: [ adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char,
->> +            atest_char0, atest_char1, atest_char2, atest_char3, atest_combodac,
->> +            atest_gpsadc0, atest_gpsadc1, atest_tsens, atest_wlan0,
->> +            atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp_i2c1,
->> +            blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_i2c5, blsp_i2c6,  blsp_spi1,
->> +            blsp_spi1_cs1, blsp_spi1_cs2, blsp_spi1_cs3, blsp_spi2,
->> +            blsp_spi2_cs1, blsp_spi2_cs2, blsp_spi2_cs3, blsp_spi3,
->> +            blsp_spi3_cs1, blsp_spi3_cs2, blsp_spi3_cs3, blsp_spi4, blsp_spi5,
->> +            blsp_spi6, blsp_uart1, blsp_uart2, blsp_uim1, blsp_uim2, cam1_rst,
->> +            cam1_standby, cam_mclk0, cam_mclk1, cci_async, cci_i2c, cci_timer0,
->> +            cci_timer1, cci_timer2, cdc_pdm0, codec_mad, dbg_out, display_5v,
->> +            dmic0_clk, dmic0_data, dsi_rst, ebi0_wrcdc, euro_us, ext_lpass,
->> +            flash_strobe, gcc_gp1_clk_a, gcc_gp1_clk_b, gcc_gp2_clk_a,
->> +            gcc_gp2_clk_b, gcc_gp3_clk_a, gcc_gp3_clk_b, gpio, gsm0_tx0,
->> +            gsm0_tx1, gsm1_tx0, gsm1_tx1, gyro_accl, kpsns0, kpsns1, kpsns2,
->> +            ldo_en, ldo_update, mag_int, mdp_vsync, modem_tsync, m_voc,
->> +            nav_pps, nav_tsync, pa_indicator, pbs0, pbs1, pbs2, pri_mi2s,
->> +            pri_mi2s_ws, prng_rosc, pwr_crypto_enabled_a, pwr_crypto_enabled_b,
->> +            pwr_modem_enabled_a,  pwr_modem_enabled_b, pwr_nav_enabled_a,
->> +            pwr_nav_enabled_b, qdss_ctitrig_in_a0, qdss_ctitrig_in_a1,
->> +            qdss_ctitrig_in_b0, qdss_ctitrig_in_b1, qdss_ctitrig_out_a0,
->> +            qdss_ctitrig_out_a1, qdss_ctitrig_out_b0, qdss_ctitrig_out_b1,
->> +            qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
->> +            qdss_tracedata_a, qdss_tracedata_b, reset_n, sd_card, sd_write,
->> +            sec_mi2s, smb_int, ssbi_wtr0, ssbi_wtr1, uim1, uim2, uim3,
->> +            uim_batt, wcss_bt, wcss_fm, wcss_wlan, webcam1_rst ]
->> +
->> +      drive-strength:
->> +        allOf:
->> +          - $ref: "/schemas/types.yaml#/definitions/uint32"
-> 
-> Same here.
->
-
-fixed in v5.
-
- 
->> +          - enum: [2, 4, 6, 8, 10, 12, 14, 16]
-> 
-> default?
->
-
-fixed in v5.
-
- 
->> +        description:
->> +          Selects the drive strength for the specified pins, in mA.
-> 
->> +
->> +    required:
->> +      - pins
->> +      - function
-> 
->        additionalProperties: false
-> 
-> You'll need to list any other properties you use. Based 
-> on the example, you'll need 'bias-pull-down: true'.
->
-
- ok, fixed in v5.
-
- 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-controller
->> +  - '#interrupt-cells'
->> +  - gpio-controller
->> +  - '#gpio-cells'
->> +  - gpio-ranges
-> 
-> additionalProperties: false
->
-
- ok, fixed in v5.
- 
->> +
->> +examples:
->> +  - |
->> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +        tlmm: pinctrl@1000000 {
->> +              compatible = "qcom,ipq6018-pinctrl";
->> +              reg = <0x01000000 0x300000>;
->> +              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->> +              gpio-controller;
->> +              #gpio-cells = <2>;
->> +              gpio-ranges = <&tlmm 0 80>;
->> +              interrupt-controller;
->> +              #interrupt-cells = <2>;
->> +
->> +              serial3-pinmux {
-> 
-> Doesn't match the schema.
-
- fixed in v5.
-
-
-Regards,
- Sricharan
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
