@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1369C33CAF
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FF9C33CB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781A62072E
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79492073A
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 19:13:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202002;
-	bh=rTDm/veJoLoQMJHrPCBBDxWNnrNUsb4DdzTNHkeOL3g=;
+	s=default; t=1579202007;
+	bh=o9D02xT1OERTo13eksDUa5Rx6rszZDH9yPUsA+RIBYE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o3CvexOjs17SYqVsB7ifQhz54cT2LrvXGcYAzpRJcideJW2hE1q27k1gsGdewf43Z
-	 RQT5ntt9Bd+3VIFP6nSg9tQAybqKs6JIgYMvfSN8DJIYeP0U/Ipkd2I0O+CqGnHBug
-	 +ipsQvN0FANSL3pqZHp5mNkUuZuBPOoWgG28DLEo=
+	b=Bx+qqmGWY4y6KqAE7DcvUnb+fvyFFpaQlxmu7ss+A6h3376y50xebjRuvuj4qELi9
+	 FBTDJFSu2xzxe1oVfGkNbIE1+G8ahrVAaIrB8yZFdlEk+FZGH8kmC1v3kaYXYgAeZz
+	 ZdUZ4Tgk8PPdOz6Pa6iwcMKyXtTtM7sYH9rDnht0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389229AbgAPTNU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 14:13:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43738 "EHLO mail.kernel.org"
+        id S1733312AbgAPQ47 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 11:56:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387398AbgAPQ5A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:00 -0500
+        id S1733307AbgAPQ45 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:56:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECE2721D56;
-        Thu, 16 Jan 2020 16:56:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29AF52467E;
+        Thu, 16 Jan 2020 16:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193819;
-        bh=rTDm/veJoLoQMJHrPCBBDxWNnrNUsb4DdzTNHkeOL3g=;
+        s=default; t=1579193817;
+        bh=o9D02xT1OERTo13eksDUa5Rx6rszZDH9yPUsA+RIBYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNJ/nwXwffK5/nq8vtxUXBVk8UK/BW2J2WUgXTOxoe1N6d+qCPyKypVnpepXR1qM7
-         iCm8mL3gU6wQzuYK4qTPS3mbiHbdpdDu7ZOJ4Oy/MekDLkKRFOyIj/FbhZPWAziFrb
-         2zUejo8wDkRtwFM/nwMmYH20P8YhIWceehariz7Q=
+        b=pQwnD516Ug8e6PtVP1gsQnBta7eDMZKBWY3j4ar0jQADGCMZkn/1e0lXc68PZeEdX
+         8SEOfZPwUYMnan4AIPHC7VPbmR7ssbtCNyM8pgoJkKh/8hXIzlbY7W8Ht9s2uM6XGP
+         LSgdGRDP2W0ZLrq4gNtjH36qv+IemmwVPnR2xWSQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 079/671] pinctrl: sh-pfc: sh7734: Remove bogus IPSR10 value
-Date:   Thu, 16 Jan 2020 11:45:10 -0500
-Message-Id: <20200116165502.8838-79-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 077/671] pinctrl: sh-pfc: r8a77995: Remove bogus SEL_PWM[0-3]_3 configurations
+Date:   Thu, 16 Jan 2020 11:45:08 -0500
+Message-Id: <20200116165502.8838-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -61,38 +61,41 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 4d374bacd7c9665179f9752a52d5d602c45d8190 ]
+[ Upstream commit e28dc3f09c9d2555a9bd982f0847988591052226 ]
 
-The IP10[5:3] field in Peripheral Function Select Register 10 has a
-width of 3 bits, i.e. it allows programming one out of 8 different
-configurations.
-However, 9 values are provided instead of 8, overflowing into the
-subsequent field in the register, and thus breaking the configuration of
-the latter.
+While the SEL_PWM[0-3] fields in the Module Select Register 0 support 4
+possible configurations per PWM pin, only the first 3 are valid.
 
-Fix this by dropping a bogus zero value.
+Replace the invalid and unused configurations for SEL_PWM[0-3]_3 by
+dummies.
 
-Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
+Fixes: 794a6711764658a1 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7734.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index 05ccb27f7781..c691e5e9d9de 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -2231,7 +2231,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_LCD_CL1_B, 0, 0,
- 	    /* IP10_5_3 [3] */
- 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
--		FN_LCD_DON_B, 0, 0, 0,
-+		FN_LCD_DON_B, 0, 0,
- 	    /* IP10_2_0 [3] */
- 		FN_SSI_SCK23, FN_VI1_4_B, FN_RX1_D, FN_FCLE_B,
- 		FN_LCD_DATA15_B, 0, 0, 0 }
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index adade5b7ffbc..337c80bde8f9 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -391,10 +391,10 @@ FM(IP12_31_28)	IP12_31_28 \
+ #define MOD_SEL0_27		FM(SEL_MSIOF3_0)	FM(SEL_MSIOF3_1)
+ #define MOD_SEL0_26		FM(SEL_HSCIF3_0)	FM(SEL_HSCIF3_1)
+ #define MOD_SEL0_25		FM(SEL_SCIF4_0)		FM(SEL_SCIF4_1)
+-#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		FM(SEL_PWM0_3)
+-#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		FM(SEL_PWM1_3)
+-#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		FM(SEL_PWM2_3)
+-#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		FM(SEL_PWM3_3)
++#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		F_(0, 0)
++#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		F_(0, 0)
++#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		F_(0, 0)
++#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		F_(0, 0)
+ #define MOD_SEL0_15		FM(SEL_IRQ_0_0)		FM(SEL_IRQ_0_1)
+ #define MOD_SEL0_14		FM(SEL_IRQ_1_0)		FM(SEL_IRQ_1_1)
+ #define MOD_SEL0_13		FM(SEL_IRQ_2_0)		FM(SEL_IRQ_2_1)
 -- 
 2.20.1
 
