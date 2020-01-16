@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4A3C33CB3
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D615AC33CB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE10624736
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A72D424741
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196594;
-	bh=4QCofp9d3SO9SZEIJdRAIXqfbCqY8aKuMPQJPKeHI4Y=;
+	s=default; t=1579196633;
+	bh=7fTI8hxW9dwg7fhTHSQjLr4YTp2ez/T5X8liCvd7LcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yLETwxCsat0Oa1ncGCQjjF32k20s/11ZFf6H21WNY9PfA+dnJMqGytrBEkdrxKmd1
-	 irPhqBnBGuOCtRojv2VGOGWyy6hqBZXg6X3n9rEMf7cGMqG1cC1LJe6AnJhN2tgWLj
-	 SrLcX/OGIBTzd0ThWNOOnbQvjNDh3Yf+WKu+9+bg=
+	b=HWRQW+9i3x65377mzgy1INwxb1XQxFiQI1lYRAydzrA3HKEl/+tUWLdDNrmyFDaxC
+	 a75XUn5ss4HpD1gbwjdMw3JYUTRYfvbUdrp5OGxO6eRDw2G7dQQdUwz73dNKYQHb0C
+	 uSF0IPTkiW/PlCDb3uFTTwD37AziRnuZ3caBN6AA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393887AbgAPRnN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:43:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33150 "EHLO mail.kernel.org"
+        id S2394013AbgAPRnv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:43:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393880AbgAPRnM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:12 -0500
+        id S2394009AbgAPRnv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:43:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23E8E24718;
-        Thu, 16 Jan 2020 17:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BD8E2473E;
+        Thu, 16 Jan 2020 17:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196591;
-        bh=4QCofp9d3SO9SZEIJdRAIXqfbCqY8aKuMPQJPKeHI4Y=;
+        s=default; t=1579196630;
+        bh=7fTI8hxW9dwg7fhTHSQjLr4YTp2ez/T5X8liCvd7LcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qt+hKvjtOE/5j2n+LdhK7EHW4BhTbUETSxUbTx4UyoBjunkJ1iLvKzLI0Z/rfbukC
-         hhkoD3/hlOCxOi70oDM8hdq6cTkzWvdGOpR54EhDP2mOFIaWKTe5iIsjlWowBzFn2G
-         AjdimMY20hUdmkrqD4VG8E5UyWlnwyw5n9M0deiM=
+        b=SOKjCi78kxcX8i1NTJ2k/P5F7JdZtNgJohmPQAx40501dyIwsPPZft4W43NnkStMG
+         D6WEccnxTEquQOrAvhYnQ7qa8A4fnQvy6iIb7T7Zq7nTkTjN9PKorqjlVjnXIuzYno
+         +M966pTCLwUEHzkX1Euz71klIzHE9gLxWECPywE0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 015/174] pinctrl: sh-pfc: sh7734: Add missing IPSR11 field
-Date:   Thu, 16 Jan 2020 12:40:12 -0500
-Message-Id: <20200116174251.24326-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 044/174] pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
+Date:   Thu, 16 Jan 2020 12:40:41 -0500
+Message-Id: <20200116174251.24326-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -61,33 +61,33 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 94482af7055e1ffa211c1135256b85590ebcac99 ]
+[ Upstream commit 0e6e448bdcf896d001a289a6112a704542d51516 ]
 
-The Peripheral Function Select Register 11 contains 3 reserved bits and
-15 variable-width fields, but the variable field descriptor does not
-contain the 3-bit field IP11[25:23].
+There are two pin groups for the FSIC SPDIF signal, but the FSIC pin
+group array lists only one, and it refers to a nonexistent group.
 
-Fixes: 856cb4bb337ee504 ("sh: Add support pinmux for SH7734")
+Fixes: 2ecd4154c906b7d6 ("sh-pfc: sh73a0: Add FSI pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7734.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index ab09d385f95d..a0835306f76e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -2242,7 +2242,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_LCD_DATA15_B, 0, 0, 0 }
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR11", 0xFFFC0048, 32,
--			3, 1, 2, 2, 2, 3, 3, 1, 2, 3, 3, 1, 1, 1, 1) {
-+			3, 1, 2, 3, 2, 2, 3, 3, 1, 2, 3, 3, 1, 1, 1, 1) {
- 	    /* IP11_31_29 [3] */
- 	    0, 0, 0, 0, 0, 0, 0, 0,
- 	    /* IP11_28 [1] */
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index ea5da5dcad2c..b173bd759ee1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -2895,7 +2895,8 @@ static const char * const fsic_groups[] = {
+ 	"fsic_sclk_out",
+ 	"fsic_data_in",
+ 	"fsic_data_out",
+-	"fsic_spdif",
++	"fsic_spdif_0",
++	"fsic_spdif_1",
+ };
+ 
+ static const char * const fsid_groups[] = {
 -- 
 2.20.1
 
