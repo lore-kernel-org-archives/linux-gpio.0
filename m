@@ -2,78 +2,124 @@ Return-Path: <SRS0=Y+ds=3G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4038AC33CB1
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jan 2020 08:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01FEC33CB6
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jan 2020 08:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0838A2072B
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jan 2020 08:12:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SJglOkpF"
+	by mail.kernel.org (Postfix) with ESMTP id BB9A92072B
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jan 2020 08:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbgAQIMW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jan 2020 03:12:22 -0500
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:42798 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728986AbgAQIMW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2020 03:12:22 -0500
-Received: by mail-lf1-f52.google.com with SMTP id y19so17652493lfl.9
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jan 2020 00:12:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uxTtS/PAyYu4PhY4731eluF8s7eyQqI9JZGrr1rS1gQ=;
-        b=SJglOkpFfLGWso6JXxp8TVd9mBPLE/eyxasneimQbQAVPow3Ff5F9sMXAiZ6xjRtOq
-         teqkgdFTNtOj130NNo3fxCVjqQRUocxq3rem1kT+7EXYwVbM9QDL6osexKS5WO58aIq8
-         Bnlgu/urUeXdGfqHz2k2yBP4lumbDurARlHjrGFo0aLsmucK8LvSPiA9fSQQlZA4GbYN
-         JplUsgekZ+upgunt139DFbsyZzKJKkn0BCKTUBXivr2DUroqxiKJPtQy2I2ZxgPI21rB
-         V8WpBqkvkUZK/IE5WurqkgIe/ik4jGrYc3sQNqwG6XJ8fkKvV4CIvyI+TLT/L32Kl4L8
-         Ls7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uxTtS/PAyYu4PhY4731eluF8s7eyQqI9JZGrr1rS1gQ=;
-        b=cUVvAQFt/2ainkxNDXPq1dESLStqPCDIbtEOLW7lJDYJ1Iqab5xr00PZzN0YTS/b9d
-         bhbpVvDVJUd6nxgeCAlU/DvaafY6halKBOhaUQebqp2/IaGjE85MmI5ecPMeRQGdTvRA
-         DiTtkJqMJucJ9vAwIZ7wLGtWoPyB8b2h5DDTjYVSoa74sEaxV23lpFYQzyqSqlwMwdyW
-         wbGT1USHZnx14Zk8M3kROBen1681mfORMzmvj9ys+ZkC3KaQuCqQMMo6SAPPfinyLW+A
-         KNWwAbuvJyhs4nA83/gEin5wDkzwxLVo/OXlmUSZVSzaahbfnh/6jgpmSlOfyDbufNG0
-         6rOw==
-X-Gm-Message-State: APjAAAUzgw3iEP3IQazwrsTvRmyuyelF42W3F7zr+aiSfuNVpCW0IN8s
-        cZK/cm8yNPSHSwY4TEBee/LFUfKMRnqJcGIa8+qd0d4Lsfs=
-X-Google-Smtp-Source: APXvYqwCoFlwaX9pa3RlM+pU/7sFZuE1VmJHQPiIfhyj1SSU/TjNQuX90/vXu+jBdalB0tDwuHviahRMlO+f+K/nWLA=
-X-Received: by 2002:a19:40d8:: with SMTP id n207mr4522802lfa.4.1579248740306;
- Fri, 17 Jan 2020 00:12:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20200116142927.58908-1-yuehaibing@huawei.com>
-In-Reply-To: <20200116142927.58908-1-yuehaibing@huawei.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 17 Jan 2020 09:12:09 +0100
-Message-ID: <CACRpkdbO14QeTBX0C5X5B3tH9x5QvahaAkW2_bVx5bfRiCzgOQ@mail.gmail.com>
-Subject: Re: [PATCH -next] gpiolib: Remove duplicated function gpio_do_set_config()
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729320AbgAQIOF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jan 2020 03:14:05 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:45950 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729196AbgAQIOF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jan 2020 03:14:05 -0500
+Received: from localhost (unknown [192.168.167.69])
+        by lucky1.263xmail.com (Postfix) with ESMTP id E65477DB6F;
+        Fri, 17 Jan 2020 16:14:01 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P20995T139699247118080S1579248839183075_;
+        Fri, 17 Jan 2020 16:14:01 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <9d948a519d0607bb5c4ec2e2624034b1>
+X-RL-SENDER: jay.xu@rock-chips.com
+X-SENDER: xjq@rock-chips.com
+X-LOGIN-NAME: jay.xu@rock-chips.com
+X-FST-TO: linus.walleij@linaro.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Jianqun Xu <jay.xu@rock-chips.com>
+To:     linus.walleij@linaro.org, heiko@sntech.de, david.wu@rock-chips.com,
+        kever.yang@rock-chips.com
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, jay.xu@rock-chips.com
+Subject: [PATCH 1/2] pinctrl: rockchip: new rockchip dir for pinctrl-rockchip
+Date:   Fri, 17 Jan 2020 16:13:57 +0800
+Message-Id: <20200117081358.5772-2-jay.xu@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200117081358.5772-1-jay.xu@rock-chips.com>
+References: <c4ec95a7-aaf1-2331-352f-2def319a1c7d@rock-chips.com>
+ <20200117081358.5772-1-jay.xu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 3:29 PM YueHaibing <yuehaibing@huawei.com> wrote:
+Create a new direcoty "rockchip" under pinctrl for pinctrl-rockchip.
 
-> gpio_set_config() simply call gpio_do_set_config(),
-> so remove the duplicated function.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+This is base patch which prepares for spliting driver by SoC types.
 
-Patch applied.
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+---
+ drivers/pinctrl/Kconfig                           |  7 -------
+ drivers/pinctrl/rockchip/Kconfig                  | 12 ++++++++++++
+ drivers/pinctrl/rockchip/Makefile                 |  2 ++
+ drivers/pinctrl/{ => rockchip}/pinctrl-rockchip.c |  0
+ 4 files changed, 14 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/pinctrl/rockchip/Kconfig
+ create mode 100644 drivers/pinctrl/rockchip/Makefile
+ rename drivers/pinctrl/{ => rockchip}/pinctrl-rockchip.c (100%)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 3bfbf2ff6e2b..5a16020c733d 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -186,13 +186,6 @@ config PINCTRL_OXNAS
+ 	select GPIOLIB_IRQCHIP
+ 	select MFD_SYSCON
+ 
+-config PINCTRL_ROCKCHIP
+-	bool
+-	select PINMUX
+-	select GENERIC_PINCONF
+-	select GENERIC_IRQ_CHIP
+-	select MFD_SYSCON
+-
+ config PINCTRL_RZA1
+ 	bool "Renesas RZ/A1 gpio and pinctrl driver"
+ 	depends on OF
+diff --git a/drivers/pinctrl/rockchip/Kconfig b/drivers/pinctrl/rockchip/Kconfig
+new file mode 100644
+index 000000000000..7a0077ca32dd
+--- /dev/null
++++ b/drivers/pinctrl/rockchip/Kconfig
+@@ -0,0 +1,12 @@
++# SPDX-License-Identifier: GPL-2.0
++
++if (ARCH_ROCKCHIP || COMPILE_TEST)
++
++config PINCTRL_ROCKCHIP
++	bool
++	select PINMUX
++	select GENERIC_PINCONF
++	select GENERIC_IRQ_CHIP
++	select MFD_SYSCON
++
++endif
+diff --git a/drivers/pinctrl/rockchip/Makefile b/drivers/pinctrl/rockchip/Makefile
+new file mode 100644
+index 000000000000..50568f4b6667
+--- /dev/null
++++ b/drivers/pinctrl/rockchip/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/rockchip/pinctrl-rockchip.c
+similarity index 100%
+rename from drivers/pinctrl/pinctrl-rockchip.c
+rename to drivers/pinctrl/rockchip/pinctrl-rockchip.c
+-- 
+2.17.1
+
+
+
