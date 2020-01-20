@@ -1,266 +1,350 @@
-Return-Path: <SRS0=37gX=3I=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=2EpN=3J=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24AFC33CB1
-	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jan 2020 13:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4E9C32771
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 06:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8F02072B
-	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jan 2020 13:16:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="hg3SXt2z"
+	by mail.kernel.org (Postfix) with ESMTP id 05ED02073A
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 06:33:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbgASNQG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 19 Jan 2020 08:16:06 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:39583 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727041AbgASNQE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 19 Jan 2020 08:16:04 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579439763; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=tLtMCXFHqRnKQLdUTW9wSpw3TsBZMWUWzXvDuYzcyH0=; b=hg3SXt2zFaUHU4COxAIdorTooR29+MMoJteu99oYi8e7GmzOnbt0eZ6NzkkWUNDki9IYZXw0
- okI1IabmUjvlpuCiAeEc+Z1MMmnQMUpSGBk9goAyVYPYHyARPhJaIOVM0iohBXmdMlzPssAj
- yd0bEXtdRGVKnpA9n05Ee/hW5O8=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e24568e.7efaf3d5cb58-smtp-out-n02;
- Sun, 19 Jan 2020 13:15:58 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9FE2DC447A1; Sun, 19 Jan 2020 13:15:57 +0000 (UTC)
-Received: from [192.168.1.8] (unknown [171.78.179.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4D2FBC43383;
-        Sun, 19 Jan 2020 13:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D2FBC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH V5 1/5] dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl
- bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        sivaprak@codeaurora.org,
-        Rajkumar Ayyasamy <arajkuma@codeaurora.org>,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-References: <1579160701-32408-1-git-send-email-sricharan@codeaurora.org>
- <1579160701-32408-2-git-send-email-sricharan@codeaurora.org>
- <20200117160102.GA16177@bogus>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <728e4966-8aa8-014c-76b4-2453aa305fe3@codeaurora.org>
-Date:   Sun, 19 Jan 2020 18:45:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1725872AbgATGdo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Jan 2020 01:33:44 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39599 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbgATGdn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2020 01:33:43 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y1so23082828lfb.6;
+        Sun, 19 Jan 2020 22:33:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=tFgGWNZakGfANkR1ARYjBOxOcWoawQ1Z6a6kdRexlIA=;
+        b=Zs6N0xwlPLVYvj5nbPL1Mp19k1WQVW2qms65lP7tncdl+jUzOKIoJLOYOeSHhsy5KW
+         kTsbo9lFsFTUWe3OD0JNtPC0R2/nX0nInjxk3Rrrp0fjOw5AsZGEBc9zCfVCl7laU6Ih
+         mC1qEgUV3diIJbcMgP0StOTpzX2bS1FGuR+8O9JRZt9T2/2nGygYG3VLwjKjsuNAB1VN
+         ufNMPXL1CZWdLndXPjzzVJPHddxuTQbPHmZ8G2LkmVw8Bss2yWx/vz/lWYVDY/65Od2y
+         FiiGRcr6QzZOSd2lfpZywdFsPhJV2USmqD4lXBEILv3Dyebz8NKTdCFxSkDI/1IkHiwv
+         9kGQ==
+X-Gm-Message-State: APjAAAXiHE9TJj8VSEFWUwIHB4XZHxEyRgiOICNokhyfJ+QT9+GTUChi
+        1awhxmizSaVSQBDyYCn2ARQ=
+X-Google-Smtp-Source: APXvYqyEB1yaF0lVRXlR20IzZ/Gl19W1Jl+hptGnasZW+8wrGmbL/GbleVWbtdKZXS/i3f1tuwqyGw==
+X-Received: by 2002:ac2:5496:: with SMTP id t22mr3158582lfk.85.1579502019372;
+        Sun, 19 Jan 2020 22:33:39 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id f11sm19174252lfa.9.2020.01.19.22.33.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jan 2020 22:33:38 -0800 (PST)
+Date:   Mon, 20 Jan 2020 08:33:27 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: [PATCH v11 00/13] Support ROHM BD71828 PMIC
+Message-ID: <cover.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20200117160102.GA16177@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
-  Thanks for the review.
+Patch series introducing support for ROHM BD71828 PMIC
 
-On 1/17/2020 9:31 PM, Rob Herring wrote:
-> On Thu, Jan 16, 2020 at 01:14:57PM +0530, Sricharan R wrote:
->> Add device tree binding Documentation details for ipq6018
->> pinctrl driver.
->>
->> Co-developed-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
->> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->> [V5]
->> * Addressed review comments from Rob
->> * Ran dt bindings check and no errors were reported
->>  .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     | 162 +++++++++++++++++++++
->>  1 file changed, 162 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->> new file mode 100644
->> index 0000000..0622258
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
->> @@ -0,0 +1,162 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq6018-pinctrl.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Technologies, Inc. IPQ6018 TLMM block
->> +
->> +maintainers:
->> +  - Sricharan R <sricharan@codeaurora.org>
->> +
->> +description: |
->> +  This binding describes the Top Level Mode Multiplexer block found in the
->> +  IPQ6018 platform.
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,ipq6018-pinctrl
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    description: Specifies the TLMM summary IRQ
->> +    maxItems: 1
->> +
->> +  interrupt-controller: true
->> +
->> +  '#interrupt-cells':
->> +    description:
->> +      Specifies the PIN numbers and Flags, as defined in defined in
->> +      include/dt-bindings/interrupt-controller/irq.h
->> +    const: 2
->> +
->> +  gpio-controller: true
->> +
->> +  '#gpio-cells':
->> +    description: Specifying the pin number and flags, as defined in
->> +      include/dt-bindings/gpio/gpio.h
->> +    const: 2
->> +
->> +  gpio-ranges:
->> +    description: Documentation/devicetree/bindings/gpio/gpio.txt
-> 
-> You can drop the description. Nothing here specific to this binding.
->
+ROHM BD71828 is a power management IC containing 7 bucks and 7 LDOs. All
+regulators can be controlled individually via I2C. Bucks 1,2,6 and
+7 can also be assigned to a "regulator group" controlled by run-levels.
+Eg. Run level specific voltages and enable/disable statuses for each of
+these bucks can be set via register interface. The buck run-level group
+assignment (selection if buck is to be controlled individually or via
+run-levels) can be changed at run-time via I2C.
 
- ok.
+This patch series brings only the basic support for controlling
+regulators individually via I2C.
 
- 
->> +    maxItems: 1
->> +
->> +#PIN CONFIGURATION NODES
->> +patternProperties:
->> +  '.*-pin.*':
-> 
-> Ideally, this would be a bit more constrained. Such as '-pin$' or 
-> '-pinmux$'.
-> 
-> Note that '-pin' is equivalent to what you have.
->
+In addition to the bucks and LDOs there are:
 
- ok.
- 
->> +    type: object
->> +    description:
->> +      Pinctrl node's client devices use subnodes for desired pin configuration.
->> +      Client device subnodes use below standard properties.
->> +    allOf:
->> +      - $ref: "/schemas/pinctrl/pincfg-node.yaml"
->> +
->> +    properties:
->> +      pins:
->> +        description:
->> +          List of gpio pins affected by the properties specified in this
->> +          subnode. The valid values are gpio1-80, sdc1_clk, sdc1_cmd,
->> +          sdc1_data, sdc2_clk, sdc2_cmd, sdc2_data, qdsd_cmd, qdsd_data0,
->> +          qdsd_data1, qdsd_data2, qdsd_data3
-> 
-> Looks like constraints:
-> 
-> items:
->   oneOf:
->     - pattern: "^gpio([1-9]|[1-7][0-9]|80)$"
->     - enum: [ sdc1_clk, sdc1_cmd, ... ]
->
+- The usual clk gate
+- 4 IO pins (mostly usable as GPO or tied to specific purpose)
+- power button support
+- RTC
+- two LEDs
+- battery charger
+- HALL sensor input
 
- ok.
- 
->> +        minItems: 1
->> +        maxItems: 4
->> +
->> +      function:
->> +        description:
->> +          Specify the alternative function to be configured for the specified
->> +          pins.
->> +        enum: [ adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char,
->> +          atest_char0, atest_char1, atest_char2, atest_char3, atest_combodac,
->> +          atest_gpsadc0, atest_gpsadc1, atest_tsens, atest_wlan0,
->> +          atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp1_i2c,
->> +          blsp2_i2c, blsp3_i2c, blsp4_i2c, blsp5_i2c, blsp6_i2c,  blsp1_spi,
->> +          blsp1_spi_cs1, blsp1_spi_cs2, blsp1_spi_cs3, blsp2_spi,
->> +          blsp2_spi_cs1, blsp2_spi_cs2, blsp2_spi_cs3, blsp3_spi,
->> +          blsp3_spi_cs1, blsp3_spi_cs2, blsp3_spi_cs3, blsp4_spi, blsp5_spi,
->> +          blsp6_spi, blsp1_uart, blsp2_uart, blsp1_uim, blsp2_uim, cam1_rst,
->> +          cam1_standby, cam_mclk0, cam_mclk1, cci_async, cci_i2c, cci_timer0,
->> +          cci_timer1, cci_timer2, cdc_pdm0, codec_mad, dbg_out, display_5v,
->> +          dmic0_clk, dmic0_data, dsi_rst, ebi0_wrcdc, euro_us, ext_lpass,
->> +          flash_strobe, gcc_gp1_clk_a, gcc_gp1_clk_b, gcc_gp2_clk_a,
->> +          gcc_gp2_clk_b, gcc_gp3_clk_a, gcc_gp3_clk_b, gpio, gsm0_tx0,
->> +          gsm0_tx1, gsm1_tx0, gsm1_tx1, gyro_accl, kpsns0, kpsns1, kpsns2,
->> +          ldo_en, ldo_update, mag_int, mdp_vsync, modem_tsync, m_voc,
->> +          nav_pps, nav_tsync, pa_indicator, pbs0, pbs1, pbs2, pri_mi2s,
->> +          pri_mi2s_ws, prng_rosc, pwr_crypto_enabled_a, pwr_crypto_enabled_b,
->> +          pwr_modem_enabled_a,  pwr_modem_enabled_b, pwr_nav_enabled_a,
->> +          pwr_nav_enabled_b, qdss_ctitrig_in_a0, qdss_ctitrig_in_a1,
->> +          qdss_ctitrig_in_b0, qdss_ctitrig_in_b1, qdss_ctitrig_out_a0,
->> +          qdss_ctitrig_out_a1, qdss_ctitrig_out_b0, qdss_ctitrig_out_b1,
->> +          qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
->> +          qdss_tracedata_a, qdss_tracedata_b, reset_n, sd_card, sd_write,
->> +          sec_mi2s, smb_int, ssbi_wtr0, ssbi_wtr1, uim1, uim2, uim3,
->> +          uim_batt, wcss_bt, wcss_fm, wcss_wlan, webcam1_rst ]
->> +
->> +      drive-strength:
->> +        enum: [2, 4, 6, 8, 10, 12, 14, 16]
->> +        default: 2
->> +        description:
->> +          Selects the drive strength for the specified pins, in mA.
-> 
->> +
->> +      bias-pull-down:
->> +        type: boolean
->> +        description: The specified pin should be configured as pull down.
->> +
->> +      bias-pull-up:
->> +        type: boolean
->> +        description: The specified pin should be configured as pull up.
->> +
->> +      bias-disable:
->> +        type: boolean
->> +        description: The specified pin should be configured as no pull.
->> +
->> +      output-high:
->> +        type: boolean
->> +        description: The specified pin is configured in output mode, driven
->> +          high.
->> +
->> +      output-low:
->> +        type: boolean
->> +        description: The specified pin is configured in output mode, driven
->> +          low.
-> 
-> No need to redefine the type and description on these 5 properties. Just 
-> a value of 'true' is enough.
-> 
+This patch series adds support to regulators, clk, RTC, GPIOs and LEDs.
 
- ok.
+Power-supply driver for charger is not included in this series.
 
-Regards,
- Sricharan
+The series also adds LED DT-node lookup based on node name or given
+property name/value pair in LED core. It also adds generic default-state
+and default-trigger property handling to LED core. Follow-up patches
+simplifying few other LED drivers should follow.
+
+Changelog v11:
+  - converted a macro to enum member as was requested by Lee.
+
+Changelog v10:
+  - Split RTC patch to a BD70528 fix (which hopefully goes to 5.4) and to
+    BD71828 support
+
+Changelog v9: (Changes suggested by Lee)
+  - Added kerneldoc to struct rohm_dvs_config
+  - cleaned few comments
+  - updated copyright date
+  - renamed variable 'mfd' to 'parent'.
+
+Changelog v8:
+  LEDs:
+    - Fixed bunch of typos.
+    - Corrected the commit message which errorneously contained the
+      'leds-compatible' which I dropped in favour of match_property.
+    - use max_brightness instead of LED_FULL if it is given when
+      handling the default_state, "on".
+    - clean fwnode_owned at the end of unsuccessful registration or
+      at the end of deregistration.
+    - fix the accidental linuxdoc comment.
+    - rename led_find_fwnode to led_get_fwnode as it increases refcount.
+
+Changelog v7:
+  - Rebased on top of v5.5-rc2
+  - Dropped already applied patches
+    - basic regulator support (in regulator tree now)
+    - regulator dt-bindings (in regulator tree now)
+    - gpio devm function documentation (in GPIO tree now)
+  - Dropped new devm-variant of gpio_array getting for MFD sub-devices who
+    have consumer information in parent DT node as gpio consumer was
+    dropped from the series
+  - removed extra line-breaks from MFD driver and Makefile
+  - fixed RTC patch subject line (added missing colon)
+  - included a patch which adds compatible for ROHM BD71850 PMIC
+
+Changelog v6:
+  Rebased on top of v5.5-rc1
+  LED core:
+    - Do new fw-node look-up only if the new match data is given. That
+      way behaviour for existing drivers is not changed
+    - Handle generic LED properties by core only if explisitly requested
+      in init-data. That way behaviour for existing drivers is not changed
+      until they are verified to work.
+  BD71828 LEDs:
+    - Fix module loading by adding "dummy" of_device_id table.
+  DT bindings:
+    All:
+    - Remove regulator run-level properties as run-level support was
+      dropped for now.
+    - Change SPDX to dual lisence
+    LED:
+    - added select: false
+    - replace oneOf + const by enum
+    Regulator:
+    - remove forgotten comments
+    - comment indenting
+    MFD:
+    - remove unnecessary descriptions
+  Regulators:
+    - Dropped patch 12 with run-level controls
+    - Dropped unnecessary ramp_delay_supported() - ram_delay ops were
+      already only filled for DVS bucks.
+  GPIO:
+    - rename internal function.
+  RTC:
+    - Added missing blank line
+  
+Changelog v5:
+  Only LED patch (patch 15) changed, rest as in v4.
+  LED:
+    - Fixed issues reported by Dan Carpenter and kbuild-bot static
+      analysis.
+Changelog v4 (first non RFC):
+  General:
+    - Changed subdevice loading and chip version identification to use
+      platform ID.
+    - License identifiers changed to GPL-2.0-only
+  MFD:
+    - Styling fixes mostly
+  DT-Bindings:
+    - a few more checks as suggested by Rob Herring.
+    - Order of DT patches changed.
+    - me as maintainer
+    - standard units to new properties (microvolts, ohms)
+    - runlevel values in an array
+  LED:
+    - BD71828 driver added (back)
+      - Added DT support
+    - Added LED DT node lookup in led framework when init_data is given
+      with DT node match information.
+    - Added common property parsing for default-state and
+      default-trigger.
+  Regulators:
+    - dropped sysfs interfaces
+    - fixed module unload/reload by binding gpio consumer information to
+      regulator device not to MFD.
+  GPIO:
+    - Added devm_gpiod_get_parent_array
+    - added few missing devm functions to documentation
+
+Changelog v3:
+  DT-Bindings:
+    - yamlify
+    - add LED binding doc
+  CLK:
+    - Move clk register definitions from MFD headers to clk driver
+  GPIO:
+    - Add generic direction define and use it.
+  LED:
+    - Drop LED driver from the series (for now).
+
+Changelog v2: Mainly RTC and GPIO fixes suggested by Alexandre and Bartosz
+  General:
+    -Patch ordering changed to provide dt binding documents right after the
+     MFD core.
+  DT-Bindings for regulators (Patch 3)
+    -Fix typo in PMIC model number
+  RTC (patch 11)
+    -Reverted renaming in order to reduce patch size.
+    -Reworded commit message
+  BD71828 regulator (patch 7)
+    -Add MODULE_ALIAS
+  GPIO (patch 12)
+    -Remove file-name from comment
+    -prefix IN and OUT defines with chip type
+    -improved documentation for the INPUT only pin.
+    -removed empty left-over function
+    -removed unnecessary #ifdef CONFIG_OF_GPIO
+    -removed unnecessary error print
+    -Add MODULE_ALIAS
+
+Patch 1:
+        dt-bindings for LEDs on BD71828 PMIC
+Patch 2:
+	dt-bindings for BD71828 PMIC
+Patch 3:
+	Convert rohm PMICs with common sub-devices to use platform_
+	device_id to match MFD sub-devices
+Patch 4:
+	Add compatible for BD71850
+Patch 5:
+        BD71828 MFD core.
+Patch 6:
+	Power button support using GPIO keys.
+Patch 7:
+        CLK gate support using existing clk-bd718x7
+Patch 8:
+        Split existing bd718x7 regulator driver to generic ROHM dt
+        parsing portion (used by more than one ROHM drivers) and
+        bd718x8 specific parts
+Patch 9:
+        Fix BD70528 RTC HOUR mask
+Patch 10:
+        Support BD71828 RTC block using BD70528 RTC driver
+Patch 11:
+        Allow control of GP(I)O pins on BD71828 via GPIO subsystem
+Patch 12:
+	Add LED node lookup and common LED binding parsing support
+	to LED class/core
+Patch 13:
+        Support toggling the LEDs on BD71828.
+
+---
+
+Matti Vaittinen (13):
+  dt-bindings: leds: ROHM BD71282 PMIC LED driver
+  dt-bindings: mfd: Document ROHM BD71828 bindings
+  mfd: rohm PMICs - use platform_device_id to match MFD sub-devices
+  mfd: bd718x7: Add compatible for BD71850
+  mfd: bd71828: Support ROHM BD71828 PMIC - core
+  mfd: input: bd71828: Add power-key support
+  clk: bd718x7: Support ROHM BD71828 clk block
+  regulator: bd718x7: Split driver to common and bd718x7 specific parts
+  mfd: bd70528: Fix hour register mask
+  rtc: bd70528: add BD71828 support
+  gpio: bd71828: Initial support for ROHM BD71828 PMIC GPIOs
+  leds: Add common LED binding parsing support to LED class/core
+  led: bd71828: Support LED outputs on ROHM BD71828 PMIC
+
+ .../bindings/leds/rohm,bd71828-leds.yaml      |  52 +++
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       | 193 ++++++++
+ drivers/clk/Kconfig                           |   6 +-
+ drivers/clk/clk-bd718x7.c                     |  50 ++-
+ drivers/gpio/Kconfig                          |  12 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd71828.c                   | 159 +++++++
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/led-class.c                      | 115 ++++-
+ drivers/leds/led-core.c                       | 258 +++++++++--
+ drivers/leds/leds-bd71828.c                   | 118 +++++
+ drivers/mfd/Kconfig                           |  15 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rohm-bd70528.c                    |   3 +-
+ drivers/mfd/rohm-bd71828.c                    | 344 ++++++++++++++
+ drivers/mfd/rohm-bd718x7.c                    |  43 +-
+ drivers/regulator/Kconfig                     |   4 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/bd718x7-regulator.c         | 200 +++------
+ drivers/regulator/rohm-regulator.c            |  95 ++++
+ drivers/rtc/Kconfig                           |   3 +-
+ drivers/rtc/rtc-bd70528.c                     | 220 +++++++--
+ include/linux/leds.h                          |  94 +++-
+ include/linux/mfd/rohm-bd70528.h              |  19 +-
+ include/linux/mfd/rohm-bd71828.h              | 423 ++++++++++++++++++
+ include/linux/mfd/rohm-bd718x7.h              |   6 -
+ include/linux/mfd/rohm-generic.h              |  70 ++-
+ include/linux/mfd/rohm-shared.h               |  21 +
+ 29 files changed, 2248 insertions(+), 289 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+ create mode 100644 drivers/gpio/gpio-bd71828.c
+ create mode 100644 drivers/leds/leds-bd71828.c
+ create mode 100644 drivers/mfd/rohm-bd71828.c
+ create mode 100644 drivers/regulator/rohm-regulator.c
+ create mode 100644 include/linux/mfd/rohm-bd71828.h
+ create mode 100644 include/linux/mfd/rohm-shared.h
+
+
+base-commit: b3a987b0264d ("Linux 5.5-rc6")
+-- 
+2.21.0
+
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
