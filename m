@@ -2,99 +2,136 @@ Return-Path: <SRS0=2EpN=3J=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC09EC32771
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 19:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C53C32771
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 20:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1C122314
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 19:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5618E22522
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jan 2020 20:16:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZY55E4I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbgATTbX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Jan 2020 14:31:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56299 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbgATTbX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2020 14:31:23 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1itclc-0005rx-4z; Mon, 20 Jan 2020 20:31:20 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1itclb-0001lC-0P; Mon, 20 Jan 2020 20:31:19 +0100
-Date:   Mon, 20 Jan 2020 20:31:18 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] gpio: pca953x: Add Maxim MAX7313 PWM support
-Message-ID: <20200120193118.3vzwy5uxnsy2w4sv@pengutronix.de>
-References: <20200107133130.1338-1-miquel.raynal@bootlin.com>
- <20200120121329.GC206171@ulmo>
- <20200120134137.54dc307e@xps13>
- <20200120141944.GD206171@ulmo>
- <20200120144457.eznywc423ehw6kuc@pengutronix.de>
- <20200120163822.232b1410@xps13>
+        id S1726642AbgATUQc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Jan 2020 15:16:32 -0500
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:54423 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgATUQb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jan 2020 15:16:31 -0500
+Received: by mail-wm1-f42.google.com with SMTP id b19so621693wmj.4
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jan 2020 12:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=J4aN0dzaqMNRPWAjNSxCd0ROICxGQWQXbvxHhyPe/mM=;
+        b=ZZY55E4IBTijzMwdMmSG0+SbwqxB5lTA4H+soRfCUToqSFviug8U79foI9suPdGwNW
+         aJLeH3Tqam13BW1CheuCxu0ruKDupdiCTWPdt8FwpWJAv6TXt4J72NPd7peZk2h/H9rX
+         hs2HLIqxY5LnJ3WtV3gy4IQnG+EuZrhM1xTficOoSPh7hMxgUNXIiDfw+K3g2GTF9ojp
+         UuZpuIzmSh59D7oGmbVx6+7wiW7wfCVZRwQYyYlE8y6lc75eRipyY1tgCL1gJsvYon5A
+         AnrFYSn8+zdeW9s1hZIymnVeBIzSuDJvEqHYyynGbr8LTXRNu0VZHOIFO2jVHXlgwlFz
+         qtYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=J4aN0dzaqMNRPWAjNSxCd0ROICxGQWQXbvxHhyPe/mM=;
+        b=VZf1VAAAQYp+5UqoKzQTZGk6cxn9J/RK4y0tvCPm8NyB2l9lq6T6cehowjMXvHtX7w
+         Oe4SLYm030PuLOkcI5Hvz+H34UEAfv57zpghDUL4mDX0WsHmTPp68hOdqYzhCP5ezG+s
+         CROS3N1zxwv5TrbLtWWB3zuRcNLd++DpE06xdaoMgH3RFRVakBszEww+3mNAlW5rJ1ia
+         Su01UOevkx4UUMmn7bMgPGKnyw0NbmSA7W6AU1EmtdvxJgYReVT7r+Rcht7ZxdIMAce0
+         9/t6jXCp7bBzMjTHwMSxSDMUT/yv2QWPNYMZ4UeVwrALR62SGy6Gwn02PWE2dLnI7LYX
+         AvSw==
+X-Gm-Message-State: APjAAAXTDQV96RYShOvpAoLPlgxzo2QWM+vtUWcpqVXeBBD2i8w3WC+8
+        zqipRCeYTh7pgEt9J+XLkI24BZRUVnvbUrz2qSChPg==
+X-Google-Smtp-Source: APXvYqy5v/TQAuK+oNVnrvwuUZzxRYRuaSK1Ka9z6bzYEiGNCNrFs9JxohWcOMdlT/+Hju2oFkMQ76KC3QKNgNlqauY=
+X-Received: by 2002:a7b:c3d7:: with SMTP id t23mr555922wmj.33.1579551389729;
+ Mon, 20 Jan 2020 12:16:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200120163822.232b1410@xps13>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+References: <CAEzB2cvnh4SGVv8y0_roK=mngHGR=GBzKkwn9ATxF2+9K4SD3Q@mail.gmail.com>
+ <CAMRc=McR6XAvW+2Uafc-TG5YYnkBFah-V+P7iF-yL3iv9c3YTQ@mail.gmail.com>
+In-Reply-To: <CAMRc=McR6XAvW+2Uafc-TG5YYnkBFah-V+P7iF-yL3iv9c3YTQ@mail.gmail.com>
+From:   John Rose <ohimg801@gmail.com>
+Date:   Mon, 20 Jan 2020 14:16:18 -0600
+Message-ID: <CAEzB2ctGMHnU1O2JPziCadak2mH4PKQtAwY-wT64n8Pt_4_tgw@mail.gmail.com>
+Subject: Re: [libgpiod] segfault with function gpiod_chip_get_all_lines(chip, &bulk);
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Miquèl,
+Ok, thanks.
 
-On Mon, Jan 20, 2020 at 04:38:22PM +0100, Miquel Raynal wrote:
-> One dumb question that I still have is: besides any backward
-> compatibility aspects, do we really care about the period/frequency of
-> the PWM? Why do we enforce a period and an active duration, while
-> we could limit ourselves to a ratio and let the driver use the most
-> suitable frequency if the hardware supports it?
-
-There are situations where just fixing the ratio would (nearly) be good
-enough. For example if you drive an LED just requesting a ratio might
-look fine at first glance. But 
-
-	.period = 5000 ms, .duty_cycle = 2500 ms
-
-has quite a different effect than
-
-	.period = 500 ns, .duty_cycle = 250 ns
-
-while both are valid if you requested 50%.
-
-Having said that I think the lowlevel API (i.e. what a device driver has
-to implement) is sane, as it allows to implement all possible requests,
-even if there might be a consumer that cares more about the absolute
-value of duty-cycle than the duty-cycle/period ratio; and it matches
-what most hardware models implement. There is usually a register to
-specify the period and one to specify the duty-cycle.
-
-And on top of that (at least once there is pwm_round_state()) you can
-implement all sort of helper functions that implement for example "best
-effort 50% with a period < 2ms".
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+On Wed, Jan 8, 2020 at 3:03 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> pt., 27 gru 2019 o 22:44 John Rose <ohimg801@gmail.com> napisa=C5=82(a):
+> >
+> > SBC:    HardKernel Odroid N2 4Gb.
+> > OS:     Ubuntu 18.04.3 Mate' DE.
+> >         Linux odroid_N2 4.9.196-63 #1 SMP PREEMPT Thu Oct 17 00:44:03
+> > -03 2019 aarch64 aarch64 aarch64 GNU/Linux
+> > ------------------------------------------------------
+> > A basic test of the gpiod_chip_get_all_lines function.
+> > ------------------------------------------------------
+> > /*--+----+----+----+----+----+----+----+----+----+----+----+----+----+-=
+---+----+----+----+----+----+----+----+----+----+----+----+
+> >  * libgpio_test_03
+> >  *
+> >  *
+> >  *
+> >  */
+> > /*******gdb debugger
+> > error******************************************************************=
+**************************************
+> > t3st3r1@odroid_N2:~$ sudo gdb c_projects/libgpio_test_03/main
+> > GNU gdb (Ubuntu 8.1-0ubuntu3.2) 8.1.0.20180409-git
+> > Copyright (C) 2018 Free Software Foundation, Inc.
+> > License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl=
+.html>
+> > This is free software: you are free to change and redistribute it.
+> > There is NO WARRANTY, to the extent permitted by law.  Type "show copyi=
+ng"
+> > and "show warranty" for details.
+> > This GDB was configured as "aarch64-linux-gnu".
+> > Type "show configuration" for configuration details.
+> > For bug reporting instructions, please see:
+> > <http://www.gnu.org/software/gdb/bugs/>.
+> > Find the GDB manual and other documentation resources online at:
+> > <http://www.gnu.org/software/gdb/documentation/>.
+> > For help, type "help".
+> > Type "apropos word" to search for commands related to "word"...
+> > Reading symbols from c_projects/libgpio_test_03/main...done.
+> > (gdb) run
+> > Starting program: /home/t3st3r1/c_projects/libgpio_test_03/main
+> > OdroidN2 -- Ubuntu 18.04.3 LTS
+> > libgpio_test_03
+> >
+> > gpiod_chip_open() OK.
+> >
+> >
+> > Program received signal SIGSEGV, Segmentation fault.
+> > 0x0000007fb7fa48d0 in gpiod_line_bulk_add (line=3D0x555556a910,
+> > bulk=3D0x7ffffff2a0) at ../include/gpiod.h:578
+> > 578 bulk->lines[bulk->num_lines++] =3D line;
+> > (gdb)
+>
+> The problem seems to be gone in current master. I get the following outpu=
+t:
+>
+> ---
+> OdroidN2 -- Ubuntu 18.04.3 LTS
+> libgpio_test_03
+>
+> gpiod_chip_open() OK.
+>
+> Exiting.
+> ---
+>
+> Bartosz
