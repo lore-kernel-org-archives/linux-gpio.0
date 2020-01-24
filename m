@@ -2,92 +2,110 @@ Return-Path: <SRS0=5tY1=3N=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA81C2D0DB
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jan 2020 13:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FB7C2D0DB
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jan 2020 13:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833F62075D
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jan 2020 13:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2452D20838
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jan 2020 13:33:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uh0ANzgN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387797AbgAXNWu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Jan 2020 08:22:50 -0500
-Received: from mga18.intel.com ([134.134.136.126]:26416 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387639AbgAXNWu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 24 Jan 2020 08:22:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2020 05:21:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,357,1574150400"; 
-   d="scan'208";a="292397111"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2020 05:21:36 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iuyu1-0000a9-NQ; Fri, 24 Jan 2020 15:21:37 +0200
-Date:   Fri, 24 Jan 2020 15:21:37 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
+        id S2388310AbgAXNdS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 24 Jan 2020 08:33:18 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46261 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388148AbgAXNdS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Jan 2020 08:33:18 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x14so126857ljd.13
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jan 2020 05:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D/AFat7RT+cMRxUdGfqmjiYgAtkCZLfg49WyUpgTPEU=;
+        b=uh0ANzgNRzGLaHoK7CTzOZtiRhm/QVyOpKJ55PnDOxr8SVtXZB7q496VSvhGnM4/qe
+         pVuF0Q9GYHt1EPoAyaj/gBlELlwpWeai/OBvdzUWwxEkB90y7eYXxO/JbVLttF8wTXgU
+         qGPqVOarJNVWK1Llmq2vCzlHDc7uZKwL34Pt4rAZa6WGRTJwjetiCFqYjzyM0riZJ09N
+         eCZDbyguXejwe14CH8aMyUnAWS0HEl6qdYZuTuERV04OAG8EMca0wQzH9gvITWVsQlby
+         M9YKwbZI1gCyJZsL7D1yzL7RemImlOPdtEbMGEfrdTeIMJNh48q4fZksjabtAbJH4ERG
+         3ANA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D/AFat7RT+cMRxUdGfqmjiYgAtkCZLfg49WyUpgTPEU=;
+        b=RBbKFNp1RNjq22h0e0X3Z2cJMsCHQhD+u/TRpwNrFPZvB0KwwCGDrC9TPjQw37Ibe5
+         CGRX5LR8RkfsdwJAesWK2KHxuULhTnm5J82fjsX4qxjayELdo+XC1Q7GBo7DBVSxDa0M
+         dTp/bnN1q3h8pZo2+ZOjEHMcYfeVKC6YG3HlefnLsDq12IKgy8Fb27j04Cqytw36YloI
+         H5tVzFcAUaTK0sLVOl5A4PR0os2EQ9ZIQCSwyN9BYQujGUGrG7KJXzmjFmPh7YP3PSmy
+         ijwkqxVqy3ABD34d0t7ttuX4uEgSViLIcwdg5pidYk2ywlV+37qc3nMhMefx37dGl5rW
+         YnRw==
+X-Gm-Message-State: APjAAAUopNBSxRiSP4CGJn1fQK7meU/pLh04aPHuI6aTJCsD+mWtvRHZ
+        gl6E9q0K1yCxPB3yN27N1InglYvm8H+rOv638llT+A==
+X-Google-Smtp-Source: APXvYqwfenNWKZmuP0hmwSn7ZShR+vJXZYILPRvJs8VwSBy8WxAmpln4YZoS+3+nE8OXs2QnEV1EE/cdbL42JhxrScI=
+X-Received: by 2002:a2e:9013:: with SMTP id h19mr2365686ljg.223.1579872796344;
+ Fri, 24 Jan 2020 05:33:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20200120100957.GA11113@black.fi.intel.com> <CACRpkdZh4Cy83BPfdgcXR6idf7KCr15VD0YkR-7CcDxV=HZgaQ@mail.gmail.com>
+ <20200124105735.GC32742@smile.fi.intel.com> <CACRpkdba9zw3qN5MEVsRhdkebVfi-fHoiNU+FhCZfpoZ1g3vLw@mail.gmail.com>
+ <20200124132137.GG32742@smile.fi.intel.com>
+In-Reply-To: <20200124132137.GG32742@smile.fi.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 24 Jan 2020 14:33:04 +0100
+Message-ID: <CACRpkdZaG2u-ty-YArScVsr6=Xvog6PFw75NZf+1pma3J7nWxw@mail.gmail.com>
+Subject: Re: [GIT PULL] intel-pinctrl for 5.6-1
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Linux pin control <linux-gpio@vger.kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 5.6-1
-Message-ID: <20200124132137.GG32742@smile.fi.intel.com>
-References: <20200120100957.GA11113@black.fi.intel.com>
- <CACRpkdZh4Cy83BPfdgcXR6idf7KCr15VD0YkR-7CcDxV=HZgaQ@mail.gmail.com>
- <20200124105735.GC32742@smile.fi.intel.com>
- <CACRpkdba9zw3qN5MEVsRhdkebVfi-fHoiNU+FhCZfpoZ1g3vLw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdba9zw3qN5MEVsRhdkebVfi-fHoiNU+FhCZfpoZ1g3vLw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 02:02:56PM +0100, Linus Walleij wrote:
-> On Fri, Jan 24, 2020 at 11:57 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Jan 23, 2020 at 03:45:14PM +0100, Linus Walleij wrote:
-> 
-> > > Pulled this into my "devel" branch for v5.6.
+On Fri, Jan 24, 2020 at 2:21 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Fri, Jan 24, 2020 at 02:02:56PM +0100, Linus Walleij wrote:
+> > On Fri, Jan 24, 2020 at 11:57 AM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Jan 23, 2020 at 03:45:14PM +0100, Linus Walleij wrote:
 > >
-> > Thanks!
-> > How long usually does it take to see in linux-next?
-> 
-> What I need before I put it for-next is successful builds on a few
-> archs.
-> 
-> Zeroday has been smacky before so I could quickly cornfirm the branches
-> build fine and that made things quicker in the past. But as of lately
-> zeroday comes and goes a bit sporadically.
-> 
-> I can do local builds of some archs but my computer isn't the most
-> fantastic workhorse really.
-> 
-> Lately I am investigating a cloud build service, it is quite promising,
-> you see the branch "testmerge" in linux-gpio where I merge all
-> the new stuff for GPIO and pin control and toss at the build server,
-> so I am working on something here.
-> 
-> Sometimes I just give up trying to build all stuff and submit it for
-> next anyway but I'd rather not have to do that, it usually results
-> in a patch storm of 4 different people fixing the same trivial
-> issue in linux-next...
+> > > > Pulled this into my "devel" branch for v5.6.
+> > >
+> > > Thanks!
+> > > How long usually does it take to see in linux-next?
+> >
+> > What I need before I put it for-next is successful builds on a few
+> > archs.
+> >
+> > Zeroday has been smacky before so I could quickly cornfirm the branches
+> > build fine and that made things quicker in the past. But as of lately
+> > zeroday comes and goes a bit sporadically.
+> >
+> > I can do local builds of some archs but my computer isn't the most
+> > fantastic workhorse really.
+> >
+> > Lately I am investigating a cloud build service, it is quite promising,
+> > you see the branch "testmerge" in linux-gpio where I merge all
+> > the new stuff for GPIO and pin control and toss at the build server,
+> > so I am working on something here.
+> >
+> > Sometimes I just give up trying to build all stuff and submit it for
+> > next anyway but I'd rather not have to do that, it usually results
+> > in a patch storm of 4 different people fixing the same trivial
+> > issue in linux-next...
+>
+> Thank you for so detailed answer! I didn't mean to complain or so,
+> I was just wondering...
 
-Thank you for so detailed answer! I didn't mean to complain or so,
-I was just wondering...
+Don't worry about that, it's a good question.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I am looking a bit into automation and testing right now so these
+things are very much on my mind.
 
-
+Yours,
+Linus Walleij
