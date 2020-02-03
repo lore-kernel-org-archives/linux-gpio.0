@@ -2,68 +2,73 @@ Return-Path: <SRS0=5NpL=3X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222F9C33CAC
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Feb 2020 12:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EB7C3524D
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Feb 2020 13:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E88A72084E
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Feb 2020 12:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39AD20721
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Feb 2020 13:30:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmkR43QF"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="hHjJni+T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgBCM4H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Feb 2020 07:56:07 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53940 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbgBCM4H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Feb 2020 07:56:07 -0500
-Received: by mail-pj1-f65.google.com with SMTP id n96so6311631pjc.3;
-        Mon, 03 Feb 2020 04:56:07 -0800 (PST)
+        id S1727311AbgBCNae (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Feb 2020 08:30:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43539 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727948AbgBCNae (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Feb 2020 08:30:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z9so5918599wrs.10
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Feb 2020 05:30:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wwQg80xGz2lOdnpP3qB15WfTcQFWbRLekpggKB7uAVo=;
-        b=FmkR43QFzWlvuGQsXZv/HeuXhfVsKTW2ePq3sWmBa6MfUDnrAfXmmTm1UYJjeQwysl
-         FdHgZ7UztBe9F4uAp4wQ1yHgH2StIF8OUxy7mJ5VNXnO4S8YAyrU1cOW329J819DPW4K
-         0q7Keg1SFrSMF2XH83K53b8+K5BQQoXZN7UEF191PAaozTfR6IZje2UjMqdnuI89H3ha
-         h/YvUks2ICLr4RlXGBj31b81xqJrQD/xcUm3/plma6bJlDzKp53FqVetqtx9yJiY4gnQ
-         xKFva4T7Xloq4MR2ZdjS765pPYBVguklbRytodTbOYavTqHY7lH2O396FC/Tpdji2NOE
-         8bjw==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1f5bwMzVaB6wRo16QwdapcC/oluekqbfNJd6d0tVIEc=;
+        b=hHjJni+TEKfxWEycbKNRTiT691geYQs4q46qUwNY1c6FnG6Rh757MTHBwgCgbC45/h
+         EFR1bWidEOjlaPcGxP/Nf+/yp1DNqAhsj8Dxkch2EiAuZ3jXG+jPuS3HTh60/AnuUNaW
+         qDwWXisqn6gbZBYkyrQZtx8jkm26KC547/ppdAHN7lndwBfQYFiKFDduVwLo89MZRYhO
+         81epeNGx85akoRGsibe+xj+a+EVow+yQbPp8IGDth/UDp+2qkHbo3aa9yMK03sqDjXfI
+         FfCN5GkMi2I5D6b8P+Pn8uqk2frmHjgPzpVOCkkxVjztBHMRas3WuF2TueQWxcvEfSyN
+         RaiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wwQg80xGz2lOdnpP3qB15WfTcQFWbRLekpggKB7uAVo=;
-        b=YmCFwrx0JD6iRqFWrfEwbUSunHu8HRLKXD4AER2p/TDbEhztT8zw2DjKlrutGumgVX
-         en6qy8+QxS3K7uSGhO7ONGBBuGQhcvHAqZsP3eJccuhXu0E6o/Fge+w+8tHNrh8nwwb3
-         mnTQsHwurlWmROECAkBAmrT6JIZKZC6yDwmwHEseFikekKPMBA850T0nNnShZ4vVldu7
-         ylrMRsFcDbcmaeosQekWZl4tCkTa4XuXulwLck3OU0RyPfwYIFJEHP0XO5Bq7MYjSyJn
-         GvSMUggaTovdPflLuZDxkcHAfI4REYXgPM7X5wowfs/cE0FWuckNI4hQB1dpYjt59cpe
-         3N1g==
-X-Gm-Message-State: APjAAAVbavBW5WLN4cXZMSXAJF/k3waEOmSNKdI/elj56mBJIGhY9b+2
-        uAebMJb6l2t1J6+fjPsXCdw=
-X-Google-Smtp-Source: APXvYqzf387HOU7SZD8zCQtXi6rSqqJaz23t9qWvrRgRb9Xmf15JEh9ADcM5w7T11OtPywY62+bp6w==
-X-Received: by 2002:a17:90a:3603:: with SMTP id s3mr29582527pjb.61.1580734566613;
-        Mon, 03 Feb 2020 04:56:06 -0800 (PST)
-Received: from localhost.localdomain ([27.59.202.234])
-        by smtp.gmail.com with ESMTPSA id r9sm1406979pfl.136.2020.02.03.04.56.03
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Mon, 03 Feb 2020 04:56:05 -0800 (PST)
-From:   sachin agarwal <asachin591@gmail.com>
-X-Google-Original-From: sachin agarwal <sachinagarwal@sachins-MacBook-2.local>
-To:     linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, asachin591@gmail.com
-Subject: [PATCH 6/6] GPIO: it87: fixed a typo
-Date:   Mon,  3 Feb 2020 18:25:51 +0530
-Message-Id: <20200203125551.84769-1-sachinagarwal@sachins-MacBook-2.local>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1f5bwMzVaB6wRo16QwdapcC/oluekqbfNJd6d0tVIEc=;
+        b=sio+pYErBmnRIvnSa8FjlZ/xfAs03qBw3Okf3ybQBNLU9jRII7XlhgQnNq3sq7kLs+
+         Bc3uxm1cCFaEqxh9pDuPF3FZLqESm2qLAwWATTofUND8rf/j5v5OLYIDCBNuD+PIRTJf
+         0fyI/dZJbbHJKhGhd2RANTPTSP6nMC8dItPXQtxOD+rKF0J2fOp3TeefE0ukUohIMsjP
+         XH9Qy8UzpDDMVGnVu3IYS9Xr6yg1hVpJtCGm/LAM2bWYtyxXDPr6zeQJa4gVkUm2s8Rp
+         Qm9KuD1SnHITVFfswCED/GKgKvZfQCTpRVuO/Bwjykfe07ayJ8JjoYJxw/nq37i99mpO
+         c1Cg==
+X-Gm-Message-State: APjAAAWreRHx/uKEWcr1w6HxIdcqxgvzIW43A/MGsn6pM0yb0o1pJTBj
+        x/TLdZzlBzyLMhKcdUOoUZrk3g==
+X-Google-Smtp-Source: APXvYqwihlTRAqU8L8rfD0ugl/hZaBWyHcy/FdrAqB8p6pd6Yd/bh6D5rLLXZ7T4GAbg+1ckLg6yew==
+X-Received: by 2002:adf:eacb:: with SMTP id o11mr16579664wrn.128.1580736632030;
+        Mon, 03 Feb 2020 05:30:32 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
+        by smtp.gmail.com with ESMTPSA id l8sm7594540wmj.2.2020.02.03.05.30.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 05:30:31 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 1/3] Revert "gpiolib: Remove duplicated function gpio_do_set_config()"
+Date:   Mon,  3 Feb 2020 14:30:24 +0100
+Message-Id: <20200203133026.22930-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200203133026.22930-1-brgl@bgdev.pl>
+References: <20200203133026.22930-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,28 +76,77 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: sachin agarwal <asachin591@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-we had written "IO" rather than "I/O".
+This reverts commit d18fddff061d2796525e6d4a958cb3d30aed8efd.
 
-Signed-off-by: Sachin Agarwal <asachin591@gmail.com>
+This patch came on top of another patch that introduced a regression.
+Revert it before addressing the culprit.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-it87.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
-index b497a1d18ca9..79b688e9cd2a 100644
---- a/drivers/gpio/gpio-it87.c
-+++ b/drivers/gpio/gpio-it87.c
-@@ -53,7 +53,7 @@
-  * @io_size size of the port rage starting from io_base.
-  * @output_base Super I/O register address for Output Enable register
-  * @simple_base Super I/O 'Simple I/O' Enable register
-- * @simple_size Super IO 'Simple I/O' Enable register size; this is
-+ * @simple_size Super I/O 'Simple I/O' Enable register size; this is
-  *	required because IT87xx chips might only provide Simple I/O
-  *	switches on a subset of lines, whereas the others keep the
-  *	same status all time.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 99ac27a72e28..0673daeaca00 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3035,8 +3035,8 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+  * rely on gpio_request() having been called beforehand.
+  */
+ 
+-static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+-			   enum pin_config_param mode)
++static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
++			      enum pin_config_param mode)
+ {
+ 	if (!gc->set_config)
+ 		return -ENOTSUPP;
+@@ -3044,6 +3044,25 @@ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 	return gc->set_config(gc, offset, mode);
+ }
+ 
++static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
++			   enum pin_config_param mode)
++{
++	unsigned arg;
++
++	switch (mode) {
++	case PIN_CONFIG_BIAS_DISABLE:
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = 1;
++		break;
++
++	default:
++		arg = 0;
++	}
++
++	return gpio_do_set_config(gc, offset, mode);
++}
++
+ static int gpio_set_bias(struct gpio_chip *chip, struct gpio_desc *desc)
+ {
+ 	int bias = 0;
+@@ -3277,7 +3296,7 @@ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ 	chip = desc->gdev->chip;
+ 
+ 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
+-	return gpio_set_config(chip, gpio_chip_hwgpio(desc), config);
++	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_debounce);
+ 
+@@ -3311,7 +3330,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ 	packed = pinconf_to_config_packed(PIN_CONFIG_PERSIST_STATE,
+ 					  !transitory);
+ 	gpio = gpio_chip_hwgpio(desc);
+-	rc = gpio_set_config(chip, gpio, packed);
++	rc = gpio_do_set_config(chip, gpio, packed);
+ 	if (rc == -ENOTSUPP) {
+ 		dev_dbg(&desc->gdev->dev, "Persistence not supported for GPIO %d\n",
+ 				gpio);
 -- 
-2.24.1
+2.23.0
 
