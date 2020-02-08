@@ -2,92 +2,83 @@ Return-Path: <SRS0=rtAr=34=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B51C35250
-	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 10:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE77C35250
+	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41CF521775
-	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 10:01:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQeyNEL3"
+	by mail.kernel.org (Postfix) with ESMTP id 7D8C720726
+	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbgBHKBa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 8 Feb 2020 05:01:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40504 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbgBHKBa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2020 05:01:30 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t3so1700686wru.7
-        for <linux-gpio@vger.kernel.org>; Sat, 08 Feb 2020 02:01:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CBVshpg4jChzphHIrEQ7PQcItNdAVR/Qn1gHCmEArzE=;
-        b=EQeyNEL3xnqK06qhvPSWoO29ennBYzKN4Y3ZoB6daXQQElk3H6hS6hm9ZMcSc+pvNU
-         RqhQ/4/FiqTN/XixQJb8OVpdFhCw2f2rvtWHmz8DxFwf0LxFm6sVOwGTBZiMi2p6/k6O
-         sRVGdAYpwnH3H0wz3i1lOavuPykbjoDZCNq+78cbmisatpU1+DNnQZJZHIdtf13R8diV
-         SlckUUAvMPgnqm6x3oVMkTK75u1RfI9WBvbaDwGsmXjSB9LaWzb6fgz5L/zmp8GkISih
-         /8ekA6+RBAXGs7UBCUEjkPVH7vJy6NodS3AhF2znZOG4o67p5/LOc/y7rlYZ6UIRPAO9
-         vaYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CBVshpg4jChzphHIrEQ7PQcItNdAVR/Qn1gHCmEArzE=;
-        b=d6638hK4BARfK2TB8fz9UlQX5DjZZSge5/X1LAi4chDRgEQKKXIt0BF+fE3VV2CPrF
-         y4OU5/Cxt0f49zMj8TVI8vQIjB7b3jZ8TQoJVS33sRKk2JF+wj5fk62qD2A1llDHBoPs
-         mavurNLrr2/SVVqK6C2q9B9e3hng1YsIX2RX+wGCiZcYuHSCTvL188zg7Un9mwfEGyVS
-         dyE+IdCMTEprCpQ0JXcpD/r8VGADW2HRoHJ2l+/GsOejGnO/h1m9pS0lGdMGeYiQHXef
-         gfC/Pc/SWjtISUureidyZT7aGRupbuLMlrQ+ZJlB/Wc/Oy8H1+XgxQ87VeVSFX2C2tSu
-         r6bw==
-X-Gm-Message-State: APjAAAXsef+VpE4gws5FT3UeR6siLYL9OQpU+4wcqdrvKzNGZGNGepgm
-        nCrViuhqkaPfXUN3vq3H+w159vz9
-X-Google-Smtp-Source: APXvYqxsfUrnePB+bcuq3e2NNVn0swI/qHa0etxV55f69MFCeqlev5daib7ryClub8lalBr8AoIneA==
-X-Received: by 2002:a5d:6089:: with SMTP id w9mr1364587wrt.94.1581156088879;
-        Sat, 08 Feb 2020 02:01:28 -0800 (PST)
-Received: from LinuxLab.ger.corp.intel.com (DSL217-132-44-191.bb.netvision.net.il. [217.132.44.191])
-        by smtp.gmail.com with ESMTPSA id d22sm6937790wmd.39.2020.02.08.02.01.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Feb 2020 02:01:28 -0800 (PST)
-From:   Daniel Mor <dmlinuxnewbie@gmail.com>
-To:     linux-gpio@vger.kernel.org
-Cc:     Daniel Mor <dmlinuxnewbie@gmail.com>
-Subject: [PATCH 2/2] core: Removing unnecessary check for monitoring multiple lines.
-Date:   Sat,  8 Feb 2020 12:01:29 +0200
-Message-Id: <20200208100129.10657-1-dmlinuxnewbie@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727118AbgBHND1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 8 Feb 2020 08:03:27 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:47869 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgBHND0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2020 08:03:26 -0500
+Received: from localhost.localdomain ([37.4.249.150]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1M58SY-1izJpq1Aiy-0017de; Sat, 08 Feb 2020 14:03:18 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 1/4] pinctrl: bcm2835: Drop unused define
+Date:   Sat,  8 Feb 2020 14:02:52 +0100
+Message-Id: <1581166975-22949-2-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581166975-22949-1-git-send-email-stefan.wahren@i2se.com>
+References: <1581166975-22949-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:7poxDZDsc+nCytjwN8LtSgR7ED0PiXCKK7Lt2YkCm/iND1UtSOp
+ QV2LAcQ3kUyNZYVk5rrzHMFzzeUo7t4Q5zJgdk5e7uYCjm90vDnbMBs2nj8cd83exIgCWfe
+ WFLAPllWyFaqlnv7HJzM/XPiJHMqUwBZobMlekxNQzV+XhN4B2+/HC01ZXqV+dGxPilb0A8
+ Lp4Woi1OYSDZ0tCH4gz9g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yx3C1NqXhqY=:kEcetKMpsTsqLpcBrKBTAF
+ ppqIic9BHNOoPHgM9Q7hTR4LGvygmjRgpnWLF4600OvZTzpBbv5R3KxRMnTT/6n8WfaqVxdZK
+ NYJ9a7Qo4jMqYdZmLY4UoCysyDV0uh10X3UK9OElVPVcyztaHM+jF/oUn3TpyMnpJ/Kpf0a+j
+ D6JI76JWLAUmA+/FatBdn6tSNJ3z8+gAqowwHzTdGcVFAK2oJBXM/DTbKjFPsevyTw0tfM0Wx
+ pV0aiyPhuogXNk0bVLVKydsBA5FI4oKImQPAfIN9zHXfIahONjUD20BrWK4H18XzMqbRCPI4E
+ Kb799iLJD+90yt5nibK8+pKM5QIyiMzF/b9+PC1DEbkH+JYPXGTvDMCEc/gGeU+5KsTGxfxGd
+ ceQsaHDJmuLpgpx0S8wE7+uR86ky1hnji0ogeI9UvDThu5UlwLvrBRMY2n+zSaVpAqTcMbzbl
+ PXCmvx7EDghhCBWoQzfoFOeWSDieN3y9yLT18GIsmqCs+Y4eJE1VyWnU7JSHTAoM0wD1Jbk6V
+ 8xy7RIbbQQicMIA24aZZbdw/fOoWDCdcnOLoK124SJ/ZLlhDoz+HpY0J/LTMrcYCMjrIGh2eQ
+ wymbXOYchDhpB+87ga4Y/T2Zh0kN3NbYYZuOE04U8fqwYdSSL/gXkCB090oUid9Hw53mUAhFN
+ 3dKlYavLg1b2myYKZxluZwjB8wlHGDIyEed/hcqvq0pB7L70UIP8gvbcqBEQZtLzgQo6Zi2yy
+ QdSFMFrT0juAzEMTrgcUSegil7mBb3rxvtF8h9omwIZ/M9xw6gyXP74zPzcATTM1kV02tibIo
+ nYtvRbXj8gL4zecC6ZAk+Q2iCJRqV7sjZLquqAmEQdOfrMtCnewg4DeMH/THjqDpkmuZFEv
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In case when needed to monitor multiple line`s on different chip`s
-function gpiod_line_event_wait_bulk() blocking it, by checking if
-the line`s in a bulk from same chip.
-In current state the API forsing the user to wait for notification on multiple threads.
+There is no usage for this define, so drop it.
 
-Signed-off-by: Daniel Mor <dmlinuxnewbie@gmail.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 ---
- lib/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/lib/core.c b/lib/core.c
-index ed63012..2a46074 100644
---- a/lib/core.c
-+++ b/lib/core.c
-@@ -977,7 +977,7 @@ int gpiod_line_event_wait_bulk(struct gpiod_line_bulk *bulk,
- 	struct gpiod_line *line;
- 	int rv;
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 0de1a3a..3fc2638 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -40,9 +40,6 @@
+ #define BCM2835_NUM_BANKS 2
+ #define BCM2835_NUM_IRQS  3
  
--	if (!line_bulk_same_chip(bulk) || !line_bulk_all_requested(bulk))
-+	if (!line_bulk_all_requested(bulk))
- 		return -1;
- 
- 	memset(fds, 0, sizeof(fds));
+-#define BCM2835_PIN_BITMAP_SZ \
+-	DIV_ROUND_UP(BCM2835_NUM_GPIOS, sizeof(unsigned long) * 8)
+-
+ /* GPIO register offsets */
+ #define GPFSEL0		0x0	/* Function Select */
+ #define GPSET0		0x1c	/* Pin Output Set */
 -- 
-2.17.1
+2.7.4
 
