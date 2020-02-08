@@ -2,25 +2,25 @@ Return-Path: <SRS0=rtAr=34=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D8EC3F68F
-	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96673C352A4
+	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7532A217BA
-	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74BAF217BA
+	for <linux-gpio@archiver.kernel.org>; Sat,  8 Feb 2020 13:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgBHNDe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 8 Feb 2020 08:03:34 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:36035 "EHLO
+        id S1727220AbgBHNDg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 8 Feb 2020 08:03:36 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:51007 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgBHNDd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2020 08:03:33 -0500
+        with ESMTP id S1727129AbgBHNDf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Feb 2020 08:03:35 -0500
 Received: from localhost.localdomain ([37.4.249.150]) by
  mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MZk1p-1j3Sio3D9j-00WpfZ; Sat, 08 Feb 2020 14:03:17 +0100
+ id 1Mk1BG-1jORvL3bXk-00kOXK; Sat, 08 Feb 2020 14:03:20 +0100
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -30,56 +30,125 @@ To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
 Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 0/4] pinctrl: bcm2835: Add support for all BCM2711 GPIOs
-Date:   Sat,  8 Feb 2020 14:02:51 +0100
-Message-Id: <1581166975-22949-1-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH 4/4] ARM: dts: bcm2711-rpi-4-b: Add SoC GPIO labels
+Date:   Sat,  8 Feb 2020 14:02:55 +0100
+Message-Id: <1581166975-22949-5-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:icI8YXP26Zm+jBjOn2iPvYMPgU0dU1i3GPi3xK6L9n7Yvhg1ZFl
- 2ZXJjVg90vdegqoIZVCbPcf+ByYk0vLlEF8GeQl2Agc8+wOd1AgKlUtzLgFzmsS0odZe677
- OGXXBRKaldCx8rstZO4BRwxB6xoXpOxgQv5tPOPSenhIhwh5SFXnq6EMC4jYIYWQZCBC3CW
- yYqrjHKPVENorBY1SlBXA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9x5HXLGv2j8=:QGeYjIQhpdk9eJVt857SY1
- lvvRiYKmpxh7u+Zy5EW8Fq04xcZhkaLQEB+Mkmw3SRc1L4qMTGIzf6/DzNieXG3pjIZImbOJj
- DPK55L3eAGE9R5iPpqR7SBOpkgDigDpEv8BRePytI2ex9CmrciCcyD+R/uTEjNHs3QF1820E1
- lnPNfK2XzruBVTHfPTiXG/ji9i3ZqUJyd/sdE9SrXvA6BOQpp5xdOeNUi39i3vtXuBu1GJZv4
- O3GOGJj5FllwnRmYsBjMP/RCF9I6z6ey0TvWh86Tr/Xi+ApwSGI08fc3kFR/m12WQfGQyqUSa
- A9Guj4iMDzlt/B3ynBuL4Vw38KMlKSzttEAmm8kvwbWR+zlw4su0lg8XU96ZuEupA18CKIS3w
- LbjSllhtjDE9u736WYEo2haGVAOoY2cTa4CKBYKiz+DPaOMGu1HHd8aapMLypFZHYgr+2Y6ju
- TDMNV4qE4PH5WgJCgOogP50NXfJIDirKCDhq1RZi3j5l7KZN+uwO50GBnlfgZsCU4hKprin6z
- uY0oOol0j7fFu6Ezk+1ZTMyCCxmaski+vcLUaeaHyBBk6Ac4em/OpnzuQOxhFl3b7X3eMCPcR
- TkiDjE46juSuJtMn1ebMjS3OG54CRImI8iBE7FUVe15MwtwNk1QNozunxuj564a/aOmdAbYzo
- NkK7ViN1FgIaWR1yXjjl70EzqixlbBOfAyipDjq/Ip1ZPCOvEqfi3RFhBQVG1H+yJ3HHts0do
- Pef5uy0sXFzIzkJUHWSmCv3ex5zPSEPlMum3As1YPrD0aFyDOjQoa7TLn3lAWtXxasaMKYCM6
- EFwLIndM/0GQic3NXe631UiV+4anz45dHcjRVBbx2m84DwyYh7b9/LW6w9vNDIu9/TEhUxY
+In-Reply-To: <1581166975-22949-1-git-send-email-stefan.wahren@i2se.com>
+References: <1581166975-22949-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:Uf6ddeH+Q5wU3A4iBHbQL6kw6jhHXupWbDnedDbnjV6Sm0OvoL+
+ 0aiJDtkaX9pxbPkeBOuQ4JmMWw+XD7KZ+F9sU+5aHuZy/6fLbFudCprCJMvvJnOtiIJ3jr1
+ B+7BL9xVHLGsFROXiW9Wgi09sxB0wh34pzksdAQ5hvcm5AvKiM6t8b0dPd+vOjkjeVl+PHy
+ W7Rl7txfWj9h4O4xX6r8w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L6KhevTF5eo=:kVi0/hnHVHoDdWEm8JG5c0
+ Whuq8qda1JXLC+G8nGXZ0o2IeeNV0wpBLvxYUbfUAh44CRunuZK3v12klyoBZ9dJCpxy70Ul7
+ 41EMdotulajfRWzLx+j6ZCwCEbgMIU6h5C28XzmsC9PMPs/z4kOu8m75gC1Y+lgdk4x3umLyp
+ L2SVF3lPNukgvVUkaWhSR90Obf8pKKhJ2sH7awlWJOodxEaotOlApZW1eB1jpqw0rKgbgIG2E
+ BBnC16WnCNdydLgJp1UzokVFUpfW72K8fwdj/SFFuhcWkzGxludPEDZP7y8g+gUhWEebp5OaB
+ /69pIBlKi4z8izFZ52Y4uG5ZVGD6JrqNqwJu1RO5xMkJ577S3n9BorpNKnGfCeSuuxRW96pSr
+ /cCsVIF0E79Rk2g80Q3sYdaYzyAKElDrR6fSBIPrEDAhMXdyhNu3xMrt5GXGVYdrNisg7WzBB
+ qTIpRWxduGLpQvE37HOs88QP6At6sNGaIDS1mCpmSIaskusgw64djCS7h6OwrJh3pmkw1UdpA
+ PavqlbmlEhm+j9N3lkG3PS8iKnfC6VOrpQ5V66a+/urmqLuUlJc9VFWeLNXjZeIqWbmaGHHvY
+ HYby8QaW+oIPhaxUXDaMVYLpvN4IBqXL+5RvnCu/OnBR6T0Gn+DuDONHIR2HhJjWREIvAUF8I
+ /+Nvo3VCQZSg2ErAb53uAP0+x3Q5u5XaAbGIpr55Ko6WqQqZW7dft59cXqElK6iL4eFEP4kB5
+ HbLPEGKLbOZRbabRcgrvnUxLkX2/NSUsuUMW+rcWLtvxzRbSFDfsXTDDvpewjJJ83p/DdQx0t
+ YUeC4OM5/bf+3g5l4A8wprQrNyXylHtrxfar4+5h7VDbfIzUorTk5wroQy3I8fOz+2+nfpE
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The BCM2711 supports 58 GPIOs [1] by using the existing BCM2835 GPIO registers
-completely. So there is no need to change the binding.
+This adds the labels for all the SoC GPIOs on the Raspberry Pi 4.
 
-Patch 1 and 2 prepare the pinctrl driver to be extended to 58 GPIOs in Patch 3.
-I didn't want to squash them in order to make review as easy as possible.
-The final patch 4 assigns all SoC GPIOs a label as we already did for
-the older Raspberry Pi boards.
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 73 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
-Changes since RFC:
-- avoid using memcpy as suggested by Nicolas
-- drop unused entry from GPIO label legend
-
-[1] - https://github.com/raspberrypi/linux/issues/3101#issuecomment-573092294
-
-Stefan Wahren (4):
-  pinctrl: bcm2835: Drop unused define
-  pinctrl: bcm2835: Refactor platform data
-  pinctrl: bcm2835: Add support for all GPIOs on BCM2711
-  ARM: dts: bcm2711-rpi-4-b: Add SoC GPIO labels
-
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts |  73 +++++++++++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 106 ++++++++++++++++++++++++++--------
- 2 files changed, 155 insertions(+), 24 deletions(-)
-
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+index 1b5a835..cb33852 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+@@ -71,6 +71,79 @@
+ 	};
+ };
+ 
++&gpio {
++	/*
++	 * Parts taken from rpi_SCH_4b_4p0_reduced.pdf and
++	 * the official GPU firmware DT blob.
++	 *
++	 * Legend:
++	 * "FOO" = GPIO line named "FOO" on the schematic
++	 * "FOO_N" = GPIO line named "FOO" on schematic, active low
++	 */
++	gpio-line-names = "ID_SDA",
++			  "ID_SCL",
++			  "SDA1",
++			  "SCL1",
++			  "GPIO_GCLK",
++			  "GPIO5",
++			  "GPIO6",
++			  "SPI_CE1_N",
++			  "SPI_CE0_N",
++			  "SPI_MISO",
++			  "SPI_MOSI",
++			  "SPI_SCLK",
++			  "GPIO12",
++			  "GPIO13",
++			  /* Serial port */
++			  "TXD1",
++			  "RXD1",
++			  "GPIO16",
++			  "GPIO17",
++			  "GPIO18",
++			  "GPIO19",
++			  "GPIO20",
++			  "GPIO21",
++			  "GPIO22",
++			  "GPIO23",
++			  "GPIO24",
++			  "GPIO25",
++			  "GPIO26",
++			  "GPIO27",
++			  "RGMII_MDIO",
++			  "RGMIO_MDC",
++			  /* Used by BT module */
++			  "CTS0",
++			  "RTS0",
++			  "TXD0",
++			  "RXD0",
++			  /* Used by Wifi */
++			  "SD1_CLK",
++			  "SD1_CMD",
++			  "SD1_DATA0",
++			  "SD1_DATA1",
++			  "SD1_DATA2",
++			  "SD1_DATA3",
++			  /* Shared with SPI flash */
++			  "PWM0_MISO",
++			  "PWM1_MOSI",
++			  "STATUS_LED_G_CLK",
++			  "SPIFLASH_CE_N",
++			  "SDA0",
++			  "SCL0",
++			  "RGMII_RXCLK",
++			  "RGMII_RXCTL",
++			  "RGMII_RXD0",
++			  "RGMII_RXD1",
++			  "RGMII_RXD2",
++			  "RGMII_RXD3",
++			  "RGMII_TXCLK",
++			  "RGMII_TXCTL",
++			  "RGMII_TXD0",
++			  "RGMII_TXD1",
++			  "RGMII_TXD2",
++			  "RGMII_TXD3";
++};
++
+ &pwm1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pwm1_0_gpio40 &pwm1_1_gpio41>;
 -- 
 2.7.4
 
