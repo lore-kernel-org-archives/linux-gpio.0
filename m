@@ -2,91 +2,75 @@ Return-Path: <SRS0=YZLQ=36=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC68CC352A3
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Feb 2020 10:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE6CC352A5
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Feb 2020 11:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7F620842
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Feb 2020 10:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 419DC20733
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Feb 2020 11:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=geoffrey-id-au.20150623.gappssmtp.com header.i=@geoffrey-id-au.20150623.gappssmtp.com header.b="XDRBr+V5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LTlQ+Wiz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbgBJKqP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Feb 2020 05:46:15 -0500
-Received: from mail-io1-f46.google.com ([209.85.166.46]:33205 "EHLO
-        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbgBJKqP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2020 05:46:15 -0500
-Received: by mail-io1-f46.google.com with SMTP id z8so7059583ioh.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Feb 2020 02:46:15 -0800 (PST)
+        id S1727121AbgBJLsc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Feb 2020 06:48:32 -0500
+Received: from mail-lf1-f44.google.com ([209.85.167.44]:41602 "EHLO
+        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbgBJLsc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Feb 2020 06:48:32 -0500
+Received: by mail-lf1-f44.google.com with SMTP id m30so3961567lfp.8
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Feb 2020 03:48:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=geoffrey-id-au.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=rQ1woM9fN4yRdu06zIzaO5A5l2NLePrcaBZqjTl2Vu0=;
-        b=XDRBr+V551p8L4jBMsagLZN7awO464tnqdGQEtHMiiUBO+PWgu3aP+z5s++qLhlxEF
-         FNNvWrlXy6GQozNuMJcTRRcdBUCWN15hHrbGaWbapTwaUgDkLh8rxZJv6zsrqTF0SJw4
-         hjZI3q+SxaFZ31IjPUTAmwY76KyhWdIOnKN4WN1EKPhZ82CLSBAbmilOJG2GbTbF/fVG
-         aBOL7XHgtZriKbeLKzeyy+dKqWXPYpYjcIGvjXbZQiJxvbloxIMgEmCkvshEpGo2teKG
-         mFGBqP0oUm/hhQV7IUFqU0ys5Uodem0C0yDgmIkbDyScZ+Ptsct9V8AvMm+RY9+QeTTT
-         W2HQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aSJzfIkOuNVooD8O1VC4Pyw5PXEqxFUSaZfTLlRTu3c=;
+        b=LTlQ+WizeRtuRFYjwRcSYzkuVowXyOXSelYl1fDOwvk1+Wclg2AyhAhRepM1sN2goD
+         XBYXuiWpSeOGUKp0cgXtX4SxUu186xxQr+p6BNtVcmHccU+eUMCu1sVplTc4UzNXd679
+         zOzeS8LmmtiCosoyDPVkUQz2/Jxav8aXNoj+JJYeLpDWA3q26RmuVJdsWGtrjB7uAl4W
+         2Rut024Luh8H8dZlNbNKrv4awX/HrBAXn8hvgfjQoEhz6V2lbBURxGbX0vL4aopJEUo9
+         e4jNqSKt/MC7tdCO1ufDLSykJrzTPBXtS1i1S5fiqwPUNS8VoIRt6G5U6lm+VAPgNOC4
+         ZhHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=rQ1woM9fN4yRdu06zIzaO5A5l2NLePrcaBZqjTl2Vu0=;
-        b=LTgvTdet1SDBwN+MRviqfJetJNZmhbmSBG4PaSZpzYqMVrSGggEQdUu8CCjvw/8xaB
-         Ur6J+Pv+lzxJE/wUVbSOk+NDp9NlDchiGWLmCfdyzv3UgTw2nJYv+Rtyw230wizY51zJ
-         ntGNjbjVywCj6T918h4fHyHR+KGWyjtutnzwOmi/LmR3m24eN4yHRnWMy0GEw9SZ68A/
-         xkCgb5iWMNqr7R6xr1rqeW1NFiwLjGL7sHdNxL90I85zOhTnqVMFMPSmlXPzrGxJ994a
-         wtAqXDMIKRM0CRGatEwQ8xSh8TLejhtN4/RxXRf2HRRAGsxgqXiHnKd8WB4QM3JYtKE0
-         Sx+g==
-X-Gm-Message-State: APjAAAV/cRD1DG+KCBQmYAcOPFWrkBZG85WfV8wgB9DuQpMQvz+5pqSY
-        EzbEOR4fzFxxxCJv27jBB4JrvABVH1J3SLSKoDtLTaLu
-X-Google-Smtp-Source: APXvYqw3NsedqLMyru+4Qqbb3idUn9cTPCcsmdKwGjhiz/8PYGnMiw3pZ6YJhQnaW7Hk4eeMeufQOKVnM6KE+4cD76U=
-X-Received: by 2002:a05:6638:a2c:: with SMTP id 12mr9598341jao.60.1581331574729;
- Mon, 10 Feb 2020 02:46:14 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=aSJzfIkOuNVooD8O1VC4Pyw5PXEqxFUSaZfTLlRTu3c=;
+        b=Vwgg0tyDGnDnbMtD6t85BAcgH4LQqtyP8Rt14wfvVj+w09/oNk8MqPyvgdNk4xtYsW
+         ZMp3nFyFdDeaVlZf2zTEWVT6ZAnvVCJOkL2N/1KR2Eex/JBK/egoq3PPmzqz1Zh6DZwl
+         l0rTpuO5Ep5gxV6aHQaA/zaRoSiD9jG4F2EUVY9Fe0WljygfoJ1K1Q0GKvOrXcqVKnHN
+         ei/2FlywssceJhRcRCPuykBQJihSZ0tZZ1ugj31g+B7dxRPAttJOIokbngBjk4luBQbi
+         vQwcRLJfjdOQkNT0hGZ+Y1EhpxSuz7Z9NLEuvgozJ1OB6dvygLQQpE8ybJeRxU/nvzmt
+         SCrA==
+X-Gm-Message-State: APjAAAWj+0yxOiAw2gGt+qXI3Nhiv48EpdhWJuNXhRD1uieCKhSa5wJ2
+        QDi0T20MoYZTM42EHEuHxqPhVKESL/TKzGE3MAPLoO72ORs=
+X-Google-Smtp-Source: APXvYqwJDTpeHrZkWtz/YSlaNIlWh13wzuejpec/1wskJmA4ZjiBqy6vPzjMfo+IUWRzK4K9mT2O1B9dg5Hk8Czx2JA=
+X-Received: by 2002:ac2:4909:: with SMTP id n9mr578438lfi.21.1581335310309;
+ Mon, 10 Feb 2020 03:48:30 -0800 (PST)
 MIME-Version: 1.0
-References: <CADn0hExOJHS0OhU41sToXxqnqpyWjmCPrsVwXE-OKBLg-0dsRQ@mail.gmail.com>
-In-Reply-To: <CADn0hExOJHS0OhU41sToXxqnqpyWjmCPrsVwXE-OKBLg-0dsRQ@mail.gmail.com>
-From:   Geoffrey White <geoffrey@geoffrey.id.au>
-Date:   Mon, 10 Feb 2020 21:46:03 +1100
-Message-ID: <CADn0hEwXv1eyqMvPLshkPBOFukjza2nvScNNXw4U4L-K7dLHCw@mail.gmail.com>
-Subject: Re: [libgpiod]
-To:     linux-gpio@vger.kernel.org
+References: <20200210103035.16406-1-brgl@bgdev.pl>
+In-Reply-To: <20200210103035.16406-1-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 10 Feb 2020 12:48:19 +0100
+Message-ID: <CACRpkdZJyWNfrzFTB8Z4XCy3N7izghW-Ooo-3a0c4jLXFDBLNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: fixes for v5.6-rc2
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+On Mon, Feb 10, 2020 at 11:30 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-What a great library gpiod is. I am trying to port over my robot
-software from WiringPi to it at the moment.  I am running Ubuntu 18.04
-on both a development laptop and a Raspbery Pi 3 A+. I cross compile
-version 1.4.2 and can run on the Pi and iterate over the detected
-devices fine. However I'm not able to detect the correct chipset on
-the device.
+> these are fixes I picked up during the merge window. Details are in the
+> signed tag. Please pull.
 
-The Pi v3a+ uses the Broadcom chipset BCM2837B0, however the chip is
-detected as a bcm2835 which is from the original Pi v1. Further, none
-of the lines are labelled with a description. They all appear as
-"unnamed" instead of labels such as  "GPIO_GCLK" or "GPIO17"
+Pulled in for fixes, thanks a lot for covering my back!
 
-I heard the stock Kernel. on 18.04 (4.15) did have some issues,
-however I have since upgraded to the 5.3.0 Kernal on both my dev
-laptop and Pi.
-
-I would personally like to keep to using the Ubuntu distribution for
-the Pi, however perhaps it is better i revert back to Raspbian.
-
-My future work I hope to integrate the DMA timing for a simple PWM
-control using the gpiod, i'd like to help out with the project if I
-can, sorry if I have approached the wrong email list.
-
- Regards,
-
-Geoffrey.
+Yours,
+Linus Walleij
