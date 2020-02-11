@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2683AC3B18A
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6A3C3B18C
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F329B20842
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3612220842
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bu8KkI9h"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="f+h/R1S7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbgBKVxi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Feb 2020 16:53:38 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:23467 "EHLO
+        id S1727566AbgBKVxk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Feb 2020 16:53:40 -0500
+Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.124]:13986 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgBKVxh (ORCPT
+        with ESMTP id S1727111AbgBKVxh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 16:53:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581458015;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=l2ioSw/GBEgoEsJDqdX898kUDDw9CYiqWmti4ETUA48=;
-        b=bu8KkI9hIzWf0Pbr1ExLGXwv8IBZGVTFyeEM/F0CQFj1ZkjepEBc/tdSJAI1VYwdiO
-        ItNlMiTzTiTyHBkDE9kov76ydjAdTArST3OAPC093wHH1VDEI2KogUlTQnJSb8/rIeY8
-        kbzok9Cr7lokB1nyDkuFJUPa49bMuwhlUfL1QQZOuBc77KU8Bg70nOs4vBFtuPRW22nw
-        Wq8rCOzP5mM4tarq9WaXYDOAfZuq+uKFqIqyruU3blEonuoj8P2BG7MtiU5GdavpGMKd
-        iyydeyyhF0g0CnBKgWOXlJqV9cLXuu+r0ziKSdw4p7kz7V0PhPkgNa3YJSTNy6u0Bjqh
-        z/iQ==
+        bh=R6XWZKI0Jv5BBqy+e+tuVA81iAkMhtX+RXM2onbHsho=;
+        b=f+h/R1S7NMQnFWkc2yo4wpW1/87VoJE75jhEkT6HviwObIM0IoOX7hdsTkwjx2f0ic
+        btDxxD0MMVL8laK7GP3FjGrk5qlUZu+CHOrvjGLyRw9Jloz7IlTazJyvBuIol/JZ1uKo
+        4hSDFXCU2M/t5JnW5gtTZnok4Tl3WHT8JoXmMbpaY06Ow4YOvh+7/iKbYmS3Gyxme6Wp
+        CFhHalpXmoehVwcJGJpLZa429NCGlD7NihGNNtjbW6R3l5Zhd6z7G6KUv5FsX0AGlJmC
+        4NaMO7vfedC/hzhcoqtsw40cS6/c2QuUhTy4y4Uhv3gol40EnSqDalxHHG8h4zO5GBuK
+        RcaA==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0P2mp10IM"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1BLfa0EL
+        with ESMTPSA id U06217w1BLfd0EP
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Tue, 11 Feb 2020 22:41:36 +0100 (CET)
+        Tue, 11 Feb 2020 22:41:39 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Paul Cercueil <paul@crapouillou.net>,
         Paul Boddie <paul@boddie.org.uk>,
@@ -67,9 +67,9 @@ Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
         linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
         linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com
-Subject: [PATCH 05/14] MIPS: CI20: defconfig: configure for supporting modules
-Date:   Tue, 11 Feb 2020 22:41:22 +0100
-Message-Id: <b490287210e46565733209197ffdae3bc90137dc.1581457290.git.hns@goldelico.com>
+Subject: [PATCH 09/14] MIPS: DTS: CI20: give eth0_power a defined voltage.
+Date:   Tue, 11 Feb 2020 22:41:26 +0100
+Message-Id: <c6697a2551e7ef8e4de4a92f2602b47ba1d52ee4.1581457290.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1581457290.git.hns@goldelico.com>
 References: <cover.1581457290.git.hns@goldelico.com>
@@ -80,24 +80,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Not all drivers need to be compiled into the kernel.
-Support building and loading of kernel modules.
+This is a 3.3V regulator.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/mips/configs/ci20_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/boot/dts/ingenic/ci20.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be41df2a81fb..e0d3c9d4c2ae 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -1,4 +1,5 @@
- # CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_MODULES=y
- CONFIG_KERNEL_XZ=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index e02a19db7ef1..e1364f941c7d 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -56,6 +56,8 @@
+ 	eth0_power: fixedregulator@0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "eth0_power";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
+ 		gpio = <&gpb 25 GPIO_ACTIVE_LOW>;
+ 		enable-active-high;
+ 	};
 -- 
 2.23.0
 
