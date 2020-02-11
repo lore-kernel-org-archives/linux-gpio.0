@@ -2,131 +2,161 @@ Return-Path: <SRS0=TFca=37=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B3CC3B186
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 09:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABECC3B186
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 10:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F8320842
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 09:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 510B220870
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 10:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bvlde9/B"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="Wds27R0i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbgBKJUS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Feb 2020 04:20:18 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37643 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727904AbgBKJTt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 04:19:49 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a6so2524815wme.2
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2020 01:19:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=J6ZLNj2Gq0W0Yaf5OErI6mxsCNdT2eS8KG7ezcB9dY0=;
-        b=bvlde9/BYWUt6yX6B3axWW/EXQmlMl7L/is9C1EKF8Nx4zE9fM88462YL3CmM28ioo
-         GH3iIhRZllHSdtjSSov1oy10smvIWwyQQi3cpc8C/meYywWKxyeTfPrd27JSUgJngcxP
-         cP5cvQhg1dsawZLIQCnMJ3tJNGV5LakxTH6BY5YHtAoek2x0s8fek2tx0fY+SkmKg3Ux
-         mH6Vj1sPdc9YxdMCamsUNWTxV1j75xySd/ke1LMmwx+VfDj4HjwGlMi4h5WxQQX/kjIZ
-         oxdMXoto6p+tODUU5saArZQ6thjikM1uE4x1cirtB9sKiVeVYoPVwUfutJkZbcavbaaz
-         Ab2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=J6ZLNj2Gq0W0Yaf5OErI6mxsCNdT2eS8KG7ezcB9dY0=;
-        b=imOCreHZgyuzVHnbaa0J7H/MqGwolOByO9DpfcPtvfoMyrQ8nwj6Sm+74Mda7iE/2L
-         dTGYSRrARN45RfntfjdpQJm6L1aiFYZIk88O03oKNtO4VoqsXMoS7mZu61kDib0YR7do
-         Fdlmz7PTMsGI8LG3iGKekZ2YRpMc4zi202207uy7VQiBRjH9FZzn22O/88AL7TXtAPMb
-         btNp5aBUHt5rzeSiYxA8AoJiAASxUlP1xYRiau8pNXbN6T157qzpYbn6LHTZ717AqNn+
-         +gd7BPHAu9hKxTFXOuy0Y4qIjcx/8J00DArMALvBQj+Sq3SPvHZkxtiRkrJWoXBmXgLi
-         KPjA==
-X-Gm-Message-State: APjAAAUdm9PaX1MU7u72cpmserpUHzBeFZb622noj12ZY4AQdJUfgifa
-        QAEzB+94JPVoCfOQc9+fQiPCXw==
-X-Google-Smtp-Source: APXvYqxHjKZdZWKhZS3AoeVyH3NMEieAbdcgVVvcmpoGXTu4vuIZJaP8GCNGxLmznkRrQAzrQ9SNuA==
-X-Received: by 2002:a1c:ddd6:: with SMTP id u205mr4689065wmg.151.1581412787259;
-        Tue, 11 Feb 2020 01:19:47 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id y131sm2958622wmc.13.2020.02.11.01.19.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 01:19:46 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Stefani Seibold <stefani@seibold.net>
-Subject: [RESEND PATCH v6 2/7] kfifo: provide kfifo_is_empty_spinlocked()
-Date:   Tue, 11 Feb 2020 10:19:32 +0100
-Message-Id: <20200211091937.29558-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200211091937.29558-1-brgl@bgdev.pl>
-References: <20200211091937.29558-1-brgl@bgdev.pl>
+        id S1727840AbgBKKIs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Feb 2020 05:08:48 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48254 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727561AbgBKKIs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 11 Feb 2020 05:08:48 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BA4R3C014422;
+        Tue, 11 Feb 2020 11:08:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=TwPRE10MrHGJ+ok36qcGjNbTRRU/wDoMTVxqEqGhrRs=;
+ b=Wds27R0iOAr36uRNOdD6PjfMDrZifimR8AmTtIFfXDi/0v/oaYcHM15rH8dzHO4R05AU
+ kLW1CADhGoZjhLPAof7EgUN4qmkuhCl88p+hroMyw67yDn+0nafMqj+2hzebmS+Z8YRl
+ HbwmAPt3mUWDktEhehyBDgSD0n39WiPyfCKHWhhHF31Ml61OVbTNStXBBnupaTzc0cj1
+ YGaEu0Azncc7/7GkTx+2VEqDCM+itH5R2DW6J0vSuLw+PC3E2c2Obj6oS/QRruDc2XPg
+ OkY156Mzn29Ik29Y6vONbvhoYo9SB+u8bbKqW33TxHtT76bPClZYPNVJllh2/u6DSw0R hQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2y1ud9ks63-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Feb 2020 11:08:32 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8EBA010002A;
+        Tue, 11 Feb 2020 11:08:30 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79B502AD23D;
+        Tue, 11 Feb 2020 11:08:30 +0100 (CET)
+Received: from lmecxl0912.lme.st.com (10.75.127.47) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 11 Feb
+ 2020 11:08:29 +0100
+Subject: Re: [PATCH 2/2] pinctrl: stm32: Add level interrupt support to gpio
+ irq chip
+To:     Marek Vasut <marex@denx.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+References: <20200210134901.1939-1-alexandre.torgue@st.com>
+ <20200210134901.1939-3-alexandre.torgue@st.com>
+ <377b0895-aaeb-b12e-cad7-469332787b4e@denx.de>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <dd6434a7-aff1-94ec-2fdf-51374c695ada@st.com>
+Date:   Tue, 11 Feb 2020 11:08:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <377b0895-aaeb-b12e-cad7-469332787b4e@denx.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-11_02:2020-02-10,2020-02-11 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Marek
 
-Provide two spinlocked versions of kfifo_is_empty() to be used with
-spinlocked variants of kfifo_in() and kfifo_out().
+On 2/10/20 7:39 PM, Marek Vasut wrote:
+> On 2/10/20 2:49 PM, Alexandre Torgue wrote:
+>> This patch adds level interrupt support to gpio irq chip.
+>>
+>> GPIO hardware block is directly linked to EXTI block but EXTI handles
+>> external interrupts only on edge. To be able to handle GPIO interrupt on
+>> level a "hack" is done in gpio irq chip: parent interrupt (exti irq chip)
+>> is retriggered following interrupt type and gpio line value.
+>>
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+>>
+>> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> index 2d5e0435af0a..04e1b062c20e 100644
+>> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> @@ -89,6 +89,7 @@ struct stm32_gpio_bank {
+>>   	struct pinctrl_gpio_range range;
+>>   	struct fwnode_handle *fwnode;
+>>   	struct irq_domain *domain;
+>> +	u32 irq_type[STM32_GPIO_PINS_PER_BANK];
+> 
+> You might want reverse xmas tree order here.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Stefani Seibold <stefani@seibold.net>
----
- include/linux/kfifo.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+I agree
 
-diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index 123c200ed7cb..86249476b57f 100644
---- a/include/linux/kfifo.h
-+++ b/include/linux/kfifo.h
-@@ -246,6 +246,37 @@ __kfifo_int_must_check_helper(int val)
- 	__tmpq->kfifo.in == __tmpq->kfifo.out; \
- })
- 
-+/**
-+ * kfifo_is_empty_spinlocked - returns true if the fifo is empty using
-+ * a spinlock for locking
-+ * @fifo: address of the fifo to be used
-+ * @lock: spinlock to be used for locking
-+ */
-+#define kfifo_is_empty_spinlocked(fifo, lock) \
-+({ \
-+	unsigned long __flags; \
-+	bool __ret; \
-+	spin_lock_irqsave(lock, __flags); \
-+	__ret = kfifo_is_empty(fifo); \
-+	spin_unlock_irqrestore(lock, __flags); \
-+	__ret; \
-+})
-+
-+/**
-+ * kfifo_is_empty_spinlocked_noirqsave  - returns true if the fifo is empty
-+ * using a spinlock for locking, doesn't disable interrupts
-+ * @fifo: address of the fifo to be used
-+ * @lock: spinlock to be used for locking
-+ */
-+#define kfifo_is_empty_spinlocked_noirqsave(fifo, lock) \
-+({ \
-+	bool __ret; \
-+	spin_lock(lock); \
-+	__ret = kfifo_is_empty(fifo); \
-+	spin_unlock(lock); \
-+	__ret; \
-+})
-+
- /**
-  * kfifo_is_full - returns true if the fifo is full
-  * @fifo: address of the fifo to be used
--- 
-2.25.0
+> 
+>>   	u32 bank_nr;
+>>   	u32 bank_ioport_nr;
+>>   	u32 pin_backup[STM32_GPIO_PINS_PER_BANK];
+>> @@ -303,6 +304,48 @@ static const struct gpio_chip stm32_gpio_template = {
+>>   	.get_direction		= stm32_gpio_get_direction,
+>>   };
+>>   
+>> +void stm32_gpio_irq_eoi(struct irq_data *d)
+>> +{
+>> +	struct stm32_gpio_bank *bank = d->domain->host_data;
+>> +	int line;
+>> +
+>> +	irq_chip_eoi_parent(d);
+>> +
+>> +	/* If level interrupt type then retrig */
+>> +	line = stm32_gpio_get(&bank->gpio_chip, d->hwirq);
+>> +	if ((line == 0 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_LOW) ||
+>> +	    (line == 1 && bank->irq_type[d->hwirq] == IRQ_TYPE_LEVEL_HIGH))
+>> +		irq_chip_retrigger_hierarchy(d);
+>> +};
+>> +
+>> +static int stm32_gpio_set_type(struct irq_data *d, unsigned int type)
+>> +{
+>> +	struct stm32_gpio_bank *bank = d->domain->host_data;
+>> +	u32 parent_type;
+>> +
+>> +	bank->irq_type[d->hwirq] = type;
+>> +
+>> +	switch (type) {
+>> +	case IRQ_TYPE_EDGE_RISING:
+>> +	case IRQ_TYPE_EDGE_FALLING:
+>> +	case IRQ_TYPE_EDGE_BOTH:
+>> +		parent_type = type;
+>> +		break;
+>> +	case IRQ_TYPE_LEVEL_HIGH:
+>> +		parent_type = IRQ_TYPE_EDGE_RISING;
+>> +		break;
+>> +	case IRQ_TYPE_LEVEL_LOW:
+>> +		parent_type = IRQ_TYPE_EDGE_FALLING;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	irq_chip_set_type_parent(d, parent_type);
+> 
+> irq_chip_set_type_parent() returns error code, shouldn't that be handled?
 
+Yes. It'll be fixed in v2.
+
+> 
+> Otherwise, tested on STM32MP1 with KSZ8851-16MLL NIC.
+
+Thanks
