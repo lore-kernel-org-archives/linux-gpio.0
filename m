@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F79C352A3
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 13:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8B5C352A3
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 13:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62D2920870
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 13:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D87B208C4
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 13:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JShKl6tZ"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="LcrMHtCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbgBKNND (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Feb 2020 08:13:03 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50811 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbgBKNNC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 08:13:02 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a5so3485938wmb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2020 05:13:00 -0800 (PST)
+        id S1729084AbgBKNNH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Feb 2020 08:13:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39898 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbgBKNNH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 08:13:07 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so12328077wrt.6
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2020 05:13:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GheSz6neeN101nnz+FLOMJnrgCH2+MfnhxBOEsDMmXs=;
-        b=JShKl6tZS7GpJERb5eCGZI7MTawLLYCPtJqP12ehsJ1w/S50qovoib1cqPZmaDSwg0
-         jjXkPqf63XQRrI6dkcBUNHwhVk9h2r0jG4dXBeIqpCcBT3Vp2CDkhhof/pZkGnlZlYjA
-         HX7okiZrFbZkWMoHuCiyZfcMCAyrTjP0QCsDpxUHeXhTVmvYAhwrnRcNs/OYyIgqKloa
-         QCkvHDHppbjbbApFdEhR2iytUgCVJn53uI7cgovLsrs6rkN8L+rqlpCWT+hm6l2sibim
-         yz9kTe32mQ6GA/gud4Ly3szhwO8p42fGavNl3x8XJ5NV/yrJ9Mu2uPXxEb1y96OU+oa1
-         Lizg==
+        bh=anPiy+Oai5eVC9epbsqPoMEWmUp50/yoIqvuC47WE5o=;
+        b=LcrMHtCUppxeolsKFGx6QsBeDzCgd+5f8d/Oq/d8bQLTe2OeansixpI49rk7VTtwHO
+         TAadngLfrWrhX/Za4qdIf48h7osfj+UtUjkYt8J+GCrXmU3esu+ojHKWvQPt39Cw0EmU
+         8iwhyTdDSKEuJwjPVx2LSG1K+4AZ2eHca+Pt/hpgb3HSE0TJRzk7+/6vxp+A9MQcK2g5
+         WxLqITqfiEcblyk3kcL8wB0WDcrtnF8YEuApH4lNvz2SbbUmBdKrW2BpMVkOXQPlDMzc
+         mPmY3MEo4I7MsTQ6a5JLe7mIygDcVOKtUqN9hKS/JM0sKW02t0qiGKxQ/L81g4zm1bkC
+         blQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GheSz6neeN101nnz+FLOMJnrgCH2+MfnhxBOEsDMmXs=;
-        b=qjP3rBDYB6m2VTV5FVhg3Xuwgu4s5L8UnYtOx9rvKcD9PqDaDUrnPNauYP9Nu8m32/
-         q1nhYoLGyN+ho0bNu2TKqHFh/qrBQe+Ot9r9vTUJVe9O8Pez1v58TW+r4V82mGg7ijdi
-         bpQ7pUKbDBvTkXZZBaHcfYsTjvi/VmzyfGJlHJ/lwPq85tIVuss+as9CAhOCLg7N8Ki0
-         fqmHYP7gdV8FONnQaHSzCgV6JUjX4rwxtma/sLEaOCONYgBpRo4Yfv+nY5cuiqssEdH2
-         PCtmAKfxiGkjnJQbeo9KgR+31uD1BjeSr5K7qPCz1VLibDgA+mIWT/Ix+iaYEjal1pQZ
-         JmGQ==
-X-Gm-Message-State: APjAAAUwQvjQP82fQGW4bA/dm3QmE26ixCtvH83oEalpmLij3mwHPGqD
-        a/b0r3N+nAYFM/CJZirgKlumLg==
-X-Google-Smtp-Source: APXvYqxd6Cg0lSNsAMRLVwVUdpIg0bBIYoGlnhsECR2LrSlHcPK1OPYbBWi4nu2ydo/l10SOHjhJIg==
-X-Received: by 2002:a1c:7c18:: with SMTP id x24mr5979102wmc.185.1581426780114;
-        Tue, 11 Feb 2020 05:13:00 -0800 (PST)
+        bh=anPiy+Oai5eVC9epbsqPoMEWmUp50/yoIqvuC47WE5o=;
+        b=Bq/qZtqjOKwdgFjflPRkSijJ7UhUA3m8F6Rli1fG7Omr+Wnp3QnepS4xK6lYMJG4ng
+         Q2rFvmmZRTh7lbCe9Z2x6k16+3QAMrA9OaORzXRlJ2fMIpMe9ZCkW3nlPERgotvarVcJ
+         Q023ufvB1g6N1Kkgut6nC8FEylVFX+D9JNAO0Hxn01iIgdj5vl6YGl21LdprJ9jTEWlR
+         iAoqrj2wRXNb/rSqwY2p0TI4I/mBnH6zUq4UaqktBjll1r/fO/wTXogS9TD0WoBsM3Uu
+         7+9QtF5LgvGQxLggADl2QgsF1kEcf8Vx9YAe2e521lvfipoggTr6CVr1R4/x/dxhp0uL
+         1KcA==
+X-Gm-Message-State: APjAAAX3Lysu54cOHPAenxzgbdkrd6Hik7AmWcPdMz2EnhVAUy9kA8i/
+        tw2TnZloO/RKrCdhdj5t+G5uIw==
+X-Google-Smtp-Source: APXvYqzzhUz5QJgJfU2ox7SdgabZbIVUaJl7QIQdgt8cnPmLLHB161BbLwhKlnx0AUyBK9UVc6nz1A==
+X-Received: by 2002:a5d:51c9:: with SMTP id n9mr8771950wrv.334.1581426785134;
+        Tue, 11 Feb 2020 05:13:05 -0800 (PST)
 Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id b21sm3873013wmd.37.2020.02.11.05.12.59
+        by smtp.gmail.com with ESMTPSA id b21sm3873013wmd.37.2020.02.11.05.13.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 05:12:59 -0800 (PST)
+        Tue, 11 Feb 2020 05:13:04 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Cameron <jic23@kernel.org>,
@@ -66,9 +66,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-iio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/6] irq: make irq_domain_reset_irq_data() available even for non-V2 users
-Date:   Tue, 11 Feb 2020 14:12:35 +0100
-Message-Id: <20200211131240.15853-2-brgl@bgdev.pl>
+Subject: [PATCH v2 5/6] irq/domain: provide irq_domain_dispose_mappings() helper
+Date:   Tue, 11 Feb 2020 14:12:39 +0100
+Message-Id: <20200211131240.15853-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211131240.15853-1-brgl@bgdev.pl>
 References: <20200211131240.15853-1-brgl@bgdev.pl>
@@ -81,86 +81,64 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-irq_domain_reset_irq_data() doesn't modify the parent data, so it can be
-made available even if irq domain hierarchy is not being built.
+Unmapping all interrupts before removing an irq_domain is a common
+use-case. Provide an appropriate helper that can also be used with
+the remove() callback in irq_domain ops.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- include/linux/irqdomain.h |  4 ++--
- kernel/irq/irqdomain.c    | 24 ++++++++++++------------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ include/linux/irqdomain.h |  2 ++
+ kernel/irq/irqdomain.c    | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
 diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index b2d47571ab67..20d38621e2f8 100644
+index fbc25f464f62..8fd27614dafd 100644
 --- a/include/linux/irqdomain.h
 +++ b/include/linux/irqdomain.h
-@@ -450,6 +450,7 @@ extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
- 				irq_hw_number_t hwirq, struct irq_chip *chip,
- 				void *chip_data, irq_flow_handler_t handler,
- 				void *handler_data, const char *handler_name);
-+extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
- #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
- extern struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
- 			unsigned int flags, unsigned int size,
-@@ -475,7 +476,6 @@ extern int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
- extern void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs);
- extern int irq_domain_activate_irq(struct irq_data *irq_data, bool early);
- extern void irq_domain_deactivate_irq(struct irq_data *irq_data);
--
- static inline int irq_domain_alloc_irqs(struct irq_domain *domain,
- 			unsigned int nr_irqs, int node, void *arg)
+@@ -390,6 +390,7 @@ extern unsigned int irq_create_mapping(struct irq_domain *host,
+ 				       irq_hw_number_t hwirq);
+ extern unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec);
+ extern void irq_dispose_mapping(unsigned int virq);
++extern void irq_domain_dispose_mappings(struct irq_domain *domain);
+ 
+ /**
+  * irq_linear_revmap() - Find a linux irq from a hw irq number.
+@@ -594,6 +595,7 @@ irq_domain_hierarchical_is_msi_remap(struct irq_domain *domain)
+ 
+ #else /* CONFIG_IRQ_DOMAIN */
+ static inline void irq_dispose_mapping(unsigned int virq) { }
++static inline void irq_domain_dispose_mappings(struct irq_domain *domain) { }
+ static inline struct irq_domain *irq_find_matching_fwnode(
+ 	struct fwnode_handle *fwnode, enum irq_domain_bus_token bus_token)
  {
-@@ -491,7 +491,7 @@ extern int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
- 					 irq_hw_number_t hwirq,
- 					 struct irq_chip *chip,
- 					 void *chip_data);
--extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
-+
- extern void irq_domain_free_irqs_common(struct irq_domain *domain,
- 					unsigned int virq,
- 					unsigned int nr_irqs);
 diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 7527e5ef6fe5..039427c98af8 100644
+index b391d2e65bdd..d09de9f2411a 100644
 --- a/kernel/irq/irqdomain.c
 +++ b/kernel/irq/irqdomain.c
-@@ -1047,6 +1047,18 @@ int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
- 	return virq;
+@@ -888,6 +888,23 @@ void irq_dispose_mapping(unsigned int virq)
  }
+ EXPORT_SYMBOL_GPL(irq_dispose_mapping);
  
 +/**
-+ * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
-+ * @irq_data:	The pointer to irq_data
++ * irq_domain_dispose_mappings() - Unmap all interrupts
++ * @domain: domain for which to unmap all interrupts
 + */
-+void irq_domain_reset_irq_data(struct irq_data *irq_data)
++void irq_domain_dispose_mappings(struct irq_domain *domain)
 +{
-+	irq_data->hwirq = 0;
-+	irq_data->chip = &no_irq_chip;
-+	irq_data->chip_data = NULL;
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
++	unsigned int virq;
++	int i;
 +
- #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
++	for (i = 0; i < domain->hwirq_max; i++) {
++		virq = irq_find_mapping(domain, i);
++		if (virq)
++			irq_dispose_mapping(virq);
++	}
++}
++EXPORT_SYMBOL_GPL(irq_domain_dispose_mappings);
++
  /**
-  * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
-@@ -1247,18 +1259,6 @@ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
- }
- EXPORT_SYMBOL(irq_domain_set_info);
- 
--/**
-- * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
-- * @irq_data:	The pointer to irq_data
-- */
--void irq_domain_reset_irq_data(struct irq_data *irq_data)
--{
--	irq_data->hwirq = 0;
--	irq_data->chip = &no_irq_chip;
--	irq_data->chip_data = NULL;
--}
--EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
--
- /**
-  * irq_domain_free_irqs_common - Clear irq_data and free the parent
-  * @domain:	Interrupt domain to match
+  * irq_find_mapping() - Find a linux irq from a hw irq number.
+  * @domain: domain owning this hardware interrupt
 -- 
 2.25.0
 
