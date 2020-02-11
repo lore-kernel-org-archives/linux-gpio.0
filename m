@@ -7,39 +7,40 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799E4C352A3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCE3C3B188
 	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F5520848
+	by mail.kernel.org (Postfix) with ESMTP id A60DD20873
 	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WP+g4oxB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="s51fYI4E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgBKVxh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727436AbgBKVxh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 11 Feb 2020 16:53:37 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:36025 "EHLO
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.223]:27397 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbgBKVxh (ORCPT
+        with ESMTP id S1727199AbgBKVxh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 16:53:37 -0500
+X-Greylist: delayed 705 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 16:53:36 EST
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581458015;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=dZbZVnixfoO3ZI6/71WGGwComZxww6jvUSKhufZA4ck=;
-        b=WP+g4oxBU419Lx3k/MqxYw2XP3wOnBvNuwHMFJloU/FHLFUuK47adrLXIvr8uFNY/H
-        xrJL1sKq05KGYpA4Bq+t9UGcrIXKC3zdkLGMNwUdJg2+trP4pDB3BoS2CQY/SWyHX7Ot
-        s4L06w0HiAinaZin4e1panQ3uqMXBYNXZl26CAkAyZZRSDmTztRuFGhsC4SW6HukBPui
-        BxXp159SKs+rnqaNivxRchQNDKf8zgCwClM5BEQu5htPWKmAYPDqAKDKdgbeGrol0/mO
-        sBgYbGlHJMDINh8PH99gyki9O/PTPe7Bgab6D40mKSPyL+XvmQOOA+bK5Wg4j7Q0XLvZ
-        6SLw==
+        bh=HJKkK+L/+IvQc4t06WFqnt4bWf+FyU8DIYq2eP8LWiA=;
+        b=s51fYI4EvPLeXNxVY0tPMkf89Y7ZX5Mq+04NyMdg2PAUXcJA89U2pb6zpEYf93NMO7
+        BVBeE7nST2oSNPjjoWkj/l2KcNj1ewigi7qeN6XbdnmtfrG2ykhIvOiqQ2aG3mJJCKbz
+        4pJmFb8E5QZnmX/HZbq7f+ZYIwWDEvo34NSdPb7o+qYAVpKG6Yy45P5T9UADZSWj5fhp
+        ZZmP0KU7YU5DMgYag2/iMSAdX6C2TPRTgk+Ks6gwRVt/yA90KmCj43M5bS8/80wSxdgw
+        903Mg1EOxHOqLr4zNEsjuZ9Eilnasgxy2sRj5vxu6aZK1HL8ZBj9dtbX6n5nPM5JjVTh
+        3Naw==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0P2mp10IM"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1BLff0ET
+        with ESMTPSA id U06217w1BLfh0EV
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Tue, 11 Feb 2020 22:41:41 +0100 (CET)
+        Tue, 11 Feb 2020 22:41:43 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Paul Cercueil <paul@crapouillou.net>,
         Paul Boddie <paul@boddie.org.uk>,
@@ -67,9 +68,9 @@ Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
         linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
         linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com
-Subject: [PATCH 12/14] MIPS: DTS: CI20: add DT node for SW1 as Enter button
-Date:   Tue, 11 Feb 2020 22:41:29 +0100
-Message-Id: <be2a188b8f36db4c9e21dfd73fef89d25dc5299e.1581457290.git.hns@goldelico.com>
+Subject: [PATCH 14/14] MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
+Date:   Tue, 11 Feb 2020 22:41:31 +0100
+Message-Id: <9d300f1bac15ef4a91052973f2ed593dd2513656.1581457290.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1581457290.git.hns@goldelico.com>
 References: <cover.1581457290.git.hns@goldelico.com>
@@ -80,46 +81,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The SW1 button can be used as a simple one-button keyboard
-and is connected to PD17.
-
-Note: SW1 has a second meaning to change the boot sequence
-when pressed while powering on.
+Interrupts should not be specified by interrupt line but by
+gpio parent and reference.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/mips/boot/dts/ingenic/ci20.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/mips/boot/dts/ingenic/ci20.dts | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index b4a820313992..8f9d182566db 100644
+index 8f9d182566db..4bacefa2cfce 100644
 --- a/arch/mips/boot/dts/ingenic/ci20.dts
 +++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -4,6 +4,7 @@
- #include "jz4780.dtsi"
- #include <dt-bindings/clock/ingenic,tcu.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	compatible = "img,ci20", "ingenic,jz4780";
-@@ -25,6 +26,17 @@
- 		       0x30000000 0x30000000>;
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
+@@ -298,7 +298,9 @@ Optional input supply properties:
+ 		rtc@51 {
+ 			compatible = "nxp,pcf8563";
+ 			reg = <0x51>;
+-			interrupts = <110>;
 +
-+		sw1 {
-+			label = "ci20:sw1";
-+			linux,code = <KEY_ENTER>;
-+			gpios = <&gpd 17 GPIO_ACTIVE_HIGH>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
++			interrupt-parent = <&gpf>;
++			interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
+ 		};
+ };
  
 -- 
 2.23.0
