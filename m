@@ -2,44 +2,44 @@ Return-Path: <SRS0=TFca=37=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE92C352A3
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EFCC3B18A
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C162082F
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 636DC206D7
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="e3eznJ+w"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="AqUtzdIg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbgBKVrg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Feb 2020 16:47:36 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.103]:10318 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbgBKVrf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 16:47:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581457653;
+        id S1727347AbgBKVri (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Feb 2020 16:47:38 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:8477 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgBKVrh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 16:47:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581457655;
         s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=RzFvreAROfD8+Za4+h0pzFXVuRYDasxapojPV71TMVg=;
-        b=e3eznJ+wtJPKNaNrmB+qSR9q23uUTrUQEC1aTzJLOtIylddZeOpZk4psPCcM6h31ZZ
-        fTKMDD5hFUjpDT3u/CJ5Btv98zRHt3eIjNLEq5v/9QRKxmMhFkA+JBOIEOmtqebUlOBv
-        peF6U65G6RRRQOrlWp+qWSjL0fbcDVrhUWvAXWafXj/yYFlyG1M6OmL33EcudmMi7pZZ
-        FVLzLWtsggukYks9hSnkfLbUMMB5K//mErwIlqHYOm6Iz+4TsLTO+NKiU4z8ijt2ndgY
-        WDJfIDIwc1/Cie8OPjMb+rch021voYlziPrFAaZggafD0sBwJFCYDEkG9McIfPWdVjBS
-        NY6w==
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=EBfn4aNTLC4vcAvpYGu7o+g5GHVcJfaycvr27j3NIl8=;
+        b=AqUtzdIgT59TofA08IG5WnXUoFaYAX7Zy1RM2oIrtj3MtNHPZLd01+6Gl3JKBCIjXT
+        oZr8MaHM5bJMzF+j3HACYogO48lYK7HBwukZrOhuYuO76dcKbMhNJuttN5FJJ+RTgcS3
+        zcpJHoZIzheYJF3MVgkn6C8owV3i1XVn6ghjcx6LtBO15iH6XPv3UGeVCg9b/Cs9nH6r
+        C1t2ibb5sGilu0bul6q7t6fcVrG74z/NvYRix3vzDtyRlI/7wpZp5p6xq/9JJtvgM8xY
+        yf4gmzWNn8V3kKF/gvVN5NfBMbf48uev9zdTNg+6mxTHvrXaUVM4KYqkistg8XANBUJ/
+        Y70A==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0P2mp10IM"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1BLfZ0EK
+        with ESMTPSA id U06217w1BLfW0EG
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Tue, 11 Feb 2020 22:41:35 +0100 (CET)
+        Tue, 11 Feb 2020 22:41:32 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Paul Cercueil <paul@crapouillou.net>,
         Paul Boddie <paul@boddie.org.uk>,
@@ -67,12 +67,10 @@ Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
         linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
         linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com
-Subject: [PATCH 04/14] MIPS: DTS: jz4780: fix #includes for irq.h and gpio.h
-Date:   Tue, 11 Feb 2020 22:41:21 +0100
-Message-Id: <5cc02bf80a341262362f8c73d9d5d3efde098482.1581457290.git.hns@goldelico.com>
+Subject: [PATCH 00/14] MIPS: Fixes and improvements for CI20 board (JZ4780)
+Date:   Tue, 11 Feb 2020 22:41:17 +0100
+Message-Id: <cover.1581457290.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1581457290.git.hns@goldelico.com>
-References: <cover.1581457290.git.hns@goldelico.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -80,27 +78,52 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The constants from irq.h and gpio.h can be used in the
-jz4780.dtsi and derived DTS like ci20.dts.
+This patch set provides several improvements for the CI20 board:
 
+* suppress warnings from i2c if device is not responding
+* make ingenic-drm found through DT
+* allow davicom dm9000 ethernet controller to use MAC address provided by U-Boot
+* fix #include in jz4780.dtsi
+* configure for loadable kernel modules
+* add DTS for IR sensor and SW1 button
+* configure so that LEDs, IR sensor, SW1 button have drivers
+* fix DTS for ACT8600 PMU and configure driver
+* fix interrupt of nxp,pcf8563
+
+There is another patch set in our queue to add HDMI support on top of this work.
+
+Signed-off-by: Paul Boddie <paul@boddie.org.uk>
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index f928329b034b..112a24deff71 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <dt-bindings/clock/jz4780-cgu.h>
- #include <dt-bindings/dma/jz4780-dma.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	#address-cells = <1>;
+
+Alex Smith (1):
+  MIPS: DTS: CI20: add DT node for IR sensor
+
+H. Nikolaus Schaller (13):
+  i2c: jz4780: suppress txabrt reports for i2cdetect
+  drm: ingenic-drm: add MODULE_DEVICE_TABLE
+  net: davicom: dm9000: allow to pass MAC address through mac_addr
+    module parameter
+  MIPS: DTS: jz4780: fix #includes for irq.h and gpio.h
+  MIPS: CI20: defconfig: configure for supporting modules
+  MIPS: CI20: defconfig: compile leds-gpio driver into the kernel and
+    configure for LED triggers
+  MIPS: DTS: CI20: fix PMU definitions for ACT8600
+  MIPS: CI20: defconfig: configure CONFIG_REGULATOR_ACT8865 for PMU
+  MIPS: DTS: CI20: give eth0_power a defined voltage.
+  MIPS: CI20: defconfig: compile gpio-ir driver
+  MIPS: DTS: CI20: add DT node for SW1 as Enter button
+  MIPS: CI20: defconfig: configure for CONFIG_KEYBOARD_GPIO=m
+  MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
+
+ arch/mips/boot/dts/ingenic/ci20.dts    | 71 ++++++++++++++++++++------
+ arch/mips/boot/dts/ingenic/jz4780.dtsi |  2 +
+ arch/mips/configs/ci20_defconfig       | 21 ++++++++
+ drivers/gpu/drm/ingenic/ingenic-drm.c  |  2 +
+ drivers/i2c/busses/i2c-jz4780.c        |  3 ++
+ drivers/net/ethernet/davicom/dm9000.c  | 42 +++++++++++++++
+ 6 files changed, 125 insertions(+), 16 deletions(-)
+
 -- 
 2.23.0
 
