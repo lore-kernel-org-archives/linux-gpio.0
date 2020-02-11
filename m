@@ -7,40 +7,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCE3C3B188
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2683AC3B18A
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A60DD20873
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F329B20842
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Feb 2020 21:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="s51fYI4E"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bu8KkI9h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbgBKVxh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Feb 2020 16:53:37 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.223]:27397 "EHLO
+        id S1727548AbgBKVxi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Feb 2020 16:53:38 -0500
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:23467 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbgBKVxh (ORCPT
+        with ESMTP id S1727279AbgBKVxh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Feb 2020 16:53:37 -0500
-X-Greylist: delayed 705 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 16:53:36 EST
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1581458015;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=HJKkK+L/+IvQc4t06WFqnt4bWf+FyU8DIYq2eP8LWiA=;
-        b=s51fYI4EvPLeXNxVY0tPMkf89Y7ZX5Mq+04NyMdg2PAUXcJA89U2pb6zpEYf93NMO7
-        BVBeE7nST2oSNPjjoWkj/l2KcNj1ewigi7qeN6XbdnmtfrG2ykhIvOiqQ2aG3mJJCKbz
-        4pJmFb8E5QZnmX/HZbq7f+ZYIwWDEvo34NSdPb7o+qYAVpKG6Yy45P5T9UADZSWj5fhp
-        ZZmP0KU7YU5DMgYag2/iMSAdX6C2TPRTgk+Ks6gwRVt/yA90KmCj43M5bS8/80wSxdgw
-        903Mg1EOxHOqLr4zNEsjuZ9Eilnasgxy2sRj5vxu6aZK1HL8ZBj9dtbX6n5nPM5JjVTh
-        3Naw==
+        bh=l2ioSw/GBEgoEsJDqdX898kUDDw9CYiqWmti4ETUA48=;
+        b=bu8KkI9hIzWf0Pbr1ExLGXwv8IBZGVTFyeEM/F0CQFj1ZkjepEBc/tdSJAI1VYwdiO
+        ItNlMiTzTiTyHBkDE9kov76ydjAdTArST3OAPC093wHH1VDEI2KogUlTQnJSb8/rIeY8
+        kbzok9Cr7lokB1nyDkuFJUPa49bMuwhlUfL1QQZOuBc77KU8Bg70nOs4vBFtuPRW22nw
+        Wq8rCOzP5mM4tarq9WaXYDOAfZuq+uKFqIqyruU3blEonuoj8P2BG7MtiU5GdavpGMKd
+        iyydeyyhF0g0CnBKgWOXlJqV9cLXuu+r0ziKSdw4p7kz7V0PhPkgNa3YJSTNy6u0Bjqh
+        z/iQ==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0P2mp10IM"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1BLfh0EV
+        with ESMTPSA id U06217w1BLfa0EL
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Tue, 11 Feb 2020 22:41:43 +0100 (CET)
+        Tue, 11 Feb 2020 22:41:36 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Paul Cercueil <paul@crapouillou.net>,
         Paul Boddie <paul@boddie.org.uk>,
@@ -68,9 +67,9 @@ Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
         linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
         linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com
-Subject: [PATCH 14/14] MIPS: DTS: CI20: fix interrupt for pcf8563 RTC
-Date:   Tue, 11 Feb 2020 22:41:31 +0100
-Message-Id: <9d300f1bac15ef4a91052973f2ed593dd2513656.1581457290.git.hns@goldelico.com>
+Subject: [PATCH 05/14] MIPS: CI20: defconfig: configure for supporting modules
+Date:   Tue, 11 Feb 2020 22:41:22 +0100
+Message-Id: <b490287210e46565733209197ffdae3bc90137dc.1581457290.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1581457290.git.hns@goldelico.com>
 References: <cover.1581457290.git.hns@goldelico.com>
@@ -81,29 +80,24 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Interrupts should not be specified by interrupt line but by
-gpio parent and reference.
+Not all drivers need to be compiled into the kernel.
+Support building and loading of kernel modules.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/mips/boot/dts/ingenic/ci20.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/mips/configs/ci20_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 8f9d182566db..4bacefa2cfce 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -298,7 +298,9 @@ Optional input supply properties:
- 		rtc@51 {
- 			compatible = "nxp,pcf8563";
- 			reg = <0x51>;
--			interrupts = <110>;
-+
-+			interrupt-parent = <&gpf>;
-+			interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
- 		};
- };
- 
+diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+index be41df2a81fb..e0d3c9d4c2ae 100644
+--- a/arch/mips/configs/ci20_defconfig
++++ b/arch/mips/configs/ci20_defconfig
+@@ -1,4 +1,5 @@
+ # CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_MODULES=y
+ CONFIG_KERNEL_XZ=y
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
 -- 
 2.23.0
 
