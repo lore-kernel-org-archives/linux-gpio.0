@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21574C3B186
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 429CFC352A4
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 Feb 2020 16:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036C820873
+	by mail.kernel.org (Postfix) with ESMTP id 22E6F21739
 	for <linux-gpio@archiver.kernel.org>; Wed, 12 Feb 2020 16:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgBLQBd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728080AbgBLQBd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 12 Feb 2020 11:01:33 -0500
-Received: from mga09.intel.com ([134.134.136.24]:18022 "EHLO mga09.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:37923 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728080AbgBLQBd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1728094AbgBLQBd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 12 Feb 2020 11:01:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 08:01:32 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 08:01:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
-   d="scan'208";a="226830956"
+   d="scan'208";a="237744581"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Feb 2020 08:01:31 -0800
+  by orsmga006.jf.intel.com with ESMTP; 12 Feb 2020 08:01:31 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1j1uSA-0009f6-Mr; Thu, 13 Feb 2020 00:01:30 +0800
-Date:   Thu, 13 Feb 2020 00:00:29 +0800
+        id 1j1uSA-0009fT-OO; Thu, 13 Feb 2020 00:01:30 +0800
+Date:   Thu, 13 Feb 2020 00:00:43 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-asoc-no-base] BUILD SUCCESS
- 24555e9b70352614777d14253771e5e380a51ccb
-Message-ID: <5e44211d./0YD4fyV6DEXQcvx%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-wdt] BUILD SUCCESS
+ 3f308d20b38b9d8597e3227726f05faf0c5be397
+Message-ID: <5e44212b.thgLmhGlLYkw0AW9%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -46,12 +46,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-asoc-no-base
-branch HEAD: 24555e9b70352614777d14253771e5e380a51ccb  sound: soc: wm8903: Cut gpio_base data
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-wdt
+branch HEAD: 3f308d20b38b9d8597e3227726f05faf0c5be397  watchdog: wm831x: Use GPIO descriptor
 
-elapsed time: 2891m
+elapsed time: 2890m
 
-configs tested: 240
+configs tested: 242
 configs skipped: 0
 
 The following configs have been built successfully.
@@ -72,30 +72,29 @@ arm64                             allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 sparc                            allyesconfig
-nds32                             allnoconfig
+m68k                             allmodconfig
+nds32                               defconfig
+riscv                          rv32_defconfig
 m68k                           sun3_defconfig
 s390                             allyesconfig
 sh                          rsk7269_defconfig
 sh                            titan_defconfig
 riscv                               defconfig
-alpha                               defconfig
-openrisc                    or1ksim_defconfig
-sparc64                          allyesconfig
+m68k                       m5475evb_defconfig
+um                           x86_64_defconfig
 microblaze                      mmu_defconfig
 s390                                defconfig
+alpha                               defconfig
 s390                             alldefconfig
 ia64                                defconfig
-nds32                               defconfig
-i386                             alldefconfig
+sparc64                          allmodconfig
 m68k                          multi_defconfig
 um                                  defconfig
-sparc                               defconfig
-xtensa                          iss_defconfig
-m68k                             allmodconfig
+sparc64                           allnoconfig
 mips                      malta_kvm_defconfig
 sparc64                             defconfig
-nios2                         3c120_defconfig
 nios2                         10m50_defconfig
+i386                             alldefconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -105,13 +104,16 @@ ia64                              allnoconfig
 ia64                             allyesconfig
 c6x                              allyesconfig
 c6x                        evmc6678_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
 openrisc                 simple_smp_defconfig
 xtensa                       common_defconfig
+xtensa                          iss_defconfig
 csky                                defconfig
+nds32                             allnoconfig
 h8300                     edosk2674_defconfig
 h8300                    h8300h-sim_defconfig
 h8300                       h8s-sim_defconfig
-m68k                       m5475evb_defconfig
 arc                              allyesconfig
 arc                                 defconfig
 microblaze                    nommu_defconfig
@@ -152,6 +154,8 @@ h8300                randconfig-a001-20200212
 microblaze           randconfig-a001-20200212
 nios2                randconfig-a001-20200212
 sparc64              randconfig-a001-20200212
+h8300                randconfig-a001-20200210
+nios2                randconfig-a001-20200210
 c6x                  randconfig-a001-20200211
 h8300                randconfig-a001-20200211
 microblaze           randconfig-a001-20200211
@@ -279,7 +283,6 @@ riscv                            allmodconfig
 riscv                             allnoconfig
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
 s390                             allmodconfig
 s390                              allnoconfig
 s390                          debug_defconfig
@@ -287,10 +290,9 @@ s390                       zfcpdump_defconfig
 sh                               allmodconfig
 sh                                allnoconfig
 sh                  sh7785lcr_32bit_defconfig
-sparc64                          allmodconfig
-sparc64                           allnoconfig
+sparc                               defconfig
+sparc64                          allyesconfig
 um                             i386_defconfig
-um                           x86_64_defconfig
 x86_64                              fedora-25
 x86_64                                  kexec
 x86_64                                    lkp
