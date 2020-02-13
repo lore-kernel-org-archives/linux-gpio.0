@@ -2,128 +2,92 @@ Return-Path: <SRS0=krvI=4B=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C391C2BA83
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Feb 2020 09:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CF7C2BA83
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0246E20848
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Feb 2020 09:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84AC20873
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OKq3DMly"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="nAfu2JiT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbgBMJr7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Feb 2020 04:47:59 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37556 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgBMJr7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2020 04:47:59 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w15so5808081wru.4
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Feb 2020 01:47:58 -0800 (PST)
+        id S1729588AbgBMKRU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Feb 2020 05:17:20 -0500
+Received: from mail-il1-f171.google.com ([209.85.166.171]:32892 "EHLO
+        mail-il1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729511AbgBMKRU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Feb 2020 05:17:20 -0500
+Received: by mail-il1-f171.google.com with SMTP id s18so4510607iln.0
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Feb 2020 02:17:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WHhqByU1qcpq0o8TX732f3dGHWa1ufmoYT93p3DuujY=;
-        b=OKq3DMlyaU4EgPKOXE6dLrkH0COvse2RVwFlIJp4dfSh3OLIQLmyu03nLadGHUun/q
-         Pz9OKXViWH/dWbaiZHZKG7oB/KNFAhNzIUhHbFJni1P/7YSC8b42bYKQLPles+b4l9L1
-         /B3JA+lDY8SjXBGfFfiu1fmXkwy3AHzGuefCWS6ji7hMe+eQ10x7CDWgncbI6s2Ob1EC
-         GToYvPK3hpVg6/a+7a1vV+RwsUBAhnz6n8+MIWbp6VxUUiHg9Amt9M2rCJ7+eHz2hqCk
-         91jA8Pps5KWfWEo1V1LsVy9VIbU7NW5rFTIuOGACgbhHnh1Vtj/THAPPbixhJQ5Saog+
-         9hKA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nwUeT3lZ8+uh/3kVImJSecB5U2oS2aEfDmRuh4Lgr9Y=;
+        b=nAfu2JiT5pE00DmIrG2ADUntVaTjETs5C16tjokqa8kWu+1/jWLiAz/GSLxNYtKCcn
+         lh7EU50m/ilHUMmX538on3Tu5El3ngwfFAEkd0ZVeoZUjbNm8QiEScdJq2DR4ox2VVXn
+         EB3A1YwRIYiFbOiwduI5AUX50ggK6a9rSmJYNVPUgDF/EBLUfcv42f7Pg6W66vQboIbb
+         8husRXjcbW4n7pD/9w+cDmDY/5636OMW31dIXaMjjEoHGjsTFbaybfVLi/YCT/CccFaG
+         sH8OTodI5+eoxMri4hlGoO2KXFCOVkwsz62eddK+RqYUzO+qRUU3So04lbUXAPTzGYcU
+         MzWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WHhqByU1qcpq0o8TX732f3dGHWa1ufmoYT93p3DuujY=;
-        b=GMvqCX4n3d7525rJ4Z896f7DEELMiWKgmmjQ8ADMj99iGDu2dj4phfxaEu2uy0vtnP
-         YBfMZPxlzE1+yEdmLC766WTkuQ6IPWPNt13ZLKwv32BIDVSn5wbIjUAU4fK6kTt1X6Oq
-         Ns1BWWu5Me6X3xv2E9JkcZ6lrzONFADIyJ5FjE/4RA6YBkTorF2nS3Hq8dsx/4PMgLQ5
-         JZt+d9qUGBbqTfYQjpnYvojs3L9xyIFHQGCg6nagf5OeQrPcePkPwSYrUpc7NuPnfp75
-         ZMuXnrcNkIOkqdZ/qG/s+mZGWvBMqutEchKtHTB/AULAlTqVFkfeqtMAjT1v2TTVcoCR
-         GwdA==
-X-Gm-Message-State: APjAAAVbjoPsKxkBYM4ile+oRJZp63pjfAOYzp31VTT/sz8eQXkpD4SZ
-        ZF2iXAOivrZKJkq0UBgP0xch4Q==
-X-Google-Smtp-Source: APXvYqwBrSSYq7Nsx5y9cJDAtZBIKBoS7Gxij9SoR+Ur1MWRkEQFPHvjNSM6HrWTtQ7TndQFE2483A==
-X-Received: by 2002:a5d:61c2:: with SMTP id q2mr19981421wrv.425.1581587277177;
-        Thu, 13 Feb 2020 01:47:57 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
-        by smtp.gmail.com with ESMTPSA id p11sm2171207wrn.40.2020.02.13.01.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 01:47:56 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [GIT PULL] gpio: updates for v5.7 part1
-Date:   Thu, 13 Feb 2020 10:47:54 +0100
-Message-Id: <20200213094754.17808-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nwUeT3lZ8+uh/3kVImJSecB5U2oS2aEfDmRuh4Lgr9Y=;
+        b=ucZrwJPk+4zloM8HA9vs4oIeIQqmw4VWWDT0X2gU5++mGFKWHe5EeSMAJHXhlxOz26
+         Zzr7u31+4smEHUgJmWJ9oaTXhKXORWbrhf4rEueSemcIUQrWcAx9KgibXxdo86x75XDp
+         qGaqBs8MG4nt0qFpgyZKOqWb32zc8V/QZa3JJWnHwGX6+q6M0AsdOKJT6iZv7GoSKWjE
+         ueuPBnJwrnADMGOcMmS+pAKPtjqlUhOGYtDSsPp6MDvqj3D4hrxWpOlB4Q69OANSCc+v
+         68/R91wN6M6xJC3lK2XDnPHihbrTWh0cQLFm0+gO6b1rdHbfREX0u8hrV7iCY7+D5Mk+
+         LbfQ==
+X-Gm-Message-State: APjAAAWD86H0pXYvRl6v/dS/9WX/2jMAzHIy02vdjJ0bjVXCoa6ToENP
+        KpSTUodxeaFR0r8fVpjxUdmzJd+4VEfYgWnTN7Wa0A==
+X-Google-Smtp-Source: APXvYqwm3800NEDuGSb7mJP2UBpbBac/mst3rHUthaJqwd8JXJHoFRTum6oFnX+3XgAujz/Z0xV2C+SFfvqFqj0jDlY=
+X-Received: by 2002:a05:6e02:ea9:: with SMTP id u9mr15400950ilj.40.1581589039611;
+ Thu, 13 Feb 2020 02:17:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200212074243.GA17928@laureti-dev> <CAMRc=Mdj6whafFQ9KN+gi8HhKCSfkhGtqhO-+AM+3JEb5MCQPA@mail.gmail.com>
+ <CAMRc=Mdcg2hp0VUsQHO2kW_uTiDAvDTCckad9D5Ja002wn1LAA@mail.gmail.com> <20200213101542.GA16222@laureti-dev>
+In-Reply-To: <20200213101542.GA16222@laureti-dev>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 13 Feb 2020 11:17:08 +0100
+Message-ID: <CAMRc=McPTNKo+J3s3h9NAr9s1eCOsd_oUu9jRLTkfKH2gfBgXw@mail.gmail.com>
+Subject: Re: [libgpiod] consider changing the license of the C++ bindings
+To:     Helmut Grohne <helmut.grohne@intenta.de>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bartekgola@gmail.com>,
+        Kent Gibson <warthog618@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+czw., 13 lut 2020 o 11:15 Helmut Grohne <helmut.grohne@intenta.de> napisa=
+=C5=82(a):
+>
+> On Wed, Feb 12, 2020 at 01:58:40PM +0100, Bartosz Golaszewski wrote:
+> > one more thing that's unclear to me: I found this post[1] on the eigen
+> > mailing list and started wondering: what makes MPL2 better than LGPL3?
+> ...
+> > [1] https://listengine.tuxfamily.org/lists.tuxfamily.org/eigen/2008/02/=
+msg00003.html
+>
+> Thank you for pointing me to this. I mostly looked at the LGPL-2.1 and
+> overlooked the fact that libgpiod already uses the "later version"
+> language permitting use of LGPL-3. Indeed, the situation is much better
+> for LGPL-3 due to precisely the paragraphs referenced in that mail.
+>
+> Thank you
+>
+> Helmut
 
-Linus,
+Does explicit relicensing to LGPL-3 make sense to avoid any potential confu=
+sion?
 
-as discussed this is the pull-request containing the line watch ioctl()
-as well as a couple patches picked up during the merge window. Details
-are in the signed tag. Please pull.
-
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v5.7-part1
-
-for you to fetch changes up to 33f0c47b8fb4724792b16351a32b24902a5d3b07:
-
-  tools: gpio: implement gpio-watch (2020-02-12 12:05:47 +0100)
-
-----------------------------------------------------------------
-gpio updates for v5.7 part 1
-
-- make irqs optional in gpio-pxa
-- improve the logic behind the get() and set() callbacks in gpio-wcd934x
-- add new kfifo helpers (acked by kfifo maintainer)
-- rework the locking mechanism for lineevent kfifo
-- implement a new ioctl() for watching changes on GPIO lines
-
-----------------------------------------------------------------
-Axel Lin (2):
-      gpio: wcd934x: Don't change gpio direction in wcd_gpio_set
-      gpio: wcd934x: Fix logic of wcd_gpio_get
-
-Bartosz Golaszewski (7):
-      kfifo: provide noirqsave variants of spinlocked in and out helpers
-      kfifo: provide kfifo_is_empty_spinlocked()
-      gpiolib: rework the locking mechanism for lineevent kfifo
-      gpiolib: emit a debug message when adding events to a full kfifo
-      gpiolib: provide a dedicated function for setting lineinfo
-      gpiolib: add new ioctl() for monitoring changes in line info
-      tools: gpio: implement gpio-watch
-
-Lubomir Rintel (1):
-      gpio: pxa: Avoid a warning when gpio0 and gpio1 IRQS are not there
-
- drivers/gpio/gpio-pxa.c     |   4 +-
- drivers/gpio/gpio-wcd934x.c |   9 +-
- drivers/gpio/gpiolib.c      | 350 ++++++++++++++++++++++++++++++++++----------
- drivers/gpio/gpiolib.h      |   1 +
- include/linux/kfifo.h       |  73 +++++++++
- include/uapi/linux/gpio.h   |  30 ++++
- tools/gpio/.gitignore       |   1 +
- tools/gpio/Build            |   1 +
- tools/gpio/Makefile         |  11 +-
- tools/gpio/gpio-watch.c     |  99 +++++++++++++
- 10 files changed, 493 insertions(+), 86 deletions(-)
- create mode 100644 tools/gpio/gpio-watch.c
+Bart
