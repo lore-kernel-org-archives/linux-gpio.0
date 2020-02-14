@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B00C3B1B9
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91C9C3B1B9
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695522086A
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8860E2086A
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581704519;
-	bh=Wg6DfDmhJX8CmKYfKrG4vk4WEruzi4uSKrwmTAYfZMM=;
+	s=default; t=1581704759;
+	bh=3pIb4yfT4IjHSbrhI4mKZgerReA1bKjGWWVF/yKGFvU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k5HdeZMgZZ1If19wq0HoSimgLif9oEbE4lyVRwEaVhPlqfgykHi4brQ2In4PxRPsv
-	 B6g32t/BVvtdId2gp/QfGkomGUE1aiPUWhiVMkRjNj8OfVCfIGRKMvcTrsA3zLxaBa
-	 XuHn7hSUHljYq9c1xc/kLm9r3mRTRMe/spOEe44E=
+	b=n7iql8aqk2tTs3uDEllPTB+p+GGx83tL1eJx7V0cKq/APG0ol6HgtbMQwGkoN4OxS
+	 d4Hih82hyqk+T5JsYrC0/nbHFd8CTR/1EWV/54gku5rbvHbcBfJ3NYdmzK5gNsIgQY
+	 gLph38GA9k6IvWcJW9e43iVTz5uHLPgbLKj201tw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbgBNPtf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 14 Feb 2020 10:49:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52610 "EHLO mail.kernel.org"
+        id S1729702AbgBNPtG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:49:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730008AbgBNPte (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:34 -0500
+        id S1729661AbgBNPtF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E79324654;
-        Fri, 14 Feb 2020 15:49:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60093217F4;
+        Fri, 14 Feb 2020 15:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695374;
-        bh=Wg6DfDmhJX8CmKYfKrG4vk4WEruzi4uSKrwmTAYfZMM=;
+        s=default; t=1581695345;
+        bh=3pIb4yfT4IjHSbrhI4mKZgerReA1bKjGWWVF/yKGFvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xYFqkP2GHBdiFlw0aKanFboibn5fMyeY3t64fxMUBycQ4t3g12V2tpLUCU9SXqSDw
-         wpzAhllkaeLaw4QD2gBVgYsr6sefmmmFykQhrdw196qjNPY70r4+218iDOehwIwoAc
-         gWDhdHslQeKqELmoYhsluO23BEjZvZ4PZvY8rN4s=
+        b=UjrOGllDdQ+j1+HGlpIkcCXtNfpCOQJJuj0ziaCxl3+/t0TjtU8TrAlac56mHVYtK
+         ybvzc69TDWXvCe/4tUnVn3jg6v2DxPISc8GQ0f6WapaS6oVWKNi8Z3eSS5airpT/eU
+         Tdp4RRlFIn4ld0dHaTnFPkxhneaDbCKHMrz9qjxQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 030/542] pinctrl: sh-pfc: r8a77965: Fix DU_DOTCLKIN3 drive/bias control
-Date:   Fri, 14 Feb 2020 10:40:22 -0500
-Message-Id: <20200214154854.6746-30-sashal@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 008/542] pinctrl: baytrail: Allocate IRQ chip dynamic
+Date:   Fri, 14 Feb 2020 10:40:00 -0500
+Message-Id: <20200214154854.6746-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -58,51 +58,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit a34cd9dfd03fa9ec380405969f1d638bc63b8d63 ]
+[ Upstream commit 539d8bde72c22d760013bf81436d6bb94eb67aed ]
 
-R-Car Gen3 Hardware Manual Errata for Rev. 2.00 of October 24, 2019
-changed the configuration bits for drive and bias control for the
-DU_DOTCLKIN3 pin on R-Car M3-N, to match the same pin on R-Car H3.
-Update the driver to reflect this.
+Keeping the IRQ chip definition static shares it with multiple instances
+of the GPIO chip in the system. This is bad and now we get this warning
+from GPIO library:
 
-After this, the handling of drive and bias control for the various
-DU_DOTCLKINx pins is consistent across all of the R-Car H3, M3-W,
-M3-W+, and M3-N SoCs.
+"detected irqchip that is shared with multiple gpiochips: please fix the driver."
 
-Fixes: 86c045c2e4201e94 ("pinctrl: sh-pfc: r8a77965: Replace DU_DOTCLKIN2 by DU_DOTCLKIN3")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191113101653.28428-1-geert+renesas@glider.be
+Hence, move the IRQ chip definition from being driver static into the struct
+intel_pinctrl. So a unique IRQ chip is used for each GPIO chip instance.
+
+Fixes: 9f573b98ca50 ("pinctrl: baytrail: Update irq chip operations")
+Depends-on: ca8a958e2acb ("pinctrl: baytrail: Pass irqchip when adding gpiochip")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 8bdf33c807f6c..6616f5210b9d9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -5998,7 +5998,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ PIN_DU_DOTCLKIN1,    0, 2 },	/* DU_DOTCLKIN1 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL12", 0xe6060330) {
--		{ PIN_DU_DOTCLKIN3,   28, 2 },	/* DU_DOTCLKIN3 */
-+		{ PIN_DU_DOTCLKIN3,   24, 2 },	/* DU_DOTCLKIN3 */
- 		{ PIN_FSCLKST,        20, 2 },	/* FSCLKST */
- 		{ PIN_TMS,             4, 2 },	/* TMS */
- 	} },
-@@ -6254,8 +6254,8 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[31] = PIN_DU_DOTCLKIN1,	/* DU_DOTCLKIN1 */
- 	} },
- 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
--		[ 0] = PIN_DU_DOTCLKIN3,	/* DU_DOTCLKIN3 */
--		[ 1] = SH_PFC_PIN_NONE,
-+		[ 0] = SH_PFC_PIN_NONE,
-+		[ 1] = PIN_DU_DOTCLKIN3,	/* DU_DOTCLKIN3 */
- 		[ 2] = PIN_FSCLKST,		/* FSCLKST */
- 		[ 3] = PIN_EXTALR,		/* EXTALR*/
- 		[ 4] = PIN_TRST_N,		/* TRST# */
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 55141d5de29e6..72ffd19448e50 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -107,6 +107,7 @@ struct byt_gpio_pin_context {
+ 
+ struct byt_gpio {
+ 	struct gpio_chip chip;
++	struct irq_chip irqchip;
+ 	struct platform_device *pdev;
+ 	struct pinctrl_dev *pctl_dev;
+ 	struct pinctrl_desc pctl_desc;
+@@ -1395,15 +1396,6 @@ static int byt_irq_type(struct irq_data *d, unsigned int type)
+ 	return 0;
+ }
+ 
+-static struct irq_chip byt_irqchip = {
+-	.name		= "BYT-GPIO",
+-	.irq_ack	= byt_irq_ack,
+-	.irq_mask	= byt_irq_mask,
+-	.irq_unmask	= byt_irq_unmask,
+-	.irq_set_type	= byt_irq_type,
+-	.flags		= IRQCHIP_SKIP_SET_WAKE,
+-};
+-
+ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_data *data = irq_desc_get_irq_data(desc);
+@@ -1551,8 +1543,15 @@ static int byt_gpio_probe(struct byt_gpio *vg)
+ 	if (irq_rc && irq_rc->start) {
+ 		struct gpio_irq_chip *girq;
+ 
++		vg->irqchip.name = "BYT-GPIO",
++		vg->irqchip.irq_ack = byt_irq_ack,
++		vg->irqchip.irq_mask = byt_irq_mask,
++		vg->irqchip.irq_unmask = byt_irq_unmask,
++		vg->irqchip.irq_set_type = byt_irq_type,
++		vg->irqchip.flags = IRQCHIP_SKIP_SET_WAKE,
++
+ 		girq = &gc->irq;
+-		girq->chip = &byt_irqchip;
++		girq->chip = &vg->irqchip;
+ 		girq->init_hw = byt_gpio_irq_init_hw;
+ 		girq->parent_handler = byt_gpio_irq_handler;
+ 		girq->num_parents = 1;
 -- 
 2.20.1
 
