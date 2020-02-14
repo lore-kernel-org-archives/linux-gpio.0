@@ -2,54 +2,55 @@ Return-Path: <SRS0=1EQs=4C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50ECC3F68F
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 17:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661B8C3B1B4
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09CD24649
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 17:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D95B222C2
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 18:06:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581703106;
-	bh=aubW97k/Xs3s9/rVKeTyIj14taE5kacqXBl/gi0ji2Q=;
+	s=default; t=1581703590;
+	bh=UjBXoZ4H2wamTacoyZSgR2hnuYrr6d0hyjeK4CZeaVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GK+l4+CgB2BuL34K6WRtZLDLQiHt21NcaZxL7cKuh+0SNspeOht65FBeipVBRRFOL
-	 Wis37eXo8Fr83/X8mU7sUYVH/tbE6QSDmPR1HrZqXOqlg1KaQVXR9RgpDVwcT8kEPH
-	 mVs9wpbQqO3dTwdSRzxedw1kDzEpGCs8Ff4sMyFg=
+	b=pUARuUzuAA5L1Iu3Gx0N75rGw5jNK3fu10R4gNX++WZizIsEcpiAeRIQaOADjhwnu
+	 rAHBs08S2w/lrMRYv+PbIZOA300HM8xS6sK7bpe8NMr2KFecuc6etMb/n1ZU1pijNz
+	 YfVdYinwgyV5eoxG94OKTOE/eqD5vEdpAdqdanSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388334AbgBNR6Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:58:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39688 "EHLO mail.kernel.org"
+        id S1731646AbgBNPyu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:54:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388146AbgBNP5K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:57:10 -0500
+        id S1731640AbgBNPyu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CEFB24688;
-        Fri, 14 Feb 2020 15:57:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 798662465D;
+        Fri, 14 Feb 2020 15:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695830;
-        bh=aubW97k/Xs3s9/rVKeTyIj14taE5kacqXBl/gi0ji2Q=;
+        s=default; t=1581695689;
+        bh=UjBXoZ4H2wamTacoyZSgR2hnuYrr6d0hyjeK4CZeaVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YU6dYAJcfbcYDWQrS+IPtnMnzHsq1DPeF3jrAUD6jhb0P6g5ZIv8kUiC01MAw5+ht
-         z0W1NgswLw3GYETIboUL16jbnRY7qt1+gRiD9Gaoc9A7fHMlq6ywhrhSvwUcZR+R5b
-         JFdzZF3aGXILrS0W8sOv/9/N5ivI2VtcjpOHtrBY=
+        b=s360V9rvJRMs77Q5Cz6WDjdGmwO0u5K6LKPHGlveKAWNne3CeolhMX/qRBGIeaFIN
+         KPEjFCvJo5YcwHCANdyvsamcCJg2WId9D5IV671C7vuteq/iyx0QWEdzbzToHVpZgK
+         KtBDghe0fK5JrZc7pm4hGWGG7WyKKn0ZutApFs5Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kevin Hao <haokexin@gmail.com>, kbuild test robot <lkp@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 383/542] gpio: Fix the no return statement warning
-Date:   Fri, 14 Feb 2020 10:46:15 -0500
-Message-Id: <20200214154854.6746-383-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 273/542] pinctrl: sh-pfc: sh7269: Fix CAN function GPIOs
+Date:   Fri, 14 Feb 2020 10:44:25 -0500
+Message-Id: <20200214154854.6746-273-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,45 +59,179 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Kevin Hao <haokexin@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9c6722d85e92233082da2b3623685bba54d6093e ]
+[ Upstream commit 02aeb2f21530c98fc3ca51028eda742a3fafbd9f ]
 
-In commit 242587616710 ("gpiolib: Add support for the irqdomain which
-doesn't use irq_fwspec as arg") we have changed the return type of
-gpiochip_populate_parent_fwspec_twocell/fourcell() from void to void *,
-but forgot to add a return statement for these two dummy functions.
-Add "return NULL" to fix the build warnings.
+pinmux_func_gpios[] contains a hole due to the missing function GPIO
+definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
+first two CAN outputs.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Kevin Hao <haokexin@gmail.com>
-Link: https://lore.kernel.org/r/20200116095003.30324-1-haokexin@gmail.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+A closer look reveals other issues:
+  - Some functionality is available on alternative pins, but the
+    PINMUX_DATA() entries is using the wrong marks,
+  - Several configurations are missing.
+
+Fix this by:
+  - Renaming CTX0CTX1CTX2_MARK, CRX0CRX1_PJ22_MARK, and
+    CRX0CRX1CRX2_PJ20_MARK to CTX0_CTX1_CTX2_MARK, CRX0_CRX1_PJ22_MARK,
+    resp. CRX0_CRX1_CRX2_PJ20_MARK for consistency with the
+    corresponding enum IDs,
+  - Adding all missing enum IDs and marks,
+  - Use the right (*_PJ2x) variants for alternative pins,
+  - Adding all missing configurations to pinmux_data[],
+  - Adding all missing function GPIO definitions to pinmux_func_gpios[].
+
+See SH7268 Group, SH7269 Group User’s Manual: Hardware, Rev. 2.00:
+  [1] Table 1.4 List of Pins
+  [2] Figure 23.29 Connection Example when Using Channels 0 and 1 as One
+      Channel (64 Mailboxes × 1 Channel) and Channel 2 as One Channel
+      (32 Mailboxes × 1 Channel),
+  [3] Figure 23.30 Connection Example when Using Channels 0, 1, and 2 as
+      One Channel (96 Mailboxes × 1 Channel),
+  [4] Table 48.3 Multiplexed Pins (Port B),
+  [5] Table 48.4 Multiplexed Pins (Port C),
+  [6] Table 48.10 Multiplexed Pins (Port J),
+  [7] Section 48.2.4 Port B Control Registers 0 to 5 (PBCR0 to PBCR5).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-5-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/gpio/driver.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 11 ++++++--
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c   | 39 ++++++++++++++++++---------
+ 2 files changed, 36 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index e2480ef94c559..5dce9c67a961e 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -553,6 +553,7 @@ static inline void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chi
- 						    unsigned int parent_hwirq,
- 						    unsigned int parent_type)
- {
-+	return NULL;
- }
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+index d516e5d488180..b887cc402b712 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+@@ -78,8 +78,15 @@ enum {
+ 	GPIO_FN_WDTOVF,
  
- static inline void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
-@@ -560,6 +561,7 @@ static inline void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *ch
- 						     unsigned int parent_hwirq,
- 						     unsigned int parent_type)
- {
-+	return NULL;
- }
+ 	/* CAN */
+-	GPIO_FN_CTX1, GPIO_FN_CRX1, GPIO_FN_CTX0, GPIO_FN_CTX0_CTX1,
+-	GPIO_FN_CRX0, GPIO_FN_CRX0_CRX1, GPIO_FN_CRX0_CRX1_CRX2,
++	GPIO_FN_CTX2, GPIO_FN_CRX2,
++	GPIO_FN_CTX1, GPIO_FN_CRX1,
++	GPIO_FN_CTX0, GPIO_FN_CRX0,
++	GPIO_FN_CTX0_CTX1, GPIO_FN_CRX0_CRX1,
++	GPIO_FN_CTX0_CTX1_CTX2, GPIO_FN_CRX0_CRX1_CRX2,
++	GPIO_FN_CTX2_PJ21, GPIO_FN_CRX2_PJ20,
++	GPIO_FN_CTX1_PJ23, GPIO_FN_CRX1_PJ22,
++	GPIO_FN_CTX0_CTX1_PJ23, GPIO_FN_CRX0_CRX1_PJ22,
++	GPIO_FN_CTX0_CTX1_CTX2_PJ21, GPIO_FN_CRX0_CRX1_CRX2_PJ20,
  
- #endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
+ 	/* DMAC */
+ 	GPIO_FN_TEND0, GPIO_FN_DACK0, GPIO_FN_DREQ0,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
+index 6cbb18ef77dc0..d20974a55d93a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
+@@ -737,13 +737,12 @@ enum {
+ 	CRX0_MARK, CTX0_MARK,
+ 	CRX1_MARK, CTX1_MARK,
+ 	CRX2_MARK, CTX2_MARK,
+-	CRX0_CRX1_MARK,
+-	CRX0_CRX1_CRX2_MARK,
+-	CTX0CTX1CTX2_MARK,
++	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
++	CRX0_CRX1_CRX2_MARK, CTX0_CTX1_CTX2_MARK,
+ 	CRX1_PJ22_MARK, CTX1_PJ23_MARK,
+ 	CRX2_PJ20_MARK, CTX2_PJ21_MARK,
+-	CRX0CRX1_PJ22_MARK,
+-	CRX0CRX1CRX2_PJ20_MARK,
++	CRX0_CRX1_PJ22_MARK, CTX0_CTX1_PJ23_MARK,
++	CRX0_CRX1_CRX2_PJ20_MARK, CTX0_CTX1_CTX2_PJ21_MARK,
+ 
+ 	/* VDC */
+ 	DV_CLK_MARK,
+@@ -821,6 +820,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(CS3_MARK, PC8MD_001),
+ 	PINMUX_DATA(TXD7_MARK, PC8MD_010),
+ 	PINMUX_DATA(CTX1_MARK, PC8MD_011),
++	PINMUX_DATA(CTX0_CTX1_MARK, PC8MD_100),
+ 
+ 	PINMUX_DATA(PC7_DATA, PC7MD_000),
+ 	PINMUX_DATA(CKE_MARK, PC7MD_001),
+@@ -833,11 +833,12 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(CAS_MARK, PC6MD_001),
+ 	PINMUX_DATA(SCK7_MARK, PC6MD_010),
+ 	PINMUX_DATA(CTX0_MARK, PC6MD_011),
++	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC6MD_100),
+ 
+ 	PINMUX_DATA(PC5_DATA, PC5MD_000),
+ 	PINMUX_DATA(RAS_MARK, PC5MD_001),
+ 	PINMUX_DATA(CRX0_MARK, PC5MD_011),
+-	PINMUX_DATA(CTX0CTX1CTX2_MARK, PC5MD_100),
++	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC5MD_100),
+ 	PINMUX_DATA(IRQ0_PC_MARK, PC5MD_101),
+ 
+ 	PINMUX_DATA(PC4_DATA, PC4MD_00),
+@@ -1289,30 +1290,32 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(LCD_DATA23_PJ23_MARK, PJ23MD_010),
+ 	PINMUX_DATA(LCD_TCON6_MARK, PJ23MD_011),
+ 	PINMUX_DATA(IRQ3_PJ_MARK, PJ23MD_100),
+-	PINMUX_DATA(CTX1_MARK, PJ23MD_101),
++	PINMUX_DATA(CTX1_PJ23_MARK, PJ23MD_101),
++	PINMUX_DATA(CTX0_CTX1_PJ23_MARK, PJ23MD_110),
+ 
+ 	PINMUX_DATA(PJ22_DATA, PJ22MD_000),
+ 	PINMUX_DATA(DV_DATA22_MARK, PJ22MD_001),
+ 	PINMUX_DATA(LCD_DATA22_PJ22_MARK, PJ22MD_010),
+ 	PINMUX_DATA(LCD_TCON5_MARK, PJ22MD_011),
+ 	PINMUX_DATA(IRQ2_PJ_MARK, PJ22MD_100),
+-	PINMUX_DATA(CRX1_MARK, PJ22MD_101),
+-	PINMUX_DATA(CRX0_CRX1_MARK, PJ22MD_110),
++	PINMUX_DATA(CRX1_PJ22_MARK, PJ22MD_101),
++	PINMUX_DATA(CRX0_CRX1_PJ22_MARK, PJ22MD_110),
+ 
+ 	PINMUX_DATA(PJ21_DATA, PJ21MD_000),
+ 	PINMUX_DATA(DV_DATA21_MARK, PJ21MD_001),
+ 	PINMUX_DATA(LCD_DATA21_PJ21_MARK, PJ21MD_010),
+ 	PINMUX_DATA(LCD_TCON4_MARK, PJ21MD_011),
+ 	PINMUX_DATA(IRQ1_PJ_MARK, PJ21MD_100),
+-	PINMUX_DATA(CTX2_MARK, PJ21MD_101),
++	PINMUX_DATA(CTX2_PJ21_MARK, PJ21MD_101),
++	PINMUX_DATA(CTX0_CTX1_CTX2_PJ21_MARK, PJ21MD_110),
+ 
+ 	PINMUX_DATA(PJ20_DATA, PJ20MD_000),
+ 	PINMUX_DATA(DV_DATA20_MARK, PJ20MD_001),
+ 	PINMUX_DATA(LCD_DATA20_PJ20_MARK, PJ20MD_010),
+ 	PINMUX_DATA(LCD_TCON3_MARK, PJ20MD_011),
+ 	PINMUX_DATA(IRQ0_PJ_MARK, PJ20MD_100),
+-	PINMUX_DATA(CRX2_MARK, PJ20MD_101),
+-	PINMUX_DATA(CRX0CRX1CRX2_PJ20_MARK, PJ20MD_110),
++	PINMUX_DATA(CRX2_PJ20_MARK, PJ20MD_101),
++	PINMUX_DATA(CRX0_CRX1_CRX2_PJ20_MARK, PJ20MD_110),
+ 
+ 	PINMUX_DATA(PJ19_DATA, PJ19MD_000),
+ 	PINMUX_DATA(DV_DATA19_MARK, PJ19MD_001),
+@@ -1663,12 +1666,24 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+ 	GPIO_FN(WDTOVF),
+ 
+ 	/* CAN */
++	GPIO_FN(CTX2),
++	GPIO_FN(CRX2),
+ 	GPIO_FN(CTX1),
+ 	GPIO_FN(CRX1),
+ 	GPIO_FN(CTX0),
+ 	GPIO_FN(CRX0),
++	GPIO_FN(CTX0_CTX1),
+ 	GPIO_FN(CRX0_CRX1),
++	GPIO_FN(CTX0_CTX1_CTX2),
+ 	GPIO_FN(CRX0_CRX1_CRX2),
++	GPIO_FN(CTX2_PJ21),
++	GPIO_FN(CRX2_PJ20),
++	GPIO_FN(CTX1_PJ23),
++	GPIO_FN(CRX1_PJ22),
++	GPIO_FN(CTX0_CTX1_PJ23),
++	GPIO_FN(CRX0_CRX1_PJ22),
++	GPIO_FN(CTX0_CTX1_CTX2_PJ21),
++	GPIO_FN(CRX0_CRX1_CRX2_PJ20),
+ 
+ 	/* DMAC */
+ 	GPIO_FN(TEND0),
 -- 
 2.20.1
 
