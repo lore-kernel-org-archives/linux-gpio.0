@@ -2,109 +2,236 @@ Return-Path: <SRS0=1EQs=4C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9E4C2BA83
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 16:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F31C3B1A5
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 16:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C72CF2187F
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 16:39:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Amj+zpwn"
+	by mail.kernel.org (Postfix) with ESMTP id E2102217F4
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Feb 2020 16:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581698419;
+	bh=CGu7tBO353P7Ff+y9HIraxw5h4GN5dJ6yvrZg2/OjNo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=PitLLyUl+BeLigbTdggLB3o8SIYUBFt7ibFXT1NmWFIiFhxltfR1DxNeBuOCvC9x4
+	 +V//3H2GUmbdOdGe/p32I/w8xNMF0zq9BMWEgUOe/UJ/Gbx9IO51yF1S9lR+0GUw1+
+	 9RGyUQ5q5iSKvPGYMoVFZmHT2Sx32dC6mt/V8bmk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393913AbgBNQjP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:39:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55622 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2393907AbgBNQjP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Feb 2020 11:39:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581698353;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ejjWyNnsQ4fYjfK0i4jU0/WTc3mIEUoKR3OpTBufYKo=;
-        b=Amj+zpwnEEXyPvBvI3Zqu+eNDggXcfDR/D8NLDJPKlIu1LVMjPNV7iMvEG2vrV4FQRQOGk
-        qmVmytk8q40svJnTvS9Nz+r+KQLETPrLmy+w2eQTkzv5vwotPjehI9jcjLzkGGgNdnbTH6
-        VRBEqYJYKJ9sGZxnaHro8LOFkHvqOVk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-vWas1kg9MGecCh9FP-ZwqQ-1; Fri, 14 Feb 2020 11:39:09 -0500
-X-MC-Unique: vWas1kg9MGecCh9FP-ZwqQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2393316AbgBNQXB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 14 Feb 2020 11:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393304AbgBNQXA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:23:00 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F49F18B9FC2;
-        Fri, 14 Feb 2020 16:39:08 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-121-12.rdu2.redhat.com [10.10.121.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 739ED10021B2;
-        Fri, 14 Feb 2020 16:39:07 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] pinctrl: ingenic: Make unreachable path more robust
-Date:   Fri, 14 Feb 2020 10:37:40 -0600
-Message-Id: <73f0c9915473d9e4b3681fb5cc55144291a43192.1581698101.git.jpoimboe@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E48B24765;
+        Fri, 14 Feb 2020 16:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581697379;
+        bh=CGu7tBO353P7Ff+y9HIraxw5h4GN5dJ6yvrZg2/OjNo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=klbtFeB187/JDYMXpbUbGmIgEFjzaJkL83OGtD26EUHvHdFu6dnKy6lqsIczDAUF3
+         iWW5uFjGl4JXQV89PBZTKBVJKvtp+nOAbVi06WKQMwfJuYCXufrUik6L829U9/Ktrz
+         yRDuG4ID/xj+QGspjEvUPUtDcGf1SDyURDToM/fU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 076/141] pinctrl: sh-pfc: sh7269: Fix CAN function GPIOs
+Date:   Fri, 14 Feb 2020 11:20:16 -0500
+Message-Id: <20200214162122.19794-76-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
+References: <20200214162122.19794-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In the second loop of ingenic_pinconf_set(), it annotates the switch
-default case as unreachable().  The annotation is technically correct,
-because that same case would have resulted in an early return in the
-previous loop.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-However, if a bug were to get introduced later, for example if an
-additional case were added to the first loop without adjusting the
-second loop, it would result in nasty undefined behavior: most likely
-the function's generated code would fall through to the next function.
+[ Upstream commit 02aeb2f21530c98fc3ca51028eda742a3fafbd9f ]
 
-Another issue is that, while objtool normally understands unreachable()
-annotations, there's one special case where it doesn't: when the
-annotation occurs immediately after a 'ret' instruction.  That happens
-to be the case here because unreachable() is immediately before the
-return.
+pinmux_func_gpios[] contains a hole due to the missing function GPIO
+definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
+first two CAN outputs.
 
-So change the unreachable() to BUG() so that the unreachable code, if
-ever executed, would panic instead of introducing undefined behavior.
-This also makes objtool happy.
+A closer look reveals other issues:
+  - Some functionality is available on alternative pins, but the
+    PINMUX_DATA() entries is using the wrong marks,
+  - Several configurations are missing.
 
-This fixes the following objtool warning:
+Fix this by:
+  - Renaming CTX0CTX1CTX2_MARK, CRX0CRX1_PJ22_MARK, and
+    CRX0CRX1CRX2_PJ20_MARK to CTX0_CTX1_CTX2_MARK, CRX0_CRX1_PJ22_MARK,
+    resp. CRX0_CRX1_CRX2_PJ20_MARK for consistency with the
+    corresponding enum IDs,
+  - Adding all missing enum IDs and marks,
+  - Use the right (*_PJ2x) variants for alternative pins,
+  - Adding all missing configurations to pinmux_data[],
+  - Adding all missing function GPIO definitions to pinmux_func_gpios[].
 
-  drivers/pinctrl/pinctrl-ingenic.o: warning: objtool: ingenic_pinconf_se=
-t() falls through to next function ingenic_pinconf_group_set()
+See SH7268 Group, SH7269 Group User’s Manual: Hardware, Rev. 2.00:
+  [1] Table 1.4 List of Pins
+  [2] Figure 23.29 Connection Example when Using Channels 0 and 1 as One
+      Channel (64 Mailboxes × 1 Channel) and Channel 2 as One Channel
+      (32 Mailboxes × 1 Channel),
+  [3] Figure 23.30 Connection Example when Using Channels 0, 1, and 2 as
+      One Channel (96 Mailboxes × 1 Channel),
+  [4] Table 48.3 Multiplexed Pins (Port B),
+  [5] Table 48.4 Multiplexed Pins (Port C),
+  [6] Table 48.10 Multiplexed Pins (Port J),
+  [7] Section 48.2.4 Port B Control Registers 0 to 5 (PBCR0 to PBCR5).
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-5-geert+renesas@glider.be
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 11 ++++++--
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c   | 39 ++++++++++++++++++---------
+ 2 files changed, 36 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-=
-ingenic.c
-index 96f04d121ebd..6b61ac6cd4d2 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -2158,7 +2158,7 @@ static int ingenic_pinconf_set(struct pinctrl_dev *=
-pctldev, unsigned int pin,
- 			break;
-=20
- 		default:
--			unreachable();
-+			BUG();
- 		}
- 	}
-=20
---=20
-2.21.1
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+index 2a0ca8780f0d8..e4caddd443daf 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+@@ -79,8 +79,15 @@ enum {
+ 	GPIO_FN_WDTOVF,
+ 
+ 	/* CAN */
+-	GPIO_FN_CTX1, GPIO_FN_CRX1, GPIO_FN_CTX0, GPIO_FN_CTX0_CTX1,
+-	GPIO_FN_CRX0, GPIO_FN_CRX0_CRX1, GPIO_FN_CRX0_CRX1_CRX2,
++	GPIO_FN_CTX2, GPIO_FN_CRX2,
++	GPIO_FN_CTX1, GPIO_FN_CRX1,
++	GPIO_FN_CTX0, GPIO_FN_CRX0,
++	GPIO_FN_CTX0_CTX1, GPIO_FN_CRX0_CRX1,
++	GPIO_FN_CTX0_CTX1_CTX2, GPIO_FN_CRX0_CRX1_CRX2,
++	GPIO_FN_CTX2_PJ21, GPIO_FN_CRX2_PJ20,
++	GPIO_FN_CTX1_PJ23, GPIO_FN_CRX1_PJ22,
++	GPIO_FN_CTX0_CTX1_PJ23, GPIO_FN_CRX0_CRX1_PJ22,
++	GPIO_FN_CTX0_CTX1_CTX2_PJ21, GPIO_FN_CRX0_CRX1_CRX2_PJ20,
+ 
+ 	/* DMAC */
+ 	GPIO_FN_TEND0, GPIO_FN_DACK0, GPIO_FN_DREQ0,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
+index cfdb4fc177c3e..3df0c0d139d08 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
+@@ -740,13 +740,12 @@ enum {
+ 	CRX0_MARK, CTX0_MARK,
+ 	CRX1_MARK, CTX1_MARK,
+ 	CRX2_MARK, CTX2_MARK,
+-	CRX0_CRX1_MARK,
+-	CRX0_CRX1_CRX2_MARK,
+-	CTX0CTX1CTX2_MARK,
++	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
++	CRX0_CRX1_CRX2_MARK, CTX0_CTX1_CTX2_MARK,
+ 	CRX1_PJ22_MARK, CTX1_PJ23_MARK,
+ 	CRX2_PJ20_MARK, CTX2_PJ21_MARK,
+-	CRX0CRX1_PJ22_MARK,
+-	CRX0CRX1CRX2_PJ20_MARK,
++	CRX0_CRX1_PJ22_MARK, CTX0_CTX1_PJ23_MARK,
++	CRX0_CRX1_CRX2_PJ20_MARK, CTX0_CTX1_CTX2_PJ21_MARK,
+ 
+ 	/* VDC */
+ 	DV_CLK_MARK,
+@@ -824,6 +823,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(CS3_MARK, PC8MD_001),
+ 	PINMUX_DATA(TXD7_MARK, PC8MD_010),
+ 	PINMUX_DATA(CTX1_MARK, PC8MD_011),
++	PINMUX_DATA(CTX0_CTX1_MARK, PC8MD_100),
+ 
+ 	PINMUX_DATA(PC7_DATA, PC7MD_000),
+ 	PINMUX_DATA(CKE_MARK, PC7MD_001),
+@@ -836,11 +836,12 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(CAS_MARK, PC6MD_001),
+ 	PINMUX_DATA(SCK7_MARK, PC6MD_010),
+ 	PINMUX_DATA(CTX0_MARK, PC6MD_011),
++	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC6MD_100),
+ 
+ 	PINMUX_DATA(PC5_DATA, PC5MD_000),
+ 	PINMUX_DATA(RAS_MARK, PC5MD_001),
+ 	PINMUX_DATA(CRX0_MARK, PC5MD_011),
+-	PINMUX_DATA(CTX0CTX1CTX2_MARK, PC5MD_100),
++	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC5MD_100),
+ 	PINMUX_DATA(IRQ0_PC_MARK, PC5MD_101),
+ 
+ 	PINMUX_DATA(PC4_DATA, PC4MD_00),
+@@ -1292,30 +1293,32 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(LCD_DATA23_PJ23_MARK, PJ23MD_010),
+ 	PINMUX_DATA(LCD_TCON6_MARK, PJ23MD_011),
+ 	PINMUX_DATA(IRQ3_PJ_MARK, PJ23MD_100),
+-	PINMUX_DATA(CTX1_MARK, PJ23MD_101),
++	PINMUX_DATA(CTX1_PJ23_MARK, PJ23MD_101),
++	PINMUX_DATA(CTX0_CTX1_PJ23_MARK, PJ23MD_110),
+ 
+ 	PINMUX_DATA(PJ22_DATA, PJ22MD_000),
+ 	PINMUX_DATA(DV_DATA22_MARK, PJ22MD_001),
+ 	PINMUX_DATA(LCD_DATA22_PJ22_MARK, PJ22MD_010),
+ 	PINMUX_DATA(LCD_TCON5_MARK, PJ22MD_011),
+ 	PINMUX_DATA(IRQ2_PJ_MARK, PJ22MD_100),
+-	PINMUX_DATA(CRX1_MARK, PJ22MD_101),
+-	PINMUX_DATA(CRX0_CRX1_MARK, PJ22MD_110),
++	PINMUX_DATA(CRX1_PJ22_MARK, PJ22MD_101),
++	PINMUX_DATA(CRX0_CRX1_PJ22_MARK, PJ22MD_110),
+ 
+ 	PINMUX_DATA(PJ21_DATA, PJ21MD_000),
+ 	PINMUX_DATA(DV_DATA21_MARK, PJ21MD_001),
+ 	PINMUX_DATA(LCD_DATA21_PJ21_MARK, PJ21MD_010),
+ 	PINMUX_DATA(LCD_TCON4_MARK, PJ21MD_011),
+ 	PINMUX_DATA(IRQ1_PJ_MARK, PJ21MD_100),
+-	PINMUX_DATA(CTX2_MARK, PJ21MD_101),
++	PINMUX_DATA(CTX2_PJ21_MARK, PJ21MD_101),
++	PINMUX_DATA(CTX0_CTX1_CTX2_PJ21_MARK, PJ21MD_110),
+ 
+ 	PINMUX_DATA(PJ20_DATA, PJ20MD_000),
+ 	PINMUX_DATA(DV_DATA20_MARK, PJ20MD_001),
+ 	PINMUX_DATA(LCD_DATA20_PJ20_MARK, PJ20MD_010),
+ 	PINMUX_DATA(LCD_TCON3_MARK, PJ20MD_011),
+ 	PINMUX_DATA(IRQ0_PJ_MARK, PJ20MD_100),
+-	PINMUX_DATA(CRX2_MARK, PJ20MD_101),
+-	PINMUX_DATA(CRX0CRX1CRX2_PJ20_MARK, PJ20MD_110),
++	PINMUX_DATA(CRX2_PJ20_MARK, PJ20MD_101),
++	PINMUX_DATA(CRX0_CRX1_CRX2_PJ20_MARK, PJ20MD_110),
+ 
+ 	PINMUX_DATA(PJ19_DATA, PJ19MD_000),
+ 	PINMUX_DATA(DV_DATA19_MARK, PJ19MD_001),
+@@ -1666,12 +1669,24 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+ 	GPIO_FN(WDTOVF),
+ 
+ 	/* CAN */
++	GPIO_FN(CTX2),
++	GPIO_FN(CRX2),
+ 	GPIO_FN(CTX1),
+ 	GPIO_FN(CRX1),
+ 	GPIO_FN(CTX0),
+ 	GPIO_FN(CRX0),
++	GPIO_FN(CTX0_CTX1),
+ 	GPIO_FN(CRX0_CRX1),
++	GPIO_FN(CTX0_CTX1_CTX2),
+ 	GPIO_FN(CRX0_CRX1_CRX2),
++	GPIO_FN(CTX2_PJ21),
++	GPIO_FN(CRX2_PJ20),
++	GPIO_FN(CTX1_PJ23),
++	GPIO_FN(CRX1_PJ22),
++	GPIO_FN(CTX0_CTX1_PJ23),
++	GPIO_FN(CRX0_CRX1_PJ22),
++	GPIO_FN(CTX0_CTX1_CTX2_PJ21),
++	GPIO_FN(CRX0_CRX1_CRX2_PJ20),
+ 
+ 	/* DMAC */
+ 	GPIO_FN(TEND0),
+-- 
+2.20.1
 
