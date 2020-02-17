@@ -1,45 +1,266 @@
-Return-Path: <SRS0=nCsr=4E=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=wphz=4F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27580C2BA83
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Feb 2020 11:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4227CC7619E
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Feb 2020 06:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085FF20857
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Feb 2020 11:18:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DB22070B
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Feb 2020 06:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581920510;
+	bh=rC6oahDiZclQyeUyM7BlELanY3Kd/ZiKCR7pIt7VJfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=L+28HBiUcCdCMPnv+W5jslI4SuJwvq/wdn7B9OJgJcLJm6F1s6WLJNyh83zbVD8fg
+	 Tr/2jjBtc01zm/WiuwsdQ1OTREkY8pUvImR7iYxu4I4AnVf9Ui8VYn1Hx33nijkM6Q
+	 hBrc7gvRmohHjDp6u0aQYWv8ps1lQpl2Yfe+rdYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgBPLSB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 16 Feb 2020 06:18:01 -0500
-Received: from out28-49.mail.aliyun.com ([115.124.28.49]:48826 "EHLO
-        out28-49.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbgBPLSB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Feb 2020 06:18:01 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2415316|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.178744-0.0103207-0.810935;DS=CONTINUE|ham_regular_dialog|0.0875169-0.280183-0.6323;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16367;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.GodzYLk_1581851850;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GodzYLk_1581851850)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Sun, 16 Feb 2020 19:17:38 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@crapouillou.net, linus.walleij@linaro.org,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-Subject: Add missing parts for X1830.
-Date:   Sun, 16 Feb 2020 19:17:06 +0800
-Message-Id: <1581851828-3493-1-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
+        id S1725873AbgBQGVt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Feb 2020 01:21:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725835AbgBQGVs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 17 Feb 2020 01:21:48 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B40A2206F4;
+        Mon, 17 Feb 2020 06:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581920507;
+        bh=rC6oahDiZclQyeUyM7BlELanY3Kd/ZiKCR7pIt7VJfs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l88BFXQFqpgRZOZLijUcaDoSmag2aNGSm/9EW3dkh3N+Zn+CQLNJ4818ZNMomB0Fr
+         vJBWmwJ4MUX1BUwtu5ygj+0Uhk4VZy50uwZc4h5tfqaWVWUfEG0AzmQMWKbyheK1Hg
+         zYR5tcx+JoP/absMmsZ2PJtNKb2kS4PLXheO+Uyk=
+Date:   Mon, 17 Feb 2020 14:21:38 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:PIN CONTROLLER - FREESCALE" <linux-gpio@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>
+Subject: Re: [PATCH] firmware: imx: Align imx SC msg structs to 4
+Message-ID: <20200217062129.GB6790@dragon>
+References: <3a8b6772a1edffdd7cdb54d6d50030b03ba0bebb.1581455751.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a8b6772a1edffdd7cdb54d6d50030b03ba0bebb.1581455751.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add lcd pinctrl driver for Ingenic X1830 SoC.
+On Tue, Feb 11, 2020 at 11:24:33PM +0200, Leonard Crestez wrote:
+> The imx SC api strongly assumes that messages are composed out of
+> 4-bytes words but some of our message structs have sizeof "6" and "7".
+> 
+> This produces many oopses with CONFIG_KASAN=y:
+> 
+> 	BUG: KASAN: stack-out-of-bounds in imx_mu_send_data+0x108/0x1f0
+> 
+> It shouldn't cause an issues in normal use because these structs are
+> always allocated on the stack.
+> 
+> Cc: stable@vger.kernel.org
 
+Should we have a fixes tag and send it for -rc?
+
+Shawn
+
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Reported-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-scu.c               | 8 ++++----
+>  drivers/firmware/imx/misc.c             | 8 ++++----
+>  drivers/firmware/imx/scu-pd.c           | 2 +-
+>  drivers/pinctrl/freescale/pinctrl-scu.c | 4 ++--
+>  drivers/rtc/rtc-imx-sc.c                | 2 +-
+>  drivers/soc/imx/soc-imx-scu.c           | 2 +-
+>  6 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+> index fbef740704d0..b8b2072742a5 100644
+> --- a/drivers/clk/imx/clk-scu.c
+> +++ b/drivers/clk/imx/clk-scu.c
+> @@ -41,16 +41,16 @@ struct clk_scu {
+>  struct imx_sc_msg_req_set_clock_rate {
+>  	struct imx_sc_rpc_msg hdr;
+>  	__le32 rate;
+>  	__le16 resource;
+>  	u8 clk;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct req_get_clock_rate {
+>  	__le16 resource;
+>  	u8 clk;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct resp_get_clock_rate {
+>  	__le32 rate;
+>  };
+>  
+> @@ -82,11 +82,11 @@ struct imx_sc_msg_get_clock_parent {
+>  	struct imx_sc_rpc_msg hdr;
+>  	union {
+>  		struct req_get_clock_parent {
+>  			__le16 resource;
+>  			u8 clk;
+> -		} __packed req;
+> +		} __packed __aligned(4) req;
+>  		struct resp_get_clock_parent {
+>  			u8 parent;
+>  		} resp;
+>  	} data;
+>  };
+> @@ -119,11 +119,11 @@ struct imx_sc_msg_req_clock_enable {
+>  	struct imx_sc_rpc_msg hdr;
+>  	__le16 resource;
+>  	u8 clk;
+>  	u8 enable;
+>  	u8 autog;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
+>  {
+>  	return container_of(hw, struct clk_scu, hw);
+>  }
+> diff --git a/drivers/firmware/imx/misc.c b/drivers/firmware/imx/misc.c
+> index 4b56a587dacd..d073cb3ce699 100644
+> --- a/drivers/firmware/imx/misc.c
+> +++ b/drivers/firmware/imx/misc.c
+> @@ -14,30 +14,30 @@
+>  struct imx_sc_msg_req_misc_set_ctrl {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 ctrl;
+>  	u32 val;
+>  	u16 resource;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_req_cpu_start {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 address_hi;
+>  	u32 address_lo;
+>  	u16 resource;
+>  	u8 enable;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_req_misc_get_ctrl {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 ctrl;
+>  	u16 resource;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_resp_misc_get_ctrl {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 val;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  /*
+>   * This function sets a miscellaneous control value.
+>   *
+>   * @param[in]     ipc         IPC handle
+> diff --git a/drivers/firmware/imx/scu-pd.c b/drivers/firmware/imx/scu-pd.c
+> index b556612207e5..af3ae0087de4 100644
+> --- a/drivers/firmware/imx/scu-pd.c
+> +++ b/drivers/firmware/imx/scu-pd.c
+> @@ -59,11 +59,11 @@
+>  /* SCU Power Mode Protocol definition */
+>  struct imx_sc_msg_req_set_resource_power_mode {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u16 resource;
+>  	u8 mode;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  #define IMX_SCU_PD_NAME_SIZE 20
+>  struct imx_sc_pm_domain {
+>  	struct generic_pm_domain pd;
+>  	char name[IMX_SCU_PD_NAME_SIZE];
+> diff --git a/drivers/pinctrl/freescale/pinctrl-scu.c b/drivers/pinctrl/freescale/pinctrl-scu.c
+> index 73bf1d9f9cc6..23cf04bdfc55 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-scu.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-scu.c
+> @@ -21,16 +21,16 @@ enum pad_func_e {
+>  
+>  struct imx_sc_msg_req_pad_set {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 val;
+>  	u16 pad;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_req_pad_get {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u16 pad;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_resp_pad_get {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 val;
+>  } __packed;
+> diff --git a/drivers/rtc/rtc-imx-sc.c b/drivers/rtc/rtc-imx-sc.c
+> index cf2c12107f2b..a5f59e6f862e 100644
+> --- a/drivers/rtc/rtc-imx-sc.c
+> +++ b/drivers/rtc/rtc-imx-sc.c
+> @@ -35,11 +35,11 @@ struct imx_sc_msg_timer_rtc_set_alarm {
+>  	u8 mon;
+>  	u8 day;
+>  	u8 hour;
+>  	u8 min;
+>  	u8 sec;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  static int imx_sc_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  {
+>  	struct imx_sc_msg_timer_get_rtc_time msg;
+>  	struct imx_sc_rpc_msg *hdr = &msg.hdr;
+> diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
+> index fb70b8a3f7c5..20d37eaeb5f2 100644
+> --- a/drivers/soc/imx/soc-imx-scu.c
+> +++ b/drivers/soc/imx/soc-imx-scu.c
+> @@ -23,11 +23,11 @@ struct imx_sc_msg_misc_get_soc_id {
+>  		} __packed req;
+>  		struct {
+>  			u32 id;
+>  		} resp;
+>  	} data;
+> -} __packed;
+> +} __packed __aligned(4);
+>  
+>  struct imx_sc_msg_misc_get_soc_uid {
+>  	struct imx_sc_rpc_msg hdr;
+>  	u32 uid_low;
+>  	u32 uid_high;
+> -- 
+> 2.17.1
+> 
