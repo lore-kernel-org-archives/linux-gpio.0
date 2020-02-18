@@ -2,192 +2,258 @@ Return-Path: <SRS0=VlQh=4G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEC8C34042
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FA8C34045
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 16:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120CF24656
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E3622527
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 16:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VHjT9YWf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgBRPSy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Feb 2020 10:18:54 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:43490 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbgBRPS2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Feb 2020 10:18:28 -0500
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id 4FJD2200q5USYZQ06FJDNA; Tue, 18 Feb 2020 16:18:26 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-0006yC-R8; Tue, 18 Feb 2020 16:18:13 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-00022y-PY; Tue, 18 Feb 2020 16:18:13 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/5] gpiolib: Add support for GPIO line table lookup
-Date:   Tue, 18 Feb 2020 16:18:09 +0100
-Message-Id: <20200218151812.7816-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200218151812.7816-1-geert+renesas@glider.be>
-References: <20200218151812.7816-1-geert+renesas@glider.be>
+        id S1726463AbgBRQCt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Feb 2020 11:02:49 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41112 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbgBRQCt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Feb 2020 11:02:49 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d11so19936709qko.8
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2020 08:02:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oto09LwYRX6FYX7brDPiPM4cxtWalpt3QASOWsbUoEE=;
+        b=VHjT9YWf16e0vGy+6PMjeXMEGBDrB+6MVzit7ECRRkGRQZNDuJxA4Oh36+Zt3/HD+N
+         2cCxW0yl3EWIW9smgEJE9YkM8Tkzr948mFUsRte0lgzIPFWx+gZQf95TvhsK3abU2QYN
+         UFGebw2AQsPeXCvXxAxNEhkSsuLSJmZs7uhOdPJte+CIlLJqISzSYEQSh+to4xeNBeGK
+         g0OEeUkueFtOyw0LJlb0ImeIwUgo246HTGxcOOujr2EkAeWNTGtehdQCZTHXuUOxrGYV
+         t1kz47nzFboU4WC9eNgCeHOPKO3PnpX4zvccOYjobtSqmq9kMGJyTN4yrFddIuFT7OTR
+         Z4qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oto09LwYRX6FYX7brDPiPM4cxtWalpt3QASOWsbUoEE=;
+        b=g7KxIgfr4iSjOfBn/FKbLIq29sBJM52nDhosc9uWrmkYf6987tKe8+BWg8tZ8bTn4Q
+         xFfQrO7VnsyPcfJag2UdW9LnlVXoVHt8njJVyKoiwvYFSUTOVaZxMqbKau5wFbOAYJH9
+         hbq9B6t9beSJ6e7k4MJkmEIiKaujyGdnk3qq1a4OygQteKVbLS8fgvkiphd9rQatdvW4
+         Kk56RSpcNZUfimBLadctaPx2nB/U4TnZxxjrMu4jk70m0FLUjIQxVAFANR3is7RlIXwW
+         d4XmjYJBu0n0qH+djRSGrJYNZorZDXPXuxCZzOJdqp4fxm/2ZC8qsemFDzLbV05pTbuU
+         4vAQ==
+X-Gm-Message-State: APjAAAXO4j62TWFT2TtmImy6JoX8ZqGxjJsoLFT+Nifv2onF9NwxxSJd
+        nmwyuLTC9WKydUHCgwQAAdc4vJpdPcbIrf9ShzQmxg==
+X-Google-Smtp-Source: APXvYqx1VKVH7TrkVD81e10r+yji5B2W/p4EV6EBOujA2z0DjIBcHZQMiD1AiPiYIdZseFjwJmutWED/nwI7yrJKXiE=
+X-Received: by 2002:a37:8343:: with SMTP id f64mr18705569qkd.21.1582041768811;
+ Tue, 18 Feb 2020 08:02:48 -0800 (PST)
+MIME-Version: 1.0
+References: <1581937039-12964-1-git-send-email-srinivas.neeli@xilinx.com>
+In-Reply-To: <1581937039-12964-1-git-send-email-srinivas.neeli@xilinx.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 18 Feb 2020 17:02:37 +0100
+Message-ID: <CAMpxmJUkyaU_W2nuBVkun=Trxzvfo4+L5FV4kvBK_KqRbY-eng@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: xilinx: Add clock adaptation support
+To:     Srinivas Neeli <srinivas.neeli@xilinx.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        shubhrajyoti.datta@xilinx.com, sgoud@xilinx.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>, git@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently GPIOs can only be referred to by GPIO controller and offset in
-GPIO lookup tables.
+pon., 17 lut 2020 o 11:57 Srinivas Neeli <srinivas.neeli@xilinx.com> napisa=
+=C5=82(a):
+>
+> Add support of clock adaptation for AXI GPIO driver.
+>
+> Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
+> ---
+>  drivers/gpio/gpio-xilinx.c | 105 +++++++++++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 103 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index a9748b5198e6..26753ae58295 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -14,6 +14,8 @@
+>  #include <linux/io.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/slab.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/clk.h>
+>
+>  /* Register Offset Definitions */
+>  #define XGPIO_DATA_OFFSET   (0x0)      /* Data register  */
+> @@ -38,6 +40,7 @@
+>   * @gpio_state: GPIO state shadow register
+>   * @gpio_dir: GPIO direction shadow register
+>   * @gpio_lock: Lock used for synchronization
+> + * @clk: clock resource for this driver
+>   */
+>  struct xgpio_instance {
+>         struct gpio_chip gc;
+> @@ -45,7 +48,8 @@ struct xgpio_instance {
+>         unsigned int gpio_width[2];
+>         u32 gpio_state[2];
+>         u32 gpio_dir[2];
+> -       spinlock_t gpio_lock[2];
+> +       spinlock_t gpio_lock[2];        /* For serializing operations */
+> +       struct clk *clk;
+>  };
+>
+>  static inline int xgpio_index(struct xgpio_instance *chip, int gpio)
+> @@ -255,6 +259,70 @@ static void xgpio_save_regs(struct xgpio_instance *c=
+hip)
+>                        chip->gpio_dir[1]);
+>  }
+>
+> +static int xgpio_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       int ret =3D pm_runtime_get_sync(chip->parent);
+> +
+> +       /*
+> +        * If the device is already active pm_runtime_get() will return 1=
+ on
+> +        * success, but gpio_request still needs to return 0.
+> +        */
+> +       return ret < 0 ? ret : 0;
+> +}
+> +
+> +static void xgpio_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       pm_runtime_put(chip->parent);
+> +}
+> +
+> +static int __maybe_unused xgpio_suspend(struct device *dev)
+> +{
+> +       struct platform_device *pdev =3D to_platform_device(dev);
+> +       int irq =3D platform_get_irq(pdev, 0);
+> +       struct irq_data *data =3D irq_get_irq_data(irq);
+> +
+> +       if (!irqd_is_wakeup_set(data))
+> +               return pm_runtime_force_suspend(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused xgpio_resume(struct device *dev)
+> +{
+> +       struct platform_device *pdev =3D to_platform_device(dev);
+> +       int irq =3D platform_get_irq(pdev, 0);
+> +       struct irq_data *data =3D irq_get_irq_data(irq);
+> +
+> +       if (!irqd_is_wakeup_set(data))
+> +               return pm_runtime_force_resume(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused xgpio_runtime_suspend(struct device *dev)
+> +{
+> +       struct platform_device *pdev =3D to_platform_device(dev);
+> +       struct xgpio_instance *gpio =3D platform_get_drvdata(pdev);
+> +
+> +       clk_disable(gpio->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused xgpio_runtime_resume(struct device *dev)
+> +{
+> +       struct platform_device *pdev =3D to_platform_device(dev);
+> +       struct xgpio_instance *gpio =3D platform_get_drvdata(pdev);
+> +
+> +       return clk_enable(gpio->clk);
+> +}
+> +
+> +static const struct dev_pm_ops xgpio_dev_pm_ops =3D {
+> +       SET_SYSTEM_SLEEP_PM_OPS(xgpio_suspend, xgpio_resume)
+> +       SET_RUNTIME_PM_OPS(xgpio_runtime_suspend,
+> +                          xgpio_runtime_resume, NULL)
+> +};
+> +
+>  /**
+>   * xgpio_of_probe - Probe method for the GPIO device.
+>   * @pdev: pointer to the platform device
+> @@ -323,6 +391,8 @@ static int xgpio_probe(struct platform_device *pdev)
+>         chip->gc.direction_output =3D xgpio_dir_out;
+>         chip->gc.get =3D xgpio_get;
+>         chip->gc.set =3D xgpio_set;
+> +       chip->gc.request =3D xgpio_request;
+> +       chip->gc.free =3D xgpio_free;
+>         chip->gc.set_multiple =3D xgpio_set_multiple;
+>
+>         chip->gc.label =3D dev_name(&pdev->dev);
+> @@ -333,15 +403,45 @@ static int xgpio_probe(struct platform_device *pdev=
+)
+>                 return PTR_ERR(chip->regs);
+>         }
+>
+> +       chip->clk =3D devm_clk_get(&pdev->dev, "s_axi_aclk");
+> +       if (IS_ERR(chip->clk)) {
+> +               if (PTR_ERR(chip->clk) !=3D -ENOENT) {
+> +                       if (PTR_ERR(chip->clk) !=3D -EPROBE_DEFER)
+> +                               dev_err(&pdev->dev, "Input clock not foun=
+d\n");
+> +                       return PTR_ERR(chip->clk);
+> +               }
+> +               /*
+> +                * Clock framework support is optional, continue on
+> +                * anyways if we don't find a matching clock.
+> +                */
 
-Add support for looking them up by line name.
-Rename gpiod_lookup.chip_label to gpiod_lookup.key, to make it clear
-that this field can have two meanings, and update the kerneldoc and
-GPIO_LOOKUP*() macros.
+Why not use devm_clk_get_optional() then?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
-v5:
-  - Add Reviewed-by, Tested-by,
-
-v4:
-  - Add Reviewed-by,
-  - Rename gpiod_lookup.chip_label.
-  - Use U16_MAX instead of (u16)-1,
-
-v3:
-  - New.
----
- drivers/gpio/gpiolib.c       | 22 +++++++++++++++++-----
- include/linux/gpio/machine.h | 15 ++++++++-------
- 2 files changed, 25 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 200c2d2be4b78043..24c02167f9e5472f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4453,7 +4453,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 	if (!table)
- 		return desc;
- 
--	for (p = &table->table[0]; p->chip_label; p++) {
-+	for (p = &table->table[0]; p->key; p++) {
- 		struct gpio_chip *chip;
- 
- 		/* idx must always match exactly */
-@@ -4464,18 +4464,30 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 		if (p->con_id && (!con_id || strcmp(p->con_id, con_id)))
- 			continue;
- 
--		chip = find_chip_by_name(p->chip_label);
-+		if (p->chip_hwnum == U16_MAX) {
-+			desc = gpio_name_to_desc(p->key);
-+			if (desc) {
-+				*flags = p->flags;
-+				return desc;
-+			}
-+
-+			dev_warn(dev, "cannot find GPIO line %s, deferring\n",
-+				 p->key);
-+			return ERR_PTR(-EPROBE_DEFER);
-+		}
-+
-+		chip = find_chip_by_name(p->key);
- 
- 		if (!chip) {
- 			/*
- 			 * As the lookup table indicates a chip with
--			 * p->chip_label should exist, assume it may
-+			 * p->key should exist, assume it may
- 			 * still appear later and let the interested
- 			 * consumer be probed again or let the Deferred
- 			 * Probe infrastructure handle the error.
- 			 */
- 			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
--				 p->chip_label);
-+				 p->key);
- 			return ERR_PTR(-EPROBE_DEFER);
- 		}
- 
-@@ -4506,7 +4518,7 @@ static int platform_gpio_count(struct device *dev, const char *con_id)
- 	if (!table)
- 		return -ENOENT;
- 
--	for (p = &table->table[0]; p->chip_label; p++) {
-+	for (p = &table->table[0]; p->key; p++) {
- 		if ((con_id && p->con_id && !strcmp(con_id, p->con_id)) ||
- 		    (!con_id && !p->con_id))
- 			count++;
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index 1ebe5be05d5f81fa..84c66fbf54fd5811 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -20,8 +20,9 @@ enum gpio_lookup_flags {
- 
- /**
-  * struct gpiod_lookup - lookup table
-- * @chip_label: name of the chip the GPIO belongs to
-- * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
-+ * @key: either the name of the chip the GPIO belongs to, or the GPIO line name
-+ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO, or
-+ *              U16_MAX to indicate that @key is a GPIO line name
-  * @con_id: name of the GPIO from the device's point of view
-  * @idx: index of the GPIO in case several GPIOs share the same name
-  * @flags: bitmask of gpio_lookup_flags GPIO_* values
-@@ -30,7 +31,7 @@ enum gpio_lookup_flags {
-  * functions using platform data.
-  */
- struct gpiod_lookup {
--	const char *chip_label;
-+	const char *key;
- 	u16 chip_hwnum;
- 	const char *con_id;
- 	unsigned int idx;
-@@ -63,17 +64,17 @@ struct gpiod_hog {
- /*
-  * Simple definition of a single GPIO under a con_id
-  */
--#define GPIO_LOOKUP(_chip_label, _chip_hwnum, _con_id, _flags) \
--	GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, 0, _flags)
-+#define GPIO_LOOKUP(_key, _chip_hwnum, _con_id, _flags) \
-+	GPIO_LOOKUP_IDX(_key, _chip_hwnum, _con_id, 0, _flags)
- 
- /*
-  * Use this macro if you need to have several GPIOs under the same con_id.
-  * Each GPIO needs to use a different index and can be accessed using
-  * gpiod_get_index()
-  */
--#define GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, _idx, _flags)  \
-+#define GPIO_LOOKUP_IDX(_key, _chip_hwnum, _con_id, _idx, _flags)         \
- {                                                                         \
--	.chip_label = _chip_label,                                        \
-+	.key = _key,                                                      \
- 	.chip_hwnum = _chip_hwnum,                                        \
- 	.con_id = _con_id,                                                \
- 	.idx = _idx,                                                      \
--- 
-2.17.1
-
+> +               chip->clk =3D NULL;
+> +       }
+> +       status =3D clk_prepare_enable(chip->clk);
+> +       if (status < 0) {
+> +               dev_err(&pdev->dev, "Failed to prepare clk\n");
+> +               return status;
+> +       }
+> +       pm_runtime_enable(&pdev->dev);
+> +       status =3D pm_runtime_get_sync(&pdev->dev);
+> +       if (status < 0)
+> +               goto err_unprepare_clk;
+> +
+>         xgpio_save_regs(chip);
+>
+>         status =3D devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
+>         if (status) {
+>                 dev_err(&pdev->dev, "failed to add GPIO chip\n");
+> -               return status;
+> +               goto err_pm_put;
+>         }
+>
+> +       pm_runtime_put(&pdev->dev);
+>         return 0;
+> +err_pm_put:
+> +       pm_runtime_put(&pdev->dev);
+> +err_unprepare_clk:
+> +       pm_runtime_disable(&pdev->dev);
+> +       clk_unprepare(chip->clk);
+> +       return status;
+>  }
+>
+>  static const struct of_device_id xgpio_of_match[] =3D {
+> @@ -356,6 +456,7 @@ static struct platform_driver xgpio_plat_driver =3D {
+>         .driver         =3D {
+>                         .name =3D "gpio-xilinx",
+>                         .of_match_table =3D xgpio_of_match,
+> +                       .pm =3D &xgpio_dev_pm_ops,
+>         },
+>  };
+>
+> --
+> 2.7.4
+>
