@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035F1C34026
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B183C34042
 	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9ED324649
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F4F24649
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbgBRPS1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726891AbgBRPS1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 18 Feb 2020 10:18:27 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:39528 "EHLO
+Received: from laurent.telenet-ops.be ([195.130.137.89]:39498 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbgBRPS1 (ORCPT
+        with ESMTP id S1726666AbgBRPS1 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Feb 2020 10:18:27 -0500
 Received: from ramsan ([84.195.182.253])
         by laurent.telenet-ops.be with bizsmtp
-        id 4FJE220015USYZQ01FJEv2; Tue, 18 Feb 2020 16:18:25 +0100
+        id 4FJD2200x5USYZQ01FJDuz; Tue, 18 Feb 2020 16:18:25 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-0006yO-UY; Tue, 18 Feb 2020 16:18:13 +0100
+        id 1j44dZ-0006yB-Pw; Tue, 18 Feb 2020 16:18:13 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-000238-Sw; Tue, 18 Feb 2020 16:18:13 +0100
+        id 1j44dZ-00022w-O1; Tue, 18 Feb 2020 16:18:13 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -46,9 +46,9 @@ Cc:     Alexander Graf <graf@amazon.com>,
         linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 5/5] MAINTAINERS: Add GPIO Aggregator section
-Date:   Tue, 18 Feb 2020 16:18:12 +0100
-Message-Id: <20200218151812.7816-6-geert+renesas@glider.be>
+Subject: [PATCH v5 1/5] gpiolib: Add support for gpiochipN-based table lookup
+Date:   Tue, 18 Feb 2020 16:18:08 +0100
+Message-Id: <20200218151812.7816-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200218151812.7816-1-geert+renesas@glider.be>
 References: <20200218151812.7816-1-geert+renesas@glider.be>
@@ -57,10 +57,14 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a maintainership section for the GPIO Aggregator, covering
-documentation and driver source code.
+Currently GPIO controllers can only be referred to by label in GPIO
+lookup tables.
+
+Add support for looking them up by "gpiochipN" name, with "N" the
+corresponding GPIO device's ID number.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
@@ -68,32 +72,42 @@ v5:
   - Add Reviewed-by, Tested-by,
 
 v4:
-  - Drop controversial GPIO repeater,
+  - Add Reviewed-by,
+  - Drop support for legacy sysfs interface based name matching,
+  - Replace complex custom matching by a simple additional check in the
+    existing gpiochip_match_name() function,
+  - Add kerneldoc() for find_chip_by_name(), documenting matching order.
 
 v3:
   - New.
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpio/gpiolib.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 634376400709d6e8..d39f550ab1555a87 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7128,6 +7128,13 @@ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
- F:	drivers/gpio/gpiolib-acpi.c
- F:	drivers/gpio/gpiolib-acpi.h
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4d0106ceeba7bb24..200c2d2be4b78043 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1738,9 +1738,18 @@ static int gpiochip_match_name(struct gpio_chip *chip, void *data)
+ {
+ 	const char *name = data;
  
-+GPIO AGGREGATOR
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/gpio/gpio-aggregator.rst
-+F:	drivers/gpio/gpio-aggregator.c
-+
- GPIO IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
+-	return !strcmp(chip->label, name);
++	return !strcmp(chip->label, name) ||
++	       !strcmp(dev_name(&chip->gpiodev->dev), name);
+ }
+ 
++/**
++ * find_chip_by_name() - Find a specific gpio_chip by name
++ * @name: Name to match
++ *
++ * Return a reference to a gpio_chip that matches the passed name.
++ * This function first tries matching on the gpio_chip's label, followed by
++ * matching on dev_name() of the corresponding gpio_device.
++ */
+ static struct gpio_chip *find_chip_by_name(const char *name)
+ {
+ 	return gpiochip_find((void *)name, gpiochip_match_name);
 -- 
 2.17.1
 
