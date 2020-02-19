@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8BEC34047
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 09:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77340C34050
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 09:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6BBF24672
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 09:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B0F24670
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 09:22:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1QPvypsL"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kN4ndebW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgBSJW0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Feb 2020 04:22:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39631 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbgBSJWZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Feb 2020 04:22:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c84so5898204wme.4
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Feb 2020 01:22:23 -0800 (PST)
+        id S1726750AbgBSJWc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Feb 2020 04:22:32 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35041 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgBSJWb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Feb 2020 04:22:31 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w12so27298918wrt.2
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Feb 2020 01:22:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VfILqk1K8yoP2xSE2um+i6NreaS03PgUUyWkRYE/P00=;
-        b=1QPvypsLACAl0jKeCmtjEj3e2Ud60KrFKki2VdyRd9aKZR++Bapjb+krH1SDvqTx54
-         5+on0pPv6zN5z8LaCwouBhQGhcAjzenmy1vl+fr8txp2xR7h7Vuj3Mcfj1s8b0Mlzh3J
-         /ClvcTFpd8Kj4jOfdzYUcNWSvADx+P5ah+s1D6fjMcu0e/s8aQjjL6VmVJ6NVxVvyxPd
-         qz8mM8ubNRsok4mHN1a9DGr6852IkOgKSKU0LPBgm5cqkD77GWrOBLGzL7pPryBcJGdO
-         xa0ldiLA8uMlR40F+mrK4ezl3fwKMM3weI/PV+a25ciVh7vcRIdjvHq8T+6H/Hq/vVzm
-         507Q==
+        bh=odwKwtP2lE8W97hrRy8NvVzj5zWj2rVZZDM+vhqGNzE=;
+        b=kN4ndebWVxSAl3I2DeNQFdgtH5aq0q9L9+oarqqkG+xsMTE62bhik4iJ5XqnBoF5q/
+         /3bTEIpaKsDjo5fe3hIBVllyXv2UYDc+nPURBs9sRjQZnN0IdlUUrmFd1BJfugsPaXrq
+         mtBPLync0/t3eexaWGxSkfGEnQ92QuvCo3HvszjoF3EV4G5WQezQ//rTaE9SW5AQHwIO
+         zxT6/snlUIoVoAQDU1bx3D8WpRpRfNkO47tIPosDKUPfCxmnBkvkZcJnXxsIoqP8SsTb
+         1sMBgyv4tnBUqj7PzzrodZSdkviZj1l/c17AWmjk1XumhemE5nv3uDZmcQ6jy7gfzabS
+         CI/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VfILqk1K8yoP2xSE2um+i6NreaS03PgUUyWkRYE/P00=;
-        b=AUC8N8TLlyBhJaykis7mw00M461j3KymIDkDS8j9Nrfpe2DZXDRGNTehYCqcyaJfKp
-         k7zB0sGU7RWWcaP5yxOLMY9R4IaIDyupPJlaoJxGgXxAreSNfqN0OQ/fkBVkwRmZOkMN
-         Uo+nEcSFK/8kvy2uCbM+Ba1Chqdp3VZoSu9aomWTmHUJHwZx/iBjFQi7DE0azqZqeRzt
-         wwSSB595TDi1QUp1LcMrYyxpkjyopFQB0ZYI/ndkt2N6fYdnkr5zAprOGOdxrkMr1PYh
-         tZRCrqgTE3ToAuitQxuFiqx12LzFx2uvVaD3mWZ5CNmOlXAfwSkQ74onqUDJkyfJ7VR8
-         +CnQ==
-X-Gm-Message-State: APjAAAX3fh4k1x6BVuPHH0efxAl9jMLJ/dm8o03N9EjVK9tzLyTohKKz
-        e/1sBBT+AZxTygDu3gK1dvhASA==
-X-Google-Smtp-Source: APXvYqzGDi13DVhhCKSM4kQot9bTETdx4VEMmzdXo6DxTwM9QgizGw1gIkl9DpZI9RbueNtqQPnbsw==
-X-Received: by 2002:a7b:c318:: with SMTP id k24mr9260090wmj.54.1582104142489;
-        Wed, 19 Feb 2020 01:22:22 -0800 (PST)
+        bh=odwKwtP2lE8W97hrRy8NvVzj5zWj2rVZZDM+vhqGNzE=;
+        b=Lb7h5MGRnTdkdKKRhTYEPgKFlrMEgmtyTkLgEtEZm2zihRX6Uj5cvcfUD/0RdkORXp
+         XNDWINhNG6W9p3MfhxtYYYxP7NAAA1jOZyicb+hwT8rgxJMNQa9PUVccr3bifZCLT/lP
+         OojhN/tX2h0DmtaJz1slhd+A/QOGYbjpKi13Fvkk8lQRqIyQMQ8ssX+Vw0eXakQa8pJQ
+         0SjIlF+QJxcYAwocrw6A5UWDs/G4tCk+Zzr5ZUIg3L5gJrUjstyeitpwdiabi2m+SKhf
+         mf3N1vUwHjh7qu4QhG5wTEpygs1FmeL9Dm9uH2tnQlErHPDBQiVFgtNjThGohLB+0kbk
+         2+kw==
+X-Gm-Message-State: APjAAAWIpUwCn+Ta5vAXbRNn/+r5ZRcnGDxefdYWSppkN2qCXFXGb2kt
+        YLhHDP49ounZAQ8c20DMNpCvaw==
+X-Google-Smtp-Source: APXvYqzMAsBMU+3D/XofaGr4QgydoNbC5+5IkqGNjXo2HITsljiwnnn5pJgC9o9DjsVBK+fpvaklTw==
+X-Received: by 2002:a5d:6709:: with SMTP id o9mr33982122wru.82.1582104149172;
+        Wed, 19 Feb 2020 01:22:29 -0800 (PST)
 Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id s65sm2172296wmf.48.2020.02.19.01.22.21
+        by smtp.gmail.com with ESMTPSA id s65sm2172296wmf.48.2020.02.19.01.22.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 01:22:21 -0800 (PST)
+        Wed, 19 Feb 2020 01:22:28 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -61,9 +61,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 1/7] nvmem: fix memory leak in error path
-Date:   Wed, 19 Feb 2020 10:22:12 +0100
-Message-Id: <20200219092218.18143-2-brgl@bgdev.pl>
+Subject: [PATCH v3 7/7] nvmem: add a comment about resource management
+Date:   Wed, 19 Feb 2020 10:22:18 +0100
+Message-Id: <20200219092218.18143-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200219092218.18143-1-brgl@bgdev.pl>
 References: <20200219092218.18143-1-brgl@bgdev.pl>
@@ -76,33 +76,31 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We need to free the ida mapping and nvmem struct if the write-protect
-GPIO lookup fails.
+The fact that part of the resources associated with the nvmem resources
+is freed by the release() callback in device_type caused me some
+confusion. Add a comment explaining that to nvmem_register().
 
-Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index ef326f243f36..89974e40d250 100644
+index 40fe5913c264..6e28f3fddf53 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -352,8 +352,11 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	else
- 		nvmem->wp_gpio = gpiod_get_optional(config->dev, "wp",
- 						    GPIOD_OUT_HIGH);
--	if (IS_ERR(nvmem->wp_gpio))
--		return ERR_CAST(nvmem->wp_gpio);
-+	if (IS_ERR(nvmem->wp_gpio)) {
-+		ida_simple_remove(&nvmem_ida, nvmem->id);
-+		kfree(nvmem);
-+		return ERR_PTR(rval);
-+	}
+@@ -397,6 +397,11 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
  
+ 	dev_dbg(&nvmem->dev, "Registering nvmem device %s\n", config->name);
  
- 	kref_init(&nvmem->refcnt);
++	/*
++	 * After calling device_add() we can stop freeing previously
++	 * allocated resources - they'll be freed from nvmem_release()
++	 * when the device's reference count drops to 0.
++	 */
+ 	rval = device_add(&nvmem->dev);
+ 	if (rval)
+ 		goto err_put_device;
 -- 
 2.25.0
 
