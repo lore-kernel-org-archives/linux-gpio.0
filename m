@@ -2,120 +2,84 @@ Return-Path: <SRS0=ab5M=4H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE169C34031
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 01:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503FDC34031
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 02:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D642465D
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 01:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25E95207FD
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Feb 2020 02:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="QTGIrnUK"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TNA6tUof"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgBSBwn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Feb 2020 20:52:43 -0500
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:35503 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbgBSBwn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Feb 2020 20:52:43 -0500
-Received: by mail-pl1-f169.google.com with SMTP id g6so8873989plt.2
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2020 17:52:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=4uPjJJCRp+SB0pozAFRGdWFgxk0Vn/KKHhu8gk6Ht+w=;
-        b=QTGIrnUKl4RtvCoMmKrEk1eGka4IU1pMphGcUjHz7NXhCbUAYygGpfmBzW0JC8C6FO
-         RxPyEp0vbA4NOhaeF89m3JXjcGbQwG1HZFn7JCBvPUBc7yL2g5xM3dByIYF8y6U0rzr0
-         qRB2R3kWVTvpe8MW77KQvF30iG714pqd2EcVMK6oSESrmq5lqxd+WLonuNXFXgsnBlFX
-         rlp8ByyDX6TeiRS9RmZ3noRTMCimEBIDh2dCDY6viwJV24WG6Ut5p1VPW007XnGHrvp/
-         N2QD2B/wjWKAHhS4L6AJ4u7saKtPXlJ9HdyFpq2hMBnYO0LAk3oHfekSXlpaI/9//0VE
-         yL5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=4uPjJJCRp+SB0pozAFRGdWFgxk0Vn/KKHhu8gk6Ht+w=;
-        b=j4YTGYkDl1FXiJIOOOuzRjFAY2jPt1r5SK3H1SBji43H5oKMo5TnAGj06I5OnjSAYs
-         BkplCA12vM5JHE9OylAvUVkpVEff99W0UJCtMyN+P6qGpdYJBHflKrOv6070lxPiJVeR
-         qTiwX61idFzyukn/5XhGstMPoWO4rRMbaVL1PTjPM/o2C95/xBCRTtZRwUV5AM1ih5NL
-         ZLzWy48eIC/vhgYcKlpxPUgXFg7gVlrjF2wIgXT2s6bqrrkd/EwJ8KSeQSK7DIPmMY02
-         zQn+HgzAVnBUo9wQtFT/opqSXppSqymXP0awtJqPnDMTaYjvpxUVA2oNYtG3SsKOvoKi
-         GLfQ==
-X-Gm-Message-State: APjAAAWxQmfMCRlX/1jz64EUPPsv4Bi8hFeYe4y0dJEI4cMgx280y6XD
-        /N8F7RX6c9d+Zc7/RXyE1dHwwir64VJAQw==
-X-Google-Smtp-Source: APXvYqy10TnjEVOJu+W+sTmT7LCRGejTdSSZWZefXp7bVS4hUnC2y3/BZXxx0jq08RXpKxg+YNxK+Q==
-X-Received: by 2002:a17:902:b944:: with SMTP id h4mr23069734pls.92.1582077162064;
-        Tue, 18 Feb 2020 17:52:42 -0800 (PST)
-Received: from [10.0.9.4] ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 70sm229998pgd.28.2020.02.18.17.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 17:52:41 -0800 (PST)
-Message-ID: <5e4c94e9.1c69fb81.f30a4.14e2@mx.google.com>
-Date:   Tue, 18 Feb 2020 17:52:41 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        id S1727936AbgBSCIc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Feb 2020 21:08:32 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39079 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727872AbgBSCIc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Feb 2020 21:08:32 -0500
+X-UUID: c1bc2e3e265b484a86280060ac9c3944-20200219
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=1qzoJ6EEatPElYiOsXSiqLR5375SqMzBtOAuZFX/AiM=;
+        b=TNA6tUofyYcQArXX4MKw0nqvFHDizn8J8XAFUqbi8y1KEeO1o5SZC0BD80UBKZfXArUWX3fU73sNUPQVcI/Sy7iKUDQZOA7hnrTn7jX3uUJLBlGBEZ8VNvulYk+IFvznd0uy2/Ezgv8x7K+jA82Ogk7w0SaOxJhS6HH8c5S6Vy4=;
+X-UUID: c1bc2e3e265b484a86280060ac9c3944-20200219
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 838099783; Wed, 19 Feb 2020 10:08:26 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 19 Feb 2020 10:05:56 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 19 Feb 2020 10:07:52 +0800
+From:   <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v2 2/2] pinctrl: make MediaTek MT6765 pinctrl ready for buidling loadable module
+Date:   Wed, 19 Feb 2020 10:08:22 +0800
+Message-ID: <1582078102-26332-2-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1582078102-26332-1-git-send-email-light.hsieh@mediatek.com>
+References: <1582078102-26332-1-git-send-email-light.hsieh@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: gpio-v5.6-2-13-g53803ecac78b
-X-Kernelci-Report-Type: build
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: for-next
-Subject: linusw/for-next build: 5 builds: 0 failed,
- 5 passed (gpio-v5.6-2-13-g53803ecac78b)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 5F8F33AF66A46C291F16CEF9770660E849AC8E6E373F8FB78901EB26DDD278DC2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next build: 5 builds: 0 failed, 5 passed (gpio-v5.6-2-13-g53803e=
-cac78b)
+RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KVGhpcyBwYXRj
+aCBtYWtlIHBpbmN0cmwtbXQ2NzY1IHJlYWR5IGZvciBidWlsZGluZyBhcyBsb2FkYWJsZSBtb2R1
+bGUuDQoNClNpZ25lZC1vZmYtYnk6IExpZ2h0IEhzaWVoIDxsaWdodC5oc2llaEBtZWRpYXRlay5j
+b20+DQotLS0NCiBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvS2NvbmZpZyAgICAgICAgICB8IDIg
+Ky0NCiBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NjUuYyB8IDQgKysrKw0K
+IDIgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvS2NvbmZpZyBiL2RyaXZlcnMvcGluY3Ry
+bC9tZWRpYXRlay9LY29uZmlnDQppbmRleCA0Y2QxMTA5Li5jNjQ1ZmRiIDEwMDY0NA0KLS0tIGEv
+ZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL0tjb25maWcNCisrKyBiL2RyaXZlcnMvcGluY3RybC9t
+ZWRpYXRlay9LY29uZmlnDQpAQCAtODksNyArODksNyBAQCBjb25maWcgUElOQ1RSTF9NVDI3MTIN
+CiAJc2VsZWN0IFBJTkNUUkxfTVRLDQogDQogY29uZmlnIFBJTkNUUkxfTVQ2NzY1DQotCWJvb2wg
+Ik1lZGlhdGVrIE1UNjc2NSBwaW4gY29udHJvbCINCisJdHJpc3RhdGUgIk1lZGlhdGVrIE1UNjc2
+NSBwaW4gY29udHJvbCINCiAJZGVwZW5kcyBvbiBPRg0KIAlkZXBlbmRzIG9uIEFSTTY0IHx8IENP
+TVBJTEVfVEVTVA0KIAlkZWZhdWx0IEFSTTY0ICYmIEFSQ0hfTUVESUFURUsNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NjUuYyBiL2RyaXZlcnMvcGlu
+Y3RybC9tZWRpYXRlay9waW5jdHJsLW10Njc2NS5jDQppbmRleCA5MDVkYWU4Yy4uMmM1OWQzOSAx
+MDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10Njc2NS5jDQor
+KysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NjUuYw0KQEAgLTYsNiAr
+Niw3IEBADQogICoNCiAgKi8NCiANCisjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQogI2luY2x1
+ZGUgInBpbmN0cmwtbXRrLW10Njc2NS5oIg0KICNpbmNsdWRlICJwaW5jdHJsLXBhcmlzLmgiDQog
+DQpAQCAtMTEwMywzICsxMTA0LDYgQEAgc3RhdGljIGludCBfX2luaXQgbXQ2NzY1X3BpbmN0cmxf
+aW5pdCh2b2lkKQ0KIAlyZXR1cm4gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZtdDY3NjVfcGlu
+Y3RybF9kcml2ZXIpOw0KIH0NCiBhcmNoX2luaXRjYWxsKG10Njc2NV9waW5jdHJsX2luaXQpOw0K
+Kw0KK01PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsNCitNT0RVTEVfREVTQ1JJUFRJT04oIk1lZGlh
+VGVrIE1UNjc2NSBQaW5jdHJsIERyaXZlciIpOw0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/gpio-v5.6-2-13-g53803ecac78b/
-
-Tree: linusw
-Branch: for-next
-Git Describe: gpio-v5.6-2-13-g53803ecac78b
-Git Commit: 53803ecac78bbabfdd65f5cb789e46660fa63900
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 5 unique architectures
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----
-For more info write to <info@kernelci.org>
