@@ -2,100 +2,106 @@ Return-Path: <SRS0=wABQ=4I=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E528FC11D00
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 09:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BEFC11D07
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 10:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7EF024673
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 09:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582190243;
-	bh=bWixAGMKU8jAr6IWwbDseU4VCSvdbKE6KK8Sbxd6ZgQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=TvDOyEaQ7tqSDatQcerx1LvlvYY6BnQEIc1cagqvWW1a9ZhkNHCd/mfK16legn1Sr
-	 y6uCA8AuM3k4ahV5FlpwT0d0M+zoPbQ1jpmsbCvKLkQ6OChH6s0YJBymjYzoQYpyJ3
-	 6WYjkCuYwdC4Z/JlwR25C4fvVUnMadO+f9Ayt/LM=
+	by mail.kernel.org (Postfix) with ESMTP id 20F1F24673
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 10:01:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="wzgL+FZr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbgBTJRX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Feb 2020 04:17:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726756AbgBTJRX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:17:23 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40A6A24654;
-        Thu, 20 Feb 2020 09:17:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582190242;
-        bh=bWixAGMKU8jAr6IWwbDseU4VCSvdbKE6KK8Sbxd6ZgQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oJYUJB6wiSoeEmvNcEfS3X7VfOLuHVjdjpsoUFRkT/spgki8coClO8V4oD4Dal1bU
-         JiDCIS1NSjQvu9qOYE1c8wHBlgz1p7hfeOA4hnjgAmI3ENkHLFMEH2DjofD322hQ3z
-         CCAioEScjF2KXmXZ8Kk9QFf2wlc4rC8O0Tes1TdQ=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j4hxQ-006gyh-Gj; Thu, 20 Feb 2020 09:17:20 +0000
+        id S1727695AbgBTKBs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Feb 2020 05:01:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37908 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727655AbgBTKBs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Feb 2020 05:01:48 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a9so1325785wmj.3
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Feb 2020 02:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Tb5z2UeOLZl/UqO+U9twmLjCGpyhePDzuQ8mmkofF+4=;
+        b=wzgL+FZrc/X+hzZaF7lsn0YjEKYkeepxbRUqFbY9Zuc606QNHiesAFPsYD9Xxt+yZl
+         SPBY4XkW/FfQcIvxmma6uJss/8oIaVkzApUSRkJm/JAb5s+KPtsn59hl+QQPRdIWnmF4
+         U5BO+JM99SUUZy2CZG5B8NH04hBL1LIFBNejeo11Z831wsS7Kvxi/TG65UXiPwoH13wO
+         fJyIIbSPRb3MtgwU8+b3vTSaxrZQQwxK5P8Vw75xJ6LosdFx/TbcjBe2eVnh+VRXt30P
+         xFFo93zGWPSmBBoSq/v358GAMQo1S7mdUwpBDNQVjasa5Jlur6rEA6ncf9gB0UIibDPe
+         URhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Tb5z2UeOLZl/UqO+U9twmLjCGpyhePDzuQ8mmkofF+4=;
+        b=ogJij768dHSFZ/bDhut9iqkyG/fjUocSrZWBc9FQtIvdr2TUzg9E0nd81WSjmgrEge
+         TxHqgaGJjLIYwrKR6gygOtp9D7kIl3LzwjxNKvAvSke9DspbKQ3wyk/3hLsaZyCG1Z6G
+         NbiHoeJjgVzvgXAQ1hJym/fSJElyUuBtQVUq/xxc4BQfOOFBFG/0OF99+5NfYhJvo0uc
+         xdbxp6JZvO+rI2dg5iUICxV1IkZZhsAHuy76dh3mDBtHQ3t7dwbGBZYgTCSniU2+GQYy
+         6mrRRjW/pqogQC2SV8fQ6T7vLCSseVomp6SWSU5smsIVwomUZ9QTsmKSu87wQD0J3i+w
+         2gmw==
+X-Gm-Message-State: APjAAAUREIR9VyPHqQGqOQdbaPJ1kNaNKMg2ABci4xZgcUTPIl2iUP7g
+        TpoHeFKwMlNf6g71oK77s6T8CQ==
+X-Google-Smtp-Source: APXvYqw0fTH4sWjn5ENuK3wMDJ5nqpMfOAHhHpEdjOffi/ADk7auSN+FgFBOXvarTSOCZvKpHY3whw==
+X-Received: by 2002:a1c:1fd0:: with SMTP id f199mr3399912wmf.113.1582192906765;
+        Thu, 20 Feb 2020 02:01:46 -0800 (PST)
+Received: from localhost.localdomain (lfbn-nic-1-188-94.w2-15.abo.wanadoo.fr. [2.15.37.94])
+        by smtp.gmail.com with ESMTPSA id z1sm3663496wmf.42.2020.02.20.02.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 02:01:46 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 1/4] nvmem: fix memory leak in error path
+Date:   Thu, 20 Feb 2020 11:01:38 +0100
+Message-Id: <20200220100141.5905-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200220100141.5905-1-brgl@bgdev.pl>
+References: <20200220100141.5905-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Feb 2020 09:17:20 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH v3 2/2] pinctrl: stm32: Add level interrupt support to
- gpio irq chip
-In-Reply-To: <CACRpkdZ7uq4U6GBQQQh=pTLf4wW3KfH3Zrz9z_3ZQgoaJD9Ynw@mail.gmail.com>
-References: <20200219143229.18084-1-alexandre.torgue@st.com>
- <20200219143229.18084-3-alexandre.torgue@st.com>
- <CACRpkdZ7uq4U6GBQQQh=pTLf4wW3KfH3Zrz9z_3ZQgoaJD9Ynw@mail.gmail.com>
-Message-ID: <c991edca3e8925cf0489c0a5676f77b2@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.10
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, alexandre.torgue@st.com, tglx@linutronix.de, jason@lakedaemon.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, marex@denx.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2020-02-20 09:04, Linus Walleij wrote:
-> On Wed, Feb 19, 2020 at 3:32 PM Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
-> 
->> GPIO hardware block is directly linked to EXTI block but EXTI handles
->> external interrupts only on edge. To be able to handle GPIO interrupt 
->> on
->> level a "hack" is done in gpio irq chip: parent interrupt (exti irq 
->> chip)
->> is retriggered following interrupt type and gpio line value.
->> 
->> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
->> Tested-by: Marek Vasut <marex@denx.de>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> If Marc want to merge it with patch 1/2 go ahead!
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I'll queue the whole thing for 5.7.
+We need to free the ida mapping and nvmem struct if the write-protect
+GPIO lookup fails.
 
-Thanks,
+Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/nvmem/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-         M.
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 503da67dde06..948c7ebce340 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -353,8 +353,11 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	else
+ 		nvmem->wp_gpio = gpiod_get_optional(config->dev, "wp",
+ 						    GPIOD_OUT_HIGH);
+-	if (IS_ERR(nvmem->wp_gpio))
++	if (IS_ERR(nvmem->wp_gpio)) {
++		ida_simple_remove(&nvmem_ida, nvmem->id);
++		kfree(nvmem);
+ 		return ERR_CAST(nvmem->wp_gpio);
++	}
+ 
+ 	kref_init(&nvmem->refcnt);
+ 	INIT_LIST_HEAD(&nvmem->cells);
 -- 
-Jazz is not dead. It just smells funny...
+2.25.0
+
