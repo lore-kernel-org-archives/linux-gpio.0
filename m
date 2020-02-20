@@ -2,96 +2,140 @@ Return-Path: <SRS0=wABQ=4I=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA92C11D04
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 12:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29090C11D05
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 13:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF60C24654
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 12:51:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="tGoj+zJj"
+	by mail.kernel.org (Postfix) with ESMTP id 0B41624670
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Feb 2020 13:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgBTMva (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Feb 2020 07:51:30 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:42626 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbgBTMva (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Feb 2020 07:51:30 -0500
-Received: by mail-qv1-f66.google.com with SMTP id dc14so1796132qvb.9
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Feb 2020 04:51:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EYcNKr/N3Y8JXsfApAPcA0o8C1pFsDDtiwpZriI6bFA=;
-        b=tGoj+zJjCFlZ9bhdUn+7m0AmuqV1txOsHJRJBnEg6KA2fyVq+zz/iELWJgMTM24R+J
-         XatNmnPWbmev9wW0oX1X8qPc1uyytzGERnz+7t+htuv8OhQzlaT/mEP180ZemvSlUqTc
-         DYtkKQ8qAfkshrVXLAj9HR6UMkjPQus/rQ6ChK8lkcaX0+nrZQ7KoXewU+Nwva72Pl6n
-         a7OydZO/RoLaPMPYG7+T5OiQGt4kAWA9AshfOVz3jOURd5D4K1AFFR+Z1JUCkworJiz9
-         lvH0Nc5SPZ8m7Ouh9OP1JwUSDVLPgQtH93yYB/x3fQ0DT7dK8OX8QyV/rmWYqfxmNZcJ
-         SLqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EYcNKr/N3Y8JXsfApAPcA0o8C1pFsDDtiwpZriI6bFA=;
-        b=P2mmznEjE/Wejxb1+9bsSoIQli8XV4UyDyk1bDReMu1J9+cT8DIJcbG4dK4M4CxkKT
-         cvCNYNN5vbemh6Lx7Kek7vKouhSBpibdhnkxUPabLXM32JlHE8GNwHiECYkCBoWo+qVG
-         cKIreN/RY3IDIzQ05ny0cIL6GVVGXxIluCZcDQjWBzg5e8NbpGTwSgy074XxM8DYZmZ3
-         3SPXy6CuCr3ewQbE17+cFoG27wU5FpOVKx3DEUOZ6GGm7Qh+rAIQt7e4oqZSunOQq1RY
-         FFq+W5XrQqsG7STLELxjwj+Xk16qDUXCvO7UHBNXjmg55YdXqllxY1m5NQkN7rokN3TH
-         f5kw==
-X-Gm-Message-State: APjAAAVkcIA+CCbhIsn+723IGxGVFpttIOxuXpMBjaQ/HpeqnIjHNN3O
-        KDF1WcJtX8OIqph+9iYSBJCiNrfiIlChGhrUpskw2tYZ
-X-Google-Smtp-Source: APXvYqzt3/u4sLm+8a7c12Ru7REntLJGkgoZmt8TgpKEmEX2TJZHyXdbu5hruKsC4N7eHkriHdxricWluVN6/oEXbJs=
-X-Received: by 2002:ad4:446b:: with SMTP id s11mr25036775qvt.148.1582203089373;
- Thu, 20 Feb 2020 04:51:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20200220100141.5905-1-brgl@bgdev.pl> <20200220100141.5905-3-brgl@bgdev.pl>
- <5970b17a-b29b-154f-033e-6da007d6a289@linaro.org>
-In-Reply-To: <5970b17a-b29b-154f-033e-6da007d6a289@linaro.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 20 Feb 2020 13:51:18 +0100
-Message-ID: <CAMpxmJX5673AmGDwrb=DMUu7=8Xi2VTtWE72F2hgitK9QUt-RA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] gpiolib: use kref in gpio_desc
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727983AbgBTNB7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Feb 2020 08:01:59 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:53474 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbgBTNB7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Feb 2020 08:01:59 -0500
+Received: from ramsan ([84.195.182.253])
+        by laurent.telenet-ops.be with bizsmtp
+        id 511u220065USYZQ0111uY3; Thu, 20 Feb 2020 14:01:58 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j4lSj-000564-VF; Thu, 20 Feb 2020 14:01:53 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j4lSj-0007Lh-To; Thu, 20 Feb 2020 14:01:53 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/2] gpio: of: Extract of_gpiochip_add_hog()
+Date:   Thu, 20 Feb 2020 14:01:48 +0100
+Message-Id: <20200220130149.26283-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200220130149.26283-1-geert+renesas@glider.be>
+References: <20200220130149.26283-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-czw., 20 lut 2020 o 13:05 Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
->
->
->
-> On 20/02/2020 10:01, Bartosz Golaszewski wrote:
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -2798,6 +2798,8 @@ static int gpiod_request_commit(struct gpio_desc =
-*desc, const char *label)
-> >               goto done;
-> >       }
-> >
-> > +     kref_init(&desc->ref);
-> > +
->
-> Should we not decrement refcount on the error path of this function?
->
+Extract the code to add all GPIO hogs of a gpio-hog node into its own
+function, so it can be reused.
 
-On error the descriptor will still be unrequested so there's no point
-in potentially calling gpiod_free(). Also: the next time someone
-requests it and succeeds, we'll set it back to 1.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/gpio/gpiolib-of.c | 49 ++++++++++++++++++++++++++-------------
+ 1 file changed, 33 insertions(+), 16 deletions(-)
 
-Bartosz
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index c6d30f73df078e0b..2b47f93886075294 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -604,6 +604,35 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 	return desc;
+ }
+ 
++/**
++ * of_gpiochip_add_hog - Add all hogs in a hog device node
++ * @chip:	gpio chip to act on
++ * @hog:	device node describing the hogs
++ *
++ * Returns error if it fails otherwise 0 on success.
++ */
++static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
++{
++	enum gpiod_flags dflags;
++	struct gpio_desc *desc;
++	unsigned long lflags;
++	const char *name;
++	unsigned int i;
++	int ret;
++
++	for (i = 0;; i++) {
++		desc = of_parse_own_gpio(hog, chip, i, &name, &lflags, &dflags);
++		if (IS_ERR(desc))
++			break;
++
++		ret = gpiod_hog(desc, name, lflags, dflags);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
+ /**
+  * of_gpiochip_scan_gpios - Scan gpio-controller for gpio definitions
+  * @chip:	gpio chip to act on
+@@ -614,29 +643,17 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+  */
+ static int of_gpiochip_scan_gpios(struct gpio_chip *chip)
+ {
+-	struct gpio_desc *desc = NULL;
+ 	struct device_node *np;
+-	const char *name;
+-	unsigned long lflags;
+-	enum gpiod_flags dflags;
+-	unsigned int i;
+ 	int ret;
+ 
+ 	for_each_available_child_of_node(chip->of_node, np) {
+ 		if (!of_property_read_bool(np, "gpio-hog"))
+ 			continue;
+ 
+-		for (i = 0;; i++) {
+-			desc = of_parse_own_gpio(np, chip, i, &name, &lflags,
+-						 &dflags);
+-			if (IS_ERR(desc))
+-				break;
+-
+-			ret = gpiod_hog(desc, name, lflags, dflags);
+-			if (ret < 0) {
+-				of_node_put(np);
+-				return ret;
+-			}
++		ret = of_gpiochip_add_hog(chip, np);
++		if (ret < 0) {
++			of_node_put(np);
++			return ret;
+ 		}
+ 	}
+ 
+-- 
+2.17.1
+
