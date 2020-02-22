@@ -2,162 +2,178 @@ Return-Path: <SRS0=EAGE=4K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A71FC35671
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Feb 2020 05:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903E9C35677
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Feb 2020 06:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61F242071E
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Feb 2020 05:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582349603;
-	bh=UAynlrotBk0FmHZnSdHsZMAiHJVBUDjojQexsIfluho=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=waQ+Rvt/auuCy3+LmQGkgg+dyU4n4fA6SpG2MpsHUKNEfkIb0nxoq3a8OFSBEw+XU
-	 hix2lMZ8iM8Y3a6kw17TxfhmF6W4W9hfjSOwbrcJeDNuyMdJD0qKZgDpRSga/UgLG5
-	 erWuFYy9atgERZsMs6mOYg6mxj2lLxs2oGNce9xg=
+	by mail.kernel.org (Postfix) with ESMTP id 4F93721741
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Feb 2020 06:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="aorvtRol"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbgBVFdU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 22 Feb 2020 00:33:20 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:58306 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbgBVFdT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Feb 2020 00:33:19 -0500
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 01M5XDb8000801;
-        Sat, 22 Feb 2020 14:33:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 01M5XDb8000801
+        id S1726189AbgBVGFz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 22 Feb 2020 01:05:55 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:42424 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbgBVGFy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Feb 2020 01:05:54 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 01M64cSL007264;
+        Sat, 22 Feb 2020 15:04:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 01M64cSL007264
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1582349594;
-        bh=kfkRB8NqTSB8RfnnWhYO851m+pZCn26htPS02MwccbU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jGpTyMmaQFCA/yAC8SI4sEY5rRsGwV7n37iHBsYx0Tf7yhCGxJurnEkRnYv7mXkEJ
-         JsG/XgCkElNDfWpzULElIwahEskifFcCgfbfMXCevqXYv/LoxA47zlm0vQm2c+wXks
-         9sU0GorFjzp+hiEZTdTagyKsg7jPMB0IirRAzwYH6j1ZvpUe4A//reJSJZAgZdootB
-         2g7WnMlVvqwRfef0X7RYd/XXHwhTzr55mpoceajykax0eZUJhKShxiuBLuEbqxsn9r
-         23cnn4NQdvEhPKtWkgxQp/tWiyQ7DXLBQ2ZGCkxLv13OY12pHAVXycTmv8OGqxec2N
-         bHWw0f1u66WqQ==
-X-Nifty-SrcIP: [209.85.221.175]
-Received: by mail-vk1-f175.google.com with SMTP id w4so1193531vkd.5;
-        Fri, 21 Feb 2020 21:33:14 -0800 (PST)
-X-Gm-Message-State: APjAAAX9u7kSV5E4z26VhT21c5/p6BMSVa0JSalDpoLUTvi30+AlUk11
-        5KHMakTJ92TETGCzaHaUkDF5RruOVSnLL0yU3B0=
-X-Google-Smtp-Source: APXvYqw0koqWOvytLQ0hXmAEc9eS7xUecajG9z93OX8duyLUDb6bva5IL7M/xtzmqsUqDWyYc6mF9iWEJjnMvLa+UjA=
-X-Received: by 2002:a1f:1bc3:: with SMTP id b186mr19356263vkb.96.1582349592746;
- Fri, 21 Feb 2020 21:33:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20200221021002.18795-1-yamada.masahiro@socionext.com>
- <20200221021002.18795-2-yamada.masahiro@socionext.com> <20200221153215.GA9815@bogus>
-In-Reply-To: <20200221153215.GA9815@bogus>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 22 Feb 2020 14:32:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARhXbyUwMwXK=afXLnBVzg_MPv2D=oyn5qWkZtv12zmRg@mail.gmail.com>
-Message-ID: <CAK7LNARhXbyUwMwXK=afXLnBVzg_MPv2D=oyn5qWkZtv12zmRg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: gpio: Convert UniPhier GPIO to json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        s=dec2015msa; t=1582351481;
+        bh=oDf9qz+GZWAPWYmHoFftPILijL8CHYn9USMXC9ZrbE8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aorvtRolf0+JAnTTtXq8CQ3Ht2LYQ+fuE3QYJ+N30aFtxuCa0tSJfmCa+dVyr/gxX
+         CSyctQ50hP9L3j/JsytSH999TqGzNmczoqqYlGEUXX6mwb5M/3Cu2pNOnFMpZxfSk9
+         lGn6L6k9tIkMgbulGh3R6TyzTwJJQYf7mIl7crbD5cHIykiQYHRjHMxA89E4J2bxED
+         CFdnEGy/epKX17gh6SpccBuAf+t20eKFHjDAFbbtBmUE7uRWBJzUdSTCG5OBi8uNgV
+         01a6ubOIhWnuEQXmMYKEMu/6QuXoLsANS6kejVrH66VyawQLipoYZsPzsvIicYFLaK
+         g53w0HXuTIVbg==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v2 3/3] dt-bingings: pinctrl: Convert UniPhier pin controller to json-schema
+Date:   Sat, 22 Feb 2020 15:04:35 +0900
+Message-Id: <20200222060435.971-3-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200222060435.971-1-yamada.masahiro@socionext.com>
+References: <20200222060435.971-1-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
+Convert the UniPhier pin controller binding to DT schema format.
 
-On Sat, Feb 22, 2020 at 12:32 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, 21 Feb 2020 11:10:01 +0900, Masahiro Yamada wrote:
-> > Convert the UniPhier GPIO controller binding to DT schema format.
-> >
-> > I omitted the 'gpio-ranges' property because it is defined in the
-> > dt-schema project (/schemas/gpio/gpio.yaml).
-> >
-> > As of writing, the 'gpio-ranges-group-names' is not defined in that
-> > file despite it is a common property described in
-> > Documentation/devicetree/bindings/gpio/gpio.txt
-> > So, I defined it in this schema.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> > I have a question about the range about 'ngpio'.
-> >
-> >   ngpios:
-> >     minimum: 0
-> >     maximum: 512
-> >
-> > The 'ngpio' property is already defined as 'uint32' in the dt-schema tool:
-> > https://github.com/robherring/dt-schema/blob/master/schemas/gpio/gpio.yaml#L20
-> >
-> > 'uint32' is unsigned, so 'minimum: 0' looks too obvious.
-> >
-> > I cannot omit the minimum because minimum and maximum depend on each other.
-> > I just put a sensible number, 512, in maximum.
-> >
-> > If this range is entirely unneeded, I will delete it.
->
-> This property is generally for when you can have some number less
-> than a maximum number implied by the compatible string.
->
-> If there is really no max (e.g. 2^32 - 1 is valid), then just do
-> 'ngpios: true'
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+In the original .txt file, there is a description:
+The UniPhier pinctrl should be a subnode of a "syscon" compatible node
+
+I did not figure out how to represent (or check) it in dt-schema.
+I just moved it to a comment line in 'examples'.
+If there is a better way, please let me know.
 
 
-What does ': true' mean?
+Changes in v2: None
 
+ .../pinctrl/socionext,uniphier-pinctrl.txt    | 27 ------------
+ .../pinctrl/socionext,uniphier-pinctrl.yaml   | 42 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 43 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
 
-If it is documented somewhere,
-could you point me to the reference?
-
-Even if I remove the 'ngpio' entirely
-from my dt-schema, the 'ngpio' is checked
-correctly.
-
-
-
-
->
-> >
-> >
-> >  .../bindings/gpio/gpio-uniphier.txt           | 51 -----------
-> >  .../gpio/socionext,uniphier-gpio.yaml         | 89 +++++++++++++++++++
-> >  MAINTAINERS                                   |  2 +-
-> >  3 files changed, 90 insertions(+), 52 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> >
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-> Error: Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.example.dts:38.34-35 syntax error
-> FATAL ERROR: Unable to parse input tree
-> scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.example.dt.yaml' failed
-> make[1]: *** [Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.example.dt.yaml] Error 1
-> Makefile:1263: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
->
-> See https://patchwork.ozlabs.org/patch/1241747
-> Please check and re-submit.
-
-OK, I will.
-
-
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+deleted file mode 100644
+index 8173b12138ad..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-UniPhier SoCs pin controller
+-
+-Required properties:
+-- compatible: should be one of the following:
+-    "socionext,uniphier-ld4-pinctrl"  - for LD4 SoC
+-    "socionext,uniphier-pro4-pinctrl" - for Pro4 SoC
+-    "socionext,uniphier-sld8-pinctrl" - for sLD8 SoC
+-    "socionext,uniphier-pro5-pinctrl" - for Pro5 SoC
+-    "socionext,uniphier-pxs2-pinctrl" - for PXs2 SoC
+-    "socionext,uniphier-ld6b-pinctrl" - for LD6b SoC
+-    "socionext,uniphier-ld11-pinctrl" - for LD11 SoC
+-    "socionext,uniphier-ld20-pinctrl" - for LD20 SoC
+-    "socionext,uniphier-pxs3-pinctrl" - for PXs3 SoC
+-
+-Note:
+-The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
+-
+-Example:
+-	soc-glue@5f800000 {
+-		compatible = "socionext,uniphier-pro4-soc-glue",
+-			     "simple-mfd", "syscon";
+-		reg = <0x5f800000 0x2000>;
+-
+-		pinctrl: pinctrl {
+-			compatible = "socionext,uniphier-pro4-pinctrl";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+new file mode 100644
+index 000000000000..f8a93d8680f9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/socionext,uniphier-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: UniPhier SoCs pin controller
++
++maintainers:
++  - Masahiro Yamada <yamada.masahiro@socionext.com>
++
++properties:
++  $nodename:
++    pattern: "pinctrl"
++
++  compatible:
++    enum:
++      - socionext,uniphier-ld4-pinctrl
++      - socionext,uniphier-pro4-pinctrl
++      - socionext,uniphier-sld8-pinctrl
++      - socionext,uniphier-pro5-pinctrl
++      - socionext,uniphier-pxs2-pinctrl
++      - socionext,uniphier-ld6b-pinctrl
++      - socionext,uniphier-ld11-pinctrl
++      - socionext,uniphier-ld20-pinctrl
++      - socionext,uniphier-pxs3-pinctrl
++
++required:
++  - compatible
++
++examples:
++  - |
++    // The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
++
++    soc-glue@5f800000 {
++        compatible = "socionext,uniphier-pro4-soc-glue", "simple-mfd", "syscon";
++        reg = <0x5f800000 0x2000>;
++
++        pinctrl: pinctrl {
++            compatible = "socionext,uniphier-pro4-pinctrl";
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3cb4c8a9107d..920bef1f5308 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2548,7 +2548,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.gi
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/socionext/uniphier.yaml
+ F:	Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
+-F:	Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
++F:	Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+ F:	arch/arm/boot/dts/uniphier*
+ F:	arch/arm/include/asm/hardware/cache-uniphier.h
+ F:	arch/arm/mach-uniphier/
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
