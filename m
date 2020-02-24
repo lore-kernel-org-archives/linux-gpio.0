@@ -2,209 +2,127 @@ Return-Path: <SRS0=epeF=4M=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C211C11D2A
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Feb 2020 09:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD66C11D36
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Feb 2020 13:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D052082E
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Feb 2020 09:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44DF521927
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Feb 2020 13:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="MR4PxrVD"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J8OaXTwY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbgBXJmR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Feb 2020 04:42:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42163 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbgBXJmG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Feb 2020 04:42:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p18so5893333wre.9
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2020 01:42:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=neyVk7RV4OtR4xz1BjORPRhapgH6pG8UY6Ux3fjGOFc=;
-        b=MR4PxrVDnc11dgXc3VKdsrLqF9uj/yQxIojpZo+q77djYlG4zSeosEurwIhQWSE35B
-         nylE3fSNnevJfrjvHDqkg4vBdRlsrPMcFA/qDcKdfOwjhEzcScdcl9yrMkikDlu4vREi
-         H3sQWPNWfo/4/Gr1sMR7gfXYUGYyCSyIa32ZBVhJsH78gnq5Q9qSJysaeKV8whGAgpgx
-         Pb0eHwyIdjlP3fiu/2TU7izxtZIA0lajVoR93lEWMsBPeGRjVeVOeCVmZ6vPLwvyzw7o
-         h2WzV40No0uYN/ec/HB5E8HdS4w8IoVCK94AuO17SCplfuxnh64cbOF3kqkD/v3bo3Ww
-         gY7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=neyVk7RV4OtR4xz1BjORPRhapgH6pG8UY6Ux3fjGOFc=;
-        b=ST9pchsu9Za88AVaPvMpKkmaOPuGuN7/HyT8xsSgaZesOaQrLX01D+A2geRy27xPiP
-         SC6avCAGtG4mAYIirwNw67ycLKAx9Utc6HiQP7Qm7KLtGc79g9pox85utAYv7UTRmezy
-         zjmfc78+Yl7Xlc/oEDyMQ+T+GSbU6M6c7jKSolwmWdb/0ddFMPI2qIXajMvb1i/vtIXh
-         urxSiXIfWTVZ8ci1CX2OjfPglUMx53CjQ3ycABThWRTQ6cBrtonqbAMOBpMQ+anV2oZR
-         VBBjVF9ScLPVr64lPBSJrwAPcPHRoPcjXx6kKKvDsNKoXDwSx9LRdMhPuNxOIJErQBkb
-         Ux7w==
-X-Gm-Message-State: APjAAAVcqEiuhYtg+XEj8PEAt7bQ1pEQp4nWub6OMkQZwPf3CCUfEJU7
-        5k59BrYQKnEc1IaJvidtwxoJWQ==
-X-Google-Smtp-Source: APXvYqxL+aCG2wMJPp+XrNvvfAKcfdqb0x0Dm729ywFQYAHCElqUCZQkzGYMYSOnlsA0AlTLZqOS9g==
-X-Received: by 2002:a5d:4fce:: with SMTP id h14mr71182804wrw.60.1582537324674;
-        Mon, 24 Feb 2020 01:42:04 -0800 (PST)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id t10sm16920730wmi.40.2020.02.24.01.42.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 01:42:04 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/3] gpiolib: use kref in gpio_desc
-Date:   Mon, 24 Feb 2020 10:41:57 +0100
-Message-Id: <20200224094158.28761-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200224094158.28761-1-brgl@bgdev.pl>
-References: <20200224094158.28761-1-brgl@bgdev.pl>
+        id S1727691AbgBXNIN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Feb 2020 08:08:13 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37492 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbgBXNIK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Feb 2020 08:08:10 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01OD7CsK028839;
+        Mon, 24 Feb 2020 07:07:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582549632;
+        bh=Tx9NLTynxh7HMA5VHJWXsAof1AdXnE/KAs53Nqq7E70=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=J8OaXTwY6rJidCznLf2G/vSUju+4HU3kRW0QV+CMkL2fpPxI5mFwt5l1u7GY1i0cK
+         fhdwF15G4WtYxb0NBQQmKRDL/VCrdAXaZORkAKh4uNPMzhrjf4desB5yiRBKSQYI5e
+         lr23otClWqEaN2djtLEvvM3O3oRjPmZTJi+w6edQ=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01OD7CFB102821
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Feb 2020 07:07:12 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 24
+ Feb 2020 07:07:11 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 24 Feb 2020 07:07:12 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01OD7B3m002482;
+        Mon, 24 Feb 2020 07:07:11 -0600
+Subject: Re: [PATCH 2/7] docs: dt: fix several broken references due to
+ renames
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+CC:     Jonathan Corbet <corbet@lwn.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-leds@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>,
+        <openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-pm@vger.kernel.org>
+References: <cover.1582361737.git.mchehab+huawei@kernel.org>
+ <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e9ae8125-3f8f-5f8c-c19c-34ac1bb5c982@ti.com>
+Date:   Mon, 24 Feb 2020 07:02:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Mauro
 
-GPIO descriptors are freed by consumers using gpiod_put(). The name of
-this function suggests some reference counting is going on but it's not
-true.
+On 2/22/20 3:00 AM, Mauro Carvalho Chehab wrote:
+> Several DT references got broken due to txt->yaml conversion.
+>
+> Those are auto-fixed by running:
+>
+> 	scripts/documentation-file-ref-check --fix
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>   Documentation/devicetree/bindings/arm/arm,scmi.txt        | 2 +-
+>   Documentation/devicetree/bindings/arm/arm,scpi.txt        | 2 +-
+>   .../devicetree/bindings/arm/bcm/brcm,bcm63138.txt         | 2 +-
+>   .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt  | 2 +-
+>   .../devicetree/bindings/arm/msm/qcom,idle-state.txt       | 2 +-
+>   Documentation/devicetree/bindings/arm/omap/mpu.txt        | 2 +-
+>   Documentation/devicetree/bindings/arm/psci.yaml           | 2 +-
+>   .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml       | 2 +-
+>   .../devicetree/bindings/display/tilcdc/tilcdc.txt         | 2 +-
+>   Documentation/devicetree/bindings/leds/common.yaml        | 2 +-
 
-Use kref to actually introduce reference counting for gpio_desc objects.
-Add a corresponding gpiod_get() helper for increasing the reference count.
+For LEDs
 
-This doesn't change anything for already existing (correct) drivers but
-allows us to keep track of GPIO descs used by multiple users.
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpiolib.c        | 40 +++++++++++++++++++++++++++++++----
- drivers/gpio/gpiolib.h        |  1 +
- include/linux/gpio/consumer.h |  9 ++++++++
- 3 files changed, 46 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index da8ffd40aa97..e97ea1e113a1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2798,6 +2798,8 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 		goto done;
- 	}
- 
-+	kref_init(&desc->ref);
-+
- 	if (chip->request) {
- 		/* chip->request may sleep */
- 		spin_unlock_irqrestore(&gpio_lock, flags);
-@@ -2941,6 +2943,13 @@ void gpiod_free(struct gpio_desc *desc)
- 	}
- }
- 
-+static void gpiod_free_kref(struct kref *ref)
-+{
-+	struct gpio_desc *desc = container_of(ref, struct gpio_desc, ref);
-+
-+	gpiod_free(desc);
-+}
-+
- /**
-  * gpiochip_is_requested - return string iff signal was requested
-  * @chip: controller managing the signal
-@@ -5075,18 +5084,41 @@ struct gpio_descs *__must_check gpiod_get_array_optional(struct device *dev,
- EXPORT_SYMBOL_GPL(gpiod_get_array_optional);
- 
- /**
-- * gpiod_put - dispose of a GPIO descriptor
-- * @desc:	GPIO descriptor to dispose of
-+ * gpiod_put - decrease the reference count of a GPIO descriptor
-+ * @desc:	GPIO descriptor to unref
-  *
-  * No descriptor can be used after gpiod_put() has been called on it.
-  */
- void gpiod_put(struct gpio_desc *desc)
- {
--	if (desc)
--		gpiod_free(desc);
-+	might_sleep();
-+
-+	VALIDATE_DESC_VOID(desc);
-+
-+	kref_put(&desc->ref, gpiod_free_kref);
- }
- EXPORT_SYMBOL_GPL(gpiod_put);
- 
-+/**
-+ * gpiod_ref - increase the reference count of a GPIO descriptor
-+ * @desc:	GPIO descriptor to reference
-+ *
-+ * Returns the same gpio_desc after increasing the reference count.
-+ */
-+struct gpio_desc *gpiod_ref(struct gpio_desc *desc)
-+{
-+	VALIDATE_DESC_PTR(desc);
-+
-+	if (!test_bit(FLAG_REQUESTED, &desc->flags)) {
-+		pr_warn("gpiolib: unable to increase the reference count of unrequested GPIO descriptor\n");
-+		return desc;
-+	}
-+
-+	kref_get(&desc->ref);
-+	return desc;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_ref);
-+
- /**
-  * gpiod_put_array - dispose of multiple GPIO descriptors
-  * @descs:	struct gpio_descs containing an array of descriptors
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 3e0aab2945d8..51a92c43dd55 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -119,6 +119,7 @@ struct gpio_desc {
- 	const char		*label;
- 	/* Name of the GPIO */
- 	const char		*name;
-+	struct kref		ref;
- };
- 
- int gpiod_request(struct gpio_desc *desc, const char *label);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index bf2d017dd7b7..02b136884923 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -81,6 +81,7 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
- struct gpio_descs *__must_check gpiod_get_array_optional(struct device *dev,
- 							const char *con_id,
- 							enum gpiod_flags flags);
-+struct gpio_desc *gpiod_ref(struct gpio_desc *desc);
- void gpiod_put(struct gpio_desc *desc);
- void gpiod_put_array(struct gpio_descs *descs);
- 
-@@ -237,6 +238,14 @@ gpiod_get_array_optional(struct device *dev, const char *con_id,
- 	return NULL;
- }
- 
-+static inline struct gpio_desc *gpiod_ref(struct gpio_desc *desc)
-+{
-+	/* GPIO can never have been requested */
-+	WARN_ON(desc);
-+
-+	return NULL;
-+}
-+
- static inline void gpiod_put(struct gpio_desc *desc)
- {
- 	might_sleep();
--- 
-2.25.0
 
