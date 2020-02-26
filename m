@@ -2,89 +2,138 @@ Return-Path: <SRS0=JoGn=4O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC4AC4BA15
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 16:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BF1C4BA26
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 19:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6821424680
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 16:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582734090;
-	bh=/t3Npmz0ziYRPUEw01AlkDHenvfuwVgllmRH8FcecUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CYtOj++7VaO1usVEg1gfzAIpJ7RG63mdxnziFvkaVdoCvVn48lliOX8b9AO0wBQP5
-	 HMFtbBbLOYOMNHHh/2UACNKMMaCsd4NFfm75phCDFE3CJf8pY2YHVUdMSiN6wQEckV
-	 dQ2EZbmu78t2ea9tA1/Yuui36xvDHXokl9e9THPc=
+	by mail.kernel.org (Postfix) with ESMTP id 77747222C4
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 19:13:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mON8v4mT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgBZQVa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Feb 2020 11:21:30 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37380 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQV3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Feb 2020 11:21:29 -0500
-Received: by mail-oi1-f194.google.com with SMTP id q84so65582oic.4;
-        Wed, 26 Feb 2020 08:21:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R8CgB5ofq/CEo+Bbd71eYLol0DUjIXGKdAp6HQA/9d8=;
-        b=WXUtLvmQ3u/1TZxpMpTPUKrE/KEAeqbJczz5ZuaPKROK2TppNbJdB5WBS6dvKU3svD
-         f281IGiL8cWwhLtAiLtKn+BAGb7dKZzXuAgkAUhAfkZxBMj/y/pRtnTlTpsEbvIOJ7r7
-         I5d7LfzHL78FRqa9AbYMpbxFPIL4Y9HA+B/a1G50j2GcWwJkVX8xAWF9IKBg9XbALjZT
-         go52ZrackJPT1akPP7Y63RvqL8Lsc5k0wvUenX9y1Dkix3N6xlgzNa8H7YOimif9DBFQ
-         cPFKvdQYsVoDBYFN21W7kq4MbwJk+1ArEdBiZhHR+fSEx2K8/UKoY3PWtVmBwYu+uF4v
-         fIGQ==
-X-Gm-Message-State: APjAAAXB/apQltBC1HX0D8Dh4inbdcRinHjx+yQeBYsrlUWR78Ll41nG
-        LuvG/IizKgbxCBwr2D+9pw==
-X-Google-Smtp-Source: APXvYqx4y3t8f8l9YMHa0dnaCosRY7xiR2vi0DCieSBpahLqPG+tzB/Y2iH6dVgGLzxAw9q3lrEIRA==
-X-Received: by 2002:aca:ab53:: with SMTP id u80mr3693789oie.94.1582734089012;
-        Wed, 26 Feb 2020 08:21:29 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t20sm939037oij.19.2020.02.26.08.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 08:21:26 -0800 (PST)
-Received: (nullmailer pid 13405 invoked by uid 1000);
-        Wed, 26 Feb 2020 16:21:25 -0000
-Date:   Wed, 26 Feb 2020 10:21:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.co,
-        alexandre.torgue@st.com, linus.walleij@linaro.org,
-        amelie.delaunay@st.com, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v3] dt-bindings: mfd: Convert stmfx bindings to
- json-schema
-Message-ID: <20200226162125.GA13349@bogus>
-References: <20200220162246.8334-1-benjamin.gaignard@st.com>
+        id S1727207AbgBZTNP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Feb 2020 14:13:15 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.100]:21883 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbgBZTNP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Feb 2020 14:13:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582744392;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=xsODhkpVGkDQnLLErU6wOpwUWKFJnPJTBh47MaWfiIU=;
+        b=mON8v4mTN69LsUaSQcl4CeXaV/HXu/aHi0kWsbAKhXS3H1utPQNppbRhz4DDFV1AVh
+        9fdg99tCaAcHE4EoPn3g4QpFHRAdcFDOgThGm46tWVcPncKO8r58ZyUifuf9TW5WZrbQ
+        JS1J0l4UhsANTMQ+ncxa1wP0ROqKLuIZCrERRyhJpW14cQNAtuDbAxdWmkkkqPgmXl/n
+        A4hZ9jFItRC+OuLazQRBCrvJJpm3tHEob49nzqCvCzZj1FKMFArEssEjs43cVxZE67Z5
+        LSLc0pBePKJ7TQFTWV/t08G6YP3He8Y5NxWJ+qPY0SiMucGhv1gtxQhn2jU5IDczmlW5
+        DIoQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAzoz/Oc2x"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id U06217w1QJD46bO
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Wed, 26 Feb 2020 20:13:04 +0100 (CET)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Paul Boddie <paul@boddie.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com,
+        "H . Nikolaus Schaller" <hns@goldelico.com>
+Subject: [RFC 5/8] pinctrl: ingenic: add hdmi-ddc pin control group
+Date:   Wed, 26 Feb 2020 20:12:57 +0100
+Message-Id: <b93845c9bef2d0f9c5b28f3de54f1534d76f8dd8.1582744379.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1582744379.git.hns@goldelico.com>
+References: <cover.1582744379.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220162246.8334-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 20 Feb 2020 17:22:46 +0100, Benjamin Gaignard wrote:
-> Convert stmfx bindings to json-schema
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  .../devicetree/bindings/mfd/st,stmfx.yaml          | 124 +++++++++++++++++++++
->  Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 -----
->  .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 -------------------
->  3 files changed, 124 insertions(+), 144 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/st,stmfx.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-> 
+From: Paul Boddie <paul@boddie.org.uk>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Paul Boddie <paul@boddie.org.uk>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 96f04d121ebd..1599a003c31f 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -4,6 +4,7 @@
+  *
+  * Copyright (c) 2017 Paul Cercueil <paul@crapouillou.net>
+  * Copyright (c) 2019 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
++ * Copyright (c) 2017, 2019 Paul Boddie <paul@boddie.org.uk>
+  */
+ 
+ #include <linux/compiler.h>
+@@ -900,6 +901,7 @@ static int jz4780_mmc0_8bit_a_pins[] = { 0x04, 0x05, 0x06, 0x07, 0x18, };
+ static int jz4780_i2c3_pins[] = { 0x6a, 0x6b, };
+ static int jz4780_i2c4_e_pins[] = { 0x8c, 0x8d, };
+ static int jz4780_i2c4_f_pins[] = { 0xb9, 0xb8, };
++static int jz4780_hdmi_ddc_pins[] = { 0xb9, 0xb8, };
+ 
+ static int jz4780_uart2_data_funcs[] = { 1, 1, };
+ static int jz4780_uart2_hwflow_funcs[] = { 1, 1, };
+@@ -908,6 +910,7 @@ static int jz4780_mmc0_8bit_a_funcs[] = { 1, 1, 1, 1, 1, };
+ static int jz4780_i2c3_funcs[] = { 1, 1, };
+ static int jz4780_i2c4_e_funcs[] = { 1, 1, };
+ static int jz4780_i2c4_f_funcs[] = { 1, 1, };
++static int jz4780_hdmi_ddc_funcs[] = { 0, 0, };
+ 
+ static const struct group_desc jz4780_groups[] = {
+ 	INGENIC_PIN_GROUP("uart0-data", jz4770_uart0_data),
+@@ -950,6 +953,7 @@ static const struct group_desc jz4780_groups[] = {
+ 	INGENIC_PIN_GROUP("i2c3-data", jz4780_i2c3),
+ 	INGENIC_PIN_GROUP("i2c4-data-e", jz4780_i2c4_e),
+ 	INGENIC_PIN_GROUP("i2c4-data-f", jz4780_i2c4_f),
++	INGENIC_PIN_GROUP("hdmi-ddc", jz4780_hdmi_ddc),
+ 	INGENIC_PIN_GROUP("cim-data", jz4770_cim_8bit),
+ 	INGENIC_PIN_GROUP("lcd-24bit", jz4770_lcd_24bit),
+ 	{ "lcd-no-pins", },
+@@ -982,6 +986,7 @@ static const char *jz4780_nemc_groups[] = {
+ static const char *jz4780_i2c3_groups[] = { "i2c3-data", };
+ static const char *jz4780_i2c4_groups[] = { "i2c4-data-e", "i2c4-data-f", };
+ static const char *jz4780_cim_groups[] = { "cim-data", };
++static const char *jz4780_hdmi_ddc_groups[] = { "hdmi-ddc", };
+ 
+ static const struct function_desc jz4780_functions[] = {
+ 	{ "uart0", jz4770_uart0_groups, ARRAY_SIZE(jz4770_uart0_groups), },
+@@ -1014,6 +1019,8 @@ static const struct function_desc jz4780_functions[] = {
+ 	{ "pwm5", jz4770_pwm5_groups, ARRAY_SIZE(jz4770_pwm5_groups), },
+ 	{ "pwm6", jz4770_pwm6_groups, ARRAY_SIZE(jz4770_pwm6_groups), },
+ 	{ "pwm7", jz4770_pwm7_groups, ARRAY_SIZE(jz4770_pwm7_groups), },
++	{ "hdmi-ddc", jz4780_hdmi_ddc_groups,
++		      ARRAY_SIZE(jz4780_hdmi_ddc_groups), },
+ };
+ 
+ static const struct ingenic_chip_info jz4780_chip_info = {
+-- 
+2.23.0
+
