@@ -2,97 +2,105 @@ Return-Path: <SRS0=JoGn=4O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3591C4BA21
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 19:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD25C4BA24
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 22:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1702467F
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 19:13:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="a3j6DMoH"
+	by mail.kernel.org (Postfix) with ESMTP id 730A021D7E
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Feb 2020 22:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582754849;
+	bh=L8aYdOhNb8wSkHJBwtY/mA6RY2dcgDtvoeGAIpG8j5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MRR3Wk9LCzoeZryGl2iCnM3LWYZJgHQ2LbdoH3Xq4lCtG7woTSUo0kN5PfbWIflrV
+	 8S9uvmljlO5+F23gOwqxRr9nUcDiXWLMKDB0DxL9scXf5nIuT7ye2jMb4TAeYzC96N
+	 ljkJsXoDEkcS4DThF7zieSF1kJfWQFg8ZoIfKfX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbgBZTNp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Feb 2020 14:13:45 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.101]:28202 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbgBZTNN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Feb 2020 14:13:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582744391;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=0KwFWogrkYd3WbP4B9tFSDqdj5/ZkSqbBbEVxlZwGEA=;
-        b=a3j6DMoHnyFV5JohDO304EjH+kmJqX6FaYH5XNaYMFXdMvHq6JuEDM8JRr6G49R54U
-        ETepDUDRMHGKp5+Hib2Fn1N91+jZ4OM5ye8e2BCsBO7IA3+/vVU3+3cg9EIyJ/JKQEZO
-        p/fb/aW+6yfMqz5cmTkJZGJ0wXgbjVS8sD/ni8pXJgxZoAd/xmwOfXjZZnPFItubV90B
-        5Rii1ZUgbdlXZyZyxEpSkqJMmEA2caYj8prxnko814fn9fq5UlP4LFN3Kz3603i93lNq
-        5fcr6c2hc2hlAI1IiqTypiMY9JALpOqOBTSqeNPry39V5MHMXO5TBkkm3wyMncSv4V6K
-        54JA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAzoz/Oc2x"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
-        with ESMTPSA id U06217w1QJD26bM
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Wed, 26 Feb 2020 20:13:02 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Paul Boddie <paul@boddie.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
+        id S1727859AbgBZWHZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Feb 2020 17:07:25 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43070 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbgBZWHY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Feb 2020 17:07:24 -0500
+Received: by mail-oi1-f195.google.com with SMTP id p125so1153554oif.10;
+        Wed, 26 Feb 2020 14:07:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mh9L6UBbZd077xS3dYC1Wgq1kmV8/0MwjWPhr3ALxzw=;
+        b=N9w+Nq8poK4jaUe38on2fXvkH2viynFW13WNQroqsmRAJ+UHToAw5A8VL0AlDvGfZb
+         MLEuJeUvVvkqCNUQcun/AJba+hCkBuZgcOwWvyBQ+CVvre8rBf0lli8uk4hrEx+ccfni
+         wUkZJh0qH460B2Zl575crgh9/gTv3WcukfrMPewuM4wi1tKo9+zon9JGQNRhVD4h4jh/
+         0H2zypsL6VKsyui6kKHan1Ct7A1VAbGx6C647KpQfNiJb2YGHT5u4bo+zIpJaruy/FOx
+         1/iZVXYB5r9QtcJ4VdmGjyiuWeLL5AR2T0Hu9gfQtVcjD/UkkH73hru4B1VsngVLwIts
+         fSKA==
+X-Gm-Message-State: APjAAAWOrGu/vJxpAgAROAfSpc/ALKXZN2jLTC+K/tGuwazXx2N5VuQG
+        3bzUz7ndS6zMJqIpoyXpsQuDx4QoWA==
+X-Google-Smtp-Source: APXvYqw1VLx2OrRQwWC2sH4XIbmcGTHpYpjGcFlcP4IOlWJurHfS6aQcTHXktgvzJUWnvB4nMfEaPg==
+X-Received: by 2002:a54:4510:: with SMTP id l16mr969952oil.70.1582754843674;
+        Wed, 26 Feb 2020 14:07:23 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j45sm1220921ota.59.2020.02.26.14.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 14:07:23 -0800 (PST)
+Received: (nullmailer pid 18100 invoked by uid 1000);
+        Wed, 26 Feb 2020 22:07:21 -0000
+Date:   Wed, 26 Feb 2020 16:07:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [RFC 3/8] drm: ingenic-drm: add MODULE_DEVICE_TABLE
-Date:   Wed, 26 Feb 2020 20:12:55 +0100
-Message-Id: <d59ba39a17f052b6d3ca1947bd62467224fac2d0.1582744379.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1582744379.git.hns@goldelico.com>
-References: <cover.1582744379.git.hns@goldelico.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bingings: pinctrl: Convert UniPhier pin
+ controller to json-schema
+Message-ID: <20200226220721.GA18049@bogus>
+References: <20200222060435.971-1-yamada.masahiro@socionext.com>
+ <20200222060435.971-3-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200222060435.971-3-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-so that the driver can load by matching the device tree
-if compiled as module.
+On Sat, 22 Feb 2020 15:04:35 +0900, Masahiro Yamada wrote:
+> Convert the UniPhier pin controller binding to DT schema format.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> In the original .txt file, there is a description:
+> The UniPhier pinctrl should be a subnode of a "syscon" compatible node
+> 
+> I did not figure out how to represent (or check) it in dt-schema.
+> I just moved it to a comment line in 'examples'.
+> If there is a better way, please let me know.
+> 
+> 
+> Changes in v2: None
+> 
+>  .../pinctrl/socionext,uniphier-pinctrl.txt    | 27 ------------
+>  .../pinctrl/socionext,uniphier-pinctrl.yaml   | 42 +++++++++++++++++++
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 43 insertions(+), 28 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.yaml
+> 
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpu/drm/ingenic/ingenic-drm.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied, thanks.
 
-diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
-index 6d47ef7b148c..d8617096dd8e 100644
---- a/drivers/gpu/drm/ingenic/ingenic-drm.c
-+++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
-@@ -844,6 +844,8 @@ static const struct of_device_id ingenic_drm_of_match[] = {
- 	{ /* sentinel */ },
- };
- 
-+MODULE_DEVICE_TABLE(of, ingenic_drm_of_match);
-+
- static struct platform_driver ingenic_drm_driver = {
- 	.driver = {
- 		.name = "ingenic-drm",
--- 
-2.23.0
-
+Rob
