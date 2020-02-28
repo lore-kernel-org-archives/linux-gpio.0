@@ -2,96 +2,127 @@ Return-Path: <SRS0=nfV1=4Q=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9316DC3F2D1
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 10:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28C4C3F2D3
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 11:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588FB246A3
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 10:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8706D246A0
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 11:22:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="prkL/o5D"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TAAPsoWn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgB1K6f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Feb 2020 05:58:35 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44705 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgB1K6e (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Feb 2020 05:58:34 -0500
-Received: by mail-ua1-f65.google.com with SMTP id a33so793794uad.11
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2020 02:58:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=pJRnjkrYSEoukXYQpbOMLDRASpxUllNw+8/8as6MqeE=;
-        b=prkL/o5D8aJ8y5nYxi0MTlPmzNE6O6Yc0MHGBVqzJdZXEw/sa5eb8R/jxstOHGX/l0
-         qYIUHibPRRLwzDvEE7Kgr5C4+zo9MG4f/MwgddKtcKAWwg8neUGGvyoPHEalYJozjb6q
-         Xvx9gEQWsZhSwtoHb3AfZuZoztMzfnzXAGubNKlCYyQVo5T/vkwtOgVyNUgtNbnsfnVZ
-         oN7Djfv2wRSbZ/xlpNMcKgucZk6V8qr3H+NKqW3h0c+TbX4zIxzkbsyzsVexPqQtUo2r
-         SEBM25jLLtpAJ1hM6SgPZ1bmQ6xlbcOSktzRQZIavhCMwhFYBdIu9Q9Ejwzp6Pri78dj
-         lOyw==
+        id S1725884AbgB1LWx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Feb 2020 06:22:53 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26857 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725730AbgB1LWx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Feb 2020 06:22:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582888972;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7BnoaA17pJMFu998jYGiIMsNzgI1x+bmJkwrgednNKw=;
+        b=TAAPsoWncSBziwjY2E94ZZ/dKl5aUEC0ibIkq0I6QhLo6ZYRpM9PSyS4tGS9Karpgal+jY
+        43g6YDfbwM54cmollXJzxN4tEfIW23KJkrHk6gCv0irLsUItQsujQRO4SACEJR9ICUTd/z
+        3zltpZfof2LoGd3/Eow9OGGeWHra2/c=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-193-7icjO7ALMK-gE724r4RYmw-1; Fri, 28 Feb 2020 06:22:48 -0500
+X-MC-Unique: 7icjO7ALMK-gE724r4RYmw-1
+Received: by mail-wm1-f72.google.com with SMTP id m4so1028096wmi.5
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2020 03:22:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=pJRnjkrYSEoukXYQpbOMLDRASpxUllNw+8/8as6MqeE=;
-        b=oAF39C70g/kZZHFo3bjyBZlth3TsdRk6fgY3h257t5eWJ5+guNs7ULo6Pu8J+pcrrd
-         9ADIBkbwKI18dWqUlApGVAtyeoTYiuEXJAUV6SaIZvKt6/byFKVTAAMO5Sj0FFdgpYkM
-         QjnaZEoEIQhjhb8C6JdBQxSfDfV35SRLwU9BLQtH3+cnFjobkQ2VYPfATKTOy0N8JMWS
-         sg5aSs9cvTMMVo/LRda9YPqPn1Ibvccm8ygE27/v9z0dP6iSiTOWtAXZEnZrvDyPURCX
-         dK6nYZ4jPKRfmEkodLzsGxu/e4pWFXw4r94uaYeySi+2t71dCJPr/diidEV0IS0rJLhJ
-         XkUA==
-X-Gm-Message-State: ANhLgQ3UclAgU3ScjL4LEVb2rjFSj134VcqN3hyUrUfDC98BiXHbiCT8
-        DgrQ4kcLFmbeFHg2c9aJPqSTE/WTiiu9WnGELWiJ7MpQ
-X-Google-Smtp-Source: ADFU+vu/mr1WKjNbYuWeJBEL1jp7bG/13WjPVyRHkCsJPGMA1Mw1bLQ08IkY5LIziEWwO+1DDh7cli3anXUn3MgUT+s=
-X-Received: by 2002:a9f:3ecc:: with SMTP id n12mr1672855uaj.45.1582887511693;
- Fri, 28 Feb 2020 02:58:31 -0800 (PST)
-MIME-Version: 1.0
-From:   Romain Izard <romain.izard.pro@gmail.com>
-Date:   Fri, 28 Feb 2020 11:58:21 +0100
-Message-ID: <CAMiSF3BULWkyWTytTBcFfch9YaV_QzuBiawk-ZqEcQnsuGdUiQ@mail.gmail.com>
-Subject: GPIOs not correctly exported via sysfs on ATSAMA5D2
-To:     Linux GPIO List <linux-gpio@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7BnoaA17pJMFu998jYGiIMsNzgI1x+bmJkwrgednNKw=;
+        b=EPoydhwiRyNi9psd96mWCsiTdcIpf2j+V9tQ0VV6IeS7C1wTpn4XgGrIKcKZm1YJOv
+         wAOX14k1UJUO1h05CWWbWzs9WxjGEkQRCxsazvOT4aQF/jZJUcjo45U1aRG9Wzq0/7Iz
+         pXEcgMiCSrQRPZGrU7AMUVjzVOIKx2MvuCTzNK96+WXyak+QGHX++KoJafDrPbeNAqFg
+         Ptg9FzbWc4G5SaeItiyCJyq0DNISEdPZOAwFkN4XmNHcw6qqq9PG9O56ToRuL7cAI9JF
+         K1haiLI1fqFj2SbNJgiEOzsIBjKW62JSvRvGCB0TLaj7/ERnNA33unTHR9nVp2FoHUvm
+         Qf2Q==
+X-Gm-Message-State: APjAAAUSRfa5ojxK9Wdg73i/TlNmDQ7OJilA6hEPdRA0aQUaqvvgcU53
+        7PHKWe3D53+Q0f5yUeIKqumA5ah4PFMVkiOvzmb+jt/2GcqPeOPKgAKM/iyCwLSccQSPzoDpo/i
+        laAKG1OWD6yZDBSi8GNzlJw==
+X-Received: by 2002:adf:ed4c:: with SMTP id u12mr4721419wro.204.1582888967640;
+        Fri, 28 Feb 2020 03:22:47 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwUfcO5YrOruRLOgiKuOdm1ewT6kk5ie3QhpLjqx3kLXtS0X76Pmw47xD73u0WNOD3WguS+sw==
+X-Received: by 2002:adf:ed4c:: with SMTP id u12mr4721394wro.204.1582888967400;
+        Fri, 28 Feb 2020 03:22:47 -0800 (PST)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id a62sm1786454wmh.33.2020.02.28.03.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Feb 2020 03:22:46 -0800 (PST)
+Subject: Re: [PATCH resend 2/3] gpiolib: acpi: Rename honor_wakeup option to
+ ignore_wake, add extra quirk
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        Marc Lehmann <schmorp@schmorp.de>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+References: <20200225102753.8351-1-hdegoede@redhat.com>
+ <20200225102753.8351-3-hdegoede@redhat.com>
+ <20200225105437.GG10400@smile.fi.intel.com>
+ <e0c39a89-bcac-4315-d764-5853eb77537d@redhat.com>
+ <20200225123425.GK10400@smile.fi.intel.com>
+ <20200225125700.GL10400@smile.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <44cc5510-571c-21c4-1855-f3141f72eaa3@redhat.com>
+Date:   Fri, 28 Feb 2020 12:22:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200225125700.GL10400@smile.fi.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+Hi,
 
-While experimenting with a new chip, I connected it on the SDIO
-interface on my board based on a SAMA5D2 SoC. For a first step, I need
-to drive the pins on the SDIO bus at a given level to program this new
-chip. To do so, I tried to control the GPIO lines manually by unbinding
-the SDHCI controller, and using /sys/class/gpio/export to control the
-pins, with the following code:
+On 2/25/20 1:57 PM, Andy Shevchenko wrote:
+> On Tue, Feb 25, 2020 at 02:34:25PM +0200, Andy Shevchenko wrote:
+>> On Tue, Feb 25, 2020 at 12:26:04PM +0100, Hans de Goede wrote:
+> 
+>> Let's do it as a list of pairs, but in slightly different format (I see some
+>> potential to derive a generic parser, based on users described in
+>> Documentation/admin-guide/kernel-parameters.txt), i.e.
+>>
+>> 	ignore_wake=pin:controller[,pin:controller[,...]]
+> 
+> Another possible format
+> 
+> 	ignore_wake=controller@pin[;controller@pin[;...]]
 
-echo a0000000.sdio-host > /sys/bus/platform/drivers/sdhci-at91/unbind
-echo 4 > /sys/class/gpio/export
-echo low > /sys/class/gpio/PA4/direction
+I like this one, the other one with the pin first feels wrong, the pin is
+part of the controller, not the other way around.
 
-Unfortunately, the state of the pin does not change and it remains
-driven to 1. I checked the configuration register with devmem2, and it
-appeared that the selected function remains the SDIO function even after
-calling export.
+I will rework the patch series to use the ignore_wake=controller@pin format.
 
-The issue does not appear when I use a GPIO in a driver with an explicit
-pinctrl configuration in the device tree, which explains why I did not
-see it until now.
+> The second one, while having less users, can be extended to have list of pins
+> of the same controller, like
+> 
+> 	ignore_wake=controller@pin[:pin2:pin3][;controller@pin[:...][;...]]
 
-The kernel version used is Linux 5.4.22
+I don't really see a need for this, the controller name can be repeated
+in the unlikely case where more then one pin needs to be blacklisted
+from wakeup and I would like to keep the parsing as KISS as possible.
 
-Is this a user error from my part, or is there something missing in the
-AT91 PIO4 pinctrl driver ?
+I guess we can always add this later if people feel like adding it.
 
-Best regards,
--- 
-Romain Izard
+Regards,
+
+Hans
+
