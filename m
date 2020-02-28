@@ -2,107 +2,85 @@ Return-Path: <SRS0=nfV1=4Q=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D31C3F2D2
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 23:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD6FC3F2D2
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 23:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998A421556
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 23:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E2E2469C
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Feb 2020 23:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sMe5Q6us"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jgpmxZ9f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgB1XbD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Feb 2020 18:31:03 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46704 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbgB1XbD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Feb 2020 18:31:03 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h18so5022475ljl.13
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2020 15:31:01 -0800 (PST)
+        id S1726366AbgB1Xdm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Feb 2020 18:33:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41510 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbgB1Xdm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Feb 2020 18:33:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u26so5028729ljd.8
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2020 15:33:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FJMOjeid6sdwgXv4TTvMxMhevRyWK73UfsN1mnUN154=;
-        b=sMe5Q6usg9+F4riRxov5cjG3cyELLD3oY3eqeIrCM0aMmY7BGEfLMLJT1SZ1gK0IwN
-         UFNBkrP7J25JufhFor+00VbaiY0V3wNFi5Y0V6yp/yTwjh7YTnRrLqyZ7eaDMrvF/TzZ
-         Dd+uXEyp9pONbPMH+vFvJHPbmE3J7xZx3HwKpXwcCLupuc+vQZA6GenODw9SfH6Az6nZ
-         hzzXjyLjydDHeMjOWfWF8PjkvIagnRsfW3bwZi7A4bzOB19Lx7TbyhEccYzR/YHRJNAZ
-         eoJubijvMqEQ04/8kdlkwXDI6wo5CzuUN5RPHEtk0Zeu1q+sM3u3109tFuStjvE6jYPa
-         NuOg==
+        bh=hkOrGQTUil2jVBBDqFqKrlwpeqHUXILYxK5e31tvxS0=;
+        b=jgpmxZ9fGsCQjwNW/xYZU8NzhYJJRQsRKUYM60FMiBWYpPSsA7yiWqy2cNQkzN6eMn
+         1dvuYUIwF+XcZvWePefIMwMv/yGaE/mALxU/IQ5K74qLNwittf9Rx8wYiHQA8BYMvz3P
+         xeebvZyWyYsSE6tTbgxclyjnPm92OscKGM6g8pLz8T1eXbaHkxG2RR+x0Sjb6FrZXKe4
+         gJ3/p62lkJV/+eUgMnbkrxPoKaKzyrrBSx55VoFnx9K/tywC/s1NU6eAtdGg3PIY5d8k
+         s7or8Wbym9H0j3o8BbmZURm+e9xD9cNkQFBtD0UTkC4dVqrErAH2fDnaSqWXZ3hvIJ+V
+         s77A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FJMOjeid6sdwgXv4TTvMxMhevRyWK73UfsN1mnUN154=;
-        b=Cx9I5SV5e2hr2BcYrrkg3mFMxiSMY8zGZrNfI4o3Zjpzq9p6DExN9Sxda+lxP1swTL
-         EKTV+KazpgSe0Hq2gDVHlq23+/ywwWcN25eoyZYHH8/VqXNek/SNgvax7SsHeZPMIhq0
-         puCgw5wIsCiME6bIWS0ty4DvKRlU0XDBcbTS02w+IDG3I1oJjYDDqqK9teFk21YVaanr
-         QheUIGQgoJHBZSQHWAJAf03h/0HrCnS1CYG0MORbVJ+Wr6N1ObIbEle/v7Y93q7Dn6Hp
-         CFVt47XSGPNu/YvQ3Zd4CGFIiYR7/L/k0/x3q9rA3I0cpUkciIkAQZxcToAXFHYxa+d2
-         Hakg==
-X-Gm-Message-State: ANhLgQ3s7TiY64eF+NtsF9eP3nSx40QMaH+6l08JUTJva6BWftlfU/yI
-        CAilC8IoJxMNa0uzSKZ+l+QGvbQ8UVE1XURGLJSuSg==
-X-Google-Smtp-Source: ADFU+vsxoOHRMUZvXuoHzVp2SunBEAeVGYJ5QRP7my8lror2nKWFrPn2yB/CjkXexreMLjBZgrvV44n23yoajzkayqA=
-X-Received: by 2002:a05:651c:2049:: with SMTP id t9mr4108228ljo.39.1582932660936;
- Fri, 28 Feb 2020 15:31:00 -0800 (PST)
+        bh=hkOrGQTUil2jVBBDqFqKrlwpeqHUXILYxK5e31tvxS0=;
+        b=BUU0+xjhXnpRhMRlsQ8k1Euqsw6JDiWMzHa23w+HI1D1p44K+YwHPMIiX7UtHvOQbE
+         y/kEdTE2Ar8Dq5JY/ZOsEO2+of1tshg/9ya1/7qRLbT1pC4VcgIHlajMmq/qxrMlPig0
+         tNLu6qzY7TnF0Cxwa8Pytd8P0DJr5Ak0GfmN83eCY5LlxhStB0Rf7TXnowCiz9bY0y0u
+         tRCMupc+i9gpNj+oBiHj24c5uZlxLQZTHxrzGlpfXr+clus24UCLuXPzItjsPDCSqysM
+         vhNqfYI9ubsV4x1nDaKgGy6U7lf0fk4KDpmFHVaxVJrjHPMYSu+L8EN3GFzWgTrgMb9I
+         Fhww==
+X-Gm-Message-State: ANhLgQ3bbjwzfWMcfGzAV6wHF81QZWjTBhOr/MkO6+3tLKbs7ZtU6KWa
+        4FT9JiPrioDfr2kRlHFa0L3rwi8ExojQrRceK2fg1A==
+X-Google-Smtp-Source: ADFU+vseh+q+xB7V/6baLcFSo2HlPLM1fgbxWyxaT5jZNfkfHPqWAPnupzICk6ekXwCKX2Bh6JPOGDJ3BbU5Mc+I5Kk=
+X-Received: by 2002:a05:651c:2c7:: with SMTP id f7mr4259493ljo.125.1582932820144;
+ Fri, 28 Feb 2020 15:33:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20200227185837.GA4469@embeddedor>
-In-Reply-To: <20200227185837.GA4469@embeddedor>
+References: <20200228154142.13860-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20200228154142.13860-1-ckeepax@opensource.cirrus.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 29 Feb 2020 00:30:50 +0100
-Message-ID: <CACRpkda4wEck_JYpMYuQ+pAkaVo1JUE9nUpNseCBRCFADpZ9Ug@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sirf/atlas7: Replace zero-length array with
- flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Barry Song <baohua@kernel.org>,
+Date:   Sat, 29 Feb 2020 00:33:29 +0100
+Message-ID: <CACRpkdYF5y7jYCczEkdLuECfiJNdp92xafgq1-GV-N2aF=3phA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: core: Remove extra kref_get which blocks hogs
+ being freed
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     ext Tony Lindgren <tony@atomide.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 7:55 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Fri, Feb 28, 2020 at 4:41 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
+> kref_init starts with the reference count at 1, which will be balanced
+> by the pinctrl_put in pinctrl_unregister. The additional kref_get in
+> pinctrl_claim_hogs will increase this count to 2 and cause the hogs to
+> not get freed when pinctrl_unregister is called.
 >
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Fixes: 6118714275f0 ("pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Patch applied!
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
