@@ -2,100 +2,97 @@ Return-Path: <SRS0=+MJV=4R=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B78C3F2C6
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Feb 2020 06:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59031C3F2C6
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Feb 2020 13:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DBC62469C
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Feb 2020 06:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F0BB246B0
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Feb 2020 13:43:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="c/Efms7O"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yEBCNkd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgB2Glj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Feb 2020 01:41:39 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:16056 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbgB2Glj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Feb 2020 01:41:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582958496;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=0ME2SplYdZp/EcXKhCp8KyLMdT2ULtuVLwdKdNAFg6E=;
-        b=c/Efms7OL7pq8mGZHfLZOcbzDL1vn992XFmTCyE+TCrnL1gMKoHFFBEREUk5HZHnVr
-        S1GjWb/4nOiB8klGMDyDtsPq8/cpIl5ZGkwgsPlsTBe8Xi2LATC+Z4yA0jjbG1KZDQ4h
-        TXZlVpzdrkhcDe8WxtIoA3bLUAt/uCKmCjRGWBh3Q1x0gFVLfw8EN1214nZFr6EQaWVn
-        d8AL1Ohe4NHBg3m7Mat8ZJyGgj8LXLzWkz8maLDqaRV57HCxGZ7CNIgfVRwlFo7vz7Ac
-        X4184LR1WJlR5T8hbhFVDq+GS8f06Zlqw4MR4aucGl39zGxfGNPRt4ChE/EhlkfAhKDk
-        4GCQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlafXAwF5A=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
-        with ESMTPSA id y0a02cw1T6fI3wF
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Sat, 29 Feb 2020 07:41:18 +0100 (CET)
-Subject: Re: [RFC v2 5/8] pinctrl: ingenic: add hdmi-ddc pin control group
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CACRpkdYSde=6JBBbe3sL3hDHhGAeOfwadT0BvL0n+-F0O2vX0g@mail.gmail.com>
-Date:   Sat, 29 Feb 2020 07:41:17 +0100
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Paul Boddie <paul@boddie.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A87158C4-E5AC-4B4A-B132-3A82982E37FC@goldelico.com>
-References: <cover.1582913973.git.hns@goldelico.com> <010d6ad3473fb4b1f1041888a071796180cdd838.1582913973.git.hns@goldelico.com> <CACRpkdYSde=6JBBbe3sL3hDHhGAeOfwadT0BvL0n+-F0O2vX0g@mail.gmail.com>
+        id S1727075AbgB2NnV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Feb 2020 08:43:21 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34512 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbgB2NnU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Feb 2020 08:43:20 -0500
+Received: by mail-io1-f68.google.com with SMTP id z190so6762556iof.1
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Feb 2020 05:43:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZkYYz+iEBVIVDEqw2HSEsdWZFMQZB77tAjcrNj7cono=;
+        b=yEBCNkd7TJPUolzMHraLOsqEKzyKk6k2VfvLZhLJ8KOtcCks9KKwcLIF7jtCJvEgNe
+         SfIuchTv6Akv0aO7WL/MmIz3m2ktu7zv7FbTScrI9QeIb8++K1jD3o6bxHNTvtAUdEzk
+         wA9ZAJVVeBbT6cL3h0IuO6rdHP/raUGBzFK23EUNSIOtfdbJIdTbkha/+ktdspR0Zprm
+         M+n6x/LMk7vsHzsHS/h3F6MTMs78BN4rrq5q2la/aycPRkjBqi8DN7sJeHZn9O8H/2F7
+         Ik3cMc2EQ03Q4EKE/FxXqENqMLvMF+64f/qz1ETyn6VpfIIg6AZW4mErLr9svMbeK6hk
+         RjmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZkYYz+iEBVIVDEqw2HSEsdWZFMQZB77tAjcrNj7cono=;
+        b=RgOtqoZn3nkNDy9eXDJuWqPWi3QyXIop3E0+0g8gN6izfI7zqzGNVeBsrwDd5G3xxj
+         LBgJW7webTLt8nFjWe0bWW3xhRWsfPwiWPBgeiTVaqUzHFgqmLZoN0ujNx4Z/NQdOLia
+         OFnrHrBYu+6MDnKBPmq0z2c55sfZ/V5Ocfi1+3mR7sadvw0T7lJ+UXhKVj+wOMH6ETxu
+         5fPu2V6KKvLyn/s9u5PgzMFi/blqlQ9i3+E5TcEoWyQVzvWUZNByIcdigDmedSQknRqa
+         KtvYgsrqbW7/yesvHfZiUdtk3YMbZq7NXlb2CkHxVi/Ity7XSTQ0sUoOdpdvOrexhF4h
+         qv+Q==
+X-Gm-Message-State: APjAAAVVQPq+y/15LlXy0U6MsU53SObtqzyK6o/i4M2e+rNF26fxqLVw
+        FEN4caNioygm474bhZXjN5KeCCO48VOwL7Ydp0S0gA==
+X-Google-Smtp-Source: APXvYqx8B+uG/d/zKTMD48jcMo2J92qHC86/tYSeXqTePGHZdl43A91WpjzUyjWqUJ4bMNeYSsp64ZF8rvX3Azc+XMg=
+X-Received: by 2002:a5d:8952:: with SMTP id b18mr7228069iot.40.1582983798962;
+ Sat, 29 Feb 2020 05:43:18 -0800 (PST)
+MIME-Version: 1.0
+References: <20200226135323.1840-1-brgl@bgdev.pl> <CACRpkdY4=bU-gMywttvnRbgu=CG0TtKx5DFiV-Gio5DBDV08-g@mail.gmail.com>
+In-Reply-To: <CACRpkdY4=bU-gMywttvnRbgu=CG0TtKx5DFiV-Gio5DBDV08-g@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Sat, 29 Feb 2020 14:43:08 +0100
+Message-ID: <CAMRc=McxeRWVaG3_+V4fodBf=vK8mLDna8dFdg=PjK5Bk0zJiw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix bitmap operations related to line event watching
 To:     Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3124)
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Kent Gibson <warthog618@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-> Am 28.02.2020 um 23:05 schrieb Linus Walleij =
-<linus.walleij@linaro.org>:
->=20
-> On Fri, Feb 28, 2020 at 7:19 PM H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->=20
->> From: Paul Boddie <paul@boddie.org.uk>
->>=20
->> Signed-off-by: Paul Boddie <paul@boddie.org.uk>
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->=20
-> This looks good, can I just apply this to the pinctrl tree?
-
-Yes. It is more or less a base commit for the others.
-
->=20
+sob., 29 lut 2020 o 00:20 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> On Wed, Feb 26, 2020 at 2:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > When operating on the bits of watched_lines bitmap, we're using
+> > desc_to_gpio() which returns the GPIO number from the global numberspac=
+e.
+> > This leads to all sorts of memory corruptions and invalid behavior. We
+> > should switch to using gpio_chip_hwgpio() instead.
+> >
+> > Fixes: 51c1064e82e7 ("gpiolib: add new ioctl() for monitoring changes i=
+n line info")
+> > Reported-by: Kent Gibson <warthog618@gmail.com>
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> This looks good but where should it be applied?
+> It fails to apply to my devel branch where this lives.
+>
 > Yours,
 > Linus Walleij
 
-BR and thanks,
-Nikolaus
+This depends on Kent's other patch. I'll send you a PR.
 
+Bart
