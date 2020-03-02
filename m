@@ -2,144 +2,284 @@ Return-Path: <SRS0=SXUz=4T=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FD5C3F2D1
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Mar 2020 10:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079E5C3F2D2
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Mar 2020 11:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 245B52465E
-	for <linux-gpio@archiver.kernel.org>; Mon,  2 Mar 2020 10:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF77621D56
+	for <linux-gpio@archiver.kernel.org>; Mon,  2 Mar 2020 11:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwnfJA9k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgCBK5Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 2 Mar 2020 05:57:25 -0500
-Received: from mga14.intel.com ([192.55.52.115]:53948 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbgCBK5Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:57:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 02:57:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,506,1574150400"; 
-   d="scan'208";a="239603529"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 02 Mar 2020 02:57:22 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1j8ilI-0066zk-T2; Mon, 02 Mar 2020 12:57:24 +0200
-Date:   Mon, 2 Mar 2020 12:57:24 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        id S1727030AbgCBLMf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 2 Mar 2020 06:12:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38925 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727027AbgCBLMf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Mar 2020 06:12:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583147554;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SkPBRGr9wFUsYjrE5mSba+0JWK4lGHVPrjmEsVlopBA=;
+        b=MwnfJA9kUoaAqgH11Xj5rQ80gBElGVpjVJyaw7VCAqYFxiHXNL3VrwAUlLXJlVKY1Bq0p5
+        F7lfcNLN2QWwAbIp/RBalWJLdLC+7BNzno3+F+gzQUI2BoKhTndSpVtWB7KjcEJvaDHqYj
+        ymj4cQrRbZ6FkFvphoqdyvw7NHsGDIc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-389-e1yTO1oRMJG8AVagBaCcSw-1; Mon, 02 Mar 2020 06:12:32 -0500
+X-MC-Unique: e1yTO1oRMJG8AVagBaCcSw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1EBE8800D50;
+        Mon,  2 Mar 2020 11:12:31 +0000 (UTC)
+Received: from x1.localdomain.com (unknown [10.36.118.189])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5174B5D9C9;
+        Mon,  2 Mar 2020 11:12:29 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
         Marc Lehmann <schmorp@schmorp.de>, linux-gpio@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: Re: [PATCH resend 2/3] gpiolib: acpi: Rename honor_wakeup option to
- ignore_wake, add extra quirk
-Message-ID: <20200302105724.GQ1224808@smile.fi.intel.com>
-References: <20200225102753.8351-1-hdegoede@redhat.com>
- <20200225102753.8351-3-hdegoede@redhat.com>
- <20200225105437.GG10400@smile.fi.intel.com>
- <e0c39a89-bcac-4315-d764-5853eb77537d@redhat.com>
- <20200225123425.GK10400@smile.fi.intel.com>
- <20200225125700.GL10400@smile.fi.intel.com>
- <44cc5510-571c-21c4-1855-f3141f72eaa3@redhat.com>
- <ac38ee83-5edf-2ee0-8cec-a0b4367054a8@redhat.com>
- <20200302093038.GN1224808@smile.fi.intel.com>
- <c187c90b-fe02-8dee-c37c-80d06feba566@redhat.com>
+Subject: [PATCH v2 2/4] gpiolib: acpi: Rework honor_wakeup option into an ignore_wake option
+Date:   Mon,  2 Mar 2020 12:12:23 +0100
+Message-Id: <20200302111225.6641-2-hdegoede@redhat.com>
+In-Reply-To: <20200302111225.6641-1-hdegoede@redhat.com>
+References: <20200302111225.6641-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c187c90b-fe02-8dee-c37c-80d06feba566@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 10:46:57AM +0100, Hans de Goede wrote:
-> On 3/2/20 10:30 AM, Andy Shevchenko wrote:
-> > On Sat, Feb 29, 2020 at 09:57:52PM +0100, Hans de Goede wrote:
-> > > On 2/28/20 12:22 PM, Hans de Goede wrote:
-> > > > On 2/25/20 1:57 PM, Andy Shevchenko wrote:
-> > > > > On Tue, Feb 25, 2020 at 02:34:25PM +0200, Andy Shevchenko wrote:
-> > > > > > On Tue, Feb 25, 2020 at 12:26:04PM +0100, Hans de Goede wrote:
-> > > > > 
-> > > > > > Let's do it as a list of pairs, but in slightly different format (I see some
-> > > > > > potential to derive a generic parser, based on users described in
-> > > > > > Documentation/admin-guide/kernel-parameters.txt), i.e.
-> > > > > > 
-> > > > > >      ignore_wake=pin:controller[,pin:controller[,...]]
-> > > > > 
-> > > > > Another possible format
-> > > > > 
-> > > > >      ignore_wake=controller@pin[;controller@pin[;...]]
-> > > > 
-> > > > I like this one, the other one with the pin first feels wrong, the pin is
-> > > > part of the controller, not the other way around.
-> > > > 
-> > > > I will rework the patch series to use the ignore_wake=controller@pin format.
-> > > 
-> > > Just a quick note. I've changed the separator from ; to , for some reason
-> > > grub, at least as used in Fedora with Fedora's grub2 BLS (boot loader spec)
-> > > implementation does not like it when there is a ; in the kernel commandline.
-> > 
-> > Hmm... I think it would be harder then to have less possible formats in the
-> > command line. Do you really need right now several pins to be listed?
-> 
-> Yes, the existing quirk for the HP X2 10 with Cherry Trail SoC + TI PMIC,
-> which currently ignores wakeups on all pins needs to ignore wakeup on 2 pins.
+Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
+quirk mechanism") was added to deal with spurious wakeups on one specific
+model of the HP x2 10 series.
 
-Ouch.
+The approach taken there was to add a bool controlling wakeup support for
+all ACPI GPIO events. This was sufficient for the specific HP x2 10 model
+the commit was trying to fix, but in the mean time other models have
+turned up which need a similar workaround to avoid spurious wakeups from
+suspend, but only for one of the pins on which the ACPI tables request
+ACPI GPIO events.
 
-> > If it's about testing, perhaps we may do it with other means.
-> 
-> Well it is possible to pass the ; by putting quotes around it, so we could
-> go with the ; if you insist, but it really makes life harder for
-> 
-> > > I will also send an email about this to Fedora grub maintainer, but for
-> > > now it is easiest to just avoid the problem.
-> > 
-> > It's definitely bug in Grub due to existing kernel users with such format.
-> > It means Grub is unable to support kernel command line in full.
-> 
-> So I discussed this with the Fedora Grub maintainer, he says the problem
-> exists in upstream grub2 too, grub2 uses a shell like command syntax
-> both in its config file and in interactive mode, so if you do e.g.:
-> 
-> linux /boot/vmlinuz root=/dev/sda1 gpiolib_acpi.ignore_wake=INT33FF:01@0;INT0002:00@2
-> 
-> Then grub will see the INT0002:00@2 as a new separate commaond, this should
-> work:
-> 
-> linux /boot/vmlinuz root=/dev/sda1 gpiolib_acpi.ignore_wake="INT33FF:01@0;INT0002:00@2"
-> 
-> But the recommended way to edit the cmdline is by editing /etc/default/grub and
-> then re-running grub2-mkconfig, which clears the quotes unless we escape them
-> and since grub2-mkconfig is shell script inside shell script inside shell script
-> I don't even want to think about how many times I need to escape the quotes.
+Since the honor_wakeup option was added to be able to ignore wake events,
+the name was perhaps not the best, this commit renames it to ignore_wake
+and changes it to a string with the following format:
+gpiolib_acpi.ignore_wake=3Dcontroller@pin[,controller@pin[,...]]
 
-So, bug is still there...
+This allows working around spurious wakeup issues on a per pin basis.
 
-> TL;DR: Using ; in kernel commandline options makes life much harder for users
-> and as such is something which we should try to avoid.
-> 
-> I appreciate that you are trying to come up with a format for the option which
-> looks like existing options and I like the @ use, but using ; really is not a
-> good example to follow and IMHO that (not a good example / idea) trumps keeping
-> the syntax identical to an existing option.
+This commit also reworks the existing quirk for the HP x2 10 so that
+it functions as before.
 
-I see. Since we have to fix real problem, go ahead with comma, but please put
-few words in the commit message why this format is being chosen.
+Note:
+-This removes the honor_wakeup parameter. This has only been upstream for
+ a short time and to the best of my knowledge there are no users using
+ this module parameter.
 
--- 
-With Best Regards,
-Andy Shevchenko
+-The controller@pin[,controller@pin[,...]] syntax is based on an existing
+ kernel module parameter using the same controller@pin format. That versi=
+on
+ uses ';' as separator, but in practice that is problematic because grub2
+ cannot handle this without taking special care to escape the ';', so her=
+e
+ we are using a ',' as separator instead which does not have this issue.
 
+Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + qui=
+rk mechanism")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Rewrite to use a much more generic string based format to describe
+ the controller@pin combination(s) on which to ignore wakeups
+---
+ drivers/gpio/gpiolib-acpi.c | 96 +++++++++++++++++++++++++++++--------
+ 1 file changed, 76 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index a77edd31dd60..87bb0d3c69da 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -21,18 +21,21 @@
+ #include "gpiolib.h"
+ #include "gpiolib-acpi.h"
+=20
+-#define QUIRK_NO_EDGE_EVENTS_ON_BOOT		0x01l
+-#define QUIRK_NO_WAKEUP				0x02l
+-
+ static int run_edge_events_on_boot =3D -1;
+ module_param(run_edge_events_on_boot, int, 0444);
+ MODULE_PARM_DESC(run_edge_events_on_boot,
+ 		 "Run edge _AEI event-handlers at boot: 0=3Dno, 1=3Dyes, -1=3Dauto");
+=20
+-static int honor_wakeup =3D -1;
+-module_param(honor_wakeup, int, 0444);
+-MODULE_PARM_DESC(honor_wakeup,
+-		 "Honor the ACPI wake-capable flag: 0=3Dno, 1=3Dyes, -1=3Dauto");
++static char *ignore_wake;
++module_param(ignore_wake, charp, 0444);
++MODULE_PARM_DESC(ignore_wake,
++		 "controller@pin combos on which to ignore the ACPI wake flag "
++		 "ignore_wake=3Dcontroller@pin[,controller@pin[,...]]");
++
++struct acpi_gpiolib_dmi_quirk {
++	bool no_edge_events_on_boot;
++	char *ignore_wake;
++};
+=20
+ /**
+  * struct acpi_gpio_event - ACPI GPIO event handler data
+@@ -202,6 +205,57 @@ static void acpi_gpiochip_request_irqs(struct acpi_g=
+pio_chip *acpi_gpio)
+ 		acpi_gpiochip_request_irq(acpi_gpio, event);
+ }
+=20
++static bool acpi_gpio_in_ignore_list(const char *controller_in, int pin_=
+in)
++{
++	const char *controller, *pin_str;
++	int len, pin;
++	char *endp;
++
++	controller =3D ignore_wake;
++	while (controller) {
++		pin_str =3D strchr(controller, '@');
++		if (!pin_str)
++			goto err;
++
++		len =3D pin_str - controller;
++		if (len =3D=3D strlen(controller_in) &&
++		    strncmp(controller, controller_in, len) =3D=3D 0) {
++			pin =3D simple_strtoul(pin_str + 1, &endp, 10);
++			if (*endp !=3D 0 && *endp !=3D ',')
++				goto err;
++
++			if (pin =3D=3D pin_in)
++				return true;
++		}
++
++		controller =3D strchr(controller, ',');
++		if (controller)
++			controller++;
++	}
++
++	return false;
++err:
++	pr_err_once("Error invalid value for gpiolib_acpi.ignore_wake: %s\n",
++		    ignore_wake);
++	return false;
++}
++
++static bool acpi_gpio_irq_is_wake(struct device *parent,
++				  struct acpi_resource_gpio *agpio)
++{
++	int pin =3D agpio->pin_table[0];
++
++	if (agpio->wake_capable !=3D ACPI_WAKE_CAPABLE)
++		return false;
++
++	if (acpi_gpio_in_ignore_list(dev_name(parent), pin)) {
++		dev_info(parent, "Ignoring wakeup on pin %d\n", pin);
++		return false;
++	}
++
++	return true;
++}
++
+ /* Always returns AE_OK so that we keep looping over the resources */
+ static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
+ 					     void *context)
+@@ -289,7 +343,7 @@ static acpi_status acpi_gpiochip_alloc_event(struct a=
+cpi_resource *ares,
+ 	event->handle =3D evt_handle;
+ 	event->handler =3D handler;
+ 	event->irq =3D irq;
+-	event->irq_is_wake =3D honor_wakeup && agpio->wake_capable =3D=3D ACPI_=
+WAKE_CAPABLE;
++	event->irq_is_wake =3D acpi_gpio_irq_is_wake(chip->parent, agpio);
+ 	event->pin =3D pin;
+ 	event->desc =3D desc;
+=20
+@@ -1328,7 +1382,9 @@ static const struct dmi_system_id gpiolib_acpi_quir=
+ks[] =3D {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "MINIX"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
+ 		},
+-		.driver_data =3D (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
++		.driver_data =3D &(struct acpi_gpiolib_dmi_quirk) {
++			.no_edge_events_on_boot =3D true,
++		},
+ 	},
+ 	{
+ 		/*
+@@ -1341,7 +1397,9 @@ static const struct dmi_system_id gpiolib_acpi_quir=
+ks[] =3D {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Wortmann_AG"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "TERRA_PAD_1061"),
+ 		},
+-		.driver_data =3D (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
++		.driver_data =3D &(struct acpi_gpiolib_dmi_quirk) {
++			.no_edge_events_on_boot =3D true,
++		},
+ 	},
+ 	{
+ 		/*
+@@ -1360,33 +1418,31 @@ static const struct dmi_system_id gpiolib_acpi_qu=
+irks[] =3D {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "HP x2 Detachable 10-p0XX"),
+ 		},
+-		.driver_data =3D (void *)QUIRK_NO_WAKEUP,
++		.driver_data =3D &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_wake =3D "INT33FF:01@0,INT0002:00@2",
++		},
+ 	},
+ 	{} /* Terminating entry */
+ };
+=20
+ static int acpi_gpio_setup_params(void)
+ {
++	const struct acpi_gpiolib_dmi_quirk *quirk =3D NULL;
+ 	const struct dmi_system_id *id;
+-	long quirks =3D 0;
+=20
+ 	id =3D dmi_first_match(gpiolib_acpi_quirks);
+ 	if (id)
+-		quirks =3D (long)id->driver_data;
++		quirk =3D id->driver_data;
+=20
+ 	if (run_edge_events_on_boot < 0) {
+-		if (quirks & QUIRK_NO_EDGE_EVENTS_ON_BOOT)
++		if (quirk && quirk->no_edge_events_on_boot)
+ 			run_edge_events_on_boot =3D 0;
+ 		else
+ 			run_edge_events_on_boot =3D 1;
+ 	}
+=20
+-	if (honor_wakeup < 0) {
+-		if (quirks & QUIRK_NO_WAKEUP)
+-			honor_wakeup =3D 0;
+-		else
+-			honor_wakeup =3D 1;
+-	}
++	if (ignore_wake =3D=3D NULL && quirk && quirk->ignore_wake)
++		ignore_wake =3D quirk->ignore_wake;
+=20
+ 	return 0;
+ }
+--=20
+2.25.1
 
