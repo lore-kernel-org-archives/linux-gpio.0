@@ -6,64 +6,64 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7379CC3F2C6
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 15:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD217C3F2D1
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 15:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E0920842
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 15:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADBEB20828
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 15:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ehTCBdZP"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="ClsKFRzu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgCCPly (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Mar 2020 10:41:54 -0500
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:40190 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbgCCPly (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2020 10:41:54 -0500
-Received: by mail-pg1-f170.google.com with SMTP id t24so1702052pgj.7
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Mar 2020 07:41:53 -0800 (PST)
+        id S1727440AbgCCPmJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 3 Mar 2020 10:42:09 -0500
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:41961 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728002AbgCCPmJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2020 10:42:09 -0500
+Received: by mail-pf1-f169.google.com with SMTP id j9so1632892pfa.8
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Mar 2020 07:42:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=CeKPvy/FgQ3+Kl2uo0A0SwVwZEWfDzjXWgkoOaBZjvk=;
-        b=ehTCBdZPmkJS5fZvWY3I+SE/pzGMbV6AxuFMH4X61Ruw2Mh3/ZCf+axQJjb5aGt6iI
-         pjcUKFo6Yo5k+72pxJ2c+s4U3DpEqursFnnMw7f+SB98cbyvT9dRgbJ2ivyyMSkvOC5i
-         CNkjpogEyuCpfOpxWUIwCokKC2wzKfwdRZuCBBRAhkHJFcFPHYLasMBjC0Mck3aKU4eK
-         XIAI8wWPxgsz2EOwzsiI3pMMpoCO0eWnESfhm5+2vwCOA4DkBa+aQTNXk+f2BkUH2Rdj
-         pOyJxQK/a0e0LsiXG+tV/tvxYdy417AhRERUbo5agFGf5SvwgSINt8QPDFos54wwdUqc
-         UOZg==
+        bh=gxK/prujocO1TWbYle5ac0wmc0WtI+xAiBBk+DoLdDw=;
+        b=ClsKFRzukw2HX2BowMKAkJfPwDFZSlmuIwixyUCnHavnHGBfIzWa0D8yBF8GKKwbJD
+         JkJJgo/fzuGMpp8fop9HQXXZRyR7Rr8VOe6J9HZx2UKAVkwqV5urwbHcU9o1Z25GWIZJ
+         cGKXSmgbTkirOWGifubPERq7X2yCrHnxtVbjK0WX+o/isKa3lbNpJ5j7m97D6ft5JZ0S
+         ePu/QdYKfhskRIhyhL8gCLwp2ESrVj8vcEFQmykR91Q+Uy8+xWV+W1FxO62QyrwOWaHM
+         guK0bL5UqQXTgNasrZLV5kX31GjUYBnPUqAPhBkDMaZAy0XS4zAPk5XY34AEp+UhaCVA
+         7C0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=CeKPvy/FgQ3+Kl2uo0A0SwVwZEWfDzjXWgkoOaBZjvk=;
-        b=roQ/ZZbG6ipwueMMntaHDR4yQqXDHlUxKydtSDEtOJHqhlKH6RftNCCbIUVfgXmj1U
-         Q/gSfYXJns8UO2iTwF4GE2XjJ4CGbngoBpzV6FQQf1WIj0eyaCYmKGW+jIt3RBNS6/Ql
-         P1Hhv/RFVyXLjnzKBhlGyZScSwAMYyihLbJmU4kttQ3wdzT4TXvqFgYi1n/Axgs6Fl8A
-         ClnpmP8HTrXXx+zHtggd2mBikFPFsun4sghz5DlvE04++1GEfmbeb6AMW+m57GbaGP8u
-         GdGOetZSnrA7vjNzzSJih57Z6VYf0ZXqlwZP+Om5naCgwpi3QCpSd6XKKM5ILa3jO8Iw
-         p47A==
-X-Gm-Message-State: ANhLgQ2DDIuAN6k1VzZ0y5VCVVp1eww7YFdBDj/qxXAW4R0vso1p+K2p
-        KtoZpuG5JThxvx5WrbqQDwh14tM948o=
-X-Google-Smtp-Source: ADFU+vvKkbI9HOIqQCaHR0YpDEyNljB7igLCPUXSCsvSEooWtgMif0eTIRt6mE18b1EP9VSIodEP/w==
-X-Received: by 2002:a65:4bc5:: with SMTP id p5mr4497798pgr.409.1583250113083;
-        Tue, 03 Mar 2020 07:41:53 -0800 (PST)
+        bh=gxK/prujocO1TWbYle5ac0wmc0WtI+xAiBBk+DoLdDw=;
+        b=PeF5LMyoe/bbai0YhjIS43QES4N7FNNZfgKYNjULUFmdf2/mNcIOyALHWxVFZIzxSf
+         fBUZLvWZqJ/R65l7XDlC/zTOYStHrDOCRm7QX6Gony6B+Om/2VYQxuRo65JiJTEFhaFI
+         jSbr+1BGtkEBu5mVVJ29kK8S+jWylLnJy1IFSgRSzDHUvD+aTUqey5UlxMK3UvU8RqHj
+         Zi+QTHLUB988slRhdXVRPS41vIOHfaM9wUjLc1b0QjKpF94aYasRlJbwWhSkNN/i6elH
+         wiWa+VEQMRlvQJ1EXvbPJ+Bot3KPST4iLXpTnvyyWyvILxPTsJiC9+MAu4hpA4AUukLc
+         p5OA==
+X-Gm-Message-State: ANhLgQ0API7K8xEZGiJowcaFyusNvPLTeoi7h4hFIE9MN95JJ+npVuaI
+        122JLI4nG+QuyyHR70r3MfMCAEeoAoM=
+X-Google-Smtp-Source: ADFU+vuP1HblTpx3lu3IHWw2QczI0iI1yH3B7EXyZywWy6/mddTwURyctzrT8I4G7BUHegcHS2qdfw==
+X-Received: by 2002:a62:19c3:: with SMTP id 186mr4757261pfz.24.1583250127819;
+        Tue, 03 Mar 2020 07:42:07 -0800 (PST)
 Received: from [10.0.9.4] ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id h2sm24679073pgv.40.2020.03.03.07.41.52
+        by smtp.gmail.com with ESMTPSA id m11sm3130744pjl.18.2020.03.03.07.42.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 07:41:52 -0800 (PST)
-Message-ID: <5e5e7ac0.1c69fb81.a1d64.0f6f@mx.google.com>
-Date:   Tue, 03 Mar 2020 07:41:52 -0800 (PST)
+        Tue, 03 Mar 2020 07:42:07 -0800 (PST)
+Message-ID: <5e5e7acf.1c69fb81.bb7b1.8874@mx.google.com>
+Date:   Tue, 03 Mar 2020 07:42:07 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: devel
-X-Kernelci-Kernel: v5.6-rc1-26-g5779925c23e1
+X-Kernelci-Branch: for-next
+X-Kernelci-Kernel: v5.6-rc3-27-g9cd0c5e02ee4
 X-Kernelci-Report-Type: build
 X-Kernelci-Tree: linusw
-Subject: linusw/devel build: 6 builds: 0 failed,
- 6 passed (v5.6-rc1-26-g5779925c23e1)
+Subject: linusw/for-next build: 6 builds: 0 failed,
+ 6 passed (v5.6-rc3-27-g9cd0c5e02ee4)
 To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,15 +71,16 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel build: 6 builds: 0 failed, 6 passed (v5.6-rc1-26-g5779925c23e1)
+linusw/for-next build: 6 builds: 0 failed, 6 passed (v5.6-rc3-27-g9cd0c5e02=
+ee4)
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.6-rc1-26-g5779925c23e1/
+Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
+l/v5.6-rc3-27-g9cd0c5e02ee4/
 
 Tree: linusw
-Branch: devel
-Git Describe: v5.6-rc1-26-g5779925c23e1
-Git Commit: 5779925c23e1b9cc4cffb6dafe0b70a47beb364d
+Branch: for-next
+Git Describe: v5.6-rc3-27-g9cd0c5e02ee4
+Git Commit: 9cd0c5e02ee4fcf8d0905def9b096b4222e179c2
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
 git/
 Built: 6 unique architectures
