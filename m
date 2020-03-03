@@ -2,74 +2,83 @@ Return-Path: <SRS0=mxQs=4U=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C98C3F2D8
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 11:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47029C3F2C6
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 12:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7D220873
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 11:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BA1920863
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 12:34:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y9nHQ8bh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgCCLFj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Mar 2020 06:05:39 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:56607 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728022AbgCCLFj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2020 06:05:39 -0500
-Received: from localhost (lfbn-lyo-1-16-97.w86-202.abo.wanadoo.fr [86.202.111.97])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 148C2240005;
-        Tue,  3 Mar 2020 11:02:16 +0000 (UTC)
-Date:   Tue, 3 Mar 2020 12:02:16 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 7/8] rtc: imx-sc: Align imx sc msg structs to 4
-Message-ID: <20200303110216.GG4803@piout.net>
-References: <cover.1582216144.git.leonard.crestez@nxp.com>
- <13404bac8360852d86c61fad5ae5f0c91ffc4cb6.1582216144.git.leonard.crestez@nxp.com>
+        id S1729299AbgCCMeh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 3 Mar 2020 07:34:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40981 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbgCCMeh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Mar 2020 07:34:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u26so3302979ljd.8
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Mar 2020 04:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cd3PuDX7QGlpsLRHSkLqaNlrKLigo/VJS+jTQKxKQ4I=;
+        b=Y9nHQ8bhBUHFsRGta95iKneEmmxYzcq36hN1eDHokC2iEnSBusLXp4oraHu4nZ44a1
+         PDUL0NPlkSj9R2KiOB/guYeQHSCwsWMKMFUpofbpDnmeIuhCK2v4ZgKWv3wWeT0vU743
+         Dym6dRgKsaosD8pNyCJhPyass3LMEOwPWFpoPjQuObMWqL9DenwMCAhhjzvmO/AsHhyX
+         fw0zseDzmakF6WleQx56XgB1IR235elHrHqkZWg1JsKGZBFaC7R8p11d3N2ZRXjN48ae
+         XtEr+3+tJuqIi3eXzd+pbWklChykz3YNF3fvLsk2K1+i4krGaczU7gfWhng4hbt5ZLKJ
+         CtZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cd3PuDX7QGlpsLRHSkLqaNlrKLigo/VJS+jTQKxKQ4I=;
+        b=ajLfenbZhThIKDOKskOiA2GLFhlQgw3m7QklO39rPQYyF0wqcWQ3i7HO+41JgjoX9I
+         oIaOU6Ia6B4M0cOJtetYJuGSrkcOfxAWh87s5m4UV3HZ5bf5ESuy2YQPJafLo9AoxNfM
+         uPHWBc0q1wVI2oGxRztnO9xoPmadNJKi+YdwLOL7jhQPYJdgqfT7hT/P2h/DX71+6eXW
+         Tuf7DWTR6pJcAydIGq0y/zL9eW+1G826I8seKqAWg6RRizbSkT8YQivp1cixnTvHgRxt
+         a3rTLAbACiv6pSum0xehx7RgkSgJUYnIcvXlgchWA3AJbODfnEXGSQ0bEvU8XPh977CB
+         Ecmg==
+X-Gm-Message-State: ANhLgQ0SdHhdGwXVQ4NOajfN5H2ssVP0qEQJJsytXRVrhHBDeW7+OY77
+        ghVQyPBAe01SxswZWAMjmR9z7mVFaxrGqiDvVbdLQg==
+X-Google-Smtp-Source: ADFU+vsn3QSWuqyWnLpWbybp4u+9gaM0g0ZKJO5jT/H3hFJPpid+emxdoaQ9W2xtLAISDCjngcELgbpKPPFtmrs5BIc=
+X-Received: by 2002:a2e:9c8a:: with SMTP id x10mr2417162lji.277.1583238876321;
+ Tue, 03 Mar 2020 04:34:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13404bac8360852d86c61fad5ae5f0c91ffc4cb6.1582216144.git.leonard.crestez@nxp.com>
+References: <20200302082448.11795-1-geert+renesas@glider.be>
+In-Reply-To: <20200302082448.11795-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 3 Mar 2020 13:34:24 +0100
+Message-ID: <CACRpkdZXUVaDFq5TLmQnEMyRH5yv2XKE3au5KbuMCh0j0+Yh3g@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Fix inverted check in gpiochip_remove()
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 20/02/2020 18:29:38+0200, Leonard Crestez wrote:
-> The imx SC api strongly assumes that messages are composed out of
-> 4-bytes words but some of our message structs have odd sizeofs.
-> 
-> This produces many oopses with CONFIG_KASAN=y.
-> 
-> Fix by marking with __aligned(4).
-> 
-> Fixes: a3094fc1a15e ("rtc: imx-sc: add rtc alarm support")
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-imx-sc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Applied, thanks.
+On Mon, Mar 2, 2020 at 9:24 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> The optimization to check for requested lines actually optimized for the
+> uncomon error case, where one of the GPIO lines is still in use.
+> Hence the error message must be printed when the loop is terminated
+> early, not when it went through all available GPIO lines.
+>
+> Fixes: 869233f81337bfb3 ("gpiolib: Optimize gpiochip_remove() when check for requested line")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Patch applied with Andy's ACK.
+
+Yours,
+Linus Walleij
