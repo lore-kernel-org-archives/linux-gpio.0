@@ -1,117 +1,164 @@
-Return-Path: <SRS0=mxQs=4U=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=U2Rb=4V=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657EAC3F2C6
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 20:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D90C3F2D1
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Mar 2020 10:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3832120CC7
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Mar 2020 20:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36B6721739
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Mar 2020 10:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="bJ/02Edp"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="y5E+wMg9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731009AbgCCUBx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Mar 2020 15:01:53 -0500
-Received: from mout.gmx.net ([212.227.15.19]:41979 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbgCCUBx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 3 Mar 2020 15:01:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1583265711;
-        bh=jv/j6Yf8i9cGXsU5FvFqYYqK9msqey0zt7TE3cfdcHk=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=bJ/02EdpYiAsQVYrzKv7fLg484CYd/RY1bOGfxyfr9ytiQqLN1dCZPr0O0NlVlYK/
-         lCaY3QA8fwzEjsnHjz8bQO3YHQSAzfrPnt1/iwa6z9K/m4ZFa38IR9cMAXgV7A7z9A
-         oj9qG/Fl66If1pb/3FkT+flHaBLW3d7j3OytuZD0=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.195.177]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N17UW-1jWlvB2y0A-012VDH; Tue, 03
- Mar 2020 21:01:51 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-gpio@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: uapi: Improve phrasing around arrays representing empty strings
-Date:   Tue,  3 Mar 2020 21:01:48 +0100
-Message-Id: <20200303200149.27370-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        id S1726137AbgCDKDg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Mar 2020 05:03:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37835 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbgCDKDg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Mar 2020 05:03:36 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a141so1198022wme.2
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2020 02:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XASc5pfORXYFJOcvcFfrv1FY9S9TSUUxH/SjHngwi20=;
+        b=y5E+wMg9L2TXJSTzTauBIGPuZKTRjLOW89CWTVd5TK/MdLKO1lHbVMHs6D0N1JfLYo
+         XSlqEVThd+Oym+CJC9CNsMrONxCbKVHTdzbOf6NollHtwFziyfVkARSJT1TVPtLBEZYj
+         2y1fFZ6fHGYaM1Aze1ZWoOsFWtoeXzgFp6P3vdjrpVwpBBVqaSRWA1/Bp9Z5y5i3uMNS
+         4Iy/S7g+gA0cnNyw3mumfydMzhG5Akptgk+qojURfxVlDzhcTkVmNUb53bgoGuo/JW93
+         VOstFek6CziW4EhbI7lWkXCwHOSpei7gNkzahg3McaYezF5+54qG/Zb1NdHhbC3BzMSB
+         Q91g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=XASc5pfORXYFJOcvcFfrv1FY9S9TSUUxH/SjHngwi20=;
+        b=LD79CtBjqVCnFNAdT2S1s7dCqr/rSk1fvHgBfnD7pmhoja6JrG6M5J8/C7rXe+yh3C
+         UG5byyhVviU93145BJgVIqa96BPOVDiCfiWaTOu5gWBimk3hCqkxETNvVsjPMlbw5rib
+         iAs/kIJZP5Zb4w/6cNiyQC87fOpXdh3FpxSiAvVFMUvYGWdeANF8iDgO4rm7uzq+0eVC
+         lLS4UzHggz1d1esxhmkw7kJCT57PNj2w0iikfdqBQARp8K6pqqsqqFLALwkarzEuyyU9
+         tohfrvobftXuEu2VSx7omDdi+r2BjUKJqef5mtUdTZBSGEBmegh+ckbrjSCElmiZ/wpN
+         7aYA==
+X-Gm-Message-State: ANhLgQ3w+Y8Xi3VtKlFz4mkmM34ai95zcx0JvyJzfy+9D914LdUtxIgp
+        5zUor22bQUfSamIUNoFKM3RKqw==
+X-Google-Smtp-Source: ADFU+vt3IWN1C2XyOAznoVBbOmgqr+bjcXZ4zI1Ah8fzQf1sD3h+oSNMBTFSdVeHo2UQk9O3L3rDww==
+X-Received: by 2002:a1c:7714:: with SMTP id t20mr2817677wmi.174.1583316211253;
+        Wed, 04 Mar 2020 02:03:31 -0800 (PST)
+Received: from [10.1.3.173] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s22sm3221091wmc.16.2020.03.04.02.03.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2020 02:03:30 -0800 (PST)
+Subject: Re: [PATCH] pinctrl: meson: add tsin pinctrl for meson gxbb/gxl/gxm
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Igor Vavro <afl2001@gmail.com>
+References: <1583124056-94785-1-git-send-email-christianshewitt@gmail.com>
+ <CACRpkdZ4+-26Q01nx9iFJLUSCfM0Cuh6U8=gdtP=63xMd+2jqA@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ BSwxi7g3Mu7u5kUByanqHyA=
+Organization: Baylibre
+Message-ID: <999512c9-e50b-af51-7875-7fe9fca665de@baylibre.com>
+Date:   Wed, 4 Mar 2020 11:03:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:upu+vLIIss57IUNt/w8STuFzssxSLFOyM6rrm6WsWKGPrfU9zEI
- h6mRx2Jvy0XTmQJX0DLh7kRa1tFUpXtalJuYByEpdLO5Krn6eB9owzAA8E4yb9I8mAo2Lec
- CheYLmSIXsScul53zOIV465YP6mlOy17HL3VycVKsuvTgGGTXhMjYFrNMxQQMhFZVmK74FJ
- dOWDnJ7JzKNY8POOLorbg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uTLupxLZDbo=:+O9hnbdmKZ+dJ2ToDWyV+r
- B+EvhpSrZybqqtGlzngpng7FwKmG0Zl4+A/uRFkpdrJY+xRwZFSXD5RWm1UfKiX3LQyN8iRah
- Z/BQ68DHUz+ck1TjlwJRYr6VznMR4Lm+zbQJMlhvK9/0hQEDvvXE++5pKwhq2++XehIlkzgXH
- Nnvo9BEGDFlTorHAKIzSkzHxpqjcNoYDmCbzE93sa4Dxxs0V10Nudl6ro5IZ6VEx58EiC45Mt
- ldNaFGhmokW+9WVhe/6+I8HZ2NMrEZn4FDrImHjoK3nO3klG8kAqxwnnBeSX92730/lE6UjbW
- j2vLtKuDh5r5tNr1706kW0mkxj5SpT/18V/4am6zaNzp2DeGnG5DwSgkVCOauYaefXS6PNH1b
- Zh/NEFXzykHwfPRJgt3wpLv9X1jew7bsO4YG+MvAhDd2043YkKsOJ/VjT+BzeS/doRI3lM2et
- nwrQ9a6FHFWB8yvDVnMOT+AzEzOcthH9+gty+aa9mIiduDysgIaUBvivbI2+IWD5yfiATVpkV
- uh4xE10wk2z2ZmMSp1aWZ2D2HvBs+/Mb7sKLb9e+ZoDIXOY6zneJbIQo4d9NmIuG9VRRho+8B
- 3NHxrOyl8fldWkne3xWLTiWB5tHaR2N9U5f2TXVWvdq/3PzjTCdJv5g7Darb2m9u5nksfMHN2
- v/ajvnnRCT+ltA7x/yhfsPaU52+7o4Or7/Lya4UboywdhFP3uS778f7ymAuNtWI3goNQnw7Bv
- PMs5mdst7Rr8mQIDbRTIigJKk+yTTCyp+I4kPGMtVMDYO2aHDxvPy9VB6rlJdCZKQVC2rzNBn
- 6ImAVN3EiNdcQO9cn1EqUS1zcbu1zzKXBMDeH1fqyyWUbjVi/oETVLGLgoPJ0H881yUuY/CqH
- 6/zg8X0enjLW/mE1GaEgU/e7YY3ij2/LecEu6QOAbypkEkukkT6qz65VlDPiTC2q0BxLLMa5q
- dlJwgQ7yxr36n4dubujQcxEldOgefr1MNlRll1fOpnafaiFueBcf2VlsXMyJICwnGUh0hycCH
- KgIY/wma8NDrVBBuhfq0GLRFEAVaw1Q4K/FnEDdcMyAwGp48D2dDmymI8fWl2ngOriRJUttAb
- K53jmO0XyuGMB+5ipk3GmY15rLhARxiGHZUSAKxUoAVZZNYz70rNF5yln2vs2RLDep+mvaGcU
- P7arEx9nGVcUzJFwIz+KDE6RfiOmdori7Af9PB9QwJ0WU8BF4T5jEnt4/2g/mjcbmwZGoXA6f
- PY+eLDf78KQ5Ng3QN
+In-Reply-To: <CACRpkdZ4+-26Q01nx9iFJLUSCfM0Cuh6U8=gdtP=63xMd+2jqA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Character arrays can be considered empty strings (if they are
-immediately terminated), but they cannot be NULL.
+Hi,
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- include/uapi/linux/gpio.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On 03/03/2020 13:40, Linus Walleij wrote:
+> On Mon, Mar 2, 2020 at 5:41 AM Christian Hewitt
+> <christianshewitt@gmail.com> wrote:
+> 
+>> From: Igor Vavro <afl2001@gmail.com>
+>>
+>> Add the tsin pinctrl definitions needed for integrated DVB hardware
+>> support on Meson GXBB/GXL/GXM boards.
+>>
+>> Signed-off-by: Igor Vavro <afl2001@gmail.com>
+>> [updated commit message]
+>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> 
+> Can I get Martin and/or Neil to review this?
 
-diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-index 799cf823d493..cd88599ea3ea 100644
-=2D-- a/include/uapi/linux/gpio.h
-+++ b/include/uapi/linux/gpio.h
-@@ -18,7 +18,7 @@
-  * struct gpiochip_info - Information about a certain GPIO chip
-  * @name: the Linux kernel name of this GPIO chip
-  * @label: a functional name for this GPIO chip, such as a product
-- * number, may be NULL
-+ * number, may be empty
-  * @lines: number of GPIO lines on this chip
-  */
- struct gpiochip_info {
-@@ -44,10 +44,10 @@ struct gpiochip_info {
-  * @flags: various flags for this line
-  * @name: the name of this GPIO line, such as the output pin of the line =
-on the
-  * chip, a rail or a pin header name on a board, as specified by the gpio
-- * chip, may be NULL
-+ * chip, may be empty
-  * @consumer: a functional name for the consumer of this GPIO line as set=
- by
-- * whatever is using it, will be NULL if there is no current user but may
-- * also be NULL if the consumer doesn't set this up
-+ * whatever is using it, will be empty if there is no current user but ma=
-y
-+ * also be empty if the consumer doesn't set this up
-  */
- struct gpioline_info {
- 	__u32 line_offset;
-=2D-
-2.20.1
+Otto replied on linux-amlogic only, reporting an issue with the path, also
+modifying the uart_c pin registers bits.
+
+So it needs a resend.
+
+Neil
+
+> 
+> Yours,
+> Linus Walleij
+> 
 
