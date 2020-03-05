@@ -2,342 +2,275 @@ Return-Path: <SRS0=6rna=4W=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E391DC3F2CD
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Mar 2020 05:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAACDC3F2D1
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Mar 2020 14:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5D3A208C3
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Mar 2020 05:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5FE21556
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Mar 2020 14:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbgCEFuV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Mar 2020 00:50:21 -0500
-Received: from mga14.intel.com ([192.55.52.115]:31386 "EHLO mga14.intel.com"
+        id S1725944AbgCEOjQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Mar 2020 09:39:16 -0500
+Received: from mga17.intel.com ([192.55.52.151]:3111 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbgCEFuP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 5 Mar 2020 00:50:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1725938AbgCEOjP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 5 Mar 2020 09:39:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Mar 2020 21:50:13 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 06:39:15 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,516,1574150400"; 
-   d="scan'208";a="234350132"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Mar 2020 21:50:11 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1j9jOd-0006m9-6S; Thu, 05 Mar 2020 13:50:11 +0800
-Date:   Thu, 05 Mar 2020 13:49:51 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-wdt-2] BUILD SUCCESS
- 93f5ede9c6c53003d635d1a422cc93d29e1f7d63
-Message-ID: <5e6092ff.tMa3QmDP9iRBz66r%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+X-IronPort-AV: E=Sophos;i="5.70,518,1574150400"; 
+   d="scan'208";a="352370974"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Mar 2020 06:39:13 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1j9red-0077m0-9i; Thu, 05 Mar 2020 16:39:15 +0200
+Date:   Thu, 5 Mar 2020 16:39:15 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Lehmann <schmorp@schmorp.de>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] gpiolib: acpi: Rework honor_wakeup option into an
+ ignore_wake option
+Message-ID: <20200305143915.GN1224808@smile.fi.intel.com>
+References: <20200302111225.6641-1-hdegoede@redhat.com>
+ <20200302111225.6641-2-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200302111225.6641-2-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-wdt-2
-branch HEAD: 93f5ede9c6c53003d635d1a422cc93d29e1f7d63  watchdog: wm831x_wdt: Remove GPIO handling
+On Mon, Mar 02, 2020 at 12:12:23PM +0100, Hans de Goede wrote:
+> Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
+> quirk mechanism") was added to deal with spurious wakeups on one specific
+> model of the HP x2 10 series.
+> 
+> The approach taken there was to add a bool controlling wakeup support for
+> all ACPI GPIO events. This was sufficient for the specific HP x2 10 model
+> the commit was trying to fix, but in the mean time other models have
+> turned up which need a similar workaround to avoid spurious wakeups from
+> suspend, but only for one of the pins on which the ACPI tables request
+> ACPI GPIO events.
+> 
+> Since the honor_wakeup option was added to be able to ignore wake events,
+> the name was perhaps not the best, this commit renames it to ignore_wake
+> and changes it to a string with the following format:
+> gpiolib_acpi.ignore_wake=controller@pin[,controller@pin[,...]]
+> 
+> This allows working around spurious wakeup issues on a per pin basis.
+> 
+> This commit also reworks the existing quirk for the HP x2 10 so that
+> it functions as before.
+> 
+> Note:
+> -This removes the honor_wakeup parameter. This has only been upstream for
+>  a short time and to the best of my knowledge there are no users using
+>  this module parameter.
+> 
+> -The controller@pin[,controller@pin[,...]] syntax is based on an existing
+>  kernel module parameter using the same controller@pin format. That version
+>  uses ';' as separator, but in practice that is problematic because grub2
+>  cannot handle this without taking special care to escape the ';', so here
+>  we are using a ',' as separator instead which does not have this issue.
+> 
 
-elapsed time: 2386m
+All are fine to me.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-configs tested: 280
-configs skipped: 0
+> Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> -Rewrite to use a much more generic string based format to describe
+>  the controller@pin combination(s) on which to ignore wakeups
+> ---
+>  drivers/gpio/gpiolib-acpi.c | 96 +++++++++++++++++++++++++++++--------
+>  1 file changed, 76 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index a77edd31dd60..87bb0d3c69da 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -21,18 +21,21 @@
+>  #include "gpiolib.h"
+>  #include "gpiolib-acpi.h"
+>  
+> -#define QUIRK_NO_EDGE_EVENTS_ON_BOOT		0x01l
+> -#define QUIRK_NO_WAKEUP				0x02l
+> -
+>  static int run_edge_events_on_boot = -1;
+>  module_param(run_edge_events_on_boot, int, 0444);
+>  MODULE_PARM_DESC(run_edge_events_on_boot,
+>  		 "Run edge _AEI event-handlers at boot: 0=no, 1=yes, -1=auto");
+>  
+> -static int honor_wakeup = -1;
+> -module_param(honor_wakeup, int, 0444);
+> -MODULE_PARM_DESC(honor_wakeup,
+> -		 "Honor the ACPI wake-capable flag: 0=no, 1=yes, -1=auto");
+> +static char *ignore_wake;
+> +module_param(ignore_wake, charp, 0444);
+> +MODULE_PARM_DESC(ignore_wake,
+> +		 "controller@pin combos on which to ignore the ACPI wake flag "
+> +		 "ignore_wake=controller@pin[,controller@pin[,...]]");
+> +
+> +struct acpi_gpiolib_dmi_quirk {
+> +	bool no_edge_events_on_boot;
+> +	char *ignore_wake;
+> +};
+>  
+>  /**
+>   * struct acpi_gpio_event - ACPI GPIO event handler data
+> @@ -202,6 +205,57 @@ static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
+>  		acpi_gpiochip_request_irq(acpi_gpio, event);
+>  }
+>  
+> +static bool acpi_gpio_in_ignore_list(const char *controller_in, int pin_in)
+> +{
+> +	const char *controller, *pin_str;
+> +	int len, pin;
+> +	char *endp;
+> +
+> +	controller = ignore_wake;
+> +	while (controller) {
+> +		pin_str = strchr(controller, '@');
+> +		if (!pin_str)
+> +			goto err;
+> +
+> +		len = pin_str - controller;
+> +		if (len == strlen(controller_in) &&
+> +		    strncmp(controller, controller_in, len) == 0) {
+> +			pin = simple_strtoul(pin_str + 1, &endp, 10);
+> +			if (*endp != 0 && *endp != ',')
+> +				goto err;
+> +
+> +			if (pin == pin_in)
+> +				return true;
+> +		}
+> +
+> +		controller = strchr(controller, ',');
+> +		if (controller)
+> +			controller++;
+> +	}
+> +
+> +	return false;
+> +err:
+> +	pr_err_once("Error invalid value for gpiolib_acpi.ignore_wake: %s\n",
+> +		    ignore_wake);
+> +	return false;
+> +}
+> +
+> +static bool acpi_gpio_irq_is_wake(struct device *parent,
+> +				  struct acpi_resource_gpio *agpio)
+> +{
+> +	int pin = agpio->pin_table[0];
+> +
+> +	if (agpio->wake_capable != ACPI_WAKE_CAPABLE)
+> +		return false;
+> +
+> +	if (acpi_gpio_in_ignore_list(dev_name(parent), pin)) {
+> +		dev_info(parent, "Ignoring wakeup on pin %d\n", pin);
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  /* Always returns AE_OK so that we keep looping over the resources */
+>  static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
+>  					     void *context)
+> @@ -289,7 +343,7 @@ static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
+>  	event->handle = evt_handle;
+>  	event->handler = handler;
+>  	event->irq = irq;
+> -	event->irq_is_wake = honor_wakeup && agpio->wake_capable == ACPI_WAKE_CAPABLE;
+> +	event->irq_is_wake = acpi_gpio_irq_is_wake(chip->parent, agpio);
+>  	event->pin = pin;
+>  	event->desc = desc;
+>  
+> @@ -1328,7 +1382,9 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "MINIX"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
+>  		},
+> -		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
+> +			.no_edge_events_on_boot = true,
+> +		},
+>  	},
+>  	{
+>  		/*
+> @@ -1341,7 +1397,9 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "Wortmann_AG"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "TERRA_PAD_1061"),
+>  		},
+> -		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
+> +			.no_edge_events_on_boot = true,
+> +		},
+>  	},
+>  	{
+>  		/*
+> @@ -1360,33 +1418,31 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "HP x2 Detachable 10-p0XX"),
+>  		},
+> -		.driver_data = (void *)QUIRK_NO_WAKEUP,
+> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
+> +			.ignore_wake = "INT33FF:01@0,INT0002:00@2",
+> +		},
+>  	},
+>  	{} /* Terminating entry */
+>  };
+>  
+>  static int acpi_gpio_setup_params(void)
+>  {
+> +	const struct acpi_gpiolib_dmi_quirk *quirk = NULL;
+>  	const struct dmi_system_id *id;
+> -	long quirks = 0;
+>  
+>  	id = dmi_first_match(gpiolib_acpi_quirks);
+>  	if (id)
+> -		quirks = (long)id->driver_data;
+> +		quirk = id->driver_data;
+>  
+>  	if (run_edge_events_on_boot < 0) {
+> -		if (quirks & QUIRK_NO_EDGE_EVENTS_ON_BOOT)
+> +		if (quirk && quirk->no_edge_events_on_boot)
+>  			run_edge_events_on_boot = 0;
+>  		else
+>  			run_edge_events_on_boot = 1;
+>  	}
+>  
+> -	if (honor_wakeup < 0) {
+> -		if (quirks & QUIRK_NO_WAKEUP)
+> -			honor_wakeup = 0;
+> -		else
+> -			honor_wakeup = 1;
+> -	}
+> +	if (ignore_wake == NULL && quirk && quirk->ignore_wake)
+> +		ignore_wake = quirk->ignore_wake;
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.25.1
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                               defconfig
-sparc                            allyesconfig
-s390                             alldefconfig
-sh                          rsk7269_defconfig
-sparc64                             defconfig
-mips                              allnoconfig
-c6x                        evmc6678_defconfig
-openrisc                    or1ksim_defconfig
-sh                               allmodconfig
-s390                       zfcpdump_defconfig
-sparc64                          allyesconfig
-arc                                 defconfig
-parisc                generic-64bit_defconfig
-sh                  sh7785lcr_32bit_defconfig
-riscv                             allnoconfig
-csky                                defconfig
-sparc                               defconfig
-ia64                             allmodconfig
-h8300                    h8300h-sim_defconfig
-i386                              allnoconfig
-i386                             alldefconfig
-i386                             allyesconfig
-i386                                defconfig
-ia64                             alldefconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-c6x                              allyesconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-alpha                               defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-h8300                     edosk2674_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-arc                              allyesconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-parisc                            allnoconfig
-parisc                           allyesconfig
-parisc                generic-32bit_defconfig
-x86_64               randconfig-a001-20200303
-x86_64               randconfig-a002-20200303
-x86_64               randconfig-a003-20200303
-i386                 randconfig-a001-20200303
-i386                 randconfig-a002-20200303
-i386                 randconfig-a003-20200303
-x86_64               randconfig-a001-20200304
-x86_64               randconfig-a002-20200304
-x86_64               randconfig-a003-20200304
-i386                 randconfig-a001-20200304
-i386                 randconfig-a002-20200304
-i386                 randconfig-a003-20200304
-x86_64               randconfig-a001-20200305
-x86_64               randconfig-a002-20200305
-x86_64               randconfig-a003-20200305
-i386                 randconfig-a001-20200305
-i386                 randconfig-a002-20200305
-i386                 randconfig-a003-20200305
-alpha                randconfig-a001-20200303
-m68k                 randconfig-a001-20200303
-mips                 randconfig-a001-20200303
-nds32                randconfig-a001-20200303
-parisc               randconfig-a001-20200303
-riscv                randconfig-a001-20200303
-alpha                randconfig-a001-20200304
-m68k                 randconfig-a001-20200304
-mips                 randconfig-a001-20200304
-nds32                randconfig-a001-20200304
-parisc               randconfig-a001-20200304
-riscv                randconfig-a001-20200304
-alpha                randconfig-a001-20200305
-m68k                 randconfig-a001-20200305
-mips                 randconfig-a001-20200305
-nds32                randconfig-a001-20200305
-parisc               randconfig-a001-20200305
-riscv                randconfig-a001-20200305
-c6x                  randconfig-a001-20200303
-h8300                randconfig-a001-20200303
-microblaze           randconfig-a001-20200303
-nios2                randconfig-a001-20200303
-sparc64              randconfig-a001-20200303
-c6x                  randconfig-a001-20200304
-h8300                randconfig-a001-20200304
-microblaze           randconfig-a001-20200304
-nios2                randconfig-a001-20200304
-sparc64              randconfig-a001-20200304
-c6x                  randconfig-a001-20200305
-h8300                randconfig-a001-20200305
-microblaze           randconfig-a001-20200305
-nios2                randconfig-a001-20200305
-sparc64              randconfig-a001-20200305
-csky                 randconfig-a001-20200303
-openrisc             randconfig-a001-20200303
-s390                 randconfig-a001-20200303
-sh                   randconfig-a001-20200303
-xtensa               randconfig-a001-20200303
-csky                 randconfig-a001-20200304
-openrisc             randconfig-a001-20200304
-s390                 randconfig-a001-20200304
-sh                   randconfig-a001-20200304
-xtensa               randconfig-a001-20200304
-csky                 randconfig-a001-20200302
-openrisc             randconfig-a001-20200302
-s390                 randconfig-a001-20200302
-sh                   randconfig-a001-20200302
-xtensa               randconfig-a001-20200302
-x86_64               randconfig-b001-20200303
-x86_64               randconfig-b002-20200303
-x86_64               randconfig-b003-20200303
-i386                 randconfig-b001-20200303
-i386                 randconfig-b002-20200303
-i386                 randconfig-b003-20200303
-x86_64               randconfig-b001-20200304
-x86_64               randconfig-b002-20200304
-x86_64               randconfig-b003-20200304
-i386                 randconfig-b001-20200304
-i386                 randconfig-b002-20200304
-i386                 randconfig-b003-20200304
-x86_64               randconfig-b001-20200305
-x86_64               randconfig-b002-20200305
-x86_64               randconfig-b003-20200305
-i386                 randconfig-b001-20200305
-i386                 randconfig-b002-20200305
-i386                 randconfig-b003-20200305
-x86_64               randconfig-c001-20200303
-x86_64               randconfig-c002-20200303
-x86_64               randconfig-c003-20200303
-i386                 randconfig-c001-20200303
-i386                 randconfig-c002-20200303
-i386                 randconfig-c003-20200303
-x86_64               randconfig-c001-20200305
-x86_64               randconfig-c002-20200305
-x86_64               randconfig-c003-20200305
-i386                 randconfig-c001-20200305
-i386                 randconfig-c002-20200305
-i386                 randconfig-c003-20200305
-x86_64               randconfig-c001-20200304
-x86_64               randconfig-c002-20200304
-x86_64               randconfig-c003-20200304
-i386                 randconfig-c001-20200304
-i386                 randconfig-c002-20200304
-i386                 randconfig-c003-20200304
-x86_64               randconfig-d001-20200303
-x86_64               randconfig-d002-20200303
-x86_64               randconfig-d003-20200303
-i386                 randconfig-d001-20200303
-i386                 randconfig-d002-20200303
-i386                 randconfig-d003-20200303
-x86_64               randconfig-d001-20200304
-x86_64               randconfig-d002-20200304
-x86_64               randconfig-d003-20200304
-i386                 randconfig-d001-20200304
-i386                 randconfig-d002-20200304
-i386                 randconfig-d003-20200304
-x86_64               randconfig-e001-20200304
-x86_64               randconfig-e002-20200304
-x86_64               randconfig-e003-20200304
-i386                 randconfig-e001-20200304
-i386                 randconfig-e002-20200304
-i386                 randconfig-e003-20200304
-x86_64               randconfig-e001-20200303
-x86_64               randconfig-e002-20200303
-x86_64               randconfig-e003-20200303
-i386                 randconfig-e001-20200303
-i386                 randconfig-e002-20200303
-i386                 randconfig-e003-20200303
-x86_64               randconfig-e001-20200305
-x86_64               randconfig-e002-20200305
-x86_64               randconfig-e003-20200305
-i386                 randconfig-e001-20200305
-i386                 randconfig-e002-20200305
-i386                 randconfig-e003-20200305
-x86_64               randconfig-f001-20200304
-x86_64               randconfig-f002-20200304
-x86_64               randconfig-f003-20200304
-i386                 randconfig-f001-20200304
-i386                 randconfig-f002-20200304
-i386                 randconfig-f003-20200304
-x86_64               randconfig-f001-20200303
-x86_64               randconfig-f002-20200303
-x86_64               randconfig-f003-20200303
-i386                 randconfig-f001-20200303
-i386                 randconfig-f002-20200303
-i386                 randconfig-f003-20200303
-x86_64               randconfig-g001-20200303
-x86_64               randconfig-g002-20200303
-x86_64               randconfig-g003-20200303
-i386                 randconfig-g001-20200303
-i386                 randconfig-g002-20200303
-i386                 randconfig-g003-20200303
-x86_64               randconfig-g001-20200304
-x86_64               randconfig-g002-20200304
-x86_64               randconfig-g003-20200304
-i386                 randconfig-g001-20200304
-i386                 randconfig-g002-20200304
-i386                 randconfig-g003-20200304
-x86_64               randconfig-h001-20200303
-x86_64               randconfig-h002-20200303
-x86_64               randconfig-h003-20200303
-i386                 randconfig-h001-20200303
-i386                 randconfig-h002-20200303
-i386                 randconfig-h003-20200303
-x86_64               randconfig-h001-20200304
-x86_64               randconfig-h002-20200304
-x86_64               randconfig-h003-20200304
-i386                 randconfig-h001-20200304
-i386                 randconfig-h002-20200304
-i386                 randconfig-h003-20200304
-x86_64               randconfig-h001-20200305
-x86_64               randconfig-h002-20200305
-x86_64               randconfig-h003-20200305
-i386                 randconfig-h001-20200305
-i386                 randconfig-h002-20200305
-i386                 randconfig-h003-20200305
-arc                  randconfig-a001-20200303
-arm                  randconfig-a001-20200303
-arm64                randconfig-a001-20200303
-ia64                 randconfig-a001-20200303
-powerpc              randconfig-a001-20200303
-sparc                randconfig-a001-20200303
-arc                  randconfig-a001-20200304
-arm                  randconfig-a001-20200304
-arm64                randconfig-a001-20200304
-ia64                 randconfig-a001-20200304
-powerpc              randconfig-a001-20200304
-sparc                randconfig-a001-20200304
-riscv                            allmodconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-s390                          debug_defconfig
-s390                             allyesconfig
-s390                              allnoconfig
-s390                             allmodconfig
-s390                                defconfig
-sh                            titan_defconfig
-sh                                allnoconfig
-sparc64                          allmodconfig
-sparc64                           allnoconfig
-um                                  defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
