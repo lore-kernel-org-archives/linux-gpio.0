@@ -2,111 +2,97 @@ Return-Path: <SRS0=Ebct=4X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8245C10DCE
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 14:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A11DC10F25
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 15:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3DC20848
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 14:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE9042084E
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 15:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XkEbWKLy"
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Kz2w2nk0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbgCFOrb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Mar 2020 09:47:31 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:43762 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726314AbgCFOrb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2020 09:47:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583506049;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yhpVk++MgudHcvpslxpK/BIUu9Ii09q0rWMNLFp+cOE=;
-        b=XkEbWKLyWnuxErmLJnDhPk25JmjsfjPt7HbWQ3ws71GpzuEsX+693L+xHstotmy5V/kWyT
-        LiG7NyHszM1Wje/mc2q4uBmvSdw68A5vp4gvOMz4pPBJzDo1ce3BVPy/IkjbluCtl9oDv4
-        3RUMlH0Z73k6YGN8y0cgs6AbG9RUHiI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-177-j4JDQbCKN0OZkk-BaHx0uA-1; Fri, 06 Mar 2020 09:47:28 -0500
-X-MC-Unique: j4JDQbCKN0OZkk-BaHx0uA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726682AbgCFP0i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Mar 2020 10:26:38 -0500
+Received: from onstation.org ([52.200.56.107]:38468 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725835AbgCFP0i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 6 Mar 2020 10:26:38 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 40EF31085935;
-        Fri,  6 Mar 2020 14:47:26 +0000 (UTC)
-Received: from x1.localdomain.com (unknown [10.36.118.146])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B98991D8E;
-        Fri,  6 Mar 2020 14:47:24 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH] gpiolib: acpi: Add missing __init(const) markers to initcall-s
-Date:   Fri,  6 Mar 2020 15:47:22 +0100
-Message-Id: <20200306144722.175298-1-hdegoede@redhat.com>
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 5E03F3EA2F;
+        Fri,  6 Mar 2020 15:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1583508397;
+        bh=O+r8VQF4XCl7Fiwv3/FRAInQGKr7a7TAhlPP1lLiB5w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Kz2w2nk0xMH0lQUaFSboFrx8+8MIeJ9tKVC7RbgDzVIKgpdTIe2vAs2ZCNDrg2UAA
+         hp7ZpRiMiMl7TzyhfxKjbOttrULM/n8t9RrJPY6kzLjQ7K5nhJ1WlZeewCReBT/tVs
+         KgddGQQW500QfgDdxZo9irx4oEtT3jAz0437Ax8M=
+Date:   Fri, 6 Mar 2020 10:26:37 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] pinctrl: qcom: ssbi-gpio: Fix fwspec parsing bug
+Message-ID: <20200306152637.GA13000@onstation.org>
+References: <20200306143416.1476250-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306143416.1476250-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The gpiolib ACPI code uses 2 initcall-s and the called function
-(and used DMI table) is missing __init(const) markers.
+On Fri, Mar 06, 2020 at 03:34:15PM +0100, Linus Walleij wrote:
+> We are parsing SSBI gpios as fourcell fwspecs but they are
+> twocell. Probably a simple copy-and-paste bug.
+> 
+> Tested on the APQ8060 DragonBoard and after this ethernet
+> and MMC card detection works again.
+> 
+> Cc: Brian Masney <masneyb@onstation.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: stable@vger.kernel.org
+> Fixes: ae436fe81053 ("pinctrl: ssbi-gpio: convert to hierarchical IRQ helpers in gpio core")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-This commit fixes this freeing up some extra memory once the kernel
-has completed booting.
+Reviewed-by: Brian Masney <masneyb@onstation.org>
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpiolib-acpi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+That was a copy and paste error on my part that originated from
+spmi-gpio.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 0017367e94ee..9276051663da 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1353,7 +1353,7 @@ int acpi_gpio_count(struct device *dev, const char =
-*con_id)
- }
-=20
- /* Run deferred acpi_gpiochip_request_irqs() */
--static int acpi_gpio_handle_deferred_request_irqs(void)
-+static int __init acpi_gpio_handle_deferred_request_irqs(void)
- {
- 	struct acpi_gpio_chip *acpi_gpio, *tmp;
-=20
-@@ -1371,7 +1371,7 @@ static int acpi_gpio_handle_deferred_request_irqs(v=
-oid)
- /* We must use _sync so that this runs after the first deferred_probe ru=
-n */
- late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
-=20
--static const struct dmi_system_id gpiolib_acpi_quirks[] =3D {
-+static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst =3D =
-{
- 	{
- 		/*
- 		 * The Minix Neo Z83-4 has a micro-USB-B id-pin handler for
-@@ -1455,7 +1455,7 @@ static const struct dmi_system_id gpiolib_acpi_quir=
-ks[] =3D {
- 	{} /* Terminating entry */
- };
-=20
--static int acpi_gpio_setup_params(void)
-+static int __init acpi_gpio_setup_params(void)
- {
- 	const struct acpi_gpiolib_dmi_quirk *quirk =3D NULL;
- 	const struct dmi_system_id *id;
---=20
-2.25.1
+Brian
 
+
+> ---
+> ChangeLog v1->v2:
+> - Renamed function pointer field to .populate_parent_alloc_arg
+>   as it is named upstream.
+> ---
+>  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> index fba1d41d20ec..338a15d08629 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> @@ -794,7 +794,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+>  	girq->fwnode = of_node_to_fwnode(pctrl->dev->of_node);
+>  	girq->parent_domain = parent_domain;
+>  	girq->child_to_parent_hwirq = pm8xxx_child_to_parent_hwirq;
+> -	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_fourcell;
+> +	girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_twocell;
+>  	girq->child_offset_to_irq = pm8xxx_child_offset_to_irq;
+>  	girq->child_irq_domain_ops.translate = pm8xxx_domain_translate;
+>  
+> -- 
+> 2.24.1
