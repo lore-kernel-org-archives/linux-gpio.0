@@ -2,116 +2,114 @@ Return-Path: <SRS0=Ebct=4X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F3C10F00
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 13:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10250C10DCE
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 13:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34CEF20848
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 13:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E21E920848
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Mar 2020 13:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgCFNdE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Mar 2020 08:33:04 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:37272 "EHLO
+        id S1727279AbgCFNdG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Mar 2020 08:33:06 -0500
+Received: from mail.baikalelectronics.com ([87.245.175.226]:37274 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbgCFNdE (ORCPT
+        with ESMTP id S1727226AbgCFNdE (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2020 08:33:04 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id D45DC8030700;
-        Fri,  6 Mar 2020 13:25:16 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 8D3B88030795;
+        Fri,  6 Mar 2020 13:25:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id mbEKk7vi2mtk; Fri,  6 Mar 2020 16:25:16 +0300 (MSK)
+        with ESMTP id nU5HxY9w87qS; Fri,  6 Mar 2020 16:25:04 +0300 (MSK)
 From:   <Sergey.Semin@baikalelectronics.ru>
-To:     Hoan Tran <hoan@os.amperecomputing.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Serge Semin <fancer.lancer@gmail.com>,
         Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Paul Burton <paulburton@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/4] gpio: dwapb: Use optional-clocks interface for APB ref-clocks
-Date:   Fri, 6 Mar 2020 16:24:47 +0300
-In-Reply-To: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru>
-References: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru>
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] gpio: dwapb: Fix reference clocks usage
+Date:   Fri, 6 Mar 2020 16:24:44 +0300
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
-Message-Id: <20200306132516.D45DC8030700@mail.baikalelectronics.ru>
+Message-Id: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+From: Serge Semin <fancer.lancer@gmail.com>
 
-The common clocks kernel framework provide a generic way to use
-an optional reference clock sources. If it's utilized there is no
-need in checking whether the clocks descriptor is actually a
-negative error at the moment of the prepare/unprepare clocks method
-calling. So if the corresponding clock source is provided, then
-getting an error shall actually terminate the device probe procedure.
-If it isn't specified then the driver shall proceed with further
-initializations.
+There is no need in any fixes to have the Baikal-T1 SoC DW GPIO controllers
+supported by the kernel DW APB GPIO driver. It works for them just fine with
+no modifications. But still there is a room for optimizations there.
 
-We'll use the optional clocks getting method to handle the APB interface
-reference clocks, which can be provided for instance in the device
-of-node with "bus" clock-name.
+First of all as it tends to be traditional for all Baikal-T1 SoC related
+patchset we replaced the legacy plain text-based dt-binding file with
+yaml-based one. Baikal-T1 DW GPIO port A supports a debounce functionality,
+but in order to use it the corresponding reference clock must be enabled.
+We added support of that clock in the driver and made sure the dt-bindings
+had its declaration. In addition seeing both APB and debounce reference
+clocks are optional, we replaced the standard devm_clk_get() usage with
+the function of optional clocks acquisition.
+
+This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
+commit 98d54f81e36b ("Linux 5.6-rc4").
 
 Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
 Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: Paul Burton <paulburton@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
----
- drivers/gpio/gpio-dwapb.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Cc: Hoan Tran <hoan@os.amperecomputing.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 92e127e74813..bfa16172f973 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -690,13 +690,16 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(gpio->regs);
- 
- 	/* Optional bus clock */
--	gpio->clk = devm_clk_get(&pdev->dev, "bus");
--	if (!IS_ERR(gpio->clk)) {
--		err = clk_prepare_enable(gpio->clk);
--		if (err) {
--			dev_info(&pdev->dev, "Cannot enable clock\n");
--			return err;
--		}
-+	gpio->clk = devm_clk_get_optional(&pdev->dev, "bus");
-+	if (IS_ERR(gpio->clk)) {
-+		dev_info(&pdev->dev, "Cannot get APB clock\n");
-+		return PTR_ERR(gpio->clk);
-+	}
-+
-+	err = clk_prepare_enable(gpio->clk);
-+	if (err) {
-+		dev_info(&pdev->dev, "Cannot enable APB clock\n");
-+		return err;
- 	}
- 
- 	gpio->flags = 0;
-@@ -793,8 +796,7 @@ static int dwapb_gpio_resume(struct device *dev)
- 	unsigned long flags;
- 	int i;
- 
--	if (!IS_ERR(gpio->clk))
--		clk_prepare_enable(gpio->clk);
-+	clk_prepare_enable(gpio->clk);
- 
- 	spin_lock_irqsave(&gc->bgpio_lock, flags);
- 	for (i = 0; i < gpio->nr_ports; i++) {
+Serge Semin (4):
+  dt-bindings: gpio: Replace DW APB GPIO legacy bindings with YAML-based
+    one
+  dt-bindings: gpio: Add DW GPIO debounce clocks bindings
+  gpio: dwapb: Use optional-clocks interface for APB ref-clocks
+  gpio: dwapb: Add debounce reference clock support
+
+ .../bindings/gpio/snps,dw-apb-gpio.yaml       | 140 ++++++++++++++++++
+ .../bindings/gpio/snps-dwapb-gpio.txt         |  65 --------
+ drivers/gpio/gpio-dwapb.c                     |  41 +++--
+ 3 files changed, 166 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+
 -- 
 2.25.1
 
