@@ -2,107 +2,102 @@ Return-Path: <SRS0=qFLp=4Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFB0C10F29
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Mar 2020 17:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E127C10DCE
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 Mar 2020 21:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6C52080C
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Mar 2020 17:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A8F620684
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 Mar 2020 21:42:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OILKpkCV"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="LpbH/bwl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgCHR7U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 8 Mar 2020 13:59:20 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:44397 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbgCHR7T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Mar 2020 13:59:19 -0400
-Received: by mail-il1-f196.google.com with SMTP id j69so6603015ila.11
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2020 10:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CqnIXBKwcZ7eK7jSIB3TeSK6nKBkp//odaCbAVz4mrM=;
-        b=OILKpkCVdg8fJb0oDu2UMkd8DzkoYGlQE0ZHzfYXS+P/oDPCnEJWEOoQSpbQ/FZ1pU
-         s4w5LRDYWmrjH5UORCgcYMTdjCUFIipv44M0fIFyn8erlVwOT3VyLLqArSnayaUtbcZp
-         rmhPMOQOjLRjvFH/qWU6BNz6pUhgNl05tREKTjJPCIuhHRigsXiaU6ssD+EcOBnYt6Oi
-         /s9NNwUaOaPt2D2WVCIUk0FOKZqjwVyd7iR1wZ9GXPK3q5kRNyHREFc+o5LCABjrXODk
-         gexACTfnFUMKORrBh/NrthZHFd7el7fN7dSUYJEn7UC3GvWsRxkEHH0Ca1bGkdKBQVM2
-         tTAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CqnIXBKwcZ7eK7jSIB3TeSK6nKBkp//odaCbAVz4mrM=;
-        b=hZ6xg3hSQuSZCr64kKtWCIYp/yq7ZRXuWA+AOxFwTja9MCr1zPAItt1ZhCfSiHqguf
-         InIVB5AEJyr4GYEwzRoNkPZBn4QpVFYyiZZcoMfBKehYKeIu5SFC7DPYzx5vYeuvdWdP
-         oFDaT8SJ+D7W8ZZn+J4c2Z6gUwiS9G+OrQXIDhq8xNcGq2+Cnmhh6IqQGWN7ywvSfsSk
-         D6QyQVeYCFOwu0p4pNZ8HFw6ytos4X1FHHN3XhCbbQ4KYKUsoKX7xohDKlv8OM6HB1zu
-         Evd8G0tQeBmMcAY/Ps7v547m1SIo1W+ODWbREnT8kuE8G2OoMTEtrGwbSVTIEOGJJDlR
-         3oxg==
-X-Gm-Message-State: ANhLgQ0JGz2vQ3QcY6pf8m84pD2TxEmBY+dj9N9rGTRbtgYMled8Qn6j
-        40LN6uyImToTlS8yQap5xGxBPQFyPnVGzyNB2/D5ow==
-X-Google-Smtp-Source: ADFU+vv543P2xAwcLKM9MTNCTIo21RVeWOWTYLKYntTFO48vO1ITYvWyJde7QMpPjSisz2LnrlmQXZrwV8Sv8gT5JuI=
-X-Received: by 2002:a05:6e02:10d3:: with SMTP id s19mr5352844ilj.220.1583690357253;
- Sun, 08 Mar 2020 10:59:17 -0700 (PDT)
+        id S1726359AbgCHVmv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 Mar 2020 17:42:51 -0400
+Received: from mout.gmx.net ([212.227.17.21]:39283 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726346AbgCHVmu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 8 Mar 2020 17:42:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1583703755;
+        bh=QhIwll7TLH2Jreh1ADKlC/MVozajL5VA7trTAIMDJTY=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=LpbH/bwl7AT5TCEiuJ0PCG4rj6Y7/aiCe964zWNDaCL8Z9RzUloJpxT55O9oHi8T9
+         n1M1ylgMwtWFGF7Bo3f/0ZMsCzgP2PskpgVJqyU5pGAmgX5SuxUTgK6yI/g2pdxkUh
+         +d2O5dovMoDTDstPiM2/JZAHe7frsoMWS052kq5s=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([37.201.214.212]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mwwdf-1jZcn33e5T-00yMza; Sun, 08
+ Mar 2020 22:42:34 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-gpio@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: at91: Fix a typo ("descibe")
+Date:   Sun,  8 Mar 2020 22:42:30 +0100
+Message-Id: <20200308214230.15193-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200211131240.15853-1-brgl@bgdev.pl> <20200211131240.15853-4-brgl@bgdev.pl>
- <20200308135117.7c60c881@why>
-In-Reply-To: <20200308135117.7c60c881@why>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sun, 8 Mar 2020 18:59:06 +0100
-Message-ID: <CAMRc=Me0AE7OgEVjiUfRUNODYoGj+LYy+1zGsGkXKput9AeKrA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] irq/domain: add a new callback to domain ops
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Dc3j1YLbf/2HoLi7BPlskXwPB9N0VyEc0ekYYBJEurrvN//f1T9
+ lJvedlkrjf1u735amuVjLky9ZkeqHLDHCsORuzaTG7N84iPrIvUBx7jY0rsNcHVLQtSmq88
+ w9KzLIlQLKBM5/9lyR0CcMtEuEO3+iLyF0mP4VxMu2f6AYFYjErCE1BZTB7eOltLnTdb7PT
+ vABU67GshUVIOGnCKfQ1g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FTtg1mIMvkg=:/p2vluF2sfmKFocK6e5e1q
+ Ih1hIAQhIJKqqZTYQzIxJ70JgO+5D0z2Gzjl7qgn9it8bbaI7pxSna1Rzz7GL7eE06X5KKC/6
+ rF53tH7K1cS3lmcXoU2z1Tvq70kuseK2g9VEzYq5xHZo4oumGrybMAXUg4VluZNH8kBlMNPmp
+ x1aDCogXkxbDxpaltnQXlWxQMX6ozzhp7EACadjbk1ZLtR91Wd8JZV1s0eSGWhK2QU2Jjfkwg
+ MqBs+7kCTrSF472zrXu8uLVqNDsCV9S23czq8Es4fgz0QFKet1EaQkWmY5/dWS2ytpaX9Io3y
+ wwV8fR87f1laD/Nc/I1zzB9JQpOCq9W6Kd/5bfPEd0zT+6iEuEa48raeadDBJJ8lops8f9cHn
+ 5MHhQFPTRMcq8cd2HU1tbwdnCGXaqfuU8ts3a9umUzjpDTyit9UndMZGD66+zWxDOuC6u7HLE
+ rk+gG9L+qB/I+QH0GWi8bHPBoJbABYqZ+PJKw0LK1mXYvmDvjnMqtLpR77wEd4Cu2H7u/e5zf
+ E79ozeweIaWAz2oawmiVhpb85uwq+9teOzW+v1Pzh2k2n2jv+MCUVIMCTMsiPJw9199gJA3c9
+ OWEaRI61wZ3gu/HeDakj4cNlo6B4jPrQFCE284cxDLxCX/myCjY0cTuf+/d4257naDGoyrOnk
+ l/deWxOolusgIUn/Ge4eePpWCPD0s2MrJK/d7KHckvUFfoYUeDq24skyd0OqPtK8uypFV4wb9
+ wcOrs1bOeioJqsussWY9Srgi1rrhaTq7v+cCaCgYERCrSEslLH7cVX5KOJ1vC7hQR1B/PlkZz
+ i3xcrvRmbdwwKh6WfDSbtqt6DdCvEsxLvB5504mhGTqyQlgicoXgcFo9vYkzwwnSDqjQAeVgo
+ 2HyDtl88vk6qKzZXijoxpb+syL36rlEwnfueUJnHZg2F3/x8FHEsiJogzWHl6wPhfIqD6k+Gt
+ 141xK1V+WbLpFzl2fmjJ0ALP2ilr+yfYQ3RbMaYXrKIro/zJpL+e1CEmVzU3LZDGcgnofWG+Z
+ YmI7mdKbJItJ6gNiChdQuH6m0YCnZlVdt64zSK/xSjKL2ka6I5IC0DbcWNBT8RVecKA3rzaTf
+ sTq+/sh4TWiR0YMCo9ZX2PCsf+tg8xc/TqWFE/ZzxqX/Twvkwrn+F6WlDDCmUA4q/8dHgveRW
+ ymOEhH87NNPHL8IJ9jQ4mfqFwJNIizoykNDQyEfEL7mJWYBFVnkmha+nnSuQAXD45lKArZMT3
+ Yz372AYkA9UuPe8ka
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-niedz., 8 mar 2020 o 14:51 Marc Zyngier <maz@kernel.org> napisa=C5=82(a):
->
-> On Tue, 11 Feb 2020 14:12:37 +0100
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Add the remove() callback to irq_domain_ops which can be used to
-> > automatically dispose of any host data associated with the domain when
-> > irq_domain_remove() is called.
->
-> I have a hard time buying this. Whatever data that is associated to the
-> domain is already owned known by whoever created the domain the first
-> place.
->
-> Since the expected use case is that whoever created the domain also
-> destroys it, the caller is already in a position to do its own cleanup,
-> and we don't need any of this.
->
-> So please explain what you are trying to achieve here.
->
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ .../devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm mainly trying to remove irq_domain_remove_sim() and make it
-possible to destroy the interrupt simulator domain with regular
-irq_domain_remove(). If you prefer that we retain this routine as is,
-I can limit this series to the first two patches, but I assumed the
-fewer functions in the interface, the better. If you have a different
-idea on how to do this - please let me know too.
+diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.=
+txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+index eb39f5051159..e8abbdad7b5d 100644
+=2D-- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+@@ -38,7 +38,7 @@ Bank: 3 (A, B and C)
+   0xffffffff 0x7fff3ccf  /* pioB */
+   0xffffffff 0x007fffff  /* pioC */
 
-Bartosz
+-For each peripheral/bank we will descibe in a u32 if a pin can be
++For each peripheral/bank we will describe in a u32 if a pin can be
+ configured in it by putting 1 to the pin bit (1 << pin)
+
+ Let's take the pioA on peripheral B
+=2D-
+2.20.1
+
