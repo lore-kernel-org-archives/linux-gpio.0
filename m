@@ -2,79 +2,61 @@ Return-Path: <SRS0=IXua=42=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23782C10F27
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 09:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D74C10F29
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 10:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD7C20727
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 09:29:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e7eCoXwJ"
+	by mail.kernel.org (Postfix) with ESMTP id 154AA20828
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 10:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgCIJ3K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Mar 2020 05:29:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46312 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbgCIJ3K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2020 05:29:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v6so7025552lfo.13
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2020 02:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/x3bOS8+EQ730wvwzViwYAyxSIAy+Gqe4DlDcCBFmac=;
-        b=e7eCoXwJn2Jq3avlPXDgQK9Rx/D9sv6dMMc8asjsu4JqGIdjFQ3+Tvma1SXSOhr7YI
-         gQznjl6GdDgBkjgwCtHbuqrUoNwW+q1mYBZlXjqVLNH9OtaWlHwrTydkv/lBF9uMCHLo
-         /2D0ERQdHCCCHUQ8MgMPH6ocbKoE0iD+vAgs4Feiu2PU4KEU/Lk8dU3I0jDfk4fnsdP7
-         Cc88vNqxKVhDyZP8ACw+iid8ZvAxTgEioqBRlvDYEi633fqtmjmvJxUgjkvwm4+Maftd
-         otTV8ue5JmmtIS4Es8BgpsbROdUrHq0Fe7jt2BevM2NF16Ty6aktOTSgqE+GGnH73Dt2
-         Z3Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/x3bOS8+EQ730wvwzViwYAyxSIAy+Gqe4DlDcCBFmac=;
-        b=uCxIKY3A9By5h/60MdNliRDRg6QhxNM966FeSLXS0yCK/qM0sWJE25CT3rm+oUMFXh
-         K9Ey7pE25/M+z8FLo9d5dFf9YjR5p8OF37Ed5iSd9VJoOdMeK/RMIBGfnp3C1B4wrGcB
-         DUxiARd8UsbYztkOCBvJmwdQrLFIa7JlF2JQ1yDJOneD87vP2VAZMKrRnZbec1fNU296
-         NaYfKywdUdroSsfCrwuQiyuMCUwcmyC1pPdSmefa27Bb5C2ZhrQWBMVrg3hFs5jRIxUH
-         r2xkPVdbltIfWyyS/Awnd9mnqhzGJeFml6robQPWalVPuQVnb3K5RwBwQcRBD4otx6EF
-         9e2g==
-X-Gm-Message-State: ANhLgQ19To42Z3ILWwdUNfxiYnH+CzMNqB1T15sbehxF/d2k6tWmt/5H
-        FOZ9Seh8QwSVOIPsDpBSaQdk77XJay5ADWVbZ4pmPQ==
-X-Google-Smtp-Source: ADFU+vsM0JTR3ANUQQsabsuZJsGRykwEGIjqSJXt/IVH98XX9FTs6BBkjNP3H6lsmBa6je9qc6mHr1lZrLe8Agh2tcQ=
-X-Received: by 2002:a19:f503:: with SMTP id j3mr8990215lfb.77.1583746146910;
- Mon, 09 Mar 2020 02:29:06 -0700 (PDT)
+        id S1726523AbgCIKss (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Mar 2020 06:48:48 -0400
+Received: from mga04.intel.com ([192.55.52.120]:15000 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbgCIKss (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Mar 2020 06:48:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 03:48:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
+   d="scan'208";a="353345195"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 09 Mar 2020 03:48:45 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 09 Mar 2020 12:48:44 +0200
+Date:   Mon, 9 Mar 2020 12:48:44 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: acpi: Add missing __init(const) markers to
+ initcall-s
+Message-ID: <20200309104844.GK2540@lahna.fi.intel.com>
+References: <20200306144722.175298-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-References: <20200305182245.9636-1-dev@kresin.me>
-In-Reply-To: <20200305182245.9636-1-dev@kresin.me>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Mar 2020 10:28:55 +0100
-Message-ID: <CACRpkdbBao6ij4SNDJso2X0q0gbU38PQu0DUtWk+QyV7KW4njA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: falcon: fix syntax error
-To:     Mathias Kresin <dev@kresin.me>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200306144722.175298-1-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 7:22 PM Mathias Kresin <dev@kresin.me> wrote:
+On Fri, Mar 06, 2020 at 03:47:22PM +0100, Hans de Goede wrote:
+> The gpiolib ACPI code uses 2 initcall-s and the called function
+> (and used DMI table) is missing __init(const) markers.
+> 
+> This commit fixes this freeing up some extra memory once the kernel
+> has completed booting.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-> Add the missing semicolon after of_node_put to get the file compiled.
->
-> Fixes: f17d2f54d36d ("pinctrl: falcon: Add of_node_put() before return")
-> Cc: stable@vger.kernel.org # v5.4+
-> Signed-off-by: Mathias Kresin <dev@kresin.me>
-
-Patch applied for fixes with Thomas Ack.
-
-Yours,
-Linus Walleij
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
