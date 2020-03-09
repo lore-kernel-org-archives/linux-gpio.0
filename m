@@ -2,61 +2,152 @@ Return-Path: <SRS0=IXua=42=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D74C10F29
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 10:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ACAC18E5A
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 12:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 154AA20828
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 10:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C8C6205ED
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Mar 2020 12:52:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0L8Y1dk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgCIKss (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Mar 2020 06:48:48 -0400
-Received: from mga04.intel.com ([192.55.52.120]:15000 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbgCIKss (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 9 Mar 2020 06:48:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Mar 2020 03:48:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,532,1574150400"; 
-   d="scan'208";a="353345195"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 09 Mar 2020 03:48:45 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 09 Mar 2020 12:48:44 +0200
-Date:   Mon, 9 Mar 2020 12:48:44 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: Add missing __init(const) markers to
- initcall-s
-Message-ID: <20200309104844.GK2540@lahna.fi.intel.com>
-References: <20200306144722.175298-1-hdegoede@redhat.com>
+        id S1726368AbgCIMwN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Mar 2020 08:52:13 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46031 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgCIMwN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2020 08:52:13 -0400
+Received: by mail-lj1-f194.google.com with SMTP id e18so9765056ljn.12
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2020 05:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jYBuqb72AK3TYTrpjzcg5ppPY/IO7sFjcVnsEoUJUs=;
+        b=u0L8Y1dkuQof2IQS0cJbbgpuEDPnAhllOQrrD4TX1NmbRjv8aJ2gsymPzjuFZjRxYj
+         oxz1LVWqxSF4QhVMK8X8S7Npkt5idEIRYNDx/BvEFz+GVcqyNPi1P2xaxfmBBS8cCCkQ
+         +xYNgr0K61EANA6R+4lrfB19k7BMdO+6ETuZx5ecVoqSSazYcWWzZg1fRcXFFWYZGw6N
+         68y+1jdPc+S0QI7CAUbdi5Wl/VjdJ/xb0hyLmZ6giJH7C4YpRL22/Z3YhRCG+Ld2ULWp
+         NBQizi2sKA+R/U9MZX1fLqajpR9ymuKmGwCFY9edZ+OiGlG10BubQa7ypTuSzt9f9SkX
+         GTKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8jYBuqb72AK3TYTrpjzcg5ppPY/IO7sFjcVnsEoUJUs=;
+        b=icyNJtMM9fPMCyDQdZ0/HhQBAsty9AK5z4qxAjWD6UyhlXXX5ZbKO8LfAoBoSE2wLO
+         UWwJZt0E3wBrhZodNDVzlMQdC2Taq8fwmhsgjhSFCc0YlytCCpWmcKT6vKPg5oKsI5uc
+         ZIGD1zvykreoNG3TFb4Ib+fnIbOL3OlBC337hZFwRhdd7HfhdICmQKjp0wngRAiygrP4
+         HNicthZRrX6WjA3CYu394V81jLv0vI+YnUgoCTir94P43QfdOFEMB7QJPevPHbJBCubV
+         vKV9TVVjLhlAikU5pPXqQaDWg9sKy5WJk4bUcVZCQhZ9WCXgIpRn+Vj5rsb008zCPiiJ
+         kY+w==
+X-Gm-Message-State: ANhLgQ3ABm0Slqc17dPvgwPz+2Em0DJF3HaqJ9ED7vgII4CmZ1fCCcRx
+        oUphvHOZUuaZbYH6WBY0cS59LHz/HAQ=
+X-Google-Smtp-Source: ADFU+vu/HK0rkNYZal/GmZ0rmHgzPK1yezejj8bxI79CUI04kMjtXjxPmfi3xnEhFcK/mo4kIegmVA==
+X-Received: by 2002:a2e:3210:: with SMTP id y16mr5093105ljy.49.1583758330651;
+        Mon, 09 Mar 2020 05:52:10 -0700 (PDT)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id 133sm3122755ljj.91.2020.03.09.05.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 05:52:10 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>, stable@vger.kernel.org
+Subject: [PATCH v2] pinctrl: qcom: Assign irq_disable/eoi conditionally
+Date:   Mon,  9 Mar 2020 13:52:07 +0100
+Message-Id: <20200309125207.571840-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306144722.175298-1-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 03:47:22PM +0100, Hans de Goede wrote:
-> The gpiolib ACPI code uses 2 initcall-s and the called function
-> (and used DMI table) is missing __init(const) markers.
-> 
-> This commit fixes this freeing up some extra memory once the kernel
-> has completed booting.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+The hierarchical parts of MSM pinctrl/GPIO is only
+used when the device tree has a "wakeup-parent" as
+a phandle, but the .irq_disable and .irq_eoi are anyway
+assigned leading to semantic problems on elder
+Qualcomm chipsets.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+When the drivers/mfd/qcom-pm8xxx.c driver calls
+chained_irq_exit() that call will in turn call chip->irq_eoi()
+which is set to irq_chip_eoi_parent() by default on a
+hierachical IRQ chip, and the parent is pinctrl-msm.c
+so that will in turn unconditionally call
+irq_chip_eoi_parent() again, but its parent is invalid
+so we get the following crash:
+
+ Unnable to handle kernel NULL pointer dereference at
+ virtual address 00000010
+ pgd = (ptrval)
+ [00000010] *pgd=00000000
+ Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+ (...)
+ PC is at irq_chip_eoi_parent+0x4/0x10
+ LR is at pm8xxx_irq_handler+0x1b4/0x2d8
+
+If we solve this crash by avoiding to call up to
+irq_chip_eoi_parent(), the machine will hang and get
+reset by the watchdog, because of semantic issues,
+probably inside irq_chip.
+
+As a solution, just assign the .irq_disable and .irq_eoi
+condtionally if we are actually using a wakeup parent.
+
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Stephen Boyd <swboyd@chromium.org>
+Cc: stable@vger.kernel.org
+Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Noticed that the previous solution doesn't actually work,
+  the machine hangs and reboots intead (even if it got rid of
+  the most obvious crash). Make a more thorough solution that
+  completely avoids using these callbacks if we don't have
+  a parent.
+- v1 was called "Guard irq_eoi()"
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 9a8daa256a32..fe3c53ae25f4 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1100,11 +1100,9 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+ 
+ 	pctrl->irq_chip.name = "msmgpio";
+ 	pctrl->irq_chip.irq_enable = msm_gpio_irq_enable;
+-	pctrl->irq_chip.irq_disable = msm_gpio_irq_disable;
+ 	pctrl->irq_chip.irq_mask = msm_gpio_irq_mask;
+ 	pctrl->irq_chip.irq_unmask = msm_gpio_irq_unmask;
+ 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
+-	pctrl->irq_chip.irq_eoi = irq_chip_eoi_parent;
+ 	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
+ 	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
+ 	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
+@@ -1118,7 +1116,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+ 		if (!chip->irq.parent_domain)
+ 			return -EPROBE_DEFER;
+ 		chip->irq.child_to_parent_hwirq = msm_gpio_wakeirq;
+-
++		pctrl->irq_chip.irq_disable = msm_gpio_irq_disable;
++		pctrl->irq_chip.irq_eoi = irq_chip_eoi_parent;
+ 		/*
+ 		 * Let's skip handling the GPIOs, if the parent irqchip
+ 		 * is handling the direct connect IRQ of the GPIO.
+-- 
+2.24.1
+
