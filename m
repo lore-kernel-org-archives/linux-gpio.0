@@ -2,31 +2,67 @@ Return-Path: <SRS0=unO8=44=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB4AC0044D
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Mar 2020 21:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66B1C2BAEE
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Mar 2020 21:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97F4920749
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Mar 2020 21:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C52E206B1
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Mar 2020 21:49:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fzumF5ev"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbgCKVbz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Mar 2020 17:31:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40736 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729232AbgCKVbz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2020 17:31:55 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jC8x9-0000Qv-7t; Wed, 11 Mar 2020 22:31:47 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id B7C2E100F5A; Wed, 11 Mar 2020 22:31:46 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Hans de Goede <hdegoede@redhat.com>,
+        id S1729223AbgCKVtX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Mar 2020 17:49:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36670 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729328AbgCKVtX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2020 17:49:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583963361;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5i8d0/y4R6sMxndZYF3wHrGqGjDf4b+kE4cAWVwa8PA=;
+        b=fzumF5evIu6CbGtVvBXdnjF2OtjYeWkCWg2x84bfT09CDlcE9OB0V8SoSIWCzGGZktWn8S
+        I0vkeehuzEtiDkQw7WsbkpNtH/yU6xYa580RfiX4A44NbMAUz2yui5JkQZovUb/r20LYlR
+        AHUD/0N7MmMScY1I5sodHe9wCZ0dP2s=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-327-N77k-BMBP3SojyCKqPecew-1; Wed, 11 Mar 2020 17:49:15 -0400
+X-MC-Unique: N77k-BMBP3SojyCKqPecew-1
+Received: by mail-wr1-f71.google.com with SMTP id y5so1557400wrq.8
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2020 14:49:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5i8d0/y4R6sMxndZYF3wHrGqGjDf4b+kE4cAWVwa8PA=;
+        b=GFKff4zvE6WeMafaTme3+BsXoA1qFHs1gSuGx7Ong5kRRyVADNu4/4q6eP4Q3kb8Jt
+         fsvSXx8wgUhM5M5acOiaLbi2Xv/Y1DfD0eKxt8PeLqSRkoPUDPYKM07fJJfV9Kao2V2g
+         SlYEtou7Ithk+d2uBzk/BkA4ewYXGToHeMEW1YqY2fk7WnxKuZzNnST/3/Oae06Im3Cf
+         FldyXX5PXexounxUEeKapMDMtlArAJbWzaBUhC0KUcO1sgd2640DeJ5MNaKwlcX8L5jT
+         n24lkGeU6Vz9HxqPz8KSWq730yQ5pQOOgoafjEAnsZ1XWEXSIr3LXCC93uvFzjSwtgz3
+         t84Q==
+X-Gm-Message-State: ANhLgQ093+UEs5/LRN3YN2Xyq3FhRjMTdIbNfR8PEu/6cJHUi6wTrV9r
+        VUUgl2Ah7Wlpkt4BWfwrDzPdv98xzG/NULY/a/uvIL54zCSdlytJ8+xKRG1WsTZumfdR+I9qzkl
+        8qvINxwrWFRs6vRtY0dha/w==
+X-Received: by 2002:a7b:c202:: with SMTP id x2mr717086wmi.71.1583963354846;
+        Wed, 11 Mar 2020 14:49:14 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvJh7ov//Fnzju2Fjoa56M5YkAUFuQ4/RNkG53NtiQYrS/m7+q0+QRUOVFSof+x/grazcfT+Q==
+X-Received: by 2002:a7b:c202:: with SMTP id x2mr717075wmi.71.1583963354591;
+        Wed, 11 Mar 2020 14:49:14 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id r23sm16627136wrr.93.2020.03.11.14.49.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2020 14:49:14 -0700 (PDT)
+Subject: Re: [RFC v2] x86: Select HARDIRQS_SW_RESEND on x86
+To:     Thomas Gleixner <tglx@linutronix.de>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -34,41 +70,54 @@ To:     Hans de Goede <hdegoede@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>
 Cc:     linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
         x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2] x86: Select HARDIRQS_SW_RESEND on x86
-In-Reply-To: <0e5b484d-89f5-c018-328a-fb4a04c6cd91@redhat.com>
-References: <87sgk4naqh.fsf@nanos.tec.linutronix.de> <0e5b484d-89f5-c018-328a-fb4a04c6cd91@redhat.com>
-Date:   Wed, 11 Mar 2020 22:31:46 +0100
-Message-ID: <87fteek27x.fsf@nanos.tec.linutronix.de>
+References: <87sgk4naqh.fsf@nanos.tec.linutronix.de>
+ <0e5b484d-89f5-c018-328a-fb4a04c6cd91@redhat.com>
+ <87fteek27x.fsf@nanos.tec.linutronix.de>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <218eb262-011f-0739-8e74-9ca3ef793bb8@redhat.com>
+Date:   Wed, 11 Mar 2020 22:49:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <87fteek27x.fsf@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hans de Goede <hdegoede@redhat.com> writes:
->> I just need to stare at the legacy PIC and the virt stuff.
->> 
->>> Also maybe we should add a Cc: stable@vger.kernel.org ??? This seems like
->>> somewhat a big change for that but it does solve some real issues...
->> 
->> Yes. Let me stare at the couple of weird irqchips which might get
->> surprised. I'll teach them not to do that :)
->
-> I know that you are very busy, still I'm wondering is there any progress
-> on this ?
+Hi,
 
-Bah. That fell through the cracks, but actually I looked at this due to
-the PCI-E AER wreckage. So yes, this is fine, but we want:
+On 3/11/20 10:31 PM, Thomas Gleixner wrote:
+> Hans de Goede <hdegoede@redhat.com> writes:
+>>> I just need to stare at the legacy PIC and the virt stuff.
+>>>
+>>>> Also maybe we should add a Cc: stable@vger.kernel.org ??? This seems like
+>>>> somewhat a big change for that but it does solve some real issues...
+>>>
+>>> Yes. Let me stare at the couple of weird irqchips which might get
+>>> surprised. I'll teach them not to do that :)
+>>
+>> I know that you are very busy, still I'm wondering is there any progress
+>> on this ?
+> 
+> Bah. That fell through the cracks, but actually I looked at this due to
+> the PCI-E AER wreckage. So yes, this is fine, but we want:
+> 
+>   https://lkml.kernel.org/r/20200306130623.590923677@linutronix.de
+>   https://lkml.kernel.org/r/20200306130623.684591280@linutronix.de
+> 
+> if we want to backport this to stable.
 
- https://lkml.kernel.org/r/20200306130623.590923677@linutronix.de
- https://lkml.kernel.org/r/20200306130623.684591280@linutronix.de
+So far I have seen a few, but not a lot of devices which need this, so
+I'm not 100% sure what to do here.
 
-if we want to backport this to stable.
+Do you consider this change safe / suitable for stable if those 2 patches
+are backported and applied first?
 
-Thanks,
+Regards,
 
-        tglx
+Hans
+
