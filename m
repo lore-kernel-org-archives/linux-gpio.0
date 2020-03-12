@@ -2,122 +2,107 @@ Return-Path: <SRS0=ce9d=45=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E445FC10DCE
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 18:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C11C10DCE
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 18:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECB32071B
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 18:35:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="V4idd58r"
+	by mail.kernel.org (Postfix) with ESMTP id 8ADD720663
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 18:44:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgCLSe7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Mar 2020 14:34:59 -0400
-Received: from mout.gmx.net ([212.227.15.19]:34145 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbgCLSe7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Mar 2020 14:34:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1584038093;
-        bh=f56xVHIr6zr2PZHI0TS7LUqKLBAli/KY7kMif9yhxy0=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=V4idd58raCGnnFUXYwiJAquLjofThszFDTGpDCYypEnYHfbhB7mP64BSV32P2pr6k
-         ztzTuqHMWIsVXjIbSzMvgFPgrhn48OFl1tYcNHQtAJXj7GG78a3o3DZv/Pzu2YQBYm
-         kWVNn7zRD90TKX+woWpRtnMUCcH4bTm7Wy+wS4Kw=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.214.34]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mdeb5-1jlnUC1PTV-00Zejg; Thu, 12
- Mar 2020 19:34:53 +0100
-Date:   Thu, 12 Mar 2020 19:34:52 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1726483AbgCLSoV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Mar 2020 14:44:21 -0400
+Received: from 3.mo173.mail-out.ovh.net ([46.105.34.1]:46093 "EHLO
+        3.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgCLSoV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2020 14:44:21 -0400
+X-Greylist: delayed 1198 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 14:44:19 EDT
+Received: from player759.ha.ovh.net (unknown [10.110.171.5])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 855B7134E1D
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Mar 2020 19:07:44 +0100 (CET)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player759.ha.ovh.net (Postfix) with ESMTPSA id 3FFD5106367DE;
+        Thu, 12 Mar 2020 18:07:36 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Jonathan Corbet <corbet@lwn.net>,
         "Daniel W . S . Almeida" <dwlsalmeida@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: driver-api/gpio/driver.rst: fix code blocks
-Message-ID: <20200312183452.GF2376@latitude>
-References: <20200312180650.1365059-1-steve@sk2.org>
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] docs: driver-api/gpio/driver.rst: fix code blocks
+Date:   Thu, 12 Mar 2020 19:06:51 +0100
+Message-Id: <20200312180650.1365059-1-steve@sk2.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jTMWTj4UTAEmbWeb"
-Content-Disposition: inline
-In-Reply-To: <20200312180650.1365059-1-steve@sk2.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:4djGkxK8HRts3U3sv1OSqZPHYAc9JiWcsVUMAEWwSiJThefE6M+
- 3Ezy8jEu8zfg7xKAal+KwWz3gjK3FhwyEAq+kRaNwmJrjKY84WFKSsOGveklpff+zkbD8bs
- ygbmt74xP9CLDdxTdGJbQG3uAN+NwxZ/I9B1JhPe0F15fwQM495YAlczrPICqL5f+B7NlEe
- Aeu3653rM46ouuEAVJUkg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:307PlKFVLfM=:3EP8wbRYu7nviegtlfHjn6
- HuoFGhZZBF3DzJCP+NO7jRuVdk8CKE1BDc3YNLY07OMrA7PbEtVPq1ADLL/XQkS0UWfhRKG4D
- vMRMgWiPu5usclWPXALb8LM2m5Jvtibf1gZwsXVdDPapLX5Bx4dsbgsMk7P0Ob/OiVx8Vz4IS
- TIZKVlFXPKhmpPYWawlpiYh24cFNmuhg6qx4vJQajXYRhP0gmXCy5Nktc2JWqSOA2c5hKF3yR
- JxUEIfm9emrJWqmHS+7DT9PspgruTIcXcQJRfXZLmBad7q7C8uVgAR9CKgdse5LB1PE79W+4O
- AODaBvFpbE0wmG8jN7OMpASuzZdlwOT4TmeFFwLHK/PzbyUdNOPNT35dg+B6059I6PYqTQGd4
- ptdXqUfIJ8IBV/dIEBaRZn8Teig0axAooO7XY4Hp7pQxJFRxc+y1frOv6bpm2Q7kzoqe+aaHf
- tbeQUB5T9fHb7LQhK6x3Qrn8o10w1mdWCRCVsHaP59GF945a6LvYsEL18JEWsUmKBesfGiFxm
- IukK7Y7eqHGJDweDHUxVlEpIUHW+nJV83I3IiK0BAdZcdqIvvc8PaAL8JRzrUJHRt8LUQj4yg
- 5G6AYut50uYROz4VQuawhr0RwIVgnXyA1WBsN0q4XoC7o/Ou4QWLyomTqDhpcqSecwf/YHa1l
- Zz3c7u6eBFPLL3zOXNK2SKZ+9hnYsYV5PYeY9cosRZ3QOH3XBQJax3DsWfMb0LICwZHCYAeMg
- 7Il15ezjkbrFRB0cDxbvZcKQo/iXIWYYNUv1CADzU3ky2AKE4aVcVP2oYC/nBhzKF8XfuxHkd
- YfZA52F/qlN8o82v6sYnPNtCuSBSfDKJKgW3NfL9/uhTxqwktxj7UbLm5bQ2a84gyV5M2c0rC
- 5/8q/GDf2Et8Y8tdz3qw9yFxJurIieIzq9wME2ik8dStJgDXOhzWsKAxrcA7qFOy1RLnYBbfN
- 4a/yOlZRA3BtXYe67WfRFgjslot88ebFApiNjjjrHqRRfgbt6Ft3CpNX7AMSJTLWdyOiHEl07
- bZfljBEiN7kEEFXdvaQsNGWuVuxUizHP47gksdmpMk7Oxcy/2CLchkUt8bYZKulyrmC43YRNO
- ph1O7IhuCcWdoj+k4hKrrfOxMbV3Vzk6y20WiPE/j4i1SFk4QGtBXP5EU54mDEpcmy/AvJq+g
- +emx98YZjW+jfwkeuR5u7d1OQ9fwylZHG7kv3lhyLsrUdTCS1AVs1xtPwMqb7uDcIhCRtiJju
- wcZ7ku/bKlc31GiFq
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 8822551671076179420
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedgudduudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejheelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Two code blocks have duplicate declarations (:: and explicit
+.. code-block), this fixes them, addressing these warnings:
 
---jTMWTj4UTAEmbWeb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	Documentation/driver-api/gpio/driver.rst:425: WARNING: Unexpected indentation.
+	Documentation/driver-api/gpio/driver.rst:423: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:427: WARNING: Block quote ends without a blank line; unexpected unindent.
+	Documentation/driver-api/gpio/driver.rst:429: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:429: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:429: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:433: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:446: WARNING: Unexpected indentation.
+	Documentation/driver-api/gpio/driver.rst:440: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:440: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:447: WARNING: Block quote ends without a blank line; unexpected unindent.
+	Documentation/driver-api/gpio/driver.rst:449: WARNING: Definition list ends without a blank line; unexpected unindent.
+	Documentation/driver-api/gpio/driver.rst:462: WARNING: Unexpected indentation.
+	Documentation/driver-api/gpio/driver.rst:460: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:462: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:465: WARNING: Block quote ends without a blank line; unexpected unindent.
+	Documentation/driver-api/gpio/driver.rst:467: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:467: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:467: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:471: WARNING: Inline emphasis start-string without end-string.
+	Documentation/driver-api/gpio/driver.rst:478: WARNING: Inline emphasis start-string without end-string.
 
-On Thu, Mar 12, 2020 at 07:06:51PM +0100, Stephen Kitt wrote:
-> -is a typical example of a cascaded interrupt handler using gpio_irq_chip=
-::
-> +is a typical example of a cascaded interrupt handler using gpio_irq_chip:
+Fixes: 4e29b70d5437 ("Documentation: gpio: driver.rst: Fix warnings")
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/driver-api/gpio/driver.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the patch, but Mauro already fixed it:
+diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
+index 871922529332..9809f593c0ab 100644
+--- a/Documentation/driver-api/gpio/driver.rst
++++ b/Documentation/driver-api/gpio/driver.rst
+@@ -416,7 +416,7 @@ The preferred way to set up the helpers is to fill in the
+ struct gpio_irq_chip inside struct gpio_chip before adding the gpio_chip.
+ If you do this, the additional irq_chip will be set up by gpiolib at the
+ same time as setting up the rest of the GPIO functionality. The following
+-is a typical example of a cascaded interrupt handler using gpio_irq_chip::
++is a typical example of a cascaded interrupt handler using gpio_irq_chip:
+ 
+ .. code-block:: c
+ 
+@@ -453,7 +453,7 @@ is a typical example of a cascaded interrupt handler using gpio_irq_chip::
+   return devm_gpiochip_add_data(dev, &g->gc, g);
+ 
+ The helper support using hierarchical interrupt controllers as well.
+-In this case the typical set-up will look like this::
++In this case the typical set-up will look like this:
+ 
+ .. code-block:: c
+ 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-?id=3Dc1c8b1ff0a1985d4992f49a5775bbcf6ee5ccfba
+base-commit: 7d3d3254adaa61cba896f71497f56901deb618e5
+-- 
+2.24.1
 
-
-
-Cheers,
-Jonathan Neusch=C3=A4fer
-
---jTMWTj4UTAEmbWeb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl5qgMUACgkQCDBEmo7z
-X9uQ9g/+JakMD13xglbFpTuEQ4Ny5G7da9WPxI7Gw3nEFve3nK3g/iipF76GJYmy
-UutgaQ0n18lyy531xH77pkVtLeQlWSh60i6yvMn0BDx0x6rRbJ4fXipAXNw2P4Q1
-eelUj7tGn8ZgHCDbeF30zxFd5qm/xGBgw7eIZe7pht+836WspJTSZCNuWh3sEGFW
-Mq7UtnKVqx11uTun7sOzp1JUuCiDDe6LXjqGVpORTImU1D27M+Wv5J44sOAXqJyq
-XOyY83v7JLHow2RANRH+griJFctFYuRpNHpLVuXp/+ROfaQPLPf2DpMx2CdsQKCn
-jMCsLd0wb23nFiO2KFQv3nzlXa0qd8KLmCCKdogul//De1DikOcFMQhvU+0CucVq
-uaV5OflNViaJ6UCI6frDPfpFiEl7cFU/3iA3ETqdSkXr0f58P4yVWAG77Iu9zLB8
-UNm9vCQoRbV3j3n89cD0oS1u7ET+ejBTWV1XwdQWA9PChIkqmKJYnRmAlovxkrP9
-le46kHIugAmGFitu1vaLEZi7BKd6m3NglIzUXevHpUVCB9XTya76rmDOUseOCMqO
-32Sl0FcawyMp5A6fhNWBtm20B/s+w0dJEkfMGKdJyF23nChFvD9uNDtRJAffl5QI
-PCf6461DD3KaHIkZEoJNX8HsdLk67lHYQemv+BfKk5zQ5zSXd2E=
-=MRzh
------END PGP SIGNATURE-----
-
---jTMWTj4UTAEmbWeb--
