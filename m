@@ -2,97 +2,98 @@ Return-Path: <SRS0=ce9d=45=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C28C1975A
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 21:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0AFC10DCE
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 22:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5606C2071C
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 21:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584049482;
-	bh=UVCZvDjUMrvdXCgL9UBcD0ediP/6S0fruvNh9/e69So=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=inw/uu02m0XMuvksp5p3xrYQH9WlBV2Hl75vT/HIuAQTINHbeNsN06/l4lvs6mdoD
-	 ZXlwGdDSFdGwHgb/yF3BKW7khL5JDy+jYjljEn/KSk5pfCMY4KjRp0BooLDEbpwT3O
-	 HqrYm6puaG1JYKaANfszgtbjhdY1Gld1bgJYpGB0=
+	by mail.kernel.org (Postfix) with ESMTP id 40E7D2072F
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Mar 2020 22:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgCLVol (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Mar 2020 17:44:41 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46263 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbgCLVol (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2020 17:44:41 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 111so7916033oth.13;
-        Thu, 12 Mar 2020 14:44:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G8Txaf4x0VEll/Y3cymC5B34TdWiNjRuLiaS7lxL2Rk=;
-        b=gnshfKkKu2PioU2GRNBmnTwIf0t14XS3eBTSbGEq9Qnv2E86Pp4yI/N6Qt0a6f3igI
-         ltgTpj9yZzwY0tBMCh7haIZlRCYIc1iVyHkcXtL0P5devgbyaGe3oiPflnujU6qAZ17x
-         VgYIi3kcOQXsxNHrJ5b+VEqsuXkAicywjUffipGzavlp0HWQzUGVljuxuz4813CW5rjc
-         AIXQ3AW3TfCZrGLCLxTT9mb69whSsz/+ffvDBPD10GjZ+2QXRkZYJhY0FYeXLIOSAVT5
-         yrP0jCFyYae0KlAQjsr5aG4bv52oqNBcn9kVia1qlHl6zZthbmhh8W8GBFLe8ej4B8BG
-         YHLg==
-X-Gm-Message-State: ANhLgQ3fnHHFubTwWzQbPCT+BOcC9LdUYj26zU5Z7LoMb51Pibn7ytaf
-        S4SS7c7/v1pTUfq1ILrjvQ==
-X-Google-Smtp-Source: ADFU+vsbiUVffUm+4ApajmRGvkt0ZEjeWR//4ZJaqErX1K21MZ7RS+bxjcqpcSKUcfUHWwllU7uIIw==
-X-Received: by 2002:a9d:2215:: with SMTP id o21mr7935579ota.113.1584049478974;
-        Thu, 12 Mar 2020 14:44:38 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m69sm18815828otc.78.2020.03.12.14.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 14:44:38 -0700 (PDT)
-Received: (nullmailer pid 31846 invoked by uid 1000);
-        Thu, 12 Mar 2020 21:44:37 -0000
-Date:   Thu, 12 Mar 2020 16:44:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sergey.Semin@baikalelectronics.ru
+        id S1726683AbgCLWiS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Mar 2020 18:38:18 -0400
+Received: from 6.mo2.mail-out.ovh.net ([87.98.165.38]:50124 "EHLO
+        6.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbgCLWiS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2020 18:38:18 -0400
+X-Greylist: delayed 12945 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Mar 2020 18:38:18 EDT
+Received: from player761.ha.ovh.net (unknown [10.108.35.131])
+        by mo2.mail-out.ovh.net (Postfix) with ESMTP id 1704B1CE110
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Mar 2020 20:02:32 +0100 (CET)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player761.ha.ovh.net (Postfix) with ESMTPSA id 840B4105EE227;
+        Thu, 12 Mar 2020 19:02:19 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 20:02:11 +0100
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: gpio: Add DW GPIO debounce clocks
- bindings
-Message-ID: <20200312214437.GA31790@bogus>
-References: <20200306132448.13917-1-Sergey.Semin@baikalelectronics.ru>
- <20200306132512.46E03803079F@mail.baikalelectronics.ru>
+        Jonathan Corbet <corbet@lwn.net>,
+        "Daniel W . S . Almeida" <dwlsalmeida@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: driver-api/gpio/driver.rst: fix code blocks
+Message-ID: <20200312200211.56555f1a@heffalump.sk2.org>
+In-Reply-To: <20200312183452.GF2376@latitude>
+References: <20200312180650.1365059-1-steve@sk2.org>
+        <20200312183452.GF2376@latitude>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306132512.46E03803079F@mail.baikalelectronics.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/EJ25.ioH5tFFK9PHcoH40.w"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 9747759918732627362
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedruddvhedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgesghdtreerredtjeenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjeeiuddrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 6 Mar 2020 16:24:46 +0300, <Sergey.Semin@baikalelectronics.ru> wrote:
-> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> 
-> Port A of the DW GPIO controller may optionally have a debounce
-> logic enabled if it was synthesized with corresponding functionality
-> enabled. In this case a dedicated reference clocks should be provided
-> to the node with "db" clock-names.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: Paul Burton <paulburton@kernel.org>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> ---
->  Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+--Sig_/EJ25.ioH5tFFK9PHcoH40.w
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Rob Herring <robh@kernel.org>
+On Thu, 12 Mar 2020 19:34:52 +0100, Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+> On Thu, Mar 12, 2020 at 07:06:51PM +0100, Stephen Kitt wrote:
+> > -is a typical example of a cascaded interrupt handler using
+> > gpio_irq_chip:: +is a typical example of a cascaded interrupt handler
+> > using gpio_irq_chip: =20
+>=20
+> Thanks for the patch, but Mauro already fixed it:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
+t/?id=3Dc1c8b1ff0a1985d4992f49a5775bbcf6ee5ccfba
+
+Ah, yes, I didn=E2=80=99t check linux-next, only docs-next.
+
+Regards,
+
+Stephen
+
+--Sig_/EJ25.ioH5tFFK9PHcoH40.w
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl5qhzMACgkQgNMC9Yht
+g5z79RAAm9GZAuW/yWNXsgIo4xZ7vu/l0TtZnkH0lOwOgZCetp6jIQOcvfVnkun6
+YG6uReaKsXrCjdEK/dDK3fx7o1eVVLbffdd2+54nkgejrec6B4NWYKirqyFbP2w9
+owznif4bNRh2N1XmtRrqkd+PiHYGt20EXBHMs9VhNovp1LA6j5v6LTQYSEY+6GaF
+0Z5JY9SgH2QLHoWkA79F/GycAYOTC3e7oiN0J3nUL/rEH8ZjutzUKvgTYymMFj12
+N6HM1tHnrPdZ6cmzo8IhF04i7rv4y+DfqHEwNIFk+TknBbA9jIv6fln1Zo9YI0wu
+QqBpTRQKqr7xiSpg2zgFJt3XYhGxVhShhFHtPmIj+Fd5VDhrqgvzLDqdTPRsLL1X
+FMZGY+KBquOPq4Sm0rLcKo80k0hbGHdfUqFQgurG8yeSZZN2zxLU8wZilXVWv4aR
+enpbcHAIniBuHzHfjKmZQsM/iowap8mIhhVTdl68zlZQd1JGJumjosMRQOo1GPKP
+t1t2zco5AnD3QZZE8k3x43uVWTg//Th574+O8t3lsa4GhlDcY1Wt+EfGFWa2dr9M
+Ow4o8q2YJz9hMqEZkeKJsS7C+rF0kj5K4k6R01L7U4BmjObZv9LB+279vL/T67WZ
+36qBQ7enf6ooL/V0H9chW+gKCLO1Zm3Yv2RmNu7fs6gOokLOopE=
+=aXXW
+-----END PGP SIGNATURE-----
+
+--Sig_/EJ25.ioH5tFFK9PHcoH40.w--
