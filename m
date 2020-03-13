@@ -2,117 +2,126 @@ Return-Path: <SRS0=nFxA=46=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0C4C10DCE
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Mar 2020 12:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D212C10DCE
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Mar 2020 14:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FB12074A
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Mar 2020 12:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC20206FA
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Mar 2020 14:47:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GVZv6Cha"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="UULHVhHo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgCMME4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Mar 2020 08:04:56 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35326 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgCMMEz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2020 08:04:55 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a20so11606597edj.2
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Mar 2020 05:04:54 -0700 (PDT)
+        id S1726794AbgCMOrk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Mar 2020 10:47:40 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33504 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbgCMOrk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2020 10:47:40 -0400
+Received: by mail-il1-f195.google.com with SMTP id k29so9169567ilg.0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Mar 2020 07:47:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KVQaV5WPaAITEfXGJD3iw4zrtyye7kAolYp6oZ1quUI=;
-        b=GVZv6ChaXLEWYvbrWTdhS4i8fMw2qeJSXb/2JBjNdfMY6mhOggh6/Z5mOaWCYPz6Ad
-         PetuwUXpdI272XaInycenRqesHqQBmYhwOBAMPaM4DCpfbCev1WQekRbj0o7QM4YsMTi
-         FkvBwDPMqy4tbFaLyfxVfYKBPgeGMPLpoi1kp2ylMBm1/Ithj6eoLKXkBEzlhpA/ihLd
-         qL22Qiw9DAFKOJT6+N8KPo5aUP110lqB7mD++bhFrTZXbdce6Qd/U/JEnBbgdbSZBnq/
-         AaqJO9+Hx6eGmoHph7LwUFG+z4KSEcnIHB1QgOQ3JYmudJ1VcD4R91SoUMJraYGdukpk
-         vEcw==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ro1R5ehcYhRf1s0gupnhw5Q+nbHwvID0ows7ral5AwA=;
+        b=UULHVhHoV9B8wA8pT06k5F7CEKhKPJTemEriB5P4jsfUl+0MFuocFV+cKfEBUwJOZR
+         44SDm19Y7MNYFx7IBYDxU1eeSaW08Y1QdU5wPqJ476lvQgn0/8iH8LZarWTvyzQ8f8Pq
+         /yfiAazoYMLLCZA+WD2VvC0CB+j3dinbmK52mQS15VrJHiRU+hrdzgsvFqZQERc3wsoQ
+         g+ZBlhE9WbwRtM/eaNTiBOiVTrV5D3Y6m0xAntdjTsJR7LHKx3cw/ImN5JlKvRE2sZTY
+         CaoeXluOwsKMbIdEpQHSRSCk8Y3XWPOtb/vcDpCSafXtfOW3R/wFvDbweG9ep+FTXkfs
+         6jCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KVQaV5WPaAITEfXGJD3iw4zrtyye7kAolYp6oZ1quUI=;
-        b=te0ugp9+/MBGziiL/OZXlCTcxx2lMkOYJbeGoOST5ychru5BRzMEu5IecT/eUBuriP
-         /JmVV9ohvSnTfmUOGo+Dtvk/aPDy7pGuyJchJRBlQ6/0tFWtYCwaf03QTQTaqA3xh/P2
-         oM+gidq//tbqLzH1FtA4B/uYQmI7/QZJU+wWKqNlvjHeXCNB45ffSObG5OmqcNzTVgS6
-         9+EkA2KD/LUvPByb9lgtfPgkJBJnVmxCMFJruEahKq3Ngv/2/GTst7Z1FDSf0jnyFBfd
-         wee8TtctMew0jyndufJgk+i6Oeggui8AMR4vKp+VqEngv87sLaH0C0gypy580kVkN+dV
-         NwFw==
-X-Gm-Message-State: ANhLgQ3BSzKL7pftzQLtkqz/NMw0LbqCaYgLKOhpdulUP2xCL1/GwHRx
-        a0XAwXrtKpVQRLpcjt21MG6i0cV/ppc=
-X-Google-Smtp-Source: ADFU+vskqub7CpCaC/ugUWZs2oR/RvePIrTwC+6a82eCHZMWi25KAtvuE8JcxWJt62Qtis9Q1Vw0NQ==
-X-Received: by 2002:a17:906:76c6:: with SMTP id q6mr11068012ejn.176.1584101092902;
-        Fri, 13 Mar 2020 05:04:52 -0700 (PDT)
-Received: from [192.168.1.9] ([84.238.208.211])
-        by smtp.googlemail.com with ESMTPSA id v25sm4584220edx.89.2020.03.13.05.04.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2020 05:04:52 -0700 (PDT)
-Subject: Re: [PATCH -next 011/491] ARM/QUALCOMM SUPPORT: Use fallthrough;
-To:     Joe Perches <joe@perches.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-pm@vger.kernel.org
-References: <cover.1583896344.git.joe@perches.com>
- <2e6818291503f032e7662f1fa45fb64c7751a7ae.1583896348.git.joe@perches.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <2ac47436-e13c-bc87-d661-e4a423c7ef5b@linaro.org>
-Date:   Fri, 13 Mar 2020 14:04:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ro1R5ehcYhRf1s0gupnhw5Q+nbHwvID0ows7ral5AwA=;
+        b=jEAT/+FPYtYA17Q48DJpjLnNPJnC/5+Ccykd3nO1H8LB9548qpCefGDdpcmFbfTBNR
+         BVKaNZuedC2KAcHu4Yq6JUz8co4UeTtP3LUsdskQW/+KnUBSNJEyZK/tSSTGyLQ2QzTZ
+         7VfsHJ4AmT4jvABegxrIAplwhwzQsRKBYrI09yR/HibVO0mEnifdSFTedxXQOExTCDNf
+         lPZgTFgf39PtKsgTrvpAkg/MmOr6XN86mPtWhMKbuc1Z+ya5ChCRqQOGwrLww4czLzP1
+         xleZ1jthQLy2Ul1JLhVeQlmbBenjEdCx3MjXsz3qgLWA0VLHbsBcOBxVbNXwsMRiBcMS
+         u7iA==
+X-Gm-Message-State: ANhLgQ2gR10IpqLVk3U6xTDVHHpQh23+TFiYCnq5A1+3hKOv7eTmXUuJ
+        HhEjL4PTlb0/C6JXdVG4X62qlQheFJEcxAY2S/R8VXn5
+X-Google-Smtp-Source: ADFU+vsUQdVDGeuArwH8++3efQ8y7YMk8cNafYrhvyIqxS2kFexBfegk6QvD0SkMs57BFtt65r+sa+KzO6NudDFAdpc=
+X-Received: by 2002:a92:d191:: with SMTP id z17mr14076733ilz.287.1584110859057;
+ Fri, 13 Mar 2020 07:47:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2e6818291503f032e7662f1fa45fb64c7751a7ae.1583896348.git.joe@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
+ <CACRpkdZSooH+mXbimgT-hnaC2gO1nTi+rY7UmUhVg9bk1j+Eow@mail.gmail.com>
+In-Reply-To: <CACRpkdZSooH+mXbimgT-hnaC2gO1nTi+rY7UmUhVg9bk1j+Eow@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 13 Mar 2020 15:47:28 +0100
+Message-ID: <CAMRc=Mf2Mx+rB7du8D66WP=Js0wuK8x44aT9H2q6JhLJvrOcVQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+czw., 12 mar 2020 o 11:35 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> Hi Bartosz,
+>
+> I'm struggling to figure out if this is the right way to count
+> references for gpio descriptors.
+>
+> I cleared up the situation of why we don't want to add kref
+> to gpio_chip in the previous message: I think we got that covered.
+> (If I'm not wrong about it, and I am frequently wrong.)
+>
+> This mail is about contrasting the suggested gpio_desc
+> kref with the existing managed resources, i.e. the
+> devm_* mechanisms.
+>
+> devm_* macros are elusive because they do not use
+> reference counting at all.
+>
+> Instead they put every devm_* requested resource with
+> a destruction function on a list associated with the struct
+> device. Functions get put on that list when we probe a
+> device driver, and the list is iterated and all release functions
+> are called when we exit .probe() with error or after calling the
+> optional .remove() function on the module. (More or less.)
+>
+> This means anything devm_* managed lives and dies
+> with the device driver attaching to the device.
+> Documentation/driver-api/driver-model/devres.rst
+>
+> If the intention of the patch is that this action is associated
+> with the detachment of the driver, then we are reinventing
+> the wheel we already invented.
+>
 
-On 3/11/20 6:51 AM, Joe Perches wrote:
-> Convert the various uses of fallthrough comments to fallthrough;
-> 
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c |  2 +-
+In this case I was thinking about a situation where we pass a
+requested descriptor to some other framework (nvmem in this case)
+which internally doesn't know anything about who manages this resource
+externally. Now we can of course simply not do anything about it and
+expect the user (who passed us the descriptor) to handle the resources
+correctly. But what happens if the user releases the descriptor not on
+driver detach but somewhere else for whatever reason while nvmem
+doesn't know about it? It may try to use the descriptor which will now
+be invalid. Reference counting in this case would help IMHO.
 
-For the Venus bits:
+Bart
 
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-
->  drivers/phy/qualcomm/phy-qcom-usb-hs.c   |  2 +-
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |  4 ++--
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |  2 +-
->  drivers/rpmsg/qcom_glink_native.c        |  4 ++--
->  drivers/soc/qcom/socinfo.c               | 16 ++++++++--------
->  drivers/thermal/qcom/tsens-v0_1.c        |  8 ++++----
->  drivers/thermal/qcom/tsens-v1.c          |  4 ++--
->  8 files changed, 21 insertions(+), 21 deletions(-)
-> 
-
--- 
-regards,
-Stan
+> E.g. to devm_* it doesn't really matter if someone else is
+> using a struct gpio_desc, or not, but if the current driver
+> is using it, it will be kept around until that driver detaches.
+> No reference counting needed for that.
+>
+> So is this related to your problem or do I just get things
+> wrong?
