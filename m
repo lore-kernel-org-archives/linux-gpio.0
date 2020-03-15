@@ -2,130 +2,94 @@ Return-Path: <SRS0=Px7v=5A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15A9C0044D
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Mar 2020 01:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B8EC10DCE
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Mar 2020 12:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9862071B
-	for <linux-gpio@archiver.kernel.org>; Sun, 15 Mar 2020 01:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A27F7205ED
+	for <linux-gpio@archiver.kernel.org>; Sun, 15 Mar 2020 12:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Sf5x1zwN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ke634LkS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbgCOB7I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 14 Mar 2020 21:59:08 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37270 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbgCOB7I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Mar 2020 21:59:08 -0400
-Received: by mail-io1-f67.google.com with SMTP id k4so13672733ior.4
-        for <linux-gpio@vger.kernel.org>; Sat, 14 Mar 2020 18:59:06 -0700 (PDT)
+        id S1728468AbgCOMOC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 15 Mar 2020 08:14:02 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34889 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbgCOMOC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 15 Mar 2020 08:14:02 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 7so7951021pgr.2;
+        Sun, 15 Mar 2020 05:14:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XS7pPJqjYBq2Cs3zeKdcSdMmGqDIVMj9vKA0yVpQYQM=;
-        b=Sf5x1zwN8QR6qPFehI+iNJp+T4OBQDZok0BZVP5d7W697tY7nu3iIaNX/pTClNaP6m
-         a2IlKNgv3JLE+oLxB140e6Gni9q1YQvXzxUKBXYU2Qz/JmiQg9VkiOFdwViV3x/oNTuq
-         ODxU2QcZ0/2BsgOZHB9KPXhgo4UWuHOLkdg5ebQcSj1DOyzkciV28dC7LznuuSbbsgLf
-         9qKypmkEvJauObctXk54IDy1FlikMphAdZKUM9sRnEVtB06VebdZWeFf0jzJDmICKRGR
-         j4BvQWoJ3wr5/ZDTL0CUeBuvqrdKMphzxoyMadubUapSr3ZlPFVXY042oSM6QDHGEcQF
-         Y0VQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xt9aen6glpugYoFyf1MaMxd1EvbCcDykTNsFcB6umqc=;
+        b=ke634LkSp/PrbzfM2jQsQNdYs+y5r+Qdaz1rrMslQz7Hi9Ef77NXc/APeCesIYck+2
+         9c2MGXxoO01XxpX6uBAkgnhVYq7fGau47TCzsORnkfCp+HEa6TWuJ0stISHwpZheIW+G
+         73TQ8IU/mKjiu/Cbey1aFnhm7UKpMneQddTsY/KcYERI1Q1LS2OeQ0I3n7mOn4Qg3w2X
+         iEh/uPmQVQpRT3JC64nXkr6zNEZvZXSo6wjFp/vfNkP3GONwIgbYumPgdGm3vcRvXGd/
+         d5rKF/JbeUhwUc3FzwYICsD6f0z9oXQZrJiOTAHB2FZ6MRf/amTbaPp8W9Wx4FnY46nG
+         2Yow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XS7pPJqjYBq2Cs3zeKdcSdMmGqDIVMj9vKA0yVpQYQM=;
-        b=nHv+ftFp26OE21bEyi3tcmy0Pv+HdgGOiJFX+DJwPF4BhgswyQHFLffYXCxLxakbkV
-         gSAHX4auzdLqO5aabkI+8D8XmtzvYijXlasgsmYtLpBBhXDPYaDOmCTrwcsYMqDoiARB
-         AXPf+IKBPUHzCloi6hHv4TEEYnFkIG6KhASLQIQy/AiqIluHpKYMkuirT/Ym6SkkMN70
-         IkDVsj7RFFAkH0cZ69FOtBjNElL8H0xn3BXeq+KPz8FjVZnFStcclPJgFksm7eh+6f0w
-         2XkoJ8jOJSSVjqwNb5qUZUIRMHDmcNhxDNQY7+I+5ObpAWYZHgqE1LncAyICNIWeIFfa
-         P2Xg==
-X-Gm-Message-State: ANhLgQ1AfsRVIhDL3aA7SYOo+HJHRGrZEWTIR5iVZ/qaceuc/79nxRcX
-        uX9Sn77bzSvnLOJvCpz1vRmvK/6VJQs0J1vy/DI+0jni
-X-Google-Smtp-Source: ADFU+vvNqfelgTman/LTAHlaUt3dUAnq12p1V6wQSTw4nfnSrB6N2tLtBDR4+u3SG5RCHzJpuWY38EXEpQpmo5eYaxA=
-X-Received: by 2002:a5e:c70c:: with SMTP id f12mr18048548iop.130.1584217720359;
- Sat, 14 Mar 2020 13:28:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200312145020.1848727-1-gabravier@gmail.com>
-In-Reply-To: <20200312145020.1848727-1-gabravier@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sat, 14 Mar 2020 21:28:29 +0100
-Message-ID: <CAMRc=Me=u5dq1_kOk3qJ-XZbkiOrK01ZDueY6K_U2N2QSc27zQ@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio-hammer: Avoid potential overflow in main
-To:     Gabriel Ravier <gabravier@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xt9aen6glpugYoFyf1MaMxd1EvbCcDykTNsFcB6umqc=;
+        b=lYtoetXql4tQnKe+DRoze5NcdzDpw74Ohgi4zEr1tujzaQoXRSFpV9AZ8kfNc/QRNT
+         bml8QPd5SrKGlgPhMoq+FHKKa5P/Txf9JL0Ug3Q06muTs63avXaaQbgrgWvX5kqMBTmo
+         NreaIBEUlOeogVpzUf0MpWriuwchFtpKutEwodHgOnluwYmypZa3/KIkjnWd1Kyy12QR
+         cP5Czq/zUuTwgNAxsCv4iYAw1JEnzxLkyvt2EMAKJ+0RUshtKlChpC31h18lbzbzi397
+         ev2uD1aHJg3mqV6zT8oQ0j4XCrdYiTllao4oj7G9ZVfiyPSzu3sEUXwiaC6qXhtufjQD
+         HabQ==
+X-Gm-Message-State: ANhLgQ2ZZkiNtyTX7F/Tb1CyELODX9Ynn557+8gTtC5s53WB0Kztjl9/
+        E+md9fUkcRhbHwFAqNzF9yEcBvIH
+X-Google-Smtp-Source: ADFU+vskFw6BpawuLYm63vwxn2euxVBEH/W3DZyNtWOfIAUMDBwwQ9XQF1T9TD0WjaFQwHgvsv4ubw==
+X-Received: by 2002:a63:b4d:: with SMTP id a13mr20543302pgl.77.1584274440443;
+        Sun, 15 Mar 2020 05:14:00 -0700 (PDT)
+Received: from guoguo-omen.lan ([240e:379:976:a075:bc02:9cda:8f71:1120])
+        by smtp.gmail.com with ESMTPSA id 5sm19869025pfw.98.2020.03.15.05.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Mar 2020 05:13:59 -0700 (PDT)
+From:   Chuanhong Guo <gch981213@gmail.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     Chuanhong Guo <gch981213@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource@vdorst.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/2] gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
+Date:   Sun, 15 Mar 2020 20:13:36 +0800
+Message-Id: <20200315121338.251362-1-gch981213@gmail.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-czw., 12 mar 2020 o 15:50 Gabriel Ravier <gabravier@gmail.com> napisa=C5=82=
-(a):
->
-> If '-o' was used more than 64 times in a single invocation of gpio-hammer=
-,
-> this could lead to an overflow of the 'lines' array. This commit fixes
-> this by avoiding the overflow and giving a proper diagnostic back to the
-> user
->
-> Signed-off-by: Gabriel Ravier <gabravier@gmail.com>
-> ---
->  tools/gpio/gpio-hammer.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/gpio/gpio-hammer.c b/tools/gpio/gpio-hammer.c
-> index 0e0060a6e..083399d27 100644
-> --- a/tools/gpio/gpio-hammer.c
-> +++ b/tools/gpio/gpio-hammer.c
-> @@ -135,7 +135,14 @@ int main(int argc, char **argv)
->                         device_name =3D optarg;
->                         break;
->                 case 'o':
-> -                       lines[i] =3D strtoul(optarg, NULL, 10);
-> +                       /*
-> +                        * Avoid overflow. Do not immediately error, we w=
-ant to
-> +                        * be able to accurately report on the amount of =
-times
-> +                        * '-o' was given to give an accurate error messa=
-ge
-> +                        */
-> +                       if (i < GPIOHANDLES_MAX)
-> +                               lines[i] =3D strtoul(optarg, NULL, 10);
-> +
->                         i++;
->                         break;
->                 case '?':
-> @@ -143,6 +150,14 @@ int main(int argc, char **argv)
->                         return -1;
->                 }
->         }
-> +
-> +       if (i >=3D GPIOHANDLES_MAX) {
-> +               fprintf(stderr,
-> +                       "Only %d occurences of '-o' are allowed, %d were =
-found\n",
-> +                       GPIOHANDLES_MAX, i + 1);
-> +               return -1;
-> +       }
-> +
->         nlines =3D i;
->
->         if (!device_name || !nlines) {
-> --
-> 2.24.1
->
+Currently gpio-hog doesn't work on gpio-mt7621 driver. On further
+debugging, I noticed that set/clear register on this controller
+only works on output pins. We need to setup pin direction before
+writing values in bgpio_dir_out for a correct gpio-hog behavior.
+This patchset introduces a new flag BGPIOF_NO_SET_ON_INPUT for
+these kind of controller and set this flag for gpio-mt7621.
 
-Patch applied, thanks!
+Chuanhong Guo (2):
+  gpio: mmio: introduce BGPIOF_NO_SET_ON_INPUT
+  gpio: mt7621: add BGPIOF_NO_SET_ON_INPUT flag
 
-Bartosz
+ drivers/gpio/gpio-mmio.c    | 23 +++++++++++++++++++----
+ drivers/gpio/gpio-mt7621.c  |  4 ++--
+ include/linux/gpio/driver.h |  1 +
+ 3 files changed, 22 insertions(+), 6 deletions(-)
+
+-- 
+2.24.1
+
