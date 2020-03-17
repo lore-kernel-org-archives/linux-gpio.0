@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D6BC5ACBF
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1061DC10F29
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C7E20724
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D2720724
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgCQJkZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 05:40:25 -0400
-Received: from v6.sk ([167.172.42.174]:50344 "EHLO v6.sk"
+        id S1726823AbgCQJkU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 05:40:20 -0400
+Received: from v6.sk ([167.172.42.174]:50228 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbgCQJkX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Mar 2020 05:40:23 -0400
+        id S1726077AbgCQJkM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Mar 2020 05:40:12 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 332816108C;
-        Tue, 17 Mar 2020 09:40:21 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 50ADC60FFA;
+        Tue, 17 Mar 2020 09:40:09 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 12/28] spi: dt-bindings: spi-controller: Slaves have no address cells
-Date:   Tue, 17 Mar 2020 10:39:06 +0100
-Message-Id: <20200317093922.20785-13-lkundrak@v3.sk>
+Subject: [PATCH 09/28] ARM: dts: mmp3: fix L2 cache controller node name
+Date:   Tue, 17 Mar 2020 10:39:03 +0100
+Message-Id: <20200317093922.20785-10-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317093922.20785-1-lkundrak@v3.sk>
 References: <20200317093922.20785-1-lkundrak@v3.sk>
@@ -60,53 +60,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SPI controllers in slave mode have a single child node that has no
-address. Enforce #address-cells of zero instead of one.
+The current one makes validation unhappy:
 
-Fixes: 0a1b929356830 ("spi: Add YAML schemas for the generic SPI options")
+  mmp3-dell-ariel.dt.yaml: l2-cache-controller@d0020000: $nodename:0:
+      'l2-cache-controller@d0020000' does not match
+      '^(cache-controller|cpu)(@[0-9a-f,]+)*$'
+
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- .../bindings/spi/spi-controller.yaml          | 23 ++++++++++++++-----
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/mmp3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-index d8e5509a70816..30d774cf6cc95 100644
---- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-@@ -15,16 +15,27 @@ description: |
-   controller may be described for use in SPI master mode or in SPI slave mode,
-   but not for both at the same time.
+diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
+index 649aa74851257..eaff9b1bc1d9f 100644
+--- a/arch/arm/boot/dts/mmp3.dtsi
++++ b/arch/arm/boot/dts/mmp3.dtsi
+@@ -523,7 +523,7 @@ ssp4: spi@d4039000 {
+ 			};
+ 		};
  
-+allOf:
-+  - if:
-+      required:
-+        - spi-slave
-+    then:
-+      properties:
-+        "#address-cells":
-+          const: 0
-+        "#size-cells":
-+          const: 0
-+    else:
-+      properties:
-+        "#address-cells":
-+          const: 1
-+        "#size-cells":
-+          const: 0
-+
- properties:
-   $nodename:
-     pattern: "^spi(@.*|-[0-9a-f])*$"
- 
--  "#address-cells":
--    const: 1
--
--  "#size-cells":
--    const: 0
--
-   cs-gpios:
-     description: |
-       GPIOs used as chip selects.
+-		l2: l2-cache-controller@d0020000 {
++		l2: cache-controller@d0020000 {
+ 			compatible = "marvell,tauros3-cache", "arm,pl310-cache";
+ 			reg = <0xd0020000 0x1000>;
+ 			cache-unified;
 -- 
 2.25.1
 
