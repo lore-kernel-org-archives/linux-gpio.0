@@ -2,100 +2,88 @@ Return-Path: <SRS0=ZVnm=5C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4D1C18E5B
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD0C5ACD8
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84DB520674
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:28:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fmVRythI"
+	by mail.kernel.org (Postfix) with ESMTP id C477E20736
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgCQJ25 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 05:28:57 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:43246 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725730AbgCQJ24 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2020 05:28:56 -0400
-X-UUID: 4e2a6919cd614f4b911b5e93c50896c1-20200317
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=caBY5KaLBvbbFihcSr1PWRfxvxROOG5oXS91E6JZO7o=;
-        b=fmVRythI/bDR5VQc/ca29cvuySrkeEeuriLbKZxgqgx8kvdCOcJSOioufGDXm7O5J6S0QhgAH4dF2RfAGOMucnzOyWG69EoJAhB/8E9TLc5k/AjYVqPVPa0X3eIsQoNAmgyh0bELQpexrAI3n8sjUwKe3h4tSEcrK1q1doCUOPw=;
-X-UUID: 4e2a6919cd614f4b911b5e93c50896c1-20200317
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <light.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1665547931; Tue, 17 Mar 2020 17:28:52 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 17 Mar 2020 17:26:28 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 17 Mar 2020 17:28:02 +0800
-Message-ID: <1584437324.12211.10.camel@mtkswgap22>
-Subject: Re: [PATCH v4 2/2] pinctrl: make MediaTek MT6765 pinctrl ready for
- buidling loadable module
-From:   Light Hsieh <light.hsieh@mediatek.com>
-To:     Sean Wang <sean.wang@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>
-Date:   Tue, 17 Mar 2020 17:28:44 +0800
-In-Reply-To: <CAGp9Lzo-HkmiitBBJF9Mybbrdgy-Kphfyi2wf0SwMGXTeuWGVA@mail.gmail.com>
-References: <1583825986-8189-1-git-send-email-light.hsieh@mediatek.com>
-         <1583825986-8189-3-git-send-email-light.hsieh@mediatek.com>
-         <CAGp9Lzo-HkmiitBBJF9Mybbrdgy-Kphfyi2wf0SwMGXTeuWGVA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726399AbgCQJjj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 05:39:39 -0400
+Received: from v6.sk ([167.172.42.174]:49982 "EHLO v6.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbgCQJjj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Mar 2020 05:39:39 -0400
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id 2754160EEC;
+        Tue, 17 Mar 2020 09:39:36 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 01/28] ARM: dts: kirkwood: Fix interrupt controller node name
+Date:   Tue, 17 Mar 2020 10:38:55 +0100
+Message-Id: <20200317093922.20785-2-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200317093922.20785-1-lkundrak@v3.sk>
+References: <20200317093922.20785-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-T24gU3VuLCAyMDIwLTAzLTE1IGF0IDE0OjE1IC0wNzAwLCBTZWFuIFdhbmcgd3JvdGU6DQo+IEhp
-LCBMaWdodA0KPiANCj4gT24gVHVlLCBNYXIgMTAsIDIwMjAgYXQgMTI6MzkgQU0gPGxpZ2h0Lmhz
-aWVoQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBMaWdodCBIc2llaCA8bGln
-aHQuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBtYWtlIHBpbmN0cmwt
-bXQ2NzY1IHJlYWR5IGZvciBidWlsZGluZyBhcyBsb2FkYWJsZSBtb2R1bGUuDQo+IHMvYnVpbGRp
-bmcvYnVpbGRpbmcvDQo+IA0KPiBJIGdvdCBidWlsZCBlcnJvciBhZnRlciB3aGVuIHRob3NlIHR3
-byBwYXRjaGVzIGFyZSBiZWluZyBhcHBsaWVkDQo+IC4uL2RyaXZlcnMvcGluY3RybC9tZWRpYXRl
-ay9waW5jdHJsLW10ay1jb21tb24tdjIuYzo1Mjk6MTogZXJyb3I6DQo+ICdtdGtfcGluY29uZl9i
-aWFzX3NldF9nZXYxJyB1bmRlY2xhcmVkIGhlcmUgKG5vdCBpbiBhIGZ1bmN0aW9uKQ0KPiANCg0K
-T0suIEkgd2lsbCBmaXggaXQuDQoNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IExpZ2h0IEhzaWVo
-IDxsaWdodC5oc2llaEBtZWRpYXRlay5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IE1hdHRoaWFzIEJy
-dWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvcGlu
-Y3RybC9tZWRpYXRlay9LY29uZmlnICAgICAgICAgIHwgMiArLQ0KPiA+ICBkcml2ZXJzL3BpbmN0
-cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NjUuYyB8IDQgKysrKw0KPiA+ICAyIGZpbGVzIGNoYW5n
-ZWQsIDUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9LY29uZmlnIGIvZHJpdmVycy9waW5jdHJsL21lZGlh
-dGVrL0tjb25maWcNCj4gPiBpbmRleCA0Y2QxMTA5Li5jNjQ1ZmRiIDEwMDY0NA0KPiA+IC0tLSBh
-L2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9waW5j
-dHJsL21lZGlhdGVrL0tjb25maWcNCj4gPiBAQCAtODksNyArODksNyBAQCBjb25maWcgUElOQ1RS
-TF9NVDI3MTINCj4gPiAgICAgICAgIHNlbGVjdCBQSU5DVFJMX01USw0KPiA+DQo+ID4gIGNvbmZp
-ZyBQSU5DVFJMX01UNjc2NQ0KPiA+IC0gICAgICAgYm9vbCAiTWVkaWF0ZWsgTVQ2NzY1IHBpbiBj
-b250cm9sIg0KPiA+ICsgICAgICAgdHJpc3RhdGUgIk1lZGlhdGVrIE1UNjc2NSBwaW4gY29udHJv
-bCINCj4gPiAgICAgICAgIGRlcGVuZHMgb24gT0YNCj4gPiAgICAgICAgIGRlcGVuZHMgb24gQVJN
-NjQgfHwgQ09NUElMRV9URVNUDQo+ID4gICAgICAgICBkZWZhdWx0IEFSTTY0ICYmIEFSQ0hfTUVE
-SUFURUsNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwt
-bXQ2NzY1LmMgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NjUuYw0KPiA+
-IGluZGV4IDkwNWRhZThjLi4yYzU5ZDM5IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGluY3Ry
-bC9tZWRpYXRlay9waW5jdHJsLW10Njc2NS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL21l
-ZGlhdGVrL3BpbmN0cmwtbXQ2NzY1LmMNCj4gPiBAQCAtNiw2ICs2LDcgQEANCj4gPiAgICoNCj4g
-PiAgICovDQo+ID4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiA+ICAjaW5jbHVk
-ZSAicGluY3RybC1tdGstbXQ2NzY1LmgiDQo+ID4gICNpbmNsdWRlICJwaW5jdHJsLXBhcmlzLmgi
-DQo+ID4NCj4gPiBAQCAtMTEwMywzICsxMTA0LDYgQEAgc3RhdGljIGludCBfX2luaXQgbXQ2NzY1
-X3BpbmN0cmxfaW5pdCh2b2lkKQ0KPiA+ICAgICAgICAgcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9y
-ZWdpc3RlcigmbXQ2NzY1X3BpbmN0cmxfZHJpdmVyKTsNCj4gPiAgfQ0KPiA+ICBhcmNoX2luaXRj
-YWxsKG10Njc2NV9waW5jdHJsX2luaXQpOw0KPiA+ICsNCj4gPiArTU9EVUxFX0xJQ0VOU0UoIkdQ
-TCB2MiIpOw0KPiA+ICtNT0RVTEVfREVTQ1JJUFRJT04oIk1lZGlhVGVrIE1UNjc2NSBQaW5jdHJs
-IERyaXZlciIpOw0KPiA+IC0tDQo+ID4gMS44LjEuMS5kaXJ0eQ0KDQo=
+The current ones makes validation unhappy:
+
+  kirkwood-lsxhl.dt.yaml: main-interrupt-ctrl@20200: $nodename:0:
+    'main-interrupt-ctrl@20200' does not match
+    '^interrupt-controller(@[0-9a-f,]+)*$'
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ arch/arm/boot/dts/kirkwood.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/kirkwood.dtsi b/arch/arm/boot/dts/kirkwood.dtsi
+index 2161e23bd98ef..6c8d94beae78f 100644
+--- a/arch/arm/boot/dts/kirkwood.dtsi
++++ b/arch/arm/boot/dts/kirkwood.dtsi
+@@ -228,7 +228,7 @@ l2: l2-cache@20128 {
+ 			reg = <0x20128 0x4>;
+ 		};
+ 
+-		intc: main-interrupt-ctrl@20200 {
++		intc: interrupt-controller@20200 {
+ 			compatible = "marvell,orion-intc";
+ 			interrupt-controller;
+ 			#interrupt-cells = <1>;
+-- 
+2.25.1
 
