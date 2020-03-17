@@ -2,129 +2,113 @@ Return-Path: <SRS0=ZVnm=5C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3722DC18E5B
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 11:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8FCC5ACD7
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 13:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B66220719
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 11:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0406C2075E
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 13:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584450673;
+	bh=YcuIoVrIQeXiuSD1j/Q1Lk0qQ1T1L/MGqpKL3q2kgPE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=tt9iLunL5np/GvDPxFIOxK3kaLuOOZ63ORHQFGPkTKtf/bz44AfXrfDBskmNHkF0K
+	 CO1UWK37zM51esA94+aDsg2j11i7e/UXCHse+AXXlxgD6QwcCOQx4pjRhQzMAEfRPO
+	 VP+zWqj8TfKx121mMKK4yNtOJESShH/q2IGJbjLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbgCQLcq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 07:32:46 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42291 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbgCQLcq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2020 07:32:46 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a2so362818otq.9;
-        Tue, 17 Mar 2020 04:32:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yETyFwQ9Htl1KGbLhFFP34JxwM+8all8kt5P2BYv2cs=;
-        b=fFmWaGRP50iLWykmVJMdnEKnpISzEjo9Sn0f1FwWkcW/b+/a2QQhFmVdPlvbFS3WaH
-         yGlVd6Qj9wfuOK4rAOCEqjh345Vk63nTpOHsyckuJO4luM5x8giHWlbjhe45f3pY62xy
-         hE5+fUPtfuuRv3TNobMIeVOCgAVVMmDf6oDKmbj6vZtdC7iF+sv7+aluMJgBjD9+q9zy
-         E2ij2P3iO73fiIUpJk8y9ENCsA+MR8qOFAbZ3L40pIW57E+irTeiA0QwDHjPYiwyxtbS
-         Ha10zX+5EJ7qoJZBnEqlR2enM9jM7VbUkflNLtZKooC95MJeh27URlNMY10VnvJbVKRS
-         thmA==
-X-Gm-Message-State: ANhLgQ0xU5/AaCkxHNeIDFuPw7wxuPKBc6+R4U3TlZha5Rn1fTePRvk1
-        mXCElEIonS1sEGkrUdElq6jKMgOkmfG9QyTH3VE=
-X-Google-Smtp-Source: ADFU+vvQTAgcQxsOpqflnHCgzX47yo6RoUnPbT1ipGmHWNBjNYcXjsyzilFOOHau23AhLSA/+Thi1PZ5zI/u0X1X+7w=
-X-Received: by 2002:a9d:1708:: with SMTP id i8mr3337224ota.250.1584444762958;
- Tue, 17 Mar 2020 04:32:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200218151812.7816-1-geert+renesas@glider.be> <20200218151812.7816-4-geert+renesas@glider.be>
-In-Reply-To: <20200218151812.7816-4-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 Mar 2020 12:32:31 +0100
-Message-ID: <CAMuHMdWXJKdD7j6QiRb4fL+fFsyDKpc7aGK-nER=CZd7bxGyPg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] gpio: Add GPIO Aggregator
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        id S1726664AbgCQNLM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 09:11:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726740AbgCQNK4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:10:56 -0400
+Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6C3620770;
+        Tue, 17 Mar 2020 13:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584450656;
+        bh=YcuIoVrIQeXiuSD1j/Q1Lk0qQ1T1L/MGqpKL3q2kgPE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IcuEk5UvdTtgQPs7Io6jULVaHJVkCLU/zHbTq0oqrBwW/D/cKjSEoWtWxd+YhhLXk
+         B/FevolAtqO81SIqhZ/F73qyB/NPiLuKpSDQYQvO3t/qwbmLe/qamZUUhl28qWmSS2
+         8K5MJOGjJDqxW7WdgLywez4tn8tuWN4jpAQhG/3M=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jEBzh-0006S5-Kz; Tue, 17 Mar 2020 14:10:53 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ben Peled <bpeled@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH 05/12] docs: dt: fix references to ap806-system-controller.txt
+Date:   Tue, 17 Mar 2020 14:10:44 +0100
+Message-Id: <cf60ef88712e4f46f4e4bf40b2c646451d921827.1584450500.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <cover.1584450500.git.mchehab+huawei@kernel.org>
+References: <cover.1584450500.git.mchehab+huawei@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 4:18 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> GPIO controllers are exported to userspace using /dev/gpiochip*
-> character devices.  Access control to these devices is provided by
-> standard UNIX file system permissions, on an all-or-nothing basis:
-> either a GPIO controller is accessible for a user, or it is not.
-> Currently no mechanism exists to control access to individual GPIOs.
->
-> Hence add a GPIO driver to aggregate existing GPIOs, and expose them as
-> a new gpiochip.
->
-> This supports the following use cases:
->   - Aggregating GPIOs using Sysfs
->     This is useful for implementing access control, and assigning a set
->     of GPIOs to a specific user or virtual machine.
->   - Generic GPIO Driver
->     This is useful for industrial control, where it can provide
->     userspace access to a simple GPIO-operated device described in DT,
->     cfr. e.g. spidev for SPI-operated devices.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ap806-system-controller.txt was renamed to ap80x-system-controller.txt.
 
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-aggregator.c
+Update its references accordingly.
 
-> +static int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
-> +                              unsigned long config)
-> +{
-> +       struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-> +
-> +       chip = fwd->descs[offset]->gdev->chip;
-> +       if (chip->set_config)
+Fixes: 2537831bbc19 ("dt-bindings: ap80x: replace AP806 with AP80x")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio-mvebu.txt        | 2 +-
+ Documentation/devicetree/bindings/thermal/armada-thermal.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
--       chip = fwd->descs[offset]->gdev->chip;
--       if (chip->set_config)
-+       chip = gpiod_to_chip(fwd->descs[offset]);
-+       if (chip && chip->set_config)
-
-> +               return chip->set_config(chip, offset, config);
-
-This is not correct: offset should be translated, too, i.e.
-
-    offset = gpio_chip_hwgpio(fwd->descs[offset]);
-
-Which adds a new dependency on "gpiolib.h"...
-
-Is there a better alternative, than providing a public gpiod_set_config()
-helper?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+index 2e097b57f170..0fc6700ed800 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+@@ -14,7 +14,7 @@ Required properties:
+ 
+     "marvell,armada-8k-gpio" should be used for the Armada 7K and 8K
+     SoCs (either from AP or CP), see
+-    Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++    Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
+     for specific details about the offset property.
+ 
+ - reg: Address and length of the register set for the device. Only one
+diff --git a/Documentation/devicetree/bindings/thermal/armada-thermal.txt b/Documentation/devicetree/bindings/thermal/armada-thermal.txt
+index f3b441100890..b0bee7e42038 100644
+--- a/Documentation/devicetree/bindings/thermal/armada-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/armada-thermal.txt
+@@ -12,7 +12,7 @@ Required properties:
+ 
+ Note: these bindings are deprecated for AP806/CP110 and should instead
+ follow the rules described in:
+-Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+ 
+ - reg: Device's register space.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.24.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
