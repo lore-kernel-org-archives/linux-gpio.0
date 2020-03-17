@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C15C2BB1D
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C686AC18E5B
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D2120714
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A88C820724
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgCQJl0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 05:41:26 -0400
-Received: from v6.sk ([167.172.42.174]:50908 "EHLO v6.sk"
+        id S1727224AbgCQJlS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 05:41:18 -0400
+Received: from v6.sk ([167.172.42.174]:50830 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727278AbgCQJlZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Mar 2020 05:41:25 -0400
+        id S1727229AbgCQJlR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 17 Mar 2020 05:41:17 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 42B8B61094;
-        Tue, 17 Mar 2020 09:41:23 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 129226109D;
+        Tue, 17 Mar 2020 09:41:15 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 27/28] dt-bindings: timer: Convert mrvl,mmp-timer to json-schema
-Date:   Tue, 17 Mar 2020 10:39:21 +0100
-Message-Id: <20200317093922.20785-28-lkundrak@v3.sk>
+Subject: [PATCH 25/28] dt-bindings: rtc: Convert sa1100-rtc to json-schema
+Date:   Tue, 17 Mar 2020 10:39:19 +0100
+Message-Id: <20200317093922.20785-26-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200317093922.20785-1-lkundrak@v3.sk>
 References: <20200317093922.20785-1-lkundrak@v3.sk>
@@ -60,86 +60,97 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-A straightforward conversion of the mrvl,mmp-timer binding to DT schema
-format using json-schema.
+Convert the sa1100-rtc binding to DT schema format using json-schema.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- .../bindings/timer/mrvl,mmp-timer.txt         | 17 --------
- .../bindings/timer/mrvl,mmp-timer.yaml        | 43 +++++++++++++++++++
- 2 files changed, 43 insertions(+), 17 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/mrvl,mmp-timer.yaml
+ .../devicetree/bindings/rtc/sa1100-rtc.txt    | 17 ------
+ .../devicetree/bindings/rtc/sa1100-rtc.yaml   | 55 +++++++++++++++++++
+ 2 files changed, 55 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rtc/sa1100-rtc.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/sa1100-rtc.yaml
 
-diff --git a/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt b/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
+diff --git a/Documentation/devicetree/bindings/rtc/sa1100-rtc.txt b/Documentation/devicetree/bindings/rtc/sa1100-rtc.txt
 deleted file mode 100644
-index b8f02c6635219..0000000000000
---- a/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
+index 968ac820254bb..0000000000000
+--- a/Documentation/devicetree/bindings/rtc/sa1100-rtc.txt
 +++ /dev/null
 @@ -1,17 +0,0 @@
--* Marvell MMP Timer controller
+-* Marvell Real Time Clock controller
 -
 -Required properties:
--- compatible : Should be "mrvl,mmp-timer".
--- reg : Address and length of the register set of timer controller.
--- interrupts : Should be the interrupt number.
--
--Optional properties:
--- clocks : Should contain a single entry describing the clock input.
+-- compatible: should be "mrvl,sa1100-rtc"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- interrupts: Should be two. The first interrupt number is the rtc alarm
+-  interrupt and the second interrupt number is the rtc hz interrupt.
+-- interrupt-names: Assign name of irq resource.
 -
 -Example:
--	timer0: timer@d4014000 {
--		compatible = "mrvl,mmp-timer";
--		reg = <0xd4014000 0x100>;
--		interrupts = <13>;
--		clocks = <&coreclk 2>;
+-	rtc: rtc@d4010000 {
+-		compatible = "mrvl,mmp-rtc";
+-		reg = <0xd4010000 0x1000>;
+-		interrupts = <5>, <6>;
+-		interrupt-names = "rtc 1Hz", "rtc alarm";
 -	};
-diff --git a/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.yaml b/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.yaml
+diff --git a/Documentation/devicetree/bindings/rtc/sa1100-rtc.yaml b/Documentation/devicetree/bindings/rtc/sa1100-rtc.yaml
 new file mode 100644
-index 0000000000000..ebee0b862d493
+index 0000000000000..53a8b72df9f34
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.yaml
-@@ -0,0 +1,43 @@
++++ b/Documentation/devicetree/bindings/rtc/sa1100-rtc.yaml
+@@ -0,0 +1,55 @@
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/timer/mrvl,mmp-timer.yaml#
++$id: http://devicetree.org/schemas/rtc/sa1100-rtc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Marvell MMP Timer bindings
++title: Marvell Real Time Clock controller bindings
++
++allOf:
++  - $ref: rtc.yaml#
 +
 +maintainers:
 +  - devicetree@vger.kernel.org
 +
 +properties:
-+  $nodename:
-+    pattern: '^timer@[a-f0-9]+$'
-+
 +  compatible:
-+    const: mrvl,mmp-timer
++    enum:
++      - mrvl,sa1100-rtc
++      - mrvl,mmp-rtc
 +
 +  reg:
-+    maxItems: 1
-+
-+  interrupts:
 +    maxItems: 1
 +
 +  clocks:
 +    maxItems: 1
 +
++  resets:
++    maxItems: 1
++
++  interrupts:
++    minItems: 2
++    maxItems: 2
++
++  interrupt-names:
++    items:
++      - const: 'rtc 1Hz'
++      - const: 'rtc alarm'
++
 +required:
 +  - compatible
 +  - reg
 +  - interrupts
++  - interrupt-names
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    timer@d4014000 {
-+        compatible = "mrvl,mmp-timer";
-+        reg = <0xd4014000 0x100>;
-+        interrupts = <13>;
-+        clocks = <&coreclk 2>;
++    rtc: rtc@d4010000 {
++        compatible = "mrvl,mmp-rtc";
++        reg = <0xd4010000 0x1000>;
++        interrupts = <5>, <6>;
++        interrupt-names = "rtc 1Hz", "rtc alarm";
 +    };
 +
 +...
