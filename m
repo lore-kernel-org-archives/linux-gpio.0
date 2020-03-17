@@ -2,27 +2,62 @@ Return-Path: <SRS0=ZVnm=5C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E13C5ACC0
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193C3C2BB1D
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 10:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5FB220714
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 09:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F8B2071C
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 10:05:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="hsHzKaLO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725730AbgCQJjf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 05:39:35 -0400
-Received: from v6.sk ([167.172.42.174]:49946 "EHLO v6.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbgCQJjf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Mar 2020 05:39:35 -0400
-Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id D181F60EC2;
-        Tue, 17 Mar 2020 09:39:31 +0000 (UTC)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Rob Herring <robh+dt@kernel.org>
+        id S1726039AbgCQKFK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 06:05:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39057 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbgCQKFG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2020 06:05:06 -0400
+Received: by mail-lj1-f194.google.com with SMTP id f10so22068790ljn.6
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2020 03:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n09seZt9zQSEmn7PnJzgCcHPTYjmqdsKfcWkGxOyoSw=;
+        b=hsHzKaLO8KEYIAs97rD1AMV6mMcqn8KvHqg4ovsIqvIqJsmunKOt1qYqCT5n50NIxg
+         5W5zLGTss9f2hdJk1xumbMBaQMEDyvjcEyPZ3jrVx+WFRbtYyH8TPSgzOsF/O0ZDV+R+
+         YjoSBTZStIUKJShmEh3hEBHRdVxm1SY6SdsdZnyJxUDVSUVZF76uON1MxQVFXMBzq7je
+         dlg8JkAxS2yIyOnnmUE/68pzDOxpbgCvnSFoZcOm6vs6rcpTxYbjby1S67f7NF/Fv36c
+         IE9PiIrFyxQp03l/Q0rCM6x04ylSD3FBrTKVotFLkqpNP2woyYPVF4wSIq4KiiZs1osm
+         q5YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n09seZt9zQSEmn7PnJzgCcHPTYjmqdsKfcWkGxOyoSw=;
+        b=k+l1hOFJ7OX44Y1yLeksmGxUxflNMshoGeCXI9thjgKhWsBwaBPd0DM3z2epEyRsou
+         4pCznhLSSmlfdtegV83rOa5Wq3fSYstMFKZ2P8uOjvhzDB1b5s70H0aWjF5Q5450mPOx
+         hOxAgGdEVpBRCQQw+haQTtaxHue8TH1SROxlCPz2kz9DZl67b1mvrhHzu2RipAEJ+9h8
+         VvkZoWftstJw+g+mJhbQ+6zDDqleLre/rkBLhgaZ9PS2y4SSIjhJv2CgINA5jlidfmQU
+         vWz9dZXAd+uPs/gllhdo3/mweeOOQ0CZACDvVpUF5k6ROCjHb/jO5rLh6yMUfOSFpcRc
+         sYBw==
+X-Gm-Message-State: ANhLgQ3qb39mjiQ8wFcDKChSpOfCc3Y+8oIvnBoZib/cN9o0mX0hnrSO
+        0H5o0LSXi+9N6ld9LUCKqpuUPA==
+X-Google-Smtp-Source: ADFU+vvDFgn0Sv1qdBbtE4XeAKrxupkPbSjYz/5IJ9Z1M/fD+IB/2XXNoyEDPpVkBc5aUWJYf1e6nA==
+X-Received: by 2002:a2e:8119:: with SMTP id d25mr2329766ljg.39.1584439502560;
+        Tue, 17 Mar 2020 03:05:02 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:48ef:94a3:a481:5e62:4324:124b? ([2a00:1fa0:48ef:94a3:a481:5e62:4324:124b])
+        by smtp.gmail.com with ESMTPSA id r7sm1932099ljc.3.2020.03.17.03.05.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2020 03:05:01 -0700 (PDT)
+Subject: Re: [PATCH 17/28] dt-bindings: mmc: Fix up clk-phase-sd-hs in an
+ example
+To:     Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh+dt@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -46,73 +81,43 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH 00/28] DT: Improve validation for Marvell SoCs
-Date:   Tue, 17 Mar 2020 10:38:54 +0100
-Message-Id: <20200317093922.20785-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.25.1
+References: <20200317093922.20785-1-lkundrak@v3.sk>
+ <20200317093922.20785-18-lkundrak@v3.sk>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <d7ccf5c1-4bfa-2fd2-b32d-a520e96bdd1e@cogentembedded.com>
+Date:   Tue, 17 Mar 2020 13:04:55 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200317093922.20785-18-lkundrak@v3.sk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello World,
+Hello!
 
-chained to this message is a set of patches that improve coverage of Device
-Tree validation for devices typically found on Marvell SoCs. It converts most
-of the peripheral binding documentation to YAML and fixes up validation issues
-in the SoC device trees.
+On 17.03.2020 12:39, Lubomir Rintel wrote:
 
-It starts with fixing the issues:
+> This way the validator can know that the two cells constitute a singlej
 
-  [PATCH 01/28] ARM: dts: kirkwood: Fix interrupt controller node name
-  [PATCH 02/28] ARM: dts: dove: Fix interrupt controller node name
-  [PATCH 03/28] ARM: dts: pxa168: Add missing address/size cells to i2c
-  [PATCH 04/28] ARM: dts: pxa168: Fix the gpio interrupt cell number
-  [PATCH 05/28] ARM: dts: pxa3xx: Fix up encoding of the /gpio
-  [PATCH 06/28] ARM: dts: pxa910: Fix the gpio interrupt cell number
-  [PATCH 07/28] ARM: dts: pxa*: Fix up encoding of the /rtc interrupts
-  [PATCH 08/28] ARM: dts: mmp*: Fix up encoding of the /rtc interrupts
-  [PATCH 09/28] ARM: dts: mmp3: fix L2 cache controller node name
-  [PATCH 10/28] ARM: dts: mmp3: fix USB & USB PHY node names
-  [PATCH 11/28] ARM: dts: berlin*: Fix up the SDHCI node names
+    Single?
 
-Then the binding fixes follow.
+> pair of clock phase degrees value, not separate items Otherwise it is
 
-When converting .txt binding files that were not written by myself,
-I didn't include the SPDX license tag and set the maintaners: to the
-devicetree@ list. The reason is that the original binding files don't
-contain the information and I didn't want to speak for anyone else and
-make it up.
+    Forgot a period after "items"?
 
-If this is not the correct thing to do, or the respective binding
-contributors want to clarify the licensing or be listed as maintainers,
-please respond and I'll send an updated patch set. I'm also happy to
-maintain any of these bindings.
+> unhappy:
+> 
+>    mmc-controller.example.dt.yaml: mmc@ab000000: clk-phase-sd-hs:0:
+>        [63] is too short
+>    mmc-controller.example.dt.yaml: mmc@ab000000: clk-phase-sd-hs:1:
+>        [72] is too short
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+[...]
 
-  [PATCH 12/28] spi: dt-bindings: spi-controller: Slaves have no
-  [PATCH 13/28] dt-bindings: serial: move Marvell compatible string to
-  [PATCH 14/28] dt-bindings: arm: l2x0: Tauros 3 is PL310 compatible
-  [PATCH 15/28] dt-bindings: arm: mrvl: Add missing compatible strings
-  [PATCH 16/28] dt-bindings: Add "mrvl", a legacy vendor prefix for
-  [PATCH 17/28] dt-bindings: mmc: Fix up clk-phase-sd-hs in an example
-  [PATCH 18/28] dt-bindings: mmc: Fix node name in an example
-  [PATCH 19/28] dt-bindings: mmc: Convert sdhci-pxa to json-schema
-  [PATCH 20/28] dt-bindings: phy: Convert phy-mmp3-usb to json-schema
-  [PATCH 21/28] dt-bindings: gpio: Convert mrvl-gpio to json-schema
-  [PATCH 22/28] dt-bindings: i2c: Convert i2c-pxa to json-schema
-  [PATCH 23/28] dt-bindings: interrupt-controller: Convert mrvl,intc to
-  [PATCH 24/28] dt-bindings: media: Convert marvell,mmp2-ccic to
-  [PATCH 25/28] dt-bindings: rtc: Convert sa1100-rtc to json-schema
-  [PATCH 26/28] dt-bindings: spi: Convert spi-pxa2xx to json-schema
-  [PATCH 27/28] dt-bindings: timer: Convert mrvl,mmp-timer to
-  [PATCH 28/28] dt-bindings: usb: Convert ehci-mv to json-schema
-
-None of the patches depends on any other and they can be applied in any
-order.
-
-Love,
-Lubo
-
-
+MBR, Sergei
