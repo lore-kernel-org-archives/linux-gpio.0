@@ -2,184 +2,120 @@ Return-Path: <SRS0=ZVnm=5C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E94C1975A
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 19:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4510EC5ACD6
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 20:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9663720752
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 19:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584475085;
-	bh=4ktS7vkXbvWPqEkGLuhwSvTcermavdaiwrVzlyvDMTU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=SbA/DY57brJhB5Id7G2NdmRH7GBWzHgs8nWvc+oZz7qhC1/tF7lbsU/LIyBDSwBxR
-	 2nie0PIWHr7wiPprkjU7230rSe4NcIitKQ4x9k5FwyNylkAzSioW/giuX9qJePkFQV
-	 9SoTXuoX7JjIv2tzDuG5dSHYPLACD8ltDuRr2Wqs=
+	by mail.kernel.org (Postfix) with ESMTP id 186F120752
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Mar 2020 20:50:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="cSJm4OCH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgCQT6F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Mar 2020 15:58:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbgCQT6E (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Mar 2020 15:58:04 -0400
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726783AbgCQUuu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Mar 2020 16:50:50 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:43577 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbgCQUuu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2020 16:50:50 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E51820753;
-        Tue, 17 Mar 2020 19:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584475084;
-        bh=4ktS7vkXbvWPqEkGLuhwSvTcermavdaiwrVzlyvDMTU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ErekzIionC/I7zFmUNqh7MxcljAySREdp8+XSrVaIt2HsegDI9CUw2Q9Ay+w0gLyW
-         6unmLPpaIgjirEHSIzlZ3SpkFSF/a26BjhaOk7/fNMrx1IW8zjF2uatw753SUDT8EN
-         Q6W+2DCAe6qxa2Sggc+xveh3nGbdqzVHUNkvlC9g=
-Received: by mail-il1-f173.google.com with SMTP id p12so6714315ilm.7;
-        Tue, 17 Mar 2020 12:58:04 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1M/FjSa47hg4/gTfzz43nNroPTohAYJv8y/u63lv+L+GF6P08d
-        R6MrqQjkDJbdEx3raxqd2d6aWylF4auADMhLF4k=
-X-Google-Smtp-Source: ADFU+vskZaQmZn/HUDvAI0R1yO/yTvGjvDEnMeLhFaqNGK4UcwDiZkQLGNE8fGZ58Cs1uMLUqtdXJCc5dza1ryNDO9g=
-X-Received: by 2002:a92:4b0d:: with SMTP id m13mr514342ilg.43.1584475083400;
- Tue, 17 Mar 2020 12:58:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <1583825986-8189-1-git-send-email-light.hsieh@mediatek.com>
- <1583825986-8189-2-git-send-email-light.hsieh@mediatek.com>
- <CAGp9LzpJTYXp9R6SKjauemPYMd9wfoacD_czQBVgWtJoMcPFKg@mail.gmail.com> <1584437292.12211.9.camel@mtkswgap22>
-In-Reply-To: <1584437292.12211.9.camel@mtkswgap22>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 17 Mar 2020 12:57:52 -0700
-X-Gmail-Original-Message-ID: <CAGp9LzoQoWyrMSYQaqH=OL9iCeakBvosZO5T3c757x3pBwwMJw@mail.gmail.com>
-Message-ID: <CAGp9LzoQoWyrMSYQaqH=OL9iCeakBvosZO5T3c757x3pBwwMJw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] pinctrl: make MediaTek pinctrl v2 driver ready for
- buidling loadable module
-To:     Light Hsieh <light.hsieh@mediatek.com>
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 621F223E3D;
+        Tue, 17 Mar 2020 21:50:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1584478247;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yHhnQloQUToDXGnXijKLNbDzOyKNXrK7+WubSxFsj34=;
+        b=cSJm4OCHxSQfB3YX/PxFPSyx/Uz0UYF9kZtTPAU8l0ttDyB7LGY1VhFNo6DXRmKBOy34AQ
+        h/PyXwOebr6/w8MwLxZzAiMLO881AAjr6KPE6IBw5tEEOBfYmPwuqC4cv8NE8GNbbFXUDo
+        /+OZlquotM0LFYlAd31RL3wXpw2MXLM=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, kuohong.wang@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Michael Walle <michael@walle.cc>
+Subject: [PATCH 01/18] include/linux/ioport.h: add helper to define REG resource constructs
+Date:   Tue, 17 Mar 2020 21:50:00 +0100
+Message-Id: <20200317205017.28280-2-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200317205017.28280-1-michael@walle.cc>
+References: <20200317205017.28280-1-michael@walle.cc>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+X-Rspamd-Server: web
+X-Rspamd-Queue-Id: 621F223E3D
+X-Spamd-Result: default: False [6.40 / 15.00];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         NEURAL_SPAM(0.00)[0.496];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[22];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE];
+         FREEMAIL_CC(0.00)[linaro.org,baylibre.com,kernel.org,suse.com,roeck-us.net,gmail.com,pengutronix.de,linux-watchdog.org,nxp.com,linutronix.de,lakedaemon.net,walle.cc];
+         SUSPICIOUS_RECIPS(1.50)[]
+X-Spam: Yes
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi, Light
+Similar to the existing helpers, add one for IORESOURCE_REG which comes
+in handy for most common resource declarations.
 
-On Tue, Mar 17, 2020 at 2:28 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
->
-> On Sun, 2020-03-15 at 14:35 -0700, Sean Wang wrote:
-> > Hi, Light
-> >
-> > On Tue, Mar 10, 2020 at 12:39 AM <light.hsieh@mediatek.com> wrote:
-> > >
-> > > From: Light Hsieh <light.hsieh@mediatek.com>
-> > >
-> >
-> > Correct the prefix of the subject with "pinctrl: mediatek".
-> >
-> > > In the future we want to be able to build the MediaTek pinctrl driver,
-> > > based on paris, as kernel module. This patch allows pinctrl-paris.c, the
-> > > external interrupt controller mtk-eint.c, and pinctrl-mtk-common-v2.c to
-> > > be loadable as module.
-> > >
-> > > Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
-> > > Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> > > ---
-> > >  drivers/pinctrl/mediatek/Kconfig                 | 13 +++++++++++--
-> > >  drivers/pinctrl/mediatek/Makefile                |  5 +++--
-> > >  drivers/pinctrl/mediatek/mtk-eint.c              |  9 +++++++++
-> > >  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 24 ++++++++++++++++++++++++
-> > >  drivers/pinctrl/mediatek/pinctrl-paris.c         |  6 ++++++
-> > >  drivers/pinctrl/pinconf-generic.c                |  1 +
-> >
-> > Separate the patches for the device driver and for the core respectively.
->
-> Since the patch for pinconf-generic.c had been done in  b88d145191ad
-> ("pinctrl: Export some needed symbols at module load time").
-> I will remove patch for pinconf-generic.c.
->
-> > >  6 files changed, 54 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> > > index 701f9af..4cd1109 100644
-> > > --- a/drivers/pinctrl/mediatek/Kconfig
-> > > +++ b/drivers/pinctrl/mediatek/Kconfig
-> > > @@ -3,10 +3,12 @@ menu "MediaTek pinctrl drivers"
-> > >         depends on ARCH_MEDIATEK || COMPILE_TEST
-> > >
-> > >  config EINT_MTK
-> > > -       bool "MediaTek External Interrupt Support"
-> > > +       tristate "MediaTek External Interrupt Support"
-> > >         depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
-> > >         select GPIOLIB
-> > >         select IRQ_DOMAIN
-> > > +       default y if PINCTRL_MTK || PINCTRL_MTK_MOORE
-> > > +       default PINCTRL_MTK_PARIS
-> > >
-> > >  config PINCTRL_MTK
-> > >         bool
-> > > @@ -17,23 +19,30 @@ config PINCTRL_MTK
-> > >         select EINT_MTK
-> > >         select OF_GPIO
-> > >
-> > > +config PINCTRL_MTK_V2
-> > > +       tristate
-> > > +       depends on PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS
-> >
-> > PINCTRL_MTK_V2 doesn't have to depend on PINCTRL_MTK_MOORE or
-> > PINCTRL_MTK_PARIS to work and it can build on it own so that lets us
-> > remove the dependency.
-> >
-> The usage of PINCTRL_MTK had been describe in cover letter:
->
-> 1.4 PINCTRL_MTK_V2: add this tristate config which depends on
->         PINCTRL_MTK_PARIS and PINCTRL_MTK_MOORE. No need to specify in
->         defconfig file.
->       * PINCTRL_MTK_V2 will be y if either PINCTRL_MTK_PARIS or
->         PINCTRL_MTK_MOORE is y.
->       * PINCTRL_MTK_V2 will be n if both PINCTRL_MTK_PARIS and
->         PINCTRL_MTK_MOORE are n.
->       * PINCTRL_MTK_V2 will be m if PINCTRL_MTK_PARIS is m and
->         PINCTRL_MTK_MOORE is n.
->
->
-> Without PINCTRL_MTK_V2, we cannot specify whether
-> pinctrl-mtk-common-v2.c is built-in or loadable kernel module.
->
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ include/linux/ioport.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-What I was actually meaning is
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index a9b9170b5dd2..cdcceeec0f86 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -165,6 +165,11 @@ enum {
+ #define DEFINE_RES_MEM(_start, _size)					\
+ 	DEFINE_RES_MEM_NAMED((_start), (_size), NULL)
+ 
++#define DEFINE_RES_REG_NAMED(_start, _size, _name)			\
++	DEFINE_RES_NAMED((_start), (_size), (_name), IORESOURCE_REG)
++#define DEFINE_RES_REG(_start, _size)					\
++	DEFINE_RES_REG_NAMED((_start), (_size), NULL)
++
+ #define DEFINE_RES_IRQ_NAMED(_irq, _name)				\
+ 	DEFINE_RES_NAMED((_irq), 1, (_name), IORESOURCE_IRQ)
+ #define DEFINE_RES_IRQ(_irq)						\
+-- 
+2.20.1
 
-config PINCTRL_MTK_V2
-          tristate
-
-with that should work for your case.
-
-> > > +
-> > >  config PINCTRL_MTK_MOORE
-> > >         bool
-> > >         depends on OF
-> > >         select GENERIC_PINCONF
-> > >         select GENERIC_PINCTRL_GROUPS
-> > >         select GENERIC_PINMUX_FUNCTIONS
-> > > +       select EINT_MTK
-> >
-> > The original design of PINCTRL_MTK_MOORE doesn't have to work with
-> > EINT_MTK coupled tightly so that let us remove the reverse dependency.
-> >
->
-> Actually, PINCTRL_MTK_MOORE use EINT_MTK in the following call flow:
-> mtk_moore_pinctrl_probe() -> mtk_build_eint() -> mtk_eint_do_init().
-> mtk_eint_do_init() is defined in mtk-eint.c.
-
-CONFIG_EINT_MTK is actually an option to Moore pinctrl since Moore
-pinctrl has already carefully considered the condition with
-CONFIG_EINT_MTK=n in mtk_build_eint.
-
->
-> > >         select GPIOLIB
-> > >         select OF_GPIO
-> > > +       select PINCTRL_MTK_V2
