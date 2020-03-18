@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5385C4332E
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DB3C4332E
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E03320409
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D73E620B1F
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584565775;
-	bh=o2e8wMh9z7NTCPwAMSIFuXNtUqwqXclZwX/VgJCxUEI=;
+	s=default; t=1584565819;
+	bh=B7CGiG0pCM17QhTb775VkylPBpMzSdyEGtH1Vf/QKG8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vay/145zAMc/djibe6fNtsv7X/unekTOc2H0DCc7PpehoNT0ZN7cgLkB69zSrZlVu
-	 NGR5Cn0bdOG12iPsDiUsbtfQvo+Y1wfR/14sLjXuVtpiq54+9a9EAkB8PYXai8dr11
-	 /cITL4x3YHpaliywdvUX3kKi5q3yiKUqiZw6CnAY=
+	b=NHhEc3NfVH+zPeo3ziGkKtB6WN13KocuWFZkkz1jT46rjjmk81U+2GrYkyq5Pepez
+	 000Z9NwtWfmd9IGfyB/3AaP6ozh1ne7oo0+C6pkTYRo/vwHqKOsD1/H1eQvC4zM0/m
+	 /ANco+TKyIYheJVrgc5ECyWC+Pha/7ngVI1M+g+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbgCRVJc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Mar 2020 17:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52798 "EHLO mail.kernel.org"
+        id S1727605AbgCRVKH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Mar 2020 17:10:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbgCRUxo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:53:44 -0400
+        id S1727095AbgCRUxa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:53:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3011620A8B;
-        Wed, 18 Mar 2020 20:53:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E868220775;
+        Wed, 18 Mar 2020 20:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564824;
-        bh=o2e8wMh9z7NTCPwAMSIFuXNtUqwqXclZwX/VgJCxUEI=;
+        s=default; t=1584564809;
+        bh=B7CGiG0pCM17QhTb775VkylPBpMzSdyEGtH1Vf/QKG8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mBG7VUtuIo2fRHJ3K9hUNrdtMGMCziQrqAhfDoRpgbiBQlYtCVgU9PyYhiFYpVEgt
-         s5AEp5301HUJ6/k2J986dSUIxtx0jxYc5zV7Zmmr6jnom3kfKFHzeKGUVIzRz53iHP
-         Bd9097ZXiBa+JppnMHQtgfOYPQExdDjHk+YHlM1c=
+        b=z0OO+MVthe28tFk4crvVSemJY8NQPOi7nOpGb0V5yANfImXuzMfgjVoTbvSNWNMdx
+         C7tC30PsM3VMOiTKixPODr50lyyJgvAt9qNpLX/G/e4vtrZGSQfIkkFw9it/+sLWv5
+         +Hw+x2Z1M6cq0/FPoIq9okzB9575eNcC19URxtv0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nicolas Belin <nbelin@baylibre.com>,
@@ -46,12 +46,12 @@ Cc:     Nicolas Belin <nbelin@baylibre.com>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 05/73] pinctrl: meson-gxl: fix GPIOX sdio pins
-Date:   Wed, 18 Mar 2020 16:52:29 -0400
-Message-Id: <20200318205337.16279-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 06/84] pinctrl: meson-gxl: fix GPIOX sdio pins
+Date:   Wed, 18 Mar 2020 16:52:03 -0400
+Message-Id: <20200318205321.16066-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
-References: <20200318205337.16279-1-sashal@kernel.org>
+In-Reply-To: <20200318205321.16066-1-sashal@kernel.org>
+References: <20200318205321.16066-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -80,7 +80,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 72c5373c8dc1e..e8d1f3050487f 100644
+index 1b6e8646700f9..2ac921c83da91 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
 @@ -147,8 +147,8 @@ static const unsigned int sdio_d0_pins[]	= { GPIOX_0 };
