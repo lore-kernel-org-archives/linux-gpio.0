@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF185C4332B
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BF0C4332E
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9913E20775
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C627020409
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584565476;
-	bh=/LbwP3v/MBgQAofFuzjmdhtM3bu7o/LCwq51sIZqGXo=;
+	s=default; t=1584565482;
+	bh=bONTE9QdEECJ7irBIRK7fX137XpPZQEhsAzh0W8JQ/4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i9HdqH6WoUowb5WMS1Cq54Tq2TsrxCYDchvXD1x+ENw1CK5JwsXNsxmGFRR3GwwjQ
-	 QSkuBWpfGkZgRTCYI0JUlBrMElVlmPL/eIwzAc03gQHchnpzX40fs1ZlcleRxvw5JL
-	 ZKAQ+qjm1lPOJou2InIRNox4pnOYt4SOG1i/CMn8=
+	b=EzMFgCm/8WP2HzAcKZ677WyJy5mPmD6mPvFAJB4JDW7VhG8qsvXuWuPH0ZxFFCNaa
+	 EcICvkV1XrdMQ2BL74SwpVWrTDZH0Y3v+UnKWtouq9OTTx0YCvL51kQkrkXOzt3kYQ
+	 KvKQFHBFdewsVKUcb4pbPlDhSWp8Z1IZxMBDZTXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbgCRUzT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Mar 2020 16:55:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55626 "EHLO mail.kernel.org"
+        id S1728255AbgCRUzQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Mar 2020 16:55:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728253AbgCRUzS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:55:18 -0400
+        id S1728243AbgCRUzQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 084FF216FD;
-        Wed, 18 Mar 2020 20:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 827BB21473;
+        Wed, 18 Mar 2020 20:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564917;
-        bh=/LbwP3v/MBgQAofFuzjmdhtM3bu7o/LCwq51sIZqGXo=;
+        s=default; t=1584564915;
+        bh=bONTE9QdEECJ7irBIRK7fX137XpPZQEhsAzh0W8JQ/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4HPH/R5kljBPf9yJ88XACD0AlqTTQdtjklZI3+/F4aF3agMHEZ8ByXooDYE48+BR
-         C7l/kYqnyB94jHcw3KMOlmMv3HvOYsevYb7ou6+Y9khBA7dDyaP7NRg/SsTwKNNTe+
-         VYHYrjmkum74rzKqS5eoLt/lu+EqN5q3csrqx+Po=
+        b=mW+jkdajYXJf7POKeafghH/hpsXktWMSsj/+4xrU5uqk8Fb4JdZaGgjf4+qpWJQS6
+         VDXcLgKNVrHfFmGnjOYT/9DQsBsDawm9r9yrJLAVcVRt7N38WP9Hngd9myFBABVacz
+         P3YidteIk+B3oKNrrSGyFTO6qGJw32J8Or37Wa30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+Cc:     Nicolas Belin <nbelin@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/37] pinctrl: core: Remove extra kref_get which blocks hogs being freed
-Date:   Wed, 18 Mar 2020 16:54:38 -0400
-Message-Id: <20200318205509.17053-6-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 04/37] pinctrl: meson-gxl: fix GPIOX sdio pins
+Date:   Wed, 18 Mar 2020 16:54:36 -0400
+Message-Id: <20200318205509.17053-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
 References: <20200318205509.17053-1-sashal@kernel.org>
@@ -58,36 +61,39 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Nicolas Belin <nbelin@baylibre.com>
 
-[ Upstream commit aafd56fc79041bf36f97712d4b35208cbe07db90 ]
+[ Upstream commit dc7a06b0dbbafac8623c2b7657e61362f2f479a7 ]
 
-kref_init starts with the reference count at 1, which will be balanced
-by the pinctrl_put in pinctrl_unregister. The additional kref_get in
-pinctrl_claim_hogs will increase this count to 2 and cause the hogs to
-not get freed when pinctrl_unregister is called.
+In the gxl driver, the sdio cmd and clk pins are inverted. It has not caused
+any issue so far because devices using these pins always take both pins
+so the resulting configuration is OK.
 
-Fixes: 6118714275f0 ("pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20200228154142.13860-1-ckeepax@opensource.cirrus.com
+Fixes: 0f15f500ff2c ("pinctrl: meson: Add GXL pinctrl definitions")
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+Link: https://lore.kernel.org/r/1582204512-7582-1-git-send-email-nbelin@baylibre.com
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index c6ff4d5fa482e..76638dee65d94 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -2008,7 +2008,6 @@ static int pinctrl_claim_hogs(struct pinctrl_dev *pctldev)
- 		return PTR_ERR(pctldev->p);
- 	}
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index 0c0a5018102b0..22ddb238e17c5 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -153,8 +153,8 @@ static const unsigned int sdio_d0_pins[]	= { GPIOX_0 };
+ static const unsigned int sdio_d1_pins[]	= { GPIOX_1 };
+ static const unsigned int sdio_d2_pins[]	= { GPIOX_2 };
+ static const unsigned int sdio_d3_pins[]	= { GPIOX_3 };
+-static const unsigned int sdio_cmd_pins[]	= { GPIOX_4 };
+-static const unsigned int sdio_clk_pins[]	= { GPIOX_5 };
++static const unsigned int sdio_clk_pins[]	= { GPIOX_4 };
++static const unsigned int sdio_cmd_pins[]	= { GPIOX_5 };
+ static const unsigned int sdio_irq_pins[]	= { GPIOX_7 };
  
--	kref_get(&pctldev->p->users);
- 	pctldev->hog_default =
- 		pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
- 	if (IS_ERR(pctldev->hog_default)) {
+ static const unsigned int nand_ce0_pins[]	= { BOOT_8 };
 -- 
 2.20.1
 
