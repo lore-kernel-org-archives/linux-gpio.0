@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F85AC4332B
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF185C4332B
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEAB320409
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9913E20775
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Mar 2020 21:04:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584565342;
-	bh=hvwALjSpKoynKhiNQhcQrr2uB1Vf0tnBZy5zFLdjeNY=;
+	s=default; t=1584565476;
+	bh=/LbwP3v/MBgQAofFuzjmdhtM3bu7o/LCwq51sIZqGXo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WHQGMrj22juLee1rki7Ww5qaCpWHE1wf1zagdGegPPb/osY2iOPC5guyg5t/g9AGc
-	 ExCx1Me6SzNbAkRqN6VubiwJk5bQoGdp2ow9OoOYlZqLcF4Vpks3qcjBeG2rHaNHZU
-	 3EibGeKZraEY9FSU2JT447IiDp4vA0vsuWKH/1bE=
+	b=i9HdqH6WoUowb5WMS1Cq54Tq2TsrxCYDchvXD1x+ENw1CK5JwsXNsxmGFRR3GwwjQ
+	 QSkuBWpfGkZgRTCYI0JUlBrMElVlmPL/eIwzAc03gQHchnpzX40fs1ZlcleRxvw5JL
+	 ZKAQ+qjm1lPOJou2InIRNox4pnOYt4SOG1i/CMn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgCRU4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Mar 2020 16:56:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56710 "EHLO mail.kernel.org"
+        id S1728268AbgCRUzT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Mar 2020 16:55:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbgCRU4B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:56:01 -0400
+        id S1728253AbgCRUzS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 18 Mar 2020 16:55:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0646320BED;
-        Wed, 18 Mar 2020 20:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 084FF216FD;
+        Wed, 18 Mar 2020 20:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564960;
-        bh=hvwALjSpKoynKhiNQhcQrr2uB1Vf0tnBZy5zFLdjeNY=;
+        s=default; t=1584564917;
+        bh=/LbwP3v/MBgQAofFuzjmdhtM3bu7o/LCwq51sIZqGXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyD0xRTeHS2LkmboLiBJUJ8MB6TD/OctojKpOlH+t32oEnyFAqPqETYiY9iLJDLvm
-         iiqRlC81yc0ktiw9yLxNQk3YcRWaMUQW/KNlcDqO9Wu7gQSKr0Qh3SfToqmhNNXLjo
-         WuXgabQ94l5sgYbyKrJaP2nxWtN+IQgl/evh2EZE=
+        b=A4HPH/R5kljBPf9yJ88XACD0AlqTTQdtjklZI3+/F4aF3agMHEZ8ByXooDYE48+BR
+         C7l/kYqnyB94jHcw3KMOlmMv3HvOYsevYb7ou6+Y9khBA7dDyaP7NRg/SsTwKNNTe+
+         VYHYrjmkum74rzKqS5eoLt/lu+EqN5q3csrqx+Po=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 04/28] pinctrl: core: Remove extra kref_get which blocks hogs being freed
-Date:   Wed, 18 Mar 2020 16:55:31 -0400
-Message-Id: <20200318205555.17447-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/37] pinctrl: core: Remove extra kref_get which blocks hogs being freed
+Date:   Wed, 18 Mar 2020 16:54:38 -0400
+Message-Id: <20200318205509.17053-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205555.17447-1-sashal@kernel.org>
-References: <20200318205555.17447-1-sashal@kernel.org>
+In-Reply-To: <20200318205509.17053-1-sashal@kernel.org>
+References: <20200318205509.17053-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 deletion(-)
 
 diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index c55517312485d..08ea74177de29 100644
+index c6ff4d5fa482e..76638dee65d94 100644
 --- a/drivers/pinctrl/core.c
 +++ b/drivers/pinctrl/core.c
-@@ -2031,7 +2031,6 @@ static int pinctrl_claim_hogs(struct pinctrl_dev *pctldev)
+@@ -2008,7 +2008,6 @@ static int pinctrl_claim_hogs(struct pinctrl_dev *pctldev)
  		return PTR_ERR(pctldev->p);
  	}
  
