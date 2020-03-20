@@ -2,122 +2,225 @@ Return-Path: <SRS0=8BAc=5F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C97C4332B
-	for <linux-gpio@archiver.kernel.org>; Fri, 20 Mar 2020 10:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBABC4332E
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Mar 2020 16:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78E6520754
-	for <linux-gpio@archiver.kernel.org>; Fri, 20 Mar 2020 10:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F408920739
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Mar 2020 16:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgCTK7I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 20 Mar 2020 06:59:08 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34541 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbgCTK7H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Mar 2020 06:59:07 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j5so6050111oij.1;
-        Fri, 20 Mar 2020 03:59:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JBGzd1fiCYIMs0yXGqTi6J4Cg8iQgyHBNWCz5d+cCxM=;
-        b=QSRMgd5q/1n7036elxXzPGURwccLrpWQkNYkFlA9lyisF9PSvlcz9R7uwdz0BFQiSn
-         MpMIiIDwykmOFZXeD9scfzwBVtr04YsRSuxqxpAO9daTwH8r6Yk5QK2aK6cq7+OVoNIf
-         8Bic8lYRjii0Dny8UpwZguzX5Ri36+lYgdW8rByMzk4HSG65coiHbjVKYOipiIywaixL
-         gyBoGgWPEsHz4eQIPnUkA/QyLsiUhA/7a6qY93BMH7Dvky/11fwkslxtwuFh273J9Sas
-         v0aYMxaA0ESGXnKyot81MqZxIzto/mhMUReAZO5/YqBnLRDESncjkU4m5msC4njEeLm2
-         BSDA==
-X-Gm-Message-State: ANhLgQ2pdLZMd1sR17D3QPWTwN6m5Kk3JCnlA33jd/8U77t/xA5wnZhM
-        m4xkxI3VRJFTq0lDvwSmBlqLkgz+giSv7I0Rq18=
-X-Google-Smtp-Source: ADFU+vuzusGltxXm39xTf3vqPlxbTHXIt6qTneJTbhVKaOcT9tMW2LW4pSYh6Pfa0gbq7YWeA+51D7+gwN7Lhc0efL4=
-X-Received: by 2002:aca:ad93:: with SMTP id w141mr6082546oie.54.1584701944814;
- Fri, 20 Mar 2020 03:59:04 -0700 (PDT)
+        id S1727427AbgCTQuf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 20 Mar 2020 12:50:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:17023 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbgCTQuf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:50:35 -0400
+IronPort-SDR: y7LarwUD8yZDruhoLCKzZBV6xi7+ax6eXuKppNp3DXJE5JgflQqgdtrTj190lufrqQ3cFSubSj
+ YZK3P5TVnOQw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 09:50:34 -0700
+IronPort-SDR: jC3R1Ir+U31dJVm/4Dr723ztyDp1oS+lw+N5DsfsQl10jj8p2D+MquOXhY3lJCkcsPvicIabrz
+ yaEeo8DdYz3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
+   d="scan'208";a="237272173"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Mar 2020 09:50:33 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jFKqu-000Eab-MB; Sat, 21 Mar 2020 00:50:32 +0800
+Date:   Sat, 21 Mar 2020 00:50:28 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [gpio:fixes] BUILD SUCCESS
+ 1b26f3ba611774c897d29228e4ba28919e0fbfd0
+Message-ID: <5e74f454.niSVobLdubHovuV4%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <20200320093125.23092-1-brgl@bgdev.pl>
-In-Reply-To: <20200320093125.23092-1-brgl@bgdev.pl>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 20 Mar 2020 11:58:53 +0100
-Message-ID: <CAMuHMdXWrK3QjGmAPC0aPtQ_62buiQLopyRKB-qro6HBK5bDyg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: don't call sleeping functions with a spinlock taken
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bartosz,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  fixes
+branch HEAD: 1b26f3ba611774c897d29228e4ba28919e0fbfd0  gpiolib: acpi: Add quirk to ignore EC wakeups on HP x2 10 CHT + AXP288 model
 
-On Fri, Mar 20, 2020 at 10:31 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> We must not call pinctrl_gpio_can_use_line() with the gpio_lock taken
-> as it takes a mutex internally. Let's move the call before taking the
-> spinlock and store the return value.
->
-> This isn't perfect - there's a moment between calling
-> pinctrl_gpio_can_use_line() and taking the spinlock where the situation
-> can change but it isn't a regression either: previously this part wasn't
-> protected at all and it only affects the information user-space is
-> seeing.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: d2ac25798208 ("gpiolib: provide a dedicated function for setting lineinfo")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+elapsed time: 482m
 
-Thanks for your patch!
+configs tested: 159
+configs skipped: 0
 
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1154,8 +1154,19 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
->                                   struct gpioline_info *info)
->  {
->         struct gpio_chip *chip = desc->gdev->chip;
-> +       bool ok_for_pinctrl;
->         unsigned long flags;
->
-> +       /*
-> +        * This function takes a mutex so we must check this before taking
-> +        * the spinlock.
-> +        *
-> +        * FIXME: find a non-racy way to retrieve this information. Maybe a
-> +        * lock common to both frameworks?
-> +        */
-> +       ok_for_pinctrl = pinctrl_gpio_can_use_line(
-> +                               chip->base + info->line_offset);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Note that this is now called unconditionally, while before it was only called
-if all previous steps in the ||-pipeline failed.
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sparc                            allyesconfig
+sh                          rsk7269_defconfig
+ia64                             alldefconfig
+sh                                allnoconfig
+i386                              allnoconfig
+i386                             alldefconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200320
+x86_64               randconfig-a002-20200320
+x86_64               randconfig-a003-20200320
+i386                 randconfig-a001-20200320
+i386                 randconfig-a002-20200320
+i386                 randconfig-a003-20200320
+alpha                randconfig-a001-20200320
+m68k                 randconfig-a001-20200320
+mips                 randconfig-a001-20200320
+nds32                randconfig-a001-20200320
+parisc               randconfig-a001-20200320
+c6x                  randconfig-a001-20200320
+h8300                randconfig-a001-20200320
+microblaze           randconfig-a001-20200320
+nios2                randconfig-a001-20200320
+sparc64              randconfig-a001-20200320
+csky                 randconfig-a001-20200320
+openrisc             randconfig-a001-20200320
+s390                 randconfig-a001-20200320
+sh                   randconfig-a001-20200320
+xtensa               randconfig-a001-20200320
+x86_64               randconfig-b001-20200320
+x86_64               randconfig-b002-20200320
+x86_64               randconfig-b003-20200320
+i386                 randconfig-b001-20200320
+i386                 randconfig-b002-20200320
+i386                 randconfig-b003-20200320
+x86_64               randconfig-c001-20200320
+x86_64               randconfig-c002-20200320
+x86_64               randconfig-c003-20200320
+i386                 randconfig-c001-20200320
+i386                 randconfig-c002-20200320
+i386                 randconfig-c003-20200320
+x86_64               randconfig-d001-20200320
+x86_64               randconfig-d002-20200320
+x86_64               randconfig-d003-20200320
+i386                 randconfig-d001-20200320
+i386                 randconfig-d002-20200320
+i386                 randconfig-d003-20200320
+x86_64               randconfig-e001-20200320
+x86_64               randconfig-e002-20200320
+x86_64               randconfig-e003-20200320
+i386                 randconfig-e001-20200320
+i386                 randconfig-e002-20200320
+i386                 randconfig-e003-20200320
+x86_64               randconfig-f001-20200320
+x86_64               randconfig-f002-20200320
+x86_64               randconfig-f003-20200320
+i386                 randconfig-f001-20200320
+i386                 randconfig-f002-20200320
+i386                 randconfig-f003-20200320
+x86_64               randconfig-g001-20200320
+x86_64               randconfig-g002-20200320
+x86_64               randconfig-g003-20200320
+i386                 randconfig-g001-20200320
+i386                 randconfig-g002-20200320
+i386                 randconfig-g003-20200320
+x86_64               randconfig-h001-20200320
+x86_64               randconfig-h002-20200320
+x86_64               randconfig-h003-20200320
+i386                 randconfig-h001-20200320
+i386                 randconfig-h002-20200320
+i386                 randconfig-h003-20200320
+arc                  randconfig-a001-20200320
+arm                  randconfig-a001-20200320
+arm64                randconfig-a001-20200320
+ia64                 randconfig-a001-20200320
+powerpc              randconfig-a001-20200320
+sparc                randconfig-a001-20200320
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
 
-> +
->         spin_lock_irqsave(&gpio_lock, flags);
->
->         if (desc->name) {
-> @@ -1182,7 +1193,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
->             test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
->             test_bit(FLAG_EXPORT, &desc->flags) ||
->             test_bit(FLAG_SYSFS, &desc->flags) ||
-> -           !pinctrl_gpio_can_use_line(chip->base + info->line_offset))
-> +           !ok_for_pinctrl)
->                 info->flags |= GPIOLINE_FLAG_KERNEL;
->         if (test_bit(FLAG_IS_OUT, &desc->flags))
->                 info->flags |= GPIOLINE_FLAG_IS_OUT;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
