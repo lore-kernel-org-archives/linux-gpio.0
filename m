@@ -3,92 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BBEC3F2CD
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BECC4332E
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 18:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C309720719
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 18:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F75C20753
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 18:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbgCWSe1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 Mar 2020 14:34:27 -0400
-Received: from mga09.intel.com ([134.134.136.24]:30763 "EHLO mga09.intel.com"
+        id S1727175AbgCWShC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Mar 2020 14:37:02 -0400
+Received: from mga09.intel.com ([134.134.136.24]:31066 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726643AbgCWSe1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 23 Mar 2020 14:34:27 -0400
-IronPort-SDR: anCU9mDSm8x9mp6F0SlD0a1KMRPJwEvzBAZjPVUQidojPIIAi28FYFtlOb4Zw1feHbmPlmFs3U
- kC3ujQHwfqtA==
+        id S1726643AbgCWShB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 23 Mar 2020 14:37:01 -0400
+IronPort-SDR: YOkxqaso6Z7uPrm7mC6ZXusdJl53vhgH/gxmpk1KbItWK/qT0YLgSBdgeK+0iDSql1fefjyTR4
+ r/QgSnwNSIJg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 11:34:26 -0700
-IronPort-SDR: fcnOiKx5CD2lQDtzXqai7u53Hpm0UfTO77ZXZRNuNg25UkLxUihSYGieAJfgAJHi+JbFa99q0+
- hwLdlkwGsAmA==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 11:37:01 -0700
+IronPort-SDR: tn0NhD+lQU0//7+OWZF8rpqEyWHco1D+xNqV3wisea2CpAF7U/EzfOgg4BIY8Y53j3XrvIKEJR
+ Fy+53NbiH7SQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,297,1580803200"; 
-   d="scan'208";a="237980140"
+   d="scan'208";a="235304109"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Mar 2020 11:34:23 -0700
+  by orsmga007.jf.intel.com with ESMTP; 23 Mar 2020 11:36:57 -0700
 Received: from andy by smile with local (Exim 4.93)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jGRu4-00CJSQ-VZ; Mon, 23 Mar 2020 20:34:24 +0200
-Date:   Mon, 23 Mar 2020 20:34:24 +0200
+        id 1jGRwZ-00CJV4-2O; Mon, 23 Mar 2020 20:36:59 +0200
+Date:   Mon, 23 Mar 2020 20:36:59 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
+Cc:     Hoan Tran <hoan@os.amperecomputing.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
         Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-gpio@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] MAINTAINERS: Add Segey Semin to maintainers of DW
- APB GPIO driver
-Message-ID: <20200323183424.GT1922688@smile.fi.intel.com>
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] gpio: dwapb: Use optional-clocks interface for
+ APB ref-clock
+Message-ID: <20200323183659.GU1922688@smile.fi.intel.com>
 References: <20200306132505.8D3B88030795@mail.baikalelectronics.ru>
  <20200323180632.14119-1-Sergey.Semin@baikalelectronics.ru>
- <20200323180632.14119-7-Sergey.Semin@baikalelectronics.ru>
+ <20200323180632.14119-5-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323180632.14119-7-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20200323180632.14119-5-Sergey.Semin@baikalelectronics.ru>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 09:06:32PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+On Mon, Mar 23, 2020 at 09:06:30PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
 > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 > 
-> Add myself as a co-maintainer of the Synopsis DesignWare APB GPIO driver.
+> The common clocks kernel framework provides a generic way to use
+> an optional reference clock sources. If it's utilized there is no
+> need in checking whether the clock descriptor pointer is actually a
+> negative error at the moment of the prepare/unprepare clocks method
+> calling. So if the corresponding clock source is provided, then
+> getting an error shall actually terminate the device probe procedure.
+> If it isn't specified then the driver shall proceed with further
+> initializations.
+> 
+> We'll use the optional clocks getting method to handle the APB reference
+> clock, which can be provided for instance in the device of-node with
+> "bus" clock-name.
 
-I see neither cover letter, nor first three patches. What's going on?
+> -	if (!IS_ERR(gpio->clk))
+> -		clk_prepare_enable(gpio->clk);
+> +	clk_prepare_enable(gpio->clk);
 
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16084,6 +16084,7 @@ F:	drivers/tty/serial/8250/8250_dw.c
->  
->  SYNOPSYS DESIGNWARE APB GPIO DRIVER
->  M:	Hoan Tran <hoan@os.amperecomputing.com>
+Perhaps it makes sense now to consider error code returned by above.
+Maybe it's material for a separate patch (up to you).
 
-> +S:	Serge Semin <fancer.lancer@gmail.com>
-
-Are you sure you used a correct letter?
-
->  L:	linux-gpio@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-
-Had you chance to run parse-maintainers.pl to see if other fields are in order?
+The rest looks good.
 
 -- 
 With Best Regards,
