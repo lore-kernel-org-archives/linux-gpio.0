@@ -1,113 +1,189 @@
-Return-Path: <SRS0=d8BZ=5H=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=YfHD=5I=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45338C54EEB
-	for <linux-gpio@archiver.kernel.org>; Sun, 22 Mar 2020 10:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4684C54FCE
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 08:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5FC20714
-	for <linux-gpio@archiver.kernel.org>; Sun, 22 Mar 2020 10:10:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E9E920736
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Mar 2020 08:45:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yd6j3htw"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Ua25DunD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbgCVKKV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 22 Mar 2020 06:10:21 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37366 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbgCVKKV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Mar 2020 06:10:21 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r24so11271287ljd.4
-        for <linux-gpio@vger.kernel.org>; Sun, 22 Mar 2020 03:10:19 -0700 (PDT)
+        id S1727587AbgCWIo6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Mar 2020 04:44:58 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43560 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbgCWIo6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2020 04:44:58 -0400
+Received: by mail-io1-f68.google.com with SMTP id n21so13190364ioo.10
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2020 01:44:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=r8JLqywymFW9of0flwpIn7h5dE0pspzdLsAD+4b5au0=;
-        b=Yd6j3htwQFpN4xj7p1Rh1QIHioLmqaKdKK48FotKAaM2KFN5HCDBZVfAzmL2jDscPB
-         xK7ipym2gnK99cxNZkW7PtN9M27Cf8zy33PpqjdwNC+cB8PA0KBya5HgJnL7FolRpb1d
-         gddroYY9mtaFaONt+kxmmAdtb3ng5sHp0KogY5I3RXVSAXTmrdfSsr9HBVMnfm21Jb9N
-         bh2c1BbPEOVYjfeJ/wMYXmXUOi84Edl4QDa9Ugv2KOGdZ2ra5N9Vlny3js14f7wwqgZH
-         yEMHF8loUgA/cqBzPBfko3ODy+XX6n1p4F/eAXzfxJ/x+hXPlczkEDmvNPXgcOOX5n5+
-         XFCA==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
+        b=Ua25DunDi0MeBVuRXcr6VxR75Zm8tN3mOIgQLv7SVFyOMiQTGlLwB2NhjD5hHMyGh0
+         jgbJY8Kv2wMMvllY/0rD5aG71MJobqW61gI5zuPRyiYBq6RN9RhoFIEInxws/vuFougT
+         m/FLLRIBW1noWeJQ+8SFmGYFFLbrveNGrvdotyOtaM840t/6npJwkZvNMkqWP6Eo12Q4
+         P7lpEQYGPmYNJisG/Rb/DbJraeU/vv11KnJDPi+LCNrWQiUE9eEr56RXwk27WCP2e5V1
+         QI1E06abQhbNtKpYYxUUwilUbd9UGJyPYuxk4wDHfg5Llgh8rTn7ZE4Ft/eMN5uLy3oV
+         nuKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=r8JLqywymFW9of0flwpIn7h5dE0pspzdLsAD+4b5au0=;
-        b=qBRGUX9aHA9DixsdhNylelnu8byGcZTyCtFuQKC8BPKDRGnRy9pIRu39+QFZY8xP3D
-         vqeqBJrtiq6kd+pDOJVRTEmYY5W8Mphk0rpE1QiXn9BkO4DPXt1nIqmLMSXZ5lk47QFp
-         gIaqx+5FdkXAWa+FOaAwAh+jzcQaAIP9fX62e8Xoux+CedyfwZjTyIFXl6673bUsd3kL
-         AMNYdlacDX1mfTruonVe/xMKgW3M63h8mZ0K0n9E56ssAxHIvCUkOyhIUnvXtevRCcYL
-         vGvNNGFSIFCLl153bsNcxVE4n61oTuxji4roTXzR4QGJpBnabs+to+q7k5+zn3+jfzA/
-         cF7Q==
-X-Gm-Message-State: ANhLgQ2XpTtpPp9IvQQiPJFYkiKmZnw1+/Dwz0dbtpKmZ0mDJ4x6sj68
-        FJCUbU9R4KwgpxuYjmvnocQ=
-X-Google-Smtp-Source: ADFU+vtTs/M44qJ8sPC6d+NhnirCZBU81LudHDdPd488wGpRE7TuYLjOKous0dICDitwI2pguxyZMg==
-X-Received: by 2002:a2e:914b:: with SMTP id q11mr10584881ljg.235.1584871818552;
-        Sun, 22 Mar 2020 03:10:18 -0700 (PDT)
-Received: from kbp1-lhp-F54859 ([77.47.205.181])
-        by smtp.gmail.com with ESMTPSA id q4sm6586875lfc.32.2020.03.22.03.10.18
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 22 Mar 2020 03:10:18 -0700 (PDT)
-Date:   Sun, 22 Mar 2020 12:10:17 +0200
-From:   Mykyta Poturai <mykyta.poturai@gmail.com>
-To:     linux-gpio@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Subject: [PATCH] tools: gpio: Fix typo in gpio-utils
-Message-ID: <20200322100943.GA22132@kbp1-lhp-F54859>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8zPLvGcYQo1o0IQb+SkUkD1MBg65ZhQ3XSlCwhyWfpI=;
+        b=IYyAEc4rtcQ9C6uqP/gCzyqINlIZs9A8WLrMC6u9OT56f7f2wE1z15+aTclQDWKUg7
+         quEB2/pQbhubtjFytguQ3UqxXw4zhSXE0y4LFpg0EaCw7tyjRrjBYr1DvPvFpfbpK4td
+         pzgD+tt/ATIvQtdCqGtBduw1EtnEk8sbpLXlR48eNpwwq6TAZm6CN4SuKmFlsBpBFQdB
+         N+Gx4s79UN+xnarA44l0NjuOBrN3lmkGrtKJx4uoFGqYAU+9Z1rgpUl+v0SS3zrQIGmc
+         rPc2STxQP50tYLzmbN2z+Va6tvCwjK1dwbOPieHZAtNhR2ywVl7XgBs/oQ/00TH/7uJJ
+         NYRw==
+X-Gm-Message-State: ANhLgQ3aZs9J2bDzSnRUSvv1e6jwcWwQxUnD0OsncGVv1ZwRMK0YgwuI
+        dO1x1ous14TfHyY+qD39QXeQk0Oc1X+w7vVF5tXqeQ==
+X-Google-Smtp-Source: ADFU+vuAXHIndZOUmHZ6KwtgPOsJUB4ijygt/ruRcg/bBmcsWhpC3fPPMJnSyb8rsa9k9SR7V6O+b/KvIzcm+1LqfdA=
+X-Received: by 2002:a5e:8204:: with SMTP id l4mr18406002iom.31.1584953095899;
+ Mon, 23 Mar 2020 01:44:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
+ <CAMRc=MdbvwQ3Exa2gmY-J0p8UeB-_dKrgqHEBo=S08yU4Uth=A@mail.gmail.com>
+ <CACRpkdbBCihyayQ=hPVLY8z4G=n5cxLnUmaPpHRuKedDQPVUyQ@mail.gmail.com>
+ <CAMpxmJX_Jqz97bp-nKtJp7_CgJ=72ZxWkEPN4Y-dpNpqEwa_Mg@mail.gmail.com>
+ <CACRpkdYpers8Zzh9A3T0mFSyZYDcrjfn9iaQn92RkVHWE+GinQ@mail.gmail.com> <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
+In-Reply-To: <CAMRc=MdLYD3CeFtp4jF+-P+4kSmt1sAezrkPFk5rK4=whNEWuA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 23 Mar 2020 09:44:45 +0100
+Message-ID: <CAMRc=MfEo6=im5EPHYtht3xN83k+rcRgQDSOB=Ucs52M8RWirg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Khouloud Touil <ktouil@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace COMSUMER with proper CONSUMER
+pt., 13 mar 2020 o 16:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
+):
+>
+> pt., 13 mar 2020 o 09:44 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+> >
+> > On Thu, Mar 12, 2020 at 7:25 PM Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> >
+> > > I believe this is not correct. The resources managed by devres are
+> > > released when the device is detached from a driver, not when the
+> > > device's reference count goes to 0. When the latter happens, the
+> > > device's specific (or its device_type's) release callback is called -
+> > > for gpiolib this is gpiodevice_release().
+> >
+> > Yeah you're right, I even point that out in my second letter :/
+> >
+> > It's a bit of confusion for everyone (or it's just me).
+> >
+>
+> No, it is confusing and I only recently understood it while trying to
+> fix a memory leak in nvmem.
+>
+> > > The kref inside struct device will not go down to zero until you call
+> > > device_del() (if you previously called device_add() that is which
+> > > increases the reference count by a couple points). But what I'm
+> > > thinking about is making the call to device_del() depend not on the
+> > > call to gpiochip_remove() but on the kref on the gpio device going
+> > > down to zero. As for the protection against module removal - this
+> > > should be handled by module_get/put().
+> >
+> > Right. At the end of gpiochip_remove():
+> >
+> >    cdev_device_del(&gdev->chrdev, &gdev->dev);
+> >    put_device(&gdev->dev);
+> >
+> > That last put_device() should in best case bring the refcount
+> > to zero.
+> >
+> > So the actual way we lifecycle GPIO chips is managed
+> > resources using only devm_* but the reference count does work
+> > too: reference count should normally land at zero since the
+> > gpiochip_remove() call is ended with a call to
+> > put_device() and that should (ideally) bring it to zero.
+> >
+> > It's just that this doesn't really trigger anything.
+> >
+>
+> Not necessarily - if the new kref for GPIO device would be detached
+> from device reference counting and what it would trigger at release is
+> this:
+>
+>    cdev_device_del(&gdev->chrdev, &gdev->dev);
+>    put_device(&gdev->dev);
+>
+> Or to be even more clear: "getting" the gpiodevice would not be the
+> same as "getting" a device - in fact only when the gpiodevice kref
+> goes down to 0 do we put the reference to the device object.
+>
+> > I think there is no way out of the fact that we have to
+> > forcefully remove the gpio_chip when devm_* destructors
+> > kicks in: the driver is indeed getting removed at that
+> > point.
+> >
+>
+> There does seem to be a way around that though: the clock framework
+> does it by creating a clock "core" object which is reference counted
+> and if the provider is removed while consumers still hold references
+> to it, then it does a couple things to "numb" the provider (as you
+> nicely put it) like replacing all ops callbacks with NULL pointers but
+> keeps the structure alive until the consumers also give up all their
+> references.
+>
+> That being said: I'm not saying this is necessary or even useful. I
+> started the discussion because I was under the impression I wasn't
+> clear enough when writing about reference counting for descriptors. If
+> nobody complains about the current implementation then let's not fix
+> something that's not broken.
+>
+> Bartosz
+>
+> > In gpiochip_remove() we "numb" the chip so that any
+> > gpio_desc:s currently in use will just fail silently and not crash,
+> > since they are not backed by a driver any more. The descs
+> > stay around until the consumer releases them, but if we probe the
+> > same GPIO device again they will certainly not re-attach or
+> > something.
+> >
+> > Arguably it is a bit of policy. Would it make more sense to
+> > have rmmod fail if the kref inside gdev->dev->kobj->kref
+> > is !=3D 1? I suppose that is what things like storage
+> > drivers pretty much have to do.
+> >
+> > The problem with that is that as soon as you have a consumer
+> > that is compiled into the kernel it makes it impossible to
+> > remove the gpio driver with rmmod.
+> >
+> > I really needed to refresh this a bit, so the above is maybe
+> > a bit therapeutic.
+> >
+> > I don't really see how we could do things differently without
+> > creating some other problem though.
+> >
+> > Yours,
+> > Linus Walleij
 
-Signed-off-by: Mykyta Poturai <mykyta.poturai@gmail.com>
----
- tools/gpio/gpio-utils.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi Linus,
 
-diff --git a/tools/gpio/gpio-utils.c b/tools/gpio/gpio-utils.c
-index 53470de..0600378 100644
---- a/tools/gpio/gpio-utils.c
-+++ b/tools/gpio/gpio-utils.c
-@@ -17,7 +17,7 @@
- #include <linux/gpio.h>
- #include "gpio-utils.h"
- 
--#define COMSUMER "gpio-utils"
-+#define CONSUMER "gpio-utils"
- 
- /**
-  * doc: Operation of gpio
-@@ -209,7 +209,7 @@ int gpiotools_gets(const char *device_name, unsigned int *lines,
- 
- 	ret = gpiotools_request_linehandle(device_name, lines, nlines,
- 					   GPIOHANDLE_REQUEST_INPUT, data,
--					   COMSUMER);
-+					   CONSUMER);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -259,7 +259,7 @@ int gpiotools_sets(const char *device_name, unsigned int *lines,
- 
- 	ret = gpiotools_request_linehandle(device_name, lines, nlines,
- 					   GPIOHANDLE_REQUEST_OUTPUT, data,
--					   COMSUMER);
-+					   CONSUMER);
- 	if (ret < 0)
- 		return ret;
- 
--- 
-2.7.4
+what is your decision on this? Because if we don't merge this, then we
+need to make sure nvmem doesn't call gpiod_put() for descriptors it
+didn't obtain itself and we should probably fix it this week.
 
+Bart
