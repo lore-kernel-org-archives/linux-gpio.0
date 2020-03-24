@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574D5C43331
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CBBC2BAEE
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3548D2076E
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24B742073E
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgCXN5H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Mar 2020 09:57:07 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36952 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbgCXN5H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 09:57:07 -0400
+        id S1727901AbgCXN5I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Mar 2020 09:57:08 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:55846 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbgCXN5I (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 09:57:08 -0400
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id JDwu2200N5USYZQ01Dwulv; Tue, 24 Mar 2020 14:57:05 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id JDwu2200P5USYZQ06Dwua9; Tue, 24 Mar 2020 14:57:06 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0006Ow-PZ; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0006On-Ln; Tue, 24 Mar 2020 14:56:54 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0001kr-Nf; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0001ki-Jv; Tue, 24 Mar 2020 14:56:54 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -46,9 +46,9 @@ Cc:     Alexander Graf <graf@amazon.com>,
         linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 8/8] MAINTAINERS: Add GPIO Aggregator section
-Date:   Tue, 24 Mar 2020 14:56:53 +0100
-Message-Id: <20200324135653.6676-8-geert+renesas@glider.be>
+Subject: [PATCH v6 5/8] gpiolib: Introduce gpiod_set_config()
+Date:   Tue, 24 Mar 2020 14:56:50 +0100
+Message-Id: <20200324135653.6676-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200324135653.6676-1-geert+renesas@glider.be>
 References: <20200324135328.5796-1-geert+renesas@glider.be>
@@ -58,46 +58,102 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a maintainership section for the GPIO Aggregator, covering
-documentation and driver source code.
+The GPIO Aggregator will need a method to forward a .set_config() call
+to its parent gpiochip.  This requires obtaining the gpio_chip and
+offset for a given gpio_desc.  While gpiod_to_chip() is public,
+gpio_chip_hwgpio() is not, so there is currently no method to obtain the
+needed GPIO offset parameter.
+
+Hence introduce a public gpiod_set_config() helper, which invokes the
+.set_config() callback through a gpio_desc pointer, like is done for
+most other gpio_chip callbacks.
+
+Rewrite the existing gpiod_set_debounce() helper as a wrapper around
+gpiod_set_config(), to avoid duplication.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
 v6:
-  - No changes,
-
-v5:
-  - Add Reviewed-by, Tested-by,
-
-v4:
-  - Drop controversial GPIO repeater,
-
-v3:
   - New.
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpio/gpiolib.c        | 28 ++++++++++++++++++++++------
+ include/linux/gpio/consumer.h |  8 ++++++++
+ 2 files changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fcd79fc38928fafc..1fad69b956df1162 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7127,6 +7127,13 @@ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
- F:	drivers/gpio/gpiolib-acpi.c
- F:	drivers/gpio/gpiolib-acpi.h
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c756602e249c052e..30ea75e972b5a3b1 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3478,6 +3478,26 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_direction_output);
  
-+GPIO AGGREGATOR
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/gpio/gpio-aggregator.rst
-+F:	drivers/gpio/gpio-aggregator.c
++/**
++ * gpiod_set_config - sets @config for a GPIO
++ * @desc: descriptor of the GPIO for which to set the configuration
++ * @config: Same packed config format as generic pinconf
++ *
++ * Returns:
++ * 0 on success, %-ENOTSUPP if the controller doesn't support setting the
++ * configuration.
++ */
++int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
++{
++	struct gpio_chip *chip;
 +
- GPIO IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
++	VALIDATE_DESC(desc);
++	chip = desc->gdev->chip;
++
++	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
++}
++EXPORT_SYMBOL_GPL(gpiod_set_config);
++
+ /**
+  * gpiod_set_debounce - sets @debounce time for a GPIO
+  * @desc: descriptor of the GPIO for which to set debounce time
+@@ -3489,14 +3509,10 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output);
+  */
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ {
+-	struct gpio_chip	*chip;
+-	unsigned long		config;
+-
+-	VALIDATE_DESC(desc);
+-	chip = desc->gdev->chip;
++	unsigned long config;
+ 
+ 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
+-	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
++	return gpiod_set_config(desc, config);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_debounce);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 0a72fccf60fff230..901aab89d025f3ff 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -157,6 +157,7 @@ int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_array *array_info,
+ 				       unsigned long *value_bitmap);
+ 
++int gpiod_set_config(struct gpio_desc *desc, unsigned long config);
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
+ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
+ void gpiod_toggle_active_low(struct gpio_desc *desc);
+@@ -473,6 +474,13 @@ static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 	return 0;
+ }
+ 
++static inline int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(desc);
++	return -ENOSYS;
++}
++
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ {
+ 	/* GPIO can never have been requested */
 -- 
 2.17.1
 
