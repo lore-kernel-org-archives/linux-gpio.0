@@ -2,106 +2,109 @@ Return-Path: <SRS0=K02N=5J=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64DEC54FCF
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD1EC43331
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 16:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89EFB2076E
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 000D020775
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 16:58:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+ijfRdU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbgCXN52 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Mar 2020 09:57:28 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:37856 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728130AbgCXN5V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 09:57:21 -0400
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id JDwu2200M5USYZQ06Dwu4g; Tue, 24 Mar 2020 14:57:19 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0006Oc-Ga; Tue, 24 Mar 2020 14:56:54 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0001kW-Ey; Tue, 24 Mar 2020 14:56:54 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 1/8] ARM: integrator: impd1: Use GPIO_LOOKUP() helper macro
-Date:   Tue, 24 Mar 2020 14:56:46 +0100
-Message-Id: <20200324135653.6676-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324135328.5796-1-geert+renesas@glider.be>
-References: <20200324135328.5796-1-geert+renesas@glider.be>
+        id S1727273AbgCXQ6Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Mar 2020 12:58:16 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:45317 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgCXQ6Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 12:58:16 -0400
+Received: by mail-lj1-f177.google.com with SMTP id t17so8717301ljc.12
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2020 09:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CPM4DQLJgGNJQ4Wt8UfEVMnJCkQpdqu/eOPtIKFxI+0=;
+        b=O+ijfRdU6ig2prtl0eLOVaeUKMhWBFSG2x9+ccBmMySNR274K8fX8JryLOl8fg0JlQ
+         WjtlJSfaHJsLOn6flOZcQG8DMdc7Hy8ek6/v31ugRHue1wy9/B/AlP+l4RtZOxCc4tuO
+         ZiUn+0cwt7XWf/VUe3HRy0AneFV0DhwzYBfIa0lu1tLkDEJwYo0q8yXNimAlbCovZkd5
+         /1APP4XshSWtYQ+YTfIUkc2ZBanQSusZyX5MYoetlXfAJhvVYU0yTh0MpyEhZ+b66+Um
+         CghHEky1uWbPDAd0ESiuvlSO3GrVT4eQ7YUlQlUdvgDSSMd7WHloHfIopKRcyHIR2Jn4
+         h4WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CPM4DQLJgGNJQ4Wt8UfEVMnJCkQpdqu/eOPtIKFxI+0=;
+        b=JMb8kgOIwslRgo6Rr5+0E5sRVOovyn6GtOoi5cD484SRJgxgOJKvTBfZK1Kip56pwD
+         5gUvdeEn4vQNbp2Ud17RnHAM4c1FX7FBGLlmvmgIarGDANqKg7RJD0D0bxYZSKdvOG5Y
+         AyvC6sqm9c0CP1KBGG3zzCgeB5VFS4d0hBefx0Jq4fRMESRVusfZOQPbgenpuR+Jv3cA
+         aYDoPkE+egVB0GZSHGsOAJyP75l//XslzrLOcDFbwcGVjrg2h0qhsBHH3i+wTrQyoXAd
+         mCjWB0lJLvs5qmGWUmyX41Y3jEYCb2rqHdxKZnx8awjSsDy42uBuInVEerll8/Y51Kvv
+         0Cwg==
+X-Gm-Message-State: ANhLgQ3qgpn3XZRR5vsQ1S0wksxA9GW6pdrTfHgH3EZDGXqOF+BUCGT6
+        3YiTCQ0w8QCnWV2mvl4USjxhqloL33DIzD+UU7YO6w==
+X-Google-Smtp-Source: ADFU+vvw+U9JHQWhhnc+AYbR0WFA1PJoRX7HX5tY/Vd08mWXiON078p7kAVIxKKBlY/KvCDmC0s1UdioCoImq87B1mY=
+X-Received: by 2002:a2e:9a90:: with SMTP id p16mr18308192lji.277.1585069093752;
+ Tue, 24 Mar 2020 09:58:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200324082903.19366-1-brgl@bgdev.pl> <CACRpkdYk19NMMW9ua12475om-jKWWf5u8Rd=VU==2vhXRocnoA@mail.gmail.com>
+ <CAMRc=Me55D2Os8KkFAbnL9-KfseYUS0=gogMrZfdzQ64to+0eg@mail.gmail.com>
+In-Reply-To: <CAMRc=Me55D2Os8KkFAbnL9-KfseYUS0=gogMrZfdzQ64to+0eg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 24 Mar 2020 17:58:02 +0100
+Message-ID: <CACRpkdaQQftxqVLNYeNnVzbYO+S3fKeVqshO98On+WJ2WdcALw@mail.gmail.com>
+Subject: Re: [GIT PULL] gpio: updates for v5.7 part 3
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-impd1_probe() fills in the GPIO lookup table by manually populating an
-array of gpiod_lookup structures.  Use the existing GPIO_LOOKUP() helper
-macro instead, to relax a dependency on the gpiod_lookup structure's
-member names.
+On Tue, Mar 24, 2020 at 1:34 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> wt., 24 mar 2020 o 10:05 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+> >
+> > Hi Bartosz,
+> >
+> > On Tue, Mar 24, 2020 at 9:29 AM Bartosz Golaszewski <brgl@bgdev.pl> wro=
+te:
+> >
+> > > this is the third and probably last batch of changes for v5.7 I picke=
+d up
+> > > into my tree. Details are in the signed tag. Please pull.
+> >
+> > Which rc is this based on? I got a bunch of unrelated changes, so
+> > I suppose I need to merge the right rc base to the devel branch
+> > first.
+> >
+> > Yours,
+> > Linus Walleij
+>
+> Hi Linus,
+>
+> this is rebased on top of your devel branch, so you should be able to
+> pull it alright.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-arm-kernel@lists.infradead.org
----
-While this patch is a dependency for "[PATCH v6 4/8] gpiolib: Add
-support for GPIO lookup by line name", it can be applied independently.
-But an Acked-by would be nice, too.
+To me it looks like it is based on my for-next branch which is a
+mixdown branch that I create solely for inclusion into
+linux-next.
 
-Cover letter and full series at
-https://lore.kernel.org/r/20200324135328.5796-1-geert+renesas@glider.be/
+Can you double-check?
 
-v6:
-  - New.
----
- arch/arm/mach-integrator/impd1.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+FWIW for-next is created like this:
+git checkout for-next
+git reset --hard fixes
+git merge devel
 
-diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
-index 1ecbea5331d6ed8b..6f875ded841924d8 100644
---- a/arch/arm/mach-integrator/impd1.c
-+++ b/arch/arm/mach-integrator/impd1.c
-@@ -410,13 +410,10 @@ static int __ref impd1_probe(struct lm_device *dev)
- 			 * 5 = Key lower right
- 			 */
- 			/* We need the two MMCI GPIO entries */
--			lookup->table[0].chip_label = chipname;
--			lookup->table[0].chip_hwnum = 3;
--			lookup->table[0].con_id = "wp";
--			lookup->table[1].chip_label = chipname;
--			lookup->table[1].chip_hwnum = 4;
--			lookup->table[1].con_id = "cd";
--			lookup->table[1].flags = GPIO_ACTIVE_LOW;
-+			lookup->table[0] = (struct gpiod_lookup)
-+				GPIO_LOOKUP(chipname, 3, "wp", 0);
-+			lookup->table[1] = (struct gpiod_lookup)
-+				GPIO_LOOKUP(chipname, 4, "cd", GPIO_ACTIVE_LOW);
- 			gpiod_add_lookup_table(lookup);
- 		}
- 
--- 
-2.17.1
+So that branch is highly volatile and not very good for
+development.
 
+Yours,
+Linus Walleij
