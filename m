@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CBBC2BAEE
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF617C43331
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B742073E
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0DB220714
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgCXN5I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Mar 2020 09:57:08 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:55846 "EHLO
+        id S1727473AbgCXN5K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Mar 2020 09:57:10 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:56032 "EHLO
         albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbgCXN5I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 09:57:08 -0400
+        with ESMTP id S1727829AbgCXN5J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2020 09:57:09 -0400
 Received: from ramsan ([84.195.182.253])
         by albert.telenet-ops.be with bizsmtp
-        id JDwu2200P5USYZQ06Dwua9; Tue, 24 Mar 2020 14:57:06 +0100
+        id JDwu2200M5USYZQ06Dwua8; Tue, 24 Mar 2020 14:57:07 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0006On-Ln; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0006Oi-JB; Tue, 24 Mar 2020 14:56:54 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0001ki-Jv; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0001kb-Gc; Tue, 24 Mar 2020 14:56:54 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -45,10 +45,12 @@ Cc:     Alexander Graf <graf@amazon.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 5/8] gpiolib: Introduce gpiod_set_config()
-Date:   Tue, 24 Mar 2020 14:56:50 +0100
-Message-Id: <20200324135653.6676-5-geert+renesas@glider.be>
+        qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v6 3/8] mfd: sm501: Use GPIO_LOOKUP_IDX() helper macro
+Date:   Tue, 24 Mar 2020 14:56:48 +0100
+Message-Id: <20200324135653.6676-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200324135653.6676-1-geert+renesas@glider.be>
 References: <20200324135328.5796-1-geert+renesas@glider.be>
@@ -58,102 +60,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The GPIO Aggregator will need a method to forward a .set_config() call
-to its parent gpiochip.  This requires obtaining the gpio_chip and
-offset for a given gpio_desc.  While gpiod_to_chip() is public,
-gpio_chip_hwgpio() is not, so there is currently no method to obtain the
-needed GPIO offset parameter.
-
-Hence introduce a public gpiod_set_config() helper, which invokes the
-.set_config() callback through a gpio_desc pointer, like is done for
-most other gpio_chip callbacks.
-
-Rewrite the existing gpiod_set_debounce() helper as a wrapper around
-gpiod_set_config(), to avoid duplication.
+i801_add_mux() fills in the GPIO lookup table by manually populating an
+array of gpiod_lookup structures.  Use the existing GPIO_LOOKUP_IDX()
+helper macro instead, to relax a dependency on the gpiod_lookup
+structure's member names.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
+While this patch is a dependency for "[PATCH v6 4/8] gpiolib: Add
+support for GPIO lookup by line name", it can be applied independently.
+But an Acked-by would be nice, too.
+
+Cover letter and full series at
+https://lore.kernel.org/r/20200324135328.5796-1-geert+renesas@glider.be/
+
 v6:
   - New.
 ---
- drivers/gpio/gpiolib.c        | 28 ++++++++++++++++++++++------
- include/linux/gpio/consumer.h |  8 ++++++++
- 2 files changed, 30 insertions(+), 6 deletions(-)
+ drivers/mfd/sm501.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c756602e249c052e..30ea75e972b5a3b1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3478,6 +3478,26 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_output);
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index e49787e6bb93e5c8..ccd62b963952814e 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1145,22 +1145,14 @@ static int sm501_register_gpio_i2c_instance(struct sm501_devdata *sm,
+ 		return -ENOMEM;
  
-+/**
-+ * gpiod_set_config - sets @config for a GPIO
-+ * @desc: descriptor of the GPIO for which to set the configuration
-+ * @config: Same packed config format as generic pinconf
-+ *
-+ * Returns:
-+ * 0 on success, %-ENOTSUPP if the controller doesn't support setting the
-+ * configuration.
-+ */
-+int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
-+{
-+	struct gpio_chip *chip;
-+
-+	VALIDATE_DESC(desc);
-+	chip = desc->gdev->chip;
-+
-+	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_set_config);
-+
- /**
-  * gpiod_set_debounce - sets @debounce time for a GPIO
-  * @desc: descriptor of the GPIO for which to set debounce time
-@@ -3489,14 +3509,10 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output);
-  */
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- {
--	struct gpio_chip	*chip;
--	unsigned long		config;
--
--	VALIDATE_DESC(desc);
--	chip = desc->gdev->chip;
-+	unsigned long config;
+ 	lookup->dev_id = "i2c-gpio";
+-	if (iic->pin_sda < 32)
+-		lookup->table[0].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[0].chip_label = "SM501-HIGH";
+-	lookup->table[0].chip_hwnum = iic->pin_sda % 32;
+-	lookup->table[0].con_id = NULL;
+-	lookup->table[0].idx = 0;
+-	lookup->table[0].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
+-	if (iic->pin_scl < 32)
+-		lookup->table[1].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[1].chip_label = "SM501-HIGH";
+-	lookup->table[1].chip_hwnum = iic->pin_scl % 32;
+-	lookup->table[1].con_id = NULL;
+-	lookup->table[1].idx = 1;
+-	lookup->table[1].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
++	lookup->table[0] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_sda < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_sda % 32, NULL, 0,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
++	lookup->table[1] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_scl < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_scl % 32, NULL, 1,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
+ 	gpiod_add_lookup_table(lookup);
  
- 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
--	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
-+	return gpiod_set_config(desc, config);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_debounce);
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 0a72fccf60fff230..901aab89d025f3ff 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -157,6 +157,7 @@ int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 				       struct gpio_array *array_info,
- 				       unsigned long *value_bitmap);
- 
-+int gpiod_set_config(struct gpio_desc *desc, unsigned long config);
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
- void gpiod_toggle_active_low(struct gpio_desc *desc);
-@@ -473,6 +474,13 @@ static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 	return 0;
- }
- 
-+static inline int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
-+{
-+	/* GPIO can never have been requested */
-+	WARN_ON(desc);
-+	return -ENOSYS;
-+}
-+
- static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- {
- 	/* GPIO can never have been requested */
+ 	icd = dev_get_platdata(&pdev->dev);
 -- 
 2.17.1
 
