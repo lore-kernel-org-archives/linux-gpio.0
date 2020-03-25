@@ -2,116 +2,86 @@ Return-Path: <SRS0=MUnz=5K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6155C43331
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE79FC43331
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC7120775
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:40:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R9LbvC/M"
+	by mail.kernel.org (Postfix) with ESMTP id 8EEC520772
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCYKkH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Mar 2020 06:40:07 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:54803 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727392AbgCYKkH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:40:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585132806;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2/jKQY/v3TwgChoX1/mwdlEYnDrnQ21fmszGm2dRlcU=;
-        b=R9LbvC/MvnRxyjqLuscUkK5zBT6z8oTPZkujsj0cslUhjUylX0HMRYfstVwEVN/f4Y3e/Y
-        6OMG7L/fewoL/N//Yosah8KR9bB9JeMWva7r/fMzRvDOq/x2w0cD9MF8M27H5gunqXq3Zb
-        1YtgjdG+luhvEeYxyCmep7Xue/NOZg8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-304-maCLJrR3NPaCbcypwcHXmA-1; Wed, 25 Mar 2020 06:40:02 -0400
-X-MC-Unique: maCLJrR3NPaCbcypwcHXmA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727272AbgCYKmK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Mar 2020 06:42:10 -0400
+Received: from mail.bitwise.fi ([109.204.228.163]:34558 "EHLO mail.bitwise.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbgCYKmK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:42:10 -0400
+X-Greylist: delayed 538 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 06:42:09 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.bitwise.fi (Postfix) with ESMTP id A2E5160054;
+        Wed, 25 Mar 2020 12:33:10 +0200 (EET)
+X-Virus-Scanned: Debian amavisd-new at mail.bitwise.fi
+Received: from mail.bitwise.fi ([127.0.0.1])
+        by localhost (mail.bitwise.fi [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id q1tYnBd_Bn1G; Wed, 25 Mar 2020 12:33:07 +0200 (EET)
+Received: from localhost.localdomain (fw1.dmz.bitwise.fi [192.168.69.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 253138017DF;
-        Wed, 25 Mar 2020 10:40:01 +0000 (UTC)
-Received: from x1.localdomain.com (ovpn-115-75.ams2.redhat.com [10.36.115.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 87BD1BBBE5;
-        Wed, 25 Mar 2020 10:39:59 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH resend] gpiolib: acpi: Add missing __init(const) markers to initcall-s
-Date:   Wed, 25 Mar 2020 11:39:56 +0100
-Message-Id: <20200325103956.109284-2-hdegoede@redhat.com>
-In-Reply-To: <20200325103956.109284-1-hdegoede@redhat.com>
-References: <20200325103956.109284-1-hdegoede@redhat.com>
+        (Authenticated sender: anssiha)
+        by mail.bitwise.fi (Postfix) with ESMTPSA id 443EA6004B;
+        Wed, 25 Mar 2020 12:33:07 +0200 (EET)
+From:   Anssi Hannula <anssi.hannula@bitwise.fi>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, stable@vger.kernel.org,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH] tools: gpio: Fix out-of-tree build regression
+Date:   Wed, 25 Mar 2020 12:31:54 +0200
+Message-Id: <20200325103154.32235-1-anssi.hannula@bitwise.fi>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The gpiolib ACPI code uses 2 initcall-s and the called function
-(and used DMI table) is missing __init(const) markers.
+Commit 0161a94e2d1c7 ("tools: gpio: Correctly add make dependencies for
+gpio_utils") added a make rule for gpio-utils-in.o but used $(output)
+instead of the correct $(OUTPUT) for the output directory, breaking
+out-of-tree build (O=xx) with the following error:
 
-This commit fixes this freeing up some extra memory once the kernel
-has completed booting.
+  No rule to make target 'out/tools/gpio/gpio-utils-in.o', needed by 'out/tools/gpio/lsgpio-in.o'.  Stop.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Fix that.
+
+Fixes: 0161a94e2d1c ("tools: gpio: Correctly add make dependencies for gpio_utils")
+Cc: <stable@vger.kernel.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
 ---
- drivers/gpio/gpiolib-acpi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 0017367e94ee..9276051663da 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1353,7 +1353,7 @@ int acpi_gpio_count(struct device *dev, const char =
-*con_id)
- }
-=20
- /* Run deferred acpi_gpiochip_request_irqs() */
--static int acpi_gpio_handle_deferred_request_irqs(void)
-+static int __init acpi_gpio_handle_deferred_request_irqs(void)
- {
- 	struct acpi_gpio_chip *acpi_gpio, *tmp;
-=20
-@@ -1371,7 +1371,7 @@ static int acpi_gpio_handle_deferred_request_irqs(v=
-oid)
- /* We must use _sync so that this runs after the first deferred_probe ru=
-n */
- late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
-=20
--static const struct dmi_system_id gpiolib_acpi_quirks[] =3D {
-+static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst =3D =
-{
- 	{
- 		/*
- 		 * The Minix Neo Z83-4 has a micro-USB-B id-pin handler for
-@@ -1455,7 +1455,7 @@ static const struct dmi_system_id gpiolib_acpi_quir=
-ks[] =3D {
- 	{} /* Terminating entry */
- };
-=20
--static int acpi_gpio_setup_params(void)
-+static int __init acpi_gpio_setup_params(void)
- {
- 	const struct acpi_gpiolib_dmi_quirk *quirk =3D NULL;
- 	const struct dmi_system_id *id;
---=20
-2.26.0.rc2
+The 0161a94e2d1c was also applied to stable releases, which is where I
+got hit by the issue.
+
+ tools/gpio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 842287e42c83..440434027557 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -35,7 +35,7 @@ $(OUTPUT)include/linux/gpio.h: ../../include/uapi/linux/gpio.h
+ 
+ prepare: $(OUTPUT)include/linux/gpio.h
+ 
+-GPIO_UTILS_IN := $(output)gpio-utils-in.o
++GPIO_UTILS_IN := $(OUTPUT)gpio-utils-in.o
+ $(GPIO_UTILS_IN): prepare FORCE
+ 	$(Q)$(MAKE) $(build)=gpio-utils
+ 
+-- 
+2.21.1
 
