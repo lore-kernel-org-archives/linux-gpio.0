@@ -2,106 +2,103 @@ Return-Path: <SRS0=MUnz=5K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1609C18E5B
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 09:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9396EC54FD0
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A596E206F6
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 09:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7C62078A
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbgCYJPE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Mar 2020 05:15:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46044 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbgCYJPE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Mar 2020 05:15:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 950E3ABD1;
-        Wed, 25 Mar 2020 09:15:01 +0000 (UTC)
-Date:   Wed, 25 Mar 2020 10:14:57 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>,
-        <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v6 2/8] i2c: i801: Use GPIO_LOOKUP() helper macro
-Message-ID: <20200325101457.0fff5bb9@endymion>
-In-Reply-To: <20200324135653.6676-2-geert+renesas@glider.be>
-References: <20200324135328.5796-1-geert+renesas@glider.be>
-        <20200324135653.6676-1-geert+renesas@glider.be>
-        <20200324135653.6676-2-geert+renesas@glider.be>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726276AbgCYKEp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Mar 2020 06:04:45 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:59656 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbgCYKEo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Mar 2020 06:04:44 -0400
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id Ja4k220035USYZQ01a4kxT; Wed, 25 Mar 2020 11:04:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jH2tw-00033y-2V; Wed, 25 Mar 2020 11:04:44 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jH2tw-0003ei-1c; Wed, 25 Mar 2020 11:04:44 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] gpiolib: Remove unused gpio_chip parameter from gpio_set_bias()
+Date:   Wed, 25 Mar 2020 11:04:39 +0100
+Message-Id: <20200325100439.14000-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200325100439.14000-1-geert+renesas@glider.be>
+References: <20200325100439.14000-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 24 Mar 2020 14:56:47 +0100, Geert Uytterhoeven wrote:
-> i801_add_mux() fills in the GPIO lookup table by manually populating an
-> array of gpiod_lookup structures.  Use the existing GPIO_LOOKUP() helper
-> macro instead, to relax a dependency on the gpiod_lookup structure's
-> member names.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: linux-i2c@vger.kernel.org
-> ---
-> While this patch is a dependency for "[PATCH v6 4/8] gpiolib: Add
-> support for GPIO lookup by line name", it can be applied independently.
-> But an Acked-by would be nice, too.
-> 
-> Cover letter and full series at
-> https://lore.kernel.org/r/20200324135328.5796-1-geert+renesas@glider.be/
-> 
-> v6:
->   - New.
-> ---
->  drivers/i2c/busses/i2c-i801.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index ca4f096fef749302..8e64a71bea684cc7 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -1444,9 +1444,9 @@ static int i801_add_mux(struct i801_priv *priv)
->  		return -ENOMEM;
->  	lookup->dev_id = "i2c-mux-gpio";
->  	for (i = 0; i < mux_config->n_gpios; i++) {
-> -		lookup->table[i].chip_label = mux_config->gpio_chip;
-> -		lookup->table[i].chip_hwnum = mux_config->gpios[i];
-> -		lookup->table[i].con_id = "mux";
-> +		lookup->table[i] = (struct gpiod_lookup)
-> +			GPIO_LOOKUP(mux_config->gpio_chip,
-> +				    mux_config->gpios[i], "mux", 0);
->  	}
->  	gpiod_add_lookup_table(lookup);
->  	priv->lookup = lookup;
+gpio_set_bias() no longer uses the passed gpio_chip pointer parameter.
+Remove it.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpiolib.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8eeb29de12cb5811..7e3c19bd21cdf327 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3264,7 +3264,7 @@ static int gpio_set_config(struct gpio_desc *desc, enum pin_config_param mode)
+ 	return gpio_do_set_config(chip, gpio_chip_hwgpio(desc), config);
+ }
+ 
+-static int gpio_set_bias(struct gpio_chip *chip, struct gpio_desc *desc)
++static int gpio_set_bias(struct gpio_desc *desc)
+ {
+ 	int bias = 0;
+ 	int ret = 0;
+@@ -3330,7 +3330,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
+ 	}
+ 	if (ret == 0) {
+ 		clear_bit(FLAG_IS_OUT, &desc->flags);
+-		ret = gpio_set_bias(chip, desc);
++		ret = gpio_set_bias(desc);
+ 	}
+ 
+ 	trace_gpio_direction(desc_to_gpio(desc), 1, ret);
+@@ -3414,7 +3414,6 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
+  */
+ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ {
+-	struct gpio_chip *gc;
+ 	int ret;
+ 
+ 	VALIDATE_DESC(desc);
+@@ -3432,7 +3431,6 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ 		return -EIO;
+ 	}
+ 
+-	gc = desc->gdev->chip;
+ 	if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+ 		/* First see if we can enable open drain in hardware */
+ 		ret = gpio_set_config(desc, PIN_CONFIG_DRIVE_OPEN_DRAIN);
+@@ -3458,7 +3456,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ 	}
+ 
+ set_output_value:
+-	ret = gpio_set_bias(gc, desc);
++	ret = gpio_set_bias(desc);
+ 	if (ret)
+ 		return ret;
+ 	return gpiod_direction_output_raw_commit(desc, value);
 -- 
-Jean Delvare
-SUSE L3 Support
+2.17.1
+
