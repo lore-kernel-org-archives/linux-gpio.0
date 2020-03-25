@@ -2,71 +2,73 @@ Return-Path: <SRS0=MUnz=5K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD037C1975A
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF86C43331
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05BD2077D
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 976D520772
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 10:40:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y33hUYj9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbgCYKEp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Mar 2020 06:04:45 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59652 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbgCYKEp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Mar 2020 06:04:45 -0400
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id Ja4k220025USYZQ01a4kxS; Wed, 25 Mar 2020 11:04:44 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jH2tw-00033t-12; Wed, 25 Mar 2020 11:04:44 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jH2tw-0003ed-01; Wed, 25 Mar 2020 11:04:44 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] gpiolib: gpio_set_config() cleanups
-Date:   Wed, 25 Mar 2020 11:04:37 +0100
-Message-Id: <20200325100439.14000-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1727259AbgCYKkD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Mar 2020 06:40:03 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:41611 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727129AbgCYKkD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:40:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585132802;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=MK8FJi8EH32DABBtM4+Sj2eGy/izEFYJv6Men8xb06o=;
+        b=Y33hUYj9ojdPkH38ehcdIz/4WR5SMcO6S3JRA4c1TUDMYJ5uwrHa5bUJdr70dgv/SSbwfe
+        9BIu8lL1S/OSmPJUlsIIsGlqqkDO/7Um8p3nqW2MKSR6Nk93qSMAZVcyfgpp1eTKG3O0F/
+        a51lWkrJOwqtP2h5gl8bMeIIr1u7/Cg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-FaN6xKrfNemWfAjsFbpmZw-1; Wed, 25 Mar 2020 06:40:00 -0400
+X-MC-Unique: FaN6xKrfNemWfAjsFbpmZw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 401AF107ACCA;
+        Wed, 25 Mar 2020 10:39:59 +0000 (UTC)
+Received: from x1.localdomain.com (ovpn-115-75.ams2.redhat.com [10.36.115.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B03A15C1A2;
+        Wed, 25 Mar 2020 10:39:57 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: [PATCH 0/1 resend] gpiolib: acpi: Add missing __init(const) markers to initcall-s
+Date:   Wed, 25 Mar 2020 11:39:55 +0100
+Message-Id: <20200325103956.109284-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-	Hi Linus, Bartosz,
+Hi Linus,
 
-This patch sets reworks the parameters for gpio_set_config() and
-gpio_set_bias(), which simplifies callers, and slightly reduces the
-number of lines of code.
+I know it has not been that long ago since I send this out, but still
+I have the feeling this one seems to have fallen through the cracks?
 
-Thanks for your comments!
+It has already been Acked by Mika, so if you can queue it up in
+linux-gpio/for-next that would be great.
 
-Geert Uytterhoeven (2):
-  gpiolib: Pass gpio_desc to gpio_set_config()
-  gpiolib: Remove unused gpio_chip parameter from gpio_set_bias()
+Regards,
 
- drivers/gpio/gpiolib.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+Hans
 
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
