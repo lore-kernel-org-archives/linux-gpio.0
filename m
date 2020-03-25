@@ -2,70 +2,150 @@ Return-Path: <SRS0=MUnz=5K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B044EC2D0E5
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 21:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C898C2D0E7
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 22:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878EF20737
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 21:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48D66208FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Mar 2020 22:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585171215;
-	bh=5ae2p5Y7Ug8W5ccwV++cNZifFhzHxGzvm+S0AmteZSo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=QPEAw2S9x4AZAYThGPv5iPRfUSsozkjxcFPh0+joXZOLcisa7PD3yhBsMVHIwPuKT
-	 c3AJemwsx16/UjybBU9YvBRCnnigS9Sl9ZnqrrfJ+eMbfPnZkITXLWFZjlbc5wa74A
-	 s7bXr6aadsuHetlowirMrZPmErcO0P9b7oc6sUV4=
+	s=default; t=1585173952;
+	bh=h1JIaMJ7tQpgNRXO467p+V4j+52rJvNdy3dnEJ2ewrs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rkbmRwWNws5sNrWzvmW8JknBJwIXyx4EPX1uoTCWJlQwnXLgvE4XIKFKCMgYvL/k3
+	 8JlCPZnTLOmHOIryQy12gvfhVjnVxHE6SmFmRXynyk245zc1k2rac+ixyhQw53c6w5
+	 8KPG3jWG3acD261m9OCY0ga/ttZCBGVUc1SH5jjs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCYVUH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Mar 2020 17:20:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbgCYVUH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Mar 2020 17:20:07 -0400
-Subject: Re: [GIT PULL] GPIO fixes for v5.6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585171207;
-        bh=5ae2p5Y7Ug8W5ccwV++cNZifFhzHxGzvm+S0AmteZSo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HMTOXZLr0EfwJ8KN7s0fv529J1Ni7zZZM5bE9zAbo9E8McfAAMmEYJ2tJhoZ136JC
-         AoZkCvderrsEBuFt3EJ9DaphhT1BqY4m9U/CFbvmQGsBFiCOPCAsV2OfNqTG/7NVRv
-         7N497u4wSRGisBAGJNBGWH7NpR2BRcqqw8d1Ccw4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdY8d=zG-z0Ju7k3Suj+seiexAdyQezcMxWV5rKHJhE3+Q@mail.gmail.com>
-References: <CACRpkdY8d=zG-z0Ju7k3Suj+seiexAdyQezcMxWV5rKHJhE3+Q@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdY8d=zG-z0Ju7k3Suj+seiexAdyQezcMxWV5rKHJhE3+Q@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.6-3
-X-PR-Tracked-Commit-Id: 0c625ccfe6f754d0896b8881f5c85bcb81699f1f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1dfb642b10158b45068102402decc3bcf853cb76
-Message-Id: <158517120696.13294.16689977262821746392.pr-tracker-bot@kernel.org>
-Date:   Wed, 25 Mar 2020 21:20:06 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        id S1727553AbgCYWFv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Mar 2020 18:05:51 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42329 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgCYWFt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Mar 2020 18:05:49 -0400
+Received: by mail-il1-f196.google.com with SMTP id f16so3470280ilj.9;
+        Wed, 25 Mar 2020 15:05:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7Ulr9pBC4SUbqUU5FsVEbaY1gpVe/0DQ9QLWI1PPgfQ=;
+        b=h8lmGFQZlK5QIMgUBSRohVsWI+SzJs+RRumzyzMs4lTHl9FL+n4P1U7I/z+M/2Cc46
+         xvnHGLo8n1XWvYmEZOuGa3lRxstQLgXiWfyYEiIEyLN4ybSNpLNAp9ALKqbJ5tedforT
+         ZprOTWErdxUVlI7kmKreDbdtCQA+fCofh4uloll27G7t7ma6DzTmmdX8V7UHOoClVBO1
+         YpC+Viz0nBDstmgAU8CaAD/XDDoEdajrfvnLm4AqehtzF+lcxYYv9UgMLuehwcGSJ4uF
+         x8Pj3UBuzXGAXtropwvHDHnNifpyyPfyIR3HEw8mbYRRNwIYe4gD9X1yBgYzQQql6daT
+         bn5w==
+X-Gm-Message-State: ANhLgQ0mIqnH4zuwPZrs3JINLpMitAtKylmVqXrGnayRlsNHJ34P+s0w
+        KYU5ujb1zUWGsePVJvfmoMsb9JU=
+X-Google-Smtp-Source: ADFU+vue8Vxmky7PF9etOIHQcfy9dQqZ6AbqyS9J6TatHClhkfnl2UGT86/bcc6UGlxsmE61Cop/rw==
+X-Received: by 2002:a92:6e11:: with SMTP id j17mr5689060ilc.249.1585173946547;
+        Wed, 25 Mar 2020 15:05:46 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.250])
+        by smtp.googlemail.com with ESMTPSA id v8sm102390ioh.40.2020.03.25.15.05.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 15:05:45 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Hans de Goede <hdegoede@redhat.com>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: iio/accel: Drop duplicate adi,adxl345/6 from trivial-devices.yaml
+Date:   Wed, 25 Mar 2020 16:05:38 -0600
+Message-Id: <20200325220542.19189-2-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200325220542.19189-1-robh@kernel.org>
+References: <20200325220542.19189-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Wed, 25 Mar 2020 20:00:14 +0100:
+The 'adi,adxl345' definition is a duplicate as there's a full binding in:
+Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.6-3
+The trivial-devices binding doesn't capture that 'adi,adxl346' has a
+fallback compatible 'adi,adxl345', so let's add it to adi,adxl345.yaml.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1dfb642b10158b45068102402decc3bcf853cb76
+Cc: Michael Hennerich <michael.hennerich@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: linux-iio@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/iio/accel/adi,adxl345.yaml     | 10 +++++++---
+ Documentation/devicetree/bindings/trivial-devices.yaml |  4 ----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Thank you!
-
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+index c602b6fe1c0c..d124eba1ce54 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+@@ -17,9 +17,13 @@ description: |
+ 
+ properties:
+   compatible:
+-    enum:
+-      - adi,adxl345
+-      - adi,adxl375
++    oneOf:
++      - items:
++          - const: adi,adxl346
++          - const: adi,adxl345
++      - enum:
++          - adi,adxl345
++          - adi,adxl375
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 978de7d37c66..51d1f6e43c02 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -42,10 +42,6 @@ properties:
+           - adi,adt7476
+             # +/-1C TDM Extended Temp Range I.C
+           - adi,adt7490
+-            # Three-Axis Digital Accelerometer
+-          - adi,adxl345
+-            # Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
+-          - adi,adxl346
+             # AMS iAQ-Core VOC Sensor
+           - ams,iaq-core
+             # i2c serial eeprom  (24cxx)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1
+
