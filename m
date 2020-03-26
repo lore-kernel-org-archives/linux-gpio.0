@@ -2,68 +2,69 @@ Return-Path: <SRS0=aBsr=5L=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E820C43331
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Mar 2020 08:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3392C43331
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Mar 2020 09:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034AE20719
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Mar 2020 08:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5BC20719
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Mar 2020 09:15:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="R86WI5i7"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="owhUI38E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbgCZIkA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Mar 2020 04:40:00 -0400
-Received: from mail-pj1-f52.google.com ([209.85.216.52]:54867 "EHLO
-        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgCZIkA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Mar 2020 04:40:00 -0400
-Received: by mail-pj1-f52.google.com with SMTP id np9so2154349pjb.4
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Mar 2020 01:39:59 -0700 (PDT)
+        id S1726338AbgCZJPT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Mar 2020 05:15:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33068 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgCZJPT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Mar 2020 05:15:19 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d17so2582490pgo.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Mar 2020 02:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=IKXhnF5b2kRgiDvzdR+SY9Zq5PCgZZoxHrwTjIDIIpI=;
-        b=R86WI5i7M4bE9t90PBJNrmzOvBRXoU1jrPqWg/bEzX2gSIvjGDY+OMedebCGts67QV
-         t3sWczj1HzPFK0gkr+iKy9MKztafPXEYKXrfoYNVGFjvzr8n99jIeYrNFh0cK5+G7iKC
-         ptxkHewHPNpLVTjZnhmUIxWx7AfKCan7/tQYZK6YK4fjEVNRYBPKrF4DM5mErv0AaUoY
-         FjUWg1obGtMZjWrqLaGpAckixjehm3iBXIahHlcj8jwjYsuc9WS8mAjTfP4zvRIRttPW
-         3ipytsqzDS58xloyixMIRmeLnQtZVg1WYQZm+zEXXiJu0ZU2GhkTbg+sbiFe3mmHO6QE
-         JlAA==
+        bh=vJqb32WIBICYpHNkqCghgBkQNcoH9/scB5SUnUgX3N0=;
+        b=owhUI38E6FA/HuOPVsREOUF/A5xBKZqOt5FGaTDKtjiqZD32XL1j4xmRZuiZxmDufk
+         uMOG2HcxPchldY4kYnRxKiGttX3PdnBSHr/LyQxlSsmnUa/1Jhn562CNyOGkzXxaNMr1
+         g1AFXdZ5ZpjXIRSqZFZByKHoBVhMm15YC/ubgz1lzMBC91Q5JVJWQnDaUhP+zhNOyOfS
+         3RYLOxd2l1lkAFtHXLBXypADjLyQt/ZWkvNY9RrDVY95m4lTsBOvoN9ELlsrFN38DHm9
+         GWYBc/9g1GBbG660NzkmXrGil/LNuxrlDy+VydxeyfbYnJ3xDkRATi/cD+MF280XYkV5
+         rRNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=IKXhnF5b2kRgiDvzdR+SY9Zq5PCgZZoxHrwTjIDIIpI=;
-        b=tDUWTEHVoICDL3wvf6mt7AX7tJjX2UobYkJ+q0CufVweUFPXwMoOZhKpE8Hii1/AMt
-         BjY7x4hD3uKekUlIpQkYCtok3gQUVOJSpsC4cIzOFKYH/akfNiOemrXjlcC5oVYXGtxb
-         wDqigo8+8Pal5jQ2YxFoTxvnN4ubxI3lHEpMzVJ+0mzrdTQppAgAGyYsjTst63VbgoFv
-         f66gSrM4IhnHwNS8+xJFhkGic1jevszK910bPTV12Rv0hs6ne64DBoZQUkviulwr7MOz
-         UclBTIRT3PB4zNQy/ExyME3Oq1q54xJbHgkHkXVqXEr0yveYZQ8Gt2rXhWtgZDFqKy7A
-         h4dQ==
-X-Gm-Message-State: ANhLgQ1inX+eMU0jsy6bsg5fJ3EuCiInEwew+Q6629u3K88CVUGdOKAF
-        m2oOyMUaGDhgXLqTqcqc0AT8cGmNNCw=
-X-Google-Smtp-Source: ADFU+vv1OCetkzQi3iop0jjfVcekp9efdIwEQHthy4y6FRhi3WXzYxEey9J+geFtSG80bj1Kwnlgqw==
-X-Received: by 2002:a17:90a:20f0:: with SMTP id f103mr1850407pjg.88.1585211998744;
-        Thu, 26 Mar 2020 01:39:58 -0700 (PDT)
+        bh=vJqb32WIBICYpHNkqCghgBkQNcoH9/scB5SUnUgX3N0=;
+        b=pmLLoQpDrA0fDGOhezwff3wBA2I/Gi9+Q0VSTXQh3ULCDH3vK5Q2eyOnJj3oEM3OEs
+         2RtNsY2dv4hziA9Z+E3NX2TUx+NkFTpZVrt3YtxOygppR8lmx25V6hIqmrc5RdYNR7l+
+         xCTEx1+i8gTvfQWPf0XodB4J4QVQYxAdz9985o2I+AkDkKJd4u1Z2neqouFPMqW5W696
+         vUlxY5i3EE7+/MGNTN7za59f3yiTje1IdghzIcn1HjMg5e1pRlo88NR8erlg9XQ0B8ML
+         WGeGeXckroYmIJh2gK8MxdbK0esjslKNYTyWy1IVZBU++cFacm2I6Ltwv1wC9q+7Gsix
+         5zBA==
+X-Gm-Message-State: ANhLgQ2Pm5qR8pu9RSpEca7lLdei+ZRny7ddEU0e8jX19pSPoorU4FpJ
+        B+Ru8NDj16sl0EOU+bc3D/RJ4EjucmI=
+X-Google-Smtp-Source: ADFU+vu+Hr1FQwFYHkauPg6dRcx3CRPRKo8KxRNWdlxe0jBZgFZEHkcPC6JyTo9UFyFjvlZDR7oYmw==
+X-Received: by 2002:aa7:9e4d:: with SMTP id z13mr8116002pfq.6.1585214117447;
+        Thu, 26 Mar 2020 02:15:17 -0700 (PDT)
 Received: from [10.0.9.4] ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id k6sm1095835pje.8.2020.03.26.01.39.57
+        by smtp.gmail.com with ESMTPSA id e187sm1142368pfe.143.2020.03.26.02.15.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 01:39:57 -0700 (PDT)
-Message-ID: <5e7c6a5d.1c69fb81.7a675.4378@mx.google.com>
-Date:   Thu, 26 Mar 2020 01:39:57 -0700 (PDT)
+        Thu, 26 Mar 2020 02:15:16 -0700 (PDT)
+Message-ID: <5e7c72a4.1c69fb81.45baa.4a5e@mx.google.com>
+Date:   Thu, 26 Mar 2020 02:15:16 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.6-rc1-47-g5eefcaed501d
-X-Kernelci-Report-Type: build
-X-Kernelci-Branch: devel
+X-Kernelci-Kernel: gpio-v5.6-3-48-g7d52bac0fadc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: for-next
 X-Kernelci-Tree: linusw
-Subject: linusw/devel build: 6 builds: 0 failed,
- 6 passed (v5.6-rc1-47-g5eefcaed501d)
+Subject: linusw/for-next boot: 56 boots: 3 failed,
+ 50 passed with 3 untried/unknown (gpio-v5.6-3-48-g7d52bac0fadc)
 To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
 From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -71,18 +72,64 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel build: 6 builds: 0 failed, 6 passed (v5.6-rc1-47-g5eefcaed501d)
+linusw/for-next boot: 56 boots: 3 failed, 50 passed with 3 untried/unknown =
+(gpio-v5.6-3-48-g7d52bac0fadc)
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
-5.6-rc1-47-g5eefcaed501d/
+Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/for-next=
+/kernel/gpio-v5.6-3-48-g7d52bac0fadc/
+Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
+l/gpio-v5.6-3-48-g7d52bac0fadc/
 
 Tree: linusw
-Branch: devel
-Git Describe: v5.6-rc1-47-g5eefcaed501d
-Git Commit: 5eefcaed501dd9e3933dbff58720244bd75ed90f
+Branch: for-next
+Git Describe: gpio-v5.6-3-48-g7d52bac0fadc
+Git Commit: 7d52bac0fadc072655373772f4ee9455039858e4
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
 git/
-Built: 6 unique architectures
+Tested: 49 unique boards, 14 SoC families, 3 builds out of 6
+
+Boot Regressions Detected:
+
+arm:
+
+    multi_v7_defconfig:
+        gcc-8:
+          bcm2836-rpi-2-b:
+              lab-collabora: failing since 43 days (last pass: gpio-v5.5-4-=
+45-gd18fddff061d - first fail: v5.6-rc1-12-g612e35e76ec8)
+
+arm64:
+
+    defconfig:
+        gcc-8:
+          meson-g12b-a311d-khadas-vim3:
+              lab-baylibre: new failure (last pass: v5.6-rc3-38-gb3e741a0f7=
+76)
+          meson-gxl-s905x-khadas-vim:
+              lab-baylibre: new failure (last pass: v5.6-rc3-38-gb3e741a0f7=
+76)
+          meson-gxm-khadas-vim2:
+              lab-baylibre: new failure (last pass: v5.6-rc3-38-gb3e741a0f7=
+76)
+          sun50i-a64-pine64-plus:
+              lab-baylibre: new failure (last pass: v5.6-rc3-38-gb3e741a0f7=
+76)
+          sun50i-h5-libretech-all-h3-cc:
+              lab-baylibre: new failure (last pass: v5.6-rc3-38-gb3e741a0f7=
+76)
+
+Boot Failures Detected:
+
+arm:
+    multi_v7_defconfig:
+        gcc-8:
+            bcm2836-rpi-2-b: 1 failed lab
+
+arm64:
+    defconfig:
+        gcc-8:
+            meson-gxl-s905x-khadas-vim: 1 failed lab
+            sun50i-a64-pine64-plus: 1 failed lab
 
 ---
 For more info write to <info@kernelci.org>
