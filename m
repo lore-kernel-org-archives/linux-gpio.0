@@ -1,81 +1,88 @@
-Return-Path: <SRS0=sxON=5N=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=ZVw9=5O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBB3C2D0EC
-	for <linux-gpio@archiver.kernel.org>; Sat, 28 Mar 2020 19:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3515CC43331
+	for <linux-gpio@archiver.kernel.org>; Sun, 29 Mar 2020 10:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36EB206F2
-	for <linux-gpio@archiver.kernel.org>; Sat, 28 Mar 2020 19:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046EC206DB
+	for <linux-gpio@archiver.kernel.org>; Sun, 29 Mar 2020 10:46:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TB6dAUe3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgC1TlZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 28 Mar 2020 15:41:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:58614 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbgC1TlZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 28 Mar 2020 15:41:25 -0400
-IronPort-SDR: zF89kCiz/5VM5glV8ma5KMWxsd9Zrj8a6X7YMPhBbYYdwOjBejJct4IWF+b2WcNSuuANtjlXsH
- JaQgVL0irkfw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 12:41:24 -0700
-IronPort-SDR: FW9BVVlUZFT3Rioj1U0jCUjzucxB6ztLd0F+WgN6j0Qu1ijV/DEacuz5YGv612fIi4Od7npeHu
- sJFDRkdDnT6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
-   d="scan'208";a="251473896"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006.jf.intel.com with ESMTP; 28 Mar 2020 12:41:21 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jIHKd-00DlbC-RD; Sat, 28 Mar 2020 21:41:23 +0200
-Date:   Sat, 28 Mar 2020 21:41:23 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v1 2/2] [RFC] gpio: pca953x: drop unused parameters of
- pca953x_recalc_addr()
-Message-ID: <20200328194123.GB1922688@smile.fi.intel.com>
-References: <20200327074922.vrxbcjw2xlrv2bkb@pengutronix.de>
- <20200327172244.30816-1-u.kleine-koenig@pengutronix.de>
- <20200327172244.30816-3-u.kleine-koenig@pengutronix.de>
- <DF902AF8-CA86-4F31-9D98-288D40634D69@goldelico.com>
- <20200328092730.rn7drxqtx7g2xsff@pengutronix.de>
+        id S1728048AbgC2KqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 29 Mar 2020 06:46:01 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35574 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbgC2KqB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Mar 2020 06:46:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:To:From:Date:Reply-To:Cc:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/F8TTmllRhQAieNs3H3r8cSkUpyHMpQ7aHdeJZxCxpM=; b=TB6dAUe3IsgMBI6Ss1SOI4z8L
+        iac0Z1lLbuGhAexjYOp5axmyd+W0FmsuQDlca1oJABLPoEnb9A1331CkamBfrf1SJ83HJ3ujKC4tV
+        B6tWsnbTJ39myLy8PsrP/z5wv8MDpFyyJfUaViS/+Kvvj6PQR6Gt2SnKPmsc01iZAQPzymakS/Bca
+        q3QjXQ6jJ3ZPMHat+HSkYyLE9eZeexB/ljHkjeidBsAQ0loa8qdIDZIVtAkVBtwZwl4bSl9CajQBw
+        CmkPgfkTYALEkXIzzyKNa0/5UHt0DEFc96K0ItTUsUcfMMhn6iWnjsT0FIzgdTj1fRPfyqBbLwQA2
+        E+fryUP1Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42874)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jIVRy-0004UG-CK; Sun, 29 Mar 2020 11:45:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jIVRu-00069D-2a; Sun, 29 Mar 2020 11:45:50 +0100
+Date:   Sun, 29 Mar 2020 11:45:50 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        devicetree@vger.kernel.org,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
+Message-ID: <20200329104549.GX25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200328092730.rn7drxqtx7g2xsff@pengutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 10:27:30AM +0100, Uwe Kleine-König wrote:
-> On Fri, Mar 27, 2020 at 11:06:43PM +0100, H. Nikolaus Schaller wrote:
+Hi,
 
-> I'm still waiting for more feedback and then will send out a v2.
+This series adds support for the fan PWM output on the Clearfog GT8K
+platform, and can potentially be extended to the Macchiatobin.
 
-From code perspective looks good,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The cooling maps are experimental - it seems to work well for me
+without the fan speed varying too much, but what I've noticed with
+fewer entries in the map is instability in the fan speed - it
+continually toggles between two fan speeds as the temperature
+rises and falls due to the different fan speed.  Hence, this is more
+for discussion at this point (and in any case, -final is likely to be
+released today.)
 
-If you give me some time (couple of days) I'll test it on PCA9555 (for no
-regression).
+ .../dts/marvell/armada-8040-clearfog-gt-8k.dts     | 125 ++++++++++++
+ arch/arm64/boot/dts/marvell/armada-cp11x.dtsi      |   6 +
+ drivers/gpio/gpio-mvebu.c                          | 220 ++++++++++++++-------
+ 3 files changed, 275 insertions(+), 76 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
