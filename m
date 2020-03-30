@@ -2,129 +2,74 @@ Return-Path: <SRS0=uzn+=5P=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1309C43331
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 07:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9903FC43331
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 08:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D4C20781
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 07:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585552569;
-	bh=w+OyByBV+I5A3BslKozLHEBsFhvZMzyxKsx/Uvrczsg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JF+aEDEzKw2WHzXEA71AyEsndGDTZ2TsB6O5EkCUw3QBoYHO5AVT1iFNIE+51Qupe
-	 pTVSX74jll0iYBImgNc5HkaumL+q6euWOfDF+F61YlF66REGlcjV4lIPpr8aNlltli
-	 lOcmuR7uTlnTL+xvI9gjCTyjmv8xdZDF6H+0Pujc=
+	by mail.kernel.org (Postfix) with ESMTP id 75ABE2073B
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 08:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbgC3HQI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Mar 2020 03:16:08 -0400
-Received: from condef-02.nifty.com ([202.248.20.67]:31472 "EHLO
-        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729472AbgC3HQI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 03:16:08 -0400
-Received: from conssluserg-01.nifty.com ([10.126.8.80])by condef-02.nifty.com with ESMTP id 02U7AC7C000608;
-        Mon, 30 Mar 2020 16:10:12 +0900
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 02U79xvR024938;
-        Mon, 30 Mar 2020 16:10:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 02U79xvR024938
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585552200;
-        bh=ln1CQt+YaUVnJf/8SbMK3iPTVvG1KE5EE/FUul8MWQc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1sthGaoHw8qoSp3F/D3eH8NqZjk++zLNoSrFExAge5M5k4o6izC7znUZmDsjrR95d
-         3LRi45OyZDxUKTfu4A/3P4aV5+yY39DtCxwP5T2nox/GAPp7PJ3ZaF7u226D4E6kMs
-         pxp3tchjSZY1dsGYXfpp7Fyf63ssOrWN+V8tr3iI8kkkZhdSc6hQrcCJehpowCH1tV
-         t5Ybjs0wWAwMh0SzhZruoB9o66WBYJD1t+qP7ZqRNrr7efxFSXjCoLMubpsREjCj3w
-         uh2OG10xugvGzdVuKY1o+FeM5bjbz3bVeCv27FcaCEJ6WsaSLhERu5H58t5BiMZ2Xi
-         G3vbpTZyiHDew==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id z125so10303326vsb.13;
-        Mon, 30 Mar 2020 00:09:59 -0700 (PDT)
-X-Gm-Message-State: AGi0PuaxIQ01k2OIzzRmX0pmP4+GKnL2dKkEkaAhViRjVhNEthRWBKXc
-        iLGdsfopkiPxzS20T9vORC2VKBgWqZ276l6JheA=
-X-Google-Smtp-Source: APiQypLmGnB9GmkGFIr7L8MQtdRTKDMNPR3ere0jKX6O5/r2adqpWFQ5TPcwWpLgYxRGXDf4dZ6YCv27RE8dCFz54+s=
-X-Received: by 2002:a67:2d55:: with SMTP id t82mr7452280vst.215.1585552198446;
- Mon, 30 Mar 2020 00:09:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-5-robh@kernel.org>
-In-Reply-To: <20200325220542.19189-5-robh@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 30 Mar 2020 16:09:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
-Message-ID: <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties: false'
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zhang Rui <rui.zhang@intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729600AbgC3IHd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Mar 2020 04:07:33 -0400
+Received: from cmccmta3.chinamobile.com ([221.176.66.81]:10545 "EHLO
+        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729546AbgC3IHc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 04:07:32 -0400
+X-Greylist: delayed 546 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 04:07:31 EDT
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec5e81a66c798-0a7d3; Mon, 30 Mar 2020 15:57:32 +0800 (CST)
+X-RM-TRANSID: 2eec5e81a66c798-0a7d3
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95e81a66be31-380c6;
+        Mon, 30 Mar 2020 15:57:32 +0800 (CST)
+X-RM-TRANSID: 2ee95e81a66be31-380c6
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: nomadik:remove unneeded variable
+Date:   Mon, 30 Mar 2020 15:56:26 +0800
+Message-Id: <1585554986-26521-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 7:06 AM Rob Herring <robh@kernel.org> wrote:
->
-> Setting 'additionalProperties: false' is frequently omitted, but is
-> important in order to check that there aren't extra undocumented
-> properties in a binding.
->
-> Ideally, we'd just add this automatically and make this the default, but
-> there's some cases where it doesn't work. For example, if a common
-> schema is referenced, then properties in the common schema aren't part
-> of what's considered for 'additionalProperties'. Also, sometimes there
-> are bus specific properties such as 'spi-max-frequency' that go into
-> bus child nodes, but aren't defined in the child node's schema.
->
-> So let's stick with the json-schema defined default and add
-> 'additionalProperties: false' where needed. This will be a continual
-> review comment and game of wack-a-mole.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+ret is unneeded, just return 0.
 
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
-
-
-You may have already queue this up, but just in case.
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 95f864d..4c56483 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1340,8 +1340,6 @@ struct nmk_cfg_param {
+ 
+ static int nmk_dt_pin_config(int index, int val, unsigned long *config)
+ {
+-	int ret = 0;
+-
+ 	if (nmk_cfg_params[index].choice == NULL)
+ 		*config = nmk_cfg_params[index].config;
+ 	else {
+@@ -1351,7 +1349,7 @@ static int nmk_dt_pin_config(int index, int val, unsigned long *config)
+ 				nmk_cfg_params[index].choice[val];
+ 		}
+ 	}
+-	return ret;
++	return 0;
+ }
+ 
+ static const char *nmk_find_pin_name(struct pinctrl_dev *pctldev, const char *pin_name)
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
+
+
+
