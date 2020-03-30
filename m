@@ -2,182 +2,101 @@ Return-Path: <SRS0=uzn+=5P=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986FEC2D0F0
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 19:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C23C43331
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 21:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2792082F
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 19:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD5CF20784
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 21:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585602401;
+	bh=VtKZVpDVLAu5TM3IzBQA/89FqJP+a6flN+kMWrByasM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=muPoYzrE/zf54q+O5XN0OXiYp4btUjuUBNLjkrln/z7iaYquhT6CcKBUe3BdgnU1f
+	 M2RlWad4pzCgtHSNx1E/vfYajavMIeBy251lBIkTIF05MkJxDl9gSJ5P1JyJpQi9BS
+	 Zli+yIkEYV3dnq18fhcOaseg4FKCSl5qWPxy8xyw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgC3Tuf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Mar 2020 15:50:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49725 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728317AbgC3Tua (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 15:50:30 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jJ0QP-0000e4-Ah; Mon, 30 Mar 2020 21:50:21 +0200
-Received: from ukl by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jJ0QO-0007qQ-MJ; Mon, 30 Mar 2020 21:50:20 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     kernel@pengutronix.de, linux-gpio@vger.kernel.org,
-        Marcel Gudert <m.gudert@eckelmann.de>
-Subject: [PATCH v2 1/2] gpio: pca953x: fix handling of automatic address incrementing
-Date:   Mon, 30 Mar 2020 21:50:17 +0200
-Message-Id: <20200330195018.27494-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <20200330195018.27494-1-u.kleine-koenig@pengutronix.de>
-References: <20200330195018.27494-1-u.kleine-koenig@pengutronix.de>
+        id S1728517AbgC3VGl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Mar 2020 17:06:41 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:47076 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbgC3VGl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 17:06:41 -0400
+Received: by mail-il1-f193.google.com with SMTP id i75so10037685ild.13;
+        Mon, 30 Mar 2020 14:06:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iABZKege7HQoVsTkUe4qgetZccJxeCXO7Xustigvp68=;
+        b=nCkJceQYz63KMbp3As7XA/tB0F6HvC/2jrCVBKk1rnMzofyKp8XoOCATHV4Jnmi9+I
+         tCMtPzA0HSJRPqHFgg8JlWUg1ZzZ94Wokr91YhNuHNiy+ym+9mIf3uvtBoNqrDly0Efa
+         gcEvnecXGen2B+/9fdF/Y5UWNfjQ1rah7eC8DlbHRCJXArWOppEiLkvVsHoVpOPFPG65
+         hNgbOj85wGsd9kBCFI0fr0/eXjpO/J1Ic+juYjl/rPhEhx9Bu+TjXCmylEo9FONEkNGG
+         NUIxyBLLjAqwBqUoU8dBXr+VOFUeke/14z8hqGot3MQBtxHwmumSaHHXeoS9xQohGKnt
+         lixw==
+X-Gm-Message-State: ANhLgQ1zChRFEy3fmJ+S5pP8lo/knjKNv8x3GEROEv4sLrq1gG2oEkH7
+        9jc8CDOg8q8eVthvt5Nb8w==
+X-Google-Smtp-Source: ADFU+vs8rOfTPzeHqxue1CIuQVubIJ6JXVW/4a/numdBTmarNRQ+n//nuGNMsVS7Iv2pbFNYaL9Qeg==
+X-Received: by 2002:a92:3d84:: with SMTP id k4mr13569581ilf.47.1585602399401;
+        Mon, 30 Mar 2020 14:06:39 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id z2sm5200482ilp.21.2020.03.30.14.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 14:06:38 -0700 (PDT)
+Received: (nullmailer pid 9284 invoked by uid 1000);
+        Mon, 30 Mar 2020 21:06:37 -0000
+Date:   Mon, 30 Mar 2020 15:06:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ben Peled <bpeled@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 05/12] docs: dt: fix references to
+ ap806-system-controller.txt
+Message-ID: <20200330210637.GA9233@bogus>
+References: <cover.1584450500.git.mchehab+huawei@kernel.org>
+ <cf60ef88712e4f46f4e4bf40b2c646451d921827.1584450500.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf60ef88712e4f46f4e4bf40b2c646451d921827.1584450500.git.mchehab+huawei@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some of the chips supported by the pca953x driver need the most
-significant bit in the address word set to automatically increment the
-address pointer on subsequent reads and writes (example: PCA9505). With
-this bit unset the same register is read multiple times on a multi-byte
-read sequence. Other chips must not have this bit set and autoincrement
-always (example: PCA9555).
+On Tue, 17 Mar 2020 14:10:44 +0100, Mauro Carvalho Chehab wrote:
+> ap806-system-controller.txt was renamed to ap80x-system-controller.txt.
+> 
+> Update its references accordingly.
+> 
+> Fixes: 2537831bbc19 ("dt-bindings: ap80x: replace AP806 with AP80x")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-mvebu.txt        | 2 +-
+>  Documentation/devicetree/bindings/thermal/armada-thermal.txt | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Up to now this AI bit was interpreted to be part of the address, which
-resulted in inconsistent regmap caching when a register was written with
-AI set and then read without it. This happened for the PCA9505 in
-pca953x_gpio_set_multiple() where pca953x_read_regs() bulk read from the
-cache for registers 0x8-0xc and then wrote to registers 0x88-0x8c. (Side
-note: reading 5 values from offset 0x8 yiels OP0 5 times because AI must
-be set to get OP0-OP4, which is another bug that is resolved here as a
-by-product.) The same problem happens when calls to gpio_set_value() and
-gpio_set_array_value() were mixed.
+Applied, thanks.
 
-With this patch the AI bit is always set for chips that support it. This
-works as there are no code locations that make use of the behaviour with
-AI unset (for the chips that support it).
-
-Note that the call to pca953x_setup_gpio() had to be done a bit earlier
-to make the NBANK macro work.
-
-The history of this bug is a bit complicated. Commit b32cecb46bdc
-("gpio: pca953x: Extract the register address mangling to single
-function") changed which chips and functions are affected. Commit
-3b00691cc46a ("gpio: pca953x: hack to fix 24 bit gpio expanders") used
-some duct tape to make the driver at least appear to work. Commit
-49427232764d ("gpio: pca953x: Perform basic regmap conversion")
-introduced the caching. Commit b4818afeacbd ("gpio: pca953x: Add
-set_multiple to allow multiple bits to be set in one write.") introduced
-the .set_multiple() callback which didn't work for chips that need the
-AI bit which was fixed later for some chips in 8958262af3fb ("gpio:
-pca953x: Repair multi-byte IO address increment on PCA9575"). So I'm
-sorry, I don't know which commit I should pick for a Fixes: line.
-
-Tested-by: Marcel Gudert <m.gudert@eckelmann.de>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/gpio/gpio-pca953x.c | 44 +++++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 5638b4e5355f..8168558299c2 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -307,8 +307,22 @@ static const struct regmap_config pca953x_i2c_regmap = {
- 	.volatile_reg = pca953x_volatile_register,
- 
- 	.cache_type = REGCACHE_RBTREE,
--	/* REVISIT: should be 0x7f but some 24 bit chips use REG_ADDR_AI */
--	.max_register = 0xff,
-+	.max_register = 0x7f,
-+};
-+
-+static const struct regmap_config pca953x_ai_i2c_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.read_flag_mask = REG_ADDR_AI,
-+	.write_flag_mask = REG_ADDR_AI,
-+
-+	.readable_reg = pca953x_readable_register,
-+	.writeable_reg = pca953x_writeable_register,
-+	.volatile_reg = pca953x_volatile_register,
-+
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = 0x7f,
- };
- 
- static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
-@@ -319,18 +333,6 @@ static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
- 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
- 	u8 regaddr = pinctrl | addr | (off / BANK_SZ);
- 
--	/* Single byte read doesn't need AI bit set. */
--	if (!addrinc)
--		return regaddr;
--
--	/* Chips with 24 and more GPIOs always support Auto Increment */
--	if (write && NBANK(chip) > 2)
--		regaddr |= REG_ADDR_AI;
--
--	/* PCA9575 needs address-increment on multi-byte writes */
--	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
--		regaddr |= REG_ADDR_AI;
--
- 	return regaddr;
- }
- 
-@@ -863,6 +865,7 @@ static int pca953x_probe(struct i2c_client *client,
- 	int ret;
- 	u32 invert = 0;
- 	struct regulator *reg;
-+	const struct regmap_config *regmap_config;
- 
- 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
- 	if (chip == NULL)
-@@ -925,7 +928,17 @@ static int pca953x_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, chip);
- 
--	chip->regmap = devm_regmap_init_i2c(client, &pca953x_i2c_regmap);
-+	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
-+
-+	if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
-+		dev_info(&client->dev, "using AI\n");
-+		regmap_config = &pca953x_ai_i2c_regmap;
-+	} else {
-+		dev_info(&client->dev, "using no AI\n");
-+		regmap_config = &pca953x_i2c_regmap;
-+	}
-+
-+	chip->regmap = devm_regmap_init_i2c(client, regmap_config);
- 	if (IS_ERR(chip->regmap)) {
- 		ret = PTR_ERR(chip->regmap);
- 		goto err_exit;
-@@ -956,7 +969,6 @@ static int pca953x_probe(struct i2c_client *client,
- 	/* initialize cached registers from their original values.
- 	 * we can't share this chip with another i2c master.
- 	 */
--	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
- 
- 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
- 		chip->regs = &pca953x_regs;
--- 
-2.26.0.rc2
-
+Rob
