@@ -2,100 +2,134 @@ Return-Path: <SRS0=uzn+=5P=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF815C2D0EE
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 09:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578E2C2D0E9
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 11:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54E820714
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 09:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC2D2072E
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Mar 2020 11:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gc6515VS"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Lo81bSLQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbgC3J6K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Mar 2020 05:58:10 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50639 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728259AbgC3J6K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 05:58:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t128so843249wma.0;
-        Mon, 30 Mar 2020 02:58:08 -0700 (PDT)
+        id S1729778AbgC3LWD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Mar 2020 07:22:03 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33573 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729744AbgC3LWD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2020 07:22:03 -0400
+Received: by mail-qk1-f196.google.com with SMTP id v7so18464387qkc.0
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2020 04:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UmkAXtrx7EGpWTd8vebBYq4HKMNN076r/XfqEl521lA=;
-        b=Gc6515VSoCC5JCdth9r+SM8Wl+KnX+zMV0+siJdziitITNOHAconkPeFMlok5lK2lr
-         8FNbXa6e1sa0WxiPXpv2oKLRKjx0phV3UXGk95o2kLJTf9ykjYIZKOM19+HHwLIFBiXa
-         YuD74354xO/Fmk7T8avXA8qOVYR9yBsrMcbDCiki15b/Gs/oH4a1d2WcdZZmEdVybmiJ
-         mOk8c9RRIXvFq9ZeFivDl0SKuZiynDB0EQR7NyDYIIUOTZ3Rbrotwnkv0qY2krz9vLsO
-         6c/kBl7MygqyEp4AFnH4phKb4GEVeKLIVTe4OKYWJj2UhfvjpDGbhUk0uCqneziMREcS
-         A/dg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CzM9Ul/dphXe/6k6V017VGqcrogFXRUNidC2oEsJyA4=;
+        b=Lo81bSLQWPVgU/i6sxlrCIBODUnjRkBTUhlltdOET1Dmks4BFPSVpOUpndvcX76UyB
+         hkWTYKD7omKCo2QzXiH1W+Q/eSWGYesRpzjunThYHGs7hjuSdF+XD+aVckt8qcSQLHLf
+         2dGg3fYi4+AUTb5J78URConeOPfe4tGuRHbb2F1LS3sMbaCujqQsCxjWXbGbH5HyzGhD
+         p/Ux96ci6T31CRwG9rUx5pXRxGzCZ84npmpm7CJGxisaBEPrDQEfeik1T+tSs3DS8SSR
+         xRT/u5P760PPOifEwBJ2NscES25L2rM7gIEkuzVGazBBxQdHCpd66DpKgluiH+hEAOZj
+         1OzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UmkAXtrx7EGpWTd8vebBYq4HKMNN076r/XfqEl521lA=;
-        b=Z6cw5qphrP9PRwYMzl/OW359VwiSBtAKIJ8r9zI9Jyw+PmwtLFtz6xNzn+g54ruWZ2
-         HBni+rJtpvO1n2o5H+Ag7FN169G96qFwUCgUzpp9jT3kIMuntzblqY9iIpwXz6Tae/kq
-         AXV95li847jComV9TTQDW3INdmC9cWbQlLg1cb08lWE5v2UH5RPa9A967PtKk7eSiTL4
-         CpcBSiInex261tTLo7/9SkQcLYW3gpZFR+Fi32w1i8R3VYXunBUc6V8dexL/omQxA6IE
-         fJfD8+CKx0dr7TVnIMYry6k4FRwjPpu312f3pMQmoqarQ0Sp2Dj233YOQB+sVgMZ40H+
-         tnXg==
-X-Gm-Message-State: ANhLgQ3ebnGeFb4+JiSZR9KKex2EqB+k4JW0c788BmRHU0D9JuKKnRg4
-        By1gs9bZ+vmbdI90eQyDsivc7u2J
-X-Google-Smtp-Source: ADFU+vthKUDkNCHJDmtynltoCVzv6w2lWTamWTrxxRNgECEON86HVyepF0hJMBLhnRNzT4qhY8NZqA==
-X-Received: by 2002:a05:600c:a:: with SMTP id g10mr12548454wmc.153.1585562287317;
-        Mon, 30 Mar 2020 02:58:07 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id a7sm4239665wmm.34.2020.03.30.02.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 02:58:06 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] pinctrl: Define of_pinctrl_get() dummy for !PINCTRL
-Date:   Mon, 30 Mar 2020 11:58:01 +0200
-Message-Id: <20200330095801.2421589-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CzM9Ul/dphXe/6k6V017VGqcrogFXRUNidC2oEsJyA4=;
+        b=q05+Xu//9ERCjoHp4R9pKUlUwrZeArXPOm4H7Lt9Dtma401JANXGwvws48qv7TD2dI
+         ec9Rff9jO69uaVHtr+xn/3wToxD5BekXznMMKN1NKKDCLYrJMjAii8AfWlnjnUpduL1k
+         e3AAv4no/pE6OSjWg+/ub+9Lt09V22jHWyRDSM9E4U3F69f7y8R6zwCNSK7AoPh4knmy
+         UvArVhfc0N9Lg76Q9i3LwY8d6m4IcewggGurdifLB7bSGUdXq1GZZuvr0SOWdZNuGO0s
+         GKQgXz0QEPVzFH4hhumRcKNfbn4kol2vJdAVeA2O5ChFcuDZ5Wv8hTYsQqvIx/RzatxA
+         Toug==
+X-Gm-Message-State: ANhLgQ3++PniLX32+zkkEp2DPoejWpP8cFBATu/u23V0OGhiNUXdLiNZ
+        fr+6HIon4kgRhWN5/HSSJwjm19wn6I3MxF4itkPj4g==
+X-Google-Smtp-Source: ADFU+vstVtsw7JWrmBNop5+zhRNU4WPamx9SIUzCEtNOrBy3Hzu3AZDNweBkY+DVn4Q0wOYnEWX26BByXVYtpX6VxmE=
+X-Received: by 2002:a37:a2c8:: with SMTP id l191mr11373979qke.120.1585567321647;
+ Mon, 30 Mar 2020 04:22:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200317205017.28280-1-michael@walle.cc> <20200317205017.28280-13-michael@walle.cc>
+ <CAMpxmJW770v6JLdveEe1hkgNEJByVyArhorSyUZBYOyFiVyOeg@mail.gmail.com>
+ <9c310f2a11913d4d089ef1b07671be00@walle.cc> <CAMpxmJXmD-M+Wbj6=wgFgP2aDxbqDN=ceHi1XDun4iwdLm55Zg@mail.gmail.com>
+ <22944c9b62aa69da418de7766b7741bd@walle.cc> <CACRpkdbJ3DBO+W4P0n-CfZ1T3L8d_L0Nizra8frkv92XPXR4WA@mail.gmail.com>
+ <4d8d3bc26bdf73eb5c0e5851589fe085@walle.cc>
+In-Reply-To: <4d8d3bc26bdf73eb5c0e5851589fe085@walle.cc>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 30 Mar 2020 13:21:50 +0200
+Message-ID: <CAMpxmJUj7wBvO=Y-u5CXazHhjsPHXcq=5iST4KuLrfakW_a9Mg@mail.gmail.com>
+Subject: Re: [PATCH 12/18] gpio: add support for the sl28cpld GPIO controller
+To:     Michael Walle <michael@walle.cc>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+pt., 27 mar 2020 o 16:28 Michael Walle <michael@walle.cc> napisa=C5=82(a):
+>
+> Am 2020-03-27 11:20, schrieb Linus Walleij:
+> > On Thu, Mar 26, 2020 at 9:06 PM Michael Walle <michael@walle.cc> wrote:
+> >> Am 2020-03-25 12:50, schrieb Bartosz Golaszewski:
+> >
+> >> > In that case maybe you should use the disable_locking option in
+> >> > regmap_config and provide your own callbacks that you can use in the
+> >> > irqchip code too?
+> >>
+> >> But how would that solve problem (1). And keep in mind, that the
+> >> reqmap_irqchip is actually used for the interrupt controller, which
+> >> is not this gpio controller.
+> >>
+> >> Ie. the interrupt controller of the sl28cpld uses the regmap_irqchip
+> >> and all interrupt phandles pointing to the interrupt controller will
+> >> reference the toplevel node. Any phandles pointing to the gpio
+> >> controller will reference the GPIO subnode.
+> >
+> > Ideally we would create something generic that has been on my
+> > mind for some time, like a generic GPIO regmap irqchip now that
+> > there are a few controllers like that.
+> >
+> > I don't know how feasible it is or how much work it would be. But
+> > as with GPIO_GENERIC (for MMIO) it would be helpful since we
+> > can then implement things like .set_multiple() and .get_multiple()
+> > for everyone.
+>
+> For starters, would that be a drivers/gpio/gpio-regmap.c or a
+> drivers/base/regmap/regmap-gpio.c? I would assume the first,
+> because the stuff in drivers/base/regmap operates on a given
+> regmap and we'd just be using one, correct? On the other hand
+> there is also the reqmap-irq.c. But as pointed out before, it
+> will add an interrupt controller to the regmap, not a device
+> so to speak.
+>
+> -michael
 
-Currently, the of_pinctrl_get() dummy is only defined for !OF, which can
-still cause build failures on configurations with OF enabled but PINCTRL
-disabled. Make sure to define the dummy if either OF or PINCTRL are not
-enabled.
+This has been on my TODO list for so long, but I've never been able to
+find the time... I'd really appreciate any effort in that direction as
+I believe it would allow us to slowly port a big part of the GPIO
+expander drivers over to it and make large portions of our codebase
+generic.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- include/linux/pinctrl/pinctrl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index 7ce23450a1cb..2aef59df93d7 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -186,7 +186,7 @@ extern int pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 				const char *pin_group, const unsigned **pins,
- 				unsigned *num_pins);
- 
--#ifdef CONFIG_OF
-+#if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_PINCTRL)
- extern struct pinctrl_dev *of_pinctrl_get(struct device_node *np);
- #else
- static inline
--- 
-2.24.1
-
+Best regards,
+Bartosz Golaszewski
