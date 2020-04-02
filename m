@@ -2,111 +2,124 @@ Return-Path: <SRS0=uhzQ=5S=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1076EC43331
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 11:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 727CCC43331
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 15:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD9820787
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 11:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49C5F20737
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 15:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="HOUmEwr1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3Du/3zZH"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="Boa+p1fb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388105AbgDBLdG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Apr 2020 07:33:06 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:52279 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388001AbgDBLdG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2020 07:33:06 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5E0D95C0197;
-        Thu,  2 Apr 2020 07:33:02 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 02 Apr 2020 07:33:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=kA1QfLW3eMIxQfptPPeBMuZlNRg
-        ZIGrXylNEE/sNhVc=; b=HOUmEwr1sk1oEZD4aOIfaOtl7vLi7xDDxRPN/4TxLMp
-        hMf5IO4aZQnozWpA/Kpj+M2rzKrkcYxwoAsBgNNxJ786jvOQTe9wRY7hCUBQl4Qu
-        urALDKUiHsLMtSxgG8coH2YVwI6X4MJ75+Gy9IreSR81/pj78NPHodZNrInXum5F
-        t/hY9sjppmwcDU9hRFKP9R2o0qL1fZY1xvNAdU5ubh5TOjrUXOF03LhjAQfaEc6s
-        NvAqYyGCruaZ3dzfosuvCjPmOgWW0btO4hi7xFwCeaBFWiUr29nCE1gMQ1pCSZ8e
-        MzQRmKp5I0Jo5RdLnJHJtvVyBydiKbMT0m2JGTZlXqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=kA1QfL
-        W3eMIxQfptPPeBMuZlNRgZIGrXylNEE/sNhVc=; b=3Du/3zZHqdsS0GGADq1tbb
-        UIq2LFztd7cF1pDIgJqY87xx5MWFqDIPrEjxMPh3BhKhQTXlcyOQDR9Ud2inbtY5
-        oqzPW1CNF9m/KNbRZ8uWv3nWXCMboEH9/cdBi8+e89GGNuO2q4yDwou6yCMyLomE
-        KmgxLCy83ynzA4AsYDPFRWHYkrdQcxHbTKjfwzvTZJw/oa3h4dgSwZ0oCaGjQ75k
-        W2PaDjs3dd36j0aWnt1xAF5aHFe5ORj3pLZuklXcOFbNYrsPCnXKC2JprZiprMEo
-        v4z96cFB0GHfn37vHh/TTeizJCq66GQipfTkc7ItQEUsmwZuWQpvir4IdQFnhXUQ
-        ==
-X-ME-Sender: <xms:bc2FXhuBLKzXVF2Vrdl04MrVTHvU1OwslYBmSfrdJRodbBIjNL1aFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrtdeggdefiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
-    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:bc2FXjloDRyooU-ygixI0rB9CSbSu6saMZ3BresCuveeJOEUHDKnrg>
-    <xmx:bc2FXtoICRRfnfWvhvXf5GqocHseUQkLlZJbfsbBBSOMlFCbMKAfPA>
-    <xmx:bc2FXq2U32p1FQJp2CZB2rm3VG6s4HwKQ3m9dW4YEeoM-ekIsRa-kg>
-    <xmx:bs2FXurbv5p-sUVIc5P5YquHbTsJyXM0B9n_A9FKFXw9fG2aXDll0w>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 668683280066;
-        Thu,  2 Apr 2020 07:33:01 -0400 (EDT)
-Date:   Thu, 2 Apr 2020 13:32:59 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     linus.walleij@linaro.org, wens@csie.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] pinctrl: sunxi: handle probe defferal
-Message-ID: <20200402113259.jalwc7hwxtymtms4@gilmour.lan>
-References: <1585818532-23051-1-git-send-email-clabbe@baylibre.com>
+        id S2389542AbgDBPwK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Apr 2020 11:52:10 -0400
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:36104 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389567AbgDBPwJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2020 11:52:09 -0400
+Received: by mail-pl1-f181.google.com with SMTP id g2so1493383plo.3
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Apr 2020 08:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=opnXLd6D5a3fqZycTi0yiMOLNvDz8Dsrjq2o9euUNEo=;
+        b=Boa+p1fbwVizTkfVEurWXWHfCIEgplP3L5Cco/MZ6W0hnjXSffpN7/wrpyQJSGMA3M
+         JIUWxnOwBsjlf1S7SSWAIm0ITmajwcx1A/Hope3xwwRywVnwT6s7fdKh1tnnqYS3W4CV
+         y23TSUkDZhUAxEiBtEc7nsZuoD1yrFPnsMlEb3FhbPq3i4mZR4tX7zDwd+TgSZcUBsVO
+         OISyhqVtPh71AdIPVRZIye+RXN4MCLvr/19GChpW62PqpP1tUlyiyv4TcikgityTBGfT
+         UOXp8SvDbnX9XiqCKvWHNDy1Uk0yrw+FOdyc27eX3ZwymYLprTPOd4bT9g+7TWxmGOK5
+         oj3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=opnXLd6D5a3fqZycTi0yiMOLNvDz8Dsrjq2o9euUNEo=;
+        b=XqyCNL4x5ZKADKOPhdo+Yy3PMO6N3o3eq1IVQMc/GXB2FMSiblEUO0vKvurBrUAYr0
+         URWDemgOzMZiXtmF+OK+gCPaqzbg8+LITfxKylHZ/lIsrdo84IUbQGxISLnScbqVJ4qU
+         VXp7kj6rW5IY52S6cxXLT5xpmHQpQLL5fXL1E5Vz91JYYSQSoZvbcJ8rsdCitTsXUcNN
+         kXrcI9UXW6UIBXwmT7jLU9dhwEaNfhuuouVTA8X2YBXGekQb6FBqsuvOO19h1AY8gIQ4
+         678UVmh9eT7P66gJQdhIUmpsoqV50OwPuO2GJbF0MgVzZaGLIeiiQQiLaXKxKUuLY5O7
+         Cdjw==
+X-Gm-Message-State: AGi0PuZgEAWzOs+7lqkRabFoW5u0hd3DRvUR094cimAQ3q7e6EmSrpLX
+        FvWt/JPPwq+YkTDGyTKVt0Ed7Qzx0b0=
+X-Google-Smtp-Source: APiQypIZfIWvb0+P9/VFeKSSGY/a2+4UNWHAFyK81RPLWcaWVtD2MhLtUZxRuAlCfHbjXYTX5C5jzA==
+X-Received: by 2002:a17:90a:b395:: with SMTP id e21mr4634651pjr.33.1585842727867;
+        Thu, 02 Apr 2020 08:52:07 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id fa16sm3989715pjb.39.2020.04.02.08.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Apr 2020 08:52:07 -0700 (PDT)
+Message-ID: <5e860a27.1c69fb81.faf4e.1ccd@mx.google.com>
+Date:   Thu, 02 Apr 2020 08:52:07 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tjv7bzkjk4m5tndt"
-Content-Disposition: inline
-In-Reply-To: <1585818532-23051-1-git-send-email-clabbe@baylibre.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v5.6-rc7-64-g4ed7d7dd4890
+X-Kernelci-Report-Type: build
+X-Kernelci-Tree: linusw
+X-Kernelci-Branch: devel
+Subject: linusw/devel build: 6 builds: 0 failed,
+ 6 passed (v5.6-rc7-64-g4ed7d7dd4890)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+linusw/devel build: 6 builds: 0 failed, 6 passed (v5.6-rc7-64-g4ed7d7dd4890)
 
---tjv7bzkjk4m5tndt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Full Build Summary: https://kernelci.org/build/linusw/branch/devel/kernel/v=
+5.6-rc7-64-g4ed7d7dd4890/
 
-On Thu, Apr 02, 2020 at 09:08:52AM +0000, Corentin Labbe wrote:
-> When checking the logs on my sun8i-a33-olinuxino I saw:
-> sun8i-a23-r-pinctrl 1f02c00.pinctrl: Reset controller missing
-> but this driver was working after.
-> This message is just here because the reset controller was still not probed.
-> So don't say anything if the return code say to wait.
->
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Tree: linusw
+Branch: devel
+Git Describe: v5.6-rc7-64-g4ed7d7dd4890
+Git Commit: 4ed7d7dd4890bb8120a3e77c16191a695fdfcc5a
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
+git/
+Built: 6 unique architectures
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
-Maxime
+Detailed per-defconfig build reports:
 
---tjv7bzkjk4m5tndt
-Content-Type: application/pgp-signature; name="signature.asc"
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
 
------BEGIN PGP SIGNATURE-----
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXoXNawAKCRDj7w1vZxhR
-xfzAAP9ylLtzCnrw2H6mzX/G1HyeNRlmKneYZuDx6o5HAAm0BwEAmpRgI1Hh4Jln
-/kdUr3TBTGjQqWJO+H4/JvS/93oyhQs=
-=iteN
------END PGP SIGNATURE-----
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
 
---tjv7bzkjk4m5tndt--
+---------------------------------------------------------------------------=
+-----
+haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---
+For more info write to <info@kernelci.org>
