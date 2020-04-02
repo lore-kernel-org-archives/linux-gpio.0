@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A297C2BA15
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 20:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12D5C2BA1E
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 20:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2657621582
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 20:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E44620857
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Apr 2020 20:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="ePtUa0Xr"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="CbLPKsA1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389765AbgDBUhS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Apr 2020 16:37:18 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:38613 "EHLO
+        id S2389931AbgDBUhT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Apr 2020 16:37:19 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:49933 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389004AbgDBUhP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2020 16:37:15 -0400
+        with ESMTP id S2389646AbgDBUhT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2020 16:37:19 -0400
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 342CC2327F;
-        Thu,  2 Apr 2020 22:37:11 +0200 (CEST)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 2B32023E21;
+        Thu,  2 Apr 2020 22:37:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1585859831;
+        t=1585859835;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=A4xIKefrMl1An1xXqkufnjbYFHb0nt7JLp19eTtgVZE=;
-        b=ePtUa0XrNMVg9FL/1zsW2Ut0BpPG91fXQdm64hIltKMUY31s1VL4HlSRAv+LbhYGuxznz3
-        DFQjJ+v/EwD7iKp0yxeC3QVK4bMpKTicXAZlFJ+cS0eJXjV6XRRG4lXFNDb1Dj9tRrcZmn
-        SafrxST4Z/HTBr2nPSOTC9fygHKKcrQ=
+        bh=2BCNRqIuUKwOGISLET/oBBcU7zrunGEC7nYi+9zMSag=;
+        b=CbLPKsA1HlR3qZnwwIA408iUz6vbqE+6/3sdoucOJT7CfD+0eEozxUuO/lWykn+R9lHeig
+        cW9dUX6mnZ55kZIOmA8fAxrkOxQQKIdNllS/4CrEQp8ZiKIM3anpqRv7TsdBl+4uqQ+NnQ
+        tE1J00i2oqZdQOF2Co0Mf1SYHEdnIqY=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 04/16] regmap-irq: make it possible to add irq_chip do a specific device node
-Date:   Thu,  2 Apr 2020 22:36:44 +0200
-Message-Id: <20200402203656.27047-5-michael@walle.cc>
+Subject: [PATCH v2 09/16] pwm: add support for sl28cpld PWM controller
+Date:   Thu,  2 Apr 2020 22:36:49 +0200
+Message-Id: <20200402203656.27047-10-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200402203656.27047-1-michael@walle.cc>
 References: <20200402203656.27047-1-michael@walle.cc>
@@ -68,7 +68,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spamd-Bar: ++++++
 X-Rspamd-Server: web
-X-Rspamd-Queue-Id: 342CC2327F
+X-Rspamd-Queue-Id: 2B32023E21
 X-Spamd-Result: default: False [6.40 / 15.00];
          FROM_HAS_DN(0.00)[];
          TO_DN_SOME(0.00)[];
@@ -81,7 +81,7 @@ X-Spamd-Result: default: False [6.40 / 15.00];
          DKIM_SIGNED(0.00)[];
          RCPT_COUNT_TWELVE(0.00)[24];
          MID_CONTAINS_FROM(1.00)[];
-         NEURAL_HAM(-0.00)[-0.157];
+         NEURAL_HAM(-0.00)[-0.165];
          RCVD_COUNT_ZERO(0.00)[0];
          FROM_EQ_ENVFROM(0.00)[];
          MIME_TRACE(0.00)[0:+];
@@ -94,202 +94,259 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a new function regmap_add_irq_chip_np() with its corresponding
-devm_regmap_add_irq_chip_np() variant. Sometimes one want to register
-the IRQ domain on a different device node that the one of the regmap
-node. For example when using a MFD where there are different interrupt
-controllers and particularly for the generic regmap gpio_chip/irq_chip
-driver. In this case it is not desireable to have the IRQ domain on
-the parent node.
+This adds support for the PWM controller of the sl28cpld board
+management controller. This is part of a multi-function device driver.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/base/regmap/regmap-irq.c | 84 ++++++++++++++++++++++++++------
- include/linux/regmap.h           | 10 ++++
- 2 files changed, 78 insertions(+), 16 deletions(-)
+ drivers/pwm/Kconfig        |  10 ++
+ drivers/pwm/Makefile       |   1 +
+ drivers/pwm/pwm-sl28cpld.c | 203 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 214 insertions(+)
+ create mode 100644 drivers/pwm/pwm-sl28cpld.c
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 3d64c9331a82..4340e1d268b6 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -541,8 +541,9 @@ static const struct irq_domain_ops regmap_domain_ops = {
- };
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index eebbc917ac97..5673e5e8b0c3 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -427,6 +427,16 @@ config PWM_SIFIVE
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-sifive.
  
- /**
-- * regmap_add_irq_chip() - Use standard regmap IRQ controller handling
-+ * regmap_add_irq_chip_np() - Use standard regmap IRQ controller handling
-  *
-+ * @np: The device_node where the IRQ domain should be added to.
-  * @map: The regmap for the device.
-  * @irq: The IRQ the device uses to signal interrupts.
-  * @irq_flags: The IRQF_ flags to use for the primary interrupt.
-@@ -556,9 +557,10 @@ static const struct irq_domain_ops regmap_domain_ops = {
-  * register cache.  The chip driver is responsible for restoring the
-  * register values used by the IRQ controller over suspend and resume.
-  */
--int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
--			int irq_base, const struct regmap_irq_chip *chip,
--			struct regmap_irq_chip_data **data)
-+int regmap_add_irq_chip_np(struct device_node *np, struct regmap *map, int irq,
-+			   int irq_flags, int irq_base,
-+			   const struct regmap_irq_chip *chip,
-+			   struct regmap_irq_chip_data **data)
- {
- 	struct regmap_irq_chip_data *d;
- 	int i;
-@@ -769,12 +771,10 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	}
- 
- 	if (irq_base)
--		d->domain = irq_domain_add_legacy(map->dev->of_node,
--						  chip->num_irqs, irq_base, 0,
--						  &regmap_domain_ops, d);
-+		d->domain = irq_domain_add_legacy(np, chip->num_irqs, irq_base,
-+						  0, &regmap_domain_ops, d);
- 	else
--		d->domain = irq_domain_add_linear(map->dev->of_node,
--						  chip->num_irqs,
-+		d->domain = irq_domain_add_linear(np, chip->num_irqs,
- 						  &regmap_domain_ops, d);
- 	if (!d->domain) {
- 		dev_err(map->dev, "Failed to create IRQ domain\n");
-@@ -808,6 +808,30 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	kfree(d);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(regmap_add_irq_chip_np);
++config PWM_SL28CPLD
++	tristate "Kontron sl28 PWM support"
++	depends on MFD_SL28CPLD
++	help
++	  Generic PWM framework driver for board management controller
++	  found on the Kontron sl28 CPLD.
 +
-+/**
-+ * regmap_add_irq_chip() - Use standard regmap IRQ controller handling
-+ *
-+ * @map: The regmap for the device.
-+ * @irq: The IRQ the device uses to signal interrupts.
-+ * @irq_flags: The IRQF_ flags to use for the primary interrupt.
-+ * @irq_base: Allocate at specific IRQ number if irq_base > 0.
-+ * @chip: Configuration for the interrupt controller.
-+ * @data: Runtime data structure for the controller, allocated on success.
-+ *
-+ * Returns 0 on success or an errno on failure.
-+ *
-+ * This is the same as regmap_add_irq_chip_np, except that the device
-+ * node of the regmap is used.
-+ */
-+int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
-+			int irq_base, const struct regmap_irq_chip *chip,
-+			struct regmap_irq_chip_data **data)
-+{
-+	return regmap_add_irq_chip_np(map->dev->of_node, map, irq, irq_flags,
-+				      irq_base, chip, data);
-+}
- EXPORT_SYMBOL_GPL(regmap_add_irq_chip);
- 
- /**
-@@ -875,9 +899,10 @@ static int devm_regmap_irq_chip_match(struct device *dev, void *res, void *data)
- }
- 
- /**
-- * devm_regmap_add_irq_chip() - Resource manager regmap_add_irq_chip()
-+ * devm_regmap_add_irq_chip_np() - Resource manager regmap_add_irq_chip_np()
-  *
-  * @dev: The device pointer on which irq_chip belongs to.
-+ * @np: The device_node where the IRQ domain should be added to.
-  * @map: The regmap for the device.
-  * @irq: The IRQ the device uses to signal interrupts
-  * @irq_flags: The IRQF_ flags to use for the primary interrupt.
-@@ -890,10 +915,11 @@ static int devm_regmap_irq_chip_match(struct device *dev, void *res, void *data)
-  * The &regmap_irq_chip_data will be automatically released when the device is
-  * unbound.
-  */
--int devm_regmap_add_irq_chip(struct device *dev, struct regmap *map, int irq,
--			     int irq_flags, int irq_base,
--			     const struct regmap_irq_chip *chip,
--			     struct regmap_irq_chip_data **data)
-+int devm_regmap_add_irq_chip_np(struct device *dev, struct device_node *np,
-+				struct regmap *map, int irq, int irq_flags,
-+				int irq_base,
-+				const struct regmap_irq_chip *chip,
-+				struct regmap_irq_chip_data **data)
- {
- 	struct regmap_irq_chip_data **ptr, *d;
- 	int ret;
-@@ -903,8 +929,8 @@ int devm_regmap_add_irq_chip(struct device *dev, struct regmap *map, int irq,
- 	if (!ptr)
- 		return -ENOMEM;
- 
--	ret = regmap_add_irq_chip(map, irq, irq_flags, irq_base,
--				  chip, &d);
-+	ret = regmap_add_irq_chip_np(np, map, irq, irq_flags, irq_base,
-+				     chip, &d);
- 	if (ret < 0) {
- 		devres_free(ptr);
- 		return ret;
-@@ -915,6 +941,32 @@ int devm_regmap_add_irq_chip(struct device *dev, struct regmap *map, int irq,
- 	*data = d;
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(devm_regmap_add_irq_chip_np);
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm-sl28cpld.
 +
-+/**
-+ * devm_regmap_add_irq_chip() - Resource manager regmap_add_irq_chip()
+ config PWM_SPEAR
+ 	tristate "STMicroelectronics SPEAr PWM support"
+ 	depends on PLAT_SPEAR || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 9a475073dafc..2c2b569dcde9 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
+ obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
+ obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+ obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
++obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
+ obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+ obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
+ obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+diff --git a/drivers/pwm/pwm-sl28cpld.c b/drivers/pwm/pwm-sl28cpld.c
+new file mode 100644
+index 000000000000..c6b372bf45fa
+--- /dev/null
++++ b/drivers/pwm/pwm-sl28cpld.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * sl28cpld PWM driver.
 + *
-+ * @dev: The device pointer on which irq_chip belongs to.
-+ * @map: The regmap for the device.
-+ * @irq: The IRQ the device uses to signal interrupts
-+ * @irq_flags: The IRQF_ flags to use for the primary interrupt.
-+ * @irq_base: Allocate at specific IRQ number if irq_base > 0.
-+ * @chip: Configuration for the interrupt controller.
-+ * @data: Runtime data structure for the controller, allocated on success
-+ *
-+ * Returns 0 on success or an errno on failure.
-+ *
-+ * The &regmap_irq_chip_data will be automatically released when the device is
-+ * unbound.
++ * Copyright 2019 Kontron Europe GmbH
 + */
-+int devm_regmap_add_irq_chip(struct device *dev, struct regmap *map, int irq,
-+			     int irq_flags, int irq_base,
-+			     const struct regmap_irq_chip *chip,
-+			     struct regmap_irq_chip_data **data)
++
++#include <linux/bitfield.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++#include <linux/regmap.h>
++
++/*
++ * PWM timer block registers.
++ */
++#define PWM_CTRL		0x00
++#define   PWM_ENABLE		BIT(7)
++#define   PWM_MODE_250HZ	0
++#define   PWM_MODE_500HZ	1
++#define   PWM_MODE_1KHZ		2
++#define   PWM_MODE_2KHZ		3
++#define   PWM_MODE_MASK		GENMASK(1, 0)
++#define PWM_CYCLE		0x01
++#define   PWM_CYCLE_MAX		0x7f
++
++struct sl28cpld_pwm {
++	struct pwm_chip pwm_chip;
++	struct regmap *regmap;
++	u32 offset;
++};
++
++struct sl28cpld_pwm_periods {
++	u8 ctrl;
++	unsigned long duty_cycle;
++};
++
++struct sl28cpld_pwm_config {
++	unsigned long period_ns;
++	u8 max_duty_cycle;
++};
++
++static struct sl28cpld_pwm_config sl28cpld_pwm_config[] = {
++	[PWM_MODE_250HZ] = { .period_ns = 4000000, .max_duty_cycle = 0x80 },
++	[PWM_MODE_500HZ] = { .period_ns = 2000000, .max_duty_cycle = 0x40 },
++	[PWM_MODE_1KHZ] = { .period_ns = 1000000, .max_duty_cycle = 0x20 },
++	[PWM_MODE_2KHZ] = { .period_ns =  500000, .max_duty_cycle = 0x10 },
++};
++
++static inline struct sl28cpld_pwm *to_sl28cpld_pwm(struct pwm_chip *chip)
 +{
-+	return devm_regmap_add_irq_chip_np(dev, map->dev->of_node, map, irq,
-+					   irq_flags, irq_base, chip, data);
++	return container_of(chip, struct sl28cpld_pwm, pwm_chip);
 +}
- EXPORT_SYMBOL_GPL(devm_regmap_add_irq_chip);
- 
- /**
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 40b07168fd8e..ae5034b2d7c3 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -21,6 +21,7 @@
- struct module;
- struct clk;
- struct device;
-+struct device_node;
- struct i2c_client;
- struct i3c_device;
- struct irq_domain;
-@@ -1310,12 +1311,21 @@ struct regmap_irq_chip_data;
- int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 			int irq_base, const struct regmap_irq_chip *chip,
- 			struct regmap_irq_chip_data **data);
-+int regmap_add_irq_chip_np(struct device_node *np, struct regmap *map, int irq,
-+			   int irq_flags, int irq_base,
-+			   const struct regmap_irq_chip *chip,
-+			   struct regmap_irq_chip_data **data);
- void regmap_del_irq_chip(int irq, struct regmap_irq_chip_data *data);
- 
- int devm_regmap_add_irq_chip(struct device *dev, struct regmap *map, int irq,
- 			     int irq_flags, int irq_base,
- 			     const struct regmap_irq_chip *chip,
- 			     struct regmap_irq_chip_data **data);
-+int devm_regmap_add_irq_chip_np(struct device *dev, struct device_node *np,
-+				struct regmap *map, int irq, int irq_flags,
-+				int irq_base,
-+				const struct regmap_irq_chip *chip,
-+				struct regmap_irq_chip_data **data);
- void devm_regmap_del_irq_chip(struct device *dev, int irq,
- 			      struct regmap_irq_chip_data *data);
- 
++
++static void sl28cpld_pwm_get_state(struct pwm_chip *chip,
++				   struct pwm_device *pwm,
++				   struct pwm_state *state)
++{
++	struct sl28cpld_pwm *spc = to_sl28cpld_pwm(chip);
++	static struct sl28cpld_pwm_config *config;
++	unsigned int reg;
++	unsigned long cycle;
++	unsigned int mode;
++
++	regmap_read(spc->regmap, spc->offset + PWM_CTRL, &reg);
++
++	state->enabled = reg & PWM_ENABLE;
++
++	mode = FIELD_GET(PWM_MODE_MASK, reg);
++	config = &sl28cpld_pwm_config[mode];
++	state->period = config->period_ns;
++
++	regmap_read(spc->regmap, spc->offset + PWM_CYCLE, &reg);
++	cycle = reg * config->period_ns;
++	state->duty_cycle = DIV_ROUND_CLOSEST_ULL(cycle,
++						  config->max_duty_cycle);
++}
++
++static int sl28cpld_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			      const struct pwm_state *state)
++{
++	struct sl28cpld_pwm *spc = to_sl28cpld_pwm(chip);
++	struct sl28cpld_pwm_config *config;
++	unsigned long long cycle;
++	int ret;
++	int mode;
++	u8 ctrl;
++
++	/* update config, first search best matching period */
++	for (mode = 0; mode < ARRAY_SIZE(sl28cpld_pwm_config); mode++) {
++		config = &sl28cpld_pwm_config[mode];
++		if (state->period == config->period_ns)
++			break;
++	}
++
++	if (mode == ARRAY_SIZE(sl28cpld_pwm_config))
++		return -EINVAL;
++
++	ctrl = FIELD_PREP(PWM_MODE_MASK, mode);
++	if (state->enabled)
++		ctrl |= PWM_ENABLE;
++
++	cycle = state->duty_cycle * config->max_duty_cycle;
++	do_div(cycle, state->period);
++
++	/*
++	 * The hardware doesn't allow to set max_duty_cycle if the
++	 * 250Hz mode is enabled. But since this is "all-high" output
++	 * just use the 500Hz mode with the duty cycle to max value.
++	 */
++	if (cycle == config->max_duty_cycle) {
++		ctrl &= ~PWM_MODE_MASK;
++		ctrl |= FIELD_PREP(PWM_MODE_MASK, PWM_MODE_500HZ);
++		cycle = PWM_CYCLE_MAX;
++	}
++
++	ret = regmap_write(spc->regmap, spc->offset + PWM_CTRL, ctrl);
++	if (ret)
++		return ret;
++
++	return regmap_write(spc->regmap, spc->offset + PWM_CYCLE, (u8)cycle);
++}
++
++static const struct pwm_ops sl28cpld_pwm_ops = {
++	.apply = sl28cpld_pwm_apply,
++	.get_state = sl28cpld_pwm_get_state,
++	.owner = THIS_MODULE,
++};
++
++static int sl28cpld_pwm_probe(struct platform_device *pdev)
++{
++	struct sl28cpld_pwm *pwm;
++	struct pwm_chip *chip;
++	struct resource *res;
++	int ret;
++
++	if (!pdev->dev.parent)
++		return -ENODEV;
++
++	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
++	if (!pwm)
++		return -ENOMEM;
++
++	pwm->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!pwm->regmap)
++		return -ENODEV;
++
++	res = platform_get_resource(pdev, IORESOURCE_REG, 0);
++	if (!res)
++		return -EINVAL;
++	pwm->offset = res->start;
++
++	/* initialize struct gpio_chip */
++	chip = &pwm->pwm_chip;
++	chip->dev = &pdev->dev;
++	chip->ops = &sl28cpld_pwm_ops;
++	chip->base = -1;
++	chip->npwm = 1;
++
++	ret = pwmchip_add(&pwm->pwm_chip);
++	if (ret < 0)
++		return ret;
++
++	platform_set_drvdata(pdev, pwm);
++
++	return 0;
++}
++
++static int sl28cpld_pwm_remove(struct platform_device *pdev)
++{
++	struct sl28cpld_pwm *pwm = platform_get_drvdata(pdev);
++
++	return pwmchip_remove(&pwm->pwm_chip);
++}
++
++static const struct of_device_id sl28cpld_pwm_of_match[] = {
++	{ .compatible = "kontron,sl28cpld-pwm" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, sl28cpld_pwm_of_match);
++
++static const struct platform_device_id sl28cpld_pwm_id_table[] = {
++	{"sl28cpld-gpio"},
++	{},
++};
++MODULE_DEVICE_TABLE(platform, sl28cpld_pwm_id_table);
++
++static struct platform_driver sl28cpld_pwm_driver = {
++	.probe = sl28cpld_pwm_probe,
++	.remove	= sl28cpld_pwm_remove,
++	.id_table = sl28cpld_pwm_id_table,
++	.driver = {
++		.name = KBUILD_MODNAME,
++		.of_match_table = sl28cpld_pwm_of_match,
++	},
++};
++module_platform_driver(sl28cpld_pwm_driver);
++
++MODULE_DESCRIPTION("sl28cpld PWM Driver");
++MODULE_AUTHOR("Michael Walle <michael@walle.cc>");
++MODULE_LICENSE("GPL");
 -- 
 2.20.1
 
