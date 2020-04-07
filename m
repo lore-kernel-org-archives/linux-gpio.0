@@ -2,47 +2,46 @@ Return-Path: <SRS0=JbAG=5X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A08C2BB86
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C735C2BB55
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04B072078C
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE112078C
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbgDGRiy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726339AbgDGRiy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 7 Apr 2020 13:38:54 -0400
 Received: from mga11.intel.com ([192.55.52.93]:4268 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1726277AbgDGRiy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 7 Apr 2020 13:38:54 -0400
-IronPort-SDR: iinTRl6bDp6O6YTiwV9kA+e+h5bPkc5iODtLJWma1mcru82PnEeqQxjPpet3bvfZ/eGMPiyMLO
- A1WSrYxq16Jw==
+IronPort-SDR: pi015Xo1m7q+FclUSYXmqiMZFDq9dmwL6ea0FQLai63T1p7CoHFjedEDaNwaeHf3YTT7fTz7zT
+ sD/D7zlwpC8Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:54 -0700
-IronPort-SDR: MBa2yEA3FH35T+hP799krCSrEYYm7p/Kql9Lgl/vNsRCNZNA7masTAONpF1XFHS//rmcNsYlsK
- +OSvGtehoP4g==
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:52 -0700
+IronPort-SDR: d51hcr/U0rpA5pLxNjep/lX30s1ltADK6oY3CorRIyb3pGNdeELm8hXbFZDGHOg/MGPorh9LHk
+ FDMbPskY8JaQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,356,1580803200"; 
-   d="scan'208";a="269496247"
+   d="scan'208";a="269496242"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 07 Apr 2020 10:38:53 -0700
+  by orsmga002.jf.intel.com with ESMTP; 07 Apr 2020 10:38:51 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 94113348; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
+        id 4B04579; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 7/9] pinctrl: mcp23s08: Make use of device properties
-Date:   Tue,  7 Apr 2020 20:38:47 +0300
-Message-Id: <20200407173849.43628-7-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/9] pinctrl: mcp23s08: Get rid of legacy platform data
+Date:   Tue,  7 Apr 2020 20:38:41 +0300
+Message-Id: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
-References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -50,120 +49,158 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Device property API allows to gather device resources from different sources,
-such as ACPI. Convert the drivers to unleash the power of device property API.
+Platform data is a legacy interface to supply device properties
+to the driver. In this case we even don't have in-kernel users
+for it. Just remove it for good.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 42 +++++++++---------------------
+ include/linux/spi/mcp23s08.h       | 18 -------------
+ 2 files changed, 12 insertions(+), 48 deletions(-)
+ delete mode 100644 include/linux/spi/mcp23s08.h
 
 diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 515d1aa32732..330c2203e0f2 100644
+index 3a235487e38d..2c8b8c45b70e 100644
 --- a/drivers/pinctrl/pinctrl-mcp23s08.c
 +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -4,6 +4,7 @@
- #include <linux/kernel.h>
- #include <linux/device.h>
- #include <linux/mutex.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
+@@ -8,7 +8,6 @@
  #include <linux/gpio/driver.h>
  #include <linux/i2c.h>
-@@ -11,7 +12,6 @@
+ #include <linux/spi/spi.h>
+-#include <linux/spi/mcp23s08.h>
  #include <linux/slab.h>
  #include <asm/byteorder.h>
  #include <linux/interrupt.h>
--#include <linux/of_device.h>
- #include <linux/regmap.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf.h>
-@@ -20,12 +20,12 @@
- /*
-  * MCP types supported by driver
-  */
--#define MCP_TYPE_S08	0
--#define MCP_TYPE_S17	1
--#define MCP_TYPE_008	2
--#define MCP_TYPE_017	3
--#define MCP_TYPE_S18    4
--#define MCP_TYPE_018    5
-+#define MCP_TYPE_S08	1
-+#define MCP_TYPE_S17	2
-+#define MCP_TYPE_008	3
-+#define MCP_TYPE_017	4
-+#define MCP_TYPE_S18	5
-+#define MCP_TYPE_018	6
+@@ -914,16 +913,9 @@ MODULE_DEVICE_TABLE(of, mcp23s08_i2c_of_match);
+ static int mcp230xx_probe(struct i2c_client *client,
+ 				    const struct i2c_device_id *id)
+ {
+-	struct mcp23s08_platform_data *pdata, local_pdata;
+ 	struct mcp23s08 *mcp;
+ 	int status;
  
- /* Registers are all 8 bits wide.
-  *
-@@ -757,7 +757,6 @@ static const struct i2c_device_id mcp230xx_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, mcp230xx_id);
+-	pdata = dev_get_platdata(&client->dev);
+-	if (!pdata) {
+-		pdata = &local_pdata;
+-		pdata->base = -1;
+-	}
+-
+ 	mcp = devm_kzalloc(&client->dev, sizeof(*mcp), GFP_KERNEL);
+ 	if (!mcp)
+ 		return -ENOMEM;
+@@ -937,7 +929,7 @@ static int mcp230xx_probe(struct i2c_client *client,
+ 	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
  
--#ifdef CONFIG_OF
- static const struct of_device_id mcp23s08_i2c_of_match[] = {
- 	{
- 		.compatible = "microchip,mcp23008",
-@@ -783,12 +782,11 @@ static const struct of_device_id mcp23s08_i2c_of_match[] = {
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, mcp23s08_i2c_of_match);
--#endif /* CONFIG_OF */
+ 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
+-				    id->driver_data, pdata->base, 0);
++				    id->driver_data, -1, 0);
+ 	if (status)
+ 		return status;
  
- static struct i2c_driver mcp230xx_driver = {
- 	.driver = {
- 		.name	= "mcp230xx",
--		.of_match_table = of_match_ptr(mcp23s08_i2c_of_match),
-+		.of_match_table = mcp23s08_i2c_of_match,
- 	},
- 	.probe		= mcp230xx_probe,
- 	.id_table	= mcp230xx_id,
-@@ -942,17 +940,17 @@ static int mcp23s08_spi_regmap_init(struct mcp23s08 *mcp, struct device *dev,
+@@ -986,13 +978,13 @@ static void mcp23s08_i2c_exit(void) { }
+ 
  static int mcp23s08_probe(struct spi_device *spi)
  {
- 	struct device *dev = &spi->dev;
-+	const void *match;
+-	struct mcp23s08_platform_data	*pdata, local_pdata;
  	unsigned			addr;
  	int				chips = 0;
  	struct mcp23s08_driver_data	*data;
  	int				status, type;
  	unsigned			ngpio = 0;
--	const struct			of_device_id *match;
- 	u32				spi_present_mask;
+ 	const struct			of_device_id *match;
++	u32				spi_present_mask;
  
--	match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), &spi->dev);
-+	match = device_get_match_data(dev);
+ 	match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), &spi->dev);
  	if (match)
--		type = (int)(uintptr_t)match->data;
-+		type = (int)(uintptr_t)match;
+@@ -1000,32 +992,24 @@ static int mcp23s08_probe(struct spi_device *spi)
  	else
  		type = spi_get_device_id(spi)->driver_data;
  
-@@ -1022,7 +1020,6 @@ static const struct spi_device_id mcp23s08_ids[] = {
- };
- MODULE_DEVICE_TABLE(spi, mcp23s08_ids);
+-	pdata = dev_get_platdata(&spi->dev);
+-	if (!pdata) {
+-		pdata = &local_pdata;
+-		pdata->base = -1;
+-
++	status = device_property_read_u32(&spi->dev,
++			"microchip,spi-present-mask", &spi_present_mask);
++	if (status) {
+ 		status = device_property_read_u32(&spi->dev,
+-			"microchip,spi-present-mask", &pdata->spi_present_mask);
++				"mcp,spi-present-mask", &spi_present_mask);
+ 		if (status) {
+-			status = device_property_read_u32(&spi->dev,
+-				"mcp,spi-present-mask",
+-				&pdata->spi_present_mask);
+-
+-			if (status) {
+-				dev_err(&spi->dev, "missing spi-present-mask");
+-				return -ENODEV;
+-			}
++			dev_err(&spi->dev, "missing spi-present-mask");
++			return -ENODEV;
+ 		}
+ 	}
  
--#ifdef CONFIG_OF
- static const struct of_device_id mcp23s08_spi_of_match[] = {
- 	{
- 		.compatible = "microchip,mcp23s08",
-@@ -1048,14 +1045,13 @@ static const struct of_device_id mcp23s08_spi_of_match[] = {
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, mcp23s08_spi_of_match);
--#endif
+-	if (!pdata->spi_present_mask || pdata->spi_present_mask > 0xff) {
++	if (!spi_present_mask || spi_present_mask > 0xff) {
+ 		dev_err(&spi->dev, "invalid spi-present-mask");
+ 		return -ENODEV;
+ 	}
  
- static struct spi_driver mcp23s08_driver = {
- 	.probe		= mcp23s08_probe,
- 	.id_table	= mcp23s08_ids,
- 	.driver = {
- 		.name	= "mcp23s08",
--		.of_match_table = of_match_ptr(mcp23s08_spi_of_match),
-+		.of_match_table = mcp23s08_spi_of_match,
- 	},
- };
+ 	for (addr = 0; addr < MCP_MAX_DEV_PER_CS; addr++) {
+-		if (pdata->spi_present_mask & BIT(addr))
++		if (spi_present_mask & BIT(addr))
+ 			chips++;
+ 	}
  
+@@ -1040,7 +1024,7 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 	spi_set_drvdata(spi, data);
+ 
+ 	for (addr = 0; addr < MCP_MAX_DEV_PER_CS; addr++) {
+-		if (!(pdata->spi_present_mask & BIT(addr)))
++		if (!(spi_present_mask & BIT(addr)))
+ 			continue;
+ 		chips--;
+ 		data->mcp[addr] = &data->chip[chips];
+@@ -1054,12 +1038,10 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 			mcp23s08_irq_bus_unlock;
+ 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
+ 					    0x40 | (addr << 1), type,
+-					    pdata->base, addr);
++					    -1, addr);
+ 		if (status < 0)
+ 			return status;
+ 
+-		if (pdata->base != -1)
+-			pdata->base += data->mcp[addr]->chip.ngpio;
+ 		ngpio += data->mcp[addr]->chip.ngpio;
+ 	}
+ 	data->ngpio = ngpio;
+diff --git a/include/linux/spi/mcp23s08.h b/include/linux/spi/mcp23s08.h
+deleted file mode 100644
+index 738a45b435f2..000000000000
+--- a/include/linux/spi/mcp23s08.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-struct mcp23s08_platform_data {
+-	/* For mcp23s08, up to 4 slaves (numbered 0..3) can share one SPI
+-	 * chipselect, each providing 1 gpio_chip instance with 8 gpios.
+-	 * For mpc23s17, up to 8 slaves (numbered 0..7) can share one SPI
+-	 * chipselect, each providing 1 gpio_chip (port A + port B) with
+-	 * 16 gpios.
+-	 */
+-	u32 spi_present_mask;
+-
+-	/* "base" is the number of the first GPIO or -1 for dynamic
+-	 * assignment. If there are gaps in chip addressing the GPIO
+-	 * numbers are sequential .. so for example if only slaves 0
+-	 * and 3 are present, their GPIOs range from base to base+15
+-	 * (or base+31 for s17 variant).
+-	 */
+-	unsigned	base;
+-};
 -- 
 2.25.1
 
