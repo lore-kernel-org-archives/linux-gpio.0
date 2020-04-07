@@ -2,109 +2,154 @@ Return-Path: <SRS0=JbAG=5X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46540C2BA1A
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F25DC2BA80
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C24120857
+	by mail.kernel.org (Postfix) with ESMTP id 000F32078C
 	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgDGRiw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Apr 2020 13:38:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31713 "EHLO mga04.intel.com"
+        id S1726386AbgDGRix (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Apr 2020 13:38:53 -0400
+Received: from mga12.intel.com ([192.55.52.136]:42932 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbgDGRiw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Apr 2020 13:38:52 -0400
-IronPort-SDR: 2uqFRSva0eoy8kVcyvfBmd54RYNpmYAtaxyPid9ekzJAHM/wGjIrwK1+IScAx+YU9/E6YX8IB7
- xILN8NWtp+NQ==
+        id S1726339AbgDGRix (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 7 Apr 2020 13:38:53 -0400
+IronPort-SDR: 4RzxzSGR1Mc2Eiq6KXM27EeXbHQvofOHEbeWfKURpa1o4StpRy7SmhFDf+FS8ONjNoDUVKQ0X5
+ IC9X4Zh1q4+g==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:52 -0700
-IronPort-SDR: k6mazVhuKW/ZrZnt8ixl2sBoXusB7ZHJ6aSk5dnQevcPUJTOLntZmojokoZs7+/tXQPA9W63RQ
- lZtHQB++K8Kw==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:52 -0700
+IronPort-SDR: xRvooFcLZmJJh9c0giiL8g50/jgvRJBLqETisRaJGbne4k1VH0qp2+qXRAM7CRCyMctnnxjT1Z
+ QMr0cHTJBptw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,356,1580803200"; 
-   d="scan'208";a="452509352"
+   d="scan'208";a="397931605"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Apr 2020 10:38:51 -0700
+  by orsmga004.jf.intel.com with ESMTP; 07 Apr 2020 10:38:51 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 56A5355; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
+        id 80772220; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/9] pinctrl: mcp23s08: Deduplicate IRQ chip filling
-Date:   Tue,  7 Apr 2020 20:38:42 +0300
-Message-Id: <20200407173849.43628-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 5/9] pinctrl: mcp23s08: Refactor mcp23s08_spi_regmap_init()
+Date:   Tue,  7 Apr 2020 20:38:45 +0300
+Message-Id: <20200407173849.43628-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
 References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In both cases, SPI and I²C, IRQ chip is filled in the same way.
-Deduplicate this by moving common part to mcp23s08_probe_one().
+There is a lot of duplication for one small helper function.
+Refactor mcp23s08_spi_regmap_init() to prepare everything first
+and then register regmap at the end.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 61 ++++++++++++++----------------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 2c8b8c45b70e..e05219d3331f 100644
+index 513864c74860..07b69242a5b3 100644
 --- a/drivers/pinctrl/pinctrl-mcp23s08.c
 +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -669,7 +669,14 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+@@ -888,50 +888,38 @@ struct mcp23s08_driver_data {
+ static int mcp23s08_spi_regmap_init(struct mcp23s08 *mcp, struct device *dev,
+ 				    unsigned int addr, unsigned int type)
+ {
+-	struct regmap_config *one_regmap_config = NULL;
++	const struct regmap_config *config;
++	struct regmap_config *copy;
++	const char *name;
  
- 	mcp->dev = dev;
- 	mcp->addr = addr;
+ 	switch (type) {
+ 	case MCP_TYPE_S08:
++		mcp->reg_shift = 0;
++		mcp->chip.ngpio = 8;
++		mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL, "mcp23s08.%d",
++						 addr);
 +
- 	mcp->irq_active_high = false;
-+	mcp->irq_chip.name = dev_name(dev);
-+	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
-+	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
-+	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
-+	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
-+	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
++		config = &mcp23x08_regmap;
++		name = devm_kasprintf(dev, GFP_KERNEL, "%d", addr);
++		break;
++
+ 	case MCP_TYPE_S17:
+-		switch (type) {
+-		case MCP_TYPE_S08:
+-			one_regmap_config =
+-				devm_kmemdup(dev, &mcp23x08_regmap,
+-					sizeof(struct regmap_config), GFP_KERNEL);
+-			mcp->reg_shift = 0;
+-			mcp->chip.ngpio = 8;
+-			mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL,
+-					"mcp23s08.%d", addr);
+-			break;
+-		case MCP_TYPE_S17:
+-			one_regmap_config =
+-				devm_kmemdup(dev, &mcp23x17_regmap,
+-					sizeof(struct regmap_config), GFP_KERNEL);
+-			mcp->reg_shift = 1;
+-			mcp->chip.ngpio = 16;
+-			mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL,
+-					"mcp23s17.%d", addr);
+-			break;
+-		}
+-		if (!one_regmap_config)
+-			return -ENOMEM;
++		mcp->reg_shift = 1;
++		mcp->chip.ngpio = 16;
++		mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL, "mcp23s17.%d",
++						 addr);
  
- 	mcp->chip.direction_input = mcp23s08_direction_input;
- 	mcp->chip.get = mcp23s08_get;
-@@ -921,12 +928,6 @@ static int mcp230xx_probe(struct i2c_client *client,
- 		return -ENOMEM;
+-		one_regmap_config->name = devm_kasprintf(dev, GFP_KERNEL, "%d", addr);
+-		mcp->regmap = devm_regmap_init(dev, &mcp23sxx_spi_regmap, mcp,
+-					       one_regmap_config);
++		config = &mcp23x17_regmap;
++		name = devm_kasprintf(dev, GFP_KERNEL, "%d", addr);
+ 		break;
  
- 	mcp->irq = client->irq;
--	mcp->irq_chip.name = dev_name(&client->dev);
--	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
--	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
--	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
--	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
--	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
+ 	case MCP_TYPE_S18:
+-		one_regmap_config =
+-			devm_kmemdup(dev, &mcp23x17_regmap,
+-				sizeof(struct regmap_config), GFP_KERNEL);
+-		if (!one_regmap_config)
+-			return -ENOMEM;
+-		mcp->regmap = devm_regmap_init(dev, &mcp23sxx_spi_regmap, mcp,
+-					       one_regmap_config);
+ 		mcp->reg_shift = 1;
+ 		mcp->chip.ngpio = 16;
+ 		mcp->chip.label = "mcp23s18";
++
++		config = &mcp23x17_regmap;
++		name = config->name;
+ 		break;
  
- 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
- 				    id->driver_data, -1, 0);
-@@ -1029,13 +1030,6 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		chips--;
- 		data->mcp[addr] = &data->chip[chips];
- 		data->mcp[addr]->irq = spi->irq;
--		data->mcp[addr]->irq_chip.name = dev_name(&spi->dev);
--		data->mcp[addr]->irq_chip.irq_mask = mcp23s08_irq_mask;
--		data->mcp[addr]->irq_chip.irq_unmask = mcp23s08_irq_unmask;
--		data->mcp[addr]->irq_chip.irq_set_type = mcp23s08_irq_set_type;
--		data->mcp[addr]->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
--		data->mcp[addr]->irq_chip.irq_bus_sync_unlock =
--			mcp23s08_irq_bus_unlock;
- 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
- 					    0x40 | (addr << 1), type,
- 					    -1, addr);
+ 	default:
+@@ -939,6 +927,13 @@ static int mcp23s08_spi_regmap_init(struct mcp23s08 *mcp, struct device *dev,
+ 		return -EINVAL;
+ 	}
+ 
++	copy = devm_kmemdup(dev, &config, sizeof(config), GFP_KERNEL);
++	if (!copy)
++		return -ENOMEM;
++
++	copy->name = name;
++
++	mcp->regmap = devm_regmap_init(dev, &mcp23sxx_spi_regmap, mcp, copy);
+ 	if (IS_ERR(mcp->regmap))
+ 		return PTR_ERR(mcp->regmap);
+ 
 -- 
 2.25.1
 
