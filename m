@@ -2,81 +2,109 @@ Return-Path: <SRS0=JbAG=5X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3573CC2BA1A
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 16:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46540C2BA1A
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F25320768
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 16:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C24120857
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbgDGQoP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Apr 2020 12:44:15 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44368 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbgDGQoP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2020 12:44:15 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a49so3767804otc.11;
-        Tue, 07 Apr 2020 09:44:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R9dHFjOaPMQsaSClflJCrlQoK/O5+By+otwJwygb61Q=;
-        b=HIcxdrCnmWTYQrDPgWKr+Jc812n9wXD6ddP3WFlo3sM16pT4Z6P6zowTDDh4A5hJCJ
-         LGM9eHvAaDdTiXYNJI6PqTHwXVNHLYeLxCPOHXxfPueVScaBRCJC7zcaZgoo3rCITZh3
-         syNNOD2T6d1xCv42ox/6BvLDZwDfFE6IckNq4KgxB45G/02sbJl140L7OeWiY4ciIFKP
-         7FBJnp1Tl2KJmL6pzLz03hWJ/lSsC+b/AiabbNP6TVt5qRBJzrAl6DK1nJ2MYsVS5fMF
-         drNGW+0ZSaCHrp84+LdepKXfhMssFHwdgDrxLdtDblcOgDzBimf2UEiWBbmW5LruBuQk
-         5D4g==
-X-Gm-Message-State: AGi0PuaNpxnshSgURS2haHAQQ3E7754dn+leiDHxQEIl3cO6ycNcpsJ1
-        u/Zaku/YmBqgiy8/xrZE8FY3oPt4wyFtA25EFtFstmvD
-X-Google-Smtp-Source: APiQypLc/uUMJz9ICJUJPRnekoWgF51izVDvtaNrBMlK0cq68vLd0pZrBiVm2DFcsFWQ2jjjutdWum0eOj2kbLSYGtw=
-X-Received: by 2002:a9d:7590:: with SMTP id s16mr2334844otk.250.1586277854332;
- Tue, 07 Apr 2020 09:44:14 -0700 (PDT)
+        id S1726332AbgDGRiw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Apr 2020 13:38:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:31713 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbgDGRiw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 7 Apr 2020 13:38:52 -0400
+IronPort-SDR: 2uqFRSva0eoy8kVcyvfBmd54RYNpmYAtaxyPid9ekzJAHM/wGjIrwK1+IScAx+YU9/E6YX8IB7
+ xILN8NWtp+NQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:52 -0700
+IronPort-SDR: k6mazVhuKW/ZrZnt8ixl2sBoXusB7ZHJ6aSk5dnQevcPUJTOLntZmojokoZs7+/tXQPA9W63RQ
+ lZtHQB++K8Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,356,1580803200"; 
+   d="scan'208";a="452509352"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Apr 2020 10:38:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 56A5355; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/9] pinctrl: mcp23s08: Deduplicate IRQ chip filling
+Date:   Tue,  7 Apr 2020 20:38:42 +0300
+Message-Id: <20200407173849.43628-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
+References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20200407154245.2548-1-brgl@bgdev.pl>
-In-Reply-To: <20200407154245.2548-1-brgl@bgdev.pl>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 Apr 2020 18:44:02 +0200
-Message-ID: <CAMuHMdWPwG-U6H+0Nmsz7fLgc-wQDnyQbZbw_rvkMZX6E4Q+0w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: disable regmap locking
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 7, 2020 at 5:42 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> This driver uses its own locking but regmap silently uses a mutex for
-> all operations too. Add the option to disable locking to the regmap
-> config struct.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+In both cases, SPI and I²C, IRQ chip is filled in the same way.
+Deduplicate this by moving common part to mcp23s08_probe_one().
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-SATA on Salvator-XS with R-Car H3 ES2.0 relies on a pca9654 GPIO hog
-and still works, so
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 2c8b8c45b70e..e05219d3331f 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -669,7 +669,14 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 
+ 	mcp->dev = dev;
+ 	mcp->addr = addr;
++
+ 	mcp->irq_active_high = false;
++	mcp->irq_chip.name = dev_name(dev);
++	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
++	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
++	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
++	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
++	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
+ 
+ 	mcp->chip.direction_input = mcp23s08_direction_input;
+ 	mcp->chip.get = mcp23s08_get;
+@@ -921,12 +928,6 @@ static int mcp230xx_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	mcp->irq = client->irq;
+-	mcp->irq_chip.name = dev_name(&client->dev);
+-	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
+-	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
+-	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
+-	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
+-	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
+ 
+ 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
+ 				    id->driver_data, -1, 0);
+@@ -1029,13 +1030,6 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 		chips--;
+ 		data->mcp[addr] = &data->chip[chips];
+ 		data->mcp[addr]->irq = spi->irq;
+-		data->mcp[addr]->irq_chip.name = dev_name(&spi->dev);
+-		data->mcp[addr]->irq_chip.irq_mask = mcp23s08_irq_mask;
+-		data->mcp[addr]->irq_chip.irq_unmask = mcp23s08_irq_unmask;
+-		data->mcp[addr]->irq_chip.irq_set_type = mcp23s08_irq_set_type;
+-		data->mcp[addr]->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
+-		data->mcp[addr]->irq_chip.irq_bus_sync_unlock =
+-			mcp23s08_irq_bus_unlock;
+ 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
+ 					    0x40 | (addr << 1), type,
+ 					    -1, addr);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
