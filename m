@@ -2,92 +2,86 @@ Return-Path: <SRS0=JbAG=5X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9DBC2BA1A
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E2C2D0EC
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 20:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22352075E
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 17:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D40B2075E
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 20:08:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nOG4bn7w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgDGRwu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Apr 2020 13:52:50 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9786 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbgDGRwu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Apr 2020 13:52:50 -0400
-IronPort-SDR: 4SQJUA3na+pqgwk5XUYmGaRSO9JNyF3ZiASmJC96FYHnhfIX9nfhoOT31WBhUHOnPvFAIhNbc6
- KK57ibxWvBYA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2020 10:38:52 -0700
-IronPort-SDR: ptWvvvZoLwYZOIxwpTuEgv2iCmcNpZksdj4ugXDrvqa/BDsZnxk1adYcxdkYCU5dB5+hiGbWwJ
- 0nZqe5XMsbcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,356,1580803200"; 
-   d="scan'208";a="275174106"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Apr 2020 10:38:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 716D214F; Tue,  7 Apr 2020 20:38:50 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 4/9] pinctrl: mcp23s08: Drop unused parameter in mcp23s08_probe_one()
-Date:   Tue,  7 Apr 2020 20:38:44 +0300
-Message-Id: <20200407173849.43628-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
-References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
+        id S1727354AbgDGUI3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Apr 2020 16:08:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:18590 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727349AbgDGUI2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2020 16:08:28 -0400
+X-UUID: 8471fe2b636049fa9f36b0f8e3fb0568-20200408
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=WqSU90W8BDFuk3y8S58rG8mKm4Tc9B0etHGPGZwhauc=;
+        b=nOG4bn7wd9ovUAiygI3NOcRDlNPX4dyIje0Ejhh7to6mIDLlGPokoulHf3O8vtXTXD0TFea5396/BcXjzuTAKZqQs8ij26LJawAhhrEZerH6FeOckd1y78Tgb3vxG6AAyiL7SZGoQVNMweKFzPeE9v2kuO0S/+POqIC2ekw08+o=;
+X-UUID: 8471fe2b636049fa9f36b0f8e3fb0568-20200408
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 360376222; Wed, 08 Apr 2020 04:08:23 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 8 Apr 2020 04:08:17 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 8 Apr 2020 04:08:18 +0800
+From:   <sean.wang@mediatek.com>
+To:     <linus.walleij@linaro.org>, <linux-mediatek@lists.infradead.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Light Hsieh <light.hsieh@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v7 2/2] pinctrl: mediatek: make MediaTek MT6765 pinctrl ready for buiding loadable module
+Date:   Wed, 8 Apr 2020 04:08:17 +0800
+Message-ID: <42100afe6f97d28447c153bea6b54ea556cf95ca.1586289920.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <9feeb04805e5a406fe22a92e3f280abda39ddda4.1586289920.git.sean.wang@mediatek.com>
+References: <9feeb04805e5a406fe22a92e3f280abda39ddda4.1586289920.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The cs parameter in mcp23s08_probe_one() is never used. Drop it for good.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 30a5b6bfbb86..513864c74860 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -581,7 +581,7 @@ static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
- 
- static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			      unsigned int addr, unsigned int type,
--			      unsigned int base, int cs)
-+			      unsigned int base)
- {
- 	int status, ret;
- 	bool mirror = false;
-@@ -741,7 +741,7 @@ static int mcp230xx_probe(struct i2c_client *client,
- 
- 	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
- 
--	status = mcp23s08_probe_one(mcp, dev, client->addr, type, -1, 0);
-+	status = mcp23s08_probe_one(mcp, dev, client->addr, type, -1);
- 	if (status)
- 		return status;
- 
-@@ -1009,7 +1009,7 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		if (!data->mcp[addr]->pinctrl_desc.name)
- 			return -ENOMEM;
- 
--		status = mcp23s08_probe_one(data->mcp[addr], dev, 0x40 | (addr << 1), type, -1, addr);
-+		status = mcp23s08_probe_one(data->mcp[addr], dev, 0x40 | (addr << 1), type, -1);
- 		if (status < 0)
- 			return status;
- 
--- 
-2.25.1
+RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KVGhpcyBwYXRj
+aCBtYWtlIHBpbmN0cmwtbXQ2NzY1IHJlYWR5IGZvciBidWlsZGluZyBhcyBsb2FkYWJsZSBtb2R1
+bGUuDQoNClNpZ25lZC1vZmYtYnk6IFNlYW4gV2FuZyA8c2Vhbi53YW5nQG1lZGlhdGVrLmNvbT4N
+ClNpZ25lZC1vZmYtYnk6IExpZ2h0IEhzaWVoIDxsaWdodC5oc2llaEBtZWRpYXRlay5jb20+DQot
+LS0NCnY2LT52NzogcmVtb3ZlIGNoYW5nZS1pZA0KLS0tDQogZHJpdmVycy9waW5jdHJsL21lZGlh
+dGVrL0tjb25maWcgICAgICAgICAgfCAyICstDQogZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3Bp
+bmN0cmwtbXQ2NzY1LmMgfCA0ICsrKysNCiAyIGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVr
+L0tjb25maWcgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvS2NvbmZpZw0KaW5kZXggNTUxYWM3
+MTZiMTBjLi5mMzJkMzY0NGM1MDkgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0
+ZWsvS2NvbmZpZw0KKysrIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL0tjb25maWcNCkBAIC04
+Nyw3ICs4Nyw3IEBAIGNvbmZpZyBQSU5DVFJMX01UMjcxMg0KIAlzZWxlY3QgUElOQ1RSTF9NVEsN
+CiANCiBjb25maWcgUElOQ1RSTF9NVDY3NjUNCi0JYm9vbCAiTWVkaWF0ZWsgTVQ2NzY1IHBpbiBj
+b250cm9sIg0KKwl0cmlzdGF0ZSAiTWVkaWF0ZWsgTVQ2NzY1IHBpbiBjb250cm9sIg0KIAlkZXBl
+bmRzIG9uIE9GDQogCWRlcGVuZHMgb24gQVJNNjQgfHwgQ09NUElMRV9URVNUDQogCWRlZmF1bHQg
+QVJNNjQgJiYgQVJDSF9NRURJQVRFSw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9tZWRp
+YXRlay9waW5jdHJsLW10Njc2NS5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwt
+bXQ2NzY1LmMNCmluZGV4IDkwNWRhZThjM2ZkOC4uMmM1OWQzOTM2MjU2IDEwMDY0NA0KLS0tIGEv
+ZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ2NzY1LmMNCisrKyBiL2RyaXZlcnMv
+cGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10Njc2NS5jDQpAQCAtNiw2ICs2LDcgQEANCiAgKg0K
+ICAqLw0KIA0KKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCiAjaW5jbHVkZSAicGluY3RybC1t
+dGstbXQ2NzY1LmgiDQogI2luY2x1ZGUgInBpbmN0cmwtcGFyaXMuaCINCiANCkBAIC0xMTAzLDMg
+KzExMDQsNiBAQCBzdGF0aWMgaW50IF9faW5pdCBtdDY3NjVfcGluY3RybF9pbml0KHZvaWQpDQog
+CXJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJm10Njc2NV9waW5jdHJsX2RyaXZlcik7
+DQogfQ0KIGFyY2hfaW5pdGNhbGwobXQ2NzY1X3BpbmN0cmxfaW5pdCk7DQorDQorTU9EVUxFX0xJ
+Q0VOU0UoIkdQTCB2MiIpOw0KK01PRFVMRV9ERVNDUklQVElPTigiTWVkaWFUZWsgTVQ2NzY1IFBp
+bmN0cmwgRHJpdmVyIik7DQotLSANCjIuMjUuMQ0K
 
