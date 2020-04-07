@@ -1,148 +1,111 @@
-Return-Path: <SRS0=MCQT=5W=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=JbAG=5X=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE6CC2BA17
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Apr 2020 16:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3080FC2BA16
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 06:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E297249AC
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Apr 2020 16:53:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC16820747
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Apr 2020 06:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwHCR0T8"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QCDaE+PM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbgDFQxA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Apr 2020 12:53:00 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36854 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729616AbgDFQxA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Apr 2020 12:53:00 -0400
-Received: by mail-qk1-f193.google.com with SMTP id l25so8825741qkk.3;
-        Mon, 06 Apr 2020 09:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=SapAmiCtw6FkuT5jKW5Pvl/sHY1boCbQG3iOESfxg2c=;
-        b=MwHCR0T8WPrmfk7GydpAlRPyDyKia47s4RzvB7iclV0WIE8sBSyk0GdPlIN4O2qXJC
-         BMDTEQBRNUjhSrCm2kgpfSvKnRmDAId8OYwwqVI+Fij0H050lXgquph/TSNNOAyjQ5lg
-         Van/rZQkM9Yo3CPZnPi6WnBN3vIEkUr0nH+KVWZXaqfzcsxPh3rIjYXyrJFP59ONxwJs
-         mrGLte3L9G35cKHh6itE9jyD62LyMHgxDoAwzMX2UpBVmIDCMbM/6OUCvFVvgY1tUxGY
-         b/OQLUXfbreALvY4oY4mkQXk6GbM4z7Rxlpae0DWJ+DwkK3nE6NIPkklQ9ZN+lpkNeTp
-         fGTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SapAmiCtw6FkuT5jKW5Pvl/sHY1boCbQG3iOESfxg2c=;
-        b=YVYqglKHQmc/BM8yYpUV3w6kjqoA2hnVLIVfVDmiRK1Zsn/2TitHtDLnLfOTpKq4Sf
-         JyJ/GOSFuxRpq638f50Mc0gBejSn6uEuNZh+1UnR4JgJQ2WR5CteJSyn0b3Ofm6MV7l3
-         YrRx09b0kH7NRxCraPrBk6gj9Kj0ABeubTrJXYSJtXH0aB3aUXQIQBZHCXmTV8ENIqcO
-         ae+N1wapqcfm7XDwqCfJELhaBlJukRd4t4pReHx7YsadsgreME4EV6NUVuBfUXDim6DS
-         1Te12jh5hiOiCy/DkxUyN11chEtydMtCRrcAYsXOkuJXy/LRhWJF04RFntJcOMOJme4y
-         YnYw==
-X-Gm-Message-State: AGi0PuZRigYQJl7TC8LIr0c1iyttwDU6jkzKz91tTEqFtVSjQWquvZXA
-        /ruGSvjZEaj27gZHzipOBnQ=
-X-Google-Smtp-Source: APiQypL0+bZB0iHqMyJr0tK+pGkgK5OtRNJtN5t8mfo2s0bfEsvvw/O/uC70Jclq+GJY6lS5bVEcpQ==
-X-Received: by 2002:a37:7d81:: with SMTP id y123mr22767868qkc.102.1586191979712;
-        Mon, 06 Apr 2020 09:52:59 -0700 (PDT)
-Received: from black.hsd1.ma.comcast.net ([2601:199:417f:9090:d567:b912:d78:1de3])
-        by smtp.gmail.com with ESMTPSA id p35sm15666925qtk.2.2020.04.06.09.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 09:52:58 -0700 (PDT)
-From:   Paul Thomas <pthomas8589@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Thomas <pthomas8589@gmail.com>
-Subject: [PATCH] gpio: gpio-pca953x, Add get_multiple function
-Date:   Mon,  6 Apr 2020 12:51:15 -0400
-Message-Id: <20200406165115.25586-1-pthomas8589@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726631AbgDGG6A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Apr 2020 02:58:00 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15619 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726591AbgDGG6A (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2020 02:58:00 -0400
+X-UUID: 65a262dc56ac42468293d65a1efd5524-20200407
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=90ccjNQIm3aIkIokkHZonC7L4E55DM1TNyxvh7zJNG8=;
+        b=QCDaE+PMKmfuJTJOZi+tcZCWZ0eU7d9ThVcUUrnEVw2JOV/qCxicEyyXAq8mmiSdPNl9A+3raP0nYdVeI5hwOqrCyOXGe7yVi6Lhp9Hk1BXT0gbd0mIPcR/kOV5Rx242O8PiwW2x1ni4iPoG0BAlDctTmKuJCtZa3odupYXSpGA=;
+X-UUID: 65a262dc56ac42468293d65a1efd5524-20200407
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1672264348; Tue, 07 Apr 2020 14:57:55 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 7 Apr 2020 14:57:53 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 7 Apr 2020 14:57:54 +0800
+Message-ID: <1586242674.19903.0.camel@mtkswgap22>
+Subject: Re: [PATCH v5 1/2] pinctrl: mediatek: make MediaTek pinctrl v2
+ driver ready for buidling loadable module
+From:   Light Hsieh <light.hsieh@mediatek.com>
+To:     Sean Wang <sean.wang@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>
+Date:   Tue, 7 Apr 2020 14:57:54 +0800
+In-Reply-To: <CAGp9LzoJ1MiqQhoRnqEgrTP6FycVGJLSQR41FOYK85ic2cgmLA@mail.gmail.com>
+References: <1585569648-14017-1-git-send-email-light.hsieh@mediatek.com>
+         <1585569648-14017-2-git-send-email-light.hsieh@mediatek.com>
+         <CAGp9LzoJ1MiqQhoRnqEgrTP6FycVGJLSQR41FOYK85ic2cgmLA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Implement a get_multiple function for gpio-pca953x. If a driver
-leaves get_multiple unimplemented then gpio_chip_get_multiple()
-in gpiolib.c takes care of it by calling chip->get() as needed.
-For i2c chips this is very inefficient. For example if you do an
-8-bit read then instead of a single i2c transaction there are
-8 transactions reading the same byte!
-
-This has been tested with max7312 chips on a 5.2 kernel.
-
-Signed-off-by: Paul Thomas <pthomas8589@gmail.com>
----
- drivers/gpio/gpio-pca953x.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 96d42f571a18..705115bde740 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -114,6 +114,7 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
- 
- #define MAX_BANK 5
- #define BANK_SZ 8
-+#define BANK_SFT 3 /* ilog2(BANK_SZ) */
- 
- #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
- 
-@@ -451,6 +452,41 @@ static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
- 	return !!(reg_val & bit);
- }
- 
-+static int pca953x_gpio_get_multiple(struct gpio_chip *gc,
-+				      unsigned long *mask, unsigned long *bits)
-+{
-+	struct pca953x_chip *chip = gpiochip_get_data(gc);
-+	unsigned int reg_val;
-+	int offset, value, i, ret = 0;
-+	u8 inreg;
-+
-+	/* Force offset outside the range of i so that
-+	 * at least the first relevant register is read
-+	 */
-+	offset = gc->ngpio;
-+	for_each_set_bit(i, mask, gc->ngpio) {
-+		/* whenever i goes into a new bank update inreg
-+		 * and read the register
-+		 */
-+		if ((offset >> BANK_SFT) != (i >> BANK_SFT)) {
-+			offset = i;
-+			inreg = pca953x_recalc_addr(chip, chip->regs->input,
-+						    offset, true, false);
-+			mutex_lock(&chip->i2c_lock);
-+			ret = regmap_read(chip->regmap, inreg, &reg_val);
-+			mutex_unlock(&chip->i2c_lock);
-+			if (ret < 0)
-+				return ret;
-+		}
-+		/* reg_val is relative to the last read byte,
-+		 * so only shift the relative bits
-+		 */
-+		value = (reg_val >> (i % 8)) & 0x01;
-+		__assign_bit(i, bits, value);
-+	}
-+	return ret;
-+}
-+
- static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 				      unsigned long *mask, unsigned long *bits)
- {
-@@ -547,6 +583,7 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
- 	gc->get = pca953x_gpio_get_value;
- 	gc->set = pca953x_gpio_set_value;
- 	gc->get_direction = pca953x_gpio_get_direction;
-+	gc->get_multiple = pca953x_gpio_get_multiple;
- 	gc->set_multiple = pca953x_gpio_set_multiple;
- 	gc->set_config = pca953x_gpio_set_config;
- 	gc->can_sleep = true;
--- 
-2.17.1
+T24gVHVlLCAyMDIwLTAzLTMxIGF0IDE0OjE1IC0wNzAwLCBTZWFuIFdhbmcgd3JvdGU6DQo+IEhp
+IExpZ2h0LA0KPiA+ICBpbnQgbXRrX3BpbmNvbmZfYmlhc19zZXRfcmV2MShzdHJ1Y3QgbXRrX3Bp
+bmN0cmwgKmh3LA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IHN0cnVj
+dCBtdGtfcGluX2Rlc2MgKmRlc2MsIGJvb2wgcHVsbHVwKQ0KPiA+IEBAIC00OTIsNiArNTAyLDcg
+QEAgaW50IG10a19waW5jb25mX2JpYXNfc2V0X3JldjEoc3RydWN0IG10a19waW5jdHJsICpodywN
+Cj4gPg0KPiA+ICAgICAgICAgcmV0dXJuIDA7DQo+ID4gIH0NCj4gPiArRVhQT1JUX1NZTUJPTF9H
+UEwobXRrX3BpbmNvbmZfYmlhc19zZXRfcmV2MSk7DQo+ID4NCj4gPiAgaW50IG10a19waW5jb25m
+X2JpYXNfZ2V0X3JldjEoc3RydWN0IG10a19waW5jdHJsICpodywNCj4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICpkZXNjLCBib29sIHB1
+bGx1cCwNCj4gPiBAQCAtNTE3LDYgKzUyOCw3IEBAIGludCBtdGtfcGluY29uZl9iaWFzX2dldF9y
+ZXYxKHN0cnVjdCBtdGtfcGluY3RybCAqaHcsDQo+ID4NCj4gPiAgICAgICAgIHJldHVybiAwOw0K
+PiA+ICB9DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKG10a19waW5jb25mX2JpYXNfc2V0X3JldjEp
+Ow0KPiA+DQo+IA0KPiBJIGdvdCBidWlsZCBlcnJvciB3aXRoIHRoZSBwYXRjaA0KPiANCj4gLi4v
+ZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jOjUyOToxOiBl
+cnJvcjoNCj4gcmVkZWZpbml0aW9uIG9mICdfX2tzeW10YWJfbXRrX3BpbmNvbmZfYmlhc19zZXRf
+cmV2MScNCj4gLi4vZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12
+Mi5jOjUwMzoxOiBub3RlOg0KPiBwcmV2aW91cyBkZWZpbml0aW9uIG9mICdfX2tzeW10YWJfbXRr
+X3BpbmNvbmZfYmlhc19zZXRfcmV2MScgd2FzIGhlcmUNCj4gbWFrZVs0XTogKioqIFtkcml2ZXJz
+L3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLm9dIEVycm9yIDENCj4gDQoN
+Ckkgd2lsbCBjb3JyZWN0IGl0IG9uIHY2Lg0KDQo+ID4gIC8qIENvbWJvIGZvciB0aGUgZm9sbG93
+aW5nIHB1bGwgcmVnaXN0ZXIgdHlwZToNCj4gPiAgICogMS4gUFUgKyBQRA0KPiA+IEBAIC03MTcs
+NiArNzI5LDcgQEAgaW50IG10a19waW5jb25mX2JpYXNfc2V0X2NvbWJvKHN0cnVjdCBtdGtfcGlu
+Y3RybCAqaHcsDQo+ID4gIG91dDoNCj4gPiAgICAgICAgIHJldHVybiBlcnI7DQo+ID4gIH0NCj4g
+PiArRVhQT1JUX1NZTUJPTF9HUEwobXRrX3BpbmNvbmZfYmlhc19zZXRfY29tYm8pOw0KPiA+DQo+
+IDxzbmlwPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3Ry
+bC1wYXJpcy5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYw0KPiA+
+IGluZGV4IDgzYmYyOWMuLjg4MjNjMGMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJs
+L21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9tZWRp
+YXRlay9waW5jdHJsLXBhcmlzLmMNCj4gPiBAQCAtMTAsNiArMTAsNyBAQA0KPiA+ICAgKi8NCj4g
+Pg0KPiA+ICAjaW5jbHVkZSA8bGludXgvZ3Bpby9kcml2ZXIuaD4NCj4gPiArI2luY2x1ZGUgPGxp
+bnV4L21vZHVsZS5oPg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcGluY3RybC9tdDY1eHgu
+aD4NCj4gPiAgI2luY2x1ZGUgInBpbmN0cmwtcGFyaXMuaCINCj4gPg0KPiA+IEBAIC02MzMsNiAr
+NjM0LDcgQEAgc3NpemVfdCBtdGtfcGN0cmxfc2hvd19vbmVfcGluKHN0cnVjdCBtdGtfcGluY3Ry
+bCAqaHcsDQo+ID4NCj4gPiAgICAgICAgIHJldHVybiBsZW47DQo+ID4gIH0NCj4gPiArRVhQT1JU
+X1NZTUJPTF9HUEwobXRrX3BjdHJsX3Nob3dfb25lX3Bpbik7DQo+ID4NCj4gPiAgI2RlZmluZSBQ
+SU5fREJHX0JVRl9TWiA5Ng0KPiA+ICBzdGF0aWMgdm9pZCBtdGtfcGN0cmxfZGJnX3Nob3coc3Ry
+dWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCBzdHJ1Y3Qgc2VxX2ZpbGUgKnMsDQo+ID4gQEAgLTEw
+MzcsMyArMTAzOSw3IEBAIHN0YXRpYyBpbnQgbXRrX3BhcmlzX3BpbmN0cmxfcmVzdW1lKHN0cnVj
+dCBkZXZpY2UgKmRldmljZSkNCj4gPiAgICAgICAgIC5zdXNwZW5kX25vaXJxID0gbXRrX3Bhcmlz
+X3BpbmN0cmxfc3VzcGVuZCwNCj4gPiAgICAgICAgIC5yZXN1bWVfbm9pcnEgPSBtdGtfcGFyaXNf
+cGluY3RybF9yZXN1bWUsDQo+ID4gIH07DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKG10a19wYXJp
+c19waW5jdHJsX3Byb2JlKTsNCj4gDQo+IHBsYWNlIEVYUE9SVF9TWU1CT0xfR1BMKG10a19wYXJp
+c19waW5jdHJsX3Byb2JlKSBleGFjdGx5IGF0IHRoZSB0YWlsDQo+IG9mIG10a19wYXJpc19waW5j
+dHJsX3Byb2JlIGRlZmluaXRpb24uDQo+IA0KDQpJIHdpbGwgbW92ZSBpdC4NCg0KPiA+ICsNCj4g
+PiArTU9EVUxFX0xJQ0VOU0UoIkdQTCB2MiIpOw0KPiA+ICtNT0RVTEVfREVTQ1JJUFRJT04oIk1l
+ZGlhVGVrIFBpbmN0cmwgQ29tbW9uIERyaXZlciBWMiBQYXJpcyIpOw0KPiA+IC0tDQo+ID4gMS44
+LjEuMS5kaXJ0eQ0KDQo=
 
