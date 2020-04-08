@@ -2,86 +2,109 @@ Return-Path: <SRS0=1fa9=5Y=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC88C2BA1B
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Apr 2020 15:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CED7C2D0F4
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Apr 2020 18:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D742072F
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Apr 2020 15:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2F0F20771
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Apr 2020 18:51:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZPV5aeI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbgDHPl7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Apr 2020 11:41:59 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61153 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727933AbgDHPl7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 8 Apr 2020 11:41:59 -0400
-IronPort-SDR: y2XL3LXfzF9LDOTvVFk8sroZcXbrzfGfIiEoEV2+nNJuaC/ijOn1IKICzUYcjxhqgSYfAFHlfN
- /eHGFY8nmkWA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2020 08:41:58 -0700
-IronPort-SDR: ucHdZjIn/sj7gpIQoYjUyInEoM6ATIA+3FRZbFsVcT9Og8PUH+SmOE8na+kKxC2bGkQNarduFc
- yK6+qadnfTow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,359,1580803200"; 
-   d="scan'208";a="361874524"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Apr 2020 08:41:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 23B61130; Wed,  8 Apr 2020 18:41:55 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/2] gpio: merrifield: Switch over to MSI interrupts
-Date:   Wed,  8 Apr 2020 18:41:54 +0300
-Message-Id: <20200408154155.68310-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+        id S1729372AbgDHSvp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Apr 2020 14:51:45 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33960 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729363AbgDHSvp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2020 14:51:45 -0400
+Received: by mail-pl1-f195.google.com with SMTP id a23so2859134plm.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2020 11:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7hOlSBB7ydWvmmauId0lofXvGU8t5v3hHpggIUrKKAQ=;
+        b=uZPV5aeI7aV9wAoSHE4QYJzgPmO/8OklH6Kb8dlPD7ePz8fR79lon3jSF2O0xYYEP1
+         WIgpOh/rt1+XjQryBUuS1INJAe7fOIu7nw+4PSgnMKcPDE1gt9vSBWqwX3BiICRfjchx
+         SS5x37AIkgn7ps8xjBO592p8+CdVCBO+winuMfgV8ESfjtOnkiNssHgJ+tJjmSg8LyNL
+         9N4TKXAQ6XdCACc361aw16eGwQvvhM3BLPmjgyzLVqonAdxrDNxyqLUqdhXv+BzgMknj
+         Qg60u+JDoKW3VVu0nMhuBaEGQUqDIu6AUzscT7Y694e+/sDsxfSHLlEJnhdT5gVVGz8s
+         7Dtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7hOlSBB7ydWvmmauId0lofXvGU8t5v3hHpggIUrKKAQ=;
+        b=CCS31/0GYcizN0qU/qllEwgCjGbO1hxyX9wv34CVgp3cAvcEbg2zI52ahVQi9WUioB
+         HfsKLgpfXpd4+/OlvRnp85fnrw1dAGAje49XFP+r/2Omxbe4KJX6xuJTbfA2JGH8fUtX
+         4mwYU/oFvxfworKMekZt2XgpThvjTQBNEGvUTViqL03f1RTWxvDZQf4dYC6QuOKYCAhe
+         QdjuhjurZbYcyEX8PWnr7eyunhF4gMTZ6caJBDpuh1L9FfSI8FEfE9pUj8GL9jwuu3CE
+         SlCJhd0ie302qBU1oJj5dlijgppQA2AzRI5H5UZnkgTZejvGcJzcjg277B0VAl00ZHSR
+         gnZw==
+X-Gm-Message-State: AGi0PuZw4DMEVY5rKzXfo8XYaGv7ICGQgU2yivoVtyWpFYf/RprulTXj
+        m+sB3nmc19CjhtYiMqoLjxNJfA==
+X-Google-Smtp-Source: APiQypJQwRMAJ6mPpNstf7GbgE2jm+FiF4s39Ym7/WT+voxTbvNy4AmPw7dqgax4X3Cu23PVKan7ag==
+X-Received: by 2002:a17:902:d691:: with SMTP id v17mr1688723ply.142.1586371903804;
+        Wed, 08 Apr 2020 11:51:43 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id d85sm1879490pfd.157.2020.04.08.11.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Apr 2020 11:51:43 -0700 (PDT)
+Date:   Wed, 8 Apr 2020 11:51:40 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Ajay Kishore <akisho@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] pinctrl: qcom: Remove duplicated include from
+ pinctrl-msm.c
+Message-ID: <20200408185140.GN663905@yoga>
+References: <20200408070504.134847-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200408070504.134847-1-yuehaibing@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some devices may support MSI interrupts. Let's at least try to use them
-in platforms that provide MSI capability.
+On Wed 08 Apr 00:05 PDT 2020, YueHaibing wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fix slipped compilation error
- drivers/gpio/gpio-merrifield.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> Remove duplicated include.
+> 
 
-diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
-index 48918a016cd8..11e6ea70568a 100644
---- a/drivers/gpio/gpio-merrifield.c
-+++ b/drivers/gpio/gpio-merrifield.c
-@@ -473,6 +473,10 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 
- 	raw_spin_lock_init(&priv->lock);
- 
-+	retval = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
-+	if (retval < 0)
-+		return retval;
-+
- 	girq = &priv->chip.irq;
- 	girq->chip = &mrfld_irqchip;
- 	girq->init_hw = mrfld_irq_init_hw;
-@@ -482,7 +486,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 				     sizeof(*girq->parents), GFP_KERNEL);
- 	if (!girq->parents)
- 		return -ENOMEM;
--	girq->parents[0] = pdev->irq;
-+	girq->parents[0] = pci_irq_vector(pdev, 0);
- 	girq->first = irq_base;
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_bad_irq;
--- 
-2.25.1
+Missed that in my review, thanks.
 
+Fixes: 13bec8d49bdf ("pinctrl: qcom: use scm_call to route GPIO irq to Apps")
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 9a398a211d30..898fc041e197 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -23,7 +23,6 @@
+>  #include <linux/pm.h>
+>  #include <linux/log2.h>
+>  #include <linux/qcom_scm.h>
+> -#include <linux/io.h>
+>  
+>  #include <linux/soc/qcom/irq.h>
+> 
+> 
+> 
