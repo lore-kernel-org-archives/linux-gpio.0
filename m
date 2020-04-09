@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC772C2BB86
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BBCC2BA2B
 	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC3F520692
+	by mail.kernel.org (Postfix) with ESMTP id 6EA9220857
 	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbgDIOMl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727226AbgDIOMl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 9 Apr 2020 10:12:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:57753 "EHLO mga14.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:22009 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbgDIOMl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727220AbgDIOMl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Thu, 9 Apr 2020 10:12:41 -0400
-IronPort-SDR: D+56rQ0N3O1rMeKRy+VGaTKcN/mBK/47vCDhU9CSp+dm6brL5eJs49jrCcZaKZOGuHs6hN30Xg
- KwOQemxzUA/g==
+IronPort-SDR: VuI8ld5GRa16gr6ysPZXklkanudZ9eaKtzgCgUUJ9LtJW6ZDt29BSfrzQEFpTXGEf6Z/tIBycT
+ 7jPsSdDt8FhA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:34 -0700
-IronPort-SDR: L7r7ecLa6gTmQr9TqFjXz4pLJmn+Y5itRCh54g9TFk1OvcYzo5BJ2be4YgPXDt6GoJbVYnnleD
- +TN2b8GQIaQw==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:36 -0700
+IronPort-SDR: RoWAGnHVGrJYyocvJV7ER5xMzwmshNILUqaqMJ6ocbLYid9JFRKDpPUaOK4xQYggJICdXmQvQ8
+ ZcMSnVtukn0g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
-   d="scan'208";a="297532032"
+   d="scan'208";a="453172111"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 09 Apr 2020 07:12:32 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 09 Apr 2020 07:12:34 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A4564A0D; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
+        id E0EA4CC3; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 07/13] gpio: dwapb: Convert to use IRQ core provided macros
-Date:   Thu,  9 Apr 2020 17:12:22 +0300
-Message-Id: <20200409141228.49561-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 13/13] gpio: dwapb: Amend indentation in some cases
+Date:   Thu,  9 Apr 2020 17:12:28 +0300
+Message-Id: <20200409141228.49561-14-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
@@ -51,42 +51,81 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-IRQ core provides macros such as IRQ_RETVAL().
-Convert code to use them.
+In some cases indentation makes code harder to read. Amend indentation
+in those cases despite of lines go a bit over 80 character limit.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-dwapb.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index a0a0288bb73e..916a42fea456 100644
+index bbaf909a463a..e4c946cafab0 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -258,8 +258,7 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
- 	unsigned long level, polarity, flags;
- 	u32 bit = irqd_to_hwirq(d);
+@@ -437,7 +437,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		}
+ 	}
  
--	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
--		     IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
-+	if (type & ~IRQ_TYPE_SENSE_MASK)
- 		return -EINVAL;
+-	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
++	for (hwirq = 0; hwirq < ngpio; hwirq++)
+ 		irq_create_mapping(gpio->domain, hwirq);
  
- 	spin_lock_irqsave(&gc->bgpio_lock, flags);
-@@ -351,12 +350,7 @@ static int dwapb_gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 	port->gc.to_irq = dwapb_gpio_to_irq;
+@@ -453,7 +453,7 @@ static void dwapb_irq_teardown(struct dwapb_gpio *gpio)
+ 	if (!gpio->domain)
+ 		return;
  
- static irqreturn_t dwapb_irq_handler_mfd(int irq, void *dev_id)
- {
--	u32 worked;
--	struct dwapb_gpio *gpio = dev_id;
--
--	worked = dwapb_do_irq(gpio);
--
--	return worked ? IRQ_HANDLED : IRQ_NONE;
-+	return IRQ_RETVAL(dwapb_do_irq(dev_id));
- }
+-	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
++	for (hwirq = 0; hwirq < ngpio; hwirq++)
+ 		irq_dispose_mapping(irq_find_mapping(gpio->domain, hwirq));
  
- static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	irq_domain_remove(gpio->domain);
+@@ -478,10 +478,9 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 		return -ENOMEM;
+ #endif
+ 
+-	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_STRIDE);
+-	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_STRIDE);
+-	dirout = gpio->regs + GPIO_SWPORTA_DDR +
+-		(pp->idx * GPIO_SWPORT_DDR_STRIDE);
++	dat = gpio->regs + GPIO_EXT_PORTA + pp->idx * GPIO_EXT_PORT_STRIDE;
++	set = gpio->regs + GPIO_SWPORTA_DR + pp->idx * GPIO_SWPORT_DR_STRIDE;
++	dirout = gpio->regs + GPIO_SWPORTA_DDR + pp->idx * GPIO_SWPORT_DDR_STRIDE;
+ 
+ 	/* This registers 32 GPIO lines per port */
+ 	err = bgpio_init(&port->gc, gpio->dev, 4, dat, set, NULL, dirout,
+@@ -582,17 +581,13 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
+ 
+ 		if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
+ 		    pp->idx >= DWAPB_MAX_PORTS) {
+-			dev_err(dev,
+-				"missing/invalid port index for port%d\n", i);
++			dev_err(dev, "missing/invalid port index for port%d\n", i);
+ 			fwnode_handle_put(fwnode);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
+-					 &pp->ngpio)) {
+-			dev_info(dev,
+-				 "failed to get number of gpios for port%d\n",
+-				 i);
++		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios", &pp->ngpio)) {
++			dev_info(dev, "failed to get number of gpios for port%d\n", i);
+ 			pp->ngpio = 32;
+ 		}
+ 
+@@ -743,8 +738,7 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 			ctx->int_deb	= dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+ 
+ 			/* Mask out interrupts */
+-			dwapb_write(gpio, GPIO_INTMASK,
+-				    0xffffffff & ~ctx->wake_en);
++			dwapb_write(gpio, GPIO_INTMASK, 0xffffffff & ~ctx->wake_en);
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
 -- 
 2.25.1
 
