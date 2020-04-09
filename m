@@ -2,148 +2,115 @@ Return-Path: <SRS0=Gzc7=5Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAE9C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4857EC2BA2B
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F68220692
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11E52208FE
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:28:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECCzfgNk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgDIOMm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Apr 2020 10:12:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:57753 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727220AbgDIOMl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 9 Apr 2020 10:12:41 -0400
-IronPort-SDR: tacuXIJnlYbQh9OnpV8gc7hK+z7WEl3aZ0F6WWwwD0fHZMomQYgE0pk1HoKjV8Ulg9NT6f1lGs
- 7TcqjAyQqFoA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:35 -0700
-IronPort-SDR: a+eXNgdKK92g8LkY3EYm0VtI/hw92+Y5sYdFbXImdXnjFZJVcavM0ikD/LQskFqgUT1z/grIHh
- PzPaRUWGb3EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
-   d="scan'208";a="251905224"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 09 Apr 2020 07:12:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id CB4E3CBC; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1727677AbgDIO2e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Apr 2020 10:28:34 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42545 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbgDIO2e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2020 10:28:34 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s13so8044999lfb.9
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Apr 2020 07:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/DFqMg/9d5OZoJpezGLjo9V/b+56Y3THJiDRcavTxCQ=;
+        b=ECCzfgNkS3E8TRfPqRHnWTCZ8qgrgYV+7Vpzp8+sJRL8pdVHlDqdE431mR6NXDcfNu
+         4inBGNwmRiOKyqgISDYkHh+idi2n9BPwAmC8DxINRD1SpNBBpJrbbHafPHRS9fqcktbV
+         1gI3JPeH+mRLcGGOGmtS5HLHrrpSM4vLyY4/3jL+QkOeO5PG6ZIOpCoXqsEtDmEIAXVN
+         vQqpvhF6XKGkDHgX8OKRdFyT5znPaCD7Cmrc1QIMiJmcDomwmuiiBaLA/cARBrG7feOa
+         Z671GpTngAvNcaZGZysRcDr153FLRYFWAXsjHFNV6S35LMsXaF8bty6WeRgHx2ibx6jQ
+         r8nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/DFqMg/9d5OZoJpezGLjo9V/b+56Y3THJiDRcavTxCQ=;
+        b=HYroYNp3rptDfpGhGQAreYks2jZMSoKX6oDbTklrKTyiP8bGIlLBfpOaBvEMAibR2f
+         wAxIml0NT3Na2p+j8G90lQrw6C68csBuSHJAE42DyfpYEebMVfFT882sP3BSr8Gd67I9
+         FvZsQnR9VP7uIKE7GFs6QFgqAmO08w3rdn1VBhqDTmiYmCgpUHxPOPWU9zMbhAQyrVa5
+         kdHgsI34YTDJi2b/RS+f6HP/Ri9kV0EjphuWXH1DK7XNlBAqWrDAVrYZKhkWE+dSWLgP
+         2dInfOngtWF21ialrkFXD6oNhLxdx34tnwwhwUYVW2CuIrZqMqxlUfq6SCCvMdLc/bRb
+         Tcmg==
+X-Gm-Message-State: AGi0PubtN/ad/1QqvuTeXZ6iCt6n+VpRH8S/I4qbDBd/OIClxsNXHifC
+        wPxbaSPz98PMTE6mVtpdWYIY3Qil
+X-Google-Smtp-Source: APiQypILUcMuNSzGu/RARRXB0pxNXD43e+Apk8mYOtoBprWQ8pZsPB2GRHwTDACQziN7t31EViAzcQ==
+X-Received: by 2002:a19:9141:: with SMTP id y1mr7814337lfj.168.1586442511772;
+        Thu, 09 Apr 2020 07:28:31 -0700 (PDT)
+Received: from mobilestation ([95.79.136.110])
+        by smtp.gmail.com with ESMTPSA id h20sm15062640lji.103.2020.04.09.07.28.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Apr 2020 07:28:31 -0700 (PDT)
+Date:   Thu, 9 Apr 2020 17:28:29 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 11/13] gpio: dwapb: Split out dwapb_get_irq() helper
-Date:   Thu,  9 Apr 2020 17:12:26 +0300
-Message-Id: <20200409141228.49561-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 00/13] gpio: dwapb: Clean up the driver and a fix
+Message-ID: <20200409142829.cyuxc36mjngwg2kw@mobilestation>
 References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Split out dwapb_get_irq() helper for better readability and maintenance.
+Hello Andy
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-dwapb.c | 56 ++++++++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 27 deletions(-)
+On Thu, Apr 09, 2020 at 05:12:15PM +0300, Andy Shevchenko wrote:
+> It appears that GPIO DW APB driver wasn't touched for a long time. Here is
+> the fix for long standing issue, i.e. missed module alias to make the driver
+> be loaded automatically.
+> 
+> On top of above a lot small clean ups here and there.
+> 
+> The series based on the v3 by Serge Semin which he sent earlier.
+> 
+> Driver has been tested on Intel Galileo Gen2 with AT25 SPI EEPROM using it
+> for a chip select.
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 5b93967a4c96..7789410fe15e 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -528,14 +528,38 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
- 			gpiochip_remove(&gpio->ports[m].gc);
- }
- 
--static struct dwapb_platform_data *
--dwapb_gpio_get_pdata(struct device *dev)
-+static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
-+			  struct dwapb_port_property *pp)
-+{
-+	struct device_node *np = NULL;
-+	int j;
-+
-+	if (fwnode_property_read_bool(fwnode, "interrupt-controller"))
-+		np = to_of_node(fwnode);
-+
-+	for (j = 0; j < pp->ngpio; j++) {
-+		pp->irq[j] = -ENXIO;
-+
-+		if (np)
-+			pp->irq[j] = of_irq_get(np, j);
-+		else if (has_acpi_companion(dev))
-+			pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
-+
-+		if (pp->irq[j] >= 0)
-+			pp->has_irq = true;
-+	}
-+
-+	if (!pp->has_irq)
-+		dev_warn(dev, "no irq for port%d\n", pp->idx);
-+}
-+
-+static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
- {
- 	struct fwnode_handle *fwnode;
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
--	int i, j;
-+	int i;
- 
- 	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
-@@ -553,8 +577,6 @@ dwapb_gpio_get_pdata(struct device *dev)
- 
- 	i = 0;
- 	device_for_each_child_node(dev, fwnode)  {
--		struct device_node *np = NULL;
--
- 		pp = &pdata->properties[i++];
- 		pp->fwnode = fwnode;
- 
-@@ -581,28 +603,8 @@ dwapb_gpio_get_pdata(struct device *dev)
- 		 * Only port A can provide interrupts in all configurations of
- 		 * the IP.
- 		 */
--		if (pp->idx != 0)
--			continue;
--
--		if (dev->of_node && fwnode_property_read_bool(fwnode,
--						  "interrupt-controller")) {
--			np = to_of_node(fwnode);
--		}
--
--		for (j = 0; j < pp->ngpio; j++) {
--			pp->irq[j] = -ENXIO;
--
--			if (np)
--				pp->irq[j] = of_irq_get(np, j);
--			else if (has_acpi_companion(dev))
--				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
--
--			if (pp->irq[j] >= 0)
--				pp->has_irq = true;
--		}
--
--		if (!pp->has_irq)
--			dev_warn(dev, "no irq for port%d\n", pp->idx);
-+		if (pp->idx == 0)
-+			dwapb_get_irq(dev, fwnode, pp);
- 	}
- 
- 	return pdata;
--- 
-2.25.1
+Thanks for the series. I'll review it in one-two days and test it out on our
+Baikal-T1-based hardware.
 
+-Sergey
+
+> 
+> Andy Shevchenko (13):
+>   gpio: dwapb: Append MODULE_ALIAS for platform driver
+>   gpio: dwapb: Refactor IRQ handler
+>   gpio: dwapb: set default handler to be handle_bad_irq()
+>   gpio: dwapb: Deduplicate IRQ resource management
+>   gpio: dwapb: Convert to use irqd_to_hwirq()
+>   gpio: dwapb: Use device_get_match_data() to simplify code
+>   gpio: dwapb: Convert to use IRQ core provided macros
+>   gpio: dwapb: Switch to more usual pattern of RMW in
+>     dwapb_gpio_set_debounce()
+>   gpio: dwapb: Drop bogus BUG_ON()s
+>   gpio: dwapb: Drop of_match_ptr() & ACPI_PTR() calls
+>   gpio: dwapb: Split out dwapb_get_irq() helper
+>   gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
+>   gpio: dwapb: Amend indentation in some cases
+> 
+>  drivers/gpio/gpio-dwapb.c | 205 +++++++++++++++-----------------------
+>  1 file changed, 79 insertions(+), 126 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
