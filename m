@@ -2,213 +2,115 @@ Return-Path: <SRS0=Gzc7=5Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2C8C2BA2B
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 13:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED83C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF982082D
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 13:06:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ObAiM6H2"
+	by mail.kernel.org (Postfix) with ESMTP id CCDE220857
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgDINGM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Apr 2020 09:06:12 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:48622 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726621AbgDINGM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2020 09:06:12 -0400
-X-UUID: 4b4f00e13e084d89af18ba3685d5a675-20200409
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=toLJInywXK6opnZ9NQoaexPTPfGfMFROYJqBdUiWjVU=;
-        b=ObAiM6H2A3KbPYrKpHKsdxNiO1NIGi7CFBtud+OyGe0JmryAtxAqiGx8Op4jsuFhF7GObjzV1tpeUkt1A7MU9ppNKhlXA/qiod7hAWk7xCIzRNdFh1f1DGW5DZdD6EwMIrYOJR16RAhIgRc3erLt/leKOWUbNj+Y+wGULb8s2Nc=;
-X-UUID: 4b4f00e13e084d89af18ba3685d5a675-20200409
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <dongchun.zhu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2084458151; Thu, 09 Apr 2020 21:03:37 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 9 Apr
- 2020 21:03:37 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 9 Apr 2020 21:03:37 +0800
-Message-ID: <1586437408.8804.62.camel@mhfsdcap03>
-Subject: Re: [V6, 1/2] media: dt-bindings: media: i2c: Document OV02A10
- bindings
-From:   Dongchun Zhu <dongchun.zhu@mediatek.com>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        id S1726983AbgDIOMb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Apr 2020 10:12:31 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4996 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726940AbgDIOMb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 9 Apr 2020 10:12:31 -0400
+IronPort-SDR: MC926sXUZVFF+qn9QXyLoTHq5dRvBOuJMRu/vazGgmdzRkXR8mnuXhgKk6WSpJdPNGqfGpRkgP
+ d92tOejPbgNQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:31 -0700
+IronPort-SDR: C9Nt1YRLVxFGDm+4X7RpRreeucvWM/rLnfMtSOdbv1PeItOsAq35EWar4/1bWvXKEVyxWcUkMQ
+ 7PTAkqy+GooQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
+   d="scan'208";a="425517693"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 09 Apr 2020 07:12:30 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 6DEF6130; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        <broonie@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Cao Bing Bu <bingbu.cao@intel.com>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg 
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Sj Huang <sj.huang@mediatek.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        Louis Kuo <louis.kuo@mediatek.com>,
-        "Shengnan Wang =?UTF-8?Q?=28=E7=8E=8B=E5=9C=A3=E7=94=B7=29?=" 
-        <shengnan.wang@mediatek.com>, <linux-gpio@vger.kernel.org>
-Date:   Thu, 9 Apr 2020 21:03:28 +0800
-In-Reply-To: <CAAFQd5DHL3mXZGHW+XWMXTVfekamEvaEv3bLZt4Bg2UpKPohmA@mail.gmail.com>
-References: <20191211112849.16705-1-dongchun.zhu@mediatek.com>
-         <20191211112849.16705-2-dongchun.zhu@mediatek.com>
-         <CAAFQd5AnWZqjQEVvw8gv7JzOBHxJvsOWaGrbY8CXQ_87ap-ahA@mail.gmail.com>
-         <CAAFQd5DHL3mXZGHW+XWMXTVfekamEvaEv3bLZt4Bg2UpKPohmA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        linux-gpio@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 01/13] gpio: dwapb: Append MODULE_ALIAS for platform driver
+Date:   Thu,  9 Apr 2020 17:12:16 +0300
+Message-Id: <20200409141228.49561-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
+References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: BB954F30AA652C663C9BBEEA6647A034795B55269FF6686A12EE0CB199AD81932000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SGkgTWF1cm8sIFNha2FyaSwgUm9iLA0KDQpPbiBXZWQsIDIwMjAtMDQtMDggYXQgMTQ6NDkgKzAy
-MDAsIFRvbWFzeiBGaWdhIHdyb3RlOg0KPiBPbiBUdWUsIERlYyAxNywgMjAxOSBhdCA0OjE1IEFN
-IFRvbWFzeiBGaWdhIDx0ZmlnYUBjaHJvbWl1bS5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gSGkgUm9i
-LCBEb25nY2h1biwNCj4gPg0KPiA+IE9uIFdlZCwgRGVjIDExLCAyMDE5IGF0IDg6MjkgUE0gRG9u
-Z2NodW4gWmh1IDxkb25nY2h1bi56aHVAbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiA+DQo+ID4g
-PiBBZGQgRFQgYmluZGluZ3MgZG9jdW1lbnRhdGlvbiBmb3IgT21uaXZpc2lvbiBPVjAyQTEwIGlt
-YWdlIHNlbnNvci4NCj4gPiA+DQo+ID4gPiBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhA
-a2VybmVsLm9yZz4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IERvbmdjaHVuIFpodSA8ZG9uZ2NodW4u
-emh1QG1lZGlhdGVrLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL21lZGlhL2kyYy9vdjAyYTEwLnR4dCAgICAgIHwgNTQgKysrKysrKysrKysrKysrKysrKysr
-Kw0KPiA+ID4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgIDcgKysrDQo+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA2MSBpbnNlcnRpb25zKCspDQo+
-ID4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9tZWRpYS9pMmMvb3YwMmExMC50eHQNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL2kyYy9vdjAyYTEwLnR4dCBiL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9pMmMvb3YwMmExMC50eHQNCj4gPiA+
-IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gPiBpbmRleCAwMDAwMDAwLi4xOGFjYzRmDQo+ID4g
-PiAtLS0gL2Rldi9udWxsDQo+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWVkaWEvaTJjL292MDJhMTAudHh0DQo+ID4gPiBAQCAtMCwwICsxLDU0IEBADQo+ID4g
-PiArKiBPbW5pdmlzaW9uIE9WMDJBMTAgTUlQSSBDU0ktMiBzZW5zb3INCj4gPiA+ICsNCj4gPiA+
-ICtSZXF1aXJlZCBQcm9wZXJ0aWVzOg0KPiA+ID4gKy0gY29tcGF0aWJsZTogc2hhbGwgYmUgIm92
-dGksb3YwMmExMCINCj4gPiA+ICstIGNsb2NrczogcmVmZXJlbmNlIHRvIHRoZSBlY2xrIGlucHV0
-IGNsb2NrDQo+ID4gPiArLSBjbG9jay1uYW1lczogc2hhbGwgYmUgImVjbGsiDQo+ID4gPiArLSBk
-b3ZkZC1zdXBwbHk6IERpZ2l0YWwgSS9PIHZvbHRhZ2Ugc3VwcGx5LCAxLjggdm9sdHMNCj4gPiA+
-ICstIGF2ZGQtc3VwcGx5OiBBbmFsb2cgdm9sdGFnZSBzdXBwbHksIDIuOCB2b2x0cw0KPiA+ID4g
-Ky0gZHZkZC1zdXBwbHk6IERpZ2l0YWwgY29yZSB2b2x0YWdlIHN1cHBseSwgMS44IHZvbHRzDQo+
-ID4gPiArLSBwb3dlcmRvd24tZ3Bpb3M6IHJlZmVyZW5jZSB0byB0aGUgR1BJTyBjb25uZWN0ZWQg
-dG8gdGhlIHBvd2VyZG93biBwaW4sDQo+ID4gPiArICAgICAgICAgICAgICAgICAgaWYgYW55LiBU
-aGlzIGlzIGFuIGFjdGl2ZSBsb3cgc2lnbmFsIHRvIHRoZSBPVjAyQTEwLg0KPiA+DQo+ID4gT24g
-dGhlIGhhcmR3YXJlIGxldmVsIHRoaXMgcGluIGlzIGFjdGl2ZSBoaWdoLCBpLmUuIHRoZSBkZXZp
-Y2UgaXMNCj4gPiBwb3dlcmVkIGRvd24gd2hlbiB0aGUgc2lnbmFsIGlzIGhpZ2guDQo+ID4NCj4g
-PiA+ICstIHJlc2V0LWdwaW9zOiByZWZlcmVuY2UgdG8gdGhlIEdQSU8gY29ubmVjdGVkIHRvIHRo
-ZSByZXNldCBwaW4sIGlmIGFueS4NCj4gPiA+ICsgICAgICAgICAgICAgIFRoaXMgaXMgYW4gYWN0
-aXZlIGhpZ2ggc2lnbmFsIHRvIHRoZSBPVjAyQTEwLg0KPiA+DQo+ID4gT24gdGhlIGhhcmR3YXJl
-IGxldmVsIHRoaXMgcGluIGlzIGFjdGl2ZSBsb3csIGkuZS4gdGhlIGRldmljZSBpcyBoZWxkDQo+
-ID4gaW4gcmVzZXQgd2hlbiB0aGUgc2lnbmFsIGlzIGxvdy4NCj4gPg0KPiA+IEhvd2V2ZXIsIHRo
-ZXJlIGlzIHNvbWUgY29uZnVzaW9uIGFyb3VuZCBob3cgdGhlIHBvbGFyaXR5IGZsYWcgaW4gdGhl
-DQo+ID4gR1BJTyBzcGVjaWZpZXIgaXMgc3VwcG9zZWQgdG8gYmUgdXNlZC4NCj4gPg0KPiA+IEFz
-IHBlciBbMV0sDQo+ID4NCj4gPiAiVGhlIGdwaW8tc3BlY2lmaWVyJ3MgcG9sYXJpdHkgZmxhZyBz
-aG91bGQgcmVwcmVzZW50IHRoZSBwaHlzaWNhbA0KPiA+IGxldmVsIGF0IHRoZSBHUElPIGNvbnRy
-b2xsZXIgdGhhdCBhY2hpZXZlcyAob3IgcmVwcmVzZW50cywgZm9yIGlucHV0cykNCj4gPiBhIGxv
-Z2ljYWxseSBhc3NlcnRlZCB2YWx1ZSBhdCB0aGUgZGV2aWNlLiBUaGUgZXhhY3QgZGVmaW5pdGlv
-biBvZg0KPiA+IGxvZ2ljYWxseSBhc3NlcnRlZCBzaG91bGQgYmUgZGVmaW5lZCBieSB0aGUgYmlu
-ZGluZyBmb3IgdGhlIGRldmljZS4iDQo+ID4NCj4gPiBJbiB0aGlzIGNhc2UgaXQgc291bmRzIGxp
-a2UgImxvZ2ljYWxseSBhc3NlcnRlZCIgbWVhbnMgdGhlIGRldmljZSBpcw0KPiA+IHBvd2VyZWQg
-ZG93biBvciBoZWxkIGluIHJlc2V0LCByZXNwZWN0aXZlbHksIHdoaWNoIHdvdWxkIHN1Z2dlc3Qg
-dGhhdA0KPiA+IHRoZSBzcGVjaWZpZXJzIHNob3VsZCBoYXZlIEdQSU9fQUNUSVZFX0hJR0ggYW5k
-IEdQSU9fQUNUSVZFX0xPVw0KPiA+IHJlc3BlY3RpdmVseS4gVGhlIGxhdHRlciB3b3VsZCBjYXVz
-ZSB0aGUgR1BJTyBzdWJzeXN0ZW0gdG8gaW52ZXJ0IHRoZQ0KPiA+IHZhbHVlcyBzZXQgYnkgdGhl
-IGNvbnN1bWVycywgd2hpY2ggd291bGQgdGhlbiBiZSBjb25mdXNpbmcgZnJvbSB0aGUNCj4gPiBk
-cml2ZXIgaW1wbGVtZW50YXRpb24gcG9pbnQgb2Ygdmlldy4NCj4gPg0KPiA+IFNob3VsZCB0aGUg
-cGluIGJlIHJlbmFtZWQgdG8gIm5yZXNldCI/IEl0IHdvdWxkIGNoYW5nZSB0aGUgbWVhbmluZyBv
-Zg0KPiA+ICJsb2dpY2FsbHkgYXNzZXJ0ZWQiIHRvICJkZXZpY2UgaXMgbm90IGhlbGQgaW4gcmVz
-ZXQiIGFuZCBzbw0KPiA+IEdQSU9fQUNUSVZFX0hJR0ggKG9yIDApIHdvdWxkIGJlIHRoZSByaWdo
-dCB2YWx1ZSB0byB1c2UuDQo+ID4NCj4gPiBbMV0gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20v
-bGludXgvbGF0ZXN0L3NvdXJjZS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bp
-by9ncGlvLnR4dCNMODMNCj4gDQo+ICsgQmFydG9zeiwgTGludXMsIFNha2FyaSBhbmQgdGhlIGxp
-bnV4LWdwaW8gTUwgZm9yIGEgYnJvYWRlciBhdWRpZW5jZS4NCj4gDQo+IFdvdWxkIGFwcHJlY2lh
-dGUgc29tZSBmZWVkYmFjayBvbiB3aGF0J3MgdGhlIHByb3BlciB3YXkgb2YgZGVmaW5pbmcNCj4g
-R1BJTyBwb2xhcml0eS4gVGhhbmtzIQ0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBUb21hc3oNCj4g
-DQoNCkkgaGF2ZSBhbm90aGVyIHF1ZXN0aW9uIGFib3V0IE9WMDJBMTAgQ01PUyBzZW5zb3IgZHQt
-YmluZGluZy4NCkFzIGl0cyB0ZXh0IGRvY3VtZW50YXRpb24gd2FzIGFscmVhZHkgcmV2aWV3ZWQg
-YnkgUm9iIG9uIGVhcmxpZXINCnZlcnNpb246DQpodHRwczovL3BhdGNod29yay5saW51eHR2Lm9y
-Zy9wYXRjaC81OTc4Ny8NCkkgd29uZGVyIHdoZXRoZXIgd2UgbmVlZCB0byBjb252ZXJ0IGl0IHRv
-IERUIGluIFlBTUwuDQpJbiBmYWN0LCBJIGp1c3Qgc3VibWl0dGVkIG9uZSBjb252ZXJzaW9uIHZl
-cnNpb24uDQpodHRwczovL2Nocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tL2MvY2hyb21p
-dW1vcy90aGlyZF9wYXJ0eS9rZXJuZWwvKy8yMTQzOTIyDQoNClVubHVja2lseSBtYWtlIGR0X2Jp
-bmRpbmdfY2hlY2sgc3RpbGwgcmVwb3J0IGVycm9ycyB0ZW1wb3JhcmlseS4NCkl0IHNlZW1zIHRo
-ZXJlIGlzIHNvbWV0aGluZyB3cm9uZyB3aXRoIHRoZSBwb3J0IHByb3BlcnR5IGluIERULg0KQ291
-bGQgYW55b25lIGhlbHAgcHJvdmlkZSBzb21lIHRpcHM/DQokbWFrZSBkdF9iaW5kaW5nX2NoZWNr
-DQpEVF9TQ0hFTUFfRklMRVM9RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlh
-L2kyYy9vdnRpLG92MDJhMTAueWFtbA0KICBTQ0hFTUEgIERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9wcm9jZXNzZWQtc2NoZW1hLnlhbWwNCkRvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9tZWRpYS9pMmMvb3Z0aSxvdjAyYTEwLnlhbWw6IGlnbm9yaW5nLA0KZXJyb3Ig
-aW4gc2NoZW1hOiBwcm9wZXJ0aWVzOiBwb3J0OiBwYXR0ZXJuUHJvcGVydGllczogZW5kcG9pbnQN
-Cndhcm5pbmc6IG5vIHNjaGVtYSBmb3VuZCBpbiBmaWxlOg0KRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21lZGlhL2kyYy9vdnRpLG92MDJhMTAueWFtbA0KbWFrZVsyXTogKioqIFtE
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcHJvY2Vzc2VkLXNjaGVtYS55YW1sXQ0K
-RXJyb3IgMjU1DQptYWtlWzFdOiAqKiogW2R0X2JpbmRpbmdfY2hlY2tdIEVycm9yIDINCm1ha2U6
-ICoqKiBbc3ViLW1ha2VdIEVycm9yIDINCg0KSW4gYWRkaXRpb24sIGFzIE9WMDJBMTAgdXNlIG9u
-ZSBwcml2YXRlIHByb3BlcnR5IHRvIGRpc3Rpbmd1aXNoDQpkaWZmZXJlbnQgcHJvamVjdHMgdGhh
-dCBhZG9wdGluZyBkaWZmZXJlbnQgcmVnaXN0ZXIgc2V0dGluZ3MsDQpJIHdvdWxkIGFwcHJlY2lh
-dGUgdGhlIGZlZWRiYWNrIG9uIGhvdyB0byBhZGQgcHJpdmF0ZSBwcm9wZXJ0eSB0byBEVCBpbg0K
-WUFNTC4NCg0KPiA+DQo+ID4gQmVzdCByZWdhcmRzLA0KPiA+IFRvbWFzeg0KPiA+DQo+ID4gPiAr
-DQo+ID4gPiArT3B0aW9uYWwgUHJvcGVydGllczoNCj4gPiA+ICstIHJvdGF0aW9uOiBhcyBkZWZp
-bmVkIGluDQo+ID4gPiArICAgICAgICAgICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQsDQo+ID4gPiArICAgICAgICAgICB2YWxpZCB2
-YWx1ZXMgYXJlIDAgKHNlbnNvciBtb3VudGVkIHVwcmlnaHQpIGFuZCAxODAgKHNlbnNvcg0KPiA+
-ID4gKyAgICAgICAgICAgbW91bnRlZCB1cHNpZGUgZG93bikuDQo+ID4gPiArDQo+ID4gPiArVGhl
-IGRldmljZSBub2RlIHNoYWxsIGNvbnRhaW4gb25lICdwb3J0JyBjaGlsZCBub2RlIHdpdGggYW4N
-Cj4gPiA+ICsnZW5kcG9pbnQnIHN1Ym5vZGUgZm9yIGl0cyBkaWdpdGFsIG91dHB1dCB2aWRlbyBw
-b3J0LA0KPiA+ID4gK2luIGFjY29yZGFuY2Ugd2l0aCB0aGUgdmlkZW8gaW50ZXJmYWNlIGJpbmRp
-bmdzIGRlZmluZWQgaW4NCj4gPiA+ICtEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-bWVkaWEvdmlkZW8taW50ZXJmYWNlcy50eHQuDQo+ID4gPiArDQo+ID4gPiArRXhhbXBsZToNCj4g
-PiA+ICsmaTJjNCB7DQo+ID4gPiArICAgICAgIG92MDJhMTA6IGNhbWVyYS1zZW5zb3JAM2Qgew0K
-PiA+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAib3Z0aSxvdjAyYTEwIjsNCj4gPiA+
-ICsgICAgICAgICAgICAgICByZWcgPSA8MHgzZD47DQo+ID4gPiArICAgICAgICAgICAgICAgcGlu
-Y3RybC1uYW1lcyA9ICJkZWZhdWx0IjsNCj4gPiA+ICsgICAgICAgICAgICAgICBwaW5jdHJsLTAg
-PSA8JmNhbWVyYV9waW5zX2NhbTFfbWNsa19vbj47DQo+ID4gPiArDQo+ID4gPiArICAgICAgICAg
-ICAgICAgY2xvY2tzID0gPCZ0b3Bja2dlbiBDTEtfVE9QX01VWF9DQU1URzI+LA0KPiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgPCZ0b3Bja2dlbiBDTEtfVE9QX1VOSVZQXzE5Mk1fRDg+Ow0K
-PiA+ID4gKyAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImVjbGsiLCAiZnJlcV9tdXgiOw0K
-PiA+ID4gKyAgICAgICAgICAgICAgIGNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47DQo+ID4g
-PiArDQo+ID4gPiArICAgICAgICAgICAgICAgZG92ZGQtc3VwcGx5ID0gPCZtdDYzNThfdmNhbWlv
-X3JlZz47DQo+ID4gPiArICAgICAgICAgICAgICAgYXZkZC1zdXBwbHkgPSA8Jm10NjM1OF92Y2Ft
-YTFfcmVnPjsNCj4gPiA+ICsgICAgICAgICAgICAgICBkdmRkLXN1cHBseSA9IDwmbXQ2MzU4X3Zj
-bjE4X3JlZz47DQo+ID4gPiArICAgICAgICAgICAgICAgcG93ZXJkb3duLWdwaW9zID0gPCZwaW8g
-MTA3IEdQSU9fQUNUSVZFX0xPVz47DQo+ID4gPiArICAgICAgICAgICAgICAgcmVzZXQtZ3Bpb3Mg
-PSA8JnBpbyAxMDkgR1BJT19BQ1RJVkVfSElHSD47DQo+ID4gPiArICAgICAgICAgICAgICAgcm90
-YXRpb24gPSA8MTgwPjsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAgICAgICAgICBwb3J0IHsNCj4g
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIE1JUEkgQ1NJLTIgYnVzIGVuZHBvaW50ICov
-DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBvdjAyYTEwX2NvcmU6IGVuZHBvaW50IHsN
-Cj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVtb3RlLWVuZHBvaW50ID0g
-PCZvdjAyYTEwXzA+Ow0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaW5r
-LWZyZXF1ZW5jaWVzID0gL2JpdHMvIDY0IDwzOTAwMDAwMDA+Ow0KPiA+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgfTsNCj4gPiA+ICsgICAgICAgICAgICAgICB9Ow0KPiA+ID4gKyAgICAgICB9
-Ow0KPiA+ID4gK307DQo+ID4gPiBkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVS
-Uw0KPiA+ID4gaW5kZXggYmQ1ODQ3ZS4uOTJhODY4YyAxMDA2NDQNCj4gPiA+IC0tLSBhL01BSU5U
-QUlORVJTDQo+ID4gPiArKysgYi9NQUlOVEFJTkVSUw0KPiA+ID4gQEAgLTEyMTMwLDYgKzEyMTMw
-LDEzIEBAIFQ6ICAgICBnaXQgZ2l0Oi8vbGludXh0di5vcmcvbWVkaWFfdHJlZS5naXQNCj4gPiA+
-ICBTOiAgICAgTWFpbnRhaW5lZA0KPiA+ID4gIEY6ICAgICBkcml2ZXJzL21lZGlhL2kyYy9vdjEz
-ODU4LmMNCj4gPiA+DQo+ID4gPiArT01OSVZJU0lPTiBPVjAyQTEwIFNFTlNPUiBEUklWRVINCj4g
-PiA+ICtNOiAgICAgRG9uZ2NodW4gWmh1IDxkb25nY2h1bi56aHVAbWVkaWF0ZWsuY29tPg0KPiA+
-ID4gK0w6ICAgICBsaW51eC1tZWRpYUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ICtUOiAgICAgZ2l0
-IGdpdDovL2xpbnV4dHYub3JnL21lZGlhX3RyZWUuZ2l0DQo+ID4gPiArUzogICAgIE1haW50YWlu
-ZWQNCj4gPiA+ICtGOiAgICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlh
-L2kyYy9vdjAyYTEwLnR4dA0KPiA+ID4gKw0KPiA+ID4gIE9NTklWSVNJT04gT1YyNjgwIFNFTlNP
-UiBEUklWRVINCj4gPiA+ICBNOiAgICAgUnVpIE1pZ3VlbCBTaWx2YSA8cm1mcmZzQGdtYWlsLmNv
-bT4NCj4gPiA+ICBMOiAgICAgbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnDQo+ID4gPiAtLQ0K
-PiA+ID4gMi45LjINCg0K
+The commit 3d2613c4289f
+  ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
+introduced a use of the platform driver but missed to add the following line
+to it:
+  MODULE_ALIAS("platform:gpio-dwapb");
+
+Add this to get driver loaded automatically if platform device is registered.
+
+Fixes: 3d2613c4289f ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-dwapb.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index d2ed11510f3c..c1b6d4f7307e 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -49,7 +49,9 @@
+ #define GPIO_EXT_PORTC		0x58
+ #define GPIO_EXT_PORTD		0x5c
+ 
++#define DWAPB_DRIVER_NAME	"gpio-dwapb"
+ #define DWAPB_MAX_PORTS		4
++
+ #define GPIO_EXT_PORT_STRIDE	0x04 /* register stride 32 bits */
+ #define GPIO_SWPORT_DR_STRIDE	0x0c /* register stride 3*32 bits */
+ #define GPIO_SWPORT_DDR_STRIDE	0x0c /* register stride 3*32 bits */
+@@ -400,7 +402,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		return;
+ 
+ 	err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 2,
+-					     "gpio-dwapb", handle_level_irq,
++					     DWAPB_DRIVER_NAME, handle_level_irq,
+ 					     IRQ_NOREQUEST, 0,
+ 					     IRQ_GC_INIT_NESTED_LOCK);
+ 	if (err) {
+@@ -457,7 +459,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		 */
+ 		err = devm_request_irq(gpio->dev, pp->irq[0],
+ 				       dwapb_irq_handler_mfd,
+-				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
++				       IRQF_SHARED, DWAPB_DRIVER_NAME, gpio);
+ 		if (err) {
+ 			dev_err(gpio->dev, "error requesting IRQ\n");
+ 			irq_domain_remove(gpio->domain);
+@@ -847,7 +849,7 @@ static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
+ 
+ static struct platform_driver dwapb_gpio_driver = {
+ 	.driver		= {
+-		.name	= "gpio-dwapb",
++		.name	= DWAPB_DRIVER_NAME,
+ 		.pm	= &dwapb_gpio_pm_ops,
+ 		.of_match_table = of_match_ptr(dwapb_of_match),
+ 		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
+@@ -861,3 +863,4 @@ module_platform_driver(dwapb_gpio_driver);
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Jamie Iles");
+ MODULE_DESCRIPTION("Synopsys DesignWare APB GPIO driver");
++MODULE_ALIAS("platform:" DWAPB_DRIVER_NAME);
+-- 
+2.25.1
 
