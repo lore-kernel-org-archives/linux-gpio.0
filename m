@@ -2,111 +2,84 @@ Return-Path: <SRS0=Gzc7=5Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E22C2BA2B
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3765CC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DACA720692
+	by mail.kernel.org (Postfix) with ESMTP id 07F9E20692
 	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgDIOMe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1727104AbgDIOMe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 9 Apr 2020 10:12:34 -0400
 Received: from mga02.intel.com ([134.134.136.20]:21918 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbgDIOMe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 9 Apr 2020 10:12:34 -0400
-IronPort-SDR: ssTTxvjOVXfJ8kYSW6EK35phu1FTzowAsP+Q+e8m7VaLq0t7hv6ocnGbHn+CIpuINFrDf6Zxkn
- NTjBdy97JIAw==
+        id S1727079AbgDIOMd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 9 Apr 2020 10:12:33 -0400
+IronPort-SDR: 2PQcQw0q0n89UFE7UNAEHljoFcVx6kcqum69jnsjuMKZRuaoBbsaoQvkutPFMdaWcay96h4hHl
+ k/cbD0R7EzwA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:34 -0700
-IronPort-SDR: 5qQHVphe5gQhSSVPeDyPhsrc/E7a88tgU7uTMvUUwWxRULzeC6gQYa5eE0fQ60WRCLIuJuKqBn
- o7KgVd6kmmmQ==
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:33 -0700
+IronPort-SDR: PYAXGXGXiFsK/n2t7C3e+Q5C4yzqNSyPMvVe/LeqbKxobZUgF1jAOT2MStUxsGQdFouZUSqSFH
+ hDo7YASZFVTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
-   d="scan'208";a="244327337"
+   d="scan'208";a="244327336"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga008.fm.intel.com with ESMTP; 09 Apr 2020 07:12:30 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 754BB766; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
+        id 6035E1FD; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 02/13] gpio: dwapb: Refactor IRQ handler
-Date:   Thu,  9 Apr 2020 17:12:17 +0300
-Message-Id: <20200409141228.49561-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 00/13] gpio: dwapb: Clean up the driver and a fix
+Date:   Thu,  9 Apr 2020 17:12:15 +0300
+Message-Id: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
-References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Refactor IRQ handler in order to:
-- enter and exit chained IRQ
-- use for_each_set_bit() helper
+It appears that GPIO DW APB driver wasn't touched for a long time. Here is
+the fix for long standing issue, i.e. missed module alias to make the driver
+be loaded automatically.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-dwapb.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+On top of above a lot small clean ups here and there.
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index c1b6d4f7307e..f61139f787d9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -193,22 +193,21 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
- 
- static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
- {
--	u32 irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
--	u32 ret = irq_status;
-+	unsigned long irq_status;
-+	int hwirq;
- 
--	while (irq_status) {
--		int hwirq = fls(irq_status) - 1;
-+	irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
-+	for_each_set_bit(hwirq, &irq_status, 32) {
- 		int gpio_irq = irq_find_mapping(gpio->domain, hwirq);
-+		u32 irq_type = irq_get_trigger_type(gpio_irq);
- 
- 		generic_handle_irq(gpio_irq);
--		irq_status &= ~BIT(hwirq);
- 
--		if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
--			== IRQ_TYPE_EDGE_BOTH)
-+		if ((irq_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH)
- 			dwapb_toggle_trigger(gpio, hwirq);
- 	}
- 
--	return ret;
-+	return irq_status;
- }
- 
- static void dwapb_irq_handler(struct irq_desc *desc)
-@@ -216,10 +215,9 @@ static void dwapb_irq_handler(struct irq_desc *desc)
- 	struct dwapb_gpio *gpio = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 
-+	chained_irq_enter(chip, desc);
- 	dwapb_do_irq(gpio);
--
--	if (chip->irq_eoi)
--		chip->irq_eoi(irq_desc_get_irq_data(desc));
-+	chained_irq_exit(chip, desc);
- }
- 
- static void dwapb_irq_enable(struct irq_data *d)
+The series based on the v3 by Serge Semin which he sent earlier.
+
+Driver has been tested on Intel Galileo Gen2 with AT25 SPI EEPROM using it
+for a chip select.
+
+Andy Shevchenko (13):
+  gpio: dwapb: Append MODULE_ALIAS for platform driver
+  gpio: dwapb: Refactor IRQ handler
+  gpio: dwapb: set default handler to be handle_bad_irq()
+  gpio: dwapb: Deduplicate IRQ resource management
+  gpio: dwapb: Convert to use irqd_to_hwirq()
+  gpio: dwapb: Use device_get_match_data() to simplify code
+  gpio: dwapb: Convert to use IRQ core provided macros
+  gpio: dwapb: Switch to more usual pattern of RMW in
+    dwapb_gpio_set_debounce()
+  gpio: dwapb: Drop bogus BUG_ON()s
+  gpio: dwapb: Drop of_match_ptr() & ACPI_PTR() calls
+  gpio: dwapb: Split out dwapb_get_irq() helper
+  gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
+  gpio: dwapb: Amend indentation in some cases
+
+ drivers/gpio/gpio-dwapb.c | 205 +++++++++++++++-----------------------
+ 1 file changed, 79 insertions(+), 126 deletions(-)
+
 -- 
 2.25.1
 
