@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F75C2BBFD
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E22C2BA2B
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D3D20857
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACA720692
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Apr 2020 14:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbgDIOMd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Apr 2020 10:12:33 -0400
-Received: from mga04.intel.com ([192.55.52.120]:28946 "EHLO mga04.intel.com"
+        id S1727162AbgDIOMe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Apr 2020 10:12:34 -0400
+Received: from mga02.intel.com ([134.134.136.20]:21918 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbgDIOMd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 9 Apr 2020 10:12:33 -0400
-IronPort-SDR: WoWFCpKIAm6myQs6EELF9098BUhTtqFYjQ8JlRQi6CgDpqajf9Rgw72DYPOC1HsCQh+a0qThHp
- e2HAs4m9RRWw==
+        id S1727041AbgDIOMe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 9 Apr 2020 10:12:34 -0400
+IronPort-SDR: ssTTxvjOVXfJ8kYSW6EK35phu1FTzowAsP+Q+e8m7VaLq0t7hv6ocnGbHn+CIpuINFrDf6Zxkn
+ NTjBdy97JIAw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:34 -0700
-IronPort-SDR: tV6NLuelwffw2tWvqe10zBiVWN3oFf0QiJH7Ig99mdn5AaOanlaHq+hXzVNWUK211e0g3lX5IU
- id8i4CWT4jZw==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 07:12:34 -0700
+IronPort-SDR: 5qQHVphe5gQhSSVPeDyPhsrc/E7a88tgU7uTMvUUwWxRULzeC6gQYa5eE0fQ60WRCLIuJuKqBn
+ o7KgVd6kmmmQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
-   d="scan'208";a="242659532"
+   d="scan'208";a="244327337"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Apr 2020 07:12:32 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 09 Apr 2020 07:12:30 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A942898E; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
+        id 754BB766; Thu,  9 Apr 2020 17:12:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 08/13] gpio: dwapb: Switch to more usual pattern of RMW in dwapb_gpio_set_debounce()
-Date:   Thu,  9 Apr 2020 17:12:23 +0300
-Message-Id: <20200409141228.49561-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 02/13] gpio: dwapb: Refactor IRQ handler
+Date:   Thu,  9 Apr 2020 17:12:17 +0300
+Message-Id: <20200409141228.49561-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
@@ -51,31 +51,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-More usual pattern is to prepare value and then write it in a single place.
-Switch code in dwapb_gpio_set_debounce() to it.
+Refactor IRQ handler in order to:
+- enter and exit chained IRQ
+- use for_each_set_bit() helper
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-dwapb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 916a42fea456..a15652ff9495 100644
+index c1b6d4f7307e..f61139f787d9 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -327,9 +327,10 @@ static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
+@@ -193,22 +193,21 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
  
- 	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
- 	if (debounce)
--		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb | mask);
-+		val_deb |= mask;
- 	else
--		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb & ~mask);
-+		val_deb &= ~mask;
-+	dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb);
+ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+ {
+-	u32 irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
+-	u32 ret = irq_status;
++	unsigned long irq_status;
++	int hwirq;
  
- 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+-	while (irq_status) {
+-		int hwirq = fls(irq_status) - 1;
++	irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
++	for_each_set_bit(hwirq, &irq_status, 32) {
+ 		int gpio_irq = irq_find_mapping(gpio->domain, hwirq);
++		u32 irq_type = irq_get_trigger_type(gpio_irq);
  
+ 		generic_handle_irq(gpio_irq);
+-		irq_status &= ~BIT(hwirq);
+ 
+-		if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
+-			== IRQ_TYPE_EDGE_BOTH)
++		if ((irq_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH)
+ 			dwapb_toggle_trigger(gpio, hwirq);
+ 	}
+ 
+-	return ret;
++	return irq_status;
+ }
+ 
+ static void dwapb_irq_handler(struct irq_desc *desc)
+@@ -216,10 +215,9 @@ static void dwapb_irq_handler(struct irq_desc *desc)
+ 	struct dwapb_gpio *gpio = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
++	chained_irq_enter(chip, desc);
+ 	dwapb_do_irq(gpio);
+-
+-	if (chip->irq_eoi)
+-		chip->irq_eoi(irq_desc_get_irq_data(desc));
++	chained_irq_exit(chip, desc);
+ }
+ 
+ static void dwapb_irq_enable(struct irq_data *d)
 -- 
 2.25.1
 
