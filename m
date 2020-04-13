@@ -2,121 +2,190 @@ Return-Path: <SRS0=v07L=55=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB897C2BA19
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 11:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CBBC2BBC7
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 12:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A06DE2075E
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 11:23:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A1F2075E
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 12:44:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDHHb9AW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbgDMLSa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Apr 2020 07:18:30 -0400
-Received: from mga17.intel.com ([192.55.52.151]:29256 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbgDMLS3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Apr 2020 07:18:29 -0400
-IronPort-SDR: CuffnDMvIj+6yMCu5FiwMknSSYb7jxzVQux6kJnppetYUTuLX6wE7WqVtaM6NseGmfsxxnOfw3
- j9Jv9BzZyx5A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 04:18:29 -0700
-IronPort-SDR: pYqj3Ue39Q9e1dkHAkeTz4DE/z43ZnK7+eYVSb0uBaSeX+lNrk71zRbRjhXdAoChe8LytN8NFw
- +ghB8KXvCXeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,378,1580803200"; 
-   d="scan'208";a="243513196"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Apr 2020 04:18:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 554F8E1; Mon, 13 Apr 2020 14:18:27 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 3/6] pinctrl: icelake: Use generic flag for special GPIO base treatment
-Date:   Mon, 13 Apr 2020 14:18:22 +0300
-Message-Id: <20200413111825.89866-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200413111825.89866-1-andriy.shevchenko@linux.intel.com>
-References: <20200413111825.89866-1-andriy.shevchenko@linux.intel.com>
+        id S1729522AbgDMMoo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Apr 2020 08:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727797AbgDMMon (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Apr 2020 08:44:43 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20A5C0A3BE2;
+        Mon, 13 Apr 2020 05:38:43 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id a81so9735858wmf.5;
+        Mon, 13 Apr 2020 05:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B3G3up+sacqGwrkeNRbiAPfpytPVgXOCXw+62EiaExE=;
+        b=YDHHb9AWyoAkrefNdSOprNxlVoZH1mvo3GKu65RWs/01H8iAXcjWyyYMMqZGpUbbcA
+         5psi/m9ze5mzyjEhPMD5Q3wBdaWVjPxwFCgdL/gFvLmBYFdRAuod0cXaXhUM7rLBBYw8
+         W7J97Rma94EbonmB2BOzE9ufv6K4qteNE6PBz1+n3fYtIMDoensPf6fhMN/hdyojIjWK
+         qWXxbfYVUlLIAOAE1mjlRwECSCIIY5Sk6WfZ7N1TULQ2IfCtFx1kVCRETSOh2F1tcxWC
+         LuBepG8PRQExNgd46BAzrOz/mrG/NarelR4jzZ7v4D5Zs+UZkIHb9NtTQLTcxOT9iv5C
+         rSOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B3G3up+sacqGwrkeNRbiAPfpytPVgXOCXw+62EiaExE=;
+        b=s+802lewxJYqDCnSbIv8812zNsMFa3830iA7SY+lFklOhIxmclX4D2jGNAQm3F+y95
+         +zxV8vAu3D845l3E0MAwUGWJGSaal+uUVjf2sSNEMzvwnF/2evuDtROHJK0TXUFA83nZ
+         k4I2JZvRtOEmhTFH35vVFxv6OTlRgtvaj7giMzU5jbtWEljHfg3CQAwnqFS8zSP+0AOo
+         g6/ALqZsy2yPNgRwQwnXHPlXoYIopoUYMr09gTJDmW/PssywS0IkeyVzP9kH29fuUfgj
+         Y7Pm6TgSeuKtbz24e0puVEnVjuC80B+l06aTsPuCPvoLkVSx6akcMGadFA9boR4KCenl
+         4wew==
+X-Gm-Message-State: AGi0PuZ9UOnDES3bbwSuwgg/hFD09QzzDTAjA46YyeNtbdxAz2ANxRtN
+        iVoxcfFe4zqdZrSoSr0OmZQ=
+X-Google-Smtp-Source: APiQypKINTvX+eUHVTxGsE/KYuvH4NMPf93w2kXDy3VYFzJa+K0tVZyS1i1tCFN7cTQRcjpPno6rzQ==
+X-Received: by 2002:a1c:5fc4:: with SMTP id t187mr19384279wmb.181.1586781522392;
+        Mon, 13 Apr 2020 05:38:42 -0700 (PDT)
+Received: from x1 (i59F66838.versanet.de. [89.246.104.56])
+        by smtp.gmail.com with ESMTPSA id w18sm14596456wrn.55.2020.04.13.05.38.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2020 05:38:41 -0700 (PDT)
+Date:   Mon, 13 Apr 2020 14:39:21 +0200
+From:   Drew Fustini <drew@pdp7.com>
+To:     Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc:     Drew Fustini <pdp7pdp7@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Drew Fustini <drew@beagleboard.org>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Subject: Re: gpio-omap: add support gpiolib bias (pull-up/down) flags?
+Message-ID: <20200413123921.GA32586@x1>
+References: <CAEf4M_Du6Egn-3nZHtSnMMwohc+-DyEdtWU5DqSJi71+nDthFw@mail.gmail.com>
+ <CACRpkdaPoMGZ7jGh6j4dYexx+qCcoMQ37vS7kbpf=3TtcA9zQQ@mail.gmail.com>
+ <CAEf4M_B_sxOiKFnEVUrx00RE2MaMA98LpijNhp0EVY11eRAXHg@mail.gmail.com>
+ <CAD6h2NT840zMfwaJatfKzai8QjZEQmF5v0xgE+9ngSJJ+Qy+6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD6h2NT840zMfwaJatfKzai8QjZEQmF5v0xgE+9ngSJJ+Qy+6g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since we have a generic flag for special GPIO base treatment,
-use it in the driver.
+On Fri, Mar 13, 2020 at 01:23:15PM +0800, Haojian Zhuang wrote:
+> On Fri, 13 Mar 2020 at 08:38, Drew Fustini <pdp7pdp7@gmail.com> wrote:
+> >
+> > On Thu, Mar 12, 2020 at 1:43 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > Do we have a datasheet for this GPIO block somewhere? Should
+> > > be the datasheet for the ASIC.
+> >
+> > I am looking at the AM335x reference manual [0] but I can not actually
+> > find any references to pull-up/down or bias for GPIO pins.  I guess I
+> > was making of the mistake of assuming this would be something the gpio
+> > pins support.
+> >
+> > > We already have the required .set_config() callback on the OMAP
+> > > driver, it's just that it only uses it for debounce.
+> > >
+> > > The driver is a bit convoluted with register offsets in a struct
+> > > omap_gpio_reg_offs depending on variant, but if they have
+> > > a register for this I'd say just get hacking.
+> > >
+> > > If the GPIO driver is using pin control as back-end you are
+> > > looking at something more complex similar to what Intel is
+> > > doing inside drivers/pinctrl/intel/pinctrl-intel.c: this driver
+> > > is just calling up to gpiochip_generic_config() which will
+> > > try to configure the lines behind the GPIO using pin config,
+> > > which works if the proper ranges are defined so the
+> > > framework can map a GPIO line to a pin control pin.
+> >
+> > Thank you for the feedback, Linus.
+> >
+> > Upon further review of drivers/pinctrl/pinctrl-single.c, I am not
+> > certain it actually supports pull-up/down.
+> >
+> > I see there is pcs_pinconf_clear_bias() and pcs_pinconf_bias_disable()
+> > but I don't see a place where the PIN_CONFIG_BIAS_PULL_DOWN or
+> > PIN_CONFIG_BIAS_PULL_UP get set.
+> >
+> 
+>                         /* 4 parameters */
+>                         case PIN_CONFIG_BIAS_DISABLE:
+>                                 pcs_pinconf_clear_bias(pctldev, pin);
+>                                 break;
+>                         case PIN_CONFIG_BIAS_PULL_DOWN:
+>                         case PIN_CONFIG_BIAS_PULL_UP:
+>                                 if (arg)
+>                                         pcs_pinconf_clear_bias(pctldev, pin);
+>                                 /* fall through */
+>                         case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+>                                 data &= ~func->conf[i].mask;
+>                                 if (arg)
+>                                         data |= func->conf[i].enable;
+>                                 else
+>                                         data |= func->conf[i].disable;
+>                                 break;
+> 
+> Because it does fall through, pullup/pulldown is set in the snippet of
+> "PIN_CONFIG_INPUT_SCHMITT_ENABLE".
+> 
+> Best Regards
+> Haojian
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: no changes
- drivers/pinctrl/intel/pinctrl-icelake.c | 30 ++++++++++++-------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+Thank you for the insights, Haojian and Linus.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-index 6489e9bbb61f..429b5a83acf0 100644
---- a/drivers/pinctrl/intel/pinctrl-icelake.c
-+++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-@@ -29,8 +29,6 @@
- 		.gpio_base = (g),			\
- 	}
- 
--#define ICL_NO_GPIO	-1
--
- #define ICL_COMMUNITY(b, s, e, g)			\
- 	{						\
- 		.barno = (b),				\
-@@ -305,29 +303,29 @@ static const struct pinctrl_pin_desc icllp_pins[] = {
- };
- 
- static const struct intel_padgroup icllp_community0_gpps[] = {
--	ICL_GPP(0, 0, 7, 0),			/* GPP_G */
--	ICL_GPP(1, 8, 33, 32),			/* GPP_B */
--	ICL_GPP(2, 34, 58, 64),			/* GPP_A */
-+	ICL_GPP(0, 0, 7, 0),				/* GPP_G */
-+	ICL_GPP(1, 8, 33, 32),				/* GPP_B */
-+	ICL_GPP(2, 34, 58, 64),				/* GPP_A */
- };
- 
- static const struct intel_padgroup icllp_community1_gpps[] = {
--	ICL_GPP(0, 59, 82, 96),			/* GPP_H */
--	ICL_GPP(1, 83, 103, 128),		/* GPP_D */
--	ICL_GPP(2, 104, 123, 160),		/* GPP_F */
--	ICL_GPP(3, 124, 152, 192),		/* vGPIO */
-+	ICL_GPP(0, 59, 82, 96),				/* GPP_H */
-+	ICL_GPP(1, 83, 103, 128),			/* GPP_D */
-+	ICL_GPP(2, 104, 123, 160),			/* GPP_F */
-+	ICL_GPP(3, 124, 152, 192),			/* vGPIO */
- };
- 
- static const struct intel_padgroup icllp_community4_gpps[] = {
--	ICL_GPP(0, 153, 176, 224),		/* GPP_C */
--	ICL_GPP(1, 177, 182, ICL_NO_GPIO),	/* HVCMOS */
--	ICL_GPP(2, 183, 206, 256),		/* GPP_E */
--	ICL_GPP(3, 207, 215, ICL_NO_GPIO),	/* JTAG */
-+	ICL_GPP(0, 153, 176, 224),			/* GPP_C */
-+	ICL_GPP(1, 177, 182, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
-+	ICL_GPP(2, 183, 206, 256),			/* GPP_E */
-+	ICL_GPP(3, 207, 215, INTEL_GPIO_BASE_NOMAP),	/* JTAG */
- };
- 
- static const struct intel_padgroup icllp_community5_gpps[] = {
--	ICL_GPP(0, 216, 223, 288),		/* GPP_R */
--	ICL_GPP(1, 224, 231, 320),		/* GPP_S */
--	ICL_GPP(2, 232, 240, ICL_NO_GPIO),	/* SPI */
-+	ICL_GPP(0, 216, 223, 288),			/* GPP_R */
-+	ICL_GPP(1, 224, 231, 320),			/* GPP_S */
-+	ICL_GPP(2, 232, 240, INTEL_GPIO_BASE_NOMAP),	/* SPI */
- };
- 
- static const struct intel_community icllp_communities[] = {
--- 
-2.25.1
+I've added debug print statements and it seems that pcs_pinconf_set()
+is never called on the BeagleBone (TI AM3358) either during boot or
+when gpiomon runs with bias switch that invokes GPIO_GET_LINEEVENT_IOCTL
+with GPIOHANDLE_REQUEST_BIAS_PULL_UP flag.
 
+The pinctrl-single driver and gpio-omap driver bind as a result of these
+device tree nodes in arch/arm/boot/dts/am33xx-l4.dtsi:
+
+    am33xx_pinmux: pinmux@800 {
+        compatible = "pinctrl-single";
+        reg = <0x800 0x238>;
+        #pinctrl-cells = <1>;
+        pinctrl-single,register-width = <32>;
+        pinctrl-single,function-mask = <0x7f>;
+    };
+
+    gpio0: gpio@0 {
+        compatible = "ti,omap4-gpio";
+        gpio-controller;
+        #gpio-cells = <2>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+        reg = <0x0 0x1000>;
+        interrupts = <96>;
+        gpio-line-names =
+        "MDIO_DATA",    // 0
+        <snip>
+
+I see in Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
+
+    "pinctrl-single" means that pinconf isn't supported.
+
+I believe this is why pcs_pinconf_set() never gets called.
+
+Any suggestions as to how I could proceed?
+
+Is it reasonable to change the compatible to "pinconf-single"?
+
+
+Thank You,
+Drew
