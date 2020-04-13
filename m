@@ -2,142 +2,123 @@ Return-Path: <SRS0=v07L=55=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AA2C2BA19
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 17:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8279CC2BA19
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 17:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D19A4206E9
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 17:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586797656;
-	bh=aZjUtUk9QZwo2K36lV5HFVf06Y2lBOpMb8+khBRP8JY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=GkplJQZdBXL12x4EY+l2B+y+lW605ng1OKDo2iq0n0VRuWhLYCN3A67Sa5T8icZpo
-	 DyuBC5/FQco4AUiemP/ylgDgKF2Ny7HUGGRm7amEKML4v0rWcmKJAtCcUjokQ3W3qz
-	 CYm07poM1hUs7dO6bLV0PtqHemEEYqUkwer/DWrU=
+	by mail.kernel.org (Postfix) with ESMTP id 67C6C2063A
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Apr 2020 17:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732515AbgDMRHg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Apr 2020 13:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57328 "EHLO mail.kernel.org"
+        id S1732550AbgDMRJY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Apr 2020 13:09:24 -0400
+Received: from mga17.intel.com ([192.55.52.151]:29256 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732482AbgDMRHf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Apr 2020 13:07:35 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D6382063A;
-        Mon, 13 Apr 2020 17:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586797654;
-        bh=aZjUtUk9QZwo2K36lV5HFVf06Y2lBOpMb8+khBRP8JY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DujfD7l5PVD2eexgA0mb8vvI4TrQRk6HOy7OoMqiCxHZp6P47b2VEv6KjP6M0dE2x
-         Jly+puteAITXPxDql3q+W9tnHcxkKtxGlr5P6PfAS2MP0Khr1xrhsi2y+fsioFk7cE
-         vlWp+5+biQe8//+QZGYtfiUAJ9qlbotuBZlD24dQ=
-Date:   Mon, 13 Apr 2020 18:07:28 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 0/6] irq/irq_sim: try to improve the API
-Message-ID: <20200413180728.0714da3d@archlinux>
-In-Reply-To: <CAMRc=Mc=gTrpQsMdOTBJaYT6JLg=o17Mm78ijAGUJYE2pXcCQQ@mail.gmail.com>
-References: <20200211131240.15853-1-brgl@bgdev.pl>
-        <CAMRc=Mc=gTrpQsMdOTBJaYT6JLg=o17Mm78ijAGUJYE2pXcCQQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728949AbgDMLSa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Apr 2020 07:18:30 -0400
+IronPort-SDR: A0c/Cq+X5r0ARpmId10dOmBRakVFXdBsi5JB3TdXm3Umr31F3KJ78zU/FgbQdal8/PCQL4dzWM
+ 5u7rFHtkyEAA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2020 04:18:29 -0700
+IronPort-SDR: l3Z2FHNWep21kq7Apd0ZE8q0Bs1kBcdZtqpyEi1BsCL7hdEI/gYHLbcYQmC+k8p4IKSYVQUWCV
+ nh4Uuir0X4Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,378,1580803200"; 
+   d="scan'208";a="245118563"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Apr 2020 04:18:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 68C151A5; Mon, 13 Apr 2020 14:18:27 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/6] pinctrl: tigerlake: Use generic flag for special GPIO base treatment
+Date:   Mon, 13 Apr 2020 14:18:23 +0300
+Message-Id: <20200413111825.89866-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200413111825.89866-1-andriy.shevchenko@linux.intel.com>
+References: <20200413111825.89866-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 3 Mar 2020 08:57:43 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Since we have a generic flag for special GPIO base treatment,
+use it in the driver.
 
-> wt., 11 lut 2020 o 14:12 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82=
-(a):
-> >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > This is my second take at improving the interrupt simulator interface.
-> > I marked it as v2 but it actually takes a completely different approach.
-> >
-> > The interrupt simulator API exposes a lot of custom data structures and
-> > functions and doesn't reuse the interfaces already exposed by the irq
-> > subsystem. This series tries to address it.
-> >
-> > First, we make irq_domain_reset_irq_data() available to non-V2 domain A=
-PI
-> > users - that'll be used in the subsequent patch. Next we overhaul the
-> > public interfaces - we hide all specific data structures and instead
-> > rely on the irq_domain struct and virtual interrupt numberspace.
-> >
-> > Next four patches simplify the interface even more, but since the change
-> > may be a bit more controversial due to modification of the irq_domain
-> > I decided to split them out of the second patch.
-> >
-> > In patch 3/6 we're adding a new callback to irq_domain_ops that is call=
-ed
-> > right before all the other code in irq_domain_remove(). Next we use it =
-to
-> > remove the simulator-specific cleanup function from irq_sim.h - users n=
-ow
-> > can simply use the regular irq_domain_remove().
-> >
-> > Last two patches show that the new callback isn't limited to the interr=
-upt
-> > simulator and can be used to shrink code in real driver too. We introdu=
-ce
-> > a new helper for a common use case of disposing of all mappings before
-> > removing the irq_domain and use it in the keystone irqchip driver.
-> >
-> > The end effect is that we limit the interrupt simulator API to two
-> > functions (plus one device managed variant) and zero new structures.
-> >
-> > v1: https://lkml.org/lkml/2019/8/12/558
-> >
-> > v1 -> v2:
-> > - instead of just making the new data structures opaque for users, remo=
-ve
-> >   them entirely in favor of irq_domain
-> > - call irq_set_handler() & irq_domain_reset_irq_data() when unmapping
-> >   the simulated interrupt
-> > - fix a memory leak in error path
-> > - make it possible to use irq_find_matching_fwnode() with the simulator
-> >   domain
-> > - correctly use irq_create_mapping() and irq_find_mapping(): only use t=
-he
-> >   former at init-time and the latter at interrupt-time
-> > =20
->=20
-> Hi,
->=20
-> it's been three weeks, so gentle ping on that.
->=20
-> Or should I resend the entire series with a more elaborate commit
-> message for patch 1/6?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: no changes
+ drivers/pinctrl/intel/pinctrl-tigerlake.c | 32 +++++++++++------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-I'd resend it now if nothing has happened that I missed.  Merge window
-having just closed, it's the perfect time for a rebase on rc1.
-
-thanks,
-
-Jonathan
-
->=20
-> Bartosz
+diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
+index 08a86f6fdea6..bcfd7548e282 100644
+--- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
++++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
+@@ -21,8 +21,6 @@
+ #define TGL_GPI_IS	0x100
+ #define TGL_GPI_IE	0x120
+ 
+-#define TGL_NO_GPIO	-1
+-
+ #define TGL_GPP(r, s, e, g)				\
+ 	{						\
+ 		.reg_num = (r),				\
+@@ -342,30 +340,30 @@ static const struct pinctrl_pin_desc tgllp_pins[] = {
+ };
+ 
+ static const struct intel_padgroup tgllp_community0_gpps[] = {
+-	TGL_GPP(0, 0, 25, 0),			/* GPP_B */
+-	TGL_GPP(1, 26, 41, 32),			/* GPP_T */
+-	TGL_GPP(2, 42, 66, 64),			/* GPP_A */
++	TGL_GPP(0, 0, 25, 0),				/* GPP_B */
++	TGL_GPP(1, 26, 41, 32),				/* GPP_T */
++	TGL_GPP(2, 42, 66, 64),				/* GPP_A */
+ };
+ 
+ static const struct intel_padgroup tgllp_community1_gpps[] = {
+-	TGL_GPP(0, 67, 74, 96),			/* GPP_S */
+-	TGL_GPP(1, 75, 98, 128),		/* GPP_H */
+-	TGL_GPP(2, 99, 119, 160),		/* GPP_D */
+-	TGL_GPP(3, 120, 143, 192),		/* GPP_U */
+-	TGL_GPP(4, 144, 170, 224),		/* vGPIO */
++	TGL_GPP(0, 67, 74, 96),				/* GPP_S */
++	TGL_GPP(1, 75, 98, 128),			/* GPP_H */
++	TGL_GPP(2, 99, 119, 160),			/* GPP_D */
++	TGL_GPP(3, 120, 143, 192),			/* GPP_U */
++	TGL_GPP(4, 144, 170, 224),			/* vGPIO */
+ };
+ 
+ static const struct intel_padgroup tgllp_community4_gpps[] = {
+-	TGL_GPP(0, 171, 194, 256),		/* GPP_C */
+-	TGL_GPP(1, 195, 219, 288),		/* GPP_F */
+-	TGL_GPP(2, 220, 225, TGL_NO_GPIO),	/* HVCMOS */
+-	TGL_GPP(3, 226, 250, 320),		/* GPP_E */
+-	TGL_GPP(4, 251, 259, TGL_NO_GPIO),	/* JTAG */
++	TGL_GPP(0, 171, 194, 256),			/* GPP_C */
++	TGL_GPP(1, 195, 219, 288),			/* GPP_F */
++	TGL_GPP(2, 220, 225, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
++	TGL_GPP(3, 226, 250, 320),			/* GPP_E */
++	TGL_GPP(4, 251, 259, INTEL_GPIO_BASE_NOMAP),	/* JTAG */
+ };
+ 
+ static const struct intel_padgroup tgllp_community5_gpps[] = {
+-	TGL_GPP(0, 260, 267, 352),		/* GPP_R */
+-	TGL_GPP(1, 268, 276, TGL_NO_GPIO),	/* SPI */
++	TGL_GPP(0, 260, 267, 352),			/* GPP_R */
++	TGL_GPP(1, 268, 276, INTEL_GPIO_BASE_NOMAP),	/* SPI */
+ };
+ 
+ static const struct intel_community tgllp_communities[] = {
+-- 
+2.25.1
 
