@@ -2,108 +2,100 @@ Return-Path: <SRS0=1XHY=56=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271BCC38A29
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFDAC352BE
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF3D2074D
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064BB2076C
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586886730;
+	bh=bBmFGEaWpYg8ap7AtJ78GaxoqXkZsiVqGYraG7fEbc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SV1kf/M+WoCCDTXm+6zytFRjK58EBci87/fTqEs/+3kmT98KE17Zt/0so638BEGZd
+	 qBmmFSweIhme6mb9dCltBGAqPdTavBYVJALRI0GMCbf8or0dPPxaMmayIkOGqeuiTI
+	 QtO6+XVb8i/oo+XquHi2csXpHIjLZJ9/ykAr/lhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502812AbgDNRuC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Apr 2020 13:50:02 -0400
-Received: from mga06.intel.com ([134.134.136.31]:42046 "EHLO mga06.intel.com"
+        id S2503063AbgDNRwJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Apr 2020 13:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502810AbgDNRt7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Apr 2020 13:49:59 -0400
-IronPort-SDR: odRXMTNID2OE9dZLkOHhE5xN0ISTugsykz/svCTwfK6CalH0v4Q7WUR+FbiZbBOhvdnuZ5DAvZ
- smTcuzEjlhFg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 10:49:03 -0700
-IronPort-SDR: QVL/lhv82ns5+hjE0D0Ssu7yJdrsJjSauiLP0V2gu6k54YNAMq9yc16jxFUJj+0YwNrhJRLFJL
- mhWazJWj5IkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,383,1580803200"; 
-   d="scan'208";a="453623130"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Apr 2020 10:49:02 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8B0AA1A1; Tue, 14 Apr 2020 20:49:01 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1730007AbgDNRwI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Apr 2020 13:52:08 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AD842074D;
+        Tue, 14 Apr 2020 17:52:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586886728;
+        bh=bBmFGEaWpYg8ap7AtJ78GaxoqXkZsiVqGYraG7fEbc8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wp6LgqVscVKq5YHlPBXE2syWWh3yNkgpqC+91VEwyp5Ovod8vI0hKx65GHf0fJ9Zj
+         NhIbdFNC3a6cI3RsqmE1jhfGca3nnr/xKgndpgQI88y7MVj5MX6jQQiJGmNmEug8zE
+         5Rq8xDU2kQrm/wrQPpZf0Ns36wk7rBj/ct3fbo8A=
+Date:   Tue, 14 Apr 2020 18:52:05 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, tiwai@suse.de,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 3/4] gpio: pch: Refactor pch_irq_type() to avoid unnecessary locking
-Date:   Tue, 14 Apr 2020 20:48:59 +0300
-Message-Id: <20200414174900.5099-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200414174900.5099-1-andriy.shevchenko@linux.intel.com>
-References: <20200414174900.5099-1-andriy.shevchenko@linux.intel.com>
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC PATCH 03/16] ASoC: Intel: sof-pcm512x: use gpiod for LED
+Message-ID: <20200414175205.GL5412@sirena.org.uk>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-4-pierre-louis.bossart@linux.intel.com>
+ <20200414171752.GC34613@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HLsZ5Z1opAQvdr2J"
+Content-Disposition: inline
+In-Reply-To: <20200414171752.GC34613@smile.fi.intel.com>
+X-Cookie: I've only got 12 cards.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When type is not supported there is no need to lock and check.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: new patch
- drivers/gpio/gpio-pch.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+--HLsZ5Z1opAQvdr2J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index 708272db6baf..9c34230f2e84 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -229,17 +229,15 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
- 	int ch, irq = d->irq;
- 
- 	ch = irq - chip->irq_base;
--	if (irq <= chip->irq_base + 7) {
-+	if (irq < chip->irq_base + 8) {
- 		im_reg = &chip->reg->im0;
--		im_pos = ch;
-+		im_pos = ch - 0;
- 	} else {
- 		im_reg = &chip->reg->im1;
- 		im_pos = ch - 8;
- 	}
- 	dev_dbg(chip->dev, "irq=%d type=%d ch=%d pos=%d\n", irq, type, ch, im_pos);
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
--
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
- 		val = PCH_EDGE_RISING;
-@@ -257,9 +255,11 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
- 		val = PCH_LEVEL_L;
- 		break;
- 	default:
--		goto unlock;
-+		return 0;
- 	}
- 
-+	spin_lock_irqsave(&chip->spinlock, flags);
-+
- 	/* Set interrupt mode */
- 	im = ioread32(im_reg) & ~(PCH_IM_MASK << (im_pos * 4));
- 	iowrite32(im | (val << (im_pos * 4)), im_reg);
-@@ -270,7 +270,6 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
- 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
- 		irq_set_handler_locked(d, handle_edge_irq);
- 
--unlock:
- 	spin_unlock_irqrestore(&chip->spinlock, flags);
- 	return 0;
- }
--- 
-2.25.1
+On Tue, Apr 14, 2020 at 08:17:52PM +0300, Andy Shevchenko wrote:
+> On Thu, Apr 09, 2020 at 02:58:28PM -0500, Pierre-Louis Bossart wrote:
 
+> > +		GPIO_LOOKUP("pcm512x-gpio", 3, "PCM512x-GPIO4", GPIO_ACTIVE_HIGH),
+
+> It says GPIO 4 and here is number 3.
+> Does this 4 come from hardware documentation?
+
+Yes, the first GPIO in the device is GPIO1.
+
+--HLsZ5Z1opAQvdr2J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6V+EQACgkQJNaLcl1U
+h9AWgQf/bIQs+gv5yXrGrVTSpNHyX246/chEfkEGGW13vu7i30lHMx7WqTl2XYH8
+dxug0+PjPKNCxQqtt278m7YnB2VZw1Go9EhQg3pq1HE7nMmf5pVgzB6wHcAkst5R
+EIQB8ezHiiVoAfJzdHSC7jXNvuc7PKuqJBPqaUZrink1flI50FyPMybtKNjCHe6n
+B+2NyFFIue4/P64qCSVLUtK0GQ2xZiUGIcAbCLMZQJg/CBOvugTygvVYFmLOBIXA
+0CHH9ozBELK/ofd55JItdSSueHgQ6RmDNmDiwlfLIkqQhPFC+1l4SJIy0agz3IeQ
+tq3d+rvrTW68hHrgEsSddNeRQEXupw==
+=7ljH
+-----END PGP SIGNATURE-----
+
+--HLsZ5Z1opAQvdr2J--
