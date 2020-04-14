@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412F3C352BE
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F940C2BB85
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2134A20678
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB452076B
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Apr 2020 17:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407631AbgDNR1r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Apr 2020 13:27:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:62989 "EHLO mga14.intel.com"
+        id S2407669AbgDNRbQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Apr 2020 13:31:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19422 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407592AbgDNR1p (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Apr 2020 13:27:45 -0400
-IronPort-SDR: kskzwyoPzc+k3eFZzIbRVvlCf0UTmoJoKv6xfYs2+mehAa+HdIKKMODZmvSqaOKhyNZYv4J8ff
- dcfP+URYWrjw==
+        id S1732341AbgDNRbO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Apr 2020 13:31:14 -0400
+IronPort-SDR: xkSX3tR87Whu96/aqq11VDgygeABGHZshLJIbwXcTW6fdmyHrX6efv5wMFhAKCsHnKBundhEFD
+ x7CZbxFXNBng==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 10:27:43 -0700
-IronPort-SDR: ECrF0e0oImZU1rOVCW4NKcfhsj9UHihE7OBCHemlO+xxKPUPWatkoWu2dnLX7yugWcec4aGcJc
- t83n+5tkeWxw==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 10:31:11 -0700
+IronPort-SDR: i0kCkIFUR74Blyj6EAjijEEDnrSwFH14wws42sXrehAbT0FunF8mp2lTkIzRnF/BHeIMtCRN+M
+ ItQ5BGFfBK9A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,383,1580803200"; 
-   d="scan'208";a="253259400"
+   d="scan'208";a="332246781"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 14 Apr 2020 10:27:39 -0700
+  by orsmga001.jf.intel.com with ESMTP; 14 Apr 2020 10:31:08 -0700
 Received: from andy by smile with local (Exim 4.93)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jOPLZ-000Zv7-M9; Tue, 14 Apr 2020 20:27:41 +0300
-Date:   Tue, 14 Apr 2020 20:27:41 +0300
+        id 1jOPOw-000Zxz-92; Tue, 14 Apr 2020 20:31:10 +0300
+Date:   Tue, 14 Apr 2020 20:31:10 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
@@ -46,29 +46,35 @@ Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
         linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 16/16] ASoC: dt-bindings: add document for Hifiberry
- DAC+ PRO clock
-Message-ID: <20200414172741.GF34613@smile.fi.intel.com>
+        Rob Herring <robh+dt@kernel.org>,
+        DigitalDreamtime <clive.messer@digitaldreamtime.co.uk>
+Subject: Re: [RFC PATCH 07/16] clk: hifiberry-dacpro: initial import
+Message-ID: <20200414173110.GG34613@smile.fi.intel.com>
 References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-17-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-8-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200409195841.18901-17-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20200409195841.18901-8-pierre-louis.bossart@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 02:58:41PM -0500, Pierre-Louis Bossart wrote:
-> The Hifiberry DAC+ PRO relies on two local audio oscillators exposed
-> with the clock framework.
+On Thu, Apr 09, 2020 at 02:58:32PM -0500, Pierre-Louis Bossart wrote:
+> From: Daniel Matuschek <daniel@hifiberry.com>
+> 
+> This patch imports the clock code from the Raspberry v5.5-y tree. The
+> ASoC machine driver initially present in this patch was dropped. The
+> comments are also dropped but all sign-offs are kept below. The patch
+> authorship was modified with explicit permission from Daniel Matuschek
+> to make sure it matches the Signed-off tag.
+> 
+> This patch generates a lot of checkpatch.pl warnings that are
+> corrected in follow-up patches.
 
-> +# SPDX-License-Identifier: GPL-2.0
-
-Dual license requirement nowadays.
+I guess it will be waste of time to review this part without squashing it first.
 
 -- 
 With Best Regards,
