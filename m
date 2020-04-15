@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2E1C3815B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC6BC2BA19
 	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02A5320767
+	by mail.kernel.org (Postfix) with ESMTP id A5EED20767
 	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634150AbgDOOQx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:16:53 -0400
+        id S2636547AbgDOOQy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:16:54 -0400
 Received: from mga14.intel.com ([192.55.52.115]:9848 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2636547AbgDOOPo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:15:44 -0400
-IronPort-SDR: spGpC7BXw1vGEKsJRens762VIVGxd7cJuJ4nyW5c6BaN7IpI5Pbk2ElLf/QwIWf3op/pNXxsfY
- vZi3l5PgX+NQ==
+        id S2636538AbgDOOPm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:15:42 -0400
+IronPort-SDR: JBv8ayGxs9UGJ+b5CB/LvJIL/ydPgY0AZc4otT2SRdA1LIJvEJrsw6VkYyOntJE9U4urCYxAbs
+ +xDmfZyMuMTw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:40 -0700
-IronPort-SDR: l7bXwqLT92kk8e4MqmmOspqgN5/R4fw3wXCfcqUtG9L0jdqNlVCyLWwhdoQ83trx6XEk4e+m+I
- 4MJWRLlYwdHA==
+IronPort-SDR: rhVC47Oc7m9VXzZaaTSDMHn7UsA+jbTEEIrZyq0D/pt3+X/gBtnBe5KsoAIpiCi4KnMvZiFRE/
+ nfWdt/UAjO+A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
-   d="scan'208";a="244112402"
+   d="scan'208";a="244112398"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga007.fm.intel.com with ESMTP; 15 Apr 2020 07:15:38 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id DE4D9E2F; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
+        id C06C4C4E; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 09/14] gpio: dwapb: Switch to more usual pattern of RMW in dwapb_gpio_set_debounce()
-Date:   Wed, 15 Apr 2020 17:15:29 +0300
-Message-Id: <20200415141534.31240-10-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 06/14] gpio: dwapb: Convert to use irqd_to_hwirq()
+Date:   Wed, 15 Apr 2020 17:15:26 +0300
+Message-Id: <20200415141534.31240-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
 References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
@@ -52,33 +52,82 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-More usual pattern is to prepare value and then write it in a single place.
-Switch code in dwapb_gpio_set_debounce() to it.
+Convert to use irqd_to_hwirq() instead of direct access to the hwirq member.
+Also amend the type of the hwirq holding variable to be irq_hw_number_t.
 
+Cc: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Tested-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/gpio/gpio-dwapb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 4edac592c253..0b073cbc003b 100644
+index c0c267cddd80..2edccc5bbc25 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -327,9 +327,10 @@ static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
+@@ -194,7 +194,7 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+ {
+ 	unsigned long irq_status;
+-	int hwirq;
++	irq_hw_number_t hwirq;
  
- 	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
- 	if (debounce)
--		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb | mask);
-+		val_deb |= mask;
- 	else
--		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb & ~mask);
-+		val_deb &= ~mask;
-+	dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb);
+ 	irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
+ 	for_each_set_bit(hwirq, &irq_status, 32) {
+@@ -230,7 +230,7 @@ static void dwapb_irq_enable(struct irq_data *d)
  
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 	val = dwapb_read(gpio, GPIO_INTEN);
+-	val |= BIT(d->hwirq);
++	val |= BIT(irqd_to_hwirq(d));
+ 	dwapb_write(gpio, GPIO_INTEN, val);
  	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ }
+@@ -245,7 +245,7 @@ static void dwapb_irq_disable(struct irq_data *d)
  
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 	val = dwapb_read(gpio, GPIO_INTEN);
+-	val &= ~BIT(d->hwirq);
++	val &= ~BIT(irqd_to_hwirq(d));
+ 	dwapb_write(gpio, GPIO_INTEN, val);
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ }
+@@ -255,7 +255,7 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+ 	struct gpio_chip *gc = &gpio->ports[0].gc;
+-	int bit = d->hwirq;
++	irq_hw_number_t bit = irqd_to_hwirq(d);
+ 	unsigned long level, polarity, flags;
+ 
+ 	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING |
+@@ -305,11 +305,12 @@ static int dwapb_irq_set_wake(struct irq_data *d, unsigned int enable)
+ 	struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = igc->private;
+ 	struct dwapb_context *ctx = gpio->ports[0].ctx;
++	irq_hw_number_t bit = irqd_to_hwirq(d);
+ 
+ 	if (enable)
+-		ctx->wake_en |= BIT(d->hwirq);
++		ctx->wake_en |= BIT(bit);
+ 	else
+-		ctx->wake_en &= ~BIT(d->hwirq);
++		ctx->wake_en &= ~BIT(bit);
+ 
+ 	return 0;
+ }
+@@ -365,8 +366,9 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	struct gpio_chip *gc = &port->gc;
+ 	struct fwnode_handle  *fwnode = pp->fwnode;
+ 	struct irq_chip_generic	*irq_gc = NULL;
+-	unsigned int hwirq, ngpio = gc->ngpio;
++	unsigned int ngpio = gc->ngpio;
+ 	struct irq_chip_type *ct;
++	irq_hw_number_t hwirq;
+ 	int err, i;
+ 
+ 	gpio->domain = irq_domain_create_linear(fwnode, ngpio,
 -- 
 2.25.1
 
