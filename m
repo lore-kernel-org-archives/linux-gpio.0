@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FF2C38A2D
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2E1C3815B
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7315D20767
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02A5320767
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636534AbgDOOQw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:16:52 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9843 "EHLO mga14.intel.com"
+        id S2634150AbgDOOQx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:16:53 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9848 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2634150AbgDOOPo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S2636547AbgDOOPo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 15 Apr 2020 10:15:44 -0400
-IronPort-SDR: DN8+RihC+wRTYwomfD4kc8qXKUBBxkqqUllE3naSKW+ypB/yiPLLUk5PUhRTKvbKQFgQXNaU/N
- yRdF2QFEG8ZA==
+IronPort-SDR: spGpC7BXw1vGEKsJRens762VIVGxd7cJuJ4nyW5c6BaN7IpI5Pbk2ElLf/QwIWf3op/pNXxsfY
+ vZi3l5PgX+NQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:40 -0700
-IronPort-SDR: avfExghL/6HFMVpJm7kM6xR2q+KLkifbvYcu7cBB6Gg19Ct/Wei2Zlraf+7QjgJZDyjsa4BU5j
- 2WyfcjoFwQQg==
+IronPort-SDR: l7bXwqLT92kk8e4MqmmOspqgN5/R4fw3wXCfcqUtG9L0jdqNlVCyLWwhdoQ83trx6XEk4e+m+I
+ 4MJWRLlYwdHA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
-   d="scan'208";a="244112401"
+   d="scan'208";a="244112402"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga007.fm.intel.com with ESMTP; 15 Apr 2020 07:15:38 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C5EFB49F; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
+        id DE4D9E2F; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 07/14] gpio: dwapb: Use device_get_match_data() to simplify code
-Date:   Wed, 15 Apr 2020 17:15:27 +0300
-Message-Id: <20200415141534.31240-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 09/14] gpio: dwapb: Switch to more usual pattern of RMW in dwapb_gpio_set_debounce()
+Date:   Wed, 15 Apr 2020 17:15:29 +0300
+Message-Id: <20200415141534.31240-10-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
 References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
@@ -52,39 +52,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use device_get_match_data() here to simplify the code a bit.
+More usual pattern is to prepare value and then write it in a single place.
+Switch code in dwapb_gpio_set_debounce() to it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Tested-by: Serge Semin <fancer.lancer@gmail.com>
 Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/gpio/gpio-dwapb.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 2edccc5bbc25..8b30ded9322a 100644
+index 4edac592c253..0b073cbc003b 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -683,18 +683,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 		return err;
- 	}
+@@ -327,9 +327,10 @@ static int dwapb_gpio_set_debounce(struct gpio_chip *gc,
  
--	gpio->flags = 0;
--	if (dev->of_node) {
--		gpio->flags = (uintptr_t)of_device_get_match_data(dev);
--	} else if (has_acpi_companion(dev)) {
--		const struct acpi_device_id *acpi_id;
--
--		acpi_id = acpi_match_device(dwapb_acpi_match, dev);
--		if (acpi_id) {
--			if (acpi_id->driver_data)
--				gpio->flags = acpi_id->driver_data;
--		}
--	}
-+	gpio->flags = (uintptr_t)device_get_match_data(dev);
+ 	val_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+ 	if (debounce)
+-		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb | mask);
++		val_deb |= mask;
+ 	else
+-		dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb & ~mask);
++		val_deb &= ~mask;
++	dwapb_write(gpio, GPIO_PORTA_DEBOUNCE, val_deb);
  
- 	for (i = 0; i < gpio->nr_ports; i++) {
- 		err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ 
 -- 
 2.25.1
 
