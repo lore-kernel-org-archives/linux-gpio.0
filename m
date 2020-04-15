@@ -2,123 +2,126 @@ Return-Path: <SRS0=HvKM=57=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D26CC2BA19
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 11:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036A4C2BA19
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 11:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53B6C20575
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 11:25:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5AFF20857
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 11:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bPsgUpYo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYKcvyIK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896912AbgDOLYF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:24:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38166 "EHLO
+        id S2409624AbgDOL4G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:56:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2896919AbgDOLX4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2020 07:23:56 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45064C061A0C
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 04:23:47 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id v7so16787585qkc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 04:23:47 -0700 (PDT)
+        with ESMTP id S2409617AbgDOL4B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2020 07:56:01 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE420C061A0C
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 04:56:00 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id j3so2891413ljg.8
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 04:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GbGdUHCJ4bUoinaanEHZGPM2IWEohSovSXtISnti05A=;
-        b=bPsgUpYoL9M6N2VPErmUCcpzn5u1MHE4amLphyBztAlEDYEc2BUT5APnZolsOpqgQo
-         UElW/h+9W6/OQYq78v+wkrwkTScU3VFsegxOrjrBSro+NUqEKIL9G+6pWDHSz8WSnPnE
-         obvD/n2FGftlzjcsOuPEV8TTSJVUDp3JG5nvbPN/zHFL8oQiNIhug82+p5i0veVBTiIv
-         52CYBawo5jbUJ8flFm+S6jB67a+hbEkBGGVG4hHAXYz0iGiKxtS+DkXCSSfFS2jSW37G
-         DFojNU+UxX7TUk7szfPJBPAo6ijrC8QtQ0Z4PVPTkamQE2hqyBCYfxdWDSePkTzzJ7xh
-         pzHQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ThQRICc5OXP3YfsYHpuU1KSyFzAUcmskO0ZXLUSWCFk=;
+        b=tYKcvyIKYngOKt8jqfNLvdhLdXoLVWVlNpybZX0aODFqwWzjP+J843t3yT9YWXDNgE
+         3DWgWx6SxhDZRTgakBualNv6Uc7AEFZauPdVXu7HoywIGh2+59/wyP71DoJ6kFizhv86
+         nVmXYyG8sru7kqsWEP3QlFKNQgouXJtM5ODm8MLupzlrsE3yXvK6lngKKDTAulyAcchk
+         z+y+IyBHNuD7KDaHcQ2pxqtdWblt4Ajjm4lr5P8qEuzBSN3gvjK7PGaFpwEg2jdH89TK
+         OwlxxBEU0ZxoHsOB+9ig1o0iEB4DQPgQmJw+npufe8VyAxxIjOOtFA9P7Ji9fZFlsCAu
+         /URw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GbGdUHCJ4bUoinaanEHZGPM2IWEohSovSXtISnti05A=;
-        b=H6bUaz/mVkfDoIfUGWNBulcEPY7dEeS6je9q1MRjdz/VuwoIXUDufuLEC+5Wdg+cY8
-         AqfmF8e1ofGxRaftoCNv6p2yIjcqHyrck3MPE6i3XowVRzqLCK7QZ5sCyEUTfT5G5lRF
-         lg4rR4ITu4WjBH/E+Hy7QRTZYvBGcdOvZi3Ho9mhd67KL4tM33yuYD1xx/61WgOQ8TwA
-         MCZPUnT3VCmLXYYi9kYuo5fkBbvOSgKXeW0tGoRGkxpsNRlVpPpNeKRXTw9D8Mk/nCEh
-         eAUVKMh8X5fWr2w286dnLL3XUnE5DJft9N5rRd8ckoKb0g4/MdYN4eNsGPkyGXdTlCeC
-         fk/g==
-X-Gm-Message-State: AGi0PubfjdV2S9ggOpUBuX+amFo2fSi3BpYh7e9wUs9oxkSboCy3sLOB
-        AumJaGMPZP0rkZT3FGKhyF/exCHihxAbEox52jBKmI6W
-X-Google-Smtp-Source: APiQypLIFkjl085Wr9baIYHsdqw7js/p+GpQ1kscrhJsG4kwCOMANeuE99y+0cw3i4iiaeT6xcHhsaHD6J6lJhvwp+E=
-X-Received: by 2002:a05:620a:1289:: with SMTP id w9mr10377990qki.263.1586949826538;
- Wed, 15 Apr 2020 04:23:46 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ThQRICc5OXP3YfsYHpuU1KSyFzAUcmskO0ZXLUSWCFk=;
+        b=Im+AzAiElsRYg9ZlOLpQ3Kj3XgnPGH//igczXgjRcVYWIC9z3uIFs4u4ZPiskDkVIS
+         fvkaJgWJ9H+ZuOSs12kGF+rgNfyQHb+VGIrijbcXE/Zm99ZMqvDJAHLqeHCyq7pEIumI
+         gbCt0DKtbziaB4DKLeBa0NnJnpwyPdWMYj+0An/6px3rxvX7F9aI+8dfauPggxIK0+jt
+         DkUeDHDlMpCnCboePYkjwe3P8JpxZC8WwKEXXNVmz54NRKN4BEdNQ48M8gke4iKqU3zU
+         APnNlwdUT8ZvkYJxjjKL5tmq2EPIcAzbx25pJ7yB+AHyTtq+lr5geDeujiBBpcb2T7Ex
+         1uSA==
+X-Gm-Message-State: AGi0PuatSI7xOatmehPmqvlY2Cjx8JKQ8zdfpNf+2X7Ej/u2Mq2WajnG
+        wwj7/Ji7oJzO2/krMEcdYZI=
+X-Google-Smtp-Source: APiQypK9Qk2ZWa+hU8VzunEcqKtnBTDWwLwElnnmtTuIlgStEA8CZmJAIAmXJ9Znqll1LfrF/VHBIg==
+X-Received: by 2002:a2e:914c:: with SMTP id q12mr3064473ljg.124.1586951759363;
+        Wed, 15 Apr 2020 04:55:59 -0700 (PDT)
+Received: from mobilestation ([176.213.3.142])
+        by smtp.gmail.com with ESMTPSA id j8sm12504606lfk.88.2020.04.15.04.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 04:55:58 -0700 (PDT)
+Date:   Wed, 15 Apr 2020 14:55:57 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 00/13] gpio: dwapb: Clean up the driver and a fix
+Message-ID: <20200415115557.jhe5kwezgib7dvyn@mobilestation>
+References: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20200412013352.674506-1-aford173@gmail.com>
-In-Reply-To: <20200412013352.674506-1-aford173@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 15 Apr 2020 13:23:35 +0200
-Message-ID: <CAMpxmJUA=-AfSGLtVzhBe16q73P6kHJeX6W_kYuG6W3AQ=3A+g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpiolib: of: Improve gpiolib-of support pull up/down
- on expanders
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>, aford@beaconembedded.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409141228.49561-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-niedz., 12 kwi 2020 o 03:34 Adam Ford <aford173@gmail.com> napisa=C5=82(a):
->
-> When using GPIO expanders attached to I2C ports, their set_config functio=
-n
-> needs to be passed a config setting which contains options to enable pull
-> up or pull down bias feature.  In order to set this config properly,
-> the gpio parser needs to handle GPIO_PULL_UP and GPIO_PULL_DOWN.
->
-> This patch enables the flags corresponding to GPIO_PULL_UP and
-> GPIO_PULL_DOWN.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index c6d30f73df07..bf17afb1f66d 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -344,6 +344,12 @@ struct gpio_desc *gpiod_get_from_of_node(struct devi=
-ce_node *node,
->         if (transitory)
->                 lflags |=3D GPIO_TRANSITORY;
->
-> +       if (flags & OF_GPIO_PULL_UP)
-> +               lflags |=3D GPIO_PULL_UP;
-> +
-> +       if (flags & OF_GPIO_PULL_DOWN)
-> +               lflags |=3D GPIO_PULL_DOWN;
-> +
->         ret =3D gpiod_configure_flags(desc, propname, lflags, dflags);
->         if (ret < 0) {
->                 gpiod_put(desc);
-> @@ -585,6 +591,10 @@ static struct gpio_desc *of_parse_own_gpio(struct de=
-vice_node *np,
->                 *lflags |=3D GPIO_ACTIVE_LOW;
->         if (xlate_flags & OF_GPIO_TRANSITORY)
->                 *lflags |=3D GPIO_TRANSITORY;
-> +       if (xlate_flags & OF_GPIO_PULL_UP)
-> +               *lflags |=3D GPIO_PULL_UP;
-> +       if (xlate_flags & OF_GPIO_PULL_DOWN)
-> +               *lflags |=3D GPIO_PULL_DOWN;
->
->         if (of_property_read_bool(np, "input"))
->                 *dflags |=3D GPIOD_IN;
-> --
+Hello Andy
+
+On Thu, Apr 09, 2020 at 05:12:15PM +0300, Andy Shevchenko wrote:
+> It appears that GPIO DW APB driver wasn't touched for a long time. Here is
+> the fix for long standing issue, i.e. missed module alias to make the driver
+> be loaded automatically.
+> 
+> On top of above a lot small clean ups here and there.
+> 
+> The series based on the v3 by Serge Semin which he sent earlier.
+> 
+> Driver has been tested on Intel Galileo Gen2 with AT25 SPI EEPROM using it
+> for a chip select.
+
+Thanks one more time for the series of nice cleanups. I've successfully
+tested it on our board with Baikal-T1 SoC, which has two DW APB IP-cores
+embedded with Ports A being configured as GPIOx32 and irqless GPIOx3.
+So for the whole series
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
+
+(Note since until my series is merged in to the kernel technically I'm not
+the driver maintainer so I'll use the reviewers tag for now where it's
+relevant.)
+
+Regards,
+-Sergey
+
+> 
+> Andy Shevchenko (13):
+>   gpio: dwapb: Append MODULE_ALIAS for platform driver
+>   gpio: dwapb: Refactor IRQ handler
+>   gpio: dwapb: set default handler to be handle_bad_irq()
+>   gpio: dwapb: Deduplicate IRQ resource management
+>   gpio: dwapb: Convert to use irqd_to_hwirq()
+>   gpio: dwapb: Use device_get_match_data() to simplify code
+>   gpio: dwapb: Convert to use IRQ core provided macros
+>   gpio: dwapb: Switch to more usual pattern of RMW in
+>     dwapb_gpio_set_debounce()
+>   gpio: dwapb: Drop bogus BUG_ON()s
+>   gpio: dwapb: Drop of_match_ptr() & ACPI_PTR() calls
+>   gpio: dwapb: Split out dwapb_get_irq() helper
+>   gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
+>   gpio: dwapb: Amend indentation in some cases
+> 
+>  drivers/gpio/gpio-dwapb.c | 205 +++++++++++++++-----------------------
+>  1 file changed, 79 insertions(+), 126 deletions(-)
+> 
+> -- 
 > 2.25.1
->
-
-Patch applied, thanks!
-
-Bart
+> 
