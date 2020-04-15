@@ -2,83 +2,112 @@ Return-Path: <SRS0=HvKM=57=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C744C3815B
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6977C2BA19
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B55620767
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC0721556
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636537AbgDOOQ4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:16:56 -0400
-Received: from mga11.intel.com ([192.55.52.93]:43702 "EHLO mga11.intel.com"
+        id S2387800AbgDOO5K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:57:10 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60655 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2636539AbgDOOPl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:15:41 -0400
-IronPort-SDR: kkfOFbchQt/g4jVW7J13BUURN1eSCqM/8dE0fRs5xBDBKsSht7A+ICF4xDfEzTWaIXkyU3n+LM
- lccAoJbra7hA==
+        id S371202AbgDOO5J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:57:09 -0400
+IronPort-SDR: 2Gvm1dA03VSQvTUL2wyt+uIlhnJgx9WbJfj7E9h0Hh4JOhQ2y5BsgxIpWdn86k6g8kQd/ZHsxN
+ /UpCVQ4T0mjg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:38 -0700
-IronPort-SDR: J5qQDhVsezmxea/Fk2X1ovJ/bXOqmxPzLAi1xZGG4fZC6XGvaswuY0bbsDZXfQXCy3d2gwV3O9
- NubxjPdrmvbQ==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:57:09 -0700
+IronPort-SDR: vTZGDdDuMV+ybxPP4XZua6xk6dUN/yHLuEGjn3AQCYHjh1uACWaSCt7N6rt09jcVkdqBHiXq2/
+ UTKYIoOEExpw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
-   d="scan'208";a="277627679"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 15 Apr 2020 07:15:36 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A29CF638; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+   d="scan'208";a="400337197"
+Received: from ccarey-mobl.amr.corp.intel.com (HELO [10.209.36.121]) ([10.209.36.121])
+  by orsmga004.jf.intel.com with ESMTP; 15 Apr 2020 07:57:07 -0700
+Subject: Re: [RFC PATCH 04/16] ASoC: Intel: sof-pcm512x: detect Hifiberry DAC+
+ PRO
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, Matthias Reichl <hias@horus.com>,
+        tiwai@suse.de, Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        linux-clk@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        broonie@kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 03/14] gpio: dwapb: Use chained IRQ prologue and epilogue
-Date:   Wed, 15 Apr 2020 17:15:23 +0300
-Message-Id: <20200415141534.31240-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
-References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+        Michael Turquette <mturquette@baylibre.com>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-5-pierre-louis.bossart@linux.intel.com>
+ <20200414172002.GD34613@smile.fi.intel.com>
+ <d3b154f4-fa8a-50a5-7246-51d31e18c4e6@linux.intel.com>
+ <20200415095526.GP34613@smile.fi.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <664999e7-f345-7296-feca-56cb53a27eb1@linux.intel.com>
+Date:   Wed, 15 Apr 2020 09:07:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200415095526.GP34613@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Refactor IRQ handler in order to enter and exit chained IRQ by using
-respective prologue and epilogue calls.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/gpio/gpio-dwapb.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index e89a3c6877aa..f61139f787d9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -215,10 +215,9 @@ static void dwapb_irq_handler(struct irq_desc *desc)
- 	struct dwapb_gpio *gpio = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 
-+	chained_irq_enter(chip, desc);
- 	dwapb_do_irq(gpio);
--
--	if (chip->irq_eoi)
--		chip->irq_eoi(irq_desc_get_irq_data(desc));
-+	chained_irq_exit(chip, desc);
- }
- 
- static void dwapb_irq_enable(struct irq_data *d)
--- 
-2.25.1
+On 4/15/20 4:55 AM, Andy Shevchenko wrote:
+> On Tue, Apr 14, 2020 at 01:02:12PM -0500, Pierre-Louis Bossart wrote:
+>> On 4/14/20 12:20 PM, Andy Shevchenko wrote:
+>>> On Thu, Apr 09, 2020 at 02:58:29PM -0500, Pierre-Louis Bossart wrote:
+> 
+> ...
+> 
+>>>> +	ctx->sclk = devm_clk_get(rtd->card->dev, "sclk");
+>>>
+>>> Is this in the bindings?
+>>
+>> Not for now. the 'sclk' part is only used by me myself and I in an ACPI
+>> context. I can add this description if desired.
+> 
+> Unfortunately you need to add this to the bindings, because it's a part of it
+> and somebody may use it outside of your scope.
 
+ok
+
+
+>>>> +	if (IS_ERR(ctx->sclk)) {
+>>>
+>>>> +		dev_info(dev, "Could not get SCLK, will operate in SOC master mode\n");
+>>>
+>>> Sounds like devm_clk_get_optional().
+>>
+>> I am not sure about the semantic here. This driver selects the one which
+>> implements this clock, so if we get a -ENOENT return it's a very bad sign.
+>> Not sure what suppressing the error and converting to NULL would do?
+> 
+> Same as per GPIO.
+> Can it work without this clock? How did it work before your change?
+> 
+> When you add any hard dependency always ask yourself above questions.
+
+The clock is not required in codec slave mode, it's provided by the SOC.
+
+The clock is required when the codec is configured as master. Without 
+these GPIO selection there will be no audio. So yes we could move this 
+to devm_clk_get_optional() and change the test to IS_ERR_OR_NULL.
+
+
+
+>>>> +		goto skip_dacpro;
+>>>> +	}
+> 
