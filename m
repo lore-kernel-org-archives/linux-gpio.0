@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D520CC2BA19
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07274C2BA19
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC1A520767
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5A2720857
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636536AbgDOOPw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:15:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:29682 "EHLO mga04.intel.com"
+        id S2636535AbgDOOPt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:15:49 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29678 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2636541AbgDOOPo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:15:44 -0400
-IronPort-SDR: wXpZIDWv/gVhKdoMJC21IVmzfUa/8bEWKEkRxf3eXrAyfzkTA3egoHQRYEvrB5Yo85Dfrkz7Hi
- z8hbJUIizCCg==
+        id S2636536AbgDOOPm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:15:42 -0400
+IronPort-SDR: eZTVJ0E2FDrFftgR+jRYM4Be+Y1/WNaHPrfprMGGt2X55PbUpna4oJ7HxwCaZaqDWNTBu6kmPH
+ Hv4AJrRN8lhA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:40 -0700
-IronPort-SDR: 6rbYQSBBdO01ZY6UtgcDv6sl4G/z3B23n4MNywzw7VOsCFbgwXawNGeRyXXmCqkhl9xq3BwXyP
- GTnoKKFokEGA==
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:38 -0700
+IronPort-SDR: DwIjJ1VGBrkDLu8hYfibqRG9SNwt2Sk3ZIP36FPPE7eBBSslPY3nOCbllKJAgd+8qjG74+6FO8
+ 4kr7FAPjP4qg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
-   d="scan'208";a="256870442"
+   d="scan'208";a="256870435"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 15 Apr 2020 07:15:38 -0700
+  by orsmga006.jf.intel.com with ESMTP; 15 Apr 2020 07:15:36 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1298CF20; Wed, 15 Apr 2020 17:15:36 +0300 (EEST)
+        id 96AEB4FD; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 13/14] gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
-Date:   Wed, 15 Apr 2020 17:15:33 +0300
-Message-Id: <20200415141534.31240-14-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 02/14] gpio: dwapb: Refactor IRQ handler to use bit operations
+Date:   Wed, 15 Apr 2020 17:15:22 +0300
+Message-Id: <20200415141534.31240-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
 References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
@@ -52,52 +52,49 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The negative conditionals are harder to parse by reader.
-Switch to positive one in dwapb_configure_irqs().
+Refactor IRQ handler in order to use for_each_set_bit() helper.
 
-Cc: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Tested-by: Serge Semin <fancer.lancer@gmail.com>
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/gpio/gpio-dwapb.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 31d29ec6ab5c..84c971e0adf0 100644
+index c1b6d4f7307e..e89a3c6877aa 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -413,15 +413,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	irq_gc->chip_types[1].type = IRQ_TYPE_EDGE_BOTH;
- 	irq_gc->chip_types[1].handler = handle_edge_irq;
+@@ -193,22 +193,21 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
  
--	if (!pp->irq_shared) {
--		int i;
--
--		for (i = 0; i < pp->ngpio; i++) {
--			if (pp->irq[i] >= 0)
--				irq_set_chained_handler_and_data(pp->irq[i],
--						dwapb_irq_handler, gpio);
--		}
--	} else {
-+	if (pp->irq_shared) {
- 		/*
- 		 * Request a shared IRQ since where MFD would have devices
- 		 * using the same irq pin
-@@ -435,6 +427,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 			gpio->domain = NULL;
- 			return;
- 		}
-+	} else {
-+		int i;
-+
-+		for (i = 0; i < pp->ngpio; i++) {
-+			if (pp->irq[i] >= 0)
-+				irq_set_chained_handler_and_data(pp->irq[i],
-+						dwapb_irq_handler, gpio);
-+		}
+ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+ {
+-	u32 irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
+-	u32 ret = irq_status;
++	unsigned long irq_status;
++	int hwirq;
+ 
+-	while (irq_status) {
+-		int hwirq = fls(irq_status) - 1;
++	irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
++	for_each_set_bit(hwirq, &irq_status, 32) {
+ 		int gpio_irq = irq_find_mapping(gpio->domain, hwirq);
++		u32 irq_type = irq_get_trigger_type(gpio_irq);
+ 
+ 		generic_handle_irq(gpio_irq);
+-		irq_status &= ~BIT(hwirq);
+ 
+-		if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
+-			== IRQ_TYPE_EDGE_BOTH)
++		if ((irq_type & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH)
+ 			dwapb_toggle_trigger(gpio, hwirq);
  	}
  
- 	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
+-	return ret;
++	return irq_status;
+ }
+ 
+ static void dwapb_irq_handler(struct irq_desc *desc)
 -- 
 2.25.1
 
