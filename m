@@ -2,146 +2,102 @@ Return-Path: <SRS0=HvKM=57=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3249C2BA19
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D520CC2BA19
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF29B206A2
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:03:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpxZ+mJN"
+	by mail.kernel.org (Postfix) with ESMTP id AC1A520767
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633929AbgDOODC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730833AbgDOOC6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:02:58 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FC7C061A0C
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 07:02:57 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id k1so12096060wrx.4
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2020 07:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yHM4I3UVsMWqFHkcRRV3Uj2fAsEa3/kl34z4h8ubApA=;
-        b=RpxZ+mJNoRt4v67f5B/0JZX3K43ow18KduhBvQakY34FTLjgNWVRER6k5rBBYOQC93
-         cxtjXNLiLCrXDYSSEwHpJoLzV8iyJcz09kzUsFr5u7GFx8K/cUOAb0Z/hXs5bGfLcb7H
-         lsSaMwTuPmltVuz64iOX3QYr/eFW4JuU+6KE7SfhiVR898VaXHs3F9R+Y66QCmOp/rXb
-         vD3H/mIyy6BgTgjqf+y9h71akDxFe3KsP6kzAn/CuXKJJwU3xeQzjBRnEN5Fq//IJDGB
-         fQVpiy8XHr33x3KkENpGUj81Uo1B0kXiTX0KiyxdjagYTFOxpIuge3DdHC/CG/MHSzMH
-         9mfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yHM4I3UVsMWqFHkcRRV3Uj2fAsEa3/kl34z4h8ubApA=;
-        b=BzKIMtLKvH/GUa4+ZL59cG0ZY9vm+pYs9y1VQWS/dNXZ4cQhaj6QAFGM1P6i10/XYX
-         e0ygTczfkDpo5WHB6nkTOWq8ASmNg4nTQqCHCQ+L0y6sauN7HzpHpeR55+m0Cu9ODg4v
-         MbodjiE+VI3OBlhXEzV5dfo0v6HWBwv8ZTtmXw5NjlvS8P6kU+Zz8EnXjgG6XNZS2RhL
-         WidFeyFMDT1xcHSuZyzD0R/ZEVLJYwBYJ+Jfp0cHRWqhgCWUoggLM6Kl0X4OkswgHmqQ
-         IJL1O/aZvRw0PeVKfKGVFCwwMu9VxtUaGoA0bOGQA6YkpsZhFiHwucWOVcTpLtvKdzt7
-         EiaQ==
-X-Gm-Message-State: AGi0PubwWa/STH+rcyOr0CpYVakV3d0p33MRx4Ra8R/9jGn1evN5NUxl
-        K4h8KhxEGZEJ5EVf0M3mU0E=
-X-Google-Smtp-Source: APiQypK2mXgVCTr2Z7J7COa+ELVDDlOd2vmzhQ9xkfjKZJqiK5EbDu1CLJmuSI5kPoFIAUTyEqnm2g==
-X-Received: by 2002:a5d:5189:: with SMTP id k9mr1808621wrv.3.1586959376093;
-        Wed, 15 Apr 2020 07:02:56 -0700 (PDT)
-Received: from x1 (i59F66838.versanet.de. [89.246.104.56])
-        by smtp.gmail.com with ESMTPSA id u12sm2324622wmu.25.2020.04.15.07.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 07:02:54 -0700 (PDT)
-Date:   Wed, 15 Apr 2020 16:03:35 +0200
-From:   Drew Fustini <drew@pdp7.com>
-To:     Kent Gibson <warthog618@gmail.com>, matheus@castello.eng.br
-Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
-        linus.walleij@linaro.org, bamv2005@gmail.com,
-        thomas.petazzoni@bootlin.com
-Subject: boards to test gpio line bias flags?
-Message-ID: <20200415140335.GA24288@x1>
-References: <20191105020429.18942-1-warthog618@gmail.com>
+        id S2636536AbgDOOPw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:15:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29682 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2636541AbgDOOPo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:15:44 -0400
+IronPort-SDR: wXpZIDWv/gVhKdoMJC21IVmzfUa/8bEWKEkRxf3eXrAyfzkTA3egoHQRYEvrB5Yo85Dfrkz7Hi
+ z8hbJUIizCCg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:40 -0700
+IronPort-SDR: 6rbYQSBBdO01ZY6UtgcDv6sl4G/z3B23n4MNywzw7VOsCFbgwXawNGeRyXXmCqkhl9xq3BwXyP
+ GTnoKKFokEGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
+   d="scan'208";a="256870442"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 15 Apr 2020 07:15:38 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 1298CF20; Wed, 15 Apr 2020 17:15:36 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v2 13/14] gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
+Date:   Wed, 15 Apr 2020 17:15:33 +0300
+Message-Id: <20200415141534.31240-14-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191105020429.18942-1-warthog618@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 10:04:22AM +0800, Kent Gibson wrote:
-> This series adds gross control o:f pull-up/pull-down to the GPIO uAPI.
-> Gross control means enabling and disabling of bias functionality,
-> not finer grained control such as setting biasing impedances.
-> 
-> The support allows both input and output lines to have any one of the
-> following biases applied as part of the line handle or event request:
->  0. As Is - bias is left alone.  This is the default for ABI compatibility.
->  1. Bias Disable - bias is explicitly disabled.
->  2. Pull Down - pull-down bias is enabled.
->  3. Pull Up - pull-up bias is enabled.
-> 
-> The biases are set via three flags, BIAS_DISABLE, BIAS_PULL_DOWN
-> and BIAS_PULL_UP.  These map directly to the similarly named 
-> pinctrl pin_config_param flags.
-> As Is corresponds to none of the flags being set.
+The negative conditionals are harder to parse by reader.
+Switch to positive one in dwapb_configure_irqs().
 
-I had been looking at how to make these flags work on the BeagleBone
-(TI Sitara AM3358 SoC) which uses the  gpio-omap driver and
-pinctrl-single driver.  Howeverm, it seems that it is not posssible as
-the BeagleBone device tree uses compatible of "pinctrl-single" instead
-of "padconf-single", and thus pcs_pinconf_set() is not called [0].
+Cc: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
+---
+ drivers/gpio/gpio-dwapb.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-The bias flags already work on the Raspberry Pi as the Broadcom SoC uses
-pinctrl-bcm2835.c which uses gpiochip_generic_config() from gpiolib.c 
-for .set_config in bcm2835_gpio_chip.  This eventually calls
-bcm2835_pinconf_set() which handles the PIN_CONFIG_BIAS_* flags.
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 31d29ec6ab5c..84c971e0adf0 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -413,15 +413,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	irq_gc->chip_types[1].type = IRQ_TYPE_EDGE_BOTH;
+ 	irq_gc->chip_types[1].handler = handle_edge_irq;
+ 
+-	if (!pp->irq_shared) {
+-		int i;
+-
+-		for (i = 0; i < pp->ngpio; i++) {
+-			if (pp->irq[i] >= 0)
+-				irq_set_chained_handler_and_data(pp->irq[i],
+-						dwapb_irq_handler, gpio);
+-		}
+-	} else {
++	if (pp->irq_shared) {
+ 		/*
+ 		 * Request a shared IRQ since where MFD would have devices
+ 		 * using the same irq pin
+@@ -435,6 +427,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 			gpio->domain = NULL;
+ 			return;
+ 		}
++	} else {
++		int i;
++
++		for (i = 0; i < pp->ngpio; i++) {
++			if (pp->irq[i] >= 0)
++				irq_set_chained_handler_and_data(pp->irq[i],
++						dwapb_irq_handler, gpio);
++		}
+ 	}
+ 
+ 	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
+-- 
+2.25.1
 
-Thus, I started thinking about what other boards I could test the bias
-flags with, and potentially, find drivers that I could add or fix
-support.
-
-The PIN_CONFIG_BIAS_* flags exist in these GPIO drivers:
-
-gpio-aspeed.c:
-aspeed seems to be used in server BMC so not hardware that I have
-access to or could easily acquire.
-
-gpio-mockup.c:
-mockup driver that has already been tested and works
-
-gpio-pca953x.c:
-an external I2C GPIO expander, easy for me to acquire, it appears
-that gpio uapi bias flags should work, but I could test and verify
-
-gpiolib.c:
-like the bmc2835 in the raspberry pi, it seems some drivers in pinctrl
-directory will define a gpiochip and use gpiochip_generic_config().
-
-Here is a list of other pinctrl drivers which use gpiochip_generic_config:
-
-drivers/pinctrl/pinctrl-stmfx.c and drivers/pinctrl/pinctrl-sx150x.c:
-These are both GPIO expanders which I could probably purchase
-
-drivers/pinctrl/intel/pinctrl-intel.c:
-Maybe this means that I could try this on x86 boards?
-
-drivers/pinctrl/sunxi/pinctrl-sunxi.c
-Maybe the Allwinner boards might work too?
-
-
-Any other hardware that I should take a look at testing?
-
-
-Thanks,
-Drew
-
-
-[0] https://lore.kernel.org/linux-gpio/20200413123921.GA32586@x1/T/#t
