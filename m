@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6066AC2BB55
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C744C3815B
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4913720767
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B55620767
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Apr 2020 14:16:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636546AbgDOOQz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:16:55 -0400
-Received: from mga11.intel.com ([192.55.52.93]:43694 "EHLO mga11.intel.com"
+        id S2636537AbgDOOQ4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:16:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:43702 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2636537AbgDOOPm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:15:42 -0400
-IronPort-SDR: +7gfma0CJgHGu2/r9d5aJ9VT3uzJngmBgtjrCjJZb54sL0vP01QbtO2IEh1otBO30GK3x8Kckt
- MCeBthhseGlA==
+        id S2636539AbgDOOPl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:15:41 -0400
+IronPort-SDR: kkfOFbchQt/g4jVW7J13BUURN1eSCqM/8dE0fRs5xBDBKsSht7A+ICF4xDfEzTWaIXkyU3n+LM
+ lccAoJbra7hA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 07:15:38 -0700
-IronPort-SDR: PTNzLWDxk1BxwGEo07OpEDodnzazFdtv9JuHUR97IRh12PdKmJPZMliuZVdI9Mlv9UGr1bhjLe
- cA3XdK5EVxjw==
+IronPort-SDR: J5qQDhVsezmxea/Fk2X1ovJ/bXOqmxPzLAi1xZGG4fZC6XGvaswuY0bbsDZXfQXCy3d2gwV3O9
+ NubxjPdrmvbQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
-   d="scan'208";a="277627677"
+   d="scan'208";a="277627679"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga004.fm.intel.com with ESMTP; 15 Apr 2020 07:15:36 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8E9B6190; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
+        id A29CF638; Wed, 15 Apr 2020 17:15:35 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 01/14] gpio: dwapb: Append MODULE_ALIAS for platform driver
-Date:   Wed, 15 Apr 2020 17:15:21 +0300
-Message-Id: <20200415141534.31240-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 03/14] gpio: dwapb: Use chained IRQ prologue and epilogue
+Date:   Wed, 15 Apr 2020 17:15:23 +0300
+Message-Id: <20200415141534.31240-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
 References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
@@ -52,68 +52,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The commit 3d2613c4289f
-  ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
-introduced a use of the platform driver but missed to add the following line
-to it:
-  MODULE_ALIAS("platform:gpio-dwapb");
+Refactor IRQ handler in order to enter and exit chained IRQ by using
+respective prologue and epilogue calls.
 
-Add this to get driver loaded automatically if platform device is registered.
-
-Fixes: 3d2613c4289f ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Tested-by: Serge Semin <fancer.lancer@gmail.com>
 Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/gpio/gpio-dwapb.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index d2ed11510f3c..c1b6d4f7307e 100644
+index e89a3c6877aa..f61139f787d9 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -49,7 +49,9 @@
- #define GPIO_EXT_PORTC		0x58
- #define GPIO_EXT_PORTD		0x5c
+@@ -215,10 +215,9 @@ static void dwapb_irq_handler(struct irq_desc *desc)
+ 	struct dwapb_gpio *gpio = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
  
-+#define DWAPB_DRIVER_NAME	"gpio-dwapb"
- #define DWAPB_MAX_PORTS		4
-+
- #define GPIO_EXT_PORT_STRIDE	0x04 /* register stride 32 bits */
- #define GPIO_SWPORT_DR_STRIDE	0x0c /* register stride 3*32 bits */
- #define GPIO_SWPORT_DDR_STRIDE	0x0c /* register stride 3*32 bits */
-@@ -400,7 +402,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		return;
++	chained_irq_enter(chip, desc);
+ 	dwapb_do_irq(gpio);
+-
+-	if (chip->irq_eoi)
+-		chip->irq_eoi(irq_desc_get_irq_data(desc));
++	chained_irq_exit(chip, desc);
+ }
  
- 	err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 2,
--					     "gpio-dwapb", handle_level_irq,
-+					     DWAPB_DRIVER_NAME, handle_level_irq,
- 					     IRQ_NOREQUEST, 0,
- 					     IRQ_GC_INIT_NESTED_LOCK);
- 	if (err) {
-@@ -457,7 +459,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		 */
- 		err = devm_request_irq(gpio->dev, pp->irq[0],
- 				       dwapb_irq_handler_mfd,
--				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
-+				       IRQF_SHARED, DWAPB_DRIVER_NAME, gpio);
- 		if (err) {
- 			dev_err(gpio->dev, "error requesting IRQ\n");
- 			irq_domain_remove(gpio->domain);
-@@ -847,7 +849,7 @@ static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
- 
- static struct platform_driver dwapb_gpio_driver = {
- 	.driver		= {
--		.name	= "gpio-dwapb",
-+		.name	= DWAPB_DRIVER_NAME,
- 		.pm	= &dwapb_gpio_pm_ops,
- 		.of_match_table = of_match_ptr(dwapb_of_match),
- 		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
-@@ -861,3 +863,4 @@ module_platform_driver(dwapb_gpio_driver);
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Jamie Iles");
- MODULE_DESCRIPTION("Synopsys DesignWare APB GPIO driver");
-+MODULE_ALIAS("platform:" DWAPB_DRIVER_NAME);
+ static void dwapb_irq_enable(struct irq_data *d)
 -- 
 2.25.1
 
