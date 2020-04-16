@@ -2,111 +2,95 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73045C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6488BC2BB85
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1942223E
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:07:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="KDKU74Iy"
+	by mail.kernel.org (Postfix) with ESMTP id 466F22223E
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgDPQHT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:07:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388603AbgDPQHN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:07:13 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C814DC061A0C
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 09:07:13 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id g6so1830857pgs.9
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 09:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=uiygRmSzsqOw5hZ2LUlG+XolnGyFeC6yCDv7wlqFO7U=;
-        b=KDKU74Iyn2h4ojXeB5LkeDTnuMm5r+YD7haJG5YqAZwAKe4qi+2jgoH4GwRl5FYpyi
-         saiDs2qjsStcG/pI2YFg9pCCTpLgbo/vubwGwQ9v8famf5EZX0IL4rpovO39VIgb5kio
-         c9RdbYBQmctptFyrQ9GL6/ZmHVbIZVvAHVwMq/zhH8D/KlXqtC+txL4kRiYHRpawUvNw
-         YkRSq6/UvfUBfu5Ihgbrk4WbJb30hi1yOlpPXOXWEsWE4ZWYF0VDoQa/1/7tx5D/WDhf
-         ftgfFUmWuLajtQbdonPbKLgMzTgDSBhkZGaGWpXh41/X57WXHONkMrqWd63jnymhznCn
-         /ymQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=uiygRmSzsqOw5hZ2LUlG+XolnGyFeC6yCDv7wlqFO7U=;
-        b=Xlm0P9Uyp9g6PMuo520NsKwMkKZYR47gR29yAOaQ2OC128Vf1uFtv5s74V1T7TFRWo
-         C2G1ZbVvbGW1ctPw4ixPaLVjE4ISBLdZrMrgn/1EqekHn9nA8M57eAO/fQwu/vqdcS4u
-         3MtgN6jI9CrJvvxi5oM/QStBmXW4IRRLQ1efPJZ1slgp3eRAoIcFgmRQne//K8CEQa+E
-         xse2jOR/nJM34D4j3y1NjV7HBmMmhKsc2BbnKV+gNmXrmEh2AXqZbxQ/tcU7Lxh6zjIR
-         qjSbG8oTToXDZGSxLD2uWC7E+0r3jKnP7dGn7UTOt/17P8y8/dTkKWrl830dsh+re1vR
-         18nA==
-X-Gm-Message-State: AGi0PuYfwiMojCZF00ho7aTREN7Sfwcu4lwHWcQ2BFkkSar+YNR17M3m
-        x7lURx4yfeOZRRefKQXyODAMUkFujlY=
-X-Google-Smtp-Source: APiQypKM3e4m6++q+ZRgn84FyitoPK5PL3lwbE35TYKTLnSZ+IbizoI/W3mnBtfMqEGeEY905vysBw==
-X-Received: by 2002:a62:6443:: with SMTP id y64mr1466167pfb.13.1587053232926;
-        Thu, 16 Apr 2020 09:07:12 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id i16sm7910674pfd.108.2020.04.16.09.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 09:07:12 -0700 (PDT)
-Message-ID: <5e9882b0.1c69fb81.88428.dc0f@mx.google.com>
-Date:   Thu, 16 Apr 2020 09:07:12 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1728020AbgDPQUM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 12:20:12 -0400
+Received: from foss.arm.com ([217.140.110.172]:37482 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726362AbgDPQUK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 12:20:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C47F530E;
+        Thu, 16 Apr 2020 09:20:09 -0700 (PDT)
+Received: from [10.57.59.184] (unknown [10.57.59.184])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 508263F237;
+        Thu, 16 Apr 2020 09:20:07 -0700 (PDT)
+Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        linux-pwm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+References: <20200329104549.GX25745@shell.armlinux.org.uk>
+ <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
+ <20200416135039.GL657811@lunn.ch>
+ <5c7cb0ff-bf49-640a-3c4a-ef71495af7b7@arm.com>
+ <20200416144231.GP657811@lunn.ch>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <628cde2b-0e1b-4c07-4321-8b23d0b34384@arm.com>
+Date:   Thu, 16 Apr 2020 17:20:05 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.7-rc1-23-gbbcb9d87dfa9
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: for-next
-Subject: linusw/for-next boot: 65 boots: 1 failed,
- 64 passed (v5.7-rc1-23-gbbcb9d87dfa9)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20200416144231.GP657811@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next boot: 65 boots: 1 failed, 64 passed (v5.7-rc1-23-gbbcb9d87d=
-fa9)
+On 2020-04-16 3:42 pm, Andrew Lunn wrote:
+> On Thu, Apr 16, 2020 at 03:37:40PM +0100, Robin Murphy wrote:
+>> On 2020-04-16 2:50 pm, Andrew Lunn wrote:
+>> [...]
+>>> Clocking with Marvell devices has always been interesting. Core IP
+>>> like this gets reused between different generations of SoCs. The
+>>> original Orion5x had no clock control at all. Latter SoCs have had
+>>> more and more complex clock trees. So care has to be taken to not
+>>> change old behaviour when adding support for new clocks.
+>>
+>> FWIW, that sounds like a good argument for encoding the clock requirements
+>> of each variant in the of_match_data, so the driver doesn't have to simply
+>> trust the DT and hope.
+> 
+> Hi Robin
+> 
+> It is not really hope. It is very obvious when it is wrong, the whole
+> machine stops dead when you are missing a clock. Very simple to test.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/linusw/branch/for-next=
-/kernel/v5.7-rc1-23-gbbcb9d87dfa9/
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/v5.7-rc1-23-gbbcb9d87dfa9/
+Heh, that's still what I meant - the driver hopes that carrying on will 
+be OK, and the end user is left to pick up the pieces when it isn't ;)
 
-Tree: linusw
-Branch: for-next
-Git Describe: v5.7-rc1-23-gbbcb9d87dfa9
-Git Commit: bbcb9d87dfa9f4d83de87e401ad3aa087adf7c70
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Tested: 57 unique boards, 15 SoC families, 3 builds out of 6
+Obviously that's less of an issue when said end-user is a kernel 
+developer making a controlled change during SoC bringup, but perhaps 
+more so for an eager inexperienced hacker cobbling together DTS 
+fragments to convince a distro kernel to boot on some embedded device 
+(even as the former I know I've had enough frustration from unclocked 
+registers showing up in unexpected places - the best is when connecting 
+an external debugger to see where it's stuck happens to enable the 
+offending clock and let the CPU progress to somewhere else by the time 
+it actually halts...). If it's possible to make a driver robust enough 
+to fail cleanly, isn't that always nicer to debug?
 
-Boot Regressions Detected:
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8:
-          bcm2836-rpi-2-b:
-              lab-collabora: failing since 65 days (last pass: gpio-v5.5-4-=
-45-gd18fddff061d - first fail: v5.6-rc1-12-g612e35e76ec8)
-
-Boot Failure Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            bcm2836-rpi-2-b: 1 failed lab
-
----
-For more info write to <info@kernelci.org>
+Robin.
