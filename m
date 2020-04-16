@@ -2,73 +2,121 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA32C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAA4C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB48B20656
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96E2F20656
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587037014;
+	bh=PbIJJBCyxb0zjE+EsVUIseBGje2iBqdBzd3TawdCtII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LGsztbUVN/KbPvkyywiPtjIQ7CfPj8zFOuf1DzyEp6HtZRWxZpweORQQoaj8msTbO
+	 CZxO5HwIkjPffaz94GJXupUiIs9jsOWJgxPlg6tU6O7B0Lyly2WS5LlrIfVlgk49Bd
+	 lX63U5iihlY/nLoI1W/gXFr8re42KMRJQLSNmvi4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633485AbgDPLf5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:35:57 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49921 "EHLO mga01.intel.com"
+        id S2633853AbgDPLgP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:36:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633761AbgDPLfm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 07:35:42 -0400
-IronPort-SDR: JlLiotrAurs9eS89D/lL3AA4s91UrsTVbW6lQSOcgq4Nfy9UMqWRx1TfT9C2Bd2WWlaWK6yOxq
- Ww2oA0Phhz/A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 04:35:42 -0700
-IronPort-SDR: NqK85L1dulKu/5rbERxgaLNMOI3Omv8yoJBKLFyT1x2ewZRht2u3F0FMPEnjSSVuWMxowS81QK
- 7w8kFJWUaXkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,390,1580803200"; 
-   d="scan'208";a="242623296"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 16 Apr 2020 04:35:40 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jP2o3-00115L-UD; Thu, 16 Apr 2020 14:35:43 +0300
-Date:   Thu, 16 Apr 2020 14:35:43 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] gpio: merrifield: Switch over to MSI interrupts
-Message-ID: <20200416113543.GB185537@smile.fi.intel.com>
-References: <20200408154155.68310-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdZKEpz=acfw0zQ71pWmLU8dALS4tap412U2x6GyY82opw@mail.gmail.com>
+        id S2506025AbgDPLEV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 07:04:21 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BEA4206B9;
+        Thu, 16 Apr 2020 10:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587033627;
+        bh=PbIJJBCyxb0zjE+EsVUIseBGje2iBqdBzd3TawdCtII=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qLx+neJh2XiUym52/Y5To6wDkJdF+YfeO3N39IXBEI/aglNs6bS7P/uMNiV4FoJl3
+         TMp7QxwJIyoECwfzV+F5isAyTkbeACxvuyoa8MrjQkJVF1B64098yNWGLrS06i/htu
+         0dOZ+2iYr9R63yIwg4ubkL8oPIU3RmTo6iLh2Iwc=
+Date:   Thu, 16 Apr 2020 11:40:24 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Clean-up schema indentation formatting
+Message-ID: <20200416104024.GD5354@sirena.org.uk>
+References: <20200416005549.9683-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wLAMOaPNJ0fu1fTG"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZKEpz=acfw0zQ71pWmLU8dALS4tap412U2x6GyY82opw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200416005549.9683-1-robh@kernel.org>
+X-Cookie: Tempt me with a spoon!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 12:50:43PM +0200, Linus Walleij wrote:
-> On Wed, Apr 8, 2020 at 5:41 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Some devices may support MSI interrupts. Let's at least try to use them
-> > in platforms that provide MSI capability.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Patch applied.
 
-Can we return to established scheme when we send a PR to you? Or you think
-better not to do like that anymore?
+--wLAMOaPNJ0fu1fTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Wed, Apr 15, 2020 at 07:55:48PM -0500, Rob Herring wrote:
+> Fix various inconsistencies in schema indentation. Most of these are
+> list indentation which should be 2 spaces more than the start of the
+> enclosing keyword. This doesn't matter functionally, but affects running
+> scripts which do transforms on the schema files.
 
+Acked-by: Mark Brown <broonie@kernel.org>
 
+--wLAMOaPNJ0fu1fTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6YNhcACgkQJNaLcl1U
+h9CTpAf+IW4icH5zPKy5c7TecTxfEyWNDjNTt8Pa69ga67NVmMDHKzueRcPb7D3e
+ihhK7zM0HDSd8aebO5YtW3GiVBBUyJ0m1CNYvbcsJscIhoOoco+NPJUss00w/0Zs
+L0RHGHcgc6lhNve8n+r6QbzSYEeeT9QhqTaPtyPnvMDRUkAYgShAD0ejHjNQWYOt
+3KuH8RD18xfK/PWSRsrrxCY3flOTx0RIpS9+oyO+JWIcKd6Y5lCZiBAXGrXEdEjx
+bgRsC/mO1YSE03iuDgQnodKThzIoJrygjOkGGDJuYsKY5erh8JZ93l5KPoLkyKCT
+SSA9qjNaVs+wMuSlq8WJ3w8m+z5cOA==
+=dNaD
+-----END PGP SIGNATURE-----
+
+--wLAMOaPNJ0fu1fTG--
