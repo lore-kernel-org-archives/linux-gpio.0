@@ -2,90 +2,124 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8D8C352BE
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1273DC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9472A21D94
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6FA021D94
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:37:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLKc2dHt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rakyXdvm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506420AbgDPLhU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38482 "EHLO
+        id S2505649AbgDPLCi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633658AbgDPLhP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:37:15 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C204C061A0C
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:37:14 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id h25so7403200lja.10
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:37:14 -0700 (PDT)
+        with ESMTP id S2505995AbgDPLBr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:01:47 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3EAC061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:01:40 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id f8so5205673lfe.12
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SRORy/jxNGUk5NEraICWvT2sGWL870gmeryOxUpsqYM=;
-        b=yLKc2dHtJq1RomNZo4JS43LGkdULXAdQGKsqeIGHV3U/JTCec/GbOwtDu0Rl+Hoa8k
-         Wh/vbqtVE+RvHyWWG7GpECyckOvUWNExQMOYud2YqKBxAr9IdfvVPFwHh2rkXoiY/Xaj
-         JGPUlPbWM5DLFjRWUQkbOahA4yGSXVAsqLQz4pBrb6MCoCSwXExVHpUv4VC/P/ItH/Sd
-         Xkql6vBAXyL8KU596I/EQiQj9Tal1Va7CpoHVlwX/hGW94E+jqeaM2DfTs0D4dyW/2+4
-         jm5bZPE4Q4rRzePBfLDgrcmhEFYipWBRIWmouM2ZcT1/JaWjmLK+7FGD8NrYaSUfb5+8
-         +NAA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=T2wyP0Kd10FdNuH7V6V7rYHnj1YKbM2dx1dVvWWsY1I=;
+        b=rakyXdvmimhJUV5R2B9V7VHpSVsIeOe7OOpMs0AARX+WjKpGxSbVqoo9eC/XifxzyL
+         tTqIwyr+PgIhFK+CR+IDL6G6lQ1zjvTTJX03dMjUHZQJcRNgpIgkb7v+1gP+92nA2sk+
+         Zc08fh9gsX6eL9jbqhTsU7MdfX9DIgZvO+0c+VVTp8l0k3S6yFiwtQzMJj+uGxR1i8Mo
+         n6EtfJZY4/hwr13ALynHUIFGNQX6o9X16QW1NxhgL5zESGYdkQGm/DCaX13EGIOCtFB5
+         Q2C8TnvHVzs/u28cmcYovGW0wGQIoiszKwv0qU+7e5yj00+Gg6+BQErpaYPStfumh5Jn
+         li+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SRORy/jxNGUk5NEraICWvT2sGWL870gmeryOxUpsqYM=;
-        b=PtivttdlYi0PG6dVNlrB2R0SdmEagsSJ90RdwBUn9A6IOYnw0/EflRm+Oph6gKiBgl
-         pJTraFMYr0MTl7vqUjjHkRoTiu4C3SPLG7afMynchYaPKbQYbSjmdwVaEFjSEa4DlOQu
-         BROV5g1cckDbMNM4EF3NwzKPAHTdwsZ2YBihJbwQL7+eKGZb6u4N1C6cknSQdY6gvrU3
-         k0gHs2bZ9NH95GKtcMunzdn7RZoAy+CJcXrGjBYy3cMYkBr71AEcFitjVNCAnmjotNOG
-         hafN8qO6V8KR8dnurBW3xpt+Ld1sKl/RrDFMHysccAsbGs4mJ5zfds9yvgKHggK0yiN+
-         xPmA==
-X-Gm-Message-State: AGi0Pub9g6yZqyvVjech5EmlABZX7eibsKKDUv1k/G5lWUj3xGwXKbRb
-        hvrk4M5hrRJNjSoP8Zi0jsAAjgFzbfWD9uWZXWNnMQ==
-X-Google-Smtp-Source: APiQypIdB7RtMtXusxNoGoP2YKrzJf+ZTGr3IFcncIO4Mig1DvRIRaXB5y+uXjqf1BQKyDOw5rGkPpeU5JeHSa+MQRY=
-X-Received: by 2002:a05:651c:23b:: with SMTP id z27mr5960293ljn.125.1587037033020;
- Thu, 16 Apr 2020 04:37:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=T2wyP0Kd10FdNuH7V6V7rYHnj1YKbM2dx1dVvWWsY1I=;
+        b=asaPfBVN4VXxy9uH6WqjqPBAtOqQL8cfHz2L+uYHqyVT1w2qrYSK4voOxQqX5n4p0c
+         Hwdze13yI7z4fV/CLHzqtzuY2wyXE9hqG2MhKrodkikcyB3+vl/5r3aM+0xnNa+w1V0S
+         8dZObcU/Q7OqZibMW0/oTmxv2k3zY3h11Ms7+O3eUJuIt4nUoGyP5jAcv9h7h8SWjph9
+         RWpyVSm2O009Hcsq5AhjYDAbSouQMtR7GyaUJW3k+srPa+xxpPeTrQncZgOlZDIolfPV
+         hmVm88G06jzNBTMpgsZMP4djJ85qvVjDfhPqEMQXMKAfE02cGCAeBiuQ84oPM0igZrT3
+         IdTw==
+X-Gm-Message-State: AGi0PuZXki3y5gpwYVYtmBwGyF/ozC9w2si6iDW5KloLps6J+lffBa0J
+        JQR5pWJJbwm8LuwuNbru4MI=
+X-Google-Smtp-Source: APiQypL9ebYejagN6aFDXXPF4TSSa3EDN3cUIGnuFMzC1Q/7jy5msR3Vlm75zJqr3hjN1cnmPWqOcw==
+X-Received: by 2002:ac2:46c4:: with SMTP id p4mr5735251lfo.37.1587034898482;
+        Thu, 16 Apr 2020 04:01:38 -0700 (PDT)
+Received: from mobilestation ([176.213.3.142])
+        by smtp.gmail.com with ESMTPSA id z13sm7849808ljn.77.2020.04.16.04.01.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2020 04:01:37 -0700 (PDT)
+Date:   Thu, 16 Apr 2020 14:01:35 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 08/14] gpio: dwapb: Convert to use IRQ core provided
+ macros
+Message-ID: <20200416110135.dieh6gctkh3bwyiz@mobilestation>
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-9-andriy.shevchenko@linux.intel.com>
+ <20200415175309.6l6skv7qsdjqsryi@mobilestation>
+ <20200416103911.GX185537@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <20200415082359.22152-1-brgl@bgdev.pl>
-In-Reply-To: <20200415082359.22152-1-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Apr 2020 13:37:01 +0200
-Message-ID: <CACRpkda_3CPy86Xm5TG37cYu6bDzLjeHPkbX_QSet8DUbJBhwQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: improve the robustness of watch/unwatch ioctl()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200416103911.GX185537@smile.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 10:24 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Thu, Apr 16, 2020 at 01:39:11PM +0300, Andy Shevchenko wrote:
+> On Wed, Apr 15, 2020 at 08:53:09PM +0300, Serge Semin wrote:
+> > On Wed, Apr 15, 2020 at 05:15:28PM +0300, Andy Shevchenko wrote:
+> > > IRQ core provides macros such as IRQ_RETVAL().
+> > > Convert code to use them.
+> 
+> > BTW Forgot to mention. Irrelevantly to this patch just so you know seeing
+> > you are from Intel and this part is being utilized by the Intel Quark SoC.
+> > dwapb_irq_handler_mfd() handler will cause a problem in RT-patched kernel
+> > (I've seen such issue in another GPIO-driver). So if PREEMP_RT_FULL patch
+> > is applied and the FULL-RT scheduler is enabled all interrupt handlers
+> > specified by request_irq()-based methods will be handled by a kernel thread,
+> > while generic_handle_irq() is supposed to be called from the atomic context
+> > only (with interrupts disabled). As a result an ugly stack dump will be printed
+> > to the kernel log by the next code:
+> > https://elixir.bootlin.com/linux/latest/source/kernel/irq/handle.c#L152
+> > 
+> > A way to fix this is described in Documentation/driver-api/gpio/driver.rst
+> 
+> There is patch from Siemens to fix that [1]. I dunno if they are going to upstream it.
+> Jan?
+> 
+> [1]: https://github.com/siemens/meta-iot2000/blob/master/meta-iot2000-bsp/recipes-kernel/linux/patches/rt-0002-gpio-dwapb-Work-around-RT-full-s-enforced-IRQ-thread.patch
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> This makes the new ioctl() a bit more robust - we now check if a line
-> is already being watched and return -EBUSY if the user-space tries to
-> start watching it again. Same for unwatch - return -EBUSY if user-space
-> tries to unwatch a line that's not being watched.
->
-> Fixes: 51c1064e82e7 ("gpiolib: add new ioctl() for monitoring changes in line info")
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Just to note I wouldn't accept that patch as it is, because it's applied to all
+types of IRQ handlers supported by the driver. The chained cascaded IRQ
+handlers won't be converted to the kernel threads in RT-patched kernels [1], so
+using the wa-lock is redundant in that case. One of the ways to fix it is
+to have a conditional wa_lock acquisition depended on the irq_shared flag
+state. Alternatively we could create a dedicated handlers for each types of
+the IRQs.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+[1] Documentation/driver-api/gpio/driver.rst
 
-I expect that you send me a pull request with some GPIO fixes
-when you feel you have some stuff including this I should send
-upstream, thanks!
+Regards,
+-Sergey
 
-Yours,
-Linus Walleij
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
