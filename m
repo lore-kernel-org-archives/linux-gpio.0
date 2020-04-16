@@ -2,86 +2,96 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2005EC2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DAAC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF7332076D
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:49:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="U1chH8R3"
+	by mail.kernel.org (Postfix) with ESMTP id 99C502076D
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgDPQty (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:49:54 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:42144 "EHLO vps0.lunn.ch"
+        id S1727910AbgDPQv1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 12:51:27 -0400
+Received: from mga04.intel.com ([192.55.52.120]:50923 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbgDPQtx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:49:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=YV1SAfrAwp0QaVFTYO0FSHpHPtlvDBOUkjggRuVS/W8=; b=U1chH8R3kb8KUrAc+3eJQcTwn8
-        MDeJ/6p6u6fCmyrzaVmLr9Xb6n3BfYIsD259+oy6rHF4k2JzBkGCqhwGM0b6b4HKVg+dJC+TV2aK1
-        YgUNOK/LU5DIofyvIIgLUhYeSZqEKS+dN67H3LP8yGRucvVgDoD+WS2eBNyQK/H6Nlao=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jP7hw-0036fC-15; Thu, 16 Apr 2020 18:49:44 +0200
-Date:   Thu, 16 Apr 2020 18:49:44 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        id S1728285AbgDPQvZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 12:51:25 -0400
+IronPort-SDR: xhHJx65bGA7K8ejB6lFFQrI4tT4y201pn8T5dwpA6qwEj/k2Zgt4Oy8fvvYJqHVNb9m/wtElF2
+ ZhuH2/9Z95lQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:51:24 -0700
+IronPort-SDR: BFJewqmLyHxlwPPIzbmpaDcWq2/78eGWBs6jbDpOcKLssIPLdS5UDrylMxYYckHIXKF9clIUA+
+ 2JGaJL3drs4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
+   d="scan'208";a="278060214"
+Received: from ernestom-mobl.amr.corp.intel.com (HELO [10.251.128.102]) ([10.251.128.102])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Apr 2020 09:51:23 -0700
+Subject: Re: [RFC PATCH 01/16] ASoC: pcm512x: expose 6 GPIOs
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        linux-pwm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
-Message-ID: <20200416164944.GS657811@lunn.ch>
-References: <20200329104549.GX25745@shell.armlinux.org.uk>
- <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
- <20200416135039.GL657811@lunn.ch>
- <5c7cb0ff-bf49-640a-3c4a-ef71495af7b7@arm.com>
- <20200416144231.GP657811@lunn.ch>
- <628cde2b-0e1b-4c07-4321-8b23d0b34384@arm.com>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-2-pierre-louis.bossart@linux.intel.com>
+ <20200414170934.GA34613@smile.fi.intel.com>
+ <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <2cd8d540-8bd0-4a42-4d11-7dea0fb03c22@linux.intel.com>
+Date:   Thu, 16 Apr 2020 09:25:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <628cde2b-0e1b-4c07-4321-8b23d0b34384@arm.com>
+In-Reply-To: <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> > It is not really hope. It is very obvious when it is wrong, the whole
-> > machine stops dead when you are missing a clock. Very simple to test.
+
+
+On 4/16/20 6:42 AM, Linus Walleij wrote:
+> On Tue, Apr 14, 2020 at 7:09 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>> On Thu, Apr 09, 2020 at 02:58:26PM -0500, Pierre-Louis Bossart wrote:
+>>> The GPIOs are used e.g. on HifiBerry DAC+ HATs to control the LED
+>>> (GPIO3) and the choice of the 44.1 (GPIO6) or 48 (GPIO3) kHz
+>>> oscillator (when present).
+>>>
+>>> Enable basic gpio_chip to get/set values and get/set
+>>> directions. Tested with GPIO_LIB from sys/class/gpio, the LED turns
+>>> on/off as desired.
+>>
+>>
+>> One question, can this use existing GPIO infrastructure, like bgpio_init()?
+>> Ah, I see, that one operates over MMIO, while we would need something based on
+>> regmap API.
+>>
+>> Bartosz, do we have plans to have bgpio_regmap_init() or alike?
 > 
-> Heh, that's still what I meant - the driver hopes that carrying on will be
-> OK, and the end user is left to pick up the pieces when it isn't ;)
+> Michael Walle is working on that:
+> https://lore.kernel.org/linux-gpio/20200402203656.27047-11-michael@walle.cc/
+> 
+> I think we should try to merge it sooner rather than later.
+> I can provide an ib-* branch for ASoC whenever we agreed
+> on a basic generic driver.
 
-> Obviously that's less of an issue when said end-user is a kernel developer
-> making a controlled change during SoC bringup, but perhaps more so for an
-> eager inexperienced hacker cobbling together DTS fragments to convince a
-> distro kernel to boot on some embedded device
-
-Clocks are SoC level stuff, so it is in the DTSI file, not the DTS
-file. An eager inexperienced hacker cobbling together DTS fragment is
-not effected. Experienced kernel hackers have put together the DTSI
-file and tested it. And if an eager inexperienced hacker does touch
-the DTSI file, they probably deserve to get their finger burnt, and
-will get a step closer to become an experience kernel hacker.
-
-     Andrew
+Thanks for the pointer, I will give it a try.
