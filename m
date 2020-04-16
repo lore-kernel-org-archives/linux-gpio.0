@@ -2,325 +2,114 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9DBC352BE
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4FCC2BB85
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 188AA22251
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC3B214AF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:34:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="U63IlJsE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XECzl8bn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442381AbgDPPWc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 11:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45272 "EHLO
+        id S2442577AbgDPPeG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 11:34:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2441625AbgDPPWb (ORCPT
+        by vger.kernel.org with ESMTP id S2898232AbgDPNk6 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 11:22:31 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06104C061A0C
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 08:22:31 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id n10so1812123pff.3
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 08:22:31 -0700 (PDT)
+        Thu, 16 Apr 2020 09:40:58 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AEDC061A0C;
+        Thu, 16 Apr 2020 06:40:57 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id f8so5574259lfe.12;
+        Thu, 16 Apr 2020 06:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=RZpnt8v+W/+AlfUCF6BJWBTcfV098C0OnKrrWm/wtlU=;
-        b=U63IlJsEQErEr5BHHkg4aol+Bu1kiLsKCP2aUMXerqAw0CZuRISe7weA5KStxDgkoq
-         J37+nvMSTExCmPHKEQJ39DM2dj0ODMWXyg6IDq54IkFyvhqn5vGs4KZl1y36nffg58bE
-         Wg2VSDbIfU36kuML02/eDASrTRS0fQF2bOxBQnccSKfPePYlh2J8vjbNSXxq9dtZw98S
-         uuuI5Xekpo0fsSoo7NhS1ynf3Xg90dofhVuyxRPk12YFKtk4agCXJO1nvFU6DXx9N4Qh
-         Wf1kkzR6HOMuiv8CbZYv1eDTxNm8jm7qHlIDn1iJ+Qg3uhcBdbmO0pixQQfvy/UHFYbY
-         B59w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZLzws5i5Y18vpPpWQKpd4tf4rrBI/U3CKui/Sn/uhyY=;
+        b=XECzl8bnoYHa7JBihaNpNho0X+TXnG6VeYsCQPhuEXHf9Iehd/9SIW1/J9mcuEEe0b
+         WRwVX/i41aBzEhsORfM4ZC2TbVxNVMolHRAjUfke0s+RGZmitBw/DnJUZHiKqHqmrYT9
+         I9LXFKpBWBqhTZZXXair5qVTLlU/jJbsjPoWIwsJBBo0mTlFrj9HgsYRzAG31YSPElY4
+         QhYDKuMQA7falqvgwPR4X+Mt7f/W7ZeP/+/HYIh3CRJ+JsZlwpc6xEeVn3/TGziToDl9
+         VblLgngigFTr2b8o136x/G69URCT7TQHa/jhmCrUF857d5kXKZ74Z1HEVMSgcSz3RKnR
+         Ss3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=RZpnt8v+W/+AlfUCF6BJWBTcfV098C0OnKrrWm/wtlU=;
-        b=rKSQqQzKdm/UzddhR8+aVaNNRRdwHQWf50FrzSxD+uanxVgHHMVH83GAYRceuyKUjX
-         DeR0fwHV5X2SgMQ5EN/Q8/K3HuOQGzItjalg+m4Mta3z9scrZZ9AmTWS0ziEUqttVGCK
-         TP8KYXv8pLGzTwaSbUy+J9nl1KMfhiRL9nQOErqUeNkVQDeDtxG4GhB0SeCnI3sR4fqJ
-         gm+z/5ZhG/lItYoem5NbIH82jsHE1bvvpZ8mIa2y79DCF7ktDafcB+Wr2u1iZeXGJvnM
-         d5IZI59P7xqkq62bkw6mvpq8z4vyBHB1Mo2AU/Yd+0bMChF3QzpLH1GETNJvQQt/ixF4
-         h6wg==
-X-Gm-Message-State: AGi0PuaOWx4a5MsFc3Qsqy7sCFol7PrF/bF+8vhTBiOGcSOpnGYRs94y
-        U6nBuxSqDlg5Om75lluoSvk/F2HTQdU=
-X-Google-Smtp-Source: APiQypJwRR2uG0bKgqIYM1IGi+i87FeavlQqnBOO4YfTJ6A22ZPp7rPaWJLmTtom2j34GWemgpEsxg==
-X-Received: by 2002:a62:2c03:: with SMTP id s3mr16934407pfs.173.1587050549845;
-        Thu, 16 Apr 2020 08:22:29 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id q97sm3036143pjb.7.2020.04.16.08.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 08:22:28 -0700 (PDT)
-Message-ID: <5e987834.1c69fb81.88660.a4f8@mx.google.com>
-Date:   Thu, 16 Apr 2020 08:22:28 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZLzws5i5Y18vpPpWQKpd4tf4rrBI/U3CKui/Sn/uhyY=;
+        b=NbGit8VHchrgxfyZz/SMcGF8EXrjpZ/Fmr7frzB973H/WfmaPkkAXbxvGNS9htcR0/
+         L74iv6RJYfzNlyp9UimvTdUPvgTkOurxlmHFmR6DLGrMdDUv+llFXYj/ZOGVwYnhiIbg
+         aoCxr7sdIjQX+RZgnpWhwzp33fwaz/mKESkeIIzrih6K7ZE3MJj5S4+3YhC+NvieCrhs
+         15dBvWKJUq07oU2BgcE3cOD9+LRYCokG1/yICMgZwHZm2orN4Bt8oBr69cJsjfL5oFiS
+         +Nvr5rn1DMOuYRbOKNfo417tsSsmp3/RhPYVndqjlOMOeEU8dgLQDtRzsBpbrH+c/Hgk
+         dDWQ==
+X-Gm-Message-State: AGi0PubpMTX1O6rsMQFWR2Ide2kVGp1Poe7NKgrycDPIVwF1BGVUQhXd
+        atm2nfOuI1P1nMBRO/fQpCSrZamP3wKrNCQv5iA=
+X-Google-Smtp-Source: APiQypIWud1D1EiOfs9YtVdVtAQk8rF/e+TJLy4nQSWV2/scuMvXiD9YGPWzt7VIZM5qqDNDgcds4hTD9Rab+a60/+0=
+X-Received: by 2002:a19:88a:: with SMTP id 132mr6153501lfi.130.1587044456209;
+ Thu, 16 Apr 2020 06:40:56 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200414152843.32129-1-pthomas8589@gmail.com> <CACRpkdaPc-rxNmdq7KFKZ-Qi7Tqy2RJ5Lkcv-8bTAh0GX7VygQ@mail.gmail.com>
+ <CAMpxmJWZEhKho0+6zf=Ca8tif=Z7PcdNv2=tAsDnOUzeZLYqLg@mail.gmail.com>
+In-Reply-To: <CAMpxmJWZEhKho0+6zf=Ca8tif=Z7PcdNv2=tAsDnOUzeZLYqLg@mail.gmail.com>
+From:   Paul Thomas <pthomas8589@gmail.com>
+Date:   Thu, 16 Apr 2020 09:40:44 -0400
+Message-ID: <CAD56B7ezM5ewaFySr8zeybHvkLmLpcZQzMgYUnVNEvdJnvgGZw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: gpio-pca953x, Add get_multiple function
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.7-rc1-23-gbbcb9d87dfa9
-X-Kernelci-Report-Type: build
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: for-next
-Subject: linusw/for-next build: 6 builds: 0 failed, 6 passed,
- 44 warnings (v5.7-rc1-23-gbbcb9d87dfa9)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next build: 6 builds: 0 failed, 6 passed, 44 warnings (v5.7-rc1-=
-23-gbbcb9d87dfa9)
+On Thu, Apr 16, 2020 at 9:21 AM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> czw., 16 kwi 2020 o 13:22 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+> >
+> > On Tue, Apr 14, 2020 at 5:30 PM Paul Thomas <pthomas8589@gmail.com> wro=
+te:
+> >
+> > > Implement a get_multiple function for gpio-pca953x. If a driver
+> > > leaves get_multiple unimplemented then gpio_chip_get_multiple()
+> > > in gpiolib.c takes care of it by calling chip->get() as needed.
+> > > For i2c chips this is very inefficient. For example if you do an
+> > > 8-bit read then instead of a single i2c transaction there are
+> > > 8 transactions reading the same byte!
+> > >
+> > > This has been tested with max7312 chips on a 5.2 kernel.
+> > >
+> > > Signed-off-by: Paul Thomas <pthomas8589@gmail.com>
+> > > ---
+> > >  changes from v1: rebased to 5.7-rc1
+> >
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >
+> > Since I know Bartosz is queueing other patches for this driver I
+> > let him pick it up.
+> >
+> > Yours,
+> > Linus Walleij
+>
+> Patch applied. I removed the last line of the commit message since I
+> guess you did test it on v5.7-rc1 after all?
+I applied the patch and compiled the kernel, but I didn't test on our
+embedded board with the actual max7312 chips, that board has a whole
+series of special commits.
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/v5.7-rc1-23-gbbcb9d87dfa9/
+-Paul
 
-Tree: linusw
-Branch: for-next
-Git Describe: v5.7-rc1-23-gbbcb9d87dfa9
-Git Commit: bbcb9d87dfa9f4d83de87e401ad3aa087adf7c70
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 6 unique architectures
-
-Warnings Detected:
-
-arc:
-
-arm64:
-    defconfig (gcc-8): 29 warnings
-
-arm:
-    multi_v7_defconfig (gcc-8): 15 warnings
-
-mips:
-
-riscv:
-
-x86_64:
-
-
-Warnings summary:
-
-    16   arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (=
-dma_ranges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" p=
-roperty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, chil=
-d #address-cells =3D=3D 2, #size-cells =3D=3D 1)
-    14   arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_fo=
-rmat): /soc/firmware:dma-ranges: empty "dma-ranges" property but its #addre=
-ss-cells (2) differs from /soc (1)
-    5    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning=
- (dma_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property=
- but its #address-cells (2) differs from /soc (1)
-    3    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Wa=
-rning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but=
- its #size-cells (1) differs from / (2)
-    3    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Wa=
-rning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but=
- its #address-cells (1) differs from / (2)
-    1    kernel/futex.c:1676:17: warning: =E2=80=98oldval=E2=80=99 may be u=
-sed uninitialized in this function [-Wmaybe-uninitialized]
-    1    arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning (dma_range=
-s_format): /soc:dma-ranges: empty "dma-ranges" property but its #size-cells=
- (1) differs from / (2)
-    1    arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning (dma_range=
-s_format): /soc:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (1) differs from / (2)
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 29 warnings, 0 section m=
-ismatches
-
-Warnings:
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi:1086.4-52: Warning (dma_r=
-anges_format): /soc/dram-controller@1c62000:dma-ranges: "dma-ranges" proper=
-ty has invalid length (12 bytes) (parent #address-cells =3D=3D 1, child #ad=
-dress-cells =3D=3D 2, #size-cells =3D=3D 1)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#address-cells (1) differs from / (2)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#size-cells (1) differs from / (2)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#address-cells (1) differs from / (2)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#size-cells (1) differs from / (2)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#address-cells (1) differs from / (2)
-    arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:7.3-14: Warning=
- (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" property but its =
-#size-cells (1) differs from / (2)
-    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning (dma=
-_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (2) differs from /soc (1)
-    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning (dma=
-_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (2) differs from /soc (1)
-    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning (dma=
-_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (2) differs from /soc (1)
-    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning (dma=
-_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (2) differs from /soc (1)
-    scripts/dtc/include-prefixes/arm/bcm2835-rpi.dtsi:18.4-15: Warning (dma=
-_ranges_format): /soc/firmware:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (2) differs from /soc (1)
-    arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning (dma_ranges_for=
-mat): /soc:dma-ranges: empty "dma-ranges" property but its #address-cells (=
-1) differs from / (2)
-    arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning (dma_ranges_for=
-mat): /soc:dma-ranges: empty "dma-ranges" property but its #size-cells (1) =
-differs from / (2)
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 15 warnings, 0 se=
-ction mismatches
-
-Warnings:
-    kernel/futex.c:1676:17: warning: =E2=80=98oldval=E2=80=99 may be used u=
-ninitialized in this function [-Wmaybe-uninitialized]
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-    arch/arm/boot/dts/bcm2835-rpi.dtsi:18.4-15: Warning (dma_ranges_format)=
-: /soc/firmware:dma-ranges: empty "dma-ranges" property but its #address-ce=
-lls (2) differs from /soc (1)
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----
-For more info write to <info@kernelci.org>
+>
+> Bart
