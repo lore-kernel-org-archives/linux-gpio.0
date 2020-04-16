@@ -2,81 +2,90 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B310C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72ACC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34A5D21927
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rWeuuWiF"
+	by mail.kernel.org (Postfix) with ESMTP id ADC2E21927
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404559AbgDPOg7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 10:36:59 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41770 "EHLO vps0.lunn.ch"
+        id S1728166AbgDPOhl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 10:37:41 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48419 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbgDPOg6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 10:36:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=/8bvKF2o1FMLSPyNiMKCVFF5p7ETHhZaS3xirlYJxCo=; b=rWeuuWiFEE5MOHCmJEfSzIm00J
-        facqd23NiAseSzFUdRTyme4ieALF1sczwdo03+DZJ1EipaG6tzGYLacdpRUWp7u5z+1Dxgns745Sp
-        /mRkpWyc2X6/TPjS3hTbpPWFd40D4ok56TZG7ppI9yK1zrTiYhU6i9DgaEnF1r1qQyq0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1jP5dF-0035Nx-9d; Thu, 16 Apr 2020 16:36:45 +0200
-Date:   Thu, 16 Apr 2020 16:36:45 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+        id S2393413AbgDPOJN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 10:09:13 -0400
+IronPort-SDR: siJmaYYDSjuV+ahszg6N9PWAQ9z7l8kwDgIKUlWJbzJwijPl7t2ZpY69puQrERAfUy/yxCI6XF
+ v0MCvin+Lh3w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 07:09:12 -0700
+IronPort-SDR: 9IaX/fYBJAgXatengMnHO39Tua0QJ/AXr1tAe0qgoZumkO3CBX+VYZ7J5C0G7vHUlchx/QB1Hv
+ AbtnXR9RtyrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
+   d="scan'208";a="400680686"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga004.jf.intel.com with ESMTP; 16 Apr 2020 07:09:11 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jP5Cb-0012mF-R1; Thu, 16 Apr 2020 17:09:13 +0300
+Date:   Thu, 16 Apr 2020 17:09:13 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Serge Semin <fancer.lancer@gmail.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
-Message-ID: <20200416143645.GN657811@lunn.ch>
-References: <20200329104549.GX25745@shell.armlinux.org.uk>
- <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
- <20200416135039.GL657811@lunn.ch>
- <20200416142944.GH25745@shell.armlinux.org.uk>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 14/14] gpio: dwapb: Amend indentation in some cases
+Message-ID: <20200416140913.GD185537@smile.fi.intel.com>
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-15-andriy.shevchenko@linux.intel.com>
+ <20200415171516.cugbzhvjua6cygnq@mobilestation>
+ <20200416105614.GZ185537@smile.fi.intel.com>
+ <20200416110613.4yyrlcle4oiy46a7@mobilestation>
+ <CACRpkdacW7_Q7YW1WOazLaP_HKBbNKev3caJyKSNMBbXp7j1Zw@mail.gmail.com>
+ <20200416133737.lvve4svqak6tbgwn@mobilestation>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200416142944.GH25745@shell.armlinux.org.uk>
+In-Reply-To: <20200416133737.lvve4svqak6tbgwn@mobilestation>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> I said in the cover message "The cooling maps are experimental".
-> They work reasonably well for me with the fan I have (a noctua fan)
-> but other people may find them to be problematical, so one of the
-> reasons for sending it as RFC is to get people to test and see how
-> well it works.
+On Thu, Apr 16, 2020 at 04:37:37PM +0300, Serge Semin wrote:
+> On Thu, Apr 16, 2020 at 02:14:10PM +0200, Linus Walleij wrote:
+> > On Thu, Apr 16, 2020 at 1:06 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+> > 
+> > > Ah, Linus already pulled the series in. Next time then.)
+> > 
+> > Yeah sorry, I was a bit stressed by a big mail backlog and also a bit
+> > infatuated with my new b4 tool.
+> > 
+> > Is it fine to fix any remaining issues with extra patches?
+> 
+> I see. No worries. Andy did a good work fixing the indentations. But that
+> caused the 80 chars line rule violation in some cases. The best way would
+> be to avoid the rule violation in the first place, though sometimes it's
+> just impossible without weakening the code readability. I suggested to fix
+> some of the issues by reducing the error messages length and in another
+> case just to remove the no-op &-operation. So If there were following up
+> patches with fixes it would have been great. Though since we have got a
+> violation for several chars in just a few lines of code, we can leave
+> with that for now. So if Andy doesn't have a time to send the followup
+> patches, I'll do this sometime later in the framework of my next patchset.
 
-Hi Russell
+I see an immutable branch with this series, so, it means it will be easier
+to all of us to move on from this point now.
 
-Maybe split the PWM parts from the cooling maps? I don't see any
-reason not to merge the PWM parts.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Maybe sometime later I might take a closer look at the maps. I have a
-wrt1900ac, which is Armada XP based. It has a fan on a GPIO pin. I
-currently have a userspace daemon controlling the fan based on hwmon
-device data. Getting the kernel to do it all would be nice.
 
-       Andrew
