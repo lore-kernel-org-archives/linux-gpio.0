@@ -2,121 +2,85 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14CC352BE
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 13:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E466CC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A52521744
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 13:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A9A21927
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3lS/x9w"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xHSW14O7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2635658AbgDPNsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 09:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58810 "EHLO
+        id S2898886AbgDPN76 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 09:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2634056AbgDPNsJ (ORCPT
+        by vger.kernel.org with ESMTP id S2409173AbgDPN7s (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 09:48:09 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1874EC061A0C
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 06:48:09 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id u10so5624786lfo.8
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 06:48:08 -0700 (PDT)
+        Thu, 16 Apr 2020 09:59:48 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD80C061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 06:59:47 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id 198so5664109lfo.7
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 06:59:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oN7yf5tDb1O7pbYuqgIpy1fdpoRCjDg/+kMZTkZwq64=;
-        b=Z3lS/x9w1KttFJSjCTVgmOaPwK8LXazCSA467iE5WnbFRH5dMMJ7DcACwh70qMaTxK
-         ucj2vN5TULkok+0tHWl3DxF44kRZ0nq8f12HnSTwbqxbjUTLd15GlYlDX437BSOldRTj
-         vz0KttNNdlSBdIPFJ8iS3QrnkkFfe2qhyUn6gYjEcCu/lhpSrXlIEjty3Jqxyfwd8Q78
-         mRC+AFEXFJyzg3Hs1l4GfDv2tihUr0rRwYLV4SBMT6nUFFRkFRM3EQ6uAI6L+hzRXUC4
-         wrLmIH0kmI+RCtmxbdKEuGXyT+ikwo9BAr45C2g4tol0XuWYmFqPwsnRdaln46V8ab25
-         SaYQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1q5iyLlgNj9M9GuhPuzbEbk8Ucjm1YG68RtJQG1D5po=;
+        b=xHSW14O7tFpGF5JL6qiZ+p2bG33urCfLnaN7tKyoMFa114XzVomjkby8Ov9s3hh/c+
+         ojjgEcUEGsO+33ErIkKBhqFSonEI4Y1/h3A78DkcVVYO3rS9Ofc8TjGzyY1yn58Imfpd
+         /D1ziD6R7x+QAYCxRjd/eirrQchp0C+vqpOXgw94JKwNDCPlaz1+K0+168nc+Y1o3IBm
+         6s8BqsdUdfK1+VLF+/pse3PLGkzMZTqNPU80KvTLa+Nj6MQkJ/pmC0t2lDKuX62sbpCi
+         0dpByTzJzgjYrxF8vnbqg3QF9rum+NiDiUce9KoZWkGXoMU/UI1+Ya+Uu1EBT+dHJyLn
+         z0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oN7yf5tDb1O7pbYuqgIpy1fdpoRCjDg/+kMZTkZwq64=;
-        b=p4xv3ABk5wA7lR9HFU8cY46g4HcE58tRorqTLfwLw6DiLXeijnHqYGyuOG2AnaTjWA
-         XpnpUDnJkcj/x1+dpj3F4SidOSkt2+TCKWk6eePUqOogQDMFCQCNlVW1zadk8OijfS4h
-         JCNV2jWPX3QUhmyfMZS1vnv4id9fGQ054ZS2FpsddXvDbr/RTkuS5UnCxdpp54dNcmNe
-         vCDkOld6IR7gwhlmtd9yQ0k136coodL8V9suZyqxBDJVA0qp36l5A46dkTCE2XUGdQ4f
-         GxinYvQZ+uQjd9sRj8ahgBEWvc5i8KDVqJLsH4GjnD4YM0yfC+DQerCW3dZrC3rcGAkW
-         s1IQ==
-X-Gm-Message-State: AGi0PubOVeAmn4nJv0V6FHLn3EpJhbttRPuJsb99d1DKo0vTnkkxyT6B
-        JZ+f2cEnU4eoT9Mw3c93xQY=
-X-Google-Smtp-Source: APiQypJr8rqxT+d39uy6PkCdCiUZ8Vp0zP97wCGV8c/SmxCzGq6vvva7ihRH4B+fvx4ONzZTQHRABg==
-X-Received: by 2002:a19:c607:: with SMTP id w7mr6204425lff.32.1587044887572;
-        Thu, 16 Apr 2020 06:48:07 -0700 (PDT)
-Received: from mobilestation ([176.213.3.142])
-        by smtp.gmail.com with ESMTPSA id z9sm19342866lfd.9.2020.04.16.06.48.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 06:48:06 -0700 (PDT)
-Date:   Thu, 16 Apr 2020 16:48:05 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1q5iyLlgNj9M9GuhPuzbEbk8Ucjm1YG68RtJQG1D5po=;
+        b=N8pfDcUE7lAnPO0TZzX2wgEhPS76GhsP7/c1St1eKQXlf3vhMePdkWZpYvcrqM20Ve
+         EZhWcmo+Bqoz+WpQD+FtUGXp90RY6giTTTOPiVq6+3xTejiUjngNRwcSV2TXiZyqHs8i
+         AXaWvDBCfXs4VbhOOMNB1FgwMlnMj8RkiKvNJHdmEGRfjBcvz/u3c/gaVsGIfI+hRgD0
+         uluVKhKjPdWo+ZLeSH74Z692xIy+A1yMCAocVY+kT3sS1imS6YFXc4QaFbob6RdCrdCS
+         t+9ssTkEk6qaH/O+pECG4J0I/0bmcWL2PFzd0It/93nxEqotx1BRSkdDQPjFw9ZgkYK8
+         Tzkw==
+X-Gm-Message-State: AGi0PuZ3nzQQ4IDnxeYMn/ixxAI7uZETxq6efxDtoOlJw2EQOzPpFE9g
+        mniFIDUADoCievhbmT7G6T5FKDkkQUhQv5bzSRo7AA==
+X-Google-Smtp-Source: APiQypIw7OqNd10YcS66AdS2GgB+hwghyrGEcWOkqEgJ0/XyHLwaw9wk7C+7hwx3lSrZlO9sUlyngnorQoAU/E5Sd1E=
+X-Received: by 2002:ac2:4a9d:: with SMTP id l29mr5803057lfp.4.1587045586242;
+ Thu, 16 Apr 2020 06:59:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-15-andriy.shevchenko@linux.intel.com>
+ <20200415171516.cugbzhvjua6cygnq@mobilestation> <20200416105614.GZ185537@smile.fi.intel.com>
+ <20200416110613.4yyrlcle4oiy46a7@mobilestation> <CACRpkdacW7_Q7YW1WOazLaP_HKBbNKev3caJyKSNMBbXp7j1Zw@mail.gmail.com>
+ <20200416133737.lvve4svqak6tbgwn@mobilestation>
+In-Reply-To: <20200416133737.lvve4svqak6tbgwn@mobilestation>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 16 Apr 2020 15:59:34 +0200
+Message-ID: <CACRpkdbgtskGyQvUy9Eb--f8YahO9gw9jgDx0k1AkK=LkkuQJg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/14] gpio: dwapb: Amend indentation in some cases
+To:     Serge Semin <fancer.lancer@gmail.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 13/14] gpio: dwapb: Use positive conditional in
- dwapb_configure_irqs()
-Message-ID: <20200416134805.r5qp4o34rpxr2h2d@mobilestation>
-References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
- <20200415141534.31240-14-andriy.shevchenko@linux.intel.com>
- <20200415163710.e26czil5abouujzu@mobilestation>
- <CACRpkdaO8GMXOOMomzmzfhDqYfgdhjTq8XvQHXuGRmnrfk7bOw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaO8GMXOOMomzmzfhDqYfgdhjTq8XvQHXuGRmnrfk7bOw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 01:53:25PM +0200, Linus Walleij wrote:
-> On Wed, Apr 15, 2020 at 6:37 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > On Wed, Apr 15, 2020 at 05:15:33PM +0300, Andy Shevchenko wrote:
-> > > The negative conditionals are harder to parse by reader.
-> > > Switch to positive one in dwapb_configure_irqs().
-> >
-> > Sorry as for me this modification is redundant. Yes, I know that if-else
-> > statement in some cases better to start with positive expression to make it
-> > a bit more clear, but in this case I'd leave it as is. First this rule is
-> > applicable if both branches are more or less equal, but here I see the most
-> > normal case of using the dt-based generic device, which doesn't declare the
-> > IRQs as shared seeing it is selected by far more devices at the moment.
-> > Second the non-shared IRQs case also covers a combined and multiple-lined
-> > GPIO IRQs (chained cascaded GPIO irqchip), while the irq_shared clause have
-> > only a single IRQ source supported. Finally If the code was like you
-> > suggested from the very beginning I wouldn't say a word, but this patch seems
-> > to me at least just moving the code around with gaining less than we have at
-> > the moment.
-> >
-> > Linus, Bartosz and other GPIO-ers may think differently though. Lets see their
-> > opinion.
-> 
-> I think I already applied all patches with the batch application tool b4,
-> without properly checking which patches you reviewed and not, sorry :(
-> 
-> However if any change is controversial I can revert or pull the patch out.
+On Thu, Apr 16, 2020 at 3:37 PM Serge Semin <fancer.lancer@gmail.com> wrote:
 
-In this case it's up to you to decide. I was against this patch in the first
-place. As for me it seemed redundant (see my justification above). But you or
-Bartosz may think differently that's why I asked your opinion to decide its
-destiny. So if you are ok with what the patch provides, then there is no need
-to revert or reset anything. But if you agree with me, then pulling the patch
-out with resetting the git history will be the best option.
+> caused the 80 chars line rule violation in some cases.
 
-Regards,
--Sergey
+As subsystem maintainer that's a coding style thing I don't
+really care much about, I personally violate it all the time.
+But you can have it any way you want of course :)
 
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
