@@ -2,90 +2,72 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72ACC2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68325C2BB85
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADC2E21927
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 491C021927
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbgDPOhl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 10:37:41 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48419 "EHLO mga03.intel.com"
+        id S1730866AbgDPOhr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 10:37:47 -0400
+Received: from foss.arm.com ([217.140.110.172]:34276 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393413AbgDPOJN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 10:09:13 -0400
-IronPort-SDR: siJmaYYDSjuV+ahszg6N9PWAQ9z7l8kwDgIKUlWJbzJwijPl7t2ZpY69puQrERAfUy/yxCI6XF
- v0MCvin+Lh3w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 07:09:12 -0700
-IronPort-SDR: 9IaX/fYBJAgXatengMnHO39Tua0QJ/AXr1tAe0qgoZumkO3CBX+VYZ7J5C0G7vHUlchx/QB1Hv
- AbtnXR9RtyrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
-   d="scan'208";a="400680686"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 16 Apr 2020 07:09:11 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jP5Cb-0012mF-R1; Thu, 16 Apr 2020 17:09:13 +0300
-Date:   Thu, 16 Apr 2020 17:09:13 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1729861AbgDPOhp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 10:37:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2C181FB;
+        Thu, 16 Apr 2020 07:37:43 -0700 (PDT)
+Received: from [10.57.59.184] (unknown [10.57.59.184])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98FB63F237;
+        Thu, 16 Apr 2020 07:37:41 -0700 (PDT)
+Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        linux-pwm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 14/14] gpio: dwapb: Amend indentation in some cases
-Message-ID: <20200416140913.GD185537@smile.fi.intel.com>
-References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
- <20200415141534.31240-15-andriy.shevchenko@linux.intel.com>
- <20200415171516.cugbzhvjua6cygnq@mobilestation>
- <20200416105614.GZ185537@smile.fi.intel.com>
- <20200416110613.4yyrlcle4oiy46a7@mobilestation>
- <CACRpkdacW7_Q7YW1WOazLaP_HKBbNKev3caJyKSNMBbXp7j1Zw@mail.gmail.com>
- <20200416133737.lvve4svqak6tbgwn@mobilestation>
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+References: <20200329104549.GX25745@shell.armlinux.org.uk>
+ <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
+ <20200416135039.GL657811@lunn.ch>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5c7cb0ff-bf49-640a-3c4a-ef71495af7b7@arm.com>
+Date:   Thu, 16 Apr 2020 15:37:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416133737.lvve4svqak6tbgwn@mobilestation>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200416135039.GL657811@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 04:37:37PM +0300, Serge Semin wrote:
-> On Thu, Apr 16, 2020 at 02:14:10PM +0200, Linus Walleij wrote:
-> > On Thu, Apr 16, 2020 at 1:06 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > 
-> > > Ah, Linus already pulled the series in. Next time then.)
-> > 
-> > Yeah sorry, I was a bit stressed by a big mail backlog and also a bit
-> > infatuated with my new b4 tool.
-> > 
-> > Is it fine to fix any remaining issues with extra patches?
-> 
-> I see. No worries. Andy did a good work fixing the indentations. But that
-> caused the 80 chars line rule violation in some cases. The best way would
-> be to avoid the rule violation in the first place, though sometimes it's
-> just impossible without weakening the code readability. I suggested to fix
-> some of the issues by reducing the error messages length and in another
-> case just to remove the no-op &-operation. So If there were following up
-> patches with fixes it would have been great. Though since we have got a
-> violation for several chars in just a few lines of code, we can leave
-> with that for now. So if Andy doesn't have a time to send the followup
-> patches, I'll do this sometime later in the framework of my next patchset.
+On 2020-04-16 2:50 pm, Andrew Lunn wrote:
+[...]
+> Clocking with Marvell devices has always been interesting. Core IP
+> like this gets reused between different generations of SoCs. The
+> original Orion5x had no clock control at all. Latter SoCs have had
+> more and more complex clock trees. So care has to be taken to not
+> change old behaviour when adding support for new clocks.
 
-I see an immutable branch with this series, so, it means it will be easier
-to all of us to move on from this point now.
+FWIW, that sounds like a good argument for encoding the clock 
+requirements of each variant in the of_match_data, so the driver doesn't 
+have to simply trust the DT and hope.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Robin.
