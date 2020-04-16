@@ -2,96 +2,91 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DAAC2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F22C3815B
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 20:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99C502076D
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFB22076D
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 20:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587068139;
+	bh=D1k4FGZwtqhoI1ElVs5JDDEH95csH4x4jdsRBKIrsUI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=FPDUNlyvI0CEHv9N3v1FuwEdh0hktJU22DYVn9mxP0Wg9cQuCjuiQjmRfy50LHZOB
+	 Dk0JcNJJmvcD5vlXbzZ8kdEL9ooArVZv+0UgBMCmznPkqY0CFjp45fcdH4Na8+WGb5
+	 LHQI0fW2QenPFXjkHPL3H7xPUNrUu8VQf8VaeYTs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbgDPQv1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:51:27 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50923 "EHLO mga04.intel.com"
+        id S1727907AbgDPUPe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 16:15:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728285AbgDPQvZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:51:25 -0400
-IronPort-SDR: xhHJx65bGA7K8ejB6lFFQrI4tT4y201pn8T5dwpA6qwEj/k2Zgt4Oy8fvvYJqHVNb9m/wtElF2
- ZhuH2/9Z95lQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:51:24 -0700
-IronPort-SDR: BFJewqmLyHxlwPPIzbmpaDcWq2/78eGWBs6jbDpOcKLssIPLdS5UDrylMxYYckHIXKF9clIUA+
- 2JGaJL3drs4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
-   d="scan'208";a="278060214"
-Received: from ernestom-mobl.amr.corp.intel.com (HELO [10.251.128.102]) ([10.251.128.102])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Apr 2020 09:51:23 -0700
-Subject: Re: [RFC PATCH 01/16] ASoC: pcm512x: expose 6 GPIOs
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Walle <michael@walle.cc>
-Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-2-pierre-louis.bossart@linux.intel.com>
- <20200414170934.GA34613@smile.fi.intel.com>
- <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <2cd8d540-8bd0-4a42-4d11-7dea0fb03c22@linux.intel.com>
-Date:   Thu, 16 Apr 2020 09:25:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1726523AbgDPUPb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 16:15:31 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DBCE2076D;
+        Thu, 16 Apr 2020 20:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587068130;
+        bh=D1k4FGZwtqhoI1ElVs5JDDEH95csH4x4jdsRBKIrsUI=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=pb1Aidbcr89YNzTHVpk+AyNMZbTkFc8vyI3afURRbjXDvFwV15/ymxbzA+qyRv2Yz
+         zkt3XEVweYahiTnIo3Fe5Z27TgbaQy1wyQI+t7pmfTd25UUanPeCULpZddV5Ht6h6E
+         mnFBpqnuRzUXcgTpoCGGyvNva9RmPVcpUddIvrBM=
+Date:   Thu, 16 Apr 2020 22:15:27 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Rishi Gupta <gupt21@gmail.com>
+cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        benjamin.tissoires@redhat.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 1/1] HID: mcp2221: add GPIO functionality support
+In-Reply-To: <1586882894-19905-1-git-send-email-gupt21@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2004162212080.19713@cbobk.fhfr.pm>
+References: <1586882894-19905-1-git-send-email-gupt21@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, 14 Apr 2020, Rishi Gupta wrote:
 
-
-On 4/16/20 6:42 AM, Linus Walleij wrote:
-> On Tue, Apr 14, 2020 at 7:09 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
->> On Thu, Apr 09, 2020 at 02:58:26PM -0500, Pierre-Louis Bossart wrote:
->>> The GPIOs are used e.g. on HifiBerry DAC+ HATs to control the LED
->>> (GPIO3) and the choice of the 44.1 (GPIO6) or 48 (GPIO3) kHz
->>> oscillator (when present).
->>>
->>> Enable basic gpio_chip to get/set values and get/set
->>> directions. Tested with GPIO_LIB from sys/class/gpio, the LED turns
->>> on/off as desired.
->>
->>
->> One question, can this use existing GPIO infrastructure, like bgpio_init()?
->> Ah, I see, that one operates over MMIO, while we would need something based on
->> regmap API.
->>
->> Bartosz, do we have plans to have bgpio_regmap_init() or alike?
+> MCP2221 has 4 pins that can be used as GPIO or configured
+> for alternate functionality such as clock generation and
+> IRQ detection. This patch adds support for GPIO functionality.
 > 
-> Michael Walle is working on that:
-> https://lore.kernel.org/linux-gpio/20200402203656.27047-11-michael@walle.cc/
+> To set direction of a pin or to toggle its state after it
+> has been configured as GPIO, driver sends command to mcp2221
+> and parses response received from mcp2221. Based on this
+> response either 0 or appropriate error code is returned to
+> GPIO framework.
 > 
-> I think we should try to merge it sooner rather than later.
-> I can provide an ib-* branch for ASoC whenever we agreed
-> on a basic generic driver.
+> To get the direction or current state of a pin, driver
+> sends command and read response from the device. Based on
+> the response received from device direction or value
+> is sent to the GPIO framework.
+> 
+> Command from driver to mcp2221 device are output report.
+> Response received from mcp2221 is input report.
+> 
+> Datasheet (page 45-48) contains details about how to decode
+> the response received from device:
+> http://ww1.microchip.com/downloads/en/DeviceDoc/20005565B.pdf
+> 
+> Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+> ---
+>  drivers/hid/hid-mcp2221.c | 169 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 169 insertions(+)
 
-Thanks for the pointer, I will give it a try.
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
