@@ -6,95 +6,94 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CECC2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF048C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CAC321D91
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A19F206E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xuyhjCJN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T7hOq5vM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634113AbgDPLxl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:53:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41046 "EHLO
+        id S2634863AbgDPMEA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 08:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2634099AbgDPLxi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:53:38 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482C0C061A0C
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:53:38 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id w145so5364820lff.3
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:53:38 -0700 (PDT)
+        with ESMTP id S2634659AbgDPMD4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 08:03:56 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5785C061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 05:03:55 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id h6so5421873lfc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 05:03:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=m8ZQeMlZwt4Luzk/CrzC0D37KaOrj1I1Zm2f8GE934A=;
-        b=xuyhjCJNnvRgEB+JDis7XdLSadcTJyK9uVilGBmrq53lTLTBmX7XkYb6umQe8YK+nr
-         fxGXOhvzNg4cvUdv81KMGbUcvKQRMZOS6Ff4T8GR9IPRmq7U3VKYJTp3Tu3PtlCH0Nuq
-         KMLxip7oYzNL7+3YL6PVaUW13b1fgkzzQaiEjcitJGSl4DixblUV/RK8UwzSDf5gYdhu
-         boMl3sGMmPDF//s1/2pV5w4k49fVPWKMqrGc8RJYfu3yBn0JNY4nkMiULGo9e0Xrw9j3
-         zgej0c7d/1qd/TggB4iIkDa17CwrnXRHSSvYpe8/EsuLJQAKpP10Yb0FcETK0StzBxWn
-         t0Hw==
+        bh=o670ErblNjXwLmVYEfpf91xjkotnH6/uPHwmnEnshmI=;
+        b=T7hOq5vMcO8u8QOFQRpuSFYa2mgJc1T47DhIMgZsV1yewE0TJ9HfdSUeqAQLNA/Zir
+         M8MCa50vW9VZfxqjHKEY7yGU7KMieeS4tpb9nmsG8XCcpOiCz38aezWClrX7vtgDlLRn
+         CqOrwpZDMNyKjHR6d6JxSr01EiaWzVLBywiV1KzhrVPrAdL3O8qd2CUy2BcXeSD+0emU
+         dxxF/rLiT1jnvoF/80sgewcUYpPUvxZt01A7DNgjptwkfhbJ26r6JhxkkXag6ljzjWpq
+         ta7DHxhmuyv86JiZoI8OgHkborDWJMr1Znk11uROgYyBGdL2xmdn8D+8Sq5aqDVeVX9b
+         3u4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m8ZQeMlZwt4Luzk/CrzC0D37KaOrj1I1Zm2f8GE934A=;
-        b=sup4lguzanM/+LJ7gipNkXrSK59dPifLinzhF41+ikfW7vlEDKBPsLg1d0wiFmEp4q
-         dAXEtERqGe73647S9g/GiWJRia6HTK/c5cQ18ZCONa3balS+vZVLGr/sAC71VEDi0S9V
-         ejYWR8yU3CKFc580j4KftQeFAYFgCXgdO4ZW8aaoSJNHtX/OnH//Z8sNe3JwXDmlJdtL
-         9A/4XDjIa+VsjF7dNdEyTM+gyZ4wb7nSpk5NovlmuDutSeaRLOxKGr2k2OlnAck0vu9W
-         +IUf3GZmd2e/VFhPVyQpEgcxKAcEaRJEpuMyEhxCiD+4gRZM+egfAj07zaRsfN5BYWEX
-         HYhw==
-X-Gm-Message-State: AGi0PuYU2DX1oV8xBbJdu/Q2MHA2zGCU8veMRami5hDGLDEwAVe2Rci9
-        sJel1CNugVpDfs0Z65PrufJDfN+Cl9EEC28HoS5KBA==
-X-Google-Smtp-Source: APiQypLwJebkvpewjgmUDZ4bFXdTBWDUH7wGL9hEnXECiQww129uiHsEPRZGRuSm+dgP+CDFoSHw6jGbYOsM0Q/69C0=
-X-Received: by 2002:ac2:5c4e:: with SMTP id s14mr5927482lfp.77.1587038016764;
- Thu, 16 Apr 2020 04:53:36 -0700 (PDT)
+        bh=o670ErblNjXwLmVYEfpf91xjkotnH6/uPHwmnEnshmI=;
+        b=WJuU6bhV78umsO7sacVwzPObaQBi5XePvNUxN6ef+xctrB53CuPMSvUyiYxx1hWtWv
+         Gzt7LbQj9nvgG5MzpwxgRyEwCA7B9i5FpIiIlCQQwioDZGD6MXLKUUlT9ZpObNx2FQqN
+         rKmDFqziJvh1//82WgMhgFknJUXfAq/nzI9+jV/Hr0WcHgDaqyikO8APrwrxoDTnOH0x
+         JBETAxKRy5Kl1VuCmtXYRKTt2WwWetijl8IqfSnajG0YgqRU/wyKmHDj8xKw+bjRRtDd
+         cAN5q9anU93GxEY5QW+zbDOlX+Huaj1tUvLkFXLoRYHjpGQktUyMKmEorSibnWxHX9py
+         vJ+w==
+X-Gm-Message-State: AGi0PuZ7X3TLdQKl+U2Jexb2JMiE/VIa0z9A4YaRXpir88YtNAuA5996
+        8KEe9QjwL7WXf8Coui1MNWqEGVAruN+WuSHSYNGOUA==
+X-Google-Smtp-Source: APiQypIK2uLfJGQ1ZATASJZHqPMrNJqaZjhcLiPjTVmrBxee13OJdf7e1BmxQ41P0mZKgKOa8lbi9SM1JzyVDj7V6W4=
+X-Received: by 2002:a19:cb41:: with SMTP id b62mr5955353lfg.21.1587038634346;
+ Thu, 16 Apr 2020 05:03:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
- <20200415141534.31240-14-andriy.shevchenko@linux.intel.com> <20200415163710.e26czil5abouujzu@mobilestation>
-In-Reply-To: <20200415163710.e26czil5abouujzu@mobilestation>
+References: <CAEf4M_Du6Egn-3nZHtSnMMwohc+-DyEdtWU5DqSJi71+nDthFw@mail.gmail.com>
+ <CACRpkdaPoMGZ7jGh6j4dYexx+qCcoMQ37vS7kbpf=3TtcA9zQQ@mail.gmail.com>
+ <CAEf4M_B_sxOiKFnEVUrx00RE2MaMA98LpijNhp0EVY11eRAXHg@mail.gmail.com>
+ <CAD6h2NT840zMfwaJatfKzai8QjZEQmF5v0xgE+9ngSJJ+Qy+6g@mail.gmail.com>
+ <20200413123921.GA32586@x1> <578a51c3-9cb4-91f9-4735-c512bf75553c@ti.com>
+ <CAOCHtYg=rM_zP6Wr3bWKfvGpeK7sXLj6GLN3DXSh8JgfqDTcCA@mail.gmail.com>
+ <db5e49dc-41b4-2ba5-87b3-f345749d7984@ti.com> <CAOCHtYgNH-OUWdKgKLr7U8Zy2OZb=P9Rpsv4mFii+VwU7h-vGA@mail.gmail.com>
+ <20200415233712.GA16167@x1>
+In-Reply-To: <20200415233712.GA16167@x1>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Apr 2020 13:53:25 +0200
-Message-ID: <CACRpkdaO8GMXOOMomzmzfhDqYfgdhjTq8XvQHXuGRmnrfk7bOw@mail.gmail.com>
-Subject: Re: [PATCH v2 13/14] gpio: dwapb: Use positive conditional in dwapb_configure_irqs()
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Date:   Thu, 16 Apr 2020 14:03:43 +0200
+Message-ID: <CACRpkda_upTeRn7xT9LuAkVKAf8LxUmQJJbVWhOoq+4zyoxfsw@mail.gmail.com>
+Subject: Re: gpio-omap: add support gpiolib bias (pull-up/down) flags?
+To:     Drew Fustini <drew@pdp7.com>, Tony Lindgren <tony@atomide.com>
+Cc:     Robert Nelson <robertcnelson@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 6:37 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> On Wed, Apr 15, 2020 at 05:15:33PM +0300, Andy Shevchenko wrote:
-> > The negative conditionals are harder to parse by reader.
-> > Switch to positive one in dwapb_configure_irqs().
->
-> Sorry as for me this modification is redundant. Yes, I know that if-else
-> statement in some cases better to start with positive expression to make it
-> a bit more clear, but in this case I'd leave it as is. First this rule is
-> applicable if both branches are more or less equal, but here I see the most
-> normal case of using the dt-based generic device, which doesn't declare the
-> IRQs as shared seeing it is selected by far more devices at the moment.
-> Second the non-shared IRQs case also covers a combined and multiple-lined
-> GPIO IRQs (chained cascaded GPIO irqchip), while the irq_shared clause have
-> only a single IRQ source supported. Finally If the code was like you
-> suggested from the very beginning I wouldn't say a word, but this patch seems
-> to me at least just moving the code around with gaining less than we have at
-> the moment.
->
-> Linus, Bartosz and other GPIO-ers may think differently though. Lets see their
-> opinion.
+On Thu, Apr 16, 2020 at 1:36 AM Drew Fustini <drew@pdp7.com> wrote:
 
-I think I already applied all patches with the batch application tool b4,
-without properly checking which patches you reviewed and not, sorry :(
+> Is there no way for gpio-omap to call into the pinctrl-single backend to
+> set the bias bits (PULLUDEN and PULLTYPESEL) in pad control registers?
 
-However if any change is controversial I can revert or pull the patch out.
+Mostly a Tony question I think, but the single pinconf_ops call
+pcs_pinconf_set() which is pretty straight-forward.
+
+Have you tried modifying omap_gpio_set_config() so that
+it accepts these configs and just calls down to
+gpiochip_generic_config() for anything that is not debounce?
 
 Yours,
 Linus Walleij
