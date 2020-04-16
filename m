@@ -2,108 +2,104 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8185C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74CEC352BE
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F07A20767
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35FC20767
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:09:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ys8YKsXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2635043AbgDPMIY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 08:08:24 -0400
-Received: from lizzard.sbs.de ([194.138.37.39]:32806 "EHLO lizzard.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2635001AbgDPMIT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 08:08:19 -0400
-X-Greylist: delayed 448 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Apr 2020 08:08:17 EDT
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 03GC0XTI010334
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Apr 2020 14:00:33 +0200
-Received: from [167.87.14.243] ([167.87.14.243])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 03GC0WZT010398;
-        Thu, 16 Apr 2020 14:00:33 +0200
-Subject: Re: [PATCH v2 08/14] gpio: dwapb: Convert to use IRQ core provided
- macros
-To:     Serge Semin <fancer.lancer@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
- <20200415141534.31240-9-andriy.shevchenko@linux.intel.com>
- <20200415175309.6l6skv7qsdjqsryi@mobilestation>
- <20200416103911.GX185537@smile.fi.intel.com>
- <20200416110135.dieh6gctkh3bwyiz@mobilestation>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <d4840691-72d6-316c-a66f-a44d422b07cb@siemens.com>
-Date:   Thu, 16 Apr 2020 14:00:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S2635058AbgDPMIy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 08:08:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2634932AbgDPMIu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 08:08:50 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32932C061A0F
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 05:08:50 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id m19so5347871lfq.13
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 05:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CLvpaW+uUne5it3kIWzMOUIojoXmf6oiO8ThkN3cpkY=;
+        b=Ys8YKsXM6fXzEeMjXeuG+QrbM/PhTPcxJ/fam+5PAoc1qC2WvmrsY0zCOurzWs1M5I
+         3sVoZJJLm1ofXVvre/Sc6/ghosEAS1wVxrAOvEzOCdRTBb/WK+AgqD8Nmy+CnyFizLUZ
+         L/EvT45dNlnZ6otQAvt2GzByEZbLdahUAYxuljFzlLSWJcku7egzOHNJrCWuYclSWmEv
+         WYf4EuwTF3S84+A9OCLMOsvtxAmXAPegR3uJp/VlbGXa3otOO/iaw4fwur65G2SuCAGG
+         zdyjLkTZYkbaQb+RCwu0LL/FfPrD3chTjG9bSUI1CHcHY2lqFBF5mRbAd+PmDEB8x7DV
+         PaWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CLvpaW+uUne5it3kIWzMOUIojoXmf6oiO8ThkN3cpkY=;
+        b=atdi1FioRnLlGid11f5AIjsmJtneuTNA4sm82zJikDKdGUmxEf3oS158Xs3OFcDFpa
+         +B6CNOTJ1E9kFt7OxwWW8Y9PLgBOO8mxH00bXFPYgU9YBLhsLU/Jdw586CRyWwnOS6dm
+         BDbY/z6izfgOeZWR4fNLIda+321cO3cjynvCAVJYT0P8nagqlUHn4KoxqNwOkfZ3WhFJ
+         q/zL5f7X55Q1L+jpEYClzvQWX9dvzWQB03EuPdcPPExbbQgc0zhKGyG/j4j8F2bpCmJ7
+         qrSR7J9tx6PmwGg3eBUEQI6B+L+7A/7t8uN35HvLuzqvCr8uh55qgzg1Y+kPGMWfjv7B
+         ENvQ==
+X-Gm-Message-State: AGi0Pubss0p84nCsx8nUT5+KoBBWoN8HelT+867KrIBd0PjtnBWPg8qC
+        CEECSxURsxtc0epbY/6527mlUDourvxAq1xMVKOPxg==
+X-Google-Smtp-Source: APiQypJzhCYUXv7QXcnsa/vkCVwefo5n3281I83Ws1Af1XZup/G2mwOYqWP5CDfj73shqpvSNrbcQ8jDk5V1Fzze4mQ=
+X-Received: by 2002:a19:700b:: with SMTP id h11mr6005687lfc.89.1587038928602;
+ Thu, 16 Apr 2020 05:08:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200416110135.dieh6gctkh3bwyiz@mobilestation>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200329104549.GX25745@shell.armlinux.org.uk> <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
+ <20200416081412.GG25745@shell.armlinux.org.uk>
+In-Reply-To: <20200416081412.GG25745@shell.armlinux.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 16 Apr 2020 14:08:36 +0200
+Message-ID: <CACRpkdYFBGvQX3i4P1+cF5ExXOSKieT6cJNPTNuKFxEhtJVEjQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-pwm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 16.04.20 13:01, Serge Semin wrote:
-> On Thu, Apr 16, 2020 at 01:39:11PM +0300, Andy Shevchenko wrote:
->> On Wed, Apr 15, 2020 at 08:53:09PM +0300, Serge Semin wrote:
->>> On Wed, Apr 15, 2020 at 05:15:28PM +0300, Andy Shevchenko wrote:
->>>> IRQ core provides macros such as IRQ_RETVAL().
->>>> Convert code to use them.
->>
->>> BTW Forgot to mention. Irrelevantly to this patch just so you know seeing
->>> you are from Intel and this part is being utilized by the Intel Quark SoC.
->>> dwapb_irq_handler_mfd() handler will cause a problem in RT-patched kernel
->>> (I've seen such issue in another GPIO-driver). So if PREEMP_RT_FULL patch
->>> is applied and the FULL-RT scheduler is enabled all interrupt handlers
->>> specified by request_irq()-based methods will be handled by a kernel thread,
->>> while generic_handle_irq() is supposed to be called from the atomic context
->>> only (with interrupts disabled). As a result an ugly stack dump will be printed
->>> to the kernel log by the next code:
->>> https://elixir.bootlin.com/linux/latest/source/kernel/irq/handle.c#L152
->>>
->>> A way to fix this is described in Documentation/driver-api/gpio/driver.rst
->>
->> There is patch from Siemens to fix that [1]. I dunno if they are going to upstream it.
->> Jan?
->>
->> [1]: https://github.com/siemens/meta-iot2000/blob/master/meta-iot2000-bsp/recipes-kernel/linux/patches/rt-0002-gpio-dwapb-Work-around-RT-full-s-enforced-IRQ-thread.patch
-> 
-> Just to note I wouldn't accept that patch as it is, because it's applied to all
-> types of IRQ handlers supported by the driver. The chained cascaded IRQ
-> handlers won't be converted to the kernel threads in RT-patched kernels [1], so
-> using the wa-lock is redundant in that case. One of the ways to fix it is
-> to have a conditional wa_lock acquisition depended on the irq_shared flag
-> state. Alternatively we could create a dedicated handlers for each types of
-> the IRQs.
+On Thu, Apr 16, 2020 at 10:14 AM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> On Thu, Apr 16, 2020 at 09:51:37AM +0200, Linus Walleij wrote:
 
-Yeah, never had the time to dig into details. Also, that patch was only 
-tested on one particular device with one particular kernel series 
-(4.4-cip-rt). That's why it's a "workaround", not a fix.
+> > The gpio changes all look fine to me +/- fixes for review comments.
+>
+> I think Uwe is incorrect for his GPIO comments; the clock is only
+> optional on A8040.  We know this because A8040 has worked fine
+> without PWM support without the clock, whereas for Armada 370,
+> the driver has hard-failed if the clock is not present.
 
-Jan
+It's fine. You are running the hardware and it should work for you.
+I usually go by the IETF motto "rough consensus and running code".
 
-> 
-> [1] Documentation/driver-api/gpio/driver.rst
-> 
-> Regards,
-> -Sergey
-> 
->>
->> -- 
->> With Best Regards,
->> Andy Shevchenko
->>
->>
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+> About the only change I would make is to move the check introduced
+> in patch 2 into patch 3 instead, inside the MVEBU_PWM_SOC_VARIANT_A8K
+> case, so that deferring for the clock works (which is necessary for
+> the PWM driver to be useful.)
+
+OK let's go with this.
+
+Yours,
+Linus Walleij
