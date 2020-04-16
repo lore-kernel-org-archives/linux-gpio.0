@@ -2,85 +2,121 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E2FC2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA21C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0039121841
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8B2720656
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G11PTYYb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uov2nDuI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633187AbgDPL1d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
+        id S2506074AbgDPLG1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:06:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506274AbgDPLQn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:16:43 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869A9C061A41
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:16:43 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id h25so7342585lja.10
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:16:43 -0700 (PDT)
+        with ESMTP id S2505871AbgDPLGS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:06:18 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83D1C061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:06:17 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id k28so5243431lfe.10
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:06:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SMyype6pheH6p2B+meThOWdIwkgayOziZmviW73TOhc=;
-        b=G11PTYYbg1ocBkCFQdd0WZXWBNANuFHYcy3Q0hhd1bv4erB3jLCmyws8c3lC3wfILN
-         aEjQAMcNSSjZZ6VYLsP3RjLmeeQ38obVAOp2FdH9Hlkb8BMxpeq3nwMChdscaoxLphO8
-         18kcnImbDmf2F/hY8mCF7NtGP/QOU7TJwbMgnElSglmUjALRd4is/kaKoJKq40iCMbPA
-         C1QwlcoOo3YW/zqzVF6bz/vrgujFNn9QGK85RYjnFtqO4MxCkihbN9IwBEIKIAYnum09
-         8ZZmTfW3LKVQrk/WFYzTTBtn+gbVGGOmr1fFaDOez9a9KTwK5u0sO836VbnhsXxjs2/u
-         li7w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=PQVuIKSPezF1i5nCh/JaET+VC8GB3RQdOhpUD+ddEWo=;
+        b=uov2nDuIn/Wfs71R36fHzId2m3P8g9dLE0bbrT5rdMT6v1gNr99qpLTkqwfWLdheNj
+         aJRfWypx92TWH/ddNAgwVJgctFXrwcS8Wj4/lF+ooJQtZM3UCfKSBqMvI/S26u0NY4+M
+         KETVQvX+ghNwNDuK7WllZpjXjZYHXcVylRB9gpTEyb7Z5FGER8KMYnDKCQXh5BKvfhwm
+         Ntqw4RZhvB5pgLZWFGWt40USck22CbjJTuBp7aHKtcRBv6VoKcWju7z+bvjaJwcWm69G
+         mcXcTOI6cqaMu8SqDH3qo+jlfcC/OTzkwLtNsK2w/XrS5LpH0cv3UdPaY89RkQ+l4Au8
+         Kfxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SMyype6pheH6p2B+meThOWdIwkgayOziZmviW73TOhc=;
-        b=I0F5PHNqOuY77KtLgo7uPoBpX3uJCXmmoOMRyzc4mm54RItwgL5JYNCziiDOmx3AGo
-         MN9g6C9rDgnGKqX0FvoqT2xAYrueQoa9u5pzG4rUSQNT9poLOr4XvXjj7aPWB+3Vb7pa
-         W+FgHEsFKqxICvWb7s+nmWXPE6dlehE20fn9MS1HshEMPy3kvsUriNfquAywaUzhGgO5
-         p/C5X4s8JYO1QyRpEEuNMbjXs/4InCA79t8OCFAxYMrM11fm0uihhhKb+S9bu1WScpwC
-         Jq2RO/J22tbxTPF7DwO8pzdysEJ+zfDxMIYQGYYTCZsJeGv4SBFRsAlcrYFuGiNUj5F2
-         R7sQ==
-X-Gm-Message-State: AGi0PuaH9X4XoApfBZhrpoJN779IIpX09S9rHdLDAj22kFJhDrqBMul/
-        r7zzKgw5iZ4f4DdmY00IsvPa1M7LU8I1Kh8xct0/kw==
-X-Google-Smtp-Source: APiQypJtQonKD3jh+va1+KhfBd6fpkD1BkWgrhEcoubjUXb3Sm75zbBsDipOQ9OsoADIUiMNpnQEpKxU7Wdf1AH6W6s=
-X-Received: by 2002:a05:651c:23b:: with SMTP id z27mr5910865ljn.125.1587035801960;
- Thu, 16 Apr 2020 04:16:41 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PQVuIKSPezF1i5nCh/JaET+VC8GB3RQdOhpUD+ddEWo=;
+        b=MIaWgk7dw+E7EQMAs9BGu0QTLK41dpoTDkrRWrZk/KQ3HQ+kTQ6Tlzyod+HDDUdh03
+         2CEh2Zwt5ZN1U087xn2PfKaHepGvGE3bnlm3XhxJT1Q7FWCKn2Ndlp+6Xh9G8x7jIw3/
+         DZPLpWmvjYCTkBo1N+hom7VtcF4krKMp8A0HNgsFTH+hDtf314gpDTYqXNIHdm2X0RNR
+         gLQgre8z+IJMOa+DOyrp3wu+P75XOq3/HmXWKCueJcSXpSUjIPSdkBmATPE5VmYrzn7c
+         N55oJxK9mcSY0FXTvT9ICY3NK7p4ML05kTOyZ/Gw8fhKfeE8w2rt2HO0ypULuOc6YoKV
+         JuHA==
+X-Gm-Message-State: AGi0PuZ827yrcDJugxDZ2pKODtG4efgzK6TAEb8Y7PoJP+Ox2XiTuD0+
+        ji7W5S0qfMvNGL5z0Urq75g=
+X-Google-Smtp-Source: APiQypLgw9vGRJ2wQiVzAogFPGr8u1/vreLctR6UCuyGuF0g39JdN3TrvCIzgX975/wk1OQBy1Ydxg==
+X-Received: by 2002:a19:43:: with SMTP id 64mr5574302lfa.67.1587035176422;
+        Thu, 16 Apr 2020 04:06:16 -0700 (PDT)
+Received: from mobilestation ([176.213.3.142])
+        by smtp.gmail.com with ESMTPSA id w1sm11852373ljw.48.2020.04.16.04.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2020 04:06:15 -0700 (PDT)
+Date:   Thu, 16 Apr 2020 14:06:13 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 14/14] gpio: dwapb: Amend indentation in some cases
+Message-ID: <20200416110613.4yyrlcle4oiy46a7@mobilestation>
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-15-andriy.shevchenko@linux.intel.com>
+ <20200415171516.cugbzhvjua6cygnq@mobilestation>
+ <20200416105614.GZ185537@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <20200414003726.25347-1-ansuelsmth@gmail.com>
-In-Reply-To: <20200414003726.25347-1-ansuelsmth@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Apr 2020 13:16:30 +0200
-Message-ID: <CACRpkdY-t5GPdUg4uf-1W6VXBcgSL5MSPe46Aj93hPSdWDbwCw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: fix wrong write in update_dual_edge
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200416105614.GZ185537@smile.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 2:37 AM Ansuel Smith <ansuelsmth@gmail.com> wrote:
+On Thu, Apr 16, 2020 at 01:56:14PM +0300, Andy Shevchenko wrote:
+> On Wed, Apr 15, 2020 at 08:15:16PM +0300, Serge Semin wrote:
+> > On Wed, Apr 15, 2020 at 05:15:34PM +0300, Andy Shevchenko wrote:
+> > > In some cases indentation makes code harder to read. Amend indentation
+> > > in those cases despite of lines go a bit over 80 character limit.
+> 
+> > > +			dev_err(dev, "missing/invalid port index for port%d\n", i);
+> > 
+> > What about shortening the message text to fit the 80 chars per line rule?
+> > I suppose the "missing" word could be omitted.
+> 
+> More likely port is not needed, but I think this kind of changes are material
+> for another (logically separated) patch.
+> 
+> ...
+> 
+> > >  			/* Mask out interrupts */
+> > > -			dwapb_write(gpio, GPIO_INTMASK,
+> > > -				    0xffffffff & ~ctx->wake_en);
+> > 
+> > > +			dwapb_write(gpio, GPIO_INTMASK, 0xffffffff & ~ctx->wake_en);
+> > 
+> > Hm, do I need some rest and missing something or the &-operation with 1s here
+> > does nothing seeing the operands data types have the same width?
+> > 
+> > (the change introduced by commit 6437c7ba69c3 ("gpio: dwapb: Add wakeup source support"))
+> 
+> No, you are right, it seems no-op to me, I have noticed it as well, but I think
+> we may improve this by separate change (as you seems also prefer not to mix
+> logically different changes in one patch).
 
-> Fix a typo in the readl/writel accessor conversion where val is used
-> instead of pol changing the behavior of the original code.
->
-> Fixes: 6c73698904aa pinctrl: qcom: Introduce readl/writel accessors
->
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+Ah, Linus already pulled the series in. Next time then.)
 
-Patch applied for fixes and tagged for stable with Bjorn's ACK.
+Regards,
+-Sergey
 
-Yours,
-Linus Walleij
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
