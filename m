@@ -2,144 +2,108 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB30C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8185C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 484CE20767
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F07A20767
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 12:08:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634872AbgDPMGU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 08:06:20 -0400
-Received: from mga12.intel.com ([192.55.52.136]:50548 "EHLO mga12.intel.com"
+        id S2635043AbgDPMIY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 08:08:24 -0400
+Received: from lizzard.sbs.de ([194.138.37.39]:32806 "EHLO lizzard.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2634695AbgDPMGS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 08:06:18 -0400
-IronPort-SDR: UGL/nwPnTx+YXm1Ng5y9zQcOZVNiAM/LSXconCBpO6K6kcPVliubmXzDdzEJHDd6tDglTHGwKt
- Y68ENlYje6Rg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 05:06:16 -0700
-IronPort-SDR: ofhIn3qgxRHoj64Mnme4hmh0iHWWP75YUVPJIC6jSirW0tho2/03Vga8xWcSqoXfJt+5jWyNFn
- bjwwUzrNNEcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,390,1580803200"; 
-   d="scan'208";a="244379993"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Apr 2020 05:06:15 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jP3Hb-0007wr-5K; Thu, 16 Apr 2020 20:06:15 +0800
-Date:   Thu, 16 Apr 2020 20:05:34 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-sa1100fb] BUILD SUCCESS
- 6a7f966069a267078313489f124a598169328e57
-Message-ID: <5e984a0e.K43SpVhTlMtizXtb%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S2635001AbgDPMIT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 08:08:19 -0400
+X-Greylist: delayed 448 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Apr 2020 08:08:17 EDT
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 03GC0XTI010334
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Apr 2020 14:00:33 +0200
+Received: from [167.87.14.243] ([167.87.14.243])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 03GC0WZT010398;
+        Thu, 16 Apr 2020 14:00:33 +0200
+Subject: Re: [PATCH v2 08/14] gpio: dwapb: Convert to use IRQ core provided
+ macros
+To:     Serge Semin <fancer.lancer@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-9-andriy.shevchenko@linux.intel.com>
+ <20200415175309.6l6skv7qsdjqsryi@mobilestation>
+ <20200416103911.GX185537@smile.fi.intel.com>
+ <20200416110135.dieh6gctkh3bwyiz@mobilestation>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <d4840691-72d6-316c-a66f-a44d422b07cb@siemens.com>
+Date:   Thu, 16 Apr 2020 14:00:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20200416110135.dieh6gctkh3bwyiz@mobilestation>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-sa1100fb
-branch HEAD: 6a7f966069a267078313489f124a598169328e57  ARM/fbdev: sa11x0: Switch to use GPIO descriptors
+On 16.04.20 13:01, Serge Semin wrote:
+> On Thu, Apr 16, 2020 at 01:39:11PM +0300, Andy Shevchenko wrote:
+>> On Wed, Apr 15, 2020 at 08:53:09PM +0300, Serge Semin wrote:
+>>> On Wed, Apr 15, 2020 at 05:15:28PM +0300, Andy Shevchenko wrote:
+>>>> IRQ core provides macros such as IRQ_RETVAL().
+>>>> Convert code to use them.
+>>
+>>> BTW Forgot to mention. Irrelevantly to this patch just so you know seeing
+>>> you are from Intel and this part is being utilized by the Intel Quark SoC.
+>>> dwapb_irq_handler_mfd() handler will cause a problem in RT-patched kernel
+>>> (I've seen such issue in another GPIO-driver). So if PREEMP_RT_FULL patch
+>>> is applied and the FULL-RT scheduler is enabled all interrupt handlers
+>>> specified by request_irq()-based methods will be handled by a kernel thread,
+>>> while generic_handle_irq() is supposed to be called from the atomic context
+>>> only (with interrupts disabled). As a result an ugly stack dump will be printed
+>>> to the kernel log by the next code:
+>>> https://elixir.bootlin.com/linux/latest/source/kernel/irq/handle.c#L152
+>>>
+>>> A way to fix this is described in Documentation/driver-api/gpio/driver.rst
+>>
+>> There is patch from Siemens to fix that [1]. I dunno if they are going to upstream it.
+>> Jan?
+>>
+>> [1]: https://github.com/siemens/meta-iot2000/blob/master/meta-iot2000-bsp/recipes-kernel/linux/patches/rt-0002-gpio-dwapb-Work-around-RT-full-s-enforced-IRQ-thread.patch
+> 
+> Just to note I wouldn't accept that patch as it is, because it's applied to all
+> types of IRQ handlers supported by the driver. The chained cascaded IRQ
+> handlers won't be converted to the kernel threads in RT-patched kernels [1], so
+> using the wa-lock is redundant in that case. One of the ways to fix it is
+> to have a conditional wa_lock acquisition depended on the irq_shared flag
+> state. Alternatively we could create a dedicated handlers for each types of
+> the IRQs.
 
-elapsed time: 870m
+Yeah, never had the time to dig into details. Also, that patch was only 
+tested on one particular device with one particular kernel series 
+(4.4-cip-rt). That's why it's a "workaround", not a fix.
 
-configs tested: 78
-configs skipped: 0
+Jan
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm                               allnoconfig
-arm                              allmodconfig
-sparc                            allyesconfig
-microblaze                      mmu_defconfig
-i386                                defconfig
-s390                                defconfig
-m68k                          multi_defconfig
-m68k                       m5475evb_defconfig
-c6x                              allyesconfig
-riscv                               defconfig
-nios2                         3c120_defconfig
-um                           x86_64_defconfig
-m68k                             allmodconfig
-openrisc                    or1ksim_defconfig
-s390                          debug_defconfig
-nds32                             allnoconfig
-csky                                defconfig
-nios2                         10m50_defconfig
-h8300                    h8300h-sim_defconfig
-mips                      fuloong2e_defconfig
-mips                              allnoconfig
-xtensa                          iss_defconfig
-s390                             allyesconfig
-um                                  defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                             alldefconfig
-i386                              debian-10.3
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                             alldefconfig
-c6x                        evmc6678_defconfig
-xtensa                       common_defconfig
-openrisc                 simple_smp_defconfig
-mips                      malta_kvm_defconfig
-mips                             allyesconfig
-mips                         64r6el_defconfig
-mips                           32r2_defconfig
-mips                             allmodconfig
-parisc                            allnoconfig
-parisc                generic-64bit_defconfig
-parisc                generic-32bit_defconfig
-parisc                           allyesconfig
-i386                 randconfig-a002-20200416
-i386                 randconfig-a003-20200416
-i386                 randconfig-a001-20200416
-x86_64               randconfig-a001-20200416
-x86_64               randconfig-a002-20200416
-x86_64               randconfig-a003-20200416
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-s390                       zfcpdump_defconfig
-s390                              allnoconfig
-s390                             allmodconfig
-s390                             alldefconfig
-sh                          rsk7269_defconfig
-sh                               allmodconfig
-sh                            titan_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                                allnoconfig
-sparc                               defconfig
-sparc64                             defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                             i386_defconfig
-x86_64                                   rhel
-x86_64                               rhel-7.6
-x86_64                    rhel-7.6-kselftests
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> 
+> [1] Documentation/driver-api/gpio/driver.rst
+> 
+> Regards,
+> -Sergey
+> 
+>>
+>> -- 
+>> With Best Regards,
+>> Andy Shevchenko
+>>
+>>
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
