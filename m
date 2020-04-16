@@ -6,79 +6,87 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1FBC2BB85
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359B4C2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE5FF206B9
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 067DE206E9
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jU0ibB7d"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yet1Q0fX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506054AbgDPLF1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33388 "EHLO
+        id S2632750AbgDPLNx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506036AbgDPLEr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:04:47 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49468C03C1AF
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 03:53:50 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id u6so5694495ljl.6
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 03:53:50 -0700 (PDT)
+        with ESMTP id S2505858AbgDPLLO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 07:11:14 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE58C061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:11:11 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id q22so7411003ljg.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Apr 2020 04:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QgaYHDB+V/P8sJggA7Iblc7jogxqawaSl+yzOQ0/Rn4=;
-        b=jU0ibB7dsoTTJYnbq7KJWD85iq65azWfsvxPzehE8nANACAg+Xlc06OrsGr3JWXvou
-         +BdxX7QH+4uNZZbRVtz1Sj5e+iyJNk2NR2lC4/RCe86BW3cGHIDvCNTX4J/dPtYe04lf
-         6G4J+hPkIZtAxrYdOwtV3czWB9x44QZehux9ei4JpD0kcovDb37m9XVWZZTzjLFfwNz1
-         pXypwEZ1sJqzrhLWKG+b6tys3DKV0kCeJ+YEnh9bqHbsd74k+JfGJVnkqjpGTBVdXuYF
-         n/RjND8rmIlYPVAQhR1gEvwX1ESXbgBH96blAk4ykcIl0nkMrwLci8W9mA/QX0ri65aj
-         hw8Q==
+        bh=DagzPuCV35qt33fGvPGLDoiS08sYzbb9yy87y7EAnZ0=;
+        b=yet1Q0fX4nxzU8FeSJeMbsR/4M4ZR8bSZgTYXnm3b33HHgDAoFiGGbEVV4TxE3vhsD
+         /c2AJ4eKsLOLbAMS8meVpOJBnXQX4HaYBk/E4mO/kE7Qx15xwDrn79DqsnaQKBdPX72/
+         9AC/Nlvz6XGq4HUe2sfq8jP1MF1spNg/BW1C10iPp8ZwR/qYFHcIp6w8D37lenRxH3+d
+         QMT/GjndGpsyFcpVXgKMwHXurfH4Ri52ptjqKfjhQDs6tHzXng01V2kKubCYftC5vUbE
+         CodkmrdPVAcWtHmXRqehK2nzSMW+0LQSwyvkE09yxCKcEZThbjK0bRaMhUhgJU4enXbO
+         pl5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QgaYHDB+V/P8sJggA7Iblc7jogxqawaSl+yzOQ0/Rn4=;
-        b=LUCMxmy9h8UKnFHwOGyqI3dQRo1V0cj00YOK9VoCxnrRdIpxlGaXMqnbdwvPgAd6Z4
-         Ix/Oef/3k7W7Ed4X8eT8jhvy9XNe6e0k4eOb7Ijqb2rkcqeMRVCG/Mkxx1dv0FvvOFqv
-         83iamz/ylKd7fL5gKz54b5CjB5v9lnivV05dee00is6ZmOtFgHhR6NKQjlkoZZ+71eAi
-         /v5MY1XTF8zjyDvZgqVvLMKLTeqW6ntxX4pcWeehhX0lo2dx1XdNZ/Zhz/oIyq7u8DvX
-         c8rRonQ4NwA7jQoLUmOnp93oJZwxfU1tiI9L3tcD6GZ4gLK6MepraCd8YST255Ltrd/w
-         P4HA==
-X-Gm-Message-State: AGi0PubR0W6lpCFoiveeoA9mZkq3M6N4CxIm+dC6DZWvVpokrFUC2Q76
-        I3ElPxVp6B6l2sksBHb1FGpqw1Vi4RfzvzJ5b6BKcg==
-X-Google-Smtp-Source: APiQypK6nkSTANaZW+1a43XoogM3H6sNnq4kMI4xqLyVIWS/PF6q8zPv4riQVVKMftU1hlwobUdBnlrK6GlVZzGsIdU=
-X-Received: by 2002:a2e:5048:: with SMTP id v8mr5601989ljd.99.1587034428690;
- Thu, 16 Apr 2020 03:53:48 -0700 (PDT)
+        bh=DagzPuCV35qt33fGvPGLDoiS08sYzbb9yy87y7EAnZ0=;
+        b=mFWyDqOxsuUzLmdVBi3UbxUJizvE3i5DgLtfVV15G8b989GJuqCx9fCWG4fr9UTELT
+         I2fCe/qNeX/zkoAf0m93lI2e/GrF829B/tK0aNTX6RIEQhsmVn9LSe2i4OAxQAbJO6rJ
+         AosEW0g6UHN5fs8EOgjMD1uK+XLAPX8ObtGgX8dvTp/C8OI3PtlzUuVrsf+o0UnBjmFV
+         BBaewaRc4pIp1sw4FSXpsAe56kH7zcwR3KuL66ZIBEIzZNmPxWPUxJuLXrifLGe/yhJ1
+         eFrGvc1pDnnKGFk9/RtKm9j4vllx8sBuqIf03RsltLJLqgPZ7MedZTN7cYt9u5n5vBDm
+         iy5w==
+X-Gm-Message-State: AGi0Pub1vQU5kwRTluIHPv91birGsbOnt1h9FFTQAIE9Za47vMHvYwR8
+        aSjPxbVQJO10XGTK2IZlRJ+a2SdY/7xRBbXeQ7UenA==
+X-Google-Smtp-Source: APiQypIe+xRjUiPUhs+Ll7NpUdbW/Z87i6LFhQq3LlYlzagCdixZd6a64fsv5yfIf2axg5JsvTgNsUrB0uS0JAF3Xd4=
+X-Received: by 2002:a2e:9605:: with SMTP id v5mr5942226ljh.258.1587035469976;
+ Thu, 16 Apr 2020 04:11:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200408070504.134847-1-yuehaibing@huawei.com>
-In-Reply-To: <20200408070504.134847-1-yuehaibing@huawei.com>
+References: <1586757913-5438-1-git-send-email-amittomer25@gmail.com>
+In-Reply-To: <1586757913-5438-1-git-send-email-amittomer25@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Apr 2020 12:53:37 +0200
-Message-ID: <CACRpkdYUX5EuRQMj_c+0wJa2pP13MF1jd8T8AjpifeR22kc_pA@mail.gmail.com>
-Subject: Re: [PATCH -next] pinctrl: qcom: Remove duplicated include from pinctrl-msm.c
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Ajay Kishore <akisho@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
+Date:   Thu, 16 Apr 2020 13:10:59 +0200
+Message-ID: <CACRpkda8bZQnQhNbwXPrf-8mZh2NhsPx3u1Gcpmi8KjUEd-17w@mail.gmail.com>
+Subject: Re: [PATCH v1] pinctrl: actions: fix function group name for i2c0_group
+To:     Amit Singh Tomar <amittomer25@gmail.com>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Matheus Castello <matheus@castello.eng.br>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-actions@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 8, 2020 at 9:02 AM YueHaibing <yuehaibing@huawei.com> wrote:
+On Mon, Apr 13, 2020 at 8:05 AM Amit Singh Tomar <amittomer25@gmail.com> wrote:
 
-> Remove duplicated include.
+> After commit 6f87359e8bca ("pinctrl: actions: Fix functions groups names
+> for S700 SoC") following error has been observed while booting Linux on
+> Cubieboard7-lite(based on S700 SoC).
 >
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> [    1.206245] pinctrl-s700 e01b0000.pinctrl: invalid group "i2c0_mfp" for function "i2c0"
+>
+> This commit fixes it by using correct name for i2c0_group.
+>
+> Fixes: 6f87359e8bca ("pinctrl: actions: Fix functions groups names for S700 SoC")
+> Signed-off-by: Amit Singh Tomar <amittomer25@gmail.com>
 
-Patch applied.
+Patch applied with Mani's ACK.
 
 Yours,
 Linus Walleij
