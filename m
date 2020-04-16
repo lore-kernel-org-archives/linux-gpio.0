@@ -2,101 +2,95 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D77C3815B
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C8CC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5786A22241
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4341214AF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 15:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ysjTGYvQ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="f5c9A4Fn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394807AbgDPOza (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 10:55:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2394717AbgDPOz2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 10:55:28 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:3201:214:fdff:fe10:1be6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C95C061A0C;
-        Thu, 16 Apr 2020 07:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2TAsDZORjN9WETPN/SBIZUHlfbmQGXgSEDTiH1aJP70=; b=ysjTGYvQYx1oDZ1Dqr3mKAJqV
-        3jM/obm2sGWYLsMebRCDuJPjat1kN4gV6S8xFS2Qke6kp404r6xAjPwZ8d3UOu0BIbEKZf1ZZWNg4
-        Z8pdruWP4dvREPUk0M9zfx9EpclAK5Imj6jdkvTmES4lYu8ZpCMHdfebIN9Ny8d0hnVlRZUTUQwqo
-        FTyiUfo1WfcED5aWEtzaW8iwEmFjEHNWBkEp7Pq3ltiOGsITZGm4Xn+lh4tKnOwaIJyE+MeKUn/9i
-        sgt6jQnl6fUol8d6ApW4baOsOkzTuhhkHo68rte+Zp0+wQ0laHKAy9m5cB1LHMedQsNMV/vkcIDKH
-        2tyt6zyFw==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:39236)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jP5vC-0004m8-3u; Thu, 16 Apr 2020 15:55:18 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jP5vB-0001yW-A8; Thu, 16 Apr 2020 15:55:17 +0100
-Date:   Thu, 16 Apr 2020 15:55:17 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-pwm@vger.kernel.org,
+        id S2408672AbgDPNu4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 09:50:56 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:41660 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408557AbgDPNuv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 09:50:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=EF/f9myVVbgrLxXwzUMzNnUxGooj5hG2873Zghg3qio=; b=f5c9A4Fn3ySTK1wzQTyIowkDaW
+        o2L99bBr1lFDYtL4BfBJGLRkjJyMo2p4ZrbupRO58aeykvzS/cr/UeCXY+d23IiSHcp6i7CeihRhq
+        jZli5GjTIUplIniSlLGL4h7pv3GwqBpq82wY+p3xcMk7emkYyilPwPjrq7EfOWM4IAck=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1jP4ud-0034yA-Ey; Thu, 16 Apr 2020 15:50:39 +0200
+Date:   Thu, 16 Apr 2020 15:50:39 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
 Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
-Message-ID: <20200416145517.GK25745@shell.armlinux.org.uk>
+Message-ID: <20200416135039.GL657811@lunn.ch>
 References: <20200329104549.GX25745@shell.armlinux.org.uk>
  <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
- <20200416135039.GL657811@lunn.ch>
- <5c7cb0ff-bf49-640a-3c4a-ef71495af7b7@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5c7cb0ff-bf49-640a-3c4a-ef71495af7b7@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 03:37:40PM +0100, Robin Murphy wrote:
-> On 2020-04-16 2:50 pm, Andrew Lunn wrote:
-> [...]
-> > Clocking with Marvell devices has always been interesting. Core IP
-> > like this gets reused between different generations of SoCs. The
-> > original Orion5x had no clock control at all. Latter SoCs have had
-> > more and more complex clock trees. So care has to be taken to not
-> > change old behaviour when adding support for new clocks.
+On Thu, Apr 16, 2020 at 09:51:37AM +0200, Linus Walleij wrote:
+> On Sun, Mar 29, 2020 at 12:46 PM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
 > 
-> FWIW, that sounds like a good argument for encoding the clock requirements
-> of each variant in the of_match_data, so the driver doesn't have to simply
-> trust the DT and hope.
+> > This series adds support for the fan PWM output on the Clearfog GT8K
+> > platform, and can potentially be extended to the Macchiatobin.
+> 
+> The gpio changes all look fine to me +/- fixes for review comments.
+> 
+> Could the MVEBU maintainers provide some feedback?
 
-Please read my patches.  This is exactly what I'm doing.  I'm preserving
-as closely as possible the current driver behaviour while adding support
-for the Armada 8040 PWM while keeping compatibility with older DT.
+Hi Linus
 
-And I'm doing that by keying off the match data, exactly as you're
-suggesting above.
+I took a quick look at this when it was first posted. I also wrote the
+PWM support in this driver. The hardware is mostly a GPIO driver, but
+it has some basic PWM facilities. It is not possible to cleanly split
+it into two drivers, which is why it has the current structure. And
+the PWM maintainers ask that the PWM parts be listed in MAINTAINERS as
+such, so they got to know about any changes.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+Clocking with Marvell devices has always been interesting. Core IP
+like this gets reused between different generations of SoCs. The
+original Orion5x had no clock control at all. Latter SoCs have had
+more and more complex clock trees. So care has to be taken to not
+change old behaviour when adding support for new clocks. So Russell
+2/6 patch looks good to me, and Uwe request could break on some
+SoCs. It would need testing on a lot of SoCs, with and without PWM
+support. 
+
+I assume Russell will at some point repost without the RFC tag. At
+that point i will take a second look and add Reviewed-by.
+
+     Andrew
