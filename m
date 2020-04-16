@@ -2,148 +2,137 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE20C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440DFC2BB55
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2E532063A
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0128621D7E
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 14:30:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A2QRGnS8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gpjzjvJ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393952AbgDPORN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 10:17:13 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50568 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393942AbgDPORK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2020 10:17:10 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03GEGxtb079531;
-        Thu, 16 Apr 2020 09:16:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587046619;
-        bh=9BclR6MwFJOWMIsrTHHHb17/A/NQ6wqTWrRF52eywVw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=A2QRGnS85VX3U7rTWAsDNwwo0CXUbckK0r9NpVKpTJe8IuPigT8Yzu2hOwc2DuwP5
-         D5fdJXTvMjpUbXyajyqopUsGBoSHeZwaxhmyIpvrfLPqY6UIkRbo4ZrVTfu1VJCC8H
-         HZQj5Cg6r2u5jZhAOwotB/jchmO9mYSn+Qj3diEk=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03GEGxgU077547
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 16 Apr 2020 09:16:59 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 16
- Apr 2020 09:16:58 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 16 Apr 2020 09:16:58 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03GEGqhp009673;
-        Thu, 16 Apr 2020 09:16:54 -0500
-Subject: Re: gpio-omap: add support gpiolib bias (pull-up/down) flags?
-To:     Drew Fustini <drew@pdp7.com>,
-        Robert Nelson <robertcnelson@gmail.com>
-CC:     Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-References: <CAEf4M_Du6Egn-3nZHtSnMMwohc+-DyEdtWU5DqSJi71+nDthFw@mail.gmail.com>
- <CACRpkdaPoMGZ7jGh6j4dYexx+qCcoMQ37vS7kbpf=3TtcA9zQQ@mail.gmail.com>
- <CAEf4M_B_sxOiKFnEVUrx00RE2MaMA98LpijNhp0EVY11eRAXHg@mail.gmail.com>
- <CAD6h2NT840zMfwaJatfKzai8QjZEQmF5v0xgE+9ngSJJ+Qy+6g@mail.gmail.com>
- <20200413123921.GA32586@x1> <578a51c3-9cb4-91f9-4735-c512bf75553c@ti.com>
- <CAOCHtYg=rM_zP6Wr3bWKfvGpeK7sXLj6GLN3DXSh8JgfqDTcCA@mail.gmail.com>
- <db5e49dc-41b4-2ba5-87b3-f345749d7984@ti.com>
- <CAOCHtYgNH-OUWdKgKLr7U8Zy2OZb=P9Rpsv4mFii+VwU7h-vGA@mail.gmail.com>
- <20200415233712.GA16167@x1>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <495f118d-380d-a994-d8f9-bacdfe4efb85@ti.com>
-Date:   Thu, 16 Apr 2020 17:16:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S2387780AbgDPOaG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 10:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390867AbgDPOaE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 10:30:04 -0400
+X-Greylist: delayed 22509 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 16 Apr 2020 07:30:02 PDT
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:3201:214:fdff:fe10:1be6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A3BC061A0C;
+        Thu, 16 Apr 2020 07:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KneQJooGNroMsnVhWpDNmOJcUpQzDw2TtA1XPoL0v94=; b=gpjzjvJ1SeNwiy64EvyosJQ8U
+        XL1D/lWSZEPz8nh71eZGnsa8wJymRu0HxttL22t1hKWPT7wk33UPO3X8aXHE9hIFE++kTF7+9U1yx
+        5jos7uFLFpiJyBwnjhrVHtWiiRzTpNHcxdGxfXopk8ecSU1y/osTb+cDOjx5VsHQtCp5ZOoCeruaz
+        libTRH86hFC6aupenZGdh7F2wIR9PRVNJPI+6mwdVGTOuvMJdO86X4GdYe2NDH71WRYjqoFOK9htC
+        XUAFco+ZR7JcPv1WXl9Ua6kNpoRcSWfo18uyeZ7fC7pmBX/6y2RMFmaO8TwQRRSD2RZ8WzoL+WyUW
+        SarV3nEjg==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:39222)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jP5WX-0004dh-LL; Thu, 16 Apr 2020 15:29:49 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jP5WS-0001x6-Nr; Thu, 16 Apr 2020 15:29:44 +0100
+Date:   Thu, 16 Apr 2020 15:29:44 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH RFC 0/6] PWM fan support on Clearfog gt8k
+Message-ID: <20200416142944.GH25745@shell.armlinux.org.uk>
+References: <20200329104549.GX25745@shell.armlinux.org.uk>
+ <CACRpkdaL4-Z36aKOVW4o2MtCG9fbqm4gxZN3QjejVRPBZrzxxA@mail.gmail.com>
+ <20200416135039.GL657811@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <20200415233712.GA16167@x1>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200416135039.GL657811@lunn.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-
-On 16/04/2020 02:37, Drew Fustini wrote:
-> On Wed, Apr 15, 2020 at 08:59:09AM -0500, Robert Nelson wrote:
->> On Wed, Apr 15, 2020 at 8:47 AM Grygorii Strashko
->> <grygorii.strashko@ti.com> wrote:
->>> On 15/04/2020 16:20, Robert Nelson wrote:
->>>> Hi Grygorii,
->>>>
->>>> On Wed, Apr 15, 2020 at 8:15 AM Grygorii Strashko
->>>> <grygorii.strashko@ti.com> wrote:
->>>>>
->>>>> For this platforms the dynamic GPIO muxing/configuration is not supported, and GPIO block by itself
->>>>> does not provide such functions as pullup/pulldown.
->>>>
->>>> Correct, that's the state today, while Drew is investing time into
->>>> trying to figure out how to properly extend this feature into our
->>>> platform.
->>>
->>> Sry, but it's not clear what's the final target (at least from public part of this thread).
->>
->> We are mainly targeting am335x based devices.  Today (well last few
->> years) we've utilized a "hack-ish" kernel module (bone-pinmux-helper)
->> to allow users to overide/change the pinmux-ing directly from
->> user-space...  (This evil module allows us to specify a list of
->> options for each pin, thus users can easily configure specifies of the
->> pin, aka gpio_pd/gpio_pu/etc from user-space...).  Since that time,
->> mainline has now grown a generic gpio pull-up/pull-down functionality,
->> with the ability to re-control these values directly from a generic
->> gpio library (libgpiod).
+On Thu, Apr 16, 2020 at 03:50:39PM +0200, Andrew Lunn wrote:
+> On Thu, Apr 16, 2020 at 09:51:37AM +0200, Linus Walleij wrote:
+> > On Sun, Mar 29, 2020 at 12:46 PM Russell King - ARM Linux admin
+> > <linux@armlinux.org.uk> wrote:
+> > 
+> > > This series adds support for the fan PWM output on the Clearfog GT8K
+> > > platform, and can potentially be extended to the Macchiatobin.
+> > 
+> > The gpio changes all look fine to me +/- fixes for review comments.
+> > 
+> > Could the MVEBU maintainers provide some feedback?
 > 
-> Hello Grygorii -
+> Hi Linus
 > 
-> As Robert described, I wanted to make us of the new support for bias
-> flags in the gpiolib uapi which allows userspace libraries like libgpiod
-> set pull-up or pull-down on lines [0].
+> I took a quick look at this when it was first posted. I also wrote the
+> PWM support in this driver. The hardware is mostly a GPIO driver, but
+> it has some basic PWM facilities. It is not possible to cleanly split
+> it into two drivers, which is why it has the current structure. And
+> the PWM maintainers ask that the PWM parts be listed in MAINTAINERS as
+> such, so they got to know about any changes.
 > 
-> Is there no way for gpio-omap to call into the pinctrl-single backend to
-> set the bias bits (PULLUDEN and PULLTYPESEL) in pad control registers?
+> Clocking with Marvell devices has always been interesting. Core IP
+> like this gets reused between different generations of SoCs. The
+> original Orion5x had no clock control at all. Latter SoCs have had
+> more and more complex clock trees. So care has to be taken to not
+> change old behaviour when adding support for new clocks. So Russell
+> 2/6 patch looks good to me, and Uwe request could break on some
+> SoCs. It would need testing on a lot of SoCs, with and without PWM
+> support. 
 > 
+> I assume Russell will at some point repost without the RFC tag. At
+> that point i will take a second look and add Reviewed-by.
 
-I'm not sure how this could help ;( If there were dedicated GPIO pins - then yes.
-But on all Sitara SoCs the pins are multi-functional and GPIO is not a primary function.
-So to use some PIN as GPIO the MUX_MODE has to be *carefully* changed - and for this DT updated.
-Which, in turn, means proper pull-up/pull-down can also be configured at the same time.
-And all above is static configuration - even if it involves connecting different modules to BB.
+I said in the cover message "The cooling maps are experimental".
+They work reasonably well for me with the fan I have (a noctua fan)
+but other people may find them to be problematical, so one of the
+reasons for sending it as RFC is to get people to test and see how
+well it works.
 
-(Changing MUX_MODE from user space sounds very unsafe for me.)
+I may have had greater success getting people to test if I'd added
+maps for the Macchiatobin, but that wasn't my target system. That's
+relatively easy to do - it's the same pin as on the gt8k, so merely
+putting the same DT changes onto Macchiatobin would allow testing
+with those settings.
 
-Next, how it can be ensured that User space will not corrupt PIN which is not a GPIO?
-Usually only set of GPIOs per bank  are really muxed out as GPIO and, right now, there is no
-way to say which ones, because pinmuxing and GPIOs configurations are going through different frameworks.
+Whether that's correct for my Macchiatobin server setup is an
+entirely separate problem - where the fan PWM controls front panel
+fans and there's a bigger fanless heatsink on the Armada 8040 (as
+per the first revision of the Macchiatobin boards).  As the boards
+ship without a PWM controllable fan, it would be of limited use.
 
-Lets say request come to configure GPIO1.20 to PULLUDEN - there is no way to be sure this pin
-is actually pinmuxed as GPIO and not rgmii2_td1. And everything depends on DT and User qualification.
-Now this is safe - just User will not get what he wants if he misses with GPIO number.
-But if GPIO driver will be allowed to go and change some pinmux - it can kill rgmii2.
-
-Or do you have more global ideas for pinmux management?
+So, really, I think the DT configuration of the PWM parameters is
+"for the user" and not actually for mainline kernels - which
+brings with it the problems of understanding control systems,
+stability of such systems, feedback, and how to configure the
+thermal subsystem... which is not easy.
 
 -- 
-Best regards,
-grygorii
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
