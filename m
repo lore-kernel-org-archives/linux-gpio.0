@@ -2,122 +2,91 @@ Return-Path: <SRS0=B0Ck=6A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDD5C2BB55
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21690C2BB85
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A52F21D94
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587037233;
-	bh=u5fMQDNAUuXaPw+89dTTA0ZVG5dJuZz63WEnr/aWCsA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Rt2A6OHvnylq9U4VfUXG/IbIjEC9vEly/zUQ5MwtYF1QWa4LbQkx4dHBoYgsRDop6
-	 07apinMGT/NviqL0BtnaOFMU6pdy6RrW8Gva+eCsaLGy0euNpa9dYcRwHsylQ8TcJR
-	 Z0ujIItH992NfXaFVjFGWpS6JZHaVa3TmJ8rg8SI=
+	by mail.kernel.org (Postfix) with ESMTP id EE44B21D7F
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Apr 2020 11:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505881AbgDPK7Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Apr 2020 06:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39426 "EHLO mail.kernel.org"
+        id S2506471AbgDPLlJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:41:09 -0400
+Received: from mga05.intel.com ([192.55.52.43]:26417 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505871AbgDPK7V (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 16 Apr 2020 06:59:21 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8860221E9;
-        Thu, 16 Apr 2020 10:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587033667;
-        bh=u5fMQDNAUuXaPw+89dTTA0ZVG5dJuZz63WEnr/aWCsA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xp/KXtyBC+AW47+w/EThPewPKJno4LpErrb9k/MShW8CSZOjoH/eQie3gyamQtAPZ
-         7+2VNJeLRNNDDKaVoGmzb7acrQ3F10p7zOFoaEDwJaxmNypi234utwSFrQnjNbswMB
-         9dE8DImjkqaSZMR+teMounUi1jKOEIZOXIrffOdk=
-Date:   Thu, 16 Apr 2020 11:41:04 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
+        id S2505833AbgDPK6U (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 16 Apr 2020 06:58:20 -0400
+IronPort-SDR: rvDSWYjrzFGdMPHWPHLAavbUpAF80AJMgGXlaGNc5LrTf7VPlZQxm3RRy9C523JwfBh+A2x3ld
+ fuX4BQXVLUbA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 03:56:13 -0700
+IronPort-SDR: QIsi64xegMHfaZCxpoGk/hEdOPnywLxzOxlkLX6eZWkQwNcI0wyXj8THfoXv0lwou0ARyFL7sC
+ upWIWbMDFsqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,390,1580803200"; 
+   d="scan'208";a="245960358"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Apr 2020 03:56:12 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jP2Bq-0010h8-UO; Thu, 16 Apr 2020 13:56:14 +0300
+Date:   Thu, 16 Apr 2020 13:56:14 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Remove cases of 'allOf' containing a
- '$ref'
-Message-ID: <20200416104104.GE5354@sirena.org.uk>
-References: <20200416005549.9683-1-robh@kernel.org>
- <20200416005549.9683-2-robh@kernel.org>
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 14/14] gpio: dwapb: Amend indentation in some cases
+Message-ID: <20200416105614.GZ185537@smile.fi.intel.com>
+References: <20200415141534.31240-1-andriy.shevchenko@linux.intel.com>
+ <20200415141534.31240-15-andriy.shevchenko@linux.intel.com>
+ <20200415171516.cugbzhvjua6cygnq@mobilestation>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/2994txjAzEdQwm5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200416005549.9683-2-robh@kernel.org>
-X-Cookie: Tempt me with a spoon!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200415171516.cugbzhvjua6cygnq@mobilestation>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Wed, Apr 15, 2020 at 08:15:16PM +0300, Serge Semin wrote:
+> On Wed, Apr 15, 2020 at 05:15:34PM +0300, Andy Shevchenko wrote:
+> > In some cases indentation makes code harder to read. Amend indentation
+> > in those cases despite of lines go a bit over 80 character limit.
 
---/2994txjAzEdQwm5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > +			dev_err(dev, "missing/invalid port index for port%d\n", i);
+> 
+> What about shortening the message text to fit the 80 chars per line rule?
+> I suppose the "missing" word could be omitted.
 
-On Wed, Apr 15, 2020 at 07:55:49PM -0500, Rob Herring wrote:
-> json-schema versions draft7 and earlier have a weird behavior in that
-> any keywords combined with a '$ref' are ignored (silently). The correct
-> form was to put a '$ref' under an 'allOf'. This behavior is now changed
+More likely port is not needed, but I think this kind of changes are material
+for another (logically separated) patch.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+...
 
---/2994txjAzEdQwm5
-Content-Type: application/pgp-signature; name="signature.asc"
+> >  			/* Mask out interrupts */
+> > -			dwapb_write(gpio, GPIO_INTMASK,
+> > -				    0xffffffff & ~ctx->wake_en);
+> 
+> > +			dwapb_write(gpio, GPIO_INTMASK, 0xffffffff & ~ctx->wake_en);
+> 
+> Hm, do I need some rest and missing something or the &-operation with 1s here
+> does nothing seeing the operands data types have the same width?
+> 
+> (the change introduced by commit 6437c7ba69c3 ("gpio: dwapb: Add wakeup source support"))
 
------BEGIN PGP SIGNATURE-----
+No, you are right, it seems no-op to me, I have noticed it as well, but I think
+we may improve this by separate change (as you seems also prefer not to mix
+logically different changes in one patch).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6YNkAACgkQJNaLcl1U
-h9B9Tgf/e6Ex42p5b/rjUYhiAhK+0T+nvTbdLGjxGyRfopnnVMMaYPWXmkdGdh0H
-/nGE0rn04EUyWfBkjgCeKuclbzRWJCfQBSl+4dlYbMuX1LKrybV3nRANP03o7A9y
-sqPsDL3Qq01Rgb8waJiwmXqcHjxKBbCZd5bzU8ff82hg8jGKMIDVzJdnYrzGJJm7
-wLygPWU+Nj65KniavgesiRhfwSLfveuWwAR6SsWCCiOhJOWgl0/KbhceiFTRLJ4c
-pQQeBPzy+/C5VH2sYPCZB3/MEQ4/6+CC1AchkSDqGwOooj4KsPXXCjiJtj4YZB86
-9wfRx0ePvlfgBQgHYw4LX6341lhYUw==
-=Rw7L
------END PGP SIGNATURE-----
+-- 
+With Best Regards,
+Andy Shevchenko
 
---/2994txjAzEdQwm5--
+
