@@ -2,126 +2,170 @@ Return-Path: <SRS0=nlfL=6B=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3343BC2BB1D
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 07:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B52C2BB85
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 08:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B8B8206D5
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 07:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9399F20644
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 08:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="IKd6F4bW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbgDQHI6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Apr 2020 03:08:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2390 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728375AbgDQHI6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Apr 2020 03:08:58 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2B8BD1AB94DE7EDF6FDF;
-        Fri, 17 Apr 2020 15:08:52 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Fri, 17 Apr 2020
- 15:08:46 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <linus.walleij@linaro.org>, <stephan@gerhold.net>,
-        <yanaijie@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] pinctrl: nomadik: db8500: remove some unused symbols
-Date:   Fri, 17 Apr 2020 15:35:12 +0800
-Message-ID: <20200417073512.42350-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.21.1
+        id S1729641AbgDQIMW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Apr 2020 04:12:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729628AbgDQIMV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Apr 2020 04:12:21 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74D6C061A41
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Apr 2020 01:12:19 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id b11so1985141wrs.6
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Apr 2020 01:12:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tvakS3Q1pErt74Ey/8HB1NoTJzsrnVjlY4jXc80KzI0=;
+        b=IKd6F4bWA7WDLrZgc2/6LrZcaXCOq0Y2jTar7smrNtnWPCXewaNPWJ0LFCfGVZxctP
+         mVAtIdPUzDSxdpSFVpLNUVqesoTJpD5c+cThZKaNGMvQsY/VHG5K2yDWoN99DBtkyjwv
+         K/kj22LEhbSBphsT9eVKHE2p59eV3MV0y2rLlZdBck6/raxTg13Yd1bzdMj2zC1V8fVo
+         uImyp3wfedtwwKcDGIH/30APkNPWkyIXatXKpdOyooiPtioHv0tk/30JqaE4QTPlrFBj
+         6C7OfSQW7j3xI0h17d1w88weIDToS+PNUWRFguYrVz/dMiA7QsuyyryblykhCkgLknrY
+         V5VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tvakS3Q1pErt74Ey/8HB1NoTJzsrnVjlY4jXc80KzI0=;
+        b=S1DfaiO27esezXjf9fFT/XAFIV7xo5A4F6khzxgJJdV0z07biimtzqrincfKxIUen0
+         6kuAKptCkw2OL3JqhX1swuATLJAQb5xY82mbCq3NaBCZtbjfji0bEcqJpkBViqVv2n2y
+         ZHjEbItQBQh4XRF8dAFIKKjwTR9ZhgxwoY/bZ0KATZNONB9eMJaRRGoF7ulGDEpsAbYr
+         M+XKMzZk1Vu6DqEjH/ZHqKc3V/rOYD82lYMkQo6ecFrOWpKwHFWUQ+Fe4j3350nYtt1+
+         H4kia8Jsuh4PF0JCMmyYkrs088Eootc3Ae3XI6AgIhCIS7yGnrFEZzAc6mCGkKQ1lk3t
+         hOHA==
+X-Gm-Message-State: AGi0PuZ4H4rfI3omW0I5nrAQVIvPPsryDGR0FazG1GMzIBjnu8EwUaum
+        VGxSBZV/za1MMoycaMlo1Ma9Qg==
+X-Google-Smtp-Source: APiQypJwT4Q0hCYipPDC2QfGJ+x7V+WnSu9vTp7m+D3Vh6ytki4rOtSRRVlFbI0W00wBcdSje3GJhA==
+X-Received: by 2002:adf:9564:: with SMTP id 91mr2638000wrs.246.1587111138514;
+        Fri, 17 Apr 2020 01:12:18 -0700 (PDT)
+Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
+        by smtp.gmail.com with ESMTPSA id o129sm1078078wme.16.2020.04.17.01.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2020 01:12:17 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 1/2] irq: make irq_domain_reset_irq_data() available even for non-V2 users
+Date:   Fri, 17 Apr 2020 10:05:48 +0200
+Message-Id: <20200417080549.23751-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200417080549.23751-1-brgl@bgdev.pl>
+References: <20200417080549.23751-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix the following gcc warning:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:899:20: warning:
-‘sbag_groups’ defined but not used [-Wunused-const-variable=]
- DB8500_FUNC_GROUPS(sbag, "sbag_oc2_1", "sbag_oc4_1");
-                    ^
-drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:570:23: warning:
-‘ipgpio6_c_2_pins’ defined but not used [-Wunused-const-variable=]
- static const unsigned ipgpio6_c_2_pins[] = { DB8500_PIN_G3 };
-                       ^~~~~~~~~~~~~~~~
-drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:472:23: warning:
-‘mc1dir_a_1_pins’ defined but not used [-Wunused-const-variable=]
- static const unsigned mc1dir_a_1_pins[] = { DB8500_PIN_AH13,
-DB8500_PIN_AG12,
-                       ^~~~~~~~~~~~~~~
-drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:453:23: warning:
-‘modem_a_1_pins’ defined but not used [-Wunused-const-variable=]
- static const unsigned modem_a_1_pins[] = { DB8500_PIN_D22,
-DB8500_PIN_C23,
-                       ^~~~~~~~~~~~~~
-drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:430:23: warning:
-‘kpskaskb_a_1_pins’ defined but not used [-Wunused-const-variable=]
- static const unsigned kpskaskb_a_1_pins[] = { DB8500_PIN_D17,
-DB8500_PIN_D16 };
-                       ^~~~~~~~~~~~~~~~~
+irq_domain_reset_irq_data() doesn't modify the parent data, so it can be
+made available even if irq domain hierarchy is not being built. We'll
+subsequently use it in irq_sim code.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c | 8 --------
- 1 file changed, 8 deletions(-)
+ include/linux/irqdomain.h |  4 ++--
+ kernel/irq/irqdomain.c    | 24 ++++++++++++------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
-index b9246e0b4fe2..0bba16dadb45 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
-@@ -427,7 +427,6 @@ static const unsigned lcd_d12_d23_a_1_pins[] = {
- 	DB8500_PIN_A3, DB8500_PIN_B6, DB8500_PIN_D6, DB8500_PIN_B7 };
- static const unsigned kp_a_1_pins[] = { DB8500_PIN_D7, DB8500_PIN_E8,
- 	DB8500_PIN_D8, DB8500_PIN_D9 };
--static const unsigned kpskaskb_a_1_pins[] = { DB8500_PIN_D17, DB8500_PIN_D16 };
- static const unsigned kp_a_2_pins[] = {
- 	DB8500_PIN_B17, DB8500_PIN_C16, DB8500_PIN_C19, DB8500_PIN_C17,
- 	DB8500_PIN_A18, DB8500_PIN_C18, DB8500_PIN_B19, DB8500_PIN_B20,
-@@ -449,9 +448,6 @@ static const unsigned i2c0_a_1_pins[] = { DB8500_PIN_C15, DB8500_PIN_B16 };
-  */
- static const unsigned ipgpio0_a_1_pins[] = { DB8500_PIN_B14 };
- static const unsigned ipgpio1_a_1_pins[] = { DB8500_PIN_C14 };
--/* Three modem pins named RF_PURn, MODEM_STATE and MODEM_PWREN */
--static const unsigned modem_a_1_pins[] = { DB8500_PIN_D22, DB8500_PIN_C23,
--					   DB8500_PIN_D23 };
- /*
-  * This MSP cannot switch RX and TX, SCK in a separate group since this
-  * seems to be optional.
-@@ -469,8 +465,6 @@ static const unsigned mc1_a_1_pins[] = { DB8500_PIN_AH16, DB8500_PIN_AG15,
- 	DB8500_PIN_AH15 };
- static const unsigned mc1_a_2_pins[] = { DB8500_PIN_AH16, DB8500_PIN_AJ15,
- 	DB8500_PIN_AG14, DB8500_PIN_AF13, DB8500_PIN_AG13, DB8500_PIN_AH15 };
--static const unsigned mc1dir_a_1_pins[] = { DB8500_PIN_AH13, DB8500_PIN_AG12,
--	DB8500_PIN_AH12, DB8500_PIN_AH11 };
- static const unsigned hsir_a_1_pins[] = { DB8500_PIN_AG10, DB8500_PIN_AH10,
- 	DB8500_PIN_AJ11 };
- static const unsigned hsit_a_1_pins[] = { DB8500_PIN_AJ9, DB8500_PIN_AH9,
-@@ -567,7 +561,6 @@ static const unsigned u0_c_1_pins[] = { DB8500_PIN_AF2, DB8500_PIN_AE1,
- 					DB8500_PIN_AE2, DB8500_PIN_AG2 };
- static const unsigned ipgpio4_c_1_pins[] = { DB8500_PIN_F3 };
- static const unsigned ipgpio5_c_1_pins[] = { DB8500_PIN_F1 };
--static const unsigned ipgpio6_c_2_pins[] = { DB8500_PIN_G3 };
- static const unsigned ipgpio7_c_1_pins[] = { DB8500_PIN_G2 };
- static const unsigned smcleale_c_1_pins[] = { DB8500_PIN_E1, DB8500_PIN_E2 };
- static const unsigned stmape_c_1_pins[] = { DB8500_PIN_G5, DB8500_PIN_G4,
-@@ -896,7 +889,6 @@ DB8500_FUNC_GROUPS(i2c3, "i2c3_c_1", "i2c3_c_2");
- DB8500_FUNC_GROUPS(spi0, "spi0_c_1");
- DB8500_FUNC_GROUPS(spi2, "spi2_oc1_1", "spi2_oc1_2");
- DB8500_FUNC_GROUPS(remap, "remap0_oc1_1", "remap1_oc1_1");
--DB8500_FUNC_GROUPS(sbag, "sbag_oc2_1", "sbag_oc4_1");
- DB8500_FUNC_GROUPS(ptm, "ptma9_oc1_1", "ptma9_oc2_1");
- DB8500_FUNC_GROUPS(rf, "rf_oc1_1", "rf_oc1_2");
- DB8500_FUNC_GROUPS(hx, "hxclk_oc1_1", "hxgpio_oc1_1");
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 8d062e86d954..ca3849224059 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -450,6 +450,7 @@ extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+ 				irq_hw_number_t hwirq, struct irq_chip *chip,
+ 				void *chip_data, irq_flow_handler_t handler,
+ 				void *handler_data, const char *handler_name);
++extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ extern struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+ 			unsigned int flags, unsigned int size,
+@@ -475,7 +476,6 @@ extern int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
+ extern void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs);
+ extern int irq_domain_activate_irq(struct irq_data *irq_data, bool early);
+ extern void irq_domain_deactivate_irq(struct irq_data *irq_data);
+-
+ static inline int irq_domain_alloc_irqs(struct irq_domain *domain,
+ 			unsigned int nr_irqs, int node, void *arg)
+ {
+@@ -491,7 +491,7 @@ extern int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
+ 					 irq_hw_number_t hwirq,
+ 					 struct irq_chip *chip,
+ 					 void *chip_data);
+-extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
++
+ extern void irq_domain_free_irqs_common(struct irq_domain *domain,
+ 					unsigned int virq,
+ 					unsigned int nr_irqs);
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 35b8d97c3a1d..e2aa128ea3ee 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1047,6 +1047,18 @@ int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
+ 	return virq;
+ }
+ 
++/**
++ * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
++ * @irq_data:	The pointer to irq_data
++ */
++void irq_domain_reset_irq_data(struct irq_data *irq_data)
++{
++	irq_data->hwirq = 0;
++	irq_data->chip = &no_irq_chip;
++	irq_data->chip_data = NULL;
++}
++EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
++
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ /**
+  * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
+@@ -1247,18 +1259,6 @@ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+ }
+ EXPORT_SYMBOL(irq_domain_set_info);
+ 
+-/**
+- * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
+- * @irq_data:	The pointer to irq_data
+- */
+-void irq_domain_reset_irq_data(struct irq_data *irq_data)
+-{
+-	irq_data->hwirq = 0;
+-	irq_data->chip = &no_irq_chip;
+-	irq_data->chip_data = NULL;
+-}
+-EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
+-
+ /**
+  * irq_domain_free_irqs_common - Clear irq_data and free the parent
+  * @domain:	Interrupt domain to match
 -- 
-2.21.1
+2.25.0
 
