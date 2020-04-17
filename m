@@ -2,66 +2,113 @@ Return-Path: <SRS0=nlfL=6B=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0ABC2BB55
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 08:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1459C2BB55
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 09:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4BD8221EA
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 08:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF62207FC
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Apr 2020 09:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbgDQIzO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Apr 2020 04:55:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55402 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729784AbgDQIzO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Apr 2020 04:55:14 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E2194417BC2613B5E240;
-        Fri, 17 Apr 2020 16:55:09 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Fri, 17 Apr 2020
- 16:54:59 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <linus.walleij@linaro.org>, <andriy.shevchenko@linux.intel.com>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH] pinctrl: mcp23s08: add module license
-Date:   Fri, 17 Apr 2020 17:21:25 +0800
-Message-ID: <20200417092125.12513-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.21.1
+        id S1730047AbgDQJFI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Apr 2020 05:05:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27130 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728419AbgDQJFG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Apr 2020 05:05:06 -0400
+IronPort-SDR: 16Tx0uSrbMV34ixbWqLRGR1nMYsgmoFF4zjxesj+pG/gfVkXYEBITYhhEJ+El0nEvi4E6zgaB+
+ w7nP8U5ZBE5Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2020 02:05:05 -0700
+IronPort-SDR: iImZ98H6UD3xcWqYoNqzdpqoBINcrRfzHDRb1nBDIsxheRoaWWd338Fac35K5WTATRAqRj0z2X
+ Pzvhpr0Af3jQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,394,1580803200"; 
+   d="scan'208";a="364275266"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 17 Apr 2020 02:05:01 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 17 Apr 2020 12:05:00 +0300
+Date:   Fri, 17 Apr 2020 12:05:00 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     =?utf-8?Q?Micha=C5=82?= Stanek <mst@semihalf.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stanekm@google.com,
+        stable@vger.kernel.org, Marcin Wojtas <mw@semihalf.com>,
+        levinale@chromium.org, andriy.shevchenko@linux.intel.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        bgolaszewski@baylibre.com, rafael.j.wysocki@intel.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Add quirk with custom translation
+ of ACPI GPIO numbers
+Message-ID: <20200417090500.GM2586@lahna.fi.intel.com>
+References: <20200205194804.1647-1-mst@semihalf.com>
+ <20200206083149.GK2667@lahna.fi.intel.com>
+ <CAMiGqYi2rVAc=hepkY-4S1U_3dJdbR4pOoB0f8tbBL4pzWLdxA@mail.gmail.com>
+ <20200207075654.GB2667@lahna.fi.intel.com>
+ <CAMiGqYjmd2edUezEXsX4JBSyOozzks1Pu8miPEviGsx=x59nZQ@mail.gmail.com>
+ <20200210101414.GN2667@lahna.fi.intel.com>
+ <CAMiGqYiYp=aSgW-4ro5ceUEaB7g0XhepFg+HZgfPvtvQL9Z1jA@mail.gmail.com>
+ <20200310144913.GY2540@lahna.fi.intel.com>
+ <20200417020641.GA145784@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200417020641.GA145784@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix the following build warning:
+On Thu, Apr 16, 2020 at 07:06:41PM -0700, Brian Norris wrote:
+> If you just read the last sentence from Michal, you get the wrong
+> picture. There's no hard-coding of gpiochipX numbers going on. We only
+> had the pin offsets "hardcoded" (in ACPI), and the kernel driver
+> unilaterally changed from a contiguous mapping to a non-contiguous
+> mapping.
 
-WARNING: modpost: missing MODULE_LICENSE() in
-drivers/pinctrl/pinctrl-mcp23s08.o
-see include/linux/module.h for more information
+OK, I now understand the issue. My apologies that I was not able to
+figure that out from the previous explanation.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 1 +
- 1 file changed, 1 insertion(+)
+So indeed if relative GPIO numbering inside the gpiochip was changed
+then it is kernel regression and needs to be dealt with.
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index cb545557dcd4..151931b593f6 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -658,3 +658,4 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(mcp23s08_probe_one);
-+MODULE_LICENSE("GPL");
--- 
-2.21.1
+> How do you recommend determining (both pre- and
+> post-commit-03c4749dd6c7ff94) whether pin 22 is at offset 22, vs. offset
+> 19?
 
+I wonder if we can add back the previous GPIO base like this?
+
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 4c74fdde576d..f53de56bb763 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1591,17 +1591,18 @@ static int chv_gpio_add_pin_ranges(struct gpio_chip *chip)
+ 	struct chv_pinctrl *pctrl = gpiochip_get_data(chip);
+ 	const struct chv_community *community = pctrl->community;
+ 	const struct chv_gpio_pinrange *range;
+-	int ret, i;
++	int ret, i, offset;
+ 
+-	for (i = 0; i < community->ngpio_ranges; i++) {
++	for (i = 0, offset = 0; i < community->ngpio_ranges; i++) {
+ 		range = &community->gpio_ranges[i];
+-		ret = gpiochip_add_pin_range(chip, dev_name(pctrl->dev),
+-					     range->base, range->base,
+-					     range->npins);
++		ret = gpiochip_add_pin_range(chip, dev_name(pctrl->dev), offset,
++					     range->base, range->npins);
+ 		if (ret) {
+ 			dev_err(pctrl->dev, "failed to add GPIO pin range\n");
+ 			return ret;
+ 		}
++
++		offset += range->npins;
+ 	}
+ 
+ 	return 0;
