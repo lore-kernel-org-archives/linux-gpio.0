@@ -2,190 +2,217 @@ Return-Path: <SRS0=Ekxo=6E=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF2EC54FD2
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758E4C3815B
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 19:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97D9F2082E
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 514F820736
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 19:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587410385;
+	bh=8O1xYFHUo2rOMpED/8nTvf1vTf+JIn6rBgkFfujB4Z0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iLchWXLenq0NB3X0V39z9obQkHzkP6s+Oz1+GVSs/vUONKIR0KhrjjF5xq+s59HTn
+	 Ju1+AOyVsP7QoDq0TnfcI3G8fIixHu7Bb946G1/FnCgOiZMfF82UNwKhZPP70uG7T8
+	 HL9GL41MGY0RA4ooGj2rUi2oqoRxv7Hr3ktDKCl0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbgDTR16 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Apr 2020 13:27:58 -0400
-Received: from mga02.intel.com ([134.134.136.20]:1400 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgDTR15 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Apr 2020 13:27:57 -0400
-IronPort-SDR: kMFGfasKJEu0soN+Y0v+1ooI1f9xGFZb2EZ1KTxFFNnBKnOF//BiR5NBwKH3wmMxcPofthVC1J
- NvXlj+csm5MA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2020 10:27:57 -0700
-IronPort-SDR: AZSI5JSSr1VXIIJONXDCXuG+66YDp9EbqdZvtwyjKC8QhaWFjwrwfyRgQGgkhApvLc3dnL9Xu2
- IBcEbga6QegA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,407,1580803200"; 
-   d="scan'208";a="255007530"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 20 Apr 2020 10:27:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B09DB17F; Mon, 20 Apr 2020 20:27:53 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Marcel Gudert <m.gudert@eckelmann.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 2/3] gpio: pca953x: fix handling of automatic address incrementing
-Date:   Mon, 20 Apr 2020 20:27:51 +0300
-Message-Id: <20200420172752.33588-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
-References: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
+        id S1726973AbgDTTTp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Apr 2020 15:19:45 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40286 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbgDTTTo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Apr 2020 15:19:44 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t199so9853125oif.7;
+        Mon, 20 Apr 2020 12:19:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m49dvApWhU3KhcyzujKNwqVJs/SgDVOiHkBTX8p3UsA=;
+        b=fPr6IxNqM++7gizqUYJNavGAop2Xhxm7D74CJDy4ths/lj9475tSr1c+CMHzHpf/VR
+         iCAMOpW1i9qKzdYlgAP6qqoO3eGmskpBhwvkOuu8EPmtEcjyUsnKAf8iUOFEVbxt1gxr
+         ZwVS5Qv8NIoxfG3qL+QCd8VZgbLpn0Zq7wI8X4FUtSzW16FXLPPwqsp1jn3auygwCrmv
+         YPf/Riua4A8h4OrZFmVu4zWfEBWo2nxLO+9mFMp1VlGT8P4FcCdz+nsFRPrPQCiHi4vb
+         uqIY4u9NIuC/4z2nBO5if37qop7nJOLhAEPSiL+enQOxcQX1sTgrrO3MxfBOqkn10lAb
+         RDXQ==
+X-Gm-Message-State: AGi0PuazhoZvW1bXBPqFDkE2VKL1VPy+UGGb7RW0qh3t9yC9ajwIJkTm
+        0uvL8V6PyXlcz3EijVySOw==
+X-Google-Smtp-Source: APiQypI1tu9WWN3GJQtf/Egn/TvM3KKQj1/YfMtUGLJE64jxb1gypfLgp3KOVUkdTuGeoCxmSDcrIw==
+X-Received: by 2002:aca:4d47:: with SMTP id a68mr739207oib.60.1587410383533;
+        Mon, 20 Apr 2020 12:19:43 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k26sm143306ots.3.2020.04.20.12.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2020 12:19:42 -0700 (PDT)
+Received: (nullmailer pid 9370 invoked by uid 1000);
+        Mon, 20 Apr 2020 19:19:41 -0000
+Date:   Mon, 20 Apr 2020 14:19:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] dt-bindings: gpio: Convert i.MX to json-schema
+Message-ID: <20200420191941.GA6101@bogus>
+References: <1586770849-15693-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586770849-15693-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Mon, Apr 13, 2020 at 05:40:49PM +0800, Anson Huang wrote:
+> Convert the i.MX GPIO binding to DT schema format using json-schema.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  .../devicetree/bindings/gpio/fsl-imx-gpio.txt      | 35 -----------
+>  .../devicetree/bindings/gpio/fsl-imx-gpio.yaml     | 72 ++++++++++++++++++++++
+>  2 files changed, 72 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/fsl-imx-gpio.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.txt b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.txt
+> deleted file mode 100644
+> index b4cd9f90..0000000
+> --- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.txt
+> +++ /dev/null
+> @@ -1,35 +0,0 @@
+> -* Freescale i.MX/MXC GPIO controller
+> -
+> -Required properties:
+> -- compatible : Should be "fsl,<soc>-gpio"
+> -- reg : Address and length of the register set for the device
+> -- interrupts : Should be the port interrupt shared by all 32 pins, if
+> -  one number.  If two numbers, the first one is the interrupt shared
+> -  by low 16 pins and the second one is for high 16 pins.
+> -- gpio-controller : Marks the device node as a gpio controller.
+> -- #gpio-cells : Should be two.  The first cell is the pin number and
+> -  the second cell is used to specify the gpio polarity:
+> -      0 = active high
+> -      1 = active low
+> -- interrupt-controller: Marks the device node as an interrupt controller.
+> -- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
+> -  The second cell bits[3:0] is used to specify trigger type and level flags:
+> -      1 = low-to-high edge triggered.
+> -      2 = high-to-low edge triggered.
+> -      4 = active high level-sensitive.
+> -      8 = active low level-sensitive.
+> -
+> -Optional properties:
+> -- clocks: the clock for clocking the GPIO silicon
+> -
+> -Example:
+> -
+> -gpio0: gpio@73f84000 {
+> -	compatible = "fsl,imx51-gpio", "fsl,imx35-gpio";
+> -	reg = <0x73f84000 0x4000>;
+> -	interrupts = <50 51>;
+> -	gpio-controller;
+> -	#gpio-cells = <2>;
+> -	interrupt-controller;
+> -	#interrupt-cells = <2>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+> new file mode 100644
+> index 0000000..465104c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/fsl-imx-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale i.MX/MXC GPIO controller
+> +
+> +maintainers:
+> +  - Anson Huang <Anson.Huang@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,imx1-gpio
+> +              - fsl,imx21-gpio
+> +              - fsl,imx31-gpio
+> +              - fsl,imx35-gpio
+> +              - fsl,imx7d-gpio
 
-Some of the chips supported by the pca953x driver need the most
-significant bit in the address word set to automatically increment the
-address pointer on subsequent reads and writes (example: PCA9505). With
-this bit unset the same register is read multiple times on a multi-byte
-read sequence. Other chips must not have this bit set and autoincrement
-always (example: PCA9555).
+compatible:
+  enum:
+    - fsl,imx1-gpio
+    - fsl,imx21-gpio
+    - fsl,imx31-gpio
+    - fsl,imx35-gpio
+    - fsl,imx7d-gpio
 
-Up to now this AI bit was interpreted to be part of the address, which
-resulted in inconsistent regmap caching when a register was written with
-AI set and then read without it. This happened for the PCA9505 in
-pca953x_gpio_set_multiple() where pca953x_read_regs() bulk read from the
-cache for registers 0x8-0xc and then wrote to registers 0x88-0x8c. (Side
-note: reading 5 values from offset 0x8 yiels OP0 5 times because AI must
-be set to get OP0-OP4, which is another bug that is resolved here as a
-by-product.) The same problem happens when calls to gpio_set_value() and
-gpio_set_array_value() were mixed.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: |
+> +      Should be the port interrupt shared by all 32 pins, if one number.
+> +      If two numbers, the first one is the interrupt shared by low 16 pins
+> +      and the second one is for high 16 pins.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  clocks:
+> +    description: |
+> +      The clock for clocking the GPIO silicon.
 
-With this patch the AI bit is always set for chips that support it. This
-works as there are no code locations that make use of the behaviour with
-AI unset (for the chips that support it).
+Can drop.
 
-Note that the call to pca953x_setup_gpio() had to be done a bit earlier
-to make the NBANK macro work.
-
-The history of this bug is a bit complicated. Commit b32cecb46bdc
-("gpio: pca953x: Extract the register address mangling to single
-function") changed which chips and functions are affected. Commit
-3b00691cc46a ("gpio: pca953x: hack to fix 24 bit gpio expanders") used
-some duct tape to make the driver at least appear to work. Commit
-49427232764d ("gpio: pca953x: Perform basic regmap conversion")
-introduced the caching. Commit b4818afeacbd ("gpio: pca953x: Add
-set_multiple to allow multiple bits to be set in one write.") introduced
-the .set_multiple() callback which didn't work for chips that need the
-AI bit which was fixed later for some chips in 8958262af3fb ("gpio:
-pca953x: Repair multi-byte IO address increment on PCA9575"). So I'm
-sorry, I don't know which commit I should pick for a Fixes: line.
-
-Tested-by: Marcel Gudert <m.gudert@eckelmann.de>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-pca953x.c | 44 +++++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 41be681ae77c2..590b072366377 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -308,8 +308,22 @@ static const struct regmap_config pca953x_i2c_regmap = {
- 
- 	.disable_locking = true,
- 	.cache_type = REGCACHE_RBTREE,
--	/* REVISIT: should be 0x7f but some 24 bit chips use REG_ADDR_AI */
--	.max_register = 0xff,
-+	.max_register = 0x7f,
-+};
-+
-+static const struct regmap_config pca953x_ai_i2c_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.read_flag_mask = REG_ADDR_AI,
-+	.write_flag_mask = REG_ADDR_AI,
-+
-+	.readable_reg = pca953x_readable_register,
-+	.writeable_reg = pca953x_writeable_register,
-+	.volatile_reg = pca953x_volatile_register,
-+
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = 0x7f,
- };
- 
- static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
-@@ -320,18 +334,6 @@ static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
- 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
- 	u8 regaddr = pinctrl | addr | (off / BANK_SZ);
- 
--	/* Single byte read doesn't need AI bit set. */
--	if (!addrinc)
--		return regaddr;
--
--	/* Chips with 24 and more GPIOs always support Auto Increment */
--	if (write && NBANK(chip) > 2)
--		regaddr |= REG_ADDR_AI;
--
--	/* PCA9575 needs address-increment on multi-byte writes */
--	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
--		regaddr |= REG_ADDR_AI;
--
- 	return regaddr;
- }
- 
-@@ -882,6 +884,7 @@ static int pca953x_probe(struct i2c_client *client,
- 	int ret;
- 	u32 invert = 0;
- 	struct regulator *reg;
-+	const struct regmap_config *regmap_config;
- 
- 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
- 	if (chip == NULL)
-@@ -944,7 +947,17 @@ static int pca953x_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, chip);
- 
--	chip->regmap = devm_regmap_init_i2c(client, &pca953x_i2c_regmap);
-+	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
-+
-+	if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
-+		dev_info(&client->dev, "using AI\n");
-+		regmap_config = &pca953x_ai_i2c_regmap;
-+	} else {
-+		dev_info(&client->dev, "using no AI\n");
-+		regmap_config = &pca953x_i2c_regmap;
-+	}
-+
-+	chip->regmap = devm_regmap_init_i2c(client, regmap_config);
- 	if (IS_ERR(chip->regmap)) {
- 		ret = PTR_ERR(chip->regmap);
- 		goto err_exit;
-@@ -975,7 +988,6 @@ static int pca953x_probe(struct i2c_client *client,
- 	/* initialize cached registers from their original values.
- 	 * we can't share this chip with another i2c master.
- 	 */
--	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
- 
- 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
- 		chip->regs = &pca953x_regs;
--- 
-2.26.1
-
+> +    maxItems: 1
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - "#gpio-cells"
+> +  - gpio-controller
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    gpio0: gpio@73f84000 {
+> +        compatible = "fsl,imx35-gpio";
+> +        reg = <0x73f84000 0x4000>;
+> +        interrupts = <50 51>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +    };
+> +
+> +...
+> -- 
+> 2.7.4
+> 
