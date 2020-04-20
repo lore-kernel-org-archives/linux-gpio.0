@@ -6,130 +6,165 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7916EC3815B
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB72C54FD0
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62BAA2078C
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671452078C
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Apr 2020 17:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbgDTR15 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726355AbgDTR15 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 20 Apr 2020 13:27:57 -0400
-Received: from mga02.intel.com ([134.134.136.20]:1400 "EHLO mga02.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:2872 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbgDTR14 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Apr 2020 13:27:56 -0400
-IronPort-SDR: AC86wnhbSZWoFofBfBCQc5tTfMRzlGgMM/j5DojdaGJtBm+e+xkygJUcOk6H4/ZskwMqV4OUNU
- PAIRhIJ6RA3w==
+        id S1726081AbgDTR15 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 20 Apr 2020 13:27:57 -0400
+IronPort-SDR: IGFn+tlZn1O7/12K7YAnAzsW66iduLxUe+E7zGVgZFKYfa+xaKcDKC0VbgiPNn5eJpW2qQgKl8
+ zFAAjyX6hjBg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2020 10:27:56 -0700
-IronPort-SDR: LXxYM7b4Z+qwMiY+dVc/AHrtpgs3h8M9eKwoosW2PZc6bR86JWjntX3M5YdohnidHTq4xidvmN
- KApv7uWECBUw==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2020 10:27:56 -0700
+IronPort-SDR: IST0KvdQ6A9cJz/g7DD+yqXpYHxTAgt2xbUaHL71FDq3eStfHWib0zHy6S3ZiA8zNnCh6rtF58
+ rvkvhNTAWGOQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,407,1580803200"; 
-   d="scan'208";a="258419344"
+   d="scan'208";a="243892358"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 20 Apr 2020 10:27:54 -0700
+  by orsmga007.jf.intel.com with ESMTP; 20 Apr 2020 10:27:54 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A0F32206; Mon, 20 Apr 2020 20:27:53 +0300 (EEST)
+        id B64FD233; Mon, 20 Apr 2020 20:27:53 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Paul Thomas <pthomas8589@gmail.com>
-Subject: [PATCH v3 1/3] gpio: pca953x: Rewrite ->get_multiple() function
-Date:   Mon, 20 Apr 2020 20:27:50 +0300
-Message-Id: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 3/3] gpio: pca953x: drop unused parameters of pca953x_recalc_addr()
+Date:   Mon, 20 Apr 2020 20:27:52 +0300
+Message-Id: <20200420172752.33588-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
+References: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The commit 96d7c7b3e654 ("gpio: gpio-pca953x, Add get_multiple function")
-basically did everything wrong from style and code reuse perspective, i.e.
-- it didn't utilize existing PCA953x internal helpers
-- it didn't utilize bitmap API
-- it misses the point that ilog2(), besides that BANK_SFT is useless,
-  can be used in macros
-- it has indentation issues.
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Rewrite the function completely.
+After the previous patch the two last parameters of
+pca953x_recalc_addr() are unused and so can be dropped.
 
-Cc: Paul Thomas <pthomas8589@gmail.com>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 41 ++++++++++---------------------------
- 1 file changed, 11 insertions(+), 30 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 60ae18e4b5f5a..41be681ae77c2 100644
+index 590b072366377..06d6af60e6b76 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -115,7 +115,6 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
+@@ -326,8 +326,7 @@ static const struct regmap_config pca953x_ai_i2c_regmap = {
+ 	.max_register = 0x7f,
+ };
  
- #define MAX_BANK 5
- #define BANK_SZ 8
--#define BANK_SFT 3 /* ilog2(BANK_SZ) */
- #define MAX_LINE	(MAX_BANK * BANK_SZ)
+-static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
+-			      bool write, bool addrinc)
++static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off)
+ {
+ 	int bank_shift = pca953x_bank_shift(chip);
+ 	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+@@ -339,7 +338,7 @@ static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
  
- #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
-@@ -469,38 +468,20 @@ static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
- }
+ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, unsigned long *val)
+ {
+-	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
++	u8 regaddr = pca953x_recalc_addr(chip, reg, 0);
+ 	u8 value[MAX_BANK];
+ 	int i, ret;
  
- static int pca953x_gpio_get_multiple(struct gpio_chip *gc,
--				      unsigned long *mask, unsigned long *bits)
-+				     unsigned long *mask, unsigned long *bits)
+@@ -357,7 +356,7 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, unsigned long
+ 
+ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, unsigned long *val)
+ {
+-	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, false, true);
++	u8 regaddr = pca953x_recalc_addr(chip, reg, 0);
+ 	u8 value[MAX_BANK];
+ 	int i, ret;
+ 
+@@ -376,8 +375,7 @@ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, unsigned long *
+ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
  {
  	struct pca953x_chip *chip = gpiochip_get_data(gc);
--	unsigned int reg_val;
--	int offset, value, i, ret = 0;
--	u8 inreg;
-+	DECLARE_BITMAP(reg_val, MAX_LINE);
-+	int ret;
+-	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
+-					true, false);
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off);
+ 	u8 bit = BIT(off % BANK_SZ);
+ 	int ret;
  
--	/* Force offset outside the range of i so that
--	 * at least the first relevant register is read
--	 */
--	offset = gc->ngpio;
--	for_each_set_bit(i, mask, gc->ngpio) {
--		/* whenever i goes into a new bank update inreg
--		 * and read the register
--		 */
--		if ((offset >> BANK_SFT) != (i >> BANK_SFT)) {
--			offset = i;
--			inreg = pca953x_recalc_addr(chip, chip->regs->input,
--						    offset, true, false);
--			mutex_lock(&chip->i2c_lock);
--			ret = regmap_read(chip->regmap, inreg, &reg_val);
--			mutex_unlock(&chip->i2c_lock);
--			if (ret < 0)
--				return ret;
--		}
--		/* reg_val is relative to the last read byte,
--		 * so only shift the relative bits
--		 */
--		value = (reg_val >> (i % 8)) & 0x01;
--		__assign_bit(i, bits, value);
--	}
--	return ret;
-+	mutex_lock(&chip->i2c_lock);
-+	ret = pca953x_read_regs(chip, chip->regs->input, reg_val);
-+	mutex_unlock(&chip->i2c_lock);
-+	if (ret)
-+		return ret;
-+
-+	bitmap_replace(bits, bits, reg_val, mask, gc->ngpio);
-+	return 0;
- }
+@@ -391,10 +389,8 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 		unsigned off, int val)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
+-					true, false);
+-	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
+-					true, false);
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off);
++	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off);
+ 	u8 bit = BIT(off % BANK_SZ);
+ 	int ret;
  
- static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+@@ -414,8 +410,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 inreg = pca953x_recalc_addr(chip, chip->regs->input, off,
+-				       true, false);
++	u8 inreg = pca953x_recalc_addr(chip, chip->regs->input, off);
+ 	u8 bit = BIT(off % BANK_SZ);
+ 	u32 reg_val;
+ 	int ret;
+@@ -439,8 +434,7 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
+-					true, false);
++	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off);
+ 	u8 bit = BIT(off % BANK_SZ);
+ 
+ 	mutex_lock(&chip->i2c_lock);
+@@ -451,8 +445,7 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
+-					true, false);
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off);
+ 	u8 bit = BIT(off % BANK_SZ);
+ 	u32 reg_val;
+ 	int ret;
+@@ -509,10 +502,8 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 					 unsigned int offset,
+ 					 unsigned long config)
+ {
+-	u8 pull_en_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_EN, offset,
+-					     true, false);
+-	u8 pull_sel_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_SEL, offset,
+-					      true, false);
++	u8 pull_en_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_EN, offset);
++	u8 pull_sel_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_SEL, offset);
+ 	u8 bit = BIT(offset % BANK_SZ);
+ 	int ret;
+ 
 -- 
 2.26.1
 
