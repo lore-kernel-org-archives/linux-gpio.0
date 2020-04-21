@@ -2,106 +2,97 @@ Return-Path: <SRS0=YgEZ=6F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492F1C55183
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 15:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA080C54FCC
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 19:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27B3F2070B
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 15:42:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dsejIxZH"
+	by mail.kernel.org (Postfix) with ESMTP id 8ABA0206D4
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 19:00:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbgDUPmp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Apr 2020 11:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726335AbgDUPm1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Apr 2020 11:42:27 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25B3C061A10
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2020 08:42:25 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id b62so14948786qkf.6
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2020 08:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HE8A/YW9uOdkpdkl4fMFPCY5/00Z/p/KrSiGNMcJmwU=;
-        b=dsejIxZHEpv9Fril4lf+eZrqZzqBrxeFBfBkQLW0nN1AxjoH2zeFXMiP0NFrl5tvsz
-         kuPVFgfRLMmbdJjnMyCyq+H512B/+MPAxVPGerzETFw764xcR+npKgvn7RhK1tX+CPee
-         JObJr5scDx2sv2er15ES8emJzVe7VEKvdm8sgs5s4Waj1cLDGKBmBBS7PeqeWj877apG
-         xsbT9rVPNp3WDdDRTsJTKAkNuLuivccMyT51uiKfqOjG1p8U7d+m4JM69uUbCfWFqpBI
-         ycxn+D+xQi7JxO9yhdEm05XNcINLYrsdNugL7RvHNdWNhvVqbeELF7wzlHRz3K3GEg+j
-         etLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HE8A/YW9uOdkpdkl4fMFPCY5/00Z/p/KrSiGNMcJmwU=;
-        b=aVjw/Evt3BVykewKGBZG/AvSYmFMLviFS9LHc7yC9O7R+Eq1aP5ynsos3ImQ9MxVvj
-         g/YiolKPb5sEWWvb85JRhF4VGmfvFYnWh/M/NqWLvgPBNhxRx5yCqsp62IHJd7xRoo3x
-         pgA4/bvl9GW//J8yFhzcx1O3B6GFQnIQhUcT+SHuTqNlPU2d1IV6e3NRlmSc+MZysmud
-         6/73cB4CTGOGr0EbRS1dIqLvuoAo5vIAbn3++/cfXk7fHaEH6VT7eRgP8T72fzcmPTfA
-         M67WzzG4ouCvYcARv4dke3ln+9GWxCsCqLnlEBgtmF1CnWFCfCIYcuAmBF8mwncRnF82
-         B2mg==
-X-Gm-Message-State: AGi0PuZ/k1vlz9JpHyMuj34/sW7ATXCO9NdKB/S1HKL6hFJNnUASAXd+
-        IX2uPJV9q/WPZv2P7QjRXRQXpxJkT0Dnn3jzlUd8FA==
-X-Google-Smtp-Source: APiQypL4VPzrnvlRdoKVb8iMwhMtdppqm/3iXFwROe+uijDS/TbocR74asAAXAm4c66tX2hHpt8BZ95HGIj1Q/FLOkE=
-X-Received: by 2002:a05:620a:1289:: with SMTP id w9mr19964875qki.263.1587483745137;
- Tue, 21 Apr 2020 08:42:25 -0700 (PDT)
+        id S1725902AbgDUTAx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Apr 2020 15:00:53 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20216 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbgDUTAx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Apr 2020 15:00:53 -0400
+IronPort-SDR: 8VZuz6ZQjo7b1KysCTZHn3LON9mMIydHkHh1gyn2Abrg5EDJSHTN08/NtPG9ZNa4ZtSlbjxjkS
+ AFL1eB8qA8wA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 12:00:52 -0700
+IronPort-SDR: S3g3CSpZauoFNqcFLwrU4Kb8UHjnqFs+3FcwLrWWWNCrX02Xl0buowUpvcxvRAG0iNfbZuY5zN
+ hTFyFImVt3/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,411,1580803200"; 
+   d="scan'208";a="290571448"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Apr 2020 12:00:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7E92394; Tue, 21 Apr 2020 22:00:50 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/2] pinctrl: intel: Move npins closer to pin_base in struct intel_community
+Date:   Tue, 21 Apr 2020 22:00:49 +0300
+Message-Id: <20200421190049.44888-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200421190049.44888-1-andriy.shevchenko@linux.intel.com>
+References: <20200421190049.44888-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com> <20200421130300.GK185537@smile.fi.intel.com>
-In-Reply-To: <20200421130300.GK185537@smile.fi.intel.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 21 Apr 2020 17:42:14 +0200
-Message-ID: <CAMpxmJVVDUN6ei__wt5z+hOJQ0w0r9TZjhN9HCtpCA8Vrud0qg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] gpio: pca953x: Rewrite ->get_multiple() function
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Paul Thomas <pthomas8589@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 21 kwi 2020 o 15:03 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
->
-> On Mon, Apr 20, 2020 at 08:27:50PM +0300, Andy Shevchenko wrote:
-> > The commit 96d7c7b3e654 ("gpio: gpio-pca953x, Add get_multiple function=
-")
-> > basically did everything wrong from style and code reuse perspective, i=
-.e.
-> > - it didn't utilize existing PCA953x internal helpers
-> > - it didn't utilize bitmap API
-> > - it misses the point that ilog2(), besides that BANK_SFT is useless,
-> >   can be used in macros
-> > - it has indentation issues.
-> >
-> > Rewrite the function completely.
->
-> Bart, Linus, please, consider this series to be applied, because it has U=
-we's fixes.
-> We may still discuss the approach with ->get_multiple(), though.
->
+It's common across the drivers to use the (pin_base, npins) pair to describe
+community characteristics. Thus, move them in the struct intel_community
+to be closer to each other.
 
-Personally I like these patches - if Linus doesn't object in the
-coming days I'll pick them up into my tree as a follow-up to Paul's
-patch.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Bart
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 058bf2b6d9f0e..bd653f2a07382 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -94,12 +94,12 @@ enum {
+  * @ie_offset: Register offset of GPI_IE from @regs.
+  * @features: Additional features supported by the hardware
+  * @pin_base: Starting pin of pins in this community
++ * @npins: Number of pins in this community
+  * @gpp_size: Maximum number of pads in each group, such as GPI_IS, GPI_IE,
+  *            PADCFGLOCK, HOSTSW_OWN. Used when @gpps is %NULL.
+  * @gpp_num_padown_regs: Number of pad registers each pad group consumes at
+  *			 minimum. Use %0 if the number of registers can be
+  *			 determined by the size of the group.
+- * @npins: Number of pins in this community
+  * @gpps: Pad groups if the controller has variable size pad groups
+  * @ngpps: Number of pad groups in this community
+  * @pad_map: Optional non-linear mapping of the pads
+@@ -121,12 +121,13 @@ struct intel_community {
+ 	unsigned int ie_offset;
+ 	unsigned int features;
+ 	unsigned int pin_base;
++	size_t npins;
+ 	unsigned int gpp_size;
+ 	unsigned int gpp_num_padown_regs;
+-	size_t npins;
+ 	const struct intel_padgroup *gpps;
+ 	size_t ngpps;
+ 	const unsigned int *pad_map;
++
+ 	/* Reserved for the core driver */
+ 	void __iomem *regs;
+ 	void __iomem *pad_regs;
+-- 
+2.26.1
 
-> For the record, should some of us volunteer to be a reviewer for this dri=
-ver.
-> It's awful that almost every release we get something either ugly or brok=
-en in it.
-> Uwe, would you like to be a designated reviewer (I would also support)?
