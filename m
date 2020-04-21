@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B75FC54FCC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6B8C54FC9
 	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 05:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4060021D94
+	by mail.kernel.org (Postfix) with ESMTP id 88342208E4
 	for <linux-gpio@archiver.kernel.org>; Tue, 21 Apr 2020 05:06:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kJjYNs9c"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nb65i71b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgDUFG6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Apr 2020 01:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
+        id S1726809AbgDUFG7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Apr 2020 01:06:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726589AbgDUFGy (ORCPT
+        by vger.kernel.org with ESMTP id S1726733AbgDUFG4 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Apr 2020 01:06:54 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01F3C03C1A6
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2020 22:06:53 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id q18so2689725pgm.11
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2020 22:06:53 -0700 (PDT)
+        Tue, 21 Apr 2020 01:06:56 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D58C03C1AB
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2020 22:06:56 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a22so860845pjk.5
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2020 22:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t8OQw8sfwg/uXUVeReDQ1BsRe4hqFMx1lUYGNpZ/8/Q=;
-        b=kJjYNs9cKOrCgsmQXMnMac9BZkaNwI2xahZwc3uaFQPoxDh8E9Hdi/aeEBXdd1E+6A
-         EbbPe/h9Hx5gZa0Rj5sZ/QvSX+ucis0rCvcwg6Eg8YWIYB33Uh1Tv7NjIYN5pQuEmoaM
-         NkK9DWYGjxBOhbp+7IaQMMLksroOhYrMA9Gw8=
+        bh=p9SfnrsRhMA/qPvuCsjST2mGoK17aHJlJJvkNnwd554=;
+        b=nb65i71bMyNDvp+sdcmyJgCnTThio7pQpLfe/PPQVkHJ/cfg7Xh4a41TWSBJorv8ms
+         V21yVwalCaHSaeWNNpHz0XKxo66L8p65pOWIn7p/PzepLjKs0URAh351pERxeBtIwcxH
+         iK6pH884EqbLKw5aelWgQcFQPAyzp2BLlq/y4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t8OQw8sfwg/uXUVeReDQ1BsRe4hqFMx1lUYGNpZ/8/Q=;
-        b=k7kTeiZp28fEa3n+paaW96UJxCHkmvvrRR3m1AGIlJVb6EcOaMSp8xnpCHxyDubBXa
-         TT0NmzhW9IMApqRPIN81ugA8kChz+gTjXhPHyUlSPJiJnjPVpvtuhRS+mWzQwPstdTEO
-         G1nvHQT9iBwuYJc2niY+VS6UfltFzzrUhG8mhuNpNeySacEvZSyew8MvaOisdKZ3eNAu
-         xu24M7bpzzv/ueFpAbOcnTGXzUYdcOE1bETugVPeABcfpqM9TVkTm2E26HS7/78lPrvq
-         6RLMZPnce2KMaJck4o+KygCXKP9/08jmkwYfPEG4e01Qo8wkTckTJTVug3H5uCTWfdXv
-         /aEA==
-X-Gm-Message-State: AGi0PuY00mSKM+mO+6owPQSUZZaoC/7NGED86xibxomYFn/9LZtnBx5P
-        BiZzo0D7Cymym7VobNNTH7GsKA==
-X-Google-Smtp-Source: APiQypJhyX361NO/uKFu3XSavILSq7J5gc6NCFinGIgz0UujoX3mgQIHk/tkIBArEvvXirv3ZsLkjg==
-X-Received: by 2002:a63:b542:: with SMTP id u2mr19600280pgo.352.1587445613437;
-        Mon, 20 Apr 2020 22:06:53 -0700 (PDT)
+        bh=p9SfnrsRhMA/qPvuCsjST2mGoK17aHJlJJvkNnwd554=;
+        b=mU2oRxJc1i0uGQtdMP5EM+CqIBKrhfODwr+XPsKCzQDGuca8XRVCErzA5cMe+4l3oz
+         IYn1BkIyyrXlNMnWsF2bYReaNt0EZF6mtoToiHI4zIXrL3o0tNEqAzcAIBubX4zPkwAc
+         XI2tgraeErvSznyReDhHznaDvM9pS34KKzXRA/6D7Tfeo4tm0DKoAhXCzJjH1zeLdwcA
+         C8vUgA09mYC9xyqTg11VYwRzZtNtuiEoEUUZ59ll8g1oZo8hk9W98I2CV9kHlvxPiVuB
+         ntj3kysAaZEzPFyZ1O57YVXr8jCqp4GfElvVR4JFqZViEV4LlYBZEbX/cvPJM0+S85CI
+         pLJw==
+X-Gm-Message-State: AGi0PuZUfKa8VEnebaQ4yJtwaJ909XsZXqL42ixagpzTLY1vZ4Sx20ZP
+        T0CcV+3R3HnyvewHUmcQob75pw==
+X-Google-Smtp-Source: APiQypIcPc/1SW4//EIY6vMzbYE5uNKXPesknOT++/ig2GpFC2AsI7vNhOSyrjyGALx69V1hBVLx4Q==
+X-Received: by 2002:a17:90a:3a81:: with SMTP id b1mr3431181pjc.184.1587445616047;
+        Mon, 20 Apr 2020 22:06:56 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id p68sm1184780pfb.89.2020.04.20.22.06.52
+        by smtp.gmail.com with ESMTPSA id p68sm1184780pfb.89.2020.04.20.22.06.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 22:06:52 -0700 (PDT)
+        Mon, 20 Apr 2020 22:06:55 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
@@ -66,12 +66,10 @@ Cc:     jonas@kwiboo.se, jeffrey.l.hugo@gmail.com,
         jernej.skrabec@siol.net, swboyd@chromium.org,
         bjorn.andersson@linaro.org, robdclark@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] drm/panel-simple: Support hpd-gpios for delaying prepare()
-Date:   Mon, 20 Apr 2020 22:06:19 -0700
-Message-Id: <20200420220458.v2.3.I53fed5b501a31e7a7fa13268ebcdd6b77bd0cadd@changeid>
+Subject: [PATCH v2 5/6] dt-bindings: drm/bridge: ti-sn65dsi86: Document no-hpd
+Date:   Mon, 20 Apr 2020 22:06:21 -0700
+Message-Id: <20200420220458.v2.5.I72892d485088e57378a4748c86bc0f6c2494d807@changeid>
 X-Mailer: git-send-email 2.26.1.301.g55bc3eb7cb9-goog
 In-Reply-To: <20200421050622.8113-1-dianders@chromium.org>
 References: <20200421050622.8113-1-dianders@chromium.org>
@@ -82,132 +80,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-People use panel-simple when they have panels that are builtin to
-their device.  In these cases the HPD (Hot Plug Detect) signal isn't
-really used for hotplugging devices but instead is used for power
-sequencing.  Panel timing diagrams (especially for eDP panels) usually
-have the HPD signal in them and it acts as an indicator that the panel
-is ready for us to talk to it.
+The ti-sn65dsi86 MIPI DSI to eDP bridge chip has a dedicated hardware
+HPD (Hot Plug Detect) pin on it, but it's mostly useless for eDP
+because of excessive debouncing in hardware.  Specifically there is no
+way to disable the debouncing and for eDP debouncing hurts you because
+HPD is just used for knowing when the panel is ready, not for
+detecting physical plug events.
 
-Sometimes the HPD signal is hooked up to a normal GPIO on a system.
-In this case we need to poll it in the correct place to know that the
-panel is ready for us.  In some system designs the right place for
-this is panel-simple.
+Currently the driver in Linux just assumes that nobody has HPD hooked
+up.  It relies on folks setting the "no-hpd" property in the panel
+node to specify that HPD isn't hooked up and then the panel driver
+using this to add some worst case delays when turning on the panel.
 
-When adding this support, we'll account for the case that there might
-be a circular dependency between panel-simple and the provider of the
-GPIO.  The case this was designed for was for the "ti-sn65dsi86"
-bridge chip.  If HPD is hooked up to one of the GPIOs provided by the
-bridge chip then in our probe function we'll always get back
--EPROBE_DEFER.  Let's handle this by allowing this GPIO to show up
-late if we saw -EPROBE_DEFER during probe.
+Apparently it's also useful to specify "no-hpd" in the bridge node so
+that the bridge driver can make sure it's doing the right thing
+without peeking into the panel [1].  This would be used if anyone ever
+found it useful implement support for the HW HPD pin on the bridge.
+Let's add this property to the bindings.
+
+NOTES:
+- This is somewhat of a backward-incompatible change.  All current
+  known users of ti-sn65dsi86 didn't have "no-hpd" specified in the
+  bridge node yet none of them had HPD hooked up.  This worked because
+  the current Linux driver just assumed that HPD was never hooked up.
+  We could make it less incompatible by saying that for this bridge
+  it's assumed HPD isn't hooked up _unless_ a property is defined, but
+  "no-hpd" is much more standard and it's unlikely to matter unless
+  someone quickly goes and implements HPD in the driver.
+- It is sensible to specify "no-hpd" at the bridge chip level and
+  specify "hpd-gpios" at the panel level.  That would mean HPD is
+  hooked up to some other GPIO in the system, just not the hardware
+  HPD pin on the bridge chip.
+
+[1] https://lore.kernel.org/r/20200417180819.GE5861@pendragon.ideasonboard.com
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v2:
-- ("simple...hpd-gpios") is 1/2 of replacement for ("Allow...bridge GPIOs")
+- ("dt-bindings: drm/bridge: ti-sn65dsi86: Document no-hpd") new for v2.
 
- drivers/gpu/drm/panel/panel-simple.c | 53 ++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ .../devicetree/bindings/display/bridge/ti,sn65dsi86.yaml    | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 3ad828eaefe1..f816e2aa29cd 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -23,6 +23,7 @@
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+index 6d7d40ad45ac..5746416b0f73 100644
+--- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+@@ -28,6 +28,10 @@ properties:
+     maxItems: 1
+     description: GPIO specifier for GPIO1 pin on bridge (active low).
  
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-@@ -108,6 +109,7 @@ struct panel_simple {
- 	struct i2c_adapter *ddc;
- 
- 	struct gpio_desc *enable_gpio;
-+	struct gpio_desc *hpd_gpio;
- 
- 	struct drm_display_mode override_mode;
- };
-@@ -259,11 +261,37 @@ static int panel_simple_unprepare(struct drm_panel *panel)
- 	return 0;
- }
- 
-+static int panel_simple_get_hpd_gpio(struct device *dev,
-+				     struct panel_simple *p, bool from_probe)
-+{
-+	int err;
++  no-hpd:
++    type: boolean
++    description: Set if the HPD line on the bridge isn't hooked up to anything.
 +
-+	p->hpd_gpio = devm_gpiod_get_optional(dev, "hpd", GPIOD_IN);
-+	if (IS_ERR(p->hpd_gpio)) {
-+		err = PTR_ERR(p->hpd_gpio);
-+
-+		/*
-+		 * If we're called from probe we won't consider '-EPROBE_DEFER'
-+		 * to be an error--we'll leave the error code in "hpd_gpio".
-+		 * When we try to use it we'll try again.  This allows for
-+		 * circular dependencies where the component providing the
-+		 * hpd gpio needs the panel to init before probing.
-+		 */
-+		if (err != -EPROBE_DEFER || !from_probe) {
-+			dev_err(dev, "failed to get 'hpd' GPIO: %d\n", err);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int panel_simple_prepare(struct drm_panel *panel)
- {
- 	struct panel_simple *p = to_panel_simple(panel);
- 	unsigned int delay;
- 	int err;
-+	int hpd_asserted;
+   vccio-supply:
+     description: A 1.8V supply that powers the digital IOs.
  
- 	if (p->prepared)
- 		return 0;
-@@ -282,6 +310,26 @@ static int panel_simple_prepare(struct drm_panel *panel)
- 	if (delay)
- 		msleep(delay);
+@@ -207,6 +211,8 @@ examples:
+         clocks = <&rpmhcc RPMH_LN_BB_CLK2>;
+         clock-names = "refclk";
  
-+	if (p->hpd_gpio) {
-+		if (IS_ERR(p->hpd_gpio)) {
-+			err = panel_simple_get_hpd_gpio(panel->dev, p, false);
-+			if (err)
-+				return err;
-+		}
++        no-hpd;
 +
-+		err = readx_poll_timeout(gpiod_get_value_cansleep, p->hpd_gpio,
-+					 hpd_asserted, hpd_asserted,
-+					 1000, 2000000);
-+		if (hpd_asserted < 0)
-+			err = hpd_asserted;
-+
-+		if (err) {
-+			dev_err(panel->dev,
-+				"error waiting for hpd GPIO: %d\n", err);
-+			return err;
-+		}
-+	}
-+
- 	p->prepared = true;
- 
- 	return 0;
-@@ -462,6 +510,11 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 	panel->desc = desc;
- 
- 	panel->no_hpd = of_property_read_bool(dev->of_node, "no-hpd");
-+	if (!panel->no_hpd) {
-+		err = panel_simple_get_hpd_gpio(dev, panel, true);
-+		if (err)
-+			return err;
-+	}
- 
- 	panel->supply = devm_regulator_get(dev, "power");
- 	if (IS_ERR(panel->supply))
+         ports {
+           #address-cells = <1>;
+           #size-cells = <0>;
 -- 
 2.26.1.301.g55bc3eb7cb9-goog
 
