@@ -2,111 +2,83 @@ Return-Path: <SRS0=CISC=6G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F19BC55185
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F77EC5518A
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A9452076E
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E46F20882
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbgDVLG7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Apr 2020 07:06:59 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35303 "EHLO mga11.intel.com"
+        id S1726234AbgDVLJh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Apr 2020 07:09:37 -0400
+Received: from mga01.intel.com ([192.55.52.88]:12656 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbgDVLG6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Apr 2020 07:06:58 -0400
-IronPort-SDR: qpKxz8uQ5SrWuG+NfoAgS50EdkpShEpGFUG4hBLJQb/IvJDU8uptntYu1KIyvJf/4tWj15xx/1
- B0T14/DydASw==
+        id S1726104AbgDVLJh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Apr 2020 07:09:37 -0400
+IronPort-SDR: ekUo6i82p9hH7RS1jH1EaSunQC3qds07G5RlC74mRAdLGnmSCjfguw0hllKYqzntIjiNLn6djz
+ u59BmNzMVulQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 04:06:58 -0700
-IronPort-SDR: ZQLEjVs73RGo05w8tg7ozKPcPvVDH3jtRbTARQIVsF/uk+eefgHlB7ubLr76/c3nn/Rmk1I5sw
- kbakxDe8oGSQ==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 04:09:37 -0700
+IronPort-SDR: C8gBEMh74DJeDpXbU7qrvhRVlQBYlnTsVVaUFYIoZGnnyDwZ/+ZG2r1FEdHQ7lc4xpWXXlpWMu
+ NJKRArDDUW6A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,414,1580803200"; 
-   d="scan'208";a="429870431"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 22 Apr 2020 04:06:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C78EC402; Wed, 22 Apr 2020 14:06:55 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+   d="scan'208";a="457108260"
+Received: from ajavier-mobl1.amr.corp.intel.com (HELO [10.255.68.153]) ([10.255.68.153])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Apr 2020 04:09:36 -0700
+Subject: Re: [RFC PATCH 13/16] clk: hifiberry-dacpro: add "sclk" lookup
+To:     Stephen Boyd <sboyd@kernel.org>, alsa-devel@alsa-project.org
+Cc:     tiwai@suse.de, broonie@kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v1 2/2] gpio: dwapb: Amend indentation in some cases
-Date:   Wed, 22 Apr 2020 14:06:54 +0300
-Message-Id: <20200422110654.23442-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200422110654.23442-1-andriy.shevchenko@linux.intel.com>
-References: <20200422110654.23442-1-andriy.shevchenko@linux.intel.com>
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-14-pierre-louis.bossart@linux.intel.com>
+ <158754810745.132238.7647643247125302962@swboyd.mtv.corp.google.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c52e0f7d-1eaf-a89b-ff5d-b2a02ad56021@linux.intel.com>
+Date:   Wed, 22 Apr 2020 04:51:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <158754810745.132238.7647643247125302962@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases indentation makes code harder to read. Amend indentation
-in those cases despite of lines go a bit over 80 character limit.
 
-Cc: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-dwapb.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 9d8476afaba3d..8639c4a7f4697 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -437,7 +437,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		}
- 	}
- 
--	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
-+	for (hwirq = 0; hwirq < ngpio; hwirq++)
- 		irq_create_mapping(gpio->domain, hwirq);
- 
- 	port->gc.to_irq = dwapb_gpio_to_irq;
-@@ -453,7 +453,7 @@ static void dwapb_irq_teardown(struct dwapb_gpio *gpio)
- 	if (!gpio->domain)
- 		return;
- 
--	for (hwirq = 0 ; hwirq < ngpio ; hwirq++)
-+	for (hwirq = 0; hwirq < ngpio; hwirq++)
- 		irq_dispose_mapping(irq_find_mapping(gpio->domain, hwirq));
- 
- 	irq_domain_remove(gpio->domain);
-@@ -478,10 +478,9 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		return -ENOMEM;
- #endif
- 
--	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_STRIDE);
--	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_STRIDE);
--	dirout = gpio->regs + GPIO_SWPORTA_DDR +
--		(pp->idx * GPIO_SWPORT_DDR_STRIDE);
-+	dat = gpio->regs + GPIO_EXT_PORTA + pp->idx * GPIO_EXT_PORT_STRIDE;
-+	set = gpio->regs + GPIO_SWPORTA_DR + pp->idx * GPIO_SWPORT_DR_STRIDE;
-+	dirout = gpio->regs + GPIO_SWPORTA_DDR + pp->idx * GPIO_SWPORT_DDR_STRIDE;
- 
- 	/* This registers 32 GPIO lines per port */
- 	err = bgpio_init(&port->gc, gpio->dev, 4, dat, set, NULL, dirout,
-@@ -588,8 +587,7 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
--					 &pp->ngpio)) {
-+		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios", &pp->ngpio)) {
- 			dev_info(dev,
- 				 "failed to get number of gpios for port%d\n",
- 				 i);
--- 
-2.26.1
+>> +       proclk->sclk_lookup = clkdev_hw_create(&proclk->hw, "sclk", NULL);
+>> +       if (!proclk->sclk_lookup) {
+>> +#ifndef CONFIG_ACPI
+> 
+> Is it to save code space? Otherwise the ifdefs are pretty ugly and I'd
+> prefer we just call of_clk APIs and rely on the inline stubs when
+> CONFIG_OF isn't enabled to be optimized out.
 
+CONFIG_OF was added as a dependency (see patch 10/16) so that we can use 
+the 'compatible' string to probe w/ the PRP0001 device.
+
+I must admit I don't know what these functions do so I just filtered 
+them out in the ACPI case.
+
+>> +               of_clk_del_provider(dev->of_node);
+>> +#endif
+>> +               return -ENOMEM;
+>> +       }
+>> +
