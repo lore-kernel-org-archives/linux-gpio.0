@@ -2,88 +2,133 @@ Return-Path: <SRS0=CISC=6G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD28C55189
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2821FC5518A
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 10:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA9A12076C
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C5A20575
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 10:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbgDVJra (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:47:30 -0400
-Received: from mga07.intel.com ([134.134.136.100]:27723 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgDVJr3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:47:29 -0400
-IronPort-SDR: QLN/jondOn7rUpGVekkWjsWWIP930hNONMRoF5BwKJIuGti7bgzM7wjGO1vxW2a82ZvDLD1357
- SrQ7/fG4eXaA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 02:47:28 -0700
-IronPort-SDR: 3aN7PojsIhZcUS0QDEfAJyxsjD1t1zD6WtaWFaWz45joO8ATB/Jbbakkgv8rZUN3zxRGc+3uB0
- QjpKwd1cSl2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,413,1580803200"; 
-   d="scan'208";a="402489946"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 22 Apr 2020 02:47:24 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jRByZ-002PzX-07; Wed, 22 Apr 2020 12:47:27 +0300
-Date:   Wed, 22 Apr 2020 12:47:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        id S1729236AbgDVKLq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:11:46 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57742 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729220AbgDVKLj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2020 06:11:39 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 17D993C0579;
+        Wed, 22 Apr 2020 12:11:37 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id uza13biTiMxw; Wed, 22 Apr 2020 12:11:32 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 0DFC43C004C;
+        Wed, 22 Apr 2020 12:11:32 +0200 (CEST)
+Received: from lxhi-065.adit-jv.com (10.72.94.60) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 22 Apr
+ 2020 12:11:31 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     <linux-renesas-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 12/16] clk: hifiberry-dacpro: add ACPI support
-Message-ID: <20200422094726.GZ185537@smile.fi.intel.com>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-13-pierre-louis.bossart@linux.intel.com>
- <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Yusuke Ashiduka <ashiduka@fujitsu.com>,
+        Torii Kenichi <torii.ken1@jp.fujitsu.com>,
+        Fukui Yohhei <yohhei.fukui@denso-ten.com>,
+        Yasushi Asano <yasano@jp.adit-jv.com>,
+        Yuichi Kusakabe <yuichi.kusakabe@denso-ten.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: [RFC PATCH 3/3] [LOCAL] arm64: dts: renesas: ulcb: Showcase 'use-alternative-interrupt'
+Date:   Wed, 22 Apr 2020 12:10:26 +0200
+Message-ID: <20200422101026.9220-4-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200422101026.9220-1-erosca@de.adit-jv.com>
+References: <20200422101026.9220-1-erosca@de.adit-jv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.72.94.60]
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 02:32:15AM -0700, Stephen Boyd wrote:
-> Quoting Pierre-Louis Bossart (2020-04-09 12:58:37)
-> > On ACPI platforms the of_ functions are irrelevant, conditionally
-> > compile them out and add devm_clk_hw_register_clkdev() call instead.
+One caveat is that the 'interrupts' property update _must_ go hand
+in hand with the newly added 'use-alternative-interrupt' property.
+Is there an easy way to avoid it?
 
-...
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-> Use if (!IS_ENABLED(CONFIG_ACPI)) instead?
-> 
-> >         ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-> >                                      &proclk->hw);
-
-I'm rather wondering if we have OF stuff integrated properly to CLK framework
-to avoid first branch completely.
-
-> > +#else
-> > +       ret = devm_clk_hw_register_clkdev(dev, &proclk->hw,
-> > +                                         init.name, NULL);
-> > +#endif
-
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index d2ba9598cd1e..168dadbd1185 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -174,6 +174,46 @@ &extalr_clk {
+ 	clock-frequency = <32768>;
+ };
+ 
++&gpio0 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio1 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio2 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio3 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio4 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio5 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio6 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio7 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
++};
++
+ &hdmi0 {
+ 	status = "okay";
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.26.0
 
