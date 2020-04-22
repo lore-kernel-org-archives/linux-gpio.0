@@ -2,94 +2,77 @@ Return-Path: <SRS0=CISC=6G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0963EC5518A
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 10:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C45C55189
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DECE720B1F
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 10:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928B02076E
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Apr 2020 11:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbgDVKK6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:10:58 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57691 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729105AbgDVKK5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2020 06:10:57 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 64B203C004C;
-        Wed, 22 Apr 2020 12:10:54 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oguoUnbPx3nK; Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 69CC13C057F;
-        Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
-Received: from lxhi-065.adit-jv.com (10.72.94.60) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 22 Apr
- 2020 12:10:48 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        id S1726100AbgDVLG7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Apr 2020 07:06:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5028 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726119AbgDVLG7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Apr 2020 07:06:59 -0400
+IronPort-SDR: 6MMg7Hmz8dA1ECxLdJqU+/dMeGmRMDoouAmiovECiUHl1y5jpshf6mCaGzoV+wZV8D8xqjNQFC
+ KxjeWopCtRZw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 04:06:58 -0700
+IronPort-SDR: nlyuZhMoHhNSnww/g8mnrbz6bjSwonMNswErViaANW2imQEkPeZAbcwmBemut1qJ1BkRk9WpdL
+ RvZBbPJHXtGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,414,1580803200"; 
+   d="scan'208";a="456467127"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Apr 2020 04:06:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B898D578; Wed, 22 Apr 2020 14:06:55 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Yusuke Ashiduka <ashiduka@fujitsu.com>,
-        Torii Kenichi <torii.ken1@jp.fujitsu.com>,
-        Fukui Yohhei <yohhei.fukui@denso-ten.com>,
-        Yasushi Asano <yasano@jp.adit-jv.com>,
-        Yuichi Kusakabe <yuichi.kusakabe@denso-ten.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [RFC PATCH 0/3] gpio: rcar: Add support for GPIO alternative interrupt
-Date:   Wed, 22 Apr 2020 12:10:23 +0200
-Message-ID: <20200422101026.9220-1-erosca@de.adit-jv.com>
-X-Mailer: git-send-email 2.26.2
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v1 1/2] gpio: dwapb: Get rid of unnecessary conjunction over 32-bit value
+Date:   Wed, 22 Apr 2020 14:06:53 +0300
+Message-Id: <20200422110654.23442-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.72.94.60]
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The motivation behind this series is described in commit
-("gpio: rcar: Add support for GPIO alternative interrupt").
+When we mask interrupts before sleep, there is no need to have a conjunction
+with 0xffffffff since the accepted by dwapb_write() value is 32-bit.
 
-The reasons for which RFC tag is attached are:
- - Have Renesas/linux-gpio communities been facing GPIO interrupt
-   partitioning questions in the past (specifically AP vs RT)?
- - Is it a no-go to have mandatory DTS dependencies like updating
-   'interrupts' on specifying the new 'use-alternative-interrupt'?
+Cc: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-dwapb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Many thanks for your comments!
-
-Eugeniu Rosca (1):
-  [LOCAL] arm64: dts: renesas: ulcb: Showcase 'use-alternative-interrupt'
-
-Torii Kenichi (2):
-  dt-bindings: gpio-rcar: Add optional use-alternative-interrupt property
-  gpio: rcar: Add support for GPIO alternative interrupt
-
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |  3 +++
- arch/arm64/boot/dts/renesas/ulcb.dtsi                        | 40 ++++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpio-rcar.c                                     | 22 +++++++++++++++++-----
- 3 files changed, 60 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 31d29ec6ab5c3..9d8476afaba3d 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -743,8 +743,7 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 			ctx->int_deb	= dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
+ 
+ 			/* Mask out interrupts */
+-			dwapb_write(gpio, GPIO_INTMASK,
+-				    0xffffffff & ~ctx->wake_en);
++			dwapb_write(gpio, GPIO_INTMASK, ~ctx->wake_en);
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
 -- 
-2.26.0
+2.26.1
 
