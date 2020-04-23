@@ -2,70 +2,77 @@ Return-Path: <SRS0=DK1R=6H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D3DC54FD0
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 16:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2826AC54FD0
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 16:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFB8320728
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 16:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00BAF20704
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 16:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="vrV0fdzs"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DpLPKwlM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgDWQLI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Apr 2020 12:11:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59752 "EHLO
+        id S1729683AbgDWQ0Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Apr 2020 12:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728865AbgDWQLI (ORCPT
+        by vger.kernel.org with ESMTP id S1729704AbgDWQ0V (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Apr 2020 12:11:08 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C5FC09B041
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 09:11:07 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id g13so7496632wrb.8
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 09:11:07 -0700 (PDT)
+        Thu, 23 Apr 2020 12:26:21 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C90C09B041
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 09:26:20 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a31so836315pje.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 09:26:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Oicma1MBgZbQF2akoDHcSsrFoGKdPLFNTqRTFU/b4M=;
-        b=vrV0fdzsAdC6GW0Pge6WbvUWlL6vp0xmODmIHt/TTJUaZKWP8kcbwJdK+aNBrRGXgP
-         7t5dGR7NEwzjKu+dw40owZRQ/UIrqnY9wFyI4pGbpEb5lI/xi1+coJ/zv60sa7H5DXoq
-         rKvl+lMq2wUfJKnshl0tRNVP2c6b6gFKX/vdEfCwK+BNPFDy4iONwpyrSKpizwYRSC9B
-         zfcN9Eu15TSHWhlL+e615WCuawFC8g56Xgjx7uiEjN5TlAK9Xevu20obO0QJXAHewed1
-         s7Ps4mKKjF6YK3EcusfOaFRz5Ksm1KErFJHU0VjJDzqyIrCKEvDZbaf70pv3m4tTa4pm
-         ggoA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Fs+VyUYiQhHLqjr9qU6M46uht+we4DMR37Sq8mHOUJg=;
+        b=DpLPKwlMZsLZnxIioolM8ptTrEbItSx7IHdh1uPs+5fsxWGMGiV+5LduIaSEo0UdUH
+         lfewHcUPuCS2CaHrmBVsSnkGCWg/Y04/Hd85eHRDtEqVH1g+b5xaPV0zWfvc0d0aJOmW
+         t+u2CkySUhgOQJfywp7JUZRfHAv1W7wSiwO2c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3Oicma1MBgZbQF2akoDHcSsrFoGKdPLFNTqRTFU/b4M=;
-        b=tyeS4mra5yuOmEQxiSfIkQtV8VvxRfo11rMifi81U6Of8C9DBaPlTvCDw89wbGNV57
-         UE3RylGWrOw4qjMChuqGgUehy8QizVS0vbVCj8qNHQtMrFs6c1U+OiHtsTy050LUjSp2
-         h5ULx7Y9BF5g9xCiZKSstOvl+0rICLcNW/QPzj19q7v6nFUD1QBduH96kfsNTMhDWSov
-         ft8FxcUOeWKFL24fkG63lx/59mpz4jryqU+siB+6vGg7AhMXM37Ztjt+PV3MV7WCu/yM
-         dZJSv3mQlukqUPA83uqSw6pKx22iVJ7uaIbwS47BPzzhrtbWfyv0inr+3s8L5Pk58FaN
-         yfVw==
-X-Gm-Message-State: AGi0PuYVZwLG0BxnU3SHIS2slWdMzfSlgJS0YKem09NnfJ4EGPgXymAA
-        2ejZ+3ruF2JZzNepcKh4EMfnqg==
-X-Google-Smtp-Source: APiQypLzqXV5Dc0IC07dcB9aBwRhf7IUbMoM+3IxhHkAIgWpyVJSDILhjphX8JKQBLZUxtnFwkS6Yg==
-X-Received: by 2002:a5d:4005:: with SMTP id n5mr5673730wrp.242.1587658265881;
-        Thu, 23 Apr 2020 09:11:05 -0700 (PDT)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id 33sm4535466wrp.5.2020.04.23.09.11.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Fs+VyUYiQhHLqjr9qU6M46uht+we4DMR37Sq8mHOUJg=;
+        b=ZGpuqX5gRgNeFVC/ZpRftR1MzQ/r68smMsOz3AxqWntNMi3hO4LYBQ49h4w4/9LGa+
+         zeP9HeJQt4bRD4tEdG1mbdmoAU0YXJvaVKVmxXGXt5h9NeOKUBwz64EgN4Me6Uuva15T
+         VMo9ZH/FVKjd7/LpYRsVzvjd0RIoC9h2TD+k3mmGaTSniniT1ll8tP36z3ucFKwOlgq8
+         +yq67izsf8S68lZwQbBjCayxAxjkTTq0y/hbjr98qmKM0syt+wreMFbO4kuvCuGNdbDN
+         WDb8WmBPNDSqexxgA7ulxP689R+dfhwzoXICySdJWiBiuCqHEODE4HkQvI9fviCZFsq3
+         n1jA==
+X-Gm-Message-State: AGi0PuZDy68hhiFf3FwKX4gkMBNeW7Avu8a+B6zRmNynkr9NAGCkAL1X
+        e7YPPY6CTzy9BOyQ3BEZx8WoQg==
+X-Google-Smtp-Source: APiQypKJjjilIFJnRl4OpyzS4YRq70Qi1utK3lHOL5ENRwaojLCeKCJCNTxUDY7zc6N7YPo9khOOyw==
+X-Received: by 2002:a17:90a:f68d:: with SMTP id cl13mr1559548pjb.107.1587659179681;
+        Thu, 23 Apr 2020 09:26:19 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id d12sm2841927pfq.36.2020.04.23.09.26.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2020 09:11:05 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [GIT PULL] gpio: fixes for v5.7-rc3
-Date:   Thu, 23 Apr 2020 18:11:01 +0200
-Message-Id: <20200423161101.15993-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
+        Thu, 23 Apr 2020 09:26:18 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        narmstrong@baylibre.com, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, spanda@codeaurora.org
+Cc:     swboyd@chromium.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jeffrey.l.hugo@gmail.com,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        robdclark@chromium.org, jernej.skrabec@siol.net, jonas@kwiboo.se,
+        bjorn.andersson@linaro.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 6/6] arm64: dts: sdm845: Add "no-hpd" to sn65dsi86 on cheza
+Date:   Thu, 23 Apr 2020 09:25:48 -0700
+Message-Id: <20200423092431.v3.6.I89df9b6094549b8149aa8b8347f7401c678055b0@changeid>
+X-Mailer: git-send-email 2.26.1.301.g55bc3eb7cb9-goog
+In-Reply-To: <20200423162548.129661-1-dianders@chromium.org>
+References: <20200423162548.129661-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -73,35 +80,39 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+We don't have the HPD line hooked up to the bridge chip.  Add it as
+suggested in the patch ("dt-bindings: drm/bridge: ti-sn65dsi86:
+Document no-hpd").
 
-The following changes since commit ae83d0b416db002fe95601e7f97f64b59514d936:
+NOTE: this patch isn't expected to have any effect but just keeps us
+cleaner for the future.  Currently the driver in Linux just assumes
+that nobody has HPD hooked up.  This change allows us to later
+implement HPD support in the driver without messing up sdm845-cheza.
 
-  Linux 5.7-rc2 (2020-04-19 14:35:30 -0700)
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+---
 
-are available in the Git repository at:
+Changes in v3: None
+Changes in v2:
+- ("arm64: dts: sdm845: Add "no-hpd" to sn65dsi86 on cheza") new for v2.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.7-rc3
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-for you to fetch changes up to 6409d049ce28bef35e13dfb8699fc7ee27469ba1:
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index 9070be43a309..5938f8b2aa2f 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -548,6 +548,8 @@ sn65dsi86_bridge: bridge@2d {
+ 		clocks = <&rpmhcc RPMH_LN_BB_CLK2>;
+ 		clock-names = "refclk";
+ 
++		no-hpd;
++
+ 		ports {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.26.1.301.g55bc3eb7cb9-goog
 
-  gpiolib: don't call sleeping functions with a spinlock taken (2020-04-23 17:55:27 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v5.7-rc3
-
-- fix set_config in pca953x
-- improve robustness of the new line watch/unwatch ioctl()
-- fix a bug with caling a sleeping function with spinlock taken
-
-----------------------------------------------------------------
-Adam Ford (1):
-      gpio: pca953x: Fix pca953x_gpio_set_config
-
-Bartosz Golaszewski (2):
-      gpiolib: improve the robustness of watch/unwatch ioctl()
-      gpiolib: don't call sleeping functions with a spinlock taken
-
- drivers/gpio/gpio-pca953x.c |  2 +-
- drivers/gpio/gpiolib.c      | 29 ++++++++++++++++++++++++++---
- 2 files changed, 27 insertions(+), 4 deletions(-)
