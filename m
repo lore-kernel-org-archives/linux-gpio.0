@@ -2,383 +2,99 @@ Return-Path: <SRS0=DK1R=6H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908A9C55192
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDE4C55192
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF592166E
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7xhHbF+"
+	by mail.kernel.org (Postfix) with ESMTP id 6674620781
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbgDWJ2R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Apr 2020 05:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbgDWJ2Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2020 05:28:16 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54876C03C1AF;
-        Thu, 23 Apr 2020 02:28:16 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id g12so5764495wmh.3;
-        Thu, 23 Apr 2020 02:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UlGV2vqlzbuHPWbE+jpO9xzuY7SKXtYOixbqsj1pKu0=;
-        b=I7xhHbF+mE0+/tGWxhgM39U1d2IvjmUw+CZakoTePRpplOwIz6ZoBxkb4lEakLjvYp
-         LA32xw2L/KFi4DmEmYrlKwwA7lP39PZynWbGKhfw9ck3frnsdsckhlbA4KGyGd+F5FrG
-         B1C7C7zYlfhJVkegH5TYu8N/AA5KnCHJs7E4/ZlY8No2+gBD8s83Bo4423JcnAZ8/en5
-         epsR3viwNyh0jGFQe5CX8rGcX3u/M0B9YOC90Vlgb0OeHAuJNA96IEs09tqSiQjdFHKT
-         ttddYL07HQxzM1aPJFbAedHpFfS8jN0/C/eDWBDcEniELDJPtmPRuyLb5h5VMPLY6fU5
-         Pa9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=UlGV2vqlzbuHPWbE+jpO9xzuY7SKXtYOixbqsj1pKu0=;
-        b=f2yzBEMFUI+XLxhJNYkyVBn9TvuHnEU1ubS9mjTq0WabsQApR8epgHg9W2bcC3+szy
-         DHyB3Lnq0MAebz4YL2Tig3Y5CayRvNT7XyUnbZln8ChPXNvBKSJpSW96sFAm2Q/AfaeJ
-         8mZeBWrOG1ZCd2AxXGoNqynp94MBfq/iB4ZW1UUiuShgbYi47HTzCASsZ3a/iN0BxxAH
-         Od/klwQcpABGC4uX+4lTELGtuC0SB0l34X3XCmK8GtNbyDl6eKI+ZUYI0KhihXY1Q6U7
-         KQpJupICFE4ypiH87Sovitqrek8OVtwhPkdhrEgKdx5eRor+A23k19Z9OAUC8ccSv/iy
-         lEOQ==
-X-Gm-Message-State: AGi0PubZ612u65jXZ3ep4OAHn/Y2JLA3hbJoIxWuE8ZTWItkAue+KlVV
-        0JFEwrzIxlfVEqv6Tk6u07o=
-X-Google-Smtp-Source: APiQypI0tSrwVFSMJqlo68TMKyN6DXnYSBys22qyaZ9lQpFL0wHrneSe0n6hs4lJWTiHBsj2dV9J/Q==
-X-Received: by 2002:a05:600c:22d1:: with SMTP id 17mr2966366wmg.167.1587634094955;
-        Thu, 23 Apr 2020 02:28:14 -0700 (PDT)
-Received: from [192.168.1.39] (116.red-83-42-57.dynamicip.rima-tde.net. [83.42.57.116])
-        by smtp.gmail.com with ESMTPSA id w10sm3037407wrg.52.2020.04.23.02.28.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2020 02:28:14 -0700 (PDT)
-Subject: Re: [PATCH QEMU v2 3/5] Add a GPIO backend using libgpiod
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Alexander Graf <graf@amazon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bartekgola@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org
-References: <20200423090118.11199-1-geert+renesas@glider.be>
- <20200423090118.11199-4-geert+renesas@glider.be>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
-Autocrypt: addr=f4bug@amsat.org; keydata=
- mQINBDU8rLoBEADb5b5dyglKgWF9uDbIjFXU4gDtcwiga9wJ/wX6xdhBqU8tlQ4BroH7AeRl
- u4zXP0QnBDAG7EetxlQzcfYbPmxFISWjckDBFvDbFsojrZmwF2/LkFSzlvKiN5KLghzzJhLO
- HhjGlF8deEZz/d/G8qzO9mIw8GIBS8uuWh6SIcG/qq7+y+2+aifaj92EdwU79apZepT/U3vN
- YrfcAuo1Ycy7/u0hJ7rlaFUn2Fu5KIgV2O++hHYtCCQfdPBg/+ujTL+U+sCDawCyq+9M5+LJ
- ojCzP9rViLZDd/gS6jX8T48hhidtbtsFRj/e9QpdZgDZfowRMVsRx+TB9yzjFdMO0YaYybXp
- dg/wCUepX5xmDBrle6cZ8VEe00+UQCAU1TY5Hs7QFfBbjgR3k9pgJzVXNUKcJ9DYQP0OBH9P
- ZbZvM0Ut2Bk6bLBO5iCVDOco0alrPkX7iJul2QWBy3Iy9j02GnA5jZ1Xtjr9kpCqQT+sRXso
- Vpm5TPGWaWljIeLWy/qL8drX1eyJzwTB3A36Ck4r3YmjMjfmvltSZB1uAdo1elHTlFEULpU/
- HiwvvqXQ9koB15U154VCuguvx/Qnboz8GFb9Uw8VyawzVxYVNME7xw7CQF8FYxzj6eI7rBf2
- Dj/II6wxWPgDEy3oUzuNOxTB7sT3b/Ym76yOJzWX5BylXQIJ5wARAQABtDFQaGlsaXBwZSBN
- YXRoaWV1LURhdWTDqSAoRjRCVUcpIDxmNGJ1Z0BhbXNhdC5vcmc+iQJVBBMBCAA/AhsPBgsJ
- CAcDAgYVCAIJCgsEFgIDAQIeAQIXgBYhBPqr514SkXIh3P1rsuPjLCzercDeBQJd660aBQks
- klzgAAoJEOPjLCzercDe2iMP+gMG2dUf+qHz2uG8nTBGMjgK0aEJrKVPodFA+iedQ5Kp3BMo
- jrTg3/DG1HMYdcvQu/NFLYwamUfUasyor1k+3dB23hY09O4xOsYJBWdilkBGsJTKErUmkUO2
- 3J/kawosvYtJJSHUpw3N6mwz/iWnjkT8BPp7fFXSujV63aZWZINueTbK7Y8skFHI0zpype9s
- loU8xc4JBrieGccy3n4E/kogGrTG5jcMTNHZ106DsQkhFnjhWETp6g9xOKrzZQbETeRBOe4P
- sRsY9YSG2Sj+ZqmZePvO8LyzGRjYU7T6Z80S1xV0lH6KTMvq7vvz5rd92f3pL4YrXq+e//HZ
- JsiLen8LH/FRhTsWRgBtNYkOsd5F9NvfJtSM0qbX32cSXMAStDVnS4U+H2vCVCWnfNug2TdY
- 7v4NtdpaCi4CBBa3ZtqYVOU05IoLnlx0miKTBMqmI05kpgX98pi2QUPJBYi/+yNu3fjjcuS9
- K5WmpNFTNi6yiBbNjJA5E2qUKbIT/RwQFQvhrxBUcRCuK4x/5uOZrysjFvhtR8YGm08h+8vS
- n0JCnJD5aBhiVdkohEFAz7e5YNrAg6kOA5IVRHB44lTBOatLqz7ntwdGD0rteKuHaUuXpTYy
- CRqCVAKqFJtxhvJvaX0vLS1Z2dwtDwhjfIdgPiKEGOgCNGH7R8l+aaM4OPOd
-Message-ID: <5dbfd026-3807-b122-ce60-1339a5252fca@amsat.org>
-Date:   Thu, 23 Apr 2020 11:28:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1725854AbgDWJ2r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Apr 2020 05:28:47 -0400
+Received: from sender4-of-o53.zoho.com ([136.143.188.53]:21351 "EHLO
+        sender4-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbgDWJ2q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2020 05:28:46 -0400
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Apr 2020 05:28:46 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1587633210; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=VVSGFYuiacgtCVG/Cr0OwEZN2WfMMzrs7p6JD9uuNUPvMgZPRAeJuKIwa4W7sMgvC3Ijrikg4aXW7l82yE/SkMm+EvHwaHCchtmwvq4aNhCZ6JWqcO6QeGjaTEPxilx37RyKrr3HrgFMAv2bN+xgY0qtzYBEDIXNI0lMt1EB8X8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1587633210; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Subject:To; 
+        bh=lVcquTCP4j4rjMQfIarQX/W9zv5y8Yc+42wtUUDGOBw=; 
+        b=QshwM3Dv4laGOlm0nq3jZs3qxFFPiKuy87//LaZE4Cm8VsjOU4okI6Ms/WM75ST61jKwixbbQFr+Q4wxUdzfuUrIikrpAfyoY/1nudqcEENi0ZlpjfZ1zoDKXVOOWU4AV2SC2a829ZRelS62VMhpAAmIzG/+p9LHd0X9lcunxO0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        spf=pass  smtp.mailfrom=no-reply@patchew.org;
+        dmarc=pass header.from=<no-reply@patchew.org> header.from=<no-reply@patchew.org>
+Received: from [172.17.0.3] (23.253.156.214 [23.253.156.214]) by mx.zohomail.com
+        with SMTPS id 1587633209047725.916656049011; Thu, 23 Apr 2020 02:13:29 -0700 (PDT)
+In-Reply-To: <20200423090118.11199-1-geert+renesas@glider.be>
+Subject: Re: [PATCH QEMU v2 0/5] Add a GPIO backend
+Reply-To: <qemu-devel@nongnu.org>
+Message-ID: <158763320718.4520.18138029284746846177@39012742ff91>
 MIME-Version: 1.0
-In-Reply-To: <20200423090118.11199-4-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+From:   no-reply@patchew.org
+To:     geert+renesas@glider.be
+Cc:     peter.maydell@linaro.org, pbonzini@redhat.com, graf@amazon.com,
+        linus.walleij@linaro.org, bartekgola@gmail.com,
+        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, qemu-arm@nongnu.org,
+        qemu-devel@nongnu.org, geert+renesas@glider.be
+Date:   Thu, 23 Apr 2020 02:13:29 -0700 (PDT)
+X-ZohoMailClient: External
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 4/23/20 11:01 AM, Geert Uytterhoeven wrote:
-> Add a GPIO controller backend, to connect virtual GPIOs on the guest to
-> physical GPIOs on the host.  This allows the guest to control any
-> external device connected to the physical GPIOs.
-> 
-> Features and limitations:
->   - The backend uses libgpiod on Linux,
->   - For now only GPIO outputs are supported,
->   - The number of GPIO lines mapped is limited to the number of GPIO
->     lines available on the virtual GPIO controller.
-> 
-> Future work:
->   - GPIO inputs,
->   - GPIO line configuration,
->   - Optimizations for controlling multiple GPIO lines at once,
->   - ...
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Drop vgpios and gpios parameters, and map the full gpiochip instead,
->   - Replace hardcoded PL061 instance by multiple dynamic instances,
->     registered through qemu_gpiodev_add().
-> ---
->  MAINTAINERS              |  6 +++
->  backends/Makefile.objs   |  2 +
->  backends/gpiodev.c       | 94 ++++++++++++++++++++++++++++++++++++++++
->  configure                | 28 ++++++++++++
->  include/sysemu/gpiodev.h | 12 +++++
->  5 files changed, 142 insertions(+)
->  create mode 100644 backends/gpiodev.c
->  create mode 100644 include/sysemu/gpiodev.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e760f65270d29d5d..a70af47430083d14 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -607,6 +607,12 @@ F: include/hw/arm/digic.h
->  F: hw/*/digic*
->  F: include/hw/*/digic*
->  
-> +GPIO device backend
-> +M: Geert Uytterhoeven <geert+renesas@glider.be>
-> +S: Supported
-> +F: backends/gpiodev.c
-> +F: include/sysemu/gpiodev.h
-> +
->  Goldfish RTC
->  M: Anup Patel <anup.patel@wdc.com>
->  M: Alistair Francis <Alistair.Francis@wdc.com>
-> diff --git a/backends/Makefile.objs b/backends/Makefile.objs
-> index 28a847cd571d96ed..ee658e797454119a 100644
-> --- a/backends/Makefile.objs
-> +++ b/backends/Makefile.objs
-> @@ -21,3 +21,5 @@ common-obj-$(CONFIG_LINUX) += hostmem-memfd.o
->  common-obj-$(CONFIG_GIO) += dbus-vmstate.o
->  dbus-vmstate.o-cflags = $(GIO_CFLAGS)
->  dbus-vmstate.o-libs = $(GIO_LIBS)
-> +
-> +common-obj-$(CONFIG_GPIODEV) += gpiodev.o
-> diff --git a/backends/gpiodev.c b/backends/gpiodev.c
-> new file mode 100644
-> index 0000000000000000..df1bd0113c7b2985
-> --- /dev/null
-> +++ b/backends/gpiodev.c
-> @@ -0,0 +1,94 @@
-> +/*
-> + * QEMU GPIO Backend
-> + *
-> + * Copyright (C) 2018-2020 Glider bv
-> + *
-> + * SPDX-License-Identifier: GPL-2.0-or-later
-> + */
-> +
-> +#include <errno.h>
-
-<errno.h> probably not needed.
-
-> +#include <gpiod.h>
-
-Please move this one...
-
-> +
-> +#include "qemu/osdep.h"
-> +#include "qemu/config-file.h"
-> +#include "qemu/cutils.h"
-> +#include "qemu/error-report.h"
-> +#include "qemu/module.h"
-> +#include "qemu/option.h"
-> +#include "qapi/error.h"
-> +
-> +#include "sysemu/gpiodev.h"
-> +
-> +#include "hw/irq.h"
-> +#include "hw/qdev-core.h"
-
-... here:
-
-#include <gpiod.h>
-
-> +
-> +static void gpiodev_irq_handler(void *opaque, int n, int level)
-> +{
-> +    struct gpiod_line *line = opaque;
-> +    int status;
-> +
-> +    status = gpiod_line_set_value(line, level);
-> +    if (status < 0) {
-> +        struct gpiod_chip *chip = gpiod_line_get_chip(line);
-> +
-> +        error_report("%s/%s: Cannot set GPIO line %u: %s",
-> +                     gpiod_chip_name(chip), gpiod_chip_label(chip),
-> +                     gpiod_line_offset(line), strerror(errno));
-> +    }
-> +}
-> +
-> +static int gpiodev_map_line(DeviceState *dev, struct gpiod_chip *chip,
-> +                            unsigned int gpio, Error **errp)
-> +{
-> +    struct gpiod_line *line;
-> +    qemu_irq irq;
-> +    int status;
-> +
-> +    line = gpiod_chip_get_line(chip, gpio);
-> +    if (!line) {
-> +        error_setg(errp, "Cannot obtain GPIO line %u: %s", gpio,
-> +                   strerror(errno));
-> +        return -1;
-> +    }
-> +
-> +    status = gpiod_line_request_output(line, "qemu", 0);
-> +    if (status < 0) {
-> +        error_setg(errp, "Cannot request GPIO line %u for output: %s", gpio,
-> +                   strerror(errno));
-> +        return status;
-> +    }
-> +
-> +    irq = qemu_allocate_irq(gpiodev_irq_handler, line, 0);
-> +    qdev_connect_gpio_out(dev, gpio, irq);
-> +    return 0;
-> +}
-> +
-> +void qemu_gpiodev_add(DeviceState *dev, const char *name, unsigned int maxgpio,
-> +                      Error **errp)
-> +{
-> +    struct gpiod_chip *chip;
-> +    unsigned int i, n;
-> +    int status;
-> +
-> +    chip = gpiod_chip_open_lookup(name);
-> +    if (!chip) {
-> +        error_setg(errp, "Cannot open GPIO chip %s: %s", name,
-> +                   strerror(errno));
-> +        return;
-> +    }
-> +
-> +    n = gpiod_chip_num_lines(chip);
-> +    if (n > maxgpio) {
-> +        warn_report("Last %u GPIO line(s) will not be mapped", n - maxgpio);
-> +        n = maxgpio;
-> +    }
-> +
-> +    for (i = 0; i < n; i++) {
-> +        status = gpiodev_map_line(dev, chip, i, errp);
-> +        if (status < 0) {
-> +            return;
-> +        }
-> +    }
-> +
-> +    info_report("Mapped %u GPIO lines", n);
-> +}
-> diff --git a/configure b/configure
-> index 23b5e93752b6a259..8b133402ef727c8e 100755
-> --- a/configure
-> +++ b/configure
-> @@ -509,6 +509,7 @@ libpmem=""
->  default_devices="yes"
->  plugins="no"
->  fuzzing="no"
-> +gpio=""
-
-Maybe name this feature 'libgpiod'?
-
->  
->  supported_cpu="no"
->  supported_os="no"
-> @@ -1601,6 +1602,10 @@ for opt do
->    ;;
->    --gdb=*) gdb_bin="$optarg"
->    ;;
-> +  --disable-gpio) gpio="no"
-> +  ;;
-> +  --enable-gpio) gpio="yes"
-
-Ditto: --enable-libgpiod, because else it seems rather confusing.
-
-> +  ;;
->    *)
->        echo "ERROR: unknown option $opt"
->        echo "Try '$0 --help' for more information"
-> @@ -1894,6 +1899,7 @@ disabled with --disable-FEATURE, default is enabled if available:
->    debug-mutex     mutex debugging support
->    libpmem         libpmem support
->    xkbcommon       xkbcommon support
-> +  gpio            gpio support
->  
->  NOTE: The object files are built at the place where configure is launched
->  EOF
-> @@ -6250,6 +6256,23 @@ case "$slirp" in
->      ;;
->  esac
->  
-> +##########################################
-> +# check for libgpiod
-> +
-> +if test "$gpio" != "no"; then
-> +    if $pkg_config --exists "libgpiod"; then
-> +        gpio="yes"
-> +        libgpiod_libs=$($pkg_config --libs libgpiod)
-> +        libgpiod_cflags=$($pkg_config --cflags libgpiod)
-> +        libs_softmmu="$libs_softmmu $libgpiod_libs"
-> +        QEMU_CFLAGS="$QEMU_CFLAGS $libgpiod_cflags"
-> +    else
-> +        if test "$gpio" = "yes" ; then
-> +            feature_not_found "gpio" "Install libgpiod"
-> +        fi
-> +        gpio="no"
-> +    fi
-> +fi
->  
->  ##########################################
->  # End of CC checks
-> @@ -6733,6 +6756,7 @@ echo "default devices   $default_devices"
->  echo "plugin support    $plugins"
->  echo "fuzzing support   $fuzzing"
->  echo "gdb               $gdb_bin"
-> +echo "gpio support      $gpio"
->  
->  if test "$supported_cpu" = "no"; then
->      echo
-> @@ -7614,6 +7638,10 @@ if test -n "$gdb_bin" ; then
->      echo "HAVE_GDB_BIN=$gdb_bin" >> $config_host_mak
->  fi
->  
-> +if test "$gpio" = "yes" ; then
-> +  echo "CONFIG_GPIODEV=y" >> $config_host_mak
-> +fi
-> +
->  if test "$tcg_interpreter" = "yes"; then
->    QEMU_INCLUDES="-iquote \$(SRC_PATH)/tcg/tci $QEMU_INCLUDES"
->  elif test "$ARCH" = "sparc64" ; then
-> diff --git a/include/sysemu/gpiodev.h b/include/sysemu/gpiodev.h
-> new file mode 100644
-> index 0000000000000000..bedd141001245207
-> --- /dev/null
-> +++ b/include/sysemu/gpiodev.h
-> @@ -0,0 +1,12 @@
-> +/*
-> + * QEMU GPIO Backend
-> + *
-> + * Copyright (C) 2018-2020 Glider bv
-> + *
-> + * SPDX-License-Identifier: GPL-2.0-or-later
-> + */
-> +
-> +#include "qemu/typedefs.h"
-
-"qemu/typedefs.h" not needed in includes.
-
-> +
-> +void qemu_gpiodev_add(DeviceState *dev, const char *name, unsigned int maxgpio,
-> +                      Error **errp);
-> 
+UGF0Y2hldyBVUkw6IGh0dHBzOi8vcGF0Y2hldy5vcmcvUUVNVS8yMDIwMDQyMzA5MDExOC4xMTE5
+OS0xLWdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlLwoKCgpIaSwKClRoaXMgc2VyaWVzIGZhaWxlZCB0
+aGUgYXNhbiBidWlsZCB0ZXN0LiBQbGVhc2UgZmluZCB0aGUgdGVzdGluZyBjb21tYW5kcyBhbmQK
+dGhlaXIgb3V0cHV0IGJlbG93LiBJZiB5b3UgaGF2ZSBEb2NrZXIgaW5zdGFsbGVkLCB5b3UgY2Fu
+IHByb2JhYmx5IHJlcHJvZHVjZSBpdApsb2NhbGx5LgoKPT09IFRFU1QgU0NSSVBUIEJFR0lOID09
+PQojIS9iaW4vYmFzaApleHBvcnQgQVJDSD14ODZfNjQKbWFrZSBkb2NrZXItaW1hZ2UtZmVkb3Jh
+IFY9MSBORVRXT1JLPTEKdGltZSBtYWtlIGRvY2tlci10ZXN0LWRlYnVnQGZlZG9yYSBUQVJHRVRf
+TElTVD14ODZfNjQtc29mdG1tdSBKPTE0IE5FVFdPUks9MQo9PT0gVEVTVCBTQ1JJUFQgRU5EID09
+PQoKICBDQyAgICAgIGNoYXJkZXYvY2hhci1waXBlLm8KICBDQyAgICAgIGNoYXJkZXYvY2hhci1w
+dHkubwoKV2FybmluZywgdHJlYXRlZCBhcyBlcnJvcjoKL3RtcC9xZW11LXRlc3Qvc3JjL2RvY3Mv
+Li4vcWVtdS1vcHRpb25zLmh4Ojg4MTpVbmV4cGVjdGVkIGluZGVudGF0aW9uLgogIENDICAgICAg
+Y2hhcmRldi9jaGFyLXJpbmdidWYubwogIENDICAgICAgY2hhcmRldi9jaGFyLXNlcmlhbC5vCgpX
+YXJuaW5nLCB0cmVhdGVkIGFzIGVycm9yOgovdG1wL3FlbXUtdGVzdC9zcmMvZG9jcy8uLi9xZW11
+LW9wdGlvbnMuaHg6ODgxOlVuZXhwZWN0ZWQgaW5kZW50YXRpb24uCiAgQ0MgICAgICBjaGFyZGV2
+L2NoYXItc29ja2V0Lm8KICBDQyAgICAgIGNoYXJkZXYvY2hhci1zdGRpby5vCi0tLQogIENDICAg
+ICAgYmxvY2tkZXYtbmJkLm8KICBDQyAgICAgIGlvdGhyZWFkLm8KICBDQyAgICAgIGpvYi1xbXAu
+bwptYWtlOiAqKiogW01ha2VmaWxlOjExMTU6IC5kb2NzX3N5c3RlbV9xZW11LjFfZG9jc19zeXN0
+ZW1fcWVtdS1ibG9jay1kcml2ZXJzLjdfZG9jc19zeXN0ZW1fcWVtdS1jcHUtbW9kZWxzLjcuc2Vu
+dGluZWwuXSBFcnJvciAyCm1ha2U6ICoqKiBEZWxldGluZyBmaWxlICcuZG9jc19zeXN0ZW1fcWVt
+dS4xX2RvY3Nfc3lzdGVtX3FlbXUtYmxvY2stZHJpdmVycy43X2RvY3Nfc3lzdGVtX3FlbXUtY3B1
+LW1vZGVscy43LnNlbnRpbmVsLicKbWFrZTogKioqIFdhaXRpbmcgZm9yIHVuZmluaXNoZWQgam9i
+cy4uLi4KbWFrZTogKioqIFtNYWtlZmlsZToxMTA0OiBkb2NzL3N5c3RlbS9pbmRleC5odG1sXSBF
+cnJvciAyClRyYWNlYmFjayAobW9zdCByZWNlbnQgY2FsbCBsYXN0KToKICBGaWxlICIuL3Rlc3Rz
+L2RvY2tlci9kb2NrZXIucHkiLCBsaW5lIDY2NCwgaW4gPG1vZHVsZT4KICAgIHN5cy5leGl0KG1h
+aW4oKSkKLS0tCiAgICByYWlzZSBDYWxsZWRQcm9jZXNzRXJyb3IocmV0Y29kZSwgY21kKQpzdWJw
+cm9jZXNzLkNhbGxlZFByb2Nlc3NFcnJvcjogQ29tbWFuZCAnWydzdWRvJywgJy1uJywgJ2RvY2tl
+cicsICdydW4nLCAnLS1sYWJlbCcsICdjb20ucWVtdS5pbnN0YW5jZS51dWlkPTU4M2IxMGUxOTJk
+ODQxZWE5ODVmZTk0NzRlOWNjZTViJywgJy11JywgJzEwMDMnLCAnLS1zZWN1cml0eS1vcHQnLCAn
+c2VjY29tcD11bmNvbmZpbmVkJywgJy0tcm0nLCAnLWUnLCAnVEFSR0VUX0xJU1Q9eDg2XzY0LXNv
+ZnRtbXUnLCAnLWUnLCAnRVhUUkFfQ09ORklHVVJFX09QVFM9JywgJy1lJywgJ1Y9JywgJy1lJywg
+J0o9MTQnLCAnLWUnLCAnREVCVUc9JywgJy1lJywgJ1NIT1dfRU5WPScsICctZScsICdDQ0FDSEVf
+RElSPS92YXIvdG1wL2NjYWNoZScsICctdicsICcvaG9tZS9wYXRjaGV3Mi8uY2FjaGUvcWVtdS1k
+b2NrZXItY2NhY2hlOi92YXIvdG1wL2NjYWNoZTp6JywgJy12JywgJy92YXIvdG1wL3BhdGNoZXct
+dGVzdGVyLXRtcC00MXhiN2JlXy9zcmMvZG9ja2VyLXNyYy4yMDIwLTA0LTIzLTA1LjA5LjU2LjEw
+MjQ4Oi92YXIvdG1wL3FlbXU6eixybycsICdxZW11OmZlZG9yYScsICcvdmFyL3RtcC9xZW11L3J1
+bicsICd0ZXN0LWRlYnVnJ10nIHJldHVybmVkIG5vbi16ZXJvIGV4aXQgc3RhdHVzIDIuCmZpbHRl
+cj0tLWZpbHRlcj1sYWJlbD1jb20ucWVtdS5pbnN0YW5jZS51dWlkPTU4M2IxMGUxOTJkODQxZWE5
+ODVmZTk0NzRlOWNjZTViCm1ha2VbMV06ICoqKiBbZG9ja2VyLXJ1bl0gRXJyb3IgMQptYWtlWzFd
+OiBMZWF2aW5nIGRpcmVjdG9yeSBgL3Zhci90bXAvcGF0Y2hldy10ZXN0ZXItdG1wLTQxeGI3YmVf
+L3NyYycKbWFrZTogKioqIFtkb2NrZXItcnVuLXRlc3QtZGVidWdAZmVkb3JhXSBFcnJvciAyCgpy
+ZWFsICAgIDNtMzAuMjMycwp1c2VyICAgIDBtOC40NTdzCgoKVGhlIGZ1bGwgbG9nIGlzIGF2YWls
+YWJsZSBhdApodHRwOi8vcGF0Y2hldy5vcmcvbG9ncy8yMDIwMDQyMzA5MDExOC4xMTE5OS0xLWdl
+ZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlL3Rlc3RpbmcuYXNhbi8/dHlwZT1tZXNzYWdlLgotLS0KRW1h
+aWwgZ2VuZXJhdGVkIGF1dG9tYXRpY2FsbHkgYnkgUGF0Y2hldyBbaHR0cHM6Ly9wYXRjaGV3Lm9y
+Zy9dLgpQbGVhc2Ugc2VuZCB5b3VyIGZlZWRiYWNrIHRvIHBhdGNoZXctZGV2ZWxAcmVkaGF0LmNv
+bQ==
