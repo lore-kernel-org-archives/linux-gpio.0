@@ -2,133 +2,102 @@ Return-Path: <SRS0=DK1R=6H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9235C55195
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 17:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05537C54FCB
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 20:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A25320781
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 17:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D657520728
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Apr 2020 20:34:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="PJ1n/7Eg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iuLVk7tU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbgDWRrs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Apr 2020 13:47:48 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:43459 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729936AbgDWRqb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2020 13:46:31 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id A663D23059;
-        Thu, 23 Apr 2020 19:46:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1587663988;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=O32DELDjRU5+PMHK61TCvsZ+IJXO1DNHAkIMR41h4Oo=;
-        b=PJ1n/7EgcJLAWKllqdtS8BMBKT55xIpWjQlXcYxh9Eok1bVCDNOKdGnH4MZXJBsM6U+N2s
-        9mG6HXl7ETEWm0Ep2pbfj1Sy7QazALi84QMnt5G33HHrNCeoVhYKaBuyYGB87HsTECRBg0
-        iafM9nI115GkTJ22DlVwvkV6TV+sF80=
-From:   Michael Walle <michael@walle.cc>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Walle <michael@walle.cc>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH v3 02/16] mfd: mfd-core: Don't overwrite the dma_mask of the child device
-Date:   Thu, 23 Apr 2020 19:45:29 +0200
-Message-Id: <20200423174543.17161-3-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200423174543.17161-1-michael@walle.cc>
-References: <20200423174543.17161-1-michael@walle.cc>
+        id S1726410AbgDWUeg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Apr 2020 16:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbgDWUef (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2020 16:34:35 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8301C09B042
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 13:34:35 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id a7so2984024pju.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2020 13:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S6QHYAQNJk/r7RcX2egg9QjNYJDfZ7VPfp2pyf+zOWQ=;
+        b=iuLVk7tU3P3H5Mb1U3zBU4nWhOhIRU5F/zHi9uFNWmfJsHIbXcw1Fq8YtaDEcAOuR3
+         JPhKTcSr8mLnmintaxTFgbNsVH/uXvrg8cNfE/krwGJFmsJlsqYeRV7sr6oqMdseMFSQ
+         Qd39yC6MzTDdmRRmpM+96KY4wn8Z7GUwGDU9M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S6QHYAQNJk/r7RcX2egg9QjNYJDfZ7VPfp2pyf+zOWQ=;
+        b=nGv09JVQGz46BI0vG8IsFeXFj/N83Qr67DgjeNHOMxnsmXMgrjGROc9gMFW91ffnrf
+         sqAQH1zo16LA2b+bLQS21z4rbdV+j4JNKwm+ezKdx1rlbtl4afpeqsPVrCaiFE80kygl
+         6uSQBRZSUSuIlWx1hppHw5UbeGyCGbMxubU8OWmbYujM2MlI7Yyk/NevQuWhzb3pWrTh
+         xdp7NA4UWjjQ+OPk6bY543MDodIlXvjUhoo6PIiNlcLQ7XzOu2QheanXlYbJa7UmHp8x
+         pWNX6qm3+W3viiMFHRP2ymj8wQVoJUdCxeF1+C3v1rPNchq3HCqcH597A7+vnXrXQLaH
+         uvig==
+X-Gm-Message-State: AGi0PuY0PhkrJ81sFHkiTh8rrClVZaf7xm/XjAhRipmz6M/m3ZiD/nNq
+        BsKgVQ1CVpvuA6MeuK2pOV0hMA==
+X-Google-Smtp-Source: APiQypJXeojnpJa/3rx7LWMgNYonCQfG+V/x3GE+RkoYxeMue+ICy0iF43qe2z6K+6WZkzhatKZVpg==
+X-Received: by 2002:a17:902:8688:: with SMTP id g8mr5781326plo.268.1587674075346;
+        Thu, 23 Apr 2020 13:34:35 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id c3sm3391925pfa.160.2020.04.23.13.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2020 13:34:34 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Alexandru M Stan <amstan@chromium.org>
+Subject: [PATCH] gpiolib: devprop: Warn if gpio-line-names is too long
+Date:   Thu, 23 Apr 2020 13:34:16 -0700
+Message-Id: <20200423203416.133274-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.26.2.303.gf8c07b1a785-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Rspamd-Server: web
-X-Rspamd-Queue-Id: A663D23059
-X-Spamd-Result: default: False [6.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         NEURAL_SPAM(0.00)[0.997];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[26];
-         MID_CONTAINS_FROM(1.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c:8000::/33, country:DE];
-         FREEMAIL_CC(0.00)[linaro.org,baylibre.com,kernel.org,suse.com,roeck-us.net,gmail.com,pengutronix.de,linux-watchdog.org,nxp.com,linutronix.de,lakedaemon.net,linuxfoundation.org,walle.cc,arm.com];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit cdfee5623290 ("driver core: initialize a default DMA mask for
-platform device") initialize the DMA of a platform device. But if the
-parent doesn't have a dma_mask set, for example if it's an I2C device,
-the dma_mask of the child platform device will be set to zero again.
-Which leads to many "DMA mask not set" warnings, if the MFD cell has the
-of_compatible property set.
+Some DT authors (including myself) have messed up the length of
+gpio-line-names and made it longer than it should be. Add a warning here
+so that developers can figure out that they've messed up their DT and
+should fix it.
 
-[    1.877937] sl28cpld-pwm sl28cpld-pwm: DMA mask not set
-[    1.883282] sl28cpld-pwm sl28cpld-pwm.0: DMA mask not set
-[    1.888795] sl28cpld-gpio sl28cpld-gpio: DMA mask not set
-
-Thus don't overwrite the dma_mask of the children. Instead set the
-dma_mask of the platform device.
-
-Signed-off-by: Michael Walle <michael@walle.cc>
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Cc: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/mfd/mfd-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib-devprop.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index f5a73af60dd4..e735565969b3 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -138,7 +138,7 @@ static int mfd_add_device(struct device *parent, int id,
+diff --git a/drivers/gpio/gpiolib-devprop.c b/drivers/gpio/gpiolib-devprop.c
+index 53781b253986..26741032fa9e 100644
+--- a/drivers/gpio/gpiolib-devprop.c
++++ b/drivers/gpio/gpiolib-devprop.c
+@@ -37,8 +37,11 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip,
+ 	if (count < 0)
+ 		return;
  
- 	pdev->dev.parent = parent;
- 	pdev->dev.type = &mfd_dev_type;
--	pdev->dev.dma_mask = parent->dma_mask;
-+	pdev->platform_dma_mask = parent->dma_mask ? *parent->dma_mask : 0;
- 	pdev->dev.dma_parms = parent->dma_parms;
- 	pdev->dev.coherent_dma_mask = parent->coherent_dma_mask;
+-	if (count > gdev->ngpio)
++	if (count > gdev->ngpio) {
++		dev_warn(&gdev->dev, "gpio-line-names is length %d but should be at most length %d",
++			 count, gdev->ngpio);
+ 		count = gdev->ngpio;
++	}
  
+ 	names = kcalloc(count, sizeof(*names), GFP_KERNEL);
+ 	if (!names)
 -- 
-2.20.1
+Sent by a computer, using git, on the internet
 
