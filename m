@@ -2,83 +2,115 @@ Return-Path: <SRS0=/bfN=6M=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B0C83000
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FDBC83001
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B969206D9
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:11:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JqQK1pUR"
+	by mail.kernel.org (Postfix) with ESMTP id 7B0FC206D7
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgD1OLw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Apr 2020 10:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbgD1OLw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Apr 2020 10:11:52 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0ACC03C1A9
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 07:11:52 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id f11so17043431ljp.1
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 07:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mtVBUdOCpGd8hnqqLGaI2J2CR4Azzg/zrhcVqiGTGls=;
-        b=JqQK1pURcb48Z2JRlimIBHmXunPRn50VSOxetMKgpzbtFFyedvhOGTMtbPYc1q8PM/
-         GSJmrYOsNOuDZr1siFf8x63cGAEwtH64AQ8H8pt3pdzx4LLW+fVN0T57YBf1ADvChxgr
-         Rb228izP+QrFoGwcKRwAo8AGyS7sVbxRiIE3DAeoQ+tBGkbqnGnrlZdafej0mxqa+sr0
-         LDzYpdgHjlAA5Fx3FcjyaK1ociNlNlRzmKPO4zSnF1SUH4UvJxBz6z7J5HUyVeVD3sBq
-         n7ezyJAzaJKNBOGoArB5/v7ysk62rbHL1keGMdguH41guWv67UCnmDCuwYP//4rmRybc
-         2E6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mtVBUdOCpGd8hnqqLGaI2J2CR4Azzg/zrhcVqiGTGls=;
-        b=f8pfPilpH6VzsfNTzeo1nbXB7Uuy9YxmwRG4vg5mtDjQ5Qd3zb6JiQNn3C0Yz4o8K9
-         ExtKCn+1kRaK8BvujqHa/YHEgwSkj1TD4kXfITbGgRu2jRHaI4Fs2DHNUIawkrzJTl4S
-         DmxODtcNRxpo1Xzxt13LkdOA332qdxe7t2i2EaGjtjvavhyY6+xTjfjKAu3QRBVaKCp/
-         wkLIzBau26t2XLl14l7ji8/RDCdI+XGezT5Y5xxQh4y4S3xYZnQblunxRokvaQwM+ry6
-         bFuVuJJ0rmXNim911cb5zUdUyBkm9cslRJ5w+riMD9rI5FeAeK7p9sFW61LOWSHUOo5X
-         ARCQ==
-X-Gm-Message-State: AGi0PubKak1xeGLIFrBR/MFYODnMxtNLvus8mRylNk5tEshvCBZKRVqT
-        HLu54SqyPdaoDGJwik5HKcehaAjdGoOjM0+fIiwspw==
-X-Google-Smtp-Source: APiQypKAHI7m6Ls+Uc8E2TsRbPo/WARh54Vyg4nS33u8nYakydliVnU0FEVuQDAq9BXo6PEIo0HC/rszrwpDHRXdZxY=
-X-Received: by 2002:a05:651c:1058:: with SMTP id x24mr18422861ljm.39.1588083110781;
- Tue, 28 Apr 2020 07:11:50 -0700 (PDT)
+        id S1727114AbgD1OS5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Apr 2020 10:18:57 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37055 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727078AbgD1OS4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 28 Apr 2020 10:18:56 -0400
+IronPort-SDR: ON3zgZzo0gQ5dAadDDJSsLm0uHUdpmfxCZ6Gp0esuBB8pCtVKnbqZniwgtY/oigIO4EHxRZUmF
+ 3ZKT7u7YMnQg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 07:18:56 -0700
+IronPort-SDR: LsyQfmOH4xWCt/wrZ0Yl8XAjPU6E+GAvNo0FVrezkBj+k7UNW2QkhJCHrX4HNi86goE+75EVlW
+ T1ULfvxIQLFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,328,1583222400"; 
+   d="scan'208";a="404704895"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga004.jf.intel.com with ESMTP; 28 Apr 2020 07:18:54 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jTR4b-003ZQM-94; Tue, 28 Apr 2020 17:18:57 +0300
+Date:   Tue, 28 Apr 2020 17:18:57 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Paul Thomas <pthomas8589@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v3 1/3] gpio: pca953x: Rewrite ->get_multiple() function
+Message-ID: <20200428141857.GW185537@smile.fi.intel.com>
+References: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
+ <20200421130300.GK185537@smile.fi.intel.com>
+ <CAMpxmJVVDUN6ei__wt5z+hOJQ0w0r9TZjhN9HCtpCA8Vrud0qg@mail.gmail.com>
+ <CACRpkdYDHiscnm0BrSTwG6=-SCWZeqVfnEEkMAeQcco77GM8kg@mail.gmail.com>
+ <20200428124129.GR185537@smile.fi.intel.com>
+ <CAD56B7cR9asgW-6PS7V+jZ8O7AYeYuH9egnF1G0uoQQaS9GhMA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200427110829.154785-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200427110829.154785-1-weiyongjun1@huawei.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 28 Apr 2020 16:11:39 +0200
-Message-ID: <CACRpkdYpFBUZfSKbA4ENdc7T5kHn4HmB=esUkKg1CpFoTeOU0g@mail.gmail.com>
-Subject: Re: [PATCH -next] gpio: mlxbf2: fix return value check in mlxbf2_gpio_get_lock_res()
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD56B7cR9asgW-6PS7V+jZ8O7AYeYuH9egnF1G0uoQQaS9GhMA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 1:07 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Tue, Apr 28, 2020 at 09:09:03AM -0400, Paul Thomas wrote:
+> On Tue, Apr 28, 2020 at 8:41 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Tue, Apr 28, 2020 at 02:13:21PM +0200, Linus Walleij wrote:
+> > > On Tue, Apr 21, 2020 at 5:42 PM Bartosz Golaszewski
+> > > <bgolaszewski@baylibre.com> wrote:
+> > > > wt., 21 kwi 2020 o 15:03 Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> napisał(a):
+> > > > > On Mon, Apr 20, 2020 at 08:27:50PM +0300, Andy Shevchenko wrote:
+> >
+> > ...
+> >
+> > > I don't mind trying to put in code to optimize use cases
+> > > when accessing single bytes here either. But I'd like there
+> > > to be explicit comments in the code saying why these
+> > > optimizations are there. Can we do those on top of
+> > > this (hopefully) known working base?
+> For the record my original get_multiple patch was a known working base.
+> 
+> >
+> > As I pointed out to Paul, the optimization like he proposed is not bad thing
+> > per se, the implementation is. On top of that I suggested to take a look to IRQ
+> > status bits, which presumable will leverage from this optimization as well.
+> >
+> > So, After applying this series it would be matter of change one line in the
+> > ->get_multiple() to replace read_regs() with optimized version or so along with
+> > IRQ bits changes.
+> 
+> This new function would then at least need to be called with mask as
+> an additional argument right? Then the bitmap_replace() will set
+> everything regardless of if it was read, this is fine I suppose
+> because it doesn't matter if it's setting bits outside of mask. You
+> just have two loops one in the new function and one in
+> bitmap_replace().
 
-> In case of error, the function devm_ioremap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Note, on 64-bit architectures there is no loop in bitmap ops (since 40 <= 64 in
+this case). On 32-bit it might be (only for 40 case, which I think less present
+in the wild than the rest). And bitmap ops are optimized over longs, so, it's
+pretty much fast (esp. in comparison to I²C IO).
 
-Patch applied.
+> If this is what people would like to see I can work
+> on it. I did look into the sparse reads and it seems as though regmap
+> has a gather_write, but not a gather_read and gather_write isn't in
+> regmap-i2c.c anyway.
 
-Yours,
-Linus Walleij
+Yes, I think this is the right way to go.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
