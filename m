@@ -2,87 +2,257 @@ Return-Path: <SRS0=NTAR=6N=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EC6C83007
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 12:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AA4C83003
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 12:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C206C21BE5
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 12:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878A021D7E
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 12:21:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HeQpH7rx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="BJYD6VCv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgD2MTv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Apr 2020 08:19:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726524AbgD2MTu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Apr 2020 08:19:50 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0A4C03C1AD
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Apr 2020 05:19:48 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id u10so1454790lfo.8
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Apr 2020 05:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C1Ts4DfOpbqwNmKAyV/9/Lll4n9YArjQ/mn7brU53Ks=;
-        b=HeQpH7rxp/Oyh4cRIDkKuEC/nrOQkmhe2swtarQuUReEO9o8Fgc5g5gq10VX8AQ9Ca
-         9FUz0xLE0yzVF97yDlEt5U8ogfTQLqmFS5CBYqICi2zKUeyYtLnU/dG73H3PEFPr4uzg
-         O7fEBhpMIUKX1MZfGlQ3RPfC8YI+3CQ4CWCQ2+9tqLp6xSNSavLwClNKF9av4efRAURB
-         KeARE2/mJ0kKPp8hy5nuL4+z4J2kd9NG229n7jc0ndiQF1qA1xFeAMNAHoETBgACTXeB
-         QqIgG/CQ1UTq3Q8vG88ewPteWzXsxqDvel6D9PYwVvaXXYsiFAA8QiKShxdQzqvsKXpw
-         IdMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C1Ts4DfOpbqwNmKAyV/9/Lll4n9YArjQ/mn7brU53Ks=;
-        b=QshG3OoHaaOZliTsF61rv7o2c27s3tT3tTLM09uSvgh6iGuzxsyMakjhThsW/5gDDj
-         +DKzCL2k/OQQZM9eqKpihkD/R3vSJnWUG03kAZjEQ3dDJyIc/VyD3HqDhemYoPtnp8WK
-         brxAU6AsdNp91C22mSW/Qmm9lQxACMh4erk+Sl6TM1KzjFbCMD4ogVajNh78VjhrOldo
-         PHMdxeckKWi+m/r4MyLXeDX8OOgtwoMr42g+dE71W7maIdBx/EqJvhefmwFb6pp03jXX
-         NAqq339eu0yqP5BjRYhsY9ocD/qYlKEXMZma9vmw6zXPy/n2haoXuM3nkAB1mYw55JEI
-         hCJw==
-X-Gm-Message-State: AGi0PuYl69EDkE8iwkEhWXLlln0OQfe6aNHwbGFxtazdbKykUCGh0dT8
-        qRO1fpqeRU9iitNME0VHP72JWGVrjvP/PUK/RJ5FSniw
-X-Google-Smtp-Source: APiQypJ2jgIIIfWcY9D1adj1uOLPdacJazusj6aGHmHvzzde6RhBsWaPWv8/f2ZwRjyszUh2zAlZgyz1YZbk16iyJ9M=
-X-Received: by 2002:ac2:4a9d:: with SMTP id l29mr21464343lfp.4.1588162786702;
- Wed, 29 Apr 2020 05:19:46 -0700 (PDT)
+        id S1726701AbgD2MVi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Apr 2020 08:21:38 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:34322 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgD2MVi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2020 08:21:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1588162894; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FKkgFmxpN+MKyPoHJp2q8jKr/zPjuo5QgcSt5/FFYlM=;
+        b=BJYD6VCvJr5NwVsS7cOFPVRIp+PL1rfh/JKRMIwhc70MxSxy6RmNeVJyTjDxI2otmwhfoF
+        5QbtopHXuozSQsDjZN9F9OWwYTZd5UwfXQ0K+IvDlG+ysvlppxwmEpMfsvZG77b8cbJhN1
+        I+8+e8MCoetpBc/ro4H5h+TdvwLBKYA=
+Date:   Tue, 28 Apr 2020 16:12:21 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 8/8] dt-bindings: display: Convert ingenic,lcd.txt to YAML
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     od@zcrc.me, =?UTF-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Message-Id: <LS4I9Q.A1ZGRSEVADNN1@crapouillou.net>
+In-Reply-To: <20200426185856.38826-8-paul@crapouillou.net>
+References: <20200426185856.38826-1-paul@crapouillou.net>
+        <20200426185856.38826-8-paul@crapouillou.net>
 MIME-Version: 1.0
-References: <20200428172322.1.I396f351e364f3c09df7c7606e79abefb8682c092@changeid>
- <20200428172322.2.Iacb3c8152c3cf9015a91308678155a578b0cc050@changeid>
-In-Reply-To: <20200428172322.2.Iacb3c8152c3cf9015a91308678155a578b0cc050@changeid>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Apr 2020 14:19:35 +0200
-Message-ID: <CACRpkdaT_G=Wa7iYhfBVGrcViy7EbDH1+Qme+UQTGTWybu7Fzg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Make "offset" and "unsigned int", not just "unsigned"
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 2:24 AM Douglas Anderson <dianders@chromium.org> wrote:
+This one patch will need a V2, I messed up with the clocks.
 
-> When I copied the function prototypes from the GPIO header file into
-> my own driver, checkpatch yelled at me saying that I shouldn't use use
-> "unsigned" but instead should say "unsigned int".  Let's make the
-> header file use "unsigned int" so others who copy like I did won't get
-> yelled at.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+-Paul
 
-Patch applied. Nice cleanup!
 
-Yours,
-Linus Walleij
+Le dim. 26 avril 2020 =E0 20:58, Paul Cercueil <paul@crapouillou.net> a=20
+=E9crit :
+> Convert the ingenic,lcd.txt to a new ingenic,lcd.yaml file.
+>=20
+> In the process, the new ingenic,jz4780-lcd compatible string has been
+> added.
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../bindings/display/ingenic,lcd.txt          |  45 -------
+>  .../bindings/display/ingenic,lcd.yaml         | 113=20
+> ++++++++++++++++++
+>  2 files changed, 113 insertions(+), 45 deletions(-)
+>  delete mode 100644=20
+> Documentation/devicetree/bindings/display/ingenic,lcd.txt
+>  create mode 100644=20
+> Documentation/devicetree/bindings/display/ingenic,lcd.yaml
+>=20
+> diff --git=20
+> a/Documentation/devicetree/bindings/display/ingenic,lcd.txt=20
+> b/Documentation/devicetree/bindings/display/ingenic,lcd.txt
+> deleted file mode 100644
+> index 01e3261defb6..000000000000
+> --- a/Documentation/devicetree/bindings/display/ingenic,lcd.txt
+> +++ /dev/null
+> @@ -1,45 +0,0 @@
+> -Ingenic JZ47xx LCD driver
+> -
+> -Required properties:
+> -- compatible: one of:
+> -  * ingenic,jz4740-lcd
+> -  * ingenic,jz4725b-lcd
+> -  * ingenic,jz4770-lcd
+> -- reg: LCD registers location and length
+> -- clocks: LCD pixclock and device clock specifiers.
+> -	   The device clock is only required on the JZ4740.
+> -- clock-names: "lcd_pclk" and "lcd"
+> -- interrupts: Specifies the interrupt line the LCD controller is=20
+> connected to.
+> -
+> -Example:
+> -
+> -panel {
+> -	compatible =3D "sharp,ls020b1dd01d";
+> -
+> -	backlight =3D <&backlight>;
+> -	power-supply =3D <&vcc>;
+> -
+> -	port {
+> -		panel_input: endpoint {
+> -			remote-endpoint =3D <&panel_output>;
+> -		};
+> -	};
+> -};
+> -
+> -
+> -lcd: lcd-controller@13050000 {
+> -	compatible =3D "ingenic,jz4725b-lcd";
+> -	reg =3D <0x13050000 0x1000>;
+> -
+> -	interrupt-parent =3D <&intc>;
+> -	interrupts =3D <31>;
+> -
+> -	clocks =3D <&cgu JZ4725B_CLK_LCD>;
+> -	clock-names =3D "lcd";
+> -
+> -	port {
+> -		panel_output: endpoint {
+> -			remote-endpoint =3D <&panel_input>;
+> -		};
+> -	};
+> -};
+> diff --git=20
+> a/Documentation/devicetree/bindings/display/ingenic,lcd.yaml=20
+> b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
+> new file mode 100644
+> index 000000000000..8e9c851dc7c5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
+> @@ -0,0 +1,113 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/ingenic,lcd.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Ingenic SoCs LCD controller devicetree bindings
+> +
+> +maintainers:
+> +  - Paul Cercueil <paul@crapouillou.net>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^lcd-controller@[0-9a-f]+$"
+> +
+> +  compatible:
+> +    enum:
+> +      - ingenic,jz4740-lcd
+> +      - ingenic,jz4725b-lcd
+> +      - ingenic,jz4770-lcd
+> +      - ingenic,jz4780-lcd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Module clock
+> +      - description: Pixel clock
+> +    minItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: lcd
+> +      - const: lcd_pclk
+> +    minItems: 1
+> +
+> +  port:
+> +    type: object
+> +    description:
+> +      A port node with endpoint definitions as defined in
+> +      Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +required:
+> +    - compatible
+> +    - reg
+> +    - interrupts
+> +    - clocks
+> +    - clock-names
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - ingenic,jz4740-lcd
+> +          - ingenic,jz4780-lcd
+> +then:
+> +  properties:
+> +    clocks:
+> +      minItems: 2
+> +    clock-names:
+> +      minItems: 2
+> +else:
+> +  properties:
+> +    clocks:
+> +      maxItems: 1
+> +    clock-names:
+> +      maxItems: 1
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/jz4740-cgu.h>
+> +    lcd-controller@13050000 {
+> +      compatible =3D "ingenic,jz4740-lcd";
+> +      reg =3D <0x13050000 0x1000>;
+> +
+> +      interrupt-parent =3D <&intc>;
+> +      interrupts =3D <30>;
+> +
+> +      clocks =3D <&cgu JZ4740_CLK_LCD>, <&cgu JZ4740_CLK_LCD_PCLK>;
+> +      clock-names =3D "lcd", "lcd_pclk";
+> +
+> +      port {
+> +        endpoint {
+> +          remote-endpoint =3D <&panel_input>;
+> +        };
+> +      };
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/clock/jz4725b-cgu.h>
+> +    lcd-controller@13050000 {
+> +      compatible =3D "ingenic,jz4725b-lcd";
+> +      reg =3D <0x13050000 0x1000>;
+> +
+> +      interrupt-parent =3D <&intc>;
+> +      interrupts =3D <31>;
+> +
+> +      clocks =3D <&cgu JZ4725B_CLK_LCD>;
+> +      clock-names =3D "lcd";
+> +
+> +      port {
+> +        endpoint {
+> +          remote-endpoint =3D <&panel_input>;
+> +        };
+> +      };
+> +    };
+> --
+> 2.26.2
+>=20
+
+
