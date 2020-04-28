@@ -2,109 +2,116 @@ Return-Path: <SRS0=/bfN=6M=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74044C8300A
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 09:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A115C83000
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 09:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ECE8206A1
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 09:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D83206C0
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 09:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UzrziHuf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6oemS2L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgD1Joh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Apr 2020 05:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45856 "EHLO
+        id S1727030AbgD1J4j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Apr 2020 05:56:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727025AbgD1Jog (ORCPT
+        by vger.kernel.org with ESMTP id S1726932AbgD1J4i (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 28 Apr 2020 05:44:36 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DD0C03C1A9
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 02:44:36 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id g10so16262896lfj.13
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 02:44:35 -0700 (PDT)
+        Tue, 28 Apr 2020 05:56:38 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D1BC03C1A9
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 02:56:38 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id u15so20804579ljd.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 02:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0UwsKd6vtLSCO+MFkJGwQlziNOURozUhwGk20R/4vuY=;
-        b=UzrziHufYg2IV1lUy1O45fipzDSH8BPk7s1ZbmSWgXVN+n9GnxcaReQ5cGUslhnEQZ
-         4JHya+bD2zeWKzi5H+7AWh9YMUGX4C0zRrSSTdK8A77cLK8VLkrABNliLF/p6/hW92e1
-         /MbDwESeW1WeukvySmU40LWggL/BNtzT6ahJ4+kwARYu3vKv49zUWPRhFH4SS0Z69N10
-         pT1vn221GFY80EXfMZTxIn+R1Z0no2h7rpBwqlcb4i1er0vk78o1WfxjfsxrV8Z9AEoz
-         5X0F3toGKfs7VvYB0Rx7v/8GpbJ4zQcMReY68MDfGFUwmZmm7WyG0TGxef4LuoWqFlHR
-         LU9w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dUYMvHNm1S+cpRAgh6CuSzaN8QMyIl6tpzVnoQoDNsE=;
+        b=O6oemS2LnyyWHZ8OwOVA5KOWkg8pK08yWXcrww9azpSPIXoqcyZUqaeM+3xVi2ke0u
+         +N6PeCK3fdOn6+nxTApK1Ve3c6+2SjX3uanr9QyJK0/7sHiR7ZSG3zOTztgcd/ym8fXa
+         o1c6DSg/BSnqC0YDotD1dhY/RN0m/4GXyeUDpgX2b8XUHT9ZLKC5d0wy37aIV2JR2ANF
+         edfFxnlJhe5pdtlMc2ZMCQZL0m2MykJTd5yLS1+DHzNuoUFcICYI/41mUidjkTSbpuoD
+         9jH0Q7n7ugThfQG3sHPJfC7kpdAmjVEmtmUnEtLuu3ViKE03MeHAGm3FuPRkK6ZQeNTn
+         QPQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0UwsKd6vtLSCO+MFkJGwQlziNOURozUhwGk20R/4vuY=;
-        b=VwUadob88THbXlCBo7pEKjSG9FR0n4jeM9jgDVXvvQxKsFdCq7pifXbV424If5c/KR
-         Gr7ynPzogt31m/fUOWsMuyGEkpfFeI0jHjEkp9AATZD4XLm8fvPfjOb1bAWKciV8BiEq
-         fD3Ss/tX29RGBIEzhcV997asYao0jilulmpJTx/UcFkOPuCLe6su0bqqOYMBwbqLAmFl
-         6XjgIFQ//ESCnhN1hiK6mUZzt1Uj44Clrar/w9T6hrf8gyDfpCKmIt1XOVbJPGQPad/M
-         SNKbPSYzJIAP5CsWhxaKrmgvsumV0De5Lu1tkbNIrNEtVSofHFxwFmDrIMKjvZCuPXVJ
-         70Fw==
-X-Gm-Message-State: AGi0PuaCkIYIehkt1VYi1f0qJwjKePOk4ahS+THaeiS7hsoz93KRe3jy
-        aSnD9IxjLA3yoczEhQlX/Oa40JDPXc8=
-X-Google-Smtp-Source: APiQypIBKhDUiLxNAiSUtFtMDDZwJ8vw1Zk/y3Q8O4xhflXGe24Z5uCiL+QpLZQ1GNBGzp7zOzFjdQ==
-X-Received: by 2002:a19:f70c:: with SMTP id z12mr19177901lfe.78.1588067074270;
-        Tue, 28 Apr 2020 02:44:34 -0700 (PDT)
-Received: from localhost.localdomain (c-f3d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.243])
-        by smtp.gmail.com with ESMTPSA id y9sm12213747ljm.11.2020.04.28.02.44.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2020 02:44:33 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Hulk Robot <hulkci@huawei.com>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH] pinctrl: ab8505: Define group for GPIO pin 50
-Date:   Tue, 28 Apr 2020 11:42:29 +0200
-Message-Id: <20200428094229.843531-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.25.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dUYMvHNm1S+cpRAgh6CuSzaN8QMyIl6tpzVnoQoDNsE=;
+        b=tnA3WqNzelf5+Bf276LPZjegMq/+rJCIFFT4aG0bAWk3RCCOvXPqmxND7eZLjiP3/X
+         J7sbyVbcoJwJDWRqZTl97tiSIturZlL821zi9dpppbeYSs6cAcFItYd0S93FMyNp9O4b
+         4v554Rt4mMI+DzffwNkm5mNvMeWA7u3bNS2rJl+vToj5RPuAiJIPxAIRu7UVJfVVPciU
+         8ImqTOP39l8fgIByUry+/9pRHluaMh8JZw/gVwjbKX3+KPc7Ol5vVcoYW3k5GHPzYa9q
+         q+JEQRBn+KaAkbu3RY7n+wxcy7VbI9w9K0jMJZ7m2DB5r7LQxg8QjF4e8khIyB3DK+XA
+         h89Q==
+X-Gm-Message-State: AGi0PuaWsjkQeZwXiTrK4Y1IaD8qp+ijP7olK/cRViTnnadJcVkQn3gq
+        rv3V5EVg8b9g9qpI42RoQZH4RQfZZiG7Sa9wi3lFqQ==
+X-Google-Smtp-Source: APiQypJlwiuxB4ab5wQqVxYuJTJqT6PIowMT3AHLQ+WNf0e2mYCYXwqrwm6FFZORaGA6n3AkLGy307SzZEMgXnQ6Ro8=
+X-Received: by 2002:a2e:b6cf:: with SMTP id m15mr16549672ljo.168.1588067796808;
+ Tue, 28 Apr 2020 02:56:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200417073512.42350-1-yanaijie@huawei.com>
+In-Reply-To: <20200417073512.42350-1-yanaijie@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 28 Apr 2020 11:56:25 +0200
+Message-ID: <CACRpkdaH1bet-iBxB7pM9-_swpXkuUiMeg6jwTyx2j8WiB2G_g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: nomadik: db8500: remove some unused symbols
+To:     Jason Yan <yanaijie@huawei.com>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Hulk robot reports an usused varible:
+On Fri, Apr 17, 2020 at 9:08 AM Jason Yan <yanaijie@huawei.com> wrote:
 
-drivers/pinctrl/nomadik/pinctrl-ab8505.c:137:23: warning:
-‘gpio50_a_1_pins’ defined but not used [-Wunused-const-variable=]
- static const unsigned gpio50_a_1_pins[] = { AB8505_PIN_L4 };
-                       ^~~~~~~~~~~~~~~
+> Fix the following gcc warning:
+>
+> drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:899:20: warning:
+> =E2=80=98sbag_groups=E2=80=99 defined but not used [-Wunused-const-variab=
+le=3D]
+>  DB8500_FUNC_GROUPS(sbag, "sbag_oc2_1", "sbag_oc4_1");
+>                     ^
+> drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:570:23: warning:
+> =E2=80=98ipgpio6_c_2_pins=E2=80=99 defined but not used [-Wunused-const-v=
+ariable=3D]
+>  static const unsigned ipgpio6_c_2_pins[] =3D { DB8500_PIN_G3 };
+>                        ^~~~~~~~~~~~~~~~
+> drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:472:23: warning:
+> =E2=80=98mc1dir_a_1_pins=E2=80=99 defined but not used [-Wunused-const-va=
+riable=3D]
+>  static const unsigned mc1dir_a_1_pins[] =3D { DB8500_PIN_AH13,
+> DB8500_PIN_AG12,
+>                        ^~~~~~~~~~~~~~~
+> drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:453:23: warning:
+> =E2=80=98modem_a_1_pins=E2=80=99 defined but not used [-Wunused-const-var=
+iable=3D]
+>  static const unsigned modem_a_1_pins[] =3D { DB8500_PIN_D22,
+> DB8500_PIN_C23,
+>                        ^~~~~~~~~~~~~~
+> drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c:430:23: warning:
+> =E2=80=98kpskaskb_a_1_pins=E2=80=99 defined but not used [-Wunused-const-=
+variable=3D]
+>  static const unsigned kpskaskb_a_1_pins[] =3D { DB8500_PIN_D17,
+> DB8500_PIN_D16 };
+>                        ^~~~~~~~~~~~~~~~~
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
 
-This variable actually should be used. Probably an oversight
-by the driver author.
+These should not be deleted but used properly. I've sent another
+patch fixing the problem and adding you as Reported-by.
 
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Reported-by: Jason Yan <yanaijie@huawei.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-ab8505.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/nomadik/pinctrl-ab8505.c b/drivers/pinctrl/nomadik/pinctrl-ab8505.c
-index 5e6e7d28390a..b93af1fb37f0 100644
---- a/drivers/pinctrl/nomadik/pinctrl-ab8505.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-ab8505.c
-@@ -178,6 +178,7 @@ static const struct abx500_pingroup ab8505_groups[] = {
- 	AB8505_PIN_GROUP(gpio40_a_1, ABX500_ALT_A),
- 	AB8505_PIN_GROUP(gpio41_a_1, ABX500_ALT_A),
- 	AB8505_PIN_GROUP(uartrxdata_a_1, ABX500_ALT_A),
-+	AB8505_PIN_GROUP(gpio50_a_1, ABX500_ALT_A),
- 	AB8505_PIN_GROUP(gpio52_a_1, ABX500_ALT_A),
- 	AB8505_PIN_GROUP(gpio53_a_1, ABX500_ALT_A),
- 	AB8505_PIN_GROUP(pdmdata_b_1, ABX500_ALT_B),
--- 
-2.25.2
-
+Yours,
+Linus Walleij
