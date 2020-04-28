@@ -2,132 +2,148 @@ Return-Path: <SRS0=/bfN=6M=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6131FC83000
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890C0C83000
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ACC3206D6
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64063206C0
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Apr 2020 14:58:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je3aj6V0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbgD1Ot4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Apr 2020 10:49:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:53152 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727930AbgD1Otz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 28 Apr 2020 10:49:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D0A331B;
-        Tue, 28 Apr 2020 07:49:54 -0700 (PDT)
-Received: from [10.57.33.170] (unknown [10.57.33.170])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92DCD3F305;
-        Tue, 28 Apr 2020 07:49:50 -0700 (PDT)
-Subject: Re: [PATCH v3 02/16] mfd: mfd-core: Don't overwrite the dma_mask of
- the child device
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Walle <michael@walle.cc>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20200423174543.17161-1-michael@walle.cc>
- <20200423174543.17161-3-michael@walle.cc>
- <20200428124548.GS185537@smile.fi.intel.com>
- <3cd3705a-4f48-6a46-e869-3ee11dc17323@arm.com>
- <20200428142938.GX185537@smile.fi.intel.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6ccad285-7b5f-3037-d4d5-ff4d9571b612@arm.com>
-Date:   Tue, 28 Apr 2020 15:49:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1728045AbgD1O6l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Apr 2020 10:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727108AbgD1O6l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 28 Apr 2020 10:58:41 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12199C03C1AB
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 07:58:41 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id g10so17066221lfj.13
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2020 07:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=AI/lAl2E39n1eOLRzzi7kmT9878t5PM3d6Yd1uaMdxI=;
+        b=Je3aj6V0coCuXOHuX9V2/3Tz7gBuN7LSSoayvjoylpdiQsHmqV+Clntyta7S7f9pH2
+         /+OkDRLIjBYMQDsrUwvBfmAgX4imusgpfYZkfpEH84k5cUr+b6tQmrChTCyOJ9LSEm53
+         YRo2Bpn/26bcwZUrdYH0rfA2v91mHhqaR/RgJJpQzxeG6W8795cmtIn8KJcRUaEBddpS
+         TUQXQ6t6dQP//9HPgDCGKBn0WBOl6Bujgi/O0ZSV06a4gOo48UkzVwzvvp7NTjppssQK
+         jSKbgifqj9epfO8SwkjiWdhXQYut/l2emHfU/RalppnwkLOciehN6woaOhN3o08h1lci
+         kclQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=AI/lAl2E39n1eOLRzzi7kmT9878t5PM3d6Yd1uaMdxI=;
+        b=H0ODB018rBA5YJ1vnIDo+MeW9F8ks7gCNFwQZq4RfOnyFO7SrcbQPSLgVV41uD+skD
+         WWu4fMz/DZiDkMvGOP1JktupmQ30gjpQRD7wi1o5jC53t7gudYRG+LyBg9vyBfygXDGH
+         UXHt7RigdW5qSB4pD++XIwcRKK758VvsCB8n410HyCeeXkHjUfiTXb17ZiHK/xm7SCkN
+         dQ6ktukrY2/+mFM9fAeKUXTUehJENX793xWfXjaFfqr7I2n5Xe+0d1Ez97JYjdphkj9m
+         Ezm2nDY6BkHXAcycdcwQe8YbuyvtxqE73L0vdR/6gyLz+6qDFlL8amekp5J/9ilf4D0C
+         o1Ug==
+X-Gm-Message-State: AGi0Pua2GU8O2Riw5WivqqrHhW1i8sXxRfczwY/nK3xqDXKJytaOu7gk
+        Eh9E2nJD99FwNgHLtz5lgdUXB3oRNGtmOHvNul97OQ==
+X-Google-Smtp-Source: APiQypKai5078NnTqqUdcWSa7D87j+Ii4ct8v3YUt0zDo3a9RNp94NFAyzhgndaoptxuukFTOnQQbaaRngpT5kxHAJU=
+X-Received: by 2002:ac2:4554:: with SMTP id j20mr19740573lfm.91.1588085919444;
+ Tue, 28 Apr 2020 07:58:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200428142938.GX185537@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20200420172752.33588-1-andriy.shevchenko@linux.intel.com>
+ <20200421130300.GK185537@smile.fi.intel.com> <CAMpxmJVVDUN6ei__wt5z+hOJQ0w0r9TZjhN9HCtpCA8Vrud0qg@mail.gmail.com>
+ <CACRpkdYDHiscnm0BrSTwG6=-SCWZeqVfnEEkMAeQcco77GM8kg@mail.gmail.com>
+ <20200428124129.GR185537@smile.fi.intel.com> <CAD56B7cR9asgW-6PS7V+jZ8O7AYeYuH9egnF1G0uoQQaS9GhMA@mail.gmail.com>
+ <20200428141857.GW185537@smile.fi.intel.com>
+In-Reply-To: <20200428141857.GW185537@smile.fi.intel.com>
+From:   Paul Thomas <pthomas8589@gmail.com>
+Date:   Tue, 28 Apr 2020 10:58:28 -0400
+Message-ID: <CAD56B7eBsLUoLGybzvk-4qQA67-5dCV=UaKFO=zOar6ZVLcaaw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] gpio: pca953x: Rewrite ->get_multiple() function
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2020-04-28 3:29 pm, Andy Shevchenko wrote:
-> On Tue, Apr 28, 2020 at 02:06:20PM +0100, Robin Murphy wrote:
->> On 2020-04-28 1:45 pm, Andy Shevchenko wrote:
->>> On Thu, Apr 23, 2020 at 07:45:29PM +0200, Michael Walle wrote:
->>>> Commit cdfee5623290 ("driver core: initialize a default DMA mask for
->>>> platform device") initialize the DMA of a platform device. But if the
->>>> parent doesn't have a dma_mask set, for example if it's an I2C device,
->>>> the dma_mask of the child platform device will be set to zero again.
->>>> Which leads to many "DMA mask not set" warnings, if the MFD cell has the
->>>> of_compatible property set.
->>>
->>> I'm wondering why parent doesn't have it.
->>
->> Because the parent isn't on a DMA-capable bus, and thus really shouldn't
->> have a valid DMA configuration ever.
-> 
-> Then how come a child is DMA capable?
+On Tue, Apr 28, 2020 at 10:18 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Apr 28, 2020 at 09:09:03AM -0400, Paul Thomas wrote:
+> > On Tue, Apr 28, 2020 at 8:41 AM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Tue, Apr 28, 2020 at 02:13:21PM +0200, Linus Walleij wrote:
+> > > > On Tue, Apr 21, 2020 at 5:42 PM Bartosz Golaszewski
+> > > > <bgolaszewski@baylibre.com> wrote:
+> > > > > wt., 21 kwi 2020 o 15:03 Andy Shevchenko
+> > > > > <andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
+> > > > > > On Mon, Apr 20, 2020 at 08:27:50PM +0300, Andy Shevchenko wrote=
+:
+> > >
+> > > ...
+> > >
+> > > > I don't mind trying to put in code to optimize use cases
+> > > > when accessing single bytes here either. But I'd like there
+> > > > to be explicit comments in the code saying why these
+> > > > optimizations are there. Can we do those on top of
+> > > > this (hopefully) known working base?
+> > For the record my original get_multiple patch was a known working base.
+> >
+> > >
+> > > As I pointed out to Paul, the optimization like he proposed is not ba=
+d thing
+> > > per se, the implementation is. On top of that I suggested to take a l=
+ook to IRQ
+> > > status bits, which presumable will leverage from this optimization as=
+ well.
+> > >
+> > > So, After applying this series it would be matter of change one line =
+in the
+> > > ->get_multiple() to replace read_regs() with optimized version or so =
+along with
+> > > IRQ bits changes.
+> >
+> > This new function would then at least need to be called with mask as
+> > an additional argument right? Then the bitmap_replace() will set
+> > everything regardless of if it was read, this is fine I suppose
+> > because it doesn't matter if it's setting bits outside of mask. You
+> > just have two loops one in the new function and one in
+> > bitmap_replace().
+>
+> Note, on 64-bit architectures there is no loop in bitmap ops (since 40 <=
+=3D 64 in
+> this case). On 32-bit it might be (only for 40 case, which I think less p=
+resent
+> in the wild than the rest). And bitmap ops are optimized over longs, so, =
+it's
+> pretty much fast (esp. in comparison to I=C2=B2C IO).
+>
+> > If this is what people would like to see I can work
+> > on it. I did look into the sparse reads and it seems as though regmap
+> > has a gather_write, but not a gather_read and gather_write isn't in
+> > regmap-i2c.c anyway.
+>
+> Yes, I think this is the right way to go.
+OK, sounds good.
 
-Because it's a platform device, and thanks to decades of legacy we have 
-to assume that any platform devices *is* DMA capable.
+-Paul
 
-> MFD takes a physical device node as a
-> parent and creates one of several children with that device as a parent. DMA
-> mask is a property of the device which *does DMA*. Obviously a child is not
-> correct device for that.
-> 
-> Where am I mistaken?
-
-In theory you're not, however in practice the driver model doesn't 
-really give us a nice way to express the necessary subtle distinctions 
-between this and other similar-looking but fundamentally different 
-parent-child relationships - if it did, we probably wouldn't need the 
-whole MFD layer in the first place. The logical ideal would be to create 
-the children on the same bus as the parent, but as it is doing that 
-would likely lead to the I2C/SPI/whatever bus code assuming they are 
-first-class devices and open up a whole new world of problems.
-
-For better or worse, the platform bus is the dumping ground for random 
-crap, so we just have to deal with all the abstraction breakage that 
-leaks out of that.
-
-Robin.
-
->>> I remember we have explicit patches in the past for buses such as PCI and AMBA
->>> to set default DMA mask for all physical devices on the respective bus, of
->>> course they can individually override it later.
->>>
->>> So, this seems to me a paper over the real issue (absence of default DMA mask
->>> where it's needed) and devices should explicitly define it if they disagree
->>> with default.
->>>
->>> If I'm wrong, you really need elaborate commit message much better.
->>
->> The problem here is that MFD children are created as platform devices
->> (regardless of what their parent is) and assigned an of_node, at which point
->> they look pretty much indistinguishable from SoC devices created by the
->> of_platform code, that *do* have to be assumed to be DMA-capable to prevent
->> ~90% of existing devicetrees from breaking.
->>
->> Of course the real fundamental issue is the platform bus itself, but it's
->> way too late to fix that :(
-> 
-> I don't think it's an issue, rather in model you are describing. Or I miss
-> something not so obvious.
-> 
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
