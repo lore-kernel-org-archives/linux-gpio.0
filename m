@@ -4,153 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA856C83003
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 13:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1890AC83000
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 13:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B182B2087E
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 13:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE1E421707
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Apr 2020 13:57:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbgD2NZA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Apr 2020 09:25:00 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:58085 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgD2NY7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2020 09:24:59 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MN5W9-1jmHai06Xl-00J200; Wed, 29 Apr 2020 15:24:45 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Light Hsieh <light.hsieh@mediatek.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Sean Wang <sean.wang@mediatek.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] pinctrl: mediatek: fix mtk_eint link error
-Date:   Wed, 29 Apr 2020 15:24:22 +0200
-Message-Id: <20200429132443.1295194-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.26.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:b2K8SGt0tNbKweRcNNd5na2gw56bnc7GqSkapPSRkiyRREMbXnV
- mXoroDsDHSuU5UDemW+096Q1oGLBjSb9A8Q0oGheHoi6a2eWYKpL9j2P6FuZgQX7IeczDrW
- dwxi0yxqo0aWJTzwXgrZJ/4d15zI6Rog4TWtotc5l3cB8KfW+IoAMQzurz+hLhsY3jkN6mR
- YdY+2SSUVRM3JY69A4Ilg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tIEy99GNx+8=:kozTZI20UsvqYUvArP7lrr
- CVSueE5VSluslq5ErNIWyj2CWFhgMtHmXt3v/rGC9X/UHxPaqC6LLL5noG0k4Dq5j41EXHWCb
- PMCNwTdKHUWN7fgmBpIjU4XPqpfHUH7QjTCqCZ5VnwonmySixRq/IaLaahcEMNm+XBu5NVV7h
- ROxryqcjmRKSV1UYN1qIEVJ6hSQEaHnkncCnI/ytOdhIZcz5LzUlvCE4Lir6+xxNkpB344DM7
- ljN/nt5iPRp+jhgNSvTe+zFPC8IURT295IA1JzDCSL9t4ueK+qD3QiuK57tJnHlITjKTqwN96
- F6KAPbHCFr/8pswmCN1jvldq/Z+76YbCHp+O2rSTTgaTTtzyM8IhfOKSW2PnP6iAfU0/qtvUc
- wAn+TTxJsVRKcHwW6DB/WQTbw3uRrJXs8OIUbqzVCq2BFazyT+12LVD2iEiZ0WFMTKEkRfCpX
- FTeFLNHCNkEOZ2V3gyE5XZcK0A8h+hHbjg2CvXmWyqrVDLkyf6ulkl8J3ZaBy8DD7i6iYs1SF
- NLDTEZrh5IRuSqTzXGjHdZ4BAcT+7k4CaiWVYGiLPHAOo5iy0bhN1962tmSTdUKH2f/yl6gUv
- qZxwcFLKnqH1cLBdstIpvMOo98khu7iN5Ae3ffSf12Lfzqq7W5tD72pU12fmGOa3ScgKo++eV
- rlKjKWK9To2C68fLzv0YtoPT190SQ0/2hGz4P5iSl4kVdtqg2lzNtCYAyKKj3GZfqF3QvpKVW
- 7z1cbRxFdgv2pbmIdbkW4gC5TLeHnAkMZ7SbwAsr/FtwiodtzHLJdfMR2m+bkNPRRUsuQv75P
- 0xarjRVA9hEnrsUt/yUbISYhgeHa+OrMmkGh8ORCnQZWR5f9Wg=
+        id S1726960AbgD2N5B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Apr 2020 09:57:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37370 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727092AbgD2N5B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 29 Apr 2020 09:57:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6D802AC5B;
+        Wed, 29 Apr 2020 13:56:58 +0000 (UTC)
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Kangjie Lu <kjlu@umn.edu>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: exar: Fix bad handling for ida_simple_get error path
+Date:   Wed, 29 Apr 2020 15:56:54 +0200
+Message-Id: <20200429135654.30120-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In a configuration with CONFIG_PINCTRL_MTK_MOORE=y and CONFIG_PINCTRL_MTK_PARIS=m,
-we end up with the mtk_eint driver as a loadable module that cannot be
-linked from built-in code:
+The commit 7ecced0934e5 ("gpio: exar: add a check for the return value
+of ida_simple_get fails") added a goto jump to the common error
+handler for ida_simple_get() error, but this is wrong in two ways:
+it doesn't set the proper return code and, more badly, it invokes
+ida_simple_remove() with a negative index that shall lead to a kernel
+panic via BUG_ON().
 
-aarch64-linux-ld: drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.o: in function `mtk_build_eint':
-(.text+0x304): undefined reference to `mtk_eint_do_init'
-aarch64-linux-ld: drivers/pinctrl/mediatek/pinctrl-moore.o: in function `mtk_gpio_set_config':
-pinctrl-moore.c:(.text+0xf80): undefined reference to `mtk_eint_set_debounce'
-aarch64-linux-ld: drivers/pinctrl/mediatek/pinctrl-moore.o: in function `mtk_gpio_to_irq':
-pinctrl-moore.c:(.text+0x1028): undefined reference to `mtk_eint_find_irq'
+This patch addresses those two issues.
 
-Simplify the Kconfig logic to always select EINT_MTK when it is needed, and
-remove the 'default' statements.
-
-Fixes: 8174a8512e3e ("pinctrl: mediatek: make MediaTek pinctrl v2 driver ready for buidling loadable module")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 7ecced0934e5 ("gpio: exar: add a check for the return value of ida_simple_get fails")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/pinctrl/mediatek/Kconfig    |  4 +---
- drivers/pinctrl/mediatek/mtk-eint.h | 28 ----------------------------
- 2 files changed, 1 insertion(+), 31 deletions(-)
+ drivers/gpio/gpio-exar.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index f32d3644c509..b6a8d91f4885 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -7,8 +7,6 @@ config EINT_MTK
- 	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
- 	select GPIOLIB
- 	select IRQ_DOMAIN
--	default y if PINCTRL_MTK || PINCTRL_MTK_MOORE
--	default PINCTRL_MTK_PARIS
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index da1ef0b1c291..b1accfba017d 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -148,8 +148,10 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	mutex_init(&exar_gpio->lock);
  
- config PINCTRL_MTK
- 	bool
-@@ -20,6 +18,7 @@ config PINCTRL_MTK
- 	select OF_GPIO
+ 	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
+-	if (index < 0)
+-		goto err_destroy;
++	if (index < 0) {
++		ret = index;
++		goto err_mutex_destroy;
++	}
  
- config PINCTRL_MTK_V2
-+	select EINT_MTK
- 	tristate
+ 	sprintf(exar_gpio->name, "exar_gpio%d", index);
+ 	exar_gpio->gpio_chip.label = exar_gpio->name;
+@@ -176,6 +178,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
  
- config PINCTRL_MTK_MOORE
-@@ -38,7 +37,6 @@ config PINCTRL_MTK_PARIS
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB
--	select EINT_MTK
- 	select OF_GPIO
- 	select PINCTRL_MTK_V2
- 
-diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-index 48468d0fae68..f40dab50a5f3 100644
---- a/drivers/pinctrl/mediatek/mtk-eint.h
-+++ b/drivers/pinctrl/mediatek/mtk-eint.h
-@@ -68,7 +68,6 @@ struct mtk_eint {
- 	const struct mtk_eint_xt *gpio_xlate;
- };
- 
--#if IS_ENABLED(CONFIG_EINT_MTK)
- int mtk_eint_do_init(struct mtk_eint *eint);
- int mtk_eint_do_suspend(struct mtk_eint *eint);
- int mtk_eint_do_resume(struct mtk_eint *eint);
-@@ -76,31 +75,4 @@ int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
- 			  unsigned int debounce);
- int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n);
- 
--#else
--static inline int mtk_eint_do_init(struct mtk_eint *eint)
--{
--	return -EOPNOTSUPP;
--}
--
--static inline int mtk_eint_do_suspend(struct mtk_eint *eint)
--{
--	return -EOPNOTSUPP;
--}
--
--static inline int mtk_eint_do_resume(struct mtk_eint *eint)
--{
--	return -EOPNOTSUPP;
--}
--
--static inline int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
--			  unsigned int debounce)
--{
--	return -EOPNOTSUPP;
--}
--
--static inline int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
--{
--	return -EOPNOTSUPP;
--}
--#endif
- #endif /* __MTK_EINT_H */
+ err_destroy:
+ 	ida_simple_remove(&ida_index, index);
++err_mutex_destroy:
+ 	mutex_destroy(&exar_gpio->lock);
+ 	return ret;
+ }
 -- 
-2.26.0
+2.16.4
 
