@@ -2,58 +2,58 @@ Return-Path: <SRS0=SVRI=6O=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5B1C47256
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Apr 2020 19:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30D4C47258
+	for <linux-gpio@archiver.kernel.org>; Thu, 30 Apr 2020 19:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92E7020836
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Apr 2020 19:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D2D20774
+	for <linux-gpio@archiver.kernel.org>; Thu, 30 Apr 2020 19:46:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XkUJdR8V"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IPR3mru5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbgD3Tq3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 30 Apr 2020 15:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
+        id S1727047AbgD3Tqe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 30 Apr 2020 15:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbgD3Tq2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2020 15:46:28 -0400
+        with ESMTP id S1726973AbgD3Tqd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2020 15:46:33 -0400
 Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C99C08E934
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2020 12:46:28 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id o185so3365785pgo.3
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2020 12:46:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72F5C08E859
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2020 12:46:32 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id o185so3365922pgo.3
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2020 12:46:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NxGWym6M39FpWdScigAXkwBmrVrNXh+0LWhd39ynj6c=;
-        b=XkUJdR8V1C3am+EJyt9UZIe3TO+QKdIR5fwICpZC4ZHIh7XC6dK2m/2frGsFFmVF4+
-         XFvFRZDs/uKFuBsrAMBeFg/o5gbGXanTomcJTZ9gpykF5Op/zXbfwstVNm9poKskcXUU
-         D4k5+FuOjdrHtSTiIAZzl4puSjm+lATNc65ww=
+        bh=sdrg4L+6qE8ef/0rMbsMXP8n/wx8xW3roLKK/ezUvnk=;
+        b=IPR3mru5odH8IH8JtJGVfjFqmoI7EykfHBnBKGKkNvL1wskBBBEhukgsM7Uu3fs7lT
+         mlE6Cavs8C1UYBm72lKgh3aoBXy1UMa6UNPCGBQy+hKpAB0W7hT669HPcz97oVuXtj0U
+         JWooQN64D4d1lKY4OIjJgpMHBSWp89pdlBf2Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NxGWym6M39FpWdScigAXkwBmrVrNXh+0LWhd39ynj6c=;
-        b=Bu0zV6jja14lhjLn7fyHPXdfIbeD3OsI25Waq7mot+yWJDyXNPntyJPwPkPjZFGyZQ
-         c1CM5U9YBYAuLEpAu+yl/ZhHUMotz8l70gQq/fjLqew1k1G0ershJatht9WPDKtBlztc
-         h+odnOLtUfEsPfVki2X8GocVMbit4xEjENPnvLiC9E9gN7Q5GM1AgJ6+OyeJCJ0thsGD
-         u9yYJtraXC9WgaE/NERao/WisJ+kGV1V+Y3cnUggDW7wF3SRa4rTU8z+BTYDJyASmJ/g
-         YM3gElY6JsLzK69CTM6QLyoXDr6h+u5dFTEhB8xS4ST2ic+67jBMqSdfC1b0zE6vhiNi
-         +Gpw==
-X-Gm-Message-State: AGi0PuaEeqErXq+fAWCOAuV+76wYVat8mghgw17koh6WrI8+o2oXHOuN
-        XoyDgSxZE3bQidrNJ5lHhNVXjA==
-X-Google-Smtp-Source: APiQypI8SL4AfT1E4wyLsRXT6pVJShj3Chcf1e1fcW4Z6r9ohTrqxNdAMX2KVlkj3fEWUtQ5+gqT5Q==
-X-Received: by 2002:a62:f247:: with SMTP id y7mr387808pfl.200.1588275987416;
-        Thu, 30 Apr 2020 12:46:27 -0700 (PDT)
+        bh=sdrg4L+6qE8ef/0rMbsMXP8n/wx8xW3roLKK/ezUvnk=;
+        b=SQ1V8VIKUa1sl4M/HN9MkFYgVAXSFy6APnI7p+UeuxxeigBmHv9180X7esXDKM5GKZ
+         cjq2YCkLbSu8l6wm6zL5vI/DXyI0o34uux2lyOoVOghhEgaqfbzHsB4SUXlUFSz5b27n
+         UM+kMCIfSVHu1vM0gFushWbmf3phxfzGKpBNaQpjOfJoOJ9RzWxE2rRPEI0zympuzT+r
+         ueMb3UKarit/MeEsDNDMa9XIwIUnPxS9vLf5OsKEMDc3b+xH/bDDD2OgYbfjBNbOpKd8
+         YZn7w0ab5rJPm/QNVoET2OMGg9dbwdN50mZ4UQHvnx0kGC15Ao0iyhPqlFB9w/kVpp4m
+         xfXQ==
+X-Gm-Message-State: AGi0PuYSpNNh4RMtYPl34MDMKKkqeksPEPqBoPXQd/m/VUs7h+u5fTCf
+        tAPSZKJfRUpKG+B3f3N9z6lYOA==
+X-Google-Smtp-Source: APiQypI3t6eeEH4NGbq4IrT0uz3oir1BusxXopSbA4gC+XU1X6T3q2P0HBzZash+S1FE0TqFj43uZA==
+X-Received: by 2002:a63:c44d:: with SMTP id m13mr602021pgg.314.1588275992083;
+        Thu, 30 Apr 2020 12:46:32 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id u3sm495993pfb.105.2020.04.30.12.46.26
+        by smtp.gmail.com with ESMTPSA id u3sm495993pfb.105.2020.04.30.12.46.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 12:46:26 -0700 (PDT)
+        Thu, 30 Apr 2020 12:46:31 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
@@ -65,10 +65,12 @@ Cc:     linux-gpio@vger.kernel.org, jonas@kwiboo.se,
         dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, swboyd@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/6] drm/bridge: ti-sn65dsi86: Export bridge GPIOs to Linux
-Date:   Thu, 30 Apr 2020 12:46:12 -0700
-Message-Id: <20200430124442.v4.1.Ia50267a5549392af8b37e67092ca653a59c95886@changeid>
+Subject: [PATCH v4 4/6] dt-bindings: drm/bridge: ti-sn65dsi86: Convert to yaml
+Date:   Thu, 30 Apr 2020 12:46:15 -0700
+Message-Id: <20200430124442.v4.4.Ifcdc4ecb12742a27862744ee1e8753cb95a38a7f@changeid>
 X-Mailer: git-send-email 2.26.2.526.g744177e7f7-goog
 In-Reply-To: <20200430194617.197510-1-dianders@chromium.org>
 References: <20200430194617.197510-1-dianders@chromium.org>
@@ -79,307 +81,410 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The ti-sn65dsi86 MIPI DSI to eDP bridge chip has 4 pins on it that can
-be used as GPIOs in a system.  Each pin can be configured as input,
-output, or a special function for the bridge chip.  These are:
-- GPIO1: SUSPEND Input
-- GPIO2: DSIA VSYNC
-- GPIO3: DSIA HSYNC or VSYNC
-- GPIO4: PWM
-
-Let's expose these pins as GPIOs.  A few notes:
-- Access to ti-sn65dsi86 is via i2c so we set "can_sleep".
-- These pins can't be configured for IRQ.
-- There are no programmable pulls or other fancy features.
-- Keeping the bridge chip powered might be expensive.  The driver is
-  setup such that if all used GPIOs are only inputs we'll power the
-  bridge chip on just long enough to read the GPIO and then power it
-  off again.  Setting a GPIO as output will keep the bridge powered.
-- If someone releases a GPIO we'll implicitly switch it to an input so
-  we no longer need to keep the bridge powered for it.
-
-Because of all of the above limitations we just need to implement a
-bare-bones GPIO driver.  The device tree bindings already account for
-this device being a GPIO controller so we only need the driver changes
-for it.
-
-NOTE: Despite the fact that these pins are nominally muxable I don't
-believe it makes sense to expose them through the pinctrl interface as
-well as the GPIO interface.  The special functions are things that the
-bridge chip driver itself would care about and it can just configure
-the pins as needed.
+This moves the bindings over, based a lot on toshiba,tc358768.yaml.
+Unless there's someone known to be better, I've set the maintainer in
+the yaml as the first person to submit bindings.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
-Changes in v4:
-- Don't include gpio.h
-- Use gpiochip_get_data() instead of container_of() to get data.
-- GPIOF_DIR_XXX => GPIO_LINE_DIRECTION_XXX
-- Use Linus W's favorite syntax to read a bit from a bitfield.
-- Define and use SN_GPIO_MUX_MASK.
-- Add a comment about why we use a bitmap for gchip_output.
-
-Changes in v3:
-- Becaue => Because
-- Add a kernel-doc to our pdata to clarify double-duty of gchip_output.
-- More comments about how powering off affects us (get_dir, dir_input).
-- Cleanup tail of ti_sn_setup_gpio_controller() to avoid one "return".
-- Use a bitmap rather than rolling my own.
-
+Changes in v4: None
+Changes in v3: None
 Changes in v2:
-- ("Export...GPIOs") is 1/2 of replacement for ("Allow...bridge GPIOs")
+- specification => specifier.
+- power up => power.
+- Added back missing suspend-gpios.
+- data-lanes and lane-polarities are are the right place now.
+- endpoints don't need to be patternProperties.
+- Specified more details for data-lanes and lane-polarities.
+- Added old example back in, fixing bugs in it.
+- Example i2c bus is just called "i2c", not "i2c1" now.
 
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 195 ++++++++++++++++++++++++++
- 1 file changed, 195 insertions(+)
+ .../bindings/display/bridge/ti,sn65dsi86.txt  |  87 ------
+ .../bindings/display/bridge/ti,sn65dsi86.yaml | 279 ++++++++++++++++++
+ 2 files changed, 279 insertions(+), 87 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index 6ad688b320ae..1a125423eb07 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -4,9 +4,11 @@
-  * datasheet: http://www.ti.com/lit/ds/symlink/sn65dsi86.pdf
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
- #include <linux/i2c.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
-@@ -54,6 +56,14 @@
- #define  BPP_18_RGB				BIT(0)
- #define SN_HPD_DISABLE_REG			0x5C
- #define  HPD_DISABLE				BIT(0)
-+#define SN_GPIO_IO_REG				0x5E
-+#define  SN_GPIO_INPUT_SHIFT			4
-+#define  SN_GPIO_OUTPUT_SHIFT			0
-+#define SN_GPIO_CTRL_REG			0x5F
-+#define  SN_GPIO_MUX_INPUT			0
-+#define  SN_GPIO_MUX_OUTPUT			1
-+#define  SN_GPIO_MUX_SPECIAL			2
-+#define  SN_GPIO_MUX_MASK			0x3
- #define SN_AUX_WDATA_REG(x)			(0x64 + (x))
- #define SN_AUX_ADDR_19_16_REG			0x74
- #define SN_AUX_ADDR_15_8_REG			0x75
-@@ -88,6 +98,34 @@
- 
- #define SN_REGULATOR_SUPPLY_NUM		4
- 
-+#define SN_NUM_GPIOS			4
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+deleted file mode 100644
+index 8ec4a7f2623a..000000000000
+--- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
++++ /dev/null
+@@ -1,87 +0,0 @@
+-SN65DSI86 DSI to eDP bridge chip
+---------------------------------
+-
+-This is the binding for Texas Instruments SN65DSI86 bridge.
+-http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=sn65dsi86&fileType=pdf
+-
+-Required properties:
+-- compatible: Must be "ti,sn65dsi86"
+-- reg: i2c address of the chip, 0x2d as per datasheet
+-- enable-gpios: gpio specification for bridge_en pin (active high)
+-
+-- vccio-supply: A 1.8V supply that powers up the digital IOs.
+-- vpll-supply: A 1.8V supply that powers up the displayport PLL.
+-- vcca-supply: A 1.2V supply that powers up the analog circuits.
+-- vcc-supply: A 1.2V supply that powers up the digital core.
+-
+-Optional properties:
+-- interrupts-extended: Specifier for the SN65DSI86 interrupt line.
+-
+-- gpio-controller: Marks the device has a GPIO controller.
+-- #gpio-cells    : Should be two. The first cell is the pin number and
+-                   the second cell is used to specify flags.
+-                   See ../../gpio/gpio.txt for more information.
+-- #pwm-cells : Should be one. See ../../pwm/pwm.yaml for description of
+-               the cell formats.
+-
+-- clock-names: should be "refclk"
+-- clocks: Specification for input reference clock. The reference
+-	  clock rate must be 12 MHz, 19.2 MHz, 26 MHz, 27 MHz or 38.4 MHz.
+-
+-- data-lanes: See ../../media/video-interface.txt
+-- lane-polarities: See ../../media/video-interface.txt
+-
+-- suspend-gpios: specification for GPIO1 pin on bridge (active low)
+-
+-Required nodes:
+-This device has two video ports. Their connections are modelled using the
+-OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+-
+-- Video port 0 for DSI input
+-- Video port 1 for eDP output
+-
+-Example
+--------
+-
+-edp-bridge@2d {
+-	compatible = "ti,sn65dsi86";
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-	reg = <0x2d>;
+-
+-	enable-gpios = <&msmgpio 33 GPIO_ACTIVE_HIGH>;
+-	suspend-gpios = <&msmgpio 34 GPIO_ACTIVE_LOW>;
+-
+-	interrupts-extended = <&gpio3 4 IRQ_TYPE_EDGE_FALLING>;
+-
+-	vccio-supply = <&pm8916_l17>;
+-	vcca-supply = <&pm8916_l6>;
+-	vpll-supply = <&pm8916_l17>;
+-	vcc-supply = <&pm8916_l6>;
+-
+-	clock-names = "refclk";
+-	clocks = <&input_refclk>;
+-
+-	ports {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		port@0 {
+-			reg = <0>;
+-
+-			edp_bridge_in: endpoint {
+-				remote-endpoint = <&dsi_out>;
+-			};
+-		};
+-
+-		port@1 {
+-			reg = <1>;
+-
+-			edp_bridge_out: endpoint {
+-				data-lanes = <2 1 3 0>;
+-				lane-polarities = <0 1 0 1>;
+-				remote-endpoint = <&edp_panel_in>;
+-			};
+-		};
+-	};
+-}
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+new file mode 100644
+index 000000000000..6d7d40ad45ac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+@@ -0,0 +1,279 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/ti,sn65dsi86.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/**
-+ * struct ti_sn_bridge - Platform data for ti-sn65dsi86 driver.
-+ * @dev:          Pointer to our device.
-+ * @regmap:       Regmap for accessing i2c.
-+ * @aux:          Our aux channel.
-+ * @bridge:       Our bridge.
-+ * @connector:    Our connector.
-+ * @debugfs:      Used for managing our debugfs.
-+ * @host_node:    Remote DSI node.
-+ * @dsi:          Our MIPI DSI source.
-+ * @refclk:       Our reference clock.
-+ * @panel:        Our panel.
-+ * @enable_gpio:  The GPIO we toggle to enable the bridge.
-+ * @supplies:     Data for bulk enabling/disabling our regulators.
-+ * @dp_lanes:     Count of dp_lanes we're using.
-+ *
-+ * @gchip:        If we expose our GPIOs, this is used.
-+ * @gchip_output: A cache of whether we've set GPIOs to output.  This
-+ *                serves double-duty of keeping track of the direction and
-+ *                also keeping track of whether we've incremented the
-+ *                pm_runtime reference count for this pin, which we do
-+ *                whenever a pin is configured as an output.  This is a
-+ *                bitmap so we can do atomic ops on it without an extra
-+ *                lock so concurrent users of our 4 GPIOs don't stomp on
-+ *                each other's read-modify-write.
-+ */
- struct ti_sn_bridge {
- 	struct device			*dev;
- 	struct regmap			*regmap;
-@@ -102,6 +140,9 @@ struct ti_sn_bridge {
- 	struct gpio_desc		*enable_gpio;
- 	struct regulator_bulk_data	supplies[SN_REGULATOR_SUPPLY_NUM];
- 	int				dp_lanes;
++title: SN65DSI86 DSI to eDP bridge chip
 +
-+	struct gpio_chip		gchip;
-+	DECLARE_BITMAP(gchip_output, SN_NUM_GPIOS);
- };
- 
- static const struct regmap_range ti_sn_bridge_volatile_ranges[] = {
-@@ -874,6 +915,154 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn_bridge *pdata)
- 	return 0;
- }
- 
-+static int ti_sn_bridge_gpio_get_direction(struct gpio_chip *chip,
-+					   unsigned int offset)
-+{
-+	struct ti_sn_bridge *pdata = gpiochip_get_data(chip);
++maintainers:
++  - Sandeep Panda <spanda@codeaurora.org>
 +
-+	/*
-+	 * We already have to keep track of the direction because we use
-+	 * that to figure out whether we've powered the device.  We can
-+	 * just return that rather than (maybe) powering up the device
-+	 * to ask its direction.
-+	 */
-+	return test_bit(offset, pdata->gchip_output) ?
-+		GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+}
++description: |
++  The Texas Instruments SN65DSI86 bridge takes MIPI DSI in and outputs eDP.
++  http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=sn65dsi86&fileType=pdf
 +
-+static int ti_sn_bridge_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ti_sn_bridge *pdata = gpiochip_get_data(chip);
-+	unsigned int val;
-+	int ret;
++properties:
++  compatible:
++    const: ti,sn65dsi86
 +
-+	/*
-+	 * When the pin is an input we don't forcibly keep the bridge
-+	 * powered--we just power it on to read the pin.  NOTE: part of
-+	 * the reason this works is that the bridge defaults (when
-+	 * powered back on) to all 4 GPIOs being configured as GPIO input.
-+	 * Also note that if something else is keeping the chip powered the
-+	 * pm_runtime functions are lightweight increments of a refcount.
-+	 */
-+	pm_runtime_get_sync(pdata->dev);
-+	ret = regmap_read(pdata->regmap, SN_GPIO_IO_REG, &val);
-+	pm_runtime_put(pdata->dev);
++  reg:
++    const: 0x2d
 +
-+	if (ret)
-+		return ret;
++  enable-gpios:
++    maxItems: 1
++    description: GPIO specifier for bridge_en pin (active high).
 +
-+	return !!(val & BIT(SN_GPIO_INPUT_SHIFT + offset));
-+}
++  suspend-gpios:
++    maxItems: 1
++    description: GPIO specifier for GPIO1 pin on bridge (active low).
 +
-+static void ti_sn_bridge_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+				  int val)
-+{
-+	struct ti_sn_bridge *pdata = gpiochip_get_data(chip);
-+	int ret;
++  vccio-supply:
++    description: A 1.8V supply that powers the digital IOs.
 +
-+	if (!test_bit(offset, pdata->gchip_output)) {
-+		dev_err(pdata->dev, "Ignoring GPIO set while input\n");
-+		return;
-+	}
++  vpll-supply:
++    description: A 1.8V supply that powers the DisplayPort PLL.
 +
-+	val &= 1;
-+	ret = regmap_update_bits(pdata->regmap, SN_GPIO_IO_REG,
-+				 BIT(SN_GPIO_OUTPUT_SHIFT + offset),
-+				 val << (SN_GPIO_OUTPUT_SHIFT + offset));
-+}
++  vcca-supply:
++    description: A 1.2V supply that powers the analog circuits.
 +
-+static int ti_sn_bridge_gpio_direction_input(struct gpio_chip *chip,
-+					     unsigned int offset)
-+{
-+	struct ti_sn_bridge *pdata = gpiochip_get_data(chip);
-+	int shift = offset * 2;
-+	int ret;
++  vcc-supply:
++    description: A 1.2V supply that powers the digital core.
 +
-+	if (!test_and_clear_bit(offset, pdata->gchip_output))
-+		return 0;
++  interrupts:
++    maxItems: 1
 +
-+	ret = regmap_update_bits(pdata->regmap, SN_GPIO_CTRL_REG,
-+				 SN_GPIO_MUX_MASK << shift,
-+				 SN_GPIO_MUX_INPUT << shift);
-+	if (ret) {
-+		set_bit(offset, pdata->gchip_output);
-+		return ret;
-+	}
++  clocks:
++    maxItems: 1
++    description:
++      Clock specifier for input reference clock. The reference clock rate must
++      be 12 MHz, 19.2 MHz, 26 MHz, 27 MHz or 38.4 MHz.
 +
-+	/*
-+	 * NOTE: if nobody else is powering the device this may fully power
-+	 * it off and when it comes back it will have lost all state, but
-+	 * that's OK because the default is input and we're now an input.
-+	 */
-+	pm_runtime_put(pdata->dev);
++  clock-names:
++    const: refclk
 +
-+	return 0;
-+}
++  gpio-controller: true
++  '#gpio-cells':
++    const: 2
++    description:
++      First cell is pin number, second cell is flags.  GPIO pin numbers are
++      1-based to match the datasheet.  See ../../gpio/gpio.txt for more
++      information.
 +
-+static int ti_sn_bridge_gpio_direction_output(struct gpio_chip *chip,
-+					      unsigned int offset, int val)
-+{
-+	struct ti_sn_bridge *pdata = gpiochip_get_data(chip);
-+	int shift = offset * 2;
-+	int ret;
++  '#pwm-cells':
++    const: 1
++    description: See ../../pwm/pwm.yaml for description of the cell formats.
 +
-+	if (test_and_set_bit(offset, pdata->gchip_output))
-+		return 0;
++  ports:
++    type: object
 +
-+	pm_runtime_get_sync(pdata->dev);
++    properties:
++      "#address-cells":
++        const: 1
 +
-+	/* Set value first to avoid glitching */
-+	ti_sn_bridge_gpio_set(chip, offset, val);
++      "#size-cells":
++        const: 0
 +
-+	/* Set direction */
-+	ret = regmap_update_bits(pdata->regmap, SN_GPIO_CTRL_REG,
-+				 SN_GPIO_MUX_MASK << shift,
-+				 SN_GPIO_MUX_OUTPUT << shift);
-+	if (ret) {
-+		clear_bit(offset, pdata->gchip_output);
-+		pm_runtime_put(pdata->dev);
-+	}
++      port@0:
++        type: object
++        additionalProperties: false
 +
-+	return ret;
-+}
++        description:
++          Video port for MIPI DSI input
 +
-+static void ti_sn_bridge_gpio_free(struct gpio_chip *chip, unsigned int offset)
-+{
-+	/* We won't keep pm_runtime if we're input, so switch there on free */
-+	ti_sn_bridge_gpio_direction_input(chip, offset);
-+}
++        properties:
++          reg:
++            const: 0
 +
-+static const char * const ti_sn_bridge_gpio_names[SN_NUM_GPIOS] = {
-+	"GPIO1", "GPIO2", "GPIO3", "GPIO4"
-+};
++          endpoint:
++            type: object
++            additionalProperties: false
 +
-+static int ti_sn_setup_gpio_controller(struct ti_sn_bridge *pdata)
-+{
-+	int ret;
++            properties:
++              remote-endpoint: true
 +
-+	/* Only init if someone is going to use us as a GPIO controller */
-+	if (!of_property_read_bool(pdata->dev->of_node, "gpio-controller"))
-+		return 0;
++              data-lanes:
++                minItems: 1
++                maxItems: 4
++                items:
++                  enum:
++                    - 0
++                    - 1
++                    - 2
++                    - 3
++                description: See ../../media/video-interface.txt
 +
-+	pdata->gchip.label = dev_name(pdata->dev);
-+	pdata->gchip.parent = pdata->dev;
-+	pdata->gchip.owner = THIS_MODULE;
-+	pdata->gchip.free = ti_sn_bridge_gpio_free;
-+	pdata->gchip.get_direction = ti_sn_bridge_gpio_get_direction;
-+	pdata->gchip.direction_input = ti_sn_bridge_gpio_direction_input;
-+	pdata->gchip.direction_output = ti_sn_bridge_gpio_direction_output;
-+	pdata->gchip.get = ti_sn_bridge_gpio_get;
-+	pdata->gchip.set = ti_sn_bridge_gpio_set;
-+	pdata->gchip.can_sleep = true;
-+	pdata->gchip.names = ti_sn_bridge_gpio_names;
-+	pdata->gchip.ngpio = SN_NUM_GPIOS;
-+	ret = devm_gpiochip_add_data(pdata->dev, &pdata->gchip, pdata);
-+	if (ret)
-+		dev_err(pdata->dev, "can't add gpio chip\n");
++              lane-polarities:
++                minItems: 1
++                maxItems: 4
++                items:
++                  enum:
++                    - 0
++                    - 1
++                description: See ../../media/video-interface.txt
 +
-+	return ret;
-+}
++            dependencies:
++              data-lanes: [lane-polarities]
 +
- static int ti_sn_bridge_probe(struct i2c_client *client,
- 			      const struct i2c_device_id *id)
- {
-@@ -937,6 +1126,12 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 
- 	pm_runtime_enable(pdata->dev);
- 
-+	ret = ti_sn_setup_gpio_controller(pdata);
-+	if (ret) {
-+		pm_runtime_disable(pdata->dev);
-+		return ret;
-+	}
++        required:
++          - reg
 +
- 	i2c_set_clientdata(client, pdata);
- 
- 	pdata->aux.name = "ti-sn65dsi86-aux";
++      port@1:
++        type: object
++        additionalProperties: false
++
++        description:
++          Video port for eDP output (panel or connector).
++
++        properties:
++          reg:
++            const: 1
++
++          endpoint:
++            type: object
++            additionalProperties: false
++
++            properties:
++              remote-endpoint: true
++
++              data-lanes:
++                minItems: 1
++                maxItems: 4
++                items:
++                  enum:
++                    - 0
++                    - 1
++                    - 2
++                    - 3
++                description: See ../../media/video-interface.txt
++
++              lane-polarities:
++                minItems: 1
++                maxItems: 4
++                items:
++                  enum:
++                    - 0
++                    - 1
++                description: See ../../media/video-interface.txt
++
++            dependencies:
++              data-lanes: [lane-polarities]
++
++        required:
++          - reg
++
++    required:
++      - "#address-cells"
++      - "#size-cells"
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - enable-gpios
++  - vccio-supply
++  - vpll-supply
++  - vcca-supply
++  - vcc-supply
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      bridge@2d {
++        compatible = "ti,sn65dsi86";
++        reg = <0x2d>;
++
++        interrupt-parent = <&tlmm>;
++        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
++
++        enable-gpios = <&tlmm 102 GPIO_ACTIVE_HIGH>;
++
++        vpll-supply = <&src_pp1800_s4a>;
++        vccio-supply = <&src_pp1800_s4a>;
++        vcca-supply = <&src_pp1200_l2a>;
++        vcc-supply = <&src_pp1200_l2a>;
++
++        clocks = <&rpmhcc RPMH_LN_BB_CLK2>;
++        clock-names = "refclk";
++
++        ports {
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          port@0 {
++            reg = <0>;
++            endpoint {
++              remote-endpoint = <&dsi0_out>;
++            };
++          };
++
++          port@1 {
++            reg = <1>;
++            endpoint {
++              remote-endpoint = <&panel_in_edp>;
++            };
++          };
++        };
++      };
++    };
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      bridge@2d {
++        compatible = "ti,sn65dsi86";
++        reg = <0x2d>;
++
++        enable-gpios = <&msmgpio 33 GPIO_ACTIVE_HIGH>;
++        suspend-gpios = <&msmgpio 34 GPIO_ACTIVE_LOW>;
++
++        interrupts-extended = <&gpio3 4 IRQ_TYPE_EDGE_FALLING>;
++
++        vccio-supply = <&pm8916_l17>;
++        vcca-supply = <&pm8916_l6>;
++        vpll-supply = <&pm8916_l17>;
++        vcc-supply = <&pm8916_l6>;
++
++        clock-names = "refclk";
++        clocks = <&input_refclk>;
++
++        ports {
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          port@0 {
++            reg = <0>;
++
++            edp_bridge_in: endpoint {
++              remote-endpoint = <&dsi_out>;
++            };
++          };
++
++          port@1 {
++            reg = <1>;
++
++            edp_bridge_out: endpoint {
++              data-lanes = <2 1 3 0>;
++              lane-polarities = <0 1 0 1>;
++              remote-endpoint = <&edp_panel_in>;
++            };
++          };
++        };
++      };
++    };
 -- 
 2.26.2.526.g744177e7f7-goog
 
