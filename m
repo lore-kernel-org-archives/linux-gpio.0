@@ -1,106 +1,160 @@
-Return-Path: <SRS0=ed2u=6P=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=iEm+=6Q=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788F7C4724C
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 May 2020 15:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC438C3A5A9
+	for <linux-gpio@archiver.kernel.org>; Sat,  2 May 2020 17:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56E17216FD
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 May 2020 15:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F8DD2071E
+	for <linux-gpio@archiver.kernel.org>; Sat,  2 May 2020 17:22:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i5JF31ii"
+	dkim=pass (2048-bit key) header.d=kiho-fi.20150623.gappssmtp.com header.i=@kiho-fi.20150623.gappssmtp.com header.b="bvb/ukky"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbgEAPKu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 May 2020 11:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728856AbgEAPKu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 May 2020 11:10:50 -0400
-Received: from mail-vk1-xa43.google.com (mail-vk1-xa43.google.com [IPv6:2607:f8b0:4864:20::a43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B73C061A0C
-        for <linux-gpio@vger.kernel.org>; Fri,  1 May 2020 08:10:50 -0700 (PDT)
-Received: by mail-vk1-xa43.google.com with SMTP id u203so2743477vkb.11
-        for <linux-gpio@vger.kernel.org>; Fri, 01 May 2020 08:10:50 -0700 (PDT)
+        id S1728383AbgEBRWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 2 May 2020 13:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726400AbgEBRWq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 May 2020 13:22:46 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71DFDC061A0C
+        for <linux-gpio@vger.kernel.org>; Sat,  2 May 2020 10:22:43 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id f11so5567937ljp.1
+        for <linux-gpio@vger.kernel.org>; Sat, 02 May 2020 10:22:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=knTG2gmvtoT22+XOsX7dmFpVAGO3ao9zwsfFiTXURTg=;
-        b=i5JF31iiDLo6z171lTJxhjapmVJS9gqP3xgHzEmURWBZ9ZrO+wXla6ynAK3ki/7XPX
-         sRwv80rlH6ndWj4Gju7PPJfTN9R8SjAgNB8Ev4Z37QlaoWQGa2up1QK2IwuGgWTxfCp1
-         86gjvyWw9Ih0xsuuDS86kOVoOpHcVaXBZSNjQ=
+        d=kiho-fi.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=SQVKZYyDlpOHs6iMr+1/4kxXWmP2kmVeVd0xRrV7hng=;
+        b=bvb/ukky9X41WtzQFHp9/Dyrs2Z6532E5++DYK8Y+jD9I8JPSyR3d70TLFH/0qJDBD
+         YR367kJ9DuheeOwxFSmH7QJYsMNfs+eBr63gsKfXg7c4Rv8ewhk1hRlB5SkjQAFsT81+
+         Zy9uYnfo1bHBojpK8wDxPhxVtMkgMFQmAPRRlHydoN8//ntvaHF5ARx1eZ2NjIGuujF/
+         4RytCj/632AyHiYLyTBHIwb/uJwuop6vdCC2eipNbSTwj7eQ7m8W+GtJuyVU5LjMMduh
+         ZN0UBGcqkOj3VoxFtIayIIM4Fej+BExaU+AhHQPS9eBMHllf0SjyLqJI+JMtdM8uomta
+         aj6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=knTG2gmvtoT22+XOsX7dmFpVAGO3ao9zwsfFiTXURTg=;
-        b=UiadB+0qY+ev77Lj/6xwkApZSumbkyrJyqGEY0eHvOaf54LRaDDQ4NdcKfQB4EeqaK
-         F2IyYaIS7AlFSETdCJuJiXvn5GwMysO3tgf16BEqhWAwAUqEMLQEjYrPL+UmXy+fUxH4
-         acH1EFaB4bb6nIyfTPiRKmsBiT9+Pbn5gcMb8BH0+8QecmF/f0/43dpD2rBY0JyviKIt
-         Gtn9pzhSGZZJu6YnQZUlESjzlBaXPRqwNP2ue5hNM9JgAf3IGH9wt/T9IlgWneOSswnV
-         Smi9wn3KQBVtYFtDi73XQjSbTL8mbVC1ShhGTUq1EtTXmZTl6EwDZh9+9L/2QhncUa0S
-         0kbA==
-X-Gm-Message-State: AGi0PuaL9Eokocrrce5s/y1RnBfYF0RkDRh/O2Nk6adpQK4mI06Py/b8
-        ekAtQ5xL8YggGzaYDMH7PyDv22HFVks=
-X-Google-Smtp-Source: APiQypJsGq6FpEMfDk3j3TnXQDimTH+DHKbgthKaZa7jsdhTVAgqFjNemRLDHczvFumueAry2vXYdg==
-X-Received: by 2002:a1f:208c:: with SMTP id g134mr3036944vkg.74.1588345849040;
-        Fri, 01 May 2020 08:10:49 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id z191sm837721vsz.32.2020.05.01.08.10.48
-        for <linux-gpio@vger.kernel.org>
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=SQVKZYyDlpOHs6iMr+1/4kxXWmP2kmVeVd0xRrV7hng=;
+        b=qiM+VXHqy7UzpfeVfwCgtU25NK3fon8Jriwz58k9hxwJy7AoKcZP4nQcWDTZgoPnpX
+         By74I4RvD51qBHmXcewNh/me40ylgfyY7chMs5pXXznTIKxz/ac8guQL7L/OzqW8cK11
+         tirIGrqiqaoA/4TyfccHELryY4o0Fm6flq8FkS5MbCRGYgp6svjw8EJ5rGIRsXUDzGiR
+         pPJvfDYLJv+qz8gyaADnIdysBIvyyRkD5r5OLcsLIcjofEIiCSnHzbWTX611Bx6JAzAt
+         WnCGgKMwwdKd40Yo7D5IRuf2EiHF39hIFHdzQZxUnnPNb+pDuMvM68UJfvQ1jh6gGT1E
+         ND4g==
+X-Gm-Message-State: AGi0PuaeHlEwpe3wHVGHqlkyiq4L3bIlfhnRqLvDrYwTbzLShLnK1KC8
+        byIhsS7U2YbFfFLTcO8o3QBSQg==
+X-Google-Smtp-Source: APiQypL6anjjjWSN6V+XYxJy+PFkZKLOCHjH2Gs85AOPKUSIbrkf713J120ogeIEH7Bp6v0YgaCNNw==
+X-Received: by 2002:a2e:80d2:: with SMTP id r18mr5539992ljg.269.1588440161810;
+        Sat, 02 May 2020 10:22:41 -0700 (PDT)
+Received: from [192.168.100.210] (dsl-kpobng12-58c361-73.dhcp.inet.fi. [88.195.97.73])
+        by smtp.gmail.com with ESMTPSA id c20sm4328925ljk.59.2020.05.02.10.22.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 May 2020 08:10:48 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id 1so6440804vsl.9
-        for <linux-gpio@vger.kernel.org>; Fri, 01 May 2020 08:10:48 -0700 (PDT)
-X-Received: by 2002:a67:bd07:: with SMTP id y7mr3622452vsq.109.1588345847717;
- Fri, 01 May 2020 08:10:47 -0700 (PDT)
+        Sat, 02 May 2020 10:22:41 -0700 (PDT)
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Petteri Jokinen <petteri@kiho.fi>
+Subject: [PATCH] gpio-f7188x: Add GPIO support for F81865
+Message-ID: <4340a212-89f5-8c62-db61-f061e494d6b1@kiho.fi>
+Date:   Sat, 2 May 2020 20:22:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <1588314617-4556-1-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1588314617-4556-1-git-send-email-mkshah@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 1 May 2020 08:10:36 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V8phQsc5SSUdqw-HRPYzW5QoEc8NoVJ+ZXQz72FgEPug@mail.gmail.com>
-Message-ID: <CAD=FV=V8phQsc5SSUdqw-HRPYzW5QoEc8NoVJ+ZXQz72FgEPug@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Add affinity callbacks to msmgpio IRQ chip
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LinusW <linus.walleij@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Srinivas Rao L <lsrao@codeaurora.org>,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Add GPIO support for Fintek F81865 chip.
 
-On Thu, Apr 30, 2020 at 11:31 PM Maulik Shah <mkshah@codeaurora.org> wrote:
->
-> From: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
->
-> Wakeup capable GPIO IRQs routed via PDC are not being migrated when a CPU
-> is hotplugged. Add affinity callbacks to msmgpio IRQ chip to update the
-> affinity of wakeup capable IRQs.
->
-> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> [mkshah: updated commit text and minor code fixes]
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+Datasheet: http://www.hardwaresecrets.com/datasheets/F81865_V028P.pdf
 
-Tested-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Petteri Jokinen <petteri@kiho.fi>
+---
+ drivers/gpio/gpio-f7188x.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index cadd02993539..18a3147f5a42 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -36,9 +36,19 @@
+ #define SIO_F71889A_ID		0x1005	/* F71889A chipset ID */
+ #define SIO_F81866_ID		0x1010	/* F81866 chipset ID */
+ #define SIO_F81804_ID		0x1502  /* F81804 chipset ID, same for f81966 */
+-
+-
+-enum chips { f71869, f71869a, f71882fg, f71889a, f71889f, f81866, f81804 };
++#define SIO_F81865_ID		0x0704	/* F81865 chipset ID */
++
++
++enum chips {
++	f71869,
++	f71869a,
++	f71882fg,
++	f71889a,
++	f71889f,
++	f81866,
++	f81804,
++	f81865,
++};
+
+ static const char * const f7188x_names[] = {
+ 	"f71869",
+@@ -48,6 +58,7 @@ static const char * const f7188x_names[] = {
+ 	"f71889f",
+ 	"f81866",
+ 	"f81804",
++	"f81865",
+ };
+
+ struct f7188x_sio {
+@@ -233,6 +244,15 @@ static struct f7188x_gpio_bank f81804_gpio_bank[] = {
+ 	F7188X_GPIO_BANK(90, 8, 0x98),
+ };
+
++static struct f7188x_gpio_bank f81865_gpio_bank[] = {
++	F7188X_GPIO_BANK(0, 8, 0xF0),
++	F7188X_GPIO_BANK(10, 8, 0xE0),
++	F7188X_GPIO_BANK(20, 8, 0xD0),
++	F7188X_GPIO_BANK(30, 8, 0xC0),
++	F7188X_GPIO_BANK(40, 8, 0xB0),
++	F7188X_GPIO_BANK(50, 8, 0xA0),
++	F7188X_GPIO_BANK(60, 5, 0x90),
++};
+
+ static int f7188x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ {
+@@ -425,6 +445,10 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 		data->nr_bank = ARRAY_SIZE(f81804_gpio_bank);
+ 		data->bank = f81804_gpio_bank;
+ 		break;
++	case f81865:
++		data->nr_bank = ARRAY_SIZE(f81865_gpio_bank);
++		data->bank = f81865_gpio_bank;
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -490,6 +514,9 @@ static int __init f7188x_find(int addr, struct f7188x_sio *sio)
+ 	case SIO_F81804_ID:
+ 		sio->type = f81804;
+ 		break;
++	case SIO_F81865_ID:
++		sio->type = f81865;
++		break;
+ 	default:
+ 		pr_info(DRVNAME ": Unsupported Fintek device 0x%04x\n", devid);
+ 		goto err;
+--
+2.26.2
+
