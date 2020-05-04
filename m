@@ -1,77 +1,109 @@
-Return-Path: <SRS0=hvde=6R=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=pwjs=6S=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A93C4724C
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 May 2020 21:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD0EC28CBC
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 May 2020 01:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D379B206B9
-	for <linux-gpio@archiver.kernel.org>; Sun,  3 May 2020 21:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29ADC206E6
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 May 2020 01:33:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="mxItMKtR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgECVrY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 3 May 2020 17:47:24 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:55952 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729204AbgECVrX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 May 2020 17:47:23 -0400
-X-IronPort-AV: E=Sophos;i="5.73,349,1583161200"; 
-   d="scan'208";a="46232093"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 04 May 2020 06:47:21 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 537CC4006DF9;
-        Mon,  4 May 2020 06:47:18 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        id S1726421AbgEDBdO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 3 May 2020 21:33:14 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:58868 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbgEDBdO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 May 2020 21:33:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1588555991; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=s3kVnM/pt0oggUIsiHNmQoFutX1dSCYY6TB3Lm6oLFE=;
+        b=mxItMKtRyij5x/wPWOz13FGJPQjbal6rSoJWpgE2O0yRMR788cFDS8oY/lU7J32gz/QGX9
+        wZTwogoNRBP8FYfj7KyPbrYAqfdVnWIPCIzTR9T3oCM4x5478uCuGUeYjZPuPKUYltHhOe
+        hRlxtN57Okse4d6QbeTj8le1efh8CVs=
+Date:   Mon, 04 May 2020 03:32:58 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [RFC v3 2/8] drm: ingenic-drm: add MODULE_DEVICE_TABLE
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Paul Boddie <paul@boddie.org.uk>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 03/10] dt-bindings: serial: renesas,scifa: Document r8a7742 bindings
-Date:   Sun,  3 May 2020 22:46:47 +0100
-Message-Id: <1588542414-14826-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Andi Kleen <ak@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Kees Cook <keescook@chromium.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
+        mips-creator-ci20-dev@googlegroups.com
+Message-Id: <YM9S9Q.3YCM1LVLIS2O3@crapouillou.net>
+In-Reply-To: <02c8f35fde969fd852a62740b4fa8a01c53b79ef.1585503354.git.hns@goldelico.com>
+References: <cover.1585503354.git.hns@goldelico.com>
+        <02c8f35fde969fd852a62740b4fa8a01c53b79ef.1585503354.git.hns@goldelico.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-RZ/G1H (R8A7742) SoC also has the R-Car gen2 compatible SCIFA ports,
-so document the SoC specific bindings.
+Hi Nikolaus,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/serial/renesas,scifa.yaml | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-index b28bcb268854..97ddd76d700f 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-@@ -24,6 +24,7 @@ properties:
- 
-       - items:
-           - enum:
-+              - renesas,scifa-r8a7742      # R8A7742 RZ/G1H
-               - renesas,scifa-r8a7743      # R8A7743 RZ/G1M
-               - renesas,scifa-r8a7744      # R8A7744 RZ/G1N
-               - renesas,scifa-r8a7745      # R8A7745 RZ/G1E
--- 
-2.17.1
+Le dim. 29 mars 2020 =E0 19:35, H. Nikolaus Schaller <hns@goldelico.com>=20
+a =E9crit :
+> so that the driver can load by matching the device tree
+> if compiled as module.
+>=20
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+
+Please add:
+
+Cc: stable@vger.kernel.org # v5.3+
+Fixes: 90b86fcc47b4 ("DRM: Add KMS driver for the Ingenic JZ47xx SoCs")
+
+And re-send this patch alone, then I can merge it ASAP.
+
+Cheers,
+-Paul
+
+> ---
+>  drivers/gpu/drm/ingenic/ingenic-drm.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c=20
+> b/drivers/gpu/drm/ingenic/ingenic-drm.c
+> index 6d47ef7b148c..bcba2f024842 100644
+> --- a/drivers/gpu/drm/ingenic/ingenic-drm.c
+> +++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
+> @@ -843,6 +843,7 @@ static const struct of_device_id=20
+> ingenic_drm_of_match[] =3D {
+>  	{ .compatible =3D "ingenic,jz4770-lcd", .data =3D &jz4770_soc_info },
+>  	{ /* sentinel */ },
+>  };
+> +MODULE_DEVICE_TABLE(of, ingenic_drm_of_match);
+>=20
+>  static struct platform_driver ingenic_drm_driver =3D {
+>  	.driver =3D {
+> --
+> 2.25.1
+>=20
+
 
