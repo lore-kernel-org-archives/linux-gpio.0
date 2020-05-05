@@ -2,63 +2,78 @@ Return-Path: <SRS0=UIRa=6T=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DBAC47254
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 08:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986AEC47258
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 13:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C376920675
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 08:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2F92078D
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 13:21:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DBugh8bK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgEEIpS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 May 2020 04:45:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41140 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbgEEIpS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 5 May 2020 04:45:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E94A4ADD5;
-        Tue,  5 May 2020 08:45:18 +0000 (UTC)
-From:   Mian Yousaf Kaukab <ykaukab@suse.de>
-To:     thierry.reding@gmail.com, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mian Yousaf Kaukab <ykaukab@suse.de>
-Subject: [PATCH] gpio: tegra186: export MODULE_DEVICE_TABLE
-Date:   Tue,  5 May 2020 10:45:01 +0200
-Message-Id: <20200505084501.13170-1-ykaukab@suse.de>
-X-Mailer: git-send-email 2.25.0
+        id S1728990AbgEENVp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 May 2020 09:21:45 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40815 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728960AbgEENVo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2020 09:21:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588684904;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=cJjk1voas+0dvk9PcOEDjKeOiN5/Y1FC1G41w1fjgkU=;
+        b=DBugh8bKri67umNv062dIgouMPRbnFVX9GKScV6wrdWd0vAKswl1nZi68AxNdCxCicK+EN
+        4IKYU6SoVXf+Dm+hEhEO5sVLUbJIHw/jsOkpk06AcEt1+GjwROYKWQ9zwZPMlbaDggcPB6
+        FkHE8hs4m2rWckOGYJXqWnkAeVh973s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-331-ldwf50YtMyquTXqrm3sR9g-1; Tue, 05 May 2020 09:21:40 -0400
+X-MC-Unique: ldwf50YtMyquTXqrm3sR9g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8BD1010CE784;
+        Tue,  5 May 2020 13:21:38 +0000 (UTC)
+Received: from x1.localdomain.com (ovpn-113-21.ams2.redhat.com [10.36.113.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A748D6060E;
+        Tue,  5 May 2020 13:21:36 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH 0/3] ACPI / utils: Add acpi_evaluate_reg() helper
+Date:   Tue,  5 May 2020 15:21:25 +0200
+Message-Id: <20200505132128.19476-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Export MODULE_DEVICE_TABLE since the driver can be built as a module.
+Hi All,
 
-Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
----
- drivers/gpio/gpio-tegra186.c | 1 +
- 1 file changed, 1 insertion(+)
+Here is a small series adding an acpi_evaluate_reg() helper, note
+the third patch sits on top of a fix for the pinctrl-cherryview
+driver which I recently submitted and which is still finding its
+way upstream.
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 79b553dc39a3..178e9128ded0 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -894,6 +894,7 @@ static const struct of_device_id tegra186_gpio_of_match[] = {
- 		/* sentinel */
- 	}
- };
-+MODULE_DEVICE_TABLE(of, tegra186_gpio_of_match);
- 
- static struct platform_driver tegra186_gpio_driver = {
- 	.driver = {
--- 
-2.25.0
+Since this is not urgent (just a small code cleanup) I suggest
+that the ACPI people can pick up patches 1-2 and then the last patch
+can be merged post 5.8-rc1, at which point all the dependencies for
+it should have landed already.
+
+Regards,
+
+Hans
 
