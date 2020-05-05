@@ -2,42 +2,42 @@ Return-Path: <SRS0=UIRa=6T=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 665BCC47257
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 16:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD7C47254
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 16:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0D220746
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 16:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C95482078D
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 May 2020 16:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588697060;
-	bh=XSouw40XSxJMsUn+OkpO2j16zf164hOmtUD4omR06L4=;
+	s=default; t=1588697108;
+	bh=+igWX9Bk88XIswSYeGW+x3/UppcDxT+gwnYJcjP87oI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=KJ0ymqSdJce0q1tu4vffgvDg+nZPkJO3po52zRlLLu6sp6BKwSazpLqNErxz3Bx+i
-	 ofcfuxXGSUwALKrMPeFk1d+fbBZv25LaSFo8VP/8RllvwJg2gf+1o+K/57SIiT68RF
-	 QhWJuBN0OxINFrZwZ4WVE4AyupNoD6eTtfr5fk+Q=
+	b=bw47PzIKFPGzZKaYyv+k85a/pdERQLs1tSajEBr4kC8v13Q1RqKxkiN7pCu+KSx4R
+	 vWrLby5sv+WT8qQghhhcL8FXb3IS2XPrUXHXhEz8Od40++vo6WbOQtcVoXxOlbEStq
+	 LPr2eO2Co27WX+JFFJ/pdZSvUER6ti5Nz8UrlWJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbgEEQoT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 May 2020 12:44:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51874 "EHLO mail.kernel.org"
+        id S1729717AbgEEQpI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 May 2020 12:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729717AbgEEQoS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 5 May 2020 12:44:18 -0400
+        id S1729541AbgEEQpI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 5 May 2020 12:45:08 -0400
 Received: from localhost (mobile-166-175-56-67.mycingular.net [166.175.56.67])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ED1B206CC;
-        Tue,  5 May 2020 16:44:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C76F20746;
+        Tue,  5 May 2020 16:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588697058;
-        bh=XSouw40XSxJMsUn+OkpO2j16zf164hOmtUD4omR06L4=;
+        s=default; t=1588697107;
+        bh=+igWX9Bk88XIswSYeGW+x3/UppcDxT+gwnYJcjP87oI=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Ulek5cyVtH6qIcceVmKvo1UIL7MuZpIrYLO8E1m8fGtePVVKUb8vDbBoNFR443aZE
-         ErEu7ZKQHuLDznlpeOM9xLX+tiBY7oVhNDI9752V/XhsTybVguccI4iNAbKzg+aZZt
-         QgAPq7U4LRFymloRdti4v3O45wRK5TzJwb6stYbQ=
-Date:   Tue, 5 May 2020 11:44:16 -0500
+        b=CxSj5RjExHqxxc0TCveV6jZ7RQSSjX7RtyLcDJ5NPHustCiFZQBf4UlspwmGhhCJf
+         sA3nCM8rLp9VgtzgKshaUcLQ/8u52sRFttc3gPZdG/jGCfDS3JwI1vz/hvAiQISqUH
+         6kYTu4ppBsTa7zg9ywttrrU4if1yFfooIZLueN3E=
+Date:   Tue, 5 May 2020 11:45:06 -0500
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Hans de Goede <hdegoede@redhat.com>
 Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
@@ -48,20 +48,60 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/3] ACPI / utils: Add acpi_evaluate_reg() helper
-Message-ID: <20200505164416.GA365505@bjorn-Precision-5520>
+Subject: Re: [PATCH 2/3] ACPI / hotplug / PCI: Use the new
+ acpi_evaluate_reg() helper
+Message-ID: <20200505164506.GA365569@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200505132128.19476-2-hdegoede@redhat.com>
+In-Reply-To: <20200505132128.19476-3-hdegoede@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 05, 2020 at 03:21:26PM +0200, Hans de Goede wrote:
-> With a recent fix to the pinctrl-cherryview driver we know have
-> 2 drivers open-coding the parameter building / passing for calling
-> _REG on an ACPI handle.
+On Tue, May 05, 2020 at 03:21:27PM +0200, Hans de Goede wrote:
+> Use the new acpi_evaluate_reg() helper in the acpiphp_glue.c code.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-s/know/now/
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+OK by me if this is merged with the first.
+
+> ---
+>  drivers/pci/hotplug/acpiphp_glue.c | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/acpiphp_glue.c b/drivers/pci/hotplug/acpiphp_glue.c
+> index b3869951c0eb..fd77eb1d460c 100644
+> --- a/drivers/pci/hotplug/acpiphp_glue.c
+> +++ b/drivers/pci/hotplug/acpiphp_glue.c
+> @@ -385,20 +385,11 @@ static unsigned char acpiphp_max_busnr(struct pci_bus *bus)
+>  static void acpiphp_set_acpi_region(struct acpiphp_slot *slot)
+>  {
+>  	struct acpiphp_func *func;
+> -	union acpi_object params[2];
+> -	struct acpi_object_list arg_list;
+>  
+> -	list_for_each_entry(func, &slot->funcs, sibling) {
+> -		arg_list.count = 2;
+> -		arg_list.pointer = params;
+> -		params[0].type = ACPI_TYPE_INTEGER;
+> -		params[0].integer.value = ACPI_ADR_SPACE_PCI_CONFIG;
+> -		params[1].type = ACPI_TYPE_INTEGER;
+> -		params[1].integer.value = 1;
+> -		/* _REG is optional, we don't care about if there is failure */
+> -		acpi_evaluate_object(func_to_handle(func), "_REG", &arg_list,
+> -				     NULL);
+> -	}
+> +	list_for_each_entry(func, &slot->funcs, sibling)
+> +		acpi_evaluate_reg(func_to_handle(func),
+> +				  ACPI_ADR_SPACE_PCI_CONFIG,
+> +				  ACPI_REG_CONNECT);
+>  }
+>  
+>  static void check_hotplug_bridge(struct acpiphp_slot *slot, struct pci_dev *dev)
+> -- 
+> 2.26.0
+> 
