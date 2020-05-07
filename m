@@ -2,35 +2,36 @@ Return-Path: <SRS0=+j8Z=6V=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F3DC38A2A
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 May 2020 11:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60B9C38A2A
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 May 2020 11:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4AD20870
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 May 2020 11:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B027320CC7
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 May 2020 11:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725848AbgEGLgi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726587AbgEGLgi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 7 May 2020 07:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbgEGLgh (ORCPT
+        with ESMTP id S1726218AbgEGLgh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 May 2020 07:36:37 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55595C05BD0D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50453C05BD0C
         for <linux-gpio@vger.kernel.org>; Thu,  7 May 2020 04:36:37 -0700 (PDT)
 Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:6572:4a1f:d283:9ae8])
         by albert.telenet-ops.be with bizsmtp
-        id bncT2200T3ZRV0X06ncTEj; Thu, 07 May 2020 13:36:28 +0200
+        id bncT2200V3ZRV0X06ncTEl; Thu, 07 May 2020 13:36:28 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jWepH-0007DT-Kf; Thu, 07 May 2020 13:36:27 +0200
+        id 1jWepH-0007DX-Lx; Thu, 07 May 2020 13:36:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jWepH-0006GI-JO; Thu, 07 May 2020 13:36:27 +0200
+        id 1jWepH-0006GM-LS; Thu, 07 May 2020 13:36:27 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
@@ -41,44 +42,39 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] lightning mountain: Add architecture dependency
-Date:   Thu,  7 May 2020 13:36:24 +0200
-Message-Id: <20200507113626.24026-1-geert+renesas@glider.be>
+Subject: [PATCH 2/2] phy: intel-lgm-emmc: Add architecture dependency
+Date:   Thu,  7 May 2020 13:36:26 +0200
+Message-Id: <20200507113626.24026-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200507113626.24026-1-geert+renesas@glider.be>
+References: <20200507113626.24026-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-	Hi all,
+The Intel eMMC PHY is only present on Intel Lightning Mountain SoCs.
+Add an architecture dependency to the PHY_INTEL_EMMC config symbol, to
+avoid asking the user about it when configuring a kernel for a non-x86
+architecture.
 
-The Intel Equilibrium pin controller and eMMC PHY are only present on Intel
-Lightning Mountain SoCs.  This series adds architecture dependencies to the
-corresponding config symbols, to avoid asking the user about them when
-configuring a kernel for a non-x86 architecture.
-    
-All patches in this series are independent.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  pinctrl: equilibrium: Add architecture dependency
-  phy: intel-lgm-emmc: Add architecture dependency
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  drivers/phy/intel/Kconfig | 1 +
- drivers/pinctrl/Kconfig   | 1 +
- 2 files changed, 2 insertions(+)
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/phy/intel/Kconfig b/drivers/phy/intel/Kconfig
+index 4ea6a8897cd7c9e1..e6320a94ddb11321 100644
+--- a/drivers/phy/intel/Kconfig
++++ b/drivers/phy/intel/Kconfig
+@@ -4,6 +4,7 @@
+ #
+ config PHY_INTEL_EMMC
+ 	tristate "Intel EMMC PHY driver"
++	depends on X86 || COMPILE_TEST
+ 	select GENERIC_PHY
+ 	help
+ 	  Enable this to support the Intel EMMC PHY
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
