@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8980EC47247
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 May 2020 15:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CAAC38A2A
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 May 2020 15:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6157D24955
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 May 2020 15:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66A024966
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 May 2020 15:37:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r/T2Qu4D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qa2htAHP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgEHPg7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 May 2020 11:36:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58434 "EHLO
+        id S1728366AbgEHPhF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 May 2020 11:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728264AbgEHPgy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 May 2020 11:36:54 -0400
+        with ESMTP id S1728355AbgEHPhD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 May 2020 11:37:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E19C061A0C;
-        Fri,  8 May 2020 08:36:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F37EFC061A0C;
+        Fri,  8 May 2020 08:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Y6GByYBpY6pH5k9QcdAJgxxwyoCDdXaPGt39GnAtfcU=; b=r/T2Qu4Dq2EPB6e8g5rt10rdUS
-        xxIMdT2OcwOzQanXgb4lV4q1HK2YMY6jUhqZw4kqLXgZCPDWdZw6jUGIRcchb87UWGNEuuzBouvX4
-        4YS6XQKp60nPAtzrXWUhDMdzUDn2lFo59J/30GXVF9vyt86zvxErfvhDIjdhWfDQu5QTV2MczwT2x
-        fGalI5f7Wmy57824Eoy61rqGOadOiirp9dqXejOb+NK5CiWjdMnCeU4VkmDWFCec3wc6SAXB9cpOu
-        qVjmdlypsglLL/MZUS2SpJ5wA9C0Z291fcC9yHzmdGJanj/2UhJ/FJKsXGQ6ggPMKfRpM8NzQ3VrW
-        aO9USAMw==;
+        bh=Fa8g/lJWKeJOUWpYZKXVATFBsUbfwqV0WZlzPMoN0uA=; b=Qa2htAHPQfxVvAUTYEeMqFgrdh
+        GOwnTg4ulWQqLx6PIvQwXwOQ38d99ysssfAJK0A0785ViFbs5O4fMdbZzuq2dDKpS8pELW7HGvkBM
+        p1nwmkCOWeGuhoWNIarZEKQnoIq2R5Ex6v5mA07Q/8cRXM1obeyxcP5oPlOnMLj/LE/DGq17tKzG5
+        C72uis6BvgLT+nnvwsubs4tEk9aZUMn1y7yUC4eLB2h/N8MLIsTdMkKA9um8pxHIhYStpxq4EUKhW
+        JF8NNAytHWoxkh5ov5BS8g1yn0WriNp19+/h+gp0YDDSf/AdqPHNP83wqLC7LkpEXhpV8LqMLPmdF
+        xf6VlBZg==;
 Received: from [2001:4bb8:180:9d3f:90d7:9df8:7cd:3504] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jX53V-0004Cz-VR; Fri, 08 May 2020 15:36:54 +0000
+        id 1jX53e-0004QB-FT; Fri, 08 May 2020 15:37:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH 06/12] eventpoll: use __anon_inode_getfd
-Date:   Fri,  8 May 2020 17:36:28 +0200
-Message-Id: <20200508153634.249933-7-hch@lst.de>
+Subject: [PATCH 09/12] rdma: use __anon_inode_getfd
+Date:   Fri,  8 May 2020 17:36:31 +0200
+Message-Id: <20200508153634.249933-10-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200508153634.249933-1-hch@lst.de>
 References: <20200508153634.249933-1-hch@lst.de>
@@ -63,40 +63,48 @@ get_unused_fd_flags + anon_inode_getfile.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/eventpoll.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/infiniband/core/rdma_core.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 8c596641a72b0..8abdb9fff611a 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2055,23 +2055,14 @@ static int do_epoll_create(int flags)
- 	 * Creates all the items needed to setup an eventpoll file. That is,
- 	 * a file structure and a free file descriptor.
- 	 */
--	fd = get_unused_fd_flags(O_RDWR | (flags & O_CLOEXEC));
--	if (fd < 0) {
--		error = fd;
-+	fd = __anon_inode_getfd("[eventpoll]", &eventpoll_fops, ep,
-+				 O_RDWR | (flags & O_CLOEXEC), &file);
-+	if (fd < 0)
- 		goto out_free_ep;
--	}
--	file = anon_inode_getfile("[eventpoll]", &eventpoll_fops, ep,
--				 O_RDWR | (flags & O_CLOEXEC));
--	if (IS_ERR(file)) {
--		error = PTR_ERR(file);
--		goto out_free_fd;
--	}
- 	ep->file = file;
- 	fd_install(fd, file);
- 	return fd;
+diff --git a/drivers/infiniband/core/rdma_core.c b/drivers/infiniband/core/rdma_core.c
+index 5128cb16bb485..541e5e06347f6 100644
+--- a/drivers/infiniband/core/rdma_core.c
++++ b/drivers/infiniband/core/rdma_core.c
+@@ -462,30 +462,21 @@ alloc_begin_fd_uobject(const struct uverbs_api_object *obj,
+ 	if (WARN_ON(fd_type->fops->release != &uverbs_uobject_fd_release))
+ 		return ERR_PTR(-EINVAL);
  
--out_free_fd:
--	put_unused_fd(fd);
- out_free_ep:
- 	ep_free(ep);
- 	return error;
+-	new_fd = get_unused_fd_flags(O_CLOEXEC);
+-	if (new_fd < 0)
+-		return ERR_PTR(new_fd);
+-
+ 	uobj = alloc_uobj(attrs, obj);
+ 	if (IS_ERR(uobj))
+-		goto err_fd;
++		return uobj;
+ 
+ 	/* Note that uverbs_uobject_fd_release() is called during abort */
+-	filp = anon_inode_getfile(fd_type->name, fd_type->fops, NULL,
+-				  fd_type->flags);
+-	if (IS_ERR(filp)) {
+-		uobj = ERR_CAST(filp);
++	new_fd = __anon_inode_getfd(fd_type->name, fd_type->fops, NULL,
++			fd_type->flags | O_CLOEXEC, &filp);
++	if (new_fd < 0)
+ 		goto err_uobj;
+-	}
+ 	uobj->object = filp;
+-
+ 	uobj->id = new_fd;
+ 	return uobj;
+ 
+ err_uobj:
+ 	uverbs_uobject_put(uobj);
+-err_fd:
+-	put_unused_fd(new_fd);
+ 	return uobj;
+ }
+ 
 -- 
 2.26.2
 
