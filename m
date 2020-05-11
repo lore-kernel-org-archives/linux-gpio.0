@@ -2,132 +2,115 @@ Return-Path: <SRS0=xHJw=6Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20DEC54E8E
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 14:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6A6C54E8F
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 14:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC0C220736
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 14:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3611120722
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 14:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbgEKOsP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 May 2020 10:48:15 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38399 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729463AbgEKOsP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 May 2020 10:48:15 -0400
-Received: by mail-ot1-f67.google.com with SMTP id m33so7735471otc.5;
-        Mon, 11 May 2020 07:48:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I53wtGF7ExqZO1oHW4EJMSb62A02nVxRDcsd0YPTnyc=;
-        b=kgLf5jgAWg4xCyGxkkZgm97pW67dx4T86OZHc8HNR4hE5tygTZjpTRu8vpEHpJrlmj
-         dALuOebKpj6vvWZ4DSTCD70VNdfc7+gMWAqtW6p6mwELuph+leShIGXSDx2s8gt641A2
-         tEur7kI9VHBfdIIzaX3juFz7orQa6aHxcxuRf86MVCfANXp7+z59uP5GhOYnZoJb6qcb
-         V7zIH/n2DfnQlhZ2nE1KrqI1ZCt0g9EDyGsI1g767TC00YVFPjqhi5gobIjNaYBnrDoS
-         e1105Yl7UOqxteQ7nyE16TwF2Id4+T7EL4OV5qAss52MuVURlFuVN6Cl++q8mLkrqt3B
-         6XfA==
-X-Gm-Message-State: AGi0Pubak75SZw10xM9ulnNkKiD/ZuE8H8/ObZnUAjH4bpi8Hr4cI5wI
-        MFFLCbC/s8R5xW/DjJc7wa3VFqwDafMrzlmeI74=
-X-Google-Smtp-Source: APiQypLbQvBf4G4mmcjUqqj3mbQibbWN7tgqkKpqekEwxxTFfjivprjK40sBPUyaFKLdyuNtOMKc90iLyoRDV1UIVs4=
-X-Received: by 2002:a9d:63da:: with SMTP id e26mr12131701otl.107.1589208493024;
- Mon, 11 May 2020 07:48:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200507114015.24461-1-geert+renesas@glider.be>
- <20200507114525.GE34497@piout.net> <87ftccorqd.fsf@soft-dev15.microsemi.net>
- <20200507124419.GG34497@piout.net> <CAMuHMdUodZQ--jHT1atL1Cmfq7kqu9c=48LXx5o0PagHVNj+RA@mail.gmail.com>
- <20200511142038.GP34497@piout.net>
-In-Reply-To: <20200511142038.GP34497@piout.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 May 2020 16:48:01 +0200
-Message-ID: <CAMuHMdXZMeY_Oz5fruxhfmS=6Tro0C3P+RoGiRZHpmACFrYXLg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: ocelot: Add platform dependency
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730558AbgEKOxL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 May 2020 10:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730474AbgEKOxK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 11 May 2020 10:53:10 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63298C05BD09
+        for <linux-gpio@vger.kernel.org>; Mon, 11 May 2020 07:53:10 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:702c:fb99:3097:2049])
+        by andre.telenet-ops.be with bizsmtp
+        id dSsy220060GoAb601Ssy9H; Mon, 11 May 2020 16:53:08 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jY9ne-00082e-2B; Mon, 11 May 2020 16:52:58 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jY9ne-0005zT-0R; Mon, 11 May 2020 16:52:58 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v7 2/6] mfd: sm501: Use GPIO_LOOKUP_IDX() helper macro
+Date:   Mon, 11 May 2020 16:52:53 +0200
+Message-Id: <20200511145257.22970-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200511145257.22970-1-geert+renesas@glider.be>
+References: <20200511145257.22970-1-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi  Alexandre,
+i801_add_mux() fills in the GPIO lookup table by manually populating an
+array of gpiod_lookup structures.  Use the existing GPIO_LOOKUP_IDX()
+helper macro instead, to relax a dependency on the gpiod_lookup
+structure's member names.
 
-On Mon, May 11, 2020 at 4:20 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 11/05/2020 13:39:42+0200, Geert Uytterhoeven wrote:
-> > On Thu, May 7, 2020 at 2:47 PM Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> wrote:
-> > > On 07/05/2020 14:27:06+0200, Lars Povlsen wrote:
-> > > > Alexandre Belloni writes:
-> > > > > On 07/05/2020 13:40:15+0200, Geert Uytterhoeven wrote:
-> > > > >> The Microsemi Ocelot pin controller is only present on Microsemi Ocelot
-> > > > >> and Jaguar2 SoCs.  Add a platform dependency to the PINCTRL_OCELOT
-> > > > >> config symbol, to avoid asking the user about it when configuring a
-> > > > >> kernel without Ocelot or Jaguar2 support.
-> > > > >>
-> > > > >
-> > > > > I have to NAK here because there are upcoming (hopefully this cycle)
-> > > > > SoCs using this driver.
-> > > >
-> > > > Not only because of that, but also an arbitrary system connecting to
-> > > > ocelot by PCI could be using the driver.
-> > >
-> > > Right, and that was why I removed the dependency when adding jaguar2
-> >
-> > That is far from obvious from the description of commit da801ab56ad87489
-> > ("pinctrl: ocelot: add MSCC Jaguar2 support")....
-> > BTW, probably PINCTRL_OCELOT should have got "default y if MSCC_OCELOT",
-> > to avoid breaking old configs?
-> >
-> > > support I never booted the mips core of jaguar2, I used it using PCIe.
-> >
-> > Ah, you're using it as a PCIe endpoint. So what about ...
-> >
-> > > > >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > >> ---
-> > > > >>  drivers/pinctrl/Kconfig | 4 ++--
-> > > > >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > >>
-> > > > >> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> > > > >> index f0ce4ce3e0f52456..bed67c08a0892240 100644
-> > > > >> --- a/drivers/pinctrl/Kconfig
-> > > > >> +++ b/drivers/pinctrl/Kconfig
-> > > > >> @@ -394,8 +394,8 @@ config PINCTRL_RK805
-> > > > >>
-> > > > >>  config PINCTRL_OCELOT
-> > > > >>       bool "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
-> > > > >> -     depends on OF
-> > > > >> -     depends on HAS_IOMEM
-> > > > >> +     depends on OF && HAS_IOMEM
-> > > > >> +     depends on MSCC_OCELOT || COMPILE_TEST
-> >
-> > ... "depends on MSCC_OCELOT || PCI || COMPILE_TEST" instead?
-> >
-> > If other SoCs gain support, the dependency list can be extended.
->
-> Hum ok, note that it can also be connected as a SPI slave but I think
-> this is a bit far fetched currently.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+v7:
+  - Add Acked-by,
 
-I can connect whatever other system using SPI, i2c, CAN, or Ethernet ;-)
-That doesn't mean I will directly program the other system's pin controller
-over that link, using the standard (MMIO) pinctrl driver.
+v6:
+  - New.
+---
+ drivers/mfd/sm501.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index e49787e6bb93e5c8..ccd62b963952814e 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1145,22 +1145,14 @@ static int sm501_register_gpio_i2c_instance(struct sm501_devdata *sm,
+ 		return -ENOMEM;
+ 
+ 	lookup->dev_id = "i2c-gpio";
+-	if (iic->pin_sda < 32)
+-		lookup->table[0].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[0].chip_label = "SM501-HIGH";
+-	lookup->table[0].chip_hwnum = iic->pin_sda % 32;
+-	lookup->table[0].con_id = NULL;
+-	lookup->table[0].idx = 0;
+-	lookup->table[0].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
+-	if (iic->pin_scl < 32)
+-		lookup->table[1].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[1].chip_label = "SM501-HIGH";
+-	lookup->table[1].chip_hwnum = iic->pin_scl % 32;
+-	lookup->table[1].con_id = NULL;
+-	lookup->table[1].idx = 1;
+-	lookup->table[1].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
++	lookup->table[0] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_sda < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_sda % 32, NULL, 0,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
++	lookup->table[1] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_scl < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_scl % 32, NULL, 1,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
+ 	gpiod_add_lookup_table(lookup);
+ 
+ 	icd = dev_get_platdata(&pdev->dev);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
