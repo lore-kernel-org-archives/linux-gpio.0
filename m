@@ -1,155 +1,101 @@
-Return-Path: <SRS0=g+UB=6Y=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=xHJw=6Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A16C38A2A
-	for <linux-gpio@archiver.kernel.org>; Sun, 10 May 2020 19:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BBBC54E4B
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 09:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B764A20801
-	for <linux-gpio@archiver.kernel.org>; Sun, 10 May 2020 19:05:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tusd/kAI"
+	by mail.kernel.org (Postfix) with ESMTP id 732E820720
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 May 2020 09:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbgEJTFv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 10 May 2020 15:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbgEJTFu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 10 May 2020 15:05:50 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4567C061A0C;
-        Sun, 10 May 2020 12:05:50 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id d22so3495231pgk.3;
-        Sun, 10 May 2020 12:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TrDysAnyzIqn5Cn1iMOx1jHu5Zp3yUHwKX37t/G/0oo=;
-        b=Tusd/kAIJ93DCgBlGio6JGtGTJMloGM3X+oLDhyeqDPqSqCXLICnX9B8HMn/Jd0Tik
-         +k7rp+0JfNDOaOh23t8jMPC6KRZz/xaa8oDPLQ+uXPvlcS1bGZ1DLNaxEcN5K35fNAUQ
-         K4+XmSRSvOCSjx8VciY3xSCCEOJy8x4ot1c6rf6Kzelxqy31GZ+6vunnB01XxySlLljG
-         nKgOxJLV8Qb0HRTMNhZNqOejR93rP3pryODWevJvGCthrkNvR2P1xPBlvkfvmDyxSxTH
-         wJlGEMaTgD4KvDzqEGV1cq7HxVl6HOFnLM2W1f9zS4HlohudcR0q29xfWtlTGa7bPjpw
-         Je0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TrDysAnyzIqn5Cn1iMOx1jHu5Zp3yUHwKX37t/G/0oo=;
-        b=nU3K3FfvENJIKEtD5yCrNbaiuNwQbD91+pmL60KA3Kz6h6+pohF9PfK3yrhVifU8LA
-         W7AAgVwMgBp/2MMqZE2vq5nMuZ0+6OjwO2bGoAmqXtrMc0PolQwXdlwORb6nvU4bIiMz
-         kGp10xYT+YDmZbMtJoxuXQ2aJSFErjHLpoEkesjnyK9ipabcFdM8LKLglOrq22MpVpup
-         WA1128OOgT0MVCWgCCVOBzIvo1Ugr4lOAuZwzFfbghSbMO01wBo2rGS4KzvMDjG+C5LW
-         mX+yvpOX+g6n1ZpvDNMdLi0497Qxhr+BHq4ABwuAzK9tylffTogQW+4DWsaREJwOd0m5
-         hcSw==
-X-Gm-Message-State: AGi0PuZncimxjfZ58V9lpjl7wxFboiksifoxXxSDedQErzw2tXLPuw7D
-        pJYaZWDaMi18vK1P2cZGgRpakmF1V15WTn3Modw=
-X-Google-Smtp-Source: APiQypLeReEsRK6CfvZljwNh3sLkBBj5r2qTM7yV0oIgFRo3EmuOUB97cNaBFdGIXnDDJM4DwzZIgvCMuvjhuSRGYZ8=
-X-Received: by 2002:a65:6251:: with SMTP id q17mr11271737pgv.4.1589137550161;
- Sun, 10 May 2020 12:05:50 -0700 (PDT)
+        id S1729304AbgEKJWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 May 2020 05:22:47 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:44774 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbgEKJWr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 May 2020 05:22:47 -0400
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.69 with qID 04B9MbiO6009310, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexmb06.realtek.com.tw[172.21.6.99])
+        by rtits2.realtek.com.tw (8.15.2/2.66/5.86) with ESMTPS id 04B9MbiO6009310
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 11 May 2020 17:22:37 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXMB06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 11 May 2020 17:22:37 +0800
+Received: from RTEXMB06.realtek.com.tw (172.21.6.99) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 11 May 2020 17:22:36 +0800
+Received: from localhost.localdomain (172.21.252.101) by
+ RTEXMB01.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server id
+ 15.1.1779.2 via Frontend Transport; Mon, 11 May 2020 17:22:36 +0800
+From:   TY Chang <tychang@realtek.com>
+To:     <tychang@realtek.com>
+CC:     <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH 0/7] pinctrl: update realtek DHC pinctrl driver
+Date:   Mon, 11 May 2020 17:22:29 +0800
+Message-ID: <20200511092236.4554-1-tychang@realtek.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <cover.1588460322.git.syednwaris@gmail.com> <20200504114109.GE185537@smile.fi.intel.com>
- <20200504143638.GA4635@shinobu> <CAHp75Vf_vP1qM9x81dErPeaJ4-cK-GOMnmEkxkhPY2gCvtmVbA@mail.gmail.com>
- <20200505145250.GA5979@shinobu> <CACG_h5pcb3uOn+or-6L8bMk3bBNFXWJre9C9pRi3hNgFxGkd_g@mail.gmail.com>
-In-Reply-To: <CACG_h5pcb3uOn+or-6L8bMk3bBNFXWJre9C9pRi3hNgFxGkd_g@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 10 May 2020 22:05:38 +0300
-Message-ID: <CAHp75VcRztO-DPnUin-2TU9e10k0VViD7=S3ypQ0vQ=ittxNkw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce the for_each_set_clump macro
-To:     Syed Nayyar Waris <syednwaris@gmail.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, rrichter@marvell.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, May 9, 2020 at 7:36 PM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
-> On Tue, May 5, 2020 at 8:24 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> > On Tue, May 05, 2020 at 04:51:56PM +0300, Andy Shevchenko wrote:
-> > > On Mon, May 4, 2020 at 5:41 PM William Breathitt Gray
-> > > <vilhelm.gray@gmail.com> wrote:
-> > > > On Mon, May 04, 2020 at 02:41:09PM +0300, Andy Shevchenko wrote:
-> > > > > On Sun, May 03, 2020 at 04:38:36AM +0530, Syed Nayyar Waris wrote:
+Hi Andreas,
 
-...
+This series update realtek DHC pinctrl driver with the following details:
 
-> > > > > Looking into the last patches where we have examples I still do not see a
-> > > > > benefit of variadic clump sizes. power of 2 sizes would make sense (and be
-> > > > > optimized accordingly (64-bit, 32-bit).
+* add missed pins
+* add pin configuration feature 
+* add suspend/resume callback function
+* fix the warnings checked by running scripts/checkpatch
+* add realtek pinctrl documentation
+* move realtek pinctrl driver to realtek directory
 
-> > > > There is of course benefit in defining for_each_set_clump with clump
-> > > > sizes of powers of 2 (we can optimize for 32 and 64 bit sizes and avoid
-> > > > boundary checks that we know will not occur), but at the very least the
-> > > > variable size bitmap_set_value and bitmap_get_value provide significant
-> > > > benefit for the readability of the gpio-xilinx code:
-> > > >
-> > > >         bitmap_set_value(old, state[0], 0, width[0]);
-> > > >         bitmap_set_value(old, state[1], width[0], width[1]);
-> > > >         ...
-> > > >         state[0] = bitmap_get_value(new, 0, width[0]);
-> > > >         state[1] = bitmap_get_value(new, width[0], width[1]);
-> > > >
-> > > > These lines are simple and clear to read: we know immediately what they
-> > > > do. But if we did not have bitmap_set_value/bitmap_get_value, we'd have
-> > > > to use several bitwise operations for each line; the obfuscation of the
-> > > > code would be an obvious hinderance here.
-> > >
-> > > Do I understand correctly that width[0] and width[1] may not be power
-> > > of two and it's actually the case?
 
-> > I'm under the impression that width[0] and width[1] are arbitrarily
-> > chosen by the user and could be any integer. I have never used this
-> > hardware so I'm hoping one of the gpio-xilinx or GPIO subsystem
-> > maintainers in this thread will respond with some guidance.
-> >
-> > If the values of width[0] and width[1] are restricted to powers of 2,
-> > then I agree that there is no need for generic bitmap_set_value and
-> > bitmap_get_value functions and we can instead use more optimized power
-> > of 2 versions.
+Cc: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Andreas Färber <afaerber@suse.de>
 
-> Regarding the question that whether width[0] and width[1] can have any
-> value or they are restricted to power-of-2.
->
-> Referring to the document (This xilinx GPIO IP was mentioned in the
-> gpio-xilinx.c file):
-> https://www.xilinx.com/support/documentation/ip_documentation/axi_gpio/v2_0/pg144-axi-gpio.pdf
->
-> On page 8, we can see that the GPIO widths for the 2 channels can have
-> values different from power-of-2.For example: 5, 15 etc.
->
-> So, I think we should keep the 'for_each_set_clump',
-> 'bitmap_get_value' and 'bitmap_set_value' as completely generic.
->
-> I am proceeding further for my next patchset submission keeping above
-> findings in mind. If you guys think something else or would like to
-> add something, let me know.
+TY Chang (7):
+  pinctrl: realtek: rtd1295: Add missed pins.
+  pinctrl: realtek: rtd1295: Add pin configs.
+  pinctrl: realtek: rtd1195: Add missed pins and pin configs.
+  pinctrl: realtek: Add pinctrl Documentation.
+  pinctrl: realtek: DHC: Fix pinctrl driver coding style.
+  pinctrl: realtek: DHC: Move files to realtek directory and rename.
+  pinctrl: realtek: DHC: Add suspend/resume callback function.
 
-Thank you for investigation. So, if Xilinx is okay with the change, I
-have no objections.
+ .../bindings/pinctrl/reaktek,pinctrl.txt      |   9 +
+ drivers/pinctrl/Kconfig                       |  10 +-
+ drivers/pinctrl/Makefile                      |   2 +-
+ drivers/pinctrl/pinctrl-rtd119x.c             | 383 ---------
+ drivers/pinctrl/realtek/Kconfig               |  10 +
+ drivers/pinctrl/realtek/Makefile              |   3 +
+ drivers/pinctrl/realtek/pinctrl-rtd.c         | 600 +++++++++++++
+ .../pinctrl/{ => realtek}/pinctrl-rtd1195.h   | 490 ++++++++---
+ .../pinctrl/{ => realtek}/pinctrl-rtd1295.h   | 805 +++++++++++++++---
+ 9 files changed, 1679 insertions(+), 633 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/reaktek,pinctrl.txt
+ delete mode 100644 drivers/pinctrl/pinctrl-rtd119x.c
+ create mode 100644 drivers/pinctrl/realtek/Kconfig
+ create mode 100644 drivers/pinctrl/realtek/Makefile
+ create mode 100644 drivers/pinctrl/realtek/pinctrl-rtd.c
+ rename drivers/pinctrl/{ => realtek}/pinctrl-rtd1195.h (64%)
+ rename drivers/pinctrl/{ => realtek}/pinctrl-rtd1295.h (62%)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.26.2
+
