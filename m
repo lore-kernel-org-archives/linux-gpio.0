@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB19CA90AF
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE24CA90AF
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 516CB206A3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:26:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5DB3206A3
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgELS0c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 May 2020 14:26:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:38515 "EHLO mga18.intel.com"
+        id S1728070AbgELS1Y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 May 2020 14:27:24 -0400
+Received: from mga03.intel.com ([134.134.136.65]:25505 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbgELS0b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 12 May 2020 14:26:31 -0400
-IronPort-SDR: x5h0DKn6uyH/FdTjRiWO3cvJtn6XsftK9hI4PhxXp12C6BkSa8qRVWyHxZi8sBmVlM6v+q5Eka
- VjXkX8IcBj3A==
+        id S1725950AbgELS1Y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 12 May 2020 14:27:24 -0400
+IronPort-SDR: /0HVrlGbk7usvI7WNQnJK9exEZVdIpy0Q07OvfBrfMA/QZYIX3AcNCYU7IYubUf7boHFJQVsPD
+ 0d0FQPNK5uDA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2020 11:26:26 -0700
-IronPort-SDR: FjQB8vbML70K7NTM8GupvnPGJuNjr5XH1JNo5pzU3ngs5eGTby4QcO2S+/xN2n9rSY31Zakf5p
- cna7gJgDWhYg==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2020 11:27:24 -0700
+IronPort-SDR: DGQTbCP+UtlmTeF/2+WWK6NjAJTD3qrF9tGjHJzMO1KCV9luUOseA8MMkgADlDbHobpIsfXN1o
+ BZVUPSn4ocjA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,384,1583222400"; 
-   d="scan'208";a="409396966"
+   d="scan'208";a="250984352"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 12 May 2020 11:26:24 -0700
+  by orsmga007.jf.intel.com with ESMTP; 12 May 2020 11:27:22 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1AEF86A; Tue, 12 May 2020 21:26:24 +0300 (EEST)
+        id 0C64725F; Tue, 12 May 2020 21:27:22 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] gpio: mb86s7x: Remove superfluous test for ACPI companion
-Date:   Tue, 12 May 2020 21:26:23 +0300
-Message-Id: <20200512182623.54990-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] gpio: xgene-sb: Drop extra check to call acpi_gpiochip_request_interrupts()
+Date:   Tue, 12 May 2020 21:27:21 +0300
+Message-Id: <20200512182721.55127-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200512182623.54990-1-andriy.shevchenko@linux.intel.com>
-References: <20200512182623.54990-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20200512182721.55127-1-andriy.shevchenko@linux.intel.com>
+References: <20200512182721.55127-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -51,71 +51,42 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-acpi_gpiochip_request_interrupts() will check for ACPI handle of
-the GPIO chip parent device and bail out if there is none defined.
-Thus, has_acpi_companion() is effectively repeating above and
-is not needed in the individual driver.
-
-Assigning ->to_irq() unconditionally doesn't change anything, except
-an error code, but this we fix as well by propagating it from
-platform_get_irq().
+There is no need to have an additional check to call
+acpi_gpiochip_request_interrupts(). Even without any interrupts available
+the registered ACPI Event handlers can be useful for debugging purposes.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-mb86s7x.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-xgene-sb.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
-index 3be2e56f7c4321..37c5363e391ef1 100644
---- a/drivers/gpio/gpio-mb86s7x.c
-+++ b/drivers/gpio/gpio-mb86s7x.c
-@@ -145,7 +145,9 @@ static int mb86s70_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
+diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+index 203a268dd09c52..a809609ee9570d 100644
+--- a/drivers/gpio/gpio-xgene-sb.c
++++ b/drivers/gpio/gpio-xgene-sb.c
+@@ -290,10 +290,8 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
  
- 	for (index = 0;; index++) {
- 		irq = platform_get_irq(to_platform_device(gc->parent), index);
--		if (irq <= 0)
-+		if (irq < 0)
-+			return irq;
-+		if (irq == 0)
- 			break;
- 		if (irq_get_irq_data(irq)->hwirq == offset)
- 			return irq;
-@@ -184,15 +186,13 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
- 	gchip->gc.free = mb86s70_gpio_free;
- 	gchip->gc.get = mb86s70_gpio_get;
- 	gchip->gc.set = mb86s70_gpio_set;
-+	gchip->gc.to_irq = mb86s70_gpio_to_irq;
- 	gchip->gc.label = dev_name(&pdev->dev);
- 	gchip->gc.ngpio = 32;
- 	gchip->gc.owner = THIS_MODULE;
- 	gchip->gc.parent = &pdev->dev;
- 	gchip->gc.base = -1;
+ 	dev_info(&pdev->dev, "X-Gene GPIO Standby driver registered\n");
  
--	if (has_acpi_companion(&pdev->dev))
--		gchip->gc.to_irq = mb86s70_gpio_to_irq;
--
- 	ret = gpiochip_add_data(&gchip->gc, gchip);
- 	if (ret) {
- 		dev_err(&pdev->dev, "couldn't register gpio driver\n");
-@@ -200,8 +200,7 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+-	if (priv->nirq > 0) {
+-		/* Register interrupt handlers for gpio signaled acpi events */
+-		acpi_gpiochip_request_interrupts(&priv->gc);
+-	}
++	/* Register interrupt handlers for GPIO signaled ACPI Events */
++	acpi_gpiochip_request_interrupts(&priv->gc);
  
--	if (has_acpi_companion(&pdev->dev))
--		acpi_gpiochip_request_interrupts(&gchip->gc);
-+	acpi_gpiochip_request_interrupts(&gchip->gc);
- 
- 	return 0;
+ 	return ret;
  }
-@@ -210,8 +209,7 @@ static int mb86s70_gpio_remove(struct platform_device *pdev)
+@@ -302,9 +300,7 @@ static int xgene_gpio_sb_remove(struct platform_device *pdev)
  {
- 	struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
+ 	struct xgene_gpio_sb *priv = platform_get_drvdata(pdev);
  
--	if (has_acpi_companion(&pdev->dev))
--		acpi_gpiochip_free_interrupts(&gchip->gc);
-+	acpi_gpiochip_free_interrupts(&gchip->gc);
- 	gpiochip_remove(&gchip->gc);
- 	clk_disable_unprepare(gchip->clk);
+-	if (priv->nirq > 0) {
+-		acpi_gpiochip_free_interrupts(&priv->gc);
+-	}
++	acpi_gpiochip_free_interrupts(&priv->gc);
+ 
+ 	irq_domain_remove(priv->irq_domain);
  
 -- 
 2.26.2
