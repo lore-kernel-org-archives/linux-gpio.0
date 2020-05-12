@@ -2,116 +2,69 @@ Return-Path: <SRS0=LosB=62=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8540FC2D0F8
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA08CA90AF
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6713B23129
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72CB8207BC
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 May 2020 18:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589309704;
+	bh=t+/MSg95b7mQI+QeMa8tHaMdB+fOWvrpJNwQ1LikcQs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=VgDou4yWPX85do+xcuu8RCP0IW3uBqONDXkfG6B8pRnEWSOHtr4wvKUIgwlUID9Zq
+	 NrFOui6Ngqv1ZsqLxBIgbeXqe4oCm6Nu7CoCXKgv9lCS9AqVPXM8VgcKqmv/F6G9a9
+	 4ZjLtqW+98+VmFm4DTvkH/72EhQJ3UoY4+P2IXxg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbgELSpg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 May 2020 14:45:36 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64723 "EHLO mga17.intel.com"
+        id S1728039AbgELSzE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 May 2020 14:55:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgELSpg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 12 May 2020 14:45:36 -0400
-IronPort-SDR: lhn3FNKlCLMm3X/MnloJuHP5L0tAooJyoGRRzdv25Rc6/9vB3awcRSzwCqZHVS8Hhr/X0umBoZ
- ORRLxf0wynxA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2020 11:45:35 -0700
-IronPort-SDR: XjMfYwbYEPxAW6x7y8SZlGa19SAncrUbvZnRmWXKvz4O/sQvv5n0kSKOilty/WUOCzeJ1pIJcD
- iCFwGQoEQ/dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,384,1583222400"; 
-   d="scan'208";a="252967041"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 12 May 2020 11:45:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9EEB725F; Tue, 12 May 2020 21:45:13 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v1 3/4] gpio: dwapb: Drop extra check to call acpi_gpiochip_request_interrupts()
-Date:   Tue, 12 May 2020 21:45:12 +0300
-Message-Id: <20200512184513.86883-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200512184513.86883-1-andriy.shevchenko@linux.intel.com>
-References: <20200512184513.86883-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1725938AbgELSzD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 12 May 2020 14:55:03 -0400
+Subject: Re: [GIT PULL] GPIO fixes for the v5.7 series
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589309703;
+        bh=t+/MSg95b7mQI+QeMa8tHaMdB+fOWvrpJNwQ1LikcQs=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=r9vviOiRotYHOK4JOA0ZuQBoIjnsme469+MzU60Yz/SfdOupl9XYNjBXdwVLqc62e
+         YabMUVJ9y1LlyFKeDp8onuwgJJGqg0zobY0n9wTb96Hvn8FIuqZsxLh5SeagcLySgy
+         tzN2eZLDNmektBG3yhD79PesSmcxUFyh3LCeCTUQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdafEGdhvn9kgBp7SAXw=JwqWRRoHu9CmytcWGeOYoixzQ@mail.gmail.com>
+References: <CACRpkdafEGdhvn9kgBp7SAXw=JwqWRRoHu9CmytcWGeOYoixzQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdafEGdhvn9kgBp7SAXw=JwqWRRoHu9CmytcWGeOYoixzQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ tags/gpio-v5.7-2
+X-PR-Tracked-Commit-Id: 0cf253eed5d2bdf7bb3152457b38f39b012955f7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8ec91c0fce1500306a858d0c35d1383fd9eb6ba6
+Message-Id: <158930970357.9866.8152621540479928779.pr-tracker-bot@kernel.org>
+Date:   Tue, 12 May 2020 18:55:03 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is no need to have an additional check to call
-acpi_gpiochip_request_interrupts(). Even without any interrupts available
-the registered ACPI Event handlers can be useful for debugging purposes.
+The pull request you sent on Tue, 12 May 2020 10:28:50 +0200:
 
-While at it, add missed acpi_gpiochip_free_interrupts() call when
-unregistering ports.
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.7-2
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/gpio/gpio-dwapb.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8ec91c0fce1500306a858d0c35d1383fd9eb6ba6
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 78662d6d73634e..2975f2d369874a 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -505,26 +505,33 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		dwapb_configure_irqs(gpio, port, pp);
- 
- 	err = gpiochip_add_data(&port->gc, port);
--	if (err)
-+	if (err) {
- 		dev_err(gpio->dev, "failed to register gpiochip for port%d\n",
- 			port->idx);
--	else
--		port->is_registered = true;
-+		return err;
-+	}
- 
- 	/* Add GPIO-signaled ACPI event support */
--	if (pp->has_irq)
--		acpi_gpiochip_request_interrupts(&port->gc);
-+	acpi_gpiochip_request_interrupts(&port->gc);
- 
--	return err;
-+	port->is_registered = true;
-+
-+	return 0;
- }
- 
- static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
- {
- 	unsigned int m;
- 
--	for (m = 0; m < gpio->nr_ports; ++m)
--		if (gpio->ports[m].is_registered)
--			gpiochip_remove(&gpio->ports[m].gc);
-+	for (m = 0; m < gpio->nr_ports; ++m) {
-+		struct dwapb_gpio_port *port = &gpio->ports[m];
-+
-+		if (!port->is_registered)
-+			continue;
-+
-+		acpi_gpiochip_free_interrupts(&port->gc);
-+		gpiochip_remove(&port->gc);
-+	}
- }
- 
- static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
+Thank you!
+
 -- 
-2.26.2
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
