@@ -2,189 +2,185 @@ Return-Path: <SRS0=p6i5=63=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A842C433E1
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 16:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A62C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 21:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0A82065D
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 16:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D50020693
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 21:59:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TheeZ54c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbgEMQkf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 May 2020 12:40:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48462 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732543AbgEMQkf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 13 May 2020 12:40:35 -0400
-IronPort-SDR: vjdEz0ZaJ5kDBRbVTI7ktKmiQ+HyGENdNjPMQZ8okC5635oXwRz/j7NK7pai21IrokIJSUIuM0
- JfDv1lSrkHkQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 09:40:34 -0700
-IronPort-SDR: nUwnUN/fEl2wksqZ56a22tPwguTSclwB/6kj5xws9ES0wgIQRog9iAyk/guIIdyzlhpVDx60BO
- DRvVqmDcl+1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,388,1583222400"; 
-   d="scan'208";a="253243058"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 13 May 2020 09:40:33 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jYuQq-000A6H-KC; Thu, 14 May 2020 00:40:32 +0800
-Date:   Thu, 14 May 2020 00:39:58 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:devel] BUILD SUCCESS
- d7faa8ffb6be57bf8233a4b5a636d76b83c51ce7
-Message-ID: <5ebc22de.zkG7wE647imycGZt%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1730254AbgEMV7W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 May 2020 17:59:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730229AbgEMV7V (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 May 2020 17:59:21 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135BBC061A0F
+        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2020 14:59:21 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t7so367405plr.0
+        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2020 14:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7pp6apoeGPwsmz3EODeA5qYm2MMJs0qtqXKCwErAfV8=;
+        b=TheeZ54cr+FeMuAS2vi5yX0aQyRJfj9Tv3o9dhV+7Oc/5ELg7XfHc86ONBb1ms1kTI
+         CtivEFPsUCfONxBbdaa6ZlldLTTKPGBsjs4w8qeJaNjw1ZLo/WHGzr0myuXsM8cHZL1G
+         EQvChDRCxHwNvngJehWaHP3WId+AxlRjSzZNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7pp6apoeGPwsmz3EODeA5qYm2MMJs0qtqXKCwErAfV8=;
+        b=BIIFZQDuAKbqODlcdsTomyBLEvh3wkGl9Q8AnraQYDfSHRYfKLzuVcKP4nN8kxSsR3
+         uND60kZPU06fQag5CaTvC5sRVy0eH4a8iQEmNSvAa540j5dtaQpPx+Y2+EWpYJb4yVgz
+         WZwMnqTuBebw9HeES4Fa2UgXv5J2RP6/oojyXgVJ1bKuYn9ZCkHT55uSlNTC31ZdWegF
+         l6+EUO85bDoR+zMOwN4883lMUXVxYmrd+pn3CjuiqT/pwtpWG2tjrw+LVO5GHgObGIoK
+         JhVLO3umGbnLG49LCLXMgLsnGE38pMqszFDhDIlt6jqphWh2UiVUlbIOOpToA9FWr7Bx
+         qC3g==
+X-Gm-Message-State: AGi0PuYOGorOZ98zFSkkne1tntmGn3nHid3MzaAw4AjMIY+DrBxE9CwN
+        iINwTm4LzjkCDkqK4B9a+rqXWw==
+X-Google-Smtp-Source: APiQypK3GMSIszeEasa/zWj9qGCgZc21TG0YHWt6LSG2kEdQcDyiNAr0jp/J25jv9rT19qSb0zBg4w==
+X-Received: by 2002:a17:90a:5a4d:: with SMTP id m13mr27500208pji.108.1589407160465;
+        Wed, 13 May 2020 14:59:20 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id k27sm547169pgb.30.2020.05.13.14.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 14:59:19 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        narmstrong@baylibre.com, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, spanda@codeaurora.org
+Cc:     bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org,
+        swboyd@chromium.org, devicetree@vger.kernel.org,
+        jeffrey.l.hugo@gmail.com, jernej.skrabec@siol.net,
+        linux-arm-msm@vger.kernel.org, robdclark@chromium.org,
+        jonas@kwiboo.se, linux-gpio@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] drm: Prepare to use a GPIO on ti-sn65dsi86 for Hot Plug Detect
+Date:   Wed, 13 May 2020 14:58:59 -0700
+Message-Id: <20200513215902.261547-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.26.2.645.ge9eca65c58-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  devel
-branch HEAD: d7faa8ffb6be57bf8233a4b5a636d76b83c51ce7  pinctrl: rockchip: fix memleak in rockchip_dt_node_to_map
 
-elapsed time: 485m
+As talked about in commit c2bfc223882d ("drm/bridge: ti-sn65dsi86:
+Remove the mystery delay"), the normal HPD pin on ti-sn65dsi86 is
+kinda useless, at least for embedded DisplayPort (eDP).  However,
+despite the fact that the actual HPD pin on the bridge is mostly
+useless for eDP, the concept of HPD for eDP still makes sense.  It
+allows us to optimize out a hardcoded delay that many panels need if
+HPD isn't hooked up.  Panel timing diagrams show HPD as one of the
+events to measure timing from and we have to assume the worst case if
+we can't actually read HPD.
 
-configs tested: 123
-configs skipped: 7
+One way to use HPD for eDP without using the mostly useless HPD pin on
+ti-sn65dsi86 is to route the panel's HPD somewhere else in the system,
+like to a GPIO.  This works great because eDP panels aren't physically
+hotplugged.  That means the debouncing logic that caused us problems
+wasn't really needed and a raw GPIO works great.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+As per the above, a smart board designer would realize the value of
+HPD and choose to route it to a GPIO somewhere on the board to avoid
+the silly sn65dsi86 debouncing.  While said "smart designer" could
+theoretically route HPD anywhere on the board, a really smart designer
+would realize that there are several GPIOs on the bridge itself that
+are nearly useless for anything but this purpose and route HPD to one
+of those.
 
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-m68k                             allyesconfig
-sparc                            allyesconfig
-mips                          rm200_defconfig
-riscv                    nommu_virt_defconfig
-mips                      pistachio_defconfig
-xtensa                           alldefconfig
-sh                           se7722_defconfig
-openrisc                         alldefconfig
-arm                        cerfcube_defconfig
-arm                         assabet_defconfig
-sh                ecovec24-romimage_defconfig
-arc                            hsdk_defconfig
-arm                          iop32x_defconfig
-riscv                             allnoconfig
-sh                   sh7724_generic_defconfig
-m68k                          amiga_defconfig
-c6x                                 defconfig
-sh                            titan_defconfig
-mips                       capcella_defconfig
-arm                       spear13xx_defconfig
-arc                        nsimosci_defconfig
-arm                         shannon_defconfig
-nios2                            alldefconfig
-arm                           corgi_defconfig
-arm                         lpc32xx_defconfig
-mips                      loongson3_defconfig
-arc                          axs101_defconfig
-mips                     loongson1c_defconfig
-c6x                        evmc6472_defconfig
-um                               alldefconfig
-arm                        clps711x_defconfig
-powerpc                    adder875_defconfig
-parisc                generic-64bit_defconfig
-arm                        vexpress_defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                                defconfig
-i386                              debian-10.3
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                              allnoconfig
-m68k                           sun3_defconfig
-m68k                                defconfig
-nios2                               defconfig
-nios2                            allyesconfig
-openrisc                            defconfig
-c6x                              allyesconfig
-c6x                               allnoconfig
-openrisc                         allyesconfig
-nds32                               defconfig
-nds32                             allnoconfig
-csky                             allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-h8300                            allmodconfig
-xtensa                              defconfig
-arc                                 defconfig
-arc                              allyesconfig
-sh                               allmodconfig
-sh                                allnoconfig
-microblaze                        allnoconfig
-mips                             allyesconfig
-mips                              allnoconfig
-mips                             allmodconfig
-parisc                            allnoconfig
-parisc                              defconfig
-parisc                           allyesconfig
-parisc                           allmodconfig
-powerpc                             defconfig
-powerpc                          allyesconfig
-powerpc                          rhel-kconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a005-20200513
-x86_64               randconfig-a003-20200513
-x86_64               randconfig-a006-20200513
-x86_64               randconfig-a004-20200513
-x86_64               randconfig-a001-20200513
-x86_64               randconfig-a002-20200513
-i386                 randconfig-a006-20200513
-i386                 randconfig-a005-20200513
-i386                 randconfig-a003-20200513
-i386                 randconfig-a001-20200513
-i386                 randconfig-a004-20200513
-i386                 randconfig-a002-20200513
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                            allmodconfig
-s390                             allyesconfig
-s390                              allnoconfig
-s390                             allmodconfig
-s390                                defconfig
-x86_64                              defconfig
-sparc                               defconfig
-sparc64                             defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                               allmodconfig
-um                                allnoconfig
-um                               allyesconfig
-um                                  defconfig
-x86_64                                   rhel
-x86_64                               rhel-7.6
-x86_64                    rhel-7.6-kselftests
-x86_64                         rhel-7.2-clear
-x86_64                                    lkp
-x86_64                              fedora-25
-x86_64                                  kexec
+This series of patches is intended to allow the scenario described
+above.
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+This patch has been tested on a board that is not yet mainline.  On
+the hardware I have:
+- Panel spec says HPD could take up to 200 ms to come up, so without
+  HPD hooked up we need to delay 200 ms.
+- On my board the panel is powered by the same rail as the
+  touchscreen.  By chance of probe order the touchscreen comes up
+  first.  This means by the time we check HPD in ti_sn_bridge_enable()
+  it's already up.  Thus we can use the panel on 200 ms earlier.
+- If I measure HPD on this pane it comes up ~56 ms after the panel is
+  powered.  This means I can save 144 ms of delay.
+
+Side effects (though not main goals) of this series are:
+- ti-sn65dsi86 GPIOs are now exported in Linux.
+- ti-sn65dsi86 bindings are converted to yaml.
+- Common panel bindings now have "hpd-gpios" listed.
+- The simple-panel driver in Linux can delay in prepare based on
+  "hpd-gpios"
+- ti-sn65dsi86 bindings (and current user) now specifies "no-hpd"
+  if HPD isn't hooked up.
+
+Patch v6 collects tags that were sent for v5 and does the one
+fix that Linus W. requested.  It also drops patches that have
+already landed.
+
+Changes in v6:
+- pdata->gchip.base = -1
+
+Changes in v5:
+- Use of_xlate so that numbers in dts start at 1, not 0.
+- Squash https://lore.kernel.org/r/20200506140208.v2.2.I0a2bca02b09c1fcb6b09479b489736d600b3e57f@changeid/
+
+Changes in v4:
+- Don't include gpio.h
+- Use gpiochip_get_data() instead of container_of() to get data.
+- GPIOF_DIR_XXX => GPIO_LINE_DIRECTION_XXX
+- Use Linus W's favorite syntax to read a bit from a bitfield.
+- Define and use SN_GPIO_MUX_MASK.
+- Add a comment about why we use a bitmap for gchip_output.
+- Tacked on "or is otherwise unusable." to description.
+
+Changes in v3:
+- Becaue => Because
+- Add a kernel-doc to our pdata to clarify double-duty of gchip_output.
+- More comments about how powering off affects us (get_dir, dir_input).
+- Cleanup tail of ti_sn_setup_gpio_controller() to avoid one "return".
+- Use a bitmap rather than rolling my own.
+- useful implement => useful to implement
+
+Changes in v2:
+- ("Export...GPIOs") is 1/2 of replacement for ("Allow...bridge GPIOs")
+- specification => specifier.
+- power up => power.
+- Added back missing suspend-gpios.
+- data-lanes and lane-polarities are are the right place now.
+- endpoints don't need to be patternProperties.
+- Specified more details for data-lanes and lane-polarities.
+- Added old example back in, fixing bugs in it.
+- Example i2c bus is just called "i2c", not "i2c1" now.
+- ("dt-bindings: drm/bridge: ti-sn65dsi86: Document no-hpd") new for v2.
+
+Douglas Anderson (3):
+  drm/bridge: ti-sn65dsi86: Export bridge GPIOs to Linux
+  dt-bindings: drm/bridge: ti-sn65dsi86: Convert to yaml
+  dt-bindings: drm/bridge: ti-sn65dsi86: Document no-hpd
+
+ .../bindings/display/bridge/ti,sn65dsi86.txt  |  87 ------
+ .../bindings/display/bridge/ti,sn65dsi86.yaml | 293 ++++++++++++++++++
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c         | 215 +++++++++++++
+ 3 files changed, 508 insertions(+), 87 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.txt
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml
+
+-- 
+2.26.2.645.ge9eca65c58-goog
+
