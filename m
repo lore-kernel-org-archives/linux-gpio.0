@@ -2,114 +2,102 @@ Return-Path: <SRS0=p6i5=63=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3B1CA90AF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 14:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85094C433E2
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 15:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1BFB2065C
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 14:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B522C222BA
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 15:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="lmOX5cIr"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="S4Tl1/zE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388899AbgEMOg1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 May 2020 10:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732972AbgEMOg0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2020 10:36:26 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BA4C061A0C
-        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2020 07:36:24 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id y3so21179189wrt.1
-        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2020 07:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ED/rV/e5loFvJYb5vErCztn0syUYserC98I6IETlsDc=;
-        b=lmOX5cIrXVmRIE3aXQWY0Ac/BJ5/tS/IY+BPJBPLWHUSnrrLFnb+JCysGxqq2nWqaF
-         h4KOFCgucqDDSt6Ec0WeFpXDbouOM0QMX9QTy4BVy4pe9KNG5D9J1NIXq2iyS5tM2rm/
-         +ExxmG6qjfRTmma44NoX3e5vKdLuP4c9RO+CYrqt/6kdkFNWXz1e7O3tkclG4z81bba3
-         DS4ujq/SlGNV7sCs3eSmuh3edTcxMxW5D6lOLqztHeaUq6r1sddkvVAJjy28dKGTkZEj
-         bBUiMQhru0sws1x2jEvcn7P0qdzWcI/4YiSL3mwpUDS+qbR0ST/TuBSz/o/bqW7QK5wT
-         Fkqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ED/rV/e5loFvJYb5vErCztn0syUYserC98I6IETlsDc=;
-        b=Gc708j/iusKFxOw6No6VIdLqmHLHuIhQ/IQEra/M+bt71xOEBrs/zwYPK/FKtS+WzP
-         8Qti7A8c1/iUet6Z9TWq1LhE6/XVYegwHWLip5APf3NjLts0+G0tLaUvcToeZ0rTlEp8
-         VJfYP9ARPATcEV18q0Bp7SUIauSL5YZpuNWfiv6lJR42nxpXRw9yJGfyEOQwpfAfZjEs
-         GimDPeSD/0OuDkNY03Ieop0JxmW4NMECDcrkTG4zmfQkH36TvQ1OzJGdiVgqdtNjGl5P
-         T+zsZy+EJAQLGuUkT38VYg1NghhSbjVdjjLLnH1hI7ps8S1A4f5fTGKG4ouP2v/Rtgkn
-         MKdQ==
-X-Gm-Message-State: AGi0PuYXfNSfgy5TUMYj8BEwzlJ5gk3oUYbQG9gSNosx3XNZTiNRiXiE
-        DZ2EQQpXNohJeWY9slSKRGd1Rg==
-X-Google-Smtp-Source: APiQypLWfnbeXHjqIcCUHNCKrowfdLXkgmajZDMAwN6M3geajVlWXZw+u+wMNjWHWyilwDaGYcpoyw==
-X-Received: by 2002:adf:eac8:: with SMTP id o8mr15780242wrn.268.1589380583465;
-        Wed, 13 May 2020 07:36:23 -0700 (PDT)
-Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
-        by smtp.gmail.com with ESMTPSA id z18sm16614041wmk.46.2020.05.13.07.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 07:36:22 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [GIT PULL] gpio: fixes for v5.7-rc6
-Date:   Wed, 13 May 2020 16:36:19 +0200
-Message-Id: <20200513143619.20565-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.25.0
+        id S2389127AbgEMPAA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 May 2020 11:00:00 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22916 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729121AbgEMO77 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 May 2020 10:59:59 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04DEwIF0014070;
+        Wed, 13 May 2020 16:59:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=9MIUs7nsYP61tQJvbx3DssG7X7lbDl4qrt73yI2Mgpg=;
+ b=S4Tl1/zEVTSB6f72mx3yfBm1XDCCBP507cBSHZOmFs2agrUmzS0iCaPl+ULjuleCBUt0
+ NurgVnQhukF1kX0NayM8hzZ2Q/nk/O3mZe2Ro2LSxNegUmmJaUNGEYVC+s3tyfu4vp3r
+ lX3oByHIOUHmtz8yCPqbvbSttbbvOlJ+Dxja1MA2VigCAbtU6He52z9nbc/wlc1P9qQ9
+ bdwdhS6GAJIE+fxsDJX7r5BQUTWvw6T8SYd+CabXKuLGkRrOUzSuZa1e7bmk6zupqhks
+ U5wQGFvzFRBURC2Qf/xMhJsSePewwV+UOpvGduCttk+FmHtcDlQNHP8kqqzbAY2wWNas nA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3100vpdfwt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 May 2020 16:59:45 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DFD9010002A;
+        Wed, 13 May 2020 16:59:44 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D192D2D3006;
+        Wed, 13 May 2020 16:59:44 +0200 (CEST)
+Received: from localhost (10.75.127.51) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 13 May 2020 16:59:44
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH 03/15] ARM: dts: stm32: update led nodes names for stm32f249-disco
+Date:   Wed, 13 May 2020 16:59:23 +0200
+Message-ID: <20200513145935.22493-4-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20200513145935.22493-1-benjamin.gaignard@st.com>
+References: <20200513145935.22493-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-13_06:2020-05-13,2020-05-13 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Update led nodes names to be aligned with yaml description
 
-Linus,
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ arch/arm/boot/dts/stm32f429-disco.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-please pull the following batch of fixes I picked up since v5.7-rc3.
+diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
+index 30c0f6717871..b39a2b24d7b0 100644
+--- a/arch/arm/boot/dts/stm32f429-disco.dts
++++ b/arch/arm/boot/dts/stm32f429-disco.dts
+@@ -70,10 +70,10 @@
+ 
+ 	leds {
+ 		compatible = "gpio-leds";
+-		red {
++		led-red {
+ 			gpios = <&gpiog 14 0>;
+ 		};
+-		green {
++		led-green {
+ 			gpios = <&gpiog 13 0>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+-- 
+2.15.0
 
-Bart
-
-The following changes since commit 6409d049ce28bef35e13dfb8699fc7ee27469ba1:
-
-  gpiolib: don't call sleeping functions with a spinlock taken (2020-04-23 17:55:27 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v5.7-rc6
-
-for you to fetch changes up to 9fefca775c8ddbbbcd97f2860218188b8641819d:
-
-  gpiolib: notify user-space about line status changes after flags are set (2020-05-13 16:25:20 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v5.7-rc6
-
-- fix probing for chips without PWM in gpio-mvebu
-- fix ida_simple_get() error path in gpio-exar
-- fix user-space notifications for line state changes
-
-----------------------------------------------------------------
-Bartosz Golaszewski (1):
-      gpiolib: notify user-space about line status changes after flags are set
-
-Sascha Hauer (1):
-      gpio: mvebu: Fix probing for chips without PWM
-
-Takashi Iwai (1):
-      gpio: exar: Fix bad handling for ida_simple_get error path
-
- drivers/gpio/gpio-exar.c  |  7 +++++--
- drivers/gpio/gpio-mvebu.c | 15 +++++++++------
- drivers/gpio/gpiolib.c    | 15 +++++++++++++--
- 3 files changed, 27 insertions(+), 10 deletions(-)
