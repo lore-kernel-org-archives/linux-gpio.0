@@ -2,67 +2,98 @@ Return-Path: <SRS0=p6i5=63=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2430C433EB
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 15:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E183C43446
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 15:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6201A20809
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 14:43:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D87207F5
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 May 2020 15:00:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="KEWtE9DJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388777AbgEMOns (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 May 2020 10:43:48 -0400
-Received: from mga04.intel.com ([192.55.52.120]:15596 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728345AbgEMOnr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 13 May 2020 10:43:47 -0400
-IronPort-SDR: Z615RnsSO4i9/AptJKOEr/g3EXKk10p3b9dVqfqn+cI39F35iV9Xzpb0xFUytmV4EuVfQw1dYk
- bTl7XS6FVWtg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2020 07:43:47 -0700
-IronPort-SDR: Fjqgo5sjFuD0Q5yjSzzIM3sWy1am4JZ68BW1mSPJLfB4CTVd21wW+Slt4hb6SzR/J9dVeHnkVn
- CYyLjUn61U6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,388,1583222400"; 
-   d="scan'208";a="251272479"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 13 May 2020 07:43:45 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jYsbt-006RVG-36; Wed, 13 May 2020 17:43:49 +0300
-Date:   Wed, 13 May 2020 17:43:49 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Cc:     Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH v1 1/4] gpio: dwapb: avoid error message for optional IRQ
-Message-ID: <20200513144349.GP185537@smile.fi.intel.com>
-References: <20200512184513.86883-1-andriy.shevchenko@linux.intel.com>
+        id S2389163AbgEMPAO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 May 2020 11:00:14 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56868 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389140AbgEMPAC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 May 2020 11:00:02 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04DEwEa0012652;
+        Wed, 13 May 2020 16:59:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=YKDaVDrP2xQNZLQzpmWzpO0+LvV9JwL1ShvubDmLjTg=;
+ b=KEWtE9DJ7xxHgWkTGUhfZtXbV9C9E4/GLgnfcf87m4lFvA/00B9DJOFrQa0+qCUW7h9r
+ CYT5MRQxYWC9GDcNwsNcMqBQON8V2hUPdnTy5MXyqYoiIVr6F1nyLhO5zmlCCR/XnLUY
+ /dw+zLhvk0iiauPFWN4Z95IeUDFoR4Il7lmeAQDRpGzMmo//vgBxMx5xb6fxw/j19NWM
+ QiOCyMa9e2ZMCMZOZtZPWATIRSoBVx766XYzqKB08Na6cFHvvs4/86oZMrc4A1tedQRr
+ icLUpI5cgb3Py6W5zujWsZnku5n4idrslsEpnIHN47a5ueZrJdMH90vsrqHcOaNbrzQa oA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 3100vn5e3h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 May 2020 16:59:51 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8C9EB10002A;
+        Wed, 13 May 2020 16:59:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7DB8C2D3006;
+        Wed, 13 May 2020 16:59:51 +0200 (CEST)
+Received: from localhost (10.75.127.50) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 13 May 2020 16:59:50
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH 09/15] ARM: dts: stm32: remove useless interrupt-names property on stm32f743
+Date:   Wed, 13 May 2020 16:59:29 +0200
+Message-ID: <20200513145935.22493-10-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20200513145935.22493-1-benjamin.gaignard@st.com>
+References: <20200513145935.22493-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200512184513.86883-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-13_06:2020-05-13,2020-05-13 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 12, 2020 at 09:45:10PM +0300, Andy Shevchenko wrote:
-> platform_get_irq() will generate an error message if the requested IRQ
-> is not present. Use platform_get_irq_optional() to avoid the error message
-> being generated.
+Driver doesn't use interrupt's name to get it so remove it from
+the node.
 
-I will wait for Serge and others to comment before I'll send v2 with a fix to
-the last patch.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ arch/arm/boot/dts/stm32h743.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+index 05eb02e6d083..e1de90ade786 100644
+--- a/arch/arm/boot/dts/stm32h743.dtsi
++++ b/arch/arm/boot/dts/stm32h743.dtsi
+@@ -487,7 +487,6 @@
+ 			assigned-clock-parents = <&rcc LSE_CK>;
+ 			interrupt-parent = <&exti>;
+ 			interrupts = <17 IRQ_TYPE_EDGE_RISING>;
+-			interrupt-names = "alarm";
+ 			st,syscfg = <&pwrcfg 0x00 0x100>;
+ 			status = "disabled";
+ 		};
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.15.0
 
