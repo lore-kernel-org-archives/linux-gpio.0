@@ -2,113 +2,162 @@ Return-Path: <SRS0=kxZy=64=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D78FC433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 07:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D79C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 08:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30AD4206D8
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 07:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A642D207DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 08:39:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="yCM4XEEX"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="XxKndpMw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbgENHkS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 May 2020 03:40:18 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44234 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725911AbgENHkS (ORCPT
+        id S1726265AbgENIjJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 May 2020 04:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725878AbgENIjI (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 May 2020 03:40:18 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04E7X8dr013496;
-        Thu, 14 May 2020 09:40:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=SpEvreKtB+MBazylqO4KkqjFJKRyk5rMPdajWCqdW74=;
- b=yCM4XEEXFY9SoRsTSHZEY9AEh57E74V74fmTZXm3ck9QbjUUud4TOF6GD4yR33DLlOC4
- 3MlDS1Y/SNxkbP3U9iYJiwjihRZ4AguTw6iLZxUmefK9etQZphd0rK1DIE3yKtaFKOSy
- CTzIAKDrjVaBA3H388fZT29cVei7U/T/btNO+CO56VPMk/Y+gY0XGDLLPgNFUMER/AM+
- wt0ewGUjoWttF5l8Zr+LzseFAzU6K1KK5XRJMWMCxF+6+nj1DzY8MrdxVntnS8tQggYx
- uofT9FaTm2lVVxeqc7LFLn2CJ8YS7EjV6CeOBfXEEMeyNYjoO6NJ7kge80OCiyZDPybq 1w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3100vyhjd7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 May 2020 09:40:05 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3AC3A10002A;
-        Thu, 14 May 2020 09:39:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E1C3C2A594D;
-        Thu, 14 May 2020 09:39:55 +0200 (CEST)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 May
- 2020 09:39:55 +0200
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Thu, 14 May 2020 09:39:55 +0200
-From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.co" <mark.rutland@arm.co>,
-        "Alexandre TORGUE" <alexandre.torgue@st.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        Amelie DELAUNAY <amelie.delaunay@st.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: mfd: Convert stmfx bindings to
- json-schema
-Thread-Topic: [PATCH v3] dt-bindings: mfd: Convert stmfx bindings to
- json-schema
-Thread-Index: AQHV6An9BN3fbiJe+Uu+wK6+EyGnQqgtoL2AgHnzXwA=
-Date:   Thu, 14 May 2020 07:39:55 +0000
-Message-ID: <70ee04c9-4f65-6909-32bc-a379c21a031e@st.com>
-References: <20200220162246.8334-1-benjamin.gaignard@st.com>
- <20200226162125.GA13349@bogus>
-In-Reply-To: <20200226162125.GA13349@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <38B5556472D33343A6C2240B0D499256@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 14 May 2020 04:39:08 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FC1C061A0C
+        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2020 01:39:08 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id 50so2722882wrc.11
+        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2020 01:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gnBehs8n8X8G6+U4IGEmmNfIUqdPo2J9oO97C9jFfas=;
+        b=XxKndpMwCiexb5RR5u9emCO2sqm5Su+FxxmWcuaPNPltZ45A7G2YqUjxL5tOY3scHr
+         z8QORk2QOPUMojy3fXVjcBw9rGR5s3+zfgYR79vRBk0rAEdMf7kyEsK8f9Z1uZoV/CXT
+         uAlKehXR7We08RxjMgFhHWLAeavUDo1vepWK90NtiGKV+ZayZQeD324F/3JKB6JqZw9e
+         dBm/3nilOlqhNqxM/kI+PlLzkYpz6DhO1OTdh4VvdkYfv0chGtj7u8k1j7RtKzPzPKlJ
+         jI2Tu9fqQeGxyfBzUzeSHEBF9ARskuxaCfZjzKUj85QhVOxwFME2cv4AJP0HqJvHPhBQ
+         Y9+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gnBehs8n8X8G6+U4IGEmmNfIUqdPo2J9oO97C9jFfas=;
+        b=LAF+9ETAA2fslGWiyTdPh66tdebHZObsssIpes1UFpAPcZGmhQIV9nHrjBOwRyf/Ou
+         SiV0mbUTfab+2sQMxm6UVpIkUqOntIf/kTqXk1CPqZby9SMn9/nCcS9OaH7DkmHmLlBa
+         0LIhsnoTaFNiuh7nipzdqt+SBGkVuM/++NXTwyF33tznsH36kEHRmp8KHZcaHXB5vsXP
+         VT2Y5IOgjpEb8qlQCl9D9FYLNHpc4MHssMQ84ithXG0M3o6yP7X4gcZF5It+0M+nAxts
+         JhDvM5TQZw9dBW0e5H+GqoE1oWQy97W+tQu81rIx5RGa5OalgoBiELB5u47/UyQXrmi7
+         G48w==
+X-Gm-Message-State: AOAM531Jdg89vnOqdLGGdePTdJABaE1aRktxaZgZzJ+tv40uMCzjHwc3
+        tMkqWnPvsx1TRRiNJKrFqwUu6w==
+X-Google-Smtp-Source: ABdhPJzuicQc9lXXLGz7we6zHzn9LdHpBsCJDJMMCDJ+vgVRkix00VVg08XP1GrDYeVxDuuk2yiOLw==
+X-Received: by 2002:adf:fac5:: with SMTP id a5mr4387775wrs.210.1589445547012;
+        Thu, 14 May 2020 01:39:07 -0700 (PDT)
+Received: from localhost.localdomain (lfbn-nic-1-65-232.w2-15.abo.wanadoo.fr. [2.15.156.232])
+        by smtp.gmail.com with ESMTPSA id z7sm2975922wrl.88.2020.05.14.01.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2020 01:39:06 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 1/2] irq: make irq_domain_reset_irq_data() available even for non-V2 users
+Date:   Thu, 14 May 2020 10:39:00 +0200
+Message-Id: <20200514083901.23445-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200514083901.23445-1-brgl@bgdev.pl>
+References: <20200514083901.23445-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-14_01:2020-05-13,2020-05-14 signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DQoNCk9uIDIvMjYvMjAgNToyMSBQTSwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IE9uIFRodSwgMjAg
-RmViIDIwMjAgMTc6MjI6NDYgKzAxMDAsIEJlbmphbWluIEdhaWduYXJkIHdyb3RlOg0KPj4gQ29u
-dmVydCBzdG1meCBiaW5kaW5ncyB0byBqc29uLXNjaGVtYQ0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6
-IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBzdC5jb20+DQo+PiAtLS0NCj4+
-ICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bWZ4LnlhbWwgICAgICAgICAgfCAx
-MjQgKysrKysrKysrKysrKysrKysrKysrDQo+PiAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9tZmQvc3RtZngudHh0ICAgIHwgIDI4IC0tLS0tDQo+PiAgIC4uLi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL3BpbmN0cmwvcGluY3RybC1zdG1meC50eHQgIHwgMTE2IC0tLS0tLS0tLS0tLS0t
-LS0tLS0NCj4+ICAgMyBmaWxlcyBjaGFuZ2VkLCAxMjQgaW5zZXJ0aW9ucygrKSwgMTQ0IGRlbGV0
-aW9ucygtKQ0KPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21mZC9zdCxzdG1meC55YW1sDQo+PiAgIGRlbGV0ZSBtb2RlIDEwMDY0NCBEb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0bWZ4LnR4dA0KPj4gICBkZWxldGUg
-bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvcGlu
-Y3RybC1zdG1meC50eHQNCj4+DQpIaSBMZWUsIFJvYiwNCg0KSSBoYXZlbid0IGJlZW4gYWJsZSB0
-byBmb3VuZCB0aGlzIHBhdGNoIGluIC1uZXh0IGJyYW5jaGVzLCBjYW4gb25lIG9mIA0KeW91IG1l
-cmdlIGl0ID8NCg0KVGhhbmtzLA0KQmVuamFtaW4NCj4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5n
-IDxyb2JoQGtlcm5lbC5vcmc+DQo=
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+irq_domain_reset_irq_data() doesn't modify the parent data, so it can be
+made available even if irq domain hierarchy is not being built. We'll
+subsequently use it in irq_sim code.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ include/linux/irqdomain.h |  2 +-
+ kernel/irq/irqdomain.c    | 24 ++++++++++++------------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 8d062e86d954..b37350c4fe37 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -450,6 +450,7 @@ extern void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+ 				irq_hw_number_t hwirq, struct irq_chip *chip,
+ 				void *chip_data, irq_flow_handler_t handler,
+ 				void *handler_data, const char *handler_name);
++extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ extern struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+ 			unsigned int flags, unsigned int size,
+@@ -491,7 +492,6 @@ extern int irq_domain_set_hwirq_and_chip(struct irq_domain *domain,
+ 					 irq_hw_number_t hwirq,
+ 					 struct irq_chip *chip,
+ 					 void *chip_data);
+-extern void irq_domain_reset_irq_data(struct irq_data *irq_data);
+ extern void irq_domain_free_irqs_common(struct irq_domain *domain,
+ 					unsigned int virq,
+ 					unsigned int nr_irqs);
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 35b8d97c3a1d..e2aa128ea3ee 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1047,6 +1047,18 @@ int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
+ 	return virq;
+ }
+ 
++/**
++ * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
++ * @irq_data:	The pointer to irq_data
++ */
++void irq_domain_reset_irq_data(struct irq_data *irq_data)
++{
++	irq_data->hwirq = 0;
++	irq_data->chip = &no_irq_chip;
++	irq_data->chip_data = NULL;
++}
++EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
++
+ #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+ /**
+  * irq_domain_create_hierarchy - Add a irqdomain into the hierarchy
+@@ -1247,18 +1259,6 @@ void irq_domain_set_info(struct irq_domain *domain, unsigned int virq,
+ }
+ EXPORT_SYMBOL(irq_domain_set_info);
+ 
+-/**
+- * irq_domain_reset_irq_data - Clear hwirq, chip and chip_data in @irq_data
+- * @irq_data:	The pointer to irq_data
+- */
+-void irq_domain_reset_irq_data(struct irq_data *irq_data)
+-{
+-	irq_data->hwirq = 0;
+-	irq_data->chip = &no_irq_chip;
+-	irq_data->chip_data = NULL;
+-}
+-EXPORT_SYMBOL_GPL(irq_domain_reset_irq_data);
+-
+ /**
+  * irq_domain_free_irqs_common - Clear irq_data and free the parent
+  * @domain:	Interrupt domain to match
+-- 
+2.25.0
+
