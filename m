@@ -2,100 +2,155 @@ Return-Path: <SRS0=kxZy=64=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C58C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 09:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4195BC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 10:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 156F1206DA
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 09:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D18420575
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 10:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbgENJVs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 May 2020 05:21:48 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:52955 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbgENJVs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2020 05:21:48 -0400
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.69 with qID 04E9LPFq8025251, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexmb06.realtek.com.tw[172.21.6.99])
-        by rtits2.realtek.com.tw (8.15.2/2.66/5.86) with ESMTPS id 04E9LPFq8025251
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 14 May 2020 17:21:25 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXMB06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 14 May 2020 17:21:25 +0800
-Received: from RTEXMB06.realtek.com.tw (172.21.6.99) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 14 May 2020 17:21:25 +0800
-Received: from localhost.localdomain (172.21.252.101) by
- RTEXMB01.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server id
- 15.1.1779.2 via Frontend Transport; Thu, 14 May 2020 17:21:25 +0800
-From:   TY Chang <tychang@realtek.com>
-To:     <linux-realtek-soc@lists.infradead.org>, <afaerber@suse.de>
-CC:     <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/7] pinctrl: update realtek DHC pinctrl driver
-Date:   Thu, 14 May 2020 17:21:18 +0800
-Message-ID: <20200514092125.6875-1-tychang@realtek.com>
-X-Mailer: git-send-email 2.26.2
+        id S1727856AbgENKvu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 May 2020 06:51:50 -0400
+Received: from mga17.intel.com ([192.55.52.151]:65156 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727853AbgENKvu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 14 May 2020 06:51:50 -0400
+IronPort-SDR: EyzXz+qXYeo46IOmEk1qCERJGh3G7SO7Qw7L7dqq6oBqS4pqxhPu2RBNctN3lIuUWF6TbuaSSY
+ pQ0SdHm71LYA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 03:51:49 -0700
+IronPort-SDR: VK8zcU/xDOL5QhdnLq70ZOZzYcwDJZHUjW2Edbw02NJUc/eQujgr5zMjioFwJKyx2QVl/G0bNI
+ 9uS2lFidTJVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,391,1583222400"; 
+   d="scan'208";a="251625379"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 14 May 2020 03:51:48 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 714D6287; Thu, 14 May 2020 13:51:47 +0300 (EEST)
+Date:   Thu, 14 May 2020 13:51:47 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux pin control <linux-gpio@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-pinctrl for 5.8-1
+Message-ID: <20200514105147.GA44595@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andreas,
+Hi Linus,
 
-This series update Realtek DHC pinctrl driver with the following details:
+Collected Intel pin control drivers for v5.8 cycle. It has all previous fixes
+that doesn't appear in your for-next branch, thus, duplicates.
 
-* add missed pins
-* add pin configuration feature 
-* add realtek DHC pinctrl documentation
-* fix the warnings checked by running scripts/checkpatch.pl
-* move realtek DHC pinctrl driver to realtek directory
-* add suspend/resume callback function
+Thanks,
 
-Cc: Andreas Färber <afaerber@suse.de>
+With Best Regards,
+Andy Shevchenko
 
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-TY Chang (7):
-  pinctrl: realtek: rtd1295: Add missed pins.
-  pinctrl: realtek: rtd1295: Add pin configs.
-  pinctrl: realtek: rtd1195: Add missed pins and pin configs.
-  dt-bindings: pinctrl: realtek: Add Realtek DHC SoC rtd1195 and
-    rtd1295.
-  pinctrl: realtek: DHC: Fix pinctrl driver coding style according to
-    checkpatch.pl.
-  pinctrl: realtek: DHC: Move pinctrl drivers to realtek directory and
-    rename.
-  pinctrl: realtek: DHC: Add suspend/resume callback function.
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
 
- .../bindings/pinctrl/realtek,rtd-pinctrl.yaml |  59 ++
- drivers/pinctrl/Kconfig                       |  10 +-
- drivers/pinctrl/Makefile                      |   2 +-
- drivers/pinctrl/pinctrl-rtd119x.c             | 383 ---------
- drivers/pinctrl/realtek/Kconfig               |  14 +
- drivers/pinctrl/realtek/Makefile              |   3 +
- drivers/pinctrl/realtek/pinctrl-rtd.c         | 600 +++++++++++++
- .../pinctrl/{ => realtek}/pinctrl-rtd1195.h   | 490 ++++++++---
- .../pinctrl/{ => realtek}/pinctrl-rtd1295.h   | 805 +++++++++++++++---
- 9 files changed, 1733 insertions(+), 633 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/realtek,rtd-pinctrl.yaml
- delete mode 100644 drivers/pinctrl/pinctrl-rtd119x.c
- create mode 100644 drivers/pinctrl/realtek/Kconfig
- create mode 100644 drivers/pinctrl/realtek/Makefile
- create mode 100644 drivers/pinctrl/realtek/pinctrl-rtd.c
- rename drivers/pinctrl/{ => realtek}/pinctrl-rtd1195.h (64%)
- rename drivers/pinctrl/{ => realtek}/pinctrl-rtd1295.h (62%)
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v5.8-1
+
+for you to fetch changes up to 6d649fca349155698ba4b8858b258a62003c5c54:
+
+  pinctrl: intel: Move npins closer to pin_base in struct intel_community (2020-04-22 14:20:00 +0300)
+
+----------------------------------------------------------------
+intel-pinctrl for v5.8-1
+
+* Introduce GPIO driver for Jasper Lake
+* Fix long standing bug in Sunrisepoint-H PAD locking code
+* Enable pin configuration setting for GPIO chip for Baytrail
+* Work around race condition in Cherriview hardware when handle IRQ
+* Clean up Cherryview code to be closer to other drivers
+
+The following is an automated git shortlog grouped by driver:
+
+baytrail:
+ -  Use platform_get_irq_optional() explicitly
+ -  Enable pin configuration setting for GPIO chip
+
+cannonlake:
+ -  Use generic flag for special GPIO base treatment
+
+cherryview:
+ -  Add missing spinlock usage in chv_gpio_irq_handler
+ -  Use GENMASK() consistently
+ -  Re-use data structures from pinctrl-intel.h (part 2)
+
+icelake:
+ -  Use generic flag for special GPIO base treatment
+
+intel:
+ -  Move npins closer to pin_base in struct intel_community
+ -  Update description in struct intel_community
+ -  Add Intel Jasper Lake pin controller support
+ -  Introduce new flag to force GPIO base to be 0
+ -  Introduce common flags for GPIO mapping scheme
+
+lynxpoint:
+ -  Use platform_get_irq_optional() explicitly
+
+sunrisepoint:
+ -  Fix PAD lock register offset for SPT-H
+
+tigerlake:
+ -  Use generic flag for special GPIO base treatment
+
+----------------------------------------------------------------
+Andy Shevchenko (14):
+      pinctrl: sunrisepoint: Fix PAD lock register offset for SPT-H
+      pinctrl: baytrail: Enable pin configuration setting for GPIO chip
+      pinctrl: cherryview: Re-use data structures from pinctrl-intel.h (part 2)
+      pinctrl: cherryview: Use GENMASK() consistently
+      pinctrl: intel: Introduce common flags for GPIO mapping scheme
+      pinctrl: cannonlake: Use generic flag for special GPIO base treatment
+      pinctrl: icelake: Use generic flag for special GPIO base treatment
+      pinctrl: tigerlake: Use generic flag for special GPIO base treatment
+      pinctrl: intel: Introduce new flag to force GPIO base to be 0
+      pinctrl: intel: Add Intel Jasper Lake pin controller support
+      pinctrl: baytrail: Use platform_get_irq_optional() explicitly
+      pinctrl: lynxpoint: Use platform_get_irq_optional() explicitly
+      pinctrl: intel: Update description in struct intel_community
+      pinctrl: intel: Move npins closer to pin_base in struct intel_community
+
+Grace Kao (1):
+      pinctrl: cherryview: Add missing spinlock usage in chv_gpio_irq_handler
+
+ drivers/pinctrl/intel/Kconfig                |   8 +
+ drivers/pinctrl/intel/Makefile               |   1 +
+ drivers/pinctrl/intel/pinctrl-baytrail.c     |  10 +-
+ drivers/pinctrl/intel/pinctrl-cannonlake.c   |  58 +++--
+ drivers/pinctrl/intel/pinctrl-cherryview.c   | 282 +++++++++-------------
+ drivers/pinctrl/intel/pinctrl-icelake.c      |  30 ++-
+ drivers/pinctrl/intel/pinctrl-intel.c        |  22 +-
+ drivers/pinctrl/intel/pinctrl-intel.h        |  27 ++-
+ drivers/pinctrl/intel/pinctrl-jasperlake.c   | 344 +++++++++++++++++++++++++++
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c    |  10 +-
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  15 +-
+ drivers/pinctrl/intel/pinctrl-tigerlake.c    |  32 ++-
+ 12 files changed, 573 insertions(+), 266 deletions(-)
+ create mode 100644 drivers/pinctrl/intel/pinctrl-jasperlake.c
 
 -- 
-2.26.2
+With Best Regards,
+Andy Shevchenko
+
 
