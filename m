@@ -2,148 +2,102 @@ Return-Path: <SRS0=kxZy=64=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_STARTS_WITH_NUMS,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975AAC433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 13:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E56C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 13:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 730C420727
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 13:00:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eT6a31lX"
+	by mail.kernel.org (Postfix) with ESMTP id 3874720734
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 13:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589461688;
+	bh=h306FV35eG189sbShcYa1Vc8owR5Bi5Bad/ZWYSnKyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UWbMaEScApOvkM7MUWGFfhUT808P+359KjzchOw6RxCnYrOeAk4dp4z+zfppmG63f
+	 l2RmYUyBDg932EMRMfmDrlTRFBEWXigqMyzULa6gp2MMO0YZxug/V7K2m6L/xS55DQ
+	 VVeD+D9CtKALq7IZTF3UrRyBrwmamVsMZoFoaTlU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbgENNA3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 May 2020 09:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726056AbgENNA2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 May 2020 09:00:28 -0400
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A114C061A0C;
-        Thu, 14 May 2020 06:00:27 -0700 (PDT)
-Received: by mail-qt1-x844.google.com with SMTP id p12so2664983qtn.13;
-        Thu, 14 May 2020 06:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=z6WOKhYc3LBk7MDZUdCfkm93NHPFxuz30hVZ9EsTSJY=;
-        b=eT6a31lXMYbpMmePM3w2g8mpZeu+6ZCGfi+ihbQIGZB7mp5akrcERZJ+d7tWh3PUSi
-         YsJdlUB5atJGK2D819evYElM3lRGMXzxV+ND2Dnj/8NzSTry7i4ZuZZ+BYhVV4PyA9mR
-         FEbabEsHZm91Bp8fCfg6cbediwk95zq0Ui0hW+CV+7/PD8hUVgFM0erv9wMET337qpO0
-         Pw0JgikhQlg4pabcMmoekfFN80ViwxYE88FGJa2VvKDzREiYb6sXkTAnCxX9uNCH5fVl
-         6/CBD08zoqwII5v8DGI9Cwy1wosGT6zKsKbSDd/RUfKv94IvHYUbitUOrpwgW70BgzSZ
-         kz+Q==
+        id S1726140AbgENNIF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 May 2020 09:08:05 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33628 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgENNIE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2020 09:08:04 -0400
+Received: by mail-oi1-f195.google.com with SMTP id o24so24466565oic.0;
+        Thu, 14 May 2020 06:08:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=z6WOKhYc3LBk7MDZUdCfkm93NHPFxuz30hVZ9EsTSJY=;
-        b=JFgrxm3L4AgHbzUZ44/hqaPwUHlIa86fXryfffc1k5HW0j87jTUcTMAM5QWUnnFfsj
-         KlfmNbC3hJthGTR1Iy4AShSuzL1RjBBb81tgijn2m+d/Vwc4SP+9TLYM8Ujq9/2pgYgf
-         5sD7oiUnyXDvv1xixH/QavR5LaMzQlJe0HfQK2qIOqK3azd+F/gzkJvsk+MKDKQbfqDi
-         VkaLH5qdEwHUnBVw7TaXnI8mtMbfQ/zeUqo77KkWpi9GOyJO1sCHK5j8/SE1fdYATH+i
-         x+62OrrBuTu3E3RVrHgcx6dkASvymv04zZZEhoQ0R6VfGYAJA6mLbuuXda8kIqYJ/wVZ
-         OxHA==
-X-Gm-Message-State: AOAM533G6qzIUVc4IuBr3U81X1Wa1kZ/oSCBx8Xg/i2GYpqx0mUZfgkj
-        KiCMNRXxhrbbUcN5V255PL742LxvWurxRQ==
-X-Google-Smtp-Source: ABdhPJwUPArE3/PN49KiSxkIfZTbNFqpTHDn0QvN073tvinjkho7qc4/vmlunVwycSLNmjQVWrSleQ==
-X-Received: by 2002:ac8:4e56:: with SMTP id e22mr4363384qtw.185.1589461226336;
-        Thu, 14 May 2020 06:00:26 -0700 (PDT)
-Received: from sca.dev ([201.17.110.164])
-        by smtp.gmail.com with ESMTPSA id g144sm2473724qke.18.2020.05.14.06.00.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 May 2020 06:00:25 -0700 (PDT)
-From:   Rodrigo Alencar <455.rodrigo.alencar@gmail.com>
-X-Google-Original-From: Rodrigo Alencar <alencar.fmce@imbel.gov.br>
-To:     linux-gpio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com,
-        linus.walleij@linaro.org,
-        Rodrigo Alencar <alencar.fmce@imbel.gov.br>,
-        Rodrigo Alencar <455.rodrigo.alencar@gmail.com>
-Subject: [PATCH] gpio: gpio-max730x: bring gpiochip_add_data after port config
-Date:   Thu, 14 May 2020 10:00:12 -0300
-Message-Id: <1589461212-27357-1-git-send-email-alencar.fmce@imbel.gov.br>
-X-Mailer: git-send-email 1.9.3
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fbQaej0+IJeKYT0mug72y3TFgNAGh3pGBDCTmds+4Dg=;
+        b=ggKxPgTE5lsEr2Lp9mtxlQaGy9V5W46OIASq8eTGlIKRtUWAQMZ9Rv8Cbf4vTUSHdq
+         kOWfW4N9COBe9b1BLrLqzn4zBgGI3VhMS08Lhj6bb1t05rBHyoTNMdCU/dZKe42lgwIc
+         C/qbdU6/l93p+hl8epFdr6cn7tDZKyh4w5wQO6iP1+SCqwVZnCL9thCiUBflTOKkYpw6
+         KOJrIwyWWnlO8GFElD+dmMjE9eT7Y5X2dFbY0kFgiuJjKayj96XRgbaKT/QIntkQqdd9
+         2A6IrjtgYVMciuIBp55Br5AMKpEF4aGDsacjMqU9W5s7RTA3c2cvXwH6esSSB9BziaSb
+         S09w==
+X-Gm-Message-State: AOAM530LVQtpFYCTazIu0gt7ORlYb/jkwRY14/TQM2bFd1e1qr59tbtX
+        46gAvd9CAC2omOyg+hEZ2w==
+X-Google-Smtp-Source: ABdhPJw9GMygDyZnfEXw9k49JWUj2GYlVgzzt4Ko7/p8rxdjnplLymQ5zNFFIPHAyaQ6bZG1qZsHbQ==
+X-Received: by 2002:aca:af94:: with SMTP id y142mr4549151oie.111.1589461682497;
+        Thu, 14 May 2020 06:08:02 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l89sm757614otc.32.2020.05.14.06.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2020 06:08:01 -0700 (PDT)
+Received: (nullmailer pid 23923 invoked by uid 1000);
+        Thu, 14 May 2020 13:08:01 -0000
+Date:   Thu, 14 May 2020 08:08:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     TY Chang <tychang@realtek.com>
+Cc:     robh+dt@kernel.org, afaerber@suse.de, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
+        linux-realtek-soc@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 4/7] dt-bindings: pinctrl: realtek: Add Realtek DHC SoC
+ rtd1195 and rtd1295.
+Message-ID: <20200514130801.GA23147@bogus>
+References: <20200514092125.6875-1-tychang@realtek.com>
+ <20200514092125.6875-5-tychang@realtek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200514092125.6875-5-tychang@realtek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-gpiochip_add_data being called before might cause premature calls of
-the gpiochip operations before the port_config values are initialized,
-which would possibily write zeros to port gonfiguration registers,
-an operation not allowed. For example, if there are gpio-hog nodes
-in a device-tree, the sequence of function calls are performed
+On Thu, 14 May 2020 17:21:22 +0800, TY Chang wrote:
+> Add compatible string for RTD1195 and RTD1295.
+> 
+> Signed-off-by: TY Chang <tychang@realtek.com>
+> ---
+>  .../bindings/pinctrl/realtek,rtd-pinctrl.yaml | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/realtek,rtd-pinctrl.yaml
+> 
 
-gpiochip_add_data
-of_gpiochip_add
-of_gpiochip_scan_gpios
-of_gpiochip_add_hog
-gpiod_hog
-gpiochip_request_own_desc
-gpiod_configure_flags
-gpiod_direction_output/gpiod_direction_input
 
-which would call later the gpiochip operation direction_output or
-direction_input prior the port_config[] initialization.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Moreover, gpiochip_get_data is replaced by the container_of macro
-inside the gpiochip operations, which would allow the calling of
-max7301_direction_input prior to gpiochip_add_data
+Error: Documentation/devicetree/bindings/pinctrl/realtek,rtd-pinctrl.example.dts:24.5-6 syntax error
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:312: recipe for target 'Documentation/devicetree/bindings/pinctrl/realtek,rtd-pinctrl.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/pinctrl/realtek,rtd-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+Makefile:1300: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-Signed-off-by: Rodrigo Alencar <455.rodrigo.alencar@gmail.com>
----
- drivers/gpio/gpio-max730x.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+See https://patchwork.ozlabs.org/patch/1290046
 
-diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
-index 1e1935c51096..b8c1fe20f49a 100644
---- a/drivers/gpio/gpio-max730x.c
-+++ b/drivers/gpio/gpio-max730x.c
-@@ -47,7 +47,7 @@
- 
- static int max7301_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	struct max7301 *ts = gpiochip_get_data(chip);
-+	struct max7301 *ts = container_of(chip, struct max7301, chip);
- 	u8 *config;
- 	u8 offset_bits, pin_config;
- 	int ret;
-@@ -89,7 +89,7 @@ static int __max7301_set(struct max7301 *ts, unsigned offset, int value)
- static int max7301_direction_output(struct gpio_chip *chip, unsigned offset,
- 				    int value)
- {
--	struct max7301 *ts = gpiochip_get_data(chip);
-+	struct max7301 *ts = container_of(chip, struct max7301, chip);
- 	u8 *config;
- 	u8 offset_bits;
- 	int ret;
-@@ -189,10 +189,6 @@ int __max730x_probe(struct max7301 *ts)
- 	ts->chip.parent = dev;
- 	ts->chip.owner = THIS_MODULE;
- 
--	ret = gpiochip_add_data(&ts->chip, ts);
--	if (ret)
--		goto exit_destroy;
--
- 	/*
- 	 * initialize pullups according to platform data and cache the
- 	 * register values for later use.
-@@ -214,7 +210,9 @@ int __max730x_probe(struct max7301 *ts)
- 		}
- 	}
- 
--	return ret;
-+	ret = gpiochip_add_data(&ts->chip, ts);
-+	if (!ret)
-+		return ret;
- 
- exit_destroy:
- 	mutex_destroy(&ts->lock);
--- 
-2.23.0.rc1
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
 
