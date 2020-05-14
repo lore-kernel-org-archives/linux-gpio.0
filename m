@@ -2,127 +2,98 @@ Return-Path: <SRS0=kxZy=64=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8863C433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 14:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E371C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 18:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABF0A205CB
-	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 14:37:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VVJT+tRd"
+	by mail.kernel.org (Postfix) with ESMTP id 3C1A520657
+	for <linux-gpio@archiver.kernel.org>; Thu, 14 May 2020 18:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589481790;
+	bh=BeBb7bNCglxE5Wm/tjXIDeZkke/2v4+gPrRjkPF3Ago=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hHq78eXFGktk0CLLW/FBUuQsGx98QlavtD66fk1cyVH/k5ULjZMERg4w93VkEtEjv
+	 LZ+mbjdhZIKGfRk2/FVKxWoVMG4gaiPDyRkr7UZ4Udw0Q9MhcHhkfqEknvnj6bfxd8
+	 W/hNUFIVGgrQHhNI/7g05SDNJChutM7rR7wurG2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgENOhr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 14 May 2020 10:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbgENOhr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2020 10:37:47 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A2BC061A0E
-        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2020 07:37:46 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id n11so1317851pgl.9
-        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2020 07:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=myAfLnmBUwxOXrWpGmgAhuCrYyR/+Qq8ha9lCmTxobQ=;
-        b=VVJT+tRdvrHedNG3fWcxgTVWuPw1kNXTpW31v+Zdv+sQr+6lTcPgup5zkVZ9D7YNKG
-         sGXHX1XE/Ca+gIB8IBrlzNwi+Mko1SqNSHfodsk12A9YwLOnksgHlalr0gCQE/McA0Pm
-         MLAhafXzPZTcbuXIWkQRsIsTGeXX5vm6ujwTR3aC8vCv3cRiHZ6rRaDEpSJg9tFoEfF/
-         V480eHYm2hDmTpSj79PvM3VpG475Nlp4IP0mA+qnTjcS4VVyqWyvuEq61oyht9AWrW+Y
-         AqfNHZq/nAxOgWvR6YMkZL/BZA9CPzIAxtn6q6gOA4Lp2yJKaYIIgAXLrl9BjABi37/L
-         uYkg==
+        id S1726726AbgENSnJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 14 May 2020 14:43:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34940 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbgENSnJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2020 14:43:09 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k110so3227723otc.2;
+        Thu, 14 May 2020 11:43:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=myAfLnmBUwxOXrWpGmgAhuCrYyR/+Qq8ha9lCmTxobQ=;
-        b=Hta4GICvewbVGv57WlW24WOTd/xqC3b0td91nSivT+2bdCEeSmaQh4aogmaP5gW/bH
-         OnOychfapT5f5BVidWGgbeaOATdGCEZkYkBIRbwpofD1Ceo7rCPbIrY1q0DMChXb1UvN
-         XAegTFYwAoe8A9vZH32TQ97hYtENb7KCgcp1fmlSiZyF6So50S5y6sKQGTqlE3Fz5qpV
-         UedEdVF67JXXIr4w8U8HnWs1UpqYVwxiynbavKbICa/fGxPfkvNH6/WihPACWCYQg5vD
-         KoFKhIVvvNVAdMHNvc1icXzqoeOAmP2CU+6lo+E1y6UFW5Cq3BK0t6BxK278aNrB3xDK
-         TPGg==
-X-Gm-Message-State: AOAM533K5XrBiKc2w2AB5ti/Hk/7eGVmGJbCbL1CzRAl3OUvdHdlqH5y
-        UkmzMU+E3WpQXnFwaKclGLq9fQ==
-X-Google-Smtp-Source: ABdhPJzMUAO/Hp/8HePC/WpyIdkcWchv8FZml1mVlO6EUQe7g4ISZjDUtlBSdcFzqCdLKZBeYAn4ig==
-X-Received: by 2002:a63:440e:: with SMTP id r14mr4398210pga.340.1589467066271;
-        Thu, 14 May 2020 07:37:46 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h14sm18053136pjc.46.2020.05.14.07.37.45
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LGIrY8SDvuTjzejIhxpj+PL53sSxg728mdDpAEJQxe8=;
+        b=VjMLuS9LaTLFpJxYAiOTvbA77irUT3TzEmddQKQiW48weKq+0ztjMvoUGxDmSvGofA
+         5HVk9GHmSMrWwg2ZxR8R+AalcuzWy4Kxg4xGaqEgV/X1hyhS2cUKv6SxCj01SmOUOJeU
+         9DdM6OU8glQtxAg6TwTchBI0rllF+xjlhCAMo7iFeu5cKhS1Mff2OqxMmnnryAkpvIlc
+         YPnghLK5Lmj8nilC7eV9qodckZooxEMYJlvlc/o29EcK0R0FJ0UHHNCJ3iMvoKUptDUQ
+         FQYB23iCcXJwRgTy48tDNlfaiXeOSn2ISPXtHPsDlzg/KmpGpJWwmGEXOg4lUk/pcsBY
+         KPlQ==
+X-Gm-Message-State: AOAM531ZLX7uoEa7knaT7m/VyrRHC4SYyiEoy7qCAS5xA/RFxWMUhmTs
+        VIpXHmGdoT1u/LrCR2kHHQ==
+X-Google-Smtp-Source: ABdhPJx/47NNA/05up2GtjIFWDb9o6IjAicvuuijIfSOZFUWsZZdtOa4nLGqRlZMFhvFdlQEXu78YQ==
+X-Received: by 2002:a05:6830:2147:: with SMTP id r7mr4711948otd.325.1589481788330;
+        Thu, 14 May 2020 11:43:08 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i7sm974717otr.80.2020.05.14.11.43.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2020 07:37:45 -0700 (PDT)
-Date:   Thu, 14 May 2020 07:36:16 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sm8250 pinctrl
- bindings
-Message-ID: <20200514143616.GU2165@builder.lan>
-References: <20200417061907.1226490-1-bjorn.andersson@linaro.org>
- <20200417061907.1226490-2-bjorn.andersson@linaro.org>
- <20200429213453.GA32114@bogus>
- <20200514060422.GL1302550@yoga>
- <CACRpkdZpfgb0wwt2FUwqPab4XhtLXfDWOvZLdCc+NF-mVJkKYw@mail.gmail.com>
+        Thu, 14 May 2020 11:43:07 -0700 (PDT)
+Received: (nullmailer pid 8968 invoked by uid 1000);
+        Thu, 14 May 2020 18:43:06 -0000
+Date:   Thu, 14 May 2020 13:43:06 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Marc Zyngier <maz@kernel.org>, linux-mmc@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 2/9] dt-bindings: irqchip: renesas-irqc: Document
+ r8a7742 bindings
+Message-ID: <20200514184306.GA8929@bogus>
+References: <1588794695-27852-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1588794695-27852-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZpfgb0wwt2FUwqPab4XhtLXfDWOvZLdCc+NF-mVJkKYw@mail.gmail.com>
+In-Reply-To: <1588794695-27852-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu 14 May 07:12 PDT 2020, Linus Walleij wrote:
-
-> On Thu, May 14, 2020 at 8:04 AM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> > On Wed 29 Apr 14:34 PDT 2020, Rob Herring wrote:
-> > > On Thu, Apr 16, 2020 at 11:19:06PM -0700, Bjorn Andersson wrote:
-> > > > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-> > [..]
-> > > > +#PIN CONFIGURATION NODES
-> > > > +patternProperties:
-> > > > +  '^.*$':
-> > > > +    if:
-> > > > +      type: object
-> > > > +    then:
-> > >
-> > > Needs a $ref to the standard properties.
-> > >
-> > > Would be good to show a child node in the example too. (And try having
-> > > an error in a standard property type to verify you get an error).
-> > >
-> >
-> > Finally looked into this.
+On Wed,  6 May 2020 20:51:28 +0100, Lad Prabhakar wrote:
+> Document SoC specific bindings for RZ/G1H (r8a7742) SoC.
 > 
-> Can you send an incremental patch because otherwise I have
-> to revert the patch that I merged (maybe to trigger happy, mea culpa).
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+> * No change
+> ---
+> 
+>  .../devicetree/bindings/interrupt-controller/renesas,irqc.yaml   | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-I appreciate that you merged this already, so I'm happy to fix this
-incrementally.
-
-> (If it's too hard I can just revert it.)
-> 
-
-Afaict there are two different $refs available with standard properties
-and adding either one works, but I don't understand how to add both.
-Also $ref'ing pincfg-node.yaml means that the binding suddenly accepts
-standard properties that the hardware doesn't support, so I would like
-to be able to reduce this list somehow...
-
-But I don't see anything preventing this from being done incrementally.
-
-Thanks,
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org>
