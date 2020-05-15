@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C1BC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 May 2020 21:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2DFC433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 May 2020 21:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13907205CB
-	for <linux-gpio@archiver.kernel.org>; Fri, 15 May 2020 21:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A440B20709
+	for <linux-gpio@archiver.kernel.org>; Fri, 15 May 2020 21:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbgEOVUD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 15 May 2020 17:20:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:43670 "EHLO mga18.intel.com"
+        id S1727059AbgEOVUF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 15 May 2020 17:20:05 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59011 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbgEOVUD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 15 May 2020 17:20:03 -0400
-IronPort-SDR: 0rs3yjlpxd53RAGhrCFoF/wB/o4A1v9Fb+UacBWx2DmM5L/5XzMrB7TM4mLxetibfd0/RHFont
- 7INy4juC43fg==
+        id S1726183AbgEOVUF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 15 May 2020 17:20:05 -0400
+IronPort-SDR: zn9iytpFUcY++X/8HQQqdpKg60swnrYZdmfvI7tUgIRhwO8az3EkRg1ILn0jzK/WcFIlwTps9Z
+ ZV40cHLMqyCw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 14:20:03 -0700
-IronPort-SDR: zVnk/oGcMEGy5P9HO2vFrduAteGSSoW4XB1nO/E8HJ9pRMraG9d16TKa3+4zb2p2hwsHcvWX/Y
- qG71WjHAD2GQ==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 14:20:05 -0700
+IronPort-SDR: ygbjQ3+ZEUHWibIcFT7rZzzugTnj27lelYuujfuSSdkMcWQJl1fqU7p0gRv8yG4EUnSge6MXgo
+ MMnz9dJBsncg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,396,1583222400"; 
-   d="scan'208";a="307524733"
+   d="scan'208";a="252150033"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 May 2020 14:20:01 -0700
+  by orsmga007.jf.intel.com with ESMTP; 15 May 2020 14:20:01 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jZhkP-0000r4-2k; Sat, 16 May 2020 05:20:01 +0800
-Date:   Sat, 16 May 2020 05:19:19 +0800
+        id 1jZhkP-0000rT-4B; Sat, 16 May 2020 05:20:01 +0800
+Date:   Sat, 16 May 2020 05:19:17 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- 1e6d7cf2188046d85068a6f3055efe2d1e621b30
-Message-ID: <5ebf0757.j/LZDwNHjh8sVu5w%lkp@intel.com>
+Subject: [pinctrl:devel] BUILD SUCCESS
+ 98a09fb4cbb0b1a750259c285b3abe7e67717121
+Message-ID: <5ebf0755.SNmHvjOcsn2kf68N%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,13 +50,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
-branch HEAD: 1e6d7cf2188046d85068a6f3055efe2d1e621b30  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  devel
+branch HEAD: 98a09fb4cbb0b1a750259c285b3abe7e67717121  Merge tag 'intel-pinctrl-v5.8-1' of git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into devel
 
 elapsed time: 483m
 
-configs tested: 98
-configs skipped: 1
+configs tested: 101
+configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -69,9 +69,13 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
+sparc                            allyesconfig
 mips                             allyesconfig
 m68k                             allyesconfig
-sparc                            allyesconfig
+powerpc                     pq2fads_defconfig
+c6x                        evmc6678_defconfig
+parisc                              defconfig
+arm                            u300_defconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -108,7 +112,6 @@ microblaze                        allnoconfig
 mips                              allnoconfig
 mips                             allmodconfig
 parisc                            allnoconfig
-parisc                              defconfig
 parisc                           allyesconfig
 parisc                           allmodconfig
 powerpc                             defconfig
@@ -125,8 +128,8 @@ i386                 randconfig-a002-20200515
 i386                 randconfig-a012-20200515
 i386                 randconfig-a016-20200515
 i386                 randconfig-a014-20200515
-i386                 randconfig-a013-20200515
 i386                 randconfig-a011-20200515
+i386                 randconfig-a013-20200515
 i386                 randconfig-a015-20200515
 x86_64               randconfig-a005-20200515
 x86_64               randconfig-a003-20200515
