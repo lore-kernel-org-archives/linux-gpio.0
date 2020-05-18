@@ -2,105 +2,103 @@ Return-Path: <SRS0=01Zh=7A=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1982C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C914AC433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC1D42065F
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC19520829
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbgERS2e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 May 2020 14:28:34 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:44046 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728986AbgERS2d (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2020 14:28:33 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 4C81380674;
-        Mon, 18 May 2020 20:28:27 +0200 (CEST)
-Date:   Mon, 18 May 2020 20:28:25 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     LinusW <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Sandeep Panda <spanda@codeaurora.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        id S1731136AbgERS33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 May 2020 14:29:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:49465 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729313AbgERRlm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 May 2020 13:41:42 -0400
+IronPort-SDR: s5qomSU/FfoTchsUXiqOSLZuB1dJ94XD6e2sUm279kEpr09UAl1u8wLxMfPA+B5OdhIp7BwSrh
+ ahb+HJG+UY4Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2020 10:41:41 -0700
+IronPort-SDR: GUqoxsNWqFAN90Ak2HQTF0yYVljEpUH7Znqv5ySUA5CSsp7QOeFb1eMGc27XAARlgWquickhiv
+ YUjWuO6EceIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,407,1583222400"; 
+   d="scan'208";a="299298222"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 18 May 2020 10:41:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9A5F819E; Mon, 18 May 2020 20:41:39 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/6] drm: Prepare to use a GPIO on ti-sn65dsi86 for
- Hot Plug Detect
-Message-ID: <20200518182825.GA862982@ravnborg.org>
-References: <20200507213500.241695-1-dianders@chromium.org>
- <20200509201511.GD30802@ravnborg.org>
- <CAD=FV=VBU7JmTdvgWjyj_ytrFmz6Gkx2OjVr1FxLh9DBG_jN6w@mail.gmail.com>
- <CAD=FV=UNuwb+YYJKw9+HNMKUNfuNFxj+Gr+yB9tXANbXAvDgCg@mail.gmail.com>
- <20200518175939.GA770425@ravnborg.org>
- <CAD=FV=XmUrF3nCZF4dDom5RrWrdVe-iJocenU3cJEDx-gGkDRA@mail.gmail.com>
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH v2 3/4] gpio: dwapb: Don't use 0 as valid Linux interrupt number
+Date:   Mon, 18 May 2020 20:41:37 +0300
+Message-Id: <20200518174138.19367-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200518174138.19367-1-andriy.shevchenko@linux.intel.com>
+References: <20200518174138.19367-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XmUrF3nCZF4dDom5RrWrdVe-iJocenU3cJEDx-gGkDRA@mail.gmail.com>
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=MOBOZvRl c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8
-        a=hm5wBbS1sMirQhL_k6wA:9 a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Douglas,
-On Mon, May 18, 2020 at 11:05:58AM -0700, Doug Anderson wrote:
-> Sam,
-> 
-> On Mon, May 18, 2020 at 10:59 AM Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > Hi Douglas.
-> >
-> > > > Given the previous feedback from Linus W, Stephen, and Laurent I
-> > > > expect things are good enough to land now, but it'd be good to get
-> > > > confirmation (I removed some of the previous tags just to get
-> > > > confirmation).  If we can get review tags early next week maybe it'll
-> > > > still be in time to land for 5.8?
-> > >
-> > > I think all the others have reviews now.  Is there anything blocking
-> > > them from getting applied?
-> > Applied, including the small fix pointed out by Linus.
-> 
-> Thanks!  Ugh, I just realized what the problem was.  I posted a v6
-> with this fix but insanely somehow didn't CC you (!!!).  It was here:
-> 
-> https://lore.kernel.org/r/20200513215902.261547-1-dianders@chromium.org
-> 
-> I'm super sorry about that and thanks for fixing the nit.  That was
-> the only difference between v5 and v6.  I just checked what you pushed
-> and it looks great, thank you.
-No worries as long as what hits drm-misc-next is OK, which it was in
-this case.
+0 is not valid IRQ number in Linux interrupt number space.
+Refactor the code with this kept in mind.
 
-	Sam
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>
+---
+v2: drop memchr_inv() use by moving it to the patch which needs it (Serge)
+ drivers/gpio/gpio-dwapb.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 944dae80d687..c939afac44c9 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -417,7 +417,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		int i;
+ 
+ 		for (i = 0; i < pp->ngpio; i++) {
+-			if (pp->irq[i] >= 0)
++			if (pp->irq[i])
+ 				irq_set_chained_handler_and_data(pp->irq[i],
+ 						dwapb_irq_handler, gpio);
+ 		}
+@@ -538,18 +538,18 @@ static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
+ 			  struct dwapb_port_property *pp)
+ {
+ 	struct device_node *np = NULL;
+-	int j;
++	int irq = -ENXIO, j;
+ 
+ 	if (fwnode_property_read_bool(fwnode, "interrupt-controller"))
+ 		np = to_of_node(fwnode);
+ 
+ 	for (j = 0; j < pp->ngpio; j++) {
+-		pp->irq[j] = -ENXIO;
+-
+ 		if (np)
+-			pp->irq[j] = of_irq_get(np, j);
++			irq = of_irq_get(np, j);
+ 		else if (has_acpi_companion(dev))
+-			pp->irq[j] = platform_get_irq_optional(to_platform_device(dev), j);
++			irq = platform_get_irq_optional(to_platform_device(dev), j);
++		if (irq > 0)
++			pp->irq[j] = irq;
+ 
+ 		if (pp->irq[j] >= 0)
+ 			pp->has_irq = true;
+-- 
+2.26.2
+
