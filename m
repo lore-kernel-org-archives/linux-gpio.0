@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C914AC433DF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A450DC433E1
 	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC19520829
+	by mail.kernel.org (Postfix) with ESMTP id 85BDF2065F
 	for <linux-gpio@archiver.kernel.org>; Mon, 18 May 2020 18:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbgERS33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 May 2020 14:29:29 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49465 "EHLO mga04.intel.com"
+        id S1730245AbgERS32 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 May 2020 14:29:28 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5555 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729313AbgERRlm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 May 2020 13:41:42 -0400
-IronPort-SDR: s5qomSU/FfoTchsUXiqOSLZuB1dJ94XD6e2sUm279kEpr09UAl1u8wLxMfPA+B5OdhIp7BwSrh
- ahb+HJG+UY4Q==
+        id S1728699AbgERRln (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 May 2020 13:41:43 -0400
+IronPort-SDR: hRop3IEeoNIa/AZCt+6fjWFwjp6zsLTGu6tIsTZZDofwk6OxdPg2PV1cuV+ehUqN+wQibXGCYh
+ OYiUjNQQyyCw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2020 10:41:41 -0700
-IronPort-SDR: GUqoxsNWqFAN90Ak2HQTF0yYVljEpUH7Znqv5ySUA5CSsp7QOeFb1eMGc27XAARlgWquickhiv
- YUjWuO6EceIA==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2020 10:41:42 -0700
+IronPort-SDR: ZbePUk3ohP7n+my8JdRTWTizS9fKDVvXmcW+AAEOi2WYVpgvWzI/5mkkN/fphEH8b7nXu5PZ2N
+ 0REV5soSuaBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,407,1583222400"; 
-   d="scan'208";a="299298222"
+   d="scan'208";a="282048617"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 18 May 2020 10:41:40 -0700
+  by orsmga002.jf.intel.com with ESMTP; 18 May 2020 10:41:40 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9A5F819E; Mon, 18 May 2020 20:41:39 +0300 (EEST)
+        id 84303D2; Mon, 18 May 2020 20:41:39 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 3/4] gpio: dwapb: Don't use 0 as valid Linux interrupt number
-Date:   Mon, 18 May 2020 20:41:37 +0300
-Message-Id: <20200518174138.19367-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/4] gpio: dwapb: Call acpi_gpiochip_free_interrupts() on GPIO chip de-registration
+Date:   Mon, 18 May 2020 20:41:35 +0300
+Message-Id: <20200518174138.19367-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200518174138.19367-1-andriy.shevchenko@linux.intel.com>
-References: <20200518174138.19367-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -52,53 +50,68 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-0 is not valid IRQ number in Linux interrupt number space.
-Refactor the code with this kept in mind.
+Add missed acpi_gpiochip_free_interrupts() call when unregistering ports.
 
+While at it, drop extra check to call acpi_gpiochip_request_interrupts().
+There is no need to have an additional check to call
+acpi_gpiochip_request_interrupts(). Even without any interrupts available
+the registered ACPI Event handlers can be useful for debugging purposes.
+
+Fixes: e6cb3486f5a1 ("gpio: dwapb: add gpio-signaled acpi event support")
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Serge Semin <fancer.lancer@gmail.com>
 ---
-v2: drop memchr_inv() use by moving it to the patch which needs it (Serge)
- drivers/gpio/gpio-dwapb.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v2: made it 1st in the series, add Fixes (Serge)
+ drivers/gpio/gpio-dwapb.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 944dae80d687..c939afac44c9 100644
+index 8639c4a7f469..e5d844304f8d 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -417,7 +417,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		int i;
+@@ -505,26 +505,33 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 		dwapb_configure_irqs(gpio, port, pp);
  
- 		for (i = 0; i < pp->ngpio; i++) {
--			if (pp->irq[i] >= 0)
-+			if (pp->irq[i])
- 				irq_set_chained_handler_and_data(pp->irq[i],
- 						dwapb_irq_handler, gpio);
- 		}
-@@ -538,18 +538,18 @@ static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
- 			  struct dwapb_port_property *pp)
+ 	err = gpiochip_add_data(&port->gc, port);
+-	if (err)
++	if (err) {
+ 		dev_err(gpio->dev, "failed to register gpiochip for port%d\n",
+ 			port->idx);
+-	else
+-		port->is_registered = true;
++		return err;
++	}
+ 
+ 	/* Add GPIO-signaled ACPI event support */
+-	if (pp->has_irq)
+-		acpi_gpiochip_request_interrupts(&port->gc);
++	acpi_gpiochip_request_interrupts(&port->gc);
+ 
+-	return err;
++	port->is_registered = true;
++
++	return 0;
+ }
+ 
+ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
  {
- 	struct device_node *np = NULL;
--	int j;
-+	int irq = -ENXIO, j;
+ 	unsigned int m;
  
- 	if (fwnode_property_read_bool(fwnode, "interrupt-controller"))
- 		np = to_of_node(fwnode);
+-	for (m = 0; m < gpio->nr_ports; ++m)
+-		if (gpio->ports[m].is_registered)
+-			gpiochip_remove(&gpio->ports[m].gc);
++	for (m = 0; m < gpio->nr_ports; ++m) {
++		struct dwapb_gpio_port *port = &gpio->ports[m];
++
++		if (!port->is_registered)
++			continue;
++
++		acpi_gpiochip_free_interrupts(&port->gc);
++		gpiochip_remove(&port->gc);
++	}
+ }
  
- 	for (j = 0; j < pp->ngpio; j++) {
--		pp->irq[j] = -ENXIO;
--
- 		if (np)
--			pp->irq[j] = of_irq_get(np, j);
-+			irq = of_irq_get(np, j);
- 		else if (has_acpi_companion(dev))
--			pp->irq[j] = platform_get_irq_optional(to_platform_device(dev), j);
-+			irq = platform_get_irq_optional(to_platform_device(dev), j);
-+		if (irq > 0)
-+			pp->irq[j] = irq;
- 
- 		if (pp->irq[j] >= 0)
- 			pp->has_irq = true;
+ static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
 -- 
 2.26.2
 
