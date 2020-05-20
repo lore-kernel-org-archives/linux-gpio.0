@@ -4,35 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA235C433E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245ACC433E3
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4A0E207E8
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09912207E8
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbgETVTV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 May 2020 17:19:21 -0400
+        id S1727835AbgETVTW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 May 2020 17:19:22 -0400
 Received: from mga17.intel.com ([192.55.52.151]:7202 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbgETVTV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727897AbgETVTV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 20 May 2020 17:19:21 -0400
-IronPort-SDR: JMY2KxPrHelOdHjFKH09R6S03Oc44Oy4V6WnV4dyolD+/DzZLXmrap0vhwVxkbX5svTb93Zgfh
- 79qp4Glj+qDg==
+IronPort-SDR: gV+tEyQrELzZOIWn8qvgZAc7g7AqvkP+snVeMpU7dok45E7hw9xnYWrKNuQwGeI2nM2FRXmOc6
+ MKvCAfEEOokg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2020 14:19:20 -0700
-IronPort-SDR: b1zvrwV+JVBpTD1IzUBKm297bpY7NPFn9ws2U9MwPdsmirPn1aYYzVGQ+xaeWRa2V9Qw6w3U5O
- 1po8kFLUmUBw==
+IronPort-SDR: ov3bWESxsQAO61JMwzRb+UO7/a/M6qej7pLhyDRhPgTCjmoPapbsMep5I7PyMdA7aOFPH6kOiA
+ IlKeu79FFkrQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,415,1583222400"; 
-   d="scan'208";a="264823758"
+   d="scan'208";a="466673558"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 20 May 2020 14:19:18 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 20 May 2020 14:19:18 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D57E517E; Thu, 21 May 2020 00:19:17 +0300 (EEST)
+        id BC2C9101; Thu, 21 May 2020 00:19:17 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -40,12 +40,10 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-acpi@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 3/5] gpio: pca953x: Drop unneeded ACPI_PTR()
-Date:   Thu, 21 May 2020 00:19:14 +0300
-Message-Id: <20200520211916.25727-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/5] gpiolib: acpi: Introduce opaque data field for quirks
+Date:   Thu, 21 May 2020 00:19:12 +0300
+Message-Id: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
-References: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -53,28 +51,100 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-ACPI_PTR() becomes a no-op when !CONFIG_ACPI. This is not needed since
-we always have ID table enabled. Moreover, in the mentioned case compiler
-will complain about defined but not used variable.
+Some quirks may need an additional data to be provided.
+Introduce special quirks data field.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib-acpi.c   | 13 +++++++------
+ drivers/gpio/gpiolib-acpi.h   |  2 ++
+ include/linux/gpio/consumer.h |  1 +
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 4bb3d3524bc7..1fca8dd7824f 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -1176,7 +1176,7 @@ static struct i2c_driver pca953x_driver = {
- 		.name	= "pca953x",
- 		.pm	= &pca953x_pm_ops,
- 		.of_match_table = pca953x_dt_ids,
--		.acpi_match_table = ACPI_PTR(pca953x_acpi_ids),
-+		.acpi_match_table = pca953x_acpi_ids,
- 	},
- 	.probe		= pca953x_probe,
- 	.remove		= pca953x_remove,
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 9276051663da..3aa976f9ad1a 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -502,7 +502,7 @@ EXPORT_SYMBOL_GPL(devm_acpi_dev_remove_driver_gpios);
+ static bool acpi_get_driver_gpio_data(struct acpi_device *adev,
+ 				      const char *name, int index,
+ 				      struct fwnode_reference_args *args,
+-				      unsigned int *quirks)
++				      struct acpi_gpio_info *info)
+ {
+ 	const struct acpi_gpio_mapping *gm;
+ 
+@@ -519,7 +519,8 @@ static bool acpi_get_driver_gpio_data(struct acpi_device *adev,
+ 			args->args[2] = par->active_low;
+ 			args->nargs = 3;
+ 
+-			*quirks = gm->quirks;
++			info->quirks = gm->quirks;
++			info->quirks_data = gm->quirks_data;
+ 			return true;
+ 		}
+ 
+@@ -716,7 +717,7 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
+ 				     struct acpi_gpio_lookup *lookup)
+ {
+ 	struct fwnode_reference_args args;
+-	unsigned int quirks = 0;
++	struct acpi_gpio_info info = {};
+ 	int ret;
+ 
+ 	memset(&args, 0, sizeof(args));
+@@ -728,8 +729,7 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
+ 		if (!adev)
+ 			return ret;
+ 
+-		if (!acpi_get_driver_gpio_data(adev, propname, index, &args,
+-					       &quirks))
++		if (!acpi_get_driver_gpio_data(adev, propname, index, &args, &info))
+ 			return ret;
+ 	}
+ 	/*
+@@ -746,7 +746,8 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
+ 	lookup->active_low = !!args.args[2];
+ 
+ 	lookup->info.adev = to_acpi_device_node(args.fwnode);
+-	lookup->info.quirks = quirks;
++	lookup->info.quirks = info.quirks;
++	lookup->info.quirks_data = info.quirks_data;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
+index 1c6d65cf0629..44cf55c9d35d 100644
+--- a/drivers/gpio/gpiolib-acpi.h
++++ b/drivers/gpio/gpiolib-acpi.h
+@@ -19,6 +19,7 @@ struct acpi_device;
+  * @polarity: interrupt polarity as provided by ACPI
+  * @triggering: triggering type as provided by ACPI
+  * @quirks: Linux specific quirks as provided by struct acpi_gpio_mapping
++ * @quirks_data: optional data for the specific @quirks
+  */
+ struct acpi_gpio_info {
+ 	struct acpi_device *adev;
+@@ -28,6 +29,7 @@ struct acpi_gpio_info {
+ 	int polarity;
+ 	int triggering;
+ 	unsigned int quirks;
++	unsigned long quirks_data;
+ };
+ 
+ #ifdef CONFIG_ACPI
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 901aab89d025..49743a499fda 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -676,6 +676,7 @@ struct acpi_gpio_mapping {
+ #define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
+ 
+ 	unsigned int quirks;
++	unsigned long quirks_data;
+ };
+ 
+ #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_ACPI)
 -- 
 2.26.2
 
