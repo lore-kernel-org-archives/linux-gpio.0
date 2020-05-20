@@ -2,302 +2,295 @@ Return-Path: <SRS0=is5H=7C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8A8C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 00:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA942C433E1
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 00:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01E6D20674
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 00:23:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="DeiYN9aU"
+	by mail.kernel.org (Postfix) with ESMTP id C648B207D8
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 00:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgETAXN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 May 2020 20:23:13 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:41866 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgETAXM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2020 20:23:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1589934176; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DMwhxCTrOVmrSTXxb5KXzDhIxLNNT9TsjN6HRPoQ70k=;
-        b=DeiYN9aUR/53mNrba2+DaSI2rGqVECDvpnlmtn13GZImNkkYwEahJYSzuRa5FLr6yCSB93
-        VHLCqro+WkV1FSRp4Zv3zJBaKGDLbZXNhEIHzTjy96NTWTBylWyyrff7kRDxtJIBg4PzRU
-        diZF3HB9XvBU9PT000d0IK4gx02Gd3w=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>, od@zcrc.me,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 3/3] dt-bindings: mtd: Convert ingenic,jz4780-nand.txt to YAML
-Date:   Wed, 20 May 2020 02:22:34 +0200
-Message-Id: <20200520002234.418025-3-paul@crapouillou.net>
-In-Reply-To: <20200520002234.418025-1-paul@crapouillou.net>
-References: <20200520002234.418025-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728039AbgETAa0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 May 2020 20:30:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:56780 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726178AbgETAa0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 19 May 2020 20:30:26 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 948661A0210;
+        Wed, 20 May 2020 02:30:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BF0F1A0237;
+        Wed, 20 May 2020 02:30:18 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2401F402BB;
+        Wed, 20 May 2020 08:30:12 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] dt-bindings: gpio: Convert mxs to json-schema
+Date:   Wed, 20 May 2020 08:20:35 +0800
+Message-Id: <1589934035-5309-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert the ingenic,jz4780-nand.txt doc file to ingenic,nand.yaml.
+Convert the MXS GPIO binding to DT schema format using json-schema.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
+ .../devicetree/bindings/gpio/gpio-mxs.txt          |  88 -------------
+ .../devicetree/bindings/gpio/gpio-mxs.yaml         | 136 +++++++++++++++++++++
+ 2 files changed, 136 insertions(+), 88 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-mxs.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
 
-Notes:
-    v2: - Don't include ingenic,nemc-client.yaml which is gone
-    	- Use 'partitions' property instead of '^partitions$' pattern
-
- .../bindings/mtd/ingenic,jz4780-nand.txt      |  92 ------------
- .../devicetree/bindings/mtd/ingenic,nand.yaml | 132 ++++++++++++++++++
- 2 files changed, 132 insertions(+), 92 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
- create mode 100644 Documentation/devicetree/bindings/mtd/ingenic,nand.yaml
-
-diff --git a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mxs.txt b/Documentation/devicetree/bindings/gpio/gpio-mxs.txt
 deleted file mode 100644
-index c02259353327..000000000000
---- a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+index 1e677a4..0000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-mxs.txt
 +++ /dev/null
-@@ -1,92 +0,0 @@
--* Ingenic JZ4780 NAND/ECC
+@@ -1,88 +0,0 @@
+-* Freescale MXS GPIO controller
 -
--This file documents the device tree bindings for NAND flash devices on the
--JZ4780. NAND devices are connected to the NEMC controller (described in
--memory-controllers/ingenic,jz4780-nemc.txt), and thus NAND device nodes must
--be children of the NEMC node.
+-The Freescale MXS GPIO controller is part of MXS PIN controller.  The
+-GPIOs are organized in port/bank.  Each port consists of 32 GPIOs.
 -
--Required NAND controller device properties:
--- compatible: Should be one of:
--  * ingenic,jz4740-nand
--  * ingenic,jz4725b-nand
--  * ingenic,jz4780-nand
--- reg: For each bank with a NAND chip attached, should specify a bank number,
--  an offset of 0 and a size of 0x1000000 (i.e. the whole NEMC bank).
+-As the GPIO controller is embedded in the PIN controller and all the
+-GPIO ports share the same IO space with PIN controller, the GPIO node
+-will be represented as sub-nodes of MXS pinctrl node.
 -
--Optional NAND controller device properties:
--- ecc-engine: To make use of the hardware ECC controller, this
--  property must contain a phandle for the ECC controller node. The required
--  properties for this node are described below. If this is not specified,
--  software ECC will be used instead.
+-Required properties for GPIO node:
+-- compatible : Should be "fsl,<soc>-gpio".  The supported SoCs include
+-  imx23 and imx28.
+-- interrupts : Should be the port interrupt shared by all 32 pins.
+-- gpio-controller : Marks the device node as a gpio controller.
+-- #gpio-cells : Should be two.  The first cell is the pin number and
+-  the second cell is used to specify the gpio polarity:
+-      0 = active high
+-      1 = active low
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
+-  The second cell bits[3:0] is used to specify trigger type and level flags:
+-      1 = low-to-high edge triggered.
+-      2 = high-to-low edge triggered.
+-      4 = active high level-sensitive.
+-      8 = active low level-sensitive.
 -
--Optional children nodes:
--- Individual NAND chips are children of the NAND controller node.
+-Note: Each GPIO port should have an alias correctly numbered in "aliases"
+-node.
 -
--Required children node properties:
--- reg: An integer ranging from 1 to 6 representing the CS line to use.
+-Examples:
 -
--Optional children node properties:
--- nand-ecc-step-size: ECC block size in bytes.
--- nand-ecc-strength: ECC strength (max number of correctable bits).
--- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
--- nand-on-flash-bbt: boolean to enable on flash bbt option, if not present false
--- rb-gpios: GPIO specifier for the busy pin.
--- wp-gpios: GPIO specifier for the write protect pin.
+-aliases {
+-	gpio0 = &gpio0;
+-	gpio1 = &gpio1;
+-	gpio2 = &gpio2;
+-	gpio3 = &gpio3;
+-	gpio4 = &gpio4;
+-};
 -
--Optional child node of NAND chip nodes:
--- partitions: see Documentation/devicetree/bindings/mtd/partition.txt
+-pinctrl@80018000 {
+-	compatible = "fsl,imx28-pinctrl", "simple-bus";
+-	reg = <0x80018000 2000>;
 -
--Example:
+-	gpio0: gpio@0 {
+-		compatible = "fsl,imx28-gpio";
+-		interrupts = <127>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
 -
--nemc: nemc@13410000 {
--	...
+-	gpio1: gpio@1 {
+-		compatible = "fsl,imx28-gpio";
+-		interrupts = <126>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
 -
--	nandc: nand-controller@1 {
--		compatible = "ingenic,jz4780-nand";
--		reg = <1 0 0x1000000>;	/* Bank 1 */
+-	gpio2: gpio@2 {
+-		compatible = "fsl,imx28-gpio";
+-		interrupts = <125>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
 -
--		#address-cells = <1>;
--		#size-cells = <0>;
+-	gpio3: gpio@3 {
+-		compatible = "fsl,imx28-gpio";
+-		interrupts = <124>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
 -
--		ecc-engine = <&bch>;
--
--		nand@1 {
--			reg = <1>;
--
--			nand-ecc-step-size = <1024>;
--			nand-ecc-strength = <24>;
--			nand-ecc-mode = "hw";
--			nand-on-flash-bbt;
--
--			rb-gpios = <&gpa 20 GPIO_ACTIVE_LOW>;
--			wp-gpios = <&gpf 22 GPIO_ACTIVE_LOW>;
--
--			partitions {
--				#address-cells = <2>;
--				#size-cells = <2>;
--				...
--			}
--		};
+-	gpio4: gpio@4 {
+-		compatible = "fsl,imx28-gpio";
+-		interrupts = <123>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
 -	};
 -};
--
--The ECC controller is a separate SoC component used for error correction on
--NAND devices. The following is a description of the device properties for a
--ECC controller.
--
--Required ECC properties:
--- compatible: Should be one of:
--  * ingenic,jz4740-ecc
--  * ingenic,jz4725b-bch
--  * ingenic,jz4780-bch
--- reg: Should specify the ECC controller registers location and length.
--- clocks: Clock for the ECC controller.
--
--Example:
--
--bch: bch@134d0000 {
--	compatible = "ingenic,jz4780-bch";
--	reg = <0x134d0000 0x10000>;
--
--	clocks = <&cgu JZ4780_CLK_BCH>;
--};
-diff --git a/Documentation/devicetree/bindings/mtd/ingenic,nand.yaml b/Documentation/devicetree/bindings/mtd/ingenic,nand.yaml
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
 new file mode 100644
-index 000000000000..8abb6d463cb6
+index 0000000..ccf5b50
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/ingenic,nand.yaml
-@@ -0,0 +1,132 @@
++++ b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+@@ -0,0 +1,136 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mtd/ingenic,nand.yaml#
++$id: http://devicetree.org/schemas/gpio/gpio-mxs.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Ingenic SoCs NAND controller devicetree bindings
++title: Freescale MXS GPIO controller
 +
 +maintainers:
-+  - Paul Cercueil <paul@crapouillou.net>
++  - Shawn Guo <shawn.guo@linaro.org>
++  - Anson Huang <Anson.Huang@nxp.com>
 +
-+allOf:
-+  - $ref: nand-controller.yaml#
++description: |
++  The Freescale MXS GPIO controller is part of MXS PIN controller.
++  The GPIOs are organized in port/bank, each port consists of 32 GPIOs.
++  As the GPIO controller is embedded in the PIN controller and all the
++  GPIO ports share the same IO space with PIN controller, the GPIO node
++  will be represented as sub-nodes of MXS pinctrl node.
 +
 +properties:
 +  compatible:
 +    enum:
-+      - ingenic,jz4740-nand
-+      - ingenic,jz4725b-nand
-+      - ingenic,jz4780-nand
++      - fsl,imx23-pinctrl
++      - fsl,imx28-pinctrl
++
++  '#address-cells':
++    const: 1
++  '#size-cells':
++    const: 0
 +
 +  reg:
-+    items:
-+      - description: Bank number, offset and size of first attached NAND chip
-+      - description: Bank number, offset and size of second attached NAND chip
-+      - description: Bank number, offset and size of third attached NAND chip
-+      - description: Bank number, offset and size of fourth attached NAND chip
-+    minItems: 1
-+
-+  ecc-engine: true
-+
-+  partitions:
-+    type: object
-+    description:
-+      Node containing description of fixed partitions.
-+      See Documentation/devicetree/bindings/mtd/partition.txt
++    maxItems: 1
 +
 +patternProperties:
-+  "^nand@[a-f0-9]$":
++  "gpio@[0-9]+$":
 +    type: object
 +    properties:
-+      rb-gpios:
-+        description: GPIO specifier for the busy pin.
++      compatible:
++        enum:
++          - fsl,imx23-gpio
++          - fsl,imx28-gpio
++
++      reg:
 +        maxItems: 1
 +
-+      wp-gpios:
-+        description: GPIO specifier for the write-protect pin.
++      interrupts:
++        description: Should be the port interrupt shared by all 32 pins.
 +        maxItems: 1
++
++      interrupt-controller: true
++
++      "#interrupt-cells":
++        const: 2
++
++      "#gpio-cells":
++        const: 2
++
++      gpio-controller: true
++
++    required:
++      - compatible
++      - reg
++      - interrupts
++      - interrupt-controller
++      - "#interrupt-cells"
++      - "#gpio-cells"
++      - gpio-controller
++
++    additionalProperties: false
 +
 +required:
 +  - compatible
 +  - reg
++  - '#address-cells'
++  - '#size-cells'
++
++additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/jz4780-cgu.h>
-+    memory-controller@13410000 {
-+      compatible = "ingenic,jz4780-nemc";
-+      reg = <0x13410000 0x10000>;
-+      #address-cells = <2>;
-+      #size-cells = <1>;
-+      ranges = <1 0 0x1b000000 0x1000000>,
-+         <2 0 0x1a000000 0x1000000>,
-+         <3 0 0x19000000 0x1000000>,
-+         <4 0 0x18000000 0x1000000>,
-+         <5 0 0x17000000 0x1000000>,
-+         <6 0 0x16000000 0x1000000>;
-+
-+      clocks = <&cgu JZ4780_CLK_NEMC>;
-+
-+      nand-controller@1 {
-+        compatible = "ingenic,jz4780-nand";
-+        reg = <1 0 0x1000000>;
-+
++    pinctrl@80018000 {
 +        #address-cells = <1>;
 +        #size-cells = <0>;
++        compatible = "fsl,imx28-pinctrl";
++        reg = <0x80018000 0x2000>;
 +
-+        ecc-engine = <&bch>;
-+
-+        ingenic,nemc-tAS = <10>;
-+        ingenic,nemc-tAH = <5>;
-+        ingenic,nemc-tBP = <10>;
-+        ingenic,nemc-tAW = <15>;
-+        ingenic,nemc-tSTRV = <100>;
-+
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pins_nemc>;
-+
-+        nand@1 {
-+          reg = <1>;
-+
-+          nand-ecc-step-size = <1024>;
-+          nand-ecc-strength = <24>;
-+          nand-ecc-mode = "hw";
-+          nand-on-flash-bbt;
-+
-+          pinctrl-names = "default";
-+          pinctrl-0 = <&pins_nemc_cs1>;
-+
-+          partitions {
-+            compatible = "fixed-partitions";
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+
-+            partition@0 {
-+              label = "u-boot-spl";
-+              reg = <0x0 0x0 0x0 0x800000>;
-+            };
-+
-+            partition@800000 {
-+              label = "u-boot";
-+              reg = <0x0 0x800000 0x0 0x200000>;
-+            };
-+
-+            partition@a00000 {
-+              label = "u-boot-env";
-+              reg = <0x0 0xa00000 0x0 0x200000>;
-+            };
-+
-+            partition@c00000 {
-+              label = "boot";
-+              reg = <0x0 0xc00000 0x0 0x4000000>;
-+            };
-+
-+            partition@4c00000 {
-+              label = "system";
-+              reg = <0x0 0x4c00000 0x1 0xfb400000>;
-+            };
-+          };
++        gpio@0 {
++                compatible = "fsl,imx28-gpio";
++                reg = <0>;
++                interrupts = <127>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
 +        };
-+      };
++
++        gpio@1 {
++                compatible = "fsl,imx28-gpio";
++                reg = <1>;
++                interrupts = <126>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++        };
++
++        gpio@2 {
++                compatible = "fsl,imx28-gpio";
++                reg = <2>;
++                interrupts = <125>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++        };
++
++        gpio@3 {
++                compatible = "fsl,imx28-gpio";
++                reg = <3>;
++                interrupts = <124>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++        };
++
++        gpio@4 {
++                compatible = "fsl,imx28-gpio";
++                reg = <4>;
++                interrupts = <123>;
++                gpio-controller;
++                #gpio-cells = <2>;
++                interrupt-controller;
++                #interrupt-cells = <2>;
++        };
 +    };
 -- 
-2.26.2
+2.7.4
 
