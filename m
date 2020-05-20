@@ -2,94 +2,79 @@ Return-Path: <SRS0=is5H=7C=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F290C433E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 16:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA235C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76D9820709
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 16:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A0E207E8
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 May 2020 21:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgETQ11 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 May 2020 12:27:27 -0400
-Received: from sauhun.de ([88.99.104.3]:39468 "EHLO pokefinder.org"
+        id S1727947AbgETVTV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 May 2020 17:19:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:7202 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726443AbgETQ11 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 May 2020 12:27:27 -0400
-Received: from localhost (p5486cd24.dip0.t-ipconnect.de [84.134.205.36])
-        by pokefinder.org (Postfix) with ESMTPSA id 9119C2C1FD1;
-        Wed, 20 May 2020 18:27:24 +0200 (CEST)
-Date:   Wed, 20 May 2020 18:27:24 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Codrin.Ciubotariu@microchip.com
-Cc:     linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Ludovic.Desroches@microchip.com, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, kamel.bouhara@bootlin.com,
-        linux@armlinux.org.uk, linus.walleij@linaro.org, alan@softiron.com
-Subject: Re: Re: [RFC PATCH] i2c: at91: Fix pinmux after devm_gpiod_get() for
- bus recovery
-Message-ID: <20200520162724.GG5759@ninjato>
-References: <20200415070643.23663-1-codrin.ciubotariu@microchip.com>
- <20200505151256.GF2468@ninjato>
- <c7a35978-03dd-3c73-6e7d-15ed40b5c57c@microchip.com>
+        id S1727083AbgETVTV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 20 May 2020 17:19:21 -0400
+IronPort-SDR: JMY2KxPrHelOdHjFKH09R6S03Oc44Oy4V6WnV4dyolD+/DzZLXmrap0vhwVxkbX5svTb93Zgfh
+ 79qp4Glj+qDg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2020 14:19:20 -0700
+IronPort-SDR: b1zvrwV+JVBpTD1IzUBKm297bpY7NPFn9ws2U9MwPdsmirPn1aYYzVGQ+xaeWRa2V9Qw6w3U5O
+ 1po8kFLUmUBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,415,1583222400"; 
+   d="scan'208";a="264823758"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 20 May 2020 14:19:18 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D57E517E; Thu, 21 May 2020 00:19:17 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-acpi@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/5] gpio: pca953x: Drop unneeded ACPI_PTR()
+Date:   Thu, 21 May 2020 00:19:14 +0300
+Message-Id: <20200520211916.25727-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
+References: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DWg365Y4B18r8evw"
-Content-Disposition: inline
-In-Reply-To: <c7a35978-03dd-3c73-6e7d-15ed40b5c57c@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+ACPI_PTR() becomes a no-op when !CONFIG_ACPI. This is not needed since
+we always have ID table enabled. Moreover, in the mentioned case compiler
+will complain about defined but not used variable.
 
---DWg365Y4B18r8evw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 4bb3d3524bc7..1fca8dd7824f 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1176,7 +1176,7 @@ static struct i2c_driver pca953x_driver = {
+ 		.name	= "pca953x",
+ 		.pm	= &pca953x_pm_ops,
+ 		.of_match_table = pca953x_dt_ids,
+-		.acpi_match_table = ACPI_PTR(pca953x_acpi_ids),
++		.acpi_match_table = pca953x_acpi_ids,
+ 	},
+ 	.probe		= pca953x_probe,
+ 	.remove		= pca953x_remove,
+-- 
+2.26.2
 
-> > This will do for 5.7. For 5.8 or 5.9, I can imagine to take the two
-> > pinctrl_state pointers into bus_recovery_info and handle all this in the
-> > core. I will try this later this week if noone is super-eager to try it
-> > out before.
-> >=20
->=20
-> By 'all this' you mean to move the entire function in the core, right?=20
-> Having just these two pointers bus_recinovery_info won't help much. I=20
-> can try it, if you haven't already started...
-
-I mean to add those two pointers to bus_recinovery_info and if they are
-populated, then the I2C core is doing the necessary magic (or maybe just
-the pinctrl handle and assume the states have fixed names?). Russell
-just sent patches to add it to the PXA driver, so we could now double
-check how much could be factored out.
-
-I haven't started yet, let's keep in touch who started first :)
-
-
---DWg365Y4B18r8evw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7FWmgACgkQFA3kzBSg
-KbYxwRAAmUjg/PPDIGnjUCza3uhJUYZsY2bgkfy5OcjxXVotYkKYSBhrtw26GG33
-DU2gPBQzDKZWB3T0kZo54GA6ZvzxRGuLKhfWLvLhbDdzz/hy94jX+DpoNJQ8mzr5
-VPpn61UjFAd8/+W+DkpYzovXAQP78o2luuhnFuoqNZbhyEGJ4yWfHY+qICUJd1Ac
-bdtL8oikCf653etM0rtpUPQQ6x/iw1cMH4u6xmtFSFi56jzdVnZB0MJKnc//t7VT
-HfCkBiuOBu78HE007oPG0ylKU7TL8f5a2QCd0cLt87oDr2frfHTTVpLj+n7m8BAY
-VEqc4bchKi58nHL8nD3h1kqFFjSxN08AFRcd6gWeUxyfVUTeuNhhxrzHnGObWJVp
-ZKXcCnS6dgfKm2o/589Qo6I5H6VzYPTGUSwNLrSwUizT8sdqPawhQaKE3CE5sLYs
-8OC7B/QmHT3+jk7Zlz0rQDT9w5mmvyP600CczkK+6ZXNFMuKjDz67X8IERmWoH6e
-lp/7qtxPKxAXSPJ4qTNa3oIW2LIWNJ2dZJVSHGXPi/CuKwJMvJZs8HnXAY6BIWFj
-MEFg1qbTxQ8fn3DNyRwf2iFkmS20RHoh2m80TsNcv71LYoq0ioASu/U4swiPh249
-KnaM3i59M9VIN8cvqnpiAQCmgNJv+hzJifmd8tVpfswSfprOJgk=
-=IUMo
------END PGP SIGNATURE-----
-
---DWg365Y4B18r8evw--
