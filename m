@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A097C433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 14:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E9FC433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 14:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46171207FB
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 14:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8ABC2240A
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 14:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590159011;
-	bh=Q2VEt+aFXCG9PoMYDnzPfWKxWW43uF0r8vtt6Oqh2hY=;
+	s=default; t=1590159091;
+	bh=r5rg1nGnucOa2iRYlF9dUzXK01fGwqiUSa2wE439b6Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jCoSFHd3QyIlbWTxR5xC9Fn2cqzze+1PuttJyzyU9ryIvOBdBCn2vOTswucs6kfss
-	 HIwEVrxkQrsduOutdwV+f81XgxdtuzVj9FyRNHryWnJO8Ph9FpEh2wnSd7kLoDONzj
-	 08SFbrMU1khSN0F2AjL4KJFEFjgo87JW0zxgFu7E=
+	b=g5OjitMjgBFFECdwUauVrcYq2Rt2DPnaVewq2EtLmbZXWngd+7KPPI7MXHB1vsp2V
+	 R0g9JzNLLUEmZfiIDlDSBsDkFfGXRwcya/tCQ29MYxS2cNmRH2ydN/ovst8hoZYABv
+	 K5OOR4R03oDXk7rAzcsgUu2Pgn6/Yev8S5VjQDYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730431AbgEVOuK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 May 2020 10:50:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51110 "EHLO mail.kernel.org"
+        id S1731017AbgEVOva (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 May 2020 10:51:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730412AbgEVOuJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 May 2020 10:50:09 -0400
+        id S1731008AbgEVOv2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 May 2020 10:51:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9647D2242F;
-        Fri, 22 May 2020 14:50:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 418CD2253A;
+        Fri, 22 May 2020 14:51:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590159009;
-        bh=Q2VEt+aFXCG9PoMYDnzPfWKxWW43uF0r8vtt6Oqh2hY=;
+        s=default; t=1590159088;
+        bh=r5rg1nGnucOa2iRYlF9dUzXK01fGwqiUSa2wE439b6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yMMRNLLccpswTY94xqVzVoFlUwZoGS/NPtXiGY1gBbOpTkFxDnLRD1rGM+nuum3s5
-         ep01LP3vRS0CMlSCUNQM7uouvbcjLcsLYL9WpVqjuAwp9vAQqsmcoK1iymScedX53r
-         TsrwqGs3+JeLNdzcZrOoKFL1vegYBlg1X0LJ8EfA=
+        b=omkpVjC9gHcYeqMHOfswiJJj9x0WVrUZgtx3T6y55PxZ/j9ZBdsqG4Gw4CtcJ4enD
+         mZEGCNnD4pXno4rnmDWwzFyiZCG3PqtYEf1rI4K1AOhqNsQcJ/8pq/44vME4xGcqhg
+         heAJzDzIpU5Im+PgRW0g0CkFjkNdPmWAr5lTDjRA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Stephen Warren <swarren@nvidia.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 08/41] gpio: tegra: mask GPIO IRQs during IRQ shutdown
-Date:   Fri, 22 May 2020 10:49:25 -0400
-Message-Id: <20200522144959.434379-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/19] gpio: tegra: mask GPIO IRQs during IRQ shutdown
+Date:   Fri, 22 May 2020 10:51:07 -0400
+Message-Id: <20200522145120.434921-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200522144959.434379-1-sashal@kernel.org>
-References: <20200522144959.434379-1-sashal@kernel.org>
+In-Reply-To: <20200522145120.434921-1-sashal@kernel.org>
+References: <20200522145120.434921-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index acb99eff9939..86568154cdb3 100644
+index 47dbd19751d0..57903501821e 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -368,6 +368,7 @@ static void tegra_gpio_irq_shutdown(struct irq_data *d)
+@@ -357,6 +357,7 @@ static void tegra_gpio_irq_shutdown(struct irq_data *d)
  	struct tegra_gpio_info *tgi = bank->tgi;
  	unsigned int gpio = d->hwirq;
  
