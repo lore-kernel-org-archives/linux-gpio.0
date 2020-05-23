@@ -4,47 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B89C433DF
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC69C433E1
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 826D82085B
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6CE20878
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="gIkIPBTy"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="IDc3IkOY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388038AbgEWRL4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 23 May 2020 13:11:56 -0400
+        id S2388081AbgEWRMC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 23 May 2020 13:12:02 -0400
 Received: from mail26.static.mailgun.info ([104.130.122.26]:50558 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387585AbgEWRLz (ORCPT
+        by vger.kernel.org with ESMTP id S2388039AbgEWRMB (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 23 May 2020 13:11:55 -0400
+        Sat, 23 May 2020 13:12:01 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1590253915; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1590253921; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=L/4HSIdcavhg+v6lXNMGj8pRMGcr/dkodA8k1pUpmlM=; b=gIkIPBTyvWkdKbbl2aq/K3I9lYaTOtbCAIlWS0mQvmtjpxMB94qJ9bSk73k9yZpnH9jcrnh7
- DSpMb8TIJt1D0BixN39LiCpHpptllgv79Y/6DQ5ufsL3CUF7dZ+BW8uuoFBPyhx6XnX7n+yI
- 6ehwWxc0wd8Sck+4TAjGbNA99pw=
+ bh=Xa/qM4zqWRu1/eInpOYfgqH291JWzSNfqUyeAVg2f5M=; b=IDc3IkOY1aBPNwqLV1hLXLzCjHyBPoKDjD7C3J9L6RjD0NcNXcMoa4smuUdK9eh9PQ/8lID5
+ 139wVnAmb74hB/0sebBkcH89VWu6AHtCz51dmCREV2gSM0OuQ+WNrd2J3pvixy5ygIAJcvss
+ OntlBw7+YF3+eEtDYyqpCSXqUkI=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
- 5ec9594845598550e61f8816 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 23 May 2020 17:11:36
- GMT
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ec95955.7fbc61f829d0-smtp-out-n05;
+ Sat, 23 May 2020 17:11:49 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F061AC433B2; Sat, 23 May 2020 17:11:35 +0000 (UTC)
+        id 42AB3C43391; Sat, 23 May 2020 17:11:49 +0000 (UTC)
 Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B8E2C433CB;
-        Sat, 23 May 2020 17:11:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B8E2C433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9FA1C433CB;
+        Sat, 23 May 2020 17:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9FA1C433CB
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
 From:   Maulik Shah <mkshah@codeaurora.org>
@@ -56,9 +53,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
         ilina@codeaurora.org, lsrao@codeaurora.org,
         Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v2 2/4] pinctrl: qcom: Remove irq_disable callback from msmgpio irqchip
-Date:   Sat, 23 May 2020 22:41:11 +0530
-Message-Id: <1590253873-11556-3-git-send-email-mkshah@codeaurora.org>
+Subject: [PATCH v2 4/4] irqchip: qcom-pdc: Introduce irq_set_wake call
+Date:   Sat, 23 May 2020 22:41:13 +0530
+Message-Id: <1590253873-11556-5-git-send-email-mkshah@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1590253873-11556-1-git-send-email-mkshah@codeaurora.org>
 References: <1590253873-11556-1-git-send-email-mkshah@codeaurora.org>
@@ -67,50 +64,98 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The gpio can be marked for wakeup and drivers can invoke disable_irq()
-during suspend, in such cases unlazy approach will also disable at HW
-and such gpios will not wakeup device from suspend to RAM.
+Remove irq_disable callback to allow lazy disable for pdc interrupts.
 
-Remove irq_disable callback to allow gpio interrupts to lazy disabled.
-The gpio interrupts will get disabled during irq_mask callback.
+Add irq_set_wake callback that unmask interrupt in HW when drivers
+mark interrupt for wakeup. Interrupt will be cleared in HW during
+lazy disable if its not marked for wakeup.
 
 Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/irqchip/qcom-pdc.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 83b7d64..2419023 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -815,18 +815,6 @@ static void msm_gpio_irq_enable(struct irq_data *d)
- 	msm_gpio_irq_clear_unmask(d, true);
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index 6ae9e1f..f7c0662 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -36,6 +36,7 @@ struct pdc_pin_region {
+ 	u32 cnt;
+ };
+ 
++DECLARE_BITMAP(pdc_wake_irqs, PDC_MAX_IRQS);
+ static DEFINE_RAW_SPINLOCK(pdc_lock);
+ static void __iomem *pdc_base;
+ static struct pdc_pin_region *pdc_region;
+@@ -87,22 +88,20 @@ static void pdc_enable_intr(struct irq_data *d, bool on)
+ 	raw_spin_unlock(&pdc_lock);
  }
  
--static void msm_gpio_irq_disable(struct irq_data *d)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
--
--	if (d->parent_data)
--		irq_chip_disable_parent(d);
--
--	if (!test_bit(d->hwirq, pctrl->skip_wake_irqs))
--		msm_gpio_irq_mask(d);
--}
--
- static void msm_gpio_irq_unmask(struct irq_data *d)
+-static void qcom_pdc_gic_disable(struct irq_data *d)
++static int qcom_pdc_gic_set_wake(struct irq_data *d, unsigned int on)
  {
- 	msm_gpio_irq_clear_unmask(d, false);
-@@ -1146,7 +1134,6 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+ 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
+-		return;
+-
+-	pdc_enable_intr(d, false);
+-	irq_chip_disable_parent(d);
+-}
++		return 0;
  
- 	pctrl->irq_chip.name = "msmgpio";
- 	pctrl->irq_chip.irq_enable = msm_gpio_irq_enable;
--	pctrl->irq_chip.irq_disable = msm_gpio_irq_disable;
- 	pctrl->irq_chip.irq_mask = msm_gpio_irq_mask;
- 	pctrl->irq_chip.irq_unmask = msm_gpio_irq_unmask;
- 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
+-static void qcom_pdc_gic_enable(struct irq_data *d)
+-{
+-	if (d->hwirq == GPIO_NO_WAKE_IRQ)
+-		return;
++	if (on) {
++		pdc_enable_intr(d, true);
++		irq_chip_enable_parent(d);
++		set_bit(d->hwirq, pdc_wake_irqs);
++	} else {
++		clear_bit(d->hwirq, pdc_wake_irqs);
++	}
+ 
+-	pdc_enable_intr(d, true);
+-	irq_chip_enable_parent(d);
++	return irq_chip_set_wake_parent(d, on);
+ }
+ 
+ static void qcom_pdc_gic_mask(struct irq_data *d)
+@@ -110,6 +109,9 @@ static void qcom_pdc_gic_mask(struct irq_data *d)
+ 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
+ 		return;
+ 
++	if (!test_bit(d->hwirq, pdc_wake_irqs))
++		pdc_enable_intr(d, false);
++
+ 	irq_chip_mask_parent(d);
+ }
+ 
+@@ -118,6 +120,7 @@ static void qcom_pdc_gic_unmask(struct irq_data *d)
+ 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
+ 		return;
+ 
++	pdc_enable_intr(d, true);
+ 	irq_chip_unmask_parent(d);
+ }
+ 
+@@ -197,15 +200,13 @@ static struct irq_chip qcom_pdc_gic_chip = {
+ 	.irq_eoi		= irq_chip_eoi_parent,
+ 	.irq_mask		= qcom_pdc_gic_mask,
+ 	.irq_unmask		= qcom_pdc_gic_unmask,
+-	.irq_disable		= qcom_pdc_gic_disable,
+-	.irq_enable		= qcom_pdc_gic_enable,
+ 	.irq_get_irqchip_state	= qcom_pdc_gic_get_irqchip_state,
+ 	.irq_set_irqchip_state	= qcom_pdc_gic_set_irqchip_state,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+ 	.irq_set_type		= qcom_pdc_gic_set_type,
++	.irq_set_wake		= qcom_pdc_gic_set_wake,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
+-				  IRQCHIP_SET_TYPE_MASKED |
+-				  IRQCHIP_SKIP_SET_WAKE,
++				  IRQCHIP_SET_TYPE_MASKED,
+ 	.irq_set_vcpu_affinity	= irq_chip_set_vcpu_affinity_parent,
+ 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+ };
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
-
