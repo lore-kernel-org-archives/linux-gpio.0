@@ -1,84 +1,140 @@
-Return-Path: <SRS0=1jHg=7E=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=7DWN=7F=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EC0C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 19:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06862C433E1
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 03:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14444206D5
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 May 2020 19:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C461220756
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 03:25:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730871AbgEVTHu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 May 2020 15:07:50 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:45530 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730910AbgEVTHu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 May 2020 15:07:50 -0400
-Received: from belgarion ([86.210.245.36])
-        by mwinf5d03 with ME
-        id hv7i220030nqnCN03v7iXH; Fri, 22 May 2020 21:07:47 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Fri, 22 May 2020 21:07:47 +0200
-X-ME-IP: 86.210.245.36
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+        id S2387516AbgEWDZZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 May 2020 23:25:25 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:49774 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387509AbgEWDZY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 May 2020 23:25:24 -0400
+Received: from [10.130.0.52] (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxH95+l8hejRE4AA--.282S3;
+        Sat, 23 May 2020 11:24:48 +0800 (CST)
+Subject: Re: [PATCH 2/3] gpio: pxa: Fix return value of pxa_gpio_probe()
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+References: <1590120740-22912-1-git-send-email-yangtiezhu@loongson.cn>
+ <1590120740-22912-2-git-send-email-yangtiezhu@loongson.cn>
+ <874ks7okk4.fsf@belgarion.home>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Ray Jui <rjui@broadcom.com>,
         bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>
-Subject: Re: [PATCH 2/3] gpio: pxa: Fix return value of pxa_gpio_probe()
-References: <1590120740-22912-1-git-send-email-yangtiezhu@loongson.cn>
-        <1590120740-22912-2-git-send-email-yangtiezhu@loongson.cn>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Fri, 22 May 2020 21:07:23 +0200
-In-Reply-To: <1590120740-22912-2-git-send-email-yangtiezhu@loongson.cn>
-        (Tiezhu Yang's message of "Fri, 22 May 2020 12:12:19 +0800")
-Message-ID: <874ks7okk4.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <3382c1df-1429-ecd3-70b6-35bc00343608@loongson.cn>
+Date:   Sat, 23 May 2020 11:24:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <874ks7okk4.fsf@belgarion.home>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf9DxH95+l8hejRE4AA--.282S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4kCr47Jw18Gr45Xw1kXwb_yoW8uw45pr
+        WkWFWF9r15GF12ga9FyanrCFs3A3W7t3yYkr48X3Zaq3WDJrW7Ar48CFWj9ryrCFW8tw10
+        qr4fCry8Aa4kZF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE
+        67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+        AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+        c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+        AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_
+        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
+        0D73UUUUU==
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Tiezhu Yang <yangtiezhu@loongson.cn> writes:
-
-> When call function devm_platform_ioremap_resource(), we should use IS_ERR()
-> to check the return value and return PTR_ERR() if failed.
+On 05/23/2020 03:07 AM, Robert Jarzmik wrote:
+> Tiezhu Yang <yangtiezhu@loongson.cn> writes:
 >
-> Fixes: 542c25b7a209 ("drivers: gpio: pxa: use devm_platform_ioremap_resource()")
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  drivers/gpio/gpio-pxa.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>> When call function devm_platform_ioremap_resource(), we should use IS_ERR()
+>> to check the return value and return PTR_ERR() if failed.
+>>
+>> Fixes: 542c25b7a209 ("drivers: gpio: pxa: use devm_platform_ioremap_resource()")
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>> ---
+>>   drivers/gpio/gpio-pxa.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+>> index 1361270..0cb6600 100644
+>> --- a/drivers/gpio/gpio-pxa.c
+>> +++ b/drivers/gpio/gpio-pxa.c
+>> @@ -660,8 +660,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
+>>   	pchip->irq1 = irq1;
+>>   
+>>   	gpio_reg_base = devm_platform_ioremap_resource(pdev, 0);
+>> -	if (!gpio_reg_base)
+>> -		return -EINVAL;
+>> +	if (IS_ERR(gpio_reg_base))
+>> +		return PTR_ERR(gpio_reg_base);
+> As far as I know, devm_platform_ioremap_resource() could return NULL which is
+> not handled by this test (unless __devm_ioremap() semantics changed since I had
+> a look).
+
+Hi Robert,
+
+In the function __devm_ioremap_resource(), if __devm_ioremap returns NULL,
+it will return IOMEM_ERR_PTR(-ENOMEM).
+
+devm_platform_ioremap_resource()
+         devm_ioremap_resource()
+                 __devm_ioremap_resource()
+                        __devm_ioremap()
+
+static void __iomem *
+__devm_ioremap_resource(struct device *dev, const struct resource *res,
+             enum devm_ioremap_type type)
+{
+...
+     dest_ptr = __devm_ioremap(dev, res->start, size, type);
+     if (!dest_ptr) {
+         dev_err(dev, "ioremap failed for resource %pR\n", res);
+         devm_release_mem_region(dev, res->start, size);
+         dest_ptr = IOMEM_ERR_PTR(-ENOMEM);
+     }
+
+     return dest_ptr;
+}
+
+And also, we can see the comment of devm_ioremap_resource():
+
+Usage example:
+
+         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+         base = devm_ioremap_resource(&pdev->dev, res);
+         if (IS_ERR(base))
+                 return PTR_ERR(base);
+
 >
-> diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-> index 1361270..0cb6600 100644
-> --- a/drivers/gpio/gpio-pxa.c
-> +++ b/drivers/gpio/gpio-pxa.c
-> @@ -660,8 +660,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
->  	pchip->irq1 = irq1;
->  
->  	gpio_reg_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (!gpio_reg_base)
-> -		return -EINVAL;
-> +	if (IS_ERR(gpio_reg_base))
-> +		return PTR_ERR(gpio_reg_base);
-As far as I know, devm_platform_ioremap_resource() could return NULL which is
-not handled by this test (unless __devm_ioremap() semantics changed since I had
-a look).
+> Therefore, this patch is incorrect, or rather incomplete.
 
-Therefore, this patch is incorrect, or rather incomplete.
+So I think this patch is correct, do I miss something?
 
-Cheers.
+Thanks,
+Tiezhu Yang
 
--- 
-Robert
+>
+> Cheers.
+>
+
