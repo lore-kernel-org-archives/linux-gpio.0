@@ -1,161 +1,202 @@
-Return-Path: <SRS0=7DWN=7F=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=/W5B=7G=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC69C433E1
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7176C433DF
+	for <linux-gpio@archiver.kernel.org>; Sun, 24 May 2020 05:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6CE20878
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 May 2020 17:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7721207C3
+	for <linux-gpio@archiver.kernel.org>; Sun, 24 May 2020 05:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="IDc3IkOY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJ2opN80"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388081AbgEWRMC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 23 May 2020 13:12:02 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:50558 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388039AbgEWRMB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 23 May 2020 13:12:01 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1590253921; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=Xa/qM4zqWRu1/eInpOYfgqH291JWzSNfqUyeAVg2f5M=; b=IDc3IkOY1aBPNwqLV1hLXLzCjHyBPoKDjD7C3J9L6RjD0NcNXcMoa4smuUdK9eh9PQ/8lID5
- 139wVnAmb74hB/0sebBkcH89VWu6AHtCz51dmCREV2gSM0OuQ+WNrd2J3pvixy5ygIAJcvss
- OntlBw7+YF3+eEtDYyqpCSXqUkI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ec95955.7fbc61f829d0-smtp-out-n05;
- Sat, 23 May 2020 17:11:49 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 42AB3C43391; Sat, 23 May 2020 17:11:49 +0000 (UTC)
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9FA1C433CB;
-        Sat, 23 May 2020 17:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9FA1C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     bjorn.andersson@linaro.org, maz@kernel.org,
-        linus.walleij@linaro.org, swboyd@chromium.org,
-        evgreen@chromium.org, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v2 4/4] irqchip: qcom-pdc: Introduce irq_set_wake call
-Date:   Sat, 23 May 2020 22:41:13 +0530
-Message-Id: <1590253873-11556-5-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1590253873-11556-1-git-send-email-mkshah@codeaurora.org>
-References: <1590253873-11556-1-git-send-email-mkshah@codeaurora.org>
+        id S1725856AbgEXFAr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 24 May 2020 01:00:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgEXFAq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 May 2020 01:00:46 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE98DC061A0E;
+        Sat, 23 May 2020 22:00:46 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id y18so7201530pfl.9;
+        Sat, 23 May 2020 22:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=krhEzLWzxEpnShGlmjhN0o67VmqokPQZNn+Tla1ZW8U=;
+        b=hJ2opN80KCVUYIaWN3aTL8FGh7posS3Q3ixIPePsYObtlauNGZEyij+9xYg73Tpctx
+         KU4cm0U4X7FzGxHY2MaYz0oGmKh8w3co+sy0EspH9f6sewqksyamluEkLWyvlZ9IFCio
+         LcKJuC8DS5jWowGZlwrouqLeBFOiR1vVbZgievi7IryexwuwZPzBtWZ2I0sbEw6PmYEg
+         1uIEH6q/vL9UVF3Q4LuIovZb0xGCBpI78+8K6dPDsemRrfafFc8t8DqmMiNx+t4g9jsi
+         I6fPioCW2pLsjnaKqPJipysTZWYCvuc4QAIaEdLGYlvV//hebbERAFpMpcf8b02rMIL5
+         JRIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=krhEzLWzxEpnShGlmjhN0o67VmqokPQZNn+Tla1ZW8U=;
+        b=n3vo2d9iIO6MCllXFbTfqYRQ6akxqSG3+C0sMiL+Mu+OXB3lCGfHTGmTM7TGjTBe6L
+         rIJaf8kCAYaFYhux6EL/hmFwwCCmIlfod/ak4Oo11O3sReLgGcM3Z/llR7O+dahHv2X6
+         4K3RsTzG179XT6fiHxY/pwixRc1UFEvfq/bnj0MVHSXnxofXLL5nAQkvGoVhsZphIMap
+         I0VSkecyQQnokPdDIXkXelnUCs5uC8ptmB9k1jx0l1rk11G0nSNsAFTlPxGJMI6jFpPx
+         XizHakGlVv6lGa0xJhCu6jcARnell2J1DJ4p/ufJduQXx8ibvF4JFrUDO5Dga9wRWuCC
+         CYHg==
+X-Gm-Message-State: AOAM530ceeKDwmt1owFDWmgG7WR000n98Soq3twijZ2xF8itlw/qt7L/
+        WjmLuJHHZs50AVZX6TA7VY8=
+X-Google-Smtp-Source: ABdhPJxVCxuXdDwqi8KaMFlgylLB8kaz2JVsKVLdE35iVR0WuQ4XbqTOElwdNHusHNZMlES/Cvgviw==
+X-Received: by 2002:a62:7b09:: with SMTP id w9mr11756543pfc.157.1590296446048;
+        Sat, 23 May 2020 22:00:46 -0700 (PDT)
+Received: from syed ([106.223.122.111])
+        by smtp.gmail.com with ESMTPSA id x14sm9785264pfi.60.2020.05.23.22.00.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 23 May 2020 22:00:45 -0700 (PDT)
+Date:   Sun, 24 May 2020 10:30:24 +0530
+From:   Syed Nayyar Waris <syednwaris@gmail.com>
+To:     linus.walleij@linaro.org, akpm@linux-foundation.org
+Cc:     andriy.shevchenko@linux.intel.com, vilhelm.gray@gmail.com,
+        michal.simek@xilinx.com, arnd@arndb.de, rrichter@marvell.com,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        yamada.masahiro@socionext.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        linux-arch@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v7 0/4] Introduce the for_each_set_clump macro
+Message-ID: <cover.1590017578.git.syednwaris@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove irq_disable callback to allow lazy disable for pdc interrupts.
+Hello Linus,
 
-Add irq_set_wake callback that unmask interrupt in HW when drivers
-mark interrupt for wakeup. Interrupt will be cleared in HW during
-lazy disable if its not marked for wakeup.
+Since this patchset primarily affects GPIO drivers, would you like
+to pick it up through your GPIO tree?
 
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
----
- drivers/irqchip/qcom-pdc.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+This patchset introduces a new generic version of for_each_set_clump. 
+The previous version of for_each_set_clump8 used a fixed size 8-bit
+clump, but the new generic version can work with clump of any size but
+less than or equal to BITS_PER_LONG. The patchset utilizes the new macro 
+in several GPIO drivers.
 
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index 6ae9e1f..f7c0662 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -36,6 +36,7 @@ struct pdc_pin_region {
- 	u32 cnt;
- };
- 
-+DECLARE_BITMAP(pdc_wake_irqs, PDC_MAX_IRQS);
- static DEFINE_RAW_SPINLOCK(pdc_lock);
- static void __iomem *pdc_base;
- static struct pdc_pin_region *pdc_region;
-@@ -87,22 +88,20 @@ static void pdc_enable_intr(struct irq_data *d, bool on)
- 	raw_spin_unlock(&pdc_lock);
- }
- 
--static void qcom_pdc_gic_disable(struct irq_data *d)
-+static int qcom_pdc_gic_set_wake(struct irq_data *d, unsigned int on)
- {
- 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
--		return;
--
--	pdc_enable_intr(d, false);
--	irq_chip_disable_parent(d);
--}
-+		return 0;
- 
--static void qcom_pdc_gic_enable(struct irq_data *d)
--{
--	if (d->hwirq == GPIO_NO_WAKE_IRQ)
--		return;
-+	if (on) {
-+		pdc_enable_intr(d, true);
-+		irq_chip_enable_parent(d);
-+		set_bit(d->hwirq, pdc_wake_irqs);
-+	} else {
-+		clear_bit(d->hwirq, pdc_wake_irqs);
-+	}
- 
--	pdc_enable_intr(d, true);
--	irq_chip_enable_parent(d);
-+	return irq_chip_set_wake_parent(d, on);
- }
- 
- static void qcom_pdc_gic_mask(struct irq_data *d)
-@@ -110,6 +109,9 @@ static void qcom_pdc_gic_mask(struct irq_data *d)
- 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
- 		return;
- 
-+	if (!test_bit(d->hwirq, pdc_wake_irqs))
-+		pdc_enable_intr(d, false);
-+
- 	irq_chip_mask_parent(d);
- }
- 
-@@ -118,6 +120,7 @@ static void qcom_pdc_gic_unmask(struct irq_data *d)
- 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
- 		return;
- 
-+	pdc_enable_intr(d, true);
- 	irq_chip_unmask_parent(d);
- }
- 
-@@ -197,15 +200,13 @@ static struct irq_chip qcom_pdc_gic_chip = {
- 	.irq_eoi		= irq_chip_eoi_parent,
- 	.irq_mask		= qcom_pdc_gic_mask,
- 	.irq_unmask		= qcom_pdc_gic_unmask,
--	.irq_disable		= qcom_pdc_gic_disable,
--	.irq_enable		= qcom_pdc_gic_enable,
- 	.irq_get_irqchip_state	= qcom_pdc_gic_get_irqchip_state,
- 	.irq_set_irqchip_state	= qcom_pdc_gic_set_irqchip_state,
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
- 	.irq_set_type		= qcom_pdc_gic_set_type,
-+	.irq_set_wake		= qcom_pdc_gic_set_wake,
- 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
--				  IRQCHIP_SET_TYPE_MASKED |
--				  IRQCHIP_SKIP_SET_WAKE,
-+				  IRQCHIP_SET_TYPE_MASKED,
- 	.irq_set_vcpu_affinity	= irq_chip_set_vcpu_affinity_parent,
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
- };
+The earlier 8-bit for_each_set_clump8 facilitated a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
+
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
+
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
+
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
+
+But with the new for_each_set_clump the clump size can be different from 8 bits.
+Moreover, the clump can be split at word boundary in situations where word 
+size is not multiple of clump size. Following are examples showing the working 
+of new macro for clump sizes of 24 bits and 6 bits.
+
+Example 1:
+clump size: 24 bits, Number of clumps (or ports): 10
+bitmap stores the bit information from where successive clumps are retrieved.
+
+     /* bitmap memory region */
+        0x00aa0000ff000000;  /* Most significant bits */
+        0xaaaaaa0000ff0000;
+        0x000000aa000000aa;
+        0xbbbbabcdeffedcba;  /* Least significant bits */
+
+Different iterations of for_each_set_clump:-
+'offset' is the bit position and 'clump' is the 24 bit clump from the
+above bitmap.
+Iteration first:        offset: 0 clump: 0xfedcba
+Iteration second:       offset: 24 clump: 0xabcdef
+Iteration third:        offset: 48 clump: 0xaabbbb
+Iteration fourth:       offset: 96 clump: 0xaa
+Iteration fifth:        offset: 144 clump: 0xff
+Iteration sixth:        offset: 168 clump: 0xaaaaaa
+Iteration seventh:      offset: 216 clump: 0xff
+Loop breaks because in the end the remaining bits (0x00aa) size was less
+than clump size of 24 bits.
+
+In above example it can be seen that in iteration third, the 24 bit clump
+that was retrieved was split between bitmap[0] and bitmap[1]. This example 
+also shows that 24 bit zeroes if present in between, were skipped (preserving
+the previous for_each_set_macro8 behaviour). 
+
+Example 2:
+clump size = 6 bits, Number of clumps (or ports) = 3.
+
+     /* bitmap memory region */
+        0x00aa0000ff000000;  /* Most significant bits */
+        0xaaaaaa0000ff0000;
+        0x0f00000000000000;
+        0x0000000000000ac0;  /* Least significant bits */
+
+Different iterations of for_each_set_clump:
+'offset' is the bit position and 'clump' is the 6 bit clump from the
+above bitmap.
+Iteration first:        offset: 6 clump: 0x2b
+Loop breaks because 6 * 3 = 18 bits traversed in bitmap.
+Here 6 * 3 is clump size * no. of clumps.
+
+Changes in v7:
+ - [Patch 2/4]: Minor changes: Use macro 'DECLARE_BITMAP()' and split 'struct'
+   definition and test data.
+
+Changes in v6:
+ - [Patch 2/4]: Make 'for loop' inside test_for_each_set_clump more
+   succinct.
+
+Changes in v5:
+ - [Patch 4/4]: Minor change: Hardcode value for better code readability.
+
+Changes in v4:
+ - [Patch 2/4]: Use 'for' loop in test function of for_each_set_clump.
+ - [Patch 3/4]: Minor change: Inline value for better code readability.
+ - [Patch 4/4]: Minor change: Inline value for better code readability.
+
+Changes in v3:
+ - [Patch 3/4]: Change datatype of some variables from u64 to unsigned long
+   in function thunderx_gpio_set_multiple.
+
+CHanges in v2:
+ - [Patch 2/4]: Unify different tests for 'for_each_set_clump'. Pass test data as
+   function parameters.
+ - [Patch 2/4]: Remove unnecessary bitmap_zero calls.
+
+Syed Nayyar Waris (4):
+  bitops: Introduce the the for_each_set_clump macro
+  lib/test_bitmap.c: Add for_each_set_clump test cases
+  gpio: thunderx: Utilize for_each_set_clump macro
+  gpio: xilinx: Utilize for_each_set_clump macro
+
+ drivers/gpio/gpio-thunderx.c      |  11 ++-
+ drivers/gpio/gpio-xilinx.c        |  62 ++++++-------
+ include/asm-generic/bitops/find.h |  19 ++++
+ include/linux/bitmap.h            |  61 +++++++++++++
+ include/linux/bitops.h            |  13 +++
+ lib/find_bit.c                    |  14 +++
+ lib/test_bitmap.c                 | 144 ++++++++++++++++++++++++++++++
+ 7 files changed, 290 insertions(+), 34 deletions(-)
+
+
+base-commit: b9bbe6ed63b2b9f2c9ee5cbd0f2c946a2723f4ce
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.26.2
+
