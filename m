@@ -2,175 +2,141 @@ Return-Path: <SRS0=HYd6=7H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590F5C433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 14:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DF0C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 15:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37D0C2087D
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 14:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18A3120878
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 15:17:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pT4+h8fC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9adz5zO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388687AbgEYOi6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 May 2020 10:38:58 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:8276 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbgEYOi6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2020 10:38:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1590417537; x=1621953537;
-  h=references:from:to:cc:subject:in-reply-to:date:
-   message-id:mime-version;
-  bh=S99rpstexzLZC2qjsjZJhCbIgtSPGJorenKaanjakaE=;
-  b=pT4+h8fCaIn96oklBnQTxFWI/OHuOUFUc+pPvkE3Ke3mn6clzggjOsf8
-   7vPKANeLlkhnPSdmO5aSdGIKmBBEJQv78jGCZKZLVAZwaC1cpyo0sRlVW
-   XUNoAqJRHUl0gfH4YoIYEL2J0OWYxim+S2q5DXXuNraDkwv+pFWGiuAZm
-   1F6l/Wl4Qyg/oaK6Ouq0/myKH0Ng0criMb+bthTz5qswhXTGWbRghLEzd
-   Qc5c2NywQXj5ViYRrFpzJ/RMz91kJwqLFm7rAGCatDLn2gXvJrCEjQydK
-   xnyxTzPr8Oj3EBjNt5b0VY52ADIpmuv58+y8W7ZzNHMZHSRR7+e7KlOid
-   g==;
-IronPort-SDR: LwW1A8ByBD+yBQ/Mc7nwGC0gUUpS4Zyp18/VCWuBjvzcMjQ/rEekYWeunGRQeW5G0mAYzSZEqO
- /cjuIUTRDbGV75TNsQADzOHlMoauPmPg373Goh/msbCft2ZFui8BtaWTiair59yBATkZ9D3CI8
- LfWxNnNy0wiUWuCaLU/H/or2Jyq2G0YBCoGNhILyKx3hl7ugIYuiRPwKmM1ilZjskJ5JQ8hBYU
- fgYi0kGYXyr6/pN0fcvJzfUQwCj8Nlu4Ei4Dw5gp2HLmBFNhjfq+xGKbHlnlBWjHt0mol8W3IJ
- L78=
-X-IronPort-AV: E=Sophos;i="5.73,433,1583218800"; 
-   d="scan'208";a="74411981"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 May 2020 07:38:56 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 25 May 2020 07:38:58 -0700
-Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 25 May 2020 07:38:49 -0700
-References: <20200513141134.25819-1-lars.povlsen@microchip.com> <20200513141134.25819-2-lars.povlsen@microchip.com> <CACRpkdZa7OM3bqB+zRprEQ3M4m9hG3uPCoYxrdH_O=oxD8zi8Q@mail.gmail.com> <87pnb1nf2j.fsf@soft-dev15.microsemi.net> <CACRpkdYesD9sRQZXQNEaBY2Ouu3bjKKGWpRtU-Lpa4AcjyPwXw@mail.gmail.com>
-From:   Lars Povlsen <lars.povlsen@microchip.com>
+        id S2391001AbgEYPRn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 May 2020 11:17:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390998AbgEYPRn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2020 11:17:43 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45459C061A0E;
+        Mon, 25 May 2020 08:17:43 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id 131so561044pfv.13;
+        Mon, 25 May 2020 08:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JgdxX2C74TdDmjeVY9HQN2a/yq7wOSbOdwxkkYCYXyQ=;
+        b=N9adz5zOwkTSECpw8gScK2pWCHzS2JXKrK0SWR5uk5+0ARWhw5rdzsPascizMaKx5J
+         Mi5jklMWhTLlXpSZWJPhU8KLwex4X+dJUT8dpDlpb5vwIcWUPbBNi3uz38tNQZKXPSX5
+         SLdsG+G5/FitBcp28xwyWZXm+CnuzG/428JvNVcXov2lVq3dd9vNC6mx7j1tgByf2SYl
+         Op8bvijIDGefF5eWmo4yx5mh8TbKlHwdmi96W5eqaF3eZm/Wge/ZCZxL8nPIvXaNI19h
+         iZMjs0rjfgJ+26iiQK02Hzvvxz9FcTe3qgtqTIkHEchq6EXIVJdjg6xv+6qe3WG/qfVl
+         7REg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JgdxX2C74TdDmjeVY9HQN2a/yq7wOSbOdwxkkYCYXyQ=;
+        b=b67OcIOQKKuPYSF99W6jaYxI8/D/XsC9D7komow8yw+8w4QUEursWOKJHA/Haz8yIY
+         OOgKGknbvKsgeao86SQ5xVkVQfpFCjvZ8/+naknou0PZ91c7UOy2ryL3En2vcVowT8/o
+         jVh+V2yz7VaJgDjDMvSXfzSSWrX+M+TdoRib9PHKdDEskj95PUDVFibm5MMGTsezyV4r
+         8b33dJM/lTWz0AIrXkm+kcJFMJRj/J++x/8jtPcUEz21D2ASlSHsdh/PH0JKTM7eFkS9
+         1sv8HoRKsDdnijPzWIcSpJlENfOaCxxyzlTG0xJjBfd31RD3JuJSQX3sS4uBpdRmzSMY
+         /+kA==
+X-Gm-Message-State: AOAM5324RIA6JBslBR7EWctrWYHPOHvla2VdVLPOHoJlDBmetoMJqXY+
+        2zk18GI8qEwMd2wQoNFCeLYh41CDbWA=
+X-Google-Smtp-Source: ABdhPJzyrvfjMW1Z89guWcSUG6SP/b4006FtLKB7GKkz56yag7CQCPbh+mpzA+Z+rDjLdjAdA6JcQw==
+X-Received: by 2002:aa7:9aa8:: with SMTP id x8mr16954629pfi.182.1590419862613;
+        Mon, 25 May 2020 08:17:42 -0700 (PDT)
+Received: from sol (220-235-68-201.dyn.iinet.net.au. [220.235.68.201])
+        by smtp.gmail.com with ESMTPSA id k4sm5288767pfp.173.2020.05.25.08.17.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 May 2020 08:17:41 -0700 (PDT)
+Date:   Mon, 25 May 2020 23:17:36 +0800
+From:   Kent Gibson <warthog618@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
-List-Id: <soc.lore.kernel.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        SoC Team <soc@kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hector Bujanda <hector.bujanda@digi.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add bindings for mscc,ocelot-sgpio
-In-Reply-To: <CACRpkdYesD9sRQZXQNEaBY2Ouu3bjKKGWpRtU-Lpa4AcjyPwXw@mail.gmail.com>
-Date:   Mon, 25 May 2020 16:38:52 +0200
-Message-ID: <87r1v8oz9f.fsf@soft-dev15.microsemi.net>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpiolib: add GPIO_SET_DEBOUNCE_IOCTL
+Message-ID: <20200525151736.GA32461@sol>
+References: <20200419001858.105281-1-hector.bujanda@digi.com>
+ <CAMRc=MeHun_WEApEXP59ZszGa2n+wbU9qq3wU1VO9o590rO-Pw@mail.gmail.com>
+ <CACRpkdaeXFW5K=Npy2ubWsffc7aepEQ5kSJ2HrkrESjaTy_psQ@mail.gmail.com>
+ <20200525022252.GA22956@sol>
+ <CACRpkdagkhbULGVGJqcS55m=X2EaH_iK0Khr8+6M7ATWrC3hOQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdagkhbULGVGJqcS55m=X2EaH_iK0Khr8+6M7ATWrC3hOQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Mon, May 25, 2020 at 02:17:41PM +0200, Linus Walleij wrote:
+> On Mon, May 25, 2020 at 4:22 AM Kent Gibson <warthog618@gmail.com> wrote:
+> 
+> > You mention timers for the gpio pins that cannot provide debounce,
+> > so I'm confused. Could you clarify which strategy you have in mind?
+> 
+> My idea is that the callback gpiod_set_debounce() for in-kernel consumers
+> should more or less always return success. Either the hardware does
+> the debounce,  or gpiolib sets up a timer.
+> 
+> > I've also had a quick look at the possibility of providing the software
+> > debounce for in-kernel consumers.
+> 
+> That is where I think it should start.
+> 
+> >  Are you anticipating new API for
+> > that?  e.g. allowing consumers to request gpio events?  Cos, gpio_keys
+> > grabs the irq itself - and that would bypass the software debouncer,
+> > or even conflict with it.
+> 
+> It may be hard or impossible.
+> 
+> I suppose gpiolib would have to steal or intercept the interrupt
+> by using e.g. IRQF_SHARED and then just return IRQ_HANDLED
+> on the first IRQ so the underlying irq handler does not get called.
+> 
 
-Linus Walleij writes:
+And how would gpiolib ensure that it was first in the chain?
 
-> On Mon, May 18, 2020 at 10:50 PM Lars Povlsen
-> <lars.povlsen@microchip.com> wrote:
->> Linus Walleij writes:
->>
->> > On Wed, May 13, 2020 at 4:11 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
->> >
->> >> This adds DT bindings for the Microsemi SGPIO controller, bindings
->> >> mscc,ocelot-sgpio and mscc,luton-sgpio.
->> >>
->> >> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->> >> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
->> >
->> >> +  microchip,sgpio-ports:
->> >> +    description: This is a 32-bit bitmask, configuring whether a
->> >> +      particular port in the controller is enabled or not. This allows
->> >> +      unused ports to be removed from the bitstream and reduce latency.
->> >> +    $ref: "/schemas/types.yaml#/definitions/uint32"
->> >
->> > I don't know about this.
->> >
->> > You are saying this pin controller can have up to 32 GPIO "ports"
->> > (also known as banks).
->> >
->> > Why can't you just represent each such port as a separate GPIO
->> > node:
->> >
->> > pinctrl@nnn {
->> >     gpio@0 {
->> >         ....
->> >     };
->> >     gpio@1 {
->> >         ....
->> >     };
->> >     ....
->> >     gpio@31 {
->> >         ....
->> >     };
->> > };
->> >
->> > Then if some of them are unused just set it to status = "disabled";
->> >
->> > This also makes your Linux driver simpler because each GPIO port
->> > just becomes a set of 32bit registers and you can use
->> > select GPIO_GENERIC and bgpio_init() and save a whole
->> > slew of standard stock code.
->> >
->>
->> Linus, thank you for your input.
->>
->> The controller handles an array of 32*n signals, where n >= 1 && n <=
->> 4.
->>
->> The problem with the above approach is that the ports are disabled
->> *port*-wise - so they remove all (upto) 4 bits. That would be across the
->> banks.
->>
->> You could of course have the "implied" semantics that a disabled port at
->> any bit position disabled all (bit positions for the same port).
->
-> I don't understand this, you would have to elaborate...
->
-> In any case microchip,sgpio-ports is probably not the right thing,
-> use ngpios which is documented and just divide by 32 to get the
-> number of ports I think? But that is just in case they get
-> enabled strictly in sequence, otherwise you'd need a custom
-> property.
->
+> After the timer times out it needs to retrigger the IRQ.
+> 
+> So the consuming driver would se a "debounced and ready"
+> IRQ so when it gets this IRQ it knows for sure there is
+> no bounciness on it because gpiolib already took care
+> of that.
+> 
+> The above is in no way trivial, but it follows the design pattern
+> of "narrow and deep" APIs.
+> 
 
-Hi Linus,
+Totally agree with the concept - just trying to work out how to
+implement it seemlessly given the existing API and usage, and given my
+limited knowledge of the kernel internals.
 
-Yes, the problem is they're not in sequence. F.ex. you could have ports
-0,1 enabled, skip 2,3,4 and have 5,6,7 enabled.
+> Failure is an option! Sorry if I push too complex ideas.
+> 
 
-In the data stream you would then have:
+I'm not as concerned about complexity as I am about fragility.
 
-p0.0 p0.1 p0.2 p0.3
-p1.0 p1.1 p1.2 p1.3
-p5.0 p5.1 p5.2 p5.3
-p6.0 p6.1 p6.2 p6.3
-p7.0 p7.1 p7.2 p7.3
+I don't see any problem adding debounce for gpiolib-cdev.
+Adding a more complete solution to gpiolib itself is certainly
+non-trivial, if it is possible at all. 
 
-I will mull about this and try to come up with something better and more
-understandable.
+The path I'll probably be taking is adding a debouncer to gpiolib-cdev,
+so at least we have a solution for userspace, then take a longer look at
+the more general solution.
 
-Luckily, this is not gating for integrating sparx5, so its possible
-we'll just skip the SGPIO driver for now.
-
-I'll provide an update as soon as possible.
-
----Lars
-
-> Yours,
-> Linus Walleij
-
--- 
-Lars Povlsen,
-Microchip
+Cheers,
+Kent.
