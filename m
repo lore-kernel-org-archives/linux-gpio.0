@@ -2,111 +2,115 @@ Return-Path: <SRS0=HYd6=7H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2C8C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 09:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725D5C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 09:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA2D20812
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 09:17:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="h5iYImgh"
+	by mail.kernel.org (Postfix) with ESMTP id 54365207FB
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 09:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbgEYJRO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 May 2020 05:17:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389427AbgEYJRJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2020 05:17:09 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A39A7C05BD43
-        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2020 02:17:09 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id f83so16856773qke.13
-        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2020 02:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UPKAWDXzbYpZcHZzE/jvh4sEsCXtgHO9Rviklrj4c2Y=;
-        b=h5iYImghCJhux6GT4d2kO7zNAoMA8fEcSSkSURRXarw2tjaLULyyfuxuVY/52g3yz3
-         6kODCAB7qd44fe7EVjnkJU3QcnefChDGILeJaBR5sIW1L+egXZ2DLr3hDAzLUtLQunwG
-         eqrRDW/LuS29vX5ageDRPa2c1Q+vCrhIvkwv1bCPNoLEwhFuSZ7BlyChZ3sLdPgj6AsV
-         f6185DEYuUvH2iZYAvOotSKaTIPDe5z0godcIwSgpxDxjypOqtTjTWq6RvDxhSEe9Wpz
-         me/D89KNUT8EGL6Cm9qTKEdA8QRqR+5vNgWnR26pw4j2W5iKOzr8y7mulkdGIvYx2ViZ
-         No9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UPKAWDXzbYpZcHZzE/jvh4sEsCXtgHO9Rviklrj4c2Y=;
-        b=T7Kb3BHeVsM0dd1ommVDrRuBsH9d2vq9lxZJ35QcxDlhib0lBLUaYiYvEksdA5EYeY
-         mWRV1IgO7h4Xri3FmTxl5KUM0PwVvh4qVi17nuc+z2eTIAiuQ7sUfOoKNK3MGHjAc5wW
-         P/Mmp1JUyOV/IcugUo/6VypVlI8FBOpyI4nnI9dO/dheiXipQedNJi9WdQKCrwbNlCjq
-         0HV45Ialyh+vqEZBf+ROtN535rck7EjyZM6zQEtaB41T/2qM0/XbXRnBOhvoAVxviSUg
-         2fA8HhfWRYQI5V4UfrodmVl11+SWjUuZjaYFR3XGAuk3ZFXZvLI8ekPTUSNBQQWnfvCY
-         HRbw==
-X-Gm-Message-State: AOAM532QptWwVMDR1BdsR1ZmiGwROdfHxuH6IxrrjQb+V8E96ThbqCQT
-        d93uTWJzWnzNrarBHnVV57n7k7VrRQC18BYbTxIE2w==
-X-Google-Smtp-Source: ABdhPJz7FwnxTWiLNqiIZD5a8zZv3R4oMP54vdsGuztkluwJWwXSbqlfJg38I7TnuuwobKL54EcMhe/ah8LeU9964M4=
-X-Received: by 2002:a37:dd6:: with SMTP id 205mr3484622qkn.323.1590398228936;
- Mon, 25 May 2020 02:17:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <1590120740-22912-1-git-send-email-yangtiezhu@loongson.cn>
-In-Reply-To: <1590120740-22912-1-git-send-email-yangtiezhu@loongson.cn>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 25 May 2020 11:16:58 +0200
-Message-ID: <CAMpxmJVYPweUL9J5uitp6zCAniQAZ2+EBuxt-pYcDarLJkcqDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] gpio: bcm-kona: Fix return value of bcm_kona_gpio_probe()
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+        id S2389411AbgEYJUd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 May 2020 05:20:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:2961 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388920AbgEYJUc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 25 May 2020 05:20:32 -0400
+IronPort-SDR: D/rgkgv4rNRmu/sCLFoiqOrJGb7P8bN1fDN8krX90szexNok72hywd9EKhjOLm45o56S+0+6EW
+ NipxjJTgcfqQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2020 02:20:32 -0700
+IronPort-SDR: YTSdOWF0d14uMR86raM1HjE8YO9sMJaCQ4b+irLECD1kjcel5wt8Peq0V6ZS/g1GhEuGA/Z3dL
+ IDsncXB0X9KQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,432,1583222400"; 
+   d="scan'208";a="375388521"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 25 May 2020 02:20:29 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 25 May 2020 12:20:28 +0300
+Date:   Mon, 25 May 2020 12:20:28 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Xuefeng Li <lixuefeng@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] gpio: pca953x: Override GpioInt() pin for Intel
+ Galileo Gen 2
+Message-ID: <20200525092028.GQ247495@lahna.fi.intel.com>
+References: <20200520211916.25727-1-andriy.shevchenko@linux.intel.com>
+ <20200520211916.25727-5-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200520211916.25727-5-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-pt., 22 maj 2020 o 06:12 Tiezhu Yang <yangtiezhu@loongson.cn> napisa=C5=82(=
-a):
->
-> When call function devm_platform_ioremap_resource(), we should use IS_ERR=
-()
-> to check the return value and return PTR_ERR() if failed.
->
-> Fixes: 72d8cb715477 ("drivers: gpio: bcm-kona: use devm_platform_ioremap_=
-resource()")
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+On Thu, May 21, 2020 at 12:19:16AM +0300, Andy Shevchenko wrote:
+> ACPI table on Intel Galileo Gen 2 has wrong pin number for IRQ resource
+> of one of the I²C GPIO expanders. ACPI GPIO library provides a special
+> quirk which we may use in this case. With help of it, override GpioInt()
+> pin for the affected platform.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/gpio/gpio-bcm-kona.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-> index baee8c3..cf3687a 100644
-> --- a/drivers/gpio/gpio-bcm-kona.c
-> +++ b/drivers/gpio/gpio-bcm-kona.c
-> @@ -625,7 +625,7 @@ static int bcm_kona_gpio_probe(struct platform_device=
- *pdev)
->
->         kona_gpio->reg_base =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(kona_gpio->reg_base)) {
-> -               ret =3D -ENXIO;
-> +               ret =3D PTR_ERR(kona_gpio->reg_base);
->                 goto err_irq_domain;
->         }
->
-> --
-> 2.1.0
->
+>  drivers/gpio/gpio-pca953x.c | 44 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 1fca8dd7824f..2014563309be 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -10,6 +10,7 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/bitmap.h>
+> +#include <linux/dmi.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/i2c.h>
+> @@ -113,6 +114,39 @@ static const struct acpi_device_id pca953x_acpi_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
+>  
+> +#ifdef CONFIG_GPIO_PCA953X_IRQ
+> +static const struct acpi_gpio_params pca953x_interrupt_gpios = { 0, 0, true };
+> +
+> +static const struct acpi_gpio_mapping pca953x_acpi_interrupt_gpios[] = {
+> +	{ "interrupt-gpios", &pca953x_interrupt_gpios, 1, ACPI_GPIO_QUIRK_FORCE_PIN, 1 },
+> +	{ }
+> +};
+> +
+> +static int pca953x_acpi_interrupt_get_irq(struct device *dev)
+> +{
+> +	struct gpio_desc *desc;
+> +
+> +	if (devm_acpi_dev_add_driver_gpios(dev, pca953x_acpi_interrupt_gpios))
+> +		dev_warn(dev, "can't add GPIO ACPI mapping\n");
+> +
+> +	desc = devm_gpiod_get(dev, "interrupt", GPIOD_IN);
+> +	if (IS_ERR(desc))
+> +		return PTR_ERR(desc);
+> +
+> +	return gpiod_to_irq(desc);
+> +}
+> +
+> +static const struct dmi_system_id pca953x_dmi_acpi_interrupt_info[] = {
+> +	{
+> +		.ident = "Intel Galileo Gen 2",
+> +		.matches = {
+> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "GalileoGen2"),
+> +		},
+> +	},
+> +	{}
 
-I fixed the commit message, since this patch addresses the error code
-propagation, not the checking itself. Applied for fixes.
-
-Bartosz
+Since you do everything already in this driver, I think we can live
+without adding ACPI_GPIO_QUIRK_FORCE_PIN to the core code at all.
