@@ -2,120 +2,162 @@ Return-Path: <SRS0=HYd6=7H=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605F5C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 16:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F62C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 16:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 328242071A
-	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 16:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C240D207DA
+	for <linux-gpio@archiver.kernel.org>; Mon, 25 May 2020 16:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="GVJ0tBXh"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RlvVOG4o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391148AbgEYQH4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 25 May 2020 12:07:56 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:40641 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391179AbgEYQH4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2020 12:07:56 -0400
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 0CA3122FF5;
-        Mon, 25 May 2020 18:07:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1590422874;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7np4wDKRiMQQf5ldFNBXoJfzP9Qd8PYygwxPlZayMKg=;
-        b=GVJ0tBXhpS08q1dua9/Jxyf7DT4zdspHg9xtiS78CDzlbnqzDPgDG5DX3672msz7aTjprc
-        e6bRUUFllkqMMs489JbnyjRr8l/xCTjGLLI6IObIDbaRX+1BhOZJNMv3AAIWZaAejJRok5
-        jSAE1Gn3LBq+f7oNj8sw/7qoyzsX5sE=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v4 1/2] gpiolib: Introduce gpiochip_irqchip_add_domain()
-Date:   Mon, 25 May 2020 18:07:40 +0200
-Message-Id: <20200525160741.21729-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200525160741.21729-1-michael@walle.cc>
-References: <20200525160741.21729-1-michael@walle.cc>
+        id S1730364AbgEYQYQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 25 May 2020 12:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729338AbgEYQYQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2020 12:24:16 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3575C05BD43
+        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2020 09:24:15 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id l1so14083199qtp.6
+        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2020 09:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KS0a12ZGAlis5FGjzq3oVpbX/YM5oeodYRXZXqWm+i8=;
+        b=RlvVOG4oquelW/QHisprTnJ5+AE3nog67eWlbiiRX9LiPSKxC/6WMrf4vBwM2ErSEA
+         uGKS5APVknW5P/Eg7MNjU54ZkvnfNQuwclevWvDHkRjNzv894NaIgXAMlbKgPzA71l3c
+         a6MuKd+gpTBCLRNLEkltvuJ1CT4jW5xM6g88pj36tRDQ4X2CsVs1yTVdtZ2XkFiq5WwK
+         42M8ef7/aC02RxBECMt7j8ZDHCGmqRgSgOauDfgM3qr76a9cdAsOwTb/o2x8+ePIvCHd
+         FAgs3MxfFbcrL5J3KwW7D3Xk2eBr1ydZzVVYI0K5LhnslAgzFRhFJTuy/gV+xQPG1Ib6
+         zCsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KS0a12ZGAlis5FGjzq3oVpbX/YM5oeodYRXZXqWm+i8=;
+        b=dTD43QMzpdUSxTCOW9WNP4matGxYtgfg8Au5Mv0Fc7Jb/mhmHTs9jsbHRBu3ifZlPZ
+         DP68h1/tR4w33d3DsF0UoS0afm1GMTxlWXE9ekUvHAtNa40hE/s5HVnpe6+VQ7FWhkkN
+         J/EnN+8x9v9nyh+K+i/K3V0tUwS//NXnVmiW1qIUL7kzkuEguX4Y/bvNFcddrFl34Y+d
+         +evVSzVpjcvFgOaP2DdXldIaF0hH5wF2533JgmySDf61RFv0i2973UlsRFRzaajz06Gz
+         btrGDb3NRWeDtMZaOPgqgT7usQu474JnEHDRPXDjye1/SnNhziktka1eVmT3A4gwMidh
+         8Q/g==
+X-Gm-Message-State: AOAM530Ke5RCBRBfD4pb5lSScap8L9/94vBWmLmrXymkBVojc8auBQTK
+        cXodUMAj76/liHAzrFE/SiHPsKS9FF79nGmCZJK4oQ==
+X-Google-Smtp-Source: ABdhPJxYcTFzk+NnfbAyKyadYyHL8dD0oRsGhvmc+Ujfz5lo4N1zqIz3HC7BJfc99USbyutgzQiNmAf4feRkGvtv8CE=
+X-Received: by 2002:ac8:2242:: with SMTP id p2mr19187641qtp.27.1590423855112;
+ Mon, 25 May 2020 09:24:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200516064507.19058-1-warthog618@gmail.com>
+In-Reply-To: <20200516064507.19058-1-warthog618@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 25 May 2020 18:24:04 +0200
+Message-ID: <CAMpxmJX51PNHucOUnZ3GbA+RxmZto9NXruBmjUYoFHz5D1Nbqw@mail.gmail.com>
+Subject: Re: [RFC PATCH] gpio: uapi: v2 proposal
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The function connects an IRQ domain to a gpiochip and reuses
-gpiochip_to_irq() which is provided by gpiolib.
+sob., 16 maj 2020 o 08:45 Kent Gibson <warthog618@gmail.com> napisa=C5=82(a=
+):
+>
+> Add a new version of the uAPI to address existing 32/64bit alignment
+> issues, add support for debounce, and provide some future proofing by
+> adding padding reserved for future use.
+>
+> Signed-off-by: Kent Gibson <warthog618@gmail.com>
+>
+> ---
+>
+> This patch is a proposal to replace the majority of the uAPI, so some
+> background and justification is in order.
+>
+> The alignment issue relates to the gpioevent_data, which packs to differe=
+nt
+> sizes on 32bit and 64bit platforms. That creates problems for 32bit apps
+> running on 64bit kernels.  The patch addresses that particular issue, and
+> the problem more generally, by adding pad fields that explicitly pad
+> structs out to 64bit boundaries, so they will pack to the same size now,
+> and even if some of the reserved padding is used for __u64 fields in the
+> future.
+>
+> The lack of future proofing in v1 makes it impossible to, for example,
+> add the debounce feature that is included in v2.
+> The future proofing is addressed by providing reserved padding in all
+> structs for future features.  Specifically, the line request,
+> config and info structs get updated versions and ioctls.
+>
+> I haven't added any padding to gpiochip_info, as I haven't seen any calls
+> for new features for the corresponding ioctl, but I'm open to updating th=
+at
+> as well.
+>
+> As the majority of the structs and ioctls were being replaced, it seemed
+> opportune to rework some of the other aspects of the uAPI.
+>
+> Firstly, I've reworked the flags field throughout.  v1 has three differen=
+t
+> flags fields, each with their own separate bit definitions.  In v2 that i=
+s
+> collapsed to one.  Further, the bits of the v2 flags field are used
+> as feature enable flags, with any other necessary configuration fields en=
+coded
+> separately.  This is simpler and clearer, while also providing a foundati=
+on
+> for adding features in the future.
+>
+> I've also merged the handle and event requests into a single request, the
+> line request, as the two requests where mostly the same, other than the
+> edge detection provided by event requests.  As a byproduct, the v2 uAPI
+> allows for multiple lines producing edge events on the same line handle.
+> This is a new capability as v1 only supports a single line in an event re=
+quest.
+>
+> This means there are now only two types of file handle to be concerned wi=
+th,
+> the chip and the line, and it is clearer which ioctls apply to which type
+> of handle.
+>
+> There is also some minor renaming of fields for consistency compared to t=
+heir
+> v1 counterparts, e.g. offset rather than lineoffset or line_offset, and
+> consumer rather than consumer_label.
+>
+> And v1 GPIOHANDLES_MAX and gpiohandle_data become GPIOLINES_MAX and
+> gpioline_values for v2 - the only change being the renaming for clarity.
+>
+> The v2 uAPI is mostly just a reorganisation of v1, so userspace code,
+> particularly libgpiod, should easily port to it.
+>
+> This patch is obviously only one patch in a much bigger series that
+> will actually implement it, but I would appreciate a review and any feedb=
+ack,
+> as it is foundational to the rest of that series.
+>
+> Thanks,
+> Kent.
+>
 
-gpiochip_irqchip_* and regmap_irq partially provide the same
-functionality. This function will help to connect just the
-minimal functionality of the gpiochip_irqchip which is needed to
-work together with regmap-irq.
+Hi Kent,
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/gpio/gpiolib.c      | 20 ++++++++++++++++++++
- include/linux/gpio/driver.h |  3 +++
- 2 files changed, 23 insertions(+)
+Thanks for posting this. I like the general direction a lot. I'll
+review this in detail later this week.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index eaa0e209188d..d07f763c9c0b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2756,6 +2756,26 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gc,
- }
- EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
- 
-+/**
-+ * gpiochip_irqchip_add_domain() - adds an irqdomain to a gpiochip
-+ * @gc: the gpiochip to add the irqchip to
-+ * @domain: the irqdomain to add to the gpiochip
-+ *
-+ * This function adds an IRQ domain to the gpiochip.
-+ */
-+int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
-+				struct irq_domain *domain)
-+{
-+	if (!domain)
-+		return -EINVAL;
-+
-+	gc->to_irq = gpiochip_to_irq;
-+	gc->irq.domain = domain;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_domain);
-+
- #else /* CONFIG_GPIOLIB_IRQCHIP */
- 
- static inline int gpiochip_add_irqchip(struct gpio_chip *gc,
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 8c41ae41b6bb..ee30065b6f61 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -599,6 +599,9 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gc,
- bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gc,
- 				unsigned int offset);
- 
-+int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
-+				struct irq_domain *domain);
-+
- #ifdef CONFIG_LOCKDEP
- 
- /*
--- 
-2.20.1
+Seeing the speed at which you make progress I think I won't be
+implementing support for the v1 of the watch ioctl() in libgpiod after
+all. Once the v2 is live I will probably bump the API version in
+libgpiod to v2.0.0 and make some non-compatible changes anyway.
 
+Bart
