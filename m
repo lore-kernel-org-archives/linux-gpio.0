@@ -2,203 +2,155 @@ Return-Path: <SRS0=Ft/e=7I=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5557FC433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 May 2020 08:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C75C433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 May 2020 09:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABF82071A
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 May 2020 08:16:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB277207ED
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 May 2020 09:20:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFEJtdNU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JCqyYSiM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgEZIP7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 May 2020 04:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45082 "EHLO
+        id S1731705AbgEZJU6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 May 2020 05:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbgEZIP7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 May 2020 04:15:59 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34DC0C03E97E
-        for <linux-gpio@vger.kernel.org>; Tue, 26 May 2020 01:15:59 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id z15so4572829pjb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 26 May 2020 01:15:59 -0700 (PDT)
+        with ESMTP id S1731662AbgEZJU6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 May 2020 05:20:58 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B77C08C5C1
+        for <linux-gpio@vger.kernel.org>; Tue, 26 May 2020 02:20:57 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id l15so23255118lje.9
+        for <linux-gpio@vger.kernel.org>; Tue, 26 May 2020 02:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CvQOwDaca6EGCpgZKmqED62Ipjg/GnmnTO0HT5H7xns=;
-        b=ZFEJtdNURaNlDsAZN791eES6Q9OyYY5z5cuh5nwl2g2SSoF9gmeI7+1CnbkK5RFG0y
-         C2H51nAdpQcnxSWimbf/PW+NH8e8YcLsP/72Gi/8243fp6irJsa1asVMGXwi2arGSnmc
-         P13SsXTgdLxezQ5oJOyi4Gj7Q/0ibpfYagUcJFHTigUd43YAw3J/NGXX8iC8ujTWrUl0
-         eWFRyYMPjPk3Z857nSi/O3Kl+CuXUobMxPMSLbYff9XOZLT4L6MSLSIfs4gMEs1aHM+U
-         mb33sCqdztNvIuBUXpszqiJI6N0FV9vsmOyFe2K8lM9CRA4QLNnWYg1uKPihy1Mw9VYO
-         2bBw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tjIxLurGAZl3ClrqkcDTUozxTD1nDew3Brnlr2xXLqY=;
+        b=JCqyYSiMdYS1eYDRtnDeEiedABn2SLAJ9eHMlUwpGPm+5yJt1v4LCf6UvpJc84XRbE
+         1cfRRQoLViCSj/Ef6G2XQ1MnDs8XRyleZi6kQTJgM4lW4Eyurn8txIZenaHRroS5F4Ii
+         zqWLfi1rIGTUwxWPo6NxZWKxgXdkIdm6Z/9uTNfehAxFi1FZ5QXiVI/oLvhWfxfBZP04
+         64YHr1ZbYww9BFPrJ+2zK2C1+oW+dLlk/sZkNNq4aRcvkJ5DbIEeA679CTRIvnoSxtQM
+         qA8qkXqWSIUdnpytsjCspoXtwgmZPFRfsVg7QYO2gGDE+hSnc8P9Dw8ZhWPx2fnwvwsb
+         qrxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CvQOwDaca6EGCpgZKmqED62Ipjg/GnmnTO0HT5H7xns=;
-        b=AUY5WPpwsTLMcF18ZkmpFe+cW0Czg0+DXPevQhWUKm91ltlG++GYlL7gdhCp4Ew18K
-         ySthtP2bhoUv+hA7t2ufpJUs/F0ATI7C/hGkSqTMUGEvIvTXPuT2tXy2Txg28BfqRrko
-         vuLI8PbMCWcX1gVGlPHtexqbLLkNZA6cvgPFswIL5syVTf8S6KV6AOjSWjtMLOU2VRcu
-         KQH8h168ITqWiS8gwUPbWBKT3llJSjFD5Atb0VyPyxte0Ydc5P6bavmqeQ/LKRgUq5PO
-         Ig9wWIvD615hbqI5A2jCTVD8oWGBcetu5eLrTvygg8WBfA5nBovqpgkMyInh5K4lpYxU
-         tF+w==
-X-Gm-Message-State: AOAM531ShU7bpIboHQVB7YNlYPdIOvMLoKzcQX3d/lzBfmfbZbLwsP2R
-        K6H6u/Ab6l2JNDRRSF/elIx1KaLtd5Y=
-X-Google-Smtp-Source: ABdhPJy2UZP9BS37mcfhmIRWR2RFYIP74a1/DAl4b7ggRU2awi4GLddYODmlwajouxFv11HihQlpJA==
-X-Received: by 2002:a17:902:c213:: with SMTP id 19mr31754227pll.190.1590480958622;
-        Tue, 26 May 2020 01:15:58 -0700 (PDT)
-Received: from localhost.localdomain ([49.216.48.63])
-        by smtp.gmail.com with ESMTPSA id go1sm13835951pjb.26.2020.05.26.01.15.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 01:15:57 -0700 (PDT)
-From:   Richard Hsu <saraon640529@gmail.com>
-To:     Richard_Hsu@asmedia.com.tw, Yd_Tseng@asmedia.com.tw,
-        Jesse1_Chang@asmedia.com.tw, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, Richard Hsu <saraon640529@gmail.com>
-Subject: [PATCH] gpio:gpio-asm28xx-18xx: new driver
-Date:   Tue, 26 May 2020 16:15:39 +0800
-Message-Id: <20200526081539.3518-1-saraon640529@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tjIxLurGAZl3ClrqkcDTUozxTD1nDew3Brnlr2xXLqY=;
+        b=mdcVm2lUFRFQMsa3mm0jSa18hnYSSDifefaOvrjKmM5SO6EMTVLczJ0SuUy5mK8LkC
+         rLApvU8v8bJec2RvQE8g4uv1JG2IY1mSexjbdwiRLTwIvTfb2LRosXmXTTYxFLum9Bi2
+         NWpln5lBJ+yjThLQ+A2qEPXFTSg2EPyZDThCQON6Og9QKDtFygX2EavEAaeEgMdBAMn1
+         1yNTZ+HXPE3TA35FoLiFRICydR8eqgkOjsnst/tlBcTl/zlHbzYyM6IGtiL244t4Bxyy
+         dsmuXVwnUSqPTalYpN5W5gQn03WOr7k8cHUzP2I4NjoGMDxDIox1JO9hO5yfYYCNkgu6
+         uHaw==
+X-Gm-Message-State: AOAM530LBvZPlwLD0NNjDIO86ee0Ffoml8BPSAMgp1gxtBhMJep+HDfY
+        XT60AaJGRuBIuGw1sGV2CAtVOemPmvRaYdMlAIfEfg==
+X-Google-Smtp-Source: ABdhPJwg6A/TEx1rm0SmH/Tfvf7jOImMZnrbm86NXCtz4hLlqpfrcSfkYxR6Rag1WIB7c/CsQ4iUICjgpzIFIhw1xII=
+X-Received: by 2002:a2e:711c:: with SMTP id m28mr162302ljc.104.1590484855739;
+ Tue, 26 May 2020 02:20:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200513141134.25819-1-lars.povlsen@microchip.com>
+ <20200513141134.25819-2-lars.povlsen@microchip.com> <CACRpkdZa7OM3bqB+zRprEQ3M4m9hG3uPCoYxrdH_O=oxD8zi8Q@mail.gmail.com>
+ <87pnb1nf2j.fsf@soft-dev15.microsemi.net> <CACRpkdYesD9sRQZXQNEaBY2Ouu3bjKKGWpRtU-Lpa4AcjyPwXw@mail.gmail.com>
+ <87r1v8oz9f.fsf@soft-dev15.microsemi.net>
+In-Reply-To: <87r1v8oz9f.fsf@soft-dev15.microsemi.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 May 2020 11:20:44 +0200
+Message-ID: <CACRpkdaJvaqPptPD-A1DriVgBOZGZ4Qf0UsbsjG39ptx6bSJKg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add bindings for mscc,ocelot-sgpio
+To:     Lars Povlsen <lars.povlsen@microchip.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     SoC Team <soc@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bartosz Golaszewski and Linux Walleij,
-  Thanks for your reply.I have modified it according to your
-suggestions.And our device is silmilar as AMD South Bridge(amd8111),
-then i just take gpio-amd8111.c in kernel driver source as reference.
-It says that we can't use plain pci_driver mechanism, as the device
-is really a multiple function device,main driver that binds to the
-pci_device is a bus driver.It seems reasonable then i follow it.
+On Mon, May 25, 2020 at 4:38 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 
-Signed-off-by: Richard Hsu <saraon640529@gmail.com>
----
- patch | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+> Yes, the problem is they're not in sequence. F.ex. you could have ports
+> 0,1 enabled, skip 2,3,4 and have 5,6,7 enabled.
 
-diff --git a/patch b/patch
-index a713f91..220a8cf 100644
---- a/patch
-+++ b/patch
-@@ -1,7 +1,7 @@
- diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpio/gpio-asm28xx-18xx.c linux-5.7.0-rc6-patch/drivers/gpio/gpio-asm28xx-18xx.c
- --- linux-5.7.0-rc6/drivers/gpio/gpio-asm28xx-18xx.c	1970-01-01 08:00:00.000000000 +0800
--+++ linux-5.7.0-rc6-patch/drivers/gpio/gpio-asm28xx-18xx.c	2020-05-22 11:55:13.736272177 +0800
--@@ -0,0 +1,282 @@
-++++ linux-5.7.0-rc6-patch/drivers/gpio/gpio-asm28xx-18xx.c	2020-05-26 10:41:11.401349769 +0800
-+@@ -0,0 +1,281 @@
- +// SPDX-License-Identifier: GPL-2.0-only
- +/*
- + * Asmedia 28xx/18xx GPIO driver
-@@ -17,6 +17,7 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +#include <linux/pci.h>
- +#include <linux/spinlock.h>
- +#include <linux/pm_runtime.h>
-++#include <linux/bits.h>
- +
- +
- +/* GPIO registers offsets */
-@@ -63,7 +64,6 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +};
- +MODULE_DEVICE_TABLE(pci, pci_tbl);
- +
--+
- +struct asm28xx_gpio {
- +	struct gpio_chip	chip;
- +	struct pci_dev		*pdev;
-@@ -104,20 +104,12 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +
- +static int asm28xx_gpio_request(struct gpio_chip *chip, unsigned offset)
- +{
--+
--+	dev_dbg(chip->parent, "ASMEDIA-28xx/18xx gpio %d request\n", offset);
--+
- +	if (offset == ASM_GPIO_PIN5)
- +		return -ENODEV;
- +
- +	return 0;
- +}
- +
--+static void asm28xx_gpio_free(struct gpio_chip *chip, unsigned offset)
--+{
--+	dev_dbg(chip->parent, "ASMEDIA-28xx/18xx gpio %d free\n", offset);
--+}
--+
- +static void asm28xx_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- +{
- +	struct asm28xx_gpio *agp = gpiochip_get_data(chip);
-@@ -196,7 +188,6 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +		.owner		= THIS_MODULE,
- +		.ngpio		= 8,
- +		.request	= asm28xx_gpio_request,
--+		.free		= asm28xx_gpio_free,
- +		.set		= asm28xx_gpio_set,
- +		.get		= asm28xx_gpio_get,
- +		.direction_output = asm28xx_gpio_dirout,
-@@ -213,6 +204,16 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +	unsigned long flags;
- +	int type;
- +
-++	/* We look for our device - Asmedia 28XX and 18XX Bridge
-++	 * I don't know about a system with two such bridges,
-++	 * so we can assume that there is max. one device.
-++	 *
-++	 * We can't use plain pci_driver mechanism,
-++	 * as the device is really a multiple function device,
-++	 * main driver that binds to the pci_device is an bus
-++	 * driver and have to find & bind to the device this way.
-++	 */
-++
- +	for_each_pci_dev(pdev) {
- +		ent = pci_match_id(pci_tbl, pdev);
- +		if (ent) {
-@@ -282,11 +283,9 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +MODULE_LICENSE("GPL");
- +MODULE_AUTHOR("Richard Hsu <Richard_Hsu@asmedia.com.tw>");
- +MODULE_DESCRIPTION("Asmedia 28xx 18xx GPIO Driver");
--+
--+
- diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpio/Kconfig linux-5.7.0-rc6-patch/drivers/gpio/Kconfig
- --- linux-5.7.0-rc6/drivers/gpio/Kconfig	2020-05-22 11:54:00.862644198 +0800
--+++ linux-5.7.0-rc6-patch/drivers/gpio/Kconfig	2020-05-22 11:55:13.680270929 +0800
-++++ linux-5.7.0-rc6-patch/drivers/gpio/Kconfig	2020-05-26 09:42:21.777312685 +0800
- @@ -113,6 +113,14 @@ config GPIO_AMDPT
-  	  driver for GPIO functionality on Promontory IOHub
-  	  Require ACPI ASL code to enumerate as a platform device.
-@@ -296,7 +295,7 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
- +	depends on PCI
- +	select GPIO_GENERIC
- +	help
--+	  driver for GPIO functionality on Asmedia 28XX and 18XX PCI-E Bridge.
-++	  Driver for GPIO functionality on Asmedia 28XX and 18XX PCI-E Bridge.
- +
- +
-  config GPIO_ASPEED
-@@ -304,9 +303,12 @@ diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpi
-  	depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO
- diff -uprN -X linux-5.7.0-rc6/Documentation/dontdiff linux-5.7.0-rc6/drivers/gpio/Makefile linux-5.7.0-rc6-patch/drivers/gpio/Makefile
- --- linux-5.7.0-rc6/drivers/gpio/Makefile	2020-05-22 11:54:00.862644198 +0800
--+++ linux-5.7.0-rc6-patch/drivers/gpio/Makefile	2020-05-22 11:55:13.680270929 +0800
--@@ -176,3 +176,4 @@ obj-$(CONFIG_GPIO_XTENSA)		+= gpio-xtens
-- obj-$(CONFIG_GPIO_ZEVIO)		+= gpio-zevio.o
-- obj-$(CONFIG_GPIO_ZX)			+= gpio-zx.o
-- obj-$(CONFIG_GPIO_ZYNQ)			+= gpio-zynq.o
-++++ linux-5.7.0-rc6-patch/drivers/gpio/Makefile	2020-05-26 09:45:42.092095882 +0800
-+@@ -31,6 +31,7 @@ obj-$(CONFIG_GPIO_AMD8111)		+= gpio-amd8
-+ obj-$(CONFIG_GPIO_AMD_FCH)		+= gpio-amd-fch.o
-+ obj-$(CONFIG_GPIO_AMDPT)		+= gpio-amdpt.o
-+ obj-$(CONFIG_GPIO_ARIZONA)		+= gpio-arizona.o
- +obj-$(CONFIG_GPIO_ASM28XX)		+= gpio-asm28xx-18xx.o
-+ obj-$(CONFIG_GPIO_ASPEED)		+= gpio-aspeed.o
-+ obj-$(CONFIG_GPIO_ASPEED_SGPIO)		+= gpio-aspeed-sgpio.o
-+ obj-$(CONFIG_GPIO_ATH79)		+= gpio-ath79.o
--- 
-2.17.1
+Just use disabled nodes.
 
+That would look like this in my idea of a device tree:
+
+pinctrl@nnn {
+    gpio0: gpio@0 {
+        compatible = "foo";
+        status = "ok";
+        ....
+    };
+    gpio1: gpio@1 {
+        compatible = "foo";
+        status = "ok";
+        ....
+    };
+    gpio2: gpio@2 {
+        compatible = "foo";
+        status = "disabled";
+        ....
+    };
+    gpio3: gpio@3 {
+        compatible = "foo";
+        status = "disabled";
+        ....
+    };
+    gpio4: gpio@4 {
+        compatible = "foo";
+        status = "disabled";
+        ....
+    };
+    gpio5: gpio@5 {
+        compatible = "foo";
+        status = "ok";
+        ....
+    };
+    gpio6: gpio@6 {
+        compatible = "foo";
+        status = "ok";
+        ....
+    };
+    gpio7: gpio@7 {
+        compatible = "foo";
+        status = "ok";
+        ....
+    };
+};
+
+It is common to use the status to enable/disable nodes like this.
+
+In the Linux kernel is is possible to iterate over these subnodes and
+check which ones are enabled and disabled while keeping the
+index by using something like:
+
+i = 0;
+struct device_node *np, *child;
+for_each_child_of_node(np, child) {
+    if (of_device_is_available(child)) {
+        pr_info("populating device %d\n", i);
+    }
+    i++;
+}
+
+Certainly you can use i in the above loop to populate your registers
+etc from an indexed array.
+
+This way the consumers can pick their GPIO from the right port
+and everything just using e.g.
+my-gpios = <&gpio6 4 GPIO_OUT_LOW>;
+
+Yours,
+Linus Walleij
