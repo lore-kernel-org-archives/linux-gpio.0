@@ -2,137 +2,111 @@ Return-Path: <SRS0=117c=7K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0608AC433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 18:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33499C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 19:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC2F720814
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 18:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FAB72078C
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 19:21:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEwS6Ikm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405942AbgE1Sq3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 May 2020 14:46:29 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49491 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405901AbgE1Sq2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 May 2020 14:46:28 -0400
-IronPort-SDR: ugP8DY17GIWoUQ94zsvGRMmbDmzzusr2+4uEaF8fndC81k6ckZPrNBrv6vFRaLQ9rsFBWvv7ba
- /CLyLYGEfaHA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2020 11:46:27 -0700
-IronPort-SDR: x9hFq4CaKByj5b+UNBLppyjZw6vF0xYhQMH8mXwb2Dg3bCdhuKQaFb02Ic4S+hekwVV/QLt3Vh
- wDNBIei/GfJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,445,1583222400"; 
-   d="scan'208";a="302570748"
-Received: from jorycorx-mobl.amr.corp.intel.com (HELO [10.254.102.46]) ([10.254.102.46])
-  by fmsmga002.fm.intel.com with ESMTP; 28 May 2020 11:46:27 -0700
-Subject: Re: [PATCH v6 2/3] gpio: add a reusable generic gpio_chip using
- regmap
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        id S2406342AbgE1TVY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 May 2020 15:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406317AbgE1TVV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2020 15:21:21 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B503C08C5C6;
+        Thu, 28 May 2020 12:21:21 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id 185so41280pgb.10;
+        Thu, 28 May 2020 12:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=CzfV181nJ0czd6Anf4yOzm4xivtTHh+yTDjv58w4w70=;
+        b=SEwS6IkmE/Vm6DfcfMAtkS88bdBGDTwOipqJzGzYUEgqSlmUGL4CsRcYnbhDYsTOc/
+         iVXx6qAo+DcuR+V46NVIWhweiXhNraus2SQxu7AwRoJ4pk6mmLSPsf5sopuYqkZkLVJS
+         O3XJAR/cdyjuFqgxmiCazRx+p9dZnmviVkapsfPgfrkoaXV4raK3mFMMrkUe5oYbVW3L
+         a6s1s3Zz0r/vK6f/u/tgrGhDWGd9ufQo4YdcYZm1jaL2RskV2JzWZmZCVKPfyEF84ax0
+         KHCFfNfquzsilCbDgQ8BqlhTLJOPFIBJgYpUZoIu3kqfxXr2SItKP9HU/YNtrnC9EB1b
+         100g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CzfV181nJ0czd6Anf4yOzm4xivtTHh+yTDjv58w4w70=;
+        b=LK2XYI5bqpEFQW66RjZxqL7gscjBDFUAKFaNxMNxxKJC/AtR0VhPratWvBqlP5PFxa
+         Ostgypaac8AigbhUZZra9xJGGxMnlyf0MhpqQqlXq9NHjeV7cXJ0uATYxr3odJYW8wZ0
+         l6Mgo+dqK6e3+rxoBxB5rTWitOOKeMaqJLhE0ho0BS9k2nOGyNFTGRGplajEUBwyARlH
+         NiDgQ6dSkt90gH7cROlyoqrCtRKN3k1a0YnKxUQA1S3skiiB17jjCujBXYiaqyjY+8Ts
+         PUk0kxeynZreSGJlyEn2UxpfbeaI1MOjq8V8rqesskINObvOWFgIyWUhkjrBRGtoNV2K
+         kTcw==
+X-Gm-Message-State: AOAM530IZzrsIJBGeOXpuMSOdmUs/ItxwtaBCXJW7uv0avv4scaWSCcr
+        jNO4Pjl2IanDhJIUZpzvnSaYkjCZ
+X-Google-Smtp-Source: ABdhPJwajHR+L1XGUzSZpZbJ6JCmAwM42UTuf8mYpiuyGtE7PLwR/qlqTJZGYpaZv9PvQQpzp7KA2A==
+X-Received: by 2002:a62:1845:: with SMTP id 66mr4749410pfy.192.1590693680279;
+        Thu, 28 May 2020 12:21:20 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id h11sm5460561pjk.20.2020.05.28.12.21.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 May 2020 12:21:19 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20200528145845.31436-1-michael@walle.cc>
- <20200528145845.31436-3-michael@walle.cc>
- <adb4eba6-c6c4-a403-dead-1951050eec26@linux.intel.com>
- <7d281a1e30ea40837ab1a156c561ca6b@walle.cc>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <6cec4ed5-3a4a-62d8-5209-da3b0863dcd1@linux.intel.com>
-Date:   Thu, 28 May 2020 13:15:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <7d281a1e30ea40837ab1a156c561ca6b@walle.cc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM
+        BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE...),
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
+        BCM2711/BCM2835 ARM ARCHITECTURE)
+Subject: [PATCH 1/4] dt-bindings: pinctrl: Document 7211 compatible for brcm,bcm2835-gpio.txt
+Date:   Thu, 28 May 2020 12:21:09 -0700
+Message-Id: <20200528192112.26123-2-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200528192112.26123-1-f.fainelli@gmail.com>
+References: <20200528192112.26123-1-f.fainelli@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Document the brcm,bcm7211-gpio compatible string in the
+brcm,bcm2835-gpio.txt document.
 
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
->>> +    /* if we have a direction register we need both input and
->>> output */
->>> +    if ((config->reg_dir_out_base || config->reg_dir_in_base) &&
->>> +        (!config->reg_dat_base || !config->reg_set_base))
->>> +        return ERR_PTR(-EINVAL);
->>  This failed for me since I didn't have the 'dat' base assigned. I
->> still can't figure out what 'dat' stands for...I just assigned it to
->> the same offset as the 'set' base but really don't understand what
->> this is supposed to do.
-> 
-> DAT is the data register, aka input register, if the GPIO is in input
-> mode.
-> 
-> If I read the datasheet correctly you should use the following:
-> 
-> PCM512x_GPIO_EN should be reg_dir_out_base
-> PCM512x_GPIO_CONTROL_1 should be reg_set_base
-> PCM512x_GPIN should be reg_dat_base
-> 
-> no custom xlate necessary. GPIN looks a bit fishy in that datasheet:
->   http://www.ti.com/lit/ds/symlink/pcm5121.pdf?ts=1590684141147
-
-ok, I updated that part - can't test it though with the boards I have, 
-only output is supported.
-
-> PCM512x_GPIO_OUTPUT_1..6 is pinmux control and shouldn't be part of
-> the gpio-regmap. Your driver needs to take care of that.
-
-yes, that's what I did.
-
->>> +
->>> +    /* we don't support having both registers simultaneously for
->>> now */
->>> +    if (config->reg_dir_out_base && config->reg_dir_in_base)
->>> +        return ERR_PTR(-EINVAL);
->>
->> and this second test seems to contradict the notion of 'both input and
->> output' above?
-> 
-> dir_out_base is used if the register is high active to select an output.
-> dir_in_base is used for a low active register. Thus both bases are used
-> to switch a GPIO between input and output.
-
-ok, makes sense now, thanks for the explanations.
-
->> re-adding comment from previous series:
->>  >> I still have a series of odd warnings I didn't have before: >> >>
->> [  101.400263] WARNING: CPU: 3 PID: 1129 at >>
->> drivers/gpio/gpiolib.c:4084 gpiod_set_value+0x3f/0x50 >> >> This seems
->> to come from >>     /* Should be using gpiod_set_value_cansleep() */
->>>>     WARN_ON(desc->gdev->chip->can_sleep); > > Right now,
->> gpio-regmap hardcodes can_sleep to true. But the only regmap > which
->> don't sleep is regmap-mmio. The PCM512x seems to be either I2C or >
->> SPI, which can both sleep. So this warning is actually correct and >
->> wherever this gpio is set should do it by calling the _cansleep() >
->> version.
->>
->> I still have the warnings with this version, not sure if you wanted to
->> fix it in the v6 or is this needs to be fixed in another piece of
->> code/patch. How would we go about removing this warning?
-> 
-> There is no fix in gpio-regmap. wherever this GPIO is connected to must
-> not call gpiod_set_value() but have to use gpiod_set_value_cansleep().
-
-yes, I figured this out and corrected the drivers, works just fine now. 
-My cleaned-up code is at 
-https://github.com/thesofproject/linux/pull/1945, I'll resubmit the v2 
-based on these patches when they are merged and available in Mark 
-Brown's tree (and I need to address the clock-related feedback).
-
-Thanks for your work Michael, really nice and useful, feel free to add 
-the following tag:
-
-Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+index 3cab7336a326..dfc67b90591c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+@@ -9,6 +9,7 @@ Required properties:
+   "brcm,bcm2835-gpio" - BCM2835 compatible pinctrl
+   "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+   "brcm,bcm2711-gpio" - BCM2711 compatible pinctrl
++  "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+ - reg: Should contain the physical address of the GPIO module's registers.
+ - gpio-controller: Marks the device node as a GPIO controller.
+ - #gpio-cells : Should be two. The first cell is the pin number and the
+-- 
+2.17.1
 
