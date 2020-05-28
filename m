@@ -2,98 +2,138 @@ Return-Path: <SRS0=117c=7K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4111C433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 03:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1322AC433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 04:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D04872088E
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 03:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1A6920721
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 04:07:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="EPZ4yD7t"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="Uxp1IEw9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgE1D6w (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 May 2020 23:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57168 "EHLO
+        id S1725789AbgE1EHE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 May 2020 00:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgE1D6v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2020 23:58:51 -0400
+        with ESMTP id S1725298AbgE1EHE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2020 00:07:04 -0400
 Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A791CC08C5C1;
-        Wed, 27 May 2020 20:58:51 -0700 (PDT)
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30459C05BD1E;
+        Wed, 27 May 2020 21:07:04 -0700 (PDT)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 3BCC322FB3;
-        Thu, 28 May 2020 05:58:48 +0200 (CEST)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 8BCEB22FB3;
+        Thu, 28 May 2020 06:07:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1590638328;
+        t=1590638822;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+u8MPYyDbcYv6Fo7V2HtH4lLlTB3DxELMaeS5MGUiiY=;
-        b=EPZ4yD7toYFs8BVoOdBNPpoiXQaLSgPG2arBFC3LaZzXluEIpLIibpTQ+f+zdK+3W4qjO4
-        qZDavCGC7/c2sbb3lK2BLQO/5NhmFA0AEVmzl1JXRo248XOdzTrETPLS/tRnk/uqZL+kEg
-        wJ6w1kVg4Vx/QpYXDNEHL9ZtIt+fztE=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rP/kD6XYOuzcQV7m9i+yyBmNxwXR7ezLBzXdA5CrG0A=;
+        b=Uxp1IEw9dzZEY2Cpv1whwF4Rc6RpbWmkhCpJsdiqMoNX8zl9m+vQzeKzuoiCJNWjxumixK
+        vew4n+U9W1nhXW7b3u7Ra4vyuP4FoMd4aTjkSy24OIQsyfjTTJRrZvpt/rn/Qnnikmt95v
+        4JN36LCZ7eeKCYzlyI3tRKQ2pdDliC0=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 28 May 2020 06:07:02 +0200
 From:   Michael Walle <michael@walle.cc>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v5 0/2] gpio: generic regmap implementation
-Date:   Thu, 28 May 2020 05:58:39 +0200
-Message-Id: <20200528035841.16800-1-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 2/2] gpio: add a reusable generic gpio_chip using
+ regmap
+In-Reply-To: <fe44039a-4fa9-dab3-cd14-04967b729158@linux.intel.com>
+References: <20200525160741.21729-1-michael@walle.cc>
+ <20200525160741.21729-3-michael@walle.cc>
+ <d245b4f5-065f-4c82-ef8e-d906b363fdcf@linux.intel.com>
+ <6d08ebbfbc9f656cb5650ede988cf36d@walle.cc>
+ <fe44039a-4fa9-dab3-cd14-04967b729158@linux.intel.com>
+User-Agent: Roundcube Webmail/1.4.4
+Message-ID: <143ec2f44c881706db9744465328329f@walle.cc>
+X-Sender: michael@walle.cc
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series is a split off of the sl28cpld series:
-https://lore.kernel.org/linux-gpio/20200423174543.17161-1-michael@walle.cc/
+Hi,
 
-I wasn't sure if I should also include the gpiochip_irqchip_add_domain()
-patch here. So feel free to skip it. OTOH if you use interrupts with
-gpio-regmap it is quite handy.
+Am 2020-05-28 02:31, schrieb Pierre-Louis Bossart:
+> Hi Michael,
+> 
+>>>> +struct gpio_regmap_config {
+>>>> +    struct device *parent;
+>>>> +    struct regmap *regmap;
+>>>> +
+>>>> +    const char *label;
+>>>> +    int ngpio;
+>>> 
+>>> could we add a .names field for the gpio_chip, I found this useful 
+>>> for
+>>> PCM512x GPIO support, e.g.
+>> 
+>> Sure, I have the names in the device tree.
+>> 
+>> But I'd prefer that you'd do a patch on top of this (assuming it is
+>> applied soon), because you can actually test it and there might be
+>> missing more.
+> 
+> I am happy to report that this gpio-regmap worked like a charm for me,
+> after I applied the minor diff below (complete code at
+> https://github.com/plbossart/sound/tree/fix/regmap-gpios).
+> 
+> I worked around my previous comments by forcing the GPIO internal
+> routing directly in regmap, and that allowed me to only play with the
+> _set and _dir bases. I see the LEDs and clock selected as before,
+> quite nice indeed.
+> 
+> The chip->label test is probably wrong, since the gpio_chip structure
+> is zeroed out if(!chip->label) is always true so the label is always
+> set to the device name. I don't know what the intent was so just
+> removed that test - maybe the correct test should be if
+> (!config->label) ?
 
-For an actual user see the patch 11/16 ("gpio: add support for the sl28cpld
-GPIO controller") of the series above.
+yes, that was a typo. should have been if (!config->label).
 
-Changes since v4:
- - add comment about can_sleep
- - fix config->label typo
- - add config->names property
+I've send a v5 with that fix and your names property.
 
-Changes since v3:
- - set reg_dat_base, that was actually broken
- - fix typo
- - fix swapped reg_in_dir/reg_out_dir documentation
- - use "goto err" in error path in gpio_regmap_register()
+> I added the names support as well, and btw I don't understand how one
+> would get them through device tree?
 
-Changes since v2:
- See changelog in the former patch series.
+gpio-line-names property, see
+Documentation/devicetree/bindings/gpio/gpio.txt.
 
-Michael Walle (2):
-  gpiolib: Introduce gpiochip_irqchip_add_domain()
-  gpio: add a reusable generic gpio_chip using regmap
+> I still have a series of odd warnings I didn't have before:
+> 
+> [  101.400263] WARNING: CPU: 3 PID: 1129 at
+> drivers/gpio/gpiolib.c:4084 gpiod_set_value+0x3f/0x50
+> 
+> This seems to come from
+> 	/* Should be using gpiod_set_value_cansleep() */
+> 	WARN_ON(desc->gdev->chip->can_sleep);
 
- drivers/gpio/Kconfig        |   4 +
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-regmap.c  | 352 ++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c      |  20 ++
- include/linux/gpio-regmap.h |  70 +++++++
- include/linux/gpio/driver.h |   3 +
- 6 files changed, 450 insertions(+)
- create mode 100644 drivers/gpio/gpio-regmap.c
- create mode 100644 include/linux/gpio-regmap.h
+Right now, gpio-regmap hardcodes can_sleep to true. But the only regmap
+which don't sleep is regmap-mmio. The PCM512x seems to be either I2C or
+SPI, which can both sleep. So this warning is actually correct and
+wherever this gpio is set should do it by calling the _cansleep()
+version.
 
--- 
-2.20.1
+> so maybe we need an option here as well? Or use a different function?
+> 
+> Anyways, that gpio-regmap does simplify my code a great deal so thanks
+> for this work, much appreciated.
 
+Glad to see that there are more users for it ;)
+
+-michael
