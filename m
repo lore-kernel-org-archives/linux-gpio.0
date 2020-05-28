@@ -2,85 +2,123 @@ Return-Path: <SRS0=117c=7K=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6A7C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 02:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B71C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 03:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1142084C
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 02:34:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590633274;
-	bh=sXIj2Dkcy1rN2fRf9ktIKBS7DuzMVS6trcXpKlObIIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xJfz4zIofnv5fa/uJrG3t6CHoafjVkgt7DPzopsUK7/i1F5SenzAfexUVlf6403Gx
-	 thZCutBmWRnwwReSwVgGtxa3b4n++G9N17Fx7TK6TTidJugyfgFDoktSBuTUXc/W6U
-	 mWit4an+uh2+TwoAcGMdtDG/upv6D987WZfGbzYg=
+	by mail.kernel.org (Postfix) with ESMTP id 830DE20888
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 May 2020 03:58:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="odjjYQXn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbgE1Ced (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 May 2020 22:34:33 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46712 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbgE1Ced (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2020 22:34:33 -0400
-Received: by mail-io1-f67.google.com with SMTP id j8so28319109iog.13;
-        Wed, 27 May 2020 19:34:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=n/FH6mJ3fikdqE4Zcc+b5bEIYmcTN5k726IIFViGyw8=;
-        b=FnNfNJ/XDdrHN6zNsoA/ynN072qhJu1oq/gguPHKnIQw7ObKzhz+HaKuKB21X0EVKP
-         jju+0+LMNaYQEIF0sy2qMGCcjFYZSV9f3GIM9axfkzfVGSr+RGFXjhT4OyNDcDbt1bde
-         Ih2JMYPL1qnko1NMyDrhJYgNUVZw/K9AP+y2rUZ3fuCVDqru39BTwre+YwTNWvAesPUI
-         8izRt4exD2Qf5/lNsKKsTMgq4vl+JX+LKNTQkGK3Mbvkp7/6NYqla3hPDN7d0z7z/ruI
-         0FijIGpKTCfMcVeZsmxUmsdkSZIvaDpWBDdyLzUgXEgZvOJGim6b6NmVHGBR/rMshg5h
-         nrSA==
-X-Gm-Message-State: AOAM533dmIDZ3ZqQ9r/1ORvgTcPiqUa1pucw1EWjSq7HgG8QhL324Ko6
-        FQYEUnMdqk/iERMnuRGx2CD2ej4=
-X-Google-Smtp-Source: ABdhPJzlRpRHQMmZDZLj/tYbF7cnyKdNiYI4MRq2hMn5XR8oW8DZfDevLNinGnIjZkv6csK9kUeBLA==
-X-Received: by 2002:a05:6602:2ac9:: with SMTP id m9mr710941iov.68.1590633271819;
-        Wed, 27 May 2020 19:34:31 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id l21sm2658506ili.8.2020.05.27.19.34.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 19:34:31 -0700 (PDT)
-Received: (nullmailer pid 3250747 invoked by uid 1000);
-        Thu, 28 May 2020 02:34:30 -0000
-Date:   Wed, 27 May 2020 20:34:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     alexandre.torgue@st.com, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, robh+dt@kernel.org,
-        gregkh@linuxfoundation.org, mcoquelin.stm32@gmail.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/15] dt-bindings: usb: dwc2: Fix issues for stm32mp15x
- SoC
-Message-ID: <20200528023430.GA3250641@bogus>
-References: <20200513145935.22493-1-benjamin.gaignard@st.com>
- <20200513145935.22493-16-benjamin.gaignard@st.com>
+        id S1727066AbgE1D6w (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 May 2020 23:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbgE1D6v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2020 23:58:51 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A774FC05BD1E;
+        Wed, 27 May 2020 20:58:51 -0700 (PDT)
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id EC2B722FB6;
+        Thu, 28 May 2020 05:58:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1590638329;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7np4wDKRiMQQf5ldFNBXoJfzP9Qd8PYygwxPlZayMKg=;
+        b=odjjYQXnrcVRFGFx4O7YE7yw16uE0WITygvNDoDZrCIvIv/hGEfyFrjsAYGtlGSKN8QOle
+        pdiy0lHG6MBBIvK0qzfhj+hjR9K5RILdln2Y2cwoGfZWCREou0llDAydB8CnOW8MpmfpuQ
+        HVA218WaPwhdZH+n/uNdYGvfikN4nTk=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v5 1/2] gpiolib: Introduce gpiochip_irqchip_add_domain()
+Date:   Thu, 28 May 2020 05:58:40 +0200
+Message-Id: <20200528035841.16800-2-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200528035841.16800-1-michael@walle.cc>
+References: <20200528035841.16800-1-michael@walle.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200513145935.22493-16-benjamin.gaignard@st.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 13 May 2020 16:59:35 +0200, Benjamin Gaignard wrote:
-> Correct the compatible list for stm32mp15x SoC.
-> Fix the name of the stm32mp15x dedicated supply to be aligned with
-> what the driver use.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  Documentation/devicetree/bindings/usb/dwc2.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
+The function connects an IRQ domain to a gpiochip and reuses
+gpiochip_to_irq() which is provided by gpiolib.
 
-Acked-by: Rob Herring <robh@kernel.org>
+gpiochip_irqchip_* and regmap_irq partially provide the same
+functionality. This function will help to connect just the
+minimal functionality of the gpiochip_irqchip which is needed to
+work together with regmap-irq.
+
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/gpio/gpiolib.c      | 20 ++++++++++++++++++++
+ include/linux/gpio/driver.h |  3 +++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index eaa0e209188d..d07f763c9c0b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2756,6 +2756,26 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gc,
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
+ 
++/**
++ * gpiochip_irqchip_add_domain() - adds an irqdomain to a gpiochip
++ * @gc: the gpiochip to add the irqchip to
++ * @domain: the irqdomain to add to the gpiochip
++ *
++ * This function adds an IRQ domain to the gpiochip.
++ */
++int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
++				struct irq_domain *domain)
++{
++	if (!domain)
++		return -EINVAL;
++
++	gc->to_irq = gpiochip_to_irq;
++	gc->irq.domain = domain;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_domain);
++
+ #else /* CONFIG_GPIOLIB_IRQCHIP */
+ 
+ static inline int gpiochip_add_irqchip(struct gpio_chip *gc,
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 8c41ae41b6bb..ee30065b6f61 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -599,6 +599,9 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gc,
+ bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gc,
+ 				unsigned int offset);
+ 
++int gpiochip_irqchip_add_domain(struct gpio_chip *gc,
++				struct irq_domain *domain);
++
+ #ifdef CONFIG_LOCKDEP
+ 
+ /*
+-- 
+2.20.1
+
