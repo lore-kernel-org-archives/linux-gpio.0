@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8502BC433E1
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 May 2020 19:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E97C433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 May 2020 19:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 646EB207D4
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 May 2020 19:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511B120897
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 May 2020 19:17:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8bCMAyL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/6dcjQI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgE2TQ4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 May 2020 15:16:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57268 "EHLO
+        id S1728073AbgE2TRO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 May 2020 15:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbgE2TQz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2020 15:16:55 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03DE3C03E969;
-        Fri, 29 May 2020 12:16:55 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id j21so376967pgb.7;
-        Fri, 29 May 2020 12:16:54 -0700 (PDT)
+        with ESMTP id S1726751AbgE2TQw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2020 15:16:52 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E51D4C08C5C8;
+        Fri, 29 May 2020 12:16:51 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id q24so1872302pjd.1;
+        Fri, 29 May 2020 12:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rVJ4oym9rXNaA44QDrgvFNwDxvnSEboxykGaMiySkgs=;
-        b=e8bCMAyLHpJLcqYLQqZZDht6uuebj1TuWkqtHigbjOtfuYf7r7e2Z2nuDzvmeYWye8
-         ISLuDOIDYjYLgMr2fp1fS2EyCOkdolUyYJ0P4ayRk1lHPo4NbMvYUSIle6gYCWxMnrY5
-         HizoyhEWEXujdeh84kihxqQOmxlox72Q4Mcb/NiNxh+UHn/Cxmr9MVW1vvprYdxFs6Jr
-         zMKzecjD5RVozG5UQHC8FFquRl97KQj+3FDl/9aCV/wTQ/ordlwKbUCy3Fn22Q7rQuoy
-         1W4joTFu/WZObaCZucseqLwJ/sEERl/KzykmRAq4PLNAbD0hL8CbiBMM3e3WL8U+Wvq6
-         HnEQ==
+        bh=CzfV181nJ0czd6Anf4yOzm4xivtTHh+yTDjv58w4w70=;
+        b=S/6dcjQIEbJ25Pf3UZKFQPrGqREnkm5v3P/61f8HL1vF049E4Ijm+vZd2V+XHyET2r
+         qqJfPzV/JwoVkb10XAOeC296dqcoonvcPt3fSm2T5mG52Hkg996Bf4DQsUvKAJbil+kZ
+         3MM1BrmrmQ2XTdkmxsekAzVI2xRpAcpLHhGZLOEM1gVwU3mABllAxZsCWB/JsKKOGkV6
+         mT+pS+GeInuKWUKpcKV6K8muEZvUMzs1SFT1S1uKAHGPLsTiCUSuc7GazcKYNwhv3FRY
+         ud8VFRAwfuFapAGoALsnL6EQMfB2PoreyoCwx0vFYOR4riF7xw7h0uEKoI8SmX5/lfRt
+         OfYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rVJ4oym9rXNaA44QDrgvFNwDxvnSEboxykGaMiySkgs=;
-        b=rlpihcSZauWOQT1jabhWd7X5RjCsi47BnLcbVSKxZTXiiM5ZtlL33KAMESUMyqyIJf
-         7MlZBuDmw3q2s6vIrNagtp2Gjt7PVP2KAYNuYk6SCCfv2bS+b5715xfN0xx+9CWbrGUF
-         cWQa85X424EVK5Bjdcm/vN4Wxs298ki1r8CwM3AOSgtjaGAUIEM8xWcPinbSsCMzgd4m
-         +k2aRZIxwUk1Gn5AuHblyQWyiojN+JOAqsXsrD/jlBfu+jpVKziL+/Zior6IQM1xmqc+
-         QSvVxodB9kaotJLpmNkGx1v4jegybgvmRf9/dpS9FgC1Q0wDIhET4P8PJcVoIVhBVt7R
-         qoRg==
-X-Gm-Message-State: AOAM532rBlSF8I6/k00ugbz2mmML0ksSqCsOfaf1+FnuNuI/eWdz9xvi
-        J9duAE2K9qD+lCC2VJGNmwiK7cbX
-X-Google-Smtp-Source: ABdhPJx7r38iIDo0qGEq+vFJYFEOCNcSDuK8YR7v1WEhbpUkyWY4kW5XuMX9Kn5N8uN+upi4P1k3zg==
-X-Received: by 2002:a63:b10b:: with SMTP id r11mr9210726pgf.27.1590779814156;
-        Fri, 29 May 2020 12:16:54 -0700 (PDT)
+        bh=CzfV181nJ0czd6Anf4yOzm4xivtTHh+yTDjv58w4w70=;
+        b=U23pu5qpzIRnetDmrj7546RTMGJRgW6uVa7Wh9cZh8w4eMJnNHGsrZF7T/f4psBZYM
+         YQP8mf76FpMg0o7QZ9h58w01F5/jnyOwXVUkZi86ja8ivEarbo37fx2HbG+yDDZAcPRI
+         PQaIbajmMVChdez+7u5OX4Jl9n+FTyrznRmfjcfdsu8eKtSBiv3bQ+uqvCTlBrxeRZwp
+         39hE2yZfYNngyYSIMXcAWDW8+R9D1wW0EhKMTs0T9NHXQVsLOoUV+JPcOip0xo25nPgK
+         hphQBz0K+8KSgqv6tqLI+CMFSK9eDar4XjvNxhTSOEgtLhgI2pQ+f1rtiE7/IODG2IaI
+         vsrw==
+X-Gm-Message-State: AOAM531OJ97gGjt9ibjlp56bZWqPx/Pa50c1SigBpUGacl29h/gDqTK5
+        Gbo3PQh1P2n1GgxOHtae3NXooMw/
+X-Google-Smtp-Source: ABdhPJwiE7JqqB91i+tb2nNu5olc+hQhWoqv8JEsbpHU4cdrfZPZbm+aoD5VorW+QLpxDMUBSjxQBg==
+X-Received: by 2002:a17:902:a989:: with SMTP id bh9mr10196254plb.44.1590779811075;
+        Fri, 29 May 2020 12:16:51 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id g92sm202505pje.13.2020.05.29.12.16.52
+        by smtp.gmail.com with ESMTPSA id g92sm202505pje.13.2020.05.29.12.16.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 12:16:53 -0700 (PDT)
+        Fri, 29 May 2020 12:16:50 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -76,9 +76,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         BCM2711/BCM2835 ARM ARCHITECTURE),
         linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM
         BCM2711/BCM2835 ARM ARCHITECTURE)
-Subject: [PATCH v2 3/4] pinctrl: bcm2835: Match BCM7211 compatible string
-Date:   Fri, 29 May 2020 12:15:21 -0700
-Message-Id: <20200529191522.27938-4-f.fainelli@gmail.com>
+Subject: [PATCH v2 1/4] dt-bindings: pinctrl: Document 7211 compatible for brcm,bcm2835-gpio.txt
+Date:   Fri, 29 May 2020 12:15:19 -0700
+Message-Id: <20200529191522.27938-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200529191522.27938-1-f.fainelli@gmail.com>
 References: <20200529191522.27938-1-f.fainelli@gmail.com>
@@ -87,30 +87,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The BCM7211 SoC uses the same pinconf_ops as the ones defined for the
-BCM2711 SoC, match the compatible string and use the correct set of
-options.
+Document the brcm,bcm7211-gpio compatible string in the
+brcm,bcm2835-gpio.txt document.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 06bd2b70af3c..1b00d93aa66e 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -1137,6 +1137,10 @@ static const struct of_device_id bcm2835_pinctrl_match[] = {
- 		.compatible = "brcm,bcm2711-gpio",
- 		.data = &bcm2711_plat_data,
- 	},
-+	{
-+		.compatible = "brcm,bcm7211-gpio",
-+		.data = &bcm2711_plat_data,
-+	},
- 	{}
- };
- 
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+index 3cab7336a326..dfc67b90591c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+@@ -9,6 +9,7 @@ Required properties:
+   "brcm,bcm2835-gpio" - BCM2835 compatible pinctrl
+   "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+   "brcm,bcm2711-gpio" - BCM2711 compatible pinctrl
++  "brcm,bcm7211-gpio" - BCM7211 compatible pinctrl
+ - reg: Should contain the physical address of the GPIO module's registers.
+ - gpio-controller: Marks the device node as a GPIO controller.
+ - #gpio-cells : Should be two. The first cell is the pin number and the
 -- 
 2.17.1
 
