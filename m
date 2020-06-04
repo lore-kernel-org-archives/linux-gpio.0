@@ -2,111 +2,102 @@ Return-Path: <SRS0=lwBt=7R=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6339FC433DF
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 09:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D92C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 09:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCA1206A2
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 09:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D11602074B
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 09:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgFDJZV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Jun 2020 05:25:21 -0400
-Received: from smtprelay0206.hostedemail.com ([216.40.44.206]:50826 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726444AbgFDJZV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2020 05:25:21 -0400
-X-Greylist: delayed 460 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Jun 2020 05:25:20 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id E1D56182D351B
-        for <linux-gpio@vger.kernel.org>; Thu,  4 Jun 2020 09:17:40 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 7FBE8837F27E;
-        Thu,  4 Jun 2020 09:17:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: lock32_040a1d426d96
-X-Filterd-Recvd-Size: 3759
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  4 Jun 2020 09:17:36 +0000 (UTC)
-Message-ID: <2aa49a543e6f48a6f428a37b63a06f9149870225.camel@perches.com>
-Subject: Re: [PATCH] pinctrl: pxa: pxa2xx: Remove 'pxa2xx_pinctrl_exit()'
- which is unused and broken
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        id S1726288AbgFDJ2L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Jun 2020 05:28:11 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43863 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726248AbgFDJ2L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 4 Jun 2020 05:28:11 -0400
+IronPort-SDR: ecb21u5GFYve9inp+1IqdgLaQizqcTsHQ5rbjPl4ItzPOacJMO8wVHuW+ODwy9eUgKlH/LYxFL
+ m4UXkqcAV5yw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2020 02:28:11 -0700
+IronPort-SDR: s5CjtJPhuJYFPDoOL02oshbGx1djFp4johgV/9xFzqBiHjDnebkEr5xd6i4gdJ84Yyurmu0OBq
+ hGjxK6m/3J2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,471,1583222400"; 
+   d="scan'208";a="273050045"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 04 Jun 2020 02:28:08 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id EDC673CA; Thu,  4 Jun 2020 12:28:07 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Date:   Thu, 04 Jun 2020 02:17:35 -0700
-In-Reply-To: <20200604083120.GF22511@kadam>
-References: <20200531073716.593343-1-christophe.jaillet@wanadoo.fr>
-         <87h7vvb1s3.fsf@belgarion.home>
-         <a2e34c9a-676f-d83f-f395-7428af038c16@wanadoo.fr>
-         <20200601183102.GS30374@kadam>
-         <CACRpkdasbS-4_ZwC-Ucm8tkSUW5tAQdUrXjxHXQ3J0goVYfgHw@mail.gmail.com>
-         <20200604083120.GF22511@kadam>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.2-0ubuntu1 
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        mouse <xllacyx@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v1] =?UTF-8?q?pintctrl:=20merrifield:=20Add=20I=C2=B2S=20b?= =?UTF-8?q?us=202=20pins=20to=20groups=20and=20functions?=
+Date:   Thu,  4 Jun 2020 12:28:07 +0300
+Message-Id: <20200604092807.67283-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.27.0.rc2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 2020-06-04 at 11:31 +0300, Dan Carpenter wrote:
-> On Thu, Jun 04, 2020 at 12:08:49AM +0200, Linus Walleij wrote:
-[]
-> > Fixes means it fixes something that was wrong in that commit.
-> > That's all. Whether syntactic or semantic or regression or
-> > serious or not does not matter. It is also not compulsory to
-> > add it is just helpful.
-> 
-> Fixes tag should be compulsory for actual bug fixes.  We had a the
-> Bad Binder exploit last year because commit f5cb779ba163
-> ("ANDROID: binder: remove waitqueue when thread exits.") had no Fixes
-> tag and wasn't backported to Android kernels.
+It is useful to control I²S bus 2 pins if we would like to connect
+an audio codec.
 
-Fixes tags IMO should be exclusively for actual bug fixes
-and should be mandatory.
-
-Perhaps:
+Reported-by: mouse <xllacyx@gmail.com>
+Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- Documentation/process/submitting-patches.rst | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/pinctrl/intel/pinctrl-merrifield.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
-index 1699b7f8e63a..285a84ae79de 100644
---- a/Documentation/process/submitting-patches.rst
-+++ b/Documentation/process/submitting-patches.rst
-@@ -636,12 +636,14 @@ idea was not posted in a public forum. That said, if we diligently credit our
- idea reporters, they will, hopefully, be inspired to help us again in the
- future.
+diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
+index 04ca8ae95df8..84da1b746fb8 100644
+--- a/drivers/pinctrl/intel/pinctrl-merrifield.c
++++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+@@ -339,6 +339,7 @@ static const struct pinctrl_pin_desc mrfld_pins[] = {
+ 	/* Family 18: Broadcast (0 pins) */
+ };
  
--A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
--is used to make it easy to determine where a bug originated, which can help
--review a bug fix. This tag also assists the stable kernel team in determining
--which stable kernel versions should receive your fix. This is the preferred
--method for indicating a bug fixed by the patch. See :ref:`describe_changes`
--for more details.
-+A Fixes: tag indicates that the patch fixes a "bug". i.e.: a logic defect or
-+regression in a previous commit.  A Fixes: tag should not be used to indicate
-+that a previous commit had some trivial defect in spelling in the commit log or
-+some whitespace defect.  The Fixes: tag is used to make it easy to determine
-+where a bug originated, which can help review a bug fix. The Fixes: tag also
-+assists the stable kernel team in determining which stable kernel versions
-+should receive your fix. This is the preferred method for indicating a bug is
-+fixed by the patch.  See :ref:`describe_changes` for more details.
++static const unsigned int mrfld_i2s2_pins[] = { 40, 41, 42, 43 };
+ static const unsigned int mrfld_sdio_pins[] = { 50, 51, 52, 53, 54, 55, 56 };
+ static const unsigned int mrfld_spi5_pins[] = { 90, 91, 92, 93, 94, 95, 96 };
+ static const unsigned int mrfld_uart0_pins[] = { 115, 116, 117, 118 };
+@@ -350,6 +351,7 @@ static const unsigned int mrfld_pwm2_pins[] = { 132 };
+ static const unsigned int mrfld_pwm3_pins[] = { 133 };
  
- .. _the_canonical_patch_format:
+ static const struct intel_pingroup mrfld_groups[] = {
++	PIN_GROUP("i2s2_grp", mrfld_i2s2_pins, 1),
+ 	PIN_GROUP("sdio_grp", mrfld_sdio_pins, 1),
+ 	PIN_GROUP("spi5_grp", mrfld_spi5_pins, 1),
+ 	PIN_GROUP("uart0_grp", mrfld_uart0_pins, 1),
+@@ -361,6 +363,7 @@ static const struct intel_pingroup mrfld_groups[] = {
+ 	PIN_GROUP("pwm3_grp", mrfld_pwm3_pins, 1),
+ };
  
++static const char * const mrfld_i2s2_groups[] = { "i2s2_grp" };
+ static const char * const mrfld_sdio_groups[] = { "sdio_grp" };
+ static const char * const mrfld_spi5_groups[] = { "spi5_grp" };
+ static const char * const mrfld_uart0_groups[] = { "uart0_grp" };
+@@ -372,6 +375,7 @@ static const char * const mrfld_pwm2_groups[] = { "pwm2_grp" };
+ static const char * const mrfld_pwm3_groups[] = { "pwm3_grp" };
+ 
+ static const struct intel_function mrfld_functions[] = {
++	FUNCTION("i2s2", mrfld_i2s2_groups),
+ 	FUNCTION("sdio", mrfld_sdio_groups),
+ 	FUNCTION("spi5", mrfld_spi5_groups),
+ 	FUNCTION("uart0", mrfld_uart0_groups),
+-- 
+2.27.0.rc2
 
