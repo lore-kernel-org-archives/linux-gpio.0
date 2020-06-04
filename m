@@ -2,493 +2,331 @@ Return-Path: <SRS0=lwBt=7R=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498B3C433E8
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BA0C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 216EB2067B
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 510BC2067B
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:51:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="XcV60QEq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgBnJm9u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbgFDVLU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Jun 2020 17:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
+        id S1728124AbgFDVvn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Jun 2020 17:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbgFDVLT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2020 17:11:19 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1C9C08C5C1;
-        Thu,  4 Jun 2020 14:11:18 -0700 (PDT)
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 0F87A22F99;
-        Thu,  4 Jun 2020 23:11:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1591305075;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=f6o59w0lk18fYFd514Vm2FGxO6MZ3E5hvmCfLeiM1Tk=;
-        b=XcV60QEqDiwKTfyy3W+U4QzU3Ax7X5WCcrUtpAcoWmfrWJgdEg59+G22pdjsUiiQGraZUk
-        bFsk8Vxgijj3jjNQ9PKWfbPJAiWD5j8ntFHHSZSc+93mXrggr7DzodwiqAGqrjLIVapz7q
-        kXyfOrjnsioJlciCc35pRlrDn5aOUho=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v4 01/11] dt-bindings: mfd: Add bindings for sl28cpld
-Date:   Thu,  4 Jun 2020 23:10:29 +0200
-Message-Id: <20200604211039.12689-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200604211039.12689-1-michael@walle.cc>
-References: <20200604211039.12689-1-michael@walle.cc>
+        with ESMTP id S1725943AbgFDVvn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2020 17:51:43 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E96C08C5C0
+        for <linux-gpio@vger.kernel.org>; Thu,  4 Jun 2020 14:51:43 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id a25so9233791ljp.3
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2020 14:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=qMCzLUzDcVuGIj9gFT0hcdo9qNIj7PjrfTm3Vlb6UMY=;
+        b=FgBnJm9uS+BGwUupUVQzyE8qlTL0a/HqrdSBwEI46Z1VufXwwxodzBDAZLUHZfoLI8
+         O2ENVs6a1nVihwFWr5dPiMHpdm6xcU06vfwmpP996MdphitezjdmkWX11/0PQPUJj3s+
+         etAbjipCP1A/ETV4c6YNuaU1+Yjps+fKoBHidLWNbghNJQ62WNFcAUicTfiuehXFf5Xc
+         eCMzSq7rUoRBmHuguSNBKiZUiI+S2axIs8F+fJMjj5gkmdtZMJZooCG3CpRHXnhYrX/2
+         qBoqPUlkvC40hAafuAuTyIzFpHzYrmiSKKrK0kiuYY0E+WJ2/q8eBZpV0ERJ0YqwTryM
+         GwqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=qMCzLUzDcVuGIj9gFT0hcdo9qNIj7PjrfTm3Vlb6UMY=;
+        b=VEBI72Ovd07ml+siyKOh73pHSuKLo0mJTMHLDoCNUexDTE4AnnKolwLwY+qZMb1B3y
+         XFdun58hxdZ/sIib4n1+egJ6gCti6Vw8sFEWdiLtFyyvsFHRqCzrDnI3Lo7tszG/mPed
+         afY0KTswm0CA0GGpJV9yya04FBQij1Q07VK4zTD3/1HkSzvmbGEwzQFp+wfXq1wY06TZ
+         M0VbzG9Dvdp6GBEOGajXyRrn1TPBeW2ZWYlJ3CVxjvzCIhWWamg00dyVaNmZOAQymILh
+         I9QdLa38rU0iqg9SL4L3NPutT+aPpK2aSV4djMw9/M5/lJqN+colCllDkvljcHZC1Ocf
+         TFfQ==
+X-Gm-Message-State: AOAM5329i95ToY8QSPJBvwqToUIAie6o5stUtWpal4YCqnPec3zwwyJV
+        B8tlseYx0SDLYMd87DUbVeYlfhD0K2eN1Pq1ZVBcCyzlhVw=
+X-Google-Smtp-Source: ABdhPJy2lA5ZDywhiXOahlFaA/MacgOrpdkhDbUDI0QB514qyTWr6g+1PORt30ybzUiKfj8dKNaHG0K2LH/tTErUQq8=
+X-Received: by 2002:a05:651c:112e:: with SMTP id e14mr2919870ljo.338.1591307501431;
+ Thu, 04 Jun 2020 14:51:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam: Yes
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Jun 2020 23:51:30 +0200
+Message-ID: <CACRpkdY=R5_g+Vrjtj9tZ=5gxh5qPWqm-yqtFB5GbKC75Yskxg@mail.gmail.com>
+Subject: [GIT PULL] Bulk GPIO changes for v5.8
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a device tree bindings for the board management controller found on
-the Kontron SMARC-sAL28 board.
+Hi Linus,
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- .../bindings/gpio/kontron,sl28cpld-gpio.yaml  |  54 +++++++
- .../hwmon/kontron,sl28cpld-hwmon.yaml         |  27 ++++
- .../kontron,sl28cpld-intc.yaml                |  54 +++++++
- .../bindings/mfd/kontron,sl28cpld.yaml        | 153 ++++++++++++++++++
- .../bindings/pwm/kontron,sl28cpld-pwm.yaml    |  35 ++++
- .../watchdog/kontron,sl28cpld-wdt.yaml        |  35 ++++
- 6 files changed, 358 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
- create mode 100644 Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
- create mode 100644 Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
+here is the bulk of GPIO changes for the v5.8 kernel cycle.
 
-diff --git a/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml b/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
-new file mode 100644
-index 000000000000..9a63a158a796
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/kontron,sl28cpld-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GPIO driver for the sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  This module is part of the sl28cpld multi-function device. For more
-+  details see Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml.
-+
-+  There are three flavors of the GPIO controller, one full featured
-+  input/output with interrupt support (kontron,sl28cpld-gpio), one
-+  output-only (kontron,sl28-gpo) and one input-only (kontron,sl28-gpi).
-+
-+  Each controller supports 8 GPIO lines.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - kontron,sl28cpld-gpio
-+      - kontron,sl28cpld-gpi
-+      - kontron,sl28cpld-gpo
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupt-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  gpio-line-names:
-+      minItems: 1
-+      maxItems: 8
-+
-+required:
-+  - compatible
-+  - "#gpio-cells"
-+  - gpio-controller
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
-new file mode 100644
-index 000000000000..1cebd61c6c32
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/kontron,sl28cpld-hwmon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Hardware monitoring driver for the sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  This module is part of the sl28cpld multi-function device. For more
-+  details see Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - kontron,sl28cpld-fan
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
-new file mode 100644
-index 000000000000..4c39e9ff9aea
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/kontron,sl28cpld-intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Interrupt controller driver for the sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  This module is part of the sl28cpld multi-function device. For more
-+  details see Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml.
-+
-+  The following interrupts are available. All types and levels are fixed
-+  and handled by the board management controller.
-+
-+  ==== ============= ==================================
-+   IRQ line/device   description
-+  ==== ============= ==================================
-+    0  RTC_INT#      Interrupt line from on-board RTC
-+    1  SMB_ALERT#    Event on SMB_ALERT# line (P1)
-+    2  ESPI_ALERT0#  Event on ESPI_ALERT0# line (S43)
-+    3  ESPI_ALERT1#  Event on ESPI_ALERT1# line (S44)
-+    4  PWR_BTN#      Event on PWR_BTN# line (P128)
-+    5  SLEEP#        Event on SLEEP# line (S149)
-+    6  watchdog      Interrupt of the internal watchdog
-+    7  n/a           not used
-+  ==== ============= ==================================
-+
-+properties:
-+  compatible:
-+    enum:
-+      - kontron,sl28cpld-intc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupt-controller: true
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - "#interrupt-cells"
-+  - interrupt-controller
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml b/Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
-new file mode 100644
-index 000000000000..1d13bb24afb8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
-@@ -0,0 +1,153 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/kontron,sl28cpld.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Kontron's sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  The board management controller may contain different IP blocks like
-+  watchdog, fan monitoring, PWM controller, interrupt controller and a
-+  GPIO controller.
-+
-+properties:
-+  compatible:
-+    const: kontron,sl28cpld-r1
-+
-+  reg:
-+    description:
-+      I2C device address.
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+patternProperties:
-+  "^gpio(@[0-9]+)?$":
-+    $ref: ../gpio/kontron,sl28cpld-gpio.yaml
-+
-+  "^hwmon(@[0-9]+)?$":
-+    $ref: ../hwmon/kontron,sl28cpld-hwmon.yaml
-+
-+  "^interrupt-controller(@[0-9]+)?$":
-+    $ref: ../interrupt-controller/kontron,sl28cpld-intc.yaml
-+
-+  "^pwm(@[0-9]+)?$":
-+    $ref: ../pwm/kontron,sl28cpld-pwm.yaml
-+
-+  "^watchdog(@[0-9]+)?$":
-+    $ref: ../watchdog/kontron,sl28cpld-wdt.yaml
-+
-+required:
-+  - "#address-cells"
-+  - "#size-cells"
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        sl28cpld@4a {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            compatible = "kontron,sl28cpld-r1";
-+            reg = <0x4a>;
-+
-+            watchdog@4 {
-+                compatible = "kontron,sl28cpld-wdt";
-+                reg = <0x4>;
-+                kontron,assert-wdt-timeout-pin;
-+            };
-+
-+            hwmon@b {
-+                compatible = "kontron,sl28cpld-fan";
-+                reg = <0xb>;
-+            };
-+
-+            pwm@c {
-+                #pwm-cells = <2>;
-+                compatible = "kontron,sl28cpld-pwm";
-+                reg = <0xc>;
-+            };
-+
-+            pwm@e {
-+                #pwm-cells = <2>;
-+                compatible = "kontron,sl28cpld-pwm";
-+                reg = <0xe>;
-+            };
-+
-+            gpio@10 {
-+                compatible = "kontron,sl28cpld-gpio";
-+                reg = <0x10>;
-+                interrupts-extended = <&gpio2 6
-+                               IRQ_TYPE_EDGE_FALLING>;
-+
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+                gpio-line-names = "a", "b", "c";
-+
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+            };
-+
-+            gpio@15 {
-+                compatible = "kontron,sl28cpld-gpio";
-+                reg = <0x15>;
-+                interrupts-extended = <&gpio2 6
-+                               IRQ_TYPE_EDGE_FALLING>;
-+
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+            };
-+
-+            gpio@1a {
-+                compatible = "kontron,sl28cpld-gpo";
-+                reg = <0x1a>;
-+
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+            };
-+
-+            gpio@1b {
-+                compatible = "kontron,sl28cpld-gpi";
-+                reg = <0x1b>;
-+
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+            };
-+
-+            interrupt-controller@1c {
-+                compatible = "kontron,sl28cpld-intc";
-+                reg = <0x1c>;
-+                interrupts-extended = <&gpio2 6
-+                               IRQ_TYPE_EDGE_FALLING>;
-+
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml b/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
-new file mode 100644
-index 000000000000..02fe88c30233
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/kontron,sl28cpld-pwm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: PWM driver for the sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  This module is part of the sl28cpld multi-function device. For more
-+  details see Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml.
-+
-+  The controller supports one PWM channel and supports only four distinct
-+  frequencies (250Hz, 500Hz, 1kHz, 2kHz).
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    const: kontron,sl28cpld-pwm
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#pwm-cells":
-+    const: 2
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml b/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
-new file mode 100644
-index 000000000000..dd6559f2973a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/kontron,sl28cpld-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Watchdog driver for the sl28cpld board management controller
-+
-+maintainers:
-+  - Michael Walle <michael@walle.cc>
-+
-+description: |
-+  This module is part of the sl28cpld multi-function device. For more
-+  details see Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml.
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+properties:
-+  compatible:
-+    const: kontron,sl28cpld-wdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  kontron,assert-wdt-timeout-pin:
-+    description: The SMARC standard defines a WDT_TIME_OUT# pin. If this
-+      property is set, this output will be pulsed when the watchdog bites
-+      and the system resets.
-+    type: boolean
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
--- 
-2.20.1
+Nothing too exciting, details in the signed tag.
 
+Some new functionality was added on top of massive
+fixes so that is why I merged in v5.7-rc7 to make it
+apply without creating a mess.
+
+Please pull it in!
+
+Med v=C3=A4nlig h=C3=A4lsning,
+Linus Walleij
+
+The following changes since commit 9cb1fd0efd195590b828b9b865421ad345a4a145=
+:
+
+  Linux 5.7-rc7 (2020-05-24 15:32:54 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.8-1
+
+for you to fetch changes up to 74910e15ab25f95f162bc4d4a634d029186543ce:
+
+  gpio: pca953x: Drop unneeded ACPI_PTR() (2020-06-03 14:04:28 +0200)
+
+----------------------------------------------------------------
+This is the bulk of GPIO changes for the v5.8 kernel cycle.
+
+Core changes:
+
+- A new GPIO aggregator driver has been merged: this can
+  join a few select GPIO lines into a new aggregated GPIO
+  chip. This can be used for security: a process can be
+  granted access to only these lines, for example for
+  industrial control. Another way to use this is to
+  reexpose certain select lines to a virtual machine or
+  container.
+
+- Warn if the gpio-line-names is too long in he DT parser
+  core.
+
+- GPIO lines can now be looked up by line name in addition
+  to being looked up by offset.
+
+New drivers:
+
+- A new generic regmap GPIO driver has been merged. Too
+  many regmap drivers are starting to look like each other
+  so we need to create some common ground and try to move
+  drivers over to using that.
+
+- The F7188X driver now supports F81865.
+
+Driver improvements:
+
+- Large improvements to the PCA953x expander, get multiple lines
+  and several cleanups.
+
+- Large improvements to the DesignWare DWAPB driver, and Sergey
+  Semin has volunteered to maintain it.
+
+- PL061 can now be built as a module, this is part of a bigger
+  effort to make the ARM platforms more modular.
+
+----------------------------------------------------------------
+Adam Ford (1):
+      gpiolib: of: improve gpiolib-of support of pull up/down on expanders
+
+Andy Shevchenko (35):
+      gpio: Extend TODO to cover code duplication avoidance
+      gpio: pch: Use BIT() and GENMASK() where it's appropriate
+      gpio: pch: Get rid of unneeded variable in IRQ handler
+      gpio: pch: Refactor pch_irq_type() to avoid unnecessary locking
+      gpio: pch: Use in pch_irq_type() macros provided by IRQ core
+      gpio: merrifield: Switch over to MSI interrupts
+      gpio: merrifield: Better show how GPIO and IRQ bases are derived
+from hardware
+      gpio: dwapb: Append MODULE_ALIAS for platform driver
+      gpio: dwapb: Refactor IRQ handler to use bit operations
+      gpio: dwapb: Use chained IRQ prologue and epilogue
+      gpio: dwapb: set default handler to be handle_bad_irq()
+      gpio: dwapb: Deduplicate IRQ resource management
+      gpio: dwapb: Convert to use irqd_to_hwirq()
+      gpio: dwapb: Use device_get_match_data() to simplify code
+      gpio: dwapb: Convert to use IRQ core provided macros
+      gpio: dwapb: Switch to more usual pattern of RMW in
+dwapb_gpio_set_debounce()
+      gpio: dwapb: Drop bogus BUG_ON()s
+      gpio: dwapb: Drop of_match_ptr() & ACPI_PTR() calls
+      gpio: dwapb: Split out dwapb_get_irq() helper
+      gpio: dwapb: Get rid of unnecessary conjunction over 32-bit value
+      gpio: dwapb: Amend indentation in some cases
+      gpio: pca953x: Rewrite ->get_multiple() function
+      gpio: mb86s7x: Use devm_clk_get_optional() to get the input clock
+      gpio: mb86s7x: Remove superfluous test for ACPI companion
+      gpio: xgene-sb: Drop redundant OF_GPIO dependency
+      gpio: xgene-sb: Allow driver to be built with COMPILE_TEST
+      gpio: xgene-sb: Drop extra check to call
+acpi_gpiochip_request_interrupts()
+      gpio: dwapb: Call acpi_gpiochip_free_interrupts() on GPIO chip
+de-registration
+      gpio: dwapb: avoid error message for optional IRQ
+      gpio: dwapb: Don't use IRQ 0 as valid Linux interrupt
+      gpio: dwapb: Remove unneeded has_irq member in struct dwapb_port_prop=
+erty
+      MAINTAINERS: Fix file name for DesignWare GPIO DT schema
+      gpio: pca935x: Allow IRQ support for driver built as a module
+      gpiolib: Separate GPIO_GET_LINEINFO_WATCH_IOCTL conditional
+      gpio: pca953x: Drop unneeded ACPI_PTR()
+
+Bartosz Golaszewski (1):
+      gpio: pca953x: disable regmap locking
+
+Brian Masney (1):
+      gpio: xgene-sb: set valid IRQ type in to_irq()
+
+Dejin Zheng (2):
+      gpio: ftgpio010: Fix small typo
+      gpio: mm-lantiq: Fix small typo
+
+Dinghao Liu (1):
+      gpio: rcar: Fix runtime PM imbalance on error
+
+Douglas Anderson (2):
+      gpio: Document proper return value for gpio drivers
+      gpio: Make "offset" and "unsigned int", not just "unsigned"
+
+Geert Uytterhoeven (10):
+      gpiolib: Improve kernel messages
+      gpiolib: Rename "chip" variables to "gc" in core header file
+      gpiolib: Document that GPIO line names are not globally unique
+      i2c: i801: Use GPIO_LOOKUP() helper macro
+      mfd: sm501: Use GPIO_LOOKUP_IDX() helper macro
+      gpiolib: Add support for GPIO lookup by line name
+      gpio: Add GPIO Aggregator
+      docs: gpio: Add GPIO Aggregator documentation
+      MAINTAINERS: Add GPIO Aggregator section
+      dt-bindings: gpio: Add renesas,em-gio bindings
+
+Hans de Goede (1):
+      gpiolib: acpi: Add missing __init(const) markers to initcall-s
+
+Kent Gibson (1):
+      tools: gpio: add bias flags to lsgpio
+
+Linus Walleij (5):
+      Merge tag 'gpio-updates-for-v5.8-part1' of
+git://git.kernel.org/.../brgl/linux into devel
+      Merge tag 'intel-gpio-v5.8-1' of
+git://git.kernel.org/.../andy/linux-gpio-intel into devel
+      Merge branch 'ib-gpio-aggregator' into devel
+      Merge tag 'gpio-updates-for-v5.8-part2' of
+git://git.kernel.org/.../brgl/linux into devel
+      Merge tag 'v5.7-rc7' into devel
+
+Maulik Shah (1):
+      gpio: gpiolib: Allow GPIO IRQs to lazy disable
+
+Mian Yousaf Kaukab (1):
+      gpio: tegra186: export MODULE_DEVICE_TABLE
+
+Michael Walle (3):
+      gpiolib: Introduce gpiochip_irqchip_add_domain()
+      gpio: add a reusable generic gpio_chip using regmap
+      MAINTAINERS: Add gpio regmap section
+
+Paul Thomas (1):
+      gpio: gpio-pca953x, Add get_multiple function
+
+Petteri Jokinen (1):
+      gpio-f7188x: Add GPIO support for F81865
+
+Rob Herring (1):
+      gpio: pl061: Support building as module
+
+Rodrigo Alencar (1):
+      gpio: max730x: bring gpiochip_add_data after port config
+
+Serge Semin (6):
+      dt-bindings: gpio: Convert snps,dw-apb-gpio to DT schema
+      dt-bindings: gpio: Add DW GPIO debounce clock property
+      dt-bindings: gpio: Add Sergey Semin to DW APB GPIO driver maintainers
+      gpio: dwapb: Use optional-clocks interface for APB ref-clock
+      gpio: dwapb: Add debounce reference clock support
+      MAINTAINERS: Add Segey Semin to maintainers of DW APB GPIO driver
+
+Stephen Boyd (1):
+      gpiolib: devprop: Warn if gpio-line-names is too long
+
+Tiezhu Yang (1):
+      gpio: pxa: Add COMPILE_TEST support
+
+Uwe Kleine-K=C3=B6nig (2):
+      gpio: pca953x: fix handling of automatic address incrementing
+      gpio: pca953x: drop unused parameters of pca953x_recalc_addr()
+
+Wei Yongjun (1):
+      gpio: mlxbf2: fix return value check in mlxbf2_gpio_get_lock_res()
+
+YueHaibing (1):
+      gpio: mlxbf2: remove unused including <linux/version.h>
+
+sachin agarwal (1):
+      gpio: ich: fix a typo
+
+ Documentation/admin-guide/gpio/gpio-aggregator.rst | 111 ++++
+ Documentation/admin-guide/gpio/index.rst           |   1 +
+ .../devicetree/bindings/gpio/renesas,em-gio.yaml   |  70 +++
+ .../devicetree/bindings/gpio/snps,dw-apb-gpio.yaml | 134 +++++
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  65 ---
+ Documentation/driver-api/gpio/board.rst            |  15 +-
+ MAINTAINERS                                        |  16 +-
+ drivers/gpio/Kconfig                               |  24 +-
+ drivers/gpio/Makefile                              |   2 +
+ drivers/gpio/TODO                                  |   4 +
+ drivers/gpio/gpio-aggregator.c                     | 568 +++++++++++++++++=
+++++
+ drivers/gpio/gpio-dwapb.c                          | 248 ++++-----
+ drivers/gpio/gpio-f7188x.c                         |  33 +-
+ drivers/gpio/gpio-ftgpio010.c                      |   2 +-
+ drivers/gpio/gpio-ich.c                            |   2 +-
+ drivers/gpio/gpio-max730x.c                        |  12 +-
+ drivers/gpio/gpio-mb86s7x.c                        |  28 +-
+ drivers/gpio/gpio-merrifield.c                     |  10 +-
+ drivers/gpio/gpio-mlxbf2.c                         |   5 +-
+ drivers/gpio/gpio-mm-lantiq.c                      |   2 +-
+ drivers/gpio/gpio-pca953x.c                        |  96 ++--
+ drivers/gpio/gpio-pch.c                            |  73 +--
+ drivers/gpio/gpio-pl061.c                          |   9 +-
+ drivers/gpio/gpio-rcar.c                           |   4 +-
+ drivers/gpio/gpio-regmap.c                         | 349 +++++++++++++
+ drivers/gpio/gpio-tegra186.c                       |   1 +
+ drivers/gpio/gpio-xgene-sb.c                       |  14 +-
+ drivers/gpio/gpiolib-acpi.c                        |   6 +-
+ drivers/gpio/gpiolib-devprop.c                     |   5 +-
+ drivers/gpio/gpiolib-of.c                          |  10 +
+ drivers/gpio/gpiolib.c                             | 165 ++++--
+ drivers/gpio/gpiolib.h                             |  27 +-
+ drivers/i2c/busses/i2c-i801.c                      |   6 +-
+ drivers/mfd/intel_quark_i2c_gpio.c                 |   1 -
+ drivers/mfd/sm501.c                                |  24 +-
+ include/linux/gpio/driver.h                        |  48 +-
+ include/linux/gpio/machine.h                       |  17 +-
+ include/linux/gpio/regmap.h                        |  86 ++++
+ include/linux/platform_data/gpio-dwapb.h           |   1 -
+ tools/gpio/lsgpio.c                                |  12 +
+ 40 files changed, 1859 insertions(+), 447 deletions(-)
+ create mode 100644 Documentation/admin-guide/gpio/gpio-aggregator.rst
+ create mode 100644 Documentation/devicetree/bindings/gpio/renesas,em-gio.y=
+aml
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio=
+.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.=
+txt
+ create mode 100644 drivers/gpio/gpio-aggregator.c
+ create mode 100644 drivers/gpio/gpio-regmap.c
+ create mode 100644 include/linux/gpio/regmap.h
