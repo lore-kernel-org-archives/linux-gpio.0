@@ -5,38 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46337C433DF
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AAAC433E4
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0EB2067B
-	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D95020825
+	for <linux-gpio@archiver.kernel.org>; Thu,  4 Jun 2020 21:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="nGLZ5abc"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="S+ZXBXto"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbgFDVLw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 4 Jun 2020 17:11:52 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:37193 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbgFDVLZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2020 17:11:25 -0400
+        id S1728104AbgFDVLz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 4 Jun 2020 17:11:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59358 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbgFDVLU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2020 17:11:20 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93BFC08C5C0;
+        Thu,  4 Jun 2020 14:11:19 -0700 (PDT)
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id EE2E222FE3;
-        Thu,  4 Jun 2020 23:11:21 +0200 (CEST)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 17B3B22F9C;
+        Thu,  4 Jun 2020 23:11:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1591305082;
+        t=1591305077;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=thRMUD35mQ2CLp7g40OFx33tgegHp5PmiaEGuFoICU4=;
-        b=nGLZ5abcsYGdDGICEhta44xmh0XdHbzE9ufB5L86JS8J0xdMYHDGt/w2zf+SASEq60oiJd
-        Lv9YKcUjTzEWnpFiOYB0F1zFfxlViz261bZxf1PlfbQdHr35uylL0gFvk7bEU5EkbaSpVs
-        QeHlzo0gCwVGV6PPdRpnZYd/Jzzefgw=
+        bh=5ML389VIPDlcqH0is2ISEMU1iStQnOv84I3nRoWZJ5A=;
+        b=S+ZXBXtoM3kYZ7moTsi46zITtMNggn+W1U0TSdd070MMRSTlFNA71pv5xloD9NA8AbCwdq
+        y3M9J8EFMeV2Rf+sgx5tkcJTEXLnGXVZe6kAYE3EjuLFOvQdVtNO+myDjnFez1cu0ZGfij
+        QCP/XsZCfhu1yyZJ/YR/TP7Vrk7em4k=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
@@ -59,9 +62,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v4 06/11] gpio: add support for the sl28cpld GPIO controller
-Date:   Thu,  4 Jun 2020 23:10:34 +0200
-Message-Id: <20200604211039.12689-7-michael@walle.cc>
+Subject: [PATCH v4 02/11] mfd: Add support for Kontron sl28cpld management controller
+Date:   Thu,  4 Jun 2020 23:10:30 +0200
+Message-Id: <20200604211039.12689-3-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200604211039.12689-1-michael@walle.cc>
 References: <20200604211039.12689-1-michael@walle.cc>
@@ -73,238 +76,149 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the GPIO controller of the sl28 board management
-controller. This driver is part of a multi-function device.
+Add the core support for the board management controller found on the
+SMARC-sAL28 board. It consists of the following functions:
+ - watchdog
+ - GPIO controller
+ - PWM controller
+ - fan sensor
+ - interrupt controller
 
-A controller has 8 lines. There are three different flavors:
-full-featured GPIO with interrupt support, input-only and output-only.
+At the moment, this controller is used on the Kontron SMARC-sAL28 board.
+
+Please note that the MFD driver is defined as bool in the Kconfig
+because the next patch will add interrupt support.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- drivers/gpio/Kconfig         |  11 +++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-sl28cpld.c | 180 +++++++++++++++++++++++++++++++++++
- 3 files changed, 192 insertions(+)
- create mode 100644 drivers/gpio/gpio-sl28cpld.c
+ drivers/mfd/Kconfig    | 19 ++++++++++
+ drivers/mfd/Makefile   |  2 ++
+ drivers/mfd/sl28cpld.c | 79 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+)
+ create mode 100644 drivers/mfd/sl28cpld.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index bcacd9c74aa8..a325d2d619a8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1215,6 +1215,17 @@ config GPIO_RC5T583
- 	  This driver provides the support for driving/reading the gpio pins
- 	  of RC5T583 device through standard gpio library.
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 4f8b73d92df3..5c0cd514d197 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -2109,5 +2109,24 @@ config SGI_MFD_IOC3
+ 	  If you have an SGI Origin, Octane, or a PCI IOC3 card,
+ 	  then say Y. Otherwise say N.
  
-+config GPIO_SL28CPLD
-+	tristate "Kontron sl28 GPIO"
-+	depends on MFD_SL28CPLD
-+	select GPIO_REGMAP
-+	select GPIOLIB_IRQCHIP
++config MFD_SL28CPLD
++	bool "Kontron sl28 core driver"
++	depends on I2C=y
++	depends on OF
++	select REGMAP_I2C
++	select MFD_CORE
 +	help
-+	  This enables support for the GPIOs found on the Kontron sl28 CPLD.
++	  This option enables support for the board management controller
++	  found on the Kontron sl28 CPLD. You have to select individual
++	  functions, such as watchdog, GPIO, etc, under the corresponding menus
++	  in order to enable them.
 +
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-sl28cpld.
++	  Currently supported boards are:
 +
- config GPIO_STMPE
- 	bool "STMPE GPIOs"
- 	depends on MFD_STMPE
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 1e4894e0bf0f..152127a9b339 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -130,6 +130,7 @@ obj-$(CONFIG_GPIO_SCH311X)		+= gpio-sch311x.o
- obj-$(CONFIG_GPIO_SCH)			+= gpio-sch.o
- obj-$(CONFIG_GPIO_SIFIVE)		+= gpio-sifive.o
- obj-$(CONFIG_GPIO_SIOX)			+= gpio-siox.o
-+obj-$(CONFIG_GPIO_SL28CPLD)		+= gpio-sl28cpld.o
- obj-$(CONFIG_GPIO_SODAVILLE)		+= gpio-sodaville.o
- obj-$(CONFIG_GPIO_SPEAR_SPICS)		+= gpio-spear-spics.o
- obj-$(CONFIG_GPIO_SPRD)			+= gpio-sprd.o
-diff --git a/drivers/gpio/gpio-sl28cpld.c b/drivers/gpio/gpio-sl28cpld.c
++		Kontron SMARC-sAL28
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called sl28cpld.
++
+ endmenu
+ endif
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 9367a92f795a..be59fb40aa28 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -264,3 +264,5 @@ obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+ obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
+ 
+ obj-$(CONFIG_SGI_MFD_IOC3)	+= ioc3.o
++
++obj-$(CONFIG_MFD_SL28CPLD)	+= sl28cpld.o
+diff --git a/drivers/mfd/sl28cpld.c b/drivers/mfd/sl28cpld.c
 new file mode 100644
-index 000000000000..800e218ee624
+index 000000000000..a23194bb6efa
 --- /dev/null
-+++ b/drivers/gpio/gpio-sl28cpld.c
-@@ -0,0 +1,180 @@
++++ b/drivers/mfd/sl28cpld.c
+@@ -0,0 +1,79 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * sl28cpld GPIO driver.
++ * MFD core for the sl28cpld.
 + *
-+ * Copyright 2019 Michael Walle <michael@walle.cc>
++ * Copyright 2019 Kontron Europe GmbH
 + */
 +
-+#include <linux/device.h>
-+#include <linux/gpio/regmap.h>
-+#include <linux/gpio/driver.h>
++#include <linux/i2c.h>
 +#include <linux/interrupt.h>
 +#include <linux/kernel.h>
++#include <linux/mfd/core.h>
 +#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
++#include <linux/of_platform.h>
 +#include <linux/regmap.h>
 +
-+/* GPIO flavor */
-+#define GPIO_REG_DIR	0x00
-+#define GPIO_REG_OUT	0x01
-+#define GPIO_REG_IN	0x02
-+#define GPIO_REG_IE	0x03
-+#define GPIO_REG_IP	0x04
++#define SL28CPLD_VERSION	0x03
++#define SL28CPLD_MIN_REQ_VERSION 14
 +
-+/* input-only flavor */
-+#define GPI_REG_IN	0x00
-+
-+/* output-only flavor */
-+#define GPO_REG_OUT	0x00
-+
-+enum sl28cpld_gpio_type {
-+	SL28CPLD_GPIO = 1,
-+	SL28CPLD_GPI,
-+	SL28CPLD_GPO,
-+};
-+
-+struct sl28cpld_gpio {
-+	struct regmap_irq_chip irq_chip;
-+	struct regmap_irq_chip_data *irq_data;
-+};
-+
-+static const struct regmap_irq sl28cpld_gpio_irqs[] = {
-+	REGMAP_IRQ_REG_LINE(0, 8),
-+	REGMAP_IRQ_REG_LINE(1, 8),
-+	REGMAP_IRQ_REG_LINE(2, 8),
-+	REGMAP_IRQ_REG_LINE(3, 8),
-+	REGMAP_IRQ_REG_LINE(4, 8),
-+	REGMAP_IRQ_REG_LINE(5, 8),
-+	REGMAP_IRQ_REG_LINE(6, 8),
-+	REGMAP_IRQ_REG_LINE(7, 8),
-+};
-+
-+static int sl28cpld_gpio_irq_init(struct device *dev,
-+				  struct sl28cpld_gpio *gpio,
-+				  struct regmap *regmap, unsigned int base,
-+				  int irq)
-+{
-+	struct regmap_irq_chip *irq_chip = &gpio->irq_chip;
-+
-+	irq_chip->name = "sl28cpld-gpio-irq",
-+	irq_chip->irqs = sl28cpld_gpio_irqs;
-+	irq_chip->num_irqs = ARRAY_SIZE(sl28cpld_gpio_irqs);
-+	irq_chip->num_regs = 1;
-+	irq_chip->status_base = base + GPIO_REG_IP;
-+	irq_chip->mask_base = base + GPIO_REG_IE;
-+	irq_chip->mask_invert = true,
-+	irq_chip->ack_base = base + GPIO_REG_IP;
-+
-+	return devm_regmap_add_irq_chip_np(dev, dev_of_node(dev), regmap,
-+					   irq, IRQF_SHARED | IRQF_ONESHOT, 0,
-+					   irq_chip, &gpio->irq_data);
-+}
-+
-+static int sl28cpld_gpio_probe(struct platform_device *pdev)
-+{
-+	const struct platform_device_id *dev_id;
-+	struct gpio_regmap_config config = {0};
-+	enum sl28cpld_gpio_type type;
-+	struct sl28cpld_gpio *gpio;
-+	bool irq_support = false;
++struct sl28cpld {
++	struct device *dev;
 +	struct regmap *regmap;
-+	int irq, ret;
-+	u32 base;
++};
 +
-+	if (!pdev->dev.parent)
-+		return -ENODEV;
++static const struct regmap_config sl28cpld_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.reg_stride = 1,
++};
 +
-+	dev_id = platform_get_device_id(pdev);
-+	if (dev_id)
-+		type = dev_id->driver_data;
-+	else
-+		type = (uintptr_t)of_device_get_match_data(&pdev->dev);
-+	if (!type)
-+		return -ENODEV;
++static int sl28cpld_probe(struct i2c_client *i2c)
++{
++	struct sl28cpld *sl28cpld;
++	struct device *dev = &i2c->dev;
++	unsigned int cpld_version;
++	int ret;
 +
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
++	sl28cpld = devm_kzalloc(dev, sizeof(*sl28cpld), GFP_KERNEL);
++	if (!sl28cpld)
 +		return -ENOMEM;
 +
-+	ret = device_property_read_u32(&pdev->dev, "reg", &base);
++	sl28cpld->regmap = devm_regmap_init_i2c(i2c, &sl28cpld_regmap_config);
++	if (IS_ERR(sl28cpld->regmap))
++		return PTR_ERR(sl28cpld->regmap);
++
++	ret = regmap_read(sl28cpld->regmap, SL28CPLD_VERSION, &cpld_version);
 +	if (ret)
-+		return -EINVAL;
++		return ret;
 +
-+	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!regmap)
-+		return -ENODEV;
-+
-+	config.regmap = regmap;
-+	config.parent = &pdev->dev;
-+	config.ngpio = 8;
-+
-+	switch (type) {
-+	case SL28CPLD_GPIO:
-+		config.reg_dat_base = base + GPIO_REG_IN;
-+		config.reg_set_base = base + GPIO_REG_OUT;
-+		/* reg_dir_out_base might be zero */
-+		config.reg_dir_out_base = GPIO_REGMAP_ADDR(base +
-+							   GPIO_REG_DIR);
-+		irq_support = true;
-+		break;
-+	case SL28CPLD_GPO:
-+		config.reg_set_base = base + GPO_REG_OUT;
-+		break;
-+	case SL28CPLD_GPI:
-+		config.reg_dat_base = base + GPI_REG_IN;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "unknown type %d\n", type);
++	if (cpld_version < SL28CPLD_MIN_REQ_VERSION) {
++		dev_err(dev, "unsupported CPLD version %d\n", cpld_version);
 +		return -ENODEV;
 +	}
 +
-+	if (irq_support &&
-+	    device_property_read_bool(&pdev->dev, "interrupt-controller")) {
-+		irq = platform_get_irq(pdev, 0);
-+		if (irq < 0)
-+			return irq;
++	sl28cpld->dev = dev;
++	i2c_set_clientdata(i2c, sl28cpld);
 +
-+		ret = sl28cpld_gpio_irq_init(&pdev->dev, gpio, regmap,
-+					     base, irq);
-+		if (ret)
-+			return ret;
++	dev_info(dev, "successfully probed. CPLD version %d\n", cpld_version);
 +
-+		config.irq_domain = regmap_irq_get_domain(gpio->irq_data);
-+	}
-+
-+	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(&pdev->dev, &config));
++	return devm_of_platform_populate(&i2c->dev);
 +}
 +
-+static const struct of_device_id sl28cpld_gpio_of_match[] = {
-+	{ .compatible = "kontron,sl28cpld-gpio",
-+	  .data = (void *)SL28CPLD_GPIO },
-+	{ .compatible = "kontron,sl28cpld-gpi",
-+	  .data = (void *)SL28CPLD_GPI },
-+	{ .compatible = "kontron,sl28cpld-gpo",
-+	  .data = (void *)SL28CPLD_GPO },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sl28cpld_gpio_of_match);
-+
-+static const struct platform_device_id sl28cpld_gpio_id_table[] = {
-+	{ "sl28cpld-gpio", SL28CPLD_GPIO },
-+	{ "sl28cpld-gpi", SL28CPLD_GPI },
-+	{ "sl28cpld-gpo", SL28CPLD_GPO },
++static const struct of_device_id sl28cpld_of_match[] = {
++	{ .compatible = "kontron,sl28cpld-r1", },
 +	{}
 +};
-+MODULE_DEVICE_TABLE(platform, sl28cpld_gpio_id_table);
++MODULE_DEVICE_TABLE(of, sl28cpld_of_match);
 +
-+static struct platform_driver sl28cpld_gpio_driver = {
-+	.probe = sl28cpld_gpio_probe,
-+	.id_table = sl28cpld_gpio_id_table,
++static struct i2c_driver sl28cpld_driver = {
++	.probe_new = sl28cpld_probe,
 +	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = sl28cpld_gpio_of_match,
++		.name = "sl28cpld",
++		.of_match_table = of_match_ptr(sl28cpld_of_match),
 +	},
 +};
-+module_platform_driver(sl28cpld_gpio_driver);
++module_i2c_driver(sl28cpld_driver);
 +
-+MODULE_DESCRIPTION("sl28cpld GPIO Driver");
++MODULE_DESCRIPTION("sl28cpld MFD Core Driver");
 +MODULE_AUTHOR("Michael Walle <michael@walle.cc>");
 +MODULE_LICENSE("GPL");
 -- 
