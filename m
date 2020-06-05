@@ -2,180 +2,98 @@ Return-Path: <SRS0=SqfU=7S=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626A2C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C930CC433DF
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C91A20659
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8273206E6
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgFENP3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Jun 2020 09:15:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:61808 "EHLO mga07.intel.com"
+        id S1726965AbgFENkk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Jun 2020 09:40:40 -0400
+Received: from mga18.intel.com ([134.134.136.126]:6614 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbgFENP3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 5 Jun 2020 09:15:29 -0400
-IronPort-SDR: hDay6+sP/Xbm6Cdru3WbeELqAe9tguzQLXjLNKS916hDlpki4t4fO5K+EXJblEEuU+4DW3j+hd
- YghXPkuZ7upw==
+        id S1726844AbgFENkk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 5 Jun 2020 09:40:40 -0400
+IronPort-SDR: gDPgdjs3agIxW5P+Q/MNwy2PE9wzi6rQKNA3ab7NjVslPVC+U2yZ3Yke8SZEdZtaZQgPHZIIId
+ 0vPanXVV3QQw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2020 06:15:28 -0700
-IronPort-SDR: 8z64UIpITHvnMyk+hpzKUgfEq+GlBhraZiuh97RJehWFeDVXSXsoR2BA/l3B/XSSk2a/rUPVZY
- 91vGmgg9lXIA==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2020 06:40:39 -0700
+IronPort-SDR: LcfXYzroyINkoPd7ayonJCRZ+/GCSSWU39W0pCuiKJzp9YO16cps1/nJwsuT6iOFx7c6v6UZnO
+ PmPknEA54w2A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,476,1583222400"; 
-   d="scan'208";a="258028176"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Jun 2020 06:15:23 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1jhCBx-00B2CL-6c; Fri, 05 Jun 2020 16:15:25 +0300
-Date:   Fri, 5 Jun 2020 16:15:25 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Michael Walle <michael@walle.cc>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+   d="scan'208";a="269768927"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 05 Jun 2020 06:40:38 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 2F2DD2C7; Fri,  5 Jun 2020 16:40:37 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v4 06/11] gpio: add support for the sl28cpld GPIO
- controller
-Message-ID: <20200605131525.GK2428291@smile.fi.intel.com>
-References: <20200604211039.12689-1-michael@walle.cc>
- <20200604211039.12689-7-michael@walle.cc>
- <CAHp75VfRhL1f-XD=PMbqd3BLeJQzQMFAupSzqAvx0g7-X_2VhQ@mail.gmail.com>
- <216db3154b46bd80202873df055bb3f3@walle.cc>
+        linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: [PATCH v1 3/4] gpio: pca953x: Fix direction setting when configure an IRQ
+Date:   Fri,  5 Jun 2020 16:40:35 +0300
+Message-Id: <20200605134036.9013-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.27.0.rc2
+In-Reply-To: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
+References: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <216db3154b46bd80202873df055bb3f3@walle.cc>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 02:42:53PM +0200, Michael Walle wrote:
-> Am 2020-06-05 14:00, schrieb Andy Shevchenko:
-> > On Fri, Jun 5, 2020 at 12:14 AM Michael Walle <michael@walle.cc> wrote:
+The commit 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
+seems inadvertently made a typo in pca953x_irq_bus_sync_unlock().
 
-> > > +       return devm_regmap_add_irq_chip_np(dev, dev_of_node(dev),
-> > > regmap,
-> > 
-> > It seems regmap needs to be converted to use fwnode.
-> 
-> Mhh, this _np functions was actually part of this series in the
-> beginning.
+When the direction bit is 1 it means input, and the piece of code in question
+was looking for output ones that should be turned to inputs.
 
-Then, please, make them fwnode aware rather than OF centric.
+Fix direction setting when configure an IRQ by injecting a bitmap complement
+operation.
 
-> > > IRQF_ONESHOT, 0,
-> > > +                                          irq_chip, &gpio->irq_data);
+Fixes: 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
+Depends-on: 35d13d94893f ("gpio: pca953x: convert to use bitmap API")
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-...
-
-> > > +       dev_id = platform_get_device_id(pdev);
-> > > +       if (dev_id)
-> > > +               type = dev_id->driver_data;
-> > 
-> > Oh, no. In new code we don't need this. We have facilities to provide
-> > platform data in a form of fwnode.
-> 
-> Ok I'll look into that.
-> 
-> But I already have a question, so there are of_property_read_xx(), which
-> seems to be the old functions, then there is device_property_read_xx() and
-> fwnode_property_read_xx(). What is the difference between the latter two?
-
-It's easy. device_*() requires struct device to be established for this, so,
-operates only against devices, while the fwnode_*() operates on pure data which
-might or might not be related to any devices. If you understand OF examples
-better, consider device node vs. child of such node.
-
-...
-
-> > > +       if (irq_support &&
-> > 
-> > Why do you need this flag? Can't simple IRQ number be sufficient?
-> 
-> I want to make sure, the is no misconfiguration. Eg. only GPIO
-> flavors which has irq_support set, have the additional interrupt
-> registers.
-
-In gpio-dwapb, for example, we simple check two things: a) hardware limitation
-(if IRQ is assigned to a proper port) and b) if there is any IRQ comes from DT,
-ACPI, etc.
-
-> > > +           device_property_read_bool(&pdev->dev,
-> > > "interrupt-controller")) {
-> > > +               irq = platform_get_irq(pdev, 0);
-> > > +               if (irq < 0)
-> > > +                       return irq;
-> > > +
-> > > +               ret = sl28cpld_gpio_irq_init(&pdev->dev, gpio, regmap,
-> > > +                                            base, irq);
-> > > +               if (ret)
-> > > +                       return ret;
-> > > +
-> > > +               config.irq_domain =
-> > > regmap_irq_get_domain(gpio->irq_data);
-> > > +       }
-
-...
-
-> > > +       { .compatible = "kontron,sl28cpld-gpio",
-> > > +         .data = (void *)SL28CPLD_GPIO },
-> > > +       { .compatible = "kontron,sl28cpld-gpi",
-> > > +         .data = (void *)SL28CPLD_GPI },
-> > > +       { .compatible = "kontron,sl28cpld-gpo",
-> > > +         .data = (void *)SL28CPLD_GPO },
-> > 
-> > All above can be twice less LOCs.
-> 
-> They are longer than 80 chars. Or do I miss something?
-
-We have 100 :-)
-
-...
-
-> > > +               .name = KBUILD_MODNAME,
-> > 
-> > This actually not good idea in long term. File name can change and break
-> > an ABI.
-> 
-> Ahh an explanation, why this is bad. Ok makes sense, although to be fair,
-> .id_table should be used for the driver name matching. I'm not sure if
-> this is used somewhere else, though.
-
-I saw in my practice chain of renames for a driver. Now, if somebody
-somewhere would like to instantiate a platform driver by its name...
-Oops, ABI breakage.
-
-And of course using platform data for such device makes less sense.
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 4d3157d8b5cd..97c9ac31ecb5 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -696,8 +696,6 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 	DECLARE_BITMAP(reg_direction, MAX_LINE);
+ 	int level;
+ 
+-	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
+-
+ 	if (chip->driver_data & PCA_PCAL) {
+ 		/* Enable latch on interrupt-enabled inputs */
+ 		pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
+@@ -708,7 +706,11 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 		pca953x_write_regs(chip, PCAL953X_INT_MASK, irq_mask);
+ 	}
+ 
++	/* Switch direction to input if needed */
++	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
++
+ 	bitmap_or(irq_mask, chip->irq_trig_fall, chip->irq_trig_raise, gc->ngpio);
++	bitmap_complement(reg_direction, reg_direction, gc->ngpio);
+ 	bitmap_and(irq_mask, irq_mask, reg_direction, gc->ngpio);
+ 
+ 	/* Look for any newly setup interrupt */
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.27.0.rc2
 
