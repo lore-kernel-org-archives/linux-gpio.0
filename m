@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C930CC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C6BC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8273206E6
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C2A5206E6
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 13:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgFENkk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Jun 2020 09:40:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:6614 "EHLO mga18.intel.com"
+        id S1726844AbgFENkl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Jun 2020 09:40:41 -0400
+Received: from mga06.intel.com ([134.134.136.31]:61677 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbgFENkk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726553AbgFENkk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 5 Jun 2020 09:40:40 -0400
-IronPort-SDR: gDPgdjs3agIxW5P+Q/MNwy2PE9wzi6rQKNA3ab7NjVslPVC+U2yZ3Yke8SZEdZtaZQgPHZIIId
- 0vPanXVV3QQw==
+IronPort-SDR: yu1F1gpBxLw0VcljA6GsIuNvJmQAFH9W5Y8wj68qv/3hPxnGRHF2gaQk9xQwzVy9c77DHkEoRH
+ +w4RlV4UWrMw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2020 06:40:39 -0700
-IronPort-SDR: LcfXYzroyINkoPd7ayonJCRZ+/GCSSWU39W0pCuiKJzp9YO16cps1/nJwsuT6iOFx7c6v6UZnO
- PmPknEA54w2A==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2020 06:40:39 -0700
+IronPort-SDR: ds+TaJtRvlShUDrfzmkqUPJGYmNiL8dav8nGpC+LLXtruJ/jmFZ9orQ0mPgWS54xzu2x9fFgWU
+ 0HgUHNB0tcWQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,476,1583222400"; 
-   d="scan'208";a="269768927"
+   d="scan'208";a="258033471"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 05 Jun 2020 06:40:38 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 05 Jun 2020 06:40:37 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 2F2DD2C7; Fri,  5 Jun 2020 16:40:37 +0300 (EEST)
+        id 1BB57190; Fri,  5 Jun 2020 16:40:37 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH v1 3/4] gpio: pca953x: Fix direction setting when configure an IRQ
-Date:   Fri,  5 Jun 2020 16:40:35 +0300
-Message-Id: <20200605134036.9013-3-andriy.shevchenko@linux.intel.com>
+        Marek Vasut <marek.vasut@gmail.com>,
+        Roland Stigge <stigge@antcom.de>
+Subject: [PATCH v1 1/4] gpio: pca953x: Synchronize interrupt handler properly
+Date:   Fri,  5 Jun 2020 16:40:33 +0300
+Message-Id: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.27.0.rc2
-In-Reply-To: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
-References: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -52,48 +51,101 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The commit 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
-seems inadvertently made a typo in pca953x_irq_bus_sync_unlock().
+Since the commit aa58a21ae378 ("gpio: pca953x: disable regmap locking")
+the locking of regmap is disabled and that immediately introduces
+a synchronization issue. It's easy to see when we try to monitor
+more than one interrupt from the same chip.
 
-When the direction bit is 1 it means input, and the piece of code in question
-was looking for output ones that should be turned to inputs.
+It seems that the problem exists from the day one and even commit
+6e20fb18054c ("drivers/gpio/pca953x.c: add a mutex to fix race condition")
+missed this.
 
-Fix direction setting when configure an IRQ by injecting a bitmap complement
-operation.
+Below are the traces and shell reproducers before and after proposed change.
+Note duplicates in the IRQ events. /proc/interrupts also shows a deviation,
+i.e. sum of children interrupts higher than parent's one.
 
-Fixes: 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
+When locking is disabled for regmap and no protection in IRQ handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ...
+ gpioset-194          regmap_hw_write_start: i2c-INT3491:02 reg=2 count=1
+ irq/31-i2c-INT3-139  regmap_hw_read_start: i2c-INT3491:02 reg=4c count=2
+ gpioset-194          regmap_hw_write_done: i2c-INT3491:02 reg=2 count=1
+ gpioset-194          regmap_reg_read_cache: i2c-INT3491:02 reg=6 val=f5
+ gpioset-194          regmap_reg_write: i2c-INT3491:02 reg=6 val=f5
+ gpioset-194          regmap_hw_write_start: i2c-INT3491:02 reg=6 count=1
+ irq/31-i2c-INT3-139  regmap_hw_read_done: i2c-INT3491:02 reg=4c count=2
+ ...
+
+ % gpiomon gpiochip3 0 &
+ % gpioset gpiochip3 1=0
+ % gpioset gpiochip3 1=1
+ event:  RISING EDGE offset: 0 timestamp: [     302.782583765]
+ % gpiomon gpiochip3 2 &
+ % gpioset gpiochip3 1=0
+ event:  RISING EDGE offset: 2 timestamp: [     312.033148829]
+ event: FALLING EDGE offset: 0 timestamp: [     312.022757525]
+ % gpioset gpiochip3 1=1
+ event:  RISING EDGE offset: 2 timestamp: [     316.201148473]
+ event:  RISING EDGE offset: 0 timestamp: [     316.191759599]
+
+When locking is disabled for regmap and protection in IRQ handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ...
+ gpioset-202          regmap_hw_write_start: i2c-INT3491:02 reg=2 count=1
+ gpioset-202          regmap_hw_write_done: i2c-INT3491:02 reg=2 count=1
+ gpioset-202          regmap_reg_read_cache: i2c-INT3491:02 reg=6 val=fd
+ gpioset-202          regmap_reg_write: i2c-INT3491:02 reg=6 val=fd
+ gpioset-202          regmap_hw_write_start: i2c-INT3491:02 reg=6 count=1
+ gpioset-202          regmap_hw_write_done: i2c-INT3491:02 reg=6 count=1
+ irq/31-i2c-INT3-139  regmap_hw_read_start: i2c-INT3491:02 reg=4c count=2
+ irq/31-i2c-INT3-139  regmap_hw_read_done: i2c-INT3491:02 reg=4c count=2
+ ...
+
+ % gpiomon gpiochip3 0 &
+ % gpioset gpiochip3 1=0
+ event: FALLING EDGE offset: 0 timestamp: [     531.330078107]
+ % gpioset gpiochip3 1=1
+ event:  RISING EDGE offset: 0 timestamp: [     532.912239128]
+ % gpiomon gpiochip3 2 &
+ % gpioset gpiochip3 1=0
+ event: FALLING EDGE offset: 0 timestamp: [     539.633669484]
+ % gpioset gpiochip3 1=1
+ event:  RISING EDGE offset: 0 timestamp: [     542.256978461]
+
+Fixes: 6e20fb18054c ("drivers/gpio/pca953x.c: add a mutex to fix race condition")
 Depends-on: 35d13d94893f ("gpio: pca953x: convert to use bitmap API")
+Depends-on: 49427232764d ("gpio: pca953x: Perform basic regmap conversion")
 Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Roland Stigge <stigge@antcom.de>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 4d3157d8b5cd..97c9ac31ecb5 100644
+index 1fca8dd7824f..afe78639ec58 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -696,8 +696,6 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
- 	DECLARE_BITMAP(reg_direction, MAX_LINE);
+@@ -734,14 +734,16 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
+ 	struct gpio_chip *gc = &chip->gpio_chip;
+ 	DECLARE_BITMAP(pending, MAX_LINE);
  	int level;
++	bool ret;
  
--	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
--
- 	if (chip->driver_data & PCA_PCAL) {
- 		/* Enable latch on interrupt-enabled inputs */
- 		pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
-@@ -708,7 +706,11 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
- 		pca953x_write_regs(chip, PCAL953X_INT_MASK, irq_mask);
- 	}
+-	if (!pca953x_irq_pending(chip, pending))
+-		return IRQ_NONE;
++	mutex_lock(&chip->i2c_lock);
++	ret = pca953x_irq_pending(chip, pending);
++	mutex_unlock(&chip->i2c_lock);
  
-+	/* Switch direction to input if needed */
-+	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
-+
- 	bitmap_or(irq_mask, chip->irq_trig_fall, chip->irq_trig_raise, gc->ngpio);
-+	bitmap_complement(reg_direction, reg_direction, gc->ngpio);
- 	bitmap_and(irq_mask, irq_mask, reg_direction, gc->ngpio);
+ 	for_each_set_bit(level, pending, gc->ngpio)
+ 		handle_nested_irq(irq_find_mapping(gc->irq.domain, level));
  
- 	/* Look for any newly setup interrupt */
+-	return IRQ_HANDLED;
++	return IRQ_RETVAL(ret);
+ }
+ 
+ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
 -- 
 2.27.0.rc2
 
