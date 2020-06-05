@@ -2,88 +2,282 @@ Return-Path: <SRS0=SqfU=7S=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209C5C433E0
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 06:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA55C433DF
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 06:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F047A2081A
-	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 06:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B1882086A
+	for <linux-gpio@archiver.kernel.org>; Fri,  5 Jun 2020 06:57:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qw82uH6l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbgFEGpM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 5 Jun 2020 02:45:12 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:56918 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbgFEGpL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 5 Jun 2020 02:45:11 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AC8F2014A4;
-        Fri,  5 Jun 2020 08:45:10 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E92692002BD;
-        Fri,  5 Jun 2020 08:45:05 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C9704402AD;
-        Fri,  5 Jun 2020 14:44:59 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 1/8] pinctrl: imx: Export necessary APIs for i.MX pinctrl drivers
-Date:   Fri,  5 Jun 2020 14:34:27 +0800
-Message-Id: <1591338874-4733-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1591338874-4733-1-git-send-email-Anson.Huang@nxp.com>
-References: <1591338874-4733-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726191AbgFEG5O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 5 Jun 2020 02:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgFEG5N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2020 02:57:13 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A4AC08C5C5
+        for <linux-gpio@vger.kernel.org>; Thu,  4 Jun 2020 23:57:13 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id v19so7388039wmj.0
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2020 23:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=tz5BlR5JaV+ArYxa0HAqmVilkT6R8zR9JrCnLl9Yodo=;
+        b=qw82uH6liAGFuBEV6hkyJqcUYBtUY4dcgnzButO12xrC67ecuHOe03IPstZhhMxpkg
+         CoAUe7ix0w9VSDzB4R6LaZ9sUbPfjvRaxYMyMYeRp9nAIJfGM7wp5Ei9cVX6EnlUMfKI
+         0jGYMDy/f68iPGczAsb9xq6xZxgStH3X/LXTNGJDpAUm3b7a4TRbEj8wIACimBuRAv40
+         NlX6/ktlt84lJ+EqG2wFjKS81cdMxFeDDWNOG+TapLO6Fy6L8RDWwhDKNMmiDlhVKIUa
+         GqxtR0PuVKCLaJBVEZZ2EffArw0dmDoRecAGRNlRyHlzphGVag+UBe1i+7I/2/XB9dA1
+         qvEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=tz5BlR5JaV+ArYxa0HAqmVilkT6R8zR9JrCnLl9Yodo=;
+        b=mc1WEpS2b+mP3pAqI7c9VJROlR0f8A5o1sA8VNGL6ss7OfbMO4uMUHA4FIxARzeNXm
+         br9WtbJioY64R33oPSH2B6bjeK9irO5a35dwu24RjVAgQ7x2y4K7eE5S4Jv+em+E3TJh
+         yehPy71J3sB45xKM8dYf5t83ODWIZV9YY5WFvmLvZSOykFB/y2ZZhOh2FJbvmzijWza/
+         jjBK0iDQyLofRVmJ9QTn6oD4ndV0gK1ddBZMo1P+s6sZyZU7wYZ3RRmOj7KrHBAjGzFC
+         tUkl69yWmQiwcs04NFO4VWZADU/N2IXQCyCaG9BhYT7Ua5mIeQI8rRKnqLyGm9jzrPhJ
+         41KA==
+X-Gm-Message-State: AOAM530Iij01LumwIYuUrx5bdeGIzLCrYKz77Sf0dDZEGFGtZRVUx5JL
+        GgKe+wEz64bkZeaBIbc+NslupA==
+X-Google-Smtp-Source: ABdhPJw+8D1o16iYVZ1h5gWKMqmnNIGt4AnryEE8VROc7MnMuuWA7+NmgtKq7OghGpEPR8xO5Fr4Zg==
+X-Received: by 2002:a1c:80d4:: with SMTP id b203mr1181014wmd.138.1591340231562;
+        Thu, 04 Jun 2020 23:57:11 -0700 (PDT)
+Received: from dell ([95.147.198.92])
+        by smtp.gmail.com with ESMTPSA id t188sm5291530wmt.27.2020.06.04.23.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2020 23:57:10 -0700 (PDT)
+Date:   Fri, 5 Jun 2020 07:57:09 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Michael Walle <michael@walle.cc>, broonie@kernel.org
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 02/11] mfd: Add support for Kontron sl28cpld
+ management controller
+Message-ID: <20200605065709.GD3714@dell>
+References: <20200604211039.12689-1-michael@walle.cc>
+ <20200604211039.12689-3-michael@walle.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200604211039.12689-3-michael@walle.cc>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Export imx_pinctrl_probe()/imx_pinctrl_pm_ops/imx_pinctrl_sc_ipc_init()
-to support i.MX SoCs' pinctrl driver to be built as module.
+Mark, what do you think?
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 ++
- drivers/pinctrl/freescale/pinctrl-scu.c | 1 +
- 2 files changed, 3 insertions(+)
+On Thu, 04 Jun 2020, Michael Walle wrote:
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index cb7e0f0..f18f0d7 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -878,6 +878,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 
- 	return pinctrl_enable(ipctl->pctl);
- }
-+EXPORT_SYMBOL_GPL(imx_pinctrl_probe);
- 
- static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
- {
-@@ -897,3 +898,4 @@ const struct dev_pm_ops imx_pinctrl_pm_ops = {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
- 					imx_pinctrl_resume)
- };
-+EXPORT_SYMBOL_GPL(imx_pinctrl_pm_ops);
-diff --git a/drivers/pinctrl/freescale/pinctrl-scu.c b/drivers/pinctrl/freescale/pinctrl-scu.c
-index 23cf04b..200e875 100644
---- a/drivers/pinctrl/freescale/pinctrl-scu.c
-+++ b/drivers/pinctrl/freescale/pinctrl-scu.c
-@@ -41,6 +41,7 @@ int imx_pinctrl_sc_ipc_init(struct platform_device *pdev)
- {
- 	return imx_scu_get_handle(&pinctrl_ipc_handle);
- }
-+EXPORT_SYMBOL_GPL(imx_pinctrl_sc_ipc_init);
- 
- int imx_pinconf_get_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
- 			unsigned long *config)
+> Add the core support for the board management controller found on the
+> SMARC-sAL28 board. It consists of the following functions:
+>  - watchdog
+>  - GPIO controller
+>  - PWM controller
+>  - fan sensor
+>  - interrupt controller
+> 
+> At the moment, this controller is used on the Kontron SMARC-sAL28 board.
+> 
+> Please note that the MFD driver is defined as bool in the Kconfig
+> because the next patch will add interrupt support.
+> 
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+>  drivers/mfd/Kconfig    | 19 ++++++++++
+>  drivers/mfd/Makefile   |  2 ++
+>  drivers/mfd/sl28cpld.c | 79 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 100 insertions(+)
+>  create mode 100644 drivers/mfd/sl28cpld.c
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 4f8b73d92df3..5c0cd514d197 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -2109,5 +2109,24 @@ config SGI_MFD_IOC3
+>  	  If you have an SGI Origin, Octane, or a PCI IOC3 card,
+>  	  then say Y. Otherwise say N.
+>  
+> +config MFD_SL28CPLD
+> +	bool "Kontron sl28 core driver"
+
+"Kontron SL28 Core Driver"
+
+> +	depends on I2C=y
+> +	depends on OF
+> +	select REGMAP_I2C
+> +	select MFD_CORE
+> +	help
+> +	  This option enables support for the board management controller
+> +	  found on the Kontron sl28 CPLD. You have to select individual
+
+I can't find any reference to the "Kontron sl28 CPLD" online.
+
+Is there a datasheet?
+
+> +	  functions, such as watchdog, GPIO, etc, under the corresponding menus
+> +	  in order to enable them.
+> +
+> +	  Currently supported boards are:
+> +
+> +		Kontron SMARC-sAL28
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called sl28cpld.
+> +
+>  endmenu
+>  endif
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 9367a92f795a..be59fb40aa28 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -264,3 +264,5 @@ obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+>  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
+>  
+>  obj-$(CONFIG_SGI_MFD_IOC3)	+= ioc3.o
+> +
+> +obj-$(CONFIG_MFD_SL28CPLD)	+= sl28cpld.o
+> diff --git a/drivers/mfd/sl28cpld.c b/drivers/mfd/sl28cpld.c
+> new file mode 100644
+> index 000000000000..a23194bb6efa
+> --- /dev/null
+> +++ b/drivers/mfd/sl28cpld.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * MFD core for the sl28cpld.
+
+Ideally this would match the Kconfig subject line.
+
+> + * Copyright 2019 Kontron Europe GmbH
+
+This is out of date.
+
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/regmap.h>
+> +
+> +#define SL28CPLD_VERSION	0x03
+> +#define SL28CPLD_MIN_REQ_VERSION 14
+> +
+> +struct sl28cpld {
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +};
+
+Why do you need this structure?
+
+> +static const struct regmap_config sl28cpld_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.reg_stride = 1,
+> +};
+> +
+> +static int sl28cpld_probe(struct i2c_client *i2c)
+> +{
+> +	struct sl28cpld *sl28cpld;
+> +	struct device *dev = &i2c->dev;
+> +	unsigned int cpld_version;
+> +	int ret;
+> +
+> +	sl28cpld = devm_kzalloc(dev, sizeof(*sl28cpld), GFP_KERNEL);
+> +	if (!sl28cpld)
+> +		return -ENOMEM;
+> +
+> +	sl28cpld->regmap = devm_regmap_init_i2c(i2c, &sl28cpld_regmap_config);
+> +	if (IS_ERR(sl28cpld->regmap))
+> +		return PTR_ERR(sl28cpld->regmap);
+
+This is now a shared memory allocator and not an MFD at all.
+
+I'm clamping down on these type of drivers!
+
+Please find a better way to accomplish this.
+
+Potentially using "simple-mfd" and "simple-regmap".
+
+The former already exists and does what you want.  The latter doesn't
+yet exist, but could solve your and lots of other contributor's
+issues.
+
+Heck maybe I'll implement it myself if this keeps happening.
+
+> +	ret = regmap_read(sl28cpld->regmap, SL28CPLD_VERSION, &cpld_version);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (cpld_version < SL28CPLD_MIN_REQ_VERSION) {
+> +		dev_err(dev, "unsupported CPLD version %d\n", cpld_version);
+> +		return -ENODEV;
+> +	}
+> +
+> +	sl28cpld->dev = dev;
+> +	i2c_set_clientdata(i2c, sl28cpld);
+
+If the struct definition is in here, how do you use it elsewhere?
+
+> +	dev_info(dev, "successfully probed. CPLD version %d\n", cpld_version);
+> +
+> +	return devm_of_platform_populate(&i2c->dev);
+> +}
+> +
+> +static const struct of_device_id sl28cpld_of_match[] = {
+> +	{ .compatible = "kontron,sl28cpld-r1", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, sl28cpld_of_match);
+> +
+> +static struct i2c_driver sl28cpld_driver = {
+> +	.probe_new = sl28cpld_probe,
+> +	.driver = {
+> +		.name = "sl28cpld",
+> +		.of_match_table = of_match_ptr(sl28cpld_of_match),
+> +	},
+> +};
+> +module_i2c_driver(sl28cpld_driver);
+> +
+> +MODULE_DESCRIPTION("sl28cpld MFD Core Driver");
+> +MODULE_AUTHOR("Michael Walle <michael@walle.cc>");
+> +MODULE_LICENSE("GPL");
+
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
