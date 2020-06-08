@@ -2,123 +2,82 @@ Return-Path: <SRS0=onMH=7V=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB06C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54939C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9EED20656
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:45:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tC+NAthJ"
+	by mail.kernel.org (Postfix) with ESMTP id 365582078C
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbgFHOpC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jun 2020 10:45:02 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40472 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729958AbgFHOpB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 10:45:01 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058Ed6W4177254;
-        Mon, 8 Jun 2020 14:44:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Ng2DZMEEFt6us9y/d3tf/ej/fd16SJO3Qp6cqK8UaYc=;
- b=tC+NAthJIAF0mA6zj9xNkSMsqtInLknvWz924TxVGh2xjttS9EoeY8odc6MjhgmI3PnO
- oYkfvsRHXbvrthnpTCFKMB6Uot8TL2n/HPmfw33W0Yl98qYJaA42A5k/yBG1xE5ehRxY
- FeZIBYa+/4dEizdtvWN0ig25dK6CkkB4utcQET6+iohd0s8K83dKqMqEordYAbCXzI8e
- Hur/RoEYfOw2NhqXJ9xCV66rOI2eBXu0HN5JOz45lBz8zCFgZPpPE+pjovMT094otH+P
- wM4O1c2AdyQJJKipjJtRfe2X9WNrB/npxG5oLzeFoeDp3qWBOzmdjckVlwy4EZuepBnx 7Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 31g3smq5w5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 08 Jun 2020 14:44:42 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058EhmRw013233;
-        Mon, 8 Jun 2020 14:44:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 31gmqmag1c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 08 Jun 2020 14:44:41 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 058EidNZ009474;
-        Mon, 8 Jun 2020 14:44:39 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 08 Jun 2020 07:44:38 -0700
-Date:   Mon, 8 Jun 2020 17:44:31 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     BOUGH CHEN <haibo.chen@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH] Revert "pinctrl: freescale: imx: Use 'devm_of_iomap()'
- to avoid a resource leak in case of error in 'imx_pinctrl_probe()'"
-Message-ID: <20200608144431.GS22511@kadam>
-References: <1591610401-12590-1-git-send-email-haibo.chen@nxp.com>
- <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9645 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 spamscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006080110
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9645 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 cotscore=-2147483648 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006080109
+        id S1730091AbgFHOsW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jun 2020 10:48:22 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:46438 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729958AbgFHOsV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Jun 2020 10:48:21 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C6CAA1A1074;
+        Mon,  8 Jun 2020 16:48:19 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 480001A1063;
+        Mon,  8 Jun 2020 16:48:15 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5C6BE40297;
+        Mon,  8 Jun 2020 22:48:09 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 0/9] Support i.MX8 SoCs pinctrl drivers built as module
+Date:   Mon,  8 Jun 2020 22:37:27 +0800
+Message-Id: <1591627056-19022-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 02:06:35PM +0000, Aisheng Dong wrote:
-> > From: haibo.chen@nxp.com <haibo.chen@nxp.com>
-> > Sent: Monday, June 8, 2020 6:00 PM
-> > 
-> > This patch block system booting, find on imx7d-sdb board.
-> > From the dts we can see, iomux and iomux_lpsr share the memory region
-> > [0x30330000-0x3033ffff], so will trigger the following issue:
-> > 
-> > [    0.179561] imx7d-pinctrl 302c0000.iomuxc-lpsr: initialized IMX pinctrl
-> > driver
-> > [    0.191742] imx7d-pinctrl 30330000.pinctrl: can't request region for
-> > resource [mem 0x30330000-0x3033ffff]
-> > [    0.191842] imx7d-pinctrl: probe of 30330000.pinctrl failed with error -16
-> > 
-> > This reverts commit ba403242615c2c99e27af7984b1650771a2cc2c9.
-> 
-> Better add your sign-off.
-> Otherwise:
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> Maybe you or Christophe could resubmit another proper fix for the original issue.
+There are more and mroe requirements that SoC specific modules should be built
+as module in order to support generic kernel image, such as Android GKI concept.
 
-I'm really sorry about that.  This was largely my fault.
+This patch series supports i.MX8 SoCs pinctrl drivers to be built as module,
+including i.MX8MQ/MM/MN/MP/QXP/QM/DXL SoCs, and it also supports building i.MX
+common pinctrl driver and i.MX SCU common pinctrl driver as module.
 
-I still don't understand how commit ba403242615c caused a problem.
+Compared to V1, the changes are as below:
+	- Separate the i.MX and i.MX SCU common pinctrl driver to 2 patches;
+	- Support building i.MX and i.MX SCU common pinctrl driver as module too.
 
-It sounds like in the original code ipctl->input_sel_base was released
-somehow?  I do a `git grep input_sel_base` and it doesn't show anything.
-What am I missing?
+Anson Huang (9):
+  pinctrl: imx: Support building SCU pinctrl driver as module
+  pinctrl: imx: Support building i.MX pinctrl driver as module
+  pinctrl: imx8mm: Support building as module
+  pinctrl: imx8mn: Support building as module
+  pinctrl: imx8mq: Support building as module
+  pinctrl: imx8mp: Support building as module
+  pinctrl: imx8qxp: Support building as module
+  pinctrl: imx8qm: Support building as module
+  pinctrl: imx8dxl: Support building as module
 
-regards,
-dan carpenter
+ drivers/pinctrl/freescale/Kconfig           | 18 +++++++++---------
+ drivers/pinctrl/freescale/pinctrl-imx.c     |  4 ++++
+ drivers/pinctrl/freescale/pinctrl-imx.h     |  2 +-
+ drivers/pinctrl/freescale/pinctrl-imx8dxl.c |  9 +++------
+ drivers/pinctrl/freescale/pinctrl-imx8mm.c  | 10 ++++------
+ drivers/pinctrl/freescale/pinctrl-imx8mn.c  | 10 ++++------
+ drivers/pinctrl/freescale/pinctrl-imx8mp.c  | 10 ++++------
+ drivers/pinctrl/freescale/pinctrl-imx8mq.c  |  9 ++++-----
+ drivers/pinctrl/freescale/pinctrl-imx8qm.c  |  9 +++------
+ drivers/pinctrl/freescale/pinctrl-imx8qxp.c |  9 +++------
+ drivers/pinctrl/freescale/pinctrl-scu.c     |  6 ++++++
+ 11 files changed, 45 insertions(+), 51 deletions(-)
+
+-- 
+2.7.4
 
