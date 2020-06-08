@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F206DC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C5C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2342207F9
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D637E20842
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbgFHOsy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jun 2020 10:48:54 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:46544 "EHLO inva020.nxp.com"
+        id S1730106AbgFHOs0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jun 2020 10:48:26 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38412 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730103AbgFHOs1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Jun 2020 10:48:27 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F2021A26C4;
-        Mon,  8 Jun 2020 16:48:25 +0200 (CEST)
+        id S1730098AbgFHOsX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 8 Jun 2020 10:48:23 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8DA7D200E60;
+        Mon,  8 Jun 2020 16:48:21 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A44551A0127;
-        Mon,  8 Jun 2020 16:48:20 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0DFF6200E67;
+        Mon,  8 Jun 2020 16:48:17 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C4B94402F3;
-        Mon,  8 Jun 2020 22:48:14 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 86B81402F0;
+        Mon,  8 Jun 2020 22:48:11 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
         stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
         s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 5/9] pinctrl: imx8mq: Support building as module
-Date:   Mon,  8 Jun 2020 22:37:32 +0800
-Message-Id: <1591627056-19022-6-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 2/9] pinctrl: imx: Support building i.MX pinctrl driver as module
+Date:   Mon,  8 Jun 2020 22:37:29 +0800
+Message-Id: <1591627056-19022-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1591627056-19022-1-git-send-email-Anson.Huang@nxp.com>
 References: <1591627056-19022-1-git-send-email-Anson.Huang@nxp.com>
@@ -45,59 +46,56 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Support building i.MX8MQ pinctrl driver as module.
+Export necessary functions to support building i.MX common pinctrl
+driver and its user to be built as module.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-No changes.
+Changes since V1:
+	- Separate i.MX and i.MX SCU pinctrl driver to 2 patches;
+	- Support building i.MX common pinctrl driver itself as module.
 ---
- drivers/pinctrl/freescale/Kconfig          | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx8mq.c | 9 ++++-----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/pinctrl/freescale/Kconfig       | 2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 4bb6aeb..f194996 100644
+index a3a30f1d..58d48df 100644
 --- a/drivers/pinctrl/freescale/Kconfig
 +++ b/drivers/pinctrl/freescale/Kconfig
-@@ -145,7 +145,7 @@ config PINCTRL_IMX8MP
- 	  Say Y here to enable the imx8mp pinctrl driver
- 
- config PINCTRL_IMX8MQ
--	bool "IMX8MQ pinctrl driver"
-+	tristate "IMX8MQ pinctrl driver"
- 	depends on ARCH_MXC
- 	select PINCTRL_IMX
- 	help
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-index 50aa1c0..db5b41a 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-@@ -8,6 +8,7 @@
- #include <linux/err.h>
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config PINCTRL_IMX
+-	bool
++	tristate "IMX pinctrl driver"
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index cb7e0f0..116d808 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -11,6 +11,7 @@
  #include <linux/init.h>
  #include <linux/io.h>
+ #include <linux/mfd/syscon.h>
 +#include <linux/module.h>
  #include <linux/of.h>
  #include <linux/of_device.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -329,6 +330,7 @@ static const struct of_device_id imx8mq_pinctrl_of_match[] = {
- 	{ .compatible = "fsl,imx8mq-iomuxc", .data = &imx8mq_pinctrl_info, },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, imx8mq_pinctrl_of_match);
+ #include <linux/of_address.h>
+@@ -878,6 +879,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
  
- static int imx8mq_pinctrl_probe(struct platform_device *pdev)
+ 	return pinctrl_enable(ipctl->pctl);
+ }
++EXPORT_SYMBOL_GPL(imx_pinctrl_probe);
+ 
+ static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
  {
-@@ -345,8 +347,5 @@ static struct platform_driver imx8mq_pinctrl_driver = {
- 	.probe = imx8mq_pinctrl_probe,
+@@ -897,3 +899,5 @@ const struct dev_pm_ops imx_pinctrl_pm_ops = {
+ 	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
+ 					imx_pinctrl_resume)
  };
- 
--static int __init imx8mq_pinctrl_init(void)
--{
--	return platform_driver_register(&imx8mq_pinctrl_driver);
--}
--arch_initcall(imx8mq_pinctrl_init);
-+module_platform_driver(imx8mq_pinctrl_driver);
++EXPORT_SYMBOL_GPL(imx_pinctrl_pm_ops);
 +MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
