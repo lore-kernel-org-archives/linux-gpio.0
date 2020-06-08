@@ -2,242 +2,110 @@ Return-Path: <SRS0=onMH=7V=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F336CC433E0
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 18:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A3BC433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 19:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C408A2074B
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 18:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F021E2068D
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 19:25:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bYuLeFsF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wki+dDfE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbgFHS47 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jun 2020 14:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55438 "EHLO
+        id S1726481AbgFHTZ3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jun 2020 15:25:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgFHS44 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 14:56:56 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9C6C08C5C6
-        for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2020 11:56:55 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id r9so552162wmh.2
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2020 11:56:55 -0700 (PDT)
+        with ESMTP id S1726406AbgFHTZ2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 15:25:28 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007A1C08C5C2
+        for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2020 12:25:27 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id l10so18693860wrr.10
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2020 12:25:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=bbezwn5gwDlTS6iFB4r9mviI0BHif4uVVFtQV600W10=;
-        b=bYuLeFsFLMkDx3qZeqjTwTuymeICsPggctKvZNcicEBsCT6pD6pMA7MDedxcCgxxxv
-         DaXRWn69Tos6NjXf9n4UhHrwGd5gC47tLeiiskVQVlVn7tUdf+gKVD++b2pSx6mjt0Wt
-         /GROQLIkv8ERRIXfaTl+IBNn5ySBixDUBCavUZXD4GOr2RPx8jv98AlcXxuFAvV8TSzH
-         uUzKSnqPFAIyr30pkKt7Dm8kolIvPkY4GfLVcdkgaBEz6LXVbdJwTjtf+/4f8Isg7P1S
-         KORdnXpCjh3OH33CQNPDcXraPiI3zvS0de9sedU66a7jPu3xIf4o9mtqTrhWJsUZrxQa
-         4t6g==
+        bh=mxhIGg2cqw/XPpjpdkJxjIWYKGlCg1JDkmDrxitivV0=;
+        b=Wki+dDfEOx3kuXRK+0nd8CQVmYMtGONVjSJ0CpY4bqVlR6pKRBsGxFhvST7jSBd/nu
+         lwCgE8jIyWk6DG440Ct3cbpaBp8xUef4NsWL1Jog+ra+Ni5Vk0HEwG911gY+gHoJkAd6
+         UFjvY0Nf8yaU6dFsgNu/Iwmed1BJTj1Csr3fDu8b0dq1sgC3EspY5WgW9MEDv/R4TJ1O
+         IRFnUC63VOciy7ODCbAZ9qho4x3FX4vE4rcqv+kK7HLDhRq/gfdTSmv92nLqKOV8IG3C
+         FuMcKLcSHJgDP6xG3GuiZsj4Auv32h4sDbD5A0ogpKPTVd7lmh+IiTN0fBxoT5MxAanj
+         EUZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=bbezwn5gwDlTS6iFB4r9mviI0BHif4uVVFtQV600W10=;
-        b=SLNnTXD+otTx+VZH/+AxZx67XIYuUpzz/EAqidnRCTDVW9bttPj9rVUEM4Athgo1xA
-         BgG5bUnIc6ct2V2Ur1j5fDZHAOSngt3ka7tN7HSr4mn+sG3kHHx5kpFuspaiyb89VmK9
-         xOdy3Kzru0d54JrCjNTUWDTrhaR4GFEQaBTq66rOEO9WLNId3x1e0pdx3QyOJdHpPV/B
-         KZjEf2S3bGy4pvq0Q1tS2+mO1SjjTUJ86jzcIBxLDJgwkAqtwb80o1VE+Fj9VxYophxk
-         Bai7lroyOHzogTMW3x+E8BccsaKBbNvwJ1v00uzgrxL70enNxhgnnFUncgXdXO1WAFlx
-         q0jg==
-X-Gm-Message-State: AOAM531mxyltWsE1LK3Wco+MQ2+e7RhFbJQUuFk626u6wRumK9T3Byd0
-        5Bnv0N9xtQ5CVOFnDJ6smEqX3A==
-X-Google-Smtp-Source: ABdhPJyiWUVMEiOfAXAeFrqmYgqJgRJgWv1aBrPn0d5IckEE0fOBQCHvZfLUDwPo686MnqwrE6u1gg==
-X-Received: by 2002:a1c:80d4:: with SMTP id b203mr135522wmd.138.1591642613825;
-        Mon, 08 Jun 2020 11:56:53 -0700 (PDT)
+        bh=mxhIGg2cqw/XPpjpdkJxjIWYKGlCg1JDkmDrxitivV0=;
+        b=OyRH8kmGKevnmSaEqqAJQr3a45nhoFXExoua1wb/FSRghkR6xpZU8ZBZbPp5DFmsQp
+         ttYDFocE/MQpQNNuSFCHYghBlf9bxuxLtwNujEJ7FJGJzA5rkk6quyxznOwqT9R/QRWZ
+         3MBoAkG96UaRmbOU0ifzHxvqagPlpBOUflxXkfKETMKmEfA5H+RODEP1ucaOInYGoSjw
+         t0Vp8WwULkCZ3oVdCtHxrnAxPVxvoN9Coo8HcmwbgI4ekiSsAF3MVhkfq/srznTaNFP6
+         X4BeWHWqEq66TQ5qj+Ie0Uabc8J3iVZrrhWlml3Hm4bv5y4uXxRvG8sdsGoWXWBj8iTD
+         o6/Q==
+X-Gm-Message-State: AOAM531GOZRUfQgMXod6O+ZeBM94IwcmkZAimnNdFPq+L6cF1RXFAqdK
+        dANr6BQWZmIo0xxqDzLjJnOilA==
+X-Google-Smtp-Source: ABdhPJyI9mGXeNtCefguGgkN84Z6BMGgUJsgmPkK8phVYm55kKWSXwGkpNK7uvgqjHjERUfVR7OTUg==
+X-Received: by 2002:adf:a34d:: with SMTP id d13mr324885wrb.270.1591644326744;
+        Mon, 08 Jun 2020 12:25:26 -0700 (PDT)
 Received: from dell ([95.147.198.92])
-        by smtp.gmail.com with ESMTPSA id l17sm431519wmi.16.2020.06.08.11.56.52
+        by smtp.gmail.com with ESMTPSA id z206sm472761wmg.30.2020.06.08.12.25.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 11:56:53 -0700 (PDT)
-Date:   Mon, 8 Jun 2020 19:56:51 +0100
+        Mon, 08 Jun 2020 12:25:25 -0700 (PDT)
+Date:   Mon, 8 Jun 2020 20:25:24 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        david.m.ertman@intel.com, shiraz.saleem@intel.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 02/11] mfd: Add support for Kontron sl28cpld
- management controller
-Message-ID: <20200608185651.GD4106@dell>
-References: <20200604211039.12689-1-michael@walle.cc>
- <20200604211039.12689-3-michael@walle.cc>
- <20200605065709.GD3714@dell>
- <20200605105026.GC5413@sirena.org.uk>
- <c5632bfab3956265e90fc2fb6c0b3cae@walle.cc>
- <20200606114645.GB2055@sirena.org.uk>
- <dc052a5c77171014ecc465b1da8b7ef8@walle.cc>
- <20200608082827.GB3567@dell>
- <CAHp75VdiH=J-ovCdh1RFJDW_bJM8=pbXRaHmB691GLb-5oBmYQ@mail.gmail.com>
- <7d7feb374cbf5a587dc1ce65fc3ad672@walle.cc>
+        linux-kernel@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v1 3/6] mfd: core: Propagate software node group to the
+ sub devices
+Message-ID: <20200608192524.GF4106@dell>
+References: <20200608134300.76091-1-andriy.shevchenko@linux.intel.com>
+ <20200608134300.76091-4-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d7feb374cbf5a587dc1ce65fc3ad672@walle.cc>
+In-Reply-To: <20200608134300.76091-4-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 08 Jun 2020, Michael Walle wrote:
+On Mon, 08 Jun 2020, Andy Shevchenko wrote:
 
-> Am 2020-06-08 12:02, schrieb Andy Shevchenko:
-> > +Cc: some Intel people WRT our internal discussion about similar
-> > problem and solutions.
-> > 
-> > On Mon, Jun 8, 2020 at 11:30 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > > On Sat, 06 Jun 2020, Michael Walle wrote:
-> > > > Am 2020-06-06 13:46, schrieb Mark Brown:
-> > > > > On Fri, Jun 05, 2020 at 10:07:36PM +0200, Michael Walle wrote:
-> > > > > > Am 2020-06-05 12:50, schrieb Mark Brown:
-> > 
-> > ...
-> > 
-> > > Right.  I'm suggesting a means to extrapolate complex shared and
-> > > sometimes intertwined batches of register sets to be consumed by
-> > > multiple (sub-)devices spanning different subsystems.
-> > > 
-> > > Actually scrap that.  The most common case I see is a single Regmap
-> > > covering all child-devices.
-> > 
-> > Yes, because often we need a synchronization across the entire address
-> > space of the (parent) device in question.
-> > 
-> > >  It would be great if there was a way in
-> > > which we could make an assumption that the entire register address
-> > > space for a 'tagged' (MFD) device is to be shared (via Regmap) between
-> > > each of the devices described by its child-nodes.  Probably by picking
-> > > up on the 'simple-mfd' compatible string in the first instance.
-> > > 
-> > > Rob, is the above something you would contemplate?
-> > > 
-> > > Michael, do your register addresses overlap i.e. are they intermingled
-> > > with one another?  Do multiple child devices need access to the same
-> > > registers i.e. are they shared?
+> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > 
-> No they don't overlap, expect for maybe the version register, which is
-> just there once and not per function block.
-
-Then what's stopping you having each device Regmap their own space?
-
-The issues I wish to resolve using 'simple-mfd' are when sub-devices
-register maps overlap and intertwine.
-
-> > > > > > But, there is more in my driver:
-> > > > > >  (1) there is a version check
-> > > 
-> > > If we can rid the Regmap dependency, then creating an entire driver to
-> > > conduct a version check is unjustifiable.  This could become an inline
-> > > function which is called by each of the sub-devices instead, for
-> > > example.
+> When ever device properties are supplied for a sub device, a software node
+> (fwnode) is actually created and then associated with that device. By allowing
+> the drivers to supply the complete software node group instead of just the
+> properties in it, the drivers can take advantage of the other features the
+> software nodes have on top of supplying the device properties.
 > 
-> sounds good to me. (although there would then be a probe fail per sub-device
-> if the version is not supported)
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/mfd-core.c   | 31 +++++++++++++++++++++++++++----
+>  include/linux/mfd/core.h |  3 +++
+>  2 files changed, 30 insertions(+), 4 deletions(-)
 
-I don't see an issue with that.  I would put that check inside a
-shared call though, complete with support for locking.
+I'm not sure a change to the API is justified presently (same does go
+for 'properties' really, but as it was only a couple of lines, it
+didn't seem too intrusive).
 
-> > > > > >  (2) there is another function for which there is no suitable linux
-> > > > > >      subsystem I'm aware of and thus which I'd like to us sysfs
-> > > > > >      attributes for: This controller supports 16 non-volatile
-> > > > > >      configuration bits. (this is still TBD)
-> > > 
-> > > There is a place for everything in Linux.
-> > > 
-> > > What do these bits configure?
-> 
-> - hardware strappings which have to be there before the board powers up,
->   like clocking mode for different SerDes settings
-> - "keep-in-reset" bits for onboard peripherals if you want to save power
-> - disable watchdog bits (there is a watchdog which is active right from
->   the start and supervises the bootloader start and switches to failsafe
->   mode if it wasn't successfully started)
-> - special boot modes, like eMMC, etc.
-> 
-> Think of it as a 16bit configuration word.
-
-And you wish for users to be able to view these at run-time?
-
-Can they adapt any of them on-the-fly or will the be RO?
-
-> > > > > TBH I'd also say that the enumeration of the subdevices for this
-> > > > > device should be in the device rather than the DT, they don't
-> > > > > seem to be things that exist outside of this one device.
-> > > >
-> > > > We're going circles here, formerly they were enumerated in the MFD.
-> > > > Yes, they are devices which aren't likely be used outside a
-> > > > "sl28cpld", but there might there might be other versions of the
-> > > > sl28cpld with other components on different base addresses. I
-> > > > don't care if they are enumerated in DT or MFD, actually, I'd
-> > > > prefer the latter. _But_ I would like to have the device tree
-> > > > properties for its subdevices, e.g. the ones for the watchdog or
-> > > > whatever components there might be in the future.
-> > > 
-> > > [...]
-> > > 
-> > > > MFD core can
-> > > > match a device tree node today; but only one per unique compatible
-> > > > string. So what should I use to differentiate the different
-> > > > subdevices?
-> > > 
-> > > Right.  I have been aware of this issue.  The only suitable solution
-> > > to this would be to match on 'reg'.
-> 
-> see below (1)
-> 
-> > > 
-> > > FYI: I plan to fix this.
-> > > 
-> > > If your register map needs to change, then I suggest that this is
-> > > either a new device or at least a different version of the device and
-> > > would also have to be represented as different (sub-)mfd_cell.
-> > > 
-> > > > Rob suggested the internal offset, which I did here.
-> > > 
-> > > FWIW, I don't like this idea.  DTs should not have to be modified
-> > > (either in the first instance or subsequently) or specifically
-> > > designed to patch inadequacies in any given OS.
-> 
-> How does (1) play together with this? What do you propose the "reg"
-> property should contain?
-
-Whatever is in the 'reg' property contained in the Device Tree node.
-Either the full address or an offset would be suitable.
-
-Caveat: All this thinking has been done on-the-fly.  I would need to
-look at some examples of existing devices and start coding before I
-could really think the solution through.
-
-Happy to discuss and/or take recommendations though.
+My recommendation is to handle this in-house (i.e. locally in-driver)
+for now.  When (if) more users adopt the practice, then we should
+consider to draw down on line numbers and repetition and make it part
+of the API.
 
 -- 
 Lee Jones [李琼斯]
