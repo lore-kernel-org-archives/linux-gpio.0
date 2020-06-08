@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAEFC433E1
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 09:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AD1C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 09:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4F92206C3
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 09:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0755206C3
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 09:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=boundarydevices-com.20150623.gappssmtp.com header.i=@boundarydevices-com.20150623.gappssmtp.com header.b="pDIzbglQ"
+	dkim=pass (2048-bit key) header.d=boundarydevices-com.20150623.gappssmtp.com header.i=@boundarydevices-com.20150623.gappssmtp.com header.b="b/xwEg+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbgFHJG7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jun 2020 05:06:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        id S1729132AbgFHJHC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jun 2020 05:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbgFHJG7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 05:06:59 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CDE0C08C5C4
-        for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2020 02:06:57 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id e1so16525776wrt.5
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2020 02:06:57 -0700 (PDT)
+        with ESMTP id S1726157AbgFHJHA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 05:07:00 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC19C08C5C3
+        for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2020 02:06:59 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id h5so16513341wrc.7
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2020 02:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=boundarydevices-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5xZDVG6s/fiwYQbkYyEt3S3SH1BzTQjs+4yAHepva4k=;
-        b=pDIzbglQCtiGn+iujJzWDKzB+/FeBGrUAYoYKTOFICPBgCJfS4JXcKhkkBT3ho0XxN
-         fSn6TV1vR4nr57AOFI2/62PVDqR7YDyrY6NBWjwr9T3rL0MGLxyDt1g985Z5AIaMSGsm
-         lgEOXq8KnZCkR6grCaloPfFmRiJuOF1/QRsv5r/yM0+EpHEPIndLkqFnchhGtbaZZkfv
-         /oJGLSd2oMXiZ7oFse9xUvhjYXt5YUZxfUBwPBZEpI9mdYYSHE3GmgBAj220Xi8uYXn1
-         FjKQUfLw8kgExZQW+yG3Y3LwUjNvKaVR3M19OHqZ8KtBqu+uuJP1BcG+jxoXNMYg/+p9
-         ipZQ==
+        bh=UmRvg9WdMz9PqUAVOc9PSpLim4YbFsqD5z6Ld3A8lwc=;
+        b=b/xwEg+jNXT6MZb0idR012OZ8lh6rDiv1uorT95uQ0YpLhQvAOa+O4cV4t32itPa2v
+         nDJy7IGpIsYIIUKvJ4iciRn4IafEGdBgqiGEuAviWGZt1/VJhmhXB6MFjqUBowB0ZLyy
+         TKm2hwxPkXEaWuDtvDJtnJkFoSy3wR5JW3pexC/6y4LbrnWlZaEfiItose4j/LbO3JEa
+         OLRFRNHXwH0ZGtLRvd/0C2DlVVizAOcYKZvnaBdREkScQDuoxoA2rYXaKtXprsBcr39X
+         H5iXEMbyjKXpULAZVlz+ILnqRsto9gtDfqatpqem8FLTeBBF56ZfgprmQil8ccR5NaVi
+         RV5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5xZDVG6s/fiwYQbkYyEt3S3SH1BzTQjs+4yAHepva4k=;
-        b=njyqmufVxRAKx4jQB6IVJWhr2CcY+atjmyqVk7j9XhFNzBqLWxA90XMwc+/6anNrpb
-         dwdnZhI/DIFngO61cu/W4p0z5rgBOeur6gf4yClQCXd2PkTcXFQXSVlGCfZAzGVxPqUF
-         wCqr0OIydmYsFFjl7hykBQ5Bg2an6kmDwiCv0PsQymoStoRYO1UKtLpInuUoBBUBVEkk
-         2/lA8OZb7HbeCaJp7+bDPvF3utK64bwDhNzedPiTApZowlxHVSQa6ZAyKl7CneyaT/jM
-         UZe8TZe/Rka9fhediqo32aBRChacFH2Nj6SnJsdMgnx7jiwdv5wvN2rdgxqkA+kV2cub
-         QUQA==
-X-Gm-Message-State: AOAM531ZoROv5VCzIUaaf67Vj+MsbyfX4VqM+kLv8AU19oo7Zrm2/M9a
-        N6IBWHc/B/rwLHdXk/wYo1xrAit1GGk=
-X-Google-Smtp-Source: ABdhPJxHli7FlXRv5bru8hsImMh+iDopRbsReGtMz+vbeNLl5NIW/i8Cz3la7f9nxA5jKSGC4RUErg==
-X-Received: by 2002:adf:fe8d:: with SMTP id l13mr21834527wrr.282.1591607215813;
-        Mon, 08 Jun 2020 02:06:55 -0700 (PDT)
+        bh=UmRvg9WdMz9PqUAVOc9PSpLim4YbFsqD5z6Ld3A8lwc=;
+        b=oUv5qbXiDeyJhIjSVGbgyV6pgzvZjfnyTLpQHfVr9HSxNIq4oc0JAltn6LHYR7HUfu
+         M8cqw5GKuo3dUZFbOUaTW3P91PoqJJZkuUQFP2yOIlIW2T/lc91B8fSOOQ4jCWS3Qr6p
+         l2TQT3sRF406fpIKnFVooWvbstmXk2IVsG4krecTacXX3kfTYQQXZAe4tk7xsT+hAR3A
+         m952jdYCtneyxCAEQchNjoZaSug9rMTqD44S93InEWecG+CQhOiwly4+IJubXpFPUTim
+         ckC2cCQ8i1ZDMNHDNEhNWyTHvaAwvr0WJjraQR4J3mVbxtTO0Ze7GReL7WtacEbfwYVU
+         Ypng==
+X-Gm-Message-State: AOAM531rwTlZ4Nj3hFn731hsBJicxystvII2nFwqo8iggWsU5d58Ra9x
+        L/4QjI9ve5ujls2SGs8mlK1UptrdLRQ=
+X-Google-Smtp-Source: ABdhPJzSL1Z85pYXXJ3nu4TQ0YXX0lmRLCqHvSq0k3owGT/rIKF0BP4FySEhqOulzUvPqK/WazzcTA==
+X-Received: by 2002:adf:8b55:: with SMTP id v21mr23434530wra.187.1591607217829;
+        Mon, 08 Jun 2020 02:06:57 -0700 (PDT)
 Received: from localhost.localdomain (2a01cb000f89b400cc883edd44ec4519.ipv6.abo.wanadoo.fr. [2a01:cb00:f89:b400:cc88:3edd:44ec:4519])
-        by smtp.gmail.com with ESMTPSA id f9sm15378727wrf.74.2020.06.08.02.06.55
+        by smtp.gmail.com with ESMTPSA id f9sm15378727wrf.74.2020.06.08.02.06.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 02:06:55 -0700 (PDT)
+        Mon, 08 Jun 2020 02:06:57 -0700 (PDT)
 From:   Gary Bisson <gary.bisson@boundarydevices.com>
 To:     linux-gpio@vger.kernel.org
 Cc:     Gary Bisson <gary.bisson@boundarydevices.com>
-Subject: [libgpiod][PATCH 1/3] core: add missing header inclusion
-Date:   Mon,  8 Jun 2020 11:06:50 +0200
-Message-Id: <20200608090652.805516-2-gary.bisson@boundarydevices.com>
+Subject: [libgpiod][PATCH 3/3] Android.bp: initial addition
+Date:   Mon,  8 Jun 2020 11:06:52 +0200
+Message-Id: <20200608090652.805516-4-gary.bisson@boundarydevices.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200608090652.805516-1-gary.bisson@boundarydevices.com>
 References: <20200608090652.805516-1-gary.bisson@boundarydevices.com>
@@ -73,27 +73,126 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Otherwise throwing the following error:
-lib/core.c:102:9: error: implicit declaration of function 'basename' is
-invalid in C99
+- Defines both shared and static versions of libgpiod
+- Defines all the libs/tools as vendor (installed in /vendor)
 
 Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
 ---
- lib/core.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/lib/core.c b/lib/core.c
-index f704b44..b71a284 100644
---- a/lib/core.c
-+++ b/lib/core.c
-@@ -10,6 +10,7 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <gpiod.h>
-+#include <libgen.h>
- #include <limits.h>
- #include <linux/gpio.h>
- #include <poll.h>
+One thing that isn't ideal here is to set GPIOD_VERSION_STR manually,
+that will require to keep track of it for all versions.
+
+Not sure if there's a better way to provide that value to Android.bp.
+
+Regards,
+Gary
+---
+ Android.bp | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Android.bp
+
+diff --git a/Android.bp b/Android.bp
+new file mode 100644
+index 0000000..6c437df
+--- /dev/null
++++ b/Android.bp
+@@ -0,0 +1,95 @@
++cc_library_shared {
++    name: "libgpiod",
++    vendor: true,
++    srcs: [
++        "lib/core.c",
++        "lib/ctxless.c",
++        "lib/helpers.c",
++        "lib/iter.c",
++        "lib/misc.c",
++    ],
++    cflags: ["-Werror", "-Wno-macro-redefined", "-DGPIOD_VERSION_STR=\"1.6-devel\""],
++    export_include_dirs: ["include"],
++    local_include_dirs: ["include"],
++}
++
++cc_library_static {
++    name: "libgpiod_static",
++    vendor: true,
++    srcs: [
++        "lib/core.c",
++        "lib/ctxless.c",
++        "lib/helpers.c",
++        "lib/iter.c",
++        "lib/misc.c",
++    ],
++    cflags: ["-Werror", "-Wno-macro-redefined", "-DGPIOD_VERSION_STR=\"1.6-devel\""],
++    export_include_dirs: ["include"],
++    local_include_dirs: ["include"],
++}
++
++cc_binary {
++    name: "gpiodetect",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpiodetect.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
++
++cc_binary {
++    name: "gpiofind",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpiofind.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
++
++cc_binary {
++    name: "gpioget",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpioget.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
++
++cc_binary {
++    name: "gpioinfo",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpioinfo.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
++
++cc_binary {
++    name: "gpiomon",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpiomon.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
++
++cc_binary {
++    name: "gpioset",
++    vendor: true,
++    srcs: [
++        "tools/tools-common.c",
++        "tools/gpioset.c",
++    ],
++    shared_libs: ["libgpiod"],
++    cflags: ["-Werror"],
++}
 -- 
 2.26.2
 
