@@ -2,143 +2,123 @@ Return-Path: <SRS0=onMH=7V=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6577C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB06C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90EC32076A
-	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9EED20656
+	for <linux-gpio@archiver.kernel.org>; Mon,  8 Jun 2020 14:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZfPL8w5"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tC+NAthJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbgFHOYT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 8 Jun 2020 10:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbgFHOYS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 10:24:18 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A91C08C5C3
-        for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2020 07:24:18 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id l11so17634894wru.0
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2020 07:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=fIhwy13PVaO5F8p6kg+GqvngU7Ke/x9Dg12+TRbhC9I=;
-        b=CZfPL8w5fOBsBIx+z/oomYpe+rnOnlu08HlfeLxZxWn4DvD8EV1jvidfa2G6obPNXw
-         wcLLWFtkhMqdqFwD6ucKN3p6mzAsg7HanEknR4Sla4G+4jcKzr/fpU1V57aBb/7AYoPw
-         a+qTL3H1zDbkTzdEZSwS+EOshh5JBGPjQ8vruPaNy4+5DBNBZZqQkTMEdK4IxTK5NACU
-         GGIM6BOSbSswTePVvH+wIByXOpNUEHdrrZU7+rCQFlWfiin1e/xF6lbhT4X8YtTuAVEZ
-         Fa5yd03P+4vcSrJt3xaJlQ1FH4O1ETJFfjANj9H1Awd+M9I8eobjJwDd948h9av12Eua
-         cTdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=fIhwy13PVaO5F8p6kg+GqvngU7Ke/x9Dg12+TRbhC9I=;
-        b=OB8UOLpSjog8NckwJ7HlpNz2PUH63AapFAHfNyvcmNYDD+WUw3oVz/DyRNOo687Bd8
-         LprSalMORy206e4HuDGL9WDy4HXroz2WC+2jCbqWz9SXnd95FVOsJ7pXzpzT4GmfMWfX
-         519ErGxw6hWKhfdflb86JkahK4FliR7TtUpUY4Gedj1DL3WZ39v5hZo9Gt++T8n8NrLM
-         6qBJE5Z2XGBs7iv0CrpopICYIvi5jxtwChT3nFrCLfYfF9yWTLVNYBR4yrbIGKQtfH2G
-         nBkqSltSmKzn1/3JKW3LSFGE9xUy4G59qnlMns23W7F8A2amYlxlnJTkLFA+5iols14e
-         jZnw==
-X-Gm-Message-State: AOAM532JrYq4488iEihHhdhZpa+CvSSqTF1bub4T1tEX3wQeWYiNH/6H
-        IA7Ju6TVGpdMmuTgnMPaa9xnKA==
-X-Google-Smtp-Source: ABdhPJweehatGIr1BA4m4b/1jQsQ1TEclLtHNU4cdgilO6fq2rqBkF/6wa0DUib7fHXp5oiaj3ZdVg==
-X-Received: by 2002:adf:f208:: with SMTP id p8mr21462928wro.388.1591626257005;
-        Mon, 08 Jun 2020 07:24:17 -0700 (PDT)
-Received: from dell ([95.147.198.92])
-        by smtp.gmail.com with ESMTPSA id o15sm22497715wmm.31.2020.06.08.07.24.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2020 07:24:15 -0700 (PDT)
-Date:   Mon, 8 Jun 2020 15:24:13 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 03/16] mfd: mfd-core: match device tree node against
- reg property
-Message-ID: <20200608142413.GA4106@dell>
-References: <20200423174543.17161-1-michael@walle.cc>
- <20200423174543.17161-4-michael@walle.cc>
- <67e90dafd67c285158c2c6f67f92edb7@walle.cc>
- <20200515102848.GH271301@dell>
- <159e68b4ce53630ef906b2fcbca925bd@walle.cc>
+        id S1730055AbgFHOpC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 8 Jun 2020 10:45:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40472 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729958AbgFHOpB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2020 10:45:01 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058Ed6W4177254;
+        Mon, 8 Jun 2020 14:44:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Ng2DZMEEFt6us9y/d3tf/ej/fd16SJO3Qp6cqK8UaYc=;
+ b=tC+NAthJIAF0mA6zj9xNkSMsqtInLknvWz924TxVGh2xjttS9EoeY8odc6MjhgmI3PnO
+ oYkfvsRHXbvrthnpTCFKMB6Uot8TL2n/HPmfw33W0Yl98qYJaA42A5k/yBG1xE5ehRxY
+ FeZIBYa+/4dEizdtvWN0ig25dK6CkkB4utcQET6+iohd0s8K83dKqMqEordYAbCXzI8e
+ Hur/RoEYfOw2NhqXJ9xCV66rOI2eBXu0HN5JOz45lBz8zCFgZPpPE+pjovMT094otH+P
+ wM4O1c2AdyQJJKipjJtRfe2X9WNrB/npxG5oLzeFoeDp3qWBOzmdjckVlwy4EZuepBnx 7Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 31g3smq5w5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 08 Jun 2020 14:44:42 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 058EhmRw013233;
+        Mon, 8 Jun 2020 14:44:41 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 31gmqmag1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 08 Jun 2020 14:44:41 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 058EidNZ009474;
+        Mon, 8 Jun 2020 14:44:39 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 08 Jun 2020 07:44:38 -0700
+Date:   Mon, 8 Jun 2020 17:44:31 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     BOUGH CHEN <haibo.chen@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH] Revert "pinctrl: freescale: imx: Use 'devm_of_iomap()'
+ to avoid a resource leak in case of error in 'imx_pinctrl_probe()'"
+Message-ID: <20200608144431.GS22511@kadam>
+References: <1591610401-12590-1-git-send-email-haibo.chen@nxp.com>
+ <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <159e68b4ce53630ef906b2fcbca925bd@walle.cc>
+In-Reply-To: <AM6PR04MB496691DDA4447CD5624EE6E680850@AM6PR04MB4966.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9645 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006080110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9645 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 cotscore=-2147483648 suspectscore=0
+ spamscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006080109
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 25 May 2020, Michael Walle wrote:
-> Am 2020-05-15 12:28, schrieb Lee Jones:
-> > On Thu, 30 Apr 2020, Michael Walle wrote:
+On Mon, Jun 08, 2020 at 02:06:35PM +0000, Aisheng Dong wrote:
+> > From: haibo.chen@nxp.com <haibo.chen@nxp.com>
+> > Sent: Monday, June 8, 2020 6:00 PM
 > > 
-> > > Hi Lee,
-> > > 
-> > > Am 2020-04-23 19:45, schrieb Michael Walle:
-> > > > There might be multiple children with the device tree compatible, for
-> > > > example if a MFD has multiple instances of the same function. In this
-> > > > case only the first is matched and the other children get a wrong
-> > > > of_node reference.
-> > > > Add a new option to match also against the unit address of the child
-> > > > node. Additonally, a new helper OF_MFD_CELL_REG is added.
-
-[...]
-
-> > > > diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-> > > > index d01d1299e49d..c2c0ad6b14f3 100644
-> > > > --- a/include/linux/mfd/core.h
-> > > > +++ b/include/linux/mfd/core.h
-> > > > @@ -13,8 +13,11 @@
-> > > >  #include <linux/platform_device.h>
-> > > >
-> > > >  #define MFD_RES_SIZE(arr) (sizeof(arr) / sizeof(struct resource))
-> > > > +#define MFD_OF_REG_VALID	BIT(31)
+> > This patch block system booting, find on imx7d-sdb board.
+> > From the dts we can see, iomux and iomux_lpsr share the memory region
+> > [0x30330000-0x3033ffff], so will trigger the following issue:
 > > 
-> > What about 64bit platforms?
+> > [    0.179561] imx7d-pinctrl 302c0000.iomuxc-lpsr: initialized IMX pinctrl
+> > driver
+> > [    0.191742] imx7d-pinctrl 30330000.pinctrl: can't request region for
+> > resource [mem 0x30330000-0x3033ffff]
+> > [    0.191842] imx7d-pinctrl: probe of 30330000.pinctrl failed with error -16
+> > 
+> > This reverts commit ba403242615c2c99e27af7984b1650771a2cc2c9.
 > 
-> The idea was to have this as a logical number. I.e. for now you may only
-> have one subdevice per unique compatible string. In fact, if you have a
-> look at the ab8500.c, there are multiple "stericsson,ab8500-pwm"
-> subdevices. But there is only one DT node for all three of it. I guess
-> this works as long as you don't use phandles to reference the pwm node
-> in the device tree. Or you don't want to use device tree properties
-> per subdevice (for example the "timeout-sec" of a watchdog device).
+> Better add your sign-off.
+> Otherwise:
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> 
+> Maybe you or Christophe could resubmit another proper fix for the original issue.
 
-This is not a good example, as the "stericsson,ab8500-pwm" is
-legitimate.  Here we are registering 3 potential devices, but only
-instantiating 1 of them.
+I'm really sorry about that.  This was largely my fault.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I still don't understand how commit ba403242615c caused a problem.
+
+It sounds like in the original code ipctl->input_sel_base was released
+somehow?  I do a `git grep input_sel_base` and it doesn't show anything.
+What am I missing?
+
+regards,
+dan carpenter
+
