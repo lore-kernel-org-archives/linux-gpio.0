@@ -2,58 +2,84 @@ Return-Path: <SRS0=U95Q=7W=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6D4C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 18:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F43C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 18:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2366C2074B
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 18:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C4012067B
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 18:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388245AbgFISGi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Jun 2020 14:06:38 -0400
-Received: from muru.com ([72.249.23.125]:57496 "EHLO muru.com"
+        id S2389161AbgFISY4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Jun 2020 14:24:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:29300 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730160AbgFISGg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jun 2020 14:06:36 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 7D1E68088;
-        Tue,  9 Jun 2020 18:07:26 +0000 (UTC)
-Date:   Tue, 9 Jun 2020 11:06:31 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Drew Fustini <drew@beagleboard.org>
-Cc:     Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@beagleboard.org>
-Subject: Re: [PATCH v2] pinctrl-single: fix pcs_parse_pinconf() return value
-Message-ID: <20200609180631.GS37466@atomide.com>
-References: <20200608125143.GA2789203@x1>
+        id S1731989AbgFISYx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 9 Jun 2020 14:24:53 -0400
+IronPort-SDR: 9cAfCwWdkaXCrdrAGUuMqlgTvZdwF4b+113l6df3ofxuILBNZPsK4Q2U7BbYHLaSDJNd7mD+zu
+ daX5zAkZL3DQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2020 11:24:52 -0700
+IronPort-SDR: EhYzjBWz4BTPFgwtNSe7EAuky5P1b73WwD6kIrkkGPX9Olky+GW0xQr0Ow9OjgD+vtD5M7X5hM
+ a3pfMudlBM8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,493,1583222400"; 
+   d="scan'208";a="274692801"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 09 Jun 2020 11:24:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id DDB214B9; Tue,  9 Jun 2020 21:24:49 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/6] pinctrl: intel: Allow drivers to define total amount of IRQs per community
+Date:   Tue,  9 Jun 2020 21:24:47 +0300
+Message-Id: <20200609182449.45813-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.27.0.rc2
+In-Reply-To: <20200609182449.45813-1-andriy.shevchenko@linux.intel.com>
+References: <20200609182449.45813-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608125143.GA2789203@x1>
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-* Drew Fustini <drew@beagleboard.org> [200608 12:52]:
-> This patch causes pcs_parse_pinconf() to return -ENOTSUPP when no
-> pinctrl_map is added.  The current behavior is to return 0 when
-> !PCS_HAS_PINCONF or !nconfs.  Thus pcs_parse_one_pinctrl_entry()
-> incorrectly assumes that a map was added and sets num_maps = 2.
-...
+Some of the pin control devices may not be capable to generate IRQ
+per each pin in the community. Allow individual drivers to define
+total amount of IRQs per community.
 
-> Fixes: 9dddb4df90d1 ("pinctrl: single: support generic pinconf")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-It would be good to get an ack/tested-by from Haojian for this.
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index cc78c483518f..0f01ef3fdfdd 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -103,6 +103,7 @@ enum {
+  * @gpps: Pad groups if the controller has variable size pad groups
+  * @ngpps: Number of pad groups in this community
+  * @pad_map: Optional non-linear mapping of the pads
++ * @nirqs: Optional total number of IRQs this community can generate
+  * @regs: Community specific common registers (reserved for core driver)
+  * @pad_regs: Community specific pad registers (reserved for core driver)
+  *
+@@ -127,6 +128,7 @@ struct intel_community {
+ 	const struct intel_padgroup *gpps;
+ 	size_t ngpps;
+ 	const unsigned int *pad_map;
++	unsigned short nirqs;
+ 
+ 	/* Reserved for the core driver */
+ 	void __iomem *regs;
+-- 
+2.27.0.rc2
 
-The patch looks right to me:
-
-Acked-by: Tony Lindgren <tony@atomide.com>
