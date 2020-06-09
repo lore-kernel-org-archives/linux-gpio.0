@@ -2,101 +2,220 @@ Return-Path: <SRS0=U95Q=7W=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3115C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 14:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B892C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 14:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 800FD20734
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 14:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346D52078C
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 14:38:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="cEH2mdWX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbgFIOdC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Jun 2020 10:33:02 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49112 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730289AbgFIOcR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jun 2020 10:32:17 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A879B1A13DB;
-        Tue,  9 Jun 2020 16:32:14 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2866E1A13DE;
-        Tue,  9 Jun 2020 16:32:10 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 927EC402F0;
-        Tue,  9 Jun 2020 22:32:04 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 2/9] pinctrl: imx: Support building i.MX pinctrl driver as module
-Date:   Tue,  9 Jun 2020 22:21:18 +0800
-Message-Id: <1591712485-20609-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1591712485-20609-1-git-send-email-Anson.Huang@nxp.com>
-References: <1591712485-20609-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730487AbgFIOih (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Jun 2020 10:38:37 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:36211 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbgFIOig (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jun 2020 10:38:36 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 1B4C422F2D;
+        Tue,  9 Jun 2020 16:38:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1591713512;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3ZPJRQPjyIuPfU5SHFsD+L8Q03R3+eZsQvqJ5K0dqDQ=;
+        b=cEH2mdWXJgiXk5AYmdHK2ORPPLW0kmX5gHUPbeGjN4COswBGwClKjt2xvIVY37IpTQHWrV
+        5w99q1qD+cl6dn+sw3zbCeKnqavpkSE/lERuAHNegK905kSkxRCahqrr4BxkdtV93EcvCO
+        sDDLQ2q+b/rGGOqSyyduIDIYa9RDBo8=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 09 Jun 2020 16:38:31 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        david.m.ertman@intel.com, shiraz.saleem@intel.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K?= =?UTF-8?Q?=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 02/11] mfd: Add support for Kontron sl28cpld management
+ controller
+In-Reply-To: <20200609064735.GH4106@dell>
+References: <20200605065709.GD3714@dell>
+ <20200605105026.GC5413@sirena.org.uk>
+ <c5632bfab3956265e90fc2fb6c0b3cae@walle.cc>
+ <20200606114645.GB2055@sirena.org.uk>
+ <dc052a5c77171014ecc465b1da8b7ef8@walle.cc> <20200608082827.GB3567@dell>
+ <CAHp75VdiH=J-ovCdh1RFJDW_bJM8=pbXRaHmB691GLb-5oBmYQ@mail.gmail.com>
+ <7d7feb374cbf5a587dc1ce65fc3ad672@walle.cc> <20200608185651.GD4106@dell>
+ <32231f26f7028d62aeda8fdb3364faf1@walle.cc> <20200609064735.GH4106@dell>
+User-Agent: Roundcube Webmail/1.4.4
+Message-ID: <32287ac0488f7cbd5a7d1259c284e554@walle.cc>
+X-Sender: michael@walle.cc
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Export necessary functions to support building i.MX common pinctrl
-driver and its user to be built as module.
+Am 2020-06-09 08:47, schrieb Lee Jones:
+> On Mon, 08 Jun 2020, Michael Walle wrote:
+> 
+>> Am 2020-06-08 20:56, schrieb Lee Jones:
+>> > On Mon, 08 Jun 2020, Michael Walle wrote:
+>> >
+>> > > Am 2020-06-08 12:02, schrieb Andy Shevchenko:
+>> > > > +Cc: some Intel people WRT our internal discussion about similar
+>> > > > problem and solutions.
+>> > > >
+>> > > > On Mon, Jun 8, 2020 at 11:30 AM Lee Jones <lee.jones@linaro.org> wrote:
+>> > > > > On Sat, 06 Jun 2020, Michael Walle wrote:
+>> > > > > > Am 2020-06-06 13:46, schrieb Mark Brown:
+>> > > > > > > On Fri, Jun 05, 2020 at 10:07:36PM +0200, Michael Walle wrote:
+>> > > > > > > > Am 2020-06-05 12:50, schrieb Mark Brown:
+>> > > >
+>> > > > ...
+>> > > >
+>> > > > > Right.  I'm suggesting a means to extrapolate complex shared and
+>> > > > > sometimes intertwined batches of register sets to be consumed by
+>> > > > > multiple (sub-)devices spanning different subsystems.
+>> > > > >
+>> > > > > Actually scrap that.  The most common case I see is a single Regmap
+>> > > > > covering all child-devices.
+>> > > >
+>> > > > Yes, because often we need a synchronization across the entire address
+>> > > > space of the (parent) device in question.
+>> > > >
+>> > > > >  It would be great if there was a way in
+>> > > > > which we could make an assumption that the entire register address
+>> > > > > space for a 'tagged' (MFD) device is to be shared (via Regmap) between
+>> > > > > each of the devices described by its child-nodes.  Probably by picking
+>> > > > > up on the 'simple-mfd' compatible string in the first instance.
+>> > > > >
+>> > > > > Rob, is the above something you would contemplate?
+>> > > > >
+>> > > > > Michael, do your register addresses overlap i.e. are they intermingled
+>> > > > > with one another?  Do multiple child devices need access to the same
+>> > > > > registers i.e. are they shared?
+>> > >
+>> > > No they don't overlap, expect for maybe the version register, which is
+>> > > just there once and not per function block.
+>> >
+>> > Then what's stopping you having each device Regmap their own space?
+>> 
+>> Because its just one I2C device, AFAIK thats not possible, right?
+> 
+> Not sure what (if any) the restrictions are.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V2:
-	- add "depends on OF" to fix build error when using x86 randconfig.
----
- drivers/pinctrl/freescale/Kconfig       | 3 ++-
- drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+You can only have one device per I2C address. Therefore, I need one 
+device
+which is enumerated by the I2C bus, which then enumerates its 
+sub-devices.
+I thought this was one of the use cases for MFD. (Regardless of how a
+sub-device access its registers). So even in the "simple-regmap" case 
+this
+would need to be an i2c device.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index f6c00d5..3383fc2 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config PINCTRL_IMX
--	bool
-+	tristate "IMX pinctrl driver"
-+	depends on OF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GENERIC_PINCONF
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index cb7e0f0..116d808 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -11,6 +11,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_address.h>
-@@ -878,6 +879,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 
- 	return pinctrl_enable(ipctl->pctl);
- }
-+EXPORT_SYMBOL_GPL(imx_pinctrl_probe);
- 
- static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
- {
-@@ -897,3 +899,5 @@ const struct dev_pm_ops imx_pinctrl_pm_ops = {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
- 					imx_pinctrl_resume)
- };
-+EXPORT_SYMBOL_GPL(imx_pinctrl_pm_ops);
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+E.g.
 
+&i2cbus {
+   mfd-device@10 {
+     compatible = "simple-regmap", "simple-mfd";
+     reg = <10>;
+     regmap,reg-bits = <8>;
+     regmap,val-bits = <8>;
+     sub-device@0 {
+       compatible = "vendor,sub-device0";
+       reg = <0>;
+     };
+     ...
+};
+
+Or if you just want the regmap:
+
+&soc {
+   regmap: regmap@fff0000 {
+     compatible = "simple-regmap";
+     reg = <0xfff0000>;
+     regmap,reg-bits = <16>;
+     regmap,val-bits = <32>;
+   };
+
+   enet-which-needs-syscon-too@1000000 {
+     vendor,ctrl-regmap = <&regmap>;
+   };
+};
+
+Similar to the current syscon (which is MMIO only..).
+
+-michael
+
+> 
+> I can't think of any reasons why not, off the top of my head.
+> 
+> Does Regmap only deal with shared accesses from multiple devices
+> accessing a single register map, or can it also handle multiple
+> devices communicating over a single I2C channel?
+> 
+> One for Mark perhaps.
+> 
+>> > The issues I wish to resolve using 'simple-mfd' are when sub-devices
+>> > register maps overlap and intertwine.
+> 
+> [...]
+> 
+>> > > > > What do these bits configure?
+>> > >
+>> > > - hardware strappings which have to be there before the board powers
+>> > > up,
+>> > >   like clocking mode for different SerDes settings
+>> > > - "keep-in-reset" bits for onboard peripherals if you want to save
+>> > > power
+>> > > - disable watchdog bits (there is a watchdog which is active right
+>> > > from
+>> > >   the start and supervises the bootloader start and switches to
+>> > > failsafe
+>> > >   mode if it wasn't successfully started)
+>> > > - special boot modes, like eMMC, etc.
+>> > >
+>> > > Think of it as a 16bit configuration word.
+>> >
+>> > And you wish for users to be able to view these at run-time?
+>> 
+>> And esp. change them.
+>> 
+>> > Can they adapt any of them on-the-fly or will the be RO?
+>> 
+>> They are R/W but only will only affect the board behavior after a 
+>> reset.
+> 
+> I see.  Makes sense.  This is board controller territory.  Perhaps
+> suitable for inclusion into drivers/soc or drivers/platform.
