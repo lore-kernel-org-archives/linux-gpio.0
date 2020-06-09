@@ -2,105 +2,80 @@ Return-Path: <SRS0=U95Q=7W=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4BFC433E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 12:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04978C433DF
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 12:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD037207C3
-	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 12:40:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CA220823
+	for <linux-gpio@archiver.kernel.org>; Tue,  9 Jun 2020 12:48:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RyP9JX2M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbgFIMkC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 9 Jun 2020 08:40:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:51609 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbgFIMkA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jun 2020 08:40:00 -0400
-IronPort-SDR: nSjuFbcSsFyxpvJMS+3ux9ksK2kSv31qnRLbpqyjBtADwQ6NNwU255Ly73jVjrKVgOCjXe2xeh
- azGggsepBpVQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2020 05:39:59 -0700
-IronPort-SDR: 6UdEfbdP4pMrhUnc1t8skUC9jkG4V7po3UjrAA0aoIpSyiEp2ss3TWdV5Qstu2B1GywRo8GFmk
- XEb4eUTLoXnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,492,1583222400"; 
-   d="scan'208";a="379725439"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Jun 2020 05:39:57 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jidXs-00BtqA-40; Tue, 09 Jun 2020 15:40:00 +0300
-Date:   Tue, 9 Jun 2020 15:40:00 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Serge Semin <fancer.lancer@gmail.com>, linux-gpio@vger.kernel.org,
+        id S1727048AbgFIMr4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 9 Jun 2020 08:47:56 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54182 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728082AbgFIMqX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jun 2020 08:46:23 -0400
+Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3F19D1227;
+        Tue,  9 Jun 2020 14:46:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1591706778;
+        bh=7whrIeN77UWRmsTr1S+zsP7M0XhqPGZPPuqIh/7NIH0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RyP9JX2MWv5mksB6QTdQ5K3EngDF2sSHwmOzAq+oRaA5vcfl53GHpfar2IbXC9lHx
+         FbYFXeOJO/xriftHoBcRIKlK4HuZ+NBv++xrH2kP71jrPdspofYEwtmhgWPocS/Qkg
+         xA0gRZTcyT3x+6oGZR3prnmqLH9YLCudeFX95FY4=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v1 3/6] mfd: core: Propagate software node group to the
- sub devices
-Message-ID: <20200609124000.GO2428291@smile.fi.intel.com>
-References: <20200608134300.76091-1-andriy.shevchenko@linux.intel.com>
- <20200608134300.76091-4-andriy.shevchenko@linux.intel.com>
- <20200608192524.GF4106@dell>
+        Jiri Kosina <trivial@kernel.org>,
+        linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 03/17] drivers: gpio: Fix trivial spelling
+Date:   Tue,  9 Jun 2020 13:45:56 +0100
+Message-Id: <20200609124610.3445662-4-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608192524.GF4106@dell>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 08:25:24PM +0100, Lee Jones wrote:
-> On Mon, 08 Jun 2020, Andy Shevchenko wrote:
-> 
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > 
-> > When ever device properties are supplied for a sub device, a software node
-> > (fwnode) is actually created and then associated with that device. By allowing
-> > the drivers to supply the complete software node group instead of just the
-> > properties in it, the drivers can take advantage of the other features the
-> > software nodes have on top of supplying the device properties.
-> > 
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  drivers/mfd/mfd-core.c   | 31 +++++++++++++++++++++++++++----
-> >  include/linux/mfd/core.h |  3 +++
-> >  2 files changed, 30 insertions(+), 4 deletions(-)
-> 
-> I'm not sure a change to the API is justified presently (same does go
-> for 'properties' really, but as it was only a couple of lines, it
-> didn't seem too intrusive).
+The word 'descriptor' is misspelled throughout the tree.
 
-This is better and comprehensive API, but I heard you.
+Fix it up accordingly:
+    decriptors -> descriptors
 
-> My recommendation is to handle this in-house (i.e. locally in-driver)
-> for now.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/gpio/TODO | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think you understand that this is not gonna work (we need to attach fwnode
-to the child device before it's registration.
-
-> When (if) more users adopt the practice, then we should
-> consider to draw down on line numbers and repetition and make it part
-> of the API.
-
-I briefly looked at the current state of affairs and found that properties are
-used only for MFD LPSS driver. Would the conversion of that driver to swnodes
-work for you?
-
-Note, the long prospective is to get rid of platform_add_properties() API
-completely.
-
+diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
+index b989c9352da2..e560e45e84f8 100644
+--- a/drivers/gpio/TODO
++++ b/drivers/gpio/TODO
+@@ -5,7 +5,7 @@ subsystem.
+ GPIO descriptors
+ 
+ Starting with commit 79a9becda894 the GPIO subsystem embarked on a journey
+-to move away from the global GPIO numberspace and toward a decriptor-based
++to move away from the global GPIO numberspace and toward a descriptor-based
+ approach. This means that GPIO consumers, drivers and machine descriptions
+ ideally have no use or idea of the global GPIO numberspace that has/was
+ used in the inception of the GPIO subsystem.
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
