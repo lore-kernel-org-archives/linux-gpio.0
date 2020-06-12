@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7240DC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F33C433DF
 	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5239E20835
+	by mail.kernel.org (Postfix) with ESMTP id 7031A20842
 	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbgFLOuM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Jun 2020 10:50:12 -0400
-Received: from mga02.intel.com ([134.134.136.20]:34514 "EHLO mga02.intel.com"
+        id S1726296AbgFLOuN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Jun 2020 10:50:13 -0400
+Received: from mga07.intel.com ([134.134.136.100]:5661 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgFLOuL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726089AbgFLOuL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 12 Jun 2020 10:50:11 -0400
-IronPort-SDR: GKENu66X51azRWqxWNF2wHsFaU/ITe30x+VQj+dWoteVc1huJOPtF1ORxpcuNmsRwJyNN68jiP
- MrPipAxfn0/Q==
+IronPort-SDR: X9w6q/f6zaRs5LfzZuYVCk2mAAH4mkfrjzlUV7Ky5C1YjBn/CR7CSWiOvlmIQluBjxFtpzCDpN
+ dnuR/uo8aMtw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2020 07:50:11 -0700
-IronPort-SDR: qnYl8jfapr6TV9NvUPGvx3bNRDLqDX+FqtT0R83jq6UbE7u0QIsuZP/TurJ6FjnerrHDV3uTGH
- cAGvpNZ/OKpg==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2020 07:50:11 -0700
+IronPort-SDR: O+w8GD550IQEJje15QuzD1htFXiDQjpW6EViGIHCYL9dWGAsPPiGLZ/HsGyQFofCoI7njlt42n
+ AD9AFtsFOf2w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,503,1583222400"; 
-   d="scan'208";a="259896457"
+   d="scan'208";a="260847915"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jun 2020 07:50:10 -0700
+  by orsmga007.jf.intel.com with ESMTP; 12 Jun 2020 07:50:10 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 4398487F; Fri, 12 Jun 2020 17:50:07 +0300 (EEST)
+        id 358586D6; Fri, 12 Jun 2020 17:50:07 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 11/13] pinctrl: lynxpoint: Introduce helpers to enable or disable input
-Date:   Fri, 12 Jun 2020 17:50:04 +0300
-Message-Id: <20200612145006.9145-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 09/13] pinctrl: intel: Make use of for_each_requested_gpio()
+Date:   Fri, 12 Jun 2020 17:50:02 +0300
+Message-Id: <20200612145006.9145-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.27.0.rc2
 In-Reply-To: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
 References: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
@@ -51,70 +51,55 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce couple of helpers to enable or disable input. i.e.
-lp_gpio_enable_input() and lp_gpio_disable_input().
+Make use of for_each_requested_gpio() instead of home grown analogue.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index 36cc45c013fb..6f1641833665 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -386,6 +386,16 @@ static int lp_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static void lp_gpio_enable_input(void __iomem *reg)
-+{
-+	iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
-+}
-+
-+static void lp_gpio_disable_input(void __iomem *reg)
-+{
-+	iowrite32(ioread32(reg) | GPINDIS_BIT, reg);
-+}
-+
- static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
- 				  struct pinctrl_gpio_range *range,
- 				  unsigned int pin)
-@@ -411,7 +421,7 @@ static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 35c88fcb75a2..74f0157c99fb 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1628,19 +1628,6 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
  	}
- 
- 	/* Enable input sensing */
--	iowrite32(ioread32(conf2) & ~GPINDIS_BIT, conf2);
-+	lp_gpio_enable_input(conf2);
- 
- 	raw_spin_unlock_irqrestore(&lg->lock, flags);
- 
-@@ -429,7 +439,7 @@ static void lp_gpio_disable_free(struct pinctrl_dev *pctldev,
- 	raw_spin_lock_irqsave(&lg->lock, flags);
- 
- 	/* Disable input sensing */
--	iowrite32(ioread32(conf2) | GPINDIS_BIT, conf2);
-+	lp_gpio_disable_input(conf2);
- 
- 	raw_spin_unlock_irqrestore(&lg->lock, flags);
- 
-@@ -920,14 +930,11 @@ static int lp_gpio_resume(struct device *dev)
- {
- 	struct intel_pinctrl *lg = dev_get_drvdata(dev);
- 	struct gpio_chip *chip = &lg->chip;
--	void __iomem *reg;
- 	int i;
- 
- 	/* on some hardware suspend clears input sensing, re-enable it here */
--	for_each_requested_gpio(chip, i, 0, chip->ngpio) {
--		reg = lp_gpio_reg(chip, i, LP_CONFIG2);
--		iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
--	}
-+	for_each_requested_gpio(chip, i, 0, chip->ngpio)
-+		lp_gpio_enable_input(lp_gpio_reg(&lg->chip, i, LP_CONFIG2));
- 
- 	return 0;
  }
+ 
+-static u32
+-intel_gpio_is_requested(struct gpio_chip *chip, int base, unsigned int size)
+-{
+-	u32 requested = 0;
+-	unsigned int i;
+-
+-	for (i = 0; i < size; i++)
+-		if (gpiochip_is_requested(chip, base + i))
+-			requested |= BIT(i);
+-
+-	return requested;
+-}
+-
+ static bool intel_gpio_update_reg(void __iomem *reg, u32 mask, u32 value)
+ {
+ 	u32 curr, updated;
+@@ -1661,12 +1648,15 @@ static void intel_restore_hostown(struct intel_pinctrl *pctrl, unsigned int c,
+ 	const struct intel_community *community = &pctrl->communities[c];
+ 	const struct intel_padgroup *padgrp = &community->gpps[gpp];
+ 	struct device *dev = pctrl->dev;
+-	u32 requested;
++	u32 requested = 0;
++	unsigned int i;
+ 
+ 	if (padgrp->gpio_base == INTEL_GPIO_BASE_NOMAP)
+ 		return;
+ 
+-	requested = intel_gpio_is_requested(&pctrl->chip, padgrp->gpio_base, padgrp->size);
++	for_each_requested_gpio(&pctrl->chip, i, padgrp->gpio_base, padgrp->size)
++		requested |= BIT(i);
++
+ 	if (!intel_gpio_update_reg(base + gpp * 4, requested, saved))
+ 		return;
+ 
 -- 
 2.27.0.rc2
 
