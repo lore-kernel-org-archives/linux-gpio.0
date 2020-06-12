@@ -2,119 +2,91 @@ Return-Path: <SRS0=HMxX=7Z=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C11C433E4
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FA0C433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23C41206A4
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JUrEayeG"
+	by mail.kernel.org (Postfix) with ESMTP id 3E70C2067B
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbgFLOrV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Jun 2020 10:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgFLOrU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2020 10:47:20 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 865FAC03E96F;
-        Fri, 12 Jun 2020 07:47:20 -0700 (PDT)
-Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C38E924F;
-        Fri, 12 Jun 2020 16:47:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591973238;
-        bh=uU2xQmtH42tW6IeH3dGPC0lnUtMW5Hht2lqVT2Xjgz4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JUrEayeG7tbFE0EaqcSKTcecMDVLls8Vl7ypODt5Ph1HOtNgfrQ1Zmg1qSwHLRPqh
-         kgIq1pd3nDQVwWbcFRnWnH049/v3J4k+xQ6QU6ImcPQiwLax0fDUjtIR2/1YEIJQLJ
-         ZEhpP4JcSnMVu8Q4167QaYmuGVgCiu8KZ/WMAlz0=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sakari.ailus@iki.fi
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v10 0/4] MAX9286 GMSL Support (+RDACM20)
-Date:   Fri, 12 Jun 2020 15:47:09 +0100
-Message-Id: <20200612144713.502006-1-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726283AbgFLOuJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Jun 2020 10:50:09 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25095 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726112AbgFLOuJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Jun 2020 10:50:09 -0400
+IronPort-SDR: spPOxYyRrCeBqKqAWH0EdGgTbDj2P/qtxwmXDkJ5FYp7MSJR2Fxz+XS4QS2jzyWPa7erJ3zfzB
+ 7aPwvT1iZrEg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2020 07:50:09 -0700
+IronPort-SDR: C5ZUExerQQ8YfCIidL6Rdr0ZfAFNZ0eUCGAgpLqasWqrrUmpO9IcQDJay/mzsiZy9jgncmFAbC
+ xZPj15AZ6a/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,503,1583222400"; 
+   d="scan'208";a="315147027"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 12 Jun 2020 07:50:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 0FB3F4C5; Fri, 12 Jun 2020 17:50:07 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 04/13] pinctrl: intel: Get rid of redundant 'else' in intel_config_set_debounce()
+Date:   Fri, 12 Jun 2020 17:49:57 +0300
+Message-Id: <20200612145006.9145-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.27.0.rc2
+In-Reply-To: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
+References: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series provides a pair of drivers for the GMSL cameras on the R-Car ADAS
-platforms.
+In a code like
+	if (...) {
+		...
+		goto label;
+	} else {
+		...
+	}
+the 'else' keyword is redundant. Get rid of it for better readability.
 
-These drivers originate from Cogent Embedded, and have been refactored to split
-the MAX9286 away from the RDACM20 drivers which were once very tightly coupled.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The MAX9286 is capable of capturing up to 4 streams simultaneously, and while
-the V4L2-Multiplexed streams series is not available, this works purely on the
-assumption that the receiver will correctly map each of the 4 VCs to separate
-video nodes, as the RCar-VIN does.
-
-This driver along with a camera driver for the RDACM20 and the
-associated platform support for the Renesas R-Car Salvator-X, and the Eagle-V3M
-can be found at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git gmsl/v10
-
-This latest v10 cleans up the DT bindings validation, and several comments
-from Sakari's review in v9.
-
-It has been successfully tested to capture from all 4 inputs simultaneously.
-
-We're very much hoping that we can aim to get the max9286 into the next
-merge-window. Please let us know if there are any issues blocking this.
-
-Jacopo Mondi (2):
-  dt-bindings: media: i2c: Add bindings for IMI RDACM2x
-  media: i2c: Add RDACM20 driver
-
-Kieran Bingham (1):
-  media: i2c: Add MAX9286 driver
-
-Laurent Pinchart (1):
-  dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
-
- .../bindings/media/i2c/imi,rdacm2x-gmsl.yaml  |  159 ++
- .../bindings/media/i2c/maxim,max9286.yaml     |  366 +++++
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- MAINTAINERS                                   |   22 +
- drivers/media/i2c/Kconfig                     |   26 +
- drivers/media/i2c/Makefile                    |    3 +
- drivers/media/i2c/max9271.c                   |  341 +++++
- drivers/media/i2c/max9271.h                   |  224 +++
- drivers/media/i2c/max9286.c                   | 1320 +++++++++++++++++
- drivers/media/i2c/rdacm20.c                   |  667 +++++++++
- 10 files changed, 3130 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
- create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
- create mode 100644 drivers/media/i2c/max9271.c
- create mode 100644 drivers/media/i2c/max9271.h
- create mode 100644 drivers/media/i2c/max9286.c
- create mode 100644 drivers/media/i2c/rdacm20.c
-
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index e05273a00ff2..76b1b899a389 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -719,12 +719,12 @@ static int intel_config_set_debounce(struct intel_pinctrl *pctrl,
+ 		if (v < 3 || v > 15) {
+ 			ret = -EINVAL;
+ 			goto exit_unlock;
+-		} else {
+-			/* Enable glitch filter and debouncer */
+-			value0 |= PADCFG0_PREGFRXSEL;
+-			value2 |= v << PADCFG2_DEBOUNCE_SHIFT;
+-			value2 |= PADCFG2_DEBEN;
+ 		}
++
++		/* Enable glitch filter and debouncer */
++		value0 |= PADCFG0_PREGFRXSEL;
++		value2 |= v << PADCFG2_DEBOUNCE_SHIFT;
++		value2 |= PADCFG2_DEBEN;
+ 	}
+ 
+ 	writel(value0, padcfg0);
 -- 
-2.25.1
+2.27.0.rc2
 
