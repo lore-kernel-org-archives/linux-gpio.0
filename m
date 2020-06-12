@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68396C433E2
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7240DC433E0
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49DE82067B
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5239E20835
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 Jun 2020 14:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgFLOuK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 Jun 2020 10:50:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5661 "EHLO mga07.intel.com"
+        id S1726361AbgFLOuM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 Jun 2020 10:50:12 -0400
+Received: from mga02.intel.com ([134.134.136.20]:34514 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbgFLOuK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 Jun 2020 10:50:10 -0400
-IronPort-SDR: Z4ChiEeRjWbLtb9lhMG0rw1Ys0RlXC92RGK8JVSvdUQjkdTkqINj74jRVKW6OsOYOQus67H2Pd
- y8igiqcHQUyg==
+        id S1726296AbgFLOuL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Jun 2020 10:50:11 -0400
+IronPort-SDR: GKENu66X51azRWqxWNF2wHsFaU/ITe30x+VQj+dWoteVc1huJOPtF1ORxpcuNmsRwJyNN68jiP
+ MrPipAxfn0/Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2020 07:50:09 -0700
-IronPort-SDR: I7rkEr8A1EDuAhtVLfjO3sFkTUAFQ3DdZNxTV3IrtHAhzivtvxGRnPTTFJAZZnCShh/s0ru2Me
- ZXLtzPHFG2jQ==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2020 07:50:11 -0700
+IronPort-SDR: qnYl8jfapr6TV9NvUPGvx3bNRDLqDX+FqtT0R83jq6UbE7u0QIsuZP/TurJ6FjnerrHDV3uTGH
+ cAGvpNZ/OKpg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,503,1583222400"; 
-   d="scan'208";a="260847907"
+   d="scan'208";a="259896457"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 12 Jun 2020 07:50:07 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 12 Jun 2020 07:50:10 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E77DD277; Fri, 12 Jun 2020 17:50:06 +0300 (EEST)
+        id 4398487F; Fri, 12 Jun 2020 17:50:07 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org,
         Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 01/13] pinctrl: intel: Disable input and output buffer when switching to GPIO
-Date:   Fri, 12 Jun 2020 17:49:54 +0300
-Message-Id: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 11/13] pinctrl: lynxpoint: Introduce helpers to enable or disable input
+Date:   Fri, 12 Jun 2020 17:50:04 +0300
+Message-Id: <20200612145006.9145-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.27.0.rc2
+In-Reply-To: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
+References: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -49,56 +51,70 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It's possible scenario that pin has been in different mode, while
-the respective GPIO register has a leftover output buffer enabled.
-In such case when we request GPIO it will switch to GPIO mode, and
-thus to output with unknown value, followed by switching to input
-mode. This can produce a glitch on the pin.
-
-Disable input and output buffer when switching to GPIO to avoid
-potential glitches.
+Introduce couple of helpers to enable or disable input. i.e.
+lp_gpio_enable_input() and lp_gpio_disable_input().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 6a274e20d926..9df5a0c0d416 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -435,11 +435,20 @@ static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
- {
- 	u32 value;
- 
-+	value = readl(padcfg0);
-+
- 	/* Put the pad into GPIO mode */
--	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
-+	value &= ~PADCFG0_PMODE_MASK;
-+	value |= PADCFG0_PMODE_GPIO;
-+
-+	/* Disable input and output buffers */
-+	value &= ~PADCFG0_GPIORXDIS;
-+	value &= ~PADCFG0_GPIOTXDIS;
-+
- 	/* Disable SCI/SMI/NMI generation */
- 	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
- 	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
-+
- 	writel(value, padcfg0);
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index 36cc45c013fb..6f1641833665 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -386,6 +386,16 @@ static int lp_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 	return 0;
  }
  
-@@ -1036,6 +1045,9 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned int type)
- 
- 	intel_gpio_set_gpio_mode(reg);
- 
-+	/* Disable TX buffer and enable RX (this will be input) */
-+	__intel_gpio_set_direction(reg, true);
++static void lp_gpio_enable_input(void __iomem *reg)
++{
++	iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
++}
 +
- 	value = readl(reg);
++static void lp_gpio_disable_input(void __iomem *reg)
++{
++	iowrite32(ioread32(reg) | GPINDIS_BIT, reg);
++}
++
+ static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				  struct pinctrl_gpio_range *range,
+ 				  unsigned int pin)
+@@ -411,7 +421,7 @@ static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	}
  
- 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
+ 	/* Enable input sensing */
+-	iowrite32(ioread32(conf2) & ~GPINDIS_BIT, conf2);
++	lp_gpio_enable_input(conf2);
+ 
+ 	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ 
+@@ -429,7 +439,7 @@ static void lp_gpio_disable_free(struct pinctrl_dev *pctldev,
+ 	raw_spin_lock_irqsave(&lg->lock, flags);
+ 
+ 	/* Disable input sensing */
+-	iowrite32(ioread32(conf2) | GPINDIS_BIT, conf2);
++	lp_gpio_disable_input(conf2);
+ 
+ 	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ 
+@@ -920,14 +930,11 @@ static int lp_gpio_resume(struct device *dev)
+ {
+ 	struct intel_pinctrl *lg = dev_get_drvdata(dev);
+ 	struct gpio_chip *chip = &lg->chip;
+-	void __iomem *reg;
+ 	int i;
+ 
+ 	/* on some hardware suspend clears input sensing, re-enable it here */
+-	for_each_requested_gpio(chip, i, 0, chip->ngpio) {
+-		reg = lp_gpio_reg(chip, i, LP_CONFIG2);
+-		iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
+-	}
++	for_each_requested_gpio(chip, i, 0, chip->ngpio)
++		lp_gpio_enable_input(lp_gpio_reg(&lg->chip, i, LP_CONFIG2));
+ 
+ 	return 0;
+ }
 -- 
 2.27.0.rc2
 
