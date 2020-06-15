@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D168C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AEBC433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43D362071A
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C02E4207DA
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fpDLtFCx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SPoa65QW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730595AbgFONeC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 09:34:02 -0400
+        id S1730652AbgFONeX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 09:34:23 -0400
 Received: from esa6.microchip.iphmx.com ([216.71.154.253]:55673 "EHLO
         esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730566AbgFONd3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 09:33:29 -0400
+        with ESMTP id S1730490AbgFONdY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 09:33:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1592228009; x=1623764009;
+  t=1592228003; x=1623764003;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pq7+Cad0Upf0gR5pSZeWVklhIYbcWc/Z2/yeAnUUmgY=;
-  b=fpDLtFCx/Jv/9FBAr5z4aCyxpCVoyPZZVFt1A0Vlr4kCTaKz020soRxD
-   n38SX6xSsGO94bATIsoHG0dgacApGKWzzwWSkgYjdFfxBu/ML7JA4Q14k
-   YWOeUFfdhSLeu1WNKrYRwzeMIJRfv7UAtSTvTr12Z2NnRwFgNU+lbgAiU
-   73CWgmOd9HNdmibblF9WesTP5vZsS601Rd/j9+HXsP2JefILqLa9E6NcQ
-   UkVow9vzBHtha+x/vTvQ0jMKq4wbJXR5LKfIWibxbzP/sPcnKHv3oOg18
-   BAfJa7YtzRyoG6OsMsyv/RiJKjjTd0J5jkcD9m7VFowchufeMT8yyE1gw
-   g==;
-IronPort-SDR: FJq1dMJI7LFLn52yKCI4CKrNZiG6i7Sm9giGAEhs/bVB0SewWfe7/PoRUA/fXDL9TBeGYWzisc
- YikhRiOl+0k/r3hzLODMcL6ZPd2jtMCp415K/YWsdQCzcswxDL5a1qSNPWN2bGwoH2BuTy8RrL
- GjOsPGH3HRJL7qfnlWo8BLfpUyEvS3btrLrQfcpeq9BAXG8hLjVWUAD7wzwZLchNspqGOT+shw
- YApGwLj/7mNu2/lIBXMO5ioEcdnfZYQMtrgexxEhHBbkqVfFWYI4MC8eNSmio7Kl5+eFgLSZhf
- dJ8=
+  bh=0PFUuYEkowikkFlJngUHzPP7u9ABrMBxXuzfa3P9yDo=;
+  b=SPoa65QWbrpFHzTkPFRMGb5647AHuesebi9TYlZiaMbAqhGoP3vkMVck
+   0fQfoaFns2CLSZUI9EgQ8GCJVD4jSmV+NUTRerUxkoRf7xIMtT5pareci
+   oHQ4JayTFSKoE72HQyz+DtxO59/TjnvpMQDzlb56zw+fLHy4yCHGKXFHb
+   x1Y6DOJRMtvTuUfSpXvI5V2jbh530p3OwY43KNrljRt2XfhsGMucuB1Du
+   7rOBtt96EpgLMWHgxcDkCXIJeZtm6hoFG04cR2aLvwtwA7qJbV8j+hj49
+   +E/YhTU01k1S+riRPnriKbLO/Ar/B78spvC68SWhnd/8z5LmFAYIuD7Ks
+   w==;
+IronPort-SDR: oJYzDtKgrsOsrZsmpYoJQvL1qlnxoMuGLHlPBrX7kLDQE45P0YJUtqovnh9AFPgJlzfqJ+aRRD
+ x77v63jtqehCSxfsMNzJdqePinUFECPkEaPbgZMBDlVlHdRrer7Ezl+isPcU2z1NueCToqkSwi
+ 8nZuk2r7cp97TO8JhHHED1BqTvyW68Bk5jiXFgmNk+/94qbITexJ92qmEZmG8wJcX1LP8AengO
+ jCjW0xgdeFDZWBYzqsvk8jLYvbvDp6KnIycQB5AjhydodFDBLNoc/Y7TTb3C+NNCiOEao3Y+6h
+ BSQ=
 X-IronPort-AV: E=Sophos;i="5.73,514,1583218800"; 
-   d="scan'208";a="15805535"
+   d="scan'208";a="15805525"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2020 06:33:28 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2020 06:33:22 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 15 Jun 2020 06:33:28 -0700
+ 15.1.1979.3; Mon, 15 Jun 2020 06:33:22 -0700
 Received: from soft-dev15.microsemi.net (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 15 Jun 2020 06:33:25 -0700
+ 15.1.1979.3 via Frontend Transport; Mon, 15 Jun 2020 06:33:18 -0700
 From:   Lars Povlsen <lars.povlsen@microchip.com>
 List-Id: <soc.lore.kernel.org>
 To:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
 CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         Steen Hegelund <Steen.Hegelund@microchip.com>,
         Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
@@ -65,9 +66,9 @@ CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 09/10] arm64: dts: sparx5: Add Sparx5 SoC DPLL clock
-Date:   Mon, 15 Jun 2020 15:32:41 +0200
-Message-ID: <20200615133242.24911-10-lars.povlsen@microchip.com>
+Subject: [PATCH v3 07/10] dt-bindings: clock: sparx5: Add bindings include file
+Date:   Mon, 15 Jun 2020 15:32:39 +0200
+Message-ID: <20200615133242.24911-8-lars.povlsen@microchip.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200615133242.24911-1-lars.povlsen@microchip.com>
 References: <20200615133242.24911-1-lars.povlsen@microchip.com>
@@ -79,71 +80,46 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds a DPLL clock to the Sparx5 SoC. It is used to generate clock
-to misc peripherals, specifically the SDHCI/eMMC controller.
+The Sparx5 support 9 different clock outputs. This include file has
+defines for each supported clock ordinal.
 
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 ---
- arch/arm64/boot/dts/microchip/sparx5.dtsi | 39 +++++++++++++----------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ include/dt-bindings/clock/microchip,sparx5.h | 23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 include/dt-bindings/clock/microchip,sparx5.h
 
-diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-index baf4176ce1dfe..161846caf9c94 100644
---- a/arch/arm64/boot/dts/microchip/sparx5.dtsi
-+++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-@@ -72,20 +72,29 @@ timer {
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
--	clocks: clocks {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges;
--		ahb_clk: ahb-clk {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <250000000>;
--		};
--		sys_clk: sys-clk {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <625000000>;
--		};
-+	lcpll_clk: lcpll-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <2500000000>;
-+	};
+diff --git a/include/dt-bindings/clock/microchip,sparx5.h b/include/dt-bindings/clock/microchip,sparx5.h
+new file mode 100644
+index 0000000000000..4b04dabacec2c
+--- /dev/null
++++ b/include/dt-bindings/clock/microchip,sparx5.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019 Microchip Inc.
++ *
++ * Author: Lars Povlsen <lars.povlsen@microchip.com>
++ */
 +
-+	clks: clock-controller@61110000c {
-+		compatible = "microchip,sparx5-dpll";
-+		#clock-cells = <1>;
-+		clocks = <&lcpll_clk>;
-+		reg = <0x6 0x1110000c 0x24>;
-+	};
++#ifndef _DT_BINDINGS_CLK_SPARX5_H
++#define _DT_BINDINGS_CLK_SPARX5_H
 +
-+	ahb_clk: ahb-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <250000000>;
-+	};
++#define CLK_ID_CORE	0
++#define CLK_ID_DDR	1
++#define CLK_ID_CPU2	2
++#define CLK_ID_ARM2	3
++#define CLK_ID_AUX1	4
++#define CLK_ID_AUX2	5
++#define CLK_ID_AUX3	6
++#define CLK_ID_AUX4	7
++#define CLK_ID_SYNCE	8
 +
-+	sys_clk: sys-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <625000000>;
- 	};
- 
- 	axi: axi@600000000 {
-@@ -161,8 +170,6 @@ uart2_pins: uart2-pins {
- 				pins = "GPIO_26", "GPIO_27";
- 				function = "uart2";
- 			};
--
- 		};
--
- 	};
- };
++#define N_CLOCKS	9
++
++#endif
 -- 
 2.27.0
 
