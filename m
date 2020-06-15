@@ -2,89 +2,166 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7B2C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC51C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 436FB2063A
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 366682074D
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:16:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730887AbgFOPOY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 11:14:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22778 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730766AbgFOPOY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jun 2020 11:14:24 -0400
-IronPort-SDR: dQmQA3qipNcfi5/dVgfBZrFjp9MygJAiAdT4dbZBG8laX7MWI5OwY4eBigPYXkd1g8KzYO1QwW
- ERXn8NfVVibw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 08:13:58 -0700
-IronPort-SDR: ljMyKzglMfQSmg3cYz4N2grfNdLl6ajTbXtqDqpPfWTMZjrUlbqxmICCWXmaFuo8xz9xSgouxt
- ddUHjVULmriQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,515,1583222400"; 
-   d="scan'208";a="276590679"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 15 Jun 2020 08:13:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 09FEC795; Mon, 15 Jun 2020 18:13:56 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 2/3] pinctrl: lynxpoint: Make use of for_each_requested_gpio()
-Date:   Mon, 15 Jun 2020 18:13:52 +0300
-Message-Id: <20200615151353.88194-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.27.0.rc2
-In-Reply-To: <20200615151353.88194-1-andriy.shevchenko@linux.intel.com>
-References: <20200615151353.88194-1-andriy.shevchenko@linux.intel.com>
+        id S1730470AbgFOPQj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 11:16:39 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34471 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730197AbgFOPQj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 11:16:39 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id B1D2EFF811;
+        Mon, 15 Jun 2020 15:16:32 +0000 (UTC)
+Date:   Mon, 15 Jun 2020 17:19:56 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        devicetree@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v10 1/4] dt-bindings: media: i2c: Add bindings for Maxim
+ Integrated MAX9286
+Message-ID: <20200615151956.fsiczqldkle5aevb@uno.localdomain>
+References: <20200612144713.502006-1-kieran.bingham+renesas@ideasonboard.com>
+ <20200612144713.502006-2-kieran.bingham+renesas@ideasonboard.com>
+ <20200612221003.GA3901624@bogus>
+ <20200613123207.6ey6y5spfa5ajk4h@uno.localdomain>
+ <CAL_Jsq+o6Hwz6vN2mgYGnZF4wX5nFoaXRMweQr8euep-9OmBiA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+o6Hwz6vN2mgYGnZF4wX5nFoaXRMweQr8euep-9OmBiA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Make use of for_each_requested_gpio() instead of home grown analogue.
+Hi Rob,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+On Mon, Jun 15, 2020 at 09:02:28AM -0600, Rob Herring wrote:
+> On Sat, Jun 13, 2020 at 6:28 AM Jacopo Mondi <jacopo@jmondi.org> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Fri, Jun 12, 2020 at 04:10:03PM -0600, Rob Herring wrote:
+> > > On Fri, 12 Jun 2020 15:47:10 +0100, Kieran Bingham wrote:
+> > > > From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > > >
+> > > > The MAX9286 deserializes video data received on up to 4 Gigabit
+> > > > Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
+> > > > to 4 data lanes.
+> > > >
+> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > >
+> > > > ---
+> > > >
+> > > > v7:
+> > > >  - Collect Rob's RB tag
+> > > >  - Remove redundant maxItems from remote-endpoints
+> > > >  - Fix SPDX licence tag
+> > > >
+> > > > v10:
+> > > > [Jacopo]
+> > > >  - Fix dt-validation
+> > > >  - Fix dt-binding examples with 2 reg entries
+> > > >
+> > > > [Kieran]
+> > > >  - Correctly match the hex camera node reg
+> > > >  - Add (required) GPIO controller support
+> > > >
+> > > >  .../bindings/media/i2c/maxim,max9286.yaml     | 366 ++++++++++++++++++
+> > > >  1 file changed, 366 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+> > > >
+> > >
+> > >
+> > > My bot found errors running 'make dt_binding_check' on your patch:
+> > >
+> > > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/media/i2c/maxim,max9286.example.dt.yaml: example-0: i2c@e66d8000:reg:0: [0, 3865935872, 0, 64] is too long
+> > >
+> > >
+> > > See https://patchwork.ozlabs.org/patch/1308280
+> > >
+> > > If you already ran 'make dt_binding_check' and didn't see the above
+> > > error(s), then make sure dt-schema is up to date:
+> > >
+> > > pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+> > >
+> >
+> > I have updated my dt-schema installation to the latest github master
+> > -------------------------------------------------------------------------------
+> > Successfully installed dtschema-2020.6.dev8+g4d2d86c
+> >
+> > https://github.com/devicetree-org/dt-schema/commit/4d2d86c5cd65cd3944ce0aaa400866bc36727bea
+> >
+> > $ /usr/bin/dt-validate -V
+> > 2020.6.dev8+g4d2d86c
+> > -------------------------------------------------------------------------------
+> >
+> > But I still cannot reproduce the error.
+> >
+> > However, I see this commit in your next branch
+> > https://github.com/devicetree-org/dt-schema/commit/b72500282cfd2eba6f9df4d7553f696544b40ee6
+> > "schemas: Add a schema to check 'reg' sizes "
+> >
+> > Which sounds very likely related to the above reported error.
+> > Was this intentional ?
+>
+> Yes, I can't add the new checks to master until all the in tree schema
+> are fixed yet I want to check submissions with pending checks, so I
+> created the 'next' branch.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index a45b8f2182fd..2a3af998b91c 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -919,16 +919,17 @@ static int lp_gpio_runtime_resume(struct device *dev)
- static int lp_gpio_resume(struct device *dev)
- {
- 	struct intel_pinctrl *lg = dev_get_drvdata(dev);
-+	struct gpio_chip *chip = &lg->chip;
-+	const char *dummy;
- 	void __iomem *reg;
- 	int i;
- 
- 	/* on some hardware suspend clears input sensing, re-enable it here */
--	for (i = 0; i < lg->chip.ngpio; i++) {
--		if (gpiochip_is_requested(&lg->chip, i) != NULL) {
--			reg = lp_gpio_reg(&lg->chip, i, LP_CONFIG2);
--			iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
--		}
-+	for_each_requested_gpio(chip, i, dummy) {
-+		reg = lp_gpio_reg(chip, i, LP_CONFIG2);
-+		iowrite32(ioread32(reg) & ~GPINDIS_BIT, reg);
- 	}
-+
- 	return 0;
- }
- 
--- 
-2.27.0.rc2
+I see, makes sense. Can I just suggest to add a few words about this
+new branch in the automated reply ? Otherwise the ones who are not aware
+of this (like I was) will keep wondering why they don't see the error your
+bot reported even if they have updated their dt-schema version to the
+latest available master.
 
+>
+> > I'm not sure how I should handle this. The error reports the i2c node
+> > parents should have both address-cells and size-cells properties set
+> > to 2, but in the example there is not i2c node parent at all :)
+> > Should I add a parent node for the i2c in the example snippet ?
+>
+> The examples have default sizes of 1 cell. If you need something
+> different, the example has to define a parent node to specify it. In
+> your case, I'd just change 'reg' to use 1 cell each.
+>
+
+Thanks, will fix.
+
+
+> Rob
