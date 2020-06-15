@@ -2,112 +2,72 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB3C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 08:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B61C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7712053B
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 08:16:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="oR0SekK0"
+	by mail.kernel.org (Postfix) with ESMTP id 5167A20578
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbgFOIQM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbgFOIQM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 04:16:12 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B50C061A0E
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 01:16:12 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id n11so14919562qkn.8
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 01:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ks2k3rFOx4dlXObGXJhZwTdC2QELUN8WUaqANCpIqu0=;
-        b=oR0SekK0lTaOSzhQhm3NVzAkhfa0SpTMN6fEILfsLxFaBYWpSetDd7sPHZPUqFseTt
-         +djNWxLvdiqI7s5zK45K0gBO/eWabDbDou3csHCVptKlBrXFFQFVHk4fEiukWvr9CP91
-         /FUC9cqYx7Vpq3NqWQa8U9pQVNwCJxzVBmt3nEWsQYCY63e0PdScNBok6/pNLMzTEDFT
-         30gRH/C7UO4xbWv7NlvtzutoF5xAkAebZmo3otmBf29Kp0NhgkVfT3vNzeYRVCr5cQWe
-         Ibrvy8kXQRsiep5lMwRUp/BBI3x9Ei0QqhbTYemZ8MS9Z8xlBP3Ua4ooIUT+Au1sLiBY
-         gfHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ks2k3rFOx4dlXObGXJhZwTdC2QELUN8WUaqANCpIqu0=;
-        b=r2TSBMI7MXJPzJct42LwiWIf+LMY1guoLMRBoFl/VR5xiaT7YHwWPE6mzQiRKPfcWt
-         0vxvCmaDBJ8CSUxlkL8IwS9tDUlFl9Ai3vezxZLs1ZiRCgxXuoU/+mwpJADiL8WxYiq8
-         UkWnK8ytNkk2yZpueAYDl1RdWiHNihI/FvQTQW6wi8sz6NcGkSFZh6wftf9bvdE/zgd6
-         nxK5S0PajzJ1Uas1sMguca3qbVxd9Q+iOWhf6HbXA4mmr8YqaMT016Ci2Doe64wWawzH
-         FpVqo7CsotbIquSn95PV8GncQiLkeLfPyu/7ZJvB6tY1fQWyjBQY0eLTF2v9VGPww2yr
-         WCsg==
-X-Gm-Message-State: AOAM532f621/Ou94rrOQyakFHucQJG/pi6jpI2Wp52aHEVvZUTYODCE8
-        TO9jyDhfabYRmjRt6nxSDL3noeF2rSd1KqOCCpNY6g==
-X-Google-Smtp-Source: ABdhPJwFBN98NMpqmvYRdwb//kMKIs//wi3K/6j6KcI/70oz0Y0XgSq3+DgIBu966lDGXREPemn0TX9xNdPBs0sd2M0=
-X-Received: by 2002:a37:4f52:: with SMTP id d79mr14333922qkb.330.1592208971419;
- Mon, 15 Jun 2020 01:16:11 -0700 (PDT)
+        id S1729151AbgFOInE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 04:43:04 -0400
+Received: from lizzard.sbs.de ([194.138.37.39]:41805 "EHLO lizzard.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729463AbgFOInE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jun 2020 04:43:04 -0400
+X-Greylist: delayed 872 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jun 2020 04:43:02 EDT
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 05F8SOYi002760
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jun 2020 10:28:24 +0200
+Received: from md1f2u6c.ad001.siemens.net ([167.87.53.252])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 05F8SNgJ021930;
+        Mon, 15 Jun 2020 10:28:24 +0200
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] gpio: pca953x: Add support for the PCAL9535
+Date:   Mon, 15 Jun 2020 10:28:23 +0200
+Message-Id: <b4548638f5eee6919f0a74f52c1a6ddba8fea678.1592209703.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.1592209703.git.jan.kiszka@siemens.com>
+References: <cover.1592209703.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com> <20200609124610.3445662-4-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20200609124610.3445662-4-kieran.bingham+renesas@ideasonboard.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 15 Jun 2020 10:16:00 +0200
-Message-ID: <CAMpxmJXboB0qkG637eoAabj1_KBe2inNgWG3aMagSar94UuaXQ@mail.gmail.com>
-Subject: Re: [PATCH 03/17] drivers: gpio: Fix trivial spelling
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 9 cze 2020 o 14:46 Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> napisa=C5=82(a):
->
-> The word 'descriptor' is misspelled throughout the tree.
->
-> Fix it up accordingly:
->     decriptors -> descriptors
->
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/gpio/TODO | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
-> index b989c9352da2..e560e45e84f8 100644
-> --- a/drivers/gpio/TODO
-> +++ b/drivers/gpio/TODO
-> @@ -5,7 +5,7 @@ subsystem.
->  GPIO descriptors
->
->  Starting with commit 79a9becda894 the GPIO subsystem embarked on a journ=
-ey
-> -to move away from the global GPIO numberspace and toward a decriptor-bas=
-ed
-> +to move away from the global GPIO numberspace and toward a descriptor-ba=
-sed
->  approach. This means that GPIO consumers, drivers and machine descriptio=
-ns
->  ideally have no use or idea of the global GPIO numberspace that has/was
->  used in the inception of the GPIO subsystem.
-> --
-> 2.25.1
->
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Patch applied, thanks!
+The PCAL9535 [1] is compatible to the PCA9535. Additionally, it comes
+with interrupt support and input latching. Other features are not
+supported by the GPIO subsystem.
 
-Bartosz
+[1] https://www.nxp.com/docs/en/data-sheet/PCAL9535A.pdf
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/gpio/gpio-pca953x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 1fca8dd7824f..34d635e51dda 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1131,6 +1131,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "nxp,pca9505", .data = OF_953X(40, PCA_INT), },
+ 	{ .compatible = "nxp,pca9534", .data = OF_953X( 8, PCA_INT), },
+ 	{ .compatible = "nxp,pca9535", .data = OF_953X(16, PCA_INT), },
++	{ .compatible = "nxp,pcal9535", .data = OF_953X(16, PCA_LATCH_INT), },
+ 	{ .compatible = "nxp,pca9536", .data = OF_953X( 4, 0), },
+ 	{ .compatible = "nxp,pca9537", .data = OF_953X( 4, PCA_INT), },
+ 	{ .compatible = "nxp,pca9538", .data = OF_953X( 8, PCA_INT), },
+-- 
+2.26.2
+
