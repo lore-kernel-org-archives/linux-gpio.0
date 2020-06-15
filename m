@@ -2,90 +2,93 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E70C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17692C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06150207DD
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D773E206B7
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:00:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="oAHfUjpS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730276AbgFOMzF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 08:55:05 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56842 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730123AbgFOMxs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jun 2020 08:53:48 -0400
-IronPort-SDR: 4MXRCOgUBHBh8Q03bh3MuQMBeyb3Q6plqU0cjZKfsfkvk/l2PlCFXaxI9apBMFlCjoCGtijq6A
- yOVupo8lgBOw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 05:53:48 -0700
-IronPort-SDR: 9AWUi8vBSUDGs3O8vIVOfV+pl5iANM5qD7wipVx6FOBtTdSzNTaKkv9ZbseJjEEu0AW2CoA40h
- sItMMayIXAlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,514,1583222400"; 
-   d="scan'208";a="261092670"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2020 05:53:46 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jkocX-00DZZd-D7; Mon, 15 Jun 2020 15:53:49 +0300
-Date:   Mon, 15 Jun 2020 15:53:49 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] gpio: pca953x: disable regmap locking for
- automatic address incrementing
-Message-ID: <20200615125349.GD2428291@smile.fi.intel.com>
-References: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
- <20200605134036.9013-4-andriy.shevchenko@linux.intel.com>
- <20200615122044.j2vdhpmhbpsw6qkb@taurus.defre.kleine-koenig.org>
+        id S1730281AbgFONAE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 09:00:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36530 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730270AbgFONAC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jun 2020 09:00:02 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05FCq4WF001659;
+        Mon, 15 Jun 2020 14:59:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=a+/ALK3THVscsxKzBuqYICXhJ6Fgulb3uVPQcBiLSxs=;
+ b=oAHfUjpS6HBzDTqripKJQAN/FmyVfvPka6PwfsNHIDu7MjuJEGEHuZC367njC2XIaAnx
+ 8CLrgYZgHvWjjGwhlQ6ypb/M/+t9o0ajsaQQsiHyCjrWSoj1p92q/pqjG43Vx1j6/FIi
+ eoN5tWYEd12bFWbPy/FHgb87gCcEd4Vh/bUTG5CaJVOpiwTfttkbnLJMcCoTyZRlvSq0
+ IOPhcb5mzVlDAlcUWbF+N3t0ZoT+O5XF3JIZ6jiAigDHQTkqFTFtqjoyxK0SNR+0smkv
+ kkdSnrcHMBsI3oXQ1WHKlvrdZrJmbUK21da07nl+cmRobmrPzoeqmh3TRg41+pAuBxo/ TA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 31mnph1h21-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jun 2020 14:59:58 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 565CD10002A;
+        Mon, 15 Jun 2020 14:59:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4D3C72B3613;
+        Mon, 15 Jun 2020 14:59:58 +0200 (CEST)
+Received: from localhost (10.75.127.49) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 15 Jun 2020 14:59:58
+ +0200
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <alexandre.torgue@st.com>
+Subject: [PATCH 1/2] pinctrl: stm32: return proper error code in pin_config_set
+Date:   Mon, 15 Jun 2020 14:59:50 +0200
+Message-ID: <20200615125951.28008-2-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200615125951.28008-1-alexandre.torgue@st.com>
+References: <20200615125951.28008-1-alexandre.torgue@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200615122044.j2vdhpmhbpsw6qkb@taurus.defre.kleine-koenig.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-15_02:2020-06-15,2020-06-15 signatures=0
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 02:20:44PM +0200, Uwe Kleine-König wrote:
-> On Fri, Jun 05, 2020 at 04:40:36PM +0300, Andy Shevchenko wrote:
-> > It's a repetition of the commit aa58a21ae378
-> >   ("gpio: pca953x: disable regmap locking")
-> > which states the following:
-> > 
-> >   This driver uses its own locking but regmap silently uses
-> >   a mutex for all operations too. Add the option to disable
-> >   locking to the regmap config struct.
-> > 
-> > Fixes: bcf41dc480b1 ("gpio: pca953x: fix handling of automatic address incrementing")
-> > Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Ah, good catch. I assume that I didn't have aa58a21ae378 in my tree when
-> I created the patch that then became bcf41dc480b1.
-> 
-> Looks right
-> 
-> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+".pin_config_set" or ".pin_config_group_set" can be called with a
+configuration not supported (i.e. PIN_CONFIG_PERSIST_STATE). In this case,
+it is more suitable to return -ENOTSUPP instead of -EINVAL.
 
-Thanks!
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-Linus, Bart, just to clarify that this is material for one of the next v5.8-rcX
-(this cycle!).
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index a657cd829ce6..5d9839beaa07 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1084,7 +1084,7 @@ static int stm32_pconf_parse_conf(struct pinctrl_dev *pctldev,
+ 		ret = stm32_pmx_gpio_set_direction(pctldev, range, pin, false);
+ 		break;
+ 	default:
+-		ret = -EINVAL;
++		ret = -ENOTSUPP;
+ 	}
+ 
+ 	return ret;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
