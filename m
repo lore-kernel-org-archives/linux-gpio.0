@@ -2,87 +2,85 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 502BCC433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D5CC433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21F19206B7
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="WNf7upJm"
+	by mail.kernel.org (Postfix) with ESMTP id AFC762071A
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 13:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbgFONAE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 09:00:04 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49544 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730267AbgFONAB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jun 2020 09:00:01 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05FCrtX6032708;
-        Mon, 15 Jun 2020 14:59:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=oi/6CIu6hVas5iNZUeHi3AM89JZcZHcG025NTbOHqXo=;
- b=WNf7upJmZQ9CnxPSTRdoUHRc8u3ybD1h2qttVUSkLg8VSn+ADjlxpH8E3wqkSvR/4s2X
- EAAYr6t/VJ4XRWnRqux4ZDh3Dm3N4dS5m2cRD9WgBNw8YLLlKlYQNQJ156AziPM7pGMI
- YQ1yPM9LKJ44hZI4hCswO9YLAptmfo6rAV3rthu2X+zQF7M7kbgyo4VyKGapglafDjva
- ippAz3IGgv+V4d38CskbClon4qe4d/P7C5D7NU4ZZpIdBld9VKPqTKA5e0L0DDBhUu0H
- fugvuM+HJ6HWBMMglJdFmOKzwx/9t19+ohYXJ+wQR7bIdyOWJgy0K2YIQyxU4LwZQ2p7 QQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 31mm91hsf7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 14:59:58 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 995FE10002A;
-        Mon, 15 Jun 2020 14:59:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8C62D2B3612;
-        Mon, 15 Jun 2020 14:59:57 +0200 (CEST)
-Received: from localhost (10.75.127.48) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 15 Jun 2020 14:59:57
- +0200
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <alexandre.torgue@st.com>
-Subject: [PATCH 0/2] pinctrl: stm32: Add possibility to configure only one pin
-Date:   Mon, 15 Jun 2020 14:59:49 +0200
-Message-ID: <20200615125951.28008-1-alexandre.torgue@st.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729981AbgFONF4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 09:05:56 -0400
+Received: from mga04.intel.com ([192.55.52.120]:13607 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729977AbgFONFz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jun 2020 09:05:55 -0400
+IronPort-SDR: l8yD0TOKhp+yrN4yk03F/kkDnq9ROSSO8YSM/YZIAvvL+xRUSAuJDaa3QszF2G/Ko0FARzTuzi
+ 2u+ARIoqlG/A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 06:04:23 -0700
+IronPort-SDR: d2T8tXvji6vFOiFKQKH5X0fVLkK3mbh5PpP1RHuFoOtwJPSU7/WC2xvRvP6VmaLhes0sabmNUl
+ 9skODP5kqyOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,514,1583222400"; 
+   d="scan'208";a="272767537"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 15 Jun 2020 06:04:21 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jkomm-00DZlg-56; Mon, 15 Jun 2020 16:04:24 +0300
+Date:   Mon, 15 Jun 2020 16:04:24 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 01/13] pinctrl: intel: Disable input and output buffer
+ when switching to GPIO
+Message-ID: <20200615130424.GE2428291@smile.fi.intel.com>
+References: <20200612145006.9145-1-andriy.shevchenko@linux.intel.com>
+ <20200615120103.GH247495@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-15_02:2020-06-15,2020-06-15 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200615120103.GH247495@lahna.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+On Mon, Jun 15, 2020 at 03:01:03PM +0300, Mika Westerberg wrote:
+> On Fri, Jun 12, 2020 at 05:49:54PM +0300, Andy Shevchenko wrote:
+> > It's possible scenario that pin has been in different mode, while
+> > the respective GPIO register has a leftover output buffer enabled.
+> > In such case when we request GPIO it will switch to GPIO mode, and
+> > thus to output with unknown value, followed by switching to input
+> > mode. This can produce a glitch on the pin.
+> > 
+> > Disable input and output buffer when switching to GPIO to avoid
+> > potential glitches.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> There was a minor comment on one patch but other than that this looks
+> good.
 
-Currently stm32 pinctrl driver offers only the possibility to configure pins
-groups thanks "pin_config_group_set" callback. To configure pins thanks to the
-GPIOlib (i.e. GPIO_PULL_UP ...) this driver needs also to support
-"pin_config_set" callback.
+I will apply patches to my review and testing queue soon, but I will reconsider
+few of them (for_each_requested_gpio() helper and its use) for v2.
 
-Regards
-Alex
+> For the whole series,
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Alexandre Torgue (2):
-  pinctrl: stm32: return proper error code in pin_config_set
-  pinctrl: stm32: add possibility to configure pins individually
-
- drivers/pinctrl/stm32/pinctrl-stm32.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+Thanks!
 
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
