@@ -6,41 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD29C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF173C433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD1072074D
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A5A32074D
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 15:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbgFOPFy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 11:05:54 -0400
-Received: from mga11.intel.com ([192.55.52.93]:44017 "EHLO mga11.intel.com"
+        id S1730821AbgFOPGH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 11:06:07 -0400
+Received: from mga17.intel.com ([192.55.52.151]:23640 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730936AbgFOPFw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jun 2020 11:05:52 -0400
-IronPort-SDR: PmKJ/bqX1hnNle0bZ16nBjAvo7xxunIBQm8ReMO5DAR2n2AH9G+t66CUyKI5ajQvJJuUYwMk41
- 1wbh2rHYXxWA==
+        id S1730943AbgFOPFy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jun 2020 11:05:54 -0400
+IronPort-SDR: muWXif3KHqqBtWKw6XsEThwdSAWUU+EsqKbdej+wE5it323HhzU2AJtL4OyXfZyRM5s8Ae8SAz
+ 3GSJRASroKIg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 08:05:50 -0700
-IronPort-SDR: rgYlEmvlyFrPhXeBlLqAAA84/xJijD93yqnpaUrAnFDTvCTCKlTE1b2Qw8yiidZMOmfUKweHmm
- 9HY2/uoG4QgQ==
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 08:05:53 -0700
+IronPort-SDR: jaGr7mN7dTErDz+1e07TjCRCD+i7UlYbjyVQbjev5eRsSUM15JQOctHIicGetbvmThs9J0TE93
+ tSxbLC2Y8a6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,514,1583222400"; 
-   d="scan'208";a="276588005"
+   d="scan'208";a="298550804"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 15 Jun 2020 08:05:48 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jun 2020 08:05:50 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E7B9092; Mon, 15 Jun 2020 18:05:46 +0300 (EEST)
+        id 1CC9F8FD; Mon, 15 Jun 2020 18:05:47 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/5] gpiolib: Introduce for_each_requested_gpio_in_range() macro
-Date:   Mon, 15 Jun 2020 18:05:41 +0300
-Message-Id: <20200615150545.87964-2-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v1 5/5] pinctrl: at91: Make use of for_each_requested_gpio()
+Date:   Mon, 15 Jun 2020 18:05:45 +0300
+Message-Id: <20200615150545.87964-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.27.0.rc2
 In-Reply-To: <20200615150545.87964-1-andriy.shevchenko@linux.intel.com>
 References: <20200615150545.87964-1-andriy.shevchenko@linux.intel.com>
@@ -51,45 +54,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce for_each_requested_gpio_in_range() macro which helps
-to iterate over requested GPIO in a range. There are already
-potential users of it, which are going to be converted
-by the following patches.
-
-For most of them for_each_requested_gpio() shortcut has been added.
+Make use of for_each_requested_gpio() instead of home grown analogue.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- include/linux/gpio/driver.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pinctrl/pinctrl-at91.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 4d949e82fd19..b0402f884999 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -474,6 +474,22 @@ struct gpio_chip {
- extern const char *gpiochip_is_requested(struct gpio_chip *gc,
- 			unsigned int offset);
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index 52386ad29f28..9c5213087659 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1486,14 +1486,11 @@ static void at91_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 	int i;
+ 	struct at91_gpio_chip *at91_gpio = gpiochip_get_data(chip);
+ 	void __iomem *pio = at91_gpio->regbase;
++	const char *gpio_label;
  
-+/**
-+ * for_each_requested_gpio_in_range - iterates over requested GPIOs in a given range
-+ * @chip:	the chip to query
-+ * @i:		loop variable
-+ * @base:	first GPIO in the range
-+ * @size:	amount of GPIOs to check starting from @base
-+ * @label:	label of current GPIO
-+ */
-+#define for_each_requested_gpio_in_range(chip, i, base, size, label)			\
-+	for (i = 0; i < size; i++)							\
-+		if ((label = gpiochip_is_requested(chip, base + i)) == NULL) {} else
-+
-+/* Iterates over all requested GPIO of the given @chip */
-+#define for_each_requested_gpio(chip, i, label)						\
-+	for_each_requested_gpio_in_range(chip, i, 0, chip->ngpio, label)
-+
- /* add/remove chips */
- extern int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 				      struct lock_class_key *lock_key,
+-	for (i = 0; i < chip->ngpio; i++) {
++	for_each_requested_gpio(chip, i, gpio_label) {
+ 		unsigned mask = pin_to_mask(i);
+-		const char *gpio_label;
+ 
+-		gpio_label = gpiochip_is_requested(chip, i);
+-		if (!gpio_label)
+-			continue;
+ 		mode = at91_gpio->ops->get_periph(pio, mask);
+ 		seq_printf(s, "[%s] GPIO%s%d: ",
+ 			   gpio_label, chip->label, i);
 -- 
 2.27.0.rc2
 
