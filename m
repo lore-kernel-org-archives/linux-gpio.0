@@ -2,90 +2,94 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA67C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 06:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF1CC433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 07:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23AA12067B
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 06:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592203787;
-	bh=FcwAg0ZkLADpZDIiqLF7eKTLkbJL6UdvFue4KTmGrvs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DCVXW2iq0Ce6MA5oh+F7qLdzHjgIzKrgngR/4Hh5eqvhbyZH5F4XiVra1kCLVunBZ
-	 Dufhh0ISxMgWhswJhX0AphpcRR4q6jvKmYPyvJgdQlZLWQExTdvL+vph5GfuHHcQ1V
-	 nKyS9hCbWLXMKoRTCAU7h5jJbrONEjX5gE5UrHQQ=
+	by mail.kernel.org (Postfix) with ESMTP id F006120707
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 07:38:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbgFOGtd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 02:49:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbgFOGrM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jun 2020 02:47:12 -0400
-Received: from mail.kernel.org (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A37352076A;
-        Mon, 15 Jun 2020 06:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592203631;
-        bh=FcwAg0ZkLADpZDIiqLF7eKTLkbJL6UdvFue4KTmGrvs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=usLX2Abq+iiAPASL2bSQneycsQufGkMW8SI0aEGOL8Me7pb7f7Ej1VPQ960FxHiRf
-         PoZ7OdWgpCs1xN2QPjdOlMm/66SORLKJp7K4DqwYHYXaFzysK94n4Ts/RIMs+KdLmr
-         qnh2twMae0Oqr6UPCKgqnBOAAyzcVtWeahqFx9ko=
-Received: from mchehab by mail.kernel.org with local (Exim 4.93)
-        (envelope-from <mchehab@kernel.org>)
-        id 1jkith-009nmT-JV; Mon, 15 Jun 2020 08:47:09 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 08/29] gpio: driver.h: fix kernel-doc markup
-Date:   Mon, 15 Jun 2020 08:46:47 +0200
-Message-Id: <97beeedde507eaeea189ae955c9f35ecf1563d6d.1592203542.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <cover.1592203542.git.mchehab+huawei@kernel.org>
-References: <cover.1592203542.git.mchehab+huawei@kernel.org>
+        id S1728411AbgFOHiz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 03:38:55 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40406 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728465AbgFOHiz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 03:38:55 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s13so12358142otd.7;
+        Mon, 15 Jun 2020 00:38:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFfNHgVox7KX7C95z1fc2WDvt6ykxqikNS/QtJNZ6S8=;
+        b=nRR8nAQssd3tHaanXqlUNMKKplCGhFMDhveZQzz+Vu61zi4sbskOc058CE654nlSiT
+         WIN9s3uYdOMTNw2bxVveEEz6ZRHv0B9XZfXMY2PGzXXLJ7CTD+ePQpRveaQuM8IWlvQa
+         zrvgwGJgawZZisnV0Id1i2/+n4gK/SK4rN3l1TY+m/LnMQd4+DbNUfsTccIxIm9ZlBFj
+         jKdYkzSs8QjncbwDGEXNeZpIuSNYKurJ12kmk4MCsZ/NYuR+CxbbgMV8V67DXClDrzc0
+         UkACb+mJ4qvRli2M/jHqx7FZh0bIh9sjMfnFFU5g6X1zSgHTPp8AVk0jyMMXFNQ5Y/jr
+         XA0Q==
+X-Gm-Message-State: AOAM531UrOiZWiIPUQXrRg8vqFV0AWVXJwp78i/UC7SwT3E/lfBMPi4d
+        lP5cvJuXVZp6W15CfDoKBIwKaHG5QA8wxc0+aDEoyYdh
+X-Google-Smtp-Source: ABdhPJw1n6MZZyE41PxKdYk9SuES7QIn4SjvHd3chD7k1FUdfaufEWwdkiYC+uoydTPHuFwA5x2yDo0fkj7opPN6ftE=
+X-Received: by 2002:a9d:c29:: with SMTP id 38mr19213763otr.107.1592206732676;
+ Mon, 15 Jun 2020 00:38:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1592203542.git.mchehab+huawei@kernel.org> <72d7ec91a60e852d34f3e15bc5faef1f62a8260e.1592203542.git.mchehab+huawei@kernel.org>
+In-Reply-To: <72d7ec91a60e852d34f3e15bc5faef1f62a8260e.1592203542.git.mchehab+huawei@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 15 Jun 2020 09:38:41 +0200
+Message-ID: <CAMuHMdV=omjGQUTZL0vBYhHDX+6GGn_Lx=2tMuGc4csJ9EKbkQ@mail.gmail.com>
+Subject: Re: [PATCH 12/29] dt: update a reference for reneases pcar file
+ renamed to yaml
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is one parameter with a wrong name at kernel-doc macro:
+Hi Mauro,
 
-./include/linux/gpio/driver.h:499: warning: Function parameter or member 'gc' not described in 'gpiochip_add_data'
-./include/linux/gpio/driver.h:499: warning: Excess function parameter 'chip' description in 'gpiochip_add_data'
+On Mon, Jun 15, 2020 at 8:47 AM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+> This file was renamed, but its reference at pfc-pinctl.txt is
 
-Fix it.
+pfc-pinctrl.txt
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- include/linux/gpio/driver.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> still pointing to the old file.
+>
+> Fixes: 7f7d408e5a00 ("dt-bindings: gpio: rcar: Convert to json-schema")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c4f272af7af5..c11261f3c724 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -481,7 +481,7 @@ extern int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 
- /**
-  * gpiochip_add_data() - register a gpio_chip
-- * @chip: the chip to register, with chip->base initialized
-+ * @gc: the chip to register, with chip->base initialized
-  * @data: driver-private data associated with this chip
-  *
-  * Context: potentially before irqs will work
+Thanks!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Note that the reference will go away with the pfc-pinctrl.txt json-schema
+conversion.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.26.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
