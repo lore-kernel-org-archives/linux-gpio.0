@@ -2,194 +2,90 @@ Return-Path: <SRS0=wtV1=74=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD91C433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E70C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6F932078A
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qwa3nyNm"
+	by mail.kernel.org (Postfix) with ESMTP id 06150207DD
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Jun 2020 12:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbgFOMzJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Jun 2020 08:55:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730121AbgFOMzI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2020 08:55:08 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013F1C061A0E;
-        Mon, 15 Jun 2020 05:55:08 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id i12so6791611pju.3;
-        Mon, 15 Jun 2020 05:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kXNO5dq1powGbD9BrNfpHM4305IDPaieel0HOsoeAtA=;
-        b=qwa3nyNmSq9Ut8ztVt6ZPFhkHUxCbdELvQ2Z0eVmmrOiyB0hvPDbyRgexefM7oClhL
-         bUyvSuw4e2zL4FEEY/zzukgwEbKLo6tOK1zp/5w0EGx7M214DXjRBa0jLoctmIdgQ0oD
-         Zg2FOrS2zvwUSba1y36iUyT/alCShBdF8M70itq3fPTBwXkRs8oDsUCRWibWJXHiqZ4b
-         b/tOXW0YniV4Ll7CLYFFsgKrSHbjicZbQraKhv6CQjxpDnURKIJZFI9Cr3HpI1rN3M79
-         8FPAyZb82mc0yeuj0tPHobUyU2XJCEG/hknT2gmo3aS/Msdbb06kxVgqsj0aedaYKU/3
-         uDyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kXNO5dq1powGbD9BrNfpHM4305IDPaieel0HOsoeAtA=;
-        b=tPCP+BD9MP/eVyC7+WbBcZyPBhb/w1rxnd8L47/j6KTSRrNoRUYYk4lN0jFufmfCTO
-         LAiqmEyQ1VDYdKfWWDPjEolkH38Qa3E6c2Wbf8VJFizbiz44iKKXqbDDlLM1V7yLMbts
-         DHAArn1W5sfGsaHAAUQi8iv3qGndnbIbiTbLuQT4hyYOJzsCYFYNQEmT4dIeFOz7VdDs
-         2r0jyqrbJ3WSNSK8fQvGinNzdGs46Tt5u5lfjMO0Z/2x6I/2gicMaQj1E4qZPlii+nqy
-         7l4NI9lB+VEaBJD7vFSnVe72bUcFikx8dFOD2PN1itqrt0HjgXdWO4hF2H2FMAzCi+Rk
-         8dDQ==
-X-Gm-Message-State: AOAM531P+WbaVVoRTrWrSN6K5yTNtn2/vLUuE5ZYMA0Dp4ds18R91CAN
-        qF4w7whP1TlMeVQzPqLtJXk=
-X-Google-Smtp-Source: ABdhPJwVaSiNiKt8E7F7y7ozgSGtM/hiMV1bukQeQmHKrRKj8fe7YPK5ptt/y+23UJL0YKdjn19jBw==
-X-Received: by 2002:a17:90a:db91:: with SMTP id h17mr11898770pjv.6.1592225707605;
-        Mon, 15 Jun 2020 05:55:07 -0700 (PDT)
-Received: from syed ([106.198.128.180])
-        by smtp.gmail.com with ESMTPSA id g21sm13805054pfh.134.2020.06.15.05.55.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jun 2020 05:55:07 -0700 (PDT)
-Date:   Mon, 15 Jun 2020 18:24:50 +0530
-From:   Syed Nayyar Waris <syednwaris@gmail.com>
-To:     linus.walleij@linaro.org, akpm@linux-foundation.org
-Cc:     andriy.shevchenko@linux.intel.com, vilhelm.gray@gmail.com,
-        bgolaszewski@baylibre.com, michal.simek@xilinx.com,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 4/4] gpio: xilinx: Utilize for_each_set_clump macro
-Message-ID: <46c05c5deeada60a13ee0de83c68583d578f42fd.1592224129.git.syednwaris@gmail.com>
-References: <cover.1592224128.git.syednwaris@gmail.com>
+        id S1730276AbgFOMzF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Jun 2020 08:55:05 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56842 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730123AbgFOMxs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 Jun 2020 08:53:48 -0400
+IronPort-SDR: 4MXRCOgUBHBh8Q03bh3MuQMBeyb3Q6plqU0cjZKfsfkvk/l2PlCFXaxI9apBMFlCjoCGtijq6A
+ yOVupo8lgBOw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 05:53:48 -0700
+IronPort-SDR: 9AWUi8vBSUDGs3O8vIVOfV+pl5iANM5qD7wipVx6FOBtTdSzNTaKkv9ZbseJjEEu0AW2CoA40h
+ sItMMayIXAlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,514,1583222400"; 
+   d="scan'208";a="261092670"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2020 05:53:46 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jkocX-00DZZd-D7; Mon, 15 Jun 2020 15:53:49 +0300
+Date:   Mon, 15 Jun 2020 15:53:49 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v1 4/4] gpio: pca953x: disable regmap locking for
+ automatic address incrementing
+Message-ID: <20200615125349.GD2428291@smile.fi.intel.com>
+References: <20200605134036.9013-1-andriy.shevchenko@linux.intel.com>
+ <20200605134036.9013-4-andriy.shevchenko@linux.intel.com>
+ <20200615122044.j2vdhpmhbpsw6qkb@taurus.defre.kleine-koenig.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cover.1592224128.git.syednwaris@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200615122044.j2vdhpmhbpsw6qkb@taurus.defre.kleine-koenig.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch reimplements the xgpio_set_multiple function in
-drivers/gpio/gpio-xilinx.c to use the new for_each_set_clump macro.
-Instead of looping for each bit in xgpio_set_multiple
-function, now we can check each channel at a time and save cycles.
+On Mon, Jun 15, 2020 at 02:20:44PM +0200, Uwe Kleine-König wrote:
+> On Fri, Jun 05, 2020 at 04:40:36PM +0300, Andy Shevchenko wrote:
+> > It's a repetition of the commit aa58a21ae378
+> >   ("gpio: pca953x: disable regmap locking")
+> > which states the following:
+> > 
+> >   This driver uses its own locking but regmap silently uses
+> >   a mutex for all operations too. Add the option to disable
+> >   locking to the regmap config struct.
+> > 
+> > Fixes: bcf41dc480b1 ("gpio: pca953x: fix handling of automatic address incrementing")
+> > Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Ah, good catch. I assume that I didn't have aa58a21ae378 in my tree when
+> I created the patch that then became bcf41dc480b1.
+> 
+> Looks right
+> 
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Syed Nayyar Waris <syednwaris@gmail.com>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
-Changes in v8:
- - No change.
+Thanks!
 
-Changes in v7:
- - No change.
+Linus, Bart, just to clarify that this is material for one of the next v5.8-rcX
+(this cycle!).
 
-Changes in v6:
- - No change.
-
-Changes in v5:
- - Minor change: Inline values '32' and '64' in code for better
-   code readability.
-
-Changes in v4:
- - Minor change: Inline values '32' and '64' in code for better
-   code readability.
-
-Changes in v3:
- - No change.
-
-Changes in v2:
- - No change.
-
- drivers/gpio/gpio-xilinx.c | 62 ++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index 67f9f82e0db0..e81092dea27e 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -136,39 +136,41 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
- 			       unsigned long *bits)
- {
--	unsigned long flags;
-+	unsigned long flags[2];
- 	struct xgpio_instance *chip = gpiochip_get_data(gc);
--	int index = xgpio_index(chip, 0);
--	int offset, i;
--
--	spin_lock_irqsave(&chip->gpio_lock[index], flags);
--
--	/* Write to GPIO signals */
--	for (i = 0; i < gc->ngpio; i++) {
--		if (*mask == 0)
--			break;
--		/* Once finished with an index write it out to the register */
--		if (index !=  xgpio_index(chip, i)) {
--			xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
--				       index * XGPIO_CHANNEL_OFFSET,
--				       chip->gpio_state[index]);
--			spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
--			index =  xgpio_index(chip, i);
--			spin_lock_irqsave(&chip->gpio_lock[index], flags);
--		}
--		if (__test_and_clear_bit(i, mask)) {
--			offset =  xgpio_offset(chip, i);
--			if (test_bit(i, bits))
--				chip->gpio_state[index] |= BIT(offset);
--			else
--				chip->gpio_state[index] &= ~BIT(offset);
--		}
-+	u32 *const state = chip->gpio_state;
-+	unsigned int *const width = chip->gpio_width;
-+	unsigned long offset, clump;
-+	size_t index;
-+
-+	DECLARE_BITMAP(old, 64);
-+	DECLARE_BITMAP(new, 64);
-+	DECLARE_BITMAP(changed, 64);
-+
-+	spin_lock_irqsave(&chip->gpio_lock[0], flags[0]);
-+	spin_lock_irqsave(&chip->gpio_lock[1], flags[1]);
-+
-+	bitmap_set_value(old, state[0], 0, width[0]);
-+	bitmap_set_value(old, state[1], width[0], width[1]);
-+	bitmap_replace(new, old, bits, mask, gc->ngpio);
-+
-+	bitmap_set_value(old, state[0], 0, 32);
-+	bitmap_set_value(old, state[1], 32, 32);
-+	state[0] = bitmap_get_value(new, 0, width[0]);
-+	state[1] = bitmap_get_value(new, width[0], width[1]);
-+	bitmap_set_value(new, state[0], 0, 32);
-+	bitmap_set_value(new, state[1], 32, 32);
-+	bitmap_xor(changed, old, new, 64);
-+
-+	for_each_set_clump(offset, clump, changed, 64, 32) {
-+		index = offset / 32;
-+		xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
-+				index * XGPIO_CHANNEL_OFFSET,
-+				state[index]);
- 	}
- 
--	xgpio_writereg(chip->regs + XGPIO_DATA_OFFSET +
--		       index * XGPIO_CHANNEL_OFFSET, chip->gpio_state[index]);
--
--	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
-+	spin_unlock_irqrestore(&chip->gpio_lock[1], flags[1]);
-+	spin_unlock_irqrestore(&chip->gpio_lock[0], flags[0]);
- }
- 
- /**
 -- 
-2.26.2
+With Best Regards,
+Andy Shevchenko
+
 
