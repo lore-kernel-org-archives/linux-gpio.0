@@ -3,44 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14C8C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 16:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDBAC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 16:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD9872075E
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 16:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A73120679
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 16:43:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730420AbgFPQ2c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:28:32 -0400
-Received: from mga04.intel.com ([192.55.52.120]:35176 "EHLO mga04.intel.com"
+        id S1729390AbgFPQnk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 12:43:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:36045 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730400AbgFPQ2c (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:28:32 -0400
-IronPort-SDR: KvvVnBAduB6kKr3k2TApZSB+J/+n+ijTWB8UwzmCZwuEgKrlwo3Q3FHPGWaMYNQq1BLhAglxWj
- K94RqoWmQtqw==
+        id S1728861AbgFPQnk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 Jun 2020 12:43:40 -0400
+IronPort-SDR: YycY4HrcBRnaZt9H+IRcWldVK5Fd0Ln/PCR497O5kju/eoYT93igDRrEUJT9HbzYzse3l1XszG
+ P4NYLU9Ky+Ow==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 09:28:30 -0700
-IronPort-SDR: 8HXi56IyqWUyPCFJRdEXn7JsGmx3tVCPeedkyh8cqOdQFpNNKgjSCP5ZBzhsqA1NZNJG+RMAsj
- qdAg4eZiM27w==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 09:43:39 -0700
+IronPort-SDR: hk/+XfuH9RyDOb5qSQ+dxUxruYi2TyQzcJpWQjWiDt8uLk1KQ9qSKDmRigo/F23DKV+IzpS1V6
+ nd1mt4pnI83Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,518,1583222400"; 
-   d="scan'208";a="309166654"
+   d="scan'208";a="476502559"
 Received: from lkp-server01.sh.intel.com (HELO b4e26a9a4e5e) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jun 2020 09:28:30 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 16 Jun 2020 09:43:37 -0700
 Received: from kbuild by b4e26a9a4e5e with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jlERp-0000Ao-CR; Tue, 16 Jun 2020 16:28:29 +0000
-Date:   Wed, 17 Jun 2020 00:27:55 +0800
+        id 1jlEgT-0000B6-5P; Tue, 16 Jun 2020 16:43:37 +0000
+Date:   Wed, 17 Jun 2020 00:43:12 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [pinctrl:for-next] BUILD SUCCESS
- de98b5f154a2a418f4afe61e69a7cc44c1bafade
-Message-ID: <5ee8f30b.gA57kIicH7uXnI93%lkp@intel.com>
+Subject: [gpio:fixes] BUILD SUCCESS
+ 861254d826499944cb4d9b5a15f5a794a6b99a69
+Message-ID: <5ee8f6a0.ScwuYATpoIx618/f%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,13 +50,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  for-next
-branch HEAD: de98b5f154a2a418f4afe61e69a7cc44c1bafade  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  fixes
+branch HEAD: 861254d826499944cb4d9b5a15f5a794a6b99a69  gpio: arizona: put pm_runtime in case of failure
 
-elapsed time: 484m
+elapsed time: 482m
 
-configs tested: 123
-configs skipped: 2
+configs tested: 127
+configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -89,6 +89,11 @@ mips                           ip27_defconfig
 c6x                        evmc6678_defconfig
 arm                       netwinder_defconfig
 sh                           se7721_defconfig
+arm                         ebsa110_defconfig
+alpha                               defconfig
+powerpc                     mpc512x_defconfig
+sh                        sh7757lcr_defconfig
+arm                           sunxi_defconfig
 i386                              allnoconfig
 i386                                defconfig
 i386                              debian-10.3
@@ -111,7 +116,6 @@ nds32                               defconfig
 nds32                             allnoconfig
 csky                             allyesconfig
 csky                                defconfig
-alpha                               defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
@@ -129,11 +133,11 @@ parisc                            allnoconfig
 parisc                              defconfig
 parisc                           allyesconfig
 parisc                           allmodconfig
+powerpc                             defconfig
 powerpc                          allyesconfig
 powerpc                          rhel-kconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
-powerpc                             defconfig
 i386                 randconfig-a006-20200615
 i386                 randconfig-a002-20200615
 i386                 randconfig-a001-20200615
