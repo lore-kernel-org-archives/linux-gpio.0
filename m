@@ -2,130 +2,97 @@ Return-Path: <SRS0=yQjr=75=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2278C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB42C433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D21BB207D3
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RxSooEOC"
+	by mail.kernel.org (Postfix) with ESMTP id B2DB42082F
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592291922;
+	bh=kOvpVuEsvNl7dmJVGf0NZaeAcX1Rnm/xQA15PjcYbO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nV2+xNWCtTtxNqTnhOR8QXNbe564fEUBkln9I7MslPLWD2Eu3Kg/MkSCQe2wDD3/s
+	 yniZb3JY8J2b0/970Z66NLBKTga8st3Ilz3tgXo39Zaw7i+pfHjMD4+qEcuGVB5N5d
+	 mX7R2f71yDpNoJErikJ++QolasBSlAELecz/VGnA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbgFPGNo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 02:13:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgFPGNn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:43 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9DDC03E96A
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id n9so7930263plk.1
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=WpLd8LRsJ/8biRJMZx0Bnx3mOD9worHTt50kQ8XWP7E=;
-        b=RxSooEOC/+yMUfI3gtNEWymtFFdmRe4Tkk2rBTpKJA3oVwp3ItlbonH5UnISC/UFSw
-         xg7h20PlIep3H7ldLpXzMVsTTCtf/6qdsD2rtzER8gSccQuO5izUvI4/DVOJyuBr0uup
-         P8aGCybW+GqHvl6l/YXJECQASVAnBVyQ/gMEygwAhcntyylCrDU5piUvOROASQrJULJ3
-         xo1aXzo0HfZYEWVbNFb3YdWACmXm/8ZRtF59TQz1J9nEEG1zyL1wVX2++p/L/AMY9SsH
-         hIm8Cg3VHPQyhCvqGwz5j4gSPvFKc8dSujV/RvR9zDWeHStJ0IPk46rRwp3VvwGDargX
-         TGmA==
+        id S1726091AbgFPHSm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 03:18:42 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:38163 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgFPHSl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 03:18:41 -0400
+Received: by mail-ej1-f66.google.com with SMTP id w16so19813543ejj.5;
+        Tue, 16 Jun 2020 00:18:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WpLd8LRsJ/8biRJMZx0Bnx3mOD9worHTt50kQ8XWP7E=;
-        b=dpe8l5iKljWvCzq2R4fPgNM3ir0bXH2+CYjgh7N9DeknLPJc7U+VAF+AKIt9snT7IX
-         oUbLAYAJ5JyQiqSapS3K6KgsE++/HIeKjptO1++tgUyrDayoz4su6SWLW+fgKK5Plb0F
-         ypTLbIqen/VEK8sNHqifNzIhpTRrXHKdxiAMcnr8RtCI2I5RApIsUKe6f9ws74PjpOCU
-         3bOZ3INSeW5Myy5eod6nRS6HFH5dJhP4NIFOYr/9EfMGhdL79dRADm3GbL+5qLnuwfXT
-         FXlwQG/48AyIN3TOiBpuCXMcRyXhqBVeiJHxFdrKxBXu481qtxSK8CQ4R7KdYnDl0YGU
-         SyQw==
-X-Gm-Message-State: AOAM531drng1PCAzBAy4lk0twkxxR9kQzQdg7VkMjbGV4u5aHy2cSiRF
-        x9EqUsE5nOhVJQWT86RWkPgiVw==
-X-Google-Smtp-Source: ABdhPJxJYRDBUdC2n/hzHBEEXJUuOgq+LjZinVw+29cwU9skb8cP3yPF9qx0n2GXzlPlzYv9r0itoQ==
-X-Received: by 2002:a17:90b:28d:: with SMTP id az13mr1345731pjb.67.1592288022378;
-        Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 23:13:41 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tT4lPCOqC8m2jN6E8L7uFkNVDR9AvY5WZewZRGKHN3k=;
+        b=eNMAtj8JqGE+DAXcm+nxXOPyOQyvAunnTk1brzsxBrcw6NGuj/z6a0yUiPsqJqH3lC
+         xXdA2CmfxIxH0iDGAUSUWk1lM32F23unbpltsKO6aIuhcjnsUvgO6hUbNJlGeUyy+8gE
+         FkPn6UmP1KIqSnlAk/NI26Zfg5GQr4S4xJ6LTqbX0dmLIKfilBoEDYUdlcIDGnWO/irF
+         oFPIz/4Sl9Yx5TDtG+jGsS644lbWNEcti8Sg5Jx9SqYKYZkbyyAj0OV++yZpBqQxnguP
+         Y0vHOZAnna7biuE2ewRTN8JQa8E1eOQfkI3W8oCvuT8rtcBdh0IGVx4ON5nBLSAjUnRQ
+         046Q==
+X-Gm-Message-State: AOAM5339TTOStu08Fatz5a3of2/oWo897okS6EInSS4NSEEtCUw8zG6F
+        PbrHxthZ8jKGhojCqELha/E=
+X-Google-Smtp-Source: ABdhPJxDifyRwf13/EjaihQm5vJnlZB+OKK9ORGdXYCRlY5yhWD2VfzUsTFNIEnVJ1d/pJH4EtKjtQ==
+X-Received: by 2002:a17:906:fcae:: with SMTP id qw14mr1563379ejb.166.1592291919788;
+        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id js3sm10651179ejb.65.2020.06.16.00.18.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 09:18:37 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-gpio@vger.kernel.org
-Subject: [RFC][PATCH 0/5] Allow for qcom-pdc, pinctrl-msm and qcom-scm drivers to be loadable as modules
-Date:   Tue, 16 Jun 2020 06:13:33 +0000
-Message-Id: <20200616061338.109499-1-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3] pinctrl: samsung: Use bank name as irqchip name
+Message-ID: <20200616071837.GB20282@kozik-lap>
+References: <CGME20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3@eucas1p1.samsung.com>
+ <20200610194052.6434-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200610194052.6434-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch series provides exports and config tweaks to allow
-the qcom-pdc, pinctrl-msm and qcom-scm drivers to be able to be
-configured as permement modules (particularlly useful for the
-Android Generic Kernel Image efforts).
+On Wed, Jun 10, 2020 at 09:40:52PM +0200, Marek Szyprowski wrote:
+> Use the bank name as the irqchip name. This name is later visible in
+> /proc/interrupts, what makes it possible to easily identify each
+> GPIO interrupt.
+> 
+> /proc/interrupts before this patch:
+> 143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
+> 144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
+> 145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+> 
+> /proc/interrupts after this patch:
+> 143:    0     gpx3   7 Edge      hdmi
+> 144:    0     gpx3   6 Level     wm8994
+> 145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     gpm2   3 Edge      3-0048
+> 
+> Handling of the eint_wake_mask_value has been reworked, because each bank
+> has now its own exynos_irq_chip structure allocated.
+> 
 
-Feedback would be appreciated!
+Thanks, applied.
 
-thanks
--john
-
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Saravana Kannan <saravanak@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: iommu@lists.linux-foundation.org
-Cc: linux-gpio@vger.kernel.org
-
-John Stultz (5):
-  irq: irqdomain: Export irq_domain_update_bus_token
-  irq: irqchip: Export irq_chip_retrigger_hierarchy and
-    irq_chip_set_vcpu_affinity_parent
-  irqchip: Allow QCOM_PDC to be loadable as a perment module
-  pinctrl: qcom: Allow pinctrl-msm code to be loadable as a module
-  firmware: QCOM_SCM: Allow qcom_scm driver to be loadable as a
-    permenent module
-
- drivers/firmware/Kconfig           |  2 +-
- drivers/firmware/Makefile          |  3 ++-
- drivers/firmware/qcom_scm.c        |  4 ++++
- drivers/iommu/Kconfig              |  2 ++
- drivers/irqchip/Kconfig            |  2 +-
- drivers/irqchip/qcom-pdc.c         | 30 ++++++++++++++++++++++++++++++
- drivers/pinctrl/qcom/Kconfig       |  2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c |  3 +++
- kernel/irq/chip.c                  |  3 ++-
- kernel/irq/irqdomain.c             |  1 +
- 10 files changed, 47 insertions(+), 5 deletions(-)
-
--- 
-2.17.1
+Best regards,
+Krzysztof
 
