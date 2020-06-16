@@ -2,160 +2,122 @@ Return-Path: <SRS0=yQjr=75=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D32C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 05:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0CCC433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B11F207E8
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 05:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA3CD207D3
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNcJFU+r"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aIIoFqiw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbgFPF5a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 01:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
+        id S1727113AbgFPGNq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 02:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgFPF5a (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 01:57:30 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 268DEC05BD43;
-        Mon, 15 Jun 2020 22:57:30 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id l6so1536464ilo.2;
-        Mon, 15 Jun 2020 22:57:30 -0700 (PDT)
+        with ESMTP id S1727094AbgFPGNp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:45 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1B7C03E96A
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id bh7so7910316plb.11
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jO6HidFD2GZHYEdq4Pf2STG4Y5Qbo03mtR4akQ8KCrc=;
-        b=XNcJFU+rZ0+XQJp6ONQ9hU4ZBMCl6KiGYneEjomu+Lm5Sl16WzM00tDZ3f7QKoct40
-         Z4S778WXwJFLa9FZWahFfpuBaUw6AZD9ZZDt3Kizgl59ImGei18iRi/Xr4RuKc1wqG0x
-         GpnQFApUOn0UBHJMFIRiHODUez3MBBgUiDA2CLc1tkdMnOTA1TQ1ldgaMOtPmfEo9ebS
-         Py94inw3gWE2cFXJlNDTZcBVV/YJ2edW/w2AcuCdCCUSKV834QIWNDh7lg/EBOxCLZDI
-         0HetA9coL37DNQoYHj4XOSn5NIhP7TwVMt4gHzhE1zZl+OcTDx0gfyQjJ55dlkw0VKzc
-         LFUw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=h4JqKpoTJwOLVa4Di6JSd/Ph+43PAaMLhE3KrwrB/cQ=;
+        b=aIIoFqiwCuM3dby19TgymneGR+eeoT1Wxy2TPpRkJqUdrynkdRP8+CNDZi8knMQXSA
+         f6Bnkylgm0SyUXod2iE5akD5Gq/nK9BJ96sFopeuj+cDyIrPembwe8QM5m9mgdTOvT/p
+         95P3wC7lRmPEoi2hm5fpeVSFDjBKYxmhYTmzVw3juKPimfKhaq0XCfwXn9MoK/NPKS8v
+         fgds0I21HWcIzLuqkAxiS2DAXTEESOnA37rEYOfIy2DG1XAnGRh/eAXCdqoPN1mDr2EJ
+         gAtL26MemRtwwpZCy39jr2cpC4DNJ+Q5ORFGwo52pyKJV0BZ9VXCJSBmyLvzLfGUCnLK
+         4aVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jO6HidFD2GZHYEdq4Pf2STG4Y5Qbo03mtR4akQ8KCrc=;
-        b=s6EKW4h5AEkIu1/NmsDJTGgF2YCFsLNFg5NzUgkCfRA8KItf6bLPBA/J9vL8GXZ8gJ
-         8Gu124TP7yp/CD58kMfm68k0l7ncwY0WlZlNlWZvgB2XCydFb86rUv2ti9+VbWK92QCf
-         i7OquFe0Gi7+PzC4XYH1qKLpYWQH9RogElt0bkkwz0IjVNDglkYUSncpkrrIB0/71i7T
-         SCP5LPVBP4AyZvIH6evTjQUkhsWFg00PiCD1JY1A2x2f1F/2xgtU68ILlkFwjshqwcDI
-         smJ3lm0SiSh5Y4JmBS1bnytqrASwbVRGDz9imKR7z0C3L/VxYWr4jwMkTicK+AxmfzUw
-         g6vg==
-X-Gm-Message-State: AOAM533rJNwy2Uc1AXhgAcTLZkrhdsKgsSjZDv0KbMxYb9gV54Cm5fCT
-        2KMTEk/aH98xnGZh2M6yvXLI1s1zB3xiz/NSaEv/DDuE
-X-Google-Smtp-Source: ABdhPJzJ4ulFoSzwUUSDOauNc6vwON0bZod0JOc0uYBVetSDlB2Hekxu0gh7p7PaYD/VNrPCi/qFhMZ0NAHmZyf3amk=
-X-Received: by 2002:a92:7309:: with SMTP id o9mr1580810ilc.205.1592287049436;
- Mon, 15 Jun 2020 22:57:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <46c05c5deeada60a13ee0de83c68583d578f42fd.1592224129.git.syednwaris@gmail.com>
- <202006160420.iatdr9ab%lkp@intel.com>
-In-Reply-To: <202006160420.iatdr9ab%lkp@intel.com>
-From:   Syed Nayyar Waris <syednwaris@gmail.com>
-Date:   Tue, 16 Jun 2020 11:27:18 +0530
-Message-ID: <CACG_h5oiA8mDpTjtyGFYR4eptbxppN9tq+2wUj8T1hsbZ5h47A@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] gpio: xilinx: Utilize for_each_set_clump macro
-To:     kernel test robot <lkp@intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kbuild-all@lists.01.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=h4JqKpoTJwOLVa4Di6JSd/Ph+43PAaMLhE3KrwrB/cQ=;
+        b=O1WSqaecZvC+rwU9DnH0ORo/GtScgBD7IzkGKspjB+FZ7w70U5XIvonlkdkc1StciN
+         PHPB4Vc+JOEztkE6gaWZ7AjEGaCnNuwpk0lckCfapb3BC1JQoT4PtFIrCJ+O3OcsdvLl
+         WmCKjMPOV8sM17CjWFS3pIFJIeI8UhnBTfeG3OnkB33dl9iTdzI4ijAiizclmloj/+Je
+         AqeCfmEwKSApCOzCCAN6jm6O/S1msDdTNk531FwWA7WK2N+qFMvv7BQSlFD3fW+p1bso
+         bkWL7tvUwQidCVk9hR+DxtP2q7XFPyFnOumF+EOTFh6VrWZ/9lqaF/EQ6+JVphelLNSS
+         IHwA==
+X-Gm-Message-State: AOAM531bSgXFM9Mws/BKIqFD4yguDCcQY7QeFDSFLEMbXqgn4B32w3Vz
+        jVZMuMXUnIjPRmj1m0N+QPsixA==
+X-Google-Smtp-Source: ABdhPJwzygD/WHkWLyQJ6iGsnCwTqfRIFtsc++PcBZQkjKRMfUmeu8vpzS8kFNaT35Xwy6HpTPU4IQ==
+X-Received: by 2002:a17:90b:46ca:: with SMTP id jx10mr1362107pjb.3.1592288023527;
+        Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-gpio@vger.kernel.org
+Subject: [RFC][PATCH 1/5] irq: irqdomain: Export irq_domain_update_bus_token
+Date:   Tue, 16 Jun 2020 06:13:34 +0000
+Message-Id: <20200616061338.109499-2-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200616061338.109499-1-john.stultz@linaro.org>
+References: <20200616061338.109499-1-john.stultz@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 1:39 AM kernel test robot <lkp@intel.com> wrote:
->
-> Hi Syed,
->
-> Thank you for the patch! Perhaps something to improve:
->
-> [auto build test WARNING on 444fc5cde64330661bf59944c43844e7d4c2ccd8]
->
-> url:    https://github.com/0day-ci/linux/commits/Syed-Nayyar-Waris/Introduce-the-for_each_set_clump-macro/20200615-205729
-> base:    444fc5cde64330661bf59944c43844e7d4c2ccd8
-> config: sparc64-randconfig-s032-20200615 (attached as .config)
-> compiler: sparc64-linux-gcc (GCC) 9.3.0
-> reproduce:
->         # apt-get install sparse
->         # sparse version: v0.6.2-rc1-3-g55607964-dirty
->         # save the attached .config to linux build tree
->         make W=1 C=1 ARCH=sparc64 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
->
->
-> sparse warnings: (new ones prefixed by >>)
->
-> >> include/linux/bitmap.h:639:45: sparse: sparse: shift too big (64) for type unsigned long
-> >> include/linux/bitmap.h:639:45: sparse: sparse: shift too big (64) for type unsigned long
->    include/linux/bitmap.h:594:63: sparse: sparse: shift too big (64) for type unsigned long
-> >> include/linux/bitmap.h:639:45: sparse: sparse: shift too big (64) for type unsigned long
-> >> include/linux/bitmap.h:638:17: sparse: sparse: invalid access past the end of 'old' (8 8)
->
-> vim +639 include/linux/bitmap.h
->
-> 169c474fb22d8a William Breathitt Gray 2019-12-04  613
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  614  /**
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  615   * bitmap_set_value - set n-bit value within a memory region
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  616   * @map: address to the bitmap memory region
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  617   * @value: value of nbits
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  618   * @start: bit offset of the n-bit value
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  619   * @nbits: size of value in bits
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  620   */
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  621  static inline void bitmap_set_value(unsigned long *map,
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  622                               unsigned long value,
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  623                               unsigned long start, unsigned long nbits)
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  624  {
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  625   const size_t index = BIT_WORD(start);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  626   const unsigned long offset = start % BITS_PER_LONG;
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  627   const unsigned long ceiling = roundup(start + 1, BITS_PER_LONG);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  628   const unsigned long space = ceiling - start;
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  629
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  630   value &= GENMASK(nbits - 1, 0);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  631
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  632   if (space >= nbits) {
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  633           map[index] &= ~(GENMASK(nbits + offset - 1, offset));
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  634           map[index] |= value << offset;
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  635   } else {
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  636           map[index] &= ~BITMAP_FIRST_WORD_MASK(start);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  637           map[index] |= value << offset;
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15 @638           map[index + 1] &= ~BITMAP_LAST_WORD_MASK(start + nbits);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15 @639           map[index + 1] |= (value >> space);
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  640   }
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  641  }
-> 803024b6c8a375 Syed Nayyar Waris      2020-06-15  642
+Add export for irq_domain_update_bus_token() so that
+we can allow drivers like the qcom-pdc driver to be
+loadable as a module.
 
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: iommu@lists.linux-foundation.org
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+ kernel/irq/irqdomain.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regarding the compilation warning reported above:
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index a4c2c915511d..ca974d965fda 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -281,6 +281,7 @@ void irq_domain_update_bus_token(struct irq_domain *domain,
+ 
+ 	mutex_unlock(&irq_domain_mutex);
+ }
++EXPORT_SYMBOL_GPL(irq_domain_update_bus_token);
+ 
+ /**
+  * irq_domain_add_simple() - Register an irq_domain and optionally map a range of irqs
+-- 
+2.17.1
 
-"sparse: shift too big (64) for type unsigned long" at line 639
-"sparse: invalid access past the end of 'old' (8 8)" at line 638
-
-Kindly refer to the code above, at these line numbers.
-
-I am in the process of fixing this warning. But what would be the fix
-? At the moment can't think of a code-fix to make the compilation
-warning disappear (specially at line 639). Can anyone please explain
-to me the meaning of the compilation warning more deeply?
-
-By the way, this warning was not reported in (earlier) v7 of the patchset.
-
-Regards
-Syed Nayyar Waris
