@@ -2,118 +2,193 @@ Return-Path: <SRS0=yQjr=75=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2F8C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 21:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78119C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5894F2082E
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 21:40:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+eaAvVo"
+	by mail.kernel.org (Postfix) with ESMTP id 5A470207D3
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgFPVkw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 17:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgFPVkw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 17:40:52 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FAF4C061573;
-        Tue, 16 Jun 2020 14:40:52 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x11so3608890plo.7;
-        Tue, 16 Jun 2020 14:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+dajMWjezIJ0QoGB+YVGjkIeaVfvA1ZzMYeFQHxUYCY=;
-        b=G+eaAvVoxKV4s+UrluTAMDCCoQ3u5InSeKWKwrY/m8A9W8k7DbebILXdxDP2iEvG1w
-         Dx3ueS+WBJFUS4KqcBlzHZK3g0OyHhdNB90HprruUOF44s4YF56endRnFxcQsLBCcHIT
-         25htvqS0mTSn9m6xpqwBwWgRbYSVJ7wIySdiWdaujhZ0T1+LNg0b/xJK+YT/Qd3ROMpK
-         ZTpIBogDLhUbbSe9q+6du5LZXYw5mnxPvt4lJphHKaLVTars0IwQE8mAaHXJaopaqezc
-         7nwKWyF9iiyY38FAnSyh0P0C4T34AUOb6NU7rTa2cGsAw/dkW+qCjaKSt0wz+bK9Jy/r
-         CBAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+dajMWjezIJ0QoGB+YVGjkIeaVfvA1ZzMYeFQHxUYCY=;
-        b=VJp9w/Hz2Bp0tTtWgyzsNuzvtSHt2ZEHg2ZLAlhLwNW2JwLAoiXq9qblKm6OvOrB/n
-         7h6gKbn3M1/KO/VJtedzm48EU2srsTZSPP87oRQWyG6yWapojDZiMEBSpSJnE3if882n
-         HNQJCd6nLD23cQFpooPIMJt7XxglLsdWUFcVG4oKIrQtRAmyOPo7839vyr/YP0fKtTMk
-         EKCwX8NBIeq9LlByVDuHMpSNe+HXVdKJFe4mnvuKZapjZzwT75C6UdRcwFemn5gxFfuB
-         ZhS15H6kivLPJpUjtGg+49hIJ3yE8D+mHpWLSXUf/ueuxxi4qQDcFj9/7OYtjk3uLbLX
-         4s4w==
-X-Gm-Message-State: AOAM531c3G0pFGgzQyCpkmLpKTUEIh7vHybQViFh7/SR90FGkZq1/Rzo
-        pw1px3TSbvGzpRJplbyMRePshsI/XvN4obBkfkSQAfoW
-X-Google-Smtp-Source: ABdhPJw+5RcNqV+etOo/4A14LjCKQKf1PiP/HW80zQ3wk0qQ/kI//YDPYeANKr3EqL380La+nt7/YUkbRD/WEM4OPWM=
-X-Received: by 2002:a17:90a:b30d:: with SMTP id d13mr4582038pjr.181.1592343651550;
- Tue, 16 Jun 2020 14:40:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200608134300.76091-1-andriy.shevchenko@linux.intel.com> <20200616200225.32mwzew3zw3nuiwh@mobilestation>
-In-Reply-To: <20200616200225.32mwzew3zw3nuiwh@mobilestation>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 17 Jun 2020 00:40:35 +0300
-Message-ID: <CAHp75VfZMx8ip=Bo=gZQiGufJvh=7dtr61C3ZcZjETFrErTk6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/6] mfd: Make use of software nodes
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        id S1726453AbgFPWeF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 18:34:05 -0400
+Received: from v6.sk ([167.172.42.174]:48566 "EHLO v6.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbgFPWeE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 Jun 2020 18:34:04 -0400
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id 80E9A61636;
+        Tue, 16 Jun 2020 22:34:01 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v3 2/5] dt-bindings: i2c: Convert i2c-pxa to json-schema
+Date:   Wed, 17 Jun 2020 00:33:50 +0200
+Message-Id: <20200616223353.993567-3-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200616223353.993567-1-lkundrak@v3.sk>
+References: <20200616223353.993567-1-lkundrak@v3.sk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 11:03 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> On Mon, Jun 08, 2020 at 04:42:54PM +0300, Andy Shevchenko wrote:
-> > Some devices would need to have a hierarchy of properties and
-> > child nodes passed to the child or children of MFD. For such case
-> > we may utilize software nodes, which is superior on device properties.
-> >
-> > Add support of software nodes to MFD core and convert one driver
-> > to show how it looks like. This allows to get rid of legacy platform
-> > data.
-> >
-> > The change has been tested on Intel Galileo Gen 2.
->
-> I am wondering whether we could move the {gpio_base, ngpio, irq_shared}
-> part into the gpio-dwapb.c driver and use either the ACPI-based or
-> platform_device_id-based matching to get the device-specific resources
-> info through the driver_data field. By doing so you wouldn't need to
-> introduce a new "snps,gpio-base"-like property and propagate
-> software_node-based properties, but still you could get rid of the
-> dwapb_platform_data structure since all the info would be locally
-> available.
+A conversion of the i2c-pxa binding to DT schema format using json-schema.
 
-The idea is to get rid of the driver being dependent on some quirks
-when we may do it clearly and nicely.
-We, by applying this series, make (keep) layers independent: board
-code vs. driver code. Mixing them more is the opposite to what I
-propose.
+This also cleans ups some errors in the binding: The compatible string
+description suggested that "mmp" in "mrvl,mmp-twsi" is to be substituted
+with a processor model, which wouldn't be a right thing to do and indeed
+nobody seems to have been doing that. There also was "Recommended
+properties" section that included optional as well as mandatory
+properties. Missing mandatory properties were added to the example.
 
-WRT property.
-snps,gpio-base can be easily changed to *already in use* gpio-base or
-being both converted to linux,gpio-base to explicitly show people that
-this is internal stuff that must not be present in firmware nodes.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-> If ACPI-based matching doesn't uniquely address the Quark GPIO node,
-> then you could just replace the intel_quark_mfd_cells[0].name with
-> something like "gpio-dwapb-quark", which then by the MFD core will be
-> copied to the corresponding platform_device->name due to calling
-> platform_device_alloc() with cell-name passed. That name will be used
-> to match a platform_driver with id_table having that new name added.
+---
+Changes since v2:
+- Add unevaluatedProperties: false
 
-Oh, that doesn't sound right. It makes things ugly.
+Changes since v1:
+- Add default GPL-2.0-only license tag
+- Fill in maintainers from MAINTAINERS file
 
+ .../devicetree/bindings/i2c/i2c-pxa.txt       | 31 --------
+ .../devicetree/bindings/i2c/i2c-pxa.yaml      | 74 +++++++++++++++++++
+ 2 files changed, 74 insertions(+), 31 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-pxa.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-pxa.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-pxa.txt b/Documentation/devicetree/bindings/i2c/i2c-pxa.txt
+deleted file mode 100644
+index c30783c0eca03..0000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-pxa.txt
++++ /dev/null
+@@ -1,31 +0,0 @@
+-* Marvell MMP I2C controller
+-
+-Required properties :
+-
+- - reg : Offset and length of the register set for the device
+- - compatible : should be "mrvl,mmp-twsi" where mmp is the name of a
+-   compatible processor, e.g. pxa168, pxa910, mmp2, mmp3.
+-   For the pxa2xx/pxa3xx, an additional node "mrvl,pxa-i2c" is required
+-   as shown in the example below.
+-   For the Armada 3700, the compatible should be "marvell,armada-3700-i2c".
+-
+-Recommended properties :
+-
+- - interrupts : the interrupt number
+- - mrvl,i2c-polling : Disable interrupt of i2c controller. Polling
+-   status register of i2c controller instead.
+- - mrvl,i2c-fast-mode : Enable fast mode of i2c controller.
+-
+-Examples:
+-	twsi1: i2c@d4011000 {
+-		compatible = "mrvl,mmp-twsi";
+-		reg = <0xd4011000 0x1000>;
+-		interrupts = <7>;
+-		mrvl,i2c-fast-mode;
+-	};
+-	
+-	twsi2: i2c@d4025000 {
+-		compatible = "mrvl,mmp-twsi";
+-		reg = <0xd4025000 0x1000>;
+-		interrupts = <58>;
+-	};
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-pxa.yaml b/Documentation/devicetree/bindings/i2c/i2c-pxa.yaml
+new file mode 100644
+index 0000000000000..da6e8bdc40377
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-pxa.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/i2c-pxa.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell MMP I2C controller bindings
++
++maintainers:
++  - Rob Herring <robh+dt@kernel.org>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++  - if:
++      not:
++        required:
++          - mrvl,i2c-polling
++    then:
++        required:
++          - interrupts
++
++properties:
++  compatible:
++    enum:
++      - mrvl,mmp-twsi
++      - mrvl,pxa-i2c
++      - marvell,armada-3700-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++
++  resets:
++    minItems: 1
++
++  mrvl,i2c-polling:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: |
++      Disable interrupt of i2c controller. Polling status register of i2c
++      controller instead.
++
++  mrvl,i2c-fast-mode:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: Enable fast mode of i2c controller.
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - '#address-cells'
++  - '#size-cells'
++
++examples:
++  - |
++    #include <dt-bindings/clock/marvell,mmp2.h>
++    i2c@d4011000 {
++        compatible = "mrvl,mmp-twsi";
++        reg = <0xd4011000 0x1000>;
++        interrupts = <7>;
++        clocks = <&soc_clocks MMP2_CLK_TWSI1>;
++        mrvl,i2c-fast-mode;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
++
++...
 -- 
-With Best Regards,
-Andy Shevchenko
+2.26.2
+
