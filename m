@@ -2,60 +2,59 @@ Return-Path: <SRS0=yQjr=75=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B15C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2278C433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E213E2074D
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D21BB207D3
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:14:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xMAoHVNp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RxSooEOC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgFPGOC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 02:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
+        id S1727079AbgFPGNo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 02:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbgFPGNr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:47 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD80C08C5C4
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:47 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x11so2516064plo.7
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:47 -0700 (PDT)
+        with ESMTP id S1727064AbgFPGNn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:43 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9DDC03E96A
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id n9so7930263plk.1
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tafn8tgvook2kdsU5HvJlEK8LMOFG+C0LcPeZd052n0=;
-        b=xMAoHVNpffLY2lyTJD9QbeN8KTyRSaCCjkC1E0u2VIy0nIWcP5sclAiUAnyOV5gxo7
-         oUZ5I8XHEKUPI5HHxhiuB3+rhaj6tORHBTO43Z+tK6rGQ9KB52CJoor8yhS92yQgrJE5
-         UsjsHN6CB7p6Wvnm/t05rV2XL0Eo3w/Gkepsz9Lk2uCVqEdP/Onw398cCpRDh4z/aPsk
-         5kwkQUlYMQYiuf9ijlJaEIfoKmdY1YHHs4x+UsDUtjNA4biCYzwLJRQYBD8q1MHKJKT7
-         XGf7sL+4v7hVAdKG6ictgI5vbmId+R5Vnm1ZlDViPyMrg6hBsc/jbJsngf/Sj51SRZS+
-         AcAQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=WpLd8LRsJ/8biRJMZx0Bnx3mOD9worHTt50kQ8XWP7E=;
+        b=RxSooEOC/+yMUfI3gtNEWymtFFdmRe4Tkk2rBTpKJA3oVwp3ItlbonH5UnISC/UFSw
+         xg7h20PlIep3H7ldLpXzMVsTTCtf/6qdsD2rtzER8gSccQuO5izUvI4/DVOJyuBr0uup
+         P8aGCybW+GqHvl6l/YXJECQASVAnBVyQ/gMEygwAhcntyylCrDU5piUvOROASQrJULJ3
+         xo1aXzo0HfZYEWVbNFb3YdWACmXm/8ZRtF59TQz1J9nEEG1zyL1wVX2++p/L/AMY9SsH
+         hIm8Cg3VHPQyhCvqGwz5j4gSPvFKc8dSujV/RvR9zDWeHStJ0IPk46rRwp3VvwGDargX
+         TGmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tafn8tgvook2kdsU5HvJlEK8LMOFG+C0LcPeZd052n0=;
-        b=A1CJiXoqLjxaLzK3KDa+dVsGQ8auvbVgSbcldsynv2ctH9EMasj5MvHJZ1S8G/xJEp
-         f4QJ/+iY2mSGf9vbyBwbwgJILtpDAWCm0hZBJptcKDCGNIbU1Meoi2MHMXNgTNwkLAG8
-         vwHVQIt/PA84csrp8fMSWOvkP9Tt6GcVwnintG//AiroVOqau7UBfst8AdlDH9q6Inef
-         eLGYIvOb8ImW6ChjxM2vXLvfLkqc8XLGquyt8qINBtP4D0JYOukLCZ+Dg3mWcps+qiz+
-         gwMbN18QEAyr2oa4ye8OIg5A+Fgg/DKMslY2YJqZSpHIxv2NBAp/x8DOlUq+purE7Hti
-         6T1A==
-X-Gm-Message-State: AOAM531Uc4Xfefb2hKFPQJDVPq4hsCFdMq+D8tAf5N2+BdNOqVUHFQ/y
-        2YEbPcerHYhtPtXEEA6hBN6Gww==
-X-Google-Smtp-Source: ABdhPJwzpEnEW8XPSBOBq1A7hYTb2UNoutUZvIjQpKbpwqGbOmCOIwyYxiTOyT5TfnOfy6VyShAGtg==
-X-Received: by 2002:a17:902:8f98:: with SMTP id z24mr796330plo.123.1592288027157;
-        Mon, 15 Jun 2020 23:13:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WpLd8LRsJ/8biRJMZx0Bnx3mOD9worHTt50kQ8XWP7E=;
+        b=dpe8l5iKljWvCzq2R4fPgNM3ir0bXH2+CYjgh7N9DeknLPJc7U+VAF+AKIt9snT7IX
+         oUbLAYAJ5JyQiqSapS3K6KgsE++/HIeKjptO1++tgUyrDayoz4su6SWLW+fgKK5Plb0F
+         ypTLbIqen/VEK8sNHqifNzIhpTRrXHKdxiAMcnr8RtCI2I5RApIsUKe6f9ws74PjpOCU
+         3bOZ3INSeW5Myy5eod6nRS6HFH5dJhP4NIFOYr/9EfMGhdL79dRADm3GbL+5qLnuwfXT
+         FXlwQG/48AyIN3TOiBpuCXMcRyXhqBVeiJHxFdrKxBXu481qtxSK8CQ4R7KdYnDl0YGU
+         SyQw==
+X-Gm-Message-State: AOAM531drng1PCAzBAy4lk0twkxxR9kQzQdg7VkMjbGV4u5aHy2cSiRF
+        x9EqUsE5nOhVJQWT86RWkPgiVw==
+X-Google-Smtp-Source: ABdhPJxJYRDBUdC2n/hzHBEEXJUuOgq+LjZinVw+29cwU9skb8cP3yPF9qx0n2GXzlPlzYv9r0itoQ==
+X-Received: by 2002:a17:90b:28d:: with SMTP id az13mr1345731pjb.67.1592288022378;
+        Mon, 15 Jun 2020 23:13:42 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.46
+        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 23:13:46 -0700 (PDT)
+        Mon, 15 Jun 2020 23:13:41 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>,
@@ -72,20 +71,24 @@ Cc:     John Stultz <john.stultz@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-gpio@vger.kernel.org
-Subject: [RFC][PATCH 4/5] pinctrl: qcom: Allow pinctrl-msm code to be loadable as a module
-Date:   Tue, 16 Jun 2020 06:13:37 +0000
-Message-Id: <20200616061338.109499-5-john.stultz@linaro.org>
+Subject: [RFC][PATCH 0/5] Allow for qcom-pdc, pinctrl-msm and qcom-scm drivers to be loadable as modules
+Date:   Tue, 16 Jun 2020 06:13:33 +0000
+Message-Id: <20200616061338.109499-1-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200616061338.109499-1-john.stultz@linaro.org>
-References: <20200616061338.109499-1-john.stultz@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Tweaks to allow pinctrl-msm code to be loadable as a module.
-This is needed in order to support having the qcom-scm driver,
-which pinctrl-msm calls into, configured as a module.
+This patch series provides exports and config tweaks to allow
+the qcom-pdc, pinctrl-msm and qcom-scm drivers to be able to be
+configured as permement modules (particularlly useful for the
+Android Generic Kernel Image efforts).
+
+Feedback would be appreciated!
+
+thanks
+-john
 
 Cc: Andy Gross <agross@kernel.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -101,36 +104,28 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-arm-msm@vger.kernel.org
 Cc: iommu@lists.linux-foundation.org
 Cc: linux-gpio@vger.kernel.org
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- drivers/pinctrl/qcom/Kconfig       | 2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index ff1ee159dca2..5a7e1bc621e6 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -2,7 +2,7 @@
- if (ARCH_QCOM || COMPILE_TEST)
- 
- config PINCTRL_MSM
--	bool
-+	tristate
- 	select PINMUX
- 	select PINCONF
- 	select GENERIC_PINCONF
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 83b7d64bc4c1..54a226f682e9 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1355,3 +1355,6 @@ int msm_pinctrl_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL(msm_pinctrl_remove);
- 
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. pinctrl-msm driver");
-+MODULE_LICENSE("GPL v2");
-+
+John Stultz (5):
+  irq: irqdomain: Export irq_domain_update_bus_token
+  irq: irqchip: Export irq_chip_retrigger_hierarchy and
+    irq_chip_set_vcpu_affinity_parent
+  irqchip: Allow QCOM_PDC to be loadable as a perment module
+  pinctrl: qcom: Allow pinctrl-msm code to be loadable as a module
+  firmware: QCOM_SCM: Allow qcom_scm driver to be loadable as a
+    permenent module
+
+ drivers/firmware/Kconfig           |  2 +-
+ drivers/firmware/Makefile          |  3 ++-
+ drivers/firmware/qcom_scm.c        |  4 ++++
+ drivers/iommu/Kconfig              |  2 ++
+ drivers/irqchip/Kconfig            |  2 +-
+ drivers/irqchip/qcom-pdc.c         | 30 ++++++++++++++++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig       |  2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c |  3 +++
+ kernel/irq/chip.c                  |  3 ++-
+ kernel/irq/irqdomain.c             |  1 +
+ 10 files changed, 47 insertions(+), 5 deletions(-)
+
 -- 
 2.17.1
 
