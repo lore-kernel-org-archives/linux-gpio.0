@@ -2,280 +2,172 @@ Return-Path: <SRS0=yQjr=75=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96780C433E4
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B04C433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB6B20B80
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2EB220B80
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 22:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPIBpSPE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgFPWei (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 18:34:38 -0400
-Received: from v6.sk ([167.172.42.174]:48640 "EHLO v6.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbgFPWeg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 16 Jun 2020 18:34:36 -0400
-Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 03A0161637;
-        Tue, 16 Jun 2020 22:34:04 +0000 (UTC)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1726407AbgFPW4y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 18:56:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56790 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgFPW4y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 18:56:54 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA13BC061573;
+        Tue, 16 Jun 2020 15:56:52 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id q19so536870lji.2;
+        Tue, 16 Jun 2020 15:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=xATZgEhnG4iKc4HqGtcJhZicmRUvlwjJ75PcShv0Jqo=;
+        b=CPIBpSPElykGHBPMqo9Q4pjn4Auscuaph/MdSO7bCogU5ysAEYwLTmQx6PdzbDoZZQ
+         zO53ZnWwyw0JejFDRyEQTSkMbKkyOoMDWhYOZ5KyQkdweEb1CVtRPSD8VptrrN2IDNPZ
+         Ynd+IOUh+YpoK3CQ59njE+4WC4lOo34DaNvGx7o2SUrnIzrAlvGRWC2KIrxfZihuGhtb
+         hk2MLH76MfcLE/vyEYaHtewAfbZYQl2lYJRdtALC1ljmkR5WglIL4OZLkcbDMagABPe8
+         WQXemwGwOTZXLGrhg/T5II1GAGtlEPABzRFCPt9oHuM8PNFt1RscmpN1Bhb1SnqQoCyg
+         kuOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xATZgEhnG4iKc4HqGtcJhZicmRUvlwjJ75PcShv0Jqo=;
+        b=SERNXsTPOkKf9ixTvC8ByKCjVeiUZ5Lh81QJxWKofhI2Y4ogZWCVg4NkjFukjEWn+3
+         tu0a2mDWiUvZ6Xpp52K1MAXbgyY8BXsaGq8GXHMiJ9Hnc4QgOWwy+rOvJ4aS00x1n2JQ
+         wOnGr/5+MdFwXWpOqu5qKHw/AsomtNRfuALdFVsQHpYpJImE2GKFsvxmVHfQDrn+4/KX
+         QEooRJXiijV+dN+XcKckXDOipOKKrsfjJk8i+wrWznPgKOl/9DH1R2BwikgFLFHNna/p
+         pQnOX2nMzGuSQuIkxV/o8naQjsYn/YgzHGc3o3LnZjCF6VwpBKx5OMlg4RM8Y5krimz9
+         lS8g==
+X-Gm-Message-State: AOAM531KeU9lUggxUx1p2ZBtCZS8r9Gr7K6Jhc8ZmdZVNrkuwu39lc7q
+        oRxc3a0KUTo98g5m5FeVGds=
+X-Google-Smtp-Source: ABdhPJzb+Fd0VMFfJKRay58MZlrAsRVUwz7+Aw5W83ky8xl5ymgEUzxNmrsFflzNNxMu9ttEGmjA7Q==
+X-Received: by 2002:a2e:3010:: with SMTP id w16mr2515012ljw.8.1592348211279;
+        Tue, 16 Jun 2020 15:56:51 -0700 (PDT)
+Received: from mobilestation ([95.79.139.207])
+        by smtp.gmail.com with ESMTPSA id a1sm4631647ljk.133.2020.06.16.15.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2020 15:56:50 -0700 (PDT)
+Date:   Wed, 17 Jun 2020 01:56:48 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 3/5] dt-bindings: interrupt-controller: Convert mrvl,intc to json-schema
-Date:   Wed, 17 Jun 2020 00:33:51 +0200
-Message-Id: <20200616223353.993567-4-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200616223353.993567-1-lkundrak@v3.sk>
-References: <20200616223353.993567-1-lkundrak@v3.sk>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v1 0/6] mfd: Make use of software nodes
+Message-ID: <20200616225648.eqzugzapatblndcy@mobilestation>
+References: <20200608134300.76091-1-andriy.shevchenko@linux.intel.com>
+ <20200616200225.32mwzew3zw3nuiwh@mobilestation>
+ <CAHp75VfZMx8ip=Bo=gZQiGufJvh=7dtr61C3ZcZjETFrErTk6Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfZMx8ip=Bo=gZQiGufJvh=7dtr61C3ZcZjETFrErTk6Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert the mrvl,intc binding to DT schema format using json-schema.
+On Wed, Jun 17, 2020 at 12:40:35AM +0300, Andy Shevchenko wrote:
+> On Tue, Jun 16, 2020 at 11:03 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+> > On Mon, Jun 08, 2020 at 04:42:54PM +0300, Andy Shevchenko wrote:
+> > > Some devices would need to have a hierarchy of properties and
+> > > child nodes passed to the child or children of MFD. For such case
+> > > we may utilize software nodes, which is superior on device properties.
+> > >
+> > > Add support of software nodes to MFD core and convert one driver
+> > > to show how it looks like. This allows to get rid of legacy platform
+> > > data.
+> > >
+> > > The change has been tested on Intel Galileo Gen 2.
+> >
+> > I am wondering whether we could move the {gpio_base, ngpio, irq_shared}
+> > part into the gpio-dwapb.c driver and use either the ACPI-based or
+> > platform_device_id-based matching to get the device-specific resources
+> > info through the driver_data field. By doing so you wouldn't need to
+> > introduce a new "snps,gpio-base"-like property and propagate
+> > software_node-based properties, but still you could get rid of the
+> > dwapb_platform_data structure since all the info would be locally
+> > available.
+> 
+> The idea is to get rid of the driver being dependent on some quirks
+> when we may do it clearly and nicely.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Yes, I've got that and in most of the aspects I like what you suggested
+in this parchset. But it seems to me that the maintainers are mostly prone
+to having some of the platform-specifics being locally (in-driver) defined.
+So I proposed an alternative solution, which might do to satisfy their
+requirement. Note saying that you want to get rid of the quirks and
+introducing something like "gpio-base" firmware property seems contradicting
+a bit. 
 
----
-Changes since v1:
-- Move minItems/maxItems to main reg property definition from the
-  conditional one
-- Drop the condition for marvell,orion-intc
-- Add default GPL-2.0-only license tag
-- Fill in maintainers from MAINTAINERS file
+> We, by applying this series, make (keep) layers independent: board
+> code vs. driver code. Mixing them more is the opposite to what I
+> propose.
+> 
+> WRT property.
+> snps,gpio-base can be easily changed to *already in use* gpio-base or
+> being both converted to linux,gpio-base to explicitly show people that
+> this is internal stuff that must not be present in firmware nodes.
+> 
 
- .../interrupt-controller/mrvl,intc.txt        |  64 ---------
- .../interrupt-controller/mrvl,intc.yaml       | 134 ++++++++++++++++++
- 2 files changed, 134 insertions(+), 64 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.yaml
+As I see it the part with "gpio-base" and the irq_shared can be moved to the
+gpio-dwapb.c driver to be defined as the quark-specific quirks. Adding a
+property like "gpio-base" seems like a quirk anyway, so I'd leave it defined in
+the driver.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
-deleted file mode 100644
-index a0ed02725a9d7..0000000000000
---- a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
-+++ /dev/null
-@@ -1,64 +0,0 @@
--* Marvell MMP Interrupt controller
--
--Required properties:
--- compatible : Should be
--               "mrvl,mmp-intc" on Marvel MMP,
--               "mrvl,mmp2-intc" along with "mrvl,mmp2-mux-intc" on MMP2 or
--               "marvell,mmp3-intc" with "mrvl,mmp2-mux-intc" on MMP3
--- reg : Address and length of the register set of the interrupt controller.
--  If the interrupt controller is intc, address and length means the range
--  of the whole interrupt controller. The "marvell,mmp3-intc" controller
--  also has a secondary range for the second CPU core.  If the interrupt
--  controller is mux-intc, address and length means one register. Since
--  address of mux-intc is in the range of intc. mux-intc is secondary
--  interrupt controller.
--- reg-names : Name of the register set of the interrupt controller. It's
--  only required in mux-intc interrupt controller.
--- interrupts : Should be the port interrupt shared by mux interrupts. It's
--  only required in mux-intc interrupt controller.
--- interrupt-controller : Identifies the node as an interrupt controller.
--- #interrupt-cells : Specifies the number of cells needed to encode an
--  interrupt source.
--- mrvl,intc-nr-irqs : Specifies the number of interrupts in the interrupt
--  controller.
--- mrvl,clr-mfp-irq : Specifies the interrupt that needs to clear MFP edge
--  detection first.
--
--Example:
--	intc: interrupt-controller@d4282000 {
--		compatible = "mrvl,mmp2-intc";
--		interrupt-controller;
--		#interrupt-cells = <1>;
--		reg = <0xd4282000 0x1000>;
--		mrvl,intc-nr-irqs = <64>;
--	};
--
--	intcmux4@d4282150 {
--		compatible = "mrvl,mmp2-mux-intc";
--		interrupts = <4>;
--		interrupt-controller;
--		#interrupt-cells = <1>;
--		reg = <0x150 0x4>, <0x168 0x4>;
--		reg-names = "mux status", "mux mask";
--		mrvl,intc-nr-irqs = <2>;
--	};
--
--* Marvell Orion Interrupt controller
--
--Required properties
--- compatible :  Should be "marvell,orion-intc".
--- #interrupt-cells: Specifies the number of cells needed to encode an
--  interrupt source. Supported value is <1>.
--- interrupt-controller : Declare this node to be an interrupt controller.
--- reg : Interrupt mask address. A list of 4 byte ranges, one per controller.
--        One entry in the list represents 32 interrupts.
--
--Example:
--
--	intc: interrupt-controller {
--        	compatible = "marvell,orion-intc", "marvell,intc";
--		interrupt-controller;
--		#interrupt-cells = <1>;
--                reg = <0xfed20204 0x04>,
--		      <0xfed20214 0x04>;
--        };
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.yaml
-new file mode 100644
-index 0000000000000..372ccbfae7716
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.yaml
-@@ -0,0 +1,134 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/mrvl,intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell MMP/Orion Interrupt controller bindings
-+
-+maintainers:
-+  - Thomas Gleixner <tglx@linutronix.de>
-+  - Jason Cooper <jason@lakedaemon.net>
-+  - Marc Zyngier <maz@kernel.org>
-+  - Rob Herring <robh+dt@kernel.org>
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          not:
-+            contains:
-+              const: marvell,orion-intc
-+    then:
-+      required:
-+        - mrvl,intc-nr-irqs
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mrvl,mmp-intc
-+              - mrvl,mmp2-intc
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 1
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - marvell,mmp3-intc
-+              - mrvl,mmp2-mux-intc
-+    then:
-+      properties:
-+        reg:
-+          minItems: 2
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: mrvl,mmp2-mux-intc
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 1
-+        reg-names:
-+          items:
-+            - const: 'mux status'
-+            - const: 'mux mask'
-+      required:
-+        - interrupts
-+    else:
-+      properties:
-+        interrupts: false
-+
-+properties:
-+  '#interrupt-cells':
-+    const: 1
-+
-+  compatible:
-+    enum:
-+      - mrvl,mmp-intc
-+      - mrvl,mmp2-intc
-+      - marvell,mmp3-intc
-+      - marvell,orion-intc
-+      - mrvl,mmp2-mux-intc
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reg-names: true
-+
-+  interrupts: true
-+
-+  interrupt-controller: true
-+
-+  mrvl,intc-nr-irqs:
-+    description: |
-+      Specifies the number of interrupts in the interrupt controller.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  mrvl,clr-mfp-irq:
-+    description: |
-+      Specifies the interrupt that needs to clear MFP edge detection first.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - '#interrupt-cells'
-+  - compatible
-+  - reg
-+  - interrupt-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    interrupt-controller@d4282000 {
-+        compatible = "mrvl,mmp2-intc";
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+        reg = <0xd4282000 0x1000>;
-+        mrvl,intc-nr-irqs = <64>;
-+    };
-+
-+    interrupt-controller@d4282150 {
-+        compatible = "mrvl,mmp2-mux-intc";
-+        interrupts = <4>;
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+        reg = <0x150 0x4>, <0x168 0x4>;
-+        reg-names = "mux status", "mux mask";
-+        mrvl,intc-nr-irqs = <2>;
-+    };
-+  - |
-+    interrupt-controller@fed20204 {
-+        compatible = "marvell,orion-intc";
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+        reg = <0xfed20204 0x04>,
-+              <0xfed20214 0x04>;
-+    };
-+
-+...
--- 
-2.26.2
+* Note I don't really like replacing the irq_shared flag with to_of_node()
+because in general to_of_node() doesn't mean the IRQ line is shared, so
+selecting the shared and non-shared interrupt request paths based on that macro
+seems hackish.
 
+> > If ACPI-based matching doesn't uniquely address the Quark GPIO node,
+> > then you could just replace the intel_quark_mfd_cells[0].name with
+> > something like "gpio-dwapb-quark", which then by the MFD core will be
+> > copied to the corresponding platform_device->name due to calling
+> > platform_device_alloc() with cell-name passed. That name will be used
+> > to match a platform_driver with id_table having that new name added.
+> 
+> Oh, that doesn't sound right. It makes things ugly.
+
+I may have said that a bit unclearly. The only thing you'd need to do is to
+add an unique name to the Quark GPIO cell, like:
+drivers/mfd/intel_quark_i2c_gpio.c:
+static struct mfd_cell intel_quark_mfd_cells[] = {
+        {
+                .name = "gpio-dwapb-quark",
+        }
+
+Then make the gpio-dwapb.c driver being compatible with that device by declaring
+the id_table with that device name and passing the table to the DW APB GPIO
+"struct platform_driver" descriptor. The MFD/platform cores already provide the
+functionality of matching those two device and driver. If ACPI node uniquely
+defines the Quark GPIO with all that quirks applicable then you wouldn't even
+need to do the platform_device-driver-based matching. Just use the acpi_device_id
+to get the quirks flags/descriptors. 
+
+The rest of the patchset concerning passing software_node's down to the
+individual MFD sub-device and declaring "reg" and "snps,nr-gpios" in there seems
+pretty much acceptable to me.
+
+* Though indeed it would be better to mark the "snps,nr-gpios" as deprecated in
+the DT schema and have the "ngpios" supported as well.
+
+-Sergey
+
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
