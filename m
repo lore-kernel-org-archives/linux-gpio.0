@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0CCC433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E720C433E2
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA3CD207D3
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6D92082F
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 Jun 2020 06:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aIIoFqiw"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z0Ya8NgI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgFPGNq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Jun 2020 02:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
+        id S1727006AbgFPGNz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Jun 2020 02:13:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbgFPGNp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:45 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1B7C03E96A
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id bh7so7910316plb.11
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+        with ESMTP id S1727104AbgFPGNt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2020 02:13:49 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD461C03E96A
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:48 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id d6so1051284pjs.3
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2020 23:13:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h4JqKpoTJwOLVa4Di6JSd/Ph+43PAaMLhE3KrwrB/cQ=;
-        b=aIIoFqiwCuM3dby19TgymneGR+eeoT1Wxy2TPpRkJqUdrynkdRP8+CNDZi8knMQXSA
-         f6Bnkylgm0SyUXod2iE5akD5Gq/nK9BJ96sFopeuj+cDyIrPembwe8QM5m9mgdTOvT/p
-         95P3wC7lRmPEoi2hm5fpeVSFDjBKYxmhYTmzVw3juKPimfKhaq0XCfwXn9MoK/NPKS8v
-         fgds0I21HWcIzLuqkAxiS2DAXTEESOnA37rEYOfIy2DG1XAnGRh/eAXCdqoPN1mDr2EJ
-         gAtL26MemRtwwpZCy39jr2cpC4DNJ+Q5ORFGwo52pyKJV0BZ9VXCJSBmyLvzLfGUCnLK
-         4aVA==
+        bh=sjkuZIHgOGWNn0NM6WxaSWNlrL5TYHvrP2K4MQU57Qs=;
+        b=z0Ya8NgIc7JGqkE+pEiQxFdlLb1wI+YIdEhjbg63klsr9SrNdiWfoslKkTEk6he3qf
+         dTUbIL6TJWmiUS0mE3JJ680pY6mwbVwm9fG095z+akltQXiIt/Tm5YyuCKRkSwJXGNid
+         ueARo5vX67GhC0jJKeiZ2O+xPlAIi7b5zjFyw/jrwW3EbNRMWWSbx4GCMJKpWzAcY6s3
+         Y8m3moUHonrenxnBYqM8BdukDS/D1MI63FiKaoqHeoenLKaFkHzd09/PJzgJghFTgGx8
+         D2F/uagbw34y3bfQlXcZWfvjzd1pHQlziWnls/d601EqJCI2KUVag4SNPvTdFblJyVbx
+         GVxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=h4JqKpoTJwOLVa4Di6JSd/Ph+43PAaMLhE3KrwrB/cQ=;
-        b=O1WSqaecZvC+rwU9DnH0ORo/GtScgBD7IzkGKspjB+FZ7w70U5XIvonlkdkc1StciN
-         PHPB4Vc+JOEztkE6gaWZ7AjEGaCnNuwpk0lckCfapb3BC1JQoT4PtFIrCJ+O3OcsdvLl
-         WmCKjMPOV8sM17CjWFS3pIFJIeI8UhnBTfeG3OnkB33dl9iTdzI4ijAiizclmloj/+Je
-         AqeCfmEwKSApCOzCCAN6jm6O/S1msDdTNk531FwWA7WK2N+qFMvv7BQSlFD3fW+p1bso
-         bkWL7tvUwQidCVk9hR+DxtP2q7XFPyFnOumF+EOTFh6VrWZ/9lqaF/EQ6+JVphelLNSS
-         IHwA==
-X-Gm-Message-State: AOAM531bSgXFM9Mws/BKIqFD4yguDCcQY7QeFDSFLEMbXqgn4B32w3Vz
-        jVZMuMXUnIjPRmj1m0N+QPsixA==
-X-Google-Smtp-Source: ABdhPJwzygD/WHkWLyQJ6iGsnCwTqfRIFtsc++PcBZQkjKRMfUmeu8vpzS8kFNaT35Xwy6HpTPU4IQ==
-X-Received: by 2002:a17:90b:46ca:: with SMTP id jx10mr1362107pjb.3.1592288023527;
-        Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+        bh=sjkuZIHgOGWNn0NM6WxaSWNlrL5TYHvrP2K4MQU57Qs=;
+        b=Fe1csdp/4hQjzoBE+qbFrRYoA9rldXNVqeyHBzi0YilPsuNuOad1bJkCEb2kiRbG46
+         lRkk2L8wNS+sIrsKK+8r4tc0oJgvnDaQRbLQOXIJOC5it6O77QbCHQeWPf8uF25rCNuV
+         t2JSrLt01Cniho5Ls2mRlgyNBaU3hg9zKPiaR1wGN6EBZ6TzIvKT5Mnuwa8o9ZL/qDS7
+         GdvLRih7Vxf4MXD9ZpR8/VRz4OOuzPf6sAxe1bna+1yQOKXlamh1kAGpstUqWxoFI0Ab
+         q0/bCmEfJ4df/0tRjMZ1x1wq1h8usOh8Zk7fVhjTDjgbioLeQYwrE/2/11FsomBtkcR6
+         8bnA==
+X-Gm-Message-State: AOAM5331Kuf8c7h8zALC0QLJQD+TikDEbjMgvQ+O8t+YUgAjQoNXnYdM
+        uLh1o+uIYURnnqDPMpi/FnSAjQ==
+X-Google-Smtp-Source: ABdhPJwYhjtOBdx0zxRParoCjvCJBIOPOU1zn3RHlSdNmeSw/AbOBT8/4UQJOQjCCNZqxbJatymuaQ==
+X-Received: by 2002:a17:90b:3004:: with SMTP id hg4mr1670052pjb.208.1592288028324;
+        Mon, 15 Jun 2020 23:13:48 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.42
+        by smtp.gmail.com with ESMTPSA id i26sm15642032pfo.0.2020.06.15.23.13.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 23:13:43 -0700 (PDT)
+        Mon, 15 Jun 2020 23:13:47 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>,
@@ -72,9 +72,9 @@ Cc:     John Stultz <john.stultz@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-gpio@vger.kernel.org
-Subject: [RFC][PATCH 1/5] irq: irqdomain: Export irq_domain_update_bus_token
-Date:   Tue, 16 Jun 2020 06:13:34 +0000
-Message-Id: <20200616061338.109499-2-john.stultz@linaro.org>
+Subject: [RFC][PATCH 5/5] firmware: QCOM_SCM: Allow qcom_scm driver to be loadable as a permenent module
+Date:   Tue, 16 Jun 2020 06:13:38 +0000
+Message-Id: <20200616061338.109499-6-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200616061338.109499-1-john.stultz@linaro.org>
 References: <20200616061338.109499-1-john.stultz@linaro.org>
@@ -83,9 +83,8 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add export for irq_domain_update_bus_token() so that
-we can allow drivers like the qcom-pdc driver to be
-loadable as a module.
+Allow the qcom_scm driver to be loadable as a
+permenent module.
 
 Cc: Andy Gross <agross@kernel.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -103,21 +102,78 @@ Cc: iommu@lists.linux-foundation.org
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- kernel/irq/irqdomain.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/Kconfig    | 2 +-
+ drivers/firmware/Makefile   | 3 ++-
+ drivers/firmware/qcom_scm.c | 4 ++++
+ drivers/iommu/Kconfig       | 2 ++
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index a4c2c915511d..ca974d965fda 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -281,6 +281,7 @@ void irq_domain_update_bus_token(struct irq_domain *domain,
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index fbd785dd0513..9e533a462bf4 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -236,7 +236,7 @@ config INTEL_STRATIX10_RSU
+ 	  Say Y here if you want Intel RSU support.
  
- 	mutex_unlock(&irq_domain_mutex);
+ config QCOM_SCM
+-	bool
++	tristate "Qcom SCM driver"
+ 	depends on ARM || ARM64
+ 	select RESET_CONTROLLER
+ 
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index 99510be9f5ed..cf24d674216b 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -17,7 +17,8 @@ obj-$(CONFIG_ISCSI_IBFT)	+= iscsi_ibft.o
+ obj-$(CONFIG_FIRMWARE_MEMMAP)	+= memmap.o
+ obj-$(CONFIG_RASPBERRYPI_FIRMWARE) += raspberrypi.o
+ obj-$(CONFIG_FW_CFG_SYSFS)	+= qemu_fw_cfg.o
+-obj-$(CONFIG_QCOM_SCM)		+= qcom_scm.o qcom_scm-smc.o qcom_scm-legacy.o
++obj-$(CONFIG_QCOM_SCM)		+= qcom-scm.o
++qcom-scm-objs += qcom_scm.o qcom_scm-smc.o qcom_scm-legacy.o
+ obj-$(CONFIG_TI_SCI_PROTOCOL)	+= ti_sci.o
+ obj-$(CONFIG_TRUSTED_FOUNDATIONS) += trusted_foundations.o
+ obj-$(CONFIG_TURRIS_MOX_RWTM)	+= turris-mox-rwtm.o
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 0e7233a20f34..b5e88bf66975 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -1155,6 +1155,7 @@ static const struct of_device_id qcom_scm_dt_match[] = {
+ 	{ .compatible = "qcom,scm" },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, qcom_scm_dt_match);
+ 
+ static struct platform_driver qcom_scm_driver = {
+ 	.driver = {
+@@ -1170,3 +1171,6 @@ static int __init qcom_scm_init(void)
+ 	return platform_driver_register(&qcom_scm_driver);
  }
-+EXPORT_SYMBOL_GPL(irq_domain_update_bus_token);
- 
- /**
-  * irq_domain_add_simple() - Register an irq_domain and optionally map a range of irqs
+ subsys_initcall(qcom_scm_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. SCM driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index b510f67dfa49..714893535dd2 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -381,6 +381,7 @@ config SPAPR_TCE_IOMMU
+ config ARM_SMMU
+ 	tristate "ARM Ltd. System MMU (SMMU) Support"
+ 	depends on (ARM64 || ARM || (COMPILE_TEST && !GENERIC_ATOMIC64)) && MMU
++	depends on QCOM_SCM || !QCOM_SCM #if QCOM_SCM=m this can't be =y
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
+ 	select ARM_DMA_USE_IOMMU if ARM
+@@ -500,6 +501,7 @@ config QCOM_IOMMU
+ 	# Note: iommu drivers cannot (yet?) be built as modules
+ 	bool "Qualcomm IOMMU Support"
+ 	depends on ARCH_QCOM || (COMPILE_TEST && !GENERIC_ATOMIC64)
++	depends on QCOM_SCM=y
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
+ 	select ARM_DMA_USE_IOMMU
 -- 
 2.17.1
 
