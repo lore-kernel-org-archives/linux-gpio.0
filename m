@@ -2,100 +2,140 @@ Return-Path: <SRS0=dtED=77=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D96C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0313CC433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6962083B
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448631;
-	bh=6gruKfqidV8dlcCkOj9tUa6RXFVX8x50lVwibQBN1mw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vwRFg4f8/ahHwG77oLbkBgKzbaRDsykJnz9A2hkNgVyd2fKeQCfcgdbfbWeCfklo7
-	 Y2ZHn7MIxkC+Ggfc5zxXlsTKyXdwe1VWWnbySBS5zI2EXVVpgMURqixIsUJbH/f/Z3
-	 Dn0ILesCQM0xePB0T0iFhA6hE0xmgQ6mWJhk4BA0=
+	by mail.kernel.org (Postfix) with ESMTP id CF2A820776
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:59:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ce2KN786"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbgFRBJR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:09:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbgFRBJR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:09:17 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADE122193E;
-        Thu, 18 Jun 2020 01:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442556;
-        bh=6gruKfqidV8dlcCkOj9tUa6RXFVX8x50lVwibQBN1mw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksQ0AyCPqlmHiHObWLQsZZXtpdSuGhFQxYf8f/R0naOk4Mbm4mviGUv4K425KoFYE
-         njGtxg8A+bWByqHhU5VlVd76iWpXRBxF2TKABek2wBoVxBF96cwHWdtMymzxsyto9q
-         5WY2MsGxqWP0N1X45rrKxxz0H24ZR2XkNL+8tN7U=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 053/388] pinctrl: ocelot: Fix GPIO interrupt decoding on Jaguar2
-Date:   Wed, 17 Jun 2020 21:02:30 -0400
-Message-Id: <20200618010805.600873-53-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
-References: <20200618010805.600873-1-sashal@kernel.org>
+        id S1726893AbgFRC73 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Jun 2020 22:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbgFRC72 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2020 22:59:28 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75975C06174E;
+        Wed, 17 Jun 2020 19:59:28 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id r18so2231659pgk.11;
+        Wed, 17 Jun 2020 19:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=c+XBBSUJkbuSD8EzkachzbNQFLmI3baAWx8Tvz5SX9A=;
+        b=ce2KN786GgRadse5m9yAoPlwSIL8pcph73/I//OEEO+UR3c+knDGQIQwQEMWusaoxR
+         c7pEFVCQBTemK2twFjbMAprzclbJfSXlvxSwZEDK4NJZbg4jFJzsidCoszJm1akXutOb
+         rBeEVOVOQRD8f6GCeckk6oBAjBoZwbCRaB99odubFDPTUCGyqe/N/9ls/xI2juTMYmth
+         R+yaoAX6CqZQuUpynGvQ0vfBb4G7TFvCQGydsdX/oML2LpmHd6zFr82rEBqNOzbBhiZa
+         AmwIQHb0fcd6R+jRtfplgvhLANX2HEniV8Nl6XyjIqgSE4/CqjpI5+DO9ALOVronKyJh
+         SOjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=c+XBBSUJkbuSD8EzkachzbNQFLmI3baAWx8Tvz5SX9A=;
+        b=nlawB26dnHh8vgP3ywCP5tCNYY83JN5bqmeTudA1nEwUPS1MIyvu69BQPhANhFGxV7
+         6iikmWkHeMA6OoPJgnznR90YU1KBSIOrXbWB14YDXX0OeP7JwiuqfTNzJwWjPPHF0/3z
+         0nPqZCp+CLYjVDSOoImT9nnGzyh6lNWv+urywyLIGcIQ8tE5xl8zbV3vuG8B0TwBo6Wg
+         tH1rHgNUQzfW+G5kxPfJ07J0mb9dktfNIElRwB90tzFkl1gOWUNoZ3J2Q02hbgMxHR1A
+         PKHIylFdf6VmwgIjpxVbm243tKVoMgepkp4j1bTaMSZpSvkAD8s/9Y97noINQBHPzWNF
+         7mVg==
+X-Gm-Message-State: AOAM531fx4Dtwca95lJMwcwQSZ38/wvCeAh9L20vgEyPh5wsQx7QIJR6
+        NHWGxCzHO2NFEZ44VTaFH9rUyv+UMBeKP86e
+X-Google-Smtp-Source: ABdhPJxvua+/GIpND09OviVKdksZLCWgeWga/Ef+nBwx2A0d5tunbidPFHBYJKkdl+DxEaSXQcryAA==
+X-Received: by 2002:a62:3582:: with SMTP id c124mr1694339pfa.298.1592449167930;
+        Wed, 17 Jun 2020 19:59:27 -0700 (PDT)
+Received: from home-desktop ([114.204.138.55])
+        by smtp.gmail.com with ESMTPSA id j184sm1094045pfg.131.2020.06.17.19.59.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Jun 2020 19:59:27 -0700 (PDT)
+Date:   Thu, 18 Jun 2020 11:59:22 +0900
+From:   Hyeonki Hong <hhk7734@gmail.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>, khilman@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH] [v2] pinctrl: meson: fix drive strength register and bit
+ calculation
+Message-ID: <20200618025916.GA19368@home-desktop>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lars Povlsen <lars.povlsen@microchip.com>
+If a GPIO bank has greater than 16 pins, PAD_DS_REG is split into two
+or more registers. However, when register and bit were calculated, the
+first register defined in the bank was used, and the bit was calculated
+based on the first pin. This causes problems in setting the driving
+strength.
 
-[ Upstream commit 0b47afc65453a70bc521e251138418056f65793f ]
+The following method was used to solve this problem:
+A bit is calculated first using predefined strides. Then, If the bit is
+32 or more, the register is changed by the quotient of the bit divided
+by 32. And the bit is set to the remainder.
 
-This fixes a problem with using the GPIO as an interrupt on Jaguar2
-(and similar), as the register layout of the platforms with 64 GPIO's
-are pairwise, such that the original offset must be multiplied with
-the platform stride.
-
-Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support.
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
-Link: https://lore.kernel.org/r/20200513125532.24585-4-lars.povlsen@microchip.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Hyeonki Hong <hhk7734@gmail.com>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/meson/pinctrl-meson.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index ed8eac6c1494..4b99922d6c7e 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -714,11 +714,12 @@ static void ocelot_irq_handler(struct irq_desc *desc)
- 	struct irq_chip *parent_chip = irq_desc_get_chip(desc);
- 	struct gpio_chip *chip = irq_desc_get_handler_data(desc);
- 	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int id_reg = OCELOT_GPIO_INTR_IDENT * info->stride;
- 	unsigned int reg = 0, irq, i;
- 	unsigned long irqs;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index bbc919bef2bf..bf116c2e45c0 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -56,6 +56,10 @@
+ #include "../pinctrl-utils.h"
+ #include "pinctrl-meson.h"
  
- 	for (i = 0; i < info->stride; i++) {
--		regmap_read(info->map, OCELOT_GPIO_INTR_IDENT + 4 * i, &reg);
-+		regmap_read(info->map, id_reg + 4 * i, &reg);
- 		if (!reg)
- 			continue;
++static const unsigned int meson_bit_strides[] = {
++	1, 1, 1, 1, 1, 2, 1
++};
++
+ /**
+  * meson_get_bank() - find the bank containing a given pin
+  *
+@@ -96,8 +100,9 @@ static void meson_calc_reg_and_bit(struct meson_bank *bank, unsigned int pin,
+ {
+ 	struct meson_reg_desc *desc = &bank->regs[reg_type];
  
+-	*reg = desc->reg * 4;
+-	*bit = desc->bit + pin - bank->first;
++	*bit = (desc->bit + pin - bank->first) * meson_bit_strides[reg_type];
++	*reg = (desc->reg + (*bit / 32)) * 4;
++	*bit &= 0x1f;
+ }
+ 
+ static int meson_get_groups_count(struct pinctrl_dev *pcdev)
+@@ -314,7 +319,6 @@ static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
+ 		return ret;
+ 
+ 	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
+-	bit = bit << 1;
+ 
+ 	if (drive_strength_ua <= 500) {
+ 		ds_val = MESON_PINCONF_DRV_500UA;
+@@ -441,7 +445,6 @@ static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
+ 		return ret;
+ 
+ 	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
+-	bit = bit << 1;
+ 
+ 	ret = regmap_read(pc->reg_ds, reg, &val);
+ 	if (ret)
 -- 
-2.25.1
+2.17.1
 
