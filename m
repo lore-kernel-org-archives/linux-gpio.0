@@ -4,52 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F41C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A434FC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 095E321534
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85734206E2
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592447127;
-	bh=EytVya3RUKs/M3nMiP4+ZwjX7H34TqkxdAqrVyMkEP8=;
+	s=default; t=1592447556;
+	bh=FgPG6cCgUeE3avIJ+Y2VCR4P+1TbrZ2c2zsyKos1QuI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hTrqe7Cqbcyqc76FHCQJBW4uwr0YMd8d30hCVBAs3A73zfnmXVs/Njz0D9cVQmx76
-	 AhkTHsHZT1LuM6BvpQaUaUWdJhkiytKR8J4Nc3P2ebKb4+qWdb1Btgam3W1rbz/vWD
-	 aG03pc8pW3DAbL+SNETC6FhTGffxYQOFSsND/L4E=
+	b=RbdvfjQmB18VNIn2ufsiiR8aZaAweytJ36K3Bkmi5u2sg/xYqNh0v3k5m1WKYKzSX
+	 4Fyryr+efbu4cr2dKBmZkghqvfC7VvWN9DU9ehcDaZJhXTaeKHiPnzW+kYCmiJ524A
+	 BtzOTHy1Nq5WonZzfdu9tUoU5u7iODdy5PSKudb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbgFRCZ0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:25:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48588 "EHLO mail.kernel.org"
+        id S1728496AbgFRBPL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729793AbgFRBRY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:17:24 -0400
+        id S1729436AbgFRBPG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:15:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CC1321D80;
-        Thu, 18 Jun 2020 01:17:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4637221EA;
+        Thu, 18 Jun 2020 01:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443044;
-        bh=EytVya3RUKs/M3nMiP4+ZwjX7H34TqkxdAqrVyMkEP8=;
+        s=default; t=1592442905;
+        bh=FgPG6cCgUeE3avIJ+Y2VCR4P+1TbrZ2c2zsyKos1QuI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AnGDWT1VV5HwCvrDKcgva5QIC7RY8Wq86Pk+FDleMZWEz2RKA4d2LOXny9Aa7vxhQ
-         A3J2UITA9DAshjZQcn/CcseSQV6+kkKVfTtUSJqqn1O76omwUk2mZ0oNyme19Ur+aS
-         QcC6C1IjYoJYhIxWy4eBHLtxJwWU37HqwxfeUVpw=
+        b=u93fT35/LXUAGvqxB03JFmkW/0XADitz3UwkPKN5EAmxYCwiobhvlyPjOwunxI20x
+         8VIRvH5E5BbWbt+DZDudBuumg62B2O0tAA9bKBVE45EsEJz0ctpNiem3PyyYVyNQ91
+         zo6zj2IHzD353gc7XXGKOMEXe+jHqCWwCG7SdrH4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 039/266] pinctrl: ocelot: Fix GPIO interrupt decoding on Jaguar2
-Date:   Wed, 17 Jun 2020 21:12:44 -0400
-Message-Id: <20200618011631.604574-39-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.7 325/388] pinctrl: freescale: imx: Fix an error handling path in 'imx_pinctrl_probe()'
+Date:   Wed, 17 Jun 2020 21:07:02 -0400
+Message-Id: <20200618010805.600873-325-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
-References: <20200618011631.604574-1-sashal@kernel.org>
+In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
+References: <20200618010805.600873-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,43 +60,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lars Povlsen <lars.povlsen@microchip.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 0b47afc65453a70bc521e251138418056f65793f ]
+[ Upstream commit 11d8da5cabf7c6c3263ba2cd9c00260395867048 ]
 
-This fixes a problem with using the GPIO as an interrupt on Jaguar2
-(and similar), as the register layout of the platforms with 64 GPIO's
-are pairwise, such that the original offset must be multiplied with
-the platform stride.
+'pinctrl_unregister()' should not be called to undo
+'devm_pinctrl_register_and_init()', it is already handled by the framework.
 
-Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support.
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
-Link: https://lore.kernel.org/r/20200513125532.24585-4-lars.povlsen@microchip.com
+This simplifies the error handling paths of the probe function.
+The 'imx_free_resources()' can be removed as well.
+
+Fixes: a51c158bf0f7 ("pinctrl: imx: use radix trees for groups and functions")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Link: https://lore.kernel.org/r/20200530204955.588962-1-christophe.jaillet@wanadoo.fr
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/freescale/pinctrl-imx.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index fb76fb2e9ea5..0a951a75c82b 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -711,11 +711,12 @@ static void ocelot_irq_handler(struct irq_desc *desc)
- 	struct irq_chip *parent_chip = irq_desc_get_chip(desc);
- 	struct gpio_chip *chip = irq_desc_get_handler_data(desc);
- 	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int id_reg = OCELOT_GPIO_INTR_IDENT * info->stride;
- 	unsigned int reg = 0, irq, i;
- 	unsigned long irqs;
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 9f42036c5fbb..1f81569c7ae3 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -774,16 +774,6 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+ 	return 0;
+ }
  
- 	for (i = 0; i < info->stride; i++) {
--		regmap_read(info->map, OCELOT_GPIO_INTR_IDENT + 4 * i, &reg);
-+		regmap_read(info->map, id_reg + 4 * i, &reg);
- 		if (!reg)
- 			continue;
+-/*
+- * imx_free_resources() - free memory used by this driver
+- * @info: info driver instance
+- */
+-static void imx_free_resources(struct imx_pinctrl *ipctl)
+-{
+-	if (ipctl->pctl)
+-		pinctrl_unregister(ipctl->pctl);
+-}
+-
+ int imx_pinctrl_probe(struct platform_device *pdev,
+ 		      const struct imx_pinctrl_soc_info *info)
+ {
+@@ -874,23 +864,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 					     &ipctl->pctl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "could not register IMX pinctrl driver\n");
+-		goto free;
++		return ret;
+ 	}
  
+ 	ret = imx_pinctrl_probe_dt(pdev, ipctl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "fail to probe dt properties\n");
+-		goto free;
++		return ret;
+ 	}
+ 
+ 	dev_info(&pdev->dev, "initialized IMX pinctrl driver\n");
+ 
+ 	return pinctrl_enable(ipctl->pctl);
+-
+-free:
+-	imx_free_resources(ipctl);
+-
+-	return ret;
+ }
+ 
+ static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
 -- 
 2.25.1
 
