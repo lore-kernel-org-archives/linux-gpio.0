@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F25C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC057C433E3
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52D6C20FC3
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF13321D7B
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592444452;
+	s=default; t=1592444906;
 	bh=d8qrNxiJ5pT/MSaN6ds/NnYwzajL2zhxp4yLqKg+Jnw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=euEMI3yX+jTuEr58wcL/CR0oiQkycin1zGvKOojmaxUtLFEpnBTXT7mGytiZdyuVb
-	 sz+uUpk2mWFpkoPm2C9oqBfzPhq2DIWM/YzSIVTvpU6I0StadmW/XB5IJbj3cfFQdq
-	 mVbAKwo7BRkcKMyQFbPc41rbIYlVSvRcKr3lX0rc=
+	b=eDVcIWf0X/AR9e/5wJM6aa5xiZVICMBAhqLrMdAsDtGtFyyY1EosiL8KaReyVWle8
+	 MwVyPy1BVmHJjlRsMZekpVd0J3eya2MZaQRQZ8X7H8SskPlUXxlgRrH8LcMT5hnOhX
+	 3+1UDWlHuPO/nBek/b4YmAJPNfvnDbAOFbVjBxLg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbgFRBkv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:40:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39550 "EHLO mail.kernel.org"
+        id S1732759AbgFRBsL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:48:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732401AbgFRB3x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:29:53 -0400
+        id S1731369AbgFRB16 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:27:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68B772224B;
-        Thu, 18 Jun 2020 01:29:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43034221F3;
+        Thu, 18 Jun 2020 01:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443793;
+        s=default; t=1592443678;
         bh=d8qrNxiJ5pT/MSaN6ds/NnYwzajL2zhxp4yLqKg+Jnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=igLJjaQMl8tOz2tArpv1xwVOCXoc6FGdK5V6hiutgihZz5ECEzyh17Uh/FmIaJO1i
-         D9+xdW0K5Hp4dxoF4m685lIZshGkD74jGqPj1tIMStBULnTUAbhWIRfyQrnVhZFtOL
-         /dON055HIN4EzXru7l27012+dXFVRdqZoR+PA8tw=
+        b=OPHB7abl3IXue8TyK84EEEBefDYjuawhE4QkraSHx2k7uMXVJxFm6Jfgr2MfHHElA
+         9gqNIUHGtRUc0zmUz5h3seiKy6Kdqk+5OhapUFohZNMlOrHqEa4bX0MWlImu+uULdB
+         waAGOzDvk8sQ3j47F3Vs4NvmaJgJeHMLLpy00wbc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 73/80] pinctrl: imxl: Fix an error handling path in 'imx1_pinctrl_core_probe()'
-Date:   Wed, 17 Jun 2020 21:28:12 -0400
-Message-Id: <20200618012819.609778-73-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 093/108] pinctrl: imxl: Fix an error handling path in 'imx1_pinctrl_core_probe()'
+Date:   Wed, 17 Jun 2020 21:25:45 -0400
+Message-Id: <20200618012600.608744-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618012819.609778-1-sashal@kernel.org>
-References: <20200618012819.609778-1-sashal@kernel.org>
+In-Reply-To: <20200618012600.608744-1-sashal@kernel.org>
+References: <20200618012600.608744-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
