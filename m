@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25100C433E1
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1548C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB83B22209
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 01:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B31A7221EC
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592445417;
-	bh=pWp5whErmJ4Ic7w6wL0o19Xjfyw0DXak7LVcI12+LI8=;
+	s=default; t=1592445710;
+	bh=T8yuiFplhkHxiUAjaifpVYPPuG9x26CJk7BTd3i7XHc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2Wne0jSC0u8tfcCTxFcbmPfJgkMrqJ0JRnpIoa9mrE4fMEmPcXKwVpSbI7oFzjrLR
-	 +gyqZ6z13GnxFjaeEsZmDWa6hOcs3/tAm+8HOYZvTtMGXf1hfC5UBjJzFGQ6PscKeA
-	 Op1V/vXx9pECDYxif5NaDweqtJfUV+v513RykloU=
+	b=fRN53WBKN1g+Be5Xoc4t+3kDf8/ACFMUoIbSRXdVHLbMC+wEYseNenAsIYkEQhGkf
+	 ALX6YoLEt79ikuTGzXHEjFysyc5F8BkXQxFMTvbtvKy0pFlV2g/bJizXq3Y8M/Z07+
+	 3Gj/jKHIotz76loj5QXCWdHuv87p17yPNvyZAPNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbgFRB4x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:56:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60436 "EHLO mail.kernel.org"
+        id S1731138AbgFRCB2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Jun 2020 22:01:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728705AbgFRBZS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:25:18 -0400
+        id S1731134AbgFRBYJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:24:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748D12083B;
-        Thu, 18 Jun 2020 01:25:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F0B921974;
+        Thu, 18 Jun 2020 01:24:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443518;
-        bh=pWp5whErmJ4Ic7w6wL0o19Xjfyw0DXak7LVcI12+LI8=;
+        s=default; t=1592443448;
+        bh=T8yuiFplhkHxiUAjaifpVYPPuG9x26CJk7BTd3i7XHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRSo04dZkrWUWYCJ8v6fttMdaECQUl1+OvNnsbX3L8Rfh5pWEEE3BMCt1YSx8VJAb
-         riKWXLpUQSFufPEv+4SIpR0Tbw48f/CnwxaAbocurjv1wCrhvhUnuYNIy6NZtOkRPJ
-         8qDROkUx/TRxrhcmlUh9TUV0GpIwKGzBYFNOr5cQ=
+        b=EvfamgsdMcDi45MjCdx80Lf9b7CLDIZdS562dVqnNqVrcEilDdHcPOuU4EtqzLkJG
+         9dNHPfLYOFpWdyA4JN74Iet10054aZJ8fSfk/IxmoMjp5uVEfzHxOzxp6rx/2p7zeD
+         516EyGBWILz9/0BxcXNDZeocOvtQEGjCzN9bu99w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+Cc:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 141/172] pinctrl: imxl: Fix an error handling path in 'imx1_pinctrl_core_probe()'
-Date:   Wed, 17 Jun 2020 21:21:47 -0400
-Message-Id: <20200618012218.607130-141-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 084/172] pinctrl: rockchip: fix memleak in rockchip_dt_node_to_map
+Date:   Wed, 17 Jun 2020 21:20:50 -0400
+Message-Id: <20200618012218.607130-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618012218.607130-1-sashal@kernel.org>
 References: <20200618012218.607130-1-sashal@kernel.org>
@@ -59,36 +61,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
 
-[ Upstream commit 9eb728321286c4b31e964d2377fca2368526d408 ]
+[ Upstream commit d7faa8ffb6be57bf8233a4b5a636d76b83c51ce7 ]
 
-When 'pinctrl_register()' has been turned into 'devm_pinctrl_register()',
-an error handling path has not been updated.
+In function rockchip_dt_node_to_map, a new_map variable is
+allocated by:
 
-Axe a now unneeded 'pinctrl_unregister()'.
+new_map = devm_kcalloc(pctldev->dev, map_num, sizeof(*new_map),
+		       GFP_KERNEL);
 
-Fixes: e55e025d1687 ("pinctrl: imxl: Use devm_pinctrl_register() for pinctrl registration")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20200530201952.585798-1-christophe.jaillet@wanadoo.fr
+This uses devres and attaches new_map to the pinctrl driver.
+This cause a leak since new_map is not released when the probed
+driver is removed. Fix it by using kcalloc to allocate new_map
+and free it in `rockchip_dt_free_map`
+
+Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://lore.kernel.org/r/20200506100903.15420-1-dafna.hirschfeld@collabora.com
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/freescale/pinctrl-imx1-core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-index deb7870b3d1a..961c24e0cc8f 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-@@ -638,7 +638,6 @@ int imx1_pinctrl_core_probe(struct platform_device *pdev,
- 
- 	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
- 	if (ret) {
--		pinctrl_unregister(ipctl->pctl);
- 		dev_err(&pdev->dev, "Failed to populate subdevices\n");
- 		return ret;
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 8d83817935da..005df24f5b3f 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -507,8 +507,8 @@ static int rockchip_dt_node_to_map(struct pinctrl_dev *pctldev,
  	}
+ 
+ 	map_num += grp->npins;
+-	new_map = devm_kcalloc(pctldev->dev, map_num, sizeof(*new_map),
+-								GFP_KERNEL);
++
++	new_map = kcalloc(map_num, sizeof(*new_map), GFP_KERNEL);
+ 	if (!new_map)
+ 		return -ENOMEM;
+ 
+@@ -518,7 +518,7 @@ static int rockchip_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* create mux map */
+ 	parent = of_get_parent(np);
+ 	if (!parent) {
+-		devm_kfree(pctldev->dev, new_map);
++		kfree(new_map);
+ 		return -EINVAL;
+ 	}
+ 	new_map[0].type = PIN_MAP_TYPE_MUX_GROUP;
+@@ -545,6 +545,7 @@ static int rockchip_dt_node_to_map(struct pinctrl_dev *pctldev,
+ static void rockchip_dt_free_map(struct pinctrl_dev *pctldev,
+ 				    struct pinctrl_map *map, unsigned num_maps)
+ {
++	kfree(map);
+ }
+ 
+ static const struct pinctrl_ops rockchip_pctrl_ops = {
 -- 
 2.25.1
 
