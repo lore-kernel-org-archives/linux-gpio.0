@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394FCC433E1
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D9BC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FCB920776
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96CE20776
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 Jun 2020 02:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448333;
-	bh=8hjRe8VoNic6N/Bn+lsV9IGG9UN9K+eQy3lY4cPPuu8=;
+	s=default; t=1592448343;
+	bh=Hwb8RdOICnfAWn54O9C5w3TGy5ajzSZfqY6SLChfTmI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2tjAYlExb/QG8qFHwdO/9wCA8bCU6MOOI7PCJwa3Ou8FeiicXBC97OJdQoQ1HtTGp
-	 0oyHEvy9AR6ZKOHnUi5oPGVDFLPMoJPPH6PqJQXMMKEVK1KfVC2e/cMuJwbJsID2a8
-	 aZWNBtzaAYrjTUI3XbPOtUIfNxWVBiHgamKBxtnM=
+	b=xKHUduLlKhSDXdZ4EKxVkml+WSi4Y9ib8fqqfzGpML2nlGneROXnU5D7KptCncLhS
+	 8IFOoRJjSguZcTakCYYSgqnc0BCyDh+Er4++H+hW2J6eGQO7qEggV/avpjNBIMasDR
+	 BqSb21ov5V2Ya4cOvyYHj13QNYf+1WYaPXk0Xauo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbgFRCpN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38634 "EHLO mail.kernel.org"
+        id S1728626AbgFRBKy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:10:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728686AbgFRBK6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:10:58 -0400
+        id S1728609AbgFRBKx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:10:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BF8821D93;
-        Thu, 18 Jun 2020 01:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F1220CC7;
+        Thu, 18 Jun 2020 01:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442658;
-        bh=8hjRe8VoNic6N/Bn+lsV9IGG9UN9K+eQy3lY4cPPuu8=;
+        s=default; t=1592442653;
+        bh=Hwb8RdOICnfAWn54O9C5w3TGy5ajzSZfqY6SLChfTmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=istH83S1nMxoJOGsd7RlAEI2atmlruqWetwOJJhRLOxoflYwahM61oZ81hCkEDLni
-         MpTCxOxciI0GvMcp+JkT3y+0PcP3QIPpvcp5qx/bA9WAjLMc7l2jCh3AfuutmAtJU3
-         0F8FQtWdVRq1WBnz8gWnYuoLWbTF3BgQQTHFLLtw=
+        b=NE4/WW0nIInLQ+/taadJfujRwz84L+duJ/f/cpAGovFNmjQAKRYBSWFQ0SQ3n/qFG
+         z7nnEFIKfCYDqq5exIAYblUo788rFjFzoJQELbSjmiSt/FYVt3LZmVCIGEnNMCqVZ5
+         VQ+DcUzHrbA9E3JeJJBosAgUxX9JB7+U1X1ld/Ks=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jason Yan <yanaijie@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 129/388] pinctrl: rza1: Fix wrong array assignment of rza1l_swio_entries
-Date:   Wed, 17 Jun 2020 21:03:46 -0400
-Message-Id: <20200618010805.600873-129-sashal@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 125/388] gpio: dwapb: Append MODULE_ALIAS for platform driver
+Date:   Wed, 17 Jun 2020 21:03:42 -0400
+Message-Id: <20200618010805.600873-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -60,43 +59,75 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 4b4e8e93eccc2abc4209fe226ec89e7fbe9f3c61 ]
+[ Upstream commit c58220cba2e03618659fa7d5dfae31f5ad4ae9d0 ]
 
-The rza1l_swio_entries referred to the wrong array rza1h_swio_pins,
-which was intended to be rza1l_swio_pins. So let's fix it.
+The commit 3d2613c4289f
+  ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
+introduced a use of the platform driver but missed to add the following line
+to it:
+  MODULE_ALIAS("platform:gpio-dwapb");
 
-This is detected by the following gcc warning:
+Add this to get driver loaded automatically if platform device is registered.
 
-drivers/pinctrl/pinctrl-rza1.c:401:35: warning: ‘rza1l_swio_pins’
-defined but not used [-Wunused-const-variable=]
- static const struct rza1_swio_pin rza1l_swio_pins[] = {
-                                   ^~~~~~~~~~~~~~~
-
-Fixes: 039bc58e73b77723 ("pinctrl: rza1: Add support for RZ/A1L")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Link: https://lore.kernel.org/r/20200417111604.19143-1-yanaijie@huawei.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 3d2613c4289f ("GPIO: gpio-dwapb: Enable platform driver binding to MFD driver")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+Link: https://lore.kernel.org/r/20200415141534.31240-2-andriy.shevchenko@linux.intel.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-rza1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-dwapb.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index da2d8365c690..ff4a7fb518bb 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -418,7 +418,7 @@ static const struct rza1_bidir_entry rza1l_bidir_entries[RZA1_NPORTS] = {
- };
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 02cf4c43a4c4..ed6061b5cca1 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -49,7 +49,9 @@
+ #define GPIO_EXT_PORTC		0x58
+ #define GPIO_EXT_PORTD		0x5c
  
- static const struct rza1_swio_entry rza1l_swio_entries[] = {
--	[0] = { ARRAY_SIZE(rza1h_swio_pins), rza1h_swio_pins },
-+	[0] = { ARRAY_SIZE(rza1l_swio_pins), rza1l_swio_pins },
- };
++#define DWAPB_DRIVER_NAME	"gpio-dwapb"
+ #define DWAPB_MAX_PORTS		4
++
+ #define GPIO_EXT_PORT_STRIDE	0x04 /* register stride 32 bits */
+ #define GPIO_SWPORT_DR_STRIDE	0x0c /* register stride 3*32 bits */
+ #define GPIO_SWPORT_DDR_STRIDE	0x0c /* register stride 3*32 bits */
+@@ -398,7 +400,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		return;
  
- /* RZ/A1L (r7s72102x) pinmux flags table */
+ 	err = irq_alloc_domain_generic_chips(gpio->domain, ngpio, 2,
+-					     "gpio-dwapb", handle_level_irq,
++					     DWAPB_DRIVER_NAME, handle_level_irq,
+ 					     IRQ_NOREQUEST, 0,
+ 					     IRQ_GC_INIT_NESTED_LOCK);
+ 	if (err) {
+@@ -455,7 +457,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		 */
+ 		err = devm_request_irq(gpio->dev, pp->irq[0],
+ 				       dwapb_irq_handler_mfd,
+-				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
++				       IRQF_SHARED, DWAPB_DRIVER_NAME, gpio);
+ 		if (err) {
+ 			dev_err(gpio->dev, "error requesting IRQ\n");
+ 			irq_domain_remove(gpio->domain);
+@@ -843,7 +845,7 @@ static SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops, dwapb_gpio_suspend,
+ 
+ static struct platform_driver dwapb_gpio_driver = {
+ 	.driver		= {
+-		.name	= "gpio-dwapb",
++		.name	= DWAPB_DRIVER_NAME,
+ 		.pm	= &dwapb_gpio_pm_ops,
+ 		.of_match_table = of_match_ptr(dwapb_of_match),
+ 		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
+@@ -857,3 +859,4 @@ module_platform_driver(dwapb_gpio_driver);
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Jamie Iles");
+ MODULE_DESCRIPTION("Synopsys DesignWare APB GPIO driver");
++MODULE_ALIAS("platform:" DWAPB_DRIVER_NAME);
 -- 
 2.25.1
 
