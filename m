@@ -2,163 +2,129 @@ Return-Path: <SRS0=KQXY=AD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E07C433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jun 2020 09:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9F1C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jun 2020 09:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEF6120716
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jun 2020 09:33:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="enuuX05i"
+	by mail.kernel.org (Postfix) with ESMTP id 73714206FA
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Jun 2020 09:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbgFVJdJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Jun 2020 05:33:09 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:29602 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726997AbgFVJdG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 Jun 2020 05:33:06 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592818386; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=GiwN0AIsCmamPXAsqGCaW2gTfZGIUbMaEVcxCKw9v3c=; b=enuuX05iCGFzi42hbjWthTTGY60KdzCxg98jcVq2obsvHfMYkN1qg1l92AZ+isbDhwZgU2Df
- v+QbmLmDbxr++TVyfr8Fv2h6AhkwIrU2RGceGETspyj8YDdG8RHiG38wE0AH6yvvUnpBiK5P
- xrVApXQKv2kOpCETj0FmpMAuhr8=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 5ef07acaf3deea03f3a90d68 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 22 Jun 2020 09:32:58
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A77FFC433A1; Mon, 22 Jun 2020 09:32:58 +0000 (UTC)
-Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 04AF5C4339C;
-        Mon, 22 Jun 2020 09:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04AF5C4339C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     bjorn.andersson@linaro.org, maz@kernel.org,
-        linus.walleij@linaro.org, swboyd@chromium.org,
-        evgreen@chromium.org, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v3 4/5] irqchip: qcom-pdc: Introduce irq_set_wake call
-Date:   Mon, 22 Jun 2020 15:01:47 +0530
-Message-Id: <1592818308-23001-5-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1592818308-23001-1-git-send-email-mkshah@codeaurora.org>
-References: <1592818308-23001-1-git-send-email-mkshah@codeaurora.org>
+        id S1727011AbgFVJeY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Jun 2020 05:34:24 -0400
+Received: from mga14.intel.com ([192.55.52.115]:21997 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726896AbgFVJeX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jun 2020 05:34:23 -0400
+IronPort-SDR: 6jzTowNRqLdr67x8J28TgiZUOkqH5JQY1dMiZpvwCXSpTrgt1N1odeC9PT9H3PDPf0GbP5PsNi
+ wwtcu4aLaS8Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9659"; a="142764088"
+X-IronPort-AV: E=Sophos;i="5.75,266,1589266800"; 
+   d="scan'208";a="142764088"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2020 02:34:22 -0700
+IronPort-SDR: JolN8ki/rEfWUv2Zai4taIMRvaai1ENQll9g/CXnmeGOpxgjcg8DiRp7KqPUnlkNGVcrW3r8dQ
+ pbbmEtq5Ixjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,266,1589266800"; 
+   d="scan'208";a="318733961"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Jun 2020 02:34:20 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jnIqM-00F1V1-Pf; Mon, 22 Jun 2020 12:34:22 +0300
+Date:   Mon, 22 Jun 2020 12:34:22 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] pinctrl: baytrail: Fix pin being driven low for a
+ while on gpiod_get(..., GPIOD_OUT_HIGH)
+Message-ID: <20200622093422.GF2428291@smile.fi.intel.com>
+References: <20200606093150.32882-1-hdegoede@redhat.com>
+ <20200608105953.GC247495@lahna.fi.intel.com>
+ <20200615100345.GV2428291@smile.fi.intel.com>
+ <3c7d2097-6ade-0568-4170-94805589cf46@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c7d2097-6ade-0568-4170-94805589cf46@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove irq_disable callback to allow lazy disable for pdc interrupts.
+On Sat, Jun 20, 2020 at 03:09:20PM +0200, Hans de Goede wrote:
+> On 6/15/20 12:03 PM, Andy Shevchenko wrote:
+> > On Mon, Jun 08, 2020 at 01:59:53PM +0300, Mika Westerberg wrote:
+> > > On Sat, Jun 06, 2020 at 11:31:50AM +0200, Hans de Goede wrote:
+> > > > The pins on the Bay Trail SoC have separate input-buffer and output-buffer
+> > > > enable bits and a read of the level bit of the value register will always
+> > > > return the value from the input-buffer.
+> > > > 
+> > > > The BIOS of a device may configure a pin in output-only mode, only enabling
+> > > > the output buffer, and write 1 to the level bit to drive the pin high.
+> > > > This 1 written to the level bit will be stored inside the data-latch of the
+> > > > output buffer.
+> > > > 
+> > > > But a subsequent read of the value register will return 0 for the level bit
+> > > > because the input-buffer is disabled. This causes a read-modify-write as
+> > > > done by byt_gpio_set_direction() to write 0 to the level bit, driving the
+> > > > pin low!
+> > > > 
+> > > > Before this commit byt_gpio_direction_output() relied on
+> > > > pinctrl_gpio_direction_output() to set the direction, followed by a call
+> > > > to byt_gpio_set() to apply the selected value. This causes the pin to
+> > > > go low between the pinctrl_gpio_direction_output() and byt_gpio_set()
+> > > > calls.
+> > > > 
+> > > > Change byt_gpio_direction_output() to directly make the register
+> > > > modifications itself instead. Replacing the 2 subsequent writes to the
+> > > > value register with a single write.
+> > > > 
+> > > > Note that the pinctrl code does not keep track internally of the direction,
+> > > > so not going through pinctrl_gpio_direction_output() is not an issue.
+> > > > 
+> > > > This issue was noticed on a Trekstor SurfTab Twin 10.1. When the panel is
+> > > > already on at boot (no external monitor connected), then the i915 driver
+> > > > does a gpiod_get(..., GPIOD_OUT_HIGH) for the panel-enable GPIO. The
+> > > > temporarily going low of that GPIO was causing the panel to reset itself
+> > > > after which it would not show an image until it was turned off and back on
+> > > > again (until a full modeset was done on it). This commit fixes this.
+> > > > 
+> > > > This commit also updates the byt_gpio_direction_input() to use direct
+> > > > register accesses instead of going through pinctrl_gpio_direction_input(),
+> > > > to keep it consistent with byt_gpio_direction_output().
+> > > > 
+> > > > Note for backporting, this commit depends on:
+> > > > commit e2b74419e5cc ("pinctrl: baytrail: Replace WARN with dev_info_once
+> > > > when setting direct-irq pin to output")
+> > > > 
+> > > > Cc: stable@vger.kernel.org
+> > > > Fixes: 86e3ef812fe3 ("pinctrl: baytrail: Update gpio chip operations")
+> > > > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > > 
+> > > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > 
+> > Pushed to my review and testing queue, thanks!
+> 
+> I'm not seeing it here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git/log/?h=review-andy
+> 
+> Did you perhaps forgot to push it ?
 
-Add irq_set_wake callback that unmask interrupt in HW when drivers
-mark interrupt for wakeup. Interrupt will be cleared in HW during
-lazy disable if its not marked for wakeup.
+Oh, thanks! Now pushed!
+I'll send it as a part of PR for v5.8-rc3 to Linus W.
 
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
----
- drivers/irqchip/qcom-pdc.c | 34 ++++++++++++++++------------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index 6ae9e1f..8beb6f7 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -36,6 +36,7 @@ struct pdc_pin_region {
- 	u32 cnt;
- };
- 
-+static DECLARE_BITMAP(pdc_wake_irqs, PDC_MAX_IRQS);
- static DEFINE_RAW_SPINLOCK(pdc_lock);
- static void __iomem *pdc_base;
- static struct pdc_pin_region *pdc_region;
-@@ -87,22 +88,17 @@ static void pdc_enable_intr(struct irq_data *d, bool on)
- 	raw_spin_unlock(&pdc_lock);
- }
- 
--static void qcom_pdc_gic_disable(struct irq_data *d)
-+static int qcom_pdc_gic_set_wake(struct irq_data *d, unsigned int on)
- {
--	if (d->hwirq == GPIO_NO_WAKE_IRQ)
--		return;
--
--	pdc_enable_intr(d, false);
--	irq_chip_disable_parent(d);
--}
--
--static void qcom_pdc_gic_enable(struct irq_data *d)
--{
--	if (d->hwirq == GPIO_NO_WAKE_IRQ)
--		return;
-+	if (on) {
-+		pdc_enable_intr(d, true);
-+		irq_chip_enable_parent(d);
-+		set_bit(d->hwirq, pdc_wake_irqs);
-+	} else {
-+		clear_bit(d->hwirq, pdc_wake_irqs);
-+	}
- 
--	pdc_enable_intr(d, true);
--	irq_chip_enable_parent(d);
-+	return irq_chip_set_wake_parent(d, on);
- }
- 
- static void qcom_pdc_gic_mask(struct irq_data *d)
-@@ -111,6 +107,9 @@ static void qcom_pdc_gic_mask(struct irq_data *d)
- 		return;
- 
- 	irq_chip_mask_parent(d);
-+
-+	if (!test_bit(d->hwirq, pdc_wake_irqs))
-+		pdc_enable_intr(d, false);
- }
- 
- static void qcom_pdc_gic_unmask(struct irq_data *d)
-@@ -118,6 +117,7 @@ static void qcom_pdc_gic_unmask(struct irq_data *d)
- 	if (d->hwirq == GPIO_NO_WAKE_IRQ)
- 		return;
- 
-+	pdc_enable_intr(d, true);
- 	irq_chip_unmask_parent(d);
- }
- 
-@@ -197,15 +197,13 @@ static struct irq_chip qcom_pdc_gic_chip = {
- 	.irq_eoi		= irq_chip_eoi_parent,
- 	.irq_mask		= qcom_pdc_gic_mask,
- 	.irq_unmask		= qcom_pdc_gic_unmask,
--	.irq_disable		= qcom_pdc_gic_disable,
--	.irq_enable		= qcom_pdc_gic_enable,
- 	.irq_get_irqchip_state	= qcom_pdc_gic_get_irqchip_state,
- 	.irq_set_irqchip_state	= qcom_pdc_gic_set_irqchip_state,
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
- 	.irq_set_type		= qcom_pdc_gic_set_type,
-+	.irq_set_wake		= qcom_pdc_gic_set_wake,
- 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
--				  IRQCHIP_SET_TYPE_MASKED |
--				  IRQCHIP_SKIP_SET_WAKE,
-+				  IRQCHIP_SET_TYPE_MASKED,
- 	.irq_set_vcpu_affinity	= irq_chip_set_vcpu_affinity_parent,
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
- };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+With Best Regards,
+Andy Shevchenko
+
 
