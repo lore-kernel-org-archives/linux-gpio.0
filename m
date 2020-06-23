@@ -2,104 +2,81 @@ Return-Path: <SRS0=prOn=AE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE46C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jun 2020 12:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351ABC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jun 2020 14:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C10E2072E
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jun 2020 12:47:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="vaAvorLb"
+	by mail.kernel.org (Postfix) with ESMTP id 0E594206EB
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Jun 2020 14:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbgFWMrd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Jun 2020 08:47:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38796 "EHLO
+        id S1732829AbgFWOkI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Jun 2020 10:40:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729562AbgFWMrc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2020 08:47:32 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51BFC061573;
-        Tue, 23 Jun 2020 05:47:32 -0700 (PDT)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B23A222175;
-        Tue, 23 Jun 2020 14:47:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1592916448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uIWcxL06bYKGyY5zeMVQC8JJNVmi1MGHB3ymuX8QDx8=;
-        b=vaAvorLb/tf1DLoSyGwy93HCy507E7meWCbgT1aWmcsuteBE6T7phkOdkulKf9JLCxyCUZ
-        kKfr9NZL4CnZZeJ+gsbXYDTDWa+vGCbR659K2P8/1+xUvMAEHj7uEP75IIwVPDvWHsvak+
-        0aPcJqUYw4tlLYbUbPIf+3lW2Hv5b94=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 23 Jun 2020 14:47:28 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Sungbo Eo <mans0n@gorani.run>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: add GPO driver for PCA9570
-In-Reply-To: <2291c01d-30df-518e-a952-644bd955f1f3@gorani.run>
-References: <20200623060526.29922-1-mans0n@gorani.run>
- <80bbca9a625b2a0feb9b816906549b7c@walle.cc>
- <2291c01d-30df-518e-a952-644bd955f1f3@gorani.run>
-User-Agent: Roundcube Webmail/1.4.5
-Message-ID: <69f5d1a1970838b8c4bd8d6e8dba6cac@walle.cc>
-X-Sender: michael@walle.cc
+        with ESMTP id S1732740AbgFWOkI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2020 10:40:08 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B2F6C061573
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Jun 2020 07:40:08 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:26:93a1:ff06:f8b0])
+        by michel.telenet-ops.be with bizsmtp
+        id ueg32200T4qCYS806eg3tp; Tue, 23 Jun 2020 16:40:04 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jnk5j-00075v-Od; Tue, 23 Jun 2020 16:40:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jnk5j-0004Rl-MN; Tue, 23 Jun 2020 16:40:03 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: Drop superfluous dependencies on GPIOLIB
+Date:   Tue, 23 Jun 2020 16:40:01 +0200
+Message-Id: <20200623144001.17052-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Sungbo,
+All config options for GPIO drivers are inside a big "if GPIOLIB ...
+endif" block, so there is no reason for individual config options to
+have expicit dependencies on GPIOLIB.  Hence remove them.
 
-Am 2020-06-23 14:22, schrieb Sungbo Eo:
-> On 2020-06-23 17:31, Michael Walle wrote:
->> Am 2020-06-23 08:05, schrieb Sungbo Eo:
->>> This patch adds support for the PCA9570 I2C GPO expander.
->>> 
->>> Signed-off-by: Sungbo Eo <mans0n@gorani.run>
->>> ---
->>> Tested in kernel 5.4 on an ipq40xx platform.
->>> 
->>> This is my first time submitting a whole driver patch, and I'm not
->>> really familiar with this PCA expander series.
->>> Please let me know how I can improve this patch further. (Do I also
->>> need to document the DT compatible string?)
->> 
->> Did you have a look at drivers/gpio/gpio-regmap.c ? Your driver seems
->> to be simple enough to be easily integrated with that. If you need a
->> blueprint; because at the moment there is no driver in the kernel
->> using that, you could have a look at:
->> https://lore.kernel.org/linux-gpio/20200604211039.12689-7-michael@walle.cc/
-> 
-> Thanks for your advice. I didn't really know what regmap is for...
-> It seems gpio-regmap is for gpio controllers having val/dir registers.
-> But pca9570 does not use port registers. The master only sends a data
-> byte without reg address.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ahh I missed that :(
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f875ec95ba8c3a7a..291bffb5c7e58d7f 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -411,7 +411,7 @@ config GPIO_MXS
+ 
+ config GPIO_OCTEON
+ 	tristate "Cavium OCTEON GPIO"
+-	depends on GPIOLIB && CAVIUM_OCTEON_SOC
++	depends on CAVIUM_OCTEON_SOC
+ 	default y
+ 	help
+ 	  Say yes here to support the on-chip GPIO lines on the OCTEON
+@@ -1118,7 +1118,7 @@ config GPIO_DLN2
+ 
+ config HTC_EGPIO
+ 	bool "HTC EGPIO support"
+-	depends on GPIOLIB && ARM
++	depends on ARM
+ 	help
+ 	  This driver supports the CPLD egpio chip present on
+ 	  several HTC phones.  It provides basic support for input
+-- 
+2.17.1
 
-> I'm not sure how to apply gpio-regmap or
-> regmap-i2c here.
-> I'll try to investigate if setting reg_size or reg_bits to zero is 
-> possible.
-> 
-> Please correct me if I'm in the wrong direction.
-
-That won't work because the underlying regmap expects the address bits 
-to be either 8 or 16. In this case I'd guess gpio-regmap, doesn't make 
-sense, because there is actually no real gain.
-
--michael
