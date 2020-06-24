@@ -2,78 +2,126 @@ Return-Path: <SRS0=9AOV=AF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AD9C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE82C433DF
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 07:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42AAF2088E
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 558E0207DD
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 07:19:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="s6Or7Qi4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389175AbgFXGfg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Jun 2020 02:35:36 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:34102 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388413AbgFXGff (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 24 Jun 2020 02:35:35 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 336011A111A;
-        Wed, 24 Jun 2020 08:35:34 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A16131A01C8;
-        Wed, 24 Jun 2020 08:35:29 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 88299402BB;
-        Wed, 24 Jun 2020 14:35:23 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
-        s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V6 1/9] pinctrl: imx: Support i.MX8 SoCs pinctrl driver built as module
-Date:   Wed, 24 Jun 2020 14:23:56 +0800
-Message-Id: <1592979844-18833-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
+        id S2389542AbgFXHTB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Jun 2020 03:19:01 -0400
+Received: from mail-eopbgr140044.outbound.protection.outlook.com ([40.107.14.44]:52870
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728360AbgFXHTA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 Jun 2020 03:19:00 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ASS+O/Rlm4/wSdaRPpsoJJdppblpEUX6262ojzBeAXMJt9Nxa1EQhLzW9OJYMStP46HM9Ts8DVvepIE9qypNSXWFcFFrJlw/jrO69ixyISfVSuRG/AICyr43LEoMnDej7ylMBHRf20HSMYJOUH+PJ7VVqfRwhzYfM7TJHNvBgNWnGKtLtDUYIC5qh0CugqRvYARWk046oWbn0zJAIdc4fW75a7ICojRSwhVX1gKGLqCZWhnhTzY6zQmr2fc1KLwYBXggGw8UmF5SJtKqdkeB8CJ3uRb77lW8e/4XdMAljdukrjI8SeGmcwpsYKjfvEn5/lNCopXLmY3sofBH2gEKJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jZDUADAujMoqX3Ci9fYq9/GmH1VL48jD5EraN+9/c7E=;
+ b=Ux/yBPESH6eszPeytyHvH+E3tNJGIy7U+WRKWygjke2jWcXGJkoRI9NZ3MgeDX6x/cnyCBdWdAIEpVv0TuwMOSIsCWO4A5L2a3eoQH2lQXw9HXDmqsOXYL5RBOEZBwhOMYTYJI4N+WiyFQfYHEJQB9jC0tiNzruUFV2zeOFGU22x5pmOglkLkXdS3dqn0gI2kVQqSgfjZR6Ii13Sxc/PeqqRUhSFl/uZz0YpOhM4y9NXT4kaVvx0wokKZBKoR/sMNYQrhys7QjT1+EpG45XlfQq3otoBNsinBAhTlFNp2KwKpylpePazWsWvYXnkehIvao61sH7nGOCCGUcTmayn2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jZDUADAujMoqX3Ci9fYq9/GmH1VL48jD5EraN+9/c7E=;
+ b=s6Or7Qi44ikRPhjpfXVUMg1LpiPwrKc+sNhDi7fxQQqdZqMGHrD4LRAPSi3B1AKJ2VBc68IY3bI93FglZDtD6lCz3XiwvxDInRd52+ia7aT5in4q9i+yofXgnw/r6emZF0v8q4Ct7UlT9+8AfGhkd5cFhhpY7As276zoNOAEB78=
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR04MB5895.eurprd04.prod.outlook.com (2603:10a6:20b:b0::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3109.22; Wed, 24 Jun
+ 2020 07:18:55 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3c6c:a0e9:9a4e:c51d]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3c6c:a0e9:9a4e:c51d%7]) with mapi id 15.20.3109.027; Wed, 24 Jun 2020
+ 07:18:55 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V6 0/9] Support i.MX8 SoCs pinctrl drivers built as module
+Thread-Topic: [PATCH V6 0/9] Support i.MX8 SoCs pinctrl drivers built as
+ module
+Thread-Index: AQHWSfGrx/93NtNROkCfwgIHGSlkuajnW0bA
+Date:   Wed, 24 Jun 2020 07:18:55 +0000
+Message-ID: <AM6PR04MB496614D9762E95226FFBEA8380950@AM6PR04MB4966.eurprd04.prod.outlook.com>
 References: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4424018d-2557-4f54-96da-08d8180edb18
+x-ms-traffictypediagnostic: AM6PR04MB5895:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR04MB5895C65FDEF6BA427E2976E080950@AM6PR04MB5895.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0444EB1997
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pyDC+0Gq7zMYl67A1eX/J6nRmbetjsKnBXyfQZ7W18m4Wo+VNtUSuUjQS1pSBX8kNpJedj4IvMSNNCTYltgQSD09BK3Tq/PplkK6hvda1xTGw3WbKnfmLHan8uTb9K4RLutjdkCW6HhM2J9Ba6vLE4TUNjsXqm6KOoIeXuYvWaf6zxHJ4RgxRENECI4d+eN2BfpDNMjYlLEkI/5tq2HMeAEQ0sIqzWE0fu2wUYOaxakNLkh1755nLE6EEbZ2Vkl0MNTE5A18zaKe9+18xQi6W17gc8U1t9mv9yUfIl/CqEEQiP5TnUNhWDc+MfRJqUfwUkqsHt15Ozwl725iDFvHh/P3sT9U8uXzbni6ry95GVhD3ieA9lZfW9bI7yVb15wJ
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(6029001)(4636009)(366004)(346002)(39860400002)(376002)(136003)(396003)(64756008)(316002)(44832011)(4326008)(66476007)(71200400001)(83380400001)(7696005)(33656002)(478600001)(110136005)(66446008)(5660300002)(52536014)(55016002)(9686003)(8936002)(6506007)(26005)(186003)(66556008)(2906002)(8676002)(76116006)(86362001)(66946007)(921003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: Ck1UHggyQNDTGaT0ZiEkXa1uWuuLni3cE4/hAU13lJs6tOJ3WGbqyTyuX5LfncvoLbru/qPgxOdMbZ8H5EUmJfS7qRuJIJcwnmhjlIOl+5dS9UWj+JaLpLVAVZIjqyDAwVUvNmcPc5E2rOBxUC8Qk3GG9axRVlx/3DbeHijXfevn7QNbM2cAuVhtugkVGHk+6jhmyzwaJmfBFSu9CJHFFogUGAScAu8sdZh9AwWhaYxQWfbOTWXm4ANwo0Z/hcguByWOChshXZkdr6M4vA6oVVZzX0RX/OkM/g7QSlcPTocKex/68sTgpj9tAxJAETQKkRL7/1tIcvkjM81km/Sjf7PXpdXoRYMRzpNymuroZcE+3iqPP+ukpQfwbG2JNg0l0RaQkk6LOtyBWk/cdg4e0sUZiT1CIRZPUPVyEv5GwU2XFvnkcdBdtg7Xacbuw+TewJ2Qw0q4fQSyL3XtpPbj7YpUNMv6yUP3mNhdTY+cNJc=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4424018d-2557-4f54-96da-08d8180edb18
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2020 07:18:55.6176
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LDoRbFZ1dXteBX8FBAGBtT2BC+ZY5HK1SgwezXNYC12NQGIX/+CDXFtWNLEWL6kZcSV/pCRrgHWCed/CYTpfKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5895
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Export necessary APIs to support i.MX8 SoCs pinctrl driver to be
-built as module.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V5:
-	- keep it still built in, ONLY export APIs for SoCs pinctrl driver;
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 1f81569..507e4af 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -877,6 +877,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 
- 	return pinctrl_enable(ipctl->pctl);
- }
-+EXPORT_SYMBOL_GPL(imx_pinctrl_probe);
- 
- static int __maybe_unused imx_pinctrl_suspend(struct device *dev)
- {
-@@ -896,3 +897,4 @@ const struct dev_pm_ops imx_pinctrl_pm_ops = {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx_pinctrl_suspend,
- 					imx_pinctrl_resume)
- };
-+EXPORT_SYMBOL_GPL(imx_pinctrl_pm_ops);
--- 
-2.7.4
-
+PiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gU2VudDogV2VkbmVz
+ZGF5LCBKdW5lIDI0LCAyMDIwIDI6MjQgUE0NCj4gDQo+IFRoZXJlIGFyZSBtb3JlIGFuZCBtcm9l
+IHJlcXVpcmVtZW50cyB0aGF0IFNvQyBzcGVjaWZpYyBtb2R1bGVzIHNob3VsZCBiZQ0KPiBidWls
+dCBhcyBtb2R1bGUgaW4gb3JkZXIgdG8gc3VwcG9ydCBnZW5lcmljIGtlcm5lbCBpbWFnZSwgc3Vj
+aCBhcyBBbmRyb2lkIEdLSQ0KPiBjb25jZXB0Lg0KPiANCj4gVGhpcyBwYXRjaCBzZXJpZXMgc3Vw
+cG9ydHMgaS5NWDggU29DcyBwaW5jdHJsIGRyaXZlcnMgdG8gYmUgYnVpbHQgYXMgbW9kdWxlLA0K
+PiBpbmNsdWRpbmcgaS5NWDhNUS9NTS9NTi9NUC9RWFAvUU0vRFhMIFNvQ3MsIGkuTVggY29tbW9u
+IHBpbmN0cmwNCj4gZHJpdmVyIGFuZCBpLk1YIFNDVSBjb21tb24gcGluY3RybCBkcml2ZXIgYXMg
+c3RpbGwgYnVpbHQtaW4uDQo+IA0KPiBDb21wYXJlZCB0byBWNSwgdGhlIGNoYW5nZXMgYXJlIGFz
+IGJlbG93Og0KPiAgICAgICAgIC0gS2VlcCBpLk1YIGNvbW1vbiBwaW5jdHJsIGxpYmFyeSBidWls
+dCBpbiwgT05MWSBpLk1YIFNvQyBwaW5jdHJsDQo+IGRyaXZlcg0KPiAgICAgICAgICAgc3VwcG9y
+dCBidWlsdCBhcyBtb2R1bGUuDQo+IA0KPiBBbnNvbiBIdWFuZyAoOSk6DQo+ICAgcGluY3RybDog
+aW14OiBTdXBwb3J0IGkuTVg4IFNvQ3MgcGluY3RybCBkcml2ZXIgYnVpbHQgYXMgbW9kdWxlDQo+
+ICAgcGluY3RybDogaW14OiBzY3U6IFN1cHBvcnQgaS5NWDggU0NVIFNvQ3MgcGluY3RybCBkcml2
+ZXIgYnVpbHQgYXMNCj4gICAgIG1vZHVsZQ0KPiAgIHBpbmN0cmw6IGlteDhtbTogU3VwcG9ydCBi
+dWlsZGluZyBhcyBtb2R1bGUNCj4gICBwaW5jdHJsOiBpbXg4bW46IFN1cHBvcnQgYnVpbGRpbmcg
+YXMgbW9kdWxlDQo+ICAgcGluY3RybDogaW14OG1xOiBTdXBwb3J0IGJ1aWxkaW5nIGFzIG1vZHVs
+ZQ0KPiAgIHBpbmN0cmw6IGlteDhtcDogU3VwcG9ydCBidWlsZGluZyBhcyBtb2R1bGUNCj4gICBw
+aW5jdHJsOiBpbXg4cXhwOiBTdXBwb3J0IGJ1aWxkaW5nIGFzIG1vZHVsZQ0KPiAgIHBpbmN0cmw6
+IGlteDhxbTogU3VwcG9ydCBidWlsZGluZyBhcyBtb2R1bGUNCj4gICBwaW5jdHJsOiBpbXg4ZHhs
+OiBTdXBwb3J0IGJ1aWxkaW5nIGFzIG1vZHVsZQ0KDQpGb3IgdGhpcyBwYXRjaCBzZXJpZXM6DQpS
+ZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCg0KUmVnYXJk
+cw0KQWlzaGVuZw0K
