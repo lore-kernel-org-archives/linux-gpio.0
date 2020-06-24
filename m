@@ -2,82 +2,94 @@ Return-Path: <SRS0=9AOV=AF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89462C433E1
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0ACEC433DF
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68C51207DD
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A756B207DD
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 06:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389055AbgFXGff (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Jun 2020 02:35:35 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47324 "EHLO inva021.nxp.com"
+        id S2389128AbgFXGfi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Jun 2020 02:35:38 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47366 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388262AbgFXGfe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 24 Jun 2020 02:35:34 -0400
+        id S2388262AbgFXGfh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 Jun 2020 02:35:37 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E3FF1200F3D;
-        Wed, 24 Jun 2020 08:35:32 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4392C200F31;
+        Wed, 24 Jun 2020 08:35:35 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 59F4B200172;
-        Wed, 24 Jun 2020 08:35:28 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B3F0A200179;
+        Wed, 24 Jun 2020 08:35:30 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 38419402A6;
-        Wed, 24 Jun 2020 14:35:22 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CAB7E402CA;
+        Wed, 24 Jun 2020 14:35:24 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
         stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
         s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V6 0/9] Support i.MX8 SoCs pinctrl drivers built as module
-Date:   Wed, 24 Jun 2020 14:23:55 +0800
-Message-Id: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V6 2/9] pinctrl: imx: scu: Support i.MX8 SCU SoCs pinctrl driver built as module
+Date:   Wed, 24 Jun 2020 14:23:57 +0800
+Message-Id: <1592979844-18833-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
+References: <1592979844-18833-1-git-send-email-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are more and mroe requirements that SoC specific modules should be built
-as module in order to support generic kernel image, such as Android GKI concept.
+Export necessary APIs to support i.MX8 SCU SoCs pinctrl driver to be
+built as module.
 
-This patch series supports i.MX8 SoCs pinctrl drivers to be built as module,
-including i.MX8MQ/MM/MN/MP/QXP/QM/DXL SoCs, i.MX common pinctrl driver and i.MX
-SCU common pinctrl driver as still built-in.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V5:
+	- keep it still built in, ONLY export APIs for SoCs pinctrl driver;
+---
+ drivers/pinctrl/freescale/pinctrl-scu.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Compared to V5, the changes are as below:
-        - Keep i.MX common pinctrl libary built in, ONLY i.MX SoC pinctrl driver
-          support built as module.
-
-Anson Huang (9):
-  pinctrl: imx: Support i.MX8 SoCs pinctrl driver built as module
-  pinctrl: imx: scu: Support i.MX8 SCU SoCs pinctrl driver built as
-    module
-  pinctrl: imx8mm: Support building as module
-  pinctrl: imx8mn: Support building as module
-  pinctrl: imx8mq: Support building as module
-  pinctrl: imx8mp: Support building as module
-  pinctrl: imx8qxp: Support building as module
-  pinctrl: imx8qm: Support building as module
-  pinctrl: imx8dxl: Support building as module
-
- drivers/pinctrl/freescale/Kconfig           | 14 +++++++-------
- drivers/pinctrl/freescale/pinctrl-imx.c     |  2 ++
- drivers/pinctrl/freescale/pinctrl-imx8dxl.c |  5 +++++
- drivers/pinctrl/freescale/pinctrl-imx8mm.c  |  6 ++++++
- drivers/pinctrl/freescale/pinctrl-imx8mn.c  |  6 ++++++
- drivers/pinctrl/freescale/pinctrl-imx8mp.c  |  6 ++++++
- drivers/pinctrl/freescale/pinctrl-imx8mq.c  |  6 ++++++
- drivers/pinctrl/freescale/pinctrl-imx8qm.c  |  5 +++++
- drivers/pinctrl/freescale/pinctrl-imx8qxp.c |  5 +++++
- drivers/pinctrl/freescale/pinctrl-scu.c     |  4 ++++
- 10 files changed, 52 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-scu.c b/drivers/pinctrl/freescale/pinctrl-scu.c
+index 23cf04b..9df45d3 100644
+--- a/drivers/pinctrl/freescale/pinctrl-scu.c
++++ b/drivers/pinctrl/freescale/pinctrl-scu.c
+@@ -41,6 +41,7 @@ int imx_pinctrl_sc_ipc_init(struct platform_device *pdev)
+ {
+ 	return imx_scu_get_handle(&pinctrl_ipc_handle);
+ }
++EXPORT_SYMBOL_GPL(imx_pinctrl_sc_ipc_init);
+ 
+ int imx_pinconf_get_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 			unsigned long *config)
+@@ -66,6 +67,7 @@ int imx_pinconf_get_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(imx_pinconf_get_scu);
+ 
+ int imx_pinconf_set_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 			unsigned long *configs, unsigned num_configs)
+@@ -101,6 +103,7 @@ int imx_pinconf_set_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(imx_pinconf_set_scu);
+ 
+ void imx_pinctrl_parse_pin_scu(struct imx_pinctrl *ipctl,
+ 			       unsigned int *pin_id, struct imx_pin *pin,
+@@ -119,3 +122,4 @@ void imx_pinctrl_parse_pin_scu(struct imx_pinctrl *ipctl,
+ 	dev_dbg(ipctl->dev, "%s: 0x%x 0x%08lx", info->pins[pin->pin].name,
+ 		pin_scu->mux_mode, pin_scu->config);
+ }
++EXPORT_SYMBOL_GPL(imx_pinctrl_parse_pin_scu);
 -- 
 2.7.4
 
