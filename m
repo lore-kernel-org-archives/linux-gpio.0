@@ -2,66 +2,67 @@ Return-Path: <SRS0=9AOV=AF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAF4C433E0
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 10:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 213A1C433DF
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 12:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25CCD20CC7
-	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 10:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAFA02088E
+	for <linux-gpio@archiver.kernel.org>; Wed, 24 Jun 2020 12:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="oXjREGJg"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wDgnINvc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390272AbgFXKUi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 24 Jun 2020 06:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40342 "EHLO
+        id S2389662AbgFXMQP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 24 Jun 2020 08:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390249AbgFXKUX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2020 06:20:23 -0400
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6A5C061755
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2020 03:20:22 -0700 (PDT)
-Received: by mail-qk1-x744.google.com with SMTP id l6so1292583qkc.6
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2020 03:20:22 -0700 (PDT)
+        with ESMTP id S2388659AbgFXMQO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2020 08:16:14 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBDEC0613ED
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2020 05:16:14 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id g13so1433566qtv.8
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2020 05:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=FRi5cLz2i8treGL656N0ByW0/+7y+778OS4JhAKmXLM=;
-        b=oXjREGJgVU4dVMZOSXvMrbqFVvgENDSiVYKLTZJdkwdyGiW1I9KPHuAotyShS63LFA
-         l4RS3K9+6w1z+0m1Ew8949PajoqeHkAoHlUXkvsmQdPQX5w1bSW/wDpRG9gWaiAnRe3a
-         c9mP5+rWIQbqp1AmG0Fu5sQPc3rMdUpu6KSPCPVPBFUlgF+92t05BXwGtyAO4bOvclgh
-         9icz0tsx7gJtMYyiDHBWx6xTFxAKB4fXyHWOohgyo9U0UyJmAma44G1w8Cl8U/d0u9lZ
-         JROZGmUGMwjaB1Ls+vA4OZDSmCqK8qRfl/iG3Mz+SmVwcFwnoMohkDVF/+F8VZgHvAV5
-         O2PQ==
+        bh=b2OqfNiPleZIbmb7TmwrT/wLfhv0B6VNDBgxLf+fGcw=;
+        b=wDgnINvcsTBFswtUyZD+fNQOqoBt3GJeRE73tzdf2M8n16m1WwfoJKAC+WdGOu9k0C
+         UTkvqhR/NFUp/luzs3XG0B809/B1PzozvO39+egk5K6Ig9iBdsGZHqQqMrOpRv8XMzhP
+         OTMCWBkWWH8OpoSsfBlEcRixDpwG1SIPWkUW+Tk3sFk5WwUkOq4/uqg/JLdCbCMUnMTa
+         mUo+om5kwRdP7bOpquXz3bWIY+dgGVsmFwCjy2ZXDnMeuW2kPG7WLQcigbsL21q0BQSe
+         EWFbU3nX6pGIVaPXoJV70AbExK9ZahDVr4p75gdmgVujT8oy06iXsBVhY7oVLsGX/JHc
+         sXcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FRi5cLz2i8treGL656N0ByW0/+7y+778OS4JhAKmXLM=;
-        b=XEHtMrIp+nHVRqUAOYAjxIF2CJRuJBK8yG0oflmHDcXox6nmt6ZzokRz0wz7sV7tCR
-         th3/iRVf2y9ssbbMihlRdNFPLbgey8+CWzSBHCCjw2sQlKl7VzQd29q81ZOogxEnCFL5
-         ssqKWHEAY2uLho9O0kRNqtdqEmRxvL24kQtd0XhYvA2Cn23j60hweX7Mj4fgjAc91clw
-         otYdNm+lSraPGhW8/kpGzCBYWMmkNVYY3VBjvrJbBu1hYZHdTSPwbMKvwXCdSrRVgLt5
-         MshQU32MmaZ01Wcd4tLH9+XG5/HmhNhWY45Q2nGVgFJryyczjCEY0S0BYN/0OeP0gsgi
-         CadA==
-X-Gm-Message-State: AOAM53125E89d1wjZTXpTubJR90nPErhWGK+oX2W9US8cpwvYLNn20Y/
-        IfRm4/Qj6+oC6BuGU4TqClChIPCpr1mBPzCOhRktzg==
-X-Google-Smtp-Source: ABdhPJwKS25ektHXwijsC418SLiGujK4Z75iFhIUuaHDCUclTqCA+ql8Op77pL4RLiJdKqeut1RuieEwxb9qsyPoxGg=
-X-Received: by 2002:a37:4ac6:: with SMTP id x189mr23699573qka.323.1592994021954;
- Wed, 24 Jun 2020 03:20:21 -0700 (PDT)
+        bh=b2OqfNiPleZIbmb7TmwrT/wLfhv0B6VNDBgxLf+fGcw=;
+        b=GFMlOLj060lVSoTRIbq7P16Skc3OSEBafP5kjuDW6VVS3PtxH3Fg737xU5zQpP1XNW
+         yFs5IcAisvHzDP/7Ft1SLhDxnke1nzUL+AdJwu0PwDhOTlPOOdExYQg/36lfuQEIfr/0
+         9gKL9Nj/XVyyAWzpdJ1leqI2dlijHqDggsPhJY8cdJwcclQDx/q5mGcz+/dRzLBAl9Mv
+         M6dD3SWBBQq6QMNtmPX//vIQQF+DQFGcz1kpkWN8VmrKBC+XhKsPvQgB627fbEmyq4Vz
+         Hjg6dbe8Tmkn22I3JzRwXxJrONoCU0+2IOQM8RwQE5yfTidonzkqs+Ame+oHqddtxvsl
+         wU4w==
+X-Gm-Message-State: AOAM531myR/14J5cz4NdQCoWggJZIkarUu/Xuro3Ird6wKU7Gcw34Mia
+        uI/0rLHP3Ug2MeYjRwP3OlxHXmMKHHd6IJVvdE6Zzg==
+X-Google-Smtp-Source: ABdhPJyVXQxb2WStduflc8ziDJ/iq9alEg0Ys2bSXmPItpbNP4s9a4/DeQdKJ02m2rZfc+IhApMgmFH3wEFyoiRlizk=
+X-Received: by 2002:ac8:134a:: with SMTP id f10mr18680640qtj.131.1593000973743;
+ Wed, 24 Jun 2020 05:16:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200623144001.17052-1-geert+renesas@glider.be>
-In-Reply-To: <20200623144001.17052-1-geert+renesas@glider.be>
+References: <20200623145748.28877-1-geert+renesas@glider.be> <20200623145748.28877-3-geert+renesas@glider.be>
+In-Reply-To: <20200623145748.28877-3-geert+renesas@glider.be>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 24 Jun 2020 12:20:11 +0200
-Message-ID: <CAMpxmJUr8_S16fPH5CWVzi+MRwpJFE2_T5BwdJaoute5n8g3Sg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Drop superfluous dependencies on GPIOLIB
+Date:   Wed, 24 Jun 2020 14:16:03 +0200
+Message-ID: <CAMpxmJWGckzicz6FddXybcJh-hb+-hoGbV29Z3BA61RVQ1nQDQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: aggregator: Use bitmap_parselist() for parsing
+ GPIO offsets
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio <linux-gpio@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -71,44 +72,23 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-wt., 23 cze 2020 o 16:40 Geert Uytterhoeven <geert+renesas@glider.be>
+wt., 23 cze 2020 o 16:57 Geert Uytterhoeven <geert+renesas@glider.be>
 napisa=C5=82(a):
 >
-> All config options for GPIO drivers are inside a big "if GPIOLIB ...
-> endif" block, so there is no reason for individual config options to
-> have expicit dependencies on GPIOLIB.  Hence remove them.
+> Replace the custom code to parse GPIO offsets and/or GPIO offset ranges
+> by a call to bitmap_parselist(), and an iteration over the returned bit
+> mask.
 >
+> This should have no impact on the format of the configuration parameters
+> written to the "new_device" virtual file in sysfs.
+>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/gpio/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index f875ec95ba8c3a7a..291bffb5c7e58d7f 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -411,7 +411,7 @@ config GPIO_MXS
->
->  config GPIO_OCTEON
->         tristate "Cavium OCTEON GPIO"
-> -       depends on GPIOLIB && CAVIUM_OCTEON_SOC
-> +       depends on CAVIUM_OCTEON_SOC
->         default y
->         help
->           Say yes here to support the on-chip GPIO lines on the OCTEON
-> @@ -1118,7 +1118,7 @@ config GPIO_DLN2
->
->  config HTC_EGPIO
->         bool "HTC EGPIO support"
-> -       depends on GPIOLIB && ARM
-> +       depends on ARM
->         help
->           This driver supports the CPLD egpio chip present on
->           several HTC phones.  It provides basic support for input
-> --
-> 2.17.1
->
+> I'm not super happy with the mask[] array, which is on the stack.
+> But there is no real limit on the number of GPIO lines provided by a
+> single gpiochip, except for the global ARCH_NR_GPIOS.
 
-Applied, thanks!
+Why not allocate it with bitmap_zalloc() then?
 
-Bartosz
+Bart
