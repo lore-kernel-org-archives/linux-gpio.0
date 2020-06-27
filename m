@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D54C433E0
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30395C433DF
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA9420702
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B37C20702
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgF0QCN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 27 Jun 2020 12:02:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:60100 "EHLO mga17.intel.com"
+        id S1726579AbgF0QCO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 27 Jun 2020 12:02:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46428 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbgF0QCN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 27 Jun 2020 12:02:13 -0400
-IronPort-SDR: E7dykW4p0vBBhnGvXWJAbsc+mvp41mHQleVitlJGDOqFA/g0+w95ru/BGC8To5RAXWOaIsgCZZ
- MSPn+OLyCZqw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="125844338"
+        id S1726126AbgF0QCO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 27 Jun 2020 12:02:14 -0400
+IronPort-SDR: FGVH/+1TpA04KGrexXY8U4Ldh8DVtwKsZg+Z7THSpmIaMfCRj0RY2fOrYHaP/XEFIfiJUV3hk1
+ 5nJRv9Rm7UGg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="133110532"
 X-IronPort-AV: E=Sophos;i="5.75,287,1589266800"; 
-   d="scan'208";a="125844338"
+   d="scan'208";a="133110532"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2020 09:02:12 -0700
-IronPort-SDR: CA1jEwgGS46t/b8x84Q//gHS0YK7FCjy5qjJXXyuTgZt9skt70E6raCn9vDvbPsVJm64s7k4mz
- FKEuLVdTHjog==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2020 09:02:10 -0700
+IronPort-SDR: 6P/MNW3X+t0/9cpELT32EbNp4nYGGnUFvJmh/TEUPGa3zpOQoAo61k1escL1Wu5C2RtBMLl4aA
+ V4YOyg6Zafew==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,287,1589266800"; 
-   d="scan'208";a="302627652"
+   d="scan'208";a="265855705"
 Received: from lkp-server01.sh.intel.com (HELO 538b5e3c8319) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2020 09:02:09 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 27 Jun 2020 09:02:09 -0700
 Received: from kbuild by 538b5e3c8319 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jpDHM-0002q5-Hs; Sat, 27 Jun 2020 16:02:08 +0000
-Date:   Sun, 28 Jun 2020 00:01:40 +0800
+        id 1jpDHM-0002q0-FY; Sat, 27 Jun 2020 16:02:08 +0000
+Date:   Sun, 28 Jun 2020 00:01:47 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:fixes] BUILD SUCCESS
- 93e0272a4395819d51c7501b3cde771863ccecd2
-Message-ID: <5ef76d64.MqXtkQWSvkIJMtje%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-spi] BUILD SUCCESS
+ 4faa1551dc16564a750a22007cad309aace4295f
+Message-ID: <5ef76d6b.fE+pMVTAY39jV1ZP%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,13 +53,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  fixes
-branch HEAD: 93e0272a4395819d51c7501b3cde771863ccecd2  Merge tag 'gpio-fixes-for-v5.8-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into fixes
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-spi
+branch HEAD: 4faa1551dc16564a750a22007cad309aace4295f  spi: omap2-mcspi: Convert to use GPIO descriptors
 
 elapsed time: 724m
 
-configs tested: 112
-configs skipped: 3
+configs tested: 118
+configs skipped: 5
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -72,6 +72,10 @@ arm                                 defconfig
 arm                              allyesconfig
 arm                              allmodconfig
 arm                               allnoconfig
+arc                     haps_hs_smp_defconfig
+s390                             allyesconfig
+powerpc                          g5_defconfig
+mips                        jmr3927_defconfig
 sh                           se7751_defconfig
 arm                       imx_v6_v7_defconfig
 arm                            xcep_defconfig
@@ -86,12 +90,16 @@ arm                         lpc18xx_defconfig
 mips                           ip27_defconfig
 arm                     eseries_pxa_defconfig
 mips                      loongson3_defconfig
+i386                             alldefconfig
+nds32                             allnoconfig
+sh                           se7724_defconfig
+mips                     loongson1b_defconfig
 parisc                            allnoconfig
 arm                            lart_defconfig
 i386                              allnoconfig
+i386                             allyesconfig
 i386                                defconfig
 i386                              debian-10.3
-i386                             allyesconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                              allnoconfig
@@ -107,7 +115,6 @@ c6x                              allyesconfig
 c6x                               allnoconfig
 openrisc                         allyesconfig
 nds32                               defconfig
-nds32                             allnoconfig
 csky                             allyesconfig
 csky                                defconfig
 alpha                               defconfig
@@ -154,7 +161,6 @@ riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
 riscv                            allmodconfig
-s390                             allyesconfig
 s390                              allnoconfig
 s390                             allmodconfig
 s390                                defconfig
