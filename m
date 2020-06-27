@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A038C433DF
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6D6C433E0
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 445F720702
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0489720702
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Jun 2020 16:03:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbgF0QDP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1725975AbgF0QDP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sat, 27 Jun 2020 12:03:15 -0400
-Received: from mga17.intel.com ([192.55.52.151]:60205 "EHLO mga17.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:35275 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbgF0QDO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 27 Jun 2020 12:03:14 -0400
-IronPort-SDR: QfPn/WE6nRh0wORp8p0Lxry1jBZlXsmsd/IFYuRYmrgIFN5dryN00f9/lXxOauILYj/QCvDrYa
- rqyzh2Z6alAA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="125844573"
+        id S1725900AbgF0QDP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 27 Jun 2020 12:03:15 -0400
+IronPort-SDR: z6rWdmsdy9z3e211ySYxCoU5TAFsTR3UwDVtCrQvnHXEOCCUS/eiANZcfx9jtnPDfCwLt7YBc5
+ 3qSdPeYLWNMg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="134013629"
 X-IronPort-AV: E=Sophos;i="5.75,287,1589266800"; 
-   d="scan'208";a="125844573"
+   d="scan'208";a="134013629"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2020 09:03:13 -0700
-IronPort-SDR: 43tMMLtJ2YGd0bCdUcgyOUSnhyY6kWEHMArYtU2o34pOPd8AeiwzwZtcNQgSHWVRxJXNIrKCBJ
- akXUWwhnQJEQ==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2020 09:03:11 -0700
+IronPort-SDR: 4ceAGMNIGHDe+6zj2Bmw6b4JKuAnq1tlujah/T1yxhMjvmvDCzl4TxbQ3aliVa9mGQ7RZ4sAt5
+ gHR/P85CB20g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,287,1589266800"; 
-   d="scan'208";a="302627901"
+   d="scan'208";a="355059986"
 Received: from lkp-server01.sh.intel.com (HELO 538b5e3c8319) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2020 09:03:10 -0700
+  by orsmga001.jf.intel.com with ESMTP; 27 Jun 2020 09:03:09 -0700
 Received: from kbuild by 538b5e3c8319 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jpDIL-0002qO-LH; Sat, 27 Jun 2020 16:03:09 +0000
-Date:   Sun, 28 Jun 2020 00:02:04 +0800
+        id 1jpDIL-0002qL-7h; Sat, 27 Jun 2020 16:03:09 +0000
+Date:   Sun, 28 Jun 2020 00:01:58 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-drm] BUILD SUCCESS
- cf9a06e657b5bc58cac41eee89a9ac61f7c70e0e
-Message-ID: <5ef76d7c.v3FTF/x7v6yA+YQJ%lkp@intel.com>
+Subject: [gpio:gpio-asoc-no-base] BUILD SUCCESS
+ 1377109c0bd2171173a591159fe18e20fca6f52c
+Message-ID: <5ef76d76.aI21orfZK/nA78LN%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,34 +53,25 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-drm
-branch HEAD: cf9a06e657b5bc58cac41eee89a9ac61f7c70e0e  drm: omapdrm: Delete surplus GPIO includes
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-asoc-no-base
+branch HEAD: 1377109c0bd2171173a591159fe18e20fca6f52c  sound: soc: wm8903: Cut gpio_base data
 
 elapsed time: 724m
 
-configs tested: 108
-configs skipped: 7
+configs tested: 112
+configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
-powerpc                      chrp32_defconfig
-arc                 nsimosci_hs_smp_defconfig
-arm64                            alldefconfig
-sh                          sdk7786_defconfig
-m68k                          sun3x_defconfig
-arc                     haps_hs_smp_defconfig
-s390                             allyesconfig
-powerpc                          g5_defconfig
-mips                        jmr3927_defconfig
+arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
 sh                           se7751_defconfig
 arm                       imx_v6_v7_defconfig
 arm                            xcep_defconfig
@@ -95,21 +86,15 @@ arm                         lpc18xx_defconfig
 mips                           ip27_defconfig
 arm                     eseries_pxa_defconfig
 mips                      loongson3_defconfig
-arm                         axm55xx_defconfig
-ia64                              allnoconfig
-mips                      pistachio_defconfig
-arm                          ixp4xx_defconfig
-arm                       spear13xx_defconfig
 parisc                            allnoconfig
 arm                            lart_defconfig
-arm                         bcm2835_defconfig
-sh                  sh7785lcr_32bit_defconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
 i386                              debian-10.3
 ia64                             allmodconfig
 ia64                                defconfig
+ia64                              allnoconfig
 ia64                             allyesconfig
 m68k                             allmodconfig
 m68k                              allnoconfig
@@ -142,15 +127,34 @@ mips                             allmodconfig
 parisc                              defconfig
 parisc                           allyesconfig
 parisc                           allmodconfig
+powerpc                             defconfig
 powerpc                          allyesconfig
 powerpc                          rhel-kconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
-powerpc                             defconfig
+i386                 randconfig-a002-20200624
+i386                 randconfig-a006-20200624
+i386                 randconfig-a003-20200624
+i386                 randconfig-a001-20200624
+i386                 randconfig-a005-20200624
+i386                 randconfig-a004-20200624
+i386                 randconfig-a013-20200624
+i386                 randconfig-a016-20200624
+i386                 randconfig-a012-20200624
+i386                 randconfig-a014-20200624
+i386                 randconfig-a011-20200624
+i386                 randconfig-a015-20200624
+x86_64               randconfig-a004-20200624
+x86_64               randconfig-a002-20200624
+x86_64               randconfig-a003-20200624
+x86_64               randconfig-a005-20200624
+x86_64               randconfig-a001-20200624
+x86_64               randconfig-a006-20200624
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
 riscv                            allmodconfig
+s390                             allyesconfig
 s390                              allnoconfig
 s390                             allmodconfig
 s390                                defconfig
