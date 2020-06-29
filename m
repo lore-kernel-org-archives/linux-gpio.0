@@ -2,107 +2,108 @@ Return-Path: <SRS0=W1Ha=AK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA85C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 19:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E50CC433E2
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 19:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDA05206E2
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 19:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5148F206A5
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 19:18:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qfyP5Rxg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgF2TKO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Jun 2020 15:10:14 -0400
-Received: from muru.com ([72.249.23.125]:59964 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbgF2TKL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:10:11 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id F1E3A81A3;
-        Mon, 29 Jun 2020 16:42:20 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] gpio: omap: Add missing PM ops for suspend
-Date:   Mon, 29 Jun 2020 09:41:14 -0700
-Message-Id: <20200629164114.1186-1-tony@atomide.com>
-X-Mailer: git-send-email 2.27.0
+        id S1729584AbgF2TRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Jun 2020 15:17:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731954AbgF2TRn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2020 15:17:43 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA3FC030F31;
+        Mon, 29 Jun 2020 09:50:55 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id o1so746758plk.1;
+        Mon, 29 Jun 2020 09:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=epjZAavl8OTnrmj035AkLkdZa01IVf7hDefQw4XclfM=;
+        b=qfyP5RxgxAmyq6gPs73byd3YoUOiLlNFQvfce7YA6ZsR4onyELxfCTqCWi9/zFOy9v
+         7ispQlUC7C62ftj66FOnsAaCx06Splb36D3NXxPefaLlEexM+/GJp5SzYtsGakl+mL8B
+         eiPo23Xf8b/PqiyIqGS164oGgDUWUvPrIGy1sBMgspA0aqQBkcHfxRXfE3/2dFsV6dAW
+         k11LT22CZUqLUqGH2Em2PSrz5m+H6cJgWvUB96mb2oPQvs7VGaO1I4H9d6J/iOgaigXr
+         4af3bgasPy59TzF+5e2A/5fHzziw2TWZci3cAFqTzHOYBESugR9IwZ0F6+uS9vE1IZyq
+         e9DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=epjZAavl8OTnrmj035AkLkdZa01IVf7hDefQw4XclfM=;
+        b=Ds++611FQtbDfwjmK0Ja4x9B58g+eThFp+aRwufbE2vjFMIxtgfGgWbB+qHZSOJdKh
+         5VsnBo8MQ/e2H3mNtffXUFLD2Ps4AcN9kHr36iYHIPL5ntx1ioOcUOHmT6F6ORvvbgW+
+         poPI0MMFucKV5HvwCURQH1raQjhOBVlulKj3W3r64sSU5qp/4vN+IRns1HuxGBDd5vk0
+         VWXkVyIEkbIQ9GQBHDI+CRTJo2gxuzAHOwZAjSdctc8LX2KFUTwCUmAD5MY6EKwcENhb
+         5HYFoGRr8/QMhmeS9C0i0JeRg+HEKWW381w6z2lIqX7+WFSzLSFvzpCqCxMNdjinfH9T
+         dvig==
+X-Gm-Message-State: AOAM531qr4mxBjjAKaoH7SAMxSn+Ci3wz8LYyEKVulMaeNx020qu7ULY
+        UQQkgwlPJjfciCCmyTDkTgvQAjzZORLlKmh1mmg=
+X-Google-Smtp-Source: ABdhPJwK8VIW73nkc0kipwx1fUf9LlTusE2dlg042QQH/vsyXg7aXQu6OoBfFkAIfefdmaXBT/ZOhM4ezkR0DNBgt9w=
+X-Received: by 2002:a17:902:8491:: with SMTP id c17mr6807522plo.262.1593449454975;
+ Mon, 29 Jun 2020 09:50:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200503105453.23658-1-miquel.raynal@bootlin.com> <20200629160844.6ecf79c1@xps13>
+In-Reply-To: <20200629160844.6ecf79c1@xps13>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Jun 2020 19:50:41 +0300
+Message-ID: <CAHp75Vehv_Cp1AhMPhk8ktyp-uHSkgweqnhhSq_7w2Kf9y=7XQ@mail.gmail.com>
+Subject: Re: [PATCH v6] gpio: pca953x: Add Maxim MAX7313 PWM support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-We've had the legacy platform code take care of suspend for us but
-this no longer is the case when probed without legacy mode with
-ti-sysc. We need to configure PM ops like standard Linux device
-drivers do.
+On Mon, Jun 29, 2020 at 5:08 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote on Sun,  3 May 2020
+> 12:54:53 +0200:
+>
+> > The MAX7313 chip is fully compatible with the PCA9535 on its basic
+> > functions but can also manage the intensity on each of its ports with
+> > PWM. Each output is independent and may be tuned with 16 values (4
+> > bits per output). The period is always 32kHz, only the duty-cycle may
+> > be changed. One can use any output as GPIO or PWM.
 
-As we still have some SoCs booting also the legacy mode, we need to
-add omap_gpio_suspend() and omap_gpio_resume(), and check for the
-is_suspended flag to avoid legacy _od_suspend_noirq() calling them
-on an already suspended GPIO instance.
+> Can I have a status on this patch please?
+>
+> If it was forgotten, I would be good to have it queued now, otherwise,
+> may I know the reason?
 
-Once we have no SoCs booting in legacy mode, we can just switch to
-using the standard PM ops with pm_runtime_force_suspend() and
-pm_runtime_force_resume().
+TWIMC, just my 2 cents about this patch.
+I don't like it in this form. On the constructive side I can propose
+at least two ways to solve:
+a) introduce a PWM as a pin mode; move pca953x to pin control; use
+this mode with PWM driver being separated from the pin control;
+b) introduce an MFD that provides two parts for this GPIO & PWM.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Personally I would go with a) as I know at least one more pin
+controller which will get an advantage of this (and it's definitely
+not an MFD).
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -60,6 +60,7 @@ struct gpio_bank {
- 	struct clk *dbck;
- 	struct notifier_block nb;
- 	unsigned int is_suspended:1;
-+	unsigned int needs_resume:1;
- 	u32 mod_usage;
- 	u32 irq_usage;
- 	u32 dbck_enable_mask;
-@@ -1504,9 +1505,34 @@ static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
-+static int omap_gpio_suspend(struct device *dev)
-+{
-+	struct gpio_bank *bank = dev_get_drvdata(dev);
-+
-+	if (bank->is_suspended)
-+		return 0;
-+
-+	bank->needs_resume = 1;
-+
-+	return omap_gpio_runtime_suspend(dev);
-+}
-+
-+static int omap_gpio_resume(struct device *dev)
-+{
-+	struct gpio_bank *bank = dev_get_drvdata(dev);
-+
-+	if (!bank->needs_resume)
-+		return 0;
-+
-+	bank->needs_resume = 0;
-+
-+	return omap_gpio_runtime_resume(dev);
-+}
-+
- static const struct dev_pm_ops gpio_pm_ops = {
- 	SET_RUNTIME_PM_OPS(omap_gpio_runtime_suspend, omap_gpio_runtime_resume,
- 									NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(omap_gpio_suspend, omap_gpio_resume)
- };
- 
- static struct platform_driver omap_gpio_driver = {
+If GPIO / pin control maintainers consider this okay, I will rest my
+case, but see above...
+
 -- 
-2.27.0
+With Best Regards,
+Andy Shevchenko
