@@ -2,141 +2,123 @@ Return-Path: <SRS0=W1Ha=AK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A28C433E2
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 21:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0065C433E3
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 21:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C226C208B6
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 21:23:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="l8oEpc8o";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jvAnAfyG"
+	by mail.kernel.org (Postfix) with ESMTP id D0254206A5
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Jun 2020 21:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593467617;
+	bh=uQiadOMZ3uEfWQnv8fMX1w6chwspqEv0Mi50OtEKkKk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Vjs2hwKM7M8mUwxpUQ+vJnjIqPVdtyamnneMWRklVjeidkIIOBs/xCunR52TAlGM8
+	 ZX46NIg9YLK2/UhBIfmtDpWfZOvax0sd92wh76ugOUdqNkgxzOMCv65maMco6ur37b
+	 z27QKGqzKrc9tvk+89/NmnoWg8zw/NTivMwYBi6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390966AbgF2VWp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:22:45 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:58681 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729596AbgF2Sv1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:51:27 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 805C058035E;
-        Mon, 29 Jun 2020 11:07:50 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 29 Jun 2020 11:07:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=WE1PSDJ6UR5jIFS55riBxt9LPeJ
-        Xh4U7NigTPnNX65A=; b=l8oEpc8ou0b31MaSG3xJyMa7ni1mk3WLjAf0+QKHhjs
-        AVpZBfZIOMlIwpRfzUZ14GCy22hl/ny7wF6EPd/RmE10onf4Ip8tNfeqRwOPe/KF
-        gPA9Mojv1xbR1GKjCgVa8zHPvuXzX/L9FcWYOtdSddgGtn8h1eG9jBxj75YJbHTK
-        AANJop2cVs8dOOdN/3CdbzUDXLfYiXtQNsQYaSDjYw02qjx1HRJeF5WHzMmAyjXS
-        3KhOuwB1qhHBpETNlNr2Wcj3pOWH0N/xGG6lycaJauSm7B8zbUUSEZMMBd+GhU53
-        6JgTxPN4HoKR9TklVbYstBJUuXqO1J9mbgHbuVlFbiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=WE1PSD
-        J6UR5jIFS55riBxt9LPeJXh4U7NigTPnNX65A=; b=jvAnAfyGaqUn/08ZHsSqLO
-        uW19B9zLVT4SoApSBBkRM437Kkyd5+RLGxYcTd9L/oNbS6MJbqab7VsM98DbsCWO
-        4d+n8RBYK/BF0fHr9iBnrIaiiVmQvnFV3zkFgHUJ5uXQbG6usHTFF8bzNilFUc7u
-        VHSM1KJiVUTLlVmNRTKoIFa+4KuOnlVlYMVDSkofqAXPutOIj/pnE21k7/gu3pBQ
-        daqivTY5w3AmuBudK+2x1qoXFuOwCBazHChG9faFssJKqFPAI7ckWQyHm9tFFwxU
-        pbbe+PLQsGexmH8opjSu/KNzsplx1vR5KknkeXSlJ597pWOeC+sjwaFee54Bzuew
-        ==
-X-ME-Sender: <xms:wwP6XqWvknOfJkcPQBXZIqW8UorMwaNBI5C1ODdyBwTlMY09xUHPxw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudelledguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:wwP6XmkjVUmeiEdlJgUfigxWgJQVaqJmvthVxhwDQFDiMykoEnTrdA>
-    <xmx:wwP6XubBPGGFyYHtXHWC-1pZWDOV_FPhqmC25ASqd2-PXgI2_RfGwg>
-    <xmx:wwP6XhWf_nU3-9dDRfPGYtrX-iylRBw_6x4z_SVVOUOMQWduDd8qGA>
-    <xmx:xgP6XmWAWQwhFI3MhZjhHXi92Prz-GT5C9njmChD_WUolvvNS1KtFw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0E01A3280060;
-        Mon, 29 Jun 2020 11:07:47 -0400 (EDT)
-Date:   Mon, 29 Jun 2020 17:07:45 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     robh+dt@kernel.org, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, srinivas.kandagatla@linaro.org,
-        linus.walleij@linaro.org, anarsoul@gmail.com,
-        tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
-        megous@megous.com, karlp@tweak.net.au, bage@linutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        huangshuosheng@allwinnertech.com, liyong@allwinnertech.com
-Subject: Re: [PATCH v2 06/11] nvmem: sunxi-sid: add support for A100's SID
- controller
-Message-ID: <20200629150745.ettjdggv55gfxs5s@gilmour.lan>
-References: <20200622025907.32574-1-frank@allwinnertech.com>
- <20200622025907.32574-7-frank@allwinnertech.com>
+        id S2404273AbgF2Vxg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:53:36 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37466 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404461AbgF2Vxf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2020 17:53:35 -0400
+Received: by mail-io1-f65.google.com with SMTP id v6so5163812iob.4;
+        Mon, 29 Jun 2020 14:53:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TqO9zSccC03uQUBHdnGu8Ma3JV07Cz0JDvsVx9Gx0ZY=;
+        b=BI5j2klROPkAw5y71Nus7JZg2kw4DRN35t07NRJ8k7ia18GH/E0t3shkmjJ18jl0SP
+         /rTnVa2UbnSnJNgWxI8OFen9vWgatI3pPXPj/4WMXjJxvxFdSfI8ywNrCw+WR8YrlARO
+         mTaMURwB9Z0RPIn2mWLBE3qw5vk2hYKNR44yqIGVs0T5bLDvpLknUc7eTNupVfliVRya
+         yVSNAzcpr7e6v2Yuir7Nod8b0MTrOaH4d/ss5+Sjr+y+jmc320xfXlce2YPHTYuC5Z+2
+         BMCB9J5u9DHwASyI2AxdIoxbMR+zKhJu9ae7SVdM6q14yX88MEBetp6EFiJLHf2B1XDL
+         0GPA==
+X-Gm-Message-State: AOAM530wCbae5J3sg6I2a4rDTIcR9/v6t5Jp3l6xGyiG5A8bpLNxhtph
+        jaQqtkoVLIj2QHFMncrWsw==
+X-Google-Smtp-Source: ABdhPJyIbG7PIhmtfb8YhLKR5Xh3nGklRFT+QTShHlA/Rx0Efb1UteRJRihqMm1UaKN8nH02gpJ1Xw==
+X-Received: by 2002:a05:6638:2601:: with SMTP id m1mr9213481jat.43.1593467614612;
+        Mon, 29 Jun 2020 14:53:34 -0700 (PDT)
+Received: from xps15 ([64.188.179.255])
+        by smtp.gmail.com with ESMTPSA id t12sm604000ilo.80.2020.06.29.14.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2020 14:53:34 -0700 (PDT)
+Received: (nullmailer pid 2994774 invoked by uid 1000);
+        Mon, 29 Jun 2020 21:53:31 -0000
+Date:   Mon, 29 Jun 2020 15:53:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Hanks Chen <hanks.chen@mediatek.com>
+Cc:     wsd_upstream@mediatek.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        linux-kernel@vger.kernel.org, mtk01761 <wendell.lin@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>, linux-clk@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 1/7] dt-bindings: pinctrl: add bindings for MediaTek
+ MT6779 SoC
+Message-ID: <20200629215331.GA2991039@bogus>
+References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
+ <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qt3qjbwfvcqzuc6s"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200622025907.32574-7-frank@allwinnertech.com>
+In-Reply-To: <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
---qt3qjbwfvcqzuc6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 22, 2020 at 10:59:02AM +0800, Frank Lee wrote:
-> Add support for A100's SID controller.
->=20
-> Signed-off-by: Frank Lee <frank@allwinnertech.com>
+On Thu, 18 Jun 2020 19:33:32 +0800, Hanks Chen wrote:
+> From: Andy Teng <andy.teng@mediatek.com>
+> 
+> Add devicetree bindings for MediaTek MT6779 pinctrl driver.
+> 
+> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
 > ---
->  drivers/nvmem/sunxi_sid.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-> index e26ef1b..8ac074b 100644
-> --- a/drivers/nvmem/sunxi_sid.c
-> +++ b/drivers/nvmem/sunxi_sid.c
-> @@ -189,6 +189,11 @@ static int sunxi_sid_probe(struct platform_device *p=
-dev)
->  	.need_register_readout =3D true,
->  };
-> =20
-> +static const struct sunxi_sid_cfg sun50i_a100_cfg =3D {
-> +	.value_offset =3D 0x200,
-> +	.size =3D 0x100,
-> +};
-> +
+>  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  |  210 ++++++++++++++++++++
+>  1 file changed, 210 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> 
 
-It looks like it's the same tha nthe H3 / A64 then?
 
-If so, you can just reuse their compatible as fallback
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Maxime
+Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dts:21:18: fatal error: dt-bindings/pinctrl/mt6779-pinfunc.h: No such file or directory
+         #include <dt-bindings/pinctrl/mt6779-pinfunc.h>
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+scripts/Makefile.lib:315: recipe for target 'Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+Makefile:1347: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
---qt3qjbwfvcqzuc6s
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+See https://patchwork.ozlabs.org/patch/1312018
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXvoDwQAKCRDj7w1vZxhR
-xR1+AQDUmJ2eKxkSAKY8N3oAYv2RkDrEZNTRivNZeW/rTDtt1gD/fIJbT8KdkTtN
-Oq4B49fJoiJYQc72b1d+sdbscb9XAw4=
-=7lp0
------END PGP SIGNATURE-----
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
 
---qt3qjbwfvcqzuc6s--
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
+
+
+
+Here, you need patch 2 to come first or merge it into this patch as it 
+is part of the binding.
+
+Rob
+
