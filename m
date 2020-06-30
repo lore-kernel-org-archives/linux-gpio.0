@@ -2,110 +2,98 @@ Return-Path: <SRS0=pBZy=AL=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DE0C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D384FC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 14:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 898092068F
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a52p8zpD"
+	by mail.kernel.org (Postfix) with ESMTP id A5EC02074D
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 14:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388254AbgF3Neh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Jun 2020 09:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388163AbgF3Ndy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2020 09:33:54 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A53DC03E979
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:33:54 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id j18so18841172wmi.3
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LxMqnKZ6/vF3Sz1VG4ZmVbGw0fGc694S11E5HGVbx6s=;
-        b=a52p8zpDtHp2BZaKl7cLaCsGbQRImiqq+vdYMe+DEp24dRvPaj0y8e3Kju7zD0XhYx
-         CLwU8KT53+rUeG44oD/jA/JijDdkch9F3RMzyJ1ppCeX6KBs/ucps8SozbJzpjtw6mOt
-         jBoBo02vlcgoUfsxeIazznL9FhHExCEjjRFK8stugey1p6cx+rMZ1SxHayD+46hcaVCM
-         8V8ZwOXV3CqPMIqYBokS0zQGkEJG0UQuUU44tgL2m9+EtAqzEEXvqj+MCGmqaek2aBnk
-         AuLUNAngsZhaTMBEpLkFjYtH/YvrrGCbOElVQH/o+cZUwBRqtDsh5w6OHa0fU394DeRV
-         X+6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LxMqnKZ6/vF3Sz1VG4ZmVbGw0fGc694S11E5HGVbx6s=;
-        b=RPjoFe1DyDalXnvLGzyAIbZd7zPpaID7iyfXc0lr4Yd8VJJwwlGJEaEv8SQTaSSFDF
-         fQb/PQWL1AMCH67OQFcro0Pei5NlpKNclisnAcHTVlJd2SRNup6kzo2TEc0hs2CzBKSn
-         7wn+60Fk11CZXKcy2J3KlisRR91SUD7nRSg/IuUFWvVBKVg+00nZGoLqj6kL4gGGFNsd
-         +9e3pUEpl/zalDC2E7rXI1Qlqs2CogXZH9mp6V22cOlLn1BUfuIPrQVGgvCxf0+Rja0z
-         DY0YVfwKTUmNmxZBHAOHTBaS7DP9BFBHxFo4VmevWAa6DT4JXQW/LzEMhoD06LLO/FFf
-         H5fA==
-X-Gm-Message-State: AOAM531wkiByVflTKepN9zrx211tdVk/o+m0wNr55tIvGHo6aYM7gW1v
-        mIeBAs5BryJzVSra0mG2zaplDg==
-X-Google-Smtp-Source: ABdhPJxjet3Fft4nPy2UchykKdNnrGWHxB31uPrnPEyWDLwTGsb3FgesECowF9Jy/VDozg8ma6IePQ==
-X-Received: by 2002:a1c:1d04:: with SMTP id d4mr22807105wmd.156.1593524032982;
-        Tue, 30 Jun 2020 06:33:52 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.35.144])
-        by smtp.gmail.com with ESMTPSA id z16sm3682464wrr.35.2020.06.30.06.33.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 06:33:52 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 04/10] gpio: gpio-pmic-eic-sprd: Fix incorrectly named property 'map'
-Date:   Tue, 30 Jun 2020 14:33:39 +0100
-Message-Id: <20200630133345.2232932-5-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200630133345.2232932-1-lee.jones@linaro.org>
+        id S1730303AbgF3OBb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Jun 2020 10:01:31 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48229 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728808AbgF3OBa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 30 Jun 2020 10:01:30 -0400
+IronPort-SDR: 8YGCtYurDXBvSTL2y57TNfJYpyOge87cZ+xS0L9K72M4d1tSVKGx7Ox27k3saPUuGvUGx9/GPv
+ cC+u9d3QWQOA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9666"; a="207750096"
+X-IronPort-AV: E=Sophos;i="5.75,297,1589266800"; 
+   d="scan'208";a="207750096"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2020 07:01:11 -0700
+IronPort-SDR: R0Gwqc2V4F52bCGV31q6QEEjl7oyXFNcUSJzJcUCp7JWplQU9Gi214eTU02coYDsK8LT2JrjJ6
+ jedy9DJDsJ2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,297,1589266800"; 
+   d="scan'208";a="277435003"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 30 Jun 2020 07:01:09 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1jqGow-00GrKd-Ty; Tue, 30 Jun 2020 17:01:10 +0300
+Date:   Tue, 30 Jun 2020 17:01:10 +0300
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH 03/10] gpio: gpio-ml-ioh: Fix missing ':' in 'struct
+ ioh_gpio_reg_data
+Message-ID: <20200630140110.GT3703480@smile.fi.intel.com>
 References: <20200630133345.2232932-1-lee.jones@linaro.org>
+ <20200630133345.2232932-4-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200630133345.2232932-4-lee.jones@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-A good attempt has been made to properly document 'struct
-sprd_pmic_eic', but 'map' has been incorrectly described as
-'regmap' since the driver's inception in 2018.
+On Tue, Jun 30, 2020 at 02:33:38PM +0100, Lee Jones wrote:
+> 'struct ioh_gpio_reg_data's 'ien_reg' property is missing a ':'
+> which confuses the kerneldoc tooling/parsers/validators.
+> 
+> Replacing it squashes the following W=1 warning:
+> 
+>  drivers/gpio/gpio-ml-ioh.c:63: warning: Function parameter or member 'ien_reg' not described in 'ioh_gpio_reg_data'
 
-Fixes the following W=1 kernel build warning:
+Applied, thanks!
 
- drivers/gpio/gpio-pmic-eic-sprd.c:65: warning: Function parameter or member 'map' not described in 'sprd_pmic_eic'
+> 
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/gpio/gpio-ml-ioh.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+> index 92b6e958cfed5..53d4abefa6ff2 100644
+> --- a/drivers/gpio/gpio-ml-ioh.c
+> +++ b/drivers/gpio/gpio-ml-ioh.c
+> @@ -44,7 +44,7 @@ struct ioh_regs {
+>  
+>  /**
+>   * struct ioh_gpio_reg_data - The register store data.
+> - * @ien_reg	To store contents of interrupt enable register.
+> + * @ien_reg:	To store contents of interrupt enable register.
+>   * @imask_reg:	To store contents of interrupt mask regist
+>   * @po_reg:	To store contents of PO register.
+>   * @pm_reg:	To store contents of PM register.
+> -- 
+> 2.25.1
+> 
 
-Cc: Orson Zhai <orsonzhai@gmail.com>
-Cc: Baolin Wang <baolin.wang7@gmail.com>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/gpio/gpio-pmic-eic-sprd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-index 05000cace9b24..9382851905662 100644
---- a/drivers/gpio/gpio-pmic-eic-sprd.c
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -48,7 +48,7 @@ enum {
-  * struct sprd_pmic_eic - PMIC EIC controller
-  * @chip: the gpio_chip structure.
-  * @intc: the irq_chip structure.
-- * @regmap: the regmap from the parent device.
-+ * @map:  the regmap from the parent device.
-  * @offset: the EIC controller's offset address of the PMIC.
-  * @reg: the array to cache the EIC registers.
-  * @buslock: for bus lock/sync and unlock.
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
