@@ -7,120 +7,101 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57259C433E2
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40913C433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3744920722
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D1FA206EB
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Jun 2020 13:34:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wTYsKZg6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUr7wg3W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbgF3NeD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Jun 2020 09:34:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44964 "EHLO
+        id S1732879AbgF3Ne1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Jun 2020 09:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388175AbgF3Nd6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2020 09:33:58 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838D2C061755
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:33:57 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id f139so19613378wmf.5
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:33:57 -0700 (PDT)
+        with ESMTP id S2388188AbgF3NeC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2020 09:34:02 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB87C03E97E
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:34:01 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id z15so8920569wrl.8
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2020 06:34:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qg/i7Z+DVHnxMJURbtuvnuqmQ2dblOKzOYHmn2TAyNw=;
-        b=wTYsKZg6XOOwxF3oDluUk1u7aO7yNTj639l5CvuRCOC6RNDIbnTV/IcodT/0pqXNw5
-         pFneNKZwxITWnSGPM7dh/ReDTHF6g0AZZopWTNoTm3SVu8g3gabrkJMYF+fLUxsCAOtc
-         g2sEqrZ62BMpGwWgQhxIyK1xLKtDhgVq7F4kMmb84oNfW36RuTgAnkrQ2AUiRMYHq5mb
-         5Z1wMXrCHXX73X50iSEhunoIGLBqslyiYCHs+Ekoh9ShjjyXgkgMDYMdvtVrgjQCiCAw
-         crp4lzcA5lAPU0j8es+fPggZvMOjmHObzD87nJW7VuLRDGYln9cRTzANzvJR6PXgUd8P
-         FLzA==
+        bh=Aqos2NxgL6TqV6vtAHFj09o8FM67bpNGP+lJI0qHUic=;
+        b=tUr7wg3Wznr91hdBXq50eNTGAccm33bM6tBl1CH1AYKPp7JvNXSuZ0fLootAup+nLZ
+         7xkoMJq1lUn19jzjKvVfTuaHmloQm+V871dkMcRy9T/bH3j7+hJYql6Pv+wj15mhtdHE
+         z+p3HQuk511W60JvRiiE4ZaHUMC3YYw6cpfddvAPSL7oz94GQ5JxL/eIwpYYN7AI7zER
+         02C7um3AfjHlBzqoZ7eQY2pLhJAu4hgYRRVaj6miRKRa0ZaL2ZCGcKELxqLOX9qJJhcc
+         kU1S0ht8R33R/0IqyPDqJyOcr1Rc3GifN2tOTQKD40fTDw1T9liHtszfTp2Uvn3pJlru
+         HMeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qg/i7Z+DVHnxMJURbtuvnuqmQ2dblOKzOYHmn2TAyNw=;
-        b=kTMSz0HkLRQtu2QCHTvCEPJJ1PGvi/4JV5CRnwjaoQjTrGj2lu9kjvAw7V7BGZ9tu5
-         Nq90uPuqqjTa2prCNrl4uqm4YCtDFVU2xiiysX49VOmGSFNG3erNe0xp/opVa1th5P5J
-         OCqxHkWKmebZH5bdh45/M/OCqUC7gSMZg+7T0AMzuwwIVbmLSrLCoQDuYE4uKpro84r8
-         CHL4aoSSwES4sZ182BqrO+waDFqqaNClXmlilI2V3xC5WVfyn33QBil3J0dbXrQUTjZx
-         xOJfDvCFI+yXMnM+cASe1Xu9/nAvhNFv+0MIcN8/K1Ekl1L8J2YZVrwuDQd16W8b5G5A
-         a5TQ==
-X-Gm-Message-State: AOAM530DIkv28C8GJBgeCnSRfpEnpwEuTBgHOuqVf70n5ycaWM6Algcz
-        QwHRSNMOtX1IhUOCmLvJRQvo+Q==
-X-Google-Smtp-Source: ABdhPJxuB0GHncTea0p5EeyC3ow+2hK3Kp2Tm41ZPwIkJuIuPL7Leq57W4yxAyWNj5wXl7BWX7g3dQ==
-X-Received: by 2002:a1c:6102:: with SMTP id v2mr22253807wmb.6.1593524036198;
-        Tue, 30 Jun 2020 06:33:56 -0700 (PDT)
+        bh=Aqos2NxgL6TqV6vtAHFj09o8FM67bpNGP+lJI0qHUic=;
+        b=WBpfl2CUbuBTkDAfmgN/HgEhfT0O+4Txma16EA5EUfq4jrlpcgHBc3MeMAWlG5iGI7
+         JNwPDPdKcYFWOW44CNZ4iubGwnxiSs/hbEG42krpJF+C/Dk0QP4i251frr3SmKFkS8/g
+         plQm3+A8C0QpyGx4b99ZxNR0pus67W8AAEHyhs9K6idcKPB+hpWU30S2ul1sAjXmMC4w
+         b5b3olrD84G8D3qxaWcWzl43A4EAm9klYz3hZA67CtYcTre+TVXyVvDRItqC53vfQ/io
+         n2kWIfnPJ4F55oQaNoBMEN4xtukucf3ZVPIxsfr8ay3UhddmqYm3LPPE9YGNH2bFpaxS
+         4gSQ==
+X-Gm-Message-State: AOAM533wfPO23oiArj5cLECEQYon9d09RrgpYGMkGNhzkJwEQgJ62hBd
+        uhqREm7FKxgLd+m+F2cfPG5smA==
+X-Google-Smtp-Source: ABdhPJx9WxsVZ5j6ppbW2LpfgLfGN/iYhXnS9SqvRlEbRO7i3cfvBgwP5qkADNjWMaQO/b1FJ/QXnQ==
+X-Received: by 2002:a5d:68c7:: with SMTP id p7mr23139275wrw.16.1593524039424;
+        Tue, 30 Jun 2020 06:33:59 -0700 (PDT)
 Received: from localhost.localdomain ([2.27.35.144])
-        by smtp.gmail.com with ESMTPSA id z16sm3682464wrr.35.2020.06.30.06.33.55
+        by smtp.gmail.com with ESMTPSA id z16sm3682464wrr.35.2020.06.30.06.33.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 06:33:55 -0700 (PDT)
+        Tue, 30 Jun 2020 06:33:58 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>
-Subject: [PATCH 07/10] gpio: gpio-it87: Fix formatting issues which confuse kerneldoc
-Date:   Tue, 30 Jun 2020 14:33:42 +0100
-Message-Id: <20200630133345.2232932-8-lee.jones@linaro.org>
+        Asmaa Mnebhi <Asmaa@mellanox.com>
+Subject: [PATCH 10/10] gpio: gpio-mlxbf2.c: Provide __releases() annotation to stop confusing Sparse
+Date:   Tue, 30 Jun 2020 14:33:45 +0100
+Message-Id: <20200630133345.2232932-11-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200630133345.2232932-1-lee.jones@linaro.org>
 References: <20200630133345.2232932-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Kerneldoc expects struct properties to be documented using the syntax
-'@.*: ', but no ':' has been provided in 'struct it87_gpio's
-header.  Add them to stop confusing kerneldoc.
+Sparse cannot peer into other functions to see when and if locks are
+acquired and released, thus it simply warns that a 'context imbalance'
+is detected instead.  Let's be kind to Sparse and let it know that
+this behaviour is intentional.
 
-Fixes the following W=1 warnings:
+ drivers/gpio/gpio-mlxbf2.c:125:12: warning: context imbalance in 'mlxbf2_gpio_lock_acquire' - different lock contexts for basic block
+ drivers/gpio/gpio-mlxbf2.c:151:13: warning: context imbalance in 'mlxbf2_gpio_lock_release' - unexpected unlock
 
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'chip' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'lock' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'io_base' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'io_size' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'output_base' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'simple_base' not described in 'it87_gpio'
- drivers/gpio/gpio-it87.c:69: warning: Function parameter or member 'simple_size' not described in 'it87_gpio'
-
-Cc: "Diego Elio Pettenò" <flameeyes@flameeyes.eu>
+Cc: Asmaa Mnebhi <Asmaa@mellanox.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpio/gpio-it87.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-mlxbf2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
-index b497a1d18ca9b..8f1be34953ce4 100644
---- a/drivers/gpio/gpio-it87.c
-+++ b/drivers/gpio/gpio-it87.c
-@@ -47,13 +47,13 @@
- 
- /**
-  * struct it87_gpio - it87-specific GPIO chip
-- * @chip the underlying gpio_chip structure
-- * @lock a lock to avoid races between operations
-- * @io_base base address for gpio ports
-- * @io_size size of the port rage starting from io_base.
-- * @output_base Super I/O register address for Output Enable register
-- * @simple_base Super I/O 'Simple I/O' Enable register
-- * @simple_size Super IO 'Simple I/O' Enable register size; this is
-+ * @chip: the underlying gpio_chip structure
-+ * @lock: a lock to avoid races between operations
-+ * @io_base: base address for gpio ports
-+ * @io_size: size of the port rage starting from io_base.
-+ * @output_base: Super I/O register address for Output Enable register
-+ * @simple_base: Super I/O 'Simple I/O' Enable register
-+ * @simple_size: Super IO 'Simple I/O' Enable register size; this is
-  *	required because IT87xx chips might only provide Simple I/O
-  *	switches on a subset of lines, whereas the others keep the
-  *	same status all time.
+diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
+index 861a8d0a84be0..befa5e1099439 100644
+--- a/drivers/gpio/gpio-mlxbf2.c
++++ b/drivers/gpio/gpio-mlxbf2.c
+@@ -149,6 +149,8 @@ static int mlxbf2_gpio_lock_acquire(struct mlxbf2_gpio_context *gs)
+  * Release the YU arm_gpio_lock after changing the direction mode.
+  */
+ static void mlxbf2_gpio_lock_release(struct mlxbf2_gpio_context *gs)
++	__releases(&gs->gc.bgpio_lock)
++	__releases(yu_arm_gpio_lock_param.lock)
+ {
+ 	writel(YU_ARM_GPIO_LOCK_RELEASE, yu_arm_gpio_lock_param.io);
+ 	spin_unlock(&gs->gc.bgpio_lock);
 -- 
 2.25.1
 
