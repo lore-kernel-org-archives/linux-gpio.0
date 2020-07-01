@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F805C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CEAC433E0
 	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jul 2020 14:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DBDA20780
+	by mail.kernel.org (Postfix) with ESMTP id A81CB20780
 	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jul 2020 14:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbgGAOfU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1731344AbgGAOfU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 1 Jul 2020 10:35:20 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37338 "EHLO mga14.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:21872 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731344AbgGAOfT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1731442AbgGAOfT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 1 Jul 2020 10:35:19 -0400
-IronPort-SDR: Dm073GUlybyUuEOM/xK8veOYnlnGO4HQZPuz/hY6hjx2k2ErtWTJ+ZVkMIeZeh4GlzBInK6yC/
- fN0lesaLNrjw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="145663822"
+IronPort-SDR: zfjXm4kTnQ6OeAUuRRWcxH4ROg9yVuQ5l0pFu+qVAldnoKXZCBITRGylGqaHNhJbmlrMKoZRI9
+ fx5/mxXKVMuQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="211645005"
 X-IronPort-AV: E=Sophos;i="5.75,300,1589266800"; 
-   d="scan'208";a="145663822"
+   d="scan'208";a="211645005"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 07:35:17 -0700
-IronPort-SDR: lnIY+N9+n2gaO0xE4yQLD15OS5UBYn9Nl4yOd5VcAqqfT1WlnoRvyhRMUN8Iw3cLPbRPINdqsl
- g2BWIS5XTxiA==
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 07:35:18 -0700
+IronPort-SDR: ishwKsZ+pmTK7wM1pb2MnX7FwdquD4a+sXnklnPnEowfumQPsufEAacRgI91TGvgagPu4e00lJ
+ 5N+K8nYDx0ow==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,300,1589266800"; 
-   d="scan'208";a="303864376"
+   d="scan'208";a="356133734"
 Received: from lkp-server01.sh.intel.com (HELO 28879958b202) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Jul 2020 07:35:16 -0700
+  by orsmga001.jf.intel.com with ESMTP; 01 Jul 2020 07:35:16 -0700
 Received: from kbuild by 28879958b202 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jqdpT-00037P-Rq; Wed, 01 Jul 2020 14:35:15 +0000
-Date:   Wed, 01 Jul 2020 22:34:18 +0800
+        id 1jqdpT-00037N-RA; Wed, 01 Jul 2020 14:35:15 +0000
+Date:   Wed, 01 Jul 2020 22:34:12 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-usb] BUILD SUCCESS
- 01ebb87a729090f2a821dc87f4b66cb3c0e37a8e
-Message-ID: <5efc9eea.m0k7uiRcxu6Xfioy%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-staging] BUILD SUCCESS
+ baa2aaadbd9621cfb4a1c52f13ecfc980d157bd6
+Message-ID: <5efc9ee4.r3WOE6xmgNHJmoEA%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,13 +53,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-usb
-branch HEAD: 01ebb87a729090f2a821dc87f4b66cb3c0e37a8e  usb: gadget: pch_udc: Convert to use GPIO descriptors
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-staging
+branch HEAD: baa2aaadbd9621cfb4a1c52f13ecfc980d157bd6  staging: wfx: Get descriptors for GPIOs
 
-elapsed time: 725m
+elapsed time: 724m
 
-configs tested: 120
-configs skipped: 5
+configs tested: 117
+configs skipped: 4
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -78,9 +78,6 @@ powerpc                      ppc6xx_defconfig
 arm                  colibri_pxa270_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                   rts7751r2dplus_defconfig
-riscv                    nommu_k210_defconfig
-i386                             alldefconfig
-mips                        vocore2_defconfig
 powerpc                         ps3_defconfig
 arm                         ebsa110_defconfig
 sparc64                          allmodconfig
@@ -108,12 +105,6 @@ m68k                              allnoconfig
 m68k                           sun3_defconfig
 m68k                                defconfig
 m68k                             allyesconfig
-nios2                               defconfig
-nios2                            allyesconfig
-openrisc                            defconfig
-c6x                              allyesconfig
-c6x                               allnoconfig
-openrisc                         allyesconfig
 nds32                               defconfig
 nds32                             allnoconfig
 csky                             allyesconfig
@@ -129,6 +120,12 @@ arc                              allyesconfig
 sh                               allmodconfig
 sh                                allnoconfig
 microblaze                        allnoconfig
+nios2                               defconfig
+nios2                            allyesconfig
+openrisc                            defconfig
+c6x                              allyesconfig
+c6x                               allnoconfig
+openrisc                         allyesconfig
 mips                             allyesconfig
 mips                              allnoconfig
 mips                             allmodconfig
