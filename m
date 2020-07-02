@@ -2,86 +2,88 @@ Return-Path: <SRS0=6M+r=AN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D533BC433ED
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Jul 2020 12:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAB7C433E0
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Jul 2020 14:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AEB220772
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Jul 2020 12:58:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fy66L3N/"
+	by mail.kernel.org (Postfix) with ESMTP id 59D9E20899
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Jul 2020 14:18:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593699512;
+	bh=OUQQW1JU24wJrZp3dLNN4aZNP+OkKamWFoOkvma1MWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=biBlI6qV3L6iAvX26zNlqH6xVG9lCklCjeXg1/s9LD2kbYyAjsPJz/a6RmUo6RF2v
+	 7LagVxHn2S2g3Dlz9oVNEgEjHidzEZ6B+SNwxWtFyOKSK7ptddoYWVX6JvvVA6gIiU
+	 6eSg29QIi97mTi/mEk+gVuPLXdMyfASk0H5DMKEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbgGBM5f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Jul 2020 08:57:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25527 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729138AbgGBM5e (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2020 08:57:34 -0400
-X-UUID: a6fb716cc0c04651bb1e9720c6a3a636-20200702
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=raRNsu9byZBHDzYCxjWLVEnVGhHYBvlatRQc7UZLxyk=;
-        b=fy66L3N/6DTq4U43NK+Ji4tZaKWux739rJ1Dx3nry5hf9Ts4aX0C0+eVBfDHQUS5wRhKhxa8J24A2Ytntx80IJjSB4keR5dbg6yBl8tdq4SBKWZjkTSvVL20MNimrpE+TdTc9LqH41dsZHdCCKUQ8YltQ728DBlEdqOyf2TF4l4=;
-X-UUID: a6fb716cc0c04651bb1e9720c6a3a636-20200702
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1094941873; Thu, 02 Jul 2020 20:57:29 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 2 Jul 2020 20:57:24 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 2 Jul 2020 20:57:26 +0800
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>
-CC:     mtk01761 <wendell.lin@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>
-Subject: [PATCH v7 6/7] clk: mediatek: add UART0 clock support
-Date:   Thu, 2 Jul 2020 20:57:09 +0800
-Message-ID: <1593694630-26604-8-git-send-email-hanks.chen@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1593694630-26604-1-git-send-email-hanks.chen@mediatek.com>
-References: <1593694630-26604-1-git-send-email-hanks.chen@mediatek.com>
+        id S1728179AbgGBOSb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Jul 2020 10:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728041AbgGBOSb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 2 Jul 2020 10:18:31 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E49A20772;
+        Thu,  2 Jul 2020 14:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593699511;
+        bh=OUQQW1JU24wJrZp3dLNN4aZNP+OkKamWFoOkvma1MWc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AybHI1SNLDlZLjJHhnUxl1vNrkcBryZEHUtTXKlejzlQSYoGW1ipuNN987H7J4DY3
+         X27y+baEEdaxlSIiZwvoLfoxIquGj2HAFLURbjU84wkSlY024jbgft/RsH+6u99FCs
+         R9ApqJA5yvh7QYn+K7yymrEJe25TxhG7yBX2Cy4w=
+Date:   Thu, 2 Jul 2020 15:18:25 +0100
+From:   Will Deacon <will@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] firmware: QCOM_SCM: Allow qcom_scm driver to be
+ loadable as a permenent module
+Message-ID: <20200702141825.GA16941@willie-the-truck>
+References: <20200625001039.56174-1-john.stultz@linaro.org>
+ <20200625001039.56174-6-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 5913775F9D7C5787756D71C66F43D079A3B204BE6CE65BC875C068193B96F5CF2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200625001039.56174-6-john.stultz@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-QWRkIE1UNjc3OSBVQVJUMCBjbG9jayBzdXBwb3J0Lg0KDQpGaXhlczogNzEwNzc0ZTA0ODYxICgi
-Y2xrOiBtZWRpYXRlazogQWRkIE1UNjc3OSBjbG9jayBzdXBwb3J0IikNClNpZ25lZC1vZmYtYnk6
-IFdlbmRlbGwgTGluIDx3ZW5kZWxsLmxpbkBtZWRpYXRlay5jb20+DQpTaWduZWQtb2ZmLWJ5OiBI
-YW5rcyBDaGVuIDxoYW5rcy5jaGVuQG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvY2xrL21l
-ZGlhdGVrL2Nsay1tdDY3NzkuYyB8ICAgIDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMg
-Yi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMNCmluZGV4IDk3NjZjY2MuLjZlMGQz
-YTEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMNCisrKyBi
-L2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYw0KQEAgLTkxOSw2ICs5MTksOCBAQA0K
-IAkJICAgICJwd21fc2VsIiwgMTkpLA0KIAlHQVRFX0lORlJBMChDTEtfSU5GUkFfUFdNLCAiaW5m
-cmFfcHdtIiwNCiAJCSAgICAicHdtX3NlbCIsIDIxKSwNCisJR0FURV9JTkZSQTAoQ0xLX0lORlJB
-X1VBUlQwLCAiaW5mcmFfdWFydDAiLA0KKwkJICAgICJ1YXJ0X3NlbCIsIDIyKSwNCiAJR0FURV9J
-TkZSQTAoQ0xLX0lORlJBX1VBUlQxLCAiaW5mcmFfdWFydDEiLA0KIAkJICAgICJ1YXJ0X3NlbCIs
-IDIzKSwNCiAJR0FURV9JTkZSQTAoQ0xLX0lORlJBX1VBUlQyLCAiaW5mcmFfdWFydDIiLA0KLS0g
-DQoxLjcuOS41DQo=
+On Thu, Jun 25, 2020 at 12:10:39AM +0000, John Stultz wrote:
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index b510f67dfa49..714893535dd2 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -381,6 +381,7 @@ config SPAPR_TCE_IOMMU
+>  config ARM_SMMU
+>  	tristate "ARM Ltd. System MMU (SMMU) Support"
+>  	depends on (ARM64 || ARM || (COMPILE_TEST && !GENERIC_ATOMIC64)) && MMU
+> +	depends on QCOM_SCM || !QCOM_SCM #if QCOM_SCM=m this can't be =y
+>  	select IOMMU_API
+>  	select IOMMU_IO_PGTABLE_LPAE
+>  	select ARM_DMA_USE_IOMMU if ARM
 
+This looks like a giant hack. Is there another way to handle this?
+
+Will
