@@ -2,132 +2,144 @@ Return-Path: <SRS0=+cjj=AR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712EBC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jul 2020 15:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51E0C433E2
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jul 2020 17:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA06720708
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jul 2020 15:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A333820715
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jul 2020 17:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="Y9JrYiAY"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="k7ecYdoQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbgGFPd3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Jul 2020 11:33:29 -0400
-Received: from smtpcmd10101.aruba.it ([62.149.156.101]:56656 "EHLO
-        smtpcmd10101.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729297AbgGFPd3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2020 11:33:29 -0400
-Received: from [192.168.1.129] ([93.146.66.165])
-        by smtpcmd10.ad.aruba.it with bizsmtp
-        id zrZS2200T3Zw7e501rZSBy; Mon, 06 Jul 2020 17:33:26 +0200
-Subject: Re: [RFC] GPIO User I/O
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
- <CACRpkdbX9T9EuN-nxkMPC=sN74PEdoLuWurNLdGCzZJwwFrdpQ@mail.gmail.com>
-From:   Rodolfo Giometti <giometti@enneenne.com>
-Message-ID: <1c4f1a83-835a-9317-3647-b55f6f39c0ba@enneenne.com>
-Date:   Mon, 6 Jul 2020 17:33:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1729750AbgGFR5j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Jul 2020 13:57:39 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:37877 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729741AbgGFR5j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2020 13:57:39 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id EFC0C23068;
+        Mon,  6 Jul 2020 19:57:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1594058257;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=McyLerbYDTMc0xi5ah8PbveqbubtEMh5NcDYySStluU=;
+        b=k7ecYdoQCTfL167kVbu2PoEuZbRTsxtSYe9Api92GRLrYfxVIp5veb44R2oBwkeETYvYfG
+        /Fw3KIGyydmMdaF3OHKQt4AglYdctbnnORl7fKGwR+0EgWI6Pd/kDz3f8sq0qcsvMGXEnr
+        W64koF572L6hG0QrU5Tja2ibeBQwa4k=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v5 11/13] arm64: dts: freescale: sl28: map GPIOs to input events
+Date:   Mon,  6 Jul 2020 19:53:51 +0200
+Message-Id: <20200706175353.16404-12-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200706175353.16404-1-michael@walle.cc>
+References: <20200706175353.16404-1-michael@walle.cc>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbX9T9EuN-nxkMPC=sN74PEdoLuWurNLdGCzZJwwFrdpQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
-        t=1594049606; bh=sjhRclmbNQRngrKqfhNGWCPGl7uVo1ztyrmApJp5b2o=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=Y9JrYiAY9mqN4rpCtup82nASdqGFnpsgbcwunaugM2ZTSbo131CjkiwkmGB87Q0tA
-         6kkprkAre8PT249nD/qfSAmiCWbBoCDaAa19ZcSHmUbOJ5gJd95MVjoN8HrZ7VUjPC
-         tgi/zIIPJoK6Lv88IaYGMTa7yTbSB6CVk2LgMerliHfsw3Td1vdr2d958A4Z8UGfbA
-         RXRPYxJyDf7he6FCFVcdhvvViiwMx68CS49bnan7vhJfOOMH4NRkCrYrMThP7YLZGX
-         EfW3xVTTaNJC218SmpU403vnRi7CbQ/bK44mUCIIHUGRDK0uFvxjmmcbCJEkuw5g1I
-         dgBoTbPfhhAlA==
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 06/07/2020 15:43, Linus Walleij wrote:
-> Hi Rodolfo!
+Now that we have support for GPIO lines of the SMARC connector, map the
+sleep, power and lid switch signals to the corresponding keys using the
+gpio-keys and gpio-keys-polled drivers. The power and sleep signals have
+dedicated interrupts, thus we use these ones. The lid switch is just
+mapped to a GPIO input and needs polling.
 
-Hi. :)
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+Changes since v4:
+ - none
 
-> thanks for your mail.
-> 
-> On Mon, Jul 6, 2020 at 2:19 PM Rodolfo Giometti <giometti@enneenne.com> wrote:
-> 
->> 4) Then users will find a new class with entries, one for each new line:
->>
->> # ls /sys/class/gpio-uio/
->> bypass-1  bypass0
->>
->> 5) By using the attribute "line" the users can get or set the line status
->>
->> # cat /sys/class/gpio-uio/bypass-1/line
->> 0
->> # echo 1 > /sys/class/gpio-uio/bypass-1/line
->> # cat /sys/class/gpio-uio/bypass-1/line
->> 1
-> 
-> This interface is problematic because it extends the sysfs ABI which is
-> obsolete. This is why the documentation of this ABI has been moved to
-> Documentation/ABI/obsolete/sysfs-gpio  for many years.
+Changes since v3:
+ - see cover letter
 
-This support is not part of CONFIG_GPIO_SYSFS; it just uses the sysfs to work.
+ .../freescale/fsl-ls1028a-kontron-sl28.dts    | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-> The sysfs approach has several problems which are summarized like
-> this in the commit where it was introduced:
-
-I see, but my solution is just for having an easy-to-use way to get access to
-meaningful GPIOs the board manufacturer defined for some specific usage during
-the board design. It's not generic as gpio-sysfs.
-
-> Another thing that is not mentioned here is that when a character
-> device is opened it is automatically closed if a process crashes,
-> which means that kernelspace can do clean-ups and reference counting
-> and making the lines available to other consumers (like if you
-> restart the program).
-
-In this case there is nothing to release nor clean up since each line has a
-fixed name, usage and it can be used as input or output without modifications.
-
-> With Geert's GPIO aggregator userspace and device tree can conjure
-> special per-usecase gpio chips as pointed out by Drew: this is
-> very useful when you want some kernel-managed yet
-> usecase-specific GPIO lines in a special "container" chip.
-> To me this is the best of two worlds. (Kernelspace and userspace.)
-
-Maybe this is the "best of two worlds" as you say but the problem is that board
-manufactures need a way to well-define how a GPIO line must be used for within
-the device-tree and without the need of patches! In this point of view neither
-the "driver_override" way nor adding a compatible value to
-gpio_aggregator_dt_ids[] can help (this last solution requires a patch for each
-board!). That's why at the moment they prefer not specify these GPIO lines at
-all or (improperly) use the gpio-leds and gpio-uinput interfaces to keep it
-simple...
-
-By using my solution each board manufacturer can specify meaningful GPIO lines
-directly within the device-tree, then users can use it via the "line" property
-or just use the new chrdev interface for better performances.
-
-Also my solution allows developers to manage these lines without any external
-programs but just using cat&echo. This is _very_ useful when your embedded
-system has a very tiny rootfs!
-
-My two cents. :)
-
-Ciao,
-
-Rodolfo
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
+index 8712fe82727b..c4fd99efdbba 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
+@@ -9,6 +9,8 @@
+ /dts-v1/;
+ #include "fsl-ls1028a.dtsi"
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	model = "Kontron SMARC-sAL28";
+@@ -23,6 +25,36 @@
+ 		spi1 = &dspi2;
+ 	};
+ 
++	buttons0 {
++		compatible = "gpio-keys";
++
++		power-button {
++			interrupts-extended = <&sl28cpld_intc
++					       4 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_POWER>;
++			label = "Power";
++		};
++
++		sleep-button {
++			interrupts-extended = <&sl28cpld_intc
++					       5 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_SLEEP>;
++			label = "Sleep";
++		};
++	};
++
++	buttons1 {
++		compatible = "gpio-keys-polled";
++		poll-interval = <200>;
++
++		lid-switch {
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_LID>;
++			gpios = <&sl28cpld_gpio3 4 GPIO_ACTIVE_LOW>;
++			label = "Lid";
++		};
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming                     skype:  rodolfo.giometti
+2.20.1
+
