@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174A9C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F1CC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE4D4207DF
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4990420674
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgGGQSk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jul 2020 12:18:40 -0400
+        id S1728614AbgGGQS2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jul 2020 12:18:28 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:43654 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728816AbgGGQSh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2020 12:18:37 -0400
+        by vger.kernel.org with ESMTP id S1728589AbgGGQSZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2020 12:18:25 -0400
 X-IronPort-AV: E=Sophos;i="5.75,324,1589209200"; 
-   d="scan'208";a="51540109"
+   d="scan'208";a="51540096"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Jul 2020 01:18:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Jul 2020 01:18:23 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 95A194015EE5;
-        Wed,  8 Jul 2020 01:18:33 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 312BE40164B2;
+        Wed,  8 Jul 2020 01:18:20 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -39,9 +39,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 08/14] dt-bindings: reset: renesas,rst: Document r8a774e1 reset module
-Date:   Tue,  7 Jul 2020 17:18:06 +0100
-Message-Id: <1594138692-16816-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 04/14] soc: renesas: Add Renesas R8A774E1 config option
+Date:   Tue,  7 Jul 2020 17:18:02 +0100
+Message-Id: <1594138692-16816-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -52,26 +52,43 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-Document bindings for the RZ/G2H (R8A774E1) reset module.
+Add configuration option for the RZ/G2H (R8A774E1) SoC.
 
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/renesas/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.yaml b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
-index 4c2b429ac702..2849ce45703c 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.yaml
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
-@@ -31,6 +31,7 @@ properties:
-       - renesas,r8a774a1-rst      # RZ/G2M
-       - renesas,r8a774b1-rst      # RZ/G2N
-       - renesas,r8a774c0-rst      # RZ/G2E
-+      - renesas,r8a774e1-rst      # RZ/G2H
-       - renesas,r8a7778-reset-wdt # R-Car M1A
-       - renesas,r8a7779-reset-wdt # R-Car H1
-       - renesas,r8a7790-rst       # R-Car H2
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 53cd8d2d0cd2..30984659df90 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -201,6 +201,13 @@ config ARCH_R8A774C0
+ 	help
+ 	  This enables support for the Renesas RZ/G2E SoC.
+ 
++config ARCH_R8A774E1
++	bool "Renesas RZ/G2H SoC Platform"
++	select ARCH_RCAR_GEN3
++	select SYSC_R8A774E1
++	help
++	  This enables support for the Renesas RZ/G2H SoC.
++
+ config ARCH_R8A77950
+ 	bool "Renesas R-Car H3 ES1.x SoC Platform"
+ 	select ARCH_RCAR_GEN3
+@@ -296,6 +303,10 @@ config SYSC_R8A774C0
+ 	bool "RZ/G2E System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+ 
++config SYSC_R8A774E1
++	bool "RZ/G2H System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
++
+ config SYSC_R8A7779
+ 	bool "R-Car H1 System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
 -- 
 2.17.1
 
