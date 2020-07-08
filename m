@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44882C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D688C433E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2940820739
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2259620739
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="syTZCHAQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkySrmxz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgGHU1K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jul 2020 16:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49226 "EHLO
+        id S1726290AbgGHU1C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jul 2020 16:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbgGHU1D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 16:27:03 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C713C061A0B;
-        Wed,  8 Jul 2020 13:27:03 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id d21so27623439lfb.6;
-        Wed, 08 Jul 2020 13:27:03 -0700 (PDT)
+        with ESMTP id S1726163AbgGHU1B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 16:27:01 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E23CC061A0B;
+        Wed,  8 Jul 2020 13:27:01 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id b25so52151269ljp.6;
+        Wed, 08 Jul 2020 13:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=en+sYWSOs29OqJtnXcDwQbwEqF1PhQMH/OzXlTL2Uro=;
-        b=syTZCHAQomVCO1IcAT05atGNhw1dbfmBOmwVCKjzqEzpZ0yC9TrCcsRcouL6w2rCQi
-         5dwv5avADj2LkceEKIhRx5FSnf5JXb2gFb3376P4VM9g1x0l2aipE3XdjfeUMS0SR9k7
-         JS3ll1n2eYfS6Law1HAu2LwUR3GsAZNz0M/iC72IegGk/wI7d+/7ilXQXlERDn+UI0ZJ
-         odtxjNCB8O4EaD+UvX/J++KNa6g7AitZ886DnrV+q71OPnON2pgBUqbnNOkAn/6eIqPW
-         8AY71jmnFDyWRYn45IbUGM0GvpWjVY14yUWCk8YgvLUx87QvzH/x5DMdEj2KdeAdi9D3
-         Ua6A==
+        bh=MQQoHIbvJW5EDg7H0+gJpKf4aGk7u+oklTpgjOewH2I=;
+        b=JkySrmxz2dzfwq6SrvWCWbbFIySR57ahieVlkp0VsHp0PXJWKij6qn1rkMOVC0s1Og
+         RHmJClSXFneSZvOplFmccnGw7oZzhh1z+/CUBBtjdWU1blwVKPYVw8/eEmZOxE4Ko2AT
+         po17D8mFZ4rp1hZwJ3vPFMBpcmnjVzoPfQoiVWdq4ZsMbu+hw6994+ud6CMUvpor8cx4
+         hwc2z7EzNybRsdbAGpqL3uFxvVVK0kal917fezSCbSjvq364dh96r8XQSBfzVhPGuH4L
+         H2PZ9CsKzIuTAhipb4q3AQPqHA5q1EFns6UeLnp7Is/4avydc5g9HskhYDLyB86ZsB6q
+         h6Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=en+sYWSOs29OqJtnXcDwQbwEqF1PhQMH/OzXlTL2Uro=;
-        b=UyXOxATomcmYFwODsKc7eyxTFRzoQpwkwrqos30tV5/CWOFoUKzo7RM2oh8fSfSI+3
-         HuJWPxz0MxRaqDoXAb6h823PMxj6n/DpDNbcyvYqfTUeSJkH8nNkFnAYKmyrmFmZhuPT
-         5sdMQVZwhVIgNtVhDnzB4eJf4wmRf7kyZHDAtp1CUjFKT1+MvJjU8nIBPjHvyKCpRDhH
-         krFOH9oPX/nWnW5ujFSU1PuE4yDJqmITIjLQgdOaawYa380IxvBUABKDOAa/DvBwhMSI
-         qHMk4wefp/y8yhRSD6mT8BYMfA2MohS1Q4f9GeM4GNlNvB4Y2aWz5xEOrW3Eo1Q52jm9
-         ObYw==
-X-Gm-Message-State: AOAM533pfignfwF6tv8sSIwzis2q/B5qvTu2+jJyOYM2ZnJ7cqPuiOwv
-        LTivj4h2amNpmPtLWhUCugM=
-X-Google-Smtp-Source: ABdhPJyHmph+5swDJx845ZRsUtuIVexs7pVope807pOxgxk8VdlOWXNEN60vNWtyj1g1o6YBr2hVWg==
-X-Received: by 2002:a19:c214:: with SMTP id l20mr37504635lfc.56.1594240022084;
-        Wed, 08 Jul 2020 13:27:02 -0700 (PDT)
+        bh=MQQoHIbvJW5EDg7H0+gJpKf4aGk7u+oklTpgjOewH2I=;
+        b=Kh4txpplwMF37/J28+UHmP+hpvGfnDa5eKfyMfL7dgY6piRtEE080hz0K+jfzeSFKN
+         yQvYQHWqnWA7Ae3rNuJ6ufPyKHFBWoVQUsrLFFEPysp17w2L0S/YDEwYmIvd4CCmmY5/
+         7Dz6/0XyZm6fOvaS2gi758FZ3KhBj/nwM3R89rgwDvS73CudZgIFKqJn0g12MRozZNj/
+         iCe5Ee7zsKMs5l4ZgIw1H6Z9QAjU8xhbF9C/gikEDTLWjuiCMCqcuk8LLbow7TprHph8
+         oOfQE5JKfh/3NCnrp0NT/Cqudbx/VnCoD8RMKtcsdmXbJthnEbXMipWRjjDa8xJySWUY
+         vkPQ==
+X-Gm-Message-State: AOAM531mypGMjhk2iqgqlC4JB785uBbLcxECxCN+zbUYCJX52duOxnQg
+        LM74AHxT/bziAS/HxLLmh0A=
+X-Google-Smtp-Source: ABdhPJwLrkA4LrPtHV1k2KRKaym/NQJZ91PW/ZuXesCvPLtwl7zOQlA8IMmdqf6cubnjH4Q8FQ7qjQ==
+X-Received: by 2002:a2e:919a:: with SMTP id f26mr3771836ljg.244.1594240019863;
+        Wed, 08 Jul 2020 13:26:59 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
-        by smtp.gmail.com with ESMTPSA id e29sm252568lfc.51.2020.07.08.13.27.00
+        by smtp.gmail.com with ESMTPSA id e29sm252568lfc.51.2020.07.08.13.26.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 13:27:01 -0700 (PDT)
+        Wed, 08 Jul 2020 13:26:59 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] gpio: max77620: Initialize hardware state of interrupts
-Date:   Wed,  8 Jul 2020 23:23:55 +0300
-Message-Id: <20200708202355.28507-7-digetx@gmail.com>
+Subject: [PATCH v3 4/6] gpio: max77620: Don't shadow error code of platform_get_irq()
+Date:   Wed,  8 Jul 2020 23:23:53 +0300
+Message-Id: <20200708202355.28507-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200708202355.28507-1-digetx@gmail.com>
 References: <20200708202355.28507-1-digetx@gmail.com>
@@ -80,62 +80,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-I noticed on Nexus 7 that after rebooting from downstream kernel to
-upstream, the GPIO interrupt is triggering non-stop despite interrupts
-being disabled for all of GPIOs. This happens because Nexus 7 uses a
-soft-reboot, meaning that bootloader should take care of resetting
-hardware, but the bootloader doesn't do it well. As a result, GPIO
-interrupt may be left ON at a boot time. Let's mask all GPIO interrupts
-at the driver's initialization time in order to resolve the issue.
+The platform_get_irq() returns a positive interrupt number on success and
+negative error code on failure (zero shouldn't ever happen in practice, it
+would produce a noisy warning). Hence let's return the error code directly
+instead of overriding it with -ENODEV.
 
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpio/gpio-max77620.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/gpio/gpio-max77620.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 6c516aa7732d..e090979659eb 100644
+index 39d431da2dbc..9121d2507f60 100644
 --- a/drivers/gpio/gpio-max77620.c
 +++ b/drivers/gpio/gpio-max77620.c
-@@ -260,6 +260,30 @@ static int max77620_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	return -ENOTSUPP;
- }
- 
-+static int max77620_gpio_irq_init_hw(struct gpio_chip *gc)
-+{
-+	struct max77620_gpio *gpio = gpiochip_get_data(gc);
-+	unsigned int i;
-+	int err;
-+
-+	/*
-+	 * GPIO interrupts may be left ON after bootloader, hence let's
-+	 * pre-initialize hardware to the expected state by disabling all
-+	 * the interrupts.
-+	 */
-+	for (i = 0; i < MAX77620_GPIO_NR; i++) {
-+		err = regmap_update_bits(gpio->rmap, GPIO_REG_ADDR(i),
-+					 MAX77620_CNFG_GPIO_INT_MASK, 0);
-+		if (err < 0) {
-+			dev_err(gpio->dev,
-+				"failed to disable interrupt: %d\n", err);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int max77620_gpio_probe(struct platform_device *pdev)
+@@ -264,12 +264,14 @@ static int max77620_gpio_probe(struct platform_device *pdev)
  {
  	struct max77620_chip *chip =  dev_get_drvdata(pdev->dev.parent);
-@@ -295,6 +319,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.irq.chip = &max77620_gpio_irqchip;
- 	mgpio->gpio_chip.irq.default_type = IRQ_TYPE_NONE;
- 	mgpio->gpio_chip.irq.handler = handle_edge_irq;
-+	mgpio->gpio_chip.irq.init_hw = max77620_gpio_irq_init_hw,
- 	mgpio->gpio_chip.irq.threaded = true;
+ 	struct max77620_gpio *mgpio;
+-	int gpio_irq;
++	unsigned int gpio_irq;
+ 	int ret;
  
- 	platform_set_drvdata(pdev, mgpio);
+-	gpio_irq = platform_get_irq(pdev, 0);
+-	if (gpio_irq <= 0)
+-		return -ENODEV;
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		return ret;
++
++	gpio_irq = ret;
+ 
+ 	mgpio = devm_kzalloc(&pdev->dev, sizeof(*mgpio), GFP_KERNEL);
+ 	if (!mgpio)
 -- 
 2.26.0
 
