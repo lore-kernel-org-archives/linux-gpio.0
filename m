@@ -2,77 +2,71 @@ Return-Path: <SRS0=2f2S=AT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A293C433E3
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA19C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 21:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B49F20739
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 20:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61267206E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 21:16:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVK8hKTd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DG7Tq5xE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbgGHU07 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jul 2020 16:26:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49202 "EHLO
+        id S1726144AbgGHVQy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jul 2020 17:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbgGHU06 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 16:26:58 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB98C061A0B;
-        Wed,  8 Jul 2020 13:26:58 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id q4so20026582lji.2;
-        Wed, 08 Jul 2020 13:26:57 -0700 (PDT)
+        with ESMTP id S1725848AbgGHVQx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 17:16:53 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84021C08C5C1
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Jul 2020 14:16:53 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id k27so6188531pgm.2
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jul 2020 14:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AVFmhaeA5cvY8qQWmM2cLZu7hHq0yenJIow/Vk0mZ2I=;
-        b=eVK8hKTdtIXPUZOZXtTZKYgZ3RgH/i5BHBuFZk3AJO6QaexqPG9IoNJk1CfsL7XjnW
-         lJPllUeAN9h2ofoqdpeSkFENA+h0WcaCtZiDWT8qtn3YhIaNO6aD9XqsFRcUZjjCVhy7
-         DvHRThf0/p07m8x5BgTStYKJ46W109i/xupEV7kuhEdMsHSBBr8hbWTZsWFDjrcXwdwX
-         hp3AH+pO1Iw7MGYJML7Uqkpc/9DQ2QA78C6Y0RFwQ3sxthD9fvJsVHMTjYdsOIeDsuWQ
-         fMWzF7FOw9u1CzlaE/DhJ+efu12EMeVotAB4rTgOZUvcIfOsUADFsaYckYpWkqtQqc5S
-         e0wg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7Vp4IuLZ1fVFx/6cLby6T01RfWxA+FZRBxb5ymhKT4=;
+        b=DG7Tq5xEaJXFcxP4mcYE+im28DTZQdmZDWvSKnqffveDKPj3fO/xuVFGGKoMptZTQ8
+         LY97zeiSNQNbHLYq6snNwSh90+f3Fnp9Bj5lUrM5x+HMl+04tmbtcdP+LKDw1p3WpkmA
+         PQkWAFIZc+06vjWVjULcB7qsQMylExydLQhwo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AVFmhaeA5cvY8qQWmM2cLZu7hHq0yenJIow/Vk0mZ2I=;
-        b=mBzEO3yKIal2A3Mkb/ia5LPBik0l46upU75WPn6mn36fss5qj8JNvyW5l/tRBVG7it
-         8FrTpVO/LB1S4jeZNUNV/Ey8pRr4cwYtDArCe+j335wgyTFyAsgeaY2sW1FY/cLa5ZOS
-         dXqNO+hJtthB4JJthD2jRrr2ViYlAwbJD+Q/1y3jW5/gilqwBpFXl70ldf58MA63bI+J
-         aazmVZq4dDYLIS/ylTjBNcTEPrIQN1Jubl+PGLK0FqdYLYf6MNkjWSYsOLABoA40cnn/
-         KtVhZ23p/nhs2WZxhYY5YZrTJ3H4wcd77X6XSQBqbgN5t24xlaLUxMNDLvvzGRKScR1N
-         uYQQ==
-X-Gm-Message-State: AOAM533KgmNRhD+a93e0ggeYKpF1bxeJtKHhQCXeKk6M50ZFnNocKt69
-        GsNGjh2pF1ze/YyXYI1Qhtg=
-X-Google-Smtp-Source: ABdhPJzFZ9tL3aVPDUSm+fuPTBkpyEq8/aaHkGVmc4H0PZh6XQi7qQbdN4YEoIkkOZP6kH08UE9hwA==
-X-Received: by 2002:a2e:5d8:: with SMTP id 207mr33377701ljf.257.1594240016560;
-        Wed, 08 Jul 2020 13:26:56 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
-        by smtp.gmail.com with ESMTPSA id e29sm252568lfc.51.2020.07.08.13.26.55
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I7Vp4IuLZ1fVFx/6cLby6T01RfWxA+FZRBxb5ymhKT4=;
+        b=pVrYTX8ZYbHogUd3z6kLDWS7iY0afW/yZuWvdkKnxBkONRePzRRIo8tYmcbsa8WG7g
+         kF+CIsmyCJCTS/FQujrq0LRsHU2a2ctMpWauTaBpNDbQG7XhizbmEvtWSRsc96BEA4gR
+         79ezRPht9D4zgZ4QvlRKEbb3XjHfnnxk5qTE7WeUbe4fYPyQm5sIUmSNUPAsRmDnYoVx
+         SVsj6LDa2K2D+8mhHSs4x0qMIbkYkZMtxEDxiRV+AUOytW8tAhf/eezFy97h56k2aZf8
+         tlaa2xjgqLH7lU3kyL1Ne/FpojY+PQeYTW8wzzCb3Jv8RBUNORp3nTKeY/m5ctA5PiEe
+         H7uA==
+X-Gm-Message-State: AOAM531eXuXZ+2EGeH9ojD9yruXbDzLuZEYiL8DOcI+cCOrQNj5Kxzvx
+        fmj5a9U3y7Wog+bRaDabYEecXuLM0+U=
+X-Google-Smtp-Source: ABdhPJxuMVCDqicP0QTyskpceVvBBaKgMk43D7cr7sg5uyWx5sV1LZCBwu7yN9Mi4xs8tEXPi85ctw==
+X-Received: by 2002:aa7:930b:: with SMTP id 11mr51514573pfj.320.1594243012759;
+        Wed, 08 Jul 2020 14:16:52 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:42b0:34ff:fe3d:58e6])
+        by smtp.gmail.com with ESMTPSA id f3sm381600pju.54.2020.07.08.14.16.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 13:26:56 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Wed, 08 Jul 2020 14:16:52 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     linus.walleij@linaro.org
+Cc:     swboyd@chromium.org, linux-arm-msm@vger.kernel.org,
+        cychiang@chromium.org, ilina@codeaurora.org, agross@kernel.org,
+        rnayak@codeaurora.org, mkshah@codeaurora.org,
+        bjorn.andersson@linaro.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Marc Zyngier <maz@kernel.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-Date:   Wed,  8 Jul 2020 23:23:50 +0300
-Message-Id: <20200708202355.28507-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200708202355.28507-1-digetx@gmail.com>
-References: <20200708202355.28507-1-digetx@gmail.com>
+Subject: [PATCH] pinctrl: qcom: Handle broken PDC dual edge case on sc7180
+Date:   Wed,  8 Jul 2020 14:16:25 -0700
+Message-Id: <20200708141610.1.Ie0d730120b232a86a4eac1e2909bcbec844d1766@changeid>
+X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -80,40 +74,170 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The MAX77620_GPIO_NR enum value represents the total number of GPIOs,
-let's use it instead of a raw value in order to improve the code's
-readability a tad.
+As per Qualcomm, there is a PDC hardware issue (with the specific IP
+rev that exists on sc7180) that causes the PDC not to work properly
+when configured to handle dual edges.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Let's work around this by emulating only ever letting our parent see
+requests for single edge interrupts on affected hardware.
+
+Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+As far as I can tell everything here should work and the limited
+testing I'm able to give it shows that, in fact, I can detect both
+edges.
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 313bd02dd893..4c0c9ec2587d 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -19,8 +19,8 @@ struct max77620_gpio {
- 	struct regmap		*rmap;
- 	struct device		*dev;
- 	struct mutex		buslock; /* irq_bus_lock */
--	unsigned int		irq_type[8];
--	bool			irq_enabled[8];
-+	unsigned int		irq_type[MAX77620_GPIO_NR];
-+	bool			irq_enabled[MAX77620_GPIO_NR];
+Please give this an extra thorough review since it's trying to find
+the exact right place to insert this code and I'm not massively
+familiar with all the frameworks.
+
+If someone has hardware where it's easy to stress test this that'd be
+wonderful too.  The board I happen to have in front of me doesn't have
+any easy-to-toggle GPIOs where I can just poke a button or a switch to
+generate edges.  My testing was done by hacking the "write protect"
+GPIO on my board into gpio-keys as a dual-edge interrupt and then
+sending commands to our security chip to toggle it--not exactly great
+for testing to make sure there are no race conditions if the interrupt
+bounces a lot.
+
+ drivers/pinctrl/qcom/pinctrl-msm.c    | 80 +++++++++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.h    |  4 ++
+ drivers/pinctrl/qcom/pinctrl-sc7180.c |  1 +
+ 3 files changed, 85 insertions(+)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 83b7d64bc4c1..45ca09ebb7b3 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -860,6 +860,79 @@ static void msm_gpio_irq_ack(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ }
+ 
++/**
++ * msm_gpio_update_dual_edge_parent() - Prime next edge for IRQs handled by parent.
++ * @d: The irq dta.
++ *
++ * This is much like msm_gpio_update_dual_edge_pos() but for IRQs that are
++ * normally handled by the parent irqchip.  The logic here is slightly
++ * different due to what's easy to do with our parent, but in principle it's
++ * the same.
++ */
++static void msm_gpio_update_dual_edge_parent(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
++	const struct msm_pingroup *g = &pctrl->soc->groups[d->hwirq];
++	unsigned long flags;
++	int loop_limit = 100;
++	unsigned int val;
++	unsigned int type;
++
++	/* Read the value and make a guess about what edge we need to catch */
++	val = msm_readl_io(pctrl, g) & BIT(g->in_bit);
++	type = val ? IRQ_TYPE_EDGE_FALLING : IRQ_TYPE_EDGE_RISING;
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++	do {
++		/* Set the parent to catch the next edge */
++		irq_chip_set_type_parent(d, type);
++
++		/*
++		 * Possibly the line changed between when we last read "val"
++		 * (and decided what edge we needed) and when set the edge.
++		 * If the value didn't change (or changed and then changed
++		 * back) then we're done.
++		 */
++		val = msm_readl_io(pctrl, g) & BIT(g->in_bit);
++		if (type == IRQ_TYPE_EDGE_RISING) {
++			if (!val)
++				break;
++			type = IRQ_TYPE_EDGE_FALLING;
++		} else if (type == IRQ_TYPE_EDGE_FALLING) {
++			if (val)
++				break;
++			type = IRQ_TYPE_EDGE_RISING;
++		}
++	} while (loop_limit-- > 0);
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	if (!loop_limit)
++		dev_err(pctrl->dev, "dual-edge irq failed to stabilize\n");
++}
++
++void msm_gpio_handle_dual_edge_parent_irq(struct irq_desc *desc)
++{
++	struct irq_data	*d = &desc->irq_data;
++
++	/* Make sure we're primed for the next edge */
++	msm_gpio_update_dual_edge_parent(d);
++
++	/* Pass on to the normal interrupt handler */
++	handle_fasteoi_irq(desc);
++}
++
++static bool msm_gpio_needs_dual_edge_parent_workaround(struct irq_data *d,
++						       unsigned int type)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
++
++	return type == IRQ_TYPE_EDGE_BOTH &&
++	       pctrl->soc->wakeirq_dual_edge_errata && d->parent_data &&
++	       test_bit(d->hwirq, pctrl->skip_wake_irqs);
++}
++
+ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -868,6 +941,13 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	unsigned long flags;
+ 	u32 val;
+ 
++	if (msm_gpio_needs_dual_edge_parent_workaround(d, type)) {
++		irq_set_handler_locked(d, msm_gpio_handle_dual_edge_parent_irq);
++		msm_gpio_update_dual_edge_parent(d);
++
++		return 0;
++	}
++
+ 	if (d->parent_data)
+ 		irq_chip_set_type_parent(d, type);
+ 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index 9452da18a78b..7486fe08eb9b 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -113,6 +113,9 @@ struct msm_gpio_wakeirq_map {
+  * @pull_no_keeper: The SoC does not support keeper bias.
+  * @wakeirq_map:    The map of wakeup capable GPIOs and the pin at PDC/MPM
+  * @nwakeirq_map:   The number of entries in @wakeirq_map
++ * @wakeirq_dual_edge_errata: If true then GPIOs using the wakeirq_map need
++ *                            to be aware that their parent can't handle dual
++ *                            edge interrupts.
+  */
+ struct msm_pinctrl_soc_data {
+ 	const struct pinctrl_pin_desc *pins;
+@@ -128,6 +131,7 @@ struct msm_pinctrl_soc_data {
+ 	const int *reserved_gpios;
+ 	const struct msm_gpio_wakeirq_map *wakeirq_map;
+ 	unsigned int nwakeirq_map;
++	bool wakeirq_dual_edge_errata;
  };
  
- static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-@@ -38,7 +38,7 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
+ extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7180.c b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+index 1b6465a882f2..1d9acad3c1ce 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7180.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7180.c
+@@ -1147,6 +1147,7 @@ static const struct msm_pinctrl_soc_data sc7180_pinctrl = {
+ 	.ntiles = ARRAY_SIZE(sc7180_tiles),
+ 	.wakeirq_map = sc7180_pdc_map,
+ 	.nwakeirq_map = ARRAY_SIZE(sc7180_pdc_map),
++	.wakeirq_dual_edge_errata = true,
+ };
  
- 	pending = value;
- 
--	for_each_set_bit(offset, &pending, 8) {
-+	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
- 
- 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
+ static int sc7180_pinctrl_probe(struct platform_device *pdev)
 -- 
-2.26.0
+2.27.0.383.g050319c2ae-goog
 
