@@ -2,76 +2,92 @@ Return-Path: <SRS0=2f2S=AT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69418C433EB
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54933C433E1
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 07:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50A5620771
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296ED206E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 07:22:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qKICfYS8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbgGHHUB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:20:01 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:41468 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730246AbgGHHUA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 03:20:00 -0400
-X-Alimail-AntiSpam: AC=SUSPECT;BC=0.5995029|-1;BR=01201311R181b1;CH=blue;DM=|SUSPECT|false|;DS=CONTINUE|ham_system_inform|0.199862-0.00729462-0.792843;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=frank@allwinnertech.com;NM=1;PH=DS;RN=33;RT=33;SR=0;TI=SMTPD_---.I-8lwqE_1594192774;
-Received: from allwinnertech.com(mailfrom:frank@allwinnertech.com fp:SMTPD_---.I-8lwqE_1594192774)
-          by smtp.aliyun-inc.com(10.147.40.26);
-          Wed, 08 Jul 2020 15:19:53 +0800
-From:   Frank Lee <frank@allwinnertech.com>
-To:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
-        icenowy@aosc.io, megous@megous.com, stefan@olimex.com,
-        bage@linutronix.de
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, huangshuosheng@allwinnertech.com,
-        liyong@allwinnertech.com, Frank Lee <frank@allwinnertech.com>
-Subject: [PATCH v3 04/16] dt-bindings: pinctrl: sunxi: make gpio banks supplies required
-Date:   Wed,  8 Jul 2020 15:19:30 +0800
-Message-Id: <20200708071942.22595-5-frank@allwinnertech.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200708071942.22595-1-frank@allwinnertech.com>
-References: <20200708071942.22595-1-frank@allwinnertech.com>
+        id S1730211AbgGHHWc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729949AbgGHHWc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 03:22:32 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15993C061755
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Jul 2020 00:22:32 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id f5so37091751ljj.10
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jul 2020 00:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FmCJ3eglFvN3eT4dZ92ESwtil9DSI68INw+lfLda+f0=;
+        b=qKICfYS87wXGDK2raBiEPSdqxxy/mrxVg8JsloXiJmUkD4BjyHRWRE4wcTUfMBQmJs
+         hpmvYepXlAJbEtD/LWIgAhWW0U8MrNXFU58I0H5xfvZ6as0cPKmDvxfeaSmSOgdTpJGW
+         3xbFMQDGPsZxoKvxkZvrKL7O1bhMa8JKOD+6Q0UYZU/qpREdNDldt82AtA7EQcgTwquo
+         hz9dWTGi9zb4aJga/xTyztV6y02ajJ7qyliC8BxFGVtJABzgjQ3dgxKfD3jsDlOhyEPZ
+         v6WkFjQ3BdVy8nsneqRcusS6PHaZ7ln5hjHT+u/p1zL6HzJhfmcZU7/a9Jq6UfwfYIoN
+         a3yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FmCJ3eglFvN3eT4dZ92ESwtil9DSI68INw+lfLda+f0=;
+        b=K2TCzRTG9lbuL90tU5ajQKIxgpymSC2ZSOWKKcVOnOsdqrVtTKYn6z5YVBheFaM+FH
+         9Pi/ne2vnZ0jHhez6QYy5t3vXvdB2rka3Z0GZ3DlCsEVuAqbpT9SM3wG8wWayo4M/+e+
+         g90022reMfeJWCTdfGBld6B96M9LOBcRZa99PsJV0dfNCfxxBRaLOe5jQpAHaQql405+
+         /vWQvQBPadMuzmf8IzWPxqGnCGbAarBqFOETbXdr3mV2i8CELIoiDJUivbWlnVqGcBbE
+         Lq+Hl1UnVv4CJ/EMClomqe7j4FECL3ZDv6bdb4/c9TcoRdi/HSGGGh8QNZZZQjcFSr5C
+         G1yw==
+X-Gm-Message-State: AOAM532XjChA5w5+KYhW2mN7KWC9M6zvK6z7QuBH2a+v1sEzzgSYXHNe
+        VA0QzNfW+ZWL8TvDLvXxjcEvL1Y5cGJPDIiJ1ftfzw==
+X-Google-Smtp-Source: ABdhPJxVSZk9OJ8mzvBdSpccIOkiBmKRMTgwEzL7Qe5kGuMosrbh6GYSkWDU//vCaRe7LEQh541MQ2A2jqXKACTTlqA=
+X-Received: by 2002:a2e:810a:: with SMTP id d10mr26819272ljg.144.1594192950588;
+ Wed, 08 Jul 2020 00:22:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200630133345.2232932-1-lee.jones@linaro.org> <20200630133345.2232932-10-lee.jones@linaro.org>
+In-Reply-To: <20200630133345.2232932-10-lee.jones@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 8 Jul 2020 09:22:19 +0200
+Message-ID: <CACRpkdZY0dP6oRdbWYUkPNicyZsVOKA-smEtkLt1h_-p7NSM7w@mail.gmail.com>
+Subject: Re: [PATCH 09/10] gpio: gpio-mlxbf2: Tell the compiler that ACPI
+ functions may not be use
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Asmaa Mnebhi <Asmaa@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since we don't really have to care about the existing DT for boards,
-it would be great to make the gpio banks supplies required.
+On Tue, Jun 30, 2020 at 3:33 PM Lee Jones <lee.jones@linaro.org> wrote:
 
-Signed-off-by: Frank Lee <frank@allwinnertech.com>
----
- .../devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+> ... as is the case when !CONFIG_ACPI.
+>
+> Fixes the following W=3D1 kernel build warning:
+>
+>  drivers/gpio/gpio-mlxbf2.c:312:36: warning: =E2=80=98mlxbf2_gpio_acpi_ma=
+tch=E2=80=99 defined but not used [-Wunused-const-variable=3D]
+>  312 | static const struct acpi_device_id mlxbf2_gpio_acpi_match[] =3D {
+>  | ^~~~~~~~~~~~~~~~~~~~~~
+>
+> Cc: Asmaa Mnebhi <Asmaa@mellanox.com>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-index 226aba0..c30a7b7 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-@@ -134,6 +134,7 @@ patternProperties:
- required:
-   - "#gpio-cells"
-   - "#interrupt-cells"
-+  - "^vcc-p[a-hlm]-supply$"
-   - compatible
-   - reg
-   - interrupts
--- 
-1.9.1
+Patch applied!
 
+Yours,
+Linus Walleij
