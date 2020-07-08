@@ -2,163 +2,143 @@ Return-Path: <SRS0=2f2S=AT=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0BAC433E0
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 08:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5349C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 08:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66FCC2078A
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 08:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A18B120C09
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jul 2020 08:27:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PmZGZ0Tk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a441co27"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgGHIXb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jul 2020 04:23:31 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52163 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726006AbgGHIXa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 04:23:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594196608;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cs+maBdeihJ4IKr25ojJHWEu+TviCb3lQndUP/4ycEs=;
-        b=PmZGZ0Tk9MV2Lzhe7J/o6M3dIGd+/eTdW3k/j8zDUIgw+ffZrvS8l53DJBD0uwaGwwMnFw
-        UwDO7DJSPxVBvsxhwoyjZYs5tB+YTHIHTIYnmXyJHVp3+rnoiIcQLvA1nlUy1wvFp1vnTp
-        /gV1b6yT5XlrECXbvYvTxEVjpXcCz1E=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-248-mmhckwuDN1WZvYy-6YW7dQ-1; Wed, 08 Jul 2020 04:23:22 -0400
-X-MC-Unique: mmhckwuDN1WZvYy-6YW7dQ-1
-Received: by mail-ej1-f71.google.com with SMTP id c16so42506755ejb.22
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jul 2020 01:23:22 -0700 (PDT)
+        id S1728010AbgGHI1z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jul 2020 04:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727944AbgGHI1w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jul 2020 04:27:52 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90523C08E6DC;
+        Wed,  8 Jul 2020 01:27:51 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id d17so38407162ljl.3;
+        Wed, 08 Jul 2020 01:27:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ohEJqbXIM1VP63tkBUHCDrB0ZyB2o3kZjgi9FEKekj4=;
+        b=a441co27DyzcWAgCtkRKk/v7hmGgwCh6CovM2eq3v8vETY7EHsW+shgRvwcuPcFoMj
+         brce+o/BBv6+IQlfoqMX4VRwWMnSZ+2QJGsNpF4iL9u7WT4hGhYwohWCXl5WpSZXL5H8
+         XFv5SAI/zOOwL9UpQFkaXpkq2cvWqOkPDA+BaikdQqQvt2zETvGkVPD40INXzbVhGDt5
+         J8/1NibGASuS5Is2gTncwE7LqyypTBbd6t1TmbDKftl/AN0l2Al+eeLnKJgZ0T3Oo4Bv
+         e6NMdAqC6gEsnwnVudWZ3xt4pmJJokSvooWDK3Eab0TrtnMwto9Q7tot/hBhpTiKl+fV
+         3pHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cs+maBdeihJ4IKr25ojJHWEu+TviCb3lQndUP/4ycEs=;
-        b=NkQcdhLrRCrt2rWnbOR9ROuFH0oDVUIvoZ6mqVOd3uuJPw+ROqkkhnbqR9K4t+vGkm
-         HDXLn3CyDsfkK3UI3thCNEyou5a+/YY8s+W4E56LD2ARhxG7CR3PEZiNbcnbFufnxVIV
-         RW1uTpqrVYhYDSM5mvkAYcZTGid7dIGJXPHYbVzlc2l7i9XPG/Xw5NA8Kzrr52Bhw9a8
-         64hDd6bFnO06013H214FlJNNNpu038vBNlyhhW+8aF75TGilbgmX0cFdmHdBKFqNySg8
-         +KIj4VRb5KRfrkeZa5Xp7PKLLmipNUA4D/duJ0jLf3lVxGwrT3xLDoZEipprBzGBw/QF
-         EoSw==
-X-Gm-Message-State: AOAM533s83pbDIlVTaxQBTH0D/RbX4IaJ3asUCp3RsM5vR6FaVtxcjy4
-        RyaqGZqpkndDWM3XQcF8uMrnh8etorxVg2pEvgmoxTUi4UBPNBmVcjBnXNoLiLp8BJjzXBzw2+x
-        Fcl4/EGRC+9eY6da/evb6Tw==
-X-Received: by 2002:a17:906:2799:: with SMTP id j25mr37387760ejc.466.1594196601697;
-        Wed, 08 Jul 2020 01:23:21 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxg2ygpxBlr/voqub1R/dAFeg5Rg7D1AhACv0B75Ob7jie7bqFqkFvnS9KceA7s8NKvlwb4wA==
-X-Received: by 2002:a17:906:2799:: with SMTP id j25mr37387748ejc.466.1594196601449;
-        Wed, 08 Jul 2020 01:23:21 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id u19sm30654495edd.62.2020.07.08.01.23.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 01:23:20 -0700 (PDT)
-Subject: Re: chv-gpio interrupt storm on UMAX VisionBook 10Wi Pro
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>
-References: <5ed9d3ad-743f-e139-cf20-18eb418b24cd@kernel.org>
- <CACRpkdbWYhbtR+Tv5fFdxuyPAXU68uAswFYNZQfNFaR_89k=nw@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <9781e07e-a609-a2e1-112f-e5ebc78bfc23@redhat.com>
-Date:   Wed, 8 Jul 2020 10:23:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ohEJqbXIM1VP63tkBUHCDrB0ZyB2o3kZjgi9FEKekj4=;
+        b=eC3vUTLnJ5EYwT+AF2zPYkJTtII7GBw7ix7WWkaGvoG/ZebX2Ffp6pEMnKV5jAVxOi
+         5w+nyS9CuQky8uu8H9GfVea6JgAJpxgkUjAVpVUZF2Uo1Jtr4Dh+TvcDd1fn1Gbow7H7
+         qZ+tXcYGHFfsv3WBl4SFFXLnMUISJ1TafRmMgZzhgMwhXtwjcpijnfnCat2Yguat487o
+         4WeUcGK8cIq13GgPsGpsxYwhuhe07+tEISdrGxpxgkKRiDMO/iJmhoz9/xGipHqF/P+L
+         vypurnK8oxL7Tl2+f3XCNGp4dSrYavF5K5V5vAiZx7/BD/AXXOSl3MZFEBQsqfMGWnPw
+         SgTw==
+X-Gm-Message-State: AOAM533jDh31n2y+9L00fPY9XM+I47H/W1vuoTPPLTJit+UeLjllryEr
+        ivlyg80LdhBrXY+/mrpCEvA=
+X-Google-Smtp-Source: ABdhPJxP25lUsbBYqiEbc/Vk9jHFUpHJpEebWor4cEddN4hDJnhcJsqaMVgh5uzL3gkIyLmv6Rdp5Q==
+X-Received: by 2002:a2e:b0e9:: with SMTP id h9mr21602930ljl.3.1594196870116;
+        Wed, 08 Jul 2020 01:27:50 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
+        by smtp.gmail.com with ESMTPSA id d2sm737555ljg.6.2020.07.08.01.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2020 01:27:49 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 3/5] gpio: max77620: Replace interrupt-enable array with bitmap
+Date:   Wed,  8 Jul 2020 11:26:32 +0300
+Message-Id: <20200708082634.30191-4-digetx@gmail.com>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200708082634.30191-1-digetx@gmail.com>
+References: <20200708082634.30191-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbWYhbtR+Tv5fFdxuyPAXU68uAswFYNZQfNFaR_89k=nw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi all,
+There is no need to dedicate an array where a bitmap could be used.
+Let's replace the interrupt's enable-array with the enable-mask in order
+to improve the code a tad.
 
-On 7/8/20 9:47 AM, Linus Walleij wrote:
-> On Wed, Jul 8, 2020 at 9:18 AM Jiri Slaby <jirislaby@kernel.org> wrote:
-> 
->> I installed Linux on UMAX VisionBook 10Wi Pro. It sometimes boots, but
->> even then it encounters lags, soft lockups:
->>> watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:0]
->>> watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/0:0H:6]
->>> watchdog: BUG: soft lockup - CPU#0 stuck for 21s! [kworker/0:2:133]
->>> watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:0]
-> 
-> Adding Hans de Goede to Cc, he often deals with this kind of weirdness
-> so he might have some ideas here.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpio/gpio-max77620.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Thank you for looping me in Linus. I've read up on the rest of the
-thread in the archives.
-
-So looking at this:
-https://www.umax.cz/umax-visionbook-10wi/
-
-This device appears to be a pretty standard Cherry Trail based 2-in-1
-with detachable keyboard. Which usually means (with all the hw-enablement
-I've been doing the last 2 years for these) that it will just work.
-But no such luck this time it seems.
-
-What I find interesting / weird is that you (Jiri) get an active
-(/sys/bus/acpi/devices/INT3496\:00/status != 0) INT3496 device at
-all. That typically only happens when the BIOS thinks you are booting
-Android.
-
-Now you may think that Android == Linux so that should be good,
-but Intel did a real frankenstein solution for Android X86, see:
-https://github.com/intel/ProductionKernelQuilts
-for all the 5000 downstream patches in al their glory (hint your
-life will be better if you don't take a look).
-
-The much saner support for these devices which eventually got added
-to the mainline kernel actually works much better with the "Windows"
-profile of the BIOS, since the mainline code expects sane ACPI tables
-and the Android targetting ACPI tables are a bit of a mess.
-
-So the first thing to do is to go into the BIOS setup and see if
-there is a setting for this (this depends on if the BIOS is
-unlocked and has like a gazillion settings, or if it is locked
-to only show a few settings).
-
-I just checked on one of own CHT devices and there the option is
-under Advanced -> System Component -> OS IMAGE ID
-
-If you have that option (or a similar android/windows toggle
-elsewhere) try setting it to Windows and see if that helps.
-
-I would expect the INT3496 device to disappear when you do
-this (it will be replaced by an ACPI event handler for the
-USB id pin GPIO, so I guess we might change one interrupt
-storm for the other).
-
-Also can you put an acpidump of this device up somewhere,
-or send me a private email with it ?
-
-Regards,
-
-Hans
-
-
-p.s.
-
-As for adding your device's DMI id to the chv_no_valid_mask
-dmi table not helping. That is somewhat expected, that table
-activates a bug to work around an *IRQ* numbering problem
-for some older Chromebooks which use direct IRQ resources
-in combination with broken IRQ numbering. The chromebooks
-adjusted the ACPI tables to deal with a bug in the Linux kernel,
-then when we fixed the bug so that things would work with
-the gazillion Windows devices out there, we had to add the
-quirk to restore the buggy behavior for the chromebooks.
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 6a7ede6b8b74..dd83c16a1ec6 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
++#include <linux/bitops.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/max77620.h>
+@@ -20,7 +21,7 @@ struct max77620_gpio {
+ 	struct device		*dev;
+ 	struct mutex		buslock; /* irq_bus_lock */
+ 	unsigned int		irq_type[MAX77620_GPIO_NR];
+-	bool			irq_enabled[MAX77620_GPIO_NR];
++	unsigned long		irq_enb_mask;
+ };
+ 
+ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
+@@ -53,7 +54,7 @@ static void max77620_gpio_irq_mask(struct irq_data *data)
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
+ 	struct max77620_gpio *gpio = gpiochip_get_data(chip);
+ 
+-	gpio->irq_enabled[data->hwirq] = false;
++	clear_bit(data->hwirq, &gpio->irq_enb_mask);
+ }
+ 
+ static void max77620_gpio_irq_unmask(struct irq_data *data)
+@@ -61,7 +62,7 @@ static void max77620_gpio_irq_unmask(struct irq_data *data)
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
+ 	struct max77620_gpio *gpio = gpiochip_get_data(chip);
+ 
+-	gpio->irq_enabled[data->hwirq] = true;
++	set_bit(data->hwirq, &gpio->irq_enb_mask);
+ }
+ 
+ static int max77620_gpio_set_irq_type(struct irq_data *data, unsigned int type)
+@@ -108,7 +109,10 @@ static void max77620_gpio_bus_sync_unlock(struct irq_data *data)
+ 	unsigned int value, offset = data->hwirq;
+ 	int err;
+ 
+-	value = gpio->irq_enabled[offset] ? gpio->irq_type[offset] : 0;
++	if (test_bit(offset, &gpio->irq_enb_mask))
++		value = gpio->irq_type[offset];
++	else
++		value = 0;
+ 
+ 	err = regmap_update_bits(gpio->rmap, GPIO_REG_ADDR(offset),
+ 				 MAX77620_CNFG_GPIO_INT_MASK, value);
+-- 
+2.26.0
 
