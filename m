@@ -2,119 +2,114 @@ Return-Path: <SRS0=qO6b=AU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99748C433E0
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jul 2020 17:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 335DAC433DF
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jul 2020 17:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 747F0207F9
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jul 2020 17:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CDF92077D
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jul 2020 17:17:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dL5T5yzX"
+	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="T8w15sga"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgGIRMk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jul 2020 13:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbgGIRMj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jul 2020 13:12:39 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1838C08C5CE;
-        Thu,  9 Jul 2020 10:12:38 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id z24so3245173ljn.8;
-        Thu, 09 Jul 2020 10:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=281uz9iaiGVo7VI6qKT+7ajuEHZDORjgoupNNobQtjM=;
-        b=dL5T5yzX5EMhvYQoovcVbN5GsAkbwY6Tv6UtajhB8R1LolxI1i5zzLcXKe/aHi10xY
-         DGPT/H8Mnrs8FN248T88ucJUk2R+3JIKpehl8AYJEmGCDMXbUYHjnbJXRgjq/QUyDhsi
-         yPKv1Svd7uNhFqmHDT2JjP7V2cd3sPJMEUWzUdkSKycXsxoUcU1j+cb1E+U5bLQVNZG8
-         fqFP99LMqdh8lcrBTtjJTRxSXt3JISJJK7EHRMJCEaRnJg2XknfFaCwCJf4EUCjuPwR4
-         FbBYOCjZyeJV0d3GsKZ8qt45hdiQCMUa/qj+4dTa/WnRkNIZ+KclVDsvBoIfH49x/I2z
-         tk9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=281uz9iaiGVo7VI6qKT+7ajuEHZDORjgoupNNobQtjM=;
-        b=WfxPnvwnnBLyRss2VXpvPooZ9NM7B8iwgjnhaqbII0hCOmbwIM7UEFYIBRyp5pWD1d
-         U6cs5WA2g05TIpf/Gnod9dyabQzwVUtuVf4Mj2BUVhPnV79llIRZLmalKLhoisLrXlfT
-         RAtxWcJOCxtPjCooAfGez/a00S9pe0r1B74xeFfE6KW5hgMdbWhjhjijrFWMJL7kVXCU
-         8YulvEQhaxSBsb/REZJjwx6dGAtuCkJtXl/ZtsMP43w80nKNDPwyMPN/t+s10WrGuTgF
-         ZhkOLo7/6cQG/9dOyTezbgG9jRI5Ctf/BnKhMB01+lcfVbEHZytMghNuh8/ZRXQxWVYs
-         +RwA==
-X-Gm-Message-State: AOAM5316/0EpF28OIDk5TQqVNLqCXOBN/Bjk7iRipLD1x5reZRvVk370
-        ypc1rbGyuQ9De29VRp/Pa7E=
-X-Google-Smtp-Source: ABdhPJxCoBAy+wgmz50uuC6+ftWgSFaVULLgqwWmOzjh7/32t2kf4vRVU30fWvSsyWs0sebITNZNwg==
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr23586723ljg.100.1594314757485;
-        Thu, 09 Jul 2020 10:12:37 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
-        by smtp.gmail.com with ESMTPSA id y22sm998314ljn.2.2020.07.09.10.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2020 10:12:36 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/6] gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-Date:   Thu,  9 Jul 2020 20:11:58 +0300
-Message-Id: <20200709171203.12950-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200709171203.12950-1-digetx@gmail.com>
-References: <20200709171203.12950-1-digetx@gmail.com>
+        id S1728206AbgGIRRR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jul 2020 13:17:17 -0400
+Received: from vps.xff.cz ([195.181.215.36]:52446 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727110AbgGIRRR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 9 Jul 2020 13:17:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1594315034; bh=3gV7jbp/PfKuXvsiiUXQuSbzC+4R90WKkgDUbSbOroA=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=T8w15sgaUVglRVUStLjyOBe5kD6r6ILjnGJfRaIwX30oPX3HkV/WG0tir90B7u8Tn
+         cwaI33E1ldqktkSPsiixkN2P9H9gkRxRVczxvTT/cGA3ybOv6S8vs2mflJ4EGQLURd
+         IdchOT3qguFiAcjCF1YgaUueWR3ccklPvnTELtUM=
+Date:   Thu, 9 Jul 2020 19:17:13 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        gregory.clement@bootlin.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
+        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
+        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
+        icenowy@aosc.io, stefan@olimex.com, bage@linutronix.de,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        liyong@allwinnertech.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, huangshuosheng@allwinnertech.com,
+        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 04/16] dt-bindings: pinctrl: sunxi: make gpio banks
+ supplies required
+Message-ID: <20200709171713.tutnlchji4e6i5pv@core.my.home>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Frank Lee <frank@allwinnertech.com>, robh+dt@kernel.org,
+        mripard@kernel.org, wens@csie.org, mturquette@baylibre.com,
+        sboyd@kernel.org, gregory.clement@bootlin.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
+        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
+        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
+        icenowy@aosc.io, stefan@olimex.com, bage@linutronix.de,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        liyong@allwinnertech.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, huangshuosheng@allwinnertech.com,
+        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200708071942.22595-1-frank@allwinnertech.com>
+ <20200708071942.22595-5-frank@allwinnertech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200708071942.22595-5-frank@allwinnertech.com>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The MAX77620_GPIO_NR enum value represents the total number of GPIOs,
-let's use it instead of a raw value in order to improve the code's
-readability a tad.
+Hello,
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-max77620.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Wed, Jul 08, 2020 at 03:19:30PM +0800, Frank Lee wrote:
+> Since we don't really have to care about the existing DT for boards,
+> it would be great to make the gpio banks supplies required.
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 313bd02dd893..4c0c9ec2587d 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -19,8 +19,8 @@ struct max77620_gpio {
- 	struct regmap		*rmap;
- 	struct device		*dev;
- 	struct mutex		buslock; /* irq_bus_lock */
--	unsigned int		irq_type[8];
--	bool			irq_enabled[8];
-+	unsigned int		irq_type[MAX77620_GPIO_NR];
-+	bool			irq_enabled[MAX77620_GPIO_NR];
- };
- 
- static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
-@@ -38,7 +38,7 @@ static irqreturn_t max77620_gpio_irqhandler(int irq, void *data)
- 
- 	pending = value;
- 
--	for_each_set_bit(offset, &pending, 8) {
-+	for_each_set_bit(offset, &pending, MAX77620_GPIO_NR) {
- 		unsigned int virq;
- 
- 		virq = irq_find_mapping(gpio->gpio_chip.irq.domain, offset);
--- 
-2.26.0
+What if the borad doesn't use one of the banks? How would
+I describe such a board if defining supplies for all banks
+is required?
 
+regards,
+	o.
+
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
+> ---
+>  .../devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml         | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> index 226aba0..c30a7b7 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+> @@ -134,6 +134,7 @@ patternProperties:
+>  required:
+>    - "#gpio-cells"
+>    - "#interrupt-cells"
+> +  - "^vcc-p[a-hlm]-supply$"
+>    - compatible
+>    - reg
+>    - interrupts
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
