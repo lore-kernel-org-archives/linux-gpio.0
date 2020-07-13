@@ -2,164 +2,155 @@ Return-Path: <SRS0=oSLa=AY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ED5C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5729CC433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D912205CB
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E1D42075B
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:49:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="g5wR0zIG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ziDxCI60"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729893AbgGMO1h (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:27:37 -0400
-Received: from smtpcmd02101.aruba.it ([62.149.158.101]:40833 "EHLO
-        smtpcmd02101.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729784AbgGMO1h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:27:37 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jul 2020 10:27:36 EDT
-Received: from [192.168.1.129] ([93.146.66.165])
-        by smtpcmd02.ad.aruba.it with bizsmtp
-        id 2eLN230113Zw7e501eLPZ4; Mon, 13 Jul 2020 16:20:27 +0200
-Subject: Re: [RFC] GPIO lines [was: GPIO User I/O]
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <01afcac0-bd34-3fd0-b991-a8b40d4b4561@enneenne.com>
- <CACRpkdbX9T9EuN-nxkMPC=sN74PEdoLuWurNLdGCzZJwwFrdpQ@mail.gmail.com>
- <1c4f1a83-835a-9317-3647-b55f6f39c0ba@enneenne.com>
- <CACRpkdZPjJSryJc+RtYjRN=X7xKMcao5pYek1fUM2+sE9xgdFQ@mail.gmail.com>
- <CAMuHMdUtguuu4FWU4nRS=pBUyEwKM1JZ8DYPdCQHXBYN0i_Frg@mail.gmail.com>
- <87efe96c-3679-14d5-4d79-569b6c047b00@enneenne.com>
- <CAMuHMdUght0hkJT1N8ub5xR5GB+U18MAhAg+zDmAAuxoRSRaYg@mail.gmail.com>
- <d30e64c9-ad7f-7cd5-51a4-3f37d6f1e3d8@enneenne.com>
- <070fa558-6e20-0fbf-d3e4-0a0eca4fe82c@enneenne.com>
- <CACRpkdYFAW2bcB53M3_b2LsveJO_PWZJhprGhdTtfmW11B1WmQ@mail.gmail.com>
-From:   Rodolfo Giometti <giometti@enneenne.com>
-Message-ID: <f66dc9c4-b164-c934-72a8-d4aca063fca5@enneenne.com>
-Date:   Mon, 13 Jul 2020 16:20:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1729703AbgGMOte (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 10:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729689AbgGMOte (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:34 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440E2C061794
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:34 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id a6so16865285wrm.4
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c6KODDu7f11jd3niq7W/zAdz/lhZIgV18jMn++N0dmk=;
+        b=ziDxCI60DN39PM3RJGP30ojYL2Y3TGAxLsIq/FctTLe1wm269+IzqFClnsGIrxXzrZ
+         jszWZM1RgKTZkNOqH1vdh/VgIjgb7ldg4fQ7OMXUormprt1oO+etW+BwEsPB1D0PNjkJ
+         2BxkDLoCQJvbPQwi490dK2xEIPOHALdTYlVCBd6G3orMtcZEvSvf7nRev9xqxPGVm8Ww
+         2rgJZDBJ8sbdaWZjmvzZEqzvcR8sXkeA4UYZPwu5X7rh4uQ7tBbKRVeYtib+PnBEgUpl
+         9PFBRhn4Hk2PR/qK4CuNn6v8DN6cQuLghH75grBKX2cQW4Hje+mVPDP+jx0ESpvL3HTc
+         +sOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c6KODDu7f11jd3niq7W/zAdz/lhZIgV18jMn++N0dmk=;
+        b=TJpyJdXGQv2eQFtSgajE6L0BhIQvWWcOrbfE4cwxo+gWHj/pa54Vn3uGWa0wNWC4CZ
+         9ayn/GWckzHygwQaSdYe0AxwbWAWzlfMY/CbhfY6fottD3Vq9Y98ZIzNqgAsbl2T+API
+         Est+3hMtUhwsC6ZQVelgXSDMi4vP8/3NOxGYAeSiFAbEmgCzA9FvPUGXjyxx3B1MxQGW
+         763gApex1ycBJlm8NVTyYorPjqjlWOTLUq/duh/7WmvC4uPZx0zwz5m0eQ9BS7JWR3vq
+         yJwpym/Y0kYQhIlbMaPQjX82L/Db7dkDylbh33rHc6SgkM11+1aK0V4sLA8aQv8y5nFH
+         8+Wg==
+X-Gm-Message-State: AOAM532KubDtV5Vl/NMH7YJF1F1rYkVxAV3wHJrpS4TFDLBcPJgLv7Ub
+        PWwTxvJYAz9VrHDD/qEGqBjinA==
+X-Google-Smtp-Source: ABdhPJwBN+7FNRB5e10ikfDcEOXPB9oZvVzsMu9gdAu4L2NQ8gP1Yq1xz451vmi1hanVhy7AZxDirg==
+X-Received: by 2002:adf:fc90:: with SMTP id g16mr79196427wrr.42.1594651772925;
+        Mon, 13 Jul 2020 07:49:32 -0700 (PDT)
+Received: from localhost.localdomain ([2.31.163.6])
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 07:49:32 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 00/25] Rid W=1 warnings in Pinctrl
+Date:   Mon, 13 Jul 2020 15:49:05 +0100
+Message-Id: <20200713144930.1034632-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYFAW2bcB53M3_b2LsveJO_PWZJhprGhdTtfmW11B1WmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
-        t=1594650027; bh=htV99MPbzwj4JWvKbJWvdYMsckXanjJlxRhiqpDyOD0=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=g5wR0zIG3iO0Xj/NjCc4RWlVwTb4BTE1PzRK9fwEzWeCY2pyFGE2VztebYSgXAsjZ
-         Vh6ei6C3yAOKF+xlvPqWKNKCFIKao0nUMJ7CI1KsBBmMKXRqdYzApq94XSW6J5QZOS
-         fAWI8X9IctbQe0JxCWWLX/WYo8OikFfUQBixY9is/OL5nKAaiEPtfFytV13CtRTQBf
-         ueEpbCDaHpwJ8k0tsL7RkD/iC7aQYM57hwaWCp8SVep8d6N4xTJ7UwhpJ1eqlfKx6p
-         czsx5Y2f9cLsOG2aC0F21VGZDre5j/+Ya+yQUKdsri4OGiGqCOxKIXbX/qSn6fYzCz
-         Xorg+Nfz0/V4A==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 11/07/2020 17:21, Linus Walleij wrote:
-> On Thu, Jul 9, 2020 at 4:11 PM Rodolfo Giometti <giometti@enneenne.com> wrote:
-> 
->>         gpio_lines {
->>                 compatible = "gpio-line";
->>
->>                 bypass0 {
->>                         gpios = <&gpionb 10 GPIO_ACTIVE_HIGH>;
->>                         mode = "out-low";
->>                 };
->>
->>                 bypass1 {
->>                         gpios = <&gpiosb 11 GPIO_ACTIVE_HIGH>;
->>                         mode = "out-low";
->>                 };
->>
->>                 key {
->>                         gpios = <&gpionb 4 GPIO_ACTIVE_HIGH>;
->>                         mode = "input";
->>                 };
->>
->>                 motor {
->>                         gpios = <&gpionb 8 GPIO_ACTIVE_HIGH>;
->>                         mode = "out-high-open-drain";
->>                 };
-> 
-> These mode = ... strings are really just a big confusion for me since
-> they reinvent several of the flags you can already give to the gpios,
-> see include/dt-bindings/gpio/gpio.h:
-> 
-> /* Bit 0 express polarity */
-> #define GPIO_ACTIVE_HIGH 0
-> #define GPIO_ACTIVE_LOW 1
-> 
-> /* Bit 1 express single-endedness */
-> #define GPIO_PUSH_PULL 0
-> #define GPIO_SINGLE_ENDED 2
-> 
-> /* Bit 2 express Open drain or open source */
-> #define GPIO_LINE_OPEN_SOURCE 0
-> #define GPIO_LINE_OPEN_DRAIN 4
-> 
-> /*
->  * Open Drain/Collector is the combination of single-ended open drain interface.
->  * Open Source/Emitter is the combination of single-ended open source interface.
->  */
-> #define GPIO_OPEN_DRAIN (GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_DRAIN)
-> #define GPIO_OPEN_SOURCE (GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_SOURCE)
+This set is part of a larger effort attempting to clean-up W=1
+kernel builds, which are currently overwhelmingly riddled with
+niggly little warnings.
 
-These modes came from include/linux/gpio/consumer.h:
+After these patches are applied, the build system no longer
+complains about any W=0 nor W=1 level warnings in drivers/pinctrl.
 
-/**
- * Optional flags that can be passed to one of gpiod_* to configure direction
- * and output value. These values cannot be OR'd.
- */
-enum gpiod_flags {
-        GPIOD_ASIS      = 0,
-        GPIOD_IN        = GPIOD_FLAGS_BIT_DIR_SET,
-        GPIOD_OUT_LOW   = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
-        GPIOD_OUT_HIGH  = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
-                          GPIOD_FLAGS_BIT_DIR_VAL,
-        GPIOD_OUT_LOW_OPEN_DRAIN = GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_OPEN_DRAIN,
-        GPIOD_OUT_HIGH_OPEN_DRAIN = GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_OPEN_DRAIN,
-};
+Hurrah!
 
-So a setting like the following should set at boot gpio10 as output to 0:
+Lee Jones (25):
+  pinctrl: actions: pinctrl-owl: Supply missing 'struct owl_pinctrl'
+    attribute descriptions
+  pinctrl: sirf: pinctrl-atlas7: Fix a bunch of documentation
+    misdemeanours
+  pinctrl: bcm: pinctrl-bcm281xx: Demote obvious misuse of kerneldoc to
+    standard comment blocks
+  pinctrl: bcm: pinctrl-iproc-gpio: Rename incorrectly documented
+    function param
+  pinctrl: qcom: pinctrl-msm: Complete 'struct msm_pinctrl'
+    documentation
+  pinctrl: samsung: pinctrl-samsung: Demote obvious misuse of kerneldoc
+    to standard comment blocks
+  pinctrl: samsung: pinctrl-s3c24xx: Fix formatting issues
+  pinctrl: samsung: pinctrl-s3c64xx: Fix formatting issues
+  pinctrl: qcom: pinctrl-msm8976: Remove unused variable
+    'nav_tsync_groups'
+  pinctrl: mediatek: pinctrl-mtk-common-v2: Mark
+    'mtk_default_register_base_names' as __maybe_unused
+  pinctrl: core: Fix a bunch of kerneldoc issues
+  pinctrl: pinmux: Add some missing parameter descriptions
+  pinctrl: devicetree: Add one new attribute description and rename
+    another two
+  pinctrl: pinconf-generic: Add function parameter description 'pctldev'
+  pinctrl: pinctrl-at91-pio4: PM related attribute descriptions
+  arch: arm: mach-at91: pm: Move prototypes to mutually included header
+  pinctrl: pinctrl-at91: Demote non-kerneldoc header and complete
+    another
+  pinctrl: pinctrl-bm1880: Rename ill documented struct attribute
+    entries
+  pinctrl: pinctrl-rockchip: Fix a bunch of kerneldoc misdemeanours
+  pinctrl: pinctrl-rza1: Demote some kerneldoc headers and fix others
+  pinctrl: pinctrl-single: Fix struct/function documentation blocks
+  pinctrl: tegra: pinctrl-tegra194: Do not initialise field twice
+  pinctrl: meson: pinctrl-meson-a1: Remove unused const variable
+    'i2c_slave_groups'
+  pinctrl: mvebu: pinctrl-armada-37xx: Update documentation block for
+    'struct armada_37xx_pin_group'
+  pinctrl: pinctrl-amd: Do not define 'struct acpi_device_id' when
+    !CONFIG_ACPI
 
-bypass0 {
-        gpios = <&gpionb 10 GPIO_ACTIVE_HIGH>;
-        mode = "out-low";
-};
-
-While the next one should set gpio10 as output to 1:
-
-bypass0 {
-        gpios = <&gpionb 10 GPIO_ACTIVE_LOW>;
-        mode = "out-low";
-};
-
-Maybe I can do something similar to hog-gpio as below, if you prefer...
-
-bypass0 {
-        gpios = <&gpionb 10 GPIO_ACTIVE_LOW>;
-	output-low;
-};
-
-Ciao,
-
-Rodolfo
+ arch/arm/mach-at91/pm.c                       | 17 +++++--------
+ drivers/pinctrl/actions/pinctrl-owl.c         |  4 ++++
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c        |  6 ++---
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c      |  2 +-
+ drivers/pinctrl/core.c                        | 12 +++++-----
+ drivers/pinctrl/devicetree.c                  |  5 ++--
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  2 +-
+ drivers/pinctrl/meson/pinctrl-meson-a1.c      |  5 ----
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c   |  7 +++---
+ drivers/pinctrl/pinconf-generic.c             |  3 ++-
+ drivers/pinctrl/pinctrl-amd.c                 |  2 ++
+ drivers/pinctrl/pinctrl-at91-pio4.c           |  2 ++
+ drivers/pinctrl/pinctrl-at91.c                |  7 +++++-
+ drivers/pinctrl/pinctrl-bm1880.c              |  4 ++--
+ drivers/pinctrl/pinctrl-rockchip.c            | 22 +++++++++--------
+ drivers/pinctrl/pinctrl-rza1.c                | 24 +++++++++----------
+ drivers/pinctrl/pinctrl-single.c              | 13 +++++++---
+ drivers/pinctrl/pinmux.c                      |  5 +++-
+ drivers/pinctrl/qcom/pinctrl-msm.c            |  6 ++++-
+ drivers/pinctrl/qcom/pinctrl-msm8976.c        |  3 ---
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |  6 ++---
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |  6 ++---
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  4 ++--
+ drivers/pinctrl/sirf/pinctrl-atlas7.c         | 21 +++++++---------
+ drivers/pinctrl/tegra/pinctrl-tegra194.c      |  1 -
+ include/linux/platform_data/atmel.h           |  5 ++++
+ 26 files changed, 107 insertions(+), 87 deletions(-)
 
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming                     skype:  rodolfo.giometti
+2.25.1
+
