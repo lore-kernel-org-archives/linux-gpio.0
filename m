@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD0DC4345C
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AADEC4345D
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D45B2067D
+	by mail.kernel.org (Postfix) with ESMTP id D9F0B2067D
 	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zce1ip8z"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bMhz0RnA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbgGMOtt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1730158AbgGMOtt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 13 Jul 2020 10:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32772 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbgGMOts (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:48 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3132DC061794
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:48 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a6so16866079wrm.4
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:48 -0700 (PDT)
+        with ESMTP id S1730150AbgGMOtq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:46 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11973C08C5DB
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:46 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id 22so13596900wmg.1
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SMipzZYJu8LR1S684y2mNrnWVA5TCC4bAA7Iz5/5CcI=;
-        b=zce1ip8zmaLh0pqXP0eF7z2mXwnarWeQ7nDj0kV29aJAUrksLMbtyCyhllEs4O/zyS
-         DlLimcmdIq0ekjAoJRvy7abIF6MIpRMlVwGZqqFjJmM+feJ7SxwO3vini+w+xBkwr7OD
-         K0Sp2LoSl9f+ClywO7+Y8RrJpb3Qa4qcT1X/hoH6r7aqg9zsAS+eWfEF7RHMs2P6zLQT
-         QDAqObXmaxXvWmG6Rxb/K0PrZSx5s2O5MMWL849pw4RPD3yOhQuoBj3jyLnbcLWhl+qw
-         CegHSweDUX51vGLFhU1CuFaRRnlpDmNOmWODanqUlMhFJN/IfwZXOV3szs34d9v0/zyP
-         BpNg==
+        bh=jIoZqzG9OLATQhyya2bqPTWvpUfxkuQVsRzQ1VQbwNE=;
+        b=bMhz0RnA/3UZT7hU8Hmuz9lWKmBNqOVSGmyPyWBVANYCkg2p3Qyae9xDS5WenLUiDn
+         8274PaEDUnifNdF6+9oklXnQalIg2pJ6Fk5ai0o+Y+Ew+yTjOWjE1X+Ei23ZlU2CHsL0
+         EbYezapMR7f7I2JL81ySs9dkcV0rOcs/En3fnXmguJWpkm70yjei7Ov9UjIcU3vrG0Jv
+         DFM0KS7YMJ+YUln5WmOprK0AsPpXluFIQCZrP2z4Vj91ZKfyJxhp+UEM3dcWQKgNBHpN
+         RsC2xNZZjHKYyFujhG/0BS2rifc9dxAlOy7fnksfbL4qUJdKbZvo75qOhwr+CvW3q8/R
+         M7aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SMipzZYJu8LR1S684y2mNrnWVA5TCC4bAA7Iz5/5CcI=;
-        b=OwKi/5C2Z8eH0KaJ7jNMU6+7zUF8rIcyIOFFIi4pLCvPfR4sJGRQvAoQIl5v6FWdwX
-         hwMzQlbErszeha+sBhWMrfytgt59EMnstzex9pwygCqVekPZtSr9ui14Z+yw93+pJS3p
-         h5m5cp5MuRsrW9khJinEmKYCrtuG8PC3GkAuMa0i+YXDGgEMjX5js6cXk80zts9+TIHm
-         qfz3cFZtzkhJmVNv99aECEaIJtznQK2rCul6xbkJWVPwyMw9SHVY4/Z9lPSYlD7hE6nv
-         Xdnv0NBPFWC2Ek4qwuJZvSeqYrkF0+/2bSniUVHeKBkvNkjpUFEDJicR+WjXUjyxhFt7
-         RxMg==
-X-Gm-Message-State: AOAM532wq+7zuJRBeLW/kajVBEmUMCR/tgyhqSdagb2h3oQguQOMa4f0
-        5ScaR94Tx3e/wdllmFU9xugpaw==
-X-Google-Smtp-Source: ABdhPJw3ZQBd6lIQl7siqOdyvmglbqKHXtOVGj8IWar52W8ai94yFUDms0wk9biaFCx3CcZS6soCeg==
-X-Received: by 2002:a5d:474f:: with SMTP id o15mr77598965wrs.306.1594651786953;
-        Mon, 13 Jul 2020 07:49:46 -0700 (PDT)
+        bh=jIoZqzG9OLATQhyya2bqPTWvpUfxkuQVsRzQ1VQbwNE=;
+        b=HBn6Hse1ah/bxD0vck4z7bYuake/7KMf7U/LyVPdjuj9OkBiwlLpgoeQKR4lJkcRwN
+         HtLMwyPgK+TJoIzQUj73U9q3q6w5YROOvoQ4v2YiS/oVFHYztM+lhk9VCoPdY3E348ke
+         i09xJ1F4X9ckEGkNxPZQFq2Jri6XFVVKAG3MT+t9Raq1oaxEElCkkljIuhl1IFBEn1Xg
+         md+zVqY54nOa8q9vy17SNxQDsSLjTy4H6NCFSbPJ6kjKxQX4yvRMJ1e8tN6JurQEexwX
+         L/6PLvbPBF5DmAwBAZoMetAa1F8Nmp52D0CPC2yRy9dJ4/0/MfYi/jE26NaUPsSBW3Ad
+         VG/Q==
+X-Gm-Message-State: AOAM532eSh0jysFZ6Hm42sTeQtwC6oCC6QDOHl7Am6WVlHSgOF9XtI1Q
+        FqL59IRYyGwoP+Fm3Bnl5qYnyg==
+X-Google-Smtp-Source: ABdhPJxGvxtVyqe4voNXc32U+fuwwbPkvPKZ54NNIT7BqjecwQyJAfoVDmOAL7IsUckuXU9N3xD+vw==
+X-Received: by 2002:a1c:e18a:: with SMTP id y132mr294500wmg.27.1594651784746;
+        Mon, 13 Jul 2020 07:49:44 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.46
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:46 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:44 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 13/25] pinctrl: devicetree: Add one new attribute description and rename another two
-Date:   Mon, 13 Jul 2020 15:49:18 +0100
-Message-Id: <20200713144930.1034632-14-lee.jones@linaro.org>
+Subject: [PATCH 11/25] pinctrl: core: Fix a bunch of kerneldoc issues
+Date:   Mon, 13 Jul 2020 15:49:16 +0100
+Message-Id: <20200713144930.1034632-12-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -74,41 +74,76 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Most are likely due to bitrot/API slip.  Some are formatting issues.
+
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/devicetree.c:27: warning: Function parameter or member 'map' not described in 'pinctrl_dt_map'
- drivers/pinctrl/devicetree.c:27: warning: Function parameter or member 'num_maps' not described in 'pinctrl_dt_map'
- drivers/pinctrl/devicetree.c:409: warning: Function parameter or member 'out_args' not described in 'pinctrl_parse_index_with_args'
- drivers/pinctrl/devicetree.c:409: warning: Excess function parameter 'out_arts' description in 'pinctrl_parse_index_with_args'
+ drivers/pinctrl/core.c:167: warning: Function parameter or member 'pin' not described in 'pin_get_name'
+ drivers/pinctrl/core.c:167: warning: Excess function parameter 'name' description in 'pin_get_name'
+ drivers/pinctrl/core.c:584: warning: Function parameter or member 'selector' not described in 'pinctrl_generic_get_group'
+ drivers/pinctrl/core.c:584: warning: Excess function parameter 'gselector' description in 'pinctrl_generic_get_group'
+ drivers/pinctrl/core.c:1356: error: Cannot parse struct or union!
+ drivers/pinctrl/core.c:1458: warning: Function parameter or member 'map' not described in 'pinctrl_unregister_mappings'
+ drivers/pinctrl/core.c:1458: warning: Excess function parameter 'maps' description in 'pinctrl_unregister_mappings'
+ drivers/pinctrl/core.c:2239: warning: Function parameter or member 'pctldev' not described in 'devm_pinctrl_register_and_init'
 
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/devicetree.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index c6fe7d64c9137..5eff8c2965528 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -17,7 +17,8 @@
-  * struct pinctrl_dt_map - mapping table chunk parsed from device tree
-  * @node: list node for struct pinctrl's @dt_maps field
-  * @pctldev: the pin controller that allocated this struct, and will free it
-- * @maps: the mapping table entries
-+ * @map: the mapping table entries
-+ * @num_maps: number of mapping table entries
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 821242bb4b16a..3e8d1630d29ed 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -161,7 +161,7 @@ int pin_get_from_name(struct pinctrl_dev *pctldev, const char *name)
+ /**
+  * pin_get_name_from_id() - look up a pin name from a pin id
+  * @pctldev: the pin control device to lookup the pin on
+- * @name: the name of the pin to look up
++ * @pin: pin number/id to look up
   */
- struct pinctrl_dt_map {
- 	struct list_head node;
-@@ -397,7 +398,7 @@ static int pinctrl_copy_args(const struct device_node *np,
-  * @np: pointer to device node with the property
-  * @list_name: property that contains the list
-  * @index: index within the list
-- * @out_arts: entries in the list pointed by index
-+ * @out_args: entries in the list pointed by index
+ const char *pin_get_name(struct pinctrl_dev *pctldev, const unsigned pin)
+ {
+@@ -577,7 +577,7 @@ EXPORT_SYMBOL_GPL(pinctrl_generic_get_group_pins);
+ /**
+  * pinctrl_generic_get_group() - returns a pin group based on the number
+  * @pctldev: pin controller device
+- * @gselector: group number
++ * @selector: group number
+  */
+ struct group_desc *pinctrl_generic_get_group(struct pinctrl_dev *pctldev,
+ 					     unsigned int selector)
+@@ -1329,7 +1329,7 @@ static void devm_pinctrl_release(struct device *dev, void *res)
+ }
+ 
+ /**
+- * struct devm_pinctrl_get() - Resource managed pinctrl_get()
++ * devm_pinctrl_get() - Resource managed pinctrl_get()
+  * @dev: the device to obtain the handle for
   *
-  * Finds the selected element in a pinctrl array consisting of an index
-  * within the controller and a number of u32 entries specified for each
+  * If there is a need to explicitly destroy the returned struct pinctrl,
+@@ -1451,7 +1451,7 @@ EXPORT_SYMBOL_GPL(pinctrl_register_mappings);
+ 
+ /**
+  * pinctrl_unregister_mappings() - unregister a set of pin controller mappings
+- * @maps: the pincontrol mappings table passed to pinctrl_register_mappings()
++ * @map: the pincontrol mappings table passed to pinctrl_register_mappings()
+  *	when registering the mappings.
+  */
+ void pinctrl_unregister_mappings(const struct pinctrl_map *map)
+@@ -2226,9 +2226,9 @@ EXPORT_SYMBOL_GPL(devm_pinctrl_register);
+  * @dev: parent device for this pin controller
+  * @pctldesc: descriptor for this pin controller
+  * @driver_data: private pin controller data for this pin controller
++ * @pctldev: pin controller device
+  *
+- * Returns an error pointer if pincontrol register failed. Otherwise
+- * it returns valid pinctrl handle.
++ * Returns zero on success or an error number on failure.
+  *
+  * The pinctrl device will be automatically released when the device is unbound.
+  */
 -- 
 2.25.1
 
