@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4FDC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6144C433F8
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 100212075D
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B200420791
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bY+eI2Sa"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZmtW2ht4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730181AbgGMOtw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32790 "EHLO
+        id S1730226AbgGMOuA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 10:50:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730175AbgGMOtv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:51 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C5BC061794
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:51 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id j4so16864415wrp.10
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:51 -0700 (PDT)
+        with ESMTP id S1730223AbgGMOuA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:50:00 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DE0C061794
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:59 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id f2so16819442wrp.7
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8XFfrtDb0YISFxdApa9cgcznz1fKsVfnxLcnox2gJ38=;
-        b=bY+eI2Sa1VcgBw/m+GSPdg+IKtmwOksNpPhNngNhJ4tpus+dIQgVEyXQmm5h/Mo+8d
-         CFGMao+VaidBm/qr7yKY8/suL3RWH+306Rfniq0CT6jdAnE7udAzLAZ38vDwZTSgwCxP
-         9Zfvo7Amfu/J/ldW9uMo1y69ApSm1SwamkBSUJZYzG+E0lsy1bD/tTOlXKuPBU95ZPwZ
-         5NNTSXixUFUk4gTpO9djXoEEhSurqXpdLHwBPR04hIDB8s8nXY4sx0MYqnLsre6mwD/M
-         tVq7d9wH1fGqnHlxr+56BcsdYIdOJk6QJB/JnCveFhAqYodfYN9gC3Sf0THlqUv0vJFp
-         w0fQ==
+        bh=nkDu4+NF/Jy0nw1npPjBWOEwj+80cykTcSKL8zkEyoE=;
+        b=ZmtW2ht4WqM7YXMQqyxHw3ZRWguzPgBqFC2JKAMqnldEWEsJAUcbwc2bmoKXuvKdhB
+         ohLnx6dHRciOiJRTxfPCFjCrEU+2qXEPZTQjSGaojFkCaf6eucv0LMOlOH5ybPM6rBxY
+         tDPXuEMK7uUVfDp3zwVJ2KxMPq7Hr81fGJ9+9pNX7BcxMW5GNb707zAllgt9brug1YNA
+         C5iAFICTeYYWHDJz2rbibn+U9WTtjaFxewwzqY+I7CTq4Iw2/NIsi2sAK7h9pWrxK98S
+         7uCOBoC0BEbMzYAIM8CRkDzn8+axiDVRtayVn3F4BqiORSe8IAY5nVQWBQKD31MV3mWw
+         wsUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8XFfrtDb0YISFxdApa9cgcznz1fKsVfnxLcnox2gJ38=;
-        b=oRh6YGnswzZ6LtXwLRIB2DXSV53uDFj27hgUssNFMsg9I+fsZ0u2sTgR3EP0ZkzL7U
-         4l3V/FUONTqFE3ZLo5zRLkiE/98b5mMYbTNRxoIGuXscmPpY/3eQKaVl8P+4w49l6YrN
-         9+J5dx7HZR/bn3LukcSeDeDEuJ7U00Ksjkwi15QV5r+xgHfX3YFvMBofZYSeyE6fco99
-         KJLzDe+/5RqyIFF+0VOS9/efIceUNdxU73U5IBwP5RNG3KeiBglSEp3F2eJad8/Pq4IK
-         18PXVgCcSOoDy8OQGQt8+jdzjO8u8kve8ZVjOXek0C5ri/+zlv94kUKiQZ7Jd8DUCJoY
-         eapw==
-X-Gm-Message-State: AOAM533XQS92ok6UjhgXVwLoIDLlr3DHNG79pM5MvdN3hz0TLPE06Mg2
-        IWgdNffjWJbsGf8tY8V3Z/M/Yw==
-X-Google-Smtp-Source: ABdhPJwmbiZnb+8yCbeRKEkrxSMvb3wxXhG75vw/5/nsc4kMk/NuIYjdgJ42nxTh62tfqm0segUiEg==
-X-Received: by 2002:adf:fc90:: with SMTP id g16mr79197339wrr.42.1594651790130;
-        Mon, 13 Jul 2020 07:49:50 -0700 (PDT)
+        bh=nkDu4+NF/Jy0nw1npPjBWOEwj+80cykTcSKL8zkEyoE=;
+        b=J2sXFzcc3/pvhn3QpwaOUMQZEJwxU//+7xojuNNV2aMAtVhayZC5XmmuUwjl+ATfyB
+         y2u5LK4Ki6CDxcxVQIw+VSK0rzto7nn+njyZmVJ3H8XZvW9yu0Jhq0wKjDt9iSKxSRxn
+         07JD2hnhzCI2X40EPvcovnnOVdxZ15kkKe9z9wSmMYtEdcdhG1O1boVGKnCxRl+uom79
+         fyzP+TSH2MbSNLP/w3tjd+ECAUY+jl3om10sWL5St4U420RQJDSufZ2f+yx1vRZ5R41d
+         qBf88fwkVy+ocR2W0DQysSHEK0F3aVX4A+qjRnbwIZM2rtjt6DIM7iWEDF2f/hlQcYJx
+         UBJg==
+X-Gm-Message-State: AOAM532MZZBUDvtBsBQ/Ayo7G6sPB56hHQuVOuoSdk6ekCwdgV4EnOj+
+        oqRCk2DVbvi87uxxlfYyj64aEQ==
+X-Google-Smtp-Source: ABdhPJwWZnEQwNy0uHw6fz+gVKKB5MdRFqRoRee91JUrZWtXKOGQ/CMQO9b8C5u1UFocGLb+2c0OYw==
+X-Received: by 2002:adf:ec42:: with SMTP id w2mr80843478wrn.269.1594651798432;
+        Mon, 13 Jul 2020 07:49:58 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.49
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:49 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:57 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH 16/25] arch: arm: mach-at91: pm: Move prototypes to mutually included header
-Date:   Mon, 13 Jul 2020 15:49:21 +0100
-Message-Id: <20200713144930.1034632-17-lee.jones@linaro.org>
+        Kevin Hilman <khilman@baylibre.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 23/25] pinctrl: meson: pinctrl-meson-a1: Remove unused const variable 'i2c_slave_groups'
+Date:   Mon, 13 Jul 2020 15:49:28 +0100
+Message-Id: <20200713144930.1034632-24-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -79,90 +78,38 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Both the caller and the supplier's source file should have access to
-the include file containing the prototypes.
+It has never been used.
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/pinctrl-at91.c:1637:6: warning: no previous prototype for ‘at91_pinctrl_gpio_suspend’ [-Wmissing-prototypes]
- 1637 | void at91_pinctrl_gpio_suspend(void)
- | ^~~~~~~~~~~~~~~~~~~~~~~~~
- drivers/pinctrl/pinctrl-at91.c:1661:6: warning: no previous prototype for ‘at91_pinctrl_gpio_resume’ [-Wmissing-prototypes]
- 1661 | void at91_pinctrl_gpio_resume(void)
- | ^~~~~~~~~~~~~~~~~~~~~~~~
+ drivers/pinctrl/meson/pinctrl-meson-a1.c:749:27: warning: ‘i2c_slave_groups’ defined but not used [-Wunused-const-variable=]
+ 749 | static const char const i2c_slave_groups[] = {
+ | ^~~~~~~~~~~~~~~~
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Qianggui Song <qianggui.song@amlogic.com>
+Cc: linux-amlogic@lists.infradead.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/mach-at91/pm.c             | 17 ++++++-----------
- drivers/pinctrl/pinctrl-at91.c      |  1 +
- include/linux/platform_data/atmel.h |  5 +++++
- 3 files changed, 12 insertions(+), 11 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson-a1.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 074bde64064e4..59f2a2d6fbbb8 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -25,17 +25,6 @@
- #include "generic.h"
- #include "pm.h"
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+index 0bcec03f344aa..8abf750eac7ee 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+@@ -746,11 +746,6 @@ static const char * const i2c3_groups[] = {
+ 	"i2c3_sck_x", "i2c3_sda_x", "i2c3_sck_f", "i2c3_sda_f",
+ };
  
--/*
-- * FIXME: this is needed to communicate between the pinctrl driver and
-- * the PM implementation in the machine. Possibly part of the PM
-- * implementation should be moved down into the pinctrl driver and get
-- * called as part of the generic suspend/resume path.
-- */
--#ifdef CONFIG_PINCTRL_AT91
--extern void at91_pinctrl_gpio_suspend(void);
--extern void at91_pinctrl_gpio_resume(void);
--#endif
+-static const char * const i2c_slave_groups[] = {
+-	"i2c_slave_sda_a", "i2c_slave_sck_a",
+-	"i2c_slave_sda_f", "i2c_slave_sck_f",
+-};
 -
- struct at91_soc_pm {
- 	int (*config_shdwc_ws)(void __iomem *shdwc, u32 *mode, u32 *polarity);
- 	int (*config_pmc_ws)(void __iomem *pmc, u32 mode, u32 polarity);
-@@ -325,6 +314,12 @@ static void at91_pm_suspend(suspend_state_t state)
- static int at91_pm_enter(suspend_state_t state)
- {
- #ifdef CONFIG_PINCTRL_AT91
-+	/*
-+	 * FIXME: this is needed to communicate between the pinctrl driver and
-+	 * the PM implementation in the machine. Possibly part of the PM
-+	 * implementation should be moved down into the pinctrl driver and get
-+	 * called as part of the generic suspend/resume path.
-+	 */
- 	at91_pinctrl_gpio_suspend();
- #endif
- 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 9c52130876597..37997e5ab0538 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -22,6 +22,7 @@
- #include <linux/pinctrl/pinmux.h>
- /* Since we request GPIOs from ourself */
- #include <linux/pinctrl/consumer.h>
-+#include <linux/platform_data/atmel.h>
- 
- #include "pinctrl-at91.h"
- #include "core.h"
-diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel.h
-index 99e6069c5fd89..666ef482ea8c0 100644
---- a/include/linux/platform_data/atmel.h
-+++ b/include/linux/platform_data/atmel.h
-@@ -28,4 +28,9 @@ static inline int at91_suspend_entering_slow_clock(void)
- }
- #endif
- 
-+#ifdef CONFIG_PINCTRL_AT91
-+void at91_pinctrl_gpio_suspend(void);
-+void at91_pinctrl_gpio_resume(void);
-+#endif
-+
- #endif /* __ATMEL_H__ */
+ static const char * const spi_a_groups[] = {
+ 	"spi_a_mosi_x2", "spi_a_ss0_x3", "spi_a_sclk_x4", "spi_a_miso_x5",
+ 	"spi_a_mosi_x7", "spi_a_miso_x8", "spi_a_ss0_x9", "spi_a_sclk_x10",
 -- 
 2.25.1
 
