@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62985C43465
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EB4C433E2
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46631208D5
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B80820DD4
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgGMVgG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 17:36:06 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:40765 "EHLO
+        id S1727098AbgGMVf6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 17:35:58 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:10833 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727825AbgGMVgE (ORCPT
+        by vger.kernel.org with ESMTP id S1727115AbgGMVf5 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Jul 2020 17:36:04 -0400
+        Mon, 13 Jul 2020 17:35:57 -0400
 X-IronPort-AV: E=Sophos;i="5.75,348,1589209200"; 
-   d="scan'208";a="51803389"
+   d="scan'208";a="51803377"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2020 06:36:03 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:55 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B6A4C40F7FC8;
-        Tue, 14 Jul 2020 06:35:59 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7347C40F7FC8;
+        Tue, 14 Jul 2020 06:35:51 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Vinod Koul <vkoul@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 9/9] arm64: dts: renesas: r8a774e1: Add Ethernet AVB node
-Date:   Mon, 13 Jul 2020 22:35:20 +0100
-Message-Id: <1594676120-5862-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 7/9] arm64: dts: renesas: r8a774e1: Add GPIO device nodes
+Date:   Mon, 13 Jul 2020 22:35:18 +0100
+Message-Id: <1594676120-5862-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -57,71 +57,159 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-This patch adds the SoC specific part of the Ethernet AVB
-device tree node.
+Add GPIO device nodes to the DT of the r8a774e1 SoC.
 
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 41 +++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 73 +++++++++++++++++------
+ 1 file changed, 56 insertions(+), 17 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 599703d87b56..caca319aafcf 100644
+index 9e05d134a295..599703d87b56 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -695,12 +695,49 @@
+@@ -246,84 +246,123 @@
  		};
  
- 		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a774e1",
-+				     "renesas,etheravb-rcar-gen3";
- 			reg = <0 0xe6800000 0 0x800>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
+ 		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 0 16>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
 -
 -			/* placeholder */
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
  		};
  
- 		can0: can@e6c30000 {
+ 		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 32 29>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
+ 		};
+ 
+ 		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 64 15>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
+ 		};
+ 
+ 		gpio3: gpio@e6053000 {
+-			/* placeholder */
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 96 16>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
+ 		};
+ 
+ 		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 128 18>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
+ 		};
+ 
+ 		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 160 26>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
+ 		};
+ 
+ 		gpio6: gpio@e6055400 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 192 32>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 906>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 906>;
+ 		};
+ 
+ 		gpio7: gpio@e6055800 {
++			compatible = "renesas,gpio-r8a774e1",
++				     "renesas,rcar-gen3-gpio";
+ 			reg = <0 0xe6055800 0 0x50>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
++			gpio-ranges = <&pfc 0 224 4>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 905>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 905>;
+ 		};
+ 
+ 		pfc: pin-controller@e6060000 {
 -- 
 2.17.1
 
