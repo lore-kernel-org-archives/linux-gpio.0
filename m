@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC4EC433FB
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAE0C4346E
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D99022082F
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A973120EDD
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbgGMVfs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 17:35:48 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:16635 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726150AbgGMVfo (ORCPT
+        id S1727905AbgGMVg0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 17:36:26 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:6771 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726150AbgGMVfw (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Jul 2020 17:35:44 -0400
+        Mon, 13 Jul 2020 17:35:52 -0400
 X-IronPort-AV: E=Sophos;i="5.75,348,1589209200"; 
-   d="scan'208";a="51803365"
+   d="scan'208";a="52016003"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:42 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:51 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 115D940F7FE7;
-        Tue, 14 Jul 2020 06:35:38 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 532E640F7FC8;
+        Tue, 14 Jul 2020 06:35:47 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Vinod Koul <vkoul@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 4/9] dt-bindings: dma: renesas,rcar-dmac: Document R8A774E1 bindings
-Date:   Mon, 13 Jul 2020 22:35:15 +0100
-Message-Id: <1594676120-5862-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6/9] dt-bindings: gpio: renesas,rcar-gpio: Add r8a774e1 support
+Date:   Mon, 13 Jul 2020 22:35:17 +0100
+Message-Id: <1594676120-5862-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -55,26 +55,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Renesas RZ/G2H (R8A774E1) SoC also has the R-Car gen3 compatible
-DMA controllers, therefore document RZ/G2H specific bindings.
+Document Renesas RZ/G2H (R8A774E1) GPIO blocks compatibility within the
+relevant dt-bindings.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml | 1 +
+ Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-index b842dfd96a89..13f1a46be40d 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
-@@ -23,6 +23,7 @@ properties:
-           - renesas,dmac-r8a774a1 # RZ/G2M
-           - renesas,dmac-r8a774b1 # RZ/G2N
-           - renesas,dmac-r8a774c0 # RZ/G2E
-+          - renesas,dmac-r8a774e1 # RZ/G2H
-           - renesas,dmac-r8a7790  # R-Car H2
-           - renesas,dmac-r8a7791  # R-Car M2-W
-           - renesas,dmac-r8a7792  # R-Car V2H
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+index 397d9383d15a..a9a9dd0854e7 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+@@ -37,6 +37,7 @@ properties:
+              - renesas,gpio-r8a774a1     # RZ/G2M
+              - renesas,gpio-r8a774b1     # RZ/G2N
+              - renesas,gpio-r8a774c0     # RZ/G2E
++             - renesas,gpio-r8a774e1     # RZ/G2H
+              - renesas,gpio-r8a7795      # R-Car H3
+              - renesas,gpio-r8a7796      # R-Car M3-W
+              - renesas,gpio-r8a77961     # R-Car M3-W+
 -- 
 2.17.1
 
