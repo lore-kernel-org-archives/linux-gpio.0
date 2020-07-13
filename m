@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46150C4345A
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35000C433F2
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2303B2065F
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D01B20738
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1WN0X53"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JW8Zfxng"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbgGMOtq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:49:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
+        id S1730111AbgGMOtn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 10:49:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730132AbgGMOtn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:43 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B8DC061755
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:43 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id l17so13607029wmj.0
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:42 -0700 (PDT)
+        with ESMTP id S1730110AbgGMOtm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:42 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCBFFC061794
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id f18so16892620wrs.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
-        b=U1WN0X53vbT4MvhLNRle/Pi49aoyXp8l/FZ9qbfpELXVGRvwteyYQ59YIS581Rx0Xp
-         q5UQZNPMwm4gbhy2sGnmyUhu+w/WSyDy8SZwq5gc7YFHp11qt2IevOUpEE0bd15DH/8G
-         F0tLllXkjBOGT94L/jRw4tRXmh6xUXZ42RV3KnfYe23GHPr8WB7Izy+DlVxJwv3uNcH3
-         spPTiORGerSbhn1gcD3+8ZhgKGlr3WTLewuQPjCmNoxXAWdMLet04UicbcIPSh9F7Dh8
-         3s3nrgW8efZiHQaPyILOHhsm0gTtGvlZ75SUX8Oby7yTHrd4vKHUhLfTND2frhv/Mv0y
-         EjZw==
+        bh=EdngZibp0zWCAAM+UJcwsurIH7yKZeYEzW9/AfNLRBM=;
+        b=JW8ZfxngbL67Sj8u+8Odvmzrwr0Un0a8dfJga8fvIiSWVdYg9aR4Bmk+ZaZcNRFo4H
+         mYYCCmw1FyfXDWpX/JP8gcpGpLbGjVhpgBWMLQ7nU3B60mmVu0+j3wYxmW0D0X1k5/zs
+         4NS/fGYu/LscQ5CzpkfJBoQy0++MW25LdnoHtLiIDNIoujjsb4iXIpRxjgIXjCQSUeu5
+         5RKO/zCJXFqGKYoHk3QXfi69WgeFYkcFR2GtBorrikmsDs+1KrMwPTr8T2C2QkbQBRi/
+         bgI7VvRNsxOtIgc9DXtgUbv6Ox4Z0pppzdqBGQdi7TUTRWQYpytYkMNaweHWedM6aOUQ
+         zj4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
-        b=TryiporHqG311cGIybrKdzk8dVLuDyc39eNHgD5TipCzIL8REVA2jSfvCruyLSzIuT
-         j7tL4gUV1FtpVFFWLSW3+TFOCQLhjqnkwDxi5H1O9ScY3oDD23gPu7mIRjpuk9NCTLJE
-         48KNboF5/W1ZdYKVQb77wmXW0HSnbzMVV8g0irBGXbGtb5R2QAL6c/LoyLoO+pCyPtm8
-         7HOhgMDaLoa7vlGy3r29hHS7D80z4bV0ZXY9efOPwwFMy1D+Xw88CrQPd9c2a6T2GXgx
-         22xQpM8WtX+2+3Nh8g4V7q+LWFuNcYb2Nw0g97GoAkQaBBKqvL/QyNPJor40r+shLeV3
-         qcTg==
-X-Gm-Message-State: AOAM532RpCZs4kTEmWLfbGH4hIfh+vrZ982E29TRLfEyW7VIdjohblGU
-        /xx3OYY6sdZaE1UNkt7paMHJsg==
-X-Google-Smtp-Source: ABdhPJxoVsuUxdjQrc3CM3WbousZGi/1/+jQn4P+0A7iaqIru6LA4EJm04rEqpNRn1DujBpLMkOpjw==
-X-Received: by 2002:a1c:c242:: with SMTP id s63mr311154wmf.146.1594651781752;
-        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
+        bh=EdngZibp0zWCAAM+UJcwsurIH7yKZeYEzW9/AfNLRBM=;
+        b=X2WAh79lT603sdO6B+JstmxObXPajkVbzJ/6CLatGxvA7cCMg+7JkM4IqaPwahlToG
+         Rv17ZhOaqyYka/Tad0EBr/pGK6SbfJ6VRjZWmB5oVnUuE5Pz11m0v7XcW3AHyjPcnAy6
+         kmkeZExXR8Mv4Rewywdm5f1Z+5hn+zEms2xrnkJnqdPjcIkRrzCa1U9hLdk1kpZEVKzM
+         OpBAxDaW2Hp0GJt4QKQLweKSV7q4ueL0A+ro5Gi2IaWloqdw5SDUar81DZ6LPce20kpp
+         SE0/BLosLfSNHz/rFpRmZc67K5qiPz/iZzE7qXx9Z17S25l0Kn48pdG8HyONNoxz7MQL
+         RArQ==
+X-Gm-Message-State: AOAM533XzVdeOiOziiar2oomLxodqJmrhMikERMwbXYdbUMiKs2Jb1mV
+        FoYN66f162LqvFQyRC4jJ7qP2w==
+X-Google-Smtp-Source: ABdhPJwbwkd7iM4SmIi+fTezp7zvJuFCTmoF3U2ec6u5Z2hwzXy9AZwysrE+mhaEjypi6okk23x0gg==
+X-Received: by 2002:a5d:6a07:: with SMTP id m7mr81416990wru.324.1594651779599;
+        Mon, 13 Jul 2020 07:49:39 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.40
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:39 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
@@ -64,10 +64,11 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thomas Abraham <thomas.ab@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 08/25] pinctrl: samsung: pinctrl-s3c64xx: Fix formatting issues
-Date:   Mon, 13 Jul 2020 15:49:13 +0100
-Message-Id: <20200713144930.1034632-9-lee.jones@linaro.org>
+Subject: [PATCH 06/25] pinctrl: samsung: pinctrl-samsung: Demote obvious misuse of kerneldoc to standard comment blocks
+Date:   Mon, 13 Jul 2020 15:49:11 +0100
+Message-Id: <20200713144930.1034632-7-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -78,53 +79,45 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Kerneldoc struct titles must be followed by whitespace else the
-checker gets confused.
+No attempt has been made to document either of the demoted functions here.
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c:212: warning: cannot understand function prototype: 'struct s3c64xx_eint0_domain_data '
+ drivers/pinctrl/samsung/pinctrl-samsung.c:1149: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_suspend'
+ drivers/pinctrl/samsung/pinctrl-samsung.c:1199: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_resume'
 
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index f97f8179f2b1b..b8166e3fe4cef 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -193,7 +193,7 @@ static const struct samsung_pin_bank_type bank_type_2bit_alive = {
- 	}
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index f26574ef234ab..608eb5a07248e 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1140,7 +1140,7 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
- /**
-- * struct s3c64xx_eint0_data: EINT0 common data
-+ * struct s3c64xx_eint0_data - EINT0 common data
-  * @drvdata: pin controller driver data
-  * @domains: IRQ domains of particular EINT0 interrupts
-  * @pins: pin offsets inside of banks of particular EINT0 interrupts
-@@ -205,7 +205,7 @@ struct s3c64xx_eint0_data {
- };
+-/**
++/*
+  * samsung_pinctrl_suspend - save pinctrl state for suspend
+  *
+  * Save data for all banks handled by this device.
+@@ -1187,7 +1187,7 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
+ 	return 0;
+ }
  
- /**
-- * struct s3c64xx_eint0_domain_data: EINT0 per-domain data
-+ * struct s3c64xx_eint0_domain_data - EINT0 per-domain data
-  * @bank: pin bank related to the domain
-  * @eints: EINT0 interrupts related to the domain
-  */
-@@ -215,7 +215,7 @@ struct s3c64xx_eint0_domain_data {
- };
- 
- /**
-- * struct s3c64xx_eint_gpio_data: GPIO EINT data
-+ * struct s3c64xx_eint_gpio_data - GPIO EINT data
-  * @drvdata: pin controller driver data
-  * @domains: array of domains related to EINT interrupt groups
-  */
+-/**
++/*
+  * samsung_pinctrl_resume - restore pinctrl state from suspend
+  *
+  * Restore one of the banks that was saved during suspend.
 -- 
 2.25.1
 
