@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14840C43445
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E37C43462
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7E9D20C56
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BAA820C56
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgGMVfc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 17:35:32 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:43762 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726150AbgGMVfb (ORCPT
+        id S1727068AbgGMVgC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 17:36:02 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:62097 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727810AbgGMVgB (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Jul 2020 17:35:31 -0400
+        Mon, 13 Jul 2020 17:36:01 -0400
 X-IronPort-AV: E=Sophos;i="5.75,348,1589209200"; 
-   d="scan'208";a="51803351"
+   d="scan'208";a="52016013"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:30 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:59 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A2E5E40F7FC8;
-        Tue, 14 Jul 2020 06:35:26 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9650940F7FE5;
+        Tue, 14 Jul 2020 06:35:55 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Vinod Koul <vkoul@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 1/9] dt-bindings: iommu: renesas,ipmmu-vmsa: Add r8a774e1 support
-Date:   Mon, 13 Jul 2020 22:35:12 +0100
-Message-Id: <1594676120-5862-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 8/9] dt-bindings: net: renesas,ravb: Add support for r8a774e1 SoC
+Date:   Mon, 13 Jul 2020 22:35:19 +0100
+Message-Id: <1594676120-5862-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -55,25 +55,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+
 Document RZ/G2H (R8A774E1) SoC bindings.
 
+Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml | 1 +
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-index e9d28a4060fa..6bfa090fd73a 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
-@@ -32,6 +32,7 @@ properties:
-           - enum:
-               - renesas,ipmmu-r8a774a1 # RZ/G2M
-               - renesas,ipmmu-r8a774b1 # RZ/G2N
-+              - renesas,ipmmu-r8a774e1 # RZ/G2H
-               - renesas,ipmmu-r8a774c0 # RZ/G2E
-               - renesas,ipmmu-r8a7795  # R-Car H3
-               - renesas,ipmmu-r8a7796  # R-Car M3-W
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 032b76f14f4f..9119f1caf391 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -21,6 +21,7 @@ Required properties:
+       - "renesas,etheravb-r8a774a1" for the R8A774A1 SoC.
+       - "renesas,etheravb-r8a774b1" for the R8A774B1 SoC.
+       - "renesas,etheravb-r8a774c0" for the R8A774C0 SoC.
++      - "renesas,etheravb-r8a774e1" for the R8A774E1 SoC.
+       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+       - "renesas,etheravb-r8a7796" for the R8A77960 SoC.
+       - "renesas,etheravb-r8a77961" for the R8A77961 SoC.
 -- 
 2.17.1
 
