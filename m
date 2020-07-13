@@ -7,63 +7,67 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F657C4345E
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46150C4345A
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA7F2067D
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2303B2065F
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ffV2wfG6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1WN0X53"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbgGMOuq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32778 "EHLO
+        id S1730143AbgGMOtq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 10:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730163AbgGMOtt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:49 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30967C061794
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id j4so16864281wrp.10
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:49 -0700 (PDT)
+        with ESMTP id S1730132AbgGMOtn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:43 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B8DC061755
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:43 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id l17so13607029wmj.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UJLr4motzozLLZVc3EnKW+yD22+TDxcp2fROtmtF5gQ=;
-        b=ffV2wfG6IyKlQhh4ojP0OpROd3zfmjD+C4pYAmtbAXq4j6GZtxD6TiszNh4An3QJf4
-         NGNnaeR2/2VYMJ9FaNC+c/5ryX9WLH9Daxd04bFGmdsF6Gpi6SATHGs2me2JKpYuWYKF
-         jnrA8JdgGfS88n43twjaoFPHZnCPGX43M2tsyI4St6KayxdGzlrsm4uLUy0cawmjSvV7
-         I/AJar4yTMVd9sY3JIzg69QyCnD4rMMG8Jx4cRw8zWBoGH54GmyiL+dHdLYO4fBpUWui
-         0qKf43y9AOBFVB/rmDlCf+igCPxbIt4yycZ9jnoIblUJX5vVpVhTvQjXrbCUVPF+2CT+
-         edxw==
+        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
+        b=U1WN0X53vbT4MvhLNRle/Pi49aoyXp8l/FZ9qbfpELXVGRvwteyYQ59YIS581Rx0Xp
+         q5UQZNPMwm4gbhy2sGnmyUhu+w/WSyDy8SZwq5gc7YFHp11qt2IevOUpEE0bd15DH/8G
+         F0tLllXkjBOGT94L/jRw4tRXmh6xUXZ42RV3KnfYe23GHPr8WB7Izy+DlVxJwv3uNcH3
+         spPTiORGerSbhn1gcD3+8ZhgKGlr3WTLewuQPjCmNoxXAWdMLet04UicbcIPSh9F7Dh8
+         3s3nrgW8efZiHQaPyILOHhsm0gTtGvlZ75SUX8Oby7yTHrd4vKHUhLfTND2frhv/Mv0y
+         EjZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UJLr4motzozLLZVc3EnKW+yD22+TDxcp2fROtmtF5gQ=;
-        b=VmAaWG3wfANmJPSNkE7N2NS9VN6AwHaPnH1/mBd/AgCG8l+9j184YJ7myxqlvEZftE
-         sh7un/OR7ImZT9R3/ZQzP0uINwGef4H3GSAcI6JhVCQ6fctjJhKwoMxdvwKLZDRc44jN
-         8FjnNVHOjPd0GVTt5UKwkRp5Cfa8gMNtDOU1NN5Wgdx9rCC301ID3Y2AAYVF9bIKDi49
-         uv6IAkSu7yA8gb3WhIcmW11q3NBPcXFeMK/LW/wUbuWMW/qVW95R7ttjV3Uf+8fiTt1p
-         koiAc1wXLfSEAmus5jfWCgHjMisE8X/QQFn2SGnsK3OJTZ1zGAmArKIzcpLOXCB+t/wi
-         9bmg==
-X-Gm-Message-State: AOAM530XFh/7j5zpGQwwN96Y7QDxqlgZjMVltfqbWa6yGSxN//AaAeGt
-        eIlH422a+FePiTJzJoF7ZDUjgw==
-X-Google-Smtp-Source: ABdhPJyFbdFGX2jy7CgZX2JIh5a+6wH+BQCwffGTPYoRYHrgk7TjVwDNaORLzk1nL642HOjfdNBdpg==
-X-Received: by 2002:adf:ff8c:: with SMTP id j12mr79223166wrr.230.1594651787968;
-        Mon, 13 Jul 2020 07:49:47 -0700 (PDT)
+        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
+        b=TryiporHqG311cGIybrKdzk8dVLuDyc39eNHgD5TipCzIL8REVA2jSfvCruyLSzIuT
+         j7tL4gUV1FtpVFFWLSW3+TFOCQLhjqnkwDxi5H1O9ScY3oDD23gPu7mIRjpuk9NCTLJE
+         48KNboF5/W1ZdYKVQb77wmXW0HSnbzMVV8g0irBGXbGtb5R2QAL6c/LoyLoO+pCyPtm8
+         7HOhgMDaLoa7vlGy3r29hHS7D80z4bV0ZXY9efOPwwFMy1D+Xw88CrQPd9c2a6T2GXgx
+         22xQpM8WtX+2+3Nh8g4V7q+LWFuNcYb2Nw0g97GoAkQaBBKqvL/QyNPJor40r+shLeV3
+         qcTg==
+X-Gm-Message-State: AOAM532RpCZs4kTEmWLfbGH4hIfh+vrZ982E29TRLfEyW7VIdjohblGU
+        /xx3OYY6sdZaE1UNkt7paMHJsg==
+X-Google-Smtp-Source: ABdhPJxoVsuUxdjQrc3CM3WbousZGi/1/+jQn4P+0A7iaqIru6LA4EJm04rEqpNRn1DujBpLMkOpjw==
+X-Received: by 2002:a1c:c242:: with SMTP id s63mr311154wmf.146.1594651781752;
+        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.47
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:47 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 14/25] pinctrl: pinconf-generic: Add function parameter description 'pctldev'
-Date:   Mon, 13 Jul 2020 15:49:19 +0100
-Message-Id: <20200713144930.1034632-15-lee.jones@linaro.org>
+        Lee Jones <lee.jones@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 08/25] pinctrl: samsung: pinctrl-s3c64xx: Fix formatting issues
+Date:   Mon, 13 Jul 2020 15:49:13 +0100
+Message-Id: <20200713144930.1034632-9-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -74,33 +78,53 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix a spelling/typo while we're here.
+Kerneldoc struct titles must be followed by whitespace else the
+checker gets confused.
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/pinconf-generic.c:242: warning: Function parameter or member 'pctldev' not described in 'pinconf_generic_parse_dt_config'
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c:212: warning: cannot understand function prototype: 'struct s3c64xx_eint0_domain_data '
 
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/pinconf-generic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index dfef471201f60..1e225d5139888 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -231,9 +231,10 @@ static void parse_dt_cfg(struct device_node *np,
-  * pinconf_generic_parse_dt_config()
-  * parse the config properties into generic pinconfig values.
-  * @np: node containing the pinconfig properties
-+ * @pctldev: pincontrol device
-  * @configs: array with nconfigs entries containing the generic pinconf values
-  *           must be freed when no longer necessary.
-- * @nconfigs: umber of configurations
-+ * @nconfigs: number of configurations
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+index f97f8179f2b1b..b8166e3fe4cef 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -193,7 +193,7 @@ static const struct samsung_pin_bank_type bank_type_2bit_alive = {
+ 	}
+ 
+ /**
+- * struct s3c64xx_eint0_data: EINT0 common data
++ * struct s3c64xx_eint0_data - EINT0 common data
+  * @drvdata: pin controller driver data
+  * @domains: IRQ domains of particular EINT0 interrupts
+  * @pins: pin offsets inside of banks of particular EINT0 interrupts
+@@ -205,7 +205,7 @@ struct s3c64xx_eint0_data {
+ };
+ 
+ /**
+- * struct s3c64xx_eint0_domain_data: EINT0 per-domain data
++ * struct s3c64xx_eint0_domain_data - EINT0 per-domain data
+  * @bank: pin bank related to the domain
+  * @eints: EINT0 interrupts related to the domain
   */
- int pinconf_generic_parse_dt_config(struct device_node *np,
- 				    struct pinctrl_dev *pctldev,
+@@ -215,7 +215,7 @@ struct s3c64xx_eint0_domain_data {
+ };
+ 
+ /**
+- * struct s3c64xx_eint_gpio_data: GPIO EINT data
++ * struct s3c64xx_eint_gpio_data - GPIO EINT data
+  * @drvdata: pin controller driver data
+  * @domains: array of domains related to EINT interrupt groups
+  */
 -- 
 2.25.1
 
