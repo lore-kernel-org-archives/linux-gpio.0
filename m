@@ -7,66 +7,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB77C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CA4C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9914E20738
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A63A02067D
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QiHDfDTG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vrMUz80P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbgGMOu2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32830 "EHLO
+        id S1730299AbgGMOuc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 10:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730205AbgGMOt5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:57 -0400
+        with ESMTP id S1730189AbgGMOty (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 10:49:54 -0400
 Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4214FC061794
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:57 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a6so16866602wrm.4
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F2FC061794
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:53 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id f7so16888062wrw.1
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 07:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MGVkPRp/+I1joXVdv6caEP06X1PF0rNG8kbo7/M1JBk=;
-        b=QiHDfDTGlAj/YS7C4u7kOc9JwEFDw3G0oGclidDhkGG3zqi1U3reU5/sFhI47sYphg
-         HeiZUEn/8P25l8ozcJNgk5z6bsdiI5c07DjWLBg3+bY/4kLVz2Q32r9LNafPsNTobcQS
-         qkH5Tm1h8TN6RDaCWLJT4g0EX6g+c1CeY4vDz8SsfIPEXVAwMrje1zKdA1KWa5H882OL
-         SZ1FPlR19YfURzt9hxk5H7HI8ywDaJ31gFsUOPmNz7070R9N6rjz0rom3oYN//QTvb+l
-         YmXn4Dpd0zghrInn3FZCpnIZl93yJoeIcYXPsxF9WdG+1WSYAZxAXJm+ILAFRi3bECqk
-         v7Wg==
+        bh=uvpgFvNf+4M0KT7vkEQvPhnEsrG9RGiG3boyv4KDsto=;
+        b=vrMUz80PGSbZwbmV+F7PV6yfcb4vbzA1BBwlGt7IOvaW2FLCyErAgUbgh3NA5AFTZT
+         rg3rxyp5lxg+M2A/pXuyCzTDM3TWNfmw0x+5eph50aQQIqiP44NLYEPZwhNtkqrXaN+n
+         EBxjJwdd3KlXlVgXOULY8K+XRuA45z14kJsz2+GoJaD2bwX6l1UPH0l0FesqMXKQO5qy
+         gRs5C5COfiGZqTR7lsqJHfO8L0wnv0kfJw65ZLZ5Rro4d6AhtvU+udBUrlxwgynjyKH0
+         cVH1XUiAqpYNFua+pzHpcO5Dl/yZC8SC7cpvPSId9A4hOyJnKWA/htNJMI3HFuLIH4C9
+         DqLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MGVkPRp/+I1joXVdv6caEP06X1PF0rNG8kbo7/M1JBk=;
-        b=KD9FakPrxGTl86x2SUa4z53nr1cSv7ka2GM20T8LjnYeGUyHGNhuFUHcn9Wg8lgpLy
-         U1tB+3k/rwRyPt99oE1+x4gPRYnzzz6PxtdudRfHcvBboAPn7SpkZwqr/wsNLI7dUt+E
-         HCSytM4Ybj9bMfb7vsoILUH1okSsUmjW4/kM1CqyRWFPuKj/g3WkD+umNqQYbKPbmV9y
-         CH33EV1K6SuDfxRLdVmgHLPFpSZgjcAJFvoXUWmeY5I8Amg/BExdSKMmS1wUp+5mTbbq
-         6eNRFP49u64/UxtyLdi8WqISb8NzsoNcNUiGLgHZ8nWCIKtC0m/9wewaT9O22f6Ja0lW
-         gteg==
-X-Gm-Message-State: AOAM532YIktgJJvgS3yZhSIIjeqyoaso3732HHCG6uilV6UgZEa4vSV5
-        2N86eT4jfIF0/i0mF95kPpu2JA==
-X-Google-Smtp-Source: ABdhPJx9Drg7tITXelXrTGkjdiA4cztDP4a+w06kMhyQ79IF54jdT4nucp1hYkuJYWkR3yVfSNeQhA==
-X-Received: by 2002:a5d:6a90:: with SMTP id s16mr78126603wru.8.1594651796017;
-        Mon, 13 Jul 2020 07:49:56 -0700 (PDT)
+        bh=uvpgFvNf+4M0KT7vkEQvPhnEsrG9RGiG3boyv4KDsto=;
+        b=c58F8hk5wrZhOHNUGQZOLCoIyB11AhHZPaAFB7ttbwxbpXYg/EFtFrXa+Cutu7Z7DI
+         Vzlq+LkuKIUq1p9Y94bwK7cJOhDP3OGcFFksytGCc2RxUfsettONPG+yyqo52Pl/4QpS
+         ulvuYR9kCAqHW41Nw8yUfyOyBOb9ftjQd5KruREyLHnovMXBUAvMDlQFQLOciY+qbTAC
+         CB0jvFF7bJ/eLFGbv8tvcdXp+tq7scfqhdj+4pHNGKdGQOUspGLt77jKNCA/EeYWlLXQ
+         Tr5hqJnS1TAaWuSTFMKJlNQJISnlDMV0ioHGIDSipUZrPKVJBo6fY/hHmqsO6iGbaeZQ
+         +85g==
+X-Gm-Message-State: AOAM533GTLuqg7QDrjALEAqRGIlR1G6ZQtMkwTQxvLvJDbiDuH4h5FHy
+        1IqmRHIuEkfGqeGNDRGpD1dZ2g==
+X-Google-Smtp-Source: ABdhPJxU7YOLp/XuHhUGNd2gC1eVG/AmN1zoITJziRxn5KRKhhZfe4M9AxA1e308qH/mPnzjiVsCOA==
+X-Received: by 2002:adf:9524:: with SMTP id 33mr79455557wrs.156.1594651792520;
+        Mon, 13 Jul 2020 07:49:52 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.55
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:55 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:52 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        linux-omap@vger.kernel.org
-Subject: [PATCH 21/25] pinctrl: pinctrl-single: Fix struct/function documentation blocks
-Date:   Mon, 13 Jul 2020 15:49:26 +0100
-Message-Id: <20200713144930.1034632-22-lee.jones@linaro.org>
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 18/25] pinctrl: pinctrl-bm1880: Rename ill documented struct attribute entries
+Date:   Mon, 13 Jul 2020 15:49:23 +0100
+Message-Id: <20200713144930.1034632-19-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -77,106 +75,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add some missing attributes/parameter descriptions, remove other
-superfluous ones, add struct header titles and fix misspellings.
-
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/pinctrl-single.c:50: warning: Function parameter or member 'mask' not described in 'pcs_func_vals'
- drivers/pinctrl/pinctrl-single.c:97: warning: Function parameter or member 'conf' not described in 'pcs_function'
- drivers/pinctrl/pinctrl-single.c:97: warning: Function parameter or member 'nconfs' not described in 'pcs_function'
- drivers/pinctrl/pinctrl-single.c:659: warning: Function parameter or member 'pin_pos' not described in 'pcs_add_pin'
- drivers/pinctrl/pinctrl-single.c:985: warning: Excess function parameter 'pctldev' description in 'pcs_parse_one_pinctrl_entry'
- drivers/pinctrl/pinctrl-single.c:1357: warning: Cannot understand  * @reg:        virtual address of interrupt register
- drivers/pinctrl/pinctrl-single.c:1377: warning: Function parameter or member 'pcs_soc' not described in 'pcs_irq_set'
- drivers/pinctrl/pinctrl-single.c:1377: warning: Function parameter or member 'irq' not described in 'pcs_irq_set'
- drivers/pinctrl/pinctrl-single.c:1377: warning: Function parameter or member 'enable' not described in 'pcs_irq_set'
- drivers/pinctrl/pinctrl-single.c:1458: warning: Function parameter or member 'pcs_soc' not described in 'pcs_irq_handle'
- drivers/pinctrl/pinctrl-single.c:1458: warning: Excess function parameter 'pcs_irq' description in 'pcs_irq_handle'
- drivers/pinctrl/pinctrl-single.c:1506: warning: Excess function parameter 'irq' description in 'pcs_irq_chain_handler'
+ drivers/pinctrl/pinctrl-bm1880.c:40: warning: Function parameter or member 'pctrldev' not described in 'bm1880_pinctrl'
+ drivers/pinctrl/pinctrl-bm1880.c:40: warning: Function parameter or member 'pinconf' not described in 'bm1880_pinctrl'
 
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: linux-omap@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/pinctrl-single.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-bm1880.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index e6d1cf25782ce..542578d0bda2d 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -42,6 +42,7 @@
-  * struct pcs_func_vals - mux function register offset and value pair
-  * @reg:	register virtual address
-  * @val:	register value
-+ * @mask:	mask
+diff --git a/drivers/pinctrl/pinctrl-bm1880.c b/drivers/pinctrl/pinctrl-bm1880.c
+index d1a7d98367870..a8e267237435f 100644
+--- a/drivers/pinctrl/pinctrl-bm1880.c
++++ b/drivers/pinctrl/pinctrl-bm1880.c
+@@ -22,12 +22,12 @@
+ /**
+  * struct bm1880_pinctrl - driver data
+  * @base:	Pinctrl base address
+- * @pctrl:	Pinctrl device
++ * @pctrldev:	Pinctrl device
+  * @groups:	Pingroups
+  * @ngroups:	Number of @groups
+  * @funcs:	Pinmux functions
+  * @nfuncs:	Number of @funcs
+- * @pconf:	Pinconf data
++ * @pinconf:	Pinconf data
   */
- struct pcs_func_vals {
- 	void __iomem *reg;
-@@ -83,6 +84,8 @@ struct pcs_conf_type {
-  * @nvals:	number of entries in vals array
-  * @pgnames:	array of pingroup names the function uses
-  * @npgnames:	number of pingroup names the function uses
-+ * @conf:	array of pin configurations
-+ * @nconfs:	number of pin configurations available
-  * @node:	list node
-  */
- struct pcs_function {
-@@ -653,6 +656,7 @@ static const struct pinconf_ops pcs_pinconf_ops = {
-  * pcs_add_pin() - add a pin to the static per controller pin array
-  * @pcs: pcs driver instance
-  * @offset: register offset from base
-+ * @pin_pos: unused
-  */
- static int pcs_add_pin(struct pcs_device *pcs, unsigned offset,
- 		unsigned pin_pos)
-@@ -959,7 +963,6 @@ static int pcs_parse_pinconf(struct pcs_device *pcs, struct device_node *np,
- 
- /**
-  * pcs_parse_one_pinctrl_entry() - parses a device tree mux entry
-- * @pctldev: pin controller device
-  * @pcs: pinctrl driver instance
-  * @np: device node of the mux entry
-  * @map: map entry
-@@ -1353,7 +1356,9 @@ static int pcs_add_gpio_func(struct device_node *node, struct pcs_device *pcs)
- 	}
- 	return ret;
- }
-+
- /**
-+ * struct pcs_interrupt
-  * @reg:	virtual address of interrupt register
-  * @hwirq:	hardware irq number
-  * @irq:	virtual irq number
-@@ -1368,6 +1373,9 @@ struct pcs_interrupt {
- 
- /**
-  * pcs_irq_set() - enables or disables an interrupt
-+ * @pcs_soc: SoC specific settings
-+ * @irq: interrupt
-+ * @enable: enable or disable the interrupt
-  *
-  * Note that this currently assumes one interrupt per pinctrl
-  * register that is typically used for wake-up events.
-@@ -1448,7 +1456,7 @@ static int pcs_irq_set_wake(struct irq_data *d, unsigned int state)
- 
- /**
-  * pcs_irq_handle() - common interrupt handler
-- * @pcs_irq: interrupt data
-+ * @pcs_soc: SoC specific settings
-  *
-  * Note that this currently assumes we have one interrupt bit per
-  * mux register. This interrupt is typically used for wake-up events.
-@@ -1496,7 +1504,6 @@ static irqreturn_t pcs_irq_handler(int irq, void *d)
- 
- /**
-  * pcs_irq_handle() - handler for the dedicated chained interrupt case
-- * @irq: interrupt
-  * @desc: interrupt descriptor
-  *
-  * Use this if you have a separate interrupt for each
+ struct bm1880_pinctrl {
+ 	void __iomem *base;
 -- 
 2.25.1
 
