@@ -2,128 +2,92 @@ Return-Path: <SRS0=oSLa=AY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E54C433E2
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3132BC433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1CF2065D
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:25:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j/XT5yyF"
+	by mail.kernel.org (Postfix) with ESMTP id 11F0E20C56
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594680903;
+	bh=FMnuW3gwBpdtYA8wx79LJuuMU1bOlbQ2lktPIstEzKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JG2m0KZf4Z+q7NRHzlZNel+jJLh2JeDG5aGyjdIWwm2oNHrfSjKR0+VTXF8rKW1Ub
+	 A5keJNjiskPLiycTAZNdZBSTxuwXJ+CNp6oQu+DZjYs+vrEANb0OjCjXvngT6Bo6lX
+	 kJbnSzv2GtxKvdqR82cMO7FCzYXu0+a10SWTG6vU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgGMWZR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 18:25:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbgGMWZR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 18:25:17 -0400
-Received: from mail-vk1-xa42.google.com (mail-vk1-xa42.google.com [IPv6:2607:f8b0:4864:20::a42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3649DC061755
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:25:17 -0700 (PDT)
-Received: by mail-vk1-xa42.google.com with SMTP id 66so3204281vka.13
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q6bh/1yGmZao7f6eku70ZfEjUaW4mF5NYpD2HrmZqeI=;
-        b=j/XT5yyFl2LbkH2lZtHlwHq+F8pmbt1Tm85qFPI0z7iEFb3EPc0mzXcrqsqbTS90ZE
-         m+To0qUhXZYncSMgOThqPs0W9mh1DSWxfcv8lMcNrpkhXIgav4O5Rdvp3cc2hXPZIt4/
-         scL1jsPMSGprQyr2BJIXvr5HxYY7wWu9lH3s8=
+        id S1726600AbgGMWy6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 18:54:58 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:39590 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbgGMWy5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 18:54:57 -0400
+Received: by mail-il1-f195.google.com with SMTP id k6so12673972ili.6;
+        Mon, 13 Jul 2020 15:54:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q6bh/1yGmZao7f6eku70ZfEjUaW4mF5NYpD2HrmZqeI=;
-        b=iKf1Me+z013gJdmQa7uUqy4z0VNHyMVojyq+IXiqvAM1q67VvNwjtfOzJJf49NlzsU
-         H/doG1ZPXotPz9axWXkyv6gW3Le7xReQiVPyfz4OoISUQgQuJJcgcabU0cdg0QorDS9d
-         nm1202Qg2MbYMtm08hI5XC50vUCoWNKrxlihOgEp/mn2JgtTy2VltkNz6cZ4CCvQKri2
-         C+2dPVCoQHFF97k0IGX+SA0l9h6E4IVJrtHAGMhoyc5fShDRTTp/XbkcpYNX0oWjxFMY
-         rDfcUMT45mXjsE51Fl/r1iXoy/0gAq+U4db3tFMNWJz+9q3+8QQI+Iz6/oD6y/P/98jo
-         /rWA==
-X-Gm-Message-State: AOAM530vGxFisMnzpa148kxVXWMIQmrb9aHRD5V/3JR1oDe04ga1nwu0
-        dQSxHmgyphgH0tvKi77wG8QtLVc3qBE=
-X-Google-Smtp-Source: ABdhPJwTGAh9Qi8CJMNs99gfuj3Fs0VNvOgDHCJUmrDzHndz4cP8oyV+KnXbp7QfLyBtNVFg2iz0XA==
-X-Received: by 2002:ac5:cbee:: with SMTP id i14mr1761147vkn.6.1594679116219;
-        Mon, 13 Jul 2020 15:25:16 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id a24sm1965871uap.1.2020.07.13.15.25.15
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2020 15:25:16 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id t187so3219472vke.5
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:25:15 -0700 (PDT)
-X-Received: by 2002:a05:6102:30b5:: with SMTP id y21mr1130601vsd.42.1594678673804;
- Mon, 13 Jul 2020 15:17:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Lx27nXKsEHDAQ3zBwCOzlK62p9t1j+kSDxv2fkLBnl0=;
+        b=omMEP7ix62sxfXYmZON9ompwOwJNPJ54PXm7iQ/l02jxQVcl/DBzLjFg3ULfadJeqn
+         RAvoVohi4oCVIWPfRG0BJxLmm7GTWUE+bKyJ+CqvDtk+G6XnNyiksO2NbTXJMtiPDYKy
+         ncivOCPxMNbhCfoBjRsjmbUDmbOEag6BAQpvnP71ti0FudDRVkHVIwln2swv/Q5YMF1G
+         1hlpd7WEWZW5E1lwjeasJg/c7UsQHxTaXQF+tFunHVCN/K9SxY7pcLVQnoWLS6drc1xH
+         YMnO7fYFMLYkuGCtExs3plDnqPZs6iYmOWyTivnccKl68dtqxAVhipvdL2uJZg9SuXjE
+         05gw==
+X-Gm-Message-State: AOAM533rw92vFKakVDVO0Oxj4DKBtI3vlLUVbN5CsnbWzhvT0yGpz9wm
+        Ejj0GN5xuT6lwEdQsti3YQ==
+X-Google-Smtp-Source: ABdhPJxKGIcBl7P0g7fSqwC5X3R2fzaMf2mpBeKTxIr+o8fUnEkwxEhRcUXiVhulNMpWIs3AEYRpIg==
+X-Received: by 2002:a92:58d6:: with SMTP id z83mr2086323ilf.186.1594680896394;
+        Mon, 13 Jul 2020 15:54:56 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id t5sm8807373iov.53.2020.07.13.15.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 15:54:55 -0700 (PDT)
+Received: (nullmailer pid 874330 invoked by uid 1000);
+        Mon, 13 Jul 2020 22:54:53 -0000
+Date:   Mon, 13 Jul 2020 16:54:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     mturquette@baylibre.com, linus.walleij@linaro.org,
+        clabbe@baylibre.com, liyong@allwinnertech.com,
+        srinivas.kandagatla@linaro.org, icenowy@aosc.io,
+        p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
+        gregory.clement@bootlin.com, sboyd@kernel.org,
+        amit.kucheria@verdurent.com, bage@linutronix.de,
+        tglx@linutronix.de, linux-pm@vger.kernel.org,
+        daniel.lezcano@linaro.org, anarsoul@gmail.com, megous@megous.com,
+        tiny.windzz@gmail.com, lee.jones@linaro.org, rui.zhang@intel.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        wens@csie.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, mripard@kernel.org, stefan@olimex.com,
+        huangshuosheng@allwinnertech.com, jason@lakedaemon.net
+Subject: Re: [PATCH v3 01/16] dt-bindings: clk: sunxi-ccu: add compatible
+ string for A100 CCU and R-CCU
+Message-ID: <20200713225453.GA874275@bogus>
+References: <20200708071942.22595-1-frank@allwinnertech.com>
+ <20200708071942.22595-2-frank@allwinnertech.com>
 MIME-Version: 1.0
-References: <1592818308-23001-1-git-send-email-mkshah@codeaurora.org> <1592818308-23001-3-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1592818308-23001-3-git-send-email-mkshah@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 13 Jul 2020 15:17:42 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WcKB0AbcYNymAbfvDac-8c3uGgOn3B1Q-U4d3ZrvGuag@mail.gmail.com>
-Message-ID: <CAD=FV=WcKB0AbcYNymAbfvDac-8c3uGgOn3B1Q-U4d3ZrvGuag@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] pinctrl: qcom: Add msmgpio irqchip flags
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        LinusW <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Srinivas Rao L <lsrao@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200708071942.22595-2-frank@allwinnertech.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
-
-On Mon, Jun 22, 2020 at 2:32 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->
-> Add irqchip specific flags for msmgpio irqchip to mask non wakeirqs
-> during suspend and mask before setting irq type.
->
-> Masking before changing type should make sure any spurious interrupt
-> is not detected during this operation.
->
-> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+On Wed, 08 Jul 2020 15:19:27 +0800, Frank Lee wrote:
+> This patch adds binding to a100's ccu clock and r-ccu clock.
+> 
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
 > ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 2419023..b909ffe 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1143,6 +1143,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->         pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
->         pctrl->irq_chip.irq_set_affinity = msm_gpio_irq_set_affinity;
->         pctrl->irq_chip.irq_set_vcpu_affinity = msm_gpio_irq_set_vcpu_affinity;
-> +       pctrl->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND
+>  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml         | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
 
-I haven't tested it, but with my suggestion in patch #4 to use
-irq_suspend and irq_resume, I presume adding IRQCHIP_MASK_ON_SUSPEND
-is no longer needed?
-
-
-> +                               | IRQCHIP_SET_TYPE_MASKED;
-
-IIUC adding "IRQCHIP_SET_TYPE_MASKED" is unrelated to the rest of this
-series, right?
-
--Doug
+Reviewed-by: Rob Herring <robh@kernel.org>
