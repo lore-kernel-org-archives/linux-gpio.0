@@ -2,72 +2,71 @@ Return-Path: <SRS0=oSLa=AY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAFAC433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42F6C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C836C20C56
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37002089D
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Jul 2020 22:23:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cSeqsacE"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j5dRr0Sn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgGMWTJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Jul 2020 18:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45668 "EHLO
+        id S1726828AbgGMWVk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Jul 2020 18:21:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbgGMWSK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 18:18:10 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A155C061755
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:18:10 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id a17so7501235vsq.6
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:18:10 -0700 (PDT)
+        with ESMTP id S1726504AbgGMWR1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2020 18:17:27 -0400
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A325C08C5DB
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:17:27 -0700 (PDT)
+Received: by mail-vs1-xe43.google.com with SMTP id u133so7488953vsc.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QHfgfv2mP6dp6kaJTVFYuFviBEEN6wpOON6T0JxtLVk=;
-        b=cSeqsacEiX0VNBd7mC9bj3A8JzJZlyD3j4cmXLuYevvPoeKEk8W+U5HnPEomxpm5bo
-         LRaqdmOo5RVCRntAP5RSqQ9O5u+EP+mswHCf4O+Kth2ygENQ1VWCkbAMFQ+01IILIQun
-         O0GExOUmlRIqEf/OfFr3Ctc6cYjV3RMpNtbgU=
+        bh=+LFCA43BGkxjqrYbBGY+idjvRsLf5O6PPbK27q7D0Bw=;
+        b=j5dRr0SnqpA2dV+P7/JOdcquxtibjP73/WoGMAUQ6ir6wX9NsomAfNw8Cp/IweTjcr
+         k7ddPDpour2+rZA3/zGoLTfyDEB+kLj1pLDMU2vXS08vsdr8rr8wKFKvlwgf42ki3KaP
+         Bj0xMElNbV/1LB37z0Bm+sogFPP5R7uwghD0U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QHfgfv2mP6dp6kaJTVFYuFviBEEN6wpOON6T0JxtLVk=;
-        b=eTjiTgq58Pz6wqci7i2wgJ1Mbkrs5ngkF6ud2v1GgHNEQh5bTt2nlg/m+wu/GqJB8Y
-         pjQTv5yfxquoKBwCxnUPLNCkU0nZdAbBeVbW7CPxZHbDDD/fokhpYvvi5IpTsbjz20E1
-         8KZHnA/gvB6mBnwA2lPGbNaK4H974m6mFads97T5x8xRk7pznY+1RERyffjH0GRTi60F
-         jt78OYNAmr92FFTBORptGHF9uVALwlCHxUvsyQAFH/gp6rK4U2kNZu3pmB4myb7XxPyV
-         rxNyMrEv4IgcniHQY1vtdFAUhPVhYG7ID8zJfnTWQq0yJvNQ64hqzfEdlU57TjyCPwrY
-         jXpw==
-X-Gm-Message-State: AOAM531cKqj5NMf8PFIICc64YOvtC0J/rdrGQAxcGmy4Tc3O5P6cfbSe
-        DfjW/EkQkgvIKPBXQ/VM6RSKsAQ14zo=
-X-Google-Smtp-Source: ABdhPJyddhR+zMT5DnLHqWrI+OGzzjzk8/38vejyFDu2soHiKLZSXtSbh6QkcWam3OC2MHDua2uaUg==
-X-Received: by 2002:a67:f74f:: with SMTP id w15mr1215202vso.53.1594678689303;
-        Mon, 13 Jul 2020 15:18:09 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id i184sm1841294vsc.18.2020.07.13.15.18.07
+        bh=+LFCA43BGkxjqrYbBGY+idjvRsLf5O6PPbK27q7D0Bw=;
+        b=cHk8hb7+XPYShUIsd/7O/E9gA1lwPMKvk4JujyOyc7xiszIW0OUCMi0dgeox4zfJIu
+         Lw/zpK5pwVASsua92l9riNm6b2MOgEBvSZbkxp5GCOXf9XkDoluUrgiqC6A7Til6giHw
+         eTbvlLcOfkCEOZrbvQdCf/SX+897xVwsQtOGRTm5SxJJOPBUpNXnmOiKi0B84ckb0+td
+         HK9vo52cPgkJ5vx/Kqd27VYuFWWcxmZNh3wsdID32/l+fWicBwW+WSLN4W0gUzJBPVgY
+         rW509oSCi6Qz3/LtM8X0cq28Q8KqEy0vINIb8A2Fl+Q6JF2cinyBxT1WXD76YV1XgR0C
+         21lw==
+X-Gm-Message-State: AOAM531zHkzNI8PdBMQ3hH267GAc62U6iSDf57R5CiNyVo2SOKClE+BU
+        L4e08fiV60Bi2ql4uqbzojdwfKF3k5g=
+X-Google-Smtp-Source: ABdhPJxexhiM6XuQVYmXq++HEWMprulLEneiN38NfsEYPc4w4z7mjKKSKwRgHEzUafX1tpUIcYtnqw==
+X-Received: by 2002:a05:6102:99:: with SMTP id t25mr1198756vsp.210.1594678646257;
+        Mon, 13 Jul 2020 15:17:26 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id e18sm1859480vsp.7.2020.07.13.15.17.23
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2020 15:18:08 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id k7so7505889vso.2
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:18:07 -0700 (PDT)
-X-Received: by 2002:a67:e046:: with SMTP id n6mr1294693vsl.6.1594678686784;
- Mon, 13 Jul 2020 15:18:06 -0700 (PDT)
+        Mon, 13 Jul 2020 15:17:25 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id g4so4741336uaq.10
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2020 15:17:23 -0700 (PDT)
+X-Received: by 2002:ab0:150c:: with SMTP id o12mr1419016uae.90.1594678643349;
+ Mon, 13 Jul 2020 15:17:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <1592818308-23001-1-git-send-email-mkshah@codeaurora.org> <1592818308-23001-2-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1592818308-23001-2-git-send-email-mkshah@codeaurora.org>
+References: <1592818308-23001-1-git-send-email-mkshah@codeaurora.org> <1592818308-23001-6-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1592818308-23001-6-git-send-email-mkshah@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 13 Jul 2020 15:17:55 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WcbEH2O+7xqCyDfrPR0+g+MpWWsgORNPepC=VrhOanFQ@mail.gmail.com>
-Message-ID: <CAD=FV=WcbEH2O+7xqCyDfrPR0+g+MpWWsgORNPepC=VrhOanFQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] pinctrl: qcom: Remove irq_disable callback from
- msmgpio irqchip
+Date:   Mon, 13 Jul 2020 15:17:11 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X=0yqDMeWSUAM4D6o_6JsOU4hm8Q2XFbOSEVQcRzRN6A@mail.gmail.com>
+Message-ID: <CAD=FV=X=0yqDMeWSUAM4D6o_6JsOU4hm8Q2XFbOSEVQcRzRN6A@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] irqchip: qcom-pdc: Reset all pdc interrupts during init
 To:     Maulik Shah <mkshah@codeaurora.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Marc Zyngier <maz@kernel.org>,
@@ -92,53 +91,89 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi,
 
-On Mon, Jun 22, 2020 at 2:32 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+On Mon, Jun 22, 2020 at 2:33 AM Maulik Shah <mkshah@codeaurora.org> wrote:
 >
-> The gpio can be marked for wakeup and drivers can invoke disable_irq()
-> during suspend, in such cases unlazy approach will also disable at HW
-> and such gpios will not wakeup device from suspend to RAM.
+> Clear previous kernel's configuration during init by resetting
+> all interrupts in enable bank to zero.
 >
-> Remove irq_disable callback to allow gpio interrupts to lazy disabled.
-> The gpio interrupts will get disabled during irq_mask callback.
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 > ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 13 -------------
->  1 file changed, 13 deletions(-)
+>  drivers/irqchip/qcom-pdc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+> index 8beb6f7..11a9d3a 100644
+> --- a/drivers/irqchip/qcom-pdc.c
+> +++ b/drivers/irqchip/qcom-pdc.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>
+> +#define PDC_MAX_IRQS_PER_REG   32
+>  #define PDC_MAX_IRQS           168
+>  #define PDC_MAX_GPIO_IRQS      256
+>
+> @@ -339,6 +340,7 @@ static const struct irq_domain_ops qcom_pdc_gpio_ops = {
+>  static int pdc_setup_pin_mapping(struct device_node *np)
+>  {
+>         int ret, n;
+> +       u32 reg, max_regs, max_pins = 0;
+>
+>         n = of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32));
+>         if (n <= 0 || n % 3)
+> @@ -367,8 +369,19 @@ static int pdc_setup_pin_mapping(struct device_node *np)
+>                                                  &pdc_region[n].cnt);
+>                 if (ret)
+>                         return ret;
+> +               max_pins += pdc_region[n].cnt;
+>         }
+>
+> +       if (max_pins > PDC_MAX_IRQS)
+> +               return -EINVAL;
+> +
+> +       max_regs = max_pins / PDC_MAX_IRQS_PER_REG;
+> +       if (max_pins % PDC_MAX_IRQS_PER_REG)
+> +               max_regs++;
 
-While the code of this patch looks fairly correct to me (there's no
-need to implement the irq_disable callback and we can just rely on the
-masking), I'm slightly anxious about the description.  It almost feels
-like you're somehow relying on the laziness to "fix" your issue here.
-...but the laziness is supposed to just be an optimization.
-Specifically if an interrupt happens to fire at any point in time
-after a driver has called disable_irq() then it acts just like a
-non-lazy disable.
-
-Said another way, I think this is a valid thing for a driver to do and
-it should get woken up if the irq fires in suspend:
-
-disable_irq();
-msleep(1000);
-enable_irq_wake()
-
-Specifically if an IRQ comes in during that sleep then it will be just
-like you had a non-lazy IRQ.
+nit: max_regs = DIV_ROUND_UP(max_pins, PDC_MAX_IRQS_PER_REG)
 
 
-So while I'm for this patch, I'd suggest a simpler description
-(assuming my understanding is correct):
+> +       for (reg = 0; reg < max_regs; reg++)
+> +               pdc_reg_write(IRQ_ENABLE_BANK, reg, 0);
 
-There is no reason to implement irq_disable() and irq_mask().  Let's just
-use irq_mask() and let the rest of the core handle it.
+This doesn't feel correct to me, but maybe I'm misunderstanding the
+hardware (I don't think I have access to a reference manual).  Looking
+at the example in the bindings, I see:
 
+qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
 
-Also: it feels really weird to me that you're getting rid of the
-irq_disable() but keeping irq_enable().  That seems like asking for
-trouble, though I'd have to do more research to see if I could figure
-out exactly what might go wrong.  Could you remove your irq_enable()
-too?
+In that example we have mappings for PDC ports:
+0 - 93 (count = 94)
+94 - 108 (count = 15)
+115 - 121 (count = 7)
 
+Notice the slight discontinuity there.  I presume that discontinuity
+is normal / allowed?  If so, if there is enough of it then I think
+your math could be wrong, though with the example you get lucky and it
+works out OK.  It's easy to see the problem with a slightly different
+example:  Imagine that you had this:
 
--Doug
+0 - 33 (count = 34)
+94 - 108 (count = 15)
+115 - 121 (count = 7)
+
+...now max_pins = 56 and max_regs = 2.  So you'll init reg 0 and 1.
+...but (IIUC) you actually should be initting 0, 1, 2, and 3.
+
+I have no idea what might be in those discontinuous ranges and if it's
+always OK to clear, but (assuming it is) one fix is to put your
+clearing loop _inside_ the other "for" loop in this function, AKA:
+
+for (reg = pdc_region[n].pin_base / PDC_MAX_IRQS_PER_REG;
+     reg < DIV_ROUND_UP(pdc_region[n].pin_base + pdc_region[n].cnt),
+                        PDC_MAX_IRQS_PER_REG)
+     reg++)
+
+...or another option is to keep track of the max "pin_base + cnt" and
+loop from 0 to there?  I just don't know your hardware well enough to
+tell which would be right.
