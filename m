@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF05C4345F
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 14:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B23C43457
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 14:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18848206F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 14:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027F6206F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 14:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594737809;
-	bh=l8HeCmPkk//bGW1au8adPFQS7xsRUtU3zITNzOeRkHU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Rnb4GNvTwCAc86t97/dJvMRQLDMDedxNAX3Oa90iAu+QZsIiv4x/4pSv2sMHan9Zs
-	 JahvmP0wDsJaUSrPYeBrn4AiRjf0PPB4awtCCes53klvF+S9/cp7vz4t1mS3+WFU06
-	 bBtVV6gh2Rhv318QxDuQBOtPmE3GXMhu07qOji6c=
+	s=default; t=1594737867;
+	bh=78btAS2b9p8DJC0sX4zuScTVsYWLaTYOwHo8pPXDDHQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lng0imI1cb5r4zgMf9kw3E3cayS7HSA52GNlfpJtzxjs509qoBqT6gyaUMvCjduS7
+	 ggKqvZmV5zoEIOclcE+LsTOteCNl5briQMh+hM1Vr5WkKmM6Dz0Q7IOZ2iQ3qtghIw
+	 5ONkvaMJv1fmFXYYbUCzl/iiSUuwDj2kwJCGIn60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgGNOnY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Jul 2020 10:43:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55116 "EHLO mail.kernel.org"
+        id S1729623AbgGNOoA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Jul 2020 10:44:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725925AbgGNOjj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Jul 2020 10:39:39 -0400
+        id S1728910AbgGNOjU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Jul 2020 10:39:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 927B122525;
-        Tue, 14 Jul 2020 14:39:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33E5A22519;
+        Tue, 14 Jul 2020 14:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594737579;
-        bh=l8HeCmPkk//bGW1au8adPFQS7xsRUtU3zITNzOeRkHU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LewM5K8FieoSOGjR8PWwWvsLGmvgmkj4RjGCK1ON+WBq3bWWhPZRPGMJ+u8h43Tua
-         KNrO6lqO0OKsxWJ453Gh49vmmISkTKtpjL0im6Kbq5QC+B0b2xwhZXtWQx+45/VfrT
-         DzaW9aoREUsaRcxSA3kRb0zbheKhV7qCnV/8WQ/8=
+        s=default; t=1594737559;
+        bh=78btAS2b9p8DJC0sX4zuScTVsYWLaTYOwHo8pPXDDHQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2WBnrNNEDiMXeQx1uSAkUDHt0rz8hAO84g9KjUBPpPojJ4eN0XJiLYLTe6Ql/orn5
+         dhsTneXfhqycZ4H5VGx5ZDX+kJDocy28EL5IreRCeXo6MeVD44fjMWsN7Uyy+aosVM
+         dKPAEnn8D2azU+FKarwSWRScrUDCb1Uga+AUPC5g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
+Cc:     Jacky Hu <hengqing.hu@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/13] gpio: arizona: handle pm_runtime_get_sync failure case
-Date:   Tue, 14 Jul 2020 10:39:25 -0400
-Message-Id: <20200714143937.4035685-1-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 04/18] pinctrl: amd: fix npins for uart0 in kerncz_groups
+Date:   Tue, 14 Jul 2020 10:39:00 -0400
+Message-Id: <20200714143914.4035489-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200714143914.4035489-1-sashal@kernel.org>
+References: <20200714143914.4035489-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,35 +58,43 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Jacky Hu <hengqing.hu@gmail.com>
 
-[ Upstream commit e6f390a834b56583e6fc0949822644ce92fbb107 ]
+[ Upstream commit 69339d083dfb7786b0e0b3fc19eaddcf11fabdfb ]
 
-Calling pm_runtime_get_sync increments the counter even in case of
-failure, causing incorrect ref count. Call pm_runtime_put if
-pm_runtime_get_sync fails.
+uart0_pins is defined as:
+static const unsigned uart0_pins[] = {135, 136, 137, 138, 139};
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20200605025207.65719-1-navid.emamdoost@gmail.com
+which npins is wronly specified as 9 later
+	{
+		.name = "uart0",
+		.pins = uart0_pins,
+		.npins = 9,
+	},
+
+npins should be 5 instead of 9 according to the definition.
+
+Signed-off-by: Jacky Hu <hengqing.hu@gmail.com>
+Link: https://lore.kernel.org/r/20200616015024.287683-1-hengqing.hu@gmail.com
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-arizona.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-amd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index ba51ea15f3794..485aa45fc5d53 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -111,6 +111,7 @@ static int arizona_gpio_direction_out(struct gpio_chip *chip,
- 		ret = pm_runtime_get_sync(chip->parent);
- 		if (ret < 0) {
- 			dev_err(chip->parent, "Failed to resume: %d\n", ret);
-+			pm_runtime_put(chip->parent);
- 			return ret;
- 		}
- 	}
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+index 3e5760f1a7153..d4a192df5fabd 100644
+--- a/drivers/pinctrl/pinctrl-amd.h
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -252,7 +252,7 @@ static const struct amd_pingroup kerncz_groups[] = {
+ 	{
+ 		.name = "uart0",
+ 		.pins = uart0_pins,
+-		.npins = 9,
++		.npins = 5,
+ 	},
+ 	{
+ 		.name = "uart1",
 -- 
 2.25.1
 
