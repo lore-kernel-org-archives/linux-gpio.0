@@ -8,31 +8,31 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B467C433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 09:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69448C433EC
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 09:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3595E221FC
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 09:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4098F2053B
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Jul 2020 09:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WXXSvwIS"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ICq9F7Cr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgGNJUN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Jul 2020 05:20:13 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50856 "EHLO
+        id S1726905AbgGNJUR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Jul 2020 05:20:17 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:10474 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726252AbgGNJUN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2020 05:20:13 -0400
-X-UUID: 2395ce963e20419fa66fd91bea3fe785-20200714
+        with ESMTP id S1726893AbgGNJUR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2020 05:20:17 -0400
+X-UUID: 1891213fe0ed4b3db31a6863a8fde92d-20200714
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=pVHcUgsl7i22itF43NRR1WIUq3RppLuJkV8eA74tsH0=;
-        b=WXXSvwISq5Bc4Unv7dd62vBr4ifmJEjq5v/1KvyZ2UPkzea8F9IP4MqEJ3qD9o9IN06nlhXYbaHi0ZVLLw82E+e8VLmz1iFcDx31UkgGacZxMH6utAOx6dFX5rKsoMd2hrX3biS92YUzVQPHM9a8y7+TSI0B56pycdNfl5bxB1Y=;
-X-UUID: 2395ce963e20419fa66fd91bea3fe785-20200714
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bItawRI4WETjkWbsEIQmhgb5ptmHRsFuKCwxFVOHsUs=;
+        b=ICq9F7CrkZYZTAOQPmWGD8LChvwnfLpKa2v88IqhC+vXrQ2P+DjCOgDoyhXkwXYonGP51IIo3Ca4izsLMpoKr4xXSa/qrdKhg4nOmMc2l1lbvQXkVo47iHTbo2GPUZ2hxjAZpYpCbu4gKZZnY9VZnHpb/ZPCRv+a0tYsdY4hLnM=;
+X-UUID: 1891213fe0ed4b3db31a6863a8fde92d-20200714
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
         (envelope-from <hanks.chen@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 482093953; Tue, 14 Jul 2020 17:20:11 +0800
+        with ESMTP id 1681360282; Tue, 14 Jul 2020 17:20:11 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1497.2; Tue, 14 Jul 2020 17:20:08 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
@@ -52,11 +52,10 @@ CC:     mtk01761 <wendell.lin@mediatek.com>,
         <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
         CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v8 5/7] pinctrl: mediatek: add mt6779 eint support
-Date:   Tue, 14 Jul 2020 17:20:00 +0800
-Message-ID: <1594718402-20813-6-git-send-email-hanks.chen@mediatek.com>
+        Hanks Chen <hanks.chen@mediatek.com>
+Subject: [PATCH v8 7/7] clk: mediatek: add UART0 clock support
+Date:   Tue, 14 Jul 2020 17:20:02 +0800
+Message-ID: <1594718402-20813-8-git-send-email-hanks.chen@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1594718402-20813-1-git-send-email-hanks.chen@mediatek.com>
 References: <1594718402-20813-1-git-send-email-hanks.chen@mediatek.com>
@@ -69,24 +68,21 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-YWRkIGRyaXZlciBzZXR0aW5nIHRvIHN1cHBvcnQgbXQ2Nzc5IGVpbnQNCg0KQWNrZWQtYnk6IFNl
-YW4gV2FuZyA8c2Vhbi53YW5nQGtlcm5lbC5vcmc+DQpTaWduZWQtb2ZmLWJ5OiBNYXJzIENoZW5n
-IDxtYXJzLmNoZW5nQG1lZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IEhhbmtzIENoZW4gPGhh
-bmtzLmNoZW5AbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3Bp
-bmN0cmwtbXQ2Nzc5LmMgfCA4ICsrKysrKysrDQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9u
-cygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ2
-Nzc5LmMgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NzkuYw0KaW5kZXgg
-MTQ1YmYyMjk0Y2UxLi4zMjgyMjYwM2ExZGYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwv
-bWVkaWF0ZWsvcGluY3RybC1tdDY3NzkuYw0KKysrIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVr
-L3BpbmN0cmwtbXQ2Nzc5LmMNCkBAIC03MzEsMTEgKzczMSwxOSBAQCBzdGF0aWMgY29uc3QgY2hh
-ciAqIGNvbnN0IG10Njc3OV9waW5jdHJsX3JlZ2lzdGVyX2Jhc2VfbmFtZXNbXSA9IHsNCiAJImlv
-Y2ZnX3J0IiwgImlvY2ZnX2x0IiwgImlvY2ZnX3RsIiwNCiB9Ow0KIA0KK3N0YXRpYyBjb25zdCBz
-dHJ1Y3QgbXRrX2VpbnRfaHcgbXQ2Nzc5X2VpbnRfaHcgPSB7DQorCS5wb3J0X21hc2sgPSA3LA0K
-KwkucG9ydHMgICAgID0gNiwNCisJLmFwX251bSAgICA9IDE5NSwNCisJLmRiX2NudCAgICA9IDEz
-LA0KK307DQorDQogc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfcGluX3NvYyBtdDY3NzlfZGF0YSA9
-IHsNCiAJLnJlZ19jYWwgPSBtdDY3NzlfcmVnX2NhbHMsDQogCS5waW5zID0gbXRrX3BpbnNfbXQ2
-Nzc5LA0KIAkubnBpbnMgPSBBUlJBWV9TSVpFKG10a19waW5zX210Njc3OSksDQogCS5uZ3JwcyA9
-IEFSUkFZX1NJWkUobXRrX3BpbnNfbXQ2Nzc5KSwNCisJLmVpbnRfaHcgPSAmbXQ2Nzc5X2VpbnRf
-aHcsDQogCS5ncGlvX20gPSAwLA0KIAkuaWVzX3ByZXNlbnQgPSB0cnVlLA0KIAkuYmFzZV9uYW1l
-cyA9IG10Njc3OV9waW5jdHJsX3JlZ2lzdGVyX2Jhc2VfbmFtZXMsDQotLSANCjIuMTguMA0K
+QWRkIE1UNjc3OSBVQVJUMCBjbG9jayBzdXBwb3J0Lg0KDQpGaXhlczogNzEwNzc0ZTA0ODYxICgi
+Y2xrOiBtZWRpYXRlazogQWRkIE1UNjc3OSBjbG9jayBzdXBwb3J0IikNClNpZ25lZC1vZmYtYnk6
+IFdlbmRlbGwgTGluIDx3ZW5kZWxsLmxpbkBtZWRpYXRlay5jb20+DQpTaWduZWQtb2ZmLWJ5OiBI
+YW5rcyBDaGVuIDxoYW5rcy5jaGVuQG1lZGlhdGVrLmNvbT4NClJldmlld2VkLWJ5OiBNYXR0aGlh
+cyBCcnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPg0KLS0tDQogZHJpdmVycy9jbGsvbWVk
+aWF0ZWsvY2xrLW10Njc3OS5jIHwgMiArKw0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
+KykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYyBiL2Ry
+aXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYw0KaW5kZXggOTc2NmNjY2Y1ODQ0Li42ZTBk
+M2ExNjY3MjkgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMN
+CisrKyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYw0KQEAgLTkxOSw2ICs5MTks
+OCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlIGluZnJhX2Nsa3NbXSA9IHsNCiAJCSAg
+ICAicHdtX3NlbCIsIDE5KSwNCiAJR0FURV9JTkZSQTAoQ0xLX0lORlJBX1BXTSwgImluZnJhX3B3
+bSIsDQogCQkgICAgInB3bV9zZWwiLCAyMSksDQorCUdBVEVfSU5GUkEwKENMS19JTkZSQV9VQVJU
+MCwgImluZnJhX3VhcnQwIiwNCisJCSAgICAidWFydF9zZWwiLCAyMiksDQogCUdBVEVfSU5GUkEw
+KENMS19JTkZSQV9VQVJUMSwgImluZnJhX3VhcnQxIiwNCiAJCSAgICAidWFydF9zZWwiLCAyMyks
+DQogCUdBVEVfSU5GUkEwKENMS19JTkZSQV9VQVJUMiwgImluZnJhX3VhcnQyIiwNCi0tIA0KMi4x
+OC4wDQo=
 
