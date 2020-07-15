@@ -2,307 +2,193 @@ Return-Path: <SRS0=C4cl=A2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C176C433EB
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jul 2020 14:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B55C433DF
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jul 2020 16:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ECED206E9
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jul 2020 14:14:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C991220658
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jul 2020 16:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgGOOOJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Jul 2020 10:14:09 -0400
-Received: from pi.codeconstruct.com.au ([103.231.89.101]:35656 "EHLO
-        codeconstruct.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgGOOOI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2020 10:14:08 -0400
-Received: by codeconstruct.com.au (Postfix, from userid 20001)
-        id D428C40192; Wed, 15 Jul 2020 10:06:30 -0400 (EDT)
-From:   Jeremy Kerr <jk@codeconstruct.com.au>
-To:     linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        devicetree@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH 1/2] gpio/aspeed-sgpio: enable access to all 80 input & output sgpios
-Date:   Wed, 15 Jul 2020 21:54:17 +0800
-Message-Id: <20200715135418.3194860-1-jk@codeconstruct.com.au>
-X-Mailer: git-send-email 2.27.0
+        id S1725811AbgGOQga (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Jul 2020 12:36:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42920 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbgGOQga (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2020 12:36:30 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8E6C061755
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2020 09:36:30 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jvkOQ-0001Gr-Qt; Wed, 15 Jul 2020 18:36:26 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jvkOK-0000PJ-M9; Wed, 15 Jul 2020 18:36:20 +0200
+Date:   Wed, 15 Jul 2020 18:36:20 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Walle <michael@walle.cc>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v5 07/13] pwm: add support for sl28cpld PWM controller
+Message-ID: <20200715163620.xhi24mct5b64qpyp@pengutronix.de>
+References: <20200706175353.16404-1-michael@walle.cc>
+ <20200706175353.16404-8-michael@walle.cc>
+ <20200709085006.b54ype3p4yu64upl@pengutronix.de>
+ <72858253a9094074e9c8cd7a4e1db09f@walle.cc>
+ <20200713084750.qj4hquzd6uz6y526@pengutronix.de>
+ <c0594c34c712ce26b3936d42c92d2361@walle.cc>
+ <20200714160856.rjqi7lv63geil3hm@pengutronix.de>
+ <eedceb44cba9b54e0634f0e8e4f96f70@walle.cc>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="43ja544hwta6zjxk"
+Content-Disposition: inline
+In-Reply-To: <eedceb44cba9b54e0634f0e8e4f96f70@walle.cc>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently, the aspeed-sgpio driver exposes up to 80 GPIO lines,
-corresponding to the 80 status bits available in hardware. Each of these
-lines can be configured as either an input or an output.
 
-However, each of these GPIOs is actually an input *and* an output; we
-actually have 80 inputs plus 80 outputs.
+--43ja544hwta6zjxk
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This change expands the maximum number of GPIOs to 160; the lower half
-of this range are the input-only GPIOs, the upper half are the outputs.
-We fix the GPIO directions to correspond to this mapping.
+Hello Michael,
 
-This also fixes a bug when setting GPIOs - we were reading from the
-input register, making it impossible to set more than one output GPIO.
+On Tue, Jul 14, 2020 at 11:09:28PM +0200, Michael Walle wrote:
+> > My wishlist (just as it comes to my mind, so no guarantee of
+> > completeness):
+> >=20
+> >  - can do 0% duty cycle for all supported period lengths
+> >  - can do 100% duty cycle for all supported period lengths
+> >  - supports both polarities
+> >  - supports immediate change of configuration and after completion of
+> >    the currently running period
+> >  - atomic update (i.e. if you go from configuration A to configuration B
+> >    the hardware guarantees to only emit periods of type A and then type
+> >    B. (Depending on the item above, the last A period might be cut off.)
+>=20
+> We actually discussed this, because the implementation would be easier. B=
+ut
+> if the change takes place immediately you might end up with a longer duty
+> cycle. Assume the PWM runs at 80% duty cycle and starts with the on-perio=
+d.
+> If you now change that to 50% you might end up with one successive duty
+> cycle of "130%". Eg. the 80% of the old and right after that you switch to
+> the new 50% and then you'd have a high output which corresponds to a 130%
+> cycle. I don't know if that is acceptable for all applications.
 
-Signed-off-by: Jeremy Kerr <jk@codeconstruct.com.au>
----
- .../devicetree/bindings/gpio/sgpio-aspeed.txt |   5 +-
- drivers/gpio/gpio-aspeed-sgpio.c              | 115 +++++++++++-------
- 2 files changed, 77 insertions(+), 43 deletions(-)
+I thought this is a "change takes place immediately" implementation?! So
+these problems are actually real here. (And this not happening is exactly
+my wish here. Is there a mis-understanding?)
 
-diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-index d4d83916c09d..be329ea4794f 100644
---- a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-+++ b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-@@ -20,8 +20,9 @@ Required properties:
- - gpio-controller : Marks the device node as a GPIO controller
- - interrupts : Interrupt specifier, see interrupt-controller/interrupts.txt
- - interrupt-controller : Mark the GPIO controller as an interrupt-controller
--- ngpios : number of GPIO lines, see gpio.txt
--  (should be multiple of 8, up to 80 pins)
-+- ngpios : number of *hardware* GPIO lines, see gpio.txt. This will expose
-+  2 software GPIOs per hardware GPIO: one for hardware input, one for hardware
-+  output. Up to 80 pins, must be a multiple of 8.
- - clocks : A phandle to the APB clock for SGPM clock division
- - bus-frequency : SGPM CLK frequency
- 
-diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
-index 8319812593e3..927d46f159b8 100644
---- a/drivers/gpio/gpio-aspeed-sgpio.c
-+++ b/drivers/gpio/gpio-aspeed-sgpio.c
-@@ -17,7 +17,8 @@
- #include <linux/spinlock.h>
- #include <linux/string.h>
- 
--#define MAX_NR_SGPIO			80
-+#define MAX_NR_HW_SGPIO			80
-+#define SGPIO_OUTPUT_OFFSET		MAX_NR_HW_SGPIO
- 
- #define ASPEED_SGPIO_CTRL		0x54
- 
-@@ -30,8 +31,8 @@ struct aspeed_sgpio {
- 	struct clk *pclk;
- 	spinlock_t lock;
- 	void __iomem *base;
--	uint32_t dir_in[3];
- 	int irq;
-+	int n_sgpio;
- };
- 
- struct aspeed_sgpio_bank {
-@@ -111,31 +112,69 @@ static void __iomem *bank_reg(struct aspeed_sgpio *gpio,
- 	}
- }
- 
--#define GPIO_BANK(x)    ((x) >> 5)
--#define GPIO_OFFSET(x)  ((x) & 0x1f)
-+#define GPIO_BANK(x)    ((x % SGPIO_OUTPUT_OFFSET) >> 5)
-+#define GPIO_OFFSET(x)  ((x % SGPIO_OUTPUT_OFFSET) & 0x1f)
- #define GPIO_BIT(x)     BIT(GPIO_OFFSET(x))
- 
- static const struct aspeed_sgpio_bank *to_bank(unsigned int offset)
- {
--	unsigned int bank = GPIO_BANK(offset);
-+	unsigned int bank;
-+
-+	bank = GPIO_BANK(offset);
- 
- 	WARN_ON(bank >= ARRAY_SIZE(aspeed_sgpio_banks));
- 	return &aspeed_sgpio_banks[bank];
- }
- 
-+static int aspeed_sgpio_init_valid_mask(struct gpio_chip *gc,
-+		unsigned long *valid_mask, unsigned int ngpios)
-+{
-+	struct aspeed_sgpio *sgpio = gpiochip_get_data(gc);
-+	int n = sgpio->n_sgpio;
-+	int c = SGPIO_OUTPUT_OFFSET - n;
-+
-+	WARN_ON(ngpios < MAX_NR_HW_SGPIO * 2);
-+
-+	/* input GPIOs in the lower range */
-+	bitmap_set(valid_mask, 0, n);
-+	bitmap_clear(valid_mask, n, c);
-+
-+	/* output GPIOS above SGPIO_OUTPUT_OFFSET */
-+	bitmap_set(valid_mask, SGPIO_OUTPUT_OFFSET, n);
-+	bitmap_clear(valid_mask, SGPIO_OUTPUT_OFFSET + n, c);
-+
-+	return 0;
-+}
-+
-+static void aspeed_sgpio_irq_init_valid_mask(struct gpio_chip *gc,
-+		unsigned long *valid_mask, unsigned int ngpios)
-+{
-+	struct aspeed_sgpio *sgpio = gpiochip_get_data(gc);
-+	int n = sgpio->n_sgpio;
-+
-+	WARN_ON(ngpios < MAX_NR_HW_SGPIO * 2);
-+
-+	/* input GPIOs in the lower range */
-+	bitmap_set(valid_mask, 0, n);
-+	bitmap_clear(valid_mask, n, ngpios - n);
-+}
-+
-+static const bool aspeed_sgpio_is_input(unsigned int offset)
-+{
-+	return offset < SGPIO_OUTPUT_OFFSET;
-+}
-+
- static int aspeed_sgpio_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
- 	const struct aspeed_sgpio_bank *bank = to_bank(offset);
- 	unsigned long flags;
- 	enum aspeed_sgpio_reg reg;
--	bool is_input;
- 	int rc = 0;
- 
- 	spin_lock_irqsave(&gpio->lock, flags);
- 
--	is_input = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
--	reg = is_input ? reg_val : reg_rdata;
-+	reg = aspeed_sgpio_is_input(offset) ? reg_val : reg_rdata;
- 	rc = !!(ioread32(bank_reg(gpio, bank, reg)) & GPIO_BIT(offset));
- 
- 	spin_unlock_irqrestore(&gpio->lock, flags);
-@@ -143,22 +182,31 @@ static int aspeed_sgpio_get(struct gpio_chip *gc, unsigned int offset)
- 	return rc;
- }
- 
--static void sgpio_set_value(struct gpio_chip *gc, unsigned int offset, int val)
-+static int sgpio_set_value(struct gpio_chip *gc, unsigned int offset, int val)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
- 	const struct aspeed_sgpio_bank *bank = to_bank(offset);
--	void __iomem *addr;
-+	void __iomem *addr_r, *addr_w;
- 	u32 reg = 0;
- 
--	addr = bank_reg(gpio, bank, reg_val);
--	reg = ioread32(addr);
-+	if (aspeed_sgpio_is_input(offset))
-+		return -EINVAL;
-+
-+	/* Since this is an output, read the cached value from rdata, then
-+	 * update val. */
-+	addr_r = bank_reg(gpio, bank, reg_rdata);
-+	addr_w = bank_reg(gpio, bank, reg_val);
-+
-+	reg = ioread32(addr_r);
- 
- 	if (val)
- 		reg |= GPIO_BIT(offset);
- 	else
- 		reg &= ~GPIO_BIT(offset);
- 
--	iowrite32(reg, addr);
-+	iowrite32(reg, addr_w);
-+
-+	return 0;
- }
- 
- static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int offset, int val)
-@@ -175,26 +223,20 @@ static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int offset, int val)
- 
- static int aspeed_sgpio_dir_in(struct gpio_chip *gc, unsigned int offset)
- {
--	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
--
--	spin_lock_irqsave(&gpio->lock, flags);
--	gpio->dir_in[GPIO_BANK(offset)] |= GPIO_BIT(offset);
--	spin_unlock_irqrestore(&gpio->lock, flags);
--
--	return 0;
-+	return aspeed_sgpio_is_input(offset) ? 0 : -EINVAL;
- }
- 
- static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int offset, int val)
- {
- 	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
- 	unsigned long flags;
-+	int rc;
- 
--	spin_lock_irqsave(&gpio->lock, flags);
--
--	gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
--	sgpio_set_value(gc, offset, val);
-+	/* No special action is required for setting the direction; we'll
-+	 * error-out in sgpio_set_value if this isn't an output GPIO */
- 
-+	spin_lock_irqsave(&gpio->lock, flags);
-+	rc = sgpio_set_value(gc, offset, val);
- 	spin_unlock_irqrestore(&gpio->lock, flags);
- 
- 	return 0;
-@@ -202,16 +244,7 @@ static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int offset, int v
- 
- static int aspeed_sgpio_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
--	int dir_status;
--	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
--	unsigned long flags;
--
--	spin_lock_irqsave(&gpio->lock, flags);
--	dir_status = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
--	spin_unlock_irqrestore(&gpio->lock, flags);
--
--	return dir_status;
--
-+	return !!aspeed_sgpio_is_input(offset);
- }
- 
- static void irqd_to_aspeed_sgpio_data(struct irq_data *d,
-@@ -402,6 +435,7 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
- 
- 	irq = &gpio->chip.irq;
- 	irq->chip = &aspeed_sgpio_irqchip;
-+	irq->init_valid_mask = aspeed_sgpio_irq_init_valid_mask;
- 	irq->handler = handle_bad_irq;
- 	irq->default_type = IRQ_TYPE_NONE;
- 	irq->parent_handler = aspeed_sgpio_irq_handler;
-@@ -452,11 +486,12 @@ static int __init aspeed_sgpio_probe(struct platform_device *pdev)
- 	if (rc < 0) {
- 		dev_err(&pdev->dev, "Could not read ngpios property\n");
- 		return -EINVAL;
--	} else if (nr_gpios > MAX_NR_SGPIO) {
-+	} else if (nr_gpios > MAX_NR_HW_SGPIO) {
- 		dev_err(&pdev->dev, "Number of GPIOs exceeds the maximum of %d: %d\n",
--			MAX_NR_SGPIO, nr_gpios);
-+			MAX_NR_HW_SGPIO, nr_gpios);
- 		return -EINVAL;
- 	}
-+	gpio->n_sgpio = nr_gpios;
- 
- 	rc = of_property_read_u32(pdev->dev.of_node, "bus-frequency", &sgpio_freq);
- 	if (rc < 0) {
-@@ -497,7 +532,8 @@ static int __init aspeed_sgpio_probe(struct platform_device *pdev)
- 	spin_lock_init(&gpio->lock);
- 
- 	gpio->chip.parent = &pdev->dev;
--	gpio->chip.ngpio = nr_gpios;
-+	gpio->chip.ngpio = MAX_NR_HW_SGPIO * 2;
-+	gpio->chip.init_valid_mask = aspeed_sgpio_init_valid_mask;
- 	gpio->chip.direction_input = aspeed_sgpio_dir_in;
- 	gpio->chip.direction_output = aspeed_sgpio_dir_out;
- 	gpio->chip.get_direction = aspeed_sgpio_get_direction;
-@@ -509,9 +545,6 @@ static int __init aspeed_sgpio_probe(struct platform_device *pdev)
- 	gpio->chip.label = dev_name(&pdev->dev);
- 	gpio->chip.base = -1;
- 
--	/* set all SGPIO pins as input (1). */
--	memset(gpio->dir_in, 0xff, sizeof(gpio->dir_in));
--
- 	aspeed_sgpio_setup_irqs(gpio, pdev);
- 
- 	rc = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
--- 
-2.27.0
+> >  - emits an irq when configuration changes
+>=20
+> Why would you need the interrupt?
 
+To know that the new setting is active. Currently Thierry's ideal PWM
+implementation blocks in pwm_apply_state() until the new setting is
+active. So some signaling is nice.=20
+
+> > > > If you change only cycle but not mode, does the hardware complete t=
+he
+> > > > currently running period?
+> > >=20
+> > > No it does not.
+> >=20
+> > Please document this as a Limitation.
+>=20
+> I've discussed this internally, for now its a limitation. In the worst
+> case you'd do one 100% duty cycle. Maybe we can fix the hardware. I
+> acknowledge that this is a severe limitation, esp. if you use the PWM
+> for controlling stuff (for now its only LCD backlight.. so thats ok).
+
+That happens if you reduce the duty cycle from A to B and the counter is
+already bigger than B but smaller than A, right? The fix would be to
+compare for counter >=3D match instead of counter =3D match. (Which then
+would result in a period with a duty cycle bigger than B but smaller
+than A. Also not ideal, but probably better.)
+
+> > > > What about disable()?
+> > >=20
+> > > Mhh well, it would do one 100% cycle.. mhh ;) Lets see if there we can
+> > > fix that (in hardware), not much we can do in the driver here. We are
+> > > _very_ constraint in size, therefore all that little edge cases fall
+> > > off
+> > > the table.
+> >=20
+> > You're saying that on disable the hardware emits a constant high level
+> > for one cycle? I hope not ...
+>=20
+> Mh, I was mistaken, disabling the PWM will turn it off immediately, but
+
+And does turn off mean, the output gets inactive?
+If so you might also disable the hardware if a 0% duty cycle is
+configured assuming this saves some energy without modifying the
+resulting wave form.
+
+> one 100% duty cycle may happen if you change from a higher to a lower
+> duty cycle setting. See above.
+>=20
+> > I never programmed a CPLD to emulate a hardware PWM, but I wonder if
+> > these are really edge cases that increase the size of the binary?!
+>=20
+> At the moment there is only one 8bit register which stores the value
+> which is used for matching. If you want to change that setting after
+> a whole cycle, you'd use another 8bit register to cache the new value.
+> So this would at least needs 8 additional flip-flops. This doesn't
+> sound much, but we are already near 100% usage of the CPLD. So its
+> hard to convince people why this is really necessary.
+
+OK. (Maybe there is enough space to allow implementing 100% for mode 0?)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--43ja544hwta6zjxk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl8PMIEACgkQwfwUeK3K
+7AmkoQf/Xsa5eWznePZ+LGv5Ny4n0jnjIKQDxCWubAooelGqLEF0EsNjO6hA2ShJ
+0/Bkwa4V22BFbXS2s4Ai4KcM6kEqxytEADlIAVvcfDxTq6aFqYrrNt+gYTLyFJvr
+7WkzW1Jh1FZpqTQck7bUAyOd9VA9Y8aEwnqDnZbUrEctYnhylTz0ogj6RLw2EZqL
+lT/EWHA461DnNoJ19v1QNBTolcDgOBMTZuk8bUBtYAJhf3Zf4m+YOYxTiOgNGOaQ
+yKB5hXTsyURWKJhf0+0pDtWry6Dl2B6xCLa/rLbfkAMx00kaKGRCSd2o7bw+mCj5
+71RVew6wqS5+tx2hi20V582pM4qAnA==
+=G5tl
+-----END PGP SIGNATURE-----
+
+--43ja544hwta6zjxk--
