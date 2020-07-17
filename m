@@ -2,36 +2,36 @@ Return-Path: <SRS0=J+Mb=A4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2678CC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C53B3C433EB
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA2320717
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A258420717
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgGQD1U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jul 2020 23:27:20 -0400
-Received: from lucky1.263xmail.com ([211.157.147.133]:48826 "EHLO
+        id S1727025AbgGQD13 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jul 2020 23:27:29 -0400
+Received: from lucky1.263xmail.com ([211.157.147.135]:38652 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbgGQD1U (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2020 23:27:20 -0400
-Received: from localhost (unknown [192.168.167.70])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 91917C5BA6;
-        Fri, 17 Jul 2020 11:27:16 +0800 (CST)
+        with ESMTP id S1726557AbgGQD12 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2020 23:27:28 -0400
+Received: from localhost (unknown [192.168.167.13])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 46FE3A1289;
+        Fri, 17 Jul 2020 11:27:25 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
 X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P22085T140330554861312S1594956429684597_;
-        Fri, 17 Jul 2020 11:27:10 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P17843T139821238978304S1594956444573766_;
+        Fri, 17 Jul 2020 11:27:25 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <342b195a6f39d3f18b8403b16fda7913>
+X-UNIQUE-TAG: <2d58e0ed85c5041d7568221e8c6e4f3f>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -45,9 +45,9 @@ To:     heiko@sntech.de, linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, kever.yang@rock-chips.com,
         david.wu@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 09/13] pinctrl: rockchip: Add RK3228 definitions to separate from other SoCs
-Date:   Fri, 17 Jul 2020 11:27:08 +0800
-Message-Id: <20200717032708.18280-1-jay.xu@rock-chips.com>
+Subject: [PATCH 11/13] pinctrl: rockchip: Add RK3128 definitions to separate from other SoCs
+Date:   Fri, 17 Jul 2020 11:27:23 +0800
+Message-Id: <20200717032723.18383-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200717032411.17654-1-jay.xu@rock-chips.com>
 References: <20200717032411.17654-1-jay.xu@rock-chips.com>
@@ -56,65 +56,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add RK3228 definitions to separate from other SoCs.
+Add RK3128 definitions to separate from other SoCs.
 
 Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 44f051af97c6..ec6a1a08f8b1 100644
+index 04e7027ec8e1..3b74455dcdb2 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1918,6 +1918,9 @@ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- }
+@@ -1799,6 +1799,8 @@ static void rk2928_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+ };
  
- #define RK3228_PULL_OFFSET		0x100
-+#define RK3228_PULL_BITS_PER_PIN	2
-+#define RK3228_PULL_PINS_PER_REG	8
-+#define RK3228_PULL_BANK_STRIDE		16
+ #define RK3128_PULL_OFFSET	0x118
++#define RK3128_PULL_PINS_PER_REG	16
++#define RK3128_PULL_BANK_STRIDE		8
  
- static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 				    int pin_num, struct regmap **regmap,
-@@ -1927,14 +1930,17 @@ static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 
- 	*regmap = info->regmap_base;
- 	*reg = RK3228_PULL_OFFSET;
--	*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
--	*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
-+	*reg += bank->bank_num * RK3228_PULL_BANK_STRIDE;
-+	*reg += ((pin_num / RK3228_PULL_PINS_PER_REG) * 4);
- 
--	*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
--	*bit *= RK3188_PULL_BITS_PER_PIN;
-+	*bit = (pin_num % RK3228_PULL_PINS_PER_REG);
-+	*bit *= RK3228_PULL_BITS_PER_PIN;
- }
- 
- #define RK3228_DRV_GRF_OFFSET		0x200
-+#define RK3228_DRV_BITS_PER_PIN		2
-+#define RK3228_DRV_PINS_PER_REG		8
-+#define RK3228_DRV_BANK_STRIDE		16
- 
- static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 				    int pin_num, struct regmap **regmap,
-@@ -1944,11 +1950,11 @@ static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ static void rk3128_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+ 					 int pin_num, struct regmap **regmap,
+@@ -1808,10 +1810,10 @@ static void rk3128_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
  
  	*regmap = info->regmap_base;
- 	*reg = RK3228_DRV_GRF_OFFSET;
--	*reg += bank->bank_num * RK3288_DRV_BANK_STRIDE;
--	*reg += ((pin_num / RK3288_DRV_PINS_PER_REG) * 4);
-+	*reg += bank->bank_num * RK3228_DRV_BANK_STRIDE;
-+	*reg += ((pin_num / RK3228_DRV_PINS_PER_REG) * 4);
+ 	*reg = RK3128_PULL_OFFSET;
+-	*reg += bank->bank_num * RK2928_PULL_BANK_STRIDE;
+-	*reg += ((pin_num / RK2928_PULL_PINS_PER_REG) * 4);
++	*reg += bank->bank_num * RK3128_PULL_BANK_STRIDE;
++	*reg += ((pin_num / RK3128_PULL_PINS_PER_REG) * 4);
  
--	*bit = (pin_num % RK3288_DRV_PINS_PER_REG);
--	*bit *= RK3288_DRV_BITS_PER_PIN;
-+	*bit = (pin_num % RK3228_DRV_PINS_PER_REG);
-+	*bit *= RK3228_DRV_BITS_PER_PIN;
+-	*bit = pin_num % RK2928_PULL_PINS_PER_REG;
++	*bit = pin_num % RK3128_PULL_PINS_PER_REG;
  }
  
- #define RK3308_PULL_OFFSET		0xa0
+ #define RK3188_PULL_OFFSET		0x164
 -- 
 2.17.1
 
