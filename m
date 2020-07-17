@@ -2,91 +2,121 @@ Return-Path: <SRS0=J+Mb=A4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689B6C433FC
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD10BC433E1
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE2A207FB
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594990165;
-	bh=F6eEgVp0U4T1SirH3j5XNkxHKxWH25GXK+ol/tUBod0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rWeznn837BZ/cdhvHQUpRg7f8wKsqt2i6T9oYlenMGWSv5OQamyVyaoPrUXEGTJA6
-	 mmu4ACjZtiBqEohUuXFwm3z/bIT4OMocSTPyqggLTc5RL344v+woiqS1L4OR/4guT/
-	 e/o8zhIJpyRdCr1bzsVvfaODXC7kdTzhK0tWSAHA=
+	by mail.kernel.org (Postfix) with ESMTP id 88C7A206F4
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:46:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="nvO4V7M0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbgGQMs5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jul 2020 08:48:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbgGQMs4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:48:56 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF41120768;
-        Fri, 17 Jul 2020 12:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594990135;
-        bh=F6eEgVp0U4T1SirH3j5XNkxHKxWH25GXK+ol/tUBod0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rgBLivDNtaFi8UBruKjJEjKbAkOYpU0MmhU5ikrjEZsHfru/d1LxjuOUA6T/GYAsQ
-         ps+VxKdUfxeto/Ubw/4fJE31A81ojxPgd88rSEiuHbfB+By0mtczTGZhEDPAT7UmNQ
-         zZfP9010at2XK/8Yber/8DNkHP9AO+2BWJfUrK9g=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=wait-a-minute.lan)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jwPnK-00Ccsm-DG; Fri, 17 Jul 2020 13:48:54 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     marex@denx.de, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
-        <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/irq-bcm7038-l1: Allow building on ARM 32-bit
-Date:   Fri, 17 Jul 2020 13:48:44 +0100
-Message-Id: <159499001591.546505.10547196907819467000.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200709234141.4901-1-f.fainelli@gmail.com>
-References: <20200709234141.4901-1-f.fainelli@gmail.com>
+        id S1726090AbgGQMqG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jul 2020 08:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbgGQMqF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2020 08:46:05 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8445C08C5C0
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2020 05:46:04 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id j4so10897718wrp.10
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2020 05:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=xar4CKwA2Rwnu+ciWE61B48Q/3ub/PHWow40xzzzpjo=;
+        b=nvO4V7M0iiy73AUDzO6fNZ/ndWFaaL50qq0vLzM68p7EiTYQGcmayq6a6qoK2+vV7/
+         sQqFsSUjwBoMt4XweTMKZ/1DeyYeU676nlIzulPGMZzY73yp9D50sa7Tj4e7KHIaajd6
+         pBLAwin/J26jR3tpMeeGgUixpMAfcKtUHHZQrcREwIxf+zM/LeATCbuY46rrCbhEyDG5
+         0aVgKsEHklhyREpNHBtseM2yajbyyjXk6g4Hxz780luSt3ZJ9PZMKyaqBlnnvX4HM6Zd
+         EZap+9kHHo6bHMgUEd6kNkKD+S+O2cuMvCzgPFyiBduJbeOVTwU+GHEbFcqTYZuG4+uk
+         uDLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xar4CKwA2Rwnu+ciWE61B48Q/3ub/PHWow40xzzzpjo=;
+        b=pLunriOmBPFb+G47D0c78spy/yAR/zwX8CJdKaXdPn/0B9JvRdqqg6Nm6qLspXGr6S
+         Jl8LTpnIWVRxJWoRECzJAPvc6EpR5dZlbHBqebLuEpvXwXVqDVpWJbILG1x96cC/fFyK
+         w5/PRzKMpg6ruoOobyXcUy63z2CXkCml+mPdxK7+9oiGZ6vXV+F7XHgxqKZmJ91eSeIQ
+         nIJgnsVNp+ZrlkOSilPS2NeVdINhNQOPZ4kjTseXdMGchRBhFaCtkDjUN1dwFWsGKW/L
+         QyKVIwXvh3HOomm3djihMUpzmFHcTSqBwU5u2y+9wk9xshmL1RMw2dTMS8jJC65Kof4U
+         qmEA==
+X-Gm-Message-State: AOAM5318tkrD9pjyYhVHhQOrsgHPoX1OrYdHzA9jaZeXqobwk/G3wGIw
+        SOw0zlrNpgge3ggLBwzV+jFS7w==
+X-Google-Smtp-Source: ABdhPJzB/mmFoX0OVmyFa3FGXmaDcYscGx0QglgVJO4mgGBAkVpi/PKUbjhcYcgugTLFjJXiA9yXHw==
+X-Received: by 2002:adf:de8d:: with SMTP id w13mr9909255wrl.129.1594989963283;
+        Fri, 17 Jul 2020 05:46:03 -0700 (PDT)
+Received: from x1 (220.red-95-125-197.staticip.rima-tde.net. [95.125.197.220])
+        by smtp.gmail.com with ESMTPSA id k18sm14473782wrx.34.2020.07.17.05.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2020 05:46:02 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 14:45:59 +0200
+From:   Drew Fustini <drew@beagleboard.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@gmail.com>
+Subject: Re: [PATCH v2] gpio: omap: handle pin config bias flags
+Message-ID: <20200717124559.GA1765997@x1>
+References: <20200715213738.1640030-1-drew@beagleboard.org>
+ <CACRpkdZ+Bm4MsyaJJ89q7_KfgmyQWyJ57SC3F38gxTbsOfwNTA@mail.gmail.com>
+ <20200717124048.GA1765226@x1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, linux-kernel@vger.kernel.org, f.fainelli@gmail.com, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, bcm-kernel-feedback-list@broadcom.com, linux-mips@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200717124048.GA1765226@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 9 Jul 2020 16:41:41 -0700, Florian Fainelli wrote:
-> We need to have a definition for cpu_logical_map[] which on ARM
-> platforms is provided by asm/smp_plat.h. This header is not
-> automatically included from linux/smp.h and untangling it is a bit
-> difficult.
+On Fri, Jul 17, 2020 at 02:40:48PM +0200, Drew Fustini wrote:
+> On Thu, Jul 16, 2020 at 10:29:30AM +0200, Linus Walleij wrote:
+> > On Wed, Jul 15, 2020 at 11:37 PM Drew Fustini <drew@beagleboard.org> wrote:
+> > 
+> > > Modify omap_gpio_set_config() to handle pin config bias flags by calling
+> > > gpiochip_generic_config().
+> > >
+> > > The pin group for the gpio line must have the corresponding pinconf
+> > > properties:
+> > >
+> > > PIN_CONFIG_BIAS_PULL_UP requires "pinctrl-single,bias-pullup"
+> > > PIN_CONFIG_BIAS_PULL_DOWN requires "pinctrl-single,bias-pulldown"
+> > >
+> > > This is necessary for pcs_pinconf_set() to find the requested bias
+> > > parameter in the PIN_MAP_TYPE_CONFIGS_GROUP pinctrl map.
+> > >
+> > > Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > > Acked-by: Tony Lindgren <tony@atomide.com>
+> > > Signed-off-by: Drew Fustini <drew@beagleboard.org>
+> > 
+> > This v2 version applied!
+> > 
+> > Yours,
+> > Linus Walleij
+> 
+> Thanks! 
+> 
+> I'm curious which branch should I look in to find it?
+> 
+> I didn't see it in any of the branches in:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/refs/
+> 
+> -Drew
 
-Applied to irq/irqchip-5.9, thanks!
+Oh, nevermind.  I found it in linux-pinctrl:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=for-next&id=40e30d26d909af89de2dcd0b4abdd27c47ac2235
 
-[1/1] irqchip/irq-bcm7038-l1: Allow building on ARM 32-bit
-      commit: 52b350cbc94721d87f087d1a5800f9531c2d682c
-
-Cheers,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
-
-
+Thanks,
+Drew
