@@ -6,61 +6,70 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FB2C433F2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A891C433F4
 	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1517A20775
+	by mail.kernel.org (Postfix) with ESMTP id 5B42520768
 	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1594990163;
-	bh=+V25eAigqJyAqO3qU/I8EgowzZWhl5WGU8izIKEiQ9I=;
+	bh=px+ZOr5vGWOD2WY1nkEe6GE/wiHxQX4NyNmrfPIeG7M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pqtd8FmdBeKUQL1qGPLBQ80/GNWm6+kci3ETC0pRMV6X/owMqOQTKdesGswIT4CRx
-	 tKib7BVwF6Lar4btDVz/yfClQSOnuRPwVIiYExZzyT4n0E1woCRLqpye65sXkn74gu
-	 e8r6qzcWooSTJb8SJ9vS7/T9dsU5OZL+X3vXIU4M=
+	b=P6p1RBorlDbGF50c/Mm/m3DrEMEWdfK/xIVImuw+3cQ4/T8+cyOS4II/RWQPavZKf
+	 caYaRUYm6O3D84RMy1Rr0o7HpqFSezzKoSVxEBlzGZxYv1BhgG324Pl9LlSY+4LKS6
+	 aFh8LN86tz086h4e0v4VSNlP/xiSONZnkKRZquAc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgGQMtG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jul 2020 08:49:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50538 "EHLO mail.kernel.org"
+        id S1726856AbgGQMtF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jul 2020 08:49:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbgGQMs6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:48:58 -0400
+        id S1726393AbgGQMs5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Jul 2020 08:48:57 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23D9120829;
-        Fri, 17 Jul 2020 12:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C61E8207F5;
+        Fri, 17 Jul 2020 12:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594990138;
-        bh=+V25eAigqJyAqO3qU/I8EgowzZWhl5WGU8izIKEiQ9I=;
+        s=default; t=1594990136;
+        bh=px+ZOr5vGWOD2WY1nkEe6GE/wiHxQX4NyNmrfPIeG7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LbwEQxU9cdujhtKlnV1pohpNhS1NKLX8UzTqFIE28aoEIc3vlYCZlhpj712m3fQq1
-         HuRQJcmCyOgC6eM2fekBmtsvbo4GLTkzlVZPx69M0dq2g4qfThKit1PXOATE3ke0wZ
-         Cm6ypytpMHx7JtChNKi4+Oq8HNecbNQ7HY1ulOVM=
+        b=iu1cvXPAlzooZ6RFLUKS78s8jwgqZAVrA9BXFIpWJcw6EZk29M3soHUxoO9YF+xom
+         D1Ol+o6cPd9LLJw7IXEVrnGoJn+zLuPKJoDYv87UVtj66Ld5C2ctFO/x4YfxsH1r75
+         jVHgRBdYRlt/EZ1YztBPKtyHMPJHD7Bcrh4N2rDA=
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=wait-a-minute.lan)
         by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <maz@kernel.org>)
-        id 1jwPnM-00Ccsm-MR; Fri, 17 Jul 2020 13:48:56 +0100
+        id 1jwPnL-00Ccsm-AZ; Fri, 17 Jul 2020 13:48:55 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Alexandre Torgue <alexandre.torgue@st.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, marex@denx.de,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH -next] irqchip: mips-gic: Make some symbols static
-Date:   Fri, 17 Jul 2020 13:48:47 +0100
-Message-Id: <159499001592.546505.12368103656173164713.b4-ty@kernel.org>
+        John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     marex@denx.de, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Joerg Roedel <joro@8bytes.org>, Andy Gross <agross@kernel.org>,
+        Todd Kjos <tkjos@google.com>, iommu@lists.linux-foundation.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Saravana Kannan <saravanak@google.com>
+Subject: Re: [PATCH v3 0/3] Allow for qcom-pdc to be loadable as a module
+Date:   Fri, 17 Jul 2020 13:48:45 +0100
+Message-Id: <159499001592.546505.10441967473975319808.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200714142245.16124-1-weiyongjun1@huawei.com>
-References: <20200714142245.16124-1-weiyongjun1@huawei.com>
+In-Reply-To: <20200710231824.60699-1-john.stultz@linaro.org>
+References: <20200710231824.60699-1-john.stultz@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, weiyongjun1@huawei.com, hulkci@huawei.com, linux-kernel@vger.kernel.org, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, john.stultz@linaro.org, linux-kernel@vger.kernel.org, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, joro@8bytes.org, agross@kernel.org, tkjos@google.com, iommu@lists.linux-foundation.org, linus.walleij@linaro.org, gregkh@linuxfoundation.org, mkshah@codeaurora.org, ilina@codeaurora.org, linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org, saravanak@google.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-gpio-owner@vger.kernel.org
@@ -68,22 +77,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 14 Jul 2020 22:22:45 +0800, Wei Yongjun wrote:
-> The sparse tool complains as follows:
+On Fri, 10 Jul 2020 23:18:21 +0000, John Stultz wrote:
+> This patch series provides exports and config tweaks to allow
+> the qcom-pdc driver to be able to be configured as a permement
+> modules (particularlly useful for the Android Generic Kernel
+> Image efforts).
 > 
-> drivers/irqchip/irq-mips-gic.c:49:1: warning:
->  symbol '__pcpu_scope_pcpu_masks' was not declared. Should it be static?
-> drivers/irqchip/irq-mips-gic.c:620:6: warning:
->  symbol 'gic_ipi_domain_free' was not declared. Should it be static?
-> drivers/irqchip/irq-mips-gic.c:634:5: warning:
->  symbol 'gic_ipi_domain_match' was not declared. Should it be static?
+> This was part of a larger patch series, to enable qcom_scm
+> driver to be a module as well, but I've split it out as there
+> are some outstanding objections I still need to address with
+> the follow-on patches, and wanted to see if progress could be
+> made on this subset of the series in the meantime.
 > 
 > [...]
 
 Applied to irq/irqchip-5.9, thanks!
 
-[1/1] irqchip/mips-gic: Make local symbols static
-      commit: 63bf3444359c94d647c2afa79b5e732585469581
+[1/3] irqdomain: Export irq_domain_update_bus_token
+      commit: ce8cefa53c06cd98607125c52c91e74373a893a0
+[2/3] genirq: Export irq_chip_retrigger_hierarchy and irq_chip_set_vcpu_affinity_parent
+      commit: 96703f046c42f8ab15e735953cbfee572c717e2d
+[3/3] irqchip/qcom-pdc: Allow QCOM_PDC to be loadable as a permanent module
+      commit: 5ef7f1bbf9f56c5380c4d876655920cac92008e5
 
 Cheers,
 
