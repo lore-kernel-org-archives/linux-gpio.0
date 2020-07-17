@@ -2,31 +2,30 @@ Return-Path: <SRS0=J+Mb=A4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C64AC433FB
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E474C43457
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C11121741
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29DBF2074B
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgGQRAl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jul 2020 13:00:41 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:21061 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726938AbgGQRAc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727858AbgGQRAc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 17 Jul 2020 13:00:32 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:58789 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727822AbgGQRAa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Jul 2020 13:00:30 -0400
 X-IronPort-AV: E=Sophos;i="5.75,362,1589209200"; 
-   d="scan'208";a="52419821"
+   d="scan'208";a="52419816"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Jul 2020 02:00:30 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 18 Jul 2020 02:00:28 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9500D40061A0;
-        Sat, 18 Jul 2020 02:00:28 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2592840061A0;
+        Sat, 18 Jul 2020 02:00:25 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
@@ -36,68 +35,41 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7790: Add USB1 PWEN pin and group
-Date:   Fri, 17 Jul 2020 18:00:24 +0100
-Message-Id: <1595005225-11519-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] Enable USB support on iW-RainboW-G21D-Q7 board
+Date:   Fri, 17 Jul 2020 18:00:23 +0100
+Message-Id: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add USB1 PWEN pin and group for USB1 interface.
+Hi All,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+This series enables support for following peripherals in iW-RainboW-G21D-Q7
+development platform:
+* HSUSB
+* USB2.0
+* xHCI
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index f524401fec5f..39ba1e7cc1c3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -3611,6 +3611,13 @@ static const unsigned int usb1_pins[] = {
- static const unsigned int usb1_mux[] = {
- 	USB1_PWEN_MARK, USB1_OVC_MARK,
- };
-+static const unsigned int usb1_pwen_pins[] = {
-+	/* PWEN */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int usb1_pwen_mux[] = {
-+	USB1_PWEN_MARK,
-+};
- /* - USB2 ------------------------------------------------------------------- */
- static const unsigned int usb2_pins[] = {
- 	/* PWEN, OVC */
-@@ -3939,7 +3946,7 @@ static const unsigned int vin3_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[289];
-+	struct sh_pfc_pin_group common[290];
- 	struct sh_pfc_pin_group automotive[1];
- } pinmux_groups = {
- 	.common = {
-@@ -4193,6 +4200,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(usb0),
- 		SH_PFC_PIN_GROUP(usb0_ovc_vbus),
- 		SH_PFC_PIN_GROUP(usb1),
-+		SH_PFC_PIN_GROUP(usb1_pwen),
- 		SH_PFC_PIN_GROUP(usb2),
- 		VIN_DATA_PIN_GROUP(vin0_data, 24),
- 		VIN_DATA_PIN_GROUP(vin0_data, 20),
-@@ -4640,6 +4648,7 @@ static const char * const usb0_groups[] = {
- 
- static const char * const usb1_groups[] = {
- 	"usb1",
-+	"usb1_pwen",
- };
- 
- static const char * const usb2_groups[] = {
+Changes for v2:
+* Added USB1 pwen pin and group
+* Fixed pinmux pins for usb1
+
+[v1] https://lkml.org/lkml/2020/5/27/1478
+ * Rest of the patches from v1 have been accepted
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  pinctrl: sh-pfc: r8a7790: Add USB1 PWEN pin and group
+  ARM: dts: r8a7742-iwg21d-q7: Enable HSUSB, USB2.0 and xHCI
+
+ arch/arm/boot/dts/r8a7742-iwg21d-q7.dts | 42 +++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c    | 11 ++++++-
+ 2 files changed, 52 insertions(+), 1 deletion(-)
+
 -- 
 2.17.1
 
