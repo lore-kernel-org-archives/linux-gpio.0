@@ -2,36 +2,35 @@ Return-Path: <SRS0=J+Mb=A4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3BDC433E2
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 01:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AEDC433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD00520838
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 01:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1134B20838
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 03:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbgGQB4E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jul 2020 21:56:04 -0400
-Received: from lucky1.263xmail.com ([211.157.147.133]:41394 "EHLO
+        id S1726629AbgGQDYX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jul 2020 23:24:23 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:44644 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbgGQB4D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2020 21:56:03 -0400
-Received: from localhost (unknown [192.168.167.235])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 44809C5D6B;
-        Fri, 17 Jul 2020 09:53:26 +0800 (CST)
+        with ESMTP id S1726386AbgGQDYX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2020 23:24:23 -0400
+Received: from localhost (unknown [192.168.167.16])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 4A002C5C96;
+        Fri, 17 Jul 2020 11:24:17 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
 X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P26706T140361238066944S1594950804654023_;
-        Fri, 17 Jul 2020 09:53:25 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P18585T140685189564160S1594956256233933_;
+        Fri, 17 Jul 2020 11:24:17 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <6045a8117473b967c7cacb8c546d06de>
+X-UNIQUE-TAG: <92d92b5863ce58a0eaff137bb4ce534e>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -45,76 +44,39 @@ To:     heiko@sntech.de, linus.walleij@linaro.org
 Cc:     linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         linux-kernel@vger.kernel.org, kever.yang@rock-chips.com,
         david.wu@rock-chips.com, Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 09/13] pinctrl: rockchip: do codingstyle
-Date:   Fri, 17 Jul 2020 09:53:23 +0800
-Message-Id: <20200717015323.14323-1-jay.xu@rock-chips.com>
+Subject: [PATCH RESEND 00/13] pinctrl: rockchip: prepare work for split driver
+Date:   Fri, 17 Jul 2020 11:23:58 +0800
+Message-Id: <20200717032411.17654-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200717014908.13914-1-jay.xu@rock-chips.com>
-References: <20200717014908.13914-1-jay.xu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add RK3228 definitions to separate from other SoCs.
+This serial patchs include 12 codingstyle patches and 1 bug fix (enable
+gpio pclk for rockchip_gpio_to_irq).
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/pinctrl/pinctrl-rockchip.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+Also it's prepare for split driver work.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 44f051af97c6..ec6a1a08f8b1 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1918,6 +1918,9 @@ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- }
- 
- #define RK3228_PULL_OFFSET		0x100
-+#define RK3228_PULL_BITS_PER_PIN	2
-+#define RK3228_PULL_PINS_PER_REG	8
-+#define RK3228_PULL_BANK_STRIDE		16
- 
- static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 				    int pin_num, struct regmap **regmap,
-@@ -1927,14 +1930,17 @@ static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 
- 	*regmap = info->regmap_base;
- 	*reg = RK3228_PULL_OFFSET;
--	*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
--	*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
-+	*reg += bank->bank_num * RK3228_PULL_BANK_STRIDE;
-+	*reg += ((pin_num / RK3228_PULL_PINS_PER_REG) * 4);
- 
--	*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
--	*bit *= RK3188_PULL_BITS_PER_PIN;
-+	*bit = (pin_num % RK3228_PULL_PINS_PER_REG);
-+	*bit *= RK3228_PULL_BITS_PER_PIN;
- }
- 
- #define RK3228_DRV_GRF_OFFSET		0x200
-+#define RK3228_DRV_BITS_PER_PIN		2
-+#define RK3228_DRV_PINS_PER_REG		8
-+#define RK3228_DRV_BANK_STRIDE		16
- 
- static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 				    int pin_num, struct regmap **regmap,
-@@ -1944,11 +1950,11 @@ static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 
- 	*regmap = info->regmap_base;
- 	*reg = RK3228_DRV_GRF_OFFSET;
--	*reg += bank->bank_num * RK3288_DRV_BANK_STRIDE;
--	*reg += ((pin_num / RK3288_DRV_PINS_PER_REG) * 4);
-+	*reg += bank->bank_num * RK3228_DRV_BANK_STRIDE;
-+	*reg += ((pin_num / RK3228_DRV_PINS_PER_REG) * 4);
- 
--	*bit = (pin_num % RK3288_DRV_PINS_PER_REG);
--	*bit *= RK3288_DRV_BITS_PER_PIN;
-+	*bit = (pin_num % RK3228_DRV_PINS_PER_REG);
-+	*bit *= RK3228_DRV_BITS_PER_PIN;
- }
- 
- #define RK3308_PULL_OFFSET		0xa0
+Jianqun Xu (13):
+  pinctrl: rockchip: add nr_pins to rockchip_pin_ctrl
+  pinctrl: rockchip: modify rockchip_pin_ctrl to const struct
+  pinctrl: rockchip: make driver be tristate module
+  pinctrl: rockchip: enable gpio pclk for rockchip_gpio_to_irq
+  pinctrl: rockchip: create irq mapping in gpio_to_irq
+  pinctrl: rockchip: Add RK3399 definitions to separate from other SoCs
+  pinctrl: rockchip: Add RK3368 definitions to separate from other SoCs
+  pinctrl: rockchip: Add RK3308 definitions to separate from other SoCs
+  pinctrl: rockchip: Add RK3228 definitions to separate from other SoCs
+  pinctrl: rockchip: Add RK3288 definitions to separate from other SoCs
+  pinctrl: rockchip: Add RK3128 definitions to separate from other SoCs
+  pinctrl: rockchip: define common codes without special chip name
+  pinctrl: rockchip: do codingstyle by adding mux route definitions
+
+ drivers/pinctrl/Kconfig            |   2 +-
+ drivers/pinctrl/pinctrl-rockchip.c | 933 ++++++++---------------------
+ 2 files changed, 261 insertions(+), 674 deletions(-)
+
 -- 
 2.17.1
 
