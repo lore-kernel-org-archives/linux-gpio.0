@@ -6,60 +6,61 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E756CC433EC
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FED3C433F7
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2E7820768
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E5AB20775
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594990163;
-	bh=JgQ/oreBwGqizaX7ztymLlHDgwGeBJjpWHzJp/rYn1Y=;
+	s=default; t=1594990165;
+	bh=aANPTIRcBlwNxZ39CkeKsSIiggpR6aP1LDoZat8EUlY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KI64eeRRnzD9Fa4TWp0XlA7SfBdWaHKzqRB7o8L4eQf+fJDjFDcz9RfwSMDNaMfAU
-	 mC/WXka2GhAtY77gBzQsSoBJTFIpA872r1WhQhfA8w/FDRC0drAR91I2w1WKVJQaDC
-	 7R8KR6E6v6kqfoJip/QSgsMIvJapgOJpDN7hp1nY=
+	b=UEcIsTsz6g6cUrHhFVUEdDUAGwP6atAPwaYOER5uhSBF4dqYGHqYYCTvG7SNFgXyb
+	 S9xGf8208st+ankHvnDpWSIFEkXbgGfBwCwmwnKIL1aE+wCdjhUAPsU2ZOw1g9FVr9
+	 U/7DPzasi7rrANIgWGaUutZJ2NUdWVL2tD4vnUXw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgGQMtF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726830AbgGQMtF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 17 Jul 2020 08:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50488 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbgGQMs5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:48:57 -0400
+        id S1726648AbgGQMs7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Jul 2020 08:48:59 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 756C9206F4;
-        Fri, 17 Jul 2020 12:48:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCB1420775;
+        Fri, 17 Jul 2020 12:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594990137;
-        bh=JgQ/oreBwGqizaX7ztymLlHDgwGeBJjpWHzJp/rYn1Y=;
+        s=default; t=1594990139;
+        bh=aANPTIRcBlwNxZ39CkeKsSIiggpR6aP1LDoZat8EUlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ep1345fb497pj9W1qaXfXFsZHpSxVyw39mT0Nr9wzDoZ7+uj6WsTVXSRrfmF/WHU2
-         6mxJaSVk5sHcIRRj4LbZUh4DL/lxZv+CkzAk/igZKq9Ef1uWYo1BWGbXvBQ61OO7Kq
-         3acO4nKlY+Xi8cSsfOHrbmaGc6FmhBaY/lCfaPCQ=
+        b=f68uB8Ol5d98bA44WDOoe9Y1fGkNoWEC+amMvpziY3HoXmtAbi9CwZbCc57LrSBZ1
+         BNvJBPK/oKfdZgg6LrCPVKfj0Yd4Uf2tTu+3qGZtVnwfUrbmwJtemLJMGqsqdxsaPz
+         +SHx1BZQ5mMJL0bvIRdXJWagQJ85fmckQXCY6ETc=
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=wait-a-minute.lan)
         by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <maz@kernel.org>)
-        id 1jwPnM-00Ccsm-0e; Fri, 17 Jul 2020 13:48:56 +0100
+        id 1jwPnN-00Ccsm-DC; Fri, 17 Jul 2020 13:48:57 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Alexandre Torgue <alexandre.torgue@st.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Masahiro Yamada <masahiroy@kernel.org>
+        Tiezhu Yang <yangtiezhu@loongson.cn>
 Cc:     linux-kernel@vger.kernel.org, marex@denx.de,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] irqchip: ativic32: constify irq_domain_ops
-Date:   Fri, 17 Jul 2020 13:48:46 +0100
-Message-Id: <159499001592.546505.4320591957768155894.b4-ty@kernel.org>
+        linux-stm32@st-md-mailman.stormreply.com,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v3 0/8] irqchip: Fix some issues and do some code cleanups about Loongson
+Date:   Fri, 17 Jul 2020 13:48:48 +0100
+Message-Id: <159499001592.546505.6228869407705026120.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200714173857.477422-1-masahiroy@kernel.org>
-References: <20200714173857.477422-1-masahiroy@kernel.org>
+In-Reply-To: <1594087972-21715-1-git-send-email-yangtiezhu@loongson.cn>
+References: <1594087972-21715-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, masahiroy@kernel.org, linux-kernel@vger.kernel.org, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, yangtiezhu@loongson.cn, linux-kernel@vger.kernel.org, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, jiaxun.yang@flygoat.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-gpio-owner@vger.kernel.org
@@ -67,14 +68,39 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 15 Jul 2020 02:38:57 +0900, Masahiro Yamada wrote:
-> This is passed to irq_domain_add_linear(), which accepts a pointer
-> to a const structure.
+On Tue, 7 Jul 2020 10:12:44 +0800, Tiezhu Yang wrote:
+> Check the return value of irq_domain_translate_onecell() and
+> irq_domain_translate_twocell(), fix potential resource leak
+> and dead lock, do some code cleanups about Loongson to make
+> it more clean and readable.
+> 
+> v2:
+>   - In order to avoid git send-email failed, make the related patches
+>     about Loongson into a new patch series and add "Fixes" tag
+> v3:
+>   - Add a new patch "irqchip/loongson-liointc: Fix potential dead lock"
+>   - Fix another typo in loongson,liointc.yaml
+> 
+> [...]
 
 Applied to irq/irqchip-5.9, thanks!
 
-[1/1] irqchip/ativic32: Constify irq_domain_ops
-      commit: 605a2cf566e130c77fc2cc77fac37fb901fc868a
+[1/8] irqchip/loongson-htpic: Remove redundant kfree operation
+      commit: f90fafecf4880b9785da85feb9b3e6d85fbf2287
+[2/8] irqchip/loongson-htpic: Remove unneeded select of I8259
+      commit: 85efd6059ae1a99e5e7205f37e910fd41dfa0ade
+[3/8] irqchip/loongson-htvec: Fix potential resource leak
+      commit: 652d54e77a438cf38a5731d8f9983c81e72dc429
+[4/8] irqchip/loongson-htvec: Check return value of irq_domain_translate_onecell()
+      commit: dbec37048d27cee36e103e113b5f9b1852bfe997
+[5/8] irqchip/loongson-pch-pic: Check return value of irq_domain_translate_twocell()
+      commit: 66a535c495f72e1deacc37dfa34acca2a06e3578
+[6/8] irqchip/loongson-pch-msi: Remove unneeded variable
+      commit: b10cbca8f03dd10dc241395a639d488f4144e986
+[7/8] irqchip/loongson-liointc: Fix potential dead lock
+      commit: fa03587cad9bd32aa552377de4f05c50181a35a8
+[8/8] dt-bindings: interrupt-controller: Fix typos in loongson,liointc.yaml
+      commit: 1055df97676a31df0b46942cb8bf66eb37ae318f
 
 Cheers,
 
