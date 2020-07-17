@@ -2,121 +2,84 @@ Return-Path: <SRS0=J+Mb=A4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD10BC433E1
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86829C433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88C7A206F4
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097DF20759
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:56:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="nvO4V7M0"
+	dkim=pass (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="pxWL+vB0";
+	dkim=pass (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="pxWL+vB0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgGQMqG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jul 2020 08:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbgGQMqF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2020 08:46:05 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8445C08C5C0
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2020 05:46:04 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id j4so10897718wrp.10
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2020 05:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xar4CKwA2Rwnu+ciWE61B48Q/3ub/PHWow40xzzzpjo=;
-        b=nvO4V7M0iiy73AUDzO6fNZ/ndWFaaL50qq0vLzM68p7EiTYQGcmayq6a6qoK2+vV7/
-         sQqFsSUjwBoMt4XweTMKZ/1DeyYeU676nlIzulPGMZzY73yp9D50sa7Tj4e7KHIaajd6
-         pBLAwin/J26jR3tpMeeGgUixpMAfcKtUHHZQrcREwIxf+zM/LeATCbuY46rrCbhEyDG5
-         0aVgKsEHklhyREpNHBtseM2yajbyyjXk6g4Hxz780luSt3ZJ9PZMKyaqBlnnvX4HM6Zd
-         EZap+9kHHo6bHMgUEd6kNkKD+S+O2cuMvCzgPFyiBduJbeOVTwU+GHEbFcqTYZuG4+uk
-         uDLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xar4CKwA2Rwnu+ciWE61B48Q/3ub/PHWow40xzzzpjo=;
-        b=pLunriOmBPFb+G47D0c78spy/yAR/zwX8CJdKaXdPn/0B9JvRdqqg6Nm6qLspXGr6S
-         Jl8LTpnIWVRxJWoRECzJAPvc6EpR5dZlbHBqebLuEpvXwXVqDVpWJbILG1x96cC/fFyK
-         w5/PRzKMpg6ruoOobyXcUy63z2CXkCml+mPdxK7+9oiGZ6vXV+F7XHgxqKZmJ91eSeIQ
-         nIJgnsVNp+ZrlkOSilPS2NeVdINhNQOPZ4kjTseXdMGchRBhFaCtkDjUN1dwFWsGKW/L
-         QyKVIwXvh3HOomm3djihMUpzmFHcTSqBwU5u2y+9wk9xshmL1RMw2dTMS8jJC65Kof4U
-         qmEA==
-X-Gm-Message-State: AOAM5318tkrD9pjyYhVHhQOrsgHPoX1OrYdHzA9jaZeXqobwk/G3wGIw
-        SOw0zlrNpgge3ggLBwzV+jFS7w==
-X-Google-Smtp-Source: ABdhPJzB/mmFoX0OVmyFa3FGXmaDcYscGx0QglgVJO4mgGBAkVpi/PKUbjhcYcgugTLFjJXiA9yXHw==
-X-Received: by 2002:adf:de8d:: with SMTP id w13mr9909255wrl.129.1594989963283;
-        Fri, 17 Jul 2020 05:46:03 -0700 (PDT)
-Received: from x1 (220.red-95-125-197.staticip.rima-tde.net. [95.125.197.220])
-        by smtp.gmail.com with ESMTPSA id k18sm14473782wrx.34.2020.07.17.05.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2020 05:46:02 -0700 (PDT)
-Date:   Fri, 17 Jul 2020 14:45:59 +0200
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@gmail.com>
-Subject: Re: [PATCH v2] gpio: omap: handle pin config bias flags
-Message-ID: <20200717124559.GA1765997@x1>
-References: <20200715213738.1640030-1-drew@beagleboard.org>
- <CACRpkdZ+Bm4MsyaJJ89q7_KfgmyQWyJ57SC3F38gxTbsOfwNTA@mail.gmail.com>
- <20200717124048.GA1765226@x1>
+        id S1726901AbgGQM4l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jul 2020 08:56:41 -0400
+Received: from fallback10.mail.ru ([94.100.178.50]:36662 "EHLO
+        fallback10.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbgGQM4l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2020 08:56:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To; bh=NObxhum/a2XzOZo4yKZBQmrDj2MqYhgPvhjEx06g028=;
+        b=pxWL+vB0OdTdFx7lPPSz0/+nTbmfEoJUR8XSu0YRHQNsmaGBY2fqZtwP/emRa6RAPrILXXos6KIrHbV9IvobjMgz+JRgz1Vx7PAHdrszWIgPD9dhHhlXANyiznFT5mrXorJdwNW6v+S6FziG/sJp0a1rnHdqqRiX+xDwust96Rk=;
+Received: from [10.161.64.58] (port=35948 helo=smtp50.i.mail.ru)
+        by fallback10.m.smailru.net with esmtp (envelope-from <fido_max@inbox.ru>)
+        id 1jwPuo-00042H-NY
+        for linux-gpio@vger.kernel.org; Fri, 17 Jul 2020 15:56:38 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To; bh=NObxhum/a2XzOZo4yKZBQmrDj2MqYhgPvhjEx06g028=;
+        b=pxWL+vB0OdTdFx7lPPSz0/+nTbmfEoJUR8XSu0YRHQNsmaGBY2fqZtwP/emRa6RAPrILXXos6KIrHbV9IvobjMgz+JRgz1Vx7PAHdrszWIgPD9dhHhlXANyiznFT5mrXorJdwNW6v+S6FziG/sJp0a1rnHdqqRiX+xDwust96Rk=;
+Received: by smtp50.i.mail.ru with esmtpa (envelope-from <fido_max@inbox.ru>)
+        id 1jwPum-0002ED-In; Fri, 17 Jul 2020 15:56:36 +0300
+To:     linux-gpio@vger.kernel.org
+Cc:     bgolaszewski@baylibre.com, linus.walleij@linaro.org
+From:   Maxim Kochetkov <fido_max@inbox.ru>
+Subject: gpiolib gpio_chrdev_release duration is about 30 ms
+Message-ID: <7eb11c0d-cd11-f873-c336-4ec955a7bdb3@inbox.ru>
+Date:   Fri, 17 Jul 2020 15:56:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200717124048.GA1765226@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-7564579A: 78E4E2B564C1792B
+X-77F55803: 4F1203BC0FB41BD9BB76C036EA8E79AC9B2E8FCD3A562362C0B1A6BAAEF55006182A05F538085040F82B387E9F848B1CAB9A26C9818407F8536DAB29EF6E70E2887D52B245FDD90E
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7F2393C4755A27B53EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637367CCE42412B8BE38638F802B75D45FF5571747095F342E8C7A0BC55FA0FE5FCA5BBF97EF41494474F089A7778E8C3165026602F4E960E9A389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C0CB629EEF1311BF91D2E47CDBA5A96583BD4B6F7A4D31EC0BB23A54CFFDBC96A8389733CBF5DBD5E9D5E8D9A59859A8B65FF0BFC5AEE34BE6CC7F00164DA146DA6F5DAA56C3B73B23666F7B5397D5B1B93AA81AA40904B5D9A18204E546F3947C724336BCC0EE1BA86136E347CC761E074AD6D5ED66289B52C79FDBAFFB82A7259735652A29929C6C725E5C173C3A84C36EDE6B9188BA9AD7BA3038C0950A5D36B5C8C57E37DE458BFCBE8621B972A70D67F23339F89546C55F5C1EE8F4F765FCE987C591F5696A4475ECD9A6C639B01BBD4B6F7A4D31EC0BC0CAF46E325F83A522CA9DD8327EE4930A3850AC1BE2E735E4A630A5B664A4FFC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-C8649E89: 74F645C069E3B1B4D86CBD6A734ED51C250D3E70029BEC630CE2BB3A9E0A6A3D510FDD9BE9EDF4E7
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojyFZPfq27zy9HhMaofhU1tw==
+X-Mailru-Sender: 11C2EC085EDE56FA9C10FA2967F5AB24254EB45F4CC46C3314B680F4BFD70BD2B9B2FA0AF6579CB0EE9242D420CFEBFD3DDE9B364B0DF2891A624F84B2C74EDA4239CF2AF0A6D4F80DA7A0AF5A3A8387
+X-Mras: Ok
+X-7564579A: B8F34718100C35BD
+X-77F55803: 6242723A09DB00B4147F32E2E3FD3168DE2A8C9985EE8C2D83F0C290355244F268F3CF0E9FE49B69877E34D63D09EFC9627B634B6B66B094264C209251EFB195269C742E85EF9C92
+X-7FA49CB5: 0D63561A33F958A526FAC18C57BAF8CAFAA4CEFC47F648E9E79444843F25DD1E8941B15DA834481FA18204E546F3947C17119E5299B287EEF6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8B2EE5AD8F952D28FBA471835C12D1D977C4224003CC8364764DC0A47125153FC0D81D268191BDAD3DC09775C1D3CA48CF7CB2176D36798DBBBA3038C0950A5D36C8A9BA7A39EFB76633AA9177FDEE801F35872C767BF85DA29E625A9149C048EE0A3850AC1BE2E735843AE0F20224B8D04AD6D5ED66289B524E70A05D1297E1BB35872C767BF85DA227C277FBC8AE2E8BDC0F6C5B2EEF3D0C75ECD9A6C639B01B4E70A05D1297E1BBC6867C52282FAC85D9B7C4F32B44FF57285124B2A10EEC6C00306258E7E6ABB4E4A6367B16DE6309
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojyFZPfq27zy8rBNmgBaPDzA==
+X-Mailru-MI: 800
+X-Mailru-Sender: A5480F10D64C90054F94DD2E9EA85DB6D1DE39FE8D7E5B9107E95B8AD09773E21BDEAF2E8698D5DCC099ADC76E806A99D50E20E2BC48EF5A30D242760C51EA9CEAB4BC95F72C04283CDA0F3B3F5B9367
+X-Mras: Ok
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 02:40:48PM +0200, Drew Fustini wrote:
-> On Thu, Jul 16, 2020 at 10:29:30AM +0200, Linus Walleij wrote:
-> > On Wed, Jul 15, 2020 at 11:37 PM Drew Fustini <drew@beagleboard.org> wrote:
-> > 
-> > > Modify omap_gpio_set_config() to handle pin config bias flags by calling
-> > > gpiochip_generic_config().
-> > >
-> > > The pin group for the gpio line must have the corresponding pinconf
-> > > properties:
-> > >
-> > > PIN_CONFIG_BIAS_PULL_UP requires "pinctrl-single,bias-pullup"
-> > > PIN_CONFIG_BIAS_PULL_DOWN requires "pinctrl-single,bias-pulldown"
-> > >
-> > > This is necessary for pcs_pinconf_set() to find the requested bias
-> > > parameter in the PIN_MAP_TYPE_CONFIGS_GROUP pinctrl map.
-> > >
-> > > Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> > > Acked-by: Tony Lindgren <tony@atomide.com>
-> > > Signed-off-by: Drew Fustini <drew@beagleboard.org>
-> > 
-> > This v2 version applied!
-> > 
-> > Yours,
-> > Linus Walleij
-> 
-> Thanks! 
-> 
-> I'm curious which branch should I look in to find it?
-> 
-> I didn't see it in any of the branches in:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/refs/
-> 
-> -Drew
+Hi.
 
-Oh, nevermind.  I found it in linux-pinctrl:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=for-next&id=40e30d26d909af89de2dcd0b4abdd27c47ac2235
+I'm using libgpiod in userspace.
+I have 6 gpiochip's on my board.
+gpiod_line_find takes about 300ms to find GPIO line.
 
-Thanks,
-Drew
+gpiod_line_find calls gpiod_foreach_chip
+then gpiod_chip_iter_next
+then gpiod_chip_close then close(chip->fd)
+then we are going to kernel gpiolib gpio_chrdev_release
+then atomic_notifier_chain_unregister
+then synchronize_rcu()
+
+synchronize_rcu takes about 30 ms (6*30ms=280ms)
+
+I tried to remove synchronize_rcu from atomic_notifier_chain_unregister 
+and gpiod_line_find takes about 2ms now.
+
