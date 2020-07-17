@@ -6,61 +6,67 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FED3C433F7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5778C43445
 	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5AB20775
+	by mail.kernel.org (Postfix) with ESMTP id 93C74207FB
 	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jul 2020 12:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1594990165;
-	bh=aANPTIRcBlwNxZ39CkeKsSIiggpR6aP1LDoZat8EUlY=;
+	bh=oveUsRxE3s8oXYlG1x5cDW1hlCLkwDVYSrD4BqPqSFk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UEcIsTsz6g6cUrHhFVUEdDUAGwP6atAPwaYOER5uhSBF4dqYGHqYYCTvG7SNFgXyb
-	 S9xGf8208st+ankHvnDpWSIFEkXbgGfBwCwmwnKIL1aE+wCdjhUAPsU2ZOw1g9FVr9
-	 U/7DPzasi7rrANIgWGaUutZJ2NUdWVL2tD4vnUXw=
+	b=PShi45s5SMwkWi+MO7CavZvAVYZG2cbir+dLjbBm8/576K/0zrFW0Onc2MghBeNiA
+	 RI6EWUAPmFj8KHVx3tTXb8dF+/ocxAXwD0XF36IsCoyFXgXgXIRg42CKa6haXLRicu
+	 ZezJtobUwTrlVvAnBUfAgtjsU+HHvrsrP0oQv8P4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgGQMtF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jul 2020 08:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50408 "EHLO mail.kernel.org"
+        id S1726491AbgGQMs5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jul 2020 08:48:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbgGQMs7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:48:59 -0400
+        id S1726056AbgGQMsz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Jul 2020 08:48:55 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB1420775;
-        Fri, 17 Jul 2020 12:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B97620775;
+        Fri, 17 Jul 2020 12:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594990139;
-        bh=aANPTIRcBlwNxZ39CkeKsSIiggpR6aP1LDoZat8EUlY=;
+        s=default; t=1594990135;
+        bh=oveUsRxE3s8oXYlG1x5cDW1hlCLkwDVYSrD4BqPqSFk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f68uB8Ol5d98bA44WDOoe9Y1fGkNoWEC+amMvpziY3HoXmtAbi9CwZbCc57LrSBZ1
-         BNvJBPK/oKfdZgg6LrCPVKfj0Yd4Uf2tTu+3qGZtVnwfUrbmwJtemLJMGqsqdxsaPz
-         +SHx1BZQ5mMJL0bvIRdXJWagQJ85fmckQXCY6ETc=
+        b=vpNpTMTzpGWGrYrt95Jx2Ul+jVSw/2ns4oGtH2ArDJV5sFfTY+L5ZG8UnreK2snAN
+         jsKvjS4RcW9BDL1vMCJdhHfiOqmoGRs4KZRZ8xip3FLibEEUvPlCRWONxoh+MZCWHP
+         bjZ0+sP08pROk+Uq7oCBCktebS+oGLFmDqD8bjVo=
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=wait-a-minute.lan)
         by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <maz@kernel.org>)
-        id 1jwPnN-00Ccsm-DC; Fri, 17 Jul 2020 13:48:57 +0100
+        id 1jwPnJ-00Ccsm-L7; Fri, 17 Jul 2020 13:48:53 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Alexandre Torgue <alexandre.torgue@st.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     linux-kernel@vger.kernel.org, marex@denx.de,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     marex@denx.de, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v3 0/8] irqchip: Fix some issues and do some code cleanups about Loongson
-Date:   Fri, 17 Jul 2020 13:48:48 +0100
-Message-Id: <159499001592.546505.6228869407705026120.b4-ty@kernel.org>
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
+        <linux-mips@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 0/6] irqchip: Broadcom STB interrupt controller updates
+Date:   Fri, 17 Jul 2020 13:48:43 +0100
+Message-Id: <159499001591.546505.10421625541842835450.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <1594087972-21715-1-git-send-email-yangtiezhu@loongson.cn>
-References: <1594087972-21715-1-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <20200709223016.989-1-f.fainelli@gmail.com>
+References: <20200709223016.989-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, yangtiezhu@loongson.cn, linux-kernel@vger.kernel.org, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, jiaxun.yang@flygoat.com
+X-SA-Exim-Rcpt-To: alexandre.torgue@st.com, jason@lakedaemon.net, tglx@linutronix.de, linux-kernel@vger.kernel.org, f.fainelli@gmail.com, marex@denx.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, bcm-kernel-feedback-list@broadcom.com, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-gpio-owner@vger.kernel.org
@@ -68,39 +74,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 7 Jul 2020 10:12:44 +0800, Tiezhu Yang wrote:
-> Check the return value of irq_domain_translate_onecell() and
-> irq_domain_translate_twocell(), fix potential resource leak
-> and dead lock, do some code cleanups about Loongson to make
-> it more clean and readable.
+On Thu, 9 Jul 2020 15:30:10 -0700, Florian Fainelli wrote:
+> This patch series contains a number of updates for Broadcom STB L2
+> interrupt controllers to enable them as wake-up interrupt controllers,
+> and add missing compatible strings that should be matched.
 > 
-> v2:
->   - In order to avoid git send-email failed, make the related patches
->     about Loongson into a new patch series and add "Fixes" tag
-> v3:
->   - Add a new patch "irqchip/loongson-liointc: Fix potential dead lock"
->   - Fix another typo in loongson,liointc.yaml
+> Thanks!
+> 
+> Florian Fainelli (3):
+>   dt-bindings: interrupt-controller: Document Broadcom STB HIF L2
+>   dt-bindings: interrupt-controller: Document UPG auxiliary L2
+>   irqchip/brcmstb-l2: Match UPG_AUX_AON_INTR2 compatible
 > 
 > [...]
 
 Applied to irq/irqchip-5.9, thanks!
 
-[1/8] irqchip/loongson-htpic: Remove redundant kfree operation
-      commit: f90fafecf4880b9785da85feb9b3e6d85fbf2287
-[2/8] irqchip/loongson-htpic: Remove unneeded select of I8259
-      commit: 85efd6059ae1a99e5e7205f37e910fd41dfa0ade
-[3/8] irqchip/loongson-htvec: Fix potential resource leak
-      commit: 652d54e77a438cf38a5731d8f9983c81e72dc429
-[4/8] irqchip/loongson-htvec: Check return value of irq_domain_translate_onecell()
-      commit: dbec37048d27cee36e103e113b5f9b1852bfe997
-[5/8] irqchip/loongson-pch-pic: Check return value of irq_domain_translate_twocell()
-      commit: 66a535c495f72e1deacc37dfa34acca2a06e3578
-[6/8] irqchip/loongson-pch-msi: Remove unneeded variable
-      commit: b10cbca8f03dd10dc241395a639d488f4144e986
-[7/8] irqchip/loongson-liointc: Fix potential dead lock
-      commit: fa03587cad9bd32aa552377de4f05c50181a35a8
-[8/8] dt-bindings: interrupt-controller: Fix typos in loongson,liointc.yaml
-      commit: 1055df97676a31df0b46942cb8bf66eb37ae318f
+[1/6] irqchip/bcm7120-l2: Set controller as wake-up source
+      commit: f4ccb74569aaf839c2830382e902dd50d564df55
+[2/6] irqchip/brcmstb-l2: Set controller as wake-up source
+      commit: c8d8d6fc478a30f3e8ea5372664dd2a808c4311e
+[3/6] dt-bindings: interrupt-controller: Document Broadcom STB HIF L2
+      commit: 90b06e2dc4d1e8e9311a5275d53f61d90b61efdc
+[4/6] irqchip/brcmstb-l2: Match HIF_SPI_INTR2 compatible
+      commit: 9ac793dc5c97691152818305974299604c67e110
+[5/6] dt-bindings: interrupt-controller: Document UPG auxiliary L2
+      commit: 03a7ac47c14c7ef50742a34b3cfba1a47a578a03
+[6/6] irqchip/brcmstb-l2: Match UPG_AUX_AON_INTR2 compatible
+      commit: 240e176a96187ee84e63626ca0d1aac92da503aa
 
 Cheers,
 
