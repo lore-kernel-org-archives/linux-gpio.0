@@ -2,200 +2,98 @@ Return-Path: <SRS0=/SYs=A5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0E1C433E4
-	for <linux-gpio@archiver.kernel.org>; Sat, 18 Jul 2020 21:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080D5C433E0
+	for <linux-gpio@archiver.kernel.org>; Sat, 18 Jul 2020 21:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01F0820684
-	for <linux-gpio@archiver.kernel.org>; Sat, 18 Jul 2020 21:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4EE20734
+	for <linux-gpio@archiver.kernel.org>; Sat, 18 Jul 2020 21:31:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hb2kXYkj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbgGRV0N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 18 Jul 2020 17:26:13 -0400
-Received: from mga09.intel.com ([134.134.136.24]:40201 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728018AbgGRV0N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 18 Jul 2020 17:26:13 -0400
-IronPort-SDR: oPg5/i6Cy/nEFQsqnBMkRRwVdbdphk+Tbn749v5gt7rQlzgbZs191GFk195KysMSUWLIPn6Kod
- 7Q48gREAi/hw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9686"; a="151122655"
-X-IronPort-AV: E=Sophos;i="5.75,368,1589266800"; 
-   d="scan'208";a="151122655"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2020 14:26:12 -0700
-IronPort-SDR: 40oZSFoM5TghfdSvQ36ZoJ+Za+062G+jcBtKYclqyxMtMkb9CFvLCDzsosKgZ4jPnmM4Gg9klq
- w/XA9EzlzNNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,368,1589266800"; 
-   d="scan'208";a="319129940"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Jul 2020 14:26:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8FE3EA7; Sun, 19 Jul 2020 00:26:09 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/3] gpio: aggregator: Refactor ->{get,set}_multiple() to make Sparse happy
-Date:   Sun, 19 Jul 2020 00:26:06 +0300
-Message-Id: <20200718212608.65328-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200718212608.65328-1-andriy.shevchenko@linux.intel.com>
-References: <20200718212608.65328-1-andriy.shevchenko@linux.intel.com>
+        id S1726989AbgGRVby (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 18 Jul 2020 17:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbgGRVby (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jul 2020 17:31:54 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C3EC0619D2
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2020 14:31:54 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id b92so8008311pjc.4
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2020 14:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MW3vYnh15YMFL9NBzMLvmKGSWy0eXL+SjCbeEXxNfBQ=;
+        b=hb2kXYkjVOdWE5GhHXy/t6w5p9pfqdm3uafiBQQlTwu3/dKITmlsizhXvEIuffYNeI
+         Zcmk8G47FA72a3YvQR67QlcZ/MEpmjFKVVXIYrYfvSkH7qke46b7lxdaP4gGM7KQwhXn
+         o+sV5BxDEgzS1BQUuLtOAVUh2n/X4jHMEVTlFiEbiGeS7Yuh8hSu/d9iU8e1xQHzFfMr
+         Kr9V+vzTP+iRxIGkkQ8y17FGb9vULjXna7Ct1MBZC5h7lqoYsOPIjVXQdznHe7ahPDWj
+         DaAmvxLyzg0B/5z+V3k75M1vgcwzLVfAnd/ChjqLR/H5OfKWVdygpOftNKGUJElTU4zz
+         ArSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MW3vYnh15YMFL9NBzMLvmKGSWy0eXL+SjCbeEXxNfBQ=;
+        b=Y1PP+T95N0C+A5YvhBtgf34abNhUqD5PRtjVB6NM6zQyaqvvNfMK7kGC03Ca3ww9Ai
+         MgbI/Y8Aavk8NYki2qJxmptLD64QG1G8nSVgBRWAWAcgAGgHtsFnt68b81XxKcttTLS0
+         D4XTYXOkYMbKJhfAVRIUVir8+6hYPo8Yghh4KCnJSOqjrXX0hTyVrdqnJ2ramNp1MI/C
+         pcWDXmRZ5RMulgzev3bGr5jogc4LDgGRYnv/7dzitiL3hN/bQSUd5X9Xv9VrrSthXQ5d
+         uAVNRfFTOUzY9UrfYnpz/YxsKlxcWolyum0BWmeOKrY7Bph2/g9ACOhPrbkKJ169AweC
+         wp2A==
+X-Gm-Message-State: AOAM530qN1zDWIi/Tg1I3o0ZMMcKEhQAmDBKVoKYrmoA0t0X+uhJyEuw
+        ZyzTj15yfRXk0Qy+yc4r8hectT7ea/j5knj9o3E=
+X-Google-Smtp-Source: ABdhPJx2OO+hb5R8yvvOIrZNHTEZizbMhJoK9sXnST8d5xe92RO7SzZcaP9r7YUDhxIAlpvqNYJMcgm1S5Pkc43kW4s=
+X-Received: by 2002:a17:90b:1b52:: with SMTP id nv18mr16804702pjb.129.1595107912183;
+ Sat, 18 Jul 2020 14:31:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200615150545.87964-1-andriy.shevchenko@linux.intel.com>
+ <20200615150545.87964-3-andriy.shevchenko@linux.intel.com> <87sgdo35sf.fsf@FE-laptop>
+In-Reply-To: <87sgdo35sf.fsf@FE-laptop>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 19 Jul 2020 00:31:36 +0300
+Message-ID: <CAHp75Vep8ABSs_mvaBGTcgSZC4sV_Dad-PfUk48b=4cNyXOt4Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] ARM/orion/gpio: Make use of for_each_requested_gpio()
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sparse can't see locking scheme used in ->get_multiple() and
-->set_multiple() callbacks.
-  CHECK   .../drivers/gpio/gpio-aggregator.c
-  .../spinlock.h:409:9: warning: context imbalance in 'gpio_fwd_get_multiple' - unexpected unlock
-  .../spinlock.h:409:9: warning: context imbalance in 'gpio_fwd_set_multiple' - unexpected unlock
+On Sat, Jul 18, 2020 at 11:53 PM Gregory CLEMENT
+<gregory.clement@bootlin.com> wrote:
+>
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+>
+> > Make use of for_each_requested_gpio() instead of home grown analogue.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Cc: Jason Cooper <jason@lakedaemon.net>
+> > Cc: Andrew Lunn <andrew@lunn.ch>
+> > Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> > Cc: Gregory Clement <gregory.clement@bootlin.com>
+>
+> Applied on mvebu/arm
 
-Refactor them to have better readability and make Sparse happy.
+I guess you need to merge an immutable branch from Linus. Does above imply this?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-aggregator.c | 70 +++++++++++++++++++++-------------
- 1 file changed, 43 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 424a3d25350b..5be166e73381 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -333,20 +333,14 @@ static int gpio_fwd_get(struct gpio_chip *chip, unsigned int offset)
- 	return gpiod_get_value(fwd->descs[offset]);
- }
- 
--static int gpio_fwd_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
- 				 unsigned long *bits)
- {
--	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
--	unsigned long *values, flags = 0;
- 	struct gpio_desc **descs;
-+	unsigned long *values;
- 	unsigned int i, j = 0;
- 	int error;
- 
--	if (chip->can_sleep)
--		mutex_lock(&fwd->mlock);
--	else
--		spin_lock_irqsave(&fwd->slock, flags);
--
- 	/* Both values bitmap and desc pointers are stored in tmp[] */
- 	values = &fwd->tmp[0];
- 	descs = (void *)&fwd->tmp[BITS_TO_LONGS(fwd->chip.ngpio)];
-@@ -356,16 +350,32 @@ static int gpio_fwd_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 		descs[j++] = fwd->descs[i];
- 
- 	error = gpiod_get_array_value(j, descs, NULL, values);
--	if (!error) {
--		j = 0;
--		for_each_set_bit(i, mask, fwd->chip.ngpio)
--			__assign_bit(i, bits, test_bit(j++, values));
--	}
-+	if (error)
-+		return error;
- 
--	if (chip->can_sleep)
-+	j = 0;
-+	for_each_set_bit(i, mask, fwd->chip.ngpio)
-+		__assign_bit(i, bits, test_bit(j++, values));
-+
-+	return 0;
-+}
-+
-+static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
-+				        unsigned long *mask, unsigned long *bits)
-+{
-+	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-+	unsigned long flags;
-+	int error;
-+
-+	if (chip->can_sleep) {
-+		mutex_lock(&fwd->mlock);
-+		error = gpio_fwd_get_multiple(fwd, mask, bits);
- 		mutex_unlock(&fwd->mlock);
--	else
-+	} else {
-+		spin_lock_irqsave(&fwd->slock, flags);
-+		error = gpio_fwd_get_multiple(fwd, mask, bits);
- 		spin_unlock_irqrestore(&fwd->slock, flags);
-+	}
- 
- 	return error;
- }
-@@ -377,19 +387,13 @@ static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
- 	gpiod_set_value(fwd->descs[offset], value);
- }
- 
--static void gpio_fwd_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-+static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
- 				  unsigned long *bits)
- {
--	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
--	unsigned long *values, flags = 0;
- 	struct gpio_desc **descs;
-+	unsigned long *values;
- 	unsigned int i, j = 0;
- 
--	if (chip->can_sleep)
--		mutex_lock(&fwd->mlock);
--	else
--		spin_lock_irqsave(&fwd->slock, flags);
--
- 	/* Both values bitmap and desc pointers are stored in tmp[] */
- 	values = &fwd->tmp[0];
- 	descs = (void *)&fwd->tmp[BITS_TO_LONGS(fwd->chip.ngpio)];
-@@ -400,11 +404,23 @@ static void gpio_fwd_set_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	}
- 
- 	gpiod_set_array_value(j, descs, NULL, values);
-+}
- 
--	if (chip->can_sleep)
-+static void gpio_fwd_set_multiple_locked(struct gpio_chip *chip,
-+				         unsigned long *mask, unsigned long *bits)
-+{
-+	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-+	unsigned long flags;
-+
-+	if (chip->can_sleep) {
-+		mutex_lock(&fwd->mlock);
-+		gpio_fwd_set_multiple(fwd, mask, bits);
- 		mutex_unlock(&fwd->mlock);
--	else
-+	} else {
-+		spin_lock_irqsave(&fwd->slock, flags);
-+		gpio_fwd_set_multiple(fwd, mask, bits);
- 		spin_unlock_irqrestore(&fwd->slock, flags);
-+	}
- }
- 
- static int gpio_fwd_set_config(struct gpio_chip *chip, unsigned int offset,
-@@ -470,9 +486,9 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
- 	chip->direction_input = gpio_fwd_direction_input;
- 	chip->direction_output = gpio_fwd_direction_output;
- 	chip->get = gpio_fwd_get;
--	chip->get_multiple = gpio_fwd_get_multiple;
-+	chip->get_multiple = gpio_fwd_get_multiple_locked;
- 	chip->set = gpio_fwd_set;
--	chip->set_multiple = gpio_fwd_set_multiple;
-+	chip->set_multiple = gpio_fwd_set_multiple_locked;
- 	chip->base = -1;
- 	chip->ngpio = ngpios;
- 	fwd->descs = descs;
+
 -- 
-2.27.0
-
+With Best Regards,
+Andy Shevchenko
