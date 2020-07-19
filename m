@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B7CC433E0
-	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jul 2020 21:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3572EC433DF
+	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jul 2020 21:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBBFB20809
-	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jul 2020 21:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003E920809
+	for <linux-gpio@archiver.kernel.org>; Sun, 19 Jul 2020 21:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="XPgsAobw"
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="vLKFl0rV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgGSVJj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 19 Jul 2020 17:09:39 -0400
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:22088 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbgGSVJj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 19 Jul 2020 17:09:39 -0400
-Date:   Sun, 19 Jul 2020 21:09:31 +0000
+        id S1726219AbgGSVI4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 19 Jul 2020 17:08:56 -0400
+Received: from mail-40134.protonmail.ch ([185.70.40.134]:50766 "EHLO
+        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbgGSVI4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 19 Jul 2020 17:08:56 -0400
+Date:   Sun, 19 Jul 2020 21:08:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1595192976;
+        s=protonmail; t=1595192934;
         bh=Fyu9jfhyPImp95But6mfnw73wgZWzedEWfpy1QW8K3U=;
         h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=XPgsAobwCA75ElAa/TbYMOsg4BYgRJx0e3yvD0eNjUb55lv+6xTO9OP0Z4T9ttRJ0
-         VKqIHTDtj3DinupxPvVW+H8L8QqqrEDsx8FAuWDz7ffBRKqoM3smf7rtSNw7NN/1ns
-         rqeNg/H4ulfi8pyeNVI7TJ5drQMx2FqyMDMKEx9I=
-To:     linus.walleij@linaro.org
+        b=vLKFl0rVdswNN+vjtUns30q6hDW57k+MlPQOvMSqCjOqDuH71zfwx3Syqs9wIlERh
+         jPqxMRKLjf32tJF0P8XBCOJkaYZJFF6sYRENwzp3k8ACyIAAs0rDKB46L/xcFXF4gE
+         dkP9Vh736vHo2jjDSv39J2l+4V+NVcdFSxHElut8=
+To:     linux.walleij@linaro.org
 From:   Colton Lewis <colton.w.lewis@protonmail.com>
 Cc:     linux-gpio@vger.kernel.org,
         Colton Lewis <colton.w.lewis@protonmail.com>
 Reply-To: Colton Lewis <colton.w.lewis@protonmail.com>
 Subject: [PATCH] gpio: Correct kernel-doc inconsistency
-Message-ID: <20200719210926.152305-1-colton.w.lewis@protonmail.com>
+Message-ID: <20200719210826.152223-1-colton.w.lewis@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
