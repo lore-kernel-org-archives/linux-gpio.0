@@ -2,150 +2,165 @@ Return-Path: <SRS0=Db+Q=BA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB0FC433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0FAC433E4
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3094820717
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A959E2072E
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:29:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="0l7buidF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgGUWF6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Jul 2020 18:05:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:8066 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbgGUWF6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Jul 2020 18:05:58 -0400
-IronPort-SDR: uJ0j+Yx19o4FaRjoMP2XO1lS42YgKDswEtahtJL4c7FiYP85H7LVGGMs8Ob61iFZ+jF5jiI54D
- dUmu0xcNPXpQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9689"; a="211781089"
-X-IronPort-AV: E=Sophos;i="5.75,380,1589266800"; 
-   d="scan'208";a="211781089"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2020 15:05:57 -0700
-IronPort-SDR: Zs/uBRtM99+HeaAvP2bLSYVQEsxMgtW1wRqU2DKf8gzuCmWYCLmEzzSXPvZFeZxdODOZxnrbKn
- Lwq5xNaXZS+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,380,1589266800"; 
-   d="scan'208";a="392490399"
-Received: from ddperry-mobl.amr.corp.intel.com (HELO [10.254.78.60]) ([10.254.78.60])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Jul 2020 15:05:56 -0700
-Subject: Re: [PATCH v2] gpio: crystalcove: Use irqchip template
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Hans de Goede <hdegoede@redhat.com>
-References: <20200721140153.369171-1-linus.walleij@linaro.org>
- <50c79c0d-3942-c248-fef0-27fa3592b89c@linux.intel.com>
- <20200721215411.GR3703480@smile.fi.intel.com>
-From:   "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Message-ID: <9a0ddc8a-8c8f-614f-56ed-3e59e9fb60f0@linux.intel.com>
-Date:   Tue, 21 Jul 2020 15:05:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728799AbgGUW3s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Jul 2020 18:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728678AbgGUW3r (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 18:29:47 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57966C0619DB
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 15:29:47 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id f18so70882wrs.0
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 15:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YjoK068xYYI7JA+9KS/v5ZylU9LwMSUUbo/ucAlYEPg=;
+        b=0l7buidFzv+ayEbJEb75DkhvcyOLreC8KLeWXKQlVXACHTpsCQnYUOkpAHJsJcnCc/
+         ulkaiYARA8FZfDqMAuyyWXZ0OTwkm4rPBDQkRsaD6nRmNbDVNlMtURXoCqoVYdMlnLJG
+         GQjHfQV0fpF4+MvmVJpMPfv0k8i9k+Y9LwhVIrZBiIG7i3o1XY/iylI4eCvFA0bjVGxw
+         WJ04+S4AC3GG68MVQQ6Lt9+tu+b8yR/nEhydyKuhPr9bSEsVaEIEOTIqEEyU9mjI/fLm
+         jK0F5y2m2tVznVwYB5cIqwmtQP5MMZW70EzJLBncW0gyxEiTr3KgNJg5z4nWIRHGG8/J
+         ADCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YjoK068xYYI7JA+9KS/v5ZylU9LwMSUUbo/ucAlYEPg=;
+        b=gzypYuX7yiz9T6BioKC62mo0/oG1WNoSUx5nsyUZFeXmoqj1kSm3lms0LlPs3S17vr
+         PPweDOoVutlGbUzm1orVdsmdKq04uqp9QhrnWIKVID5SjEgkVKxx+OML3F6B/Zsux8Rq
+         XRhtwqzI4yCWGcXhrvTpYEcm1lXQ1aELw2ydUsdY5+Yg/X3tlTuI/2h5l4rJ/JUj6YwZ
+         wd9R8/PswGZ/s5Zdhyq1/VU14e/u5KJTZ6nBZCfPod0XpPFDzn+RHjbn4nLEDU6d0Kip
+         wVbEExQ27HnTVb6yyPcNA9eV+Ie+mmMDLR9+UbMVL+gzr5zsVNFE/WisZ6wVXgSCfRAs
+         NH7A==
+X-Gm-Message-State: AOAM530a110YsuNJPHFLrNp1ys45QhGTlZLOTso2I0IBEADmPKAVo/gY
+        JSaOIJvRVznfr+zWq24zKi7CvQ==
+X-Google-Smtp-Source: ABdhPJzsT0LvEgdkuonv+hl4lMIi0wGHa6O+5uUVVx/KAcLUwygW7f77i+4LAZD5EyBIqbtaCSuH0g==
+X-Received: by 2002:adf:dfd0:: with SMTP id q16mr2767760wrn.60.1595370584930;
+        Tue, 21 Jul 2020 15:29:44 -0700 (PDT)
+Received: from localhost.localdomain (172.red-80-27-177.dynamicip.rima-tde.net. [80.27.177.172])
+        by smtp.gmail.com with ESMTPSA id n16sm4824114wmc.40.2020.07.21.15.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jul 2020 15:29:44 -0700 (PDT)
+From:   Drew Fustini <drew@beagleboard.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@gmail.com>
+Cc:     Drew Fustini <drew@beagleboard.org>
+Subject: [PATCH v4] pinctrl: core: print gpio in pins debugfs file
+Date:   Wed, 22 Jul 2020 00:28:53 +0200
+Message-Id: <20200721222851.2075891-1-drew@beagleboard.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200721215411.GR3703480@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+If there is a gpio range mapping for the pin, then print out the gpio
+chip and line index for the pin in the debugfs 'pins' file with the
+format: "[line-index]:[gpio-label]"
+
+Here is an example output on the BeagleBoard.org PocketBeagle (AM3358):
+/sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pins
+
+pin 25 (PIN25) 25:gpio-32-63 44e10864 00000037 pinctrl-single 
+pin 26 (PIN26) 26:gpio-32-63 44e10868 00000037 pinctrl-single 
+pin 27 (PIN27) 27:gpio-32-63 44e1086c 00000037 pinctrl-single 
+pin 28 (PIN28) 0:N/A 44e10870 00000036 pinctrl-single 
+pin 29 (PIN29) 0:N/A 44e10874 00000006 pinctrl-single 
+pin 30 (PIN30) 28:gpio-32-63 44e10878 00000027 pinctrl-single 
+pin 31 (PIN31) 29:gpio-32-63 44e1087c 00000037 pinctrl-single 
+pin 32 (PIN32) 30:gpio-32-63 44e10880 00000037 pinctrl-single 
+pin 33 (PIN33) 31:gpio-32-63 44e10884 00000037 pinctrl-single 
+pin 34 (PIN34) 0:gpio-64-95 44e10888 00000037 pinctrl-single 
+pin 35 (PIN35) 1:gpio-64-95 44e1088c 00000037 pinctrl-single 
+
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Suggested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Drew Fustini <drew@beagleboard.org>
+---
+ drivers/pinctrl/core.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+v4 change:
+- can format to be integer first as Andy suggested it will make parsing
+  easier
+
+v3 change:
+- gpio column is now gpiochip label and line index
+
+v2 changes:
+- print 'NA' if pin does not have a GPIO number
+- change gpio_num from unsigned to unsigned int per checkpatch
 
 
-On 7/21/20 2:54 PM, Andy Shevchenko wrote:
-> On Tue, Jul 21, 2020 at 10:08:57AM -0700, Kuppuswamy, Sathyanarayanan wrote:
->> Hi,
->>
->> On 7/21/20 7:01 AM, Linus Walleij wrote:
->>> This makes the driver use the irqchip template to assign
->>> properties to the gpio_irq_chip instead of using the
->>> explicit calls to gpiochip_irqchip_add_nested() and
->>> gpiochip_set_nested_irqchip(). The irqchip is instead
->>> added while adding the gpiochip.
->> Looks good to me.
-> 
-> Thanks!
-> 
->>      Reviewed-by: Kuppuswamy Sathyanarayanan
->> <sathyanarayanan.kuppuswamy@linux.intel.com>
-> 
-> It's not first time your tag goes like this. Please, fix your tools to be it like
-> Reviewed-by: Name <address@com>
-> (no leading spaces, no split -- one line)
-Ok. I will fix it in future emails.
-> 
->>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>> Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>> Cc: Hans de Goede <hdegoede@redhat.com>
->>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->>> ---
->>> ChangeLog v1->V2:
->>> - Fixed a variable name ch->cg
->>> ---
->>>    drivers/gpio/gpio-crystalcove.c | 24 +++++++++++++++---------
->>>    1 file changed, 15 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
->>> index 14d1f4c933b6..39349b0e6923 100644
->>> --- a/drivers/gpio/gpio-crystalcove.c
->>> +++ b/drivers/gpio/gpio-crystalcove.c
->>> @@ -330,6 +330,7 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
->>>    	int retval;
->>>    	struct device *dev = pdev->dev.parent;
->>>    	struct intel_soc_pmic *pmic = dev_get_drvdata(dev);
->>> +	struct gpio_irq_chip *girq;
->>>    	if (irq < 0)
->>>    		return irq;
->>> @@ -353,14 +354,15 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
->>>    	cg->chip.dbg_show = crystalcove_gpio_dbg_show;
->>>    	cg->regmap = pmic->regmap;
->>> -	retval = devm_gpiochip_add_data(&pdev->dev, &cg->chip, cg);
->>> -	if (retval) {
->>> -		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
->>> -		return retval;
->>> -	}
->>> -
->>> -	gpiochip_irqchip_add_nested(&cg->chip, &crystalcove_irqchip, 0,
->>> -				    handle_simple_irq, IRQ_TYPE_NONE);
->>> +	girq = &cg->chip.irq;
->>> +	girq->chip = &crystalcove_irqchip;
->>> +	/* This will let us handle the parent IRQ in the driver */
->>> +	girq->parent_handler = NULL;
->>> +	girq->num_parents = 0;
->>> +	girq->parents = NULL;
->>> +	girq->default_type = IRQ_TYPE_NONE;
->>> +	girq->handler = handle_simple_irq;
->>> +	girq->threaded = true;
->>>    	retval = request_threaded_irq(irq, NULL, crystalcove_gpio_irq_handler,
->>>    				      IRQF_ONESHOT, KBUILD_MODNAME, cg);
->>> @@ -370,7 +372,11 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
->>>    		return retval;
->>>    	}
->>> -	gpiochip_set_nested_irqchip(&cg->chip, &crystalcove_irqchip, irq);
->>> +	retval = devm_gpiochip_add_data(&pdev->dev, &cg->chip, cg);
->>> +	if (retval) {
->>> +		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
->>> +		return retval;
->>> +	}
->>>    	return 0;
->>>    }
->>>
->>
->> -- 
->> Sathyanarayanan Kuppuswamy
->> Linux Kernel Developer
-> 
-
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 821242bb4b16..39e74cdf5c7d 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -27,6 +27,7 @@
+ #include <linux/pinctrl/machine.h>
+ 
+ #ifdef CONFIG_GPIOLIB
++#include "../gpio/gpiolib.h"
+ #include <asm-generic/gpio.h>
+ #endif
+ 
+@@ -1601,6 +1602,9 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
+ 	struct pinctrl_dev *pctldev = s->private;
+ 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
+ 	unsigned i, pin;
++	struct pinctrl_gpio_range *range;
++	unsigned int gpio_num;
++	struct gpio_chip *chip;
+ 
+ 	seq_printf(s, "registered pins: %d\n", pctldev->desc->npins);
+ 
+@@ -1618,6 +1622,23 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
+ 
+ 		seq_printf(s, "pin %d (%s) ", pin, desc->name);
+ 
++#ifdef CONFIG_GPIOLIB
++		gpio_num = 0;
++		list_for_each_entry(range, &pctldev->gpio_ranges, node) {
++			if ((pin >= range->pin_base) &&
++			    (pin < (range->pin_base + range->npins))) {
++				gpio_num = range->base + (pin - range->pin_base);
++				break;
++			}
++		}
++		chip = gpio_to_chip(gpio_num);
++		if (chip && chip->gpiodev && chip->gpiodev->base)
++			seq_printf(s, "%u:%s ", gpio_num -
++				chip->gpiodev->base, chip->label);
++		else
++			seq_puts(s, "0:N/A ");
++#endif
++
+ 		/* Driver-specific info per pin */
+ 		if (ops->pin_dbg_show)
+ 			ops->pin_dbg_show(pctldev, s, pin);
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+2.25.1
+
