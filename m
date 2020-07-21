@@ -2,160 +2,84 @@ Return-Path: <SRS0=Db+Q=BA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895C1C433E4
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 14:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A820C433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 14:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD8220702
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 14:03:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2812206E9
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 14:04:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="PzWnn8lu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLLccylq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbgGUODw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Jul 2020 10:03:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50290 "EHLO
+        id S1728342AbgGUOEq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Jul 2020 10:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgGUODw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 10:03:52 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA752C0619DB
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 07:03:51 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id f7so21348445wrw.1
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 07:03:51 -0700 (PDT)
+        with ESMTP id S1726436AbgGUOEq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 10:04:46 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C45C061794
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 07:04:45 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id z24so24176817ljn.8
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 07:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NfVwMqC0uQWqEXEYVAIidH5sBEC97K0Eu+a0jsNaLKY=;
-        b=PzWnn8luK9wl6PGEsGK2ImTxulWmPdYNOiSWEyzjQfRdbJk4gQfgX7qUATANX0nAjW
-         bbL0yFiwhqAgEcu63UZper1tkX/FFfdod5D4hQ5uM4O9Jtbe9I27IJU7B5dgNSCmqxLB
-         P0HVj9sqNaJycs6cItW8xGlLod2JtT5TaDS0F/BRxuFkOEJdrTCmq2SSzpLYUSDsDfc/
-         YG54UEQOeaSAfG8qhctZh30yNjWcrS3MgXofd9toe731uJmd8ZDHHqs9il5wffvRezqW
-         4cTLSbPPm0SA9zLhQ82hxtNcUul7NN/Rra6mpFERTIAI5rN/rTXVhnRoOHLj2Rwg2mHf
-         jm5A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UtktXB94UoE1zwpGw4L7DaOAMB9VthZKcyfMWewtchM=;
+        b=yLLccylqygcGxLogT7uDUU7Zoo5Gf+rgoWnJxkrvtrNuUUC2Rm99zffl7dgXLUcsxV
+         JUsR4Mi/ot+fvK33v6Uu9vN0B0j5hKnXMEescl1VOpltOAT9W+Gc7AkhEo0n8b2nQ3N9
+         d/+3tCKJOzeU0p9NOt2e8P3KvgBHGGWOMJu6pZa/vhd+Kz+Aay2PlVhVJ3TIu9jZxoPC
+         r0KQv2Q360/8fCEcxHhs7RkvZv/6qZQ6+getRlZ//wMfZEIDwVEjPXekSUXa5CcHoapM
+         VtDgPKHLENtTXQEZU/5R51RZaY8KybsI0FcI9GKc9mCGpjhucIPruaTfi5edb2oyHwpN
+         f/VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NfVwMqC0uQWqEXEYVAIidH5sBEC97K0Eu+a0jsNaLKY=;
-        b=a7LjG641qdcQqtIa+Kd2ca+2pPEqVigF7TNnKrJ3SKBUgz27ISw4R7fWZI3Vpx3+VR
-         ldfdMGWJUzuE7mW5x0XdHfKCStArjHyCi6d+Aw20HpIzjBXczOlv/fJlDDMuePlRWCOm
-         zXLe4C8wmE6xWHUzvWq5GJ6k3+79nZ6l8k1q697ktUkXz8OQC9nnoh/905/trulIQi+U
-         sUisbvrk9GIkFumb55jxCD7N+Isdt2dNoL/oKNaRf61Hc0XtN5WWCXyZSmPBhKnuvpEc
-         10szNgE9vZNUYmWyCiICgqLHNBvjPqunC/absxpYUA73yXpfj8zsabUyWEy1QWqVCqda
-         EZaw==
-X-Gm-Message-State: AOAM533KwCzCF8m3Qp0HbdjeYw9UvdL/O2BmFnnN6ClZTcaMhMOnMrHj
-        jJrQ8TrkQsol3ulj5JnvHO8WWQ==
-X-Google-Smtp-Source: ABdhPJxkr+yVQH10n0lVsc27YqVqO+bGf0Gx8/dmhlMhsEiD6eVWN29Tmcqw0W+PtL2RxJv4RUcuOQ==
-X-Received: by 2002:a5d:69d2:: with SMTP id s18mr14514125wrw.408.1595340230395;
-        Tue, 21 Jul 2020 07:03:50 -0700 (PDT)
-Received: from localhost.localdomain (103.red-88-29-77.staticip.rima-tde.net. [88.29.77.103])
-        by smtp.gmail.com with ESMTPSA id c194sm3740003wme.8.2020.07.21.07.03.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 07:03:49 -0700 (PDT)
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@gmail.com>
-Cc:     Drew Fustini <drew@beagleboard.org>
-Subject: [PATCH v3] pinctrl: core: print gpio in pins debugfs file
-Date:   Tue, 21 Jul 2020 16:02:34 +0200
-Message-Id: <20200721140233.2063475-1-drew@beagleboard.org>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UtktXB94UoE1zwpGw4L7DaOAMB9VthZKcyfMWewtchM=;
+        b=fhKc08vDcbAxu+gbpmqxOCoKr5RFJUuGrAclYS7CDGPdRWHMmiNnxfwvDIiqieYeYY
+         t27KRJ2QwSfitKb61JhpqxjlI0c4yPGNEg6zX+bV5w25MmiZNlNZLI8NEdi94W4MnwLh
+         0E9n8neqts9YRLGxYmeRcPb2a75MZMfheP3n8c3cDnOURLmoCs5LXO+El8A4EK/v9CsT
+         AhTOEI2fM+ueWiM56wLmLS4PQoR21gcmH7F1h7+N33yBTpfyt8M9pAAZsgd804KcTpA9
+         FVFnJcndEhSYl9eKqUHrRevc/X4i2QdbThmv4ZiWIPlOGi0vWD5XbOQIYY2/CpEmk5bV
+         rE5A==
+X-Gm-Message-State: AOAM533p1V1efZI6SJ3jBi/PfVe3zp5NCyO0lF6e6bQBNl2EC8alRz2t
+        eNFq584rDzjHurV/k8t4GseSrtDzwIHPFBfeGULDmg==
+X-Google-Smtp-Source: ABdhPJypCfBIap1qfVyDPf9GKnF6IcierHr4eIXAb39wsTOTb1+XEiOppOE1PPcvOhD3UUXSdtIpISL/xoX/eMJE4Q8=
+X-Received: by 2002:a2e:8046:: with SMTP id p6mr13595138ljg.100.1595340284205;
+ Tue, 21 Jul 2020 07:04:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200720154548.12453-1-paul@crapouillou.net>
+In-Reply-To: <20200720154548.12453-1-paul@crapouillou.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 21 Jul 2020 16:04:33 +0200
+Message-ID: <CACRpkdaqOFgjNkD0m0A3XTXYfh10YuAVYKxd-8cFk0WDsC0mZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: ingenic,pinctrl: Support pinmux/pinconf nodes
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>, od@zcrc.me,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If there is a gpio range mapping for the pin, then print out the gpio
-chip and line index for the pin in the debugfs 'pins' file with the
-format: "[gpiochip-label]:line-[index] "
+On Mon, Jul 20, 2020 at 5:45 PM Paul Cercueil <paul@crapouillou.net> wrote:
 
-For example, here is a section of 'pins' the PocketBeagle (AM3358):
-/sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pins
+> Add YAML to describe the pinmux/pinconf sub-nodes of the pinctrl IP on
+> Ingenic SoCs.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-pin 25 (PIN25) gpio-32-63:line-25 44e10864 00000037 pinctrl-single 
-pin 26 (PIN26) gpio-32-63:line-26 44e10868 00000037 pinctrl-single 
-pin 27 (PIN27) gpio-32-63:line-27 44e1086c 00000037 pinctrl-single 
-pin 28 (PIN28) NA 44e10870 00000036 pinctrl-single 
-pin 29 (PIN29) NA 44e10874 00000006 pinctrl-single 
-pin 30 (PIN30) gpio-32-63:line-28 44e10878 00000027 pinctrl-single 
-pin 31 (PIN31) gpio-32-63:line-29 44e1087c 00000037 pinctrl-single 
-pin 32 (PIN32) gpio-32-63:line-30 44e10880 00000037 pinctrl-single 
-pin 33 (PIN33) gpio-32-63:line-31 44e10884 00000037 pinctrl-single 
-pin 34 (PIN34) gpio-64-95:line-0 44e10888 00000037 pinctrl-single 
-pin 35 (PIN35) gpio-64-95:line-1 44e1088c 00000037 pinctrl-single 
+Patch applied.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Suggested-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Drew Fustini <drew@beagleboard.org>
-
-v3 changes:
-- gpio column is now gpiochip label and line index
-
-v2 changes:
-- print 'NA' if pin does not have a GPIO number
-- change gpio_num from unsigned to unsigned int per checkpatch
----
- drivers/pinctrl/core.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 821242bb4b16..a23dc264cae7 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -27,6 +27,7 @@
- #include <linux/pinctrl/machine.h>
- 
- #ifdef CONFIG_GPIOLIB
-+#include "../gpio/gpiolib.h"
- #include <asm-generic/gpio.h>
- #endif
- 
-@@ -1601,6 +1602,9 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
- 	struct pinctrl_dev *pctldev = s->private;
- 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
- 	unsigned i, pin;
-+	struct pinctrl_gpio_range *range;
-+	unsigned int gpio_num;
-+	struct gpio_chip *chip;
- 
- 	seq_printf(s, "registered pins: %d\n", pctldev->desc->npins);
- 
-@@ -1618,6 +1622,23 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
- 
- 		seq_printf(s, "pin %d (%s) ", pin, desc->name);
- 
-+#ifdef CONFIG_GPIOLIB
-+		gpio_num = 0;
-+		list_for_each_entry(range, &pctldev->gpio_ranges, node) {
-+			if ((pin >= range->pin_base) &&
-+			    (pin < (range->pin_base + range->npins))) {
-+				gpio_num = range->base + (pin - range->pin_base);
-+				break;
-+			}
-+		}
-+		chip = gpio_to_chip(gpio_num);
-+		if (chip && chip->gpiodev && chip->gpiodev->base)
-+			seq_printf(s, "%s:line-%u ", chip->label,
-+				gpio_num - chip->gpiodev->base);
-+		else
-+			seq_puts(s, "NA ");
-+#endif
-+
- 		/* Driver-specific info per pin */
- 		if (ops->pin_dbg_show)
- 			ops->pin_dbg_show(pctldev, s, pin);
--- 
-2.25.1
-
+Yours,
+Linus Walleij
