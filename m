@@ -2,83 +2,56 @@ Return-Path: <SRS0=Db+Q=BA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DC1C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB0FC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 685B020717
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:10:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeU835oH"
+	by mail.kernel.org (Postfix) with ESMTP id 3094820717
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 22:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbgGUWKi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Jul 2020 18:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbgGUWKh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 18:10:37 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7190EC061794;
-        Tue, 21 Jul 2020 15:10:37 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id 22so95694wmg.1;
-        Tue, 21 Jul 2020 15:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CUFVApO2b9cQq89aRlwUWU4CPz3+v1mbEwt5LEC0HTw=;
-        b=eeU835oH6sxO1TQ86KycNK1CSs80K0J1tpt6xR4n4nqtXH28Ao+UgiVViU5wqEZ2/7
-         yPhOwbZ3L4XX82Zt89/SIjF/eVyIxiKGNMJkJYTFUt+5TvHLu2H7+v834tOYB0cl6X5g
-         qNsa8gWSsGqGKfcVWvsbPW1lkKLjy2c4iJ6DaLDzQsIBmQxHtQoGqiOjIB06QGh2aT5F
-         Di7GFRR7oG8/wbowkjdhFZWkm2Ngx2nHHVYqQr6lp0eaDAadZd1rZ3PLDqSpGyxYoJIX
-         tp6SbK+eVoCY25WK8XMgoJW8K0ybpZ6jGv03gtoSDwIF7kB2GYIXIHxHIRxuAP0BFnGY
-         W9WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CUFVApO2b9cQq89aRlwUWU4CPz3+v1mbEwt5LEC0HTw=;
-        b=lbUcc4ColUpg86+z27BOdRtb7D0Asi0vpdQuSwBN94qzXZS6/IolsMovB7BtAaXrKL
-         Pzf90RxwbIyybhhjmBnGaTIfjaqsq0chPcjDlKHFSM+aw2mVQtBls/3zB+ejPW+/oGtA
-         jz8kyrR6VXbxvrzdENAaaKB+HqGsyN7ErKQnTWcstAhdNKzSOZn9Xox14lAmsaHy6R2P
-         ufW2pdH0pI16rLcfvPSiaW4Lb1gOONI0+Mm0bGgTJ3VsfmG2RgHwBWeeIrIwKAV8d6C4
-         PmXhwkuQzUmS3BJsT18chJE2X1XXEcN/E9XzfRXoH9g7u0E7zq6SNOzZdjayh/zY4lrf
-         hhJw==
-X-Gm-Message-State: AOAM531xlo/WzvdudCYw3YmhyWhqyTgqps8hVEAJw/9pd/R5jsBpP2e0
-        th//wU0iiWVS1xdpqIVXtGU=
-X-Google-Smtp-Source: ABdhPJzTVp965UfG1Qd/JLIYsVZscDi4yz0cLVSD+x45RcP4gzFAdIND3KE6aTyn+wCxsC5KSPuZLw==
-X-Received: by 2002:a1c:8094:: with SMTP id b142mr5711792wmd.122.1595369436166;
-        Tue, 21 Jul 2020 15:10:36 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.122.158])
-        by smtp.gmail.com with ESMTPSA id u2sm4771038wml.16.2020.07.21.15.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jul 2020 15:10:35 -0700 (PDT)
-Subject: Re: [PATCH 1/2] dt-bindings: clock: remove UART3 clock support
-To:     Hanks Chen <hanks.chen@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wsd_upstream@mediatek.com
-References: <20200721054033.18520-1-hanks.chen@mediatek.com>
- <20200721054033.18520-2-hanks.chen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <22a7a43b-1345-f316-f212-4d956ada50c4@gmail.com>
-Date:   Wed, 22 Jul 2020 00:10:34 +0200
+        id S1728121AbgGUWF6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Jul 2020 18:05:58 -0400
+Received: from mga06.intel.com ([134.134.136.31]:8066 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbgGUWF6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Jul 2020 18:05:58 -0400
+IronPort-SDR: uJ0j+Yx19o4FaRjoMP2XO1lS42YgKDswEtahtJL4c7FiYP85H7LVGGMs8Ob61iFZ+jF5jiI54D
+ dUmu0xcNPXpQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9689"; a="211781089"
+X-IronPort-AV: E=Sophos;i="5.75,380,1589266800"; 
+   d="scan'208";a="211781089"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2020 15:05:57 -0700
+IronPort-SDR: Zs/uBRtM99+HeaAvP2bLSYVQEsxMgtW1wRqU2DKf8gzuCmWYCLmEzzSXPvZFeZxdODOZxnrbKn
+ Lwq5xNaXZS+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,380,1589266800"; 
+   d="scan'208";a="392490399"
+Received: from ddperry-mobl.amr.corp.intel.com (HELO [10.254.78.60]) ([10.254.78.60])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Jul 2020 15:05:56 -0700
+Subject: Re: [PATCH v2] gpio: crystalcove: Use irqchip template
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Hans de Goede <hdegoede@redhat.com>
+References: <20200721140153.369171-1-linus.walleij@linaro.org>
+ <50c79c0d-3942-c248-fef0-27fa3592b89c@linux.intel.com>
+ <20200721215411.GR3703480@smile.fi.intel.com>
+From:   "Kuppuswamy, Sathyanarayanan" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Message-ID: <9a0ddc8a-8c8f-614f-56ed-3e59e9fb60f0@linux.intel.com>
+Date:   Tue, 21 Jul 2020 15:05:56 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200721054033.18520-2-hanks.chen@mediatek.com>
+In-Reply-To: <20200721215411.GR3703480@smile.fi.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,32 +62,90 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 
 
-On 21/07/2020 07:40, Hanks Chen wrote:
-> remove the redundant clk interface of uart.
+On 7/21/20 2:54 PM, Andy Shevchenko wrote:
+> On Tue, Jul 21, 2020 at 10:08:57AM -0700, Kuppuswamy, Sathyanarayanan wrote:
+>> Hi,
+>>
+>> On 7/21/20 7:01 AM, Linus Walleij wrote:
+>>> This makes the driver use the irqchip template to assign
+>>> properties to the gpio_irq_chip instead of using the
+>>> explicit calls to gpiochip_irqchip_add_nested() and
+>>> gpiochip_set_nested_irqchip(). The irqchip is instead
+>>> added while adding the gpiochip.
+>> Looks good to me.
 > 
-> Fixes: 710774e04861 ("clk: mediatek: Add MT6779 clock support")
-
-These are cosmetic changes. They don't fix any bug, so we won't need a Fixes tag 
-here. Neither on 2/2.
-
-Regards,
-Matthias
-
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
-> ---
->   include/dt-bindings/clock/mt6779-clk.h | 1 -
->   1 file changed, 1 deletion(-)
+> Thanks!
 > 
-> diff --git a/include/dt-bindings/clock/mt6779-clk.h b/include/dt-bindings/clock/mt6779-clk.h
-> index b083139afbd2..2b5f2354d7eb 100644
-> --- a/include/dt-bindings/clock/mt6779-clk.h
-> +++ b/include/dt-bindings/clock/mt6779-clk.h
-> @@ -229,7 +229,6 @@
->   #define CLK_INFRA_UART0			21
->   #define CLK_INFRA_UART1			22
->   #define CLK_INFRA_UART2			23
-> -#define CLK_INFRA_UART3			24
->   #define CLK_INFRA_GCE_26M		25
->   #define CLK_INFRA_CQ_DMA_FPC		26
->   #define CLK_INFRA_BTIF			27
+>>      Reviewed-by: Kuppuswamy Sathyanarayanan
+>> <sathyanarayanan.kuppuswamy@linux.intel.com>
 > 
+> It's not first time your tag goes like this. Please, fix your tools to be it like
+> Reviewed-by: Name <address@com>
+> (no leading spaces, no split -- one line)
+Ok. I will fix it in future emails.
+> 
+>>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>> Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>> Cc: Hans de Goede <hdegoede@redhat.com>
+>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>> ---
+>>> ChangeLog v1->V2:
+>>> - Fixed a variable name ch->cg
+>>> ---
+>>>    drivers/gpio/gpio-crystalcove.c | 24 +++++++++++++++---------
+>>>    1 file changed, 15 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+>>> index 14d1f4c933b6..39349b0e6923 100644
+>>> --- a/drivers/gpio/gpio-crystalcove.c
+>>> +++ b/drivers/gpio/gpio-crystalcove.c
+>>> @@ -330,6 +330,7 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
+>>>    	int retval;
+>>>    	struct device *dev = pdev->dev.parent;
+>>>    	struct intel_soc_pmic *pmic = dev_get_drvdata(dev);
+>>> +	struct gpio_irq_chip *girq;
+>>>    	if (irq < 0)
+>>>    		return irq;
+>>> @@ -353,14 +354,15 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
+>>>    	cg->chip.dbg_show = crystalcove_gpio_dbg_show;
+>>>    	cg->regmap = pmic->regmap;
+>>> -	retval = devm_gpiochip_add_data(&pdev->dev, &cg->chip, cg);
+>>> -	if (retval) {
+>>> -		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+>>> -		return retval;
+>>> -	}
+>>> -
+>>> -	gpiochip_irqchip_add_nested(&cg->chip, &crystalcove_irqchip, 0,
+>>> -				    handle_simple_irq, IRQ_TYPE_NONE);
+>>> +	girq = &cg->chip.irq;
+>>> +	girq->chip = &crystalcove_irqchip;
+>>> +	/* This will let us handle the parent IRQ in the driver */
+>>> +	girq->parent_handler = NULL;
+>>> +	girq->num_parents = 0;
+>>> +	girq->parents = NULL;
+>>> +	girq->default_type = IRQ_TYPE_NONE;
+>>> +	girq->handler = handle_simple_irq;
+>>> +	girq->threaded = true;
+>>>    	retval = request_threaded_irq(irq, NULL, crystalcove_gpio_irq_handler,
+>>>    				      IRQF_ONESHOT, KBUILD_MODNAME, cg);
+>>> @@ -370,7 +372,11 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
+>>>    		return retval;
+>>>    	}
+>>> -	gpiochip_set_nested_irqchip(&cg->chip, &crystalcove_irqchip, irq);
+>>> +	retval = devm_gpiochip_add_data(&pdev->dev, &cg->chip, cg);
+>>> +	if (retval) {
+>>> +		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
+>>> +		return retval;
+>>> +	}
+>>>    	return 0;
+>>>    }
+>>>
+>>
+>> -- 
+>> Sathyanarayanan Kuppuswamy
+>> Linux Kernel Developer
+> 
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
