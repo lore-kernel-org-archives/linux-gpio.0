@@ -2,133 +2,84 @@ Return-Path: <SRS0=Db+Q=BA=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB36C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 09:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA28C433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 09:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 782692070A
-	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 09:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F8232072E
+	for <linux-gpio@archiver.kernel.org>; Tue, 21 Jul 2020 09:46:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8AuH6Mf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJoWY8b+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgGUJfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 21 Jul 2020 05:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36968 "EHLO
+        id S1726147AbgGUJqX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 21 Jul 2020 05:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbgGUJfm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 05:35:42 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B62FC061794;
-        Tue, 21 Jul 2020 02:35:42 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id o8so2122468wmh.4;
-        Tue, 21 Jul 2020 02:35:42 -0700 (PDT)
+        with ESMTP id S1726089AbgGUJqW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2020 05:46:22 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA32C061794
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 02:46:22 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id u12so11305084lff.2
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2020 02:46:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4yhgkqbsnYfJYCERold44+/ri3htU91RXGcg84HkdV8=;
-        b=W8AuH6MfBCWy9CRyCRe8DjaCBTNVbpzRZShjzBRD0aveb7WQsKbttnHKMqqBMrIaNd
-         EUKSZe4lHPWnwhIGxptNRnmN2vFLqsp26KUgIlptGPHjdo0W/ctYBuwgyHIjk16PwSUK
-         4agWLrG6qodi4oiizNeJOyIQqn9nb7Jyk7SzmfOUtN+FU6xfxSGy7jLnhYbBdu6hZ7ey
-         GbzzufQPwraL6nXi5tQkcxokq85dRdEMnG82goMp3rVIuuM/dxcp1A+CSaTbek5T3BWN
-         johE6DLm+kazgiP2ny4YoptYGh44D49xXj26R34boIUPb95prwl3elVIZ+goILShUNDL
-         yGuw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eAq/5LUtzjm9hByndWmu/JdlO/PHjc2fHCwR1vSW0Ls=;
+        b=TJoWY8b+ZcoWZOgvMSC3SFNBIlEixJxKML8Fx8/TrFwFyP/04alK/HfYxBL1lfWmX9
+         2+7Iq1jTccFZeaGXWqwNIBILHIA6BRUHfs1uKyfnR4ASg8NtjXd07IdsoOD8iSj2oqHe
+         5P94ZpILrncKRbbGe7n5VzDF6jvGryubEmh3RplAafuW/pJNXPASpKvfCgF8fH6W0myl
+         BdF/jpHmSuFMDSPd1mAZacsJkP+rO970tjfFROIkin+yIDEzqI8PoSg4QaMmaotg4ceK
+         mRcZzGRD+QUKMz6PFmIfu00jphFXoT0+xO9g62pOwhiIQYPWM/jUNDBhQOWWAeWuu/No
+         Qhdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4yhgkqbsnYfJYCERold44+/ri3htU91RXGcg84HkdV8=;
-        b=sNbsiN7Fj7mGIHHQDDcwxaQ8r2hL/rPGnWGURCaSbKafNTjFOK4/U6ifj2xQoOmsuh
-         HSQhQD1H/P2mEiAIugElAFb1GLXC5vUCPBatMPXW2gKnrqBChSgvmxZUf2aWuNLADZA5
-         y09L/BdxV/H2a3rqzwTI3Q5PFIsRQkXL4A61naxG8ifNEOorAAl4etg707Lq17xr07PB
-         3hVY/eoYY19n4OQgrv8DtTEjworSZwSt11jy3DOmYbUKCQGA7rPUY7LNIqyHjlhLLOGq
-         Uu8wWskUr12/+VoB3zukPEbTrTRgCRPvzsGBsBrojs9n08dNmK/qTiyD1nzmk/9xJeH0
-         iBZA==
-X-Gm-Message-State: AOAM530/spaX43fszaO9Joq1NHeN7Phw61HScUnaiZHCFicIWxRFFuR7
-        5fPE8Uezxr8kV64deu2RuwU=
-X-Google-Smtp-Source: ABdhPJysqlKEkciHKD8bwfKwYCSK2N14ryXtdaDYN/HKPF/sQDxNcYdDCGU/iY3QqOwYpuxwscCJ4A==
-X-Received: by 2002:a1c:bc54:: with SMTP id m81mr3192451wmf.22.1595324141171;
-        Tue, 21 Jul 2020 02:35:41 -0700 (PDT)
-Received: from localhost ([41.37.22.226])
-        by smtp.gmail.com with ESMTPSA id z10sm36909296wrm.21.2020.07.21.02.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2020 02:35:40 -0700 (PDT)
-From:   Abanoub Sameh <abanoubsameh8@gmail.com>
-X-Google-Original-From: Abanoub Sameh <abanoubsameh@protonmail.com>
-To:     andy.shevchenko@gmail.com
-Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Abanoub Sameh <abanoubsameh@protonmail.com>
-Subject: [PATCH 1/7] gpio: fixed coding style issues in gpio-crystalcove.c
-Date:   Tue, 21 Jul 2020 11:35:16 +0200
-Message-Id: <20200721093522.2309530-1-abanoubsameh@protonmail.com>
-X-Mailer: git-send-email 2.28.0.rc0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eAq/5LUtzjm9hByndWmu/JdlO/PHjc2fHCwR1vSW0Ls=;
+        b=WbKReKvAe1Hdc9GUIWZO+RSj0mf8azUcbeeLZNzvTzm6JXEgCgv0pcZDHku0GhfPL+
+         KPRth4Sj1uoFlQKrWjXR057O9e5PxB5z7zWeI79UVuRUhN/3RAoy5ZtBOYUDm4gioIZi
+         Sbd2+OrhnytaYFX+dyYoQw8TSylROKw+cHoYxywcaN+05k19vAcxPpN7HkNqpMsy4ATX
+         5WlEsU24wNkP0SAJlhB07xqn/GHxVlCKqKUcyUpguaBI1nqPdkqYA/6cRtfXEyo1MKJw
+         FIBx3CIJxBVG+UA8Ce9bn7x3dJKDN3l0GEQb4Wx/ZDOKG3p3l0tTdeua7xDihernHbRQ
+         pSEw==
+X-Gm-Message-State: AOAM530OKKURxSyqUaDjxabtp8eB8cRdmfBlzzj0nWvH+D/3Lid5inq+
+        A1ov24MZc2Lj1xfMsPQfjmJuQq+4RjFP42y9DPQuIHWJHBg=
+X-Google-Smtp-Source: ABdhPJyddGEwsC4mNNF47VP5l+S8zVCB2pYo1hQApbROTYwKbZ1sVR8QU5v6NdTE8YUkPBcgx5yxxj70ySw6FOEAQjw=
+X-Received: by 2002:a05:6512:3150:: with SMTP id s16mr13090870lfi.47.1595324780657;
+ Tue, 21 Jul 2020 02:46:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200718212608.65328-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20200718212608.65328-1-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 21 Jul 2020 11:46:09 +0200
+Message-ID: <CACRpkdYxyJ3E5113SmGnZ6giD-L3HsQwUjN96Qiiwj5vUYSDnQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] gpio: aggregator: Further improvements
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Signed-off-by: Abanoub Sameh <abanoubsameh@protonmail.com>
----
- drivers/gpio/gpio-crystalcove.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On Sat, Jul 18, 2020 at 11:26 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
-index 14d1f4c933b6..9391722ec107 100644
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -129,7 +129,7 @@ static void crystalcove_update_irq_ctrl(struct crystalcove_gpio *cg, int gpio)
- 	regmap_update_bits(cg->regmap, reg, CTLI_INTCNT_BE, cg->intcnt_value);
- }
- 
--static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
-+static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned int gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 	int reg = to_reg(gpio, CTRL_OUT);
-@@ -140,7 +140,7 @@ static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
- 	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
- }
- 
--static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
-+static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned int gpio,
- 				    int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-@@ -152,7 +152,7 @@ static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
- 	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET | value);
- }
- 
--static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
-+static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned int gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 	unsigned int val;
-@@ -169,7 +169,7 @@ static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
- }
- 
- static void crystalcove_gpio_set(struct gpio_chip *chip,
--				 unsigned gpio, int value)
-+				 unsigned int gpio, int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 	int reg = to_reg(gpio, CTRL_OUT);
-@@ -183,7 +183,7 @@ static void crystalcove_gpio_set(struct gpio_chip *chip,
- 		regmap_update_bits(cg->regmap, reg, 1, 0);
- }
- 
--static int crystalcove_irq_type(struct irq_data *data, unsigned type)
-+static int crystalcove_irq_type(struct irq_data *data, unsigned int type)
- {
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
--- 
-2.28.0.rc0
+> Patch 1 makes sparse happy about locking and, in my opinion, improves
+> readability, though increases LOC count.
+> Patch 2 simplifies parser by using existing helpers.
+> Patch 3 refactors loop in parser for better readability in my opinion.
 
+I see you retracted patch 3, but patch 1 & 2 looks good to me, I just would
+like Geert to have a look at them first, Geert?
+
+Yours,
+Linus Walleij
