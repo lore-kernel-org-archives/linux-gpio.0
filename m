@@ -2,132 +2,120 @@ Return-Path: <SRS0=obyX=BB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EA7C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 07:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A99C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A585320717
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 07:36:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6tzxIMq"
+	by mail.kernel.org (Postfix) with ESMTP id 140B820657
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgGVHgb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Jul 2020 03:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbgGVHgb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 03:36:31 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBCE2C0619DC
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 00:36:30 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id s9so1390741ljm.11
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 00:36:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AW545wyqnzjd9cz2nVLAkT4dmk7TFu8OWbGQ6dF6vm4=;
-        b=O6tzxIMqV2MjVAreLULH90U+foKiCj1BOZTaLIXVQcK9Cba9+52dOv6ugamyJD127b
-         0bRGC7LDKD5B+hfMbEys7vvkGzJea5wTqZRfnzc7vtA5pk0XQ65cSSWrC0hWbbanD9h7
-         7Ru3FnFPHoKAskRMS+9qGRPEGsTSaX7dntVHQXzB8RMHGm6WN5eXSU92DOveqhWATGOC
-         mzmfYo19VEZQyIrmnwNxk2qh6RE2eiAA0lk+RpsPTb7ynW++ia/jO2ATftPc3qukodnK
-         NupBvmTDVqNkvCt+/9NC2FeqspnENY8NeArISTr1/j9Id6SsPFpfR3yIwlRUoKDLfn5M
-         wX4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AW545wyqnzjd9cz2nVLAkT4dmk7TFu8OWbGQ6dF6vm4=;
-        b=KhlhfbVP44AnJtVRW6p31gYDZ3kWYSXGh53cOeod3anzL84J0UWBZitTHe4ADpK5Zc
-         CO2WiRGdUneiS7wOBtHt4FirHKGo3ygNcULghkimduGSTfG17fCI3voZvjY5AIaOBXpU
-         Z9c4kH/gSjGu6FKNCzeyNEyCT9BBXFeEXPhVwSYiLsT3sdjdFCQd2irG0AyyKYvcUdbG
-         olZmgaIUIgEIo0oqFqqqptUR/WvoTouJcgqdkNtb85AEuC7y3xexej/43N1MA6ZzyTPy
-         frMzzjKEPY9Us9xy6qcMiszkeuNDdA/xzyMXSwZHxWsUswXeLF3I/q0SwSe46XH/lpY1
-         K43w==
-X-Gm-Message-State: AOAM533zsCyK9mgLWQTBJokPysn7nOE95UvZ6BsjN6ENeJ+8r8Rj+kPr
-        lxKWLsC9keWJlv34hsJwwMagCurIYicqug==
-X-Google-Smtp-Source: ABdhPJzQoaq03uBHaZe5ecM0yVpZayPCzVbYVTWfYrvHqH17hM0ksclPVXMTMexq1Rcn0fsEtrZiew==
-X-Received: by 2002:a2e:9bc4:: with SMTP id w4mr14992432ljj.391.1595403388947;
-        Wed, 22 Jul 2020 00:36:28 -0700 (PDT)
-Received: from localhost.localdomain (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
-        by smtp.gmail.com with ESMTPSA id c14sm7417649lfb.69.2020.07.22.00.36.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2020 00:36:28 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Baluta <daniel.baluta@gmail.com>,
-        Octavian Purdila <octavian.purdila@nxp.com>
-Subject: [PATCH] gpio: dln2: Use irqchip template
-Date:   Wed, 22 Jul 2020 09:34:26 +0200
-Message-Id: <20200722073426.38890-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.26.2
+        id S1726638AbgGVIPY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Jul 2020 04:15:24 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:54149 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbgGVIPY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 04:15:24 -0400
+Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M2Nm2-1jyiP614Kk-003uVO; Wed, 22 Jul 2020 10:15:22 +0200
+Received: by mail-qk1-f180.google.com with SMTP id h7so1157563qkk.7;
+        Wed, 22 Jul 2020 01:15:21 -0700 (PDT)
+X-Gm-Message-State: AOAM532wjO64Z+d3CTwKf8R7ZGOqjG8eHICWXf0g07AMFKCAna2sganK
+        H02CCCdf30LscmESqVQcIX8yE6IrLrnAL45a0Gs=
+X-Google-Smtp-Source: ABdhPJxagWHIltsd9Y/Q05+su4bERDSiI05YQqxd93lRzKMZfkhjYuXY9Gz+GQLMwzj41iA+H33WQKqVlNof6awBZO4=
+X-Received: by 2002:a37:9004:: with SMTP id s4mr22189849qkd.286.1595405721056;
+ Wed, 22 Jul 2020 01:15:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1595382353-17486-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1595382353-17486-1-git-send-email-Anson.Huang@nxp.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 22 Jul 2020 10:15:04 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a13gcF_+dkfxZW0u_YuJ92hY1JukWfzM+e30iM=YUhraQ@mail.gmail.com>
+Message-ID: <CAK8P3a13gcF_+dkfxZW0u_YuJ92hY1JukWfzM+e30iM=YUhraQ@mail.gmail.com>
+Subject: Re: [PATCH V2 1/4] gpio: mxc: Support module build
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Peter Chen <peter.chen@nxp.com>, oleksandr.suvorov@toradex.com,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Peng Fan <peng.fan@nxp.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joel Stanley <joel@jms.id.au>, Lubomir Rintel <lkundrak@v3.sk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>, michael@walle.cc,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:2+1HvxydBqMn5yYipjFC8GFVU2TNleW+f/pTxKufbuXKucE3cW0
+ RAYn8DTEH2GMVmuVy+nuZKYiW/lNH7aYfZbw1w2pj8W0gZ0+roRixc68t2xHPGPcbfTQmcR
+ RaAt/cxvTLACHs+mL5KrteXYssBzctMa2v+T5D+05hBAjMTPNMKasfKn+v42uegYzT/px28
+ TgOvxLyjrtiCnf8QVwS1g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9e0Btv5QQVo=:O89GEMuTiq6qPyegwQo49r
+ PfC2qntbTFRaF95teHM7opnxT92dUYr76fX5F+xQeGH9IG+rnk1BCCcR7L+lkOMRHOv4b+EuD
+ Dm6Cx/qLZvea9H/qbyDwLZ3gIdqRleao+YfHD3cd0cIEWHy1Tx0qHHokC0v1ZZggOqtT3szLI
+ AbmWKsVB1CcwbsfUOo8M/IBkZPYEjbhmhJUFb0E/+dAbOhH+Tn/XggD1a5euMGvlClKGr3oX7
+ 5KPZLLx4YGvs6GiIKMNLtUrBZqHemP1Q6YZX6NGDQpk943gnr7R7UzVhO2N/uj+JzaEzUSCsq
+ XuazUpin6xVkEIGureW428uiU9Fue/bao0DrROyfo3bEXw7J2aGcplA1vxKKMJ/O3W07k154D
+ f4xpMPe4iVYWcqnO88Qr9TelNI+f+6ZmVDxBO35g1ZffAQlZMcYZ3JIIKpf0URLW/hqeI/33w
+ ufpe2wypWl9Fef8bDRKegO+rjNZY8qpDYa4HYnAvZh/y15WwcMGKgBbe2iF8FDRbtTFOkpLR2
+ DcfiqLmqCfoGvmDSbO/OHQU0GWdMuLC/GcU/llV/a9b5Gk/5wsfq0k9F8t9axG2vo6gDEo3oQ
+ hlZO8MNXVUxHL5W+9sjWHFs/J3NuLcwmOOay9swQqiWHl8YoQ7dMWBeFw0XBDhC/fGMyDxlhX
+ HzZL3ueqmqgnUMHsFWJ7/vFWVJWo67ToK4XLxCYrg9kZH6Z/9F9+iHtrPOsVUE9e/Vk2IQ7Eo
+ DfIObAExtux70UWkXGStgyxQdgbuwRW4CkoY4o1jc7GmKtoD5nSMFgbYLRfebWpBg3Z/x6kEk
+ rBkPNPOJ5ue9VzrRKxIx/IrBWkRfnICfCNTDgiolkzj04s/Jpc35gDmS8G2rD5HFCiqlJmB2i
+ /NJCC3Ui4LxF01Ee9KRTQJEVw187+WOil3E/fR8fe5ywKGuHaWZYXZVGPppDHJ/YvRKeGnBp6
+ dfICmmS637URQgionWToq3JKzJ84s4jEQp5nuWcLfED263kLX5BBa
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This makes the driver use the irqchip template to assign
-properties to the gpio_irq_chip instead of using the
-explicit calls to gpiochip_irqchip_add(). The irqchip is
-instead added while adding the gpiochip.
+On Wed, Jul 22, 2020 at 3:50 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+>
+> Change config to tristate, add module device table, module author,
+> description and license to support module build for i.MX GPIO driver.
+>
+> As this is a SoC GPIO module, it provides common functions for most
+> of the peripheral devices, such as GPIO pins control, secondary
+> interrupt controller for GPIO pins IRQ etc., without GPIO driver, most
+> of the peripheral devices will NOT work properly, so GPIO module is
+> similar with clock, pinctrl driver that should be loaded ONCE and
+> never unloaded.
+>
+> Since MXC GPIO driver needs to have init function to register syscore
+> ops once, here still use subsys_initcall(), NOT module_platform_driver().
 
-Cc: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Octavian Purdila <octavian.purdila@nxp.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-dln2.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+I'm not following this explanation.
 
-diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-index 26b40c8b8a12..4c5f6d0c8d74 100644
---- a/drivers/gpio/gpio-dln2.c
-+++ b/drivers/gpio/gpio-dln2.c
-@@ -440,6 +440,7 @@ static int dln2_gpio_probe(struct platform_device *pdev)
- {
- 	struct dln2_gpio *dln2;
- 	struct device *dev = &pdev->dev;
-+	struct gpio_irq_chip *girq;
- 	int pins;
- 	int ret;
- 
-@@ -476,6 +477,15 @@ static int dln2_gpio_probe(struct platform_device *pdev)
- 	dln2->gpio.direction_output = dln2_gpio_direction_output;
- 	dln2->gpio.set_config = dln2_gpio_set_config;
- 
-+	girq = &dln2->gpio.irq;
-+	girq->chip = &dln2_gpio_irqchip;
-+	/* The event comes from the outside so no parent handler */
-+	girq->parent_handler = NULL;
-+	girq->num_parents = 0;
-+	girq->parents = NULL;
-+	girq->default_type = IRQ_TYPE_NONE;
-+	girq->handler = handle_simple_irq;
-+
- 	platform_set_drvdata(pdev, dln2);
- 
- 	ret = devm_gpiochip_add_data(dev, &dln2->gpio, dln2);
-@@ -484,13 +494,6 @@ static int dln2_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = gpiochip_irqchip_add(&dln2->gpio, &dln2_gpio_irqchip, 0,
--				   handle_simple_irq, IRQ_TYPE_NONE);
--	if (ret < 0) {
--		dev_err(dev, "failed to add irq chip: %d\n", ret);
--		return ret;
--	}
--
- 	ret = dln2_register_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV,
- 				     dln2_gpio_event);
- 	if (ret) {
--- 
-2.26.2
+Why is this driver using syscore_ops rather than
+SIMPLE_DEV_PM_OPS() or similar?
 
+Why can the driver not unregister the syscore_ops the way it
+registers them when unloading the module?
+
+Why do you need subsys_initcall() rather than a device_initcall()?
+
+If the subsys_initcall() is indeed required here instead of
+device_initcall(), how can it work if the driver is a loadable
+module?
+
+       Arnd
