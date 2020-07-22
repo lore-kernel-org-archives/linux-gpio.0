@@ -2,83 +2,110 @@ Return-Path: <SRS0=obyX=BB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952F0C433E1
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE21C433E5
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CCF920657
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEBE32077D
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 08:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9bRZcEb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILgCH7OV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbgGVILD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Jul 2020 04:11:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49470 "EHLO
+        id S1728642AbgGVInT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Jul 2020 04:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbgGVILC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 04:11:02 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D59CC0619DC
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 01:11:02 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id 88so974705wrh.3
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 01:11:02 -0700 (PDT)
+        with ESMTP id S1726526AbgGVInS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 04:43:18 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8983CC0619DC;
+        Wed, 22 Jul 2020 01:43:18 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id z15so1046598wrl.8;
+        Wed, 22 Jul 2020 01:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L+0qNosp+qbvFerQDb4sog2QQlEVT83lp6nympGJ2JM=;
-        b=j9bRZcEbg8UI+nQer1+XOuz0n2+b+AjZvjKwMBGdWa1XGO0pwTfIoZP0RKRq0afFRK
-         FXrSyp0Aia8ZBlMhTKx/TXgF6LJG7eW5XgK3U3pW0OKjtM1rwMwKMnm3nHsvXa0yamT6
-         gPKbyH8cZM+sbjwvNWIuuX/LxLYdj+lksdUM5Q0mDdlRXDse93ZKcDSH6B4OtsMJ4Maq
-         6PV20/xXY5uciFbZyzVa2CTK9JKWVW74Khyw50j+p8xKh1oeeZ8uvSvXRaQvFamsqncM
-         u9r34Vo+8UbbK9NNXhCBu0RuuxOLhP34BL7ii63mhcXaKo1hfK+DGFq23XyzMkFZgw6+
-         pQGA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wjB5ELp9SHAf9SrbqAcXBLR0Nucf1cmk8PLR4YQ6EeE=;
+        b=ILgCH7OVE1I2wwwPOX+7NQudT+l7/ZlhvlAf2Wxc+ALPOdpvxovZVdBQnKDv4VvSOX
+         WeKNWKbs6o41dVeiDf1bHgAM+FhsHf5ijbZnbipChAvemxTzKPiQf0ThMl/3Zg67x32f
+         YPJF15cSwmSj7JPKUDfnHxj4P0QGdiDgQtRZh3mzOAWBbKcPluLSJXKEl9vlyNRdk0Bp
+         iO77Mv5K5Vst6unlftQXlcONA8EM6WRUvB4+9NMBIuAVZJx5Lm/j7PU1OmNSz7DpGfIi
+         C9FMKzrLXZeEsXq3GDm9z3Hnpv+ZjohX9kD/HP9YLzjasxAgbSWD7X1jyZrp3MQLP4kh
+         QmFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L+0qNosp+qbvFerQDb4sog2QQlEVT83lp6nympGJ2JM=;
-        b=E63g5mCvyVhkaGyIKVXue2o9fLSCiut80XS7l48DCjtO28hBQ36r8jtWobg6eCG5/+
-         VaPD3Ojt2izamDiCdj/YyWNpTcK3Ev97OC8AqMtHjEcwdH+yBFsR/4SFOVc63PVPM9CX
-         o4ypoSLpU8+Ba4PBeyfcuJZPwh2xw2qxNrBH0QiOQXPejJlexGmRL/pk9IxHa1++ZZsv
-         C26vHBxBQnwC7t88SsAahyne1dzXqoho5/QqY0wNttgV9pxhZRcUWdIcdemD8E91VlHT
-         dWTsWUoX5blj+Qu6TlN8szgVZwXFFA8Srt6nSdCvk5LEOrWQcFs862lyk39scnK7DKo7
-         vdZg==
-X-Gm-Message-State: AOAM531GR/KtuJPYWaoIITKGZX0zt2Ph+qUnxI6v0KwqtgkXCRVMhecD
-        qhSxf+5zodyWCt9PD4yJRleZd2NJLWngF5Yx3Sw=
-X-Google-Smtp-Source: ABdhPJw87b1CLEJnCRq0YlA66lLXpoKVZjrjubP+puUQDxmoPusmPOLIxywNJ10qm4+gSGUCAlsJYA9PKn3UONfAFTg=
-X-Received: by 2002:a5d:420e:: with SMTP id n14mr31821077wrq.164.1595405461269;
- Wed, 22 Jul 2020 01:11:01 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wjB5ELp9SHAf9SrbqAcXBLR0Nucf1cmk8PLR4YQ6EeE=;
+        b=shI9NVscmPFDycT2F3OCQB0/S7L+SIamVZTh+HoU5Ybl4cBVqajPpAOOVWn02KEK5Z
+         OF9HojNmUGZHMZSvK1xtv1DLSqT1+kxHd+j1gNbcZZyrq8Db4yOtjHUL7o9npHvBy2s0
+         QzEPGCq7p6oiDhuXAQ+ZVTaIeNxC2fk6KFDkb3JIrufS+iAnNw2KQfpx3mLjSgwzdmZ7
+         uEcGMEK8NCmTm0GwZeUMelMA7mVFnPSx7HL/oXzysB/dQBxkneUoaFpbHvijMW331VZU
+         QilgohaAE9q+Wl+hkwInNfSfbZzry2YoCfDk8pASnwlRVPgrgTQA3ANSi7w+zPskJd4l
+         w1fA==
+X-Gm-Message-State: AOAM530MPHkhHrn6PRUaqq472a3meL/C5A2zUuPXNm8KvKWqgQ5uX2Rf
+        GvOi4vZcidu8oxs7UkWrz0Y=
+X-Google-Smtp-Source: ABdhPJxlWiEov15iy9/riqXA7B2hI67oGx3zp7/BbZOGyfUGYQf4x5XHJFdL6u7mY1E1itglTCxrcw==
+X-Received: by 2002:adf:f18c:: with SMTP id h12mr28847223wro.375.1595407397275;
+        Wed, 22 Jul 2020 01:43:17 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.122.158])
+        by smtp.gmail.com with ESMTPSA id n16sm6255231wmc.40.2020.07.22.01.43.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jul 2020 01:43:16 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] Remove MT6779 UART3 clock support
+To:     Hanks Chen <hanks.chen@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wsd_upstream@mediatek.com
+References: <1595387397-13110-1-git-send-email-hanks.chen@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <54e4d0b9-e62c-a3cb-7f74-af2891664cf1@gmail.com>
+Date:   Wed, 22 Jul 2020 10:43:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-References: <20200722073426.38890-1-linus.walleij@linaro.org>
-In-Reply-To: <20200722073426.38890-1-linus.walleij@linaro.org>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 22 Jul 2020 11:10:49 +0300
-Message-ID: <CAEnQRZA7PKNAP1oswO3mGMTh42YefLE_AwSMSBu9NvaWq_L4QA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dln2: Use irqchip template
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Octavian Purdila <octavian.purdila@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1595387397-13110-1-git-send-email-hanks.chen@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 10:36 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> This makes the driver use the irqchip template to assign
-> properties to the gpio_irq_chip instead of using the
-> explicit calls to gpiochip_irqchip_add(). The irqchip is
-> instead added while adding the gpiochip.
->
-> Cc: Daniel Baluta <daniel.baluta@gmail.com>
-> Cc: Octavian Purdila <octavian.purdila@nxp.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@gmail.com>
+
+On 22/07/2020 05:09, Hanks Chen wrote:
+> remove the redundant clk interface of uart.
+> CLK_INFRA_UART3 is a dummy clk interface,
+> it has no effect on the operation of the read/write instruction.
+> 
+> Change since v2:
+> Commit "dt-bindings: clock: remove UART3 clock support"
+
+Sorry just another comment. I think we can make this one patch deleting everything.
+
+> -- remove Fixes tag
+> Commit "clk: mediatek: remove UART3 clock support"
+> -- remove Fixes tag
+> 
+> Hanks Chen (2):
+>    dt-bindings: clock: remove UART3 clock support
+>    clk: mediatek: remove UART3 clock support
+> 
+>   drivers/clk/mediatek/clk-mt6779.c      | 2 --
+>   include/dt-bindings/clock/mt6779-clk.h | 1 -
+>   2 files changed, 3 deletions(-)
+> 
