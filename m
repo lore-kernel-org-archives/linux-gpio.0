@@ -2,116 +2,194 @@ Return-Path: <SRS0=obyX=BB=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A86C433E3
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 15:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1CAC433E3
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 17:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1DA207DD
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 15:22:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CEDC20781
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jul 2020 17:22:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtSpJ5Cf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFXMtt5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732699AbgGVPWh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Jul 2020 11:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
+        id S1727818AbgGVRWk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Jul 2020 13:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbgGVPWg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 11:22:36 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A3FC0619DC;
-        Wed, 22 Jul 2020 08:22:36 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id f2so2292343wrp.7;
-        Wed, 22 Jul 2020 08:22:36 -0700 (PDT)
+        with ESMTP id S1727041AbgGVRWj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jul 2020 13:22:39 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BD9C0619DC
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 10:22:39 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id 11so2772155qkn.2
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2020 10:22:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p46aNpFOGjdCmJUYCpOTrNt8oHQJcuNdSnoUklPY2KU=;
-        b=FtSpJ5Cf7uEsr3PCdVXu/ThzroZELAAgxI5XSHKoHhPqICq8j7jJm57MTCQt/FoVJR
-         tOUXhYlpE7K4qq8ptOgZWxa1KAKeUT3SXzUgFVP443/7qmqQdjIGNGUeDopmMejdHKdm
-         Ss8ULTkAr23R77WM2EMkEF/XKwgOcxJaUs80MTlL2h0028lTEleLHa3fHziIFjmR+kxm
-         FYF75ivaIGSyjuGNbKfC5o1axi14RdPHy49kY/7213SQC7skXYE2SpWmY4CcG9LwAnGj
-         Kj0Fk1dsl+5hlk9VTa6ksYbSZRWbFZRZ3SIEl2RzvkmVkJ1nxWJQBV1oGNMBM8XvBN8V
-         wW9A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CNRpaQ7BFVF8L0ySWpJ42EFSFrc/qGUfBQXX9pxWDQo=;
+        b=bFXMtt5zI6461NG242jNw/xsgR7DfM2vEPfjIvLJOFexIBCqgyoHbArRO/BaEFFwWX
+         D0YWxeJFRYM8xnT7ZUEY/m4JdPDt0EMc5ccIHSvIs4KM2eSlN9OpjvGbTd0gvjy8KAsh
+         dVyulHdiVbzHskIrD8MnbGBEYu/b2I92CV0pyy3ezu3nGxkg9tVCByj/iPPcpMbaIW16
+         TsBf2SOBWJpb1AMk1hWDSrNJMmVg/xDecGXFaeEAxpSE4ob1NSouY3Pzp/4ecpesGPft
+         Q6Ej2pb6ikP4GpFuvnJQm8ked+P1/SdJ9bgbFLVjUqBYuqQHcMKOohCL8UvQcNif1sa2
+         8Qsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p46aNpFOGjdCmJUYCpOTrNt8oHQJcuNdSnoUklPY2KU=;
-        b=P0W6TskF0zVLrHf/Lf+pkiRftmCo5aeFazOwogGANC4/nPi321gg6An71Zt1pg/Hkn
-         kgM9v3E8aOIWBGzx9G849mYxhg+C6YBTJzOjagDpGMcx59xOKuKBWPMgx8IA04ZsmwyS
-         E9KgZjRN8Qhc9XtSLok0zNdBezxIjJ9/t/qyLRXU3ZRT/QFpEGRtEA9S1zEbLs4zUhrb
-         IO6dENNeGzFZtdnBAzhCU/q0lt+qGrRUFuOFWpArMTvpHzOURPZGOXLvc+rmSs4k5cSK
-         DaG1uT4x/4+FOimqo0fmd2OLIVABNZOdS91NOJYb0jN+sv2MWiBKhOYMHF3JidqKcnBp
-         6Z7A==
-X-Gm-Message-State: AOAM533t12RwWt/Uk5P+o6mcwif+hV0YsRMmxr3ixnM/0SnmLLSpGF8x
-        5TTSySvP5N2Jk+KujTd4sZc=
-X-Google-Smtp-Source: ABdhPJzfk+sntvb8MTYNW0SLffM4YqzF4Kt2Pn9rPi7wN6oH604KA4hfxmQUs1CCPXdjrb/zEQoDHA==
-X-Received: by 2002:adf:d084:: with SMTP id y4mr69504wrh.161.1595431355050;
-        Wed, 22 Jul 2020 08:22:35 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.122.158])
-        by smtp.gmail.com with ESMTPSA id y11sm271524wrs.80.2020.07.22.08.22.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jul 2020 08:22:34 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] clk: mediatek: remove UART3 clock support
-To:     Hanks Chen <hanks.chen@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wsd_upstream@mediatek.com
-References: <1595387397-13110-1-git-send-email-hanks.chen@mediatek.com>
- <1595387397-13110-3-git-send-email-hanks.chen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <3f326326-ca93-1d4d-3a5c-0821aa97fd71@gmail.com>
-Date:   Wed, 22 Jul 2020 17:22:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CNRpaQ7BFVF8L0ySWpJ42EFSFrc/qGUfBQXX9pxWDQo=;
+        b=FXN11T5s09Anopqh6q9jjCZgZgQDcla9VDMrm8dHH9oa0lY807TzBL6fg/qWZvmnwX
+         lRLQWp9b2vVs15QiYKfN8iJgW++z5Gd8FvV1/6E2/Uft+mymCPL/WAa6SN3OhZXOnCRZ
+         5QCuE3rNK0RV3Txlr8LcYcY4SqfGKkMKzyz/MYzJou7maLqG+qK3jh6dX1Ao05n7qPxd
+         6JMRhsPBYp70kwa4BueuEYsr9fz1p2VKfQz55dpHA++JTPC3mmPVSzFIbdYP2Zvdjqbh
+         COT6cUWkFjU/4bi7xo/XyYtWLKNC15KXE2bf7zpWuzbcR8LymhbVFc2W7sH4u0XY5Avo
+         TWbw==
+X-Gm-Message-State: AOAM5312CKTDwyZLKr2Ni9OgBTA9FjVGL3L53+cchOudKFpTAjKhTDKr
+        6S+8Zf3ISa2dCNmwJgQvL7Y=
+X-Google-Smtp-Source: ABdhPJxedV6w/VMreQcRXnhED0C5ep6IGBqCkRFU3yeFijSL/3aowq8gmrB/msPw5yXp6AJ7baFBqw==
+X-Received: by 2002:a05:620a:1355:: with SMTP id c21mr1093383qkl.378.1595438559028;
+        Wed, 22 Jul 2020 10:22:39 -0700 (PDT)
+Received: from shinobu (072-189-064-225.res.spectrum.com. [72.189.64.225])
+        by smtp.gmail.com with ESMTPSA id b22sm396498qka.43.2020.07.22.10.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2020 10:22:37 -0700 (PDT)
+Date:   Wed, 22 Jul 2020 13:22:36 -0400
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] gpio: 104-dio-48e: Use irqchip template
+Message-ID: <20200722172236.GB93793@shinobu>
+References: <20200722103915.162156-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1595387397-13110-3-git-send-email-hanks.chen@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
+Content-Disposition: inline
+In-Reply-To: <20200722103915.162156-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
+--OwLcNYc0lM97+oe1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2020 05:09, Hanks Chen wrote:
-> CLK_INFRA_UART3 is a dummy clk interface,
-> it has no effect on the operation of the read/write instruction.
-> 
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
+On Wed, Jul 22, 2020 at 12:39:15PM +0200, Linus Walleij wrote:
+> This makes the driver use the irqchip template to assign
+> properties to the gpio_irq_chip instead of using the
+> explicit call to gpiochip_irqchip_add().
+>=20
+> The irqchip is instead added while adding the gpiochip.
+> Also move the IRQ initialization to the special .init_hw()
+> callback.
+>=20
+> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
 > ---
->   drivers/clk/mediatek/clk-mt6779.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt6779.c b/drivers/clk/mediatek/clk-mt6779.c
-> index 9766cccf5844..75f2235486be 100644
-> --- a/drivers/clk/mediatek/clk-mt6779.c
-> +++ b/drivers/clk/mediatek/clk-mt6779.c
-> @@ -923,8 +923,6 @@ static const struct mtk_gate infra_clks[] = {
->   		    "uart_sel", 23),
->   	GATE_INFRA0(CLK_INFRA_UART2, "infra_uart2",
->   		    "uart_sel", 24),
-> -	GATE_INFRA0(CLK_INFRA_UART3, "infra_uart3",
-> -		    "uart_sel", 25),
->   	GATE_INFRA0(CLK_INFRA_GCE_26M, "infra_gce_26m",
->   		    "axi_sel", 27),
->   	GATE_INFRA0(CLK_INFRA_CQ_DMA_FPC, "infra_cqdma_fpc",
-> 
+>  drivers/gpio/gpio-104-dio-48e.c | 35 ++++++++++++++++++++++-----------
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-=
+48e.c
+> index 1f7d9bbec0fc..7a9021c4fa48 100644
+> --- a/drivers/gpio/gpio-104-dio-48e.c
+> +++ b/drivers/gpio/gpio-104-dio-48e.c
+> @@ -368,10 +368,21 @@ static const char *dio48e_names[DIO48E_NGPIO] =3D {
+>  	"PPI Group 1 Port C 5", "PPI Group 1 Port C 6", "PPI Group 1 Port C 7"
+>  };
+> =20
+> +static int dio48e_irq_init_hw(struct gpio_chip *gc)
+> +{
+> +	struct dio48e_gpio *const dio48egpio =3D gpiochip_get_data(gc);
+> +
+> +	/* Disable IRQ by default */
+> +	inb(dio48egpio->base + 0xB);
+> +
+> +	return 0;
+> +}
+> +
+>  static int dio48e_probe(struct device *dev, unsigned int id)
+>  {
+>  	struct dio48e_gpio *dio48egpio;
+>  	const char *const name =3D dev_name(dev);
+> +	struct gpio_irq_chip *girq;
+>  	int err;
+> =20
+>  	dio48egpio =3D devm_kzalloc(dev, sizeof(*dio48egpio), GFP_KERNEL);
+> @@ -399,13 +410,17 @@ static int dio48e_probe(struct device *dev, unsigne=
+d int id)
+>  	dio48egpio->chip.set_multiple =3D dio48e_gpio_set_multiple;
+>  	dio48egpio->base =3D base[id];
+> =20
+> -	raw_spin_lock_init(&dio48egpio->lock);
+> +	girq =3D &dio48egpio->chip.irq;
+> +	girq->chip =3D &dio48e_irqchip;
+> +	/* This will let us handle the parent IRQ in the driver */
+> +	girq->parent_handler =3D NULL;
+> +	girq->num_parents =3D 0;
+> +	girq->parents =3D NULL;
+> +	girq->default_type =3D IRQ_TYPE_NONE;
+> +	girq->handler =3D handle_edge_irq;
+> +	girq->init_hw =3D dio48e_irq_init_hw;
+> =20
+> -	err =3D devm_gpiochip_add_data(dev, &dio48egpio->chip, dio48egpio);
+> -	if (err) {
+> -		dev_err(dev, "GPIO registering failed (%d)\n", err);
+> -		return err;
+> -	}
+> +	raw_spin_lock_init(&dio48egpio->lock);
+> =20
+>  	/* initialize all GPIO as output */
+>  	outb(0x80, base[id] + 3);
+> @@ -419,13 +434,9 @@ static int dio48e_probe(struct device *dev, unsigned=
+ int id)
+>  	outb(0x00, base[id] + 6);
+>  	outb(0x00, base[id] + 7);
+> =20
+> -	/* disable IRQ by default */
+> -	inb(base[id] + 0xB);
+> -
+> -	err =3D gpiochip_irqchip_add(&dio48egpio->chip, &dio48e_irqchip, 0,
+> -		handle_edge_irq, IRQ_TYPE_NONE);
+> +	err =3D devm_gpiochip_add_data(dev, &dio48egpio->chip, dio48egpio);
+>  	if (err) {
+> -		dev_err(dev, "Could not add irqchip (%d)\n", err);
+> +		dev_err(dev, "GPIO registering failed (%d)\n", err);
+>  		return err;
+>  	}
+> =20
+> --=20
+> 2.26.2
+>=20
+
+--OwLcNYc0lM97+oe1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEk5I4PDJ2w1cDf/bghvpINdm7VJIFAl8YddsACgkQhvpINdm7
+VJKjDhAA5Xp7O8I8NG8Cxivz5LqbD81ABaDyGvWkgG9xcmzjq/S6I+X0Jazap20N
+QchB+EzrotsmP7VYeLAq9HUPySAvFDJvwmaGXZdVh36KTS/PRGwVO5kblhCNSkcL
+qko6Izb4BRocp5SAfuFxjGtF5CTuCrozr3S4e6oKSstD56LFSTTNLOYXb0wZVGej
+TIe/rXHsVIo5hVyhjOy6u3nxI8k31hZC5r5cwX46O3fj38OuJIBLYTi0ywYmboVh
+X9w2IdggmjI5kOtmFUjGbgCZrCUvLRVDHXWp5VIkHvLiPr5t8A5sTwax0x+6FmmF
+xN0GNPw4+iJbxoLMQbA+vYLFeMk9B+FVM3r7XD6IbtaEGgwy0CMiOvAB7UkE5xr+
+94WN4ctX1W+n0rHApxIFvboOROJEOZYc0X392+DIUarVJqEm1WuNrRHEzWohbgbz
+RZLz7HFgzae3BLsN3LQuwgXK4wrYqMIQM6VpIwJbYWzzF4u77zfxcn4HtUOFWXnj
+vo5CQhJHvHB+up1ZNWrn8b+nObbxHY7c3CCjeZEDkCJYDelI4mIF29oA2xQ+dnf0
+6kwTWnW3gtQyFy9MrXLbGEEySBaEUTyy/rlrS1IOKHcDZKm3/1qWGLnqTLDFElmU
+60NuoIeJkpxIMEp89VKyGkXpXK6kUvnaTXspNwHpgoSEK23uyrg=
+=+ogM
+-----END PGP SIGNATURE-----
+
+--OwLcNYc0lM97+oe1--
