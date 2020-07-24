@@ -2,83 +2,144 @@ Return-Path: <SRS0=uGbt=BD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB68CC433E3
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jul 2020 09:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E82C433E4
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jul 2020 10:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B654120674
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jul 2020 09:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D875020578
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Jul 2020 10:50:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sfbXV0YG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AvHJycej"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgGXJd3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Jul 2020 05:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57248 "EHLO
+        id S1726801AbgGXKuS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 24 Jul 2020 06:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbgGXJd3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Jul 2020 05:33:29 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFFBEC0619D3;
-        Fri, 24 Jul 2020 02:33:28 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id x9so6707093ila.3;
-        Fri, 24 Jul 2020 02:33:28 -0700 (PDT)
+        with ESMTP id S1726301AbgGXKuS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Jul 2020 06:50:18 -0400
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA21C0619D3
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2020 03:50:17 -0700 (PDT)
+Received: by mail-vs1-xe44.google.com with SMTP id m6so4639557vsl.12
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2020 03:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qcMfOD5MtvQGZ9E5B9qN3UgNCKk+57UbGUFWp26wSLo=;
-        b=sfbXV0YGF7Fj8DQaTtOkcPreIN8aFQJVDRR1gsFH4WNtfwjVcdnUdpnrdatpjOdrsW
-         90ML9UnjorLBH3RqBCKXyfYdM2pJ0vYGb5gRnZOQTqhaITvVasa/cS29Hes64qc2oimX
-         evub1Brrluk8G9qQQWhVFZA8Fto5scFdeJq76SxEqkTt1NAI/RAlYNDuQWZTL3jB+Umh
-         6x1Q4LNKQN2KYUUIS9vubVwf8t4IvFgGQn+IIyKuu+OryMBc1TrM7eoBCNZoqaQiBMMJ
-         xVhig/MmqoVTJLbsxz5rm2J9XXWL6EvEvpHZdc1moy7QpnR8vRaYMeQiGpnv3D3vKVrx
-         PUGQ==
+        bh=UQU/lPzGwmqxJWjLiiaA2ZtS7d0dFJRLifebRqaZDxw=;
+        b=AvHJycejFPc3A0BK6AbxF2HivO+45rKsHz/BBeg1JQGx09hmnLAMB6dHob93h/l3B5
+         WC6l/mOpKRUgWF0lOoxggxoFNyVa7mW1U4FVU+3uuSCWvDANy3FjsBfy+Q/5prvJ/agJ
+         5YkiGoGD/DO9eGDQWsFgEgEhpAx7RJKh44xGpUghNIF3ZQ4KU3sQqSMmg8LCuduimDW9
+         5HzDluIUR4jmlwZVkhBJbhxLYAE7a2Mi0Vsof9fT4zOZc59AZjaq5ubXhSi0UDCnjnTa
+         01phQ3bRoAAPELT8i5RDcO/BPYSnnbaanwcziFyuAE7ocsWU0QELcSleRnfEMQbF4ykE
+         escg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qcMfOD5MtvQGZ9E5B9qN3UgNCKk+57UbGUFWp26wSLo=;
-        b=BgOAKWgl1RFEg1WpTVRAo0IwQKwfLwBEBY02zsOD9vbPj5HlCa7Md4MEOeYJ0yxAG0
-         QG9Eve99zKbKAy8pQaUEvQ+36ZEPNmbbp1vY5I97DRF8uH6Wad4iZznnUZ2Eoke6j3Rb
-         qDxJRmTmzfZ0rF24VpvNeT8eePAsYfToq/bATsrUSI4yuiRTYcDzHkdEtyfZszjCqXQB
-         Qqaf1VQCCPItnpsjgbuZExImOEGxfzhRSxtbsN9QwMsJ3MlGj33zNge+urlCAq3Wspgp
-         noQJEBUi2z80dhWG5/2XfrcP1MT0WPjcFF9X6HZgHgJ9kbS2hJ0BzuHOXG3etXbLarkV
-         hi6g==
-X-Gm-Message-State: AOAM5335Z2fuCqhMUqDkhN+7zBi02Y57cmCEeaYj/JyRSOpo2l+o2m53
-        QxUS0pc9w1/QnCo/VZC0e+4KnggNjo4EiWinWqo=
-X-Google-Smtp-Source: ABdhPJxY69gmaaAzmvW7k7FjyJK3JnEKWbEmfx7jf1Swstl6CZYMROOBsb3ssppnerABun9HLrKhuTxDzsiYLJndR1c=
-X-Received: by 2002:a05:6e02:8e3:: with SMTP id n3mr9849554ilt.259.1595583208221;
- Fri, 24 Jul 2020 02:33:28 -0700 (PDT)
+        bh=UQU/lPzGwmqxJWjLiiaA2ZtS7d0dFJRLifebRqaZDxw=;
+        b=jSw/R/JLrJwoTrVj90eM2bgK7cNKNCf1ejzRODR2iB2n7ptzDpvgjUyxesLwJILXXr
+         0T+Q/LzRi4Ub0SUEUPjLeaZPAlA4YuM1ESi8oBgtAOLNztytE7Ry+Us7aJk2IW87VAJC
+         CKFm5Cv6tWyhepUJS4kdX6jifgtW2ZcJUn2UbWh7bhSNnU7RUDIR8UXrhjGRQVjWj9OB
+         7QWj0LHIIjUK9GJVaDttWUMMzKMwB1U0VeEaKGfgX7LwCA3BkYB1PzCQagP8oyEcZtZ/
+         gnJZVeNzcz6f5LHZKOWkC8kEUX4gm7zVASUNKBIz/ry+Lkp9OhQBKoN4MtkNlPzVHCDp
+         RZDA==
+X-Gm-Message-State: AOAM530Xsz0w4fuHF8vnyiUAQJvg4UMROqOIqTSsZ+Hh4aQLz0Icao49
+        L41X6do993xc2N3prOzR7JjW0NDA85EKSRi9e6KPGgJ8JY5z3A==
+X-Google-Smtp-Source: ABdhPJxgbymK+VYNYxlF37FdJcyHQVfjke1siUlLQqKzPaalBpQHPkQ/WDT/vyS+RXgyxiLgvtBNlo+9XRovxfcj9JM=
+X-Received: by 2002:a67:338b:: with SMTP id z133mr7384839vsz.138.1595587817009;
+ Fri, 24 Jul 2020 03:50:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <1595513168-11965-1-git-send-email-srinivas.neeli@xilinx.com> <1595513168-11965-4-git-send-email-srinivas.neeli@xilinx.com>
-In-Reply-To: <1595513168-11965-4-git-send-email-srinivas.neeli@xilinx.com>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Fri, 24 Jul 2020 15:03:16 +0530
-Message-ID: <CAKfKVtFLZNwe7xRQipanE3M2vjLPvrh2uNpawbGHMrtXmYF--w@mail.gmail.com>
-Subject: Re: [PATCH V2 3/3] MAINTAINERS: add fragment for xilinx GPIO drivers
-To:     Srinivas Neeli <srinivas.neeli@xilinx.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        sgoud@xilinx.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, git@xilinx.com
+References: <20200717141924.57887-1-linus.walleij@linaro.org>
+ <CAPLW+4kX_1YNDNNeqzQGHZmnr0PYKHsrN++jw9-jOYv6Da3UuQ@mail.gmail.com> <CACRpkdYxhOQnXUaW-MdT4NX+NEES91NOoMPR6wEcaCrUR253Cw@mail.gmail.com>
+In-Reply-To: <CACRpkdYxhOQnXUaW-MdT4NX+NEES91NOoMPR6wEcaCrUR253Cw@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 24 Jul 2020 13:50:05 +0300
+Message-ID: <CAPLW+4mWw12ZsyK3-LiwcpQtiNMkbgUnGUHBbjtk-7vVZQQaxA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: max732x: Use irqchip template
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 7:37 PM Srinivas Neeli
-<srinivas.neeli@xilinx.com> wrote:
+Hi Linus,
+
+On Tue, 21 Jul 2020 at 12:54, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> Added entry for xilinx GPIO drivers.
+> On Sun, Jul 19, 2020 at 6:34 PM Sam Protsenko
+> <semen.protsenko@linaro.org> wrote:
+> > On Fri, 17 Jul 2020 at 17:19, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > >
+> > > This makes the driver use the irqchip template to assign
+> > > properties to the gpio_irq_chip instead of using the
+> > > explicit calls to gpiochip_irqchip_add_nested() and
+> > > gpiochip_set_nested_irqchip(). The irqchip is instead
+> > > added while adding the gpiochip.
+> > >
+> > > Cc: Sam Protsenko <semen.protsenko@linaro.org>
+> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
-> ---
-Acked-by: : Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > I can test it on my MAX7325 board with BeagleBone Black in a day or
+> > two.
+>
+> Thanks! No hurry.
+>
+> > Do you want me to verify your patch on top of linux-mainline or
+> > linux-next?
+>
+> Either should work.
+>
+> > Also, is there any specific stuff you want me to look at,
+> > or making sure there are no regressions w.r.t. IRQ from the chip is
+> > enough?
+>
+> Just that really, that the IRQs happen as before.
+>
+
+Just tested it on my MAX7325 board [1], by adding gpio-keys and
+gpio-leds to BBB dts [2]. Alas, the patch seems to be breaking IRQs.
+Before the patch, I can see gpio-buttons appear in /proc/interrupts
+and dmesg is clear of errors. After applying the patch, no gpio-keys
+appear in /proc/interrupts and dmesg is reporting errors like this:
+
+    irq: no irq domain found for max7325@68 !
+
+This is probably because the patch is setting gpio_chip structure
+fields after devm_gpiochip_add_data() was executed. Next hacky change
+fixes it:
+
+<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>
+@@ -695,11 +695,11 @@ static int max732x_probe(struct i2c_client *client,
+                        return ret;
+        }
+
+-       ret = devm_gpiochip_add_data(&client->dev, &chip->gpio_chip, chip);
++       ret = max732x_irq_setup(chip, id);
+        if (ret)
+                return ret;
+
+-       ret = max732x_irq_setup(chip, id);
++       ret = devm_gpiochip_add_data(&client->dev, &chip->gpio_chip, chip);
+        if (ret)
+                return ret;
+ <<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>
+
+I didn't check if it's a correct fix, so the diff above is only to
+check the idea. Anyway, if you send v2 I can retest it, as my setup is
+ready.
+
+Thanks!
+
+[1] https://github.com/joe-skb7/max7325-pcb
+[2] https://github.com/joe-skb7/linux-mainline-bbb-max732x/commits/max732_bbb_test
+
+> Yours,
+> Linus Walleij
