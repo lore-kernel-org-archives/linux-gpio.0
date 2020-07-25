@@ -2,207 +2,107 @@ Return-Path: <SRS0=M2kr=BE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30620C433DF
-	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 20:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7947C433E5
+	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC1C7206C1
-	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 20:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC51F206C1
+	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPRH08HK"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="m+Ehso6C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgGYUwN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 25 Jul 2020 16:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbgGYUwM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2020 16:52:12 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E9CC08C5C0;
-        Sat, 25 Jul 2020 13:52:11 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id m16so6220855pls.5;
-        Sat, 25 Jul 2020 13:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hhs+1xM7FhyybbR0iXVsCSFCjTnqQqQ71jqS9xdAn3Y=;
-        b=IPRH08HKCRZ88hk4TmoW2iHRPZN33mH1aL4FzajE0Nohrf0HwdaOi9MDoFZCAcpPCM
-         ZlGvT0ffQpDcD23LL/tB1jsChRCoQarOw+00bSBKIxX02d0VUmqLVySh1LgRh+WAA0ZK
-         kV5qd8GZVmhRhBQlxPTe0Uec7tMhKyDyJJqHH9JKDYNKR2+NDxfsrVPSIOWIfip/ddF2
-         rUhz6JmMGyCF5K71HJo6O1FvBU4Ve0/++KyR+WjD+G87KMXF1chWsvyR9iQgV6LNXh4i
-         c3qHniK+vvCgc9PxBMksKf9Yk6puB+NphBCyq5+coXHs/3O2IPMndYUgz9n5e2cgv+JF
-         qrhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hhs+1xM7FhyybbR0iXVsCSFCjTnqQqQ71jqS9xdAn3Y=;
-        b=p63zmhVweZ6eH8880Sq8B8FxVbxxRN4NbKeqVpGdAaTRoB78NlkGylRhZm5NwhH4XI
-         cMAtneCmfLHSPMDyIcNPiH/W/aLi5fKrjtmD8aLX61ls9A6HORh/hfWtciGeL9u1naKJ
-         MBBpXklDf9Q9TJ7tboJbWhL5zXJUxM61julZ8eh7W7f5g2Vm/RglGiieRXfrK+HHgSiu
-         M3Q1tqeZTIEpz+9VD4mRQKmhE0MNLb82ZVkh+7InCM76muKmbnBowOSp9KjGhnzjyB4F
-         TL+gScZWcV47mH34B29zn6FLCk3od5nmtMGEJi/68Gv5LfyUXiJBx+sKSZj9HMbQS5uu
-         mZfA==
-X-Gm-Message-State: AOAM530dfKdpUMDPjFVUlKFmZSZUJRVkPrdq+bFFOLi9qLwlEKaBm9N+
-        sulSfZx1F8UaFNtbX5a9Z7Ja9ippC/mSSViCsNE=
-X-Google-Smtp-Source: ABdhPJzPqCteWw8LxG2tqCKe06Uf2hNJGql0o3mluy8ww/Kdu18ydX800zwKZMQNiRMY4/oK4CqHcUmuxQ5a+r8kT+k=
-X-Received: by 2002:a17:90b:3547:: with SMTP id lt7mr11307651pjb.181.1595710330583;
- Sat, 25 Jul 2020 13:52:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200725041955.9985-1-warthog618@gmail.com> <20200725041955.9985-6-warthog618@gmail.com>
-In-Reply-To: <20200725041955.9985-6-warthog618@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 25 Jul 2020 23:51:54 +0300
-Message-ID: <CAHp75VcKtATPDKGAViWqjOJDqukDrgZ13aTU6rTJ1jEeB3vmVw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/18] gpiolib: cdev: support GPIO_GET_LINE_IOCTL and GPIOLINE_GET_VALUES_IOCTL
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        id S1727912AbgGYXTD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 25 Jul 2020 19:19:03 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:55099 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727978AbgGYXTC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2020 19:19:02 -0400
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id D78DA23E3F;
+        Sun, 26 Jul 2020 01:18:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1595719139;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=H2B8ttJ42dTzqVNdmFa3MX4YvKetSzzq/kFHiQy1AgA=;
+        b=m+Ehso6CLT/Ck9ZM3H3xskkzr3b0I/HsSi5C7c8W7/rhwwnKDCS9yUZHTqX1ixQdSkg76Q
+        7fvdoOusdlfr5U+dmdDTHxrezF70JkOR/v7TiXCFr/5lKUkqzq8+iLzlevnb1ak2ORh+DH
+        CgJW6zUpxsigEGELWzDqEcP/0F+07U8=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v6 03/13] mfd: simple-mfd-i2c: add sl28cpld support
+Date:   Sun, 26 Jul 2020 01:18:24 +0200
+Message-Id: <20200725231834.25642-4-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200725231834.25642-1-michael@walle.cc>
+References: <20200725231834.25642-1-michael@walle.cc>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 7:24 AM Kent Gibson <warthog618@gmail.com> wrote:
->
-> Add support for requesting lines using the GPIO_GET_LINE_IOCTL, and
-> returning their current values using GPIOLINE_GET_VALUES_IOCTL.
+Add the core support for the board management controller found on the
+SMARC-sAL28 board.
 
-...
+At the moment, this controller is used on the Kontron SMARC-sAL28 board.
 
-> +struct line {
-> +       struct gpio_device *gdev;
-> +       const char *label;
-> +       u32 num_descs;
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+Changes since v5:
+ - none
 
-> +       /* descs must be last so it can be dynamically sized */
+Changes since v4:
+ - new patch
 
-I guess [] implies above comment and thus comment can be dropped.
+ drivers/mfd/simple-mfd-i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +       struct gpio_desc *descs[];
-> +};
-
-...
-
-> +static bool padding_not_zeroed(__u32 *padding, int pad_size)
-> +{
-> +       int i, sum = 0;
-> +
-> +       for (i = 0; i < pad_size; i++)
-> +               sum |= padding[i];
-> +
-> +       return sum;
-> +}
-
-Reimplementation of memchr_inv() ?
-
-...
-
-> +static u64 gpioline_config_flags(struct gpioline_config *lc, int line_idx)
-> +{
-> +       int i;
-> +
-> +       for (i = lc->num_attrs - 1; i >= 0; i--) {
-
-Much better to read is
-
-unsigned int i = lc->num_attrs;
-
-while (i--) {
- ...
-}
-
-> +               if ((lc->attrs[i].attr.id == GPIOLINE_ATTR_ID_FLAGS) &&
-
-> +                   test_bit(line_idx, (unsigned long *)lc->attrs[i].mask))
-
-This casting is not good. What about BE 32-bit architecture?
-
-> +                       return lc->attrs[i].attr.flags;
-> +       }
-> +       return lc->flags;
-> +}
-> +
-> +static int gpioline_config_output_value(struct gpioline_config *lc,
-> +                                       int line_idx)
-> +{
-
-Same comments as per above.
-
-> +}
-
-...
-
-> +static long line_get_values(struct line *line, void __user *ip)
-> +{
-> +       struct gpioline_values lv;
-
-> +       unsigned long *vals = (unsigned long *)lv.bits;
-
-Casting u64 to unsigned long is not good.
-
-> +}
-
-...
-
-> +static void line_free(struct line *line)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < line->num_descs; i++) {
-
-> +               if (line->descs[i])
-
-Redundant?
-
-> +                       gpiod_free(line->descs[i]);
-> +       }
-> +       kfree(line->label);
-> +       put_device(&line->gdev->dev);
-> +       kfree(line);
-> +}
-
-...
-
-> +       /* Make sure this is terminated */
-> +       linereq.consumer[sizeof(linereq.consumer)-1] = '\0';
-> +       if (strlen(linereq.consumer)) {
-> +               line->label = kstrdup(linereq.consumer, GFP_KERNEL);
-
-kstrndup() ?
-
-> +               if (!line->label) {
-> +                       ret = -ENOMEM;
-> +                       goto out_free_line;
-> +               }
-> +       }
-
-...
-
-> +               struct gpio_desc *desc = gpiochip_get_desc(gdev->chip, offset);
-
-I prefer to see this split, but it's minor.
-
-> +               if (IS_ERR(desc)) {
-> +                       ret = PTR_ERR(desc);
-> +                       goto out_free_line;
-> +               }
-
-...
-
-> +               dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
-> +                       offset);
-
-Perhaps tracepoint / event?
-
+diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+index 45090ddad104..dd19abd41d30 100644
+--- a/drivers/mfd/simple-mfd-i2c.c
++++ b/drivers/mfd/simple-mfd-i2c.c
+@@ -37,6 +37,7 @@ static int simple_mfd_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct of_device_id simple_mfd_i2c_of_match[] = {
++	{ .compatible = "kontron,sl28cpld-r1" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
