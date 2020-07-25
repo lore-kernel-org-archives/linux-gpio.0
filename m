@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7947C433E5
-	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CF9C433EC
+	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC51F206C1
-	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8A8E20786
+	for <linux-gpio@archiver.kernel.org>; Sat, 25 Jul 2020 23:19:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="m+Ehso6C"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="kqEGlrmP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbgGYXTD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 25 Jul 2020 19:19:03 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:55099 "EHLO
+        id S1728170AbgGYXTL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 25 Jul 2020 19:19:11 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:37695 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbgGYXTC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2020 19:19:02 -0400
+        with ESMTP id S1728158AbgGYXTI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2020 19:19:08 -0400
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id D78DA23E3F;
-        Sun, 26 Jul 2020 01:18:58 +0200 (CEST)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 10FBE23E4C;
+        Sun, 26 Jul 2020 01:19:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1595719139;
+        t=1595719145;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=H2B8ttJ42dTzqVNdmFa3MX4YvKetSzzq/kFHiQy1AgA=;
-        b=m+Ehso6CLT/Ck9ZM3H3xskkzr3b0I/HsSi5C7c8W7/rhwwnKDCS9yUZHTqX1ixQdSkg76Q
-        7fvdoOusdlfr5U+dmdDTHxrezF70JkOR/v7TiXCFr/5lKUkqzq8+iLzlevnb1ak2ORh+DH
-        CgJW6zUpxsigEGELWzDqEcP/0F+07U8=
+        bh=9ai0La+0NTz47zNKNe8eCNR0aOanRg5MZY86cm9G5UM=;
+        b=kqEGlrmPMMmvf5UYnEWCX7xD16NalVyHm8iD2CKx6Y+VwWk2EGFCxx+7e2BzfsxBTFTocT
+        xKhT9AwybYVF9eTawp2dkCoEjLAYb9sPdI7mKhh5f5Hp5Tr+Nz3FtcRvrdnqlecrAVjUCY
+        XGTnkTsDPcSANAkKEr4FbAPcv5Jttyc=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v6 03/13] mfd: simple-mfd-i2c: add sl28cpld support
-Date:   Sun, 26 Jul 2020 01:18:24 +0200
-Message-Id: <20200725231834.25642-4-michael@walle.cc>
+Subject: [PATCH v6 09/13] arm64: dts: freescale: sl28: enable sl28cpld
+Date:   Sun, 26 Jul 2020 01:18:30 +0200
+Message-Id: <20200725231834.25642-10-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200725231834.25642-1-michael@walle.cc>
 References: <20200725231834.25642-1-michael@walle.cc>
@@ -75,10 +75,7 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the core support for the board management controller found on the
-SMARC-sAL28 board.
-
-At the moment, this controller is used on the Kontron SMARC-sAL28 board.
+Add the board management controller node.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
@@ -86,23 +83,134 @@ Changes since v5:
  - none
 
 Changes since v4:
- - new patch
+ - none
 
- drivers/mfd/simple-mfd-i2c.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v3:
+ - see cover letter
 
-diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-index 45090ddad104..dd19abd41d30 100644
---- a/drivers/mfd/simple-mfd-i2c.c
-+++ b/drivers/mfd/simple-mfd-i2c.c
-@@ -37,6 +37,7 @@ static int simple_mfd_i2c_probe(struct i2c_client *i2c)
- }
+ .../freescale/fsl-ls1028a-kontron-sl28.dts    | 102 ++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
+index 360b3a168c10..8712fe82727b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28.dts
+@@ -8,6 +8,7 @@
  
- static const struct of_device_id simple_mfd_i2c_of_match[] = {
-+	{ .compatible = "kontron,sl28cpld-r1" },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
+ /dts-v1/;
+ #include "fsl-ls1028a.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Kontron SMARC-sAL28";
+@@ -170,6 +171,107 @@
+ 		reg = <0x32>;
+ 	};
+ 
++	sl28cpld@4a {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "kontron,sl28cpld-r1";
++		reg = <0x4a>;
++
++		watchdog@4 {
++			compatible = "kontron,sl28cpld-wdt";
++			reg = <0x4>;
++			kontron,assert-wdt-timeout-pin;
++		};
++
++		hwmon@b {
++			compatible = "kontron,sl28cpld-fan";
++			reg = <0xb>;
++		};
++
++		sl28cpld_pwm0: pwm@c {
++			#pwm-cells = <2>;
++			compatible = "kontron,sl28cpld-pwm";
++			reg = <0xc>;
++		};
++
++		sl28cpld_pwm1: pwm@e {
++			#pwm-cells = <2>;
++			compatible = "kontron,sl28cpld-pwm";
++			reg = <0xe>;
++		};
++
++		sl28cpld_gpio0: gpio@10 {
++			compatible = "kontron,sl28cpld-gpio";
++			reg = <0x10>;
++			interrupts-extended = <&gpio2 6
++					       IRQ_TYPE_EDGE_FALLING>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-line-names =
++				"GPIO0_CAM0_PWR_N", "GPIO1_CAM1_PWR_N",
++				"GPIO2_CAM0_RST_N", "GPIO3_CAM1_RST_N",
++				"GPIO4_HDA_RST_N", "GPIO5_PWM_OUT",
++				"GPIO6_TACHIN", "GPIO7";
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		sl28cpld_gpio1: gpio@15 {
++			compatible = "kontron,sl28cpld-gpio";
++			reg = <0x15>;
++			interrupts-extended = <&gpio2 6
++					       IRQ_TYPE_EDGE_FALLING>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-line-names =
++				"GPIO8", "GPIO9", "GPIO10", "GPIO11",
++				"", "", "", "";
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		sl28cpld_gpio2: gpio@1a {
++			compatible = "kontron,sl28cpld-gpo";
++			reg = <0x1a>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-line-names =
++				"LCD0 voltage enable",
++				"LCD0 backlight enable",
++				"eMMC reset", "LVDS bridge reset",
++				"LVDS bridge power-down",
++				"SDIO power enable",
++				"", "";
++		};
++
++		sl28cpld_gpio3: gpio@1b {
++			compatible = "kontron,sl28cpld-gpi";
++			reg = <0x1b>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-line-names =
++				"Power button", "Force recovery", "Sleep",
++				"Battery low", "Lid state", "Charging",
++				"Charger present", "";
++		};
++
++		sl28cpld_intc: interrupt-controller@1c {
++			compatible = "kontron,sl28cpld-intc";
++			reg = <0x1c>;
++			interrupts-extended = <&gpio2 6
++					       IRQ_TYPE_EDGE_FALLING>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
+ 	eeprom@50 {
+ 		compatible = "atmel,24c32";
+ 		reg = <0x50>;
 -- 
 2.20.1
 
