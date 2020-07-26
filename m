@@ -2,132 +2,108 @@ Return-Path: <SRS0=5vEm=BF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3019FC433E1
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52593C433DF
+	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09551206E3
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E5BA2065F
+	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:37:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F6FHkRMQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iNadD80I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbgGZWc1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 26 Jul 2020 18:32:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        id S1727843AbgGZWhs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 26 Jul 2020 18:37:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgGZWc1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jul 2020 18:32:27 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E177C0619D2
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:32:27 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id x9so15174311ljc.5
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:32:26 -0700 (PDT)
+        with ESMTP id S1726835AbgGZWhr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jul 2020 18:37:47 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34832C0619D5
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:37:46 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id g6so2559418ljn.11
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:37:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8Uj9DqY9mbv3zlczdmjdbMvg00+ndnvIXaEDqWHCCR4=;
-        b=F6FHkRMQuJKwtea1bJ86D04J6jIdi+5VWFDof7XpeNDsdXQ92aCmdj3vTMoYn/vLKB
-         13bwk/jpxBKiWUm15hkg3T0pG1Z/OReA9NsZVRxitXkuHNT5pCpAeV+T9h89q7SpK03j
-         YTdZzxKPmssuzWoZBUaqD0mkr7EzrmXwgg6PA137JnoODiv1wEM9vaZTbRknSHKbCx03
-         IcJbd4KjZqSoFhAQWgoH4KmZJ3lELeZywZydkjEHEGapXqElJ/mJRnrl2I4uj1tAVPrr
-         R8xLsCNhB6fLq+7vaRD1MlMnHQzplW5ybvgtbflvNzEgG4fx4ZK1gVuiO+bQD52QNa+7
-         r9sQ==
+         :cc;
+        bh=GpwOccBGYJpOpejj8LGvoGKhI+wr9+pa+RZ9Hp5UCyA=;
+        b=iNadD80IPgOf3bhhB7SDd6GKj3H+1+4alVP+Ffn+LPUXErddmDBoOk9K83lZmBHJph
+         r+/zFAlf+vnQhl2ZkuGEmds9lsqPdmoh3QoKaSqj8uHvY5fO/+3ZDxkA7vtne677n8tA
+         gIfsloGmVAUJSfgiZsz8zHsRWudlEzztGCL/gj6XGwOkBn9HXyeI/tbgwhWXsXgf/fbe
+         BQ9bnnnPLfJgcFqpai9IledZDeG7F8q5Tuufl6yo/2T6TCn3nlqvbpPWUs4byoFDkmgu
+         v9CBsff6vo+oDfOybz+sp0EDIpxCDqrNNL5AjcJcTX7n5HqCWPRVuzRerHlBqxQVA5ow
+         m9lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8Uj9DqY9mbv3zlczdmjdbMvg00+ndnvIXaEDqWHCCR4=;
-        b=ap+nr5Am1jO4SrZWdEJmWTSCFlGTWHUJYO6IsATlajL3BsTIQ/iXbeF2CTBBGdz8ce
-         CEaKYThSCKjU6nxCEqz1tVQ7DcoidxamW4ll9Um45s9TK611viXyQaPVEBx4QUFLVAuo
-         qGko7glkDcnmdEBiu0ESocUhqHa7plW8CRAnFuALfp1CW6jhrmVL9a6eHJkH9/ZQeb3b
-         oksIDGo9es8yU+82mvWMDnpaW2OUkNvJ8Cmb/3MdsSH5FgKmhkhZJYpheMFBpMADXn8y
-         EKPtX/TzPNd0SjFLVF67TclqFHz7AvawrpVir8EfH6RU0nkSgeJwIYsGT4F18OMJjkg6
-         H/oA==
-X-Gm-Message-State: AOAM5318kNr6qlHzJrpEtt9gKXPuTPVsd6Qbs2WdQRm4D1CrPCvk/m/t
-        EO0zsypNct6ysMOEseNO7A1XQIdgnymEjNXHkBq0iA==
-X-Google-Smtp-Source: ABdhPJw8sYQi3t1BK0+yGx3Vr8EZXHdPL7d3BpO2c9vuD8+6udJ5snlavvb2VTsG1o0tbi5iBbi4M1Im2qFdwvmx8U4=
-X-Received: by 2002:a2e:9a4d:: with SMTP id k13mr9244310ljj.283.1595802745456;
- Sun, 26 Jul 2020 15:32:25 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=GpwOccBGYJpOpejj8LGvoGKhI+wr9+pa+RZ9Hp5UCyA=;
+        b=GjaEYOS9JfN9PpyrXDMRJdBGKlv/tQh7ylelgIBgEDBk/FP5blHr5/q2gpXcHgDlCl
+         N9bmcFrC7k5Gwi0AP3Si6ICYccMAqHK1JuGeJqmE08tLMP3kWY1wKsNZh8dWX85wKS2Z
+         KH1P1ROGFa4WBY3jTA7woi/YE1Y+KXpYfikVMROam6AErZgagg1Yb/r3K9ToxZ/0DpJr
+         /nsOLAbyAMkv4cXb7/gRBqKMZB/ha06JiUVVUAs9uJ41il4vz7zvlGn/Qz8qnuYI0YKp
+         dSWFgf0ylv+KlqIvIYXx8pAbYBPszL78GG5lA7ay8DPoam2Zr29TM6k8Sp5zEypeDklN
+         GIHw==
+X-Gm-Message-State: AOAM531yj9/62iTPV0en3A01fJcFIQd2q8cqxil5/BivNue7PW+dfzJ5
+        9G9XtvoQCVKge1CnkxWsxLHvicK81+iKVSpjHcwYLw==
+X-Google-Smtp-Source: ABdhPJxmd9QUe9VTvRu3V0FXazi56yvP4h8Uxx2eBEqtTPbBeG6J64+i3U7BvSmPzjaXb02KI2iaDoGaEnBxDnrUw5E=
+X-Received: by 2002:a2e:90e:: with SMTP id 14mr1813189ljj.293.1595803064397;
+ Sun, 26 Jul 2020 15:37:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <7eb11c0d-cd11-f873-c336-4ec955a7bdb3@inbox.ru>
- <CACRpkda-pXF71vr5v90yipKubc14tbZW5Ryw1o7rdn4FbWwsTw@mail.gmail.com>
- <190bca20-946f-52f9-64f8-8971da17d38b@inbox.ru> <CAHp75VfQdTtbiHjhBuf3czdKAgmiQeALo7CaqW36oEkSGSHUBA@mail.gmail.com>
- <20200718042548.GA43247@sol> <7a22761d-c930-3597-6bf1-c799f70a47f8@inbox.ru>
- <CAMRc=MdSMMd5SN2HeicgdHkKsBTHTB_5Cn0cYG5EPggn0Mcukg@mail.gmail.com> <20200725035203.GA8572@sol>
-In-Reply-To: <20200725035203.GA8572@sol>
+References: <20200720145412.24221-1-krzk@kernel.org>
+In-Reply-To: <20200720145412.24221-1-krzk@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 27 Jul 2020 00:32:14 +0200
-Message-ID: <CACRpkda-LT9_=Qb0hcCcjDcKpzomy6nOp5pYTCA+3P4EoS5Pxg@mail.gmail.com>
-Subject: Re: gpiolib gpio_chrdev_release duration is about 30 ms
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+Date:   Mon, 27 Jul 2020 00:37:33 +0200
+Message-ID: <CACRpkdaPUbPmt9LK9qmek-zyDd9QNWTpW6QuPW9DRptFhNX1PQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Use bank name as irqchip name
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Maxim Kochetkov <fido_max@inbox.ru>
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 5:52 AM Kent Gibson <warthog618@gmail.com> wrote:
-> On Fri, Jul 24, 2020 at 09:36:03PM +0200, Bartosz Golaszewski wrote:
-> > On Mon, Jul 20, 2020 at 10:14 AM Maxim Kochetkov <fido_max@inbox.ru> wr=
-ote:
-> > >
-> > > It works fine with this patch. Thank you so much!
-> > >
-> > > 18.07.2020 07:25, Kent Gibson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > On Fri, Jul 17, 2020 at 06:07:04PM +0300, Andy Shevchenko wrote:
-> > > >> On Fri, Jul 17, 2020 at 5:17 PM Maxim Kochetkov <fido_max@inbox.ru=
-> wrote:
-> > > >>>
-> > > >>> I need a small userspace program to do some GPIO magic to communi=
-cate
-> > > >>> other hardware like devmem. This program takes about 2,5 seconds =
-just to
-> > > >>> find GPIO lines by name.
-> > > >>>
-> > > >>> replacing synchronize_rcu to synchronize_rcu_expedited in
-> > > >>> atomic_notifier_chain_unregister gives the same boost as removing
-> > > >>> synchronize_rcu
-> > > >>
-> > > >> Have you tried to replace an atomic notifier call with a regular o=
-ne?
-> > > >> IIRC it's still not clear why atomic is used there.
-> > > >>
-> > > >
-> > > > Indeed, I recently submitted a patch to switch the
-> > > > atomic_notifier_call_chain to blocking_notifier_call_chain, as some=
- of
-> > > > the chained calls can sleep.
-> > > > Not sure if that is related, or if the change would make this case =
-better
-> > > > or worse, but it would be interesting to find out.
-> > > > The patch is in the current gpio/devel, btw.
-> > > >
-> > > > Cheers,
-> > > > Kent.
-> > > >
-> >
-> > Linus,
-> >
-> > I think we should consider submitting this patch for stable then
-> > because this slow-down was affects previously existing use-cases.
-> >
->
-> That patch is post the cdev split, so it certainly wont apply to an
-> older kernel.  I'm happy to backport it if you need it - just
-> nominate the branch you want it for.
+On Mon, Jul 20, 2020 at 4:54 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Let's let this land upstream in the merge window and then we can consider
-backports for performance regressions.
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Use the bank name as the irqchip name. This name is later visible in
+> /proc/interrupts, what makes it possible to easily identify each
+> GPIO interrupt.
+>
+> /proc/interrupts before this patch:
+> 143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
+> 144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
+> 145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+>
+> /proc/interrupts after this patch:
+> 143:    0     gpx3   7 Edge      hdmi
+> 144:    0     gpx3   6 Level     wm8994
+> 145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     gpm2   3 Edge      3-0048
+>
+> Handling of the eint_wake_mask_value has been reworked, because each bank
+> has now its own exynos_irq_chip structure allocated.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>
+> Hi Linus,
+>
+> I have only one patch queued for Samsung pinctrl. Can you apply it
+> directly?
+
+OK patch applied!
 
 Yours,
 Linus Walleij
