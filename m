@@ -2,112 +2,353 @@ Return-Path: <SRS0=5vEm=BF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BEDC433E1
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 03:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45400C433ED
+	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 09:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 266B820771
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 03:58:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pW3nnfGF"
+	by mail.kernel.org (Postfix) with ESMTP id 2E22520714
+	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 09:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgGZD6n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 25 Jul 2020 23:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgGZD6n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2020 23:58:43 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063D4C0619D2
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2020 20:58:42 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id w17so6427116ply.11
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2020 20:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jcaev1Cp7bKZYJR/UD71l80ZfPg2FMWy0HIr5qj2bGY=;
-        b=pW3nnfGF9WNDmVTg3erlNCt9uor03x6BZY37vmHSdP/xICtKgeoqTIYUtOqGOGI6kx
-         wuXTf9SMQ2Z/ErYmpP7TYebvPZRaAte8jmiOKquFASWUAxefXF8STiy/6P/Jv7R00kBl
-         57dQfKZ8WNigXDUijzvOgs/mNBoEIxbs9PlpEC38RImsjO2WVr8iPSXNIl87vtl9a9qq
-         i3tHldUSxyybwQGYKtwc1pCYThrLKg67f/t+eRlWvRje+OjBVUmB/EbiwIKg5Ks97btC
-         yz7ob2Qp8v5wYvw5b7+lebRQDzRVb9I7zg9817yrUOdm0QQ/Spsbpv7a9Cyl4JlpmWF6
-         x7UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jcaev1Cp7bKZYJR/UD71l80ZfPg2FMWy0HIr5qj2bGY=;
-        b=aluvpFlq9Eu8cUsnYrn9/VcoOaRlOWMwthbY6/DwwWrD/iXQtkFBTIueiTflZSqJbA
-         v8Rf4M5wJhe3+i9/nZn0WXew9kic1unG8IM/lhgHDf0oLH9T0qFDnHpZ08Z7YcHw+tLW
-         qcnLKtyP2FKXAzHUtmpXoqpj6IP5OGHGuBs2pn9KZsV9dno0MTMrPeSIJi2Y/yGtD63x
-         +YMpS5jRdHtZdJCFt9fw8WsmEMPNNQvfFhuIPLf/mWgotePUs++p3liOTIQFhDnFUHx+
-         ogoIQg0toI4jT644wBC1tXsjOA0GbsdIN9iNH9SOuaYSVF9XsLzxUd4SpgfRMiLgOa+b
-         0DLA==
-X-Gm-Message-State: AOAM532vb+v/aU1QL1j7/0M/gezOHNi6xAN8RkTNL3C5MEyo2VrlHtKH
-        5rJs6xXuIHbWYFu6EPcJqMVwr2dG6iyf4cT8r5s/Xg==
-X-Google-Smtp-Source: ABdhPJwXraTjC6SZ1tebNEZfR+TFnQAO2mmQKDrLOibMydwILen7cWd7OX+0bEwRfZm/OlR0+VbdaTmWP6YaljsQzW0=
-X-Received: by 2002:a17:90a:f98e:: with SMTP id cq14mr1036997pjb.51.1595735922224;
- Sat, 25 Jul 2020 20:58:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200718000637.3632841-1-saravanak@google.com> <159568680935.564881.11936174169505990646.b4-ty@kernel.org>
-In-Reply-To: <159568680935.564881.11936174169505990646.b4-ty@kernel.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Sat, 25 Jul 2020 20:58:06 -0700
-Message-ID: <CAGETcx8qyn8TmwvTrXkYEj78MdCNr+HxV0x7JTc8Wvo0VanKEg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] irqchip: Add IRQCHIP_PLATFORM_DRIVER helper macros
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Jason Cooper <jason@lakedaemon.net>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
+        id S1727801AbgGZJTB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 26 Jul 2020 05:19:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:33213 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727817AbgGZJTB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 26 Jul 2020 05:19:01 -0400
+IronPort-SDR: Iv2VaoVkLV6UjxmMvI+Uy2P/GBNd1pdhGa1f+AqVFkxY/R7sDvYU1xTgnCS/9hiub7icRPdW6A
+ CHS7CKaWNrRA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9693"; a="150868924"
+X-IronPort-AV: E=Sophos;i="5.75,398,1589266800"; 
+   d="scan'208";a="150868924"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2020 02:18:52 -0700
+IronPort-SDR: Z4TYiw1c1o2TkE6KU2miscl1K06z4FRIEze0ktepLtTtHycAhZLVflE5nFRzH/2p5eIocc0wqI
+ rQOKnub5oSlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,398,1589266800"; 
+   d="scan'208";a="327727628"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Jul 2020 02:18:47 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jzcnt-0045sX-QV; Sun, 26 Jul 2020 12:18:45 +0300
+Date:   Sun, 26 Jul 2020 12:18:45 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Michael Walle <michael@walle.cc>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        marex@denx.de, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>,
-        John Stultz <john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v6 08/13] hwmon: add support for the sl28cpld hardware
+ monitoring controller
+Message-ID: <20200726091845.GL3703480@smile.fi.intel.com>
+References: <20200725231834.25642-1-michael@walle.cc>
+ <20200725231834.25642-9-michael@walle.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200725231834.25642-9-michael@walle.cc>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 7:23 AM Marc Zyngier <maz@kernel.org> wrote:
->
-> On Fri, 17 Jul 2020 17:06:33 -0700, Saravana Kannan wrote:
-> > Made a series out of the previous v2 patch + some example uses of the
-> > macros.
-> >
-> > Not sure if the MTK changes work (just compile tested), but saw that
-> > Hanks was trying to make those drivers into tristate. So I assume
-> > they'll work as platform drivers. Please wait for MTK Ack before picking
-> > up patches 3 and 4.
-> >
-> > [...]
->
-> Applied to irq/irqchip-5.9, thanks!
->
-> [1/4] irqchip: Add IRQCHIP_PLATFORM_DRIVER_BEGIN/END and IRQCHIP_MATCH helper macros
->       commit: f3b5e608ed6d17bdf04dacbf2374f10d51fe9b09
-> [2/4] irqchip/qcom-pdc: Switch to using IRQCHIP_PLATFORM_DRIVER helper macros
->       commit: 04741740254cd83fb4f2b7747aeb35202104f8fe
-> [3/4] irqchip/mtk-sysirq: Convert to a platform driver
->       commit: 3ae3022690e6787839dafa8ea3496450248b53e1
-> [4/4] irqchip/mtk-cirq: Convert to a platform driver
->       commit: 538b63351607960ff2249460089daa31337ddeba
+On Sun, Jul 26, 2020 at 01:18:29AM +0200, Michael Walle wrote:
+> Add support for the hardware monitoring controller of the sl28cpld board
+> management controller. This driver is part of a multi-function device.
 
-Thanks!
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
--Saravana
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> Changes since v5:
+>  - none
+> 
+> Changes since v4:
+>  - update copyright year
+>  - remove #include <linux/of_device.h>, suggested by Andy.
+>  - use PTR_ERR_OR_ZERO(), suggested by Andy.
+>  - remove the platform device table
+>  - don't use KBUID_MODNAME
+> 
+> Changes since v3:
+>  - see cover letter
+> 
+>  Documentation/hwmon/index.rst    |   1 +
+>  Documentation/hwmon/sl28cpld.rst |  36 ++++++++
+>  drivers/hwmon/Kconfig            |  10 +++
+>  drivers/hwmon/Makefile           |   1 +
+>  drivers/hwmon/sl28cpld-hwmon.c   | 142 +++++++++++++++++++++++++++++++
+>  5 files changed, 190 insertions(+)
+>  create mode 100644 Documentation/hwmon/sl28cpld.rst
+>  create mode 100644 drivers/hwmon/sl28cpld-hwmon.c
+> 
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index 750d3a975d82..d90c43c82936 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -154,6 +154,7 @@ Hardware Monitoring Kernel Drivers
+>     sht3x
+>     shtc1
+>     sis5595
+> +   sl28cpld
+>     smm665
+>     smsc47b397
+>     smsc47m192
+> diff --git a/Documentation/hwmon/sl28cpld.rst b/Documentation/hwmon/sl28cpld.rst
+> new file mode 100644
+> index 000000000000..7ed65f78250c
+> --- /dev/null
+> +++ b/Documentation/hwmon/sl28cpld.rst
+> @@ -0,0 +1,36 @@
+> +.. SPDX-License-Identifier: GPL-2.0-only
+> +
+> +Kernel driver sl28cpld
+> +======================
+> +
+> +Supported chips:
+> +
+> +   * Kontron sl28cpld
+> +
+> +     Prefix: 'sl28cpld'
+> +
+> +     Datasheet: not available
+> +
+> +Authors: Michael Walle <michael@walle.cc>
+> +
+> +Description
+> +-----------
+> +
+> +The sl28cpld is a board management controller which also exposes a hardware
+> +monitoring controller. At the moment this controller supports a single fan
+> +supervisor. In the future there might be other flavours and additional
+> +hardware monitoring might be supported.
+> +
+> +The fan supervisor has a 7 bit counter register and a counter period of 1
+> +second. If the 7 bit counter overflows, the supervisor will automatically
+> +switch to x8 mode to support a wider input range at the loss of
+> +granularity.
+> +
+> +Sysfs entries
+> +-------------
+> +
+> +The following attributes are supported.
+> +
+> +======================= ========================================================
+> +fan1_input		Fan RPM. Assuming 2 pulses per revolution.
+> +======================= ========================================================
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 8dc28b26916e..a02829ec7386 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -1479,6 +1479,16 @@ config SENSORS_RASPBERRYPI_HWMON
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called raspberrypi-hwmon.
+>  
+> +config SENSORS_SL28CPLD
+> +	tristate "Kontron sl28cpld hardware monitoring driver"
+> +	select MFD_SIMPLE_MFD_I2C
+> +	help
+> +	  If you say yes here you get support for the fan supervisor of the
+> +	  sl28cpld board management controller.
+> +
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called sl28cpld-hwmon.
+> +
+>  config SENSORS_SHT15
+>  	tristate "Sensiron humidity and temperature sensors. SHT15 and compat."
+>  	depends on GPIOLIB || COMPILE_TEST
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index a8f4b35b136b..dee8511f9348 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -159,6 +159,7 @@ obj-$(CONFIG_SENSORS_S3C)	+= s3c-hwmon.o
+>  obj-$(CONFIG_SENSORS_SCH56XX_COMMON)+= sch56xx-common.o
+>  obj-$(CONFIG_SENSORS_SCH5627)	+= sch5627.o
+>  obj-$(CONFIG_SENSORS_SCH5636)	+= sch5636.o
+> +obj-$(CONFIG_SENSORS_SL28CPLD)	+= sl28cpld-hwmon.o
+>  obj-$(CONFIG_SENSORS_SHT15)	+= sht15.o
+>  obj-$(CONFIG_SENSORS_SHT21)	+= sht21.o
+>  obj-$(CONFIG_SENSORS_SHT3x)	+= sht3x.o
+> diff --git a/drivers/hwmon/sl28cpld-hwmon.c b/drivers/hwmon/sl28cpld-hwmon.c
+> new file mode 100644
+> index 000000000000..e48f58ec5b9c
+> --- /dev/null
+> +++ b/drivers/hwmon/sl28cpld-hwmon.c
+> @@ -0,0 +1,142 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * sl28cpld hardware monitoring driver
+> + *
+> + * Copyright 2020 Kontron Europe GmbH
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +
+> +#define FAN_INPUT		0x00
+> +#define   FAN_SCALE_X8		BIT(7)
+> +#define   FAN_VALUE_MASK	GENMASK(6, 0)
+> +
+> +struct sl28cpld_hwmon {
+> +	struct regmap *regmap;
+> +	u32 offset;
+> +};
+> +
+> +static umode_t sl28cpld_hwmon_is_visible(const void *data,
+> +					 enum hwmon_sensor_types type,
+> +					 u32 attr, int channel)
+> +{
+> +	return 0444;
+> +}
+> +
+> +static int sl28cpld_hwmon_read(struct device *dev,
+> +			       enum hwmon_sensor_types type, u32 attr,
+> +			       int channel, long *input)
+> +{
+> +	struct sl28cpld_hwmon *hwmon = dev_get_drvdata(dev);
+> +	unsigned int value;
+> +	int ret;
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +		ret = regmap_read(hwmon->regmap, hwmon->offset + FAN_INPUT,
+> +				  &value);
+> +		if (ret)
+> +			return ret;
+> +		/*
+> +		 * The register has a 7 bit value and 1 bit which indicates the
+> +		 * scale. If the MSB is set, then the lower 7 bit has to be
+> +		 * multiplied by 8, to get the correct reading.
+> +		 */
+> +		if (value & FAN_SCALE_X8)
+> +			value = FIELD_GET(FAN_VALUE_MASK, value) << 3;
+> +
+> +		/*
+> +		 * The counter period is 1000ms and the sysfs specification
+> +		 * says we should asssume 2 pulses per revolution.
+> +		 */
+> +		value *= 60 / 2;
+> +
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	*input = value;
+> +	return 0;
+> +}
+> +
+> +static const u32 sl28cpld_hwmon_fan_config[] = {
+> +	HWMON_F_INPUT,
+> +	0
+> +};
+> +
+> +static const struct hwmon_channel_info sl28cpld_hwmon_fan = {
+> +	.type = hwmon_fan,
+> +	.config = sl28cpld_hwmon_fan_config,
+> +};
+> +
+> +static const struct hwmon_channel_info *sl28cpld_hwmon_info[] = {
+> +	&sl28cpld_hwmon_fan,
+> +	NULL
+> +};
+> +
+> +static const struct hwmon_ops sl28cpld_hwmon_ops = {
+> +	.is_visible = sl28cpld_hwmon_is_visible,
+> +	.read = sl28cpld_hwmon_read,
+> +};
+> +
+> +static const struct hwmon_chip_info sl28cpld_hwmon_chip_info = {
+> +	.ops = &sl28cpld_hwmon_ops,
+> +	.info = sl28cpld_hwmon_info,
+> +};
+> +
+> +static int sl28cpld_hwmon_probe(struct platform_device *pdev)
+> +{
+> +	struct sl28cpld_hwmon *hwmon;
+> +	struct device *hwmon_dev;
+> +	int ret;
+> +
+> +	if (!pdev->dev.parent)
+> +		return -ENODEV;
+> +
+> +	hwmon = devm_kzalloc(&pdev->dev, sizeof(*hwmon), GFP_KERNEL);
+> +	if (!hwmon)
+> +		return -ENOMEM;
+> +
+> +	hwmon->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!hwmon->regmap)
+> +		return -ENODEV;
+> +
+> +	ret = device_property_read_u32(&pdev->dev, "reg", &hwmon->offset);
+> +	if (ret)
+> +		return -EINVAL;
+> +
+> +	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
+> +				"sl28cpld_hwmon", hwmon,
+> +				&sl28cpld_hwmon_chip_info, NULL);
+> +	if (IS_ERR(hwmon_dev))
+> +		dev_err(&pdev->dev, "failed to register as hwmon device");
+> +
+> +	return PTR_ERR_OR_ZERO(hwmon_dev);
+> +}
+> +
+> +static const struct of_device_id sl28cpld_hwmon_of_match[] = {
+> +	{ .compatible = "kontron,sl28cpld-fan" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, sl28cpld_hwmon_of_match);
+> +
+> +static struct platform_driver sl28cpld_hwmon_driver = {
+> +	.probe = sl28cpld_hwmon_probe,
+> +	.driver = {
+> +		.name = "sl28cpld-fan",
+> +		.of_match_table = sl28cpld_hwmon_of_match,
+> +	},
+> +};
+> +module_platform_driver(sl28cpld_hwmon_driver);
+> +
+> +MODULE_DESCRIPTION("sl28cpld Hardware Monitoring Driver");
+> +MODULE_AUTHOR("Michael Walle <michael@walle.cc>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.20.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
