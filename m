@@ -1,109 +1,110 @@
-Return-Path: <SRS0=5vEm=BF=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=8noH=BG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E050FC433E0
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3DAC433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 27 Jul 2020 01:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA3812065F
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jul 2020 22:35:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC94620663
+	for <linux-gpio@archiver.kernel.org>; Mon, 27 Jul 2020 01:46:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hDMGD4iB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5GnH5zf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbgGZWfY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 26 Jul 2020 18:35:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60204 "EHLO
+        id S1726800AbgG0BqH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 26 Jul 2020 21:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgGZWfY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jul 2020 18:35:24 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A51FEC0619D2
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:35:23 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id 185so4964624ljj.7
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2020 15:35:23 -0700 (PDT)
+        with ESMTP id S1726797AbgG0BqH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jul 2020 21:46:07 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09776C0619D2;
+        Sun, 26 Jul 2020 18:46:07 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id o13so8519074pgf.0;
+        Sun, 26 Jul 2020 18:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EMOTG0PO+s5CwQFVuZNWBPHyIul1aA0fgUibL6tdegM=;
-        b=hDMGD4iB8N6MW08e5ijsZsVqQDqAcRXmHyhX06vvU+sz7Un/KjdLfrrh5L6yx+6/SB
-         hch1sgS+OylR31eFhuN5okRW/045rSJmOzNFObfozuYaNN/Wto2jJuCvmBwOYtEdQX0L
-         TWocChB/EY+iYJagjeMGEzcM3ErFpyim+h8qxVt+vIFPpk2EwBnlbGIsuSo3vbaE929s
-         1YgrPVpXedOWJOhjcFqX8qtoLCFsW1RXSA26dnPMS2/ltWIkCzIWlKSD71LCU14crCOy
-         roD2OpjtjR6OO0p215DhzcrnUBunnVLkZ988eIc0jqJY8zvk4P4xkyk2ujvdcaYDM7dF
-         Xirg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FkewYi4NEj9DYPkGcNYYj0thN1u6i8LoJmF6J427G24=;
+        b=W5GnH5zfdSudcBo7qCazalC4ZSXSOYqNKlrGTJ8f+lEm7c2BVM2nBoC97NLCxz8Ecw
+         IhGkIfz8LRCbGdRkYIBxqBXvDjp6NOweULfKOCfoBseFL6i+3IFTR6nH6OU/wFUb/mMK
+         h7SKDxAEd2Zii4siaC3NZK+qYX7ZQZ5YAlf0EHJKUjR0gnEFw/t/p4+u4d/1Ca5RWBfu
+         AsbM4OhrPVAgIZFi+Y9ZcAxP4QfLSU9h2B5aWBNwV30/AkGMxQs4tVuF22b6orkSlhyB
+         idfPxRstz30HihkGVL7zTLO5AaYyBi/uK9tHAnKJThD/D+mncYKL42Ze4ElPniTxlYgW
+         FrLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EMOTG0PO+s5CwQFVuZNWBPHyIul1aA0fgUibL6tdegM=;
-        b=YR1SixTXN/fKq9ZPC8Ob1qnyoFoCXKQmW1pgre4ZIPjrdua9IlZ6ilL9NMP4RgE0L5
-         ZobB90Lw+zNgkvxZ1kmQFmIQ0/4r3+UeZGP9dBT84fdMpt4owxcMlVyQu2zAfW/Mbw16
-         4jbEVqdFT1lxRY/GtfbMuA+zcsPD5F3CQN6abmTXKasvQen1NoP+NU4dFIHjj5Cxqrg7
-         zRjhMURnwMD5vVHF7mRAR59Tt/Tg4/kH9jG4wKI5BTVEC8g8silfcLCaQUITIoDUI9dr
-         7FNG2itz9iZjXtIaHQrxI2B3ZRwyWCDlvwgHDGse8pIoYxlhrE6Jj3XoH2JQ8NZ4d3il
-         pcSg==
-X-Gm-Message-State: AOAM533kgiFxLEwWl9n4emoAFZIohb56cduEAikTDUKO9cpDHKu23S/o
-        ZPo0R51CNkg35vjbMB9OWnRFbHjwwWM5eR2W5sPlCA==
-X-Google-Smtp-Source: ABdhPJxpoI4Wz0qFGlLsoQ0qfnzhIbW7RXo+Pg6uMltg+pY1lVTlif7DJngj4Tw0aAxErsl+kDQaFXGMGvRhjoiKyoE=
-X-Received: by 2002:a2e:9d4a:: with SMTP id y10mr4059257ljj.104.1595802922025;
- Sun, 26 Jul 2020 15:35:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200722122751.266440-1-drew@beagleboard.org>
-In-Reply-To: <20200722122751.266440-1-drew@beagleboard.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 27 Jul 2020 00:35:08 +0200
-Message-ID: <CACRpkdbL6KD1fNWKBNuqVZDaMDH=S61XSU5Qhza4CuQMx=277A@mail.gmail.com>
-Subject: Re: [PATCH v5] pinctrl: core: print gpio in pins debugfs file
-To:     Drew Fustini <drew@beagleboard.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FkewYi4NEj9DYPkGcNYYj0thN1u6i8LoJmF6J427G24=;
+        b=e01A8E/SWyGBaH1sN8FttXVicHHCyMAVzYFQP387g+lvTopTB/dJSg6IHVb/5WDzrq
+         eI2UvFdOTziendZIvKZTs6531MgFhjZEC1IzVaUDSUCwcuW5XtRZjHyxpoR0+ZpVGhBx
+         Br/FHGc9lxlL0mu1begNehO+gjc70jU9YNJjOKzmsYXmSB1sZJ1vAbFzSFOFK5cQW5sT
+         bMMxaEyYIEuZfCN5aj7NVXxZJ2T+QC1EzJ+iea0uV6EKb+bPYK7u83dZMleD9pZLpjps
+         ghRPg6JiBN58lgC61UmaizxvIx+zFhj94oPmzwYBn9RUJ0NipVXBhj/caWBIn2ljVi7Y
+         hncg==
+X-Gm-Message-State: AOAM530bOgeQqART/Aolnwk0JTYpFqtwqRVSBPneM/F0EVR6oa7xRK0D
+        genjfWoav2Gs1SW+KSIKTpc=
+X-Google-Smtp-Source: ABdhPJytt0icjy2kS8S+uy58W68c1qkGUJk9cKVJo/3bRIx1J3Iy6gKw07rxLgO3+N0Gk30soflAMQ==
+X-Received: by 2002:a63:5a54:: with SMTP id k20mr17555354pgm.226.1595814366497;
+        Sun, 26 Jul 2020 18:46:06 -0700 (PDT)
+Received: from sol (106-69-185-93.dyn.iinet.net.au. [106.69.185.93])
+        by smtp.gmail.com with ESMTPSA id c2sm7009210pgb.52.2020.07.26.18.46.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Jul 2020 18:46:05 -0700 (PDT)
+Date:   Mon, 27 Jul 2020 09:46:01 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 03/18] gpiolib: make cdev a build option
+Message-ID: <20200727014601.GA10761@sol>
+References: <20200725041955.9985-1-warthog618@gmail.com>
+ <20200725041955.9985-4-warthog618@gmail.com>
+ <CACRpkdZymmO9ku5OmCO74eiX3Y3jq_1g5De9Tx4hg3Lyrdt6bQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZymmO9ku5OmCO74eiX3Y3jq_1g5De9Tx4hg3Lyrdt6bQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 2:29 PM Drew Fustini <drew@beagleboard.org> wrote:
+On Mon, Jul 27, 2020 at 12:25:53AM +0200, Linus Walleij wrote:
+> On Sat, Jul 25, 2020 at 6:21 AM Kent Gibson <warthog618@gmail.com> wrote:
+> 
+> > +config GPIO_CDEV
+> > +       bool "/dev/gpiochipN (character device interface)"
+> > +       default y
+> 
+> I don't want to make it too easy to do this, as I see it as a standard
+> kernel feature.
+> 
+> Can we add:
+> 
+> depends on EXPERT
+> 
+> as with other standard kernel features?
+> 
 
-> If there is a gpio range mapping for the pin, then print out the gpio
-> chip and line index for the pin in the debugfs 'pins' file with the
-> format: "[line-index]:[gpio-label]"
->
-> Here is example output on the BeagleBoard.org PocketBeagle (AM3358):
-> /sys/kernel/debug/pinctrl/44e10800.pinmux-pinctrl-single/pins
->
-> pin 25 (PIN25) 25:gpio-32-63 44e10864 00000037 pinctrl-single
-> pin 26 (PIN26) 26:gpio-32-63 44e10868 00000037 pinctrl-single
-> pin 27 (PIN27) 27:gpio-32-63 44e1086c 00000037 pinctrl-single
-> pin 28 (PIN28) 0:? 44e10870 00000036 pinctrl-single
-> pin 29 (PIN29) 0:? 44e10874 00000006 pinctrl-single
-> pin 30 (PIN30) 28:gpio-32-63 44e10878 00000027 pinctrl-single
-> pin 31 (PIN31) 29:gpio-32-63 44e1087c 00000037 pinctrl-single
-> pin 32 (PIN32) 30:gpio-32-63 44e10880 00000037 pinctrl-single
-> pin 33 (PIN33) 31:gpio-32-63 44e10884 00000037 pinctrl-single
-> pin 34 (PIN34) 0:gpio-64-95 44e10888 00000037 pinctrl-single
-> pin 35 (PIN35) 1:gpio-64-95 44e1088c 00000037 pinctrl-single
->
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Suggested-by: Tony Lindgren <tony@atomide.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Drew Fustini <drew@beagleboard.org>
+Fair enough.
 
-Neat, this v5 patch applied!
+But what of the GPIO_CDEV_V1 option to disable uAPI V1 added in patch 04,
+and that depends on GPIO_CDEV?
+That is equivalent to GPIO_SYSFS, which is not dependent on EXPERT,
+so I'll need to restructure the dependencies so it doesn't
+inherit the EXPERT dependency.
+Unless you also want it to be dependent on EXPERT.
 
-Yours,
-Linus Walleij
+Hmmm, and maybe patch 04 should be later in the series - after V2 is
+fully implemented and V1 is deprecated - around patch 11.
+
+Cheers,
+Kent.
