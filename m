@@ -2,86 +2,119 @@ Return-Path: <SRS0=YGv/=BH=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AD1C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jul 2020 07:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A59C433E3
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jul 2020 07:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D89722070B
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jul 2020 07:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 942D22070B
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jul 2020 07:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DO3x8bu4"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BnVg4hjx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbgG1H2b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jul 2020 03:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
+        id S1727860AbgG1H3N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jul 2020 03:29:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbgG1H2b (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2020 03:28:31 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC05DC061794
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2020 00:28:30 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id t6so7080676ljk.9
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2020 00:28:30 -0700 (PDT)
+        with ESMTP id S1726990AbgG1H3N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2020 03:29:13 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B50C061794
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2020 00:29:12 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id j22so4552875lfm.2
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2020 00:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AZ65ABF9GRXpc6cSYiiHamCyWdfzzDVO2I2z4LBGsiQ=;
-        b=DO3x8bu4PJ6sQzue54jzP6DVYYpREHRUQV+ey4rEM1BMtiGpYXR65u0cB3MNb0d0f+
-         x/qzo1SZGSh21eHvcewWEa5ZnxvOg7XB4KSth/deIMNar5sJ9/dG1mVsTXQ7pvVmt04t
-         SIMa0soXicEGMo25JlLXBLRwm5WETwHRB+yDwfADHg7rlcEVOoBQWAup7BXvfOtbXPCy
-         Mp5xlBX9l+d+hbd5mp6uvEiwXo7lIg94AiLDSrYR86ho+sopKba+/ns57AOeCdqOflBB
-         7ESBDsk4R0Tv0Gu+Z+a+YV68XUxPjoLI3xt9JTFcYTWzYzyGUlnTB1EJj4aJuyGVCiwN
-         HgjQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vl/1AzReSowGHK7rWhVKeID56AYucjcDR0PS1Rw0UJs=;
+        b=BnVg4hjxnMBM4u1v1/bEErLwlKbB8FFzicHCgiT2zY/kIC2Mm/lOGosy6GycuhAFAX
+         /shU3Iif9RIHc49CXO14jPx7H4P2XEY6BJRrI6VaQw16mTTeZnCrP9SmKgORDPcUMoGU
+         nOttlECF6UYyeqNutzrJBkr0K6jkYXEMl+xP9X3hO/kogKd6Ynz1xPqcH6Ui/3SJJhbC
+         ryLvzmtrY6+es58g0mLjB1yMIesC4UiVhu2b4pp5ZqGY8JSIPJYcJEbIZRhy4Wq9aSfZ
+         lNf06Qujzplu28SluZKb3dIzq/TWOV0TaG/j8jjvJT8MjhlAvNpYCy8Tl8021PL+QsMk
+         3g5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AZ65ABF9GRXpc6cSYiiHamCyWdfzzDVO2I2z4LBGsiQ=;
-        b=sOr2SpjWFQ3uDl4Toihej1AVjRQSSaYUJrnnNWLr5VHfd023rWKJ7NB31dncwH+Bqn
-         uAgWPLIyKa8LWmX5kh1pzbmMf9yf8yaMMKLzMU4feVqkkJLeJRL/StsPkkhxBx5rTjvH
-         7Feb09sU7OagPB6Z1AvErWn0/9yrrIUOfORgaiOYhY76J9QN0ENNBMUvH59G7MEQ7cUl
-         MWO6klU18bnMgM686n9wK+VyOxWj/MEYygFRR4M+bC7NpPUopYGPvl9WZfTr4SQKFlmX
-         JzP3ZA54/qce+YjQ4ePKB+16ynk61jQTV/Uy6g94YddgGAx1OLPpMUdDb/LMdJBMfXKi
-         trKw==
-X-Gm-Message-State: AOAM531Sh4regnyjlQfipWTKelHaowyWV538zHj1OOg8duzXyqP7T4/x
-        j0Gc9geZaYmPhYwngBLc5Tss2/BVPRJNUsJ25K/UrQ==
-X-Google-Smtp-Source: ABdhPJzB7AOGoUePISHrGYOMvRjpJtqCvYyuYtajzPRrmzVJ+BSu/WHx4JBBoR1U1JKxhQ7vwdvtW8t63+DSbtfcRKQ=
-X-Received: by 2002:a2e:9a4d:: with SMTP id k13mr12462714ljj.283.1595921309406;
- Tue, 28 Jul 2020 00:28:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200716100638.112451-1-linus.walleij@linaro.org> <20200727211331.npttctrjmkfhezhn@mobilestation>
-In-Reply-To: <20200727211331.npttctrjmkfhezhn@mobilestation>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vl/1AzReSowGHK7rWhVKeID56AYucjcDR0PS1Rw0UJs=;
+        b=F1yINUO25BrTDOAuAw0Ks5khyHiHFsuag6l5WsOczk6QbdbDEwW2X+0URVUE0rM0hG
+         DXchtNKPLHk+LwETlP9d7XNlVLp8AOr7XWrbgbGVS1Q3+UDalyh7XeuV83t5uamVNEVu
+         IKBB9lrsfLQ8xbrS6lRdMXzuNTUrPhCcbZxkRvjzELlNQXRjEVh0YgwlDf0Oy/jSskqx
+         AzRxGckcEAydLElcBsSFRL4KbCmGe2jKO4Dp/eotgLULctqGnIYCbT2lDKLK6/fm0g27
+         Ks+GJJwfbkTLt7LX1bRXOA0RivE93jtV5+wuiqVmchzFp2s6AHJQ+jnHnvld/7vsk5zg
+         huEA==
+X-Gm-Message-State: AOAM531nsQh6sRjycyK+SAHQnTC1uTs9vk3fYodOzrgH4DAijjRYIuzg
+        rYXwT7v3ATgtAa84ossy+Ym7Zk24oHncnw==
+X-Google-Smtp-Source: ABdhPJxo+lmr2Ml2VhhFziUVDvkExSb97C0nP28YbuMEW/JDggX7uqbJe2h5Nz/PJvwLFc24gyn7gw==
+X-Received: by 2002:a19:257:: with SMTP id 84mr13150167lfc.208.1595921350439;
+        Tue, 28 Jul 2020 00:29:10 -0700 (PDT)
+Received: from localhost.localdomain (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
+        by smtp.gmail.com with ESMTPSA id h23sm3600656lfk.37.2020.07.28.00.29.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2020 00:29:09 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 28 Jul 2020 09:28:18 +0200
-Message-ID: <CACRpkdaWGH4H5JnsmydMfvvEFzynU-wEdRWoxM2Ynv8KWPTDJQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: stmpe: Use irqchip template
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+To:     linux-gpio@vger.kernel.org
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Patrice Chotard <patrice.chotard@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Content-Type: text/plain; charset="UTF-8"
+        Serge Semin <fancer.lancer@gmail.com>
+Subject: [PATCH] gpio: stmpe: Move chip registration
+Date:   Tue, 28 Jul 2020 09:27:06 +0200
+Message-Id: <20200728072706.348725-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 11:13 PM Serge Semin <fancer.lancer@gmail.com> wrote:
+Make sure to register the GPIO chip after requesting the
+interrupt and setting up the IRQ members of the irqchip.
 
-> Hmm, the GPIO-irq-chip setting are initialized after the GPIO-chip has been
-> registered by calling the gpiochip_add_data() method earlier in this method.
-> That means the IRQ-chip won't be created by the GPIOlib, which will introduce a
-> bug. In order to fix the problem it's better to move the whole "if (irq > 0)
-> {...}" clause to be executed before the gpiochip_add_data() function invocation.
->
-> Though I could misunderstood something...
+Fixes: 9745079609df ("gpio: stmpe: Use irqchip template")
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Reported-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-stmpe.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Ah what a mistake, thank you so much for looking through this patch and
-spotting this! I sent a fix.
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 395ee51445ea..6c48809d0505 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -500,12 +500,6 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto out_free;
+ 
+-	ret = gpiochip_add_data(&stmpe_gpio->chip, stmpe_gpio);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
+-		goto out_disable;
+-	}
+-
+ 	if (irq > 0) {
+ 		struct gpio_irq_chip *girq;
+ 
+@@ -528,6 +522,12 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 		girq->threaded = true;
+ 	}
+ 
++	ret = gpiochip_add_data(&stmpe_gpio->chip, stmpe_gpio);
++	if (ret) {
++		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
++		goto out_disable;
++	}
++
+ 	platform_set_drvdata(pdev, stmpe_gpio);
+ 
+ 	return 0;
+-- 
+2.26.2
 
-Yours,
-Linus Walleij
