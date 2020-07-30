@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714B2C433E5
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Jul 2020 13:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1375CC433E0
+	for <linux-gpio@archiver.kernel.org>; Thu, 30 Jul 2020 13:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 596922072A
-	for <linux-gpio@archiver.kernel.org>; Thu, 30 Jul 2020 13:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01602072A
+	for <linux-gpio@archiver.kernel.org>; Thu, 30 Jul 2020 13:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728981AbgG3Nzv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 30 Jul 2020 09:55:51 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:56566 "EHLO
+        id S1729362AbgG3N4S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 30 Jul 2020 09:56:18 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:56564 "EHLO
         mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728554AbgG3Nzv (ORCPT
+        with ESMTP id S1726794AbgG3Nzv (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Jul 2020 09:55:51 -0400
 Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 6E5BC8040A7B;
-        Thu, 30 Jul 2020 13:55:46 +0000 (UTC)
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 490C68040A7C;
+        Thu, 30 Jul 2020 13:55:45 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at baikalelectronics.ru
 Received: from mail.baikalelectronics.ru ([127.0.0.1])
         by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id P9ReLZPKR7wE; Thu, 30 Jul 2020 16:55:45 +0300 (MSK)
+        with ESMTP id xmJFDaShvY46; Thu, 30 Jul 2020 16:55:44 +0300 (MSK)
 From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
 To:     Hoan Tran <hoan@os.amperecomputing.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -37,9 +37,9 @@ CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
         Rob Herring <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 08/10] gpio: dwapb: Get reset control by means of resource managed interface
-Date:   Thu, 30 Jul 2020 16:55:34 +0300
-Message-ID: <20200730135536.19747-9-Sergey.Semin@baikalelectronics.ru>
+Subject: [PATCH v2 06/10] gpio: dwapb: Discard GPIO-to-IRQ mapping function
+Date:   Thu, 30 Jul 2020 16:55:32 +0300
+Message-ID: <20200730135536.19747-7-Sergey.Semin@baikalelectronics.ru>
 In-Reply-To: <20200730135536.19747-1-Sergey.Semin@baikalelectronics.ru>
 References: <20200730135536.19747-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
@@ -51,78 +51,50 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The reset control interface provides the resource managed version of
-the reset_control_get() method. The only thing which needs to be also
-automated is the reset lane assertion on the device removal. It can be
-implemented by means of the custom action definition. After that the reset
-control will be purely managed by the device resources interface.
+Since GPIOlib-based IRQ-chip interface is now utilized there is no need in
+setting up a custom GPIO-to-IRQ mapping method. GPIO-lib defines the
+standard mapping method - gpiochip_to_irq(), which will be used anyway no
+matter whether the custom to_irq callback is specified or not.
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
 ---
- drivers/gpio/gpio-dwapb.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+
+Changelog v2:
+- This is a new patch detached from commit
+  "gpio: dwapb: Convert driver to using the GPIO-lib-based IRQ-chip".
+---
+ drivers/gpio/gpio-dwapb.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 226d9c2d9493..9aa681c79c82 100644
+index 327333fbc750..f7acc5abbf5c 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -607,6 +607,32 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
- 	return pdata;
+@@ -150,14 +150,6 @@ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+ 	gc->write_reg(reg_base + gpio_reg_convert(gpio, offset), val);
  }
  
-+static void dwapb_assert_reset(void *data)
-+{
-+	struct dwapb_gpio *gpio = data;
-+
-+	reset_control_assert(gpio->rst);
-+}
-+
-+static int dwapb_get_reset(struct dwapb_gpio *gpio)
-+{
-+	int err;
-+
-+	gpio->rst = devm_reset_control_get_optional_shared(gpio->dev, NULL);
-+	if (IS_ERR(gpio->rst)) {
-+		dev_err(gpio->dev, "Cannot get reset descriptor\n");
-+		return PTR_ERR(gpio->rst);
-+	}
-+
-+	err = reset_control_deassert(gpio->rst);
-+	if (err) {
-+		dev_err(gpio->dev, "Cannot deassert reset lane\n");
-+		return err;
-+	}
-+
-+	return devm_add_action_or_reset(gpio->dev, dwapb_assert_reset, gpio);
-+}
-+
- static const struct of_device_id dwapb_of_match[] = {
- 	{ .compatible = "snps,dw-apb-gpio", .data = (void *)0},
- 	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2},
-@@ -646,11 +672,9 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	gpio->dev = &pdev->dev;
- 	gpio->nr_ports = pdata->nports;
- 
--	gpio->rst = devm_reset_control_get_optional_shared(dev, NULL);
--	if (IS_ERR(gpio->rst))
--		return PTR_ERR(gpio->rst);
+-static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+-{
+-	struct dwapb_gpio_port *port = gpiochip_get_data(gc);
+-	struct dwapb_gpio *gpio = port->gpio;
 -
--	reset_control_deassert(gpio->rst);
-+	err = dwapb_get_reset(gpio);
-+	if (err)
-+		return err;
+-	return irq_find_mapping(gpio->domain, offset);
+-}
+-
+ static struct dwapb_gpio_port *dwapb_offs_to_port(struct dwapb_gpio *gpio, unsigned int offs)
+ {
+ 	struct dwapb_gpio_port *port;
+@@ -466,8 +458,6 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	}
  
- 	gpio->ports = devm_kcalloc(&pdev->dev, gpio->nr_ports,
- 				   sizeof(*gpio->ports), GFP_KERNEL);
-@@ -700,7 +724,6 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
- 	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
+ 	girq->chip = &port->irqchip;
+-
+-	port->gc.to_irq = dwapb_gpio_to_irq;
+ }
  
- 	dwapb_gpio_unregister(gpio);
--	reset_control_assert(gpio->rst);
- 	clk_bulk_disable_unprepare(DWAPB_NR_CLOCKS, gpio->clks);
- 
- 	return 0;
+ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
 -- 
 2.27.0
 
