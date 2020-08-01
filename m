@@ -1,127 +1,90 @@
-Return-Path: <SRS0=oICM=BK=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=Ky3h=BL=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E977C433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Jul 2020 23:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79072C433DF
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 04:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5222206D8
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Jul 2020 23:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417B72076A
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 04:33:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="utYyUXWF"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bkvMTwgR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbgGaX7N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Jul 2020 19:59:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbgGaX7N (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2020 19:59:13 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6364C06174A;
-        Fri, 31 Jul 2020 16:59:12 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id v12so3768602ljc.10;
-        Fri, 31 Jul 2020 16:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UsimTWbIrqsHqWHrugIeQHRl2pI9arEz0nqny+Jdx80=;
-        b=utYyUXWFBG19iMOaqbTjqZjscEIXbcx7v1vLol18jiKTYRhX+ajiGTEdZkIZbE1xGO
-         ya6Dt/2zN3bJNoJPSrNavs9KiDD63R33H1D/Y29D0J4nO/RFpd+o+QptgGwz4JHjuC50
-         h5QZUpXltw5YzDfyd63hjnCpN/5gYLydc9ly/GEDT0UFBf+o8M6IL1ikTIU7tlO3pzux
-         86SGQeXcqI/vEuxrQEG9h+CbQSNlc4Vv2Fo5SasGBGzyEZ58UOzVv5zJjjGy4GwwKl7k
-         aE6233UfVWhErWQgbSjVOg+GvRej2+8k4SCdTRczeb1rghlxzKkgUDcrG8eFQlfzWDSI
-         J+VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UsimTWbIrqsHqWHrugIeQHRl2pI9arEz0nqny+Jdx80=;
-        b=aEPX+bueXCqd6rtnSu+dmyl+J83MJA74ebTU+oML0JwlNnmKow3jkDOmESBODX2fQ5
-         ISa5YTi039/X+J+czVmw1y+fBpf7CygCfoySQFPApQIVWdVuVv3bTThbJfXC5YuINhyx
-         X6BWpguOHmFZKnHghKg4N+LJ8v+cSSz+us1bxHDzJDCuhN42enDs1Yh1KgGGfo06FKPz
-         bPDIteCGlownQ9P6ZCwv09E1zh3yz7XOBRpM+FDB1n7GS0w0P5vY8jiqnijqn9/gl6F0
-         K+JYYBf3e/9qpD2JoQMZHN+37SY8s3C3FdtaDJuP/xJlYrTJP9nvBZ8ZJfhuRaEijCz1
-         Yviw==
-X-Gm-Message-State: AOAM532LrYWiOwFsSNu/B3fWcceVltTNAqQ3OuUFzcSslABO72sayVEN
-        IMf7tJGzlntt8vBEUvczr/480w23SpZrRx4bqGxoARH4
-X-Google-Smtp-Source: ABdhPJyuFPum9EZ4xPwGLLRNhsfcctEtKyXIrIFwRlk9aXs5vD/fJgPGGo+5lZGA8s4Wgzgm9WPoKYSWNuEjwSxFSr0=
-X-Received: by 2002:a2e:6e0a:: with SMTP id j10mr2736087ljc.389.1596239951119;
- Fri, 31 Jul 2020 16:59:11 -0700 (PDT)
+        id S1725801AbgHAEdo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 1 Aug 2020 00:33:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:22047 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725601AbgHAEdo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Aug 2020 00:33:44 -0400
+X-UUID: 3ccb1420bc4d473cbce0582b0181a449-20200801
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=VSXHzuVe7TyPrG7V1dalxToyvgZ0VM2OicojizCUcAM=;
+        b=bkvMTwgRrP94DoVh4i+wuu9QvGZCkPx5NrjE2GXcbY71+vAERFZTOuUz2wofZuc9D9cxg4wZPMBlfA0U9A9nEBPvNQKsnBJTx6CNmWgxF2cyuoFaAzlslghEpglP8uO+nShUl1bLrGFFRV9fO+yz8GxsHFcPdeZ/wGDRsnHXHvM=;
+X-UUID: 3ccb1420bc4d473cbce0582b0181a449-20200801
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <zhiyong.tao@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 548145483; Sat, 01 Aug 2020 12:33:39 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Sat, 1 Aug 2020 12:33:36 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Sat, 1 Aug 2020 12:33:36 +0800
+From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
+To:     <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
+        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
+        <sean.wang@kernel.org>
+CC:     <srv_heupstream@mediatek.com>, <zhiyong.tao@mediatek.com>,
+        <hui.liu@mediatek.com>, <eddie.huang@mediatek.com>,
+        <chuanjia.liu@mediatek.com>, <biao.huang@mediatek.com>,
+        <hongzhou.yang@mediatek.com>, <erin.lo@mediatek.com>,
+        <sean.wang@mediatek.com>, <sj.huang@mediatek.com>,
+        <seiya.wang@mediatek.com>, <jg_poxu@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+Subject: [PATCH v2 0/3] Mediatek pinctrl patch on mt8192 
+Date:   Sat, 1 Aug 2020 12:33:00 +0800
+Message-ID: <20200801043303.32149-1-zhiyong.tao@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <20200729093450.28585-1-zhang.lyra@gmail.com>
-In-Reply-To: <20200729093450.28585-1-zhang.lyra@gmail.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Sat, 1 Aug 2020 07:58:56 +0800
-Message-ID: <CADBw62p=aB3EZYkMm44Zx4Krww21SS9vCsMnPOq0pn2DgA8VkQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sprd: Clear interrupt when setting the type as edge
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Taiping Lai <taiping.lai@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B470880E776B38862319ED4C7CBD9BC1D5990EA650C3814ADCD0175DDF9A736D2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 5:35 PM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> From: Taiping Lai <taiping.lai@unisoc.com>
->
-> The raw interrupt status of GPIO maybe set before the interrupt is enabled,
-> which would trigger the interrupt event once enabled it from user side.
-> This is the case for edge interrupts only. Adding a clear operation when
-> setting interrupt type can avoid that.
->
-> Fixes: 9a3821c2bb47 ("gpio: Add GPIO driver for Spreadtrum SC9860 platform")
-> Signed-off-by: Taiping Lai <taiping.lai@unisoc.com>
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  drivers/gpio/gpio-sprd.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
-> index d7314d39ab65..36ea8a3bd451 100644
-> --- a/drivers/gpio/gpio-sprd.c
-> +++ b/drivers/gpio/gpio-sprd.c
-> @@ -149,17 +149,20 @@ static int sprd_gpio_irq_set_type(struct irq_data *data,
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IC, 1);
+VGhpcyBzZXJpZXMgaW5jbHVkZXMgMyBwYXRjaGVzOg0KMS5hZGQgcGluY3RybCBmaWxlIG9uIG10
+ODE5Mi4NCjIuYWRkIHBpbmN0cmwgYmluZGluZyBkb2N1bWVudCBvbiBtdDgxOTIuDQozLmFkZCBw
+aW5jdHJsIGRyaXZlciBvbiBNVDgxOTIuDQoNCkNoYW5nZXMgaW4gcGF0Y2ggdjI6DQoxKWNoYW5n
+ZSBtYWludGFpbmVycyBuYW1lIGluIHBpbmN0cmwtbXQ4MTkyLnlhbWwuDQoyKXJlbW92ZSB1bnVz
+ZWQgZGVzY3JpcHRpb24gZm9yICJyZWctbmFtZXMiLg0KMyljaGFuZ2UgJ3N1Ym5vZGUgZm9ybWF0
+Oicgd2hpY2ggaXMgbm90IGEgY2hpbGQgbmFtZSB0byAiXnBpbnMiLg0KNClhZGQgKCd8JykgYWZ0
+ZXIgImRlc2NyaXB0aW9uOiIuDQo1KXJlbW92ZSAiaTJjMF9waW5zX2E6IGkyYzAiIGFuZCAiaTJj
+MF9waW5zX2E6IGkyYzEiLg0KNilhZGQgcHJvcGVydGllcyBmb3IgcGluIGNvbmZpZ3VyYXRpb24g
+bm9kZXMuDQoNClpoaXlvbmcgVGFvICgzKToNCiAgZHQtYmluZGluZ3M6IHBpbmN0cmw6IG10ODE5
+MjogYWRkIHBpbmN0cmwgZmlsZQ0KICBkdC1iaW5kaW5nczogcGluY3RybDogbXQ4MTkyOiBhZGQg
+YmluZGluZyBkb2N1bWVudA0KICBwaW5jdHJsOiBhZGQgcGluY3RybCBkcml2ZXIgb24gbXQ4MTky
+DQoNCiAuLi4vYmluZGluZ3MvcGluY3RybC9waW5jdHJsLW10ODE5Mi55YW1sICAgICAgfCAgMTUx
+ICsrDQogZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL0tjb25maWcgICAgICAgICAgICAgIHwgICAg
+NyArDQogZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL01ha2VmaWxlICAgICAgICAgICAgIHwgICAg
+MSArDQogZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ4MTkyLmMgICAgIHwgMTQ1
+MyArKysrKysrKysrKw0KIGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1tdDgx
+OTIuaCB8IDIyMjggKysrKysrKysrKysrKysrKysNCiBpbmNsdWRlL2R0LWJpbmRpbmdzL3BpbmN0
+cmwvbXQ4MTkyLXBpbmZ1bmMuaCAgfCAxMzQ0ICsrKysrKysrKysNCiA2IGZpbGVzIGNoYW5nZWQs
+IDUxODQgaW5zZXJ0aW9ucygrKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9waW5jdHJsLW10ODE5Mi55YW1sDQogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ODE5Mi5jDQogY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1tdDgx
+OTIuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3BpbmN0cmwvbXQ4
+MTkyLXBpbmZ1bmMuaA0KDQotLQ0KMi4xOC4wDQoNCg==
 
-I think you should move this abonormal interrupt clearing operation to
-sprd_gpio_request(), when users request a GPIO.
-
->                 irq_set_handler_locked(data, handle_edge_irq);
->                 break;
->         case IRQ_TYPE_EDGE_FALLING:
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IC, 1);
->                 irq_set_handler_locked(data, handle_edge_irq);
->                 break;
->         case IRQ_TYPE_EDGE_BOTH:
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
->                 sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 1);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IC, 1);
->                 irq_set_handler_locked(data, handle_edge_irq);
->                 break;
->         case IRQ_TYPE_LEVEL_HIGH:
-> --
-> 2.20.1
->
-
-
--- 
-Baolin Wang
