@@ -2,195 +2,165 @@ Return-Path: <SRS0=Ky3h=BL=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D58C433E0
-	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 11:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 568C9C433E0
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 12:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6221A2087C
-	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 11:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35C422076A
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Aug 2020 12:25:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bH/7xYTV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMcFJpRf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbgHALwD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 1 Aug 2020 07:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49268 "EHLO
+        id S1728933AbgHAMZX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 1 Aug 2020 08:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbgHALwD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Aug 2020 07:52:03 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A9AC06174A;
-        Sat,  1 Aug 2020 04:52:03 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id lx9so9006447pjb.2;
-        Sat, 01 Aug 2020 04:52:03 -0700 (PDT)
+        with ESMTP id S1729021AbgHAMYg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Aug 2020 08:24:36 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8BF5C06174A;
+        Sat,  1 Aug 2020 05:24:35 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id a21so34005317ejj.10;
+        Sat, 01 Aug 2020 05:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h2cimN9Yvy25UPH51XSaIWZhhYkPPGceN+e4WaCDrxc=;
-        b=bH/7xYTVSzAYcbVdRzs8gJFpprccPE4mejvVwACUZSyaK4y7HU0D4JgmpJieFGMzca
-         By43QB0NUfbqvAw4PsJoN+Ka+Ac67V9IQ6ySwQVN3kmDMb5auEnBECTxFPziztvdXkBF
-         31lWDuJ4tH4zL5i2eokMS76E2FVS2yORWf5IHX0h6RA2qdyKnIMtpHSbt5i8rAwTTWv2
-         SBnXvJdgmVaSFQJDOk8imVfUnnqlOyfBVnYIH8Gg/JAMSzwZYnokzVlP80psyONL4+P0
-         k5+8HYB29ylJNQmSvVqkVp5zKe3zwzR5viY7ytlOQa69tkbQEOHw8fYGo1RUNlYl+U8T
-         DlfQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=epPKirRj4kip4paapWF+wmIvk6STec5g/eZ1qAPHqnE=;
+        b=WMcFJpRf/lOxCS+UFtLRYapRWoI4RITRNpKoH0WYIEdRtQzRhdoJM2m+oowu10XQVF
+         b5yyHM+bxdKOZwzUyFNMeVE0Y6pD916gDf+ubV+SJLsjKZhZKbMi6/41b1IZQfC0gX4z
+         iHWbsPoAMIAr7CmBfOVmZA3Mm8zN9YJXKSe43HPcEzI+TBnGB3uESwep6+cCCJLvdYQO
+         k3Pq9Rp6gCCZqAq8yzQ1WmyM1fXSxNSUSIlGAg+LcnL+b+VgXM3bpxQijNN2G4f+VA1Y
+         TGPNWlVCuRTIuCWVZ/ljxMkjt8i7dsBo+m9iPBIADCaJcBBBwjV4T7Eult2TR9cZ8wZk
+         Lyaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h2cimN9Yvy25UPH51XSaIWZhhYkPPGceN+e4WaCDrxc=;
-        b=D64GNYNAyyHz4jnGRc/WP8DMBV+5gHlf5wKwc5SbW+f31waxvjBAw4d4xEtSscxBeR
-         Oa8FuOesyYf2EaUWidjtf5c275Ek3giHBgnA6gnvP4GXFONsSxRISYLIKdLZdHknQwGk
-         6vwoV1scrAOtgyve8bgNA8UgmG7InkROLoULyeGp9+fA/iMvhLGZQT9fPDDkMcuIXemk
-         q9Tn5vEIziQ8StYyvo/HSB4ztzGRjoqo2T/8kSMz2MGvf/l3j56AjVYrGeSTY1cZSdud
-         sGJBhmCoWruiliU7g5miSJGAKvc3/6RTlN7yO3zmXB09nHzEwPDpydy4jOvnuvzoUQfy
-         e1qw==
-X-Gm-Message-State: AOAM531buHT1gBWAg4AvtPLuUdJJrgh838x7V77W05JEsMmaU1s3F4As
-        gZkzF1d9kWSIc0B0Kar0p6lQASlRdETu7wj15AQ=
-X-Google-Smtp-Source: ABdhPJwfp5CCIbJnTwmKX2fsq5+6kN32Du9swj9c1Soea9R8ZJZ1Lj85b5NXu/Fr1GYYpDt0bUqzDN277cRKM2FvJlQ=
-X-Received: by 2002:a17:902:8491:: with SMTP id c17mr7322900plo.262.1596282722426;
- Sat, 01 Aug 2020 04:52:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200731123835.8003-1-a.fatoum@pengutronix.de>
-In-Reply-To: <20200731123835.8003-1-a.fatoum@pengutronix.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 1 Aug 2020 14:51:46 +0300
-Message-ID: <CAHp75VcnGX8Bjcxx6sVkp1wzeLb38eBqUhrPWqjnzc-7jXShGw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: don't use same lockdep class for all
- devm_gpiochip_add_data users
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=epPKirRj4kip4paapWF+wmIvk6STec5g/eZ1qAPHqnE=;
+        b=rVN7kHxIFajJ8FN/MUj4619uJgY90wtbZrnjIlwc12Xt1dWZ90r+RaumgAMqhmwBjC
+         qzBX84h2LS4BJpPNVnXehzHi/qgugPhUTZ7WpOusVOVcIQ0zOLJukxMbPQl38RobjOau
+         RL167NCXI/PwiSo5DY30VZ4qTsjOtmu2v+nm/PAE0Bz9g8QuGoF5rB0s6oWZCPG002Go
+         vQwzfEblyUhrfglHsyWbnw3kwKXosOGIVj94CkpLQYcvq/Y7HL9YBduC7e3hBKsMDACm
+         J7v+QhyHQir6Ei4Gi9L5JM54tw4qMwaJUEaGta3mv/bdLlMr4fojQ9Dg8KkdCd+oS3Fi
+         RbjQ==
+X-Gm-Message-State: AOAM533BRfOutsSwl7R8tIjRTpaOGZF19729hEOQtxc1HJ+xMow75WvF
+        SSo2zO8VZVj0HBG0pXsIgmV7cbgXDxNM1g==
+X-Google-Smtp-Source: ABdhPJwuExwGM+Muatp1WuT205GPGAkYdwooFfx/4UjM/AxNCA9IZ5/VWUebqtI+PF1sFL/q0k+PDA==
+X-Received: by 2002:a17:906:7f0b:: with SMTP id d11mr8932095ejr.116.1596284674567;
+        Sat, 01 Aug 2020 05:24:34 -0700 (PDT)
+Received: from net.saheed (95C84E0A.dsl.pool.telekom.hu. [149.200.78.10])
+        by smtp.gmail.com with ESMTPSA id a101sm12083131edf.76.2020.08.01.05.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Aug 2020 05:24:34 -0700 (PDT)
+From:   "Saheed O. Bolarinwa" <refactormyself@gmail.com>
+To:     helgaas@kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     "Saheed O. Bolarinwa" <refactormyself@gmail.com>,
+        bjorn@helgaas.com, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [RFC PATCH 08/17] gpio: Drop uses of pci_read_config_*() return value
+Date:   Sat,  1 Aug 2020 13:24:37 +0200
+Message-Id: <20200801112446.149549-9-refactormyself@gmail.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <20200801112446.149549-1-refactormyself@gmail.com>
+References: <20200801112446.149549-1-refactormyself@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 31, 2020 at 3:40 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->
-> Commit 959bc7b22bd2 ("gpio: Automatically add lockdep keys") documents
-> in its commits message its intention to "create a unique class key for
-> each driver".
->
-> It does so by having gpiochip_add_data add in-place the definition of
-> two static lockdep classes for LOCKDEP use. That way, every caller of
-> the macro adds their gpiochip with unique lockdep classes.
->
-> There are many indirect callers of gpiochip_add_data, however, via
-> use of devm_gpiochip_add_data. devm_gpiochip_add_data has external
-> linkage and all its users will share the same lockdep classes, which
-> probably is not intended.
->
-> Fix this by replicating the gpio_chip_add_data statics-in-macro for
-> the devm_ version as well.
+The return value of pci_read_config_*() may not indicate a device error.
+However, the value read by these functions is more likely to indicate
+this kind of error. This presents two overlapping ways of reporting
+errors and complicates error checking.
 
-I ran into similar issues in another driver (not GPIO) and I agree with the fix.
+It is possible to move to one single way of checking for error if the
+dependency on the return value of these functions is removed, then it
+can later be made to return void.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Remove all uses of the return value of pci_read_config_*().
+Check the actual value read for ~0. In this case, ~0 is an invalid
+value thus it indicates some kind of error.
 
-> Fixes: 959bc7b22bd2 ("gpio: Automatically add lockdep keys")
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> ---
-> This doesn't fix any particular problem I ran into, but the code
-> looked buggy, at least to my lockdep-user-not-developer eyes.
-> ---
->  drivers/gpio/gpiolib-devres.c | 13 ++++++++-----
->  include/linux/gpio/driver.h   | 13 +++++++++++--
->  2 files changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-> index 5c91c4365da1..7dbce4c4ebdf 100644
-> --- a/drivers/gpio/gpiolib-devres.c
-> +++ b/drivers/gpio/gpiolib-devres.c
-> @@ -487,10 +487,12 @@ static void devm_gpio_chip_release(struct device *dev, void *res)
->  }
->
->  /**
-> - * devm_gpiochip_add_data() - Resource managed gpiochip_add_data()
-> + * devm_gpiochip_add_data_with_key() - Resource managed gpiochip_add_data_with_key()
->   * @dev: pointer to the device that gpio_chip belongs to.
->   * @gc: the GPIO chip to register
->   * @data: driver-private data associated with this chip
-> + * @lock_key: lockdep class for IRQ lock
-> + * @request_key: lockdep class for IRQ request
->   *
->   * Context: potentially before irqs will work
->   *
-> @@ -501,8 +503,9 @@ static void devm_gpio_chip_release(struct device *dev, void *res)
->   * gc->base is invalid or already associated with a different chip.
->   * Otherwise it returns zero as a success code.
->   */
-> -int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *gc,
-> -                          void *data)
-> +int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip *gc, void *data,
-> +                                   struct lock_class_key *lock_key,
-> +                                   struct lock_class_key *request_key)
->  {
->         struct gpio_chip **ptr;
->         int ret;
-> @@ -512,7 +515,7 @@ int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *gc,
->         if (!ptr)
->                 return -ENOMEM;
->
-> -       ret = gpiochip_add_data(gc, data);
-> +       ret = gpiochip_add_data_with_key(gc, data, lock_key, request_key);
->         if (ret < 0) {
->                 devres_free(ptr);
->                 return ret;
-> @@ -523,4 +526,4 @@ int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *gc,
->
->         return 0;
->  }
-> -EXPORT_SYMBOL_GPL(devm_gpiochip_add_data);
-> +EXPORT_SYMBOL_GPL(devm_gpiochip_add_data_with_key);
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index c4f272af7af5..e6217d8e2e9f 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -509,8 +509,16 @@ extern int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->                 gpiochip_add_data_with_key(gc, data, &lock_key, \
->                                            &request_key);         \
->         })
-> +#define devm_gpiochip_add_data(dev, gc, data) ({ \
-> +               static struct lock_class_key lock_key;  \
-> +               static struct lock_class_key request_key;         \
-> +               devm_gpiochip_add_data_with_key(dev, gc, data, &lock_key, \
-> +                                          &request_key);         \
-> +       })
->  #else
->  #define gpiochip_add_data(gc, data) gpiochip_add_data_with_key(gc, data, NULL, NULL)
-> +#define devm_gpiochip_add_data(dev, gc, data) \
-> +       devm_gpiochip_add_data_with_key(dev, gc, data, NULL, NULL)
->  #endif /* CONFIG_LOCKDEP */
->
->  static inline int gpiochip_add(struct gpio_chip *gc)
-> @@ -518,8 +526,9 @@ static inline int gpiochip_add(struct gpio_chip *gc)
->         return gpiochip_add_data(gc, NULL);
->  }
->  extern void gpiochip_remove(struct gpio_chip *gc);
-> -extern int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *gc,
-> -                                 void *data);
-> +extern int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip *gc, void *data,
-> +                                          struct lock_class_key *lock_key,
-> +                                          struct lock_class_key *request_key);
->
->  extern struct gpio_chip *gpiochip_find(void *data,
->                               int (*match)(struct gpio_chip *gc, void *data));
-> --
-> 2.27.0
->
+Suggested-by: Bjorn Helgaas <bjorn@helgaas.com>
+Signed-off-by: Saheed O. Bolarinwa <refactormyself@gmail.com>
+---
+ drivers/gpio/gpio-amd8111.c |  7 +++++--
+ drivers/gpio/gpio-rdc321x.c | 21 ++++++++++++---------
+ 2 files changed, 17 insertions(+), 11 deletions(-)
 
-
+diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+index fdcebe59510d..7b9882380cbc 100644
+--- a/drivers/gpio/gpio-amd8111.c
++++ b/drivers/gpio/gpio-amd8111.c
+@@ -198,9 +198,12 @@ static int __init amd_gpio_init(void)
+ 	goto out;
+ 
+ found:
+-	err = pci_read_config_dword(pdev, 0x58, &gp.pmbase);
+-	if (err)
++	pci_read_config_dword(pdev, 0x58, &gp.pmbase);
++	if (gp.pmbase == (u32)~0) {
++		err = -ENODEV;
+ 		goto out;
++	}
++
+ 	err = -EIO;
+ 	gp.pmbase &= 0x0000FF00;
+ 	if (gp.pmbase == 0)
+diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
+index 01ed2517e9fd..03f1ff07b844 100644
+--- a/drivers/gpio/gpio-rdc321x.c
++++ b/drivers/gpio/gpio-rdc321x.c
+@@ -85,10 +85,13 @@ static int rdc_gpio_config(struct gpio_chip *chip,
+ 	gpch = gpiochip_get_data(chip);
+ 
+ 	spin_lock(&gpch->lock);
+-	err = pci_read_config_dword(gpch->sb_pdev, gpio < 32 ?
+-			gpch->reg1_ctrl_base : gpch->reg2_ctrl_base, &reg);
+-	if (err)
++	pci_read_config_dword(gpch->sb_pdev,
++				(gpio < 32) ? gpch->reg1_ctrl_base
++					: gpch->reg2_ctrl_base, &reg);
++	if (reg == (u32)~0) {
++		err = -ENODEV;
+ 		goto unlock;
++	}
+ 
+ 	reg |= 1 << (gpio & 0x1f);
+ 
+@@ -166,17 +169,17 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
+ 	/* This might not be, what others (BIOS, bootloader, etc.)
+ 	   wrote to these registers before, but it's a good guess. Still
+ 	   better than just using 0xffffffff. */
+-	err = pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
++	pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
+ 					rdc321x_gpio_dev->reg1_data_base,
+ 					&rdc321x_gpio_dev->data_reg[0]);
+-	if (err)
+-		return err;
++	if (rdc321x_gpio_dev->data_reg[0] == (u32)~0)
++		return -ENODEV;
+ 
+-	err = pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
++	pci_read_config_dword(rdc321x_gpio_dev->sb_pdev,
+ 					rdc321x_gpio_dev->reg2_data_base,
+ 					&rdc321x_gpio_dev->data_reg[1]);
+-	if (err)
+-		return err;
++	if (rdc321x_gpio_dev->data_reg[1] == (u32)~0)
++		return -ENODEV;
+ 
+ 	dev_info(&pdev->dev, "registering %d GPIOs\n",
+ 					rdc321x_gpio_dev->chip.ngpio);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.18.4
+
