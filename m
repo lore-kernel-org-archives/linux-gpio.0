@@ -2,177 +2,155 @@ Return-Path: <SRS0=Snkp=BN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9848C433E0
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 21:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2672DC433DF
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 23:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05A13208C7
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 21:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311F72073E
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 23:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ml+4cPKm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJ/Vah5o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgHCV6C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Aug 2020 17:58:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45796 "EHLO
+        id S1728421AbgHCXBZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Aug 2020 19:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgHCV6C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2020 17:58:02 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1921FC06174A
-        for <linux-gpio@vger.kernel.org>; Mon,  3 Aug 2020 14:58:02 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id n25so6392004vsq.6
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2020 14:58:02 -0700 (PDT)
+        with ESMTP id S1727991AbgHCXBZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2020 19:01:25 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CAF3C06174A;
+        Mon,  3 Aug 2020 16:01:25 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id e8so21007526pgc.5;
+        Mon, 03 Aug 2020 16:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cHgUICdi9xK+5WmgsC8O+1KkScVXRPzwwp8CUGby/X0=;
-        b=ml+4cPKmiKL+peX9skOC2i9Q69Hus93rCzCmmb7P/4Dl8nUjNtTy+US4rB+PzvHc91
-         9MYptvwCJdifuqbfAddJLN62QZvtY/0gcB3JMDimUQccc2zpT2C0+EbDYVABI58h//ea
-         quqkVFAxyHvUn6xjm2GhcyTFbSsMYjbIYt4Jc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=U7xiOKnF5k9oqaGDQtytgIU1Bk6rutKSQp8jZmHwNQg=;
+        b=NJ/Vah5oFAXMdxGjQfGtDZXVctjmbmqQjP1Dls4q3txj6UUYGvZc0d6tXc4BgsFVZk
+         fcS5Xp11H2UvtfyKHl0msaJhuCOD0Ly7h6453x9X5/v0BEYtY2v8ZghT4uHU7MxdFZW4
+         o8Y106lgQF3O9gHRSbKe/c3QEwstOAa7O5E9iAuUm55wQw8WJaZEBPRwNI1eF+gooqhV
+         0OGVj7m+siFojAZW0FDGq9LdrPUpi9Y3w1iPH73wqATJ4fxi8NgnJSDxhDEA9Li/bGrj
+         audsvrFWQPHpAXBXgkZ+9OU0dd8w5XRfksI4jmNn1zOmHoDJ9fKymKiwITeoK7egUvRF
+         Dzmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cHgUICdi9xK+5WmgsC8O+1KkScVXRPzwwp8CUGby/X0=;
-        b=jG3guJjd+Pwz0aJphkcBx/zLlJq3LY8XVs3B9oGll/YohrCaaDHCbOgJg70SYnkImi
-         yL9UNU+9/vL2UK7Es6ok5YIwAAuOOeNMbZoQSlLV4swICN5l1S0n2c+q4uOYEig1CiPu
-         aU1mTm3vwnKlJYN1LJuyX2FGXila7BFzUGoNA5U1XzFSw0Rn3xRj2eX3aPKYK7/UQVO1
-         bKyUTEiCGx4DDKg+SseMEcf1MCq/ZruME0xCWNrOWAfXqSlIlwn2G4GI6NjFydMT6Tqi
-         2+ZLHC0xblfndOu8sCVKTXgmna+WPIQJKozF/z1ni6MfxP0L4qy6KUiMtEJ9aX9i9sXQ
-         0CGA==
-X-Gm-Message-State: AOAM532tKiZsI/6dBenLdegNO1lmC5JtZh75xJJnVkV1Lxprgq7s9xkM
-        seBuhbb2pMxxmwZQyhSNIS5fRKW0Aow=
-X-Google-Smtp-Source: ABdhPJwB66tP9UXy/FLMXQ7jIF8ci7giirxR81Q7j9oRRTjgkQwnUXtt0mrWD/RnKXA8k4jYTp/Jlg==
-X-Received: by 2002:a67:ed45:: with SMTP id m5mr13333573vsp.197.1596491880847;
-        Mon, 03 Aug 2020 14:58:00 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id x10sm2856021vkd.56.2020.08.03.14.57.59
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Aug 2020 14:58:00 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id z26so6138791uaa.4
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2020 14:57:59 -0700 (PDT)
-X-Received: by 2002:ab0:44e5:: with SMTP id n92mr12794962uan.121.1596491878639;
- Mon, 03 Aug 2020 14:57:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200714080254.v3.1.Ie0d730120b232a86a4eac1e2909bcbec844d1766@changeid>
- <CANcMJZC-kAc1kqqNhfd9wvFS4ans8t7cpAfNVZbybA4W6x5-KQ@mail.gmail.com>
-In-Reply-To: <CANcMJZC-kAc1kqqNhfd9wvFS4ans8t7cpAfNVZbybA4W6x5-KQ@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 3 Aug 2020 14:57:46 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WNY8vR4ip2w47rf7rnBmtenEXtjXstj8PWNaXjCN3ZXQ@mail.gmail.com>
-Message-ID: <CAD=FV=WNY8vR4ip2w47rf7rnBmtenEXtjXstj8PWNaXjCN3ZXQ@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: qcom: Handle broken/missing PDC dual edge
- IRQs on sc7180
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Maulik Shah <mkshah@codeaurora.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U7xiOKnF5k9oqaGDQtytgIU1Bk6rutKSQp8jZmHwNQg=;
+        b=plr9Vwx2H5HvbY41E9ae83rs79VhZ/dDwK6L3XWxoA0u8i9/KRGBC1uliNxIOCskDi
+         i8ifnI/YQdsYgaokBY/qecsbK7E0e4upzAf818EU6h+ttqZhXGtRGRUQNps9oQVM/lZD
+         zScOfcjVRz6sQTNqBSGzuCen+nYZKuc9PbrPBSj4g9pjHBLJZzPjE/URzgeRUTEBika1
+         KMe3NbqKIYDGELNle/yTQj/KzsxfyV0VQtt2c1GGPqQP+raIad67HKnGyPZiNKkEg8mS
+         8umCv1UpadED113CNaxZniAOfjJc+YMkSIM02LheBn9kit5/7zWYp6Akk0WuNjU+aAEQ
+         Cg1g==
+X-Gm-Message-State: AOAM532EHWVxnAS0KDx4q+/pe1aAFr/h1qbFvbhXiQXyfCo9fJ1Rpzdd
+        Ob/Ul//gAPrOKggWidrGXiw=
+X-Google-Smtp-Source: ABdhPJzwwOjM0lONrtRAMUe5g5xvjho9AMf3gJldLUkDQbeRGRx/akjn5cgtQ13iFfpMITqJZG5p8Q==
+X-Received: by 2002:aa7:97a3:: with SMTP id d3mr17719806pfq.178.1596495684606;
+        Mon, 03 Aug 2020 16:01:24 -0700 (PDT)
+Received: from sol (106-69-185-93.dyn.iinet.net.au. [106.69.185.93])
+        by smtp.gmail.com with ESMTPSA id w187sm12000763pfd.87.2020.08.03.16.01.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2020 16:01:23 -0700 (PDT)
+Date:   Tue, 4 Aug 2020 07:01:18 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Todd Kjos <tkjos@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 05/18] gpiolib: cdev: support GPIO_GET_LINE_IOCTL and
+ GPIOLINE_GET_VALUES_IOCTL
+Message-ID: <20200803230118.GA3650@sol>
+References: <20200725041955.9985-1-warthog618@gmail.com>
+ <20200725041955.9985-6-warthog618@gmail.com>
+ <CAHp75VcKtATPDKGAViWqjOJDqukDrgZ13aTU6rTJ1jEeB3vmVw@mail.gmail.com>
+ <20200726011244.GA6587@sol>
+ <CAMpxmJWaEVwjXSFHTYmwdfA+88upVkJ4ePSQf_ziSOa1YdOUKQ@mail.gmail.com>
+ <20200802033158.GA13174@sol>
+ <CAMpxmJWZpMFbrMBkLiR9q7chdamVnjw0geDf-pgKrz=AWD8mNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJWZpMFbrMBkLiR9q7chdamVnjw0geDf-pgKrz=AWD8mNg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
-
-On Mon, Aug 3, 2020 at 2:06 PM John Stultz <john.stultz@linaro.org> wrote:
->
-> On Tue, Jul 14, 2020 at 8:08 AM Douglas Anderson <dianders@chromium.org> wrote:
+On Mon, Aug 03, 2020 at 10:02:50PM +0200, Bartosz Golaszewski wrote:
+> On Sun, Aug 2, 2020 at 5:32 AM Kent Gibson <warthog618@gmail.com> wrote:
 > >
-> > Depending on how you look at it, you can either say that:
-> > a) There is a PDC hardware issue (with the specific IP rev that exists
-> >    on sc7180) that causes the PDC not to work properly when configured
-> >    to handle dual edges.
-> > b) The dual edge feature of the PDC hardware was only added in later
-> >    HW revisions and thus isn't in all hardware.
+> > On Fri, Jul 31, 2020 at 06:05:10PM +0200, Bartosz Golaszewski wrote:
+> > > On Sun, Jul 26, 2020 at 3:12 AM Kent Gibson <warthog618@gmail.com> wrote:
+> 
+> [snip!]
+> 
+> > > > >
+> > > > > > +static u64 gpioline_config_flags(struct gpioline_config *lc, int line_idx)
+> > > > > > +{
+> > > > > > +       int i;
+> > > > > > +
+> > > > > > +       for (i = lc->num_attrs - 1; i >= 0; i--) {
+> > > > >
+> > > > > Much better to read is
+> > > > >
+> > > > > unsigned int i = lc->num_attrs;
+> > > > >
+> > > > > while (i--) {
+> > > > >  ...
+> > > > > }
+> > > > >
+> > > >
+> > > > Really? I find that the post-decrement in the while makes determining the
+> > > > bounds of the loop more confusing.
+> > > >
+> > >
+> > > Agreed, Andy: this is too much nit-picking. :)
+> > >
 > >
-> > Regardless of how you look at it, let's work around the lack of dual
-> > edge support by only ever letting our parent see requests for single
-> > edge interrupts on affected hardware.
+> > I was actually hoping for some feedback on the direction of that loop,
+> > as it relates to the handling of multiple instances of the same
+> > attribute associated with a given line.
 > >
-> > NOTE: it's possible that a driver requesting a dual edge interrupt
-> > might get several edges coalesced into a single IRQ.  For instance if
-> > a line starts low and then goes high and low again, the driver that
-> > requested the IRQ is not guaranteed to be called twice.  However, it
-> > is guaranteed that once the driver's interrupt handler starts running
-> > its first instruction that any new edges coming in will cause the
-> > interrupt to fire again.  This is relatively commonplace for dual-edge
-> > gpio interrupts (many gpio controllers require software to emulate
-> > dual edge with single edge) so client drivers should be setup to
-> > handle it.
+> > The reverse loop here implements a last in wins policy, but I'm now
+> > thinking the kernel should be encouraging userspace to only associate a
+> > given attribute with a line once, and that a first in wins would help do
+> > that - as additional associations would be ignored.
 > >
-> > Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->
-> Just as a heads up. I started seeing boot failures (crashes really
-> early before we get serial output) with db845c when testing with the
-> android-mainline tree that pulled v5.8 in.
+> > Alternatively, the kernel should enforce that an attribute can only be
+> > associated once, but that would require adding more request validation.
+> >
+> 
+> I guess this would result in a lot of churn to do validation which is
+> largely unnecessary? To me the first in wins sounds more consistent.
+> 
 
-Even before earlycon?  Ick.  For me earlycon comes up way before
-pinctrl and I thought that, by design, earlycon came up so dang early
-that you could debug almost anything with it.
+Fully validating the attrs would involve a lot of tedious looping, which
+would be pointless 99.99% of the time, so I was hoping to avoid it.
+OTOH we're interacting with hardware so I don't want to be doing
+anything that userspace hasn't explicitly requested.
 
-To confirm, I could even drop into earlycon_kgdb (which starts later
-than earlycon), then set a breakpoint on msm_pinctrl_probe() and I'd
-hit my breakpoint.  Enabling earlycon should be super easy these
-days--just add the "earlycon" command line parameter and the kernel
-seems to do the rest of the magic based on the "stdout-path".  I guess
-if your bootloader doesn't cooperate and leave the system in an OK
-state then you'll be in bad shape, but otherwise it should be nice...
+But I would be satisfied with clearly documenting the behaviour - and
+in most cases libgpiod will be taking care of it anyway...
 
-NOTE: if you have earlycon and this is still causing crashes before
-earlycon starts, the only things I can think of are side effects of
-this patch.  Could it have made your kernel just a little too big and
-now you're overflowing some hard limit of the bootloader?  Maybe
-you're hitting a ccache bug and using some stale garbage (don't laugh,
-this happened to me the other year)?  Maybe there's a pointer bug and
-this moves addresses just enough to make it cause havoc?
+> Also: I just started going through the patches - nice idea with the
+> GPIO attributes, I really like it. Although I need to give it a longer
+> thought tomorrow - I'm wondering if we can maybe unify them and the
+> flags.
+> 
 
+I had an earlier draft that did just that - and that is partially why
+the loop is last in wins - I was using slot 0 as the default flags.
+But the default flags cover a lot of use cases, including all of v1, and
+it was simple and cheap to provide a default - and it simplified the
+initial port of libgpiod to v2...
 
-> I did some quick bisection and came down to this patch, and sure
-> enough things boot again with this patch reverted.
->
-> In my testing earlier today with v5.8 (+ just a few patches for db845c
-> support), I didn't see this failure, but the configs in use are
-> different there.
->
-> I'll try to spend a bit of time to understand exactly what is failing,
-> but if you have any initial suggestions for things to try, I'd
-> appreciate it.
+Cheers,
+Kent.
 
-So on SDM845 we aren't setting "wakeirq_dual_edge_errata", right?
-It's possible that you also need it, but I didn't have an SDM845
-device in front of me to test with--I only have remote access to one.
-...but in any case, the fact that SDM845 doesn't have
-"wakeirq_dual_edge_errata" set should eliminate a bunch of code.
-
-Once you eliminate that there's almost nothing left of this patch.
-You could try commenting out:
-
-irq_set_handler_locked(d, handle_fasteoi_irq);
-
-...and see if that helps?
-
-NOTE: I just tried putting kernel 5.8 on my sdm845-cheza device.  It
-booted up without crashing...  I'm probably not using the same config
-you are, but at least it appears that sdm845 isn't totally broken or
-anything...
-
--Doug
