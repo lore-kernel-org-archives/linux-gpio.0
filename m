@@ -2,143 +2,83 @@ Return-Path: <SRS0=Snkp=BN=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B597C433E1
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 12:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D009C433E0
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 13:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F40920781
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 12:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2D8206D7
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Aug 2020 13:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbgHCMdX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Aug 2020 08:33:23 -0400
-Received: from mga06.intel.com ([134.134.136.31]:17590 "EHLO mga06.intel.com"
+        id S1726813AbgHCNud (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Aug 2020 09:50:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5063 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbgHCMdW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 3 Aug 2020 08:33:22 -0400
-IronPort-SDR: 64/dWRwAVfGaNIFBw6l3XYwKOE0ZnpAiwYItsxMFtnG/kyhPmDSnoNe8unzh2wtkpB8AiJnsHb
- x1xVHEIY5hjw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9701"; a="213624281"
+        id S1726785AbgHCNud (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 3 Aug 2020 09:50:33 -0400
+IronPort-SDR: vxp283VIE2ln1FI3F8n2flyvc6KjyhH94iByTzDzRI1OoDByxn0XmaF9Eimy/wB/0qKSBCcHyK
+ j7VCk3BncODw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9701"; a="152068940"
 X-IronPort-AV: E=Sophos;i="5.75,430,1589266800"; 
-   d="scan'208";a="213624281"
+   d="scan'208";a="152068940"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2020 05:33:21 -0700
-IronPort-SDR: AUCvyW+haRetLrqyv19+QuQIBIvk0qHFb2I4h/6KRfAudmq2La4YdoAlDTLbYeALpSrUXT0oyP
- k4diVocW4TyA==
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2020 06:50:32 -0700
+IronPort-SDR: fbvBRE1t8DcfW/cjd+Jl55BHuUWsdbv6MT7a3tV71DLNJnKE7cG3oZDI0wxKTNMrPQvIJDNer3
+ M6TA83SngK/A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,430,1589266800"; 
-   d="scan'208";a="396039047"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 03 Aug 2020 05:33:19 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 03 Aug 2020 15:33:18 +0300
-Date:   Mon, 3 Aug 2020 15:33:18 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="324077066"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Aug 2020 06:50:31 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1k2arH-005xPq-CY; Mon, 03 Aug 2020 16:50:31 +0300
+Date:   Mon, 3 Aug 2020 16:50:31 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH v1 1/3] pinctrl: intel: Extract
  intel_pinctrl_get_soc_data() helper for wider use
-Message-ID: <20200803123318.GR1375436@lahna.fi.intel.com>
+Message-ID: <20200803135031.GI3703480@smile.fi.intel.com>
 References: <20200729115708.38112-1-andriy.shevchenko@linux.intel.com>
+ <20200803123318.GR1375436@lahna.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200729115708.38112-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20200803123318.GR1375436@lahna.fi.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 02:57:06PM +0300, Andy Shevchenko wrote:
-> intel_pinctrl_get_soc_data() helper can be used in few driver instead of
-> open-coded variants. Thus, extract it as a standalone API.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-intel.c | 24 ++++++++++++++++++------
->  drivers/pinctrl/intel/pinctrl-intel.h |  2 ++
->  2 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 5a39e6ce6786..6e11d16a8684 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -1424,9 +1424,6 @@ static int intel_pinctrl_probe(struct platform_device *pdev,
->  	struct intel_pinctrl *pctrl;
->  	int i, ret, irq;
->  
-> -	if (!soc_data)
-> -		return -EINVAL;
-> -
->  	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
->  	if (!pctrl)
->  		return -ENOMEM;
-> @@ -1534,11 +1531,26 @@ int intel_pinctrl_probe_by_hid(struct platform_device *pdev)
->  	const struct intel_pinctrl_soc_data *data;
->  
->  	data = device_get_match_data(&pdev->dev);
-> +	if (!data)
-> +		return -ENODATA;
-> +
->  	return intel_pinctrl_probe(pdev, data);
->  }
->  EXPORT_SYMBOL_GPL(intel_pinctrl_probe_by_hid);
->  
->  int intel_pinctrl_probe_by_uid(struct platform_device *pdev)
-> +{
-> +	const struct intel_pinctrl_soc_data *data;
-> +
-> +	data = intel_pinctrl_get_soc_data(pdev);
-> +	if (IS_ERR(data))
-> +		return PTR_ERR(data);
-> +
-> +	return intel_pinctrl_probe(pdev, data);
-> +}
-> +EXPORT_SYMBOL_GPL(intel_pinctrl_probe_by_uid);
-> +
-> +const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_device *pdev)
+On Mon, Aug 03, 2020 at 03:33:18PM +0300, Mika Westerberg wrote:
+> On Wed, Jul 29, 2020 at 02:57:06PM +0300, Andy Shevchenko wrote:
+> > intel_pinctrl_get_soc_data() helper can be used in few driver instead of
+> > open-coded variants. Thus, extract it as a standalone API.
 
-Can we make this take const parameter as well?
+...
 
->  {
->  	const struct intel_pinctrl_soc_data *data = NULL;
->  	const struct intel_pinctrl_soc_data **table;
-> @@ -1561,15 +1573,15 @@ int intel_pinctrl_probe_by_uid(struct platform_device *pdev)
->  
->  		id = platform_get_device_id(pdev);
->  		if (!id)
-> -			return -ENODEV;
-> +			return ERR_PTR(-ENODEV);
->  
->  		table = (const struct intel_pinctrl_soc_data **)id->driver_data;
->  		data = table[pdev->id];
->  	}
->  
-> -	return intel_pinctrl_probe(pdev, data);
-> +	return data ?: ERR_PTR(-ENODATA);
->  }
-> -EXPORT_SYMBOL_GPL(intel_pinctrl_probe_by_uid);
-> +EXPORT_SYMBOL_GPL(intel_pinctrl_get_soc_data);
->  
->  #ifdef CONFIG_PM_SLEEP
->  static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned int pin)
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-> index 2e283247f3ba..38a1d6af7427 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.h
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.h
-> @@ -198,6 +198,8 @@ struct intel_pinctrl_soc_data {
->  	size_t ncommunities;
->  };
->  
-> +const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_device *pdev);
-> +
->  struct intel_pad_context;
->  struct intel_community_context;
->  
-> -- 
-> 2.27.0
+> > +const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_device *pdev)
+> 
+> Can we make this take const parameter as well?
+
+You mean
+
+const struct intel_pinctrl_soc_data *
+intel_pinctrl_get_soc_data(const struct platform_device *pdev)
+
+?
+
+Sure, I can do it for v2.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
