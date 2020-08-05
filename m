@@ -6,75 +6,105 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D737C433E0
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 12:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780C7C433DF
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 16:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CDB321744
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 12:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5598A23435
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 16:03:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbgHEMo3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 5 Aug 2020 08:44:29 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35388 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbgHEMfo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2020 08:35:44 -0400
-Received: by mail-oi1-f196.google.com with SMTP id k4so39435189oik.2;
-        Wed, 05 Aug 2020 05:35:43 -0700 (PDT)
+        id S1726604AbgHEP6z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 Aug 2020 11:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbgHEPtk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2020 11:49:40 -0400
+Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C23C0D941F;
+        Wed,  5 Aug 2020 08:16:52 -0700 (PDT)
+Received: by mail-oo1-xc41.google.com with SMTP id j16so4477021ooc.7;
+        Wed, 05 Aug 2020 08:16:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fi0Vkqop4EGcsiOxJMU7b52vof3OIZ3dx6v9pdPXURk=;
-        b=Fjkc66/9z1rjezmzJZw6poKCoQ5ijqbbKucCg8c5uY+vD60eOjjmnEPBvKHpQVyo3T
-         5pa+lMj8TwVBkvbAcTITAmudONTGslPJ/CdlskfrqiV+lL80Mhr5A2ViFrilcA0F8asO
-         S7RNwHsHPLqZCdNTTPaYTdCeyaTx6cNen0GyE4zjKXUcSBG4gu37Cd+eG7oLKn8gG7s5
-         dV59dJ3RL0K7yzORNpg66f4As1szXqgdA/xXuxNPlJbBPTDOpbcCxE5KSFEKF6M10VWl
-         kWDISRGG13cUeFfBCe/AcP9o+h0QEp46u4VYOzHEis+9Es3J7JLJy6TZNE0HTiHhTtVN
-         xUGQ==
-X-Gm-Message-State: AOAM531c0orxplAMj5VENbNTKueO15XWqM6mNoB3pJBBows1KeAU7gez
-        oOHukhSz4A6yT955gTiIiaZdnPpyx0in16TjA8Luaw==
-X-Google-Smtp-Source: ABdhPJy7sqwBSiN+pyzIPZ9M2XedaR1gb87JLdDr/1wnAKP9dc8YJ0PX9xHpkxMnE8yZusJ10E71WEVlm96ZcFvLUso=
-X-Received: by 2002:aca:b742:: with SMTP id h63mr2275849oif.148.1596628879890;
- Wed, 05 Aug 2020 05:01:19 -0700 (PDT)
+        bh=ma8XUemDPSU43scaub//Tj8SjqSjSSXU9X7SXIYVoOU=;
+        b=bmU5erMabaHnH11G4ugT3ZM+1sK5m+CgBAaNTNYXbKwghE1JcaTdfyatMzrkN6xRef
+         8EyEh25LYHNs4TS3f4pJAkWTp5YFFgNSK3ELo+H/WbG2E9LWM762Cz3tKJiSc6zm3ViG
+         J0jnPEFIfMw17vO0s7xuJmbGKFt7L9SS+jsHuGwFpussM36hCV716bIr74P5QdnjImBf
+         8PPeWstiKPeXSx2pLUCkb5rOTzSLytHTfDnEKL3NcyLBucMwnutLVMbLhkLp5FTHqF6L
+         q5Ay4BPAEamWokIyry1/VbK2ccfvRIu99e/1qHRH5hAewbZ6HLYixM6lDLnZuivkVD+j
+         +ncA==
+X-Gm-Message-State: AOAM530wFlP+DcDNIcMPIc1IHfgx/k6PtcqyB1SRwDI9Jh/fd5Et9e8T
+        sUCF2xXLhgEgbqLyA1GhX/cM4coEDBUUP1k+V88eDJD5
+X-Google-Smtp-Source: ABdhPJwe10oto1QkttDyucMJ1qGeA6Wk+Q0uDI4AF3ApXEWocJh2xeIhIPIH+vNM+BYieFqojz9wao5UdxjTIgmcZbQ=
+X-Received: by 2002:a9d:7d8c:: with SMTP id j12mr2827246otn.250.1596636279974;
+ Wed, 05 Aug 2020 07:04:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1595005225-11519-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <1595005225-11519-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200728134226.27592-1-trix@redhat.com>
+In-Reply-To: <20200728134226.27592-1-trix@redhat.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Aug 2020 14:01:06 +0200
-Message-ID: <CAMuHMdUZi4iPTv5Q7PgHkTEOS-N53rB2iRHBw=Mr0v1Lo89MKw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7790: Add USB1 PWEN pin and group
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date:   Wed, 5 Aug 2020 16:04:28 +0200
+Message-ID: <CAMuHMdX-m+q-SYveM2BQyM+EoiQ1ctVviJzjs+UbTzH9cJaqMQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: of: reset name variable in of_gpiochip_add_hog
+To:     trix@redhat.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Frank Rowand <frank.rowand@sony.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 7:00 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> Add USB1 PWEN pin and group for USB1 interface.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Tom,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v5.10.
+Thanks for your patch!
+
+On Tue, Jul 28, 2020 at 3:42 PM <trix@redhat.com> wrote:
+> From: Tom Rix <trix@redhat.com>
+>
+> Clang static analysis reports this error
+>
+> gpiolib-of.c:664:9: warning: 2nd function call argument
+>   is an uninitialized value [core.CallAndMessage]
+>         ret = gpiod_hog(desc, name, lflags, dflags);
+>
+> name is sometimes set by of_parse_own_gpio
+> name is always used by gpiod_hog
+
+This is a false-positive: gpiod_hog() is only called if
+of_parse_own_gpio() returned success, in which case it has filled in the
+name output parameter.
+
+> So it is necessary to reset name so an old value is
+> not mistakenly used by gpiod_hog.
+
+Hence this is not needed.
+
+> Fixes: bc21077e084b ("gpio: of: Extract of_gpiochip_add_hog()")
+
+This is not the commit that introduced the "bug".
+
+> Signed-off-by: Tom Rix <trix@redhat.com>
+
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -657,6 +657,7 @@ static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
+>         int ret;
+>
+>         for (i = 0;; i++) {
+> +               name = NULL;
+>                 desc = of_parse_own_gpio(hog, chip, i, &name, &lflags, &dflags);
+>                 if (IS_ERR(desc))
+>                         break;
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
