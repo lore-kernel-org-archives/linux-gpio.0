@@ -1,364 +1,245 @@
-Return-Path: <SRS0=ABNL=BO=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=zbn2=BP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BCCC433DF
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 Aug 2020 22:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10345C433DF
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 02:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5179122B45
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 Aug 2020 22:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DABA420792
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 02:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTbqMBe0"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="gT5rKgtg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbgHDWDn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 4 Aug 2020 18:03:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbgHDWDl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2020 18:03:41 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A6EC06174A
-        for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2020 15:03:40 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id 185so35129027ljj.7
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2020 15:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=T4K09t84l1nl1Ms1e5xtw8jx7SKT5a9K3CHKvr2VhgA=;
-        b=DTbqMBe0LfXKG6P9EemciPJlAW4ie1r3G0WmHuNvkbO55s4d/oTBydO7SjfYSrfcWe
-         qN7D/XjriCVQWIbaQe+nRlZm6MEzOp3LOs81oBPkuOwrb2vjBJ5OCfvvdjE+2x5GgT+m
-         IvGrq5JhUNFu3VjId67mC1dhIt37piJqpW3VfiLiADLeFDIwWFcWJBX1/d6BuOtvMaPg
-         bXM44xFkiYi5KsHfegBApnsLcDEw8LZTO1sPneYjAvfBGbRSBCGcD3OTXaUr2asGq2IM
-         FJ+TgWH3VCvh9a/81JAPZQlTrZByiak/9UyFzDlVRNprVr0Xo895Z368afn5i9p4cOYn
-         w09A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=T4K09t84l1nl1Ms1e5xtw8jx7SKT5a9K3CHKvr2VhgA=;
-        b=TY5t9ZQAxG5JhINR8Gq+T44afCty47dPaj3PE3O4ou6Rhs4pkMB+MnnffF+PSYC8Bf
-         bcd0dgm6eIBjJjTO8W0bQYTJ4GxD01wqEDg0voFxYZ+oO0+g9xNjU3KagmYL97GcfHdK
-         PZrgquFtil6AH3+6gJdNh6NM+hbpWPZRrL8n6+JH7AYatCRlgAOnbQyUf1/QFiqzbXWZ
-         kG1w41f3RhxtB5kCl/F1Apj6vdxFCMe0mkVl6rD7ZzEWWOihPa2gJQQrL876D3drVOxt
-         6S310ZQVhUxJ/NyOY81jYXRaO0Ncy0CcDCx9GsSF2VGXQbgDizykYcl2hCGzNhZNxjIt
-         q9lQ==
-X-Gm-Message-State: AOAM530QIfs9A9Yr8+Pu0Og+fVS2FNFZj2DhwBaSWbqseWMtJWYxAJJz
-        NJJoHdlp05Kvx/vN0OeDu+1ipR8tpvmmBEJQgIEjGg==
-X-Google-Smtp-Source: ABdhPJyqcO1HqXvuHj2OI8bFLZu5HnKk2nZ6nYeFGI8a1XaOyUjEXSemPvu5BsET+xoE8POCSOwKSVIQD9uTStoW1/k=
-X-Received: by 2002:a2e:6a17:: with SMTP id f23mr10024403ljc.338.1596578619111;
- Tue, 04 Aug 2020 15:03:39 -0700 (PDT)
-MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 5 Aug 2020 00:03:28 +0200
-Message-ID: <CACRpkdamytgQTZ60g2R0UpRk5iy=uajtDp5VhsjKaM5H_CpUFA@mail.gmail.com>
-Subject: [GIT PULL] GPIO changes for the v5.9 merge window
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        id S1726230AbgHECYU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 4 Aug 2020 22:24:20 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:48525 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725864AbgHECYT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2020 22:24:19 -0400
+X-UUID: 6989112aa27041399f0fc8111928f557-20200805
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=qwrcJyYbmUJ+qLAaK5A34Fz5y2cCZtNPZGVFJaXtFDA=;
+        b=gT5rKgtg9oyOzlDYnb6lAX349xG0s0mxyUP6/UGhUsuuNsGr+2HKaCkxD1eL1Ngfzt9juPuKZdYBG0/FAmMUhvulafV4EoJqKnprfz9OLuFnhb3/QAsrkGuGtW16P4vhWppunmxfroRdo/PneN2JTGapBbsKNwLprwUYg4zkOJs=;
+X-UUID: 6989112aa27041399f0fc8111928f557-20200805
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <hanks.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 991920688; Wed, 05 Aug 2020 10:24:11 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 5 Aug 2020 10:24:07 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 5 Aug 2020 10:24:09 +0800
+Message-ID: <1596594249.11014.1.camel@mtkswgap22>
+Subject: Re: [PATCH v10 2/3] arm64: dts: add dts nodes for MT6779
+From:   Hanks Chen <hanks.chen@mediatek.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+Date:   Wed, 5 Aug 2020 10:24:09 +0800
+In-Reply-To: <1596115816-11758-3-git-send-email-hanks.chen@mediatek.com>
+References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com>
+         <1596115816-11758-3-git-send-email-hanks.chen@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 53E961C257AC9D4F92D4926C719947B767AE82D2D00EF64BC8704EFF5BCD79512000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+SGkgTWF0dGhpYXMgYW5kIGFsbCwNCg0KR2VudGxlIHBpbmcgb24gdGhpcyBwYXRjaC4NCg0KVGhh
+bmtzDQoNCg0KSGFua3MgQ2hlbg0KDQpPbiBUaHUsIDIwMjAtMDctMzAgYXQgMjE6MzAgKzA4MDAs
+IEhhbmtzIENoZW4gd3JvdGU6DQo+IHRoaXMgYWRkcyBpbml0aWFsIE1UNjc3OSBkdHMgc2V0dGlu
+Z3MgZm9yIGJvYXJkIHN1cHBvcnQsDQo+IGluY2x1ZGluZyBjcHUsIGdpYywgdGltZXIsIGNjZiwg
+cGluY3RybCwgdWFydCwgc3lzaXJxLi4uZXRjLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSGFua3Mg
+Q2hlbiA8aGFua3MuY2hlbkBtZWRpYXRlay5jb20+DQo+IC0tLQ0KPiAgYXJjaC9hcm02NC9ib290
+L2R0cy9tZWRpYXRlay9NYWtlZmlsZSAgICAgICB8ICAgMSArDQo+ICBhcmNoL2FybTY0L2Jvb3Qv
+ZHRzL21lZGlhdGVrL210Njc3OS1ldmIuZHRzIHwgIDMxICsrKw0KPiAgYXJjaC9hcm02NC9ib290
+L2R0cy9tZWRpYXRlay9tdDY3NzkuZHRzaSAgICB8IDI3MSArKysrKysrKysrKysrKysrKysrKw0K
+PiAgMyBmaWxlcyBjaGFuZ2VkLCAzMDMgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAw
+NjQ0IGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ2Nzc5LWV2Yi5kdHMNCj4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBhcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210Njc3OS5kdHNpDQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9NYWtlZmlsZSBi
+L2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvTWFrZWZpbGUNCj4gaW5kZXggYTU3YWY5ZGE5
+ZjVjLi40ZDFiMGY5ZDhkMWMgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVk
+aWF0ZWsvTWFrZWZpbGUNCj4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9NYWtl
+ZmlsZQ0KPiBAQCAtMSw2ICsxLDcgQEANCj4gICMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
+TC0yLjANCj4gIGR0Yi0kKENPTkZJR19BUkNIX01FRElBVEVLKSArPSBtdDI3MTItZXZiLmR0Yg0K
+PiAgZHRiLSQoQ09ORklHX0FSQ0hfTUVESUFURUspICs9IG10Njc1NS1ldmIuZHRiDQo+ICtkdGIt
+JChDT05GSUdfQVJDSF9NRURJQVRFSykgKz0gbXQ2Nzc5LWV2Yi5kdGINCj4gIGR0Yi0kKENPTkZJ
+R19BUkNIX01FRElBVEVLKSArPSBtdDY3OTUtZXZiLmR0Yg0KPiAgZHRiLSQoQ09ORklHX0FSQ0hf
+TUVESUFURUspICs9IG10Njc5Ny1ldmIuZHRiDQo+ICBkdGItJChDT05GSUdfQVJDSF9NRURJQVRF
+SykgKz0gbXQ2Nzk3LXgyMC1kZXYuZHRiDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3Qv
+ZHRzL21lZGlhdGVrL210Njc3OS1ldmIuZHRzIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRl
+ay9tdDY3NzktZXZiLmR0cw0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAw
+MDAwMDAuLjE2NGY1Y2JiMzgyMQ0KPiAtLS0gL2Rldi9udWxsDQo+ICsrKyBiL2FyY2gvYXJtNjQv
+Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ2Nzc5LWV2Yi5kdHMNCj4gQEAgLTAsMCArMSwzMSBAQA0KPiAr
+Ly8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjArDQo+ICsvKg0KPiArICogQ29weXJp
+Z2h0IChjKSAyMDE5IE1lZGlhVGVrIEluYy4NCj4gKyAqIEF1dGhvcjogTWFycy5DIDxtYXJzLmNo
+ZW5nQG1lZGlhdGVrLmNvbT4NCj4gKyAqDQo+ICsgKi8NCj4gKw0KPiArL2R0cy12MS87DQo+ICsj
+aW5jbHVkZSAibXQ2Nzc5LmR0c2kiDQo+ICsNCj4gKy8gew0KPiArCW1vZGVsID0gIk1lZGlhVGVr
+IE1UNjc3OSBFVkIiOw0KPiArCWNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2Nzc5LWV2YiIsICJt
+ZWRpYXRlayxtdDY3NzkiOw0KPiArDQo+ICsJYWxpYXNlcyB7DQo+ICsJCXNlcmlhbDAgPSAmdWFy
+dDA7DQo+ICsJfTsNCj4gKw0KPiArCW1lbW9yeUA0MDAwMDAwMCB7DQo+ICsJCWRldmljZV90eXBl
+ID0gIm1lbW9yeSI7DQo+ICsJCXJlZyA9IDwwIDB4NDAwMDAwMDAgMCAweDFlODAwMDAwPjsNCj4g
+Kwl9Ow0KPiArDQo+ICsJY2hvc2VuIHsNCj4gKwkJc3Rkb3V0LXBhdGggPSAic2VyaWFsMDo5MjE2
+MDBuOCI7DQo+ICsJfTsNCj4gK307DQo+ICsNCj4gKyZ1YXJ0MCB7DQo+ICsJc3RhdHVzID0gIm9r
+YXkiOw0KPiArfTsNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
+bXQ2Nzc5LmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210Njc3OS5kdHNpDQo+
+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAwMDAwMC4uMzcwZjMwOWQzMmRl
+DQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
+dDY3NzkuZHRzaQ0KPiBAQCAtMCwwICsxLDI3MSBAQA0KPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50
+aWZpZXI6IEdQTC0yLjArDQo+ICsvKg0KPiArICogQ29weXJpZ2h0IChjKSAyMDE5IE1lZGlhVGVr
+IEluYy4NCj4gKyAqIEF1dGhvcjogTWFycy5DIDxtYXJzLmNoZW5nQG1lZGlhdGVrLmNvbT4NCj4g
+KyAqDQo+ICsgKi8NCj4gKw0KPiArI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL210Njc3OS1j
+bGsuaD4NCj4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pcnEu
+aD4NCj4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9hcm0tZ2lj
+Lmg+DQo+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcGluY3RybC9tdDY3NzktcGluZnVuYy5oPg0K
+PiArDQo+ICsvIHsNCj4gKwljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc3OSI7DQo+ICsJaW50
+ZXJydXB0LXBhcmVudCA9IDwmc3lzaXJxPjsNCj4gKwkjYWRkcmVzcy1jZWxscyA9IDwyPjsNCj4g
+Kwkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gKw0KPiArCXBzY2kgew0KPiArCQljb21wYXRpYmxlID0g
+ImFybSxwc2NpLTAuMiI7DQo+ICsJCW1ldGhvZCA9ICJzbWMiOw0KPiArCX07DQo+ICsNCj4gKwlj
+cHVzIHsNCj4gKwkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+ICsJCSNzaXplLWNlbGxzID0gPDA+
+Ow0KPiArDQo+ICsJCWNwdTA6IGNwdUAwIHsNCj4gKwkJCWRldmljZV90eXBlID0gImNwdSI7DQo+
+ICsJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU1IjsNCj4gKwkJCWVuYWJsZS1tZXRob2Qg
+PSAicHNjaSI7DQo+ICsJCQlyZWcgPSA8MHgwMDA+Ow0KPiArCQl9Ow0KPiArDQo+ICsJCWNwdTE6
+IGNwdUAxIHsNCj4gKwkJCWRldmljZV90eXBlID0gImNwdSI7DQo+ICsJCQljb21wYXRpYmxlID0g
+ImFybSxjb3J0ZXgtYTU1IjsNCj4gKwkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQo+ICsJCQly
+ZWcgPSA8MHgxMDA+Ow0KPiArCQl9Ow0KPiArDQo+ICsJCWNwdTI6IGNwdUAyIHsNCj4gKwkJCWRl
+dmljZV90eXBlID0gImNwdSI7DQo+ICsJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU1IjsN
+Cj4gKwkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQo+ICsJCQlyZWcgPSA8MHgyMDA+Ow0KPiAr
+CQl9Ow0KPiArDQo+ICsJCWNwdTM6IGNwdUAzIHsNCj4gKwkJCWRldmljZV90eXBlID0gImNwdSI7
+DQo+ICsJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU1IjsNCj4gKwkJCWVuYWJsZS1tZXRo
+b2QgPSAicHNjaSI7DQo+ICsJCQlyZWcgPSA8MHgzMDA+Ow0KPiArCQl9Ow0KPiArDQo+ICsJCWNw
+dTQ6IGNwdUA0IHsNCj4gKwkJCWRldmljZV90eXBlID0gImNwdSI7DQo+ICsJCQljb21wYXRpYmxl
+ID0gImFybSxjb3J0ZXgtYTU1IjsNCj4gKwkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQo+ICsJ
+CQlyZWcgPSA8MHg0MDA+Ow0KPiArCQl9Ow0KPiArDQo+ICsJCWNwdTU6IGNwdUA1IHsNCj4gKwkJ
+CWRldmljZV90eXBlID0gImNwdSI7DQo+ICsJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTU1
+IjsNCj4gKwkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQo+ICsJCQlyZWcgPSA8MHg1MDA+Ow0K
+PiArCQl9Ow0KPiArDQo+ICsJCWNwdTY6IGNwdUA2IHsNCj4gKwkJCWRldmljZV90eXBlID0gImNw
+dSI7DQo+ICsJCQljb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTc1IjsNCj4gKwkJCWVuYWJsZS1t
+ZXRob2QgPSAicHNjaSI7DQo+ICsJCQlyZWcgPSA8MHg2MDA+Ow0KPiArCQl9Ow0KPiArDQo+ICsJ
+CWNwdTc6IGNwdUA3IHsNCj4gKwkJCWRldmljZV90eXBlID0gImNwdSI7DQo+ICsJCQljb21wYXRp
+YmxlID0gImFybSxjb3J0ZXgtYTc1IjsNCj4gKwkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQo+
+ICsJCQlyZWcgPSA8MHg3MDA+Ow0KPiArCQl9Ow0KPiArCX07DQo+ICsNCj4gKwlwbXUgew0KPiAr
+CQljb21wYXRpYmxlID0gImFybSxhcm12OC1wbXV2MyI7DQo+ICsJCWludGVycnVwdC1wYXJlbnQg
+PSA8JmdpYz47DQo+ICsJCWludGVycnVwdHMgPSA8R0lDX1BQSSA3IElSUV9UWVBFX0xFVkVMX0xP
+VyAwPjsNCj4gKwl9Ow0KPiArDQo+ICsJY2xrMjZtOiBvc2NpbGxhdG9yQDAgew0KPiArCQljb21w
+YXRpYmxlID0gImZpeGVkLWNsb2NrIjsNCj4gKwkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiArCQlj
+bG9jay1mcmVxdWVuY3kgPSA8MjYwMDAwMDA+Ow0KPiArCQljbG9jay1vdXRwdXQtbmFtZXMgPSAi
+Y2xrMjZtIjsNCj4gKwl9Ow0KPiArDQo+ICsJY2xrMzJrOiBvc2NpbGxhdG9yQDEgew0KPiArCQlj
+b21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsNCj4gKwkJI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiAr
+CQljbG9jay1mcmVxdWVuY3kgPSA8MzI3Njg+Ow0KPiArCQljbG9jay1vdXRwdXQtbmFtZXMgPSAi
+Y2xrMzJrIjsNCj4gKwl9Ow0KPiArDQo+ICsJdGltZXIgew0KPiArCQljb21wYXRpYmxlID0gImFy
+bSxhcm12OC10aW1lciI7DQo+ICsJCWludGVycnVwdC1wYXJlbnQgPSA8JmdpYz47DQo+ICsJCWlu
+dGVycnVwdHMgPSA8R0lDX1BQSSAxMyBJUlFfVFlQRV9MRVZFTF9MT1cgMD4sDQo+ICsJCQkgICAg
+IDxHSUNfUFBJIDE0IElSUV9UWVBFX0xFVkVMX0xPVyAwPiwNCj4gKwkJCSAgICAgPEdJQ19QUEkg
+MTEgSVJRX1RZUEVfTEVWRUxfTE9XIDA+LA0KPiArCQkJICAgICA8R0lDX1BQSSAxMCBJUlFfVFlQ
+RV9MRVZFTF9MT1cgMD47DQo+ICsJfTsNCj4gKw0KPiArCXNvYyB7DQo+ICsJCSNhZGRyZXNzLWNl
+bGxzID0gPDI+Ow0KPiArCQkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gKwkJY29tcGF0aWJsZSA9ICJz
+aW1wbGUtYnVzIjsNCj4gKwkJcmFuZ2VzOw0KPiArDQo+ICsJCWdpYzogaW50ZXJydXB0LWNvbnRy
+b2xsZXJAMGMwMDAwMDAgew0KPiArCQkJY29tcGF0aWJsZSA9ICJhcm0sZ2ljLXYzIjsNCj4gKwkJ
+CSNpbnRlcnJ1cHQtY2VsbHMgPSA8ND47DQo+ICsJCQlpbnRlcnJ1cHQtcGFyZW50ID0gPCZnaWM+
+Ow0KPiArCQkJaW50ZXJydXB0LWNvbnRyb2xsZXI7DQo+ICsJCQlyZWcgPSA8MCAweDBjMDAwMDAw
+IDAgMHg0MDAwMD4sICAvKiBHSUNEICovDQo+ICsJCQkgICAgICA8MCAweDBjMDQwMDAwIDAgMHgy
+MDAwMDA+OyAvKiBHSUNSICovDQo+ICsJCQlpbnRlcnJ1cHRzID0gPEdJQ19QUEkgOSBJUlFfVFlQ
+RV9MRVZFTF9ISUdIIDA+Ow0KPiArDQo+ICsJCQlwcGktcGFydGl0aW9ucyB7DQo+ICsJCQkJcHBp
+X2NsdXN0ZXIwOiBpbnRlcnJ1cHQtcGFydGl0aW9uLTAgew0KPiArCQkJCQlhZmZpbml0eSA9IDwm
+Y3B1MCAmY3B1MSBcDQo+ICsJCQkJCQkmY3B1MiAmY3B1MyAmY3B1NCAmY3B1NT47DQo+ICsJCQkJ
+fTsNCj4gKwkJCQlwcGlfY2x1c3RlcjE6IGludGVycnVwdC1wYXJ0aXRpb24tMSB7DQo+ICsJCQkJ
+CWFmZmluaXR5ID0gPCZjcHU2ICZjcHU3PjsNCj4gKwkJCQl9Ow0KPiArCQkJfTsNCj4gKw0KPiAr
+CQl9Ow0KPiArDQo+ICsJCXN5c2lycTogaW50cG9sLWNvbnRyb2xsZXJAMGM1M2E2NTAgew0KPiAr
+CQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDY3Nzktc3lzaXJxIiwNCj4gKwkJCQkgICAgICJt
+ZWRpYXRlayxtdDY1Nzctc3lzaXJxIjsNCj4gKwkJCWludGVycnVwdC1jb250cm9sbGVyOw0KPiAr
+CQkJI2ludGVycnVwdC1jZWxscyA9IDwzPjsNCj4gKwkJCWludGVycnVwdC1wYXJlbnQgPSA8Jmdp
+Yz47DQo+ICsJCQlyZWcgPSA8MCAweDBjNTNhNjUwIDAgMHg1MD47DQo+ICsJCX07DQo+ICsNCj4g
+KwkJdG9wY2tnZW46IGNsb2NrLWNvbnRyb2xsZXJAMTAwMDAwMDAgew0KPiArCQkJY29tcGF0aWJs
+ZSA9ICJtZWRpYXRlayxtdDY3NzktdG9wY2tnZW4iLCAic3lzY29uIjsNCj4gKwkJCXJlZyA9IDww
+IDB4MTAwMDAwMDAgMCAweDEwMDA+Ow0KPiArCQkJI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiArCQl9
+Ow0KPiArDQo+ICsJCWluZnJhY2ZnX2FvOiBjbG9jay1jb250cm9sbGVyQDEwMDAxMDAwIHsNCj4g
+KwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2Nzc5LWluZnJhY2ZnX2FvIiwgInN5c2NvbiI7
+DQo+ICsJCQlyZWcgPSA8MCAweDEwMDAxMDAwIDAgMHgxMDAwPjsNCj4gKwkJCSNjbG9jay1jZWxs
+cyA9IDwxPjsNCj4gKwkJfTsNCj4gKw0KPiArCQlwaW86IHBpbmN0cmxAMTAwMDUwMDAgew0KPiAr
+CQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDY3NzktcGluY3RybCIsICJzeXNjb24iOw0KPiAr
+CQkJcmVnID0gPDAgMHgxMDAwNTAwMCAwIDB4MTAwMD4sDQo+ICsJCQkgICAgICA8MCAweDExYzIw
+MDAwIDAgMHgxMDAwPiwNCj4gKwkJCSAgICAgIDwwIDB4MTFkMTAwMDAgMCAweDEwMDA+LA0KPiAr
+CQkJICAgICAgPDAgMHgxMWUyMDAwMCAwIDB4MTAwMD4sDQo+ICsJCQkgICAgICA8MCAweDExZTcw
+MDAwIDAgMHgxMDAwPiwNCj4gKwkJCSAgICAgIDwwIDB4MTFlYTAwMDAgMCAweDEwMDA+LA0KPiAr
+CQkJICAgICAgPDAgMHgxMWYyMDAwMCAwIDB4MTAwMD4sDQo+ICsJCQkgICAgICA8MCAweDExZjMw
+MDAwIDAgMHgxMDAwPiwNCj4gKwkJCSAgICAgIDwwIDB4MTAwMGIwMDAgMCAweDEwMDA+Ow0KPiAr
+CQkJcmVnLW5hbWVzID0gImdwaW8iLCAiaW9jZmdfcm0iLA0KPiArCQkJCSAgICAiaW9jZmdfYnIi
+LCAiaW9jZmdfbG0iLA0KPiArCQkJCSAgICAiaW9jZmdfbGIiLCAiaW9jZmdfcnQiLA0KPiArCQkJ
+CSAgICAiaW9jZmdfbHQiLCAiaW9jZmdfdGwiLA0KPiArCQkJCSAgICAiZWludCI7DQo+ICsJCQln
+cGlvLWNvbnRyb2xsZXI7DQo+ICsJCQkjZ3Bpby1jZWxscyA9IDwyPjsNCj4gKwkJCWdwaW8tcmFu
+Z2VzID0gPCZwaW8gMCAwIDIxMD47DQo+ICsJCQlpbnRlcnJ1cHQtY29udHJvbGxlcjsNCj4gKwkJ
+CSNpbnRlcnJ1cHQtY2VsbHMgPSA8Mj47DQo+ICsJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjA0
+IElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KPiArCQl9Ow0KPiArDQo+ICsJCWFwbWl4ZWQ6IGNsb2Nr
+LWNvbnRyb2xsZXJAMTAwMGMwMDAgew0KPiArCQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDY3
+NzktYXBtaXhlZCIsICJzeXNjb24iOw0KPiArCQkJcmVnID0gPDAgMHgxMDAwYzAwMCAwIDB4ZTAw
+PjsNCj4gKwkJCSNjbG9jay1jZWxscyA9IDwxPjsNCj4gKwkJfTsNCj4gKw0KPiArCQl1YXJ0MDog
+c2VyaWFsQDExMDAyMDAwIHsNCj4gKwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2Nzc5LXVh
+cnQiLA0KPiArCQkJCSAgICAgIm1lZGlhdGVrLG10NjU3Ny11YXJ0IjsNCj4gKwkJCXJlZyA9IDww
+IDB4MTEwMDIwMDAgMCAweDQwMD47DQo+ICsJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMTE1IElS
+UV9UWVBFX0xFVkVMX0xPVz47DQo+ICsJCQljbG9ja3MgPSA8JmNsazI2bT4sIDwmaW5mcmFjZmdf
+YW8gQ0xLX0lORlJBX1VBUlQwPjsNCj4gKwkJCWNsb2NrLW5hbWVzID0gImJhdWQiLCAiYnVzIjsN
+Cj4gKwkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ICsJCX07DQo+ICsNCj4gKwkJdWFydDE6IHNl
+cmlhbEAxMTAwMzAwMCB7DQo+ICsJCQljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc3OS11YXJ0
+IiwNCj4gKwkJCQkgICAgICJtZWRpYXRlayxtdDY1NzctdWFydCI7DQo+ICsJCQlyZWcgPSA8MCAw
+eDExMDAzMDAwIDAgMHg0MDA+Ow0KPiArCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDExNiBJUlFf
+VFlQRV9MRVZFTF9MT1c+Ow0KPiArCQkJY2xvY2tzID0gPCZjbGsyNm0+LCA8JmluZnJhY2ZnX2Fv
+IENMS19JTkZSQV9VQVJUMT47DQo+ICsJCQljbG9jay1uYW1lcyA9ICJiYXVkIiwgImJ1cyI7DQo+
+ICsJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiArCQl9Ow0KPiArDQo+ICsJCXVhcnQyOiBzZXJp
+YWxAMTEwMDQwMDAgew0KPiArCQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDY3NzktdWFydCIs
+DQo+ICsJCQkJICAgICAibWVkaWF0ZWssbXQ2NTc3LXVhcnQiOw0KPiArCQkJcmVnID0gPDAgMHgx
+MTAwNDAwMCAwIDB4NDAwPjsNCj4gKwkJCWludGVycnVwdHMgPSA8R0lDX1NQSSAxMTcgSVJRX1RZ
+UEVfTEVWRUxfTE9XPjsNCj4gKwkJCWNsb2NrcyA9IDwmY2xrMjZtPiwgPCZpbmZyYWNmZ19hbyBD
+TEtfSU5GUkFfVUFSVDI+Ow0KPiArCQkJY2xvY2stbmFtZXMgPSAiYmF1ZCIsICJidXMiOw0KPiAr
+CQkJc3RhdHVzID0gImRpc2FibGVkIjsNCj4gKwkJfTsNCj4gKw0KPiArCQlhdWRpbzogY2xvY2st
+Y29udHJvbGxlckAxMTIxMDAwMCB7DQo+ICsJCQljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc3
+OS1hdWRpbyIsICJzeXNjb24iOw0KPiArCQkJcmVnID0gPDAgMHgxMTIxMDAwMCAwIDB4MTAwMD47
+DQo+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ICsJCX07DQo+ICsNCj4gKwkJbWZnY2ZnOiBj
+bG9jay1jb250cm9sbGVyQDEzZmJmMDAwIHsNCj4gKwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWss
+bXQ2Nzc5LW1mZ2NmZyIsICJzeXNjb24iOw0KPiArCQkJcmVnID0gPDAgMHgxM2ZiZjAwMCAwIDB4
+MTAwMD47DQo+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ICsJCX07DQo+ICsNCj4gKwkJbW1z
+eXM6IHN5c2NvbkAxNDAwMDAwMCB7DQo+ICsJCQljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc3
+OS1tbXN5cyIsICJzeXNjb24iOw0KPiArCQkJcmVnID0gPDAgMHgxNDAwMDAwMCAwIDB4MTAwMD47
+DQo+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ICsJCX07DQo+ICsNCj4gKwkJaW1nc3lzOiBj
+bG9jay1jb250cm9sbGVyQDE1MDIwMDAwIHsNCj4gKwkJCWNvbXBhdGlibGUgPSAibWVkaWF0ZWss
+bXQ2Nzc5LWltZ3N5cyIsICJzeXNjb24iOw0KPiArCQkJcmVnID0gPDAgMHgxNTAyMDAwMCAwIDB4
+MTAwMD47DQo+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+ICsJCX07DQo+ICsNCj4gKwkJdmRl
+Y3N5czogY2xvY2stY29udHJvbGxlckAxNjAwMDAwMCB7DQo+ICsJCQljb21wYXRpYmxlID0gIm1l
+ZGlhdGVrLG10Njc3OS12ZGVjc3lzIiwgInN5c2NvbiI7DQo+ICsJCQlyZWcgPSA8MCAweDE2MDAw
+MDAwIDAgMHgxMDAwPjsNCj4gKwkJCSNjbG9jay1jZWxscyA9IDwxPjsNCj4gKwkJfTsNCj4gKw0K
+PiArCQl2ZW5jc3lzOiBjbG9jay1jb250cm9sbGVyQDE3MDAwMDAwIHsNCj4gKwkJCWNvbXBhdGli
+bGUgPSAibWVkaWF0ZWssbXQ2Nzc5LXZlbmNzeXMiLCAic3lzY29uIjsNCj4gKwkJCXJlZyA9IDww
+IDB4MTcwMDAwMDAgMCAweDEwMDA+Ow0KPiArCQkJI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiArCQl9
+Ow0KPiArDQo+ICsJCWNhbXN5czogY2xvY2stY29udHJvbGxlckAxYTAwMDAwMCB7DQo+ICsJCQlj
+b21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc3OS1jYW1zeXMiLCAic3lzY29uIjsNCj4gKwkJCXJl
+ZyA9IDwwIDB4MWEwMDAwMDAgMCAweDEwMDAwPjsNCj4gKwkJCSNjbG9jay1jZWxscyA9IDwxPjsN
+Cj4gKwkJfTsNCj4gKw0KPiArCQlpcGVzeXM6IGNsb2NrLWNvbnRyb2xsZXJAMWIwMDAwMDAgew0K
+PiArCQkJY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDY3NzktaXBlc3lzIiwgInN5c2NvbiI7DQo+
+ICsJCQlyZWcgPSA8MCAweDFiMDAwMDAwIDAgMHgxMDAwPjsNCj4gKwkJCSNjbG9jay1jZWxscyA9
+IDwxPjsNCj4gKwkJfTsNCj4gKw0KPiArCX07DQo+ICt9Ow0KDQo=
 
-here is the big slew of GPIO changes for the v5.9 merge window.
-
-There is nothing too exciting in it, but a new macro that fixes a
-build failure on a minor ARM32 platform that appeared yesterday
-is part of it so we better merge it.
-
-Please pull it in!
-
-Yours,
-Linus Walleij
-
-The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
-
-  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v5.9-1
-
-for you to fetch changes up to 22cc422070d9a9a399f8a70b89f1b852945444cb:
-
-  gpio: wcove: Request IRQ after all initialisation done (2020-08-04
-01:25:02 +0200)
-
-----------------------------------------------------------------
-This is the bulk of GPIO changes for the v5.9 kernel cycle:
-
-Core changes:
-
-- Introduce the for_each_requested_gpio() macro to help in
-  dependent code all over the place. Also patch a few locations
-  to use it while we are at it.
-
-- Split out the sysfs code into its own file.
-
-- Split out the character device code into its own file, then
-  make a set of refactorings and improvements to this code.
-  We are setting the stage to revamp the userspace API a bit
-  in the next cycle.
-
-- Fix a whole slew of kerneldoc that was wrong or missing.
-
-New drivers:
-
-- The PCA953x driver now supports the PCAL9535.
-
-Driver improvements:
-
-- A host of incremental modernizations and improvements to the
-  PCA953x driver.
-
-- Incremental improvements to the Xilinx Zynq driver.
-
-- Some improvements to the GPIO aggregator driver.
-
-- I ran all over the place switching all threaded and other
-  drivers requesting their own IRQ while using the core
-  GPIO IRQ helpers to pass the GPIO irq chip as a template
-  instead of calling the explicit set-up functions. Next merge
-  window we may retire the old code altogether.
-
-----------------------------------------------------------------
-Abanoub Sameh (6):
-      gpio: pch: changed every 'unsigned' to 'unsigned int'
-      gpio: pch: Add a blank line between declaration and code
-      gpio: crystalcove: changed every 'unsigned' to 'unsigned int'
-      gpio: ich: changed every 'unsigned' to 'unsigned int'
-      gpio: sch: changed every 'unsigned' to 'unsigned int'
-      gpio: sch: Add a blank line between declaration and code
-
-Ahmad Fatoum (1):
-      gpio: don't use same lockdep class for all devm_gpiochip_add_data users
-
-Andy Shevchenko (16):
-      gpio: pca953x: Synchronize interrupt handler properly
-      gpio: pca953x: Override IRQ for one of the expanders on Galileo Gen 2
-      gpio: pca953x: Fix direction setting when configure an IRQ
-      gpio: pca953x: disable regmap locking for automatic address incrementing
-      gpiolib: Introduce for_each_requested_gpio_in_range() macro
-      ARM/orion/gpio: Make use of for_each_requested_gpio()
-      gpio: mvebu: Make use of for_each_requested_gpio()
-      gpio: xra1403: Make use of for_each_requested_gpio()
-      pinctrl: at91: Make use of for_each_requested_gpio()
-      gpio: pca953x: Fix GPIO resource leak on Intel Galileo Gen 2
-      gpiolib: Deduplicate find_first_zero_bit() call
-      gpio: pch: Move IRQ status message to verbose debug level
-      gpio: mmio: replace open-coded for_each_set_bit()
-      gpio: pca953x: Request IRQ after all initialisation done
-      gpio: crystalcove: Free IRQ on error path
-      gpio: wcove: Request IRQ after all initialisation done
-
-Colton Lewis (1):
-      gpio: Correct kernel-doc inconsistency
-
-Dmitry Osipenko (6):
-      gpio: max77620: Replace 8 with MAX77620_GPIO_NR
-      gpio: max77620: Fix missing release of interrupt
-      gpio: max77620: Don't set of_node
-      gpio: max77620: Don't shadow error code of platform_get_irq()
-      gpio: max77620: Use irqchip template
-      gpio: max77620: Initialize hardware state of interrupts
-
-Drew Fustini (2):
-      gpio: omap: handle pin config bias flags
-      gpio: omap: improve coding style for pin config flags
-
-Gaurav Singh (2):
-      gpio: max732x: remove redundant check
-      gpio: max732x: remove redundant check from probe()
-
-Geert Uytterhoeven (3):
-      gpio: Drop superfluous dependencies on GPIOLIB
-      gpio: aggregator: Drop pre-initialization in get_arg()
-      gpio: aggregator: Use bitmap_parselist() for parsing GPIO offsets
-
-Glenn Langedock (1):
-      gpio: zynq: protect direction in/out with a spinlock
-
-Jan Kiszka (2):
-      dt-bindings: gpio: pca953x: add nxp,pcal9535
-      gpio: pca953x: Add support for the PCAL9535
-
-Kent Gibson (18):
-      gpiolib: split character device into gpiolib-cdev
-      gpiolib: move gpiolib-sysfs function declarations into their own header
-      gpiolib: cdev: sort includes
-      gpiolib: cdev: minor indentation fixes
-      gpiolib: cdev: refactor gpiohandle_flags_to_desc_flags
-      gpiolib: cdev: rename 'filep' and 'filp' to 'file' to be
-consistent with other use
-      gpiolib: cdev: rename numdescs to num_descs
-      gpiolib: cdev: remove pointless decrement of i
-      gpiolib: cdev: use blocking notifier call chain instead of atomic
-      gpiolib: cdev: rename priv to cdev
-      gpiolib: cdev: fix minor race in GET_LINEINFO_WATCH
-      gpiolib: cdev: remove recalculation of offset
-      gpiolib: cdev: refactor linehandle cleanup into linehandle_free
-      gpiolib: cdev: refactor lineevent cleanup into lineevent_free
-      gpio: uapi: fix misplaced comment line
-      tools: gpio: fix spurious close warning in lsgpio
-      tools: gpio: fix spurious close warning in gpio-utils
-      tools: gpio: fix spurious close warning in gpio-event-mon
-
-Kieran Bingham (1):
-      drivers: gpio: Fix trivial spelling
-
-Lee Jones (10):
-      gpio: gpio-ml-ioh: Fix missing ':' in 'struct ioh_gpio_reg_data
-      gpio: gpiolib-of: Provide documentation for of_gpio_spi_cs_get_count()
-      gpio: gpio-altera: Add missing kerneldoc entry and demote comment
-      gpio: gpio-pmic-eic-sprd: Fix incorrectly named property 'map'
-      gpio: gpio-sama5d2-piobu: Demote all kerneldoc headers to basic
-comment blocks
-      gpio: gpio-syscon: Fix formatting issues which confuse kerneldoc
-      gpio: gpio-it87: Fix formatting issues which confuse kerneldoc
-      gpio: gpio-mlxbf: Tell the compiler that ACPI functions may not be used
-      gpio: gpio-mlxbf2: Tell the compiler that ACPI functions may not be use
-      gpio: gpio-mlxbf2.c: Provide __releases() annotation to stop
-confusing Sparse
-
-Linus Walleij (27):
-      Merge branch 'ib-for-each-requested' into devel
-      Merge tag 'gpio-fixes-for-v5.8-rc3' of
-git://git.kernel.org/.../brgl/linux into fixes
-      Merge tag 'gpio-updates-for-v5.9-part1' of
-git://git.kernel.org/.../brgl/linux into devel
-      gpio: Add gpio-charger to the documentation
-      Merge branch 'lee-fixes' into devel
-      Merge branch 'devel' into for-next
-      Merge tag 'gpio-updates-for-v5.9-part2' of
-git://git.kernel.org/.../brgl/linux into devel
-      gpio: max77620: Use helper variable and clarify
-      gpio: tc35892: Use irqchip template
-      gpio: stmpe: Use irqchip template
-      gpio: adnp: Use irqchip template
-      gpio: adp5588: Use irqchip template
-      gpio: pcf857x: Use irqchip template
-      gpio: pca953x: Use irqchip template
-      gpio: crystalcove: Use irqchip template
-      gpio: wcove: Use irqchip template
-      Merge tag 'intel-gpio-v5.9-1' of
-git://git.kernel.org/.../andy/linux-gpio-intel into devel
-      gpio: dln2: Use irqchip template
-      gpio: ws16c48: Use irqchip template
-      gpio: 104-dio-48e: Use irqchip template
-      gpio: 104-idi-48: Use irqchip template
-      gpio: 104-idio-16: Use irqchip template
-      gpio: pcie-idio-24: Use irqchip template
-      gpio: pci-idio-16: Use irqchip template
-      gpio: rcar: Use irqchip template
-      gpio: stmpe: Move chip registration
-      gpio: max732x: Use irqchip template
-
-Mauro Carvalho Chehab (1):
-      gpio: driver.h: fix kernel-doc markup
-
-Michael Walle (1):
-      gpio: regmap: fix type clash
-
-Navid Emamdoost (2):
-      gpio: arizona: handle pm_runtime_get_sync failure case
-      gpio: arizona: put pm_runtime in case of failure
-
-Shubhrajyoti Datta (6):
-      dt-bindings: gpio: Add binding for Versal gpio
-      dt-bindings: gpio: Add pmc gpio node to gpio-zynq
-      gpio: zynq: Add Versal support
-      gpio: zynq: Disable the irq if it is not a wakeup source
-      gpio: zynq: Add pmc gpio support
-      gpio: zynq: Remove error prints in EPROBE_DEFER
-
-Song Hui (1):
-      gpio: mpc8xxx: change the gpio interrupt flags.
-
-Sungbo Eo (2):
-      gpio: pca9570: add GPO driver for PCA9570
-      gpio: pca9570: Add DT bindings for NXP PCA9570
-
-Tony Lindgren (1):
-      gpio: omap: Add missing PM ops for suspend
-
-Wang Qing (1):
-      gpiolib: sysfs: use kobj_to_dev
-
- .../devicetree/bindings/gpio/gpio-pca953x.txt      |    1 +
- .../devicetree/bindings/gpio/gpio-pca9570.yaml     |   47 +
- .../devicetree/bindings/gpio/gpio-zynq.txt         |    4 +-
- Documentation/driver-api/gpio/drivers-on-gpio.rst  |    7 +
- arch/arm/plat-orion/gpio.c                         |    8 +-
- drivers/gpio/Kconfig                               |   12 +-
- drivers/gpio/Makefile                              |    2 +
- drivers/gpio/TODO                                  |    2 +-
- drivers/gpio/gpio-104-dio-48e.c                    |   35 +-
- drivers/gpio/gpio-104-idi-48.c                     |   33 +-
- drivers/gpio/gpio-104-idio-16.c                    |   33 +-
- drivers/gpio/gpio-adnp.c                           |   95 +-
- drivers/gpio/gpio-adp5588.c                        |   39 +-
- drivers/gpio/gpio-aggregator.c                     |   63 +-
- drivers/gpio/gpio-altera.c                         |    3 +-
- drivers/gpio/gpio-arizona.c                        |    7 +-
- drivers/gpio/gpio-crystalcove.c                    |   50 +-
- drivers/gpio/gpio-dln2.c                           |   17 +-
- drivers/gpio/gpio-ich.c                            |   26 +-
- drivers/gpio/gpio-it87.c                           |   14 +-
- drivers/gpio/gpio-max732x.c                        |   32 +-
- drivers/gpio/gpio-max77620.c                       |   71 +-
- drivers/gpio/gpio-ml-ioh.c                         |    2 +-
- drivers/gpio/gpio-mlxbf.c                          |    2 +-
- drivers/gpio/gpio-mlxbf2.c                         |    4 +-
- drivers/gpio/gpio-mmio.c                           |   20 +-
- drivers/gpio/gpio-mpc8xxx.c                        |    2 +-
- drivers/gpio/gpio-mvebu.c                          |    8 +-
- drivers/gpio/gpio-omap.c                           |   45 +-
- drivers/gpio/gpio-pca953x.c                        |  142 ++-
- drivers/gpio/gpio-pca9570.c                        |  146 +++
- drivers/gpio/gpio-pcf857x.c                        |   47 +-
- drivers/gpio/gpio-pch.c                            |   14 +-
- drivers/gpio/gpio-pci-idio-16.c                    |   33 +-
- drivers/gpio/gpio-pcie-idio-24.c                   |   17 +-
- drivers/gpio/gpio-pmic-eic-sprd.c                  |    2 +-
- drivers/gpio/gpio-rcar.c                           |   17 +-
- drivers/gpio/gpio-sama5d2-piobu.c                  |   16 +-
- drivers/gpio/gpio-sch.c                            |   23 +-
- drivers/gpio/gpio-stmpe.c                          |   36 +-
- drivers/gpio/gpio-syscon.c                         |   12 +-
- drivers/gpio/gpio-tc3589x.c                        |   26 +-
- drivers/gpio/gpio-wcove.c                          |   34 +-
- drivers/gpio/gpio-ws16c48.c                        |   39 +-
- drivers/gpio/gpio-xra1403.c                        |    8 +-
- drivers/gpio/gpio-zynq.c                           |   66 +-
- drivers/gpio/gpiolib-cdev.c                        | 1121 +++++++++++++++++++
- drivers/gpio/gpiolib-cdev.h                        |   11 +
- drivers/gpio/gpiolib-devres.c                      |   13 +-
- drivers/gpio/gpiolib-of.c                          |    3 +
- drivers/gpio/gpiolib-sysfs.c                       |    3 +-
- drivers/gpio/gpiolib-sysfs.h                       |   24 +
- drivers/gpio/gpiolib.c                             | 1144 +-------------------
- drivers/gpio/gpiolib.h                             |   20 +-
- drivers/pinctrl/pinctrl-at91.c                     |    7 +-
- include/linux/gpio/driver.h                        |   37 +-
- include/linux/gpio/regmap.h                        |    2 +-
- include/uapi/linux/gpio.h                          |    2 +-
- tools/gpio/gpio-event-mon.c                        |    3 +-
- tools/gpio/gpio-utils.c                            |    4 +-
- tools/gpio/lsgpio.c                                |    3 +-
- 61 files changed, 2150 insertions(+), 1609 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
- create mode 100644 drivers/gpio/gpio-pca9570.c
- create mode 100644 drivers/gpio/gpiolib-cdev.c
- create mode 100644 drivers/gpio/gpiolib-cdev.h
- create mode 100644 drivers/gpio/gpiolib-sysfs.h
