@@ -2,112 +2,82 @@ Return-Path: <SRS0=zbn2=BP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3419C433DF
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 10:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8120C433E0
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 12:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B01D2076E
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 10:00:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=eaxlabs.cz header.i=@eaxlabs.cz header.b="Iutxphsc"
+	by mail.kernel.org (Postfix) with ESMTP id 8A0BA2250E
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Aug 2020 12:44:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbgHEKAN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 5 Aug 2020 06:00:13 -0400
-Received: from ms9.eaxlabs.cz ([147.135.177.209]:45494 "EHLO ms9.eaxlabs.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbgHEKAI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 5 Aug 2020 06:00:08 -0400
-X-Greylist: delayed 1894 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Aug 2020 06:00:07 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=eaxlabs.cz; s=mail;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To; bh=t+IvbY/JQGlbvRGnvirF9n+itqwG0xol8Zk+qYQz+C0=;
-        b=IutxphscpyDm1uPQQxc980NCsxvnVNuaIn7GM8bBHHNa7ij3YY7P8MR/0AqL7wBsoq1Y5uwD/a3TvrJrlO/gnpEFXPETmLdAa3UrLCWafpZQGSOGxDWlmFe8mDLY5Op6xKRfWIhSsZN7QVzIfUXZ6ydF8peyeESio9+4Yq/tR5U=;
-Received: from [82.99.129.6] (helo=[10.76.6.116])
-        by ms9.eaxlabs.cz with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <devik@eaxlabs.cz>)
-        id 1k3Fia-0003zx-MN; Wed, 05 Aug 2020 11:28:18 +0200
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Martin DEVERA <devik@eaxlabs.cz>
-Subject: pinctrl: sx150x bug
-Message-ID: <f32130bf-cfd4-b1bf-538c-dbc9ee2d947a@eaxlabs.cz>
-Date:   Wed, 5 Aug 2020 11:28:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728505AbgHEMnH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 Aug 2020 08:43:07 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:38087 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728411AbgHEMgA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2020 08:36:00 -0400
+Received: by mail-yb1-f193.google.com with SMTP id e187so11384689ybc.5;
+        Wed, 05 Aug 2020 05:35:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8hbSnFLozAnFw+mEl1ug9b36cQI1zAqdjX8AiRGf5eg=;
+        b=hb2pliSgGkPsyEzfmhgDjqehn0bPAW56+btYIyS3Np8i6buuK88MET9JSJ0TqygRBT
+         23LL8QrPlV9+46Lz87nOYn0sqCxZxW+eTmuw3pc69a7mZRAxC+PDtskzQ2Vjf90poscz
+         yuwCQ+uPR9dY0OkOrTorM1bTnfUnbsMuWD8k+c4PYLLoNln40qGT4lTvCJcOq+0REmKY
+         XVUiKkaQX3xNIKocFBFHvJgczF39n2el1aePaKWZf8+ySADLC7AAqJXLt2Q/dSx9Rl1F
+         u0FIXItziNBtm47+Z812Exka5pBv0CvXaIRQkaXYRyb85w+gRdHBRZo/WkKNKIAcq5L6
+         bOLw==
+X-Gm-Message-State: AOAM532FqcQHW4+l+EpxH7jOipve+LsrBI2O9m9vmgy1kqmQCzksQFuB
+        RknedRfMQu4z23qaR4phw0ZPyjC7LszLzjzOgymkEg==
+X-Google-Smtp-Source: ABdhPJz68cp3BRosp19kHXfNdEIyo86KFXA5kI74C0lDw4gKE3Oz8neNAi9dx02X0JasBYqG0QOhCPNYbri4NwptkNk=
+X-Received: by 2002:a05:6830:1b79:: with SMTP id d25mr2165898ote.107.1596628926098;
+ Wed, 05 Aug 2020 05:02:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1595005225-11519-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1595005225-11519-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 5 Aug 2020 14:01:54 +0200
+Message-ID: <CAMuHMdX17U-wBTZ6Z2=yHn4x9N1CwEUJNBmYKaSV5v_sxUd+5w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: r8a7742-iwg21d-q7: Enable HSUSB, USB2.0
+ and xHCI
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+On Fri, Jul 17, 2020 at 7:00 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Enable support for HSUSB, USB2.0 and xHCI on iWave RZ/G1H carrier board.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-I encountered bug in SX1502 expander driver in 5.7.7. Here is relevant 
-DTS part:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.10.
 
-compatible = "semtech,sx1502q";
-gpio4_cfg_pins: gpio2-cfg {
-                         pins = "gpio5";
-                         output-high;
-     };
+Gr{oetje,eeting}s,
 
-And part of OOPS:
+                        Geert
 
-[    0.673996] [<c023cfa6>] (gpiochip_get_data) from [<c023b235>] 
-(sx150x_gpio_direction_output+0xd)
-[    0.683259] [<c023b235>] (sx150x_gpio_direction_output) from 
-[<c023b363>] (sx150x_pinconf_set+0x)
-[    0.692796] [<c023b363>] (sx150x_pinconf_set) from [<c0238fef>] 
-(pinconf_apply_setting+0x39/0x7e)
-[    0.701635] [<c0238fef>] (pinconf_apply_setting) from [<c0236c77>] 
-(pinctrl_commit_state+0xa5/0x)
-[    0.710648] [<c0236c77>] (pinctrl_commit_state) from [<c0237e03>] 
-(pinctrl_enable+0xff/0x1d4)
-[    0.719139] [<c0237e03>] (pinctrl_enable) from [<c023b791>] 
-(sx150x_probe+0x1a3/0x358)
-[    0.727027] [<c023b791>] (sx150x_probe) from [<c02c38bf>] 
-(i2c_device_probe+0x1bb/0x1dc)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The problem is that sx150x_pinconf_set uses sx150x_gpio_direction_output 
-but gpio is not
-setup yet. Patch below fixes it but I'm not sure whether is it correct:
-
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c 
-b/drivers/pinctrl/pinctrl-sx150x.c
-index 6e74bd87d959..3f5651edd336 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1154,12 +1154,6 @@ static int sx150x_probe(struct i2c_client *client,
-                 return ret;
-         }
-
--       ret = pinctrl_enable(pctl->pctldev);
--       if (ret) {
--               dev_err(dev, "Failed to enable pinctrl device\n");
--               return ret;
--       }
--
-         /* Register GPIO controller */
-         pctl->gpio.base = -1;
-         pctl->gpio.ngpio = pctl->data->npins;
-@@ -1191,6 +1185,12 @@ static int sx150x_probe(struct i2c_client *client,
-         if (ret)
-                 return ret;
-
-+       ret = pinctrl_enable(pctl->pctldev);
-+       if (ret) {
-+               dev_err(dev, "Failed to enable pinctrl device\n");
-+               return ret;
-+       }
-+
-         ret = gpiochip_add_pin_range(&pctl->gpio, dev_name(dev),
-                                      0, 0, pctl->data->npins);
-         if (ret)
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
