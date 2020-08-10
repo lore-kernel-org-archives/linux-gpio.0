@@ -2,158 +2,177 @@ Return-Path: <SRS0=N9G1=BU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A368AC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 12:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE2FC433E0
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 13:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78ED920729
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 12:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597061361;
-	bh=ulzg4XSN8hmnySzA/cm1GK1DRA+dsU1xkBqs4jiywVU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=hEevJs2JtAFIu6/DINj5hUqWtbuxmSpuA8KVxWDhip5Ub1kU7sWDxahFxotpgSjTe
-	 nVJ1zWoz8riJRFxxaIIl/fS10oV5ymBm9O5Q1lPaMHi7/fDvDRS5H3lFsmO7hzQkSX
-	 +NKJ1DfaX5r3ocEU5oRm9EL5UhqWYAhA8EYwFTNI=
+	by mail.kernel.org (Postfix) with ESMTP id A1C02206E9
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 13:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgHJMJU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Aug 2020 08:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33866 "EHLO
+        id S1726518AbgHJNeA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Aug 2020 09:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbgHJMJU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2020 08:09:20 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD688C061756;
-        Mon, 10 Aug 2020 05:09:17 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id g6so9237740ljn.11;
-        Mon, 10 Aug 2020 05:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=oMBvems1BGpH6GI9xJVHleaO1t7Rgz/V70ULHJgIFaM=;
-        b=Vzvcj9Fs+Dv6VULXjWSOlYNPSPrKGmJ+eEXF+LWwH+pZsdqPH/KY4W5WJBH5JI63Uj
-         yBuNa5tZySK6Rsuan+sN8q7WgK9Js6rVjYkjtlPNvOFUqZkaUh05hrcA5khvJyfMgfvO
-         FVVMH3ADZvoVDWOKFkOCBZvvh+MTP+e0N0orOKWLj1DJ2zH7ylZqTeurTmcQmgyx/oxR
-         jsNjE4diuNLnfRcUJof2hS2qJ0fOuw9Ai971TKPShYAXP51Lq69JPy/0U0qcc9KjXxbM
-         JaMFjPjYFrfXhUGEyUsOsUR6GLgliDHSWcpZXXOSqIoOnmO6PGI8T6dmf95XUdLiSwMc
-         ql0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=oMBvems1BGpH6GI9xJVHleaO1t7Rgz/V70ULHJgIFaM=;
-        b=rQ988D0X5AeB930WKRiKzU0SPL8UJW54Bw7ysbTjTdrtzdYY/+a174goency6vq8yT
-         sTTc6tTl4/vTk81/MCfilItMWHyAqHHuHeMDulxhco9R5nKJHW2zLmUx2Lwnphjwzqmp
-         f0munwzm5/Ls5wlwpZyusYjwPo/KYknfxO6EFzLum/ybMSfBP8ip3tzB83LqllL7l5pc
-         fT9lAzKUOCZy0BeEyfrnbUD0rjFqeCdAMSimBCV3KRPuhazYlyMAsgIlx2vOT1GsBpMM
-         t0otp5/R+MHxSbZ9WPrS5dZAEwLVrT/cRXZ32mxMxSbnljrIsZQOJkuP4tiBV3066Jua
-         czRw==
-X-Gm-Message-State: AOAM532Er51880RIW8XYWuVgcOh9iVJn2DdYfops/lDjSdzELP+A1LoN
-        Dmz7sLTLeBeOYY4X9z30Cac=
-X-Google-Smtp-Source: ABdhPJwaDWxR0aZPAD+mdtRsWa6zXkLg8uAwd451CmgPgwp3S2j5FYtstvBTqfeYY2+vFrhG8VIKPg==
-X-Received: by 2002:a2e:b689:: with SMTP id l9mr368612ljo.393.1597061354261;
-        Mon, 10 Aug 2020 05:09:14 -0700 (PDT)
-Received: from saruman ([194.34.132.58])
-        by smtp.gmail.com with ESMTPSA id m20sm11443764lfb.72.2020.08.10.05.09.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Aug 2020 05:09:13 -0700 (PDT)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Maulik Shah <mkshah@codeaurora.org>, bjorn.andersson@linaro.org,
-        maz@kernel.org, linus.walleij@linaro.org, swboyd@chromium.org,
-        evgreen@chromium.org, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: Re: [PATCH v4 7/7] irqchip: qcom-pdc: Reset all pdc interrupts during init
-In-Reply-To: <1597058460-16211-8-git-send-email-mkshah@codeaurora.org>
-References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-8-git-send-email-mkshah@codeaurora.org>
-Date:   Mon, 10 Aug 2020 15:09:01 +0300
-Message-ID: <87imdqpusi.fsf@kernel.org>
+        with ESMTP id S1726465AbgHJNeA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2020 09:34:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17A7C061756
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2020 06:33:59 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1k57w5-0002ut-S7; Mon, 10 Aug 2020 15:33:57 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1k57w4-0006od-PD; Mon, 10 Aug 2020 15:33:56 +0200
+Date:   Mon, 10 Aug 2020 15:33:56 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thorsten Scherer <t.scherer@eckelmann.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH] gpio: siox: indicate exclusive support of threaded IRQs
+Message-ID: <20200810133356.wn2fk66pei3w5yua@pengutronix.de>
+References: <20200804091603.541-1-a.fatoum@pengutronix.de>
+ <20200805061753.5o63zu4ionhgjab4@pengutronix.de>
+ <871rkkhy7v.fsf@nanos.tec.linutronix.de>
+ <CACRpkdaOysS1-Y=3ghQ+1qbMTR8yi3bHg=_+gUOPo_EcmGmJiw@mail.gmail.com>
+ <87r1sjham2.fsf@nanos.tec.linutronix.de>
+ <20200806194608.bdhvltvwxi3opykk@pengutronix.de>
+ <87eeojh5vh.fsf@nanos.tec.linutronix.de>
+ <20200806210709.5etazgtsfgkdnoui@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3fex52n3xl56lef6"
+Content-Disposition: inline
+In-Reply-To: <20200806210709.5etazgtsfgkdnoui@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+
+--3fex52n3xl56lef6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Maulik Shah <mkshah@codeaurora.org> writes:
-
-> Clear previous kernel's configuration during init by resetting
-> interrupts in enable bank to zero.
->
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
->  drivers/irqchip/qcom-pdc.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-> index dfcdfc5..80e0dfb 100644
-> --- a/drivers/irqchip/qcom-pdc.c
-> +++ b/drivers/irqchip/qcom-pdc.c
-> @@ -389,7 +389,8 @@ static const struct irq_domain_ops qcom_pdc_gpio_ops =
-=3D {
->=20=20
->  static int pdc_setup_pin_mapping(struct device_node *np)
->  {
-> -	int ret, n;
-> +	int ret, n, i;
-> +	u32 irq_index, reg_index, val;
->=20=20
->  	n =3D of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32=
-));
->  	if (n <=3D 0 || n % 3)
-> @@ -418,6 +419,15 @@ static int pdc_setup_pin_mapping(struct device_node =
-*np)
->  						 &pdc_region[n].cnt);
->  		if (ret)
->  			return ret;
+On Thu, Aug 06, 2020 at 11:07:09PM +0200, Uwe Kleine-K=F6nig wrote:
+> Hello Thomas,
+>=20
+> On Thu, Aug 06, 2020 at 10:33:06PM +0200, Thomas Gleixner wrote:
+> > Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de> writes:
+> > > On Thu, Aug 06, 2020 at 08:50:45PM +0200, Thomas Gleixner wrote:
+> > >> handle_nested_irq() does not care. It cares about thread context,
+> > >> external reentrancy protection for the same nested interrupt and that
+> > >> the nested interrupt has a thread handler.
+> > >>=20
+> > >> The latter is what goes belly up because w/o that threaded bit set t=
+he
+> > >> GPIO core fails to set nested thread. So if a consumer requests an
+> > >> interrupt with request_any_context_irq() then that fails to select
+> > >> thread mode which means the threaded handler is not set causing
+> > >> handle_nested_irq() to fail.
+> > >
+> > > For a caller of request_threaded_irq() that passes a relevant hardirq
+> > > handler the hardirq handler is never called but request_threaded_irq()
+> > > doesn't fail. The handler is just replaced by irq_nested_primary_hand=
+ler
+> > > in __setup_irq(). Is that a bug? (I didn't test, just read the code, =
+so I
+> > > might have missed something.)
+> >=20
+> > Depends on what the threaded handler expects what the primary handler
+> > has done. It might just work or not :)
+>=20
+> So we need something like:
+>=20
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 48c38e09c673..31777a0b79df 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -1393,12 +1393,18 @@ __setup_irq(unsigned int irq, struct irq_desc *de=
+sc, struct irqaction *new)
+>  			ret =3D -EINVAL;
+>  			goto out_mput;
+>  		}
+> -		/*
+> -		 * Replace the primary handler which was provided from
+> -		 * the driver for non nested interrupt handling by the
+> -		 * dummy function which warns when called.
+> -		 */
+> -		new->handler =3D irq_nested_primary_handler;
 > +
-> +		for (i =3D pdc_region[n].pin_base; i < pdc_region[n].pin_base +
-> +						 pdc_region[n].cnt; i++) {
+> +		if (new->handler =3D=3D NULL) {
+> +			/* Scream loud if the primary handler gets called */
+> +			new->handler =3D irq_nested_primary_handler;
+> +		} else {
+> +			/*
+> +			 * The handler won't be called as the requestor expects,
+> +			 * so refuse to install the handler
+> +			 */
+> +			ret =3D -EINVAL;
+> +			goto out_mput;
+> +		}
+>  	} else {
+>  		if (irq_settings_can_thread(desc)) {
+>  			ret =3D irq_setup_forced_threading(new);
+>=20
 
-how about making the for loop slightly easier to read by moving pin_base
-inside the loop?
+The siox stuff is used at Eckelmann (i.e. probably the only siox user)
+via /dev/gpiochip%d. The code providing this device uses
+request_threaded_irq(), so that's why we didn't run into the oops. That
+the primary handler might not run was noticed already and cared for in
+commit 1033be58992f ("gpiolib: fix line event timestamps for nested
+irqs").
 
-	for (i =3D 0; i < pdc_region[n].cnt; i++) {
-        	reg_index =3D (i + pdc_region[n].pin_base) >> 5;
-        	irq_index =3D (i + pdc_region[n].pin_base) & 0x1f;
+I grepped around a bit and I think most other drivers depend on their
+primary handler being called. (Some primary handlers disable and/or mask
+the irq[1], this is wrong, isn't it?)
 
-		[...]
-        }
+So I really think request_threaded_irq should not silently rop the
+primary handler on the floor.
 
-=2D-=20
-balbi
+Best regards
+Uwe
 
---=-=-=
+[1] I saw:
+ - arch/mips/alchemy/devboards/db1200.c
+ - drivers/crypto/hisilicon/sec/sec_drv.c
+ - drivers/crypto/stm32/stm32-hash.c
+ - drivers/dma/idxd/init.c
+
+
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--3fex52n3xl56lef6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl8xON0ACgkQzL64meEa
-mQYWmhAAoPMQrU9MnIAYOqNNzNtawl7woFD3U3/hWPKR9Ec+eg/mAnzUQn9WkCeZ
-iwF4bNfzAj3WR+oOm5zAR4rjqfy4nGRsgxabtD7ESAUsoDt5UEJv2upOjhLbyFwS
-PmYYg/2hl1/cDtmz2FtN9hd5EGcQpM/Cm09wgbI+PWWVb61IdFPE2zlUPZr4jKYS
-zhoqOgTxoZmsWwfVPsY6EpMWpGdnvQIOLvTg8/Xm55hGhNQPQt6lNrgY0olzHnxv
-Z92vaAYjbJSCtuc36DwyM2bfY49cYeYpxRkKQm8POZr3s5I6QF3GAc2GSV3e9dnq
-p6tLIZoGMOm25FJDHxuU7uDD7shQOWwWZf4zYTxIUxnKwlHgUqB3tR8Xch2zibW0
-+UZdNLMqsB5OIHBblKaq11YAlIvmgaN0elnL3WQrZTaY1MvjGvTf7e8aQYSPelJz
-piZ9XP7uvt5y/WV6E4NCKIsAB0VRPeOLS2qoAUFuWHzcLN+YxPOtdRj1KASZElQJ
-AHKfuOkg6VWn+q6bb/OtHQ179dzoWNhMESZcapAbx72UIU2abtS8LQdXL7pIdCnt
-bEif9TrxTtGT5lkAgS5B5fMUrPRrxMdxFBDJy6pjDg6y+Y8MfhZRmnYhCJTB0+6v
-lqvrgJWBAzO1dR9zJYe5d5vAeRNBGFvvl9AFEOjuZU9mhCoNdYU=
-=O4o+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl8xTMEACgkQwfwUeK3K
+7AmXrAf6A6Q2k3DoADwkOMt5SOZJoWBkLVOwOALEc/qdFz8dOjYhTP7NMPLgpfIE
+uSo8H+NXI6V1sBmbuJS9EcwtAVc77eJ+krQ2+wVGZ2RYtMQgEc9j5RuodsXmxUtZ
+WMog0aYDAeKhKK521vl1VzXN4w1OGW3EGJeklPkQD3qFWb67SQmm/oVs49gtn51q
+SE9+QwnthqX3W/yMN8k9a8phQbCzISK4BBiz/m7uo+QxIyM1qfFLUqyTt3OSljL2
+oe61PKjjsBWodf2DUmJFv+fZQHMgUPs+zV/2hugOYwNKilf7EGjlvfqJvuwSpfHv
+g40WVoz4JvERPNl4PMBJuEAEQk1v/g==
+=j+b9
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--3fex52n3xl56lef6--
