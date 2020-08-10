@@ -2,145 +2,82 @@ Return-Path: <SRS0=N9G1=BU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20321C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 11:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B909C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 11:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECE66206E9
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 11:24:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BKII8mKW"
+	by mail.kernel.org (Postfix) with ESMTP id 5D28920709
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Aug 2020 11:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgHJLYr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Aug 2020 07:24:47 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:44847 "EHLO m43-7.mailgun.net"
+        id S1726379AbgHJLdW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Aug 2020 07:33:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:10394 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbgHJLVl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Aug 2020 07:21:41 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1597058501; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=wCH2n0Q7ydePXVwUlLWJAGuuKVfyJIQu6/ufchdgTHs=; b=BKII8mKWyDhHaFXhE/kCsEgwlMHO+EZEsujz6Euy5H5QpjCoZhj4DK2IezW4CmCiTphjISIf
- ttgQNpmVTfbSrfgJSGGjkvBF99Lp9q0z1CS/RZUs4qTZsxcItQtTTsgs33hnlV0pc+FimkwW
- MKujo3frpOoxJrHhqOPwlMyiVtM=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n17.prod.us-east-1.postgun.com with SMTP id
- 5f312daed78a2e58335e0986 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 10 Aug 2020 11:21:18
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A7A78C43395; Mon, 10 Aug 2020 11:21:17 +0000 (UTC)
-Received: from mkshah-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3FCB3C433C6;
-        Mon, 10 Aug 2020 11:21:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FCB3C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-From:   Maulik Shah <mkshah@codeaurora.org>
-To:     bjorn.andersson@linaro.org, maz@kernel.org,
-        linus.walleij@linaro.org, swboyd@chromium.org,
-        evgreen@chromium.org, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v4 0/7] irqchip: qcom: pdc: Introduce irq_set_wake call
-Date:   Mon, 10 Aug 2020 16:50:53 +0530
-Message-Id: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1726330AbgHJLdW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Aug 2020 07:33:22 -0400
+IronPort-SDR: nD5Y6+JuvY5h8lI3IjxTut4IGbvsPr9Tju0Il2mB9mtOwJQ/8iyJMBsp3NENAJEw1ZVr9mC6nW
+ zk7fxePtdM8A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9708"; a="141122168"
+X-IronPort-AV: E=Sophos;i="5.75,457,1589266800"; 
+   d="scan'208";a="141122168"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2020 04:33:21 -0700
+IronPort-SDR: 0n4QkhfNXU1lYEubDVdtHGJDczh/nRNsQqYEFly8zTCXdDyD0ZQ/8qrjJR7BWetnrQS8nIYKVU
+ lpleHfgUoIUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,457,1589266800"; 
+   d="scan'208";a="324412953"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 10 Aug 2020 04:33:20 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1k55gb-007bfH-Vn; Mon, 10 Aug 2020 14:09:49 +0300
+Date:   Mon, 10 Aug 2020 14:09:49 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v1 1/3] gpio: aggregator: Refactor ->{get,set}_multiple()
+ to make Sparse happy
+Message-ID: <20200810110949.GQ3703480@smile.fi.intel.com>
+References: <20200718212608.65328-1-andriy.shevchenko@linux.intel.com>
+ <20200718212608.65328-2-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdV3vK3C-pTDDYx9YOUi1fQBdC75R0D3rrytPkE6S2DChQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV3vK3C-pTDDYx9YOUi1fQBdC75R0D3rrytPkE6S2DChQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Changes in v4:
-- Drop "Remove irq_disable callback from msmgpio irqchip" patch from v3
-- Introduce irq_suspend_one() and irq_resume_one() callbacks
-- Use the new callbacks to unmask wake interrupts during suspend
-- Reset only pdc interrupts that are mapped in DTSI
+On Wed, Aug 05, 2020 at 04:56:06PM +0200, Geert Uytterhoeven wrote:
+> On Sat, Jul 18, 2020 at 11:26 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 
-Changes in v3:
-- Drop gpiolib change (v2 patch 1) since its already in linux-next
-- Add Acked-by Linus Walleij for v2 patch 2 and v2 patch 3.
-- Address Stephen's comment to on v2 patch 3
-- Address Stephen's comment to change variable to static on v2 patch 4.
-- Add a new change to use return value from .irq_set_wake callback
-- Add a new change to reset PDC irq enable bank during init time
+...
 
-Changes in v2:
-- Fix compiler error on gpiolib patch
+> ERROR: code indent should use tabs where possible
 
-This series adds support to lazy disable pdc interrupt.
+...
 
-Some drivers using gpio interrupts want to configure gpio for wakeup using
-enable_irq_wake() but during suspend entry disables irq and expects system
-to resume when interrupt occurs. In the driver resume call interrupt is
-re-enabled and removes wakeup capability using disable_irq_wake() one such
-example is cros ec driver.
+> ERROR: code indent should use tabs where possible
 
-With [1] in documentation saying "An irq can be disabled with disable_irq()
-and still wake the system as long as the irq has wake enabled".
+> With the above checkpatch errors fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The PDC IRQs are currently "unlazy disabled" (disable here means that it
-will be masked in PDC & GIC HW GICD_ISENABLER, the moment driver invokes
-disable_irq()) such IRQs can not wakeup from low power modes like suspend
-to RAM since the driver chosen to disable this.
-
-During suspend entry, no one re-enable/unmask in HW, even if its marked for
-wakeup.
-
-One solutions thought to address this problem was...During suspend entry at
-last point, irq chip driver re-enable/unmask IRQs in HW that are marked for
-wakeup. This was attemped in [2].
-
-This series adds alternate solution to [2] by "lazy disable" IRQs in HW.
-The genirq takes care of lazy disable in case if irqchip did not implement
-irq_disable callback. Below is high level steps on how this works out..
-
-a. During driver's disable_irq() call, IRQ will be marked disabled in SW
-b. IRQ will still be enabled(read unmasked in HW)
-c. The device then enters low power mode like suspend to RAM
-d. The HW detects unmasked IRQs and wakesup the CPU
-e. During resume after local_irq_enable() CPU goes to handle the wake IRQ
-f. Generic handler comes to know that IRQ is disabled in SW
-g. Generic handler marks IRQ as pending and now invokes mask callback
-h. IRQ gets disabled/masked in HW now
-i. When driver invokes enable_irq() the SW pending IRQ leads IRQ's handler
-j. enable_irq() will again enable/unmask in HW
-
-[1] https://www.spinics.net/lists/kernel/msg3398294.html
-[2] https://patchwork.kernel.org/patch/11466021/
-
-Douglas Anderson (4):
-  genirq: Introduce irq_suspend_one() and irq_resume_one() callbacks
-  genirq: introduce irq_suspend_parent() and irq_resume_parent()
-  pinctrl: qcom: Call our parent for irq_suspend_one / irq_resume_one
-  irqchip: qcom-pdc: Unmask wake up irqs during suspend
-
-Maulik Shah (3):
-  pinctrl: qcom: Add msmgpio irqchip flags
-  pinctrl: qcom: Use return value from irq_set_wake call
-  irqchip: qcom-pdc: Reset all pdc interrupts during init
-
- drivers/irqchip/qcom-pdc.c         | 63 ++++++++++++++++++++++++++++++++++++--
- drivers/pinctrl/qcom/pinctrl-msm.c | 12 +++++---
- include/linux/irq.h                | 15 +++++++--
- kernel/irq/chip.c                  | 44 ++++++++++++++++++++++++++
- kernel/irq/internals.h             |  2 ++
- kernel/irq/pm.c                    | 15 +++++++--
- 6 files changed, 138 insertions(+), 13 deletions(-)
+Thanks, I'll send it separately, patch 2 needs to be thought thru a bit more.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+With Best Regards,
+Andy Shevchenko
+
 
