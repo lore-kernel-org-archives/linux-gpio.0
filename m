@@ -2,124 +2,94 @@ Return-Path: <SRS0=ZrTP=BV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 298D6C433E0
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3805EC433DF
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 21:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01E4F20756
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10CA620756
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 21:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gjXSyPyX"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ic5XdKk6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbgHKUMR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Aug 2020 16:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47310 "EHLO
+        id S1726173AbgHKVbx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Aug 2020 17:31:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbgHKUMR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2020 16:12:17 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5345FC06174A
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:17 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id x6so7223821pgx.12
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:17 -0700 (PDT)
+        with ESMTP id S1726114AbgHKVbw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2020 17:31:52 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 375F5C061787
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 14:31:52 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id f9so81709pju.4
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 14:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vF7UMROFE+dAJKvt4jRLzJ1y/Thu+BCzQUX/As3ZgXM=;
-        b=gjXSyPyXZoPTlyrC5XR/K9JyfeE+I1aFx5WTng1nCFxKNi2DXwnibyuUdLyRZ/bzRz
-         yNxYdmLEWKclEDlwLKm+mxedlq9DiWpV4FxLYj19eUGHv9Z7PWwO+cbkPuMA8qjPxdYp
-         uZSF/mQuyDOMl+8Wy70Tl5CxdDML5f8yRR3GU=
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=AfVxpgJxZ32N1LOm+xuOB6bkmTr53McK9vmsomA92LE=;
+        b=ic5XdKk6gydxMYgraTNOoIX9Qr9I7gTNGubgAXooXrZz721fDPz4m2EjMsb00Sz127
+         fbvckWvmv30KrMBqS0QhDkKbbJcxA7HlsSi94cHs+zcHYOvkq3S86i84M0rblZRajpOf
+         IcSFe1DZhwHH7CyGIHN64J+Tvo+CwqO7p+XM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vF7UMROFE+dAJKvt4jRLzJ1y/Thu+BCzQUX/As3ZgXM=;
-        b=p3Qc1lN8v//DSlnN/pmw5m0RQcOG97JHYZtXrTpEo/yXCQcpoe5qFneUJfE0SDPJ6e
-         49O7VI8bFT+zSyeHZMsz0jC9FAPTo1YS0coo91YMX3Ky1OsihRpSAyCOe/i3lPsCQm6l
-         ZK7eaD/GWep8GQGOCAePzO8wjTHR97qlmFbUnZedqRS5CDF2b7P4koF93rEsGS9xl/pk
-         BH6cYMFYlAP2D3YNrZLCLeE9n3LbG186ppanYKhcXzQ6hxVWapj4hiRMGwwsYsg1b+Zd
-         ayGdRcVUHYJE7GvNMb8NzqX45YYsvt/LHk5G9OYgmwAkfX/qz4Cj6uXAmp6u3FQl2fbW
-         cbBw==
-X-Gm-Message-State: AOAM533pn6EAE3DDgu7mIbB2XmTpFEOzfesL9N/jGpBfTmPny8YpTndg
-        68dUSIGxHwFyBVfd8IwNVxQwNMYA3R4=
-X-Google-Smtp-Source: ABdhPJwXhXC2CpQQPT1SNqHVQsbiX9Fv770On4cxW4/rwJ23rzFaM2nzyaJVzsDxP5kq61Uv9f4Iqg==
-X-Received: by 2002:a63:de4e:: with SMTP id y14mr522417pgi.106.1597176736631;
-        Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
-        by smtp.gmail.com with ESMTPSA id z4sm26065038pfb.55.2020.08.11.13.12.16
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
-Received: by mail-pl1-f172.google.com with SMTP id r4so66735pls.2
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
-X-Received: by 2002:a1f:2fc1:: with SMTP id v184mr26376890vkv.42.1597176274522;
- Tue, 11 Aug 2020 13:04:34 -0700 (PDT)
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=AfVxpgJxZ32N1LOm+xuOB6bkmTr53McK9vmsomA92LE=;
+        b=HutSHdGi7Q54S7Gjt9GyllXGmycOa6z2MtQ423MWpldqGi3ht8Xw8CHC/JuX1/zKt5
+         yHirwlufsYNLh0bO3pwEwJfzr8pfZxn40QOzP5VsHl6Tn8JSGMW1t5Lu0QCCFqXJePww
+         cpMSRJ1eQaTnb2/vAkbm4pgeQv/9LmNJGO2YdvCr6Z64ITa5sao1gdmasryqeMIxo7tk
+         seAUDrGHLNcUzUOrlvLEJj2sgyXM8WxBiZrq56DhiZ8NVMxpUpKNmK9EAgDEkOmfAGSA
+         IjBTLiryhYJDA5/zn1aZdL5OAP9FqN9vV/7q4NxjmcHsdlYmqS34RnK4k1J9E+BjS76w
+         ITOA==
+X-Gm-Message-State: AOAM53105ZeJY8fA3EGL+YECkTg5NmZ6GqqJ7wE92xsVcl9ZmaV07ilz
+        o43aNnTcOifSzrfuVp5Gl6r92w==
+X-Google-Smtp-Source: ABdhPJyqL4TIDkhnnHdUryy4LGUhSjye4Oo+pBg8Wb1pq/wCqARm+tYcIqMsZ0lHBAcH7HwPz+7cPg==
+X-Received: by 2002:a17:902:6ac3:: with SMTP id i3mr2101777plt.21.1597181511570;
+        Tue, 11 Aug 2020 14:31:51 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:3e52:82ff:fe6c:83ab])
+        by smtp.gmail.com with ESMTPSA id w15sm3796047pjk.13.2020.08.11.14.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Aug 2020 14:31:50 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-2-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1597058460-16211-2-git-send-email-mkshah@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 11 Aug 2020 13:04:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U4YVAqQXoJ47KY78kEsdoK33ic0P0rADkFWe=yU1x1nQ@mail.gmail.com>
-Message-ID: <CAD=FV=U4YVAqQXoJ47KY78kEsdoK33ic0P0rADkFWe=yU1x1nQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] pinctrl: qcom: Add msmgpio irqchip flags
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        LinusW <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Srinivas Rao L <lsrao@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1597058460-16211-8-git-send-email-mkshah@codeaurora.org>
+References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-8-git-send-email-mkshah@codeaurora.org>
+Subject: Re: [PATCH v4 7/7] irqchip: qcom-pdc: Reset all pdc interrupts during init
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+To:     Maulik Shah <mkshah@codeaurora.org>, bjorn.andersson@linaro.org,
+        evgreen@chromium.org, linus.walleij@linaro.org, maz@kernel.org,
+        mka@chromium.org
+Date:   Tue, 11 Aug 2020 14:31:49 -0700
+Message-ID: <159718150946.1360974.10983789401181131846@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Quoting Maulik Shah (2020-08-10 04:21:00)
+> Clear previous kernel's configuration during init by resetting
+> interrupts in enable bank to zero.
 
-On Mon, Aug 10, 2020 at 4:21 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->
-> Add irqchip specific flags for msmgpio irqchip to mask non wakeirqs
-> during suspend and mask before setting irq type.
->
-> Masking before changing type should make sure any spurious interrupt
-> is not detected during this operation.
->
-> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Can you please add some more information here about why we're not
+clearing all the pdc irqs and only the ones that are listed in DT? Is
+that because the pdc is shared between exception levels of the CPU and
+so some irqs shouldn't be used? Does the DT binding need to change to
+only list the hwirqs that are usable by the OS instead of the ones that
+are usable for the entire system? The binding doesn't mention this at
+all so I am just guessing here.
+
+>=20
+> Suggested-by: Stephen Boyd <swboyd@chromium.org>
 > Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index a2567e7..90edf61 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1243,6 +1243,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->         pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
->         pctrl->irq_chip.irq_set_affinity = msm_gpio_irq_set_affinity;
->         pctrl->irq_chip.irq_set_vcpu_affinity = msm_gpio_irq_set_vcpu_affinity;
-> +       pctrl->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND
-> +                               | IRQCHIP_SET_TYPE_MASKED;
->
->         np = of_parse_phandle(pctrl->dev->of_node, "wakeup-parent", 0);
->         if (np) {
-
-After taking Stephen's suggestion of improving the subject:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
