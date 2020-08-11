@@ -2,71 +2,71 @@ Return-Path: <SRS0=ZrTP=BV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05DAC433DF
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 298D6C433E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2C29206C3
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E4F20756
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Aug 2020 20:12:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T2pPGoew"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gjXSyPyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbgHKULN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Aug 2020 16:11:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47144 "EHLO
+        id S1726274AbgHKUMR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Aug 2020 16:12:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbgHKULM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2020 16:11:12 -0400
-Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3284C061787
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:11:12 -0700 (PDT)
-Received: by mail-vk1-xa44.google.com with SMTP id l184so6610vki.10
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:11:12 -0700 (PDT)
+        with ESMTP id S1725889AbgHKUMR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2020 16:12:17 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5345FC06174A
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:17 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id x6so7223821pgx.12
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=81NTZpiDGt+DeUizhccfQdwoJcBOsmeDza4v9LRaS7Q=;
-        b=T2pPGoewiPvpKJXBD5E4PN02jutwvTNLcRqdRrgP2E5cscCIODU8xre0K6Osk2++nZ
-         OPTK0ZCaP13n0PvGhkr6G8u+FQ4RmvpwBowCG815DBoaD2LVFl3kbbOvb5SUosE1b30e
-         t0F5H2mWqYRNhhPVAWztu1uPrp1MZ8ZGHdNpQ=
+        bh=vF7UMROFE+dAJKvt4jRLzJ1y/Thu+BCzQUX/As3ZgXM=;
+        b=gjXSyPyXZoPTlyrC5XR/K9JyfeE+I1aFx5WTng1nCFxKNi2DXwnibyuUdLyRZ/bzRz
+         yNxYdmLEWKclEDlwLKm+mxedlq9DiWpV4FxLYj19eUGHv9Z7PWwO+cbkPuMA8qjPxdYp
+         uZSF/mQuyDOMl+8Wy70Tl5CxdDML5f8yRR3GU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=81NTZpiDGt+DeUizhccfQdwoJcBOsmeDza4v9LRaS7Q=;
-        b=YOvTrcskeAmgLr8WIschtIVDjybtzFoUcPPQMLxbzY10vTTUsbC8CWovzVrZu5Vv9A
-         6N2nuWreQm7twjDMYHPl68mhKxIbzxFCVgoOSXjxeHL7Ho7U7vjpsuq8xJz6tvfgVwEo
-         fBO31UPOdPJS6t3syLf0r3idYI4iYYZaVzBgnZ4COcIBivPwoD7JGdykusNr2qkgtLFY
-         A8K9IzOZpsgC8mNcVgelRxIeLuuRjC+gGlzmvE0w7tBqbow5Zp48A/bBGHrKYnlLT660
-         P5lJC2P/84lb0QArlSPT7oMbxbPHzIzH/nnR67bjiVTNrYmcIUw458quqCLJUKNeiTPu
-         xC2Q==
-X-Gm-Message-State: AOAM531o+3Gi5OABTwRTC8XtW+QEDmiaxA5hbE7cLAcUL5rgk7B6xZKk
-        eQ6oLqOqYg7fCMYVVMqgA3f1gGirvHM=
-X-Google-Smtp-Source: ABdhPJzPy8wrrZsNlY7Y0Pt6QXDPcyajkcI3lA1kZZUIBSBup9g7fo2yL5SLhD1dij+ZCKIYyuWEPQ==
-X-Received: by 2002:a1f:3d15:: with SMTP id k21mr26579634vka.58.1597176671671;
-        Tue, 11 Aug 2020 13:11:11 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id q74sm4416vkq.31.2020.08.11.13.11.10
+        bh=vF7UMROFE+dAJKvt4jRLzJ1y/Thu+BCzQUX/As3ZgXM=;
+        b=p3Qc1lN8v//DSlnN/pmw5m0RQcOG97JHYZtXrTpEo/yXCQcpoe5qFneUJfE0SDPJ6e
+         49O7VI8bFT+zSyeHZMsz0jC9FAPTo1YS0coo91YMX3Ky1OsihRpSAyCOe/i3lPsCQm6l
+         ZK7eaD/GWep8GQGOCAePzO8wjTHR97qlmFbUnZedqRS5CDF2b7P4koF93rEsGS9xl/pk
+         BH6cYMFYlAP2D3YNrZLCLeE9n3LbG186ppanYKhcXzQ6hxVWapj4hiRMGwwsYsg1b+Zd
+         ayGdRcVUHYJE7GvNMb8NzqX45YYsvt/LHk5G9OYgmwAkfX/qz4Cj6uXAmp6u3FQl2fbW
+         cbBw==
+X-Gm-Message-State: AOAM533pn6EAE3DDgu7mIbB2XmTpFEOzfesL9N/jGpBfTmPny8YpTndg
+        68dUSIGxHwFyBVfd8IwNVxQwNMYA3R4=
+X-Google-Smtp-Source: ABdhPJwXhXC2CpQQPT1SNqHVQsbiX9Fv770On4cxW4/rwJ23rzFaM2nzyaJVzsDxP5kq61Uv9f4Iqg==
+X-Received: by 2002:a63:de4e:: with SMTP id y14mr522417pgi.106.1597176736631;
+        Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id z4sm26065038pfb.55.2020.08.11.13.12.16
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 13:11:10 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id o184so6675746vsc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:11:10 -0700 (PDT)
-X-Received: by 2002:a67:d714:: with SMTP id p20mr26453646vsj.119.1597176669782;
- Tue, 11 Aug 2020 13:11:09 -0700 (PDT)
+        Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id r4so66735pls.2
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2020 13:12:16 -0700 (PDT)
+X-Received: by 2002:a1f:2fc1:: with SMTP id v184mr26376890vkv.42.1597176274522;
+ Tue, 11 Aug 2020 13:04:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-5-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1597058460-16211-5-git-send-email-mkshah@codeaurora.org>
+References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-2-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1597058460-16211-2-git-send-email-mkshah@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 11 Aug 2020 13:10:58 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Uvsd3YBK0PS5X4ScAtC1q0Xfh8q=JQ1iTRKi=VVSU4Gw@mail.gmail.com>
-Message-ID: <CAD=FV=Uvsd3YBK0PS5X4ScAtC1q0Xfh8q=JQ1iTRKi=VVSU4Gw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] genirq: introduce irq_suspend_parent() and irq_resume_parent()
+Date:   Tue, 11 Aug 2020 13:04:23 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U4YVAqQXoJ47KY78kEsdoK33ic0P0rADkFWe=yU1x1nQ@mail.gmail.com>
+Message-ID: <CAD=FV=U4YVAqQXoJ47KY78kEsdoK33ic0P0rADkFWe=yU1x1nQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] pinctrl: qcom: Add msmgpio irqchip flags
 To:     Maulik Shah <mkshah@codeaurora.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Marc Zyngier <maz@kernel.org>,
@@ -93,24 +93,33 @@ Hi,
 
 On Mon, Aug 10, 2020 at 4:21 AM Maulik Shah <mkshah@codeaurora.org> wrote:
 >
-> From: Douglas Anderson <dianders@chromium.org>
+> Add irqchip specific flags for msmgpio irqchip to mask non wakeirqs
+> during suspend and mask before setting irq type.
 >
-> This goes with the new irq_suspend_one() and irq_resume_one()
-> callbacks and allow us to easily pass things up to our parent.
+> Masking before changing type should make sure any spurious interrupt
+> is not detected during this operation.
 >
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Fixes: e35a6ae0eb3a ("pinctrl/msm: Setup GPIO chip in hierarchy")
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 > ---
->  include/linux/irq.h |  2 ++
->  kernel/irq/chip.c   | 28 ++++++++++++++++++++++++++++
->  2 files changed, 30 insertions(+)
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index a2567e7..90edf61 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -1243,6 +1243,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>         pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
+>         pctrl->irq_chip.irq_set_affinity = msm_gpio_irq_set_affinity;
+>         pctrl->irq_chip.irq_set_vcpu_affinity = msm_gpio_irq_set_vcpu_affinity;
+> +       pctrl->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND
+> +                               | IRQCHIP_SET_TYPE_MASKED;
+>
+>         np = of_parse_phandle(pctrl->dev->of_node, "wakeup-parent", 0);
+>         if (np) {
 
-Thanks for posting my patch.  Small nit here is that when I saw the
-patches listed together I realized that I forgot to capitalize
-"introduce" in ${SUBJECT}.  The two patches right next to each other
-that both start with "introduce" where one has a capital and one
-doesn't look weird.  Hopefully you can fix in the next version?
+After taking Stephen's suggestion of improving the subject:
 
-Thanks!
-
--Doug
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
