@@ -2,27 +2,27 @@ Return-Path: <SRS0=NG6A=BX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3438C433E5
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF60AC433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9384120716
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A1E20716
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbgHMHtZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Aug 2020 03:49:25 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:39086 "EHLO
+        id S1726758AbgHMHuE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Aug 2020 03:50:04 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:39082 "EHLO
         rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbgHMHtY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 03:49:24 -0400
+        with ESMTP id S1726106AbgHMHtX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 03:49:23 -0400
 Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.69 with qID 07D7n9fQ5028965, This message is accepted by code: ctloc85258
+X-SpamFilter-By: ArmorX SpamTrap 5.69 with qID 07D7n9fO5028965, This message is accepted by code: ctloc85258
 Received: from mail.realtek.com (rtexmb06.realtek.com.tw[172.21.6.99])
-        by rtits2.realtek.com.tw (8.15.2/2.66/5.86) with ESMTPS id 07D7n9fQ5028965
+        by rtits2.realtek.com.tw (8.15.2/2.66/5.86) with ESMTPS id 07D7n9fO5028965
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
         Thu, 13 Aug 2020 15:49:09 +0800
 Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
@@ -41,9 +41,9 @@ To:     <linux-realtek-soc@lists.infradead.org>, <afaerber@suse.de>
 CC:     <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
         <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 6/9] arm64: dts: realtek: rtd129x: fix SDIO pinctrl node
-Date:   Thu, 13 Aug 2020 15:49:05 +0800
-Message-ID: <20200813074908.889-7-tychang@realtek.com>
+Subject: [PATCH v3 4/9] dt-bindings: pinctrl: realtek: Add Realtek DHC SoC rtd1195
+Date:   Thu, 13 Aug 2020 15:49:03 +0800
+Message-ID: <20200813074908.889-5-tychang@realtek.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813074908.889-1-tychang@realtek.com>
 References: <20200813074908.889-1-tychang@realtek.com>
@@ -55,26 +55,154 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix sdio function value of pinctrl property.
+Add device tree binding Documentation for rtd1195
+pinctrl driver.
 
 Signed-off-by: TY Chang <tychang@realtek.com>
 ---
- arch/arm64/boot/dts/realtek/rtd129x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../pinctrl/realtek,rtd1195-pinctrl.yaml      | 133 ++++++++++++++++++
+ 1 file changed, 133 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-index 59a68581f542..38ec852dfc6c 100644
---- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-@@ -313,7 +313,7 @@ sdmmc_wp_pin: sdmmc-wp-pin {
- 	};
- 
- 	sdio_pins: sdio-pins {
--		function = "sdio";
-+		function = "sdio_0";
- 		groups = "sdio_cmd", "sdio_clk", "sdio_data_0", "sdio_data_1", "sdio_data_2", "sdio_data_3";
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
+new file mode 100644
+index 000000000000..8a088f10a3e4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
+@@ -0,0 +1,133 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/realtek,rtd1195-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Realtek DHC RTD1195 pin control
++
++maintainers:
++  - Andreas Farber <afaerber@suse.de>
++
++properties:
++  compatible:
++    enum:
++      - realtek,rtd1195-iso-pinctrl
++      - realtek,rtd1195-crt-pinctrl
++  reg:
++    maxItems: 1
++
++#PIN CONFIGURATION NODES
++patternProperties:
++  '(-pin|-pins)$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    allOf:
++      - $ref: "/schemas/pinctrl/pincfg-node.yaml"
++
++    properties:
++      pins:
++        items:
++          enum: [ iso_gpio_0, iso_gpio_1, usb0, usb1, vfd_cs_n,
++          vfd_clk, vfd_d, ir_rx, ir_tx, ur0_rx, ur0_tx,
++          ur1_rx, ur1_tx, ur1_cts_n, ur1_rts_n, i2c_scl_0,
++          i2c_sda_0, etn_led_link, etn_led_rxtx,
++          i2c_scl_6, i2c_sda_6, ai_loc, ejtag_avcpu_loc,
++          ur1_loc, pwm_01_open_drain, pwm_23_open_drain,
++          gpio_0, gpio_1, gpio_2, gpio_3, gpio_4, gpio_5,
++          gpio_6, gpio_7, gpio_8, nf_dd_0, nf_dd_1,
++          nf_dd_2, nf_dd_3, nf_dd_4, nf_dd_5, nf_dd_6,
++          nf_dd_7, nf_rdy, nf_rd_n, nf_wr_n, nf_ale,
++          nf_cle, nf_ce_n_0, nf_ce_n_1, mmc_data_0,
++          mmc_data_1, mmc_data_2, mmc_data_3, mmc_clk,
++          mmc_cmd, mmc_wp, mmc_cd, sdio_clk, sdio_data_0,
++          sdio_data_1, sdio_data_2, sdio_data_3, sdio_cmd,
++          i2c_scl_5, i2c_sda_5, tp1_data, tp1_clk,
++          tp1_valid, tp1_sync, tp0_data, tp0_clk,
++          tp0_valid, tp0_sync, usb_id, hdmi_hpd, spdif,
++          i2c_scl_1, i2c_sda_1, i2c_scl_4, i2c_sda_4,
++          sensor_cko_0, sensor_cko_1, sensor_rst,
++          sensor_stb_0, sensor_stb_1, ejtag_scpu_loc,
++          hif_loc, ao_loc ]
++        minItems: 1
++
++      groups:
++        items:
++          enum: [ iso_gpio_0, iso_gpio_1, usb0, usb1, vfd_cs_n,
++          vfd_clk, vfd_d, ir_rx, ir_tx, ur0_rx, ur0_tx,
++          ur1_rx, ur1_tx, ur1_cts_n, ur1_rts_n, i2c_scl_0,
++          i2c_sda_0, etn_led_link, etn_led_rxtx,
++          i2c_scl_6, i2c_sda_6, ai_loc, ejtag_avcpu_loc,
++          ur1_loc, pwm_01_open_drain, pwm_23_open_drain,
++          gpio_0, gpio_1, gpio_2, gpio_3, gpio_4, gpio_5,
++          gpio_6, gpio_7, gpio_8, nf_dd_0, nf_dd_1,
++          nf_dd_2, nf_dd_3, nf_dd_4, nf_dd_5, nf_dd_6,
++          nf_dd_7, nf_rdy, nf_rd_n, nf_wr_n, nf_ale,
++          nf_cle, nf_ce_n_0, nf_ce_n_1, mmc_data_0,
++          mmc_data_1, mmc_data_2, mmc_data_3, mmc_clk,
++          mmc_cmd, mmc_wp, mmc_cd, sdio_clk, sdio_data_0,
++          sdio_data_1, sdio_data_2, sdio_data_3, sdio_cmd,
++          i2c_scl_5, i2c_sda_5, tp1_data, tp1_clk,
++          tp1_valid, tp1_sync, tp0_data, tp0_clk,
++          tp0_valid, tp0_sync, usb_id, hdmi_hpd, spdif,
++          i2c_scl_1, i2c_sda_1, i2c_scl_4, i2c_sda_4,
++          sensor_cko_0, sensor_cko_1, sensor_rst,
++          sensor_stb_0, sensor_stb_1, ejtag_scpu_loc,
++          hif_loc, ao_loc ]
++        minItems: 1
++
++      function:
++        enum: [ gpio, ai_ur1, ai_vfd, avcpu_ejtag_iso,
++        avcpu_ejtag_misc_loc, etn_led, i2c0, i2c2,
++        i2c3, i2c6, ir_rx, ir_tx, pwm, standby_dbg,
++        uart0, uart1, ur1_misc, vfd, pwm_01_normal,
++        pwm_23_normal, pwm_01_open_drain, pwm_23_open_drain,
++        ao_tp0, ao_gpio, avcpu_ejtag_misc, cpu_loop, emmc,
++        gspi, hif_misc, hif_nf, i2c1, i2c2, i2c3,
++        i2c4, i2c5, mmc, nand, scpu_ejtag_gpio,
++        scpu_ejtag_cr, sdio, sensor, spdif, tp0, tp1,
++        uart1, usb ]
++
++      drive-strength:
++        enum: [2, 4, 8]
++
++      bias-pull-down: true
++
++      bias-pull-up: true
++
++      bias-disable: true
++
++      input-schmitt-disable: true
++
++      input-schmitt-enable: true
++
++    oneOf:
++      - required:
++        - pins
++      - required:
++        - groups
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    iso_pinctrl: pinctrl@300 {
++        compatible = "realtek,rtd1195-iso-pinctrl";
++        reg = <0x300 0x14>;
++
++        i2c0_pins: i2c0-pins {
++            function = "i2c0";
++            groups = "i2c_scl_0", "i2c_sda_0";
++            drive-strength = <4>;
++            bias-disable;
++        };
++    };
++
 -- 
 2.28.0
 
