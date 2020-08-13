@@ -2,207 +2,119 @@ Return-Path: <SRS0=NG6A=BX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF60AC433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F5BC433E3
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2A1E20716
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D1252078B
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 07:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgHMHuE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Aug 2020 03:50:04 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:39082 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbgHMHtX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 03:49:23 -0400
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.69 with qID 07D7n9fO5028965, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexmb06.realtek.com.tw[172.21.6.99])
-        by rtits2.realtek.com.tw (8.15.2/2.66/5.86) with ESMTPS id 07D7n9fO5028965
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 13 Aug 2020 15:49:09 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXMB06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 13 Aug 2020 15:49:09 +0800
-Received: from RTEXMB05.realtek.com.tw (172.21.6.98) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 13 Aug 2020 15:49:09 +0800
-Received: from localhost.localdomain (172.21.252.101) by
- RTEXMB01.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server id
- 15.1.1779.2 via Frontend Transport; Thu, 13 Aug 2020 15:49:09 +0800
-From:   TY Chang <tychang@realtek.com>
-To:     <linux-realtek-soc@lists.infradead.org>, <afaerber@suse.de>
-CC:     <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/9] dt-bindings: pinctrl: realtek: Add Realtek DHC SoC rtd1195
-Date:   Thu, 13 Aug 2020 15:49:03 +0800
-Message-ID: <20200813074908.889-5-tychang@realtek.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200813074908.889-1-tychang@realtek.com>
-References: <20200813074908.889-1-tychang@realtek.com>
+        id S1726591AbgHMHvJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Aug 2020 03:51:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38760 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbgHMHvJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 03:51:09 -0400
+Received: by mail-ot1-f65.google.com with SMTP id q9so4110499oth.5;
+        Thu, 13 Aug 2020 00:51:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eU62SrftExeZEPFtSlHLsBRzbUkLx1KNOgZc6VKFeBQ=;
+        b=RKVY0mqqakUrEXk4TORV8A5/ZSMY0dexhKfXyaOKBp8tYT6+lN9tMY1gCu59dMSnI/
+         6Av5sXCLtCtfska6KBUfoUvPLN8QSlHGcwX+BKv8ZNWhNtirhMGElzBnWp56J7vtBCeA
+         RTsTm+tpM0JqO6hs1Zx9oL0KiDPnHu2wr8nXIFBaGz9jqMUEyZCYMyj21d8ckpZmX8IH
+         sIyh51oPoVvqSR3qDoGMDZJhbXuz4s9KHdaT9j4oPeIaqxws0OL9u53GcL8uZhE7hrov
+         ikjJM0LMxR/OG4BC9tZAySXGXWwQpPbcG9j3oyJJCCrBhecUJhWEIB5ZPymwSBlP+imO
+         EXuw==
+X-Gm-Message-State: AOAM531KpbVTNZA6DQGhlLakjE36ZGk11NQSWXrXhgb2m/BrbDAUDZAN
+        GTNNlK5/qceLxjH+paJhJQLuqYhFPre+GsLWPoc=
+X-Google-Smtp-Source: ABdhPJzAAKS8g3t/W5mSJd2Vboc2FEvoNvVXoru7u4kNP7jabPCwVCki2JjTk/fEfMzVv8QAFC24k07bLAU2LYhSK+k=
+X-Received: by 2002:a05:6830:1b79:: with SMTP id d25mr2990956ote.107.1597305067462;
+ Thu, 13 Aug 2020 00:51:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+References: <20200812203618.2656699-1-robh@kernel.org>
+In-Reply-To: <20200812203618.2656699-1-robh@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 13 Aug 2020 09:50:55 +0200
+Message-ID: <CAMuHMdVXvSRF-G_TYu4P+Bqa2FZJWsUCyzqFur3Rb-tBExfbsw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Whitespace clean-ups in schema files
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-hwmon@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-input@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add device tree binding Documentation for rtd1195
-pinctrl driver.
+Hi Rob,
 
-Signed-off-by: TY Chang <tychang@realtek.com>
----
- .../pinctrl/realtek,rtd1195-pinctrl.yaml      | 133 ++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
+On Wed, Aug 12, 2020 at 10:36 PM Rob Herring <robh@kernel.org> wrote:
+> Clean-up incorrect indentation, extra spaces, long lines, and missing
+> EOF newline in schema files. Most of the clean-ups are for list
+> indentation which should always be 2 spaces more than the preceding
+> keyword.
+>
+> Found with yamllint (which I plan to integrate into the checks).
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
-new file mode 100644
-index 000000000000..8a088f10a3e4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1195-pinctrl.yaml
-@@ -0,0 +1,133 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/realtek,rtd1195-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek DHC RTD1195 pin control
-+
-+maintainers:
-+  - Andreas Farber <afaerber@suse.de>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rtd1195-iso-pinctrl
-+      - realtek,rtd1195-crt-pinctrl
-+  reg:
-+    maxItems: 1
-+
-+#PIN CONFIGURATION NODES
-+patternProperties:
-+  '(-pin|-pins)$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    allOf:
-+      - $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+
-+    properties:
-+      pins:
-+        items:
-+          enum: [ iso_gpio_0, iso_gpio_1, usb0, usb1, vfd_cs_n,
-+          vfd_clk, vfd_d, ir_rx, ir_tx, ur0_rx, ur0_tx,
-+          ur1_rx, ur1_tx, ur1_cts_n, ur1_rts_n, i2c_scl_0,
-+          i2c_sda_0, etn_led_link, etn_led_rxtx,
-+          i2c_scl_6, i2c_sda_6, ai_loc, ejtag_avcpu_loc,
-+          ur1_loc, pwm_01_open_drain, pwm_23_open_drain,
-+          gpio_0, gpio_1, gpio_2, gpio_3, gpio_4, gpio_5,
-+          gpio_6, gpio_7, gpio_8, nf_dd_0, nf_dd_1,
-+          nf_dd_2, nf_dd_3, nf_dd_4, nf_dd_5, nf_dd_6,
-+          nf_dd_7, nf_rdy, nf_rd_n, nf_wr_n, nf_ale,
-+          nf_cle, nf_ce_n_0, nf_ce_n_1, mmc_data_0,
-+          mmc_data_1, mmc_data_2, mmc_data_3, mmc_clk,
-+          mmc_cmd, mmc_wp, mmc_cd, sdio_clk, sdio_data_0,
-+          sdio_data_1, sdio_data_2, sdio_data_3, sdio_cmd,
-+          i2c_scl_5, i2c_sda_5, tp1_data, tp1_clk,
-+          tp1_valid, tp1_sync, tp0_data, tp0_clk,
-+          tp0_valid, tp0_sync, usb_id, hdmi_hpd, spdif,
-+          i2c_scl_1, i2c_sda_1, i2c_scl_4, i2c_sda_4,
-+          sensor_cko_0, sensor_cko_1, sensor_rst,
-+          sensor_stb_0, sensor_stb_1, ejtag_scpu_loc,
-+          hif_loc, ao_loc ]
-+        minItems: 1
-+
-+      groups:
-+        items:
-+          enum: [ iso_gpio_0, iso_gpio_1, usb0, usb1, vfd_cs_n,
-+          vfd_clk, vfd_d, ir_rx, ir_tx, ur0_rx, ur0_tx,
-+          ur1_rx, ur1_tx, ur1_cts_n, ur1_rts_n, i2c_scl_0,
-+          i2c_sda_0, etn_led_link, etn_led_rxtx,
-+          i2c_scl_6, i2c_sda_6, ai_loc, ejtag_avcpu_loc,
-+          ur1_loc, pwm_01_open_drain, pwm_23_open_drain,
-+          gpio_0, gpio_1, gpio_2, gpio_3, gpio_4, gpio_5,
-+          gpio_6, gpio_7, gpio_8, nf_dd_0, nf_dd_1,
-+          nf_dd_2, nf_dd_3, nf_dd_4, nf_dd_5, nf_dd_6,
-+          nf_dd_7, nf_rdy, nf_rd_n, nf_wr_n, nf_ale,
-+          nf_cle, nf_ce_n_0, nf_ce_n_1, mmc_data_0,
-+          mmc_data_1, mmc_data_2, mmc_data_3, mmc_clk,
-+          mmc_cmd, mmc_wp, mmc_cd, sdio_clk, sdio_data_0,
-+          sdio_data_1, sdio_data_2, sdio_data_3, sdio_cmd,
-+          i2c_scl_5, i2c_sda_5, tp1_data, tp1_clk,
-+          tp1_valid, tp1_sync, tp0_data, tp0_clk,
-+          tp0_valid, tp0_sync, usb_id, hdmi_hpd, spdif,
-+          i2c_scl_1, i2c_sda_1, i2c_scl_4, i2c_sda_4,
-+          sensor_cko_0, sensor_cko_1, sensor_rst,
-+          sensor_stb_0, sensor_stb_1, ejtag_scpu_loc,
-+          hif_loc, ao_loc ]
-+        minItems: 1
-+
-+      function:
-+        enum: [ gpio, ai_ur1, ai_vfd, avcpu_ejtag_iso,
-+        avcpu_ejtag_misc_loc, etn_led, i2c0, i2c2,
-+        i2c3, i2c6, ir_rx, ir_tx, pwm, standby_dbg,
-+        uart0, uart1, ur1_misc, vfd, pwm_01_normal,
-+        pwm_23_normal, pwm_01_open_drain, pwm_23_open_drain,
-+        ao_tp0, ao_gpio, avcpu_ejtag_misc, cpu_loop, emmc,
-+        gspi, hif_misc, hif_nf, i2c1, i2c2, i2c3,
-+        i2c4, i2c5, mmc, nand, scpu_ejtag_gpio,
-+        scpu_ejtag_cr, sdio, sensor, spdif, tp0, tp1,
-+        uart1, usb ]
-+
-+      drive-strength:
-+        enum: [2, 4, 8]
-+
-+      bias-pull-down: true
-+
-+      bias-pull-up: true
-+
-+      bias-disable: true
-+
-+      input-schmitt-disable: true
-+
-+      input-schmitt-enable: true
-+
-+    oneOf:
-+      - required:
-+        - pins
-+      - required:
-+        - groups
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iso_pinctrl: pinctrl@300 {
-+        compatible = "realtek,rtd1195-iso-pinctrl";
-+        reg = <0x300 0x14>;
-+
-+        i2c0_pins: i2c0-pins {
-+            function = "i2c0";
-+            groups = "i2c_scl_0", "i2c_sda_0";
-+            drive-strength = <4>;
-+            bias-disable;
-+        };
-+    };
-+
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+> @@ -24,9 +24,9 @@ properties:
+>        - const: renesas,r8a7778-cpg-clocks # R-Car M1
+>        - const: renesas,r8a7779-cpg-clocks # R-Car H1
+>        - items:
+> -        - enum:
+> -            - renesas,r7s72100-cpg-clocks # RZ/A1H
+> -        - const: renesas,rz-cpg-clocks    # RZ/A1
+> +          - enum:
+> +              - renesas,r7s72100-cpg-clocks # RZ/A1H
+> +          - const: renesas,rz-cpg-clocks    # RZ/A1
+
+This change breaks alignment of the comments at the end of each line.
+
+>        - const: renesas,sh73a0-cpg-clocks  # SH-Mobile AG5
+
+(I only checked the files I care about)
+
+If you don't update commit  e0fe7fc6f2ca0781 ("dt-bindings: Whitespace
+clean-ups in schema files"), I can send a patch after v5.9-rc1.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.28.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
