@@ -2,238 +2,310 @@ Return-Path: <SRS0=NG6A=BX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE8AC433E1
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 12:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F56CC433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 16:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF77207DA
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 12:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAAAB20855
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Aug 2020 16:17:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="AznXhcmS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EHioGyt8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgHMMsy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Aug 2020 08:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55022 "EHLO
+        id S1726647AbgHMQRL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Aug 2020 12:17:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbgHMMsw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 08:48:52 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D01C061757;
-        Thu, 13 Aug 2020 05:48:51 -0700 (PDT)
-Received: from mwalle01.sab.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 37B1B22FAC;
-        Thu, 13 Aug 2020 14:48:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1597322926;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=8wGXzYnnzcl6WCLIhd06uoOF6oOEUvWo5HhfAsa2jiU=;
-        b=AznXhcmSfd0Czc30V6gWYMCR6s4pHKXsL0hIfJLZGh6UOg30sM2QVMb1zaSQYlKDrhmzZI
-        w+Ng1O5ihr44SNfGDumDZmN44OTHNPYBFq2Dg1xoW01p6yPKIPmWkE8ESSculrtIutxQ6Y
-        BXxGpvXrqvlVRggrOczDVHCErmX5Q54=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v8 00/13] Add support for Kontron sl28cpld
-Date:   Thu, 13 Aug 2020 14:48:19 +0200
-Message-Id: <20200813124832.17349-1-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
+        with ESMTP id S1726249AbgHMQRK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 12:17:10 -0400
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08556C061757
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 09:17:10 -0700 (PDT)
+Received: by mail-ua1-x942.google.com with SMTP id q68so1810516uaq.0
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 09:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rhPxzDEAbDsTxP9pTuuqSCleYcAolz9FzuIO2cC9vEg=;
+        b=EHioGyt8X0ovb69iv+wO2bgemHmETeXUEonigieujzAlN5C5JEl0BMPidKeDNq42ed
+         6PcPmOxaZLF2j8ecZByS+j3Da3iCxyOutRymE3GK8jmRXn4IegZIUBRJuMFx2x1hAKTj
+         1mf6FTRCGV941eVk3vLyCAKGo3xD1YCjBRnZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rhPxzDEAbDsTxP9pTuuqSCleYcAolz9FzuIO2cC9vEg=;
+        b=P7nJ5C49dItD6jXjH6fqIQXZFrQbn/nJSBx9a91eRP0MaL+BsDTDwUb6jU3dp0gFKf
+         BHFcJxBpVRQJo2Fp2IlqIpeNChCWXJKcjcPU1XwPwSXAvrStjlOioeSNBtrb30C5HJK+
+         ckqCubLo6XQAEAkamaki8HjsrrwbXNwgNIL4q4+9iQ4dWml39/KxWQdcc7rf9onalQFB
+         C8mKCRXhSw1OTHUcM0moLHutLch/QQ6I03A8ABHv1bwqBIHXltrSCg2FDymILQ9o9VIS
+         1B7CjEqBHal4FsypWicwEvfAxVxfjTP+UYmms2YYPdjVVUydaLCe2KD6cCgO61Wvqj/I
+         rrCA==
+X-Gm-Message-State: AOAM530neeJOFnncu/gO1f4xQdqIhCTdXu83R6vBW6moZCKYRyYs1mkv
+        AdzACxoImMlEjZ9d/8/xNvMICGSjYmY=
+X-Google-Smtp-Source: ABdhPJytG9Kq5+5nRQqt7zcMTtS6dPV9ZW8COqQzMd2CuTDzUNhllfKKW9NFDdFHro2j/6ghd6BVOA==
+X-Received: by 2002:ab0:41:: with SMTP id 59mr4197448uai.40.1597335427256;
+        Thu, 13 Aug 2020 09:17:07 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id m143sm843310vkm.1.2020.08.13.09.17.07
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2020 09:17:07 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id p8so3179830vsm.12
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 09:17:07 -0700 (PDT)
+X-Received: by 2002:a67:d714:: with SMTP id p20mr4179240vsj.119.1597334961095;
+ Thu, 13 Aug 2020 09:09:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam: Yes
+References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org>
+ <1597058460-16211-4-git-send-email-mkshah@codeaurora.org> <87pn7ulwr5.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87pn7ulwr5.fsf@nanos.tec.linutronix.de>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 13 Aug 2020 09:09:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WN4R1tS47ZzdZa_hsbvLifwnv6rgETVaiea0+QSZmiOw@mail.gmail.com>
+Message-ID: <CAD=FV=WN4R1tS47ZzdZa_hsbvLifwnv6rgETVaiea0+QSZmiOw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] genirq: Introduce irq_suspend_one() and
+ irq_resume_one() callbacks
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Maulik Shah <mkshah@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        LinusW <linus.walleij@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Srinivas Rao L <lsrao@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Kontron sl28cpld is a board management chip providing gpio, pwm, fan
-monitoring and an interrupt controller. For now this controller is used on
-the Kontron SMARC-sAL28 board. But because of its flexible nature, it
-might also be used on other boards in the future. The individual blocks
-(like gpio, pwm, etc) are kept intentionally small. The MFD core driver
-then instantiates different (or multiple of the same) blocks. It also
-provides the register layout so it might be updated in the future without a
-device tree change; and support other boards with a different layout or
-functionalities.
+Hi,
 
-See also [1] for more information.
+On Thu, Aug 13, 2020 at 2:29 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Maulik Shah <mkshah@codeaurora.org> writes:
+> > From: Douglas Anderson <dianders@chromium.org>
+> >
+> > The "struct irq_chip" has two callbacks in it: irq_suspend() and
+> > irq_resume().  These two callbacks are interesting because sometimes
+> > an irq chip needs to know about suspend/resume, but they are a bit
+> > awkward because:
+> > 1. They are called once for the whole irq_chip, not once per IRQ.
+> >    It's passed data for one of the IRQs enabled on that chip.  That
+> >    means it's up to the irq_chip driver to aggregate.
+> > 2. They are only called if you're using "generic-chip", which not
+> >    everyone is.
+> > 3. The implementation uses syscore ops, which apparently have problems
+> >    with s2idle.
+>
+> The main point is that these callbacks are specific to generic chip and
+> not used anywhere else.
 
-This is my first take of a MFD driver. I don't know whether the subsystem
-maintainers should only be CCed on the patches which affect the subsystem
-or on all patches for this series. I've chosen the latter so you can get a
-more complete picture.
+I'm not sure I understand.  This callback is used by drivers that use
+generic-chip but I don't think there's anything specific about
+generic-chip in these callbacks.  Sure many of them use the
+generic-chip's "wake_active" tracking but a different IRQ chip could
+track "wake_active" itself without bringing in all of generic-chip and
+still might want to accomplish the same thing, right?
 
-[1] https://lore.kernel.org/linux-devicetree/0e3e8204ab992d75aa07fc36af7e4ab2@walle.cc/
 
-Changes for v4 and above are tracked in the patches, suggested by Lee.
+> > Probably the old irq_suspend() and irq_resume() callbacks should be
+> > deprecated.
+>
+> You need to analyze first what these callbacks actually do. :)
 
-Changes since v3:
- - use of_platform_populate() to populate internal devices using the
-   internal register offsets as unit-addresses
- - because we don't use mfd_cells anymore, we cannot use IORESOURCE_REG,
-   but instead parse the reg property in each individual driver
- - dropped the following patches because they were already merged:
-     gpiolib: Introduce gpiochip_irqchip_add_domain()
-     gpio: add a reusable generic gpio_chip using regmap
- - dropped the following patches because they are no longer needed:
-     include/linux/ioport.h: add helper to define REG resource constructs
-     mfd: mfd-core: Don't overwrite the dma_mask of the child device
-     mfd: mfd-core: match device tree node against reg property
- - rephrase commit messages, as suggested by Thomas Gleixner
+See below.  I intended my callbacks to be for the same type of thing
+as the existing ones, though perhaps either my naming or description
+was confusing.
 
-Changes since v2:
-As suggested by Guenter Roeck:
- - added sl28cpld.rst to index.rst
- - removed sl28cpld_wdt_status()
- - reverse christmas tree local variable ordering
- - assign device_property_read_bool() retval directly
- - introduce WDT_DEFAULT_TIMEOUT and use it if the hardware reports
-   0 as timeout.
- - set WDOG_HW_RUNNING if applicable
- - remove platform_set_drvdata() leftover
 
-As suggested by Bartosz Golaszewski:
- - don't export gpio_regmap_simple_xlate()
- - combine local variable declaration of the same type
- - drop the "struct gpio_regmap_addr", instead use -1 to force an address
-   offset of zero
- - fix typo
- - use "struct gpio_regmap_config" pattern, keep "struct gpio_regmap"
-   private. this also means we need a getter/setter for the driver_data
-   element.
+> > Let's introcuce a nicer API that works for all irq_chip devices.
+>
+> s/Let's intro/Intro/
+>
+> Let's is pretty useless in a changelog especially if you read it some
+> time after the patch got applied.
 
-As suggested by Linus Walleij:
- - don't store irq_domain in gpio-regmap. drop to_irq() altogether for now.
-   Instead there is now a new patch which lets us set the irqdomain of the
-   gpiochip_irqchip and use its .to_irq() function. This way we don't have
-   to expose the gpio_chip inside the gpio-regmap to the user.
+Sounds fine.  Hopefully Maulik can adjust when he posts the next version.
 
-Changes since v1:
- - use of_match_table in all drivers, needed for automatic module loading,
-   when using OF_MFD_CELL()
- - add new gpio-regmap.c which adds a generic regmap gpio_chip
-   implementation
- - new patch for reqmap_irq, so we can reuse its implementation
- - remove almost any code from gpio-sl28cpld.c, instead use gpio-regmap and
-   regmap-irq
- - change the handling of the mfd core vs device tree nodes; add a new
-   property "of_reg" to the mfd_cell struct which, when set, is matched to
-   the unit-address of the device tree nodes.
- - fix sl28cpld watchdog when it is not initialized by the bootloader.
-   Explicitly set the operation mode.
- - also add support for kontron,assert-wdt-timeout-pin in sl28cpld-wdt.
 
-As suggested by Bartosz Golaszewski:
- - define registers as hex
- - make gpio enum uppercase
- - move parent regmap check before memory allocation
- - use device_property_read_bool() instead of the of_ version
- - mention the gpio flavors in the bindings documentation
+> > This will be called by the core and is called once per IRQ.  The core
+> > will call the suspend callback after doing its normal suspend
+> > operations and the resume before its normal resume operations.
+>
+> Will be? You are adding the code which calls that unconditionally even.
+>
+> > +void suspend_one_irq(struct irq_desc *desc)
+> > +{
+> > +     struct irq_chip *chip = desc->irq_data.chip;
+> > +
+> > +     if (chip->irq_suspend_one)
+> > +             chip->irq_suspend_one(&desc->irq_data);
+> > +}
+> > +
+> > +void resume_one_irq(struct irq_desc *desc)
+> > +{
+> > +     struct irq_chip *chip = desc->irq_data.chip;
+> > +
+> > +     if (chip->irq_resume_one)
+> > +             chip->irq_resume_one(&desc->irq_data);
+> > +}
+>
+> There not much of a point to have these in chip.c. The functionality is
+> clearly pm.c only.
 
-As suggested by Guenter Roeck:
- - cleanup #includes and sort them
- - use devm_watchdog_register_device()
- - use watchdog_stop_on_reboot()
- - provide a Documentation/hwmon/sl28cpld.rst
- - cleaned up the weird tristate->bool and I2C=y issue. Instead mention
-   that the MFD driver is bool because of the following intc patch
- - removed the SL28CPLD_IRQ typo
+No objections to it moving.  Since Maulik is posting the patches,
+hopefully he can move it?
 
-As suggested by Rob Herring:
- - combine all dt bindings docs into one patch
- - change the node name for all gpio flavors to "gpio"
- - removed the interrupts-extended rule
- - cleaned up the unit-address space, see above
 
-Michael Walle (13):
-  mfd: add simple regmap based I2C driver
-  dt-bindings: mfd: Add bindings for sl28cpld
-  mfd: simple-mfd-i2c: add sl28cpld support
-  irqchip: add sl28cpld interrupt controller support
-  watchdog: add support for sl28cpld watchdog
-  pwm: add support for sl28cpld PWM controller
-  gpio: add support for the sl28cpld GPIO controller
-  hwmon: add support for the sl28cpld hardware monitoring controller
-  arm64: dts: freescale: sl28: enable sl28cpld
-  arm64: dts: freescale: sl28: map GPIOs to input events
-  arm64: dts: freescale: sl28: enable LED support
-  arm64: dts: freescale: sl28: enable fan support
-  arm64: defconfig: enable the sl28cpld board management controller
+> >  static bool suspend_device_irq(struct irq_desc *desc)
+> >  {
+> > +     bool sync = false;
+> > +
+> >       if (!desc->action || irq_desc_is_chained(desc) ||
+> >           desc->no_suspend_depth)
+> > -             return false;
+> > +             goto exit;
+>
+> What?
+>
+> If no_suspend_depth is > 0 why would you try to tell the irq chip
+> that this line needs to be suspended?
+>
+> If there is no action, then the interrupt line is in shut down
+> state. What's the point of suspending it?
+>
+> Chained interrupts are special and you really have to think hard whether
+> calling suspend for them unconditionally is a good idea. What if a
+> wakeup irq is connected to this chained thing?
 
- .../bindings/gpio/kontron,sl28cpld-gpio.yaml  |  54 ++++
- .../hwmon/kontron,sl28cpld-hwmon.yaml         |  27 ++
- .../kontron,sl28cpld-intc.yaml                |  54 ++++
- .../bindings/mfd/kontron,sl28cpld.yaml        | 153 ++++++++++
- .../bindings/pwm/kontron,sl28cpld-pwm.yaml    |  35 +++
- .../watchdog/kontron,sl28cpld-wdt.yaml        |  35 +++
- Documentation/hwmon/index.rst                 |   1 +
- Documentation/hwmon/sl28cpld.rst              |  36 +++
- .../fsl-ls1028a-kontron-kbox-a-230-ls.dts     |  18 ++
- .../fsl-ls1028a-kontron-sl28-var3-ads2.dts    |   9 +
- .../freescale/fsl-ls1028a-kontron-sl28.dts    | 134 +++++++++
- arch/arm64/configs/defconfig                  |   6 +
- drivers/gpio/Kconfig                          |  12 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-sl28cpld.c                  | 161 +++++++++++
- drivers/hwmon/Kconfig                         |  10 +
- drivers/hwmon/Makefile                        |   1 +
- drivers/hwmon/sl28cpld-hwmon.c                | 142 +++++++++
- drivers/irqchip/Kconfig                       |   8 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-sl28cpld.c                |  96 +++++++
- drivers/mfd/Kconfig                           |  22 ++
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/simple-mfd-i2c.c                  |  57 ++++
- drivers/pwm/Kconfig                           |  10 +
- drivers/pwm/Makefile                          |   1 +
- drivers/pwm/pwm-sl28cpld.c                    | 269 ++++++++++++++++++
- drivers/watchdog/Kconfig                      |  11 +
- drivers/watchdog/Makefile                     |   1 +
- drivers/watchdog/sl28cpld_wdt.c               | 229 +++++++++++++++
- 30 files changed, 1595 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
- create mode 100644 Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
- create mode 100644 Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
- create mode 100644 Documentation/hwmon/sl28cpld.rst
- create mode 100644 drivers/gpio/gpio-sl28cpld.c
- create mode 100644 drivers/hwmon/sl28cpld-hwmon.c
- create mode 100644 drivers/irqchip/irq-sl28cpld.c
- create mode 100644 drivers/mfd/simple-mfd-i2c.c
- create mode 100644 drivers/pwm/pwm-sl28cpld.c
- create mode 100644 drivers/watchdog/sl28cpld_wdt.c
+I think there is a confusion about what this callback is intended to
+do and that probably needs to be made clearer, either by renaming or
+by comments (or both).  Let's think about these two things that we
+might be telling the IRQ:
 
--- 
-2.20.1
+a) Please disable yourself in preparation for suspending.
 
+b) The system is suspending, please take any action you need to.
+
+I believe you are reading this as a).  I intended it to be b).  Can
+you think of a name for these callbacks that would make it clearer?
+suspend_notify() / resume_notify() maybe?
+
+
+Specifically the problem we're trying to address is when an IRQ is
+marked as "disabled" (driver called disable_irq()) but also marked as
+"wakeup" (driver called enable_irq_wake()).  As per my understanding,
+this means:
+
+* Don't call the interrupt handler for this interrupt until I call
+enable_irq() but keep tracking it (either in hardware or in software).
+Specifically it's a requirement that if the interrupt fires one or
+more times while masked the interrupt handler should be called as soon
+as enable_irq() is called.
+
+* If this interrupt fires while the system is suspended then please
+wake the system up.
+
+
+On some (many?) interrupt controllers a masked interrupt won't wake
+the system up.  Thus we need some point in time where the interrupt
+controller can unmask interrupts in hardware so that they can act as
+wakeups.  Also: if an interrupt was masked lazily this could be a good
+time to ensure that these interrupts _won't_ wake the system up.  Thus
+the point of these callbacks is to provide a hook for IRQ chips to do
+this.  Now that you understand the motivation perhaps you can suggest
+a better way to accomplish this if the approach in this patch is not
+OK.
+
+
+I will note that a quick audit of existing users of the gernic-chip's
+irq_suspend() show that they are doing exactly this.  So the point of
+my patch is to actually allow other IRQ chips (ones that aren't using
+generic-chip) to do this type of thing.  At the same time my patch
+provides a way for current users of generic-chip to adapt their
+routines so they work without syscore (which, I guess, isn't
+compatible with s2idle).
+
+
+> >       if (irqd_is_wakeup_set(&desc->irq_data)) {
+> >               irqd_set(&desc->irq_data, IRQD_WAKEUP_ARMED);
+> > +
+> >               /*
+> >                * We return true here to force the caller to issue
+> >                * synchronize_irq(). We need to make sure that the
+> >                * IRQD_WAKEUP_ARMED is visible before we return from
+> >                * suspend_device_irqs().
+> >                */
+> > -             return true;
+> > +             sync = true;
+> > +             goto exit;
+>
+> So again. This interrupt is a wakeup source. What's the point of
+> suspending it unconditionally.
+
+Again this is a confusion about whether I'm saying "please suspend
+yourself" or "the system is suspending, please take needed action".
+
+
+> >       }
+> >
+> >       desc->istate |= IRQS_SUSPENDED;
+> > @@ -95,7 +99,10 @@ static bool suspend_device_irq(struct irq_desc *desc)
+> >        */
+> >       if (irq_desc_get_chip(desc)->flags & IRQCHIP_MASK_ON_SUSPEND)
+> >               mask_irq(desc);
+> > -     return true;
+> > +
+> > +exit:
+> > +     suspend_one_irq(desc);
+> > +     return sync;
+>
+> So what happens in this case:
+>
+>    CPU0                         CPU1
+>    interrupt                    suspend_device_irq()
+>      handle()                     chip->suspend_one()
+>        action()                 ...
+>        chip->fiddle();
+>
+> ????
+
+Ah, so I guess we need to move the call to suspend_one_irq() till
+after the (potential) call to synchronize_irq() in in
+suspend_device_irqs()?
+
+
+> What is the logic here and how is this going to work under all
+> circumstances without having magic hacks in the irq chip to handle all
+> the corner cases?
+>
+> This needs way more thoughts vs. the various states and sync
+> requirements. Just adding callbacks, invoking them unconditionally, not
+> giving any rationale how the whole thing is supposed to work and then
+> let everyone figure out how to deal with the state and corner case
+> handling at the irq chip driver level does not cut it, really.
+>
+> State handling is core functionality and if irq chip drivers have
+> special requirements then they want to be communicated with flags and/or
+> specialized callbacks.
+
+Hopefully with the above explanation this makes more sense?  If not,
+hopefully you can suggest how to adapt it to accomplish what we need
+(allow wakeup from masked IRQs that have wakeup enabled).
+
+Thanks!
+
+-Doug
