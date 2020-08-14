@@ -2,99 +2,101 @@ Return-Path: <SRS0=M7SY=BY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049DCC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 10:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162D8C433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 12:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D692F206A4
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 10:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBC982087D
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 12:43:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SJrKMe+d";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wCiXtVzl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbgHNKcG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 14 Aug 2020 06:32:06 -0400
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:46758 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726012AbgHNKcF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 14 Aug 2020 06:32:05 -0400
-Received: from [188.210.212.0] (helo=localhost.localdomain)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1k6WZD-000572-7J; Fri, 14 Aug 2020 11:04:07 +0100
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     thomas.preston@codethink.co.uk
-Subject: [PATCH 2/3] pinctrl: mcp23s08: Remove interrupt-controller
-Date:   Fri, 14 Aug 2020 11:03:56 +0100
-Message-Id: <20200814100357.209340-3-thomas.preston@codethink.co.uk>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200814100357.209340-1-thomas.preston@codethink.co.uk>
-References: <20200814100357.209340-1-thomas.preston@codethink.co.uk>
+        id S1728012AbgHNMn0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 14 Aug 2020 08:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbgHNMn0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2020 08:43:26 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9828CC061384;
+        Fri, 14 Aug 2020 05:43:25 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1597409003;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/i5quBEHOUiEWbSlPICXRpE8LPmHlTEYkvSOImfh/R8=;
+        b=SJrKMe+dhkz8mqYvSm1e3oBcNuMqzj+vKg2nmRvxCMocVOYxiR8hR8W5A5OaMsQ5eaXR+h
+        s7OkQsvCSQIKdFkpRWVJje01s5cMnZyE67XTqnZjDT9+W9drRPQb4Z6C7cJ6De4c2niyOS
+        flq+s8FYRYtir4SvAgp3/bSDrLcUVLsggqIOjgZbmsTbuGRe1fGI5psw0V71kBU9pmTfLr
+        +9kJpggyh/g8HZfVm4PIzrORvKjA0OPCWoy6q+ae7LDNHYMuEZtRd5bKJB5P6PsIrHHMfh
+        fun6UsKWyYtiZfEYCzgiKdAUYazF6mV33S35Z0/D84Ps4+jxA/ieqo0WzAlsZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1597409003;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/i5quBEHOUiEWbSlPICXRpE8LPmHlTEYkvSOImfh/R8=;
+        b=wCiXtVzl9KyVOqjtdNk4AHVJumpRqaSpCZ9HC97XShRjOmcy9x+d74s433K+ZrFzbItPma
+        WAXqqS9/MwtJgpAw==
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Maulik Shah <mkshah@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        LinusW <linus.walleij@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Srinivas Rao L <lsrao@codeaurora.org>
+Subject: Re: [PATCH v4 3/7] genirq: Introduce irq_suspend_one() and irq_resume_one() callbacks
+In-Reply-To: <CAD=FV=V1hvWZ0ANX9nsvRX_iXjuzw0X_tL2hgg4zYGgsqRtLTQ@mail.gmail.com>
+References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-4-git-send-email-mkshah@codeaurora.org> <87pn7ulwr5.fsf@nanos.tec.linutronix.de> <CAD=FV=WN4R1tS47ZzdZa_hsbvLifwnv6rgETVaiea0+QSZmiOw@mail.gmail.com> <878sei42ql.fsf@nanos.tec.linutronix.de> <CAD=FV=Wyp8B6183avk4on4Akz6dANkuJ25h_o_ERDuiZ87mwNw@mail.gmail.com> <87364q3rqb.fsf@nanos.tec.linutronix.de> <CAD=FV=V1hvWZ0ANX9nsvRX_iXjuzw0X_tL2hgg4zYGgsqRtLTQ@mail.gmail.com>
+Date:   Fri, 14 Aug 2020 14:43:23 +0200
+Message-ID: <87bljdl7o4.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The mcp23s08 device and friends are interrupt /client/ nodes, and should
-not reference the interrupt controller device tree property
-"interrupt-controller" [0].
+Doug,
 
-Fix the mcp23s08 driver so that it activates interrupts when it detects
-the "interrupts" property instead, which is always present if we want
-interrupts enabled.
+On Thu, Aug 13 2020 at 20:04, Doug Anderson wrote:
+> On Thu, Aug 13, 2020 at 7:07 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>    Having a quick and dirty POC for illustration is fine and usually
+>>    useful.
+>
+> OK, I will try to remember that, in the future, I should send
+> questions rather than patches to you.  I'm always learning the
 
-[0] Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+The quick and dirty POC patch for illustration along with the questions
+is always good to catch my attention.
 
-Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 7 +++----
- drivers/pinctrl/pinctrl-mcp23s08.h | 2 +-
- 2 files changed, 4 insertions(+), 5 deletions(-)
+> workflows of the different maintainers, so sorry for killing so much
+> time.  :(
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 0138638276e7..ac8926985c28 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -566,9 +566,8 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	if (ret < 0)
- 		goto fail;
- 
--	mcp->irq_controller =
--		device_property_read_bool(dev, "interrupt-controller");
--	if (mcp->irq && mcp->irq_controller) {
-+	mcp->irq_enabled = device_property_present(dev, "interrupts");
-+	if (mcp->irq && mcp->irq_enabled) {
- 		mcp->irq_active_high =
- 			device_property_read_bool(dev,
- 					      "microchip,irq-active-high");
-@@ -601,7 +600,7 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			goto fail;
- 	}
- 
--	if (mcp->irq && mcp->irq_controller) {
-+	if (mcp->irq && mcp->irq_enabled) {
- 		struct gpio_irq_chip *girq = &mcp->chip.irq;
- 
- 		girq->chip = &mcp->irq_chip;
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.h b/drivers/pinctrl/pinctrl-mcp23s08.h
-index 90dc27081a3c..1aa9b11780fc 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.h
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.h
-@@ -30,7 +30,7 @@ struct mcp23s08 {
- 	u16			irq_rise;
- 	u16			irq_fall;
- 	int			irq;
--	bool			irq_controller;
-+	bool			irq_enabled;
- 	int			cached_gpio;
- 	/* lock protects regmap access with bypass/cache flags */
- 	struct mutex		lock;
--- 
-2.26.2
+No problem. 
 
+>> If it solves the problem and from what you explained it should do so
+>> then this is definitely the right way to go.
+>
+> Wonderful!  Looking forward to Maulik's post doing it this way.
+
+/me closes the case for now and moves on.
+
+Thanks
+
+        tglx
