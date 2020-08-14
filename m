@@ -2,333 +2,213 @@ Return-Path: <SRS0=M7SY=BY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A375DC433E4
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 03:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E05C433DF
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 03:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70CD42078D
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 03:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4CC220716
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 03:05:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Odalo00k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRKdgiqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbgHNDFN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Aug 2020 23:05:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45776 "EHLO
+        id S1726593AbgHNDFV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Aug 2020 23:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbgHNDFM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 23:05:12 -0400
-Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F0C9C061384
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 20:05:12 -0700 (PDT)
-Received: by mail-vs1-xe42.google.com with SMTP id r7so3996364vsq.5
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 20:05:12 -0700 (PDT)
+        with ESMTP id S1726576AbgHNDFV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2020 23:05:21 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D222C061757;
+        Thu, 13 Aug 2020 20:05:21 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id mw10so3723931pjb.2;
+        Thu, 13 Aug 2020 20:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3h+hOtZ0O+sw6nZ7l5sUdheVk8E93Obg4yxo2/Jz3lU=;
-        b=Odalo00kZdhQM/wJM4k3CuBjmJDqVr+KmWEjaDiQHPiLqou8vU09CEqX5RpdQSSUGx
-         nD0GDSz6zbX6sdhZ6IXAWDOdxue1YsF3f2KMF3lGcmc3vgp/Ax79LKgZDGmAuh8ToJ9Z
-         Fpa6Hj0hN0Z56Jk6/o21hj9T3CYktmFAiij40=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ADP2aGUDRbAJ2fzGJ4u2MgmoEkak0G6DX7jqH1kdmdo=;
+        b=mRKdgiqs07vkxxjTqsAjH/48JLLsLSlgnk86cInqgmM2qtR3OFBEIImGHr7cnPmOWo
+         bH98bVfbHz3ZEmpoiSkgX9pCscgED2r5H7SKU6axAQ+5g/1HaYWSaeZDNB7FD5JlgFqw
+         FCyLt6VkzxW+4yHrbJ6OnXWTV9DhrF5cJywLHuToFVjpjDhczNCqGlPBFMb3nF8baeFc
+         ymKJu3V5r/awDaDY8pTojRjd/A1d2xyj2mea54AZcPG8E7TnSxzyThEaZu1Kdc0u4lTU
+         Op3E/C/xuHu4X59/M3bqHHCS90P25Ox3E5j6axdMB7oWbIrBTDmi/TIC6Z5F16NrV7QM
+         ihBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3h+hOtZ0O+sw6nZ7l5sUdheVk8E93Obg4yxo2/Jz3lU=;
-        b=UQAfzfvOeEMmfTdCX7Ylsor1e45MJHU2JCEeRZQax6RLBZwSWEoPHW0gh1ZxeDBY04
-         RfUiX1fWHyBfBBl9TCurAgOA3bbX31NpmMg+3M4Fo8wQXF3kF+7S7DRWjEYf+Qh2eWdg
-         /gxM1pO2Ck1UGgda+N/jCUJpPSi79dUkW1wsE1hhSV8vuGnLKk09ZCuvm2XyiobJl9z/
-         c40kSop/SluzOqaIPl9A3Nb4IMv3glgZd+9w7SG+02kuiiR4Z0OH+6NpVskqz+MQrfBO
-         oqru+ABarz3j3nMeaG3A2EL4y2VrF3EWAWbd3QM/8iyCwrBsjZ0QjM5j+QPx3F0lJSEt
-         q9gA==
-X-Gm-Message-State: AOAM533xSbswiZ/eW51Sr2S++ctS2H/5ICJugX4UI8if0HDPcQNe6euo
-        JOC+yrxyVKByaTPqzu7uOEp+uTM0FXU=
-X-Google-Smtp-Source: ABdhPJz90tQRW9QflIyhhqY8ujjtNQAl2CesSMPZM/Ec7GvtAWg3xqhZEocnj1P3X6is2T3AXgDG7w==
-X-Received: by 2002:a67:8882:: with SMTP id k124mr308736vsd.27.1597374309391;
-        Thu, 13 Aug 2020 20:05:09 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id b21sm1176583vkb.30.2020.08.13.20.05.08
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2020 20:05:08 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id k25so3980473vsm.11
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2020 20:05:08 -0700 (PDT)
-X-Received: by 2002:a67:f44f:: with SMTP id r15mr291730vsn.42.1597374307349;
- Thu, 13 Aug 2020 20:05:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ADP2aGUDRbAJ2fzGJ4u2MgmoEkak0G6DX7jqH1kdmdo=;
+        b=hPAqdLROZkdyFBRDbO2ITSk6zky1EVPkYQ2938qvjvUjfSMnrEKKCF2KB0/HTuTsp9
+         UTAxz0adzTB1FhFq60VIoZ86QbOd+62QFLaDzWQxN51KRPcpmDR+NpvPxcQZwIAEdbVD
+         KFlbcU05RQqoDwI5ykzPgfzciJBFltKRvi+DC5vpuE1nlgaER2kdhTZCXqsaMEMrm0dr
+         GBLfuaFJV+ypMTTjHDnCkntcyTQyldSlP9vasRy/TAbE3cQvlztNekMGLmboyJA51XPQ
+         puqdGIugILetnuuKm+FkPdUSwbiZ/sRoMOtK2AV1A5dE+y2/pZ0h+wuwpFSuP5Pcu7SJ
+         xzlQ==
+X-Gm-Message-State: AOAM531XGMmWlyOkN+IL6lFhwtfcdDc4ADgzqY1x3PwiilZiJjoPrB5b
+        5Qgu810tx2ER0yaYsjlOI1POPSda
+X-Google-Smtp-Source: ABdhPJyBfyqQYElJZFfdYEuxQXJmg/JEp305/WNS5U1OvbEIKg7mYWMBZW5bpPPuv97c87bvSBAOXw==
+X-Received: by 2002:a17:902:30d:: with SMTP id 13mr563880pld.251.1597374320266;
+        Thu, 13 Aug 2020 20:05:20 -0700 (PDT)
+Received: from sol.lan (106-69-161-64.dyn.iinet.net.au. [106.69.161.64])
+        by smtp.gmail.com with ESMTPSA id z3sm6522231pgk.49.2020.08.13.20.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2020 20:05:19 -0700 (PDT)
+From:   Kent Gibson <warthog618@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bgolaszewski@baylibre.com, linus.walleij@linaro.org
+Cc:     Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH v4 14/20] tools: gpio: port lsgpio to v2 uAPI
+Date:   Fri, 14 Aug 2020 11:02:51 +0800
+Message-Id: <20200814030257.135463-15-warthog618@gmail.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200814030257.135463-1-warthog618@gmail.com>
+References: <20200814030257.135463-1-warthog618@gmail.com>
 MIME-Version: 1.0
-References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org>
- <1597058460-16211-4-git-send-email-mkshah@codeaurora.org> <87pn7ulwr5.fsf@nanos.tec.linutronix.de>
- <CAD=FV=WN4R1tS47ZzdZa_hsbvLifwnv6rgETVaiea0+QSZmiOw@mail.gmail.com>
- <878sei42ql.fsf@nanos.tec.linutronix.de> <CAD=FV=Wyp8B6183avk4on4Akz6dANkuJ25h_o_ERDuiZ87mwNw@mail.gmail.com>
- <87364q3rqb.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87364q3rqb.fsf@nanos.tec.linutronix.de>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 13 Aug 2020 20:04:55 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V1hvWZ0ANX9nsvRX_iXjuzw0X_tL2hgg4zYGgsqRtLTQ@mail.gmail.com>
-Message-ID: <CAD=FV=V1hvWZ0ANX9nsvRX_iXjuzw0X_tL2hgg4zYGgsqRtLTQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/7] genirq: Introduce irq_suspend_one() and
- irq_resume_one() callbacks
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Maulik Shah <mkshah@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        LinusW <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Srinivas Rao L <lsrao@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Port the lsgpio tool to the latest GPIO uAPI.
 
-On Thu, Aug 13, 2020 at 7:07 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Doug,
->
-> On Thu, Aug 13 2020 at 15:58, Doug Anderson wrote:
-> > On Thu, Aug 13, 2020 at 3:09 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> > * If this interrupt fires while the system is suspended then please
-> >> > wake the system up.
-> >>
-> >> Well, that's kinda contradicting itself. If the interrupt is masked then
-> >> what is the point? I'm surely missing something subtle here.
-> >
-> > This is how I've always been told that the API works and there are at
-> > least a handful of drivers in the kernel whose suspend routines both
-> > enable wakeup and call disable_irq().  Isn't this also documented as
-> > of commit f9f21cea3113 ("genirq: Clarify that irq wake state is
-> > orthogonal to enable/disable")?
->
-> Fair enough. The wording there is unfortunate and I probably should have
-> spent more brain cycles before applying it. It suggests that this is a
-> pure driver problem. I should have asked some of the questions I asked
-> now back then :(
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+---
+ tools/gpio/lsgpio.c | 60 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 38 insertions(+), 22 deletions(-)
 
-I mean, certainly a driver could be rewritten not to do this.  ...and,
-in fact, the easier approach (for just solving my immediate concern)
-would be to change cros-ec not to do this.  However, it was my
-understanding that what cros-ec was doing was actually just fine and
-part of the API to drivers.  This understanding was solidified when
-the patch I mentioned landed.  When looking at this before I found
-that certainly there are other drivers that do this and it felt better
-to implement the proper thing rather than add a hack to cros-ec to
-work around the Qualcomm pinctrl driver.
+diff --git a/tools/gpio/lsgpio.c b/tools/gpio/lsgpio.c
+index b08d7a5e779b..deda38244026 100644
+--- a/tools/gpio/lsgpio.c
++++ b/tools/gpio/lsgpio.c
+@@ -25,57 +25,73 @@
+ 
+ struct gpio_flag {
+ 	char *name;
+-	unsigned long mask;
++	unsigned long long mask;
+ };
+ 
+ struct gpio_flag flagnames[] = {
+ 	{
+-		.name = "kernel",
+-		.mask = GPIOLINE_FLAG_KERNEL,
++		.name = "used",
++		.mask = GPIO_V2_LINE_FLAG_USED,
++	},
++	{
++		.name = "input",
++		.mask = GPIO_V2_LINE_FLAG_INPUT,
+ 	},
+ 	{
+ 		.name = "output",
+-		.mask = GPIOLINE_FLAG_IS_OUT,
++		.mask = GPIO_V2_LINE_FLAG_OUTPUT,
+ 	},
+ 	{
+ 		.name = "active-low",
+-		.mask = GPIOLINE_FLAG_ACTIVE_LOW,
++		.mask = GPIO_V2_LINE_FLAG_ACTIVE_LOW,
+ 	},
+ 	{
+ 		.name = "open-drain",
+-		.mask = GPIOLINE_FLAG_OPEN_DRAIN,
++		.mask = GPIO_V2_LINE_FLAG_OPEN_DRAIN,
+ 	},
+ 	{
+ 		.name = "open-source",
+-		.mask = GPIOLINE_FLAG_OPEN_SOURCE,
++		.mask = GPIO_V2_LINE_FLAG_OPEN_SOURCE,
+ 	},
+ 	{
+ 		.name = "pull-up",
+-		.mask = GPIOLINE_FLAG_BIAS_PULL_UP,
++		.mask = GPIO_V2_LINE_FLAG_BIAS_PULL_UP,
+ 	},
+ 	{
+ 		.name = "pull-down",
+-		.mask = GPIOLINE_FLAG_BIAS_PULL_DOWN,
++		.mask = GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN,
+ 	},
+ 	{
+ 		.name = "bias-disabled",
+-		.mask = GPIOLINE_FLAG_BIAS_DISABLE,
++		.mask = GPIO_V2_LINE_FLAG_BIAS_DISABLED,
+ 	},
+ };
+ 
+-void print_flags(unsigned long flags)
++static void print_attributes(struct gpio_v2_line_info *info)
+ {
+ 	int i;
+-	int printed = 0;
++	const char *field_format = "%s";
+ 
+ 	for (i = 0; i < ARRAY_SIZE(flagnames); i++) {
+-		if (flags & flagnames[i].mask) {
+-			if (printed)
+-				fprintf(stdout, " ");
+-			fprintf(stdout, "%s", flagnames[i].name);
+-			printed++;
++		if (info->flags & flagnames[i].mask) {
++			fprintf(stdout, field_format, flagnames[i].name);
++			field_format = ", %s";
+ 		}
+ 	}
++
++	if ((info->flags & GPIO_V2_LINE_FLAG_EDGE_RISING) &&
++	    (info->flags & GPIO_V2_LINE_FLAG_EDGE_FALLING))
++		fprintf(stdout, field_format, "both-edges");
++	else if (info->flags & GPIO_V2_LINE_FLAG_EDGE_RISING)
++		fprintf(stdout, field_format, "rising-edge");
++	else if (info->flags & GPIO_V2_LINE_FLAG_EDGE_FALLING)
++		fprintf(stdout, field_format, "falling-edge");
++
++	for (i = 0; i < info->num_attrs; i++) {
++		if (info->attrs[i].id == GPIO_V2_LINE_ATTR_ID_DEBOUNCE)
++			fprintf(stdout, ", debounce_period=%dusec",
++				info->attrs[0].debounce_period);
++	}
+ }
+ 
+ int list_device(const char *device_name)
+@@ -109,18 +125,18 @@ int list_device(const char *device_name)
+ 
+ 	/* Loop over the lines and print info */
+ 	for (i = 0; i < cinfo.lines; i++) {
+-		struct gpioline_info linfo;
++		struct gpio_v2_line_info linfo;
+ 
+ 		memset(&linfo, 0, sizeof(linfo));
+-		linfo.line_offset = i;
++		linfo.offset = i;
+ 
+-		ret = ioctl(fd, GPIO_GET_LINEINFO_IOCTL, &linfo);
++		ret = ioctl(fd, GPIO_V2_GET_LINEINFO_IOCTL, &linfo);
+ 		if (ret == -1) {
+ 			ret = -errno;
+ 			perror("Failed to issue LINEINFO IOCTL\n");
+ 			goto exit_close_error;
+ 		}
+-		fprintf(stdout, "\tline %2d:", linfo.line_offset);
++		fprintf(stdout, "\tline %2d:", linfo.offset);
+ 		if (linfo.name[0])
+ 			fprintf(stdout, " \"%s\"", linfo.name);
+ 		else
+@@ -131,7 +147,7 @@ int list_device(const char *device_name)
+ 			fprintf(stdout, " unused");
+ 		if (linfo.flags) {
+ 			fprintf(stdout, " [");
+-			print_flags(linfo.flags);
++			print_attributes(&linfo);
+ 			fprintf(stdout, "]");
+ 		}
+ 		fprintf(stdout, "\n");
+-- 
+2.28.0
 
-In general the idea here, I think, is that in the "suspend" call of a
-driver it might want to disable interrupts so that it doesn't have to
-deal with them after the driver has configured things (and adjusted
-its internal data structures) for suspend.  However, it might still
-want its interrupt to cause a wakeup.  ...so it wants the wakeup to
-happen (and its resume call to be made to get everything back in the
-right state) and at the end of the resume call it wants to enable its
-interrupt handler again.  That seems like a sane design pattern to me,
-but maybe I'm crazy.  Yes, I guess the driver could implement the
-"noirq" suspend function, but sometimes it's simpler to have a single
-suspend function that first leverages interrupts, then disables them
-at an exact point it can control, and then finishes adjusting its
-state.
-
-I'll also note that the concept that a masked interrupt can "wake you
-up" is also not unlike how ARM SoCs work, which is part of what made
-me feel like this API was fine.  Specifically if you have interrupts
-masked at the CPU level and then enter "WFI" (wait for interrupt) it
-will wake up (or come out of idle) from one of those masked
-interrupts.
-
-
-> >> If that's the main problem which is solved in these callbacks, then I
-> >> really have to ask why this has not been raised years ago. Why can't
-> >> people talk?
-> >
-> > Not all of us have the big picture that you do to know how things
-> > ought to work, I guess.  If nothing else someone looking at this
-> > problem would think: "this must be a common problem, let's go see how
-> > all the other places do it" and then they find how everyone else is
-> > doing it and do it that way.  It requires the grander picture that a
-> > maintainer has in order to say: whoa, everyone's copying the same
-> > hack--let's come up with a better solution.
->
-> That's not the point. I know how these things happen, but I fail to
-> understand why nobody ever looks at this and says: OMG, I need to do yet
-> another variant of copy&pasta of the same thing every other driver
-> does. Why is there no infrastructure for that?
->
-> Asking that question does not require a maintainer who always encouraged
-> people to talk about exactly these kind of things instead of going off
-> and creating the gazillionst broken copy of the same thing with yet
-> another wart working around core code problems and thereby violating
-> layering and introducing bugs which wouldn't exist otherwise.
->
-> Spare me all the $corp reasons. I've heard all of them and if not then
-> the not yet known reason won't be any more convincing. :)
-
-As per above, if I was simply motivated to hack it to get it done I
-would have suggested we just muck with cros_ec.  I certainly do have a
-bias for getting things done and getting things landed, but I also try
-to pride myself in not saying that we should just accept any old hack.
-Perhaps many people posting patches just want any old crap landed, but
-I'd like to think I'm not one of them.
-
-
-> One of the most underutilized strengths of FOSS is that you can go and
-> ask someone who has the big picture in his head before you go off and
-> waste time on distangling copy&pasta, dealing with the resulting obvious
-> bugs and then the latent ones which only surface 3 month after the
-> product has shipped. Or like in this case figure out that the copy&pasta
-> road is a dead end and then create something new without seeing the big
-> picture and having analyzed completely what consequences this might have.
-
-I've found that one of the best ways to get something figured out is
-to post a patch, even if it's not perfect.  Perhaps in cases where
-you're involved, but in general most cases where you just ask a
-question you get ignored.  You've gotta post a patch.  This solution
-was the best I was able to come up with and was discussed with several
-people before posting.
-
-
-> I don't know how much hours you and others spent on this. I surely know
-> that after you gave me proper context it took me less than an hour to
-> figure out that one problem you were trying to solve was already solved
-> and the other one was just a matter of doing the counterpart of it. I
-> definitely spent way more time on reviewing and debating.
-
-I did spend quite a bit of time on it, though perhaps it's not
-obvious.  Though I agree that the patch in isolation didn't have a
-good enough description, I felt like it combined with the later
-patches in the series did show what I was trying to do.
-
-
-> So if you had asked upfront, I probably would have spent quite some time
-> on it as well depending on the quality of the question and explanation
-> but the total amount on both sides would have been significantly lower,
-> which I consider a win-win situation.
->
-> Of course I know that my $corp MBA foo is close to zero, so I just can
-> be sure that it would have been a win for me :)
->
-> Seriously, we need to promote a 'talk to each other' culture very
-> actively. The people with the big picture in their head, aka
-> maintainers, are happy to answer questions and they also want that
-> others come forth and say "this makes no sense" instead of silently
-> accepting that the five other drivers do something stupid. This would
-> help to solve some of the well known problems:
->
->  - Maintainer scalability
->
->    I rather discuss a problem with you at the conceptual level upfront
->    instead of reviewing patches after the fact and having to tell you
->    that it's all wrong. The latter takes way more time.
->
->    Having a quick and dirty POC for illustration is fine and usually
->    useful.
-
-OK, I will try to remember that, in the future, I should send
-questions rather than patches to you.  I'm always learning the
-workflows of the different maintainers, so sorry for killing so much
-time.  :(
-
-
->  - Maintainer blinders
->
->    Maintainers need input from the outside as any other people because
->    they become blind to shortcomings in the area they are responsible
->    for as any other person. Especially if they maintain complex and
->    highly active subsystems.
->
->  - Submitter frustration
->
->    You spent a huge amount of time to come up with a solution for
->    something and then you get told by the maintainer/reviewer that the
->    time spent was wasted and your solution is crap. It does not matter
->    much what the politeness level of that message is. It sets you back
->    and causes frustration on both ends.
->
->  - Turn around times
->
->    A lot of time can be spared by talking to each other early. A half
->    baken POC patch is fine for opening such a discussion, but going down
->    all the way and then having the talk over the final patch review is
->    more than suboptimal and causes grief on both sides.
-
-Yup, definitely understand.  Again, sorry for the misunderstandings
-this time around and hopefully we can find better ways to interact in
-the future.
-
-
-> >>   "These two callbacks are interesting because sometimes an irq chip
-> >>    needs to know about suspend/resume."
-> >>
-> >> Really valuable and precise technical information.
-> >
-> > Funny to get yelled at for not providing a detailed enough changelog.
-> > Usually people complain that my changelogs are too detailed.  Sigh.
->
-> The complaint you might get from me about an overly detailed changelog
-> is that it has redundant or pointless information in it, e.g.
->
->   - the 500 lines of debug dump containing about 10 lines of valuable
->     information which you already decoded and condensed in order to
->     figure the problem out.
->
->   - anecdotes around the discovery which carry zero information and
->     often show that that the scope of the problem was not fully
->     understood.
->
->   - pointless examples of how to trigger the fail
->
->   - In depth explanaations of what the patch does instead of a concise
->     explanation at the conceptual level.
->
-> You won't hear me complain about a concise and coherent in depth
-> technical explanation of a problem.
->
-> Writing changelogs is an art and I surely look at some of my own
-> changelogs written long ago and yell at myself from time to time.
->
-> Reading a patch goes top down obviously:
->
->       1) Subject line
->       2) Changelog
->       3) Patch.
->
-> If I have to rumage for my crystal ball before #3 then I already spent
-> more time than necessary. If the thing is some random feature then I
-> might just say: try again. But if I get the sense that it is about a bug
-> or  has some smell of a shorrcoming in the core code then I have to bite
-> the bullet and decode it the hard way. Not the most efficient way. And
-> from experience I can tell you that if #1 and #2 are already problematic
-> then #3 needs some serious scrutiny in most cases.
->
-> >> Hint: "Sometimes a chip needs to know" does not qualify :)
-> >
-> > Clearly I am not coherent.  ;-)  My only goal was to help enable
-> > interrupts that were disabled / marked as wakeup (as per above,
-> > documented to be OK) to work on Qualcomm chips.  This specifically
-> > affects me because a driver that I need to work (cros_ec) does this.
->
-> Mission acoomplished :)
->
-> > If IRQCHIP_UNMASK_WAKEUP_ON_SUSPEND is good to add then it sounds like
-> > a great plan to me.
->
-> If it solves the problem and from what you explained it should do so
-> then this is definitely the right way to go.
-
-Wonderful!  Looking forward to Maulik's post doing it this way.
-
--Doug
