@@ -1,106 +1,164 @@
-Return-Path: <SRS0=M7SY=BY=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=nTOY=BZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89637C433E1
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 20:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A7EC433E1
+	for <linux-gpio@archiver.kernel.org>; Sat, 15 Aug 2020 21:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6424420774
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Aug 2020 20:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AE4922BED
+	for <linux-gpio@archiver.kernel.org>; Sat, 15 Aug 2020 21:58:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Jdo0NGDf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meBYpFKf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbgHNUYp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 14 Aug 2020 16:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36418 "EHLO
+        id S1729230AbgHOV6B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 15 Aug 2020 17:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbgHNUYo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2020 16:24:44 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C34C061385
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2020 13:24:44 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id g15so779804plj.6
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2020 13:24:44 -0700 (PDT)
+        with ESMTP id S1728915AbgHOVwA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 15 Aug 2020 17:52:00 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33334C02B8F5;
+        Sat, 15 Aug 2020 06:21:45 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id f9so5572669pju.4;
+        Sat, 15 Aug 2020 06:21:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=rwpaXnT2EeEfwGVu4ev0tx59FKrNBxWx6TusqvWIrO4=;
-        b=Jdo0NGDfaHr6zmtamxEimY/fqPy2jmUHSXfgnVas6TIV83p6Tc/4V+90pUHvallzEc
-         C/iVNYD1ikU9HKFeCoEiaUSjHf2k+OPtnGgDgyt+1oAyoSPy0oZSZZtOYGwuovPd/bPN
-         bh/7iVIqEXktIv/8CZAJqfNXvvD1oqgSa989k=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1uixVnw4VqVRWBxjLItwqvGPWa+lcvmh4b3cIx3Xb64=;
+        b=meBYpFKfZGJfoM+cLyqrj1fe3d3boOTYypFqELfkisrmrZVlGPAQBtePqMqyFOrQB3
+         Cc/nFs46SwiWFIct3N1kx4mlrEdFTHyrFVkoh31I1UKdBvFVtKX61Zkg7tfbovIFYzj/
+         FFbIUExgZKNdsT+YV+XQZl2wWLbnkJUqV0r1rIqjqJ2ob5rFRN+AcrVzeuOmr6GdJhj4
+         S0vesbPzZsNQ7iwr09KLeXBDlA5xQ2hs05KaoRPypH9iTrwT/a5XcMEhVurj8+TjYqrh
+         wBxd8uxnA+NhOegQ7gE+XWhloVMCs2ZisXrFrGM0hFEu606nHJAbg3RmstTBcedMC4nP
+         T+3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=rwpaXnT2EeEfwGVu4ev0tx59FKrNBxWx6TusqvWIrO4=;
-        b=cnXnc7BzgqkC8pLVbELXV4yq3skBDGK3j1N8vgULQk3M13nHeNwSiSkIYLUZqU7ine
-         8uMkim8gLy9ej57FTRldw+UxX1v7J2nTlDPEL+k61r4sxRQv+aAjs7uqCFhVvLbG4GaJ
-         h+PU2t5+DvgNWwMCTAanolT1EZlER6v+21/bCpzhBL+RJLSmu7vsqbOmRQJ0xmgeNS85
-         dlfpn5li+YLM5eBm4p7l6Z0IWjIjzR/dueWw0Alhx9vRLpPRuwqI8YebNIbbBF7dSX78
-         3u4SYxmnR41f1SVZm+cX6dyRt+ZVQLjWbKfNV3IgreSg6Q4byEvJNkeSSjuWTyT+ZSLN
-         4cqg==
-X-Gm-Message-State: AOAM532urVaTYvpXjx1OQz2lEljqgTTbP3QE9TATzHsmwplVgWbXOS/O
-        4g57j9ntj/oSupMypdZgyp63hA==
-X-Google-Smtp-Source: ABdhPJy/guAnpNvjPltmDRyGFOwK8QXlT4NftOMstfwJ8I5HPq/JZI2YY8fQWzE+0d728rj4fPnFbQ==
-X-Received: by 2002:a17:90a:1fca:: with SMTP id z10mr3536837pjz.209.1597436684024;
-        Fri, 14 Aug 2020 13:24:44 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:3e52:82ff:fe6c:83ab])
-        by smtp.gmail.com with ESMTPSA id r15sm10581689pfq.189.2020.08.14.13.24.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1uixVnw4VqVRWBxjLItwqvGPWa+lcvmh4b3cIx3Xb64=;
+        b=QD9YKjpgw5N4djevR52pV5pdG1ynKFJn6QRmbbN4ih4yHSzsKjepqq+wlELK79MGRc
+         eluh7JLFTMghreHs7qXY3lb60b9fjcrPgyN9HQKawZmcpEa/tE7LFMx8rylrgWauoMhK
+         E6VWVp5i4pbJRVgdO80ACNpbhkoj2GdZ3CNPUNTc0rCdxk4ZnWy1UkXDEv0NYU369fVc
+         tZ/7IUbJxUgU3C2klR01ByFcO2gYGOF2/7BkgzI5WmNmYGdS5mNBFC06KTfTBhGfa7lH
+         S/pYhHER+WSSMb6GKKJYkFN2SzR3DrBbC4HTCZttt6UB9sMuH87G6IYC3MJfDnE5xvTL
+         9XCg==
+X-Gm-Message-State: AOAM532ZDbHhqlk205fDAeonRdEkG1GMIzlSq+upddeCNOxr9t3c17Wp
+        AkujLhMAcM1tbmA9Yfgylsm7CdMmudY=
+X-Google-Smtp-Source: ABdhPJxbk52AnBRSmfVNk8XI6Ty+YU14VH35qkrnjDVKBaPq7aA4B1AcKNSuoTXdfUG4GeC9zJvnZg==
+X-Received: by 2002:a17:902:ff16:: with SMTP id f22mr5330256plj.269.1597497697744;
+        Sat, 15 Aug 2020 06:21:37 -0700 (PDT)
+Received: from sol (106-69-184-100.dyn.iinet.net.au. [106.69.184.100])
+        by smtp.gmail.com with ESMTPSA id d29sm11068823pgb.54.2020.08.15.06.21.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Aug 2020 13:24:43 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 15 Aug 2020 06:21:36 -0700 (PDT)
+Date:   Sat, 15 Aug 2020 21:21:32 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 07/20] gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL
+ and GPIO_V2_LINE_GET_VALUES_IOCTL
+Message-ID: <20200815132132.GA26885@sol>
+References: <20200814030257.135463-1-warthog618@gmail.com>
+ <20200814030257.135463-8-warthog618@gmail.com>
+ <CAMpxmJXdGUnnomfWNRmpi979jLPMj17JuA=0K2Nq-oVS_-oQ3A@mail.gmail.com>
+ <20200815065309.GA13905@sol>
+ <CAMpxmJVMJYJ71z59Mu-mCTQPNqV9N9sXJXNBjYazGo0tmXthfg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1272cba3-1a6c-4d2e-0b4b-a19dfb5f3a4d@codeaurora.org>
-References: <1597058460-16211-1-git-send-email-mkshah@codeaurora.org> <1597058460-16211-8-git-send-email-mkshah@codeaurora.org> <159718150946.1360974.10983789401181131846@swboyd.mtv.corp.google.com> <1272cba3-1a6c-4d2e-0b4b-a19dfb5f3a4d@codeaurora.org>
-Subject: Re: [PATCH v4 7/7] irqchip: qcom-pdc: Reset all pdc interrupts during init
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, agross@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
-        ilina@codeaurora.org, lsrao@codeaurora.org
-To:     Maulik Shah <mkshah@codeaurora.org>, bjorn.andersson@linaro.org,
-        evgreen@chromium.org, linus.walleij@linaro.org, maz@kernel.org,
-        mka@chromium.org
-Date:   Fri, 14 Aug 2020 13:24:42 -0700
-Message-ID: <159743668207.33733.6711446681138353287@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJVMJYJ71z59Mu-mCTQPNqV9N9sXJXNBjYazGo0tmXthfg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Quoting Maulik Shah (2020-08-13 00:30:44)
-> Hi,
->=20
-> On 8/12/2020 3:01 AM, Stephen Boyd wrote:
-> > Quoting Maulik Shah (2020-08-10 04:21:00)
-> >> Clear previous kernel's configuration during init by resetting
-> >> interrupts in enable bank to zero.
-> > Can you please add some more information here about why we're not
-> > clearing all the pdc irqs and only the ones that are listed in DT?
-> sure.
-> >   Is
-> > that because the pdc is shared between exception levels of the CPU and
-> > so some irqs shouldn't be used? Does the DT binding need to change to
-> > only list the hwirqs that are usable by the OS instead of the ones that
-> > are usable for the entire system? The binding doesn't mention this at
-> > all so I am just guessing here.
->=20
-> The IRQs specified in qcom,pdc-ranges property in DT are the only ones=20
-> that can be used in the current OS for the PDC.
->=20
-> So instead of setting entire register to zero (each reg supports 32=20
-> interrupts enable bit) only clearing the ones that can be used.
->=20
+On Sat, Aug 15, 2020 at 09:21:22AM +0200, Bartosz Golaszewski wrote:
+> On Sat, Aug 15, 2020 at 8:53 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Fri, Aug 14, 2020 at 09:31:29PM +0200, Bartosz Golaszewski wrote:
+> > > On Fri, Aug 14, 2020 at 5:04 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > > >
+> > > > Add support for requesting lines using the GPIO_V2_GET_LINE_IOCTL, and
+> > > > returning their current values using GPIO_V2_LINE_GET_VALUES_IOCTL.
+> > > >
+> > > > Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> > > > ---
+> > >
+> > > Hi Kent,
+> > >
+> > > not many comments here, just a couple minor details below.
+> > >
+> >
+> > [snip]
+> >
+> > > > +
+> > > > +/**
+> > > > + * struct line - contains the state of a userspace line request
+> > > > + * @gdev: the GPIO device the line request pertains to
+> > > > + * @label: consumer label used to tag descriptors
+> > > > + * @num_descs: the number of descriptors held in the descs array
+> > > > + * @descs: the GPIO descriptors held by this line request, with @num_descs
+> > > > + * elements.
+> > > > + */
+> > > > +struct line {
+> > >
+> > > How about line_request, line_request_data or line_req_ctx? Something
+> > > more intuitive than struct line that doesn't even refer to a single
+> > > line. Same for relevant functions below.
+> > >
+> >
+> > As I've mentioned previously, I'm not a fan of names that include _data,
+> > _ctx, _state, or similar that don't really add anything.
+> >
+> 
+> I certainly disagree with you on this. I think it's useful to discern
+> the object itself from data associated with it. Let's consider struct
+> irq_data and let's imagine it would be called struct irq instead. The
+> latter would be misleading - as this struct contains a lot additional
+> fields that form the context for the irq but aren't logically part of
+> the "irq object". And then you have irq_common_data which is even more
+> disconnected from the irq. This also would make using the name "irq"
+> for the variables containing the global irq number confusing.
+> 
+> I think the same happens here: we may want to use the name "line" for
+> local variables and then having "struct line_data" (or similar) would
+> make it easier to read.
+> 
 
-Ok. Is something wrong with setting all the register bits to 0? Is there
-something else in those registers that shouldn't be touched? Please add
-these details to the commit message.
+My counter example to both points is "struct file *file".
+
+> I'll listen to other's suggestions/voices but personally I think that
+> _ctx, _data etc. suffixes actually make sense.
+> 
+> > I did consider line_request, but that was too close to the
+> > gpio_v2_line_request in gpio.d, not just the struct but also the
+> > resulting local variables, particularly in line_create() where they
+> > co-exist.
+> >
+> > Given the ioctl names, GPIO_V2_GET_LINE_IOCTL and
+> > GPIO_V2_LINE_GET/SET_xxx, that all create or operate on this struct, and
+> > that this is within the scope of gpiolib-cdev, the name 'line' seemed the
+> > best fit.
+> >
+> 
+> And that's why line_data or line_request_data do make sense IMO.
+> 
+> > And how does it not refer to a single line - what are the descs??
+> >
+> 
+> I meant the fact that it can refer to multiple lines while being
+> called "struct line". I do find this misleading.
+> 
+
+And struct line_data isn't?
+
+Cheers,
+Kent.
