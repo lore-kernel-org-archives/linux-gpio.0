@@ -2,141 +2,58 @@ Return-Path: <SRS0=QcYp=B4=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997C4C433E3
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Aug 2020 10:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010F6C433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Aug 2020 11:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FD23204EA
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Aug 2020 10:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC0220706
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Aug 2020 11:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgHRKU6 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Aug 2020 06:20:58 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:57266 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726043AbgHRKUx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 Aug 2020 06:20:53 -0400
-Received: from [78.134.86.56] (port=53170 helo=[192.168.77.62])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1k7yjY-000DIV-Rp; Tue, 18 Aug 2020 12:20:49 +0200
-Subject: Re: [PATCH 2/3] fpga manager: xilinx-spi: provide better diagnostics
- on programming failure
-To:     Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anatolij Gustschin <agust@denx.de>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20200817165911.32589-1-luca@lucaceresoli.net>
- <20200817165911.32589-2-luca@lucaceresoli.net>
- <b1a1a9d9-d36b-40f0-24e3-f793e55db929@redhat.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <51694865-2a05-ac67-43a0-dbcb9989cbab@lucaceresoli.net>
-Date:   Tue, 18 Aug 2020 12:20:46 +0200
+        id S1726576AbgHRLam (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Aug 2020 07:30:42 -0400
+Received: from imap3.hz.codethink.co.uk ([176.9.8.87]:50904 "EHLO
+        imap3.hz.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbgHRLaf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Aug 2020 07:30:35 -0400
+X-Greylist: delayed 1272 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Aug 2020 07:30:31 EDT
+Received: from [188.210.212.0] (helo=[192.168.0.104])
+        by imap3.hz.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1k7zUO-0005sK-8K; Tue, 18 Aug 2020 12:09:12 +0100
+Subject: Re: [PATCH 0/3] pinctrl: mcp23s08: Fixups for mcp23x17
+To:     Rob Herring <robh@kernel.org>
+Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200814100357.209340-1-thomas.preston@codethink.co.uk>
+ <26d33248-c07b-db2c-2989-3ca14aea7896@codethink.co.uk>
+ <20200817192957.GA1401599@bogus>
+From:   Thomas Preston <thomas.preston@codethink.co.uk>
+Message-ID: <13c56cdc-ecb4-6590-7233-887397f1cd97@codethink.co.uk>
+Date:   Tue, 18 Aug 2020 12:09:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <b1a1a9d9-d36b-40f0-24e3-f793e55db929@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200817192957.GA1401599@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 7bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-[a question for GPIO maintainers below]
-
-Hi Tom,
-
-thanks for your review!
-
-On 17/08/20 20:15, Tom Rix wrote:
-> The other two patches are fine.
+On 17/08/2020 20:29, Rob Herring wrote:
+> On Fri, Aug 14, 2020 at 02:56:54PM +0100, Thomas Preston wrote:
+>> Actually I think I'm wrong about the interrupt-controller changes in patches
+>> 0002 and 0003.
 > 
-> On 8/17/20 9:59 AM, Luca Ceresoli wrote:
->> When the DONE pin does not go high after programming to confirm programming
->> success, the INIT_B pin provides some info on the reason. Use it if
->> available to provide a more explanatory error message.
->>
->> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
->> ---
->>  drivers/fpga/xilinx-spi.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/fpga/xilinx-spi.c b/drivers/fpga/xilinx-spi.c
->> index 502fae0d1d85..2aa942bb1114 100644
->> --- a/drivers/fpga/xilinx-spi.c
->> +++ b/drivers/fpga/xilinx-spi.c
->> @@ -169,7 +169,16 @@ static int xilinx_spi_write_complete(struct fpga_manager *mgr,
->>  			return xilinx_spi_apply_cclk_cycles(conf);
->>  	}
->>  
->> -	dev_err(&mgr->dev, "Timeout after config data transfer.\n");
->> +	if (conf->init_b) {
->> +		int init_b_asserted = gpiod_get_value(conf->init_b);
-> 
-> gpiod_get_value can fail. So maybe need split the first statement.
-> 
-> init_b_asserted < 0 ? "invalid device"
-> 
-> As the if-else statement is getting complicated, embedding the ? : makes this hard to read.  'if,else if, else' would be better.
+> You are. Looking at the datasheet, the GPIOs have interrupt capability.
+> GPIO controllers are typically both an interrupt client and provider.
 
-Thanks for the heads up. However I'm not sure which is the best thing to
-do here.
+Thanks for the clarification.
 
-First, I've been reading the libgpiod code after your email and yes, the
-libgpiod code _could_ return runtime errors received from the gpiochip
-driver, even though the docs state:
-
-> The get/set calls do not return errors because “invalid GPIO”> should have been reported earlier from gpiod_direction_*().
-(https://www.kernel.org/doc/html/latest/driver-api/gpio/consumer.html)
-
-On the other hand there are plenty of calls to gpiod_get/set_value in
-the kernel that don't check for error values. I guess this is because
-failures getting/setting a GPIO are very uncommon (perhaps impossible
-with platform GPIO).
-
-When still a GPIO get/set operation fails I'm not sure adding thousands
-of error-checking code lines in hundreds of drivers is the best way to
-go. I feel like we should have a unique, noisy dev_err() in the error
-path in libgpio but I was surprised in not finding any [1].
-
-Linus, Bartosz, what's your opinion? Should all drivers check for errors
-after every gpiod_[sg]et_value*() call?
-
->> +		dev_err(&mgr->dev,
->> +			init_b_asserted ? "CRC error or invalid device\n"
->> +			: "Missing sync word or incomplete bitstream\n");
->> +	} else {
->> +		dev_err(&mgr->dev, "Timeout after config data transfer.\n");
-> patch 3 removes '.' s , and you just added one back in ?
-
-Here I'm only changing indentation of this line. But OK, this is
-misleading, so I'll swap patches 2 and 3 in the next patch iteration to
-avoid confusion.
-
-[1]
-https://elixir.bootlin.com/linux/v5.8/source/drivers/gpio/gpiolib.c#L3646
-
--- 
-Luca
-
+I still think the patch 0001 is required. The precious and volatile 
+ranges are broken.
