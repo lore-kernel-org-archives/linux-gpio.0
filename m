@@ -2,85 +2,175 @@ Return-Path: <SRS0=D2MX=B6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D99EC433E1
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790ACC433E3
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE1272078D
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:22:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jGbkrces"
+	by mail.kernel.org (Postfix) with ESMTP id 5ED402054F
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgHTLWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Aug 2020 07:22:48 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:57527 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730549AbgHTLWd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2020 07:22:33 -0400
-X-UUID: af4d0888a4f647dab8a88998ad979dc4-20200820
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=S1Y+0IiFS8nO4Trq+5CEEIC6sfUAEGt90ibukYT0b9E=;
-        b=jGbkrcesOI3wVd2mXfBAN9w/vHttcOMif6TLelF36AnrYNIbu55x54Z9wbExfm2m7KZQkrxUyQgsAXig34choBQ3fGTPRRg37vcuOuxQrWJdOP5di3NTP4Ep5GB6lvuAx9O0gQE5iA+1Jkd7fcO70uTcZwOJMbLMQMwQKXvjVX4=;
-X-UUID: af4d0888a4f647dab8a88998ad979dc4-20200820
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1994942789; Thu, 20 Aug 2020 19:22:31 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 20 Aug 2020 19:22:27 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 20 Aug 2020 19:22:27 +0800
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>,
-        sin_jieyang <sin_jieyang@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>
-Subject: [PATCH v2] pinctrl: mediatek: check mtk_is_virt_gpio input parameter
-Date:   Thu, 20 Aug 2020 19:22:25 +0800
-Message-ID: <1597922546-29633-1-git-send-email-hanks.chen@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1730237AbgHTLZe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Aug 2020 07:25:34 -0400
+Received: from mail-oo1-f67.google.com ([209.85.161.67]:42045 "EHLO
+        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728514AbgHTKGm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2020 06:06:42 -0400
+Received: by mail-oo1-f67.google.com with SMTP id a6so283925oog.9;
+        Thu, 20 Aug 2020 03:06:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7+CSk1ksXzy7e0WIknvr7+ji8pZUrOi3fj0VsGs4weY=;
+        b=EXA02wWQsI5YuePA3VIgOVGGfySn9Nyv6KRdADkev9beQf15igej8ZcJYwdAqafunl
+         0nsIU5GeAzT41tL22DqSVj4gQIu5wBPfuXQ7IETeOb8grj+SsQi+wQhqdPFXqGiAfH6N
+         Ttvqnk082JjN2O+MoPp92mbjJX8IxjFpAsJctnAwLaYKwtJYQjIBXMjtWu3NCsqp30Tr
+         rNWJb41EQnLC/jWn/D5C3yJtaik8lb2S8nKgiSbHxydfmsntX7uJ9fkW8+j03ouQdR3m
+         TecMTKvVw8NY7VAV9NrjaFfjOMPHX5cZ2mwlVZ6JAOtTMerYKbsSMBY2cxiU38z2M8gC
+         UEZQ==
+X-Gm-Message-State: AOAM533/sBcqedcM2+5wXRGK25XzmS3U+kk0LaYQ0ZYIPWH9w5dOwWvS
+        vC4KIEnasnMf+U30xZNwp9OwUBkqpL1iqX7W0RQ=
+X-Google-Smtp-Source: ABdhPJzLpZOD1rs1p3nBtT5EFxS48HiVxoTkLH06KtZW1eQSDDDuEahrzdmBlpsHmdngJPIb1mx3MtQK7PAdAm1yD5w=
+X-Received: by 2002:a4a:4201:: with SMTP id h1mr1818497ooj.1.1597918001038;
+ Thu, 20 Aug 2020 03:06:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: F88F058F9D588338A2C62533E12951333599251915843B08FD4ABEB0C93057CF2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20200807141345.6714-1-geert+renesas@glider.be>
+ <20200817233253.GA1819982@bogus> <CAMuHMdV-NVycDcPggYw4-pvSkkwo079bUevA2yB3XM5YfHi9mg@mail.gmail.com>
+In-Reply-To: <CAMuHMdV-NVycDcPggYw4-pvSkkwo079bUevA2yB3XM5YfHi9mg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 20 Aug 2020 12:06:29 +0200
+Message-ID: <CAMuHMdWGu5+PYiYR9rdt97Hd1ribi0Yc0q68NBU6AFRBDCCg_g@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2] dt-bindings: pinctrl: sh-pfc: Convert to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Y2hlY2sgbXRrX2lzX3ZpcnRfZ3BpbyBpbnB1dCBwYXJhbWV0ZXIsDQp2aXJ0dWFsIGdwaW8gbmVl
-ZCB0byBzdXBwb3J0IGVpbnQgbW9kZS4NCg0KYWRkIGVycm9yIGhhbmRsZXIgZm9yIHRoZSBrbyBj
-YXNlDQp0byBmaXggdGhpcyBib290IGZhaWw6DQpwYyA6IG10a19pc192aXJ0X2dwaW8rMHgyMC8w
-eDM4IFtwaW5jdHJsX210a19jb21tb25fdjJdDQpsciA6IG10a19ncGlvX2dldF9kaXJlY3Rpb24r
-MHg0NC8weGIwIFtwaW5jdHJsX3BhcmlzXQ0KDQpGaXhlczogZWRkNTQ2NDY1MDAyICgicGluY3Ry
-bDogbWVkaWF0ZWs6IGF2b2lkIHZpcnR1YWwgZ3BpbyB0cnlpbmcgdG8gc2V0IHJlZyIpDQpTaW5n
-ZWQtb2ZmLWJ5OiBKaWUgWWFuZyA8c2luX2ppZXlhbmdAbWVkaWF0ZWsuY29tPg0KU2lnbmVkLW9m
-Zi1ieTogSGFua3MgQ2hlbiA8aGFua3MuY2hlbkBtZWRpYXRlay5jb20+DQoNCi0tLQ0KQ2hhbmdl
-cyBzaW5jZSB2MToNCi0gdXBkYXRlIFNpbmdlZC1vZmYtYnkNCi0gYWxpZ24gd2l0aCBwaW5jdHJs
-L21lZGlhdGVrL3BpbmN0cmwtbXRrLW10Ki5oIA0KDQotLS0NCiBkcml2ZXJzL3BpbmN0cmwvbWVk
-aWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMgfCA0ICsrKysNCiAxIGZpbGUgY2hhbmdlZCwg
-NCBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsv
-cGluY3RybC1tdGstY29tbW9uLXYyLmMgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3Ry
-bC1tdGstY29tbW9uLXYyLmMNCmluZGV4IGM1M2UyYzM5MWUzMi4uYTQ4NWQ3OWY1MWExIDEwMDY0
-NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5j
-DQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMN
-CkBAIC0yNTksNiArMjU5LDEwIEBAIGJvb2wgbXRrX2lzX3ZpcnRfZ3BpbyhzdHJ1Y3QgbXRrX3Bp
-bmN0cmwgKmh3LCB1bnNpZ25lZCBpbnQgZ3Bpb19uKQ0KIA0KIAlkZXNjID0gKGNvbnN0IHN0cnVj
-dCBtdGtfcGluX2Rlc2MgKikmaHctPnNvYy0+cGluc1tncGlvX25dOw0KIA0KKwkvKiBpZiB0aGUg
-R1BJTyBpcyBub3Qgc3VwcG9ydGVkIGZvciBlaW50IG1vZGUgKi8NCisJaWYgKGRlc2MtPmVpbnQu
-ZWludF9tID09IE5PX0VJTlRfU1VQUE9SVCkNCisJCXJldHVybiB2aXJ0X2dwaW87DQorDQogCWlm
-IChkZXNjLT5mdW5jcyAmJiAhZGVzYy0+ZnVuY3NbZGVzYy0+ZWludC5laW50X21dLm5hbWUpDQog
-CQl2aXJ0X2dwaW8gPSB0cnVlOw0KIA0KLS0gDQoyLjE4LjANCg==
+Hi Rob,
 
+On Tue, Aug 18, 2020 at 9:10 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, Aug 18, 2020 at 1:32 AM Rob Herring <robh@kernel.org> wrote:
+> > On Fri, Aug 07, 2020 at 04:13:45PM +0200, Geert Uytterhoeven wrote:
+> > > Convert the Renesas Pin Function Controller (PFC) Device Tree binding
+> > > documentation to json-schema.
+> > >
+> > > Document missing properties.
+> > > Drop deprecated and obsolete #gpio-range-cells property.
+> > > Update the example to match reality.
+> > > Drop consumer examples, as they do not belong here.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > Still RFC, due to the FIXMEs near the enum descriptions.
+> > > If I enable the enums checks, I get e.g.:
+> > >
+> > >     [[1800]] is not one of [1800, 3300]
+> > >
+> > > Note the double square brackets around 1800.
+> > > The usual error message doesn't have them, e.g.:
+> > >
+> > >     2000 is not one of [1800, 3300]
+> > >
+> > > So this looks like a bug in the tooling?
+> >
+> > Yes, we only recently started supporting schemas under
+> > 'additionalProperties', but failed to apply fixups.
+> >
+> > I have a fix I'm testing out. I'm bumping the version requirement in
+> > 5.10, so I'll make sure it is there.
+>
+> Thanks, looking forward to it.
+
+I can confirm this is fixed in v2020.08.1.
+
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+>
+> > > +  interrupts-extended:
+> >
+> > Just use 'interrupts' here. 'interrupt-extended' is always magically
+> > supported.
+>
+> Apparently not everywhere...
+>
+>     Documentation/devicetree/bindings/pinctrl/renesas,pfc.example.dt.yaml:
+> pin-controller@e6050000: 'interrupts' is a required property
+
+The existing fixup doesn't handle "required: interrupts"  if that is inside an
+if/then/else block.
+
+> > > +additionalProperties:
+> > > +  anyOf:
+> > > +    - type: object
+> > > +      allOf:
+> > > +        - $ref: pincfg-node.yaml#
+> > > +        - $ref: pinmux-node.yaml#
+> > > +
+> > > +      description:
+> > > +        Pin controller client devices use pin configuration subnodes (children
+> > > +        and grandchildren) for desired pin configuration.
+> > > +        Client device subnodes use below standard properties.
+> > > +
+> > > +      properties:
+> > > +        phandle: true
+> >
+> > Once fixed, this won't be necessary.
+>
+> OK.
+
+Seems to be still an issue in v2020.08.1?
+
+> > > +        function: true
+> > > +        groups: true
+> > > +        pins: true
+> > > +        bias-disable: true
+> > > +        bias-pull-down: true
+> > > +        bias-pull-up: true
+> > > +        drive-strength:
+> > > +          true # FIXME enum: [ 3, 6, 9, 12, 15, 18, 21, 24 ] # Superset of supported values
+> > > +          # avb:pins_mdio:drive-strength: [[24]] is not one of [3, 6, 9, 12, 15, 18, 21, 24]
+> > > +        power-source:
+> > > +          true # FIXME enum: [ 1800, 3300 ]
+> > > +          # sd0_uhs:power-source: [[1800]] is not one of [1800, 3300]
+> > > +        gpio-hog: true
+> > > +        gpios: true
+> > > +        input: true
+> > > +        output-high: true
+> > > +        output-low: true
+> > > +
+> > > +      additionalProperties: false
+> > > +
+> > > +    - type: object
+> > > +      properties:
+> > > +        phandle: true
+> >
+> > For this one, you can just link it back to the first entry:
+> >
+> > - type: object
+> >   additionalProperties:
+> >     $ref: "#/additionalProperties/anyOf/0"
+>
+> Thanks, cool!
+
+Works great!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
