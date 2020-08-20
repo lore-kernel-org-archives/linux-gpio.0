@@ -2,175 +2,98 @@ Return-Path: <SRS0=D2MX=B6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790ACC433E3
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E069C433E1
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 13:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED402054F
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D4E207BB
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 13:01:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="u4kmujXa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbgHTLZe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Aug 2020 07:25:34 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:42045 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728514AbgHTKGm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2020 06:06:42 -0400
-Received: by mail-oo1-f67.google.com with SMTP id a6so283925oog.9;
-        Thu, 20 Aug 2020 03:06:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7+CSk1ksXzy7e0WIknvr7+ji8pZUrOi3fj0VsGs4weY=;
-        b=EXA02wWQsI5YuePA3VIgOVGGfySn9Nyv6KRdADkev9beQf15igej8ZcJYwdAqafunl
-         0nsIU5GeAzT41tL22DqSVj4gQIu5wBPfuXQ7IETeOb8grj+SsQi+wQhqdPFXqGiAfH6N
-         Ttvqnk082JjN2O+MoPp92mbjJX8IxjFpAsJctnAwLaYKwtJYQjIBXMjtWu3NCsqp30Tr
-         rNWJb41EQnLC/jWn/D5C3yJtaik8lb2S8nKgiSbHxydfmsntX7uJ9fkW8+j03ouQdR3m
-         TecMTKvVw8NY7VAV9NrjaFfjOMPHX5cZ2mwlVZ6JAOtTMerYKbsSMBY2cxiU38z2M8gC
-         UEZQ==
-X-Gm-Message-State: AOAM533/sBcqedcM2+5wXRGK25XzmS3U+kk0LaYQ0ZYIPWH9w5dOwWvS
-        vC4KIEnasnMf+U30xZNwp9OwUBkqpL1iqX7W0RQ=
-X-Google-Smtp-Source: ABdhPJzLpZOD1rs1p3nBtT5EFxS48HiVxoTkLH06KtZW1eQSDDDuEahrzdmBlpsHmdngJPIb1mx3MtQK7PAdAm1yD5w=
-X-Received: by 2002:a4a:4201:: with SMTP id h1mr1818497ooj.1.1597918001038;
- Thu, 20 Aug 2020 03:06:41 -0700 (PDT)
+        id S1729741AbgHTM6V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Aug 2020 08:58:21 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54186 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729061AbgHTJks (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2020 05:40:48 -0400
+X-UUID: 1984987cbc4d4ab59f1cffc95a1863c6-20200820
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=PEJq9o5rjHt9Tgt/ghXvLxkCSShvH3PLy1g95tCOzfo=;
+        b=u4kmujXaQXvIQTsiNtWhYp1Ir+63ck6qM6hUbYor08fTrvamxwsGwbRChhAqFPiLrA3xaTpNnbvg32Cg13H6mcCd2Sj711agi0uo1EFrzigGdJdgjUoNngR2Cj32wiXN3MUHrkEPJa3rJEvgTrgPTrBkHmKmq51H/c4Z4ZEzPE0=;
+X-UUID: 1984987cbc4d4ab59f1cffc95a1863c6-20200820
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1248855608; Thu, 20 Aug 2020 17:40:43 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 20 Aug 2020 17:40:39 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 20 Aug 2020 17:40:40 +0800
+From:   <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v1 1/1] pinctrl: mediatek: refine mtk_pmx_get_funcs_cnt()
+Date:   Thu, 20 Aug 2020 17:40:39 +0800
+Message-ID: <1597916439-26376-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-References: <20200807141345.6714-1-geert+renesas@glider.be>
- <20200817233253.GA1819982@bogus> <CAMuHMdV-NVycDcPggYw4-pvSkkwo079bUevA2yB3XM5YfHi9mg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV-NVycDcPggYw4-pvSkkwo079bUevA2yB3XM5YfHi9mg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 20 Aug 2020 12:06:29 +0200
-Message-ID: <CAMuHMdWGu5+PYiYR9rdt97Hd1ribi0Yc0q68NBU6AFRBDCCg_g@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2] dt-bindings: pinctrl: sh-pfc: Convert to json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 89E841128ED7E0737F0C5C3B513376298F38FFC82A08151051B83A73D1B33ED22000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
+RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KUmVmaW5lIGlt
+cGxlbWVudGF0aW9uIG9mIG10a19wbXhfZ2V0X2Z1bmNzX2NudCgpLg0KVGhlIG9yaWdpbmFsIGlt
+cGxlbWVudGF0aW9uIGFsd2F5cyByZXR1cm4gQVJSQVlfU0laRShtdGtfZ3Bpb19mdW5jdGlvbnMp
+DQp3aGljaCBpcyAxNi4NCg0KSG93ZXZlciwgTVQ2NzY1L01UNjc3OSBvbmx5IHN1cHBvcnQgOCBm
+dW5jdGlvbnMgcGVyIEdQSU8gcGluLiBTbyByZXR1cm5pbmcNCjE2IGlzIGltcHJvcGVyLiBUaGUg
+bmV3IGltcGxlbWVudGF0aW9uIGNoZWNrIG1lbWJlciBuZnVuY3Mgb2Ygc3RydWN0DQptdGtfcGlu
+X3NvYyBmb3IgYSBwbGF0Zm9ybS4gSWYgbmZ1bmNzIGlzIG5vdCB6ZXJvLCByZXR1cm4gbmZ1bmNz
+Lg0KSWYgbmZ1bmNzIGlzIHplcm8sIGZhbGxiYWNrIHRvIG9yaWdpbmFsIGltcGxlbWVudGF0aW9u
+IGJ5IHJldHVybmluZw0KQVJSQVlfU0laRShtdGtfZ3Bpb19mdW5jdGlvbnMpLg0KDQpTaWduZWQt
+b2ZmLWJ5OiBMaWdodCBIc2llaCA8bGlnaHQuaHNpZWhAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJp
+dmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ2NzY1LmMgfCAxICsNCiBkcml2ZXJzL3Bp
+bmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NzkuYyB8IDEgKw0KIGRyaXZlcnMvcGluY3RybC9t
+ZWRpYXRlay9waW5jdHJsLXBhcmlzLmMgIHwgNCArKysrDQogMyBmaWxlcyBjaGFuZ2VkLCA2IGlu
+c2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5j
+dHJsLW10Njc2NS5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ2NzY1LmMN
+CmluZGV4IDJjNTlkMzkuLjhkOWYzZWEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVk
+aWF0ZWsvcGluY3RybC1tdDY3NjUuYw0KKysrIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3Bp
+bmN0cmwtbXQ2NzY1LmMNCkBAIC0xMDY5LDYgKzEwNjksNyBAQA0KIAkucGlucyA9IG10a19waW5z
+X210Njc2NSwNCiAJLm5waW5zID0gQVJSQVlfU0laRShtdGtfcGluc19tdDY3NjUpLA0KIAkubmdy
+cHMgPSBBUlJBWV9TSVpFKG10a19waW5zX210Njc2NSksDQorCS5uZnVuY3MgPSA4LA0KIAkuZWlu
+dF9odyA9ICZtdDY3NjVfZWludF9odywNCiAJLmdwaW9fbSA9IDAsDQogCS5iYXNlX25hbWVzID0g
+bXQ2NzY1X3BpbmN0cmxfcmVnaXN0ZXJfYmFzZV9uYW1lcywNCmRpZmYgLS1naXQgYS9kcml2ZXJz
+L3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdDY3NzkuYyBiL2RyaXZlcnMvcGluY3RybC9tZWRp
+YXRlay9waW5jdHJsLW10Njc3OS5jDQppbmRleCBiYjA4NTFjLi4xZjI2YWRiIDEwMDY0NA0KLS0t
+IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXQ2Nzc5LmMNCisrKyBiL2RyaXZl
+cnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10Njc3OS5jDQpAQCAtNzQ0LDYgKzc0NCw3IEBA
+DQogCS5waW5zID0gbXRrX3BpbnNfbXQ2Nzc5LA0KIAkubnBpbnMgPSBBUlJBWV9TSVpFKG10a19w
+aW5zX210Njc3OSksDQogCS5uZ3JwcyA9IEFSUkFZX1NJWkUobXRrX3BpbnNfbXQ2Nzc5KSwNCisJ
+Lm5mdW5jcyA9IDgsDQogCS5laW50X2h3ID0gJm10Njc3OV9laW50X2h3LA0KIAkuZ3Bpb19tID0g
+MCwNCiAJLmllc19wcmVzZW50ID0gdHJ1ZSwNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwv
+bWVkaWF0ZWsvcGluY3RybC1wYXJpcy5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0
+cmwtcGFyaXMuYw0KaW5kZXggYTIzYzE4Mi4uOTZmOWY4NiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
+cGluY3RybC9tZWRpYXRlay9waW5jdHJsLXBhcmlzLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9t
+ZWRpYXRlay9waW5jdHJsLXBhcmlzLmMNCkBAIC02NTcsNiArNjU3LDEwIEBAIHN0YXRpYyB2b2lk
+IG10a19wY3RybF9kYmdfc2hvdyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsIHN0cnVjdCBz
+ZXFfZmlsZSAqcywNCiANCiBzdGF0aWMgaW50IG10a19wbXhfZ2V0X2Z1bmNzX2NudChzdHJ1Y3Qg
+cGluY3RybF9kZXYgKnBjdGxkZXYpDQogew0KKwlzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3ID0gcGlu
+Y3RybF9kZXZfZ2V0X2RydmRhdGEocGN0bGRldik7DQorIA0KKwlpZiAoaHctPnNvYy0+bmZ1bmNz
+KQ0KKwkJcmV0dXJuIChpbnQpaHctPnNvYy0+bmZ1bmNzOw0KIAlyZXR1cm4gQVJSQVlfU0laRSht
+dGtfZ3Bpb19mdW5jdGlvbnMpOw0KIH0NCiANCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
 
-On Tue, Aug 18, 2020 at 9:10 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Aug 18, 2020 at 1:32 AM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Aug 07, 2020 at 04:13:45PM +0200, Geert Uytterhoeven wrote:
-> > > Convert the Renesas Pin Function Controller (PFC) Device Tree binding
-> > > documentation to json-schema.
-> > >
-> > > Document missing properties.
-> > > Drop deprecated and obsolete #gpio-range-cells property.
-> > > Update the example to match reality.
-> > > Drop consumer examples, as they do not belong here.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > > Still RFC, due to the FIXMEs near the enum descriptions.
-> > > If I enable the enums checks, I get e.g.:
-> > >
-> > >     [[1800]] is not one of [1800, 3300]
-> > >
-> > > Note the double square brackets around 1800.
-> > > The usual error message doesn't have them, e.g.:
-> > >
-> > >     2000 is not one of [1800, 3300]
-> > >
-> > > So this looks like a bug in the tooling?
-> >
-> > Yes, we only recently started supporting schemas under
-> > 'additionalProperties', but failed to apply fixups.
-> >
-> > I have a fix I'm testing out. I'm bumping the version requirement in
-> > 5.10, so I'll make sure it is there.
->
-> Thanks, looking forward to it.
-
-I can confirm this is fixed in v2020.08.1.
-
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
->
-> > > +  interrupts-extended:
-> >
-> > Just use 'interrupts' here. 'interrupt-extended' is always magically
-> > supported.
->
-> Apparently not everywhere...
->
->     Documentation/devicetree/bindings/pinctrl/renesas,pfc.example.dt.yaml:
-> pin-controller@e6050000: 'interrupts' is a required property
-
-The existing fixup doesn't handle "required: interrupts"  if that is inside an
-if/then/else block.
-
-> > > +additionalProperties:
-> > > +  anyOf:
-> > > +    - type: object
-> > > +      allOf:
-> > > +        - $ref: pincfg-node.yaml#
-> > > +        - $ref: pinmux-node.yaml#
-> > > +
-> > > +      description:
-> > > +        Pin controller client devices use pin configuration subnodes (children
-> > > +        and grandchildren) for desired pin configuration.
-> > > +        Client device subnodes use below standard properties.
-> > > +
-> > > +      properties:
-> > > +        phandle: true
-> >
-> > Once fixed, this won't be necessary.
->
-> OK.
-
-Seems to be still an issue in v2020.08.1?
-
-> > > +        function: true
-> > > +        groups: true
-> > > +        pins: true
-> > > +        bias-disable: true
-> > > +        bias-pull-down: true
-> > > +        bias-pull-up: true
-> > > +        drive-strength:
-> > > +          true # FIXME enum: [ 3, 6, 9, 12, 15, 18, 21, 24 ] # Superset of supported values
-> > > +          # avb:pins_mdio:drive-strength: [[24]] is not one of [3, 6, 9, 12, 15, 18, 21, 24]
-> > > +        power-source:
-> > > +          true # FIXME enum: [ 1800, 3300 ]
-> > > +          # sd0_uhs:power-source: [[1800]] is not one of [1800, 3300]
-> > > +        gpio-hog: true
-> > > +        gpios: true
-> > > +        input: true
-> > > +        output-high: true
-> > > +        output-low: true
-> > > +
-> > > +      additionalProperties: false
-> > > +
-> > > +    - type: object
-> > > +      properties:
-> > > +        phandle: true
-> >
-> > For this one, you can just link it back to the first entry:
-> >
-> > - type: object
-> >   additionalProperties:
-> >     $ref: "#/additionalProperties/anyOf/0"
->
-> Thanks, cool!
-
-Works great!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
