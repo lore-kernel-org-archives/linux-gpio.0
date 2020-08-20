@@ -2,202 +2,101 @@ Return-Path: <SRS0=D2MX=B6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAD0C433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 01:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675D3C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB0F2078D
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 01:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA0F20885
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Aug 2020 11:22:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="WG3KUIyd"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="R0qJtzBJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbgHTBPw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Aug 2020 21:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbgHTBPv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Aug 2020 21:15:51 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327CDC061383
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2020 18:15:51 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id a26so684069ejc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2020 18:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=L95gIXwGMvZZq8+ZBbJLFbYWdlFmXYekwntOD8a6oOA=;
-        b=WG3KUIydvAL6lmQrHxm61oJNRNmcU6P3AYdrnvvDk2Y+hKlIojHKEJGegWF4qwv1+Y
-         QTeYxO/dmBMjiGuD8Bcer9Szc6wGqRF7KS54/JvegK794xU8NuZtLrfXge70efh+Srjf
-         j8SOWTy9A9tvc8TrHp9v6b/ZgrKwYzANCvRu97KxycC19b+fIKbadEqG5DQwkPrUYnrD
-         oXvP4WUQANyhz4Iia2vNUjttdG3ES2Q5Q+15Mf8bYJ86ICEPE5SpK2K5syACwh1i+IeQ
-         SzVm4NRN8oEMld6tQ3d+tp0J1Y7Gsx/80wE5GM+Iv8TVgc/ysjZ1fPS6WsvaQVMk41/k
-         HhsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L95gIXwGMvZZq8+ZBbJLFbYWdlFmXYekwntOD8a6oOA=;
-        b=gEd/JxJA+DiWVATHVdWFTJfo14/pkFI7Jn2BvzZ2LH9OyJFNOc6mXBv7iBV//0aqp4
-         2McYADA3HjQoG0h3sFHLPjMltoSpIzxbzoQLa7GUSu8RrYeYjQ7zYkGvkiK2MHatrH7H
-         RNXQPkKgcpwfptq5jYaPYJYLhgLwgyfrSgFjfB28pNI5q7J7RPA2bZR80T/DGUPiImD2
-         EkFuLJuEiUY//yJQNddPDEjTIu9sbbt2EY0tIEl978iIZfvnkRiYpV1AiFrrLHGFlhbL
-         az5zRy9znC2D2f6YdW6B3545wvoOMwp8qSYOKTnGTjRGtui9g5zk7FotZC5QKeDtsp4t
-         rjeA==
-X-Gm-Message-State: AOAM533+swcWzHMU65bAQtv880stHSmlQuTUjdZDIdxej7pS6HCYFmLO
-        vQbi8lygpGN1M32CpMXo9UH2ow==
-X-Google-Smtp-Source: ABdhPJyEI0+REUtIA4p2wEAbWZN4TQlHgJzr4Z/vBB40QUXm8ya4oYGDbsGWCuRbDl47Y0QH6guB/Q==
-X-Received: by 2002:a17:906:528d:: with SMTP id c13mr1023638ejm.61.1597886149318;
-        Wed, 19 Aug 2020 18:15:49 -0700 (PDT)
-Received: from x1 ([2001:16b8:5ca7:9f01:a7aa:12ad:e665:579d])
-        by smtp.gmail.com with ESMTPSA id i26sm274194edv.70.2020.08.19.18.15.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2020 18:15:48 -0700 (PDT)
-Date:   Thu, 20 Aug 2020 03:15:45 +0200
-From:   Drew Fustini <drew@beagleboard.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH] gpio: omap: improve coding style for pin config flags
-Message-ID: <20200820011545.GA140179@x1>
-References: <20200722120755.230741-1-drew@beagleboard.org>
- <20200819063127.GU2994@atomide.com>
+        id S1728047AbgHTLWM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Aug 2020 07:22:12 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59210 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729769AbgHTLV0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2020 07:21:26 -0400
+X-UUID: 580e092745a84891a3507e5f51e90f4c-20200820
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ohfEWTwXhQSMstYzm/6OXzB+lRaN+zQdjX8fExzTluA=;
+        b=R0qJtzBJ1vc+N8eEPOkeNxSCcZ1m//4Jc3Nf6S3JPSGBeA4C2Mlr/wxtO3VfddFN4Nzw2PISibZ0yQpJ64YKhp2UGPmLdk/r0rAYfGkD4GdCT5m59878o2NL/7esxDe7oOk0gTPOEuVF6tDNPTKFoIG84lFAxWtEVSQnd1kX+RA=;
+X-UUID: 580e092745a84891a3507e5f51e90f4c-20200820
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <hanks.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2126183433; Thu, 20 Aug 2020 19:21:11 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 20 Aug 2020 19:21:07 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 20 Aug 2020 19:21:07 +0800
+Message-ID: <1597922468.29505.1.camel@mtkswgap22>
+Subject: Re: [PATCH] pinctrl: mediatek: check mtk_is_virt_gpio input
+ parameter
+From:   Hanks Chen <hanks.chen@mediatek.com>
+To:     Sean Wang <sean.wang@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        sin_jieyang <sin_jieyang@mediatek.com>
+Date:   Thu, 20 Aug 2020 19:21:08 +0800
+In-Reply-To: <CAGp9Lzq7H_KREyhxNy1zBsBJdFRAA7Zc1jkGc=ZiN_og1H9KBQ@mail.gmail.com>
+References: <1597317260-24348-1-git-send-email-hanks.chen@mediatek.com>
+         <CAGp9Lzq7H_KREyhxNy1zBsBJdFRAA7Zc1jkGc=ZiN_og1H9KBQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200819063127.GU2994@atomide.com>
+X-TM-SNTS-SMTP: 84FF2A7FAAC6C2272C02EA56389C25CB737D14086DD27890545B84F223C0307A2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 09:31:27AM +0300, Tony Lindgren wrote:
-> Hi,
-> 
-> * Drew Fustini <drew@beagleboard.org> [200722 12:09]:
-> > Change the handling of pin config flags from if/else to switch
-> > statement to make the code more readable and cleaner.
-> > 
-> > Suggested-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > Signed-off-by: Drew Fustini <drew@beagleboard.org>
-> 
-> This looks OK to me:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> 
-> I've lost track of the pending pinctrl/gpio/dts patches you've
-> posted :) Care to also summarized the pending ones and repost
-> them now that v5.9-rc1 is out?
+T24gV2VkLCAyMDIwLTA4LTE5IGF0IDE2OjQzIC0wNzAwLCBTZWFuIFdhbmcgd3JvdGU6DQo+IEhp
+IEhhbmtzLA0KPiANCj4gT24gVGh1LCBBdWcgMTMsIDIwMjAgYXQgNDoxNCBBTSBIYW5rcyBDaGVu
+IDxoYW5rcy5jaGVuQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBjaGVjayBtdGtfaXNf
+dmlydF9ncGlvIGlucHV0IHBhcmFtZXRlciwNCj4gPiB2aXJ0dWFsIGdwaW8gbmVlZCB0byBzdXBw
+b3J0IGVpbnQgbW9kZS4NCj4gPg0KPiA+IGFkZCBlcnJvciBoYW5kbGVyIGZvciB0aGUga28gY2Fz
+ZQ0KPiA+IHRvIGZpeCB0aGlzIGJvb3QgZmFpbDoNCj4gPiBwYyA6IG10a19pc192aXJ0X2dwaW8r
+MHgyMC8weDM4IFtwaW5jdHJsX210a19jb21tb25fdjJdDQo+ID4gbHIgOiBtdGtfZ3Bpb19nZXRf
+ZGlyZWN0aW9uKzB4NDQvMHhiMCBbcGluY3RybF9wYXJpc10NCj4gDQo+IGl0IGlzIGJldHRlciB3
+ZSBwb3N0IHRoZSBjb21wbGV0ZSBjYWxsIHN0YWNrIHdoZW4gdGhlIGZhaWx1cmUgb2NjdXJzDQo+
+IA0KPiA+DQo+ID4gRml4ZXM6IGVkZDU0NjQ2NTAwMiAoInBpbmN0cmw6IG1lZGlhdGVrOiBhdm9p
+ZCB2aXJ0dWFsIGdwaW8gdHJ5aW5nIHRvIHNldCByZWciKQ0KPiA+IFNpbmdlZC1vZmYtYnk6IHNp
+bl9qaWV5YW5nIDxzaW5famlleWFuZ0BtZWRpYXRlay5jb20+DQo+IA0KPiBzaWduZWQtb2ZmLWJ5
+IHdpdGggdGhlIGZ1bGwgbmFtZQ0KDQpHb3QgaXQsIEknbGwgdXBkYXRlIGl0IGluIG5leHQgdmVy
+c2lvbi4NCg0KPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBIYW5rcyBDaGVuIDxoYW5rcy5jaGVuQG1l
+ZGlhdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0
+cmwtbXRrLWNvbW1vbi12Mi5jIHwgNCArKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2Vy
+dGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsv
+cGluY3RybC1tdGstY29tbW9uLXYyLmMgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3Ry
+bC1tdGstY29tbW9uLXYyLmMNCj4gPiBpbmRleCBjNTNlMmMzOTFlMzIuLjI3YWI5YzUxMmFlMSAx
+MDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29t
+bW9uLXYyLmMNCj4gPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGst
+Y29tbW9uLXYyLmMNCj4gPiBAQCAtMjU5LDYgKzI1OSwxMCBAQCBib29sIG10a19pc192aXJ0X2dw
+aW8oc3RydWN0IG10a19waW5jdHJsICpodywgdW5zaWduZWQgaW50IGdwaW9fbikNCj4gPg0KPiA+
+ICAgICAgICAgZGVzYyA9IChjb25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICopJmh3LT5zb2MtPnBp
+bnNbZ3Bpb19uXTsNCj4gPg0KPiA+ICsgICAgICAgLyogaWYgdGhlIEdQSU8gaXMgbm90IHN1cHBv
+cnRlZCBmb3IgZWludCBtb2RlICovDQo+ID4gKyAgICAgICBpZiAoZGVzYy0+ZWludC5laW50X20g
+PT0gRUlOVF9OQSkNCj4gDQo+IHMvTk9fRUlOVF9TVVBQT1JUL0VJTlRfTkEvIHRvIGFsaWduIHdp
+dGggcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1tdCouaCB1c2VzDQoNCkdvdCBpdCwgSSds
+bCBmaXggaXQgaW4gbmV4dCB2ZXJzaW9uLg0KDQpUaGFua3MgZm9yIHlvdXIgcmVwbHkNCg0KDQpI
+YW5rcw0KDQo+IA0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gdmlydF9ncGlvOw0KPiA+ICsN
+Cj4gPiAgICAgICAgIGlmIChkZXNjLT5mdW5jcyAmJiAhZGVzYy0+ZnVuY3NbZGVzYy0+ZWludC5l
+aW50X21dLm5hbWUpDQo+ID4gICAgICAgICAgICAgICAgIHZpcnRfZ3BpbyA9IHRydWU7DQo+ID4N
+Cj4gPiAtLQ0KPiA+IDIuMTguMA0KDQo=
 
-Everything appears to be in mainline already:
-
-commit f1b206cf7c57561ea156798f323b0541a783bd2f
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jul 22 14:27:52 2020 +0200
-
-    pinctrl: core: print gpio in pins debugfs file
-
-commit bde8c0e64c78633612aaf283692f72bef0bbc549
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jul 22 14:07:56 2020 +0200
-
-    gpio: omap: improve coding style for pin config flags
-        
-commit 75dec56710dfafd37daa95e756c5d1840932ba90
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Fri Jul 17 21:40:43 2020 +0200
-
-    gpio: omap: handle pin config bias flags
-
-commit 40e30d26d909af89de2dcd0b4abdd27c47ac2235
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jul 15 23:37:38 2020 +0200
-
-    gpio: omap: handle pin config bias flags
-
-commit abe4e4675dfc62b7f2328e2c4bce8b5bdcdff7c0
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Sun Jul 12 12:37:19 2020 +0200
-
-    ARM: dts: am335x-pocketbeagle: set default mux for gpio pins
-    
-commit bc6d201591344aa21d616179ee9ad406a7336267
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jun 17 20:05:43 2020 +0200
-
-    pinctrl: single: fix function name in documentation
-
-commit 27c90e5e48d008bfda1cf6108eb699697317c67b
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jul 1 03:33:20 2020 +0200
-
-    ARM: dts: am33xx-l4: change #pinctrl-cells from 1 to 2
-    
-commit a133954188887a830b5ce438a287a5e4e234b1be
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jul 1 03:33:19 2020 +0200
-
-    pinctrl: single: parse #pinctrl-cells = 2
-    
-commit e14d2c766392ff1f226017fd62f0b6283a53bd0c
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Thu Jun 18 20:29:21 2020 +0200
-
-    ARM: dts: am335x-pocketbeagle: add gpio-line-names
-
-commit aafd897a5ac4cb7f9b4f99acc5365a7df1f77aa0
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Thu May 21 22:09:26 2020 +0200
-
-    ARM: dts: am335x-boneblack: add gpio-line-names
-
-commit ff82009fcc6ace774570107750f5af91c9081b0a
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Wed Jun 10 13:02:58 2020 +0200
-
-    ARM: dts: am33xx-l4: add gpio-ranges
-
-commit 25fae752156db7253471347df08a2700501eafde
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Fri Jun 12 13:27:58 2020 +0200
-
-    pinctrl: single: fix function name in documentation
-
-commit 80bf72598663496d08b3c0231377db6a99d7fd68
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Mon Jun 15 17:57:01 2020 +0200
-
-    ARM: dts: am5729: beaglebone-ai: fix rgmii phy-mode
-
-commit d7af722344e6dc52d87649100516515263e15c75
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Tue Jun 9 23:45:21 2020 +0200
-
-    ARM: dts: am335x-pocketbeagle: Fix mmc0 Write Protect
-
-commit f46fe79ff1b65692a65266a5bec6dbe2bf7fc70f
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Mon Jun 8 14:51:43 2020 +0200
-
-    pinctrl-single: fix pcs_parse_pinconf() return value
-
-Author: Drew Fustini <drew@beagleboard.org>
-Date:   Fri Apr 3 21:19:31 2020 +0200
-
-    dt-bindings: Add vendor prefix for BeagleBoard.org
-
-
-The only thing that isn't would be "ARM: dts: am33xx: add ocp label"
-which you applied to omap-for-v5.9/dt.
-
-thanks,
-drew
