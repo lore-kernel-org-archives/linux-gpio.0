@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9CFC433E3
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Aug 2020 16:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F482C433DF
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Aug 2020 16:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F28AD207DA
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Aug 2020 16:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79EF32072D
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Aug 2020 16:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="qF93VePZ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="YEGiyQmX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbgHVQSG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 22 Aug 2020 12:18:06 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:20655 "EHLO m43-7.mailgun.net"
+        id S1728381AbgHVQSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 22 Aug 2020 12:18:23 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:43113 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728478AbgHVQSF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 22 Aug 2020 12:18:05 -0400
+        id S1728452AbgHVQRw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 22 Aug 2020 12:17:52 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1598113085; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1598113071; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=6CK3GhJoJ54IkukAZoKwFfsGZ9K0U13iWkuTPb/0AKs=; b=qF93VePZe/mB5EsrpVcyhJQFgcBZeh/S6ODu7LOOO0sm0VBuIys6wk1r7IWi8iACMaZ3Du8p
- 8shhVtZ+5Bps0j0xfmnwPlo8vHhphMtGSZcf8w5pVK92IjnNvyvlxHxdbSw6b8SRgJy1hMxo
- +8YlbLnBuwFcldnG27Saw3U95rQ=
+ bh=vN/+a4AwSccacld7HquNcB9hFyaMzUXcSWHTfwH8ZuI=; b=YEGiyQmXciA8Ygwdj7yIQaIGZKmKHJgr1o4Qp2TK2xumyep+eeHX0HkZDfZwqHV+WtTX+RT0
+ lMpGBJW5AV9itDklq/qHazG0FNeXp5G3PDhuL3jqYq9mowRbXnZ83NnKLZCJ3fpkgppfhz6W
+ /wtRIGznmu+ltCEzgxtAXwXVDlw=
 X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI0ZDgwZiIsICJsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 5f41452fa0b59f2b43554d4c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 22 Aug 2020 16:17:51
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 5f41452952709f547604e13c (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 22 Aug 2020 16:17:45
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DB590C433A0; Sat, 22 Aug 2020 16:17:50 +0000 (UTC)
+        id 7E971C433B2; Sat, 22 Aug 2020 16:17:45 +0000 (UTC)
 Received: from mkshah-linux.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 409E7C433AD;
-        Sat, 22 Aug 2020 16:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 409E7C433AD
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E4D34C43395;
+        Sat, 22 Aug 2020 16:17:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4D34C43395
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
 From:   Maulik Shah <mkshah@codeaurora.org>
@@ -55,9 +55,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         jason@lakedaemon.net, dianders@chromium.org, rnayak@codeaurora.org,
         ilina@codeaurora.org, lsrao@codeaurora.org,
         Maulik Shah <mkshah@codeaurora.org>
-Subject: [PATCH v5 6/6] irqchip: qcom-pdc: Reset PDC interrupts during init
-Date:   Sat, 22 Aug 2020 21:47:01 +0530
-Message-Id: <1598113021-4149-7-git-send-email-mkshah@codeaurora.org>
+Subject: [PATCH v5 5/6] irqchip: qcom-pdc: Set IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND flag
+Date:   Sat, 22 Aug 2020 21:47:00 +0530
+Message-Id: <1598113021-4149-6-git-send-email-mkshah@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1598113021-4149-1-git-send-email-mkshah@codeaurora.org>
 References: <1598113021-4149-1-git-send-email-mkshah@codeaurora.org>
@@ -66,51 +66,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Kexec can directly boot into a new kernel without going to complete
-reboot. This can leave the previous kernel's configuration for PDC
-interrupts as is.
+Set IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND flag to enable/unmask the
+wakeirqs during suspend entry.
 
-Clear previous kernel's configuration during init by setting interrupts
-in enable bank to zero. The IRQs specified in qcom,pdc-ranges property
-are the only ones that can be used by the new kernel so clear only those
-IRQs. The remaining ones may be in use by a different kernel and should
-not be set by new kernel.
-
-Suggested-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 ---
- drivers/irqchip/qcom-pdc.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/irqchip/qcom-pdc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index 052a20d..7b40f07 100644
+index c1c5dfa..052a20d 100644
 --- a/drivers/irqchip/qcom-pdc.c
 +++ b/drivers/irqchip/qcom-pdc.c
-@@ -343,7 +343,8 @@ static const struct irq_domain_ops qcom_pdc_gpio_ops = {
- 
- static int pdc_setup_pin_mapping(struct device_node *np)
- {
--	int ret, n;
-+	int ret, n, i;
-+	u32 irq_index, reg_index, val;
- 
- 	n = of_property_count_elems_of_size(np, "qcom,pdc-ranges", sizeof(u32));
- 	if (n <= 0 || n % 3)
-@@ -372,6 +373,14 @@ static int pdc_setup_pin_mapping(struct device_node *np)
- 						 &pdc_region[n].cnt);
- 		if (ret)
- 			return ret;
-+
-+		for (i = 0; i < pdc_region[n].cnt; i++) {
-+			reg_index = (i + pdc_region[n].pin_base) >> 5;
-+			irq_index = (i + pdc_region[n].pin_base) & 0x1f;
-+			val = pdc_reg_read(IRQ_ENABLE_BANK, reg_index);
-+			val &= ~BIT(irq_index);
-+			pdc_reg_write(IRQ_ENABLE_BANK, reg_index, val);
-+		}
- 	}
- 
- 	return 0;
+@@ -207,7 +207,8 @@ static struct irq_chip qcom_pdc_gic_chip = {
+ 	.irq_set_type		= qcom_pdc_gic_set_type,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
+ 				  IRQCHIP_SET_TYPE_MASKED |
+-				  IRQCHIP_SKIP_SET_WAKE,
++				  IRQCHIP_SKIP_SET_WAKE |
++				  IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND,
+ 	.irq_set_vcpu_affinity	= irq_chip_set_vcpu_affinity_parent,
+ 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+ };
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
