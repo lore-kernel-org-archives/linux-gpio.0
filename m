@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6A9C433DF
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28183C433E1
+	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2A102075B
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F10A52078D
+	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598199363;
-	bh=lnBHoUXioLOrOWNKvWtcrwmt13u6QaY0trxOTodHtew=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=W1lLnGSqJGFrRO0pCaSeFn1fMO/rkdI9mEOuinYxWqoXGzvaSyDJC48gDAgyNfgY6
-	 c/osq3ben6Wj7UzRpn9aD4b7mUp3cQJm46u8sQQK5nxuQOMmuVX77Fb43tpTrxbbOh
-	 CT/Xx/PFUC1V6nD0gWUDqRDk3gxsf8yXAqBUoMUo=
+	s=default; t=1598199385;
+	bh=6J700F/7E7GczejTvE7NhKf03HRHUXkORzTnGCkrd1M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dkXYytNyByJN1C/zZWNLFGfX81r/H8eg9t5gzr+nGbJCD+KourmE5HpS0ZL7Bqjpt
+	 gIjJyXBZXCCIhVZCyKYUlj0zU2lpLOw3eGX1w+shhk63tTdJ2OzPKU9SiBoq7DW8Jd
+	 lXVkIbuq8zOrQldUSj0Ct/RWYnbM8lomidlJGs/4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgHWQQD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Aug 2020 12:16:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43796 "EHLO mail.kernel.org"
+        id S1725996AbgHWQQM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Aug 2020 12:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbgHWQQC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 23 Aug 2020 12:16:02 -0400
+        id S1727836AbgHWQQL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 23 Aug 2020 12:16:11 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 685DC2072D;
-        Sun, 23 Aug 2020 16:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E03EC2075B;
+        Sun, 23 Aug 2020 16:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598199361;
-        bh=lnBHoUXioLOrOWNKvWtcrwmt13u6QaY0trxOTodHtew=;
-        h=From:To:Cc:Subject:Date:From;
-        b=M4jcEMVojBCm6n6VI1JLybJ3HkimOMO74lwgXpcMV4RvKKHZeawHTgV8XtBvp9UtQ
-         ULqXZ3K+wsEaxZPwJSqX2sGxr7+iuFaZhY48Xna/0DmrwbZmpnIbv+wrnX/1RoSgBl
-         yb2ljxrWBvbfEbhd6Rk/f+zaCNTZCX+gnvm5j4Ys=
+        s=default; t=1598199371;
+        bh=6J700F/7E7GczejTvE7NhKf03HRHUXkORzTnGCkrd1M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PtY+ifsPFqIus6SJ3OIoI3SDwmshNJwHOTBhdCETqkc8CGBXDcJYRmPEz8BiEY0uH
+         x8mVhJ+N8yuCtmU3Xwk0B10VGKg/HpAq+KS+Bk0ouJeyWri1Cx+LEFbpXHd+ar56YP
+         UlS7AshzC9TAjFTagptiA9kh9qZCTx6874G6ZkFU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -55,65 +55,56 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Anson Huang <Anson.Huang@nxp.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 01/22] dt-bindings: gpio: fsl-imx-gpio: Add i.MX 8 compatibles
-Date:   Sun, 23 Aug 2020 18:15:29 +0200
-Message-Id: <20200823161550.3981-1-krzk@kernel.org>
+Subject: [PATCH 03/22] dt-bindings: gpio: fsl-imx-gpio: Add parsing of hogs
+Date:   Sun, 23 Aug 2020 18:15:31 +0200
+Message-Id: <20200823161550.3981-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200823161550.3981-1-krzk@kernel.org>
+References: <20200823161550.3981-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DTSes with new i.MX 8 SoCs introduce their own compatibles so add them
-to fix dtbs_check warnings like:
+Allow parsing GPIO controller children nodes with GPIO hogs to fix
+warning:
 
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: gpio@30200000:
-    compatible:0: 'fsl,imx8mm-gpio' is not one of ['fsl,imx1-gpio', 'fsl,imx21-gpio', 'fsl,imx31-gpio', 'fsl,imx35-gpio', 'fsl,imx7d-gpio']
+  arch/arm64/boot/dts/freescale/imx8mq-evk.dt.yaml: gpio@30240000: 'wl-reg-on' does not match any of the regexes: 'pinctrl-[0-9]+'
     From schema: Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: gpio@30200000:
-    compatible: ['fsl,imx8mm-gpio', 'fsl,imx35-gpio'] is too long
-
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: gpio@30200000:
-    compatible: Additional items are not allowed ('fsl,imx35-gpio' was unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../bindings/gpio/fsl-imx-gpio.yaml           | 21 +++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/gpio/fsl-imx-gpio.yaml  | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-index 0b223abe8cfb..454db20c2d1a 100644
+index 1fac69573bb9..337b99343dce 100644
 --- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
 +++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-@@ -11,12 +11,21 @@ maintainers:
- 
- properties:
-   compatible:
--    enum:
--      - fsl,imx1-gpio
--      - fsl,imx21-gpio
--      - fsl,imx31-gpio
--      - fsl,imx35-gpio
--      - fsl,imx7d-gpio
-+    oneOf:
-+      - enum:
-+          - fsl,imx1-gpio
-+          - fsl,imx21-gpio
-+          - fsl,imx31-gpio
-+          - fsl,imx35-gpio
-+          - fsl,imx7d-gpio
-+      - items:
-+          - enum:
-+              - fsl,imx8mm-gpio
-+              - fsl,imx8mn-gpio
-+              - fsl,imx8mp-gpio
-+              - fsl,imx8mq-gpio
-+              - fsl,imx8qxp-gpio
-+          - const: fsl,imx35-gpio
- 
-   reg:
+@@ -54,6 +54,23 @@ properties:
+   gpio-ranges:
      maxItems: 1
+ 
++patternProperties:
++  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
++    type: object
++    properties:
++      gpio-hog: true
++      gpios: true
++      input: true
++      output-high: true
++      output-low: true
++      line-name: true
++
++    required:
++      - gpio-hog
++      - gpios
++
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
 -- 
 2.17.1
 
