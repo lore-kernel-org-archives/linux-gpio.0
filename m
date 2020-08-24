@@ -1,114 +1,73 @@
-Return-Path: <SRS0=sZF4=CB=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5C2C433E3
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525AEC433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC9A2072D
-	for <linux-gpio@archiver.kernel.org>; Sun, 23 Aug 2020 16:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598199605;
-	bh=yKCM7tLnXxMws8MTZ9jhKA97yUjAzHOZPP6ETkwSECU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nBN0D85HR/6ukEBD1NrmKOdl7sEOrg4YEgauwk6PGzhfX6s7i/3rZnaWlABbLIfCK
-	 PSL5CPUg35ok0CbIOMAsOczQOjWrY0/7ra6UQJGkZJ/McWSm2ij7tBN8CiwjMKM5KI
-	 XDvTqqyp1bCnH9Nbc+A/y9Vv+ldr6Cie6VOji6lI=
+	by mail.kernel.org (Postfix) with ESMTP id 382322076D
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbgHWQQ3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Aug 2020 12:16:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbgHWQQZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 23 Aug 2020 12:16:25 -0400
-Received: from kozik-lap.proceq-device.com (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC9C720767;
-        Sun, 23 Aug 2020 16:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598199384;
-        bh=yKCM7tLnXxMws8MTZ9jhKA97yUjAzHOZPP6ETkwSECU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9UTaE5wLzgKph+nZVaiHPQI/bQFi3jkQu3Bq/mCJqqVDhAzVHrOGSla5kcuHNpfW
-         Rjsz3FrMJmE0UPj9VM21JQKK7tMGqF9soY6qz0m7GmBM3jaasdWJw1GufujloLb+5m
-         +QbsRgkisM82EefUDSBdUUPuwPJ4IegaiTipCzQA=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 06/22] dt-bindings: pwm: imx-pwm: Add i.MX 8M compatibles
-Date:   Sun, 23 Aug 2020 18:15:34 +0200
-Message-Id: <20200823161550.3981-6-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200823161550.3981-1-krzk@kernel.org>
-References: <20200823161550.3981-1-krzk@kernel.org>
+        id S1727821AbgHXAEj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Aug 2020 20:04:39 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:29156 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726894AbgHXAEi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 23 Aug 2020 20:04:38 -0400
+Date:   24 Aug 2020 09:04:37 +0900
+X-IronPort-AV: E=Sophos;i="5.76,346,1592838000"; 
+   d="scan'208";a="55306325"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2020 09:04:37 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EB512411FB94;
+        Mon, 24 Aug 2020 09:04:37 +0900 (JST)
+Message-ID: <87blj0zzax.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: sh-pfc: collect Renesas related CONFIGs in one place
+In-Reply-To: <CAMuHMdWqc1Peo06g_1JrEvEExyaY+k33WJNmbhugE7YrppiRmw@mail.gmail.com>
+References: <87r1s5hoht.wl-kuninori.morimoto.gx@renesas.com>
+        <87pn7phofb.wl-kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdWqc1Peo06g_1JrEvEExyaY+k33WJNmbhugE7YrppiRmw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-to fix dtbs_check warnings like:
 
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
-    compatible:0: 'fsl,imx8mm-pwm' is not one of ['fsl,imx1-pwm', 'fsl,imx27-pwm']
-    From schema: Documentation/devicetree/bindings/pwm/imx-pwm.yaml
+Hi Geert
 
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
-    compatible: ['fsl,imx8mm-pwm', 'fsl,imx27-pwm'] is too long
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > Renesas related pinctrl CONFIGs are located many places,
+> > and it is confusable.
+> > This patch collects these into same place,
+> > and group into "Renesas pinctrl drivers" menu.
+> >
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Still wondering about moving drivers/pinctrl/pinctrl-rz{a1,a2,n1}.c
+> into drivers/pinctrl/sh-pfc/, too.
 
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
-    compatible: Additional items are not allowed ('fsl,imx27-pwm' was unexpected)
+As I mentioned before, I'm waiting Linus's opinion.
+But will move these in v3 without waiting him.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thank you for your help !!
+
+Best regards
 ---
- Documentation/devicetree/bindings/pwm/imx-pwm.yaml | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pwm/imx-pwm.yaml b/Documentation/devicetree/bindings/pwm/imx-pwm.yaml
-index 01df06777cba..473863eb67e5 100644
---- a/Documentation/devicetree/bindings/pwm/imx-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/imx-pwm.yaml
-@@ -19,9 +19,17 @@ properties:
-       - 3
- 
-   compatible:
--    enum:
--      - fsl,imx1-pwm
--      - fsl,imx27-pwm
-+    oneOf:
-+      - enum:
-+          - fsl,imx1-pwm
-+          - fsl,imx27-pwm
-+      - items:
-+          - enum:
-+              - fsl,imx8mm-pwm
-+              - fsl,imx8mn-pwm
-+              - fsl,imx8mp-pwm
-+              - fsl,imx8mq-pwm
-+          - const: fsl,imx27-pwm
- 
-   reg:
-     maxItems: 1
--- 
-2.17.1
-
+Kuninori Morimoto
