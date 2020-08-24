@@ -2,32 +2,32 @@ Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E43C433E3
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713B0C433E3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C11B920720
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF58206C0
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 00:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgHXAF0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 23 Aug 2020 20:05:26 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:42143 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726737AbgHXAF0 (ORCPT
+        id S1726847AbgHXA2j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 23 Aug 2020 20:28:39 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:32827 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726737AbgHXA2j (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 23 Aug 2020 20:05:26 -0400
-Date:   24 Aug 2020 09:05:24 +0900
+        Sun, 23 Aug 2020 20:28:39 -0400
+Date:   24 Aug 2020 09:28:37 +0900
 X-IronPort-AV: E=Sophos;i="5.76,346,1592838000"; 
-   d="scan'208";a="55089840"
+   d="scan'208";a="55308762"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Aug 2020 09:05:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2020 09:28:37 +0900
 Received: from mercury.renesas.com (unknown [10.166.252.133])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 50DFD411FB94;
-        Mon, 24 Aug 2020 09:05:24 +0900 (JST)
-Message-ID: <87a6ykzz9m.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B60B34127DA3;
+        Mon, 24 Aug 2020 09:28:37 +0900 (JST)
+Message-ID: <877dtozy6x.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -50,22 +50,10 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi Geert
 
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >
-> > Now, Renesas Pin Control drivers are under menu,
-> > but current description are not aligned.
-> > This patch align these.
-> >
-> >         - Emma Mobile AV2 pin control support
-> 
-> Oops, that must be an old typo in the PFC subsystem => EV2 ;-)
-
-Oops, OK will adjust in v3
-
 > Note that your patch does not apply to v5.9-rc1 or my sh-pfc branch,
 > due to the addition of support for RZ/G2H.
 
-OK, will adjust in v3
+On "renesas-drivers-2020-08-18-v5.9-rc1" is enough ?
 
 
 Thank you for your help !!
