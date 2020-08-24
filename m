@@ -2,88 +2,78 @@ Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D7C433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E47C433E1
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC6A2078D
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzr8yzqR"
+	by mail.kernel.org (Postfix) with ESMTP id 3540220838
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgHXMQE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Aug 2020 08:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgHXMQE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 08:16:04 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D42DC061573
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2020 05:16:04 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id si26so11584183ejb.12
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2020 05:16:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=TIdKHXQfy6SgGn+KEE33EdzympBssmxR9jtnRnXHy74=;
-        b=tzr8yzqRDVNtGah/CrNBv2yD4mG5qvAcpVUen0VbGcIgU98M9YccPsXnzgOh3QKeqZ
-         37ulbEx56JP6vUaR63VZ6Of2pRPk4qZ/PqIVYqNieDq6puWb2LmRUXy8oWd4ISyBK+i/
-         F30AEnh//IEWTCDrosGz0uYtcPV35kxPO2N1p5ZbPwwXBCb401qz7iEW3I1Tr0Qr2zrR
-         8GqPjcp15LiCmSJbsq6pXFoFIIyUTemgop3SOBggqHHl04XqI9thze2ICDNfLJz1bWUc
-         lKv60O0YtrP4iALThl49o4hJalMCQuce5HynTiKJEKm33q/N4qEbyILwTuVu+2OQEJaD
-         npVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=TIdKHXQfy6SgGn+KEE33EdzympBssmxR9jtnRnXHy74=;
-        b=aONsmDpIB7sk4SZnAWw7u5v15XTYvzWlGLf+wRJZr1KItcVwwtNZZOyDnNfZAcevU1
-         +9rN+uDf6X2qsHrUNKVutyEAIar/o3g2lU2FhIGFmdqBbSHve8k+0u2vYqub6JLT+YC8
-         PniZqPCBMT98cnaZ2CNOIkbofMAfRQb307SAZNUnuBuXgSln3sVvgp8NPg9/YfMcDuf8
-         ZdcTki8a9n1fmWpqFEpDGayMnthy94ag9vxjBTrU2HaxYREzLNmmZjnPtRPzQI32HG9f
-         Yn6Z0O24PtgYlw7jnAPCsLYhOROuV8j1BG0rXISP428QyuB5PNHyEv56qEaFQYnRM2uD
-         HNuw==
-X-Gm-Message-State: AOAM531pw94hOl5L1eafcE4cI/eXuUJw3RCt1ALVPf2fjUEhXqQWNaS9
-        CftOCsPdcLsDgfpWrsmbie7qqPBzkg4GH+jjuasJ1cMA
-X-Google-Smtp-Source: ABdhPJzlsfZs1iF3q+Si5/CZKYaTfT7WjY8UtiJiqlESpsQRrjJ7uVLuJgw6o8dsBRZ7ajRmwNuO6pmg40A8Nc7Iivs=
-X-Received: by 2002:a17:906:19d5:: with SMTP id h21mr5181735ejd.505.1598271362738;
- Mon, 24 Aug 2020 05:16:02 -0700 (PDT)
+        id S1726924AbgHXMap (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Aug 2020 08:30:45 -0400
+Received: from mo-csw1516.securemx.jp ([210.130.202.155]:48180 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbgHXMao (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 08:30:44 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 07OCULOh008502; Mon, 24 Aug 2020 21:30:22 +0900
+X-Iguazu-Qid: 34tMJPQphi6dh7o7hw
+X-Iguazu-QSIG: v=2; s=0; t=1598272221; q=34tMJPQphi6dh7o7hw; m=AgtQge0HMDRNecaYJInjTapyhman1xSmmcPyB3Gfh1A=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1513) id 07OCUKX3003865;
+        Mon, 24 Aug 2020 21:30:20 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+        by imx12.toshiba.co.jp  with ESMTP id 07OCUKuP018052;
+        Mon, 24 Aug 2020 21:30:20 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 07OCUJ4j032306;
+        Mon, 24 Aug 2020 21:30:20 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Marc Zyngier <maz@misterjones.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v2 8/8] arm64: defconfig: Enable configs for Toshiba Visconti
+Date:   Mon, 24 Aug 2020 21:29:57 +0900
+X-TSB-HOP: ON
+Message-Id: <20200824122957.1392870-9-nobuhiro1.iwamatsu@toshiba.co.jp>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200824122957.1392870-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <20200824122957.1392870-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 MIME-Version: 1.0
-From:   Belisko Marek <marek.belisko@gmail.com>
-Date:   Mon, 24 Aug 2020 14:15:52 +0200
-Message-ID: <CAAfyv34GFWhbjwg-jtnYr5XpjfXJnguDZFDd5_jc4cJboUMUEQ@mail.gmail.com>
-Subject: looking for recent headers in different path in configure
-To:     linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Enable support for the Toshiba Visconti SoCs.
 
-I'm using libgopid in yocto build system. I'm using kernel 5.6 and
-would like to compile 1.5.1 libgpiod release. I have an issue that
-configure phase fails that kernel headers <= 5.5. it's due totthe fact
-that libc in yocto is compiled with 4.19 but I would like to use
-headers from my kernel 5.6. Is there some easy way to tell configure
-phase to search headers in some other directory?
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks and regards,
-
-marek
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e0f33826819f..8faadd68f859 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -57,6 +57,7 @@ CONFIG_ARCH_THUNDER=y
+ CONFIG_ARCH_THUNDER2=y
+ CONFIG_ARCH_UNIPHIER=y
+ CONFIG_ARCH_VEXPRESS=y
++CONFIG_ARCH_VISCONTI=y
+ CONFIG_ARCH_XGENE=y
+ CONFIG_ARCH_ZX=y
+ CONFIG_ARCH_ZYNQMP=y
 -- 
-as simple and primitive as possible
--------------------------------------------------
-Marek Belisko - OPEN-NANDRA
-Freelance Developer
+2.27.0
 
-Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
-Tel: +421 915 052 184
-skype: marekwhite
-twitter: #opennandra
-web: http://open-nandra.com
