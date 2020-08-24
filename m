@@ -2,181 +2,88 @@ Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933DCC433DF
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 10:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D7C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57FBB2071E
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 10:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC6A2078D
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 12:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UskvNm3E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzr8yzqR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbgHXKqA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Aug 2020 06:46:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55086 "EHLO
+        id S1725926AbgHXMQE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Aug 2020 08:16:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbgHXKpz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 06:45:55 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275F0C061573;
-        Mon, 24 Aug 2020 03:45:49 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id md23so10502594ejb.6;
-        Mon, 24 Aug 2020 03:45:49 -0700 (PDT)
+        with ESMTP id S1725906AbgHXMQE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 08:16:04 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D42DC061573
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2020 05:16:04 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id si26so11584183ejb.12
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2020 05:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=f6wdlEKoq+5Slr+UsziPsdyk2CY1PCYDCcZCpyAdvwo=;
-        b=UskvNm3ErsbR8Pp/wFDQea/LOjrsQ4lwIZJjMWNn1JqQJYresYEAPXPejRzFL60qex
-         VE2PGxG3z8KRswRMmM0oKcJxH4wfLw5UvtX4JnyAUPoKWu9sxdm0qD/ddj2zaeo5vMgE
-         KZeoYRVzeupKX/SneIEZ9AqQDO61XOR3UAzcYoPFcwipi1OS8bSVvAxM+lct67wWGrRQ
-         WoFGfSl7GIm+5MgTB/3tGzC54KHwQhZaDXdU/hYA/29sWSYgsMo2Xqb3cBh5O/NmY5R9
-         K9vbAnDlVC3IpZUgmny3LW/UUBYTGqa+eXFV+oY6U5DqQJs1C4JQPbuhL3NgHMj6ka9y
-         dPtA==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=TIdKHXQfy6SgGn+KEE33EdzympBssmxR9jtnRnXHy74=;
+        b=tzr8yzqRDVNtGah/CrNBv2yD4mG5qvAcpVUen0VbGcIgU98M9YccPsXnzgOh3QKeqZ
+         37ulbEx56JP6vUaR63VZ6Of2pRPk4qZ/PqIVYqNieDq6puWb2LmRUXy8oWd4ISyBK+i/
+         F30AEnh//IEWTCDrosGz0uYtcPV35kxPO2N1p5ZbPwwXBCb401qz7iEW3I1Tr0Qr2zrR
+         8GqPjcp15LiCmSJbsq6pXFoFIIyUTemgop3SOBggqHHl04XqI9thze2ICDNfLJz1bWUc
+         lKv60O0YtrP4iALThl49o4hJalMCQuce5HynTiKJEKm33q/N4qEbyILwTuVu+2OQEJaD
+         npVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=f6wdlEKoq+5Slr+UsziPsdyk2CY1PCYDCcZCpyAdvwo=;
-        b=BOUAhbn+dwgjhScJXvuiz4Va037vSwo5yd/BDLejfqcvC0VaDZ2mt9vowBb7GZKo7V
-         N/uyQWbDQK8ATzkD3DLTD6NNPQoMretQFkENqTQLoIAo3NdwKVaUhQJ2ypHJLhwyg+AT
-         rUPxHqqLYPzlJmQvRRZsuvbrxVI2KAplyckVV6X7ZlIomwlMlw5D98kCFofGmqunFuKC
-         0wAQ/ZxgsE7jM2a6MFehnkCIZuTaKrWiMpmsHEdw6Bfoub23kFgMffh0w9hncAX+i4+k
-         L1KlAD4XvdwiXHkB9yfM/fcUTK7/XvCTZj/Xe1sVzjgqzlfrTZLw5K6qy+TenoiVrZND
-         i95w==
-X-Gm-Message-State: AOAM532enl1T4w0Q4fdYmU947gUZXkr3Nxynbgb1xUJBd2LvgG2t/8mh
-        YPznfxq8yHFQx/9qkPNFZY8Fo5k3riKia2wyo4o=
-X-Google-Smtp-Source: ABdhPJzEP44NtBFAfTFi6m+U0B8L72BF9hYGNpMJgnWY8VcgZq+4UR0vLLyZ7HOS1sZEFPyg+vJmWEtgQHp7weUp5fA=
-X-Received: by 2002:a17:906:2a04:: with SMTP id j4mr5218133eje.440.1598265947869;
- Mon, 24 Aug 2020 03:45:47 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=TIdKHXQfy6SgGn+KEE33EdzympBssmxR9jtnRnXHy74=;
+        b=aONsmDpIB7sk4SZnAWw7u5v15XTYvzWlGLf+wRJZr1KItcVwwtNZZOyDnNfZAcevU1
+         +9rN+uDf6X2qsHrUNKVutyEAIar/o3g2lU2FhIGFmdqBbSHve8k+0u2vYqub6JLT+YC8
+         PniZqPCBMT98cnaZ2CNOIkbofMAfRQb307SAZNUnuBuXgSln3sVvgp8NPg9/YfMcDuf8
+         ZdcTki8a9n1fmWpqFEpDGayMnthy94ag9vxjBTrU2HaxYREzLNmmZjnPtRPzQI32HG9f
+         Yn6Z0O24PtgYlw7jnAPCsLYhOROuV8j1BG0rXISP428QyuB5PNHyEv56qEaFQYnRM2uD
+         HNuw==
+X-Gm-Message-State: AOAM531pw94hOl5L1eafcE4cI/eXuUJw3RCt1ALVPf2fjUEhXqQWNaS9
+        CftOCsPdcLsDgfpWrsmbie7qqPBzkg4GH+jjuasJ1cMA
+X-Google-Smtp-Source: ABdhPJzlsfZs1iF3q+Si5/CZKYaTfT7WjY8UtiJiqlESpsQRrjJ7uVLuJgw6o8dsBRZ7ajRmwNuO6pmg40A8Nc7Iivs=
+X-Received: by 2002:a17:906:19d5:: with SMTP id h21mr5181735ejd.505.1598271362738;
+ Mon, 24 Aug 2020 05:16:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200823161550.3981-1-krzk@kernel.org> <20200823161550.3981-21-krzk@kernel.org>
- <AM6PR04MB49668B0F67B02B2A33603B4880560@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <20200824091102.GA20819@kozik-lap> <CAA+hA=S=2SoF8egOq8h-eB9wZGDqrAw66VtW-bU9oBmzFSj9Bw@mail.gmail.com>
- <VI1PR04MB52949085DFA5D29C2858094290560@VI1PR04MB5294.eurprd04.prod.outlook.com>
- <20200824103237.GA26120@kozik-lap>
-In-Reply-To: <20200824103237.GA26120@kozik-lap>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 24 Aug 2020 18:30:33 +0800
-Message-ID: <CAA+hA=TD8bjmws7FXAP7zZR1dYgtLPzjFrhPg8XwZcpP2ef4ug@mail.gmail.com>
-Subject: Re: [PATCH 21/22] arm64: dts: imx8qxp: Remove i.MX7 compatible from USDHC
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bough Chen <haibo.chen@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+From:   Belisko Marek <marek.belisko@gmail.com>
+Date:   Mon, 24 Aug 2020 14:15:52 +0200
+Message-ID: <CAAfyv34GFWhbjwg-jtnYr5XpjfXJnguDZFDd5_jc4cJboUMUEQ@mail.gmail.com>
+Subject: looking for recent headers in different path in configure
+To:     linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 6:32 PM Krzysztof Kozlowski <krzk@kernel.org> wrote=
-:
->
-> On Mon, Aug 24, 2020 at 10:31:31AM +0000, Bough Chen wrote:
-> > > -----Original Message-----
-> > > From: Dong Aisheng [mailto:dongas86@gmail.com]
-> > > Sent: 2020=E5=B9=B48=E6=9C=8824=E6=97=A5 17:45
-> > > To: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Cc: Aisheng Dong <aisheng.dong@nxp.com>; devicetree@vger.kernel.org;
-> > > linux-serial@vger.kernel.org; Anson Huang <anson.huang@nxp.com>;
-> > > linux-gpio@vger.kernel.org; Fabio Estevam <festevam@gmail.com>; Linus
-> > > Walleij <linus.walleij@linaro.org>; linux-pm@vger.kernel.org;
-> > > linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > linux-pwm@vger.kernel.org; Bartosz Golaszewski
-> > > <bgolaszewski@baylibre.com>; Rob Herring <robh+dt@kernel.org>;
-> > > linux-mtd@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Peng=
-utronix
-> > > Kernel Team <kernel@pengutronix.de>; Thierry Reding
-> > > <thierry.reding@gmail.com>; Shawn Guo <shawnguo@kernel.org>; Sascha
-> > > Hauer <s.hauer@pengutronix.de>; linux-arm-kernel@lists.infradead.org;
-> > > linux-watchdog@vger.kernel.org; Bough Chen <haibo.chen@nxp.com>
-> > > Subject: Re: [PATCH 21/22] arm64: dts: imx8qxp: Remove i.MX7 compatib=
-le
-> > > from USDHC
-> > >
-> > > On Mon, Aug 24, 2020 at 5:15 PM Krzysztof Kozlowski <krzk@kernel.org>
-> > > wrote:
-> > > >
-> > > > On Mon, Aug 24, 2020 at 09:00:19AM +0000, Aisheng Dong wrote:
-> > > > > > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > > Sent: Monday, August 24, 2020 12:16 AM
-> > > > > >
-> > > > > > The USDHC on i.MX 8QXP has its own compatible described in
-> > > > > > bindings and used in the driver (with its own quirks).  Remove
-> > > > > > additional fsl,imx7d-usdhc compatible to fix dtbs_check warning=
-s like:
-> > > > > >
-> > > > > >   arch/arm64/boot/dts/freescale/imx8qxp-ai_ml.dt.yaml:
-> > > mmc@5b010000:
-> > > > > >     compatible: ['fsl,imx8qxp-usdhc', 'fsl,imx7d-usdhc'] is too=
- long
-> > > > > >     From schema:
-> > > > > > /ocumentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-> > > > > >
-> > > > > >   arch/arm64/boot/dts/freescale/imx8qxp-ai_ml.dt.yaml:
-> > > mmc@5b010000:
-> > > > > >     compatible: Additional items are not allowed
-> > > > > > ('fsl,imx7d-usdhc' was
-> > > > > > unexpected)
-> > > > > >
-> > > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > >
-> > > > > For Patch 19-22, I think we should fix dt binding doc.
-> > > >
-> > > > Are you sure that these USDHC controllers are compatible with i.MX =
-7D?
-> > > > Could they really run with fsl,imx7d-usdhc compatible?
-> > >
-> > > AFAIK uSDHC on QXP is derived from the former platforms with adding a=
- few
-> > > more new features. e.g. HS400ES/CMDQ.
-> > > Let me loop in uSDHC driver owner Haibo Chen to double confirm.
-> >
-> > Yes, usdhc of imx8qxp can work by using the compatible "fsl, imx7d-usdh=
-c", but will not support HS400ES/Command Queue any more. Also imx8qxp suppo=
-rt Auto CMD23, but imx7d not.
-> > And imx8qxp need to re-config the clock rate after system PM, imx7d do =
-not need to do this.
->
-> Then we can leave the compatible in DTS and I will correct the device
-> tree schema.
+Hi,
 
-Haibo,
+I'm using libgopid in yocto build system. I'm using kernel 5.6 and
+would like to compile 1.5.1 libgpiod release. I have an issue that
+configure phase fails that kernel headers <= 5.5. it's due totthe fact
+that libc in yocto is compiled with 4.19 but I would like to use
+headers from my kernel 5.6. Is there some easy way to tell configure
+phase to search headers in some other directory?
 
-As Krzysztof is helping fix uSDHC binding doc in Patch 12/22,
-please double check with IC for the whole uSDHC derive relationships on i.M=
-X
-and feedback to Krzysztof if anything is wrong.
+Thanks and regards,
 
-Regards
-Aisheng
+marek
 
->
-> Best regards,
-> Krzysztof
+-- 
+as simple and primitive as possible
+-------------------------------------------------
+Marek Belisko - OPEN-NANDRA
+Freelance Developer
+
+Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
+Tel: +421 915 052 184
+skype: marekwhite
+twitter: #opennandra
+web: http://open-nandra.com
