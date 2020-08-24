@@ -2,147 +2,89 @@ Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E91BC433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 06:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E79C433DF
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 07:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64A77206BE
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 06:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB412074D
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 05:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbgHXG6R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Aug 2020 02:58:17 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37511 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbgHXG6L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 02:58:11 -0400
-Received: from [2001:67c:670:100:1d::c0] (helo=ptx.hi.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kA6Qc-00039e-ED; Mon, 24 Aug 2020 08:58:02 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kA6Qb-0006nF-2p; Mon, 24 Aug 2020 08:58:01 +0200
-Date:   Mon, 24 Aug 2020 08:58:01 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Subject: Re: [PATCH 02/22] dt-bindings: gpio: fsl-imx-gpio: Add gpio-ranges
- property
-Message-ID: <20200824065801.GH13023@pengutronix.de>
-References: <20200823161550.3981-1-krzk@kernel.org>
- <20200823161550.3981-2-krzk@kernel.org>
- <20200824052446.GE13023@pengutronix.de>
- <20200824063806.GA2497@kozik-lap>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824063806.GA2497@kozik-lap>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:53:51 up 186 days, 14:24, 148 users,  load average: 0.09, 0.16,
- 0.18
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        id S1726051AbgHXFtV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Aug 2020 01:49:21 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:16395 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725817AbgHXFtV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Aug 2020 01:49:21 -0400
+Date:   24 Aug 2020 14:49:20 +0900
+X-IronPort-AV: E=Sophos;i="5.76,347,1592838000"; 
+   d="scan'208";a="55127146"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 24 Aug 2020 14:49:20 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1C73241AD1D5;
+        Mon, 24 Aug 2020 14:49:20 +0900 (JST)
+Message-ID: <87mu2ky4rz.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 0/4] pinctrl: sh-pfc: collect Renesas related CONFIGs in one place
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 08:38:06AM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Aug 24, 2020 at 07:24:46AM +0200, Sascha Hauer wrote:
-> > On Sun, Aug 23, 2020 at 06:15:30PM +0200, Krzysztof Kozlowski wrote:
-> > > The GPIO controller node can have gpio-ranges property.  This fixes
-> > > dtbs_check warnings like:
-> > > 
-> > >   arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: gpio@30200000: 'gpio-ranges' does not match any of the regexes: 'pinctrl-[0-9]+'
-> > >     From schema: Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-> > > 
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/gpio/fsl-imx-gpio.yaml    | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-> > > index 454db20c2d1a..1fac69573bb9 100644
-> > > --- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
-> > > @@ -51,6 +51,9 @@ properties:
-> > >  
-> > >    gpio-controller: true
-> > >  
-> > > +  gpio-ranges:
-> > > +    maxItems: 1
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - reg
-> > > @@ -62,6 +65,18 @@ required:
-> > >  
-> > >  additionalProperties: false
-> > >  
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: fsl,imx8mp-gpio
-> > > +    then:
-> > > +      properties:
-> > > +        gpio-ranges:
-> > > +          minItems: 1
-> > > +          maxItems: 2
-> > 
-> > Why do you limit this to fsl,imx8mp-gpio? The i.MX5,6,7 dtsi files use
-> > gpio-ranges as well and other i.MX dtsi files could also use it.
-> 
-> All other cases use maximum one element in gpio-ranges, so they are
-> covered so I assumed they are continuous. But if it not the case, I can
-> make all them maximum 2.
 
-I misread this, I thought you allow gpio-ranges only for imx8mp, but
-it's only the maxItems you set differently for that SoC. Anyway,
-arch/arm/boot/dts/imx6dl.dtsi has this:
+Hi Linus, Geert
 
-&gpio1 {
-        gpio-ranges = <&iomuxc  0 131 2>, <&iomuxc  2 137 8>, <&iomuxc 10 189 2>,
-                      <&iomuxc 12 194 1>, <&iomuxc 13 193 1>, <&iomuxc 14 192 1>,
-                      <&iomuxc 15 191 1>, <&iomuxc 16 185 2>, <&iomuxc 18 184 1>,
-                      <&iomuxc 19 187 1>, <&iomuxc 20 183 1>, <&iomuxc 21 188 1>,
-                      <&iomuxc 22 123 3>, <&iomuxc 25 121 1>, <&iomuxc 26 127 1>,
-                      <&iomuxc 27 126 1>, <&iomuxc 28 128 1>, <&iomuxc 29 130 1>,
-                      <&iomuxc 30 129 1>, <&iomuxc 31 122 1>;
-};
+These are v4 patch for Renesas pinctrl Kconfig.
 
-I don't think it makes sense to specify maxItems.
+Renesas related pinctrl CONFIGs are located random places on menuconfig,
+because of it, it is confusable.
+This patch collects these into same place.
 
-Sascha
+This patch moves pinctrl-rza{a1,a2,n1}.c to sh-pfc,
+but not renamed "sh-pfc" to "renesas".
+
+These are based on renesas-drivers-2020-08-18-v5.9-rc1
+
+v3 -> v4
+	- fixup pinctrl-rz{a1,a2,n1}.c compile error
+
+v2 -> v3
+	- tidyup "AV2" to "EV2"
+	- move pinctrl-rza{a1,a2,n1}.c to sh-pfc
+	- sort all drivers
+
+v1 -> v2
+	- align driver description title
+	- sort  driver description title
+
+Kuninori Morimoto (4):
+  pinctrl: sh-pfc: tidyup Emma Mobile EV2
+  pinctrl: sh-pfc: collect Renesas related CONFIGs in one place
+  pinctrl: sh-pfc: align driver description title
+  pinctrl: sh-pfc: tidy up driver description title
+
+ drivers/pinctrl/Kconfig                     |  32 ----
+ drivers/pinctrl/Makefile                    |   3 -
+ drivers/pinctrl/sh-pfc/Kconfig              | 181 ++++++++++++--------
+ drivers/pinctrl/sh-pfc/Makefile             |   4 +
+ drivers/pinctrl/{ => sh-pfc}/pinctrl-rza1.c |   0
+ drivers/pinctrl/{ => sh-pfc}/pinctrl-rza2.c |   0
+ drivers/pinctrl/{ => sh-pfc}/pinctrl-rzn1.c |   0
+ 7 files changed, 114 insertions(+), 106 deletions(-)
+ rename drivers/pinctrl/{ => sh-pfc}/pinctrl-rza1.c (100%)
+ rename drivers/pinctrl/{ => sh-pfc}/pinctrl-rza2.c (100%)
+ rename drivers/pinctrl/{ => sh-pfc}/pinctrl-rzn1.c (100%)
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
