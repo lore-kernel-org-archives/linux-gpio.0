@@ -2,120 +2,72 @@ Return-Path: <SRS0=HW0j=CC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804CCC433E1
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 05:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E988C433E3
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 06:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64ABE20706
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 05:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67442087D
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Aug 2020 05:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgHXFqM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Aug 2020 01:46:12 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60475 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbgHXFqL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2020 01:46:11 -0400
-Received: from [2001:67c:670:100:1d::c0] (helo=ptx.hi.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kA5Iw-0004fN-D3; Mon, 24 Aug 2020 07:46:02 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kA5Iv-0001Wd-F9; Mon, 24 Aug 2020 07:46:01 +0200
-Date:   Mon, 24 Aug 2020 07:46:01 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Subject: Re: [PATCH 07/22] dt-bindings: serial: fsl-imx-uart: imx-pwm: Add
- i.MX 8M compatibles
-Message-ID: <20200824054601.GF13023@pengutronix.de>
-References: <20200823161550.3981-1-krzk@kernel.org>
- <20200823161550.3981-7-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200823161550.3981-7-krzk@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:44:43 up 186 days, 13:15, 151 users,  load average: 0.94, 0.53,
- 0.26
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        id S1726104AbgHXFtm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Aug 2020 01:49:42 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:9852 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725817AbgHXFtl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Aug 2020 01:49:41 -0400
+Date:   24 Aug 2020 14:49:40 +0900
+X-IronPort-AV: E=Sophos;i="5.76,347,1592838000"; 
+   d="scan'208";a="55343878"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Aug 2020 14:49:40 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A9F924008568;
+        Mon, 24 Aug 2020 14:49:40 +0900 (JST)
+Message-ID: <87lfi4y4re.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v4 1/4] pinctrl: sh-pfc: tidyup Emma Mobile EV2
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <87mu2ky4rz.wl-kuninori.morimoto.gx@renesas.com>
+References: <87mu2ky4rz.wl-kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
-The subject contains a "imx-pwm", presumably from the last patch.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Sascha
+It is "Emma Mobile EV2" not "AV2".
+This patch tidyup it.
 
-On Sun, Aug 23, 2020 at 06:15:35PM +0200, Krzysztof Kozlowski wrote:
-> DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-> to fix dtbs_check warnings like:
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
->     compatible:0: 'fsl,imx8mm-pwm' is not one of ['fsl,imx1-pwm', 'fsl,imx27-pwm']
->     From schema: Documentation/devicetree/bindings/pwm/imx-pwm.yaml
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
->     compatible: ['fsl,imx8mm-pwm', 'fsl,imx27-pwm'] is too long
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: pwm@30660000:
->     compatible: Additional items are not allowed ('fsl,imx27-pwm' was unexpected)
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  Documentation/devicetree/bindings/serial/fsl-imx-uart.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/fsl-imx-uart.yaml b/Documentation/devicetree/bindings/serial/fsl-imx-uart.yaml
-> index cba3f83ccd5f..3d896173b3b0 100644
-> --- a/Documentation/devicetree/bindings/serial/fsl-imx-uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/fsl-imx-uart.yaml
-> @@ -36,6 +36,10 @@ properties:
->              - fsl,imx6sx-uart
->              - fsl,imx6ul-uart
->              - fsl,imx7d-uart
-> +            - fsl,imx8mm-uart
-> +            - fsl,imx8mn-uart
-> +            - fsl,imx8mp-uart
-> +            - fsl,imx8mq-uart
->            - const: fsl,imx6q-uart
->  
->    reg:
-> -- 
-> 2.17.1
-> 
-> 
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index 7fdc7ed8bd2e..8b2b1e1a9047 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -66,7 +66,7 @@ config PINCTRL_SH_FUNC_GPIO
+ 	  This enables legacy function GPIOs for SH platforms
+ 
+ config PINCTRL_PFC_EMEV2
+-	bool "Emma Mobile AV2 pin control support" if COMPILE_TEST
++	bool "Emma Mobile EV2 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A73A4
+ 	bool "R-Mobile APE6 pin control support" if COMPILE_TEST
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
