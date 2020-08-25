@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADDAC433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775BCC433DF
 	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 19:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3809A20782
+	by mail.kernel.org (Postfix) with ESMTP id 6177B2075F
 	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 19:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1598384311;
-	bh=IcWdUIpZPLrTFhfMFn5K5VkjUKVluLTxZ3P2v5TWsEE=;
+	bh=M4HsMpi+RByLc2WfD2hU1auUVsDqshtSVqJUE+BFQVI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LJH65QtYy+IC8ANsH3IdTkHsMhGw4/3mVxg1Q0IMvjCLsC+DnDfkvrfYmLbWS7m2x
-	 qFEEBK/rs0q+PZMitx4y0W07al5r/6J1M245GvB4ox1LzzHkPkqu98e1oA8P0bFKE3
-	 9yHbBunEW5uumsEKQLmCZxiEVta5mhOXFaSLXicw=
+	b=07piiMhYgdvS2FYE5zTt/drIMbRPH20ph0vTeJlnz329QZsUERdK6cN3KtaouIvB4
+	 WrEg5B+syoO/yUa9Zd+ajcTJPawfRNkGTOb+k9m/U0lbDGDTeQFjJ3u9ei4ete+8tg
+	 8WbsUW4UjY8M9py0ux+3mr0/5i8qYoTgwmhxpFY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgHYTia (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Aug 2020 15:38:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44838 "EHLO mail.kernel.org"
+        id S1727821AbgHYTiU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Aug 2020 15:38:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbgHYTi2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Aug 2020 15:38:28 -0400
+        id S1726149AbgHYTiT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Aug 2020 15:38:19 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 903BA2076C;
-        Tue, 25 Aug 2020 19:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9A6C2075E;
+        Tue, 25 Aug 2020 19:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598384307;
-        bh=IcWdUIpZPLrTFhfMFn5K5VkjUKVluLTxZ3P2v5TWsEE=;
+        s=default; t=1598384298;
+        bh=M4HsMpi+RByLc2WfD2hU1auUVsDqshtSVqJUE+BFQVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gJHNNnI+e6F9M/j7H2BKfgIoxpLcyVT0jAV7Hqq8/V4GMtu7v7xkqaeWBcfrsFyCm
-         2wAcS5fv1Pi0A9WGjUQzniBV4GuEgYGDR7xQeSNcYMfnn4wgGuKcJOm0LG2hippJbT
-         JFURqXPBstDg6mKTN0g6YvQkg/50s1viQMPkiwRU=
+        b=oOkLt8Y8H/gwVZuCXJOtYYkPoy7sPNwaLw4UhvOunN6Z8R3ikXyDrTfJfSLfesO9a
+         gCmGLV4zq8C6d6N8i4Mm+6pe7XdOVDi/AHw28KlDiLU6apTZNIXzh62bbgT+mDV0hv
+         4eC1Vml69ym2WYaSIHI/js2lICJeCRjDeBbYU4m4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -60,9 +60,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 18/19] arm64: dts: imx8mq-evk: Add hog suffix to wl-reg-on
-Date:   Tue, 25 Aug 2020 21:35:35 +0200
-Message-Id: <20200825193536.7332-19-krzk@kernel.org>
+Subject: [PATCH v3 17/19] dt-bindings: serial: fsl-lpuart: Fix compatible matching
+Date:   Tue, 25 Aug 2020 21:35:34 +0200
+Message-Id: <20200825193536.7332-18-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200825193536.7332-1-krzk@kernel.org>
 References: <20200825193536.7332-1-krzk@kernel.org>
@@ -71,28 +71,57 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-According to device tree specification, device node names should be
-somewhat generic and reflecting the function of the device so add the
-"hog" suffix to wl-reg-on GPIO hog.
+The i.MX 8QXP DTSes use two compatibles so update the binding to fix
+dtbs_check warnings like:
+
+  arch/arm64/boot/dts/freescale/imx8qxp-mek.dt.yaml: serial@5a060000:
+    compatible: ['fsl,imx8qxp-lpuart', 'fsl,imx7ulp-lpuart'] is too long
+    From schema: Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+
+  arch/arm64/boot/dts/freescale/imx8qxp-mek.dt.yaml: serial@5a060000:
+    compatible: Additional items are not allowed ('fsl,imx7ulp-lpuart' was unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-index 8aa9cd8e495a..a088831d2e24 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-@@ -157,7 +157,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_wifi_reset>;
+---
+
+Changes since v2:
+1. Remove moved compatibles.
+
+Changes since v1:
+1. New patch.
+---
+ .../devicetree/bindings/serial/fsl-lpuart.yaml  | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+index e82c2cf9fef7..bd21060d26e0 100644
+--- a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
++++ b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+@@ -14,13 +14,16 @@ allOf:
  
--	wl-reg-on {
-+	wl-reg-on-hog {
- 		gpio-hog;
- 		gpios = <29 GPIO_ACTIVE_HIGH>;
- 		output-high;
+ properties:
+   compatible:
+-    enum:
+-      - fsl,vf610-lpuart
+-      - fsl,ls1021a-lpuart
+-      - fsl,ls1028a-lpuart
+-      - fsl,imx7ulp-lpuart
+-      - fsl,imx8qxp-lpuart
+-      - fsl,imx8qm-lpuart
++    oneOf:
++      - enum:
++          - fsl,vf610-lpuart
++          - fsl,ls1021a-lpuart
++          - fsl,ls1028a-lpuart
++          - fsl,imx7ulp-lpuart
++          - fsl,imx8qm-lpuart
++      - items:
++          - const: fsl,imx8qxp-lpuart
++          - const: fsl,imx7ulp-lpuart
+ 
+   reg:
+     maxItems: 1
 -- 
 2.17.1
 
