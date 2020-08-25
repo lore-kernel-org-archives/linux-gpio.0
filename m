@@ -2,145 +2,120 @@ Return-Path: <SRS0=V2bQ=CD=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085E4C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 13:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B46C433E1
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 13:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7BAD2075F
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 13:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27AFA2076C
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 13:39:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="i8UhYGZn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJMuObmr"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="FY+BZBxM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D1ieySps"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbgHYNgw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Aug 2020 09:36:52 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:34481 "EHLO
+        id S1726257AbgHYNgH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Aug 2020 09:36:07 -0400
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:49681 "EHLO
         wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726749AbgHYNgX (ORCPT
+        by vger.kernel.org with ESMTP id S1726580AbgHYNgD (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Aug 2020 09:36:23 -0400
+        Tue, 25 Aug 2020 09:36:03 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id B57FBCCD;
-        Tue, 25 Aug 2020 09:36:20 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 25 Aug 2020 09:36:22 -0400
+        by mailnew.west.internal (Postfix) with ESMTP id DF382C53;
+        Tue, 25 Aug 2020 09:36:01 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 25 Aug 2020 09:36:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=POEurteasFjtErahfEjgvleBxyP
-        Dp8wZRReEbv/IAys=; b=i8UhYGZnZjo037lPyii2wA/CX7LkgMwr9a3XbcVjYtH
-        Wmv4F/2SE2c8N6spUbl7zBloi9b8wwCB+yERBHAut3kTCUOpHgNgbOA4LR/Ew0vV
-        zHWRGcEy9u2JN0gE1wGX9XTkLkCrA7Mkx86YSG14ttmT+Uj6+qHU7u84BFVAS5sH
-        fXYnmp4r3f7OD7prv9BfPZedMze1b1hMbGqK9suB0YzsZo+r1Pwlb71TifHAQdcZ
-        T8olniVwYsB8msCX1/AJnol0C48g8QdEGfJm6UpKwcj6f5GUa8fq4cMTtm0kveAB
-        Q8qOXt9jXKfa556Nf62m8CjIn3OfmFnNPZlpFx0bL9g==
+        :content-type:in-reply-to; s=fm3; bh=ypPIgBZlj0QkzTKDgIZnXB33E2I
+        dNRV4QSnBi+COnQA=; b=FY+BZBxM/ANQECCXkC7udwol6SQYhnzjgPVgEJvWmYk
+        WF/sQHvlu4zQbTE5F3hgXdzPLrmesCWy63bAkUOsLQCxP8TIqMsoIclMPwOaJdX5
+        3rc0CUf1F+2NlIm9vkLoDPKqq2RZ/Jx7DLEIwzUxGffnGEqU4dtcXGrONC1J8A+z
+        U6MWaRxN7AOv5FBncsi3kriGukuH04NQaVlAUV80Gi8i+t86O0APITKWvyb32cg6
+        tv4VSKBd+jG6DIzs7UKCTLPQQmiru8aNqd8g0EXoYwRPcsRNL3mHm4Ul1RxiH24s
+        nZ1H/pQ+0SCkcJD7HQr8I1jp/a0D5rO8qrIi3OEOa6w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=POEurt
-        easFjtErahfEjgvleBxyPDp8wZRReEbv/IAys=; b=XJMuObmrP1KF2fiCudIQoF
-        Uw9YdDA9nRFLxEgXw4Mjs9KyCgAEczVVNqFx6J1rHndHBdOO5lsN9hYTd5dtYd2o
-        SiQ+GHyPrGNtuolY4oY5F0wdDLm6p9aUtcwVif+FX4vxcDyt7PIfORygP+kHk+PU
-        5y82npqA9hHXInV1zafBoPumQHM2nxY8MkCgYYQDh0chHba0IOTKOzdhfCFpUmqr
-        mRM5PpYFzv8lUAPcy88JZ84iEz+emJjwyCr0JgsRaWbO7k2o/042PGFoKQHO+cX6
-        3W2gjd2837hYtUzxOdHL8tBTnRCazMAGQiti0R8NLNtESi0NhEQEDTSm2jxGeohQ
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ypPIgB
+        Zlj0QkzTKDgIZnXB33E2IdNRV4QSnBi+COnQA=; b=D1ieySpsg2WkooCMaqirJB
+        c+0bD5GKSFzdWU+Wk7VM3KUI7RgTDwchMr1EpSy/1u7BwCbzj036PFoEE8uHiGxG
+        ujR+ascEB1fQUgozHMwI+Ad0LTaHjCKODLovvP/uJnMTq22js1y5WkR6UcMyEAPa
+        /VFzY3NTK1QxyJy54PvF4iiilTsyMQV/hHWU//iL7Ziz/8s6w4bexbaUE37pI4RR
+        rH4k2Kuggwz7u9uZU4DG7avXS8YytADwI+20PTmnkQ9I70xSn9DYGWbn5cwo83TN
+        plbdEc39ZkSqLkjt5hCO2bWyj/5B7WRWp27Oohke8iMNLhXmAsXfhxa0gSDJ9ZOg
         ==
-X-ME-Sender: <xms:1BNFX-4Ec6Wt06BBmqcZp-stJ36Ws-Pz6M9S0fH9vKfHtHaYRipLhQ>
+X-ME-Sender: <xms:wRNFXzUBXODmYvlbqEuxJYgww5qquOYjGRzNXMXq79rrmIXiRYWweA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedruddvtddgieelucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
     htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepvddune
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:1BNFX34Jxf_MxSBsPQgv3osZA2IUOm9RuGW3he0GaDIb-Crt_jqsNQ>
-    <xmx:1BNFX9eW9OggrB-x6yam3EuKH9xSnH4r8TBzbmLawHnDvILI2Ef81w>
-    <xmx:1BNFX7LPwLSpf-QM7m7LqSbRD0zLgnVPKcNN9eWu5vFhQibCKW1fKQ>
-    <xmx:1BNFX6AWjA-EcPGV4346e34oYz6jt_QRUfA4kEdsWppp3Zws0d7Ei3LzJcE>
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepleenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:wRNFX7k9FIvyXPQKRPVmtlwBrwHIR9VYWwWmV-n7iutQXeNe5sbcnA>
+    <xmx:wRNFX_bV_rKmMyHQ0POSPAoWq1oThWNTATiqfiJxln71LxD5rlNrYw>
+    <xmx:wRNFX-WJZwJKmD9xo7gu5C5PNKqnNBw6St7s_6820ZYsXlABhdzI7g>
+    <xmx:wRNFX_4nh9us8QGBjybN6UYXlVzDuUMIGI1SJOVpWT69NHtSbfPHurMqDUU>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ABAA63280059;
-        Tue, 25 Aug 2020 09:36:19 -0400 (EDT)
-Date:   Tue, 25 Aug 2020 10:55:32 +0200
+        by mail.messagingengine.com (Postfix) with ESMTPA id 238EA30600B1;
+        Tue, 25 Aug 2020 09:36:01 -0400 (EDT)
+Date:   Tue, 25 Aug 2020 10:44:51 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Frank Lee <tiny.windzz@gmail.com>,
-        Frank Lee <frank@allwinnertech.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, gregory.clement@bootlin.com,
-        Thomas Gleixner <tglx@linutronix.de>, jason@lakedaemon.net,
-        Marc Zyngier <maz@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "p.zabel" <p.zabel@pengutronix.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        clabbe@baylibre.com, bage@linutronix.de,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 00/16] Allwinner A100 Initial support
-Message-ID: <20200825085532.vv4dpuzmjnshm5qn@gilmour.lan>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, wens@csie.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tiny.windzz@gmail.com, huangshuosheng@allwinnertech.com,
+        liyong@allwinnertech.com, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 04/16] dt-bindings: pinctrl: sunxi: Add A100 pinctrl
+ bindings
+Message-ID: <20200825084451.w5xfgqwszk7brv4c@gilmour.lan>
 References: <cover.1595572867.git.frank@allwinnertech.com>
- <CAEExFWsvScMgi_Dftfq06HZiF8CFAmym8Z_tgQoHHAfiGxWt0g@mail.gmail.com>
- <CAEExFWuwjmqAh0c3kMLS3Gs6UC2A8TtY-9nJeWxFPRDugtR4pA@mail.gmail.com>
- <20200824080327.GH3248864@dell>
+ <a5773d677bcc89af3810cdd187fae54eced82f27.1595572867.git.frank@allwinnertech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="auueqe22v4rtftcj"
+        protocol="application/pgp-signature"; boundary="ezfe6ijrj5w62qid"
 Content-Disposition: inline
-In-Reply-To: <20200824080327.GH3248864@dell>
+In-Reply-To: <a5773d677bcc89af3810cdd187fae54eced82f27.1595572867.git.frank@allwinnertech.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
---auueqe22v4rtftcj
+--ezfe6ijrj5w62qid
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 24, 2020 at 09:03:27AM +0100, Lee Jones wrote:
-> On Mon, 24 Aug 2020, Frank Lee wrote:
+On Fri, Jul 24, 2020 at 03:02:42PM +0800, Frank Lee wrote:
+> From: Yangtao Li <frank@allwinnertech.com>
 >=20
-> > ping......
+> Add device tree binding Documentation details for A100 pinctrl driver,
+> which has a r pin controller and a pin controller with more irq lines.
 >=20
-> "Please don't send content free pings and please allow a reasonable
->  time for review.  People get busy, go on holiday, attend conferences
->  and so on so unless there is some reason for urgency (like critical
->  bug fixes) please allow at least a couple of weeks for review.  If
->  there have been review comments then people may be waiting for those
->  to be addressed.  Sending content free pings just adds to the mail
->  volume (if they are seen at all) and if something has gone wrong
->  you'll have to resend the patches anyway so [RESEND]ing with any
->  comments addressed is generally a much better approach."
+> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-This is true to some extent, but pinging after a month doesn't seem
-unreasonable either.
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
+Thanks!
 Maxime
 
---auueqe22v4rtftcj
+--ezfe6ijrj5w62qid
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX0TSBAAKCRDj7w1vZxhR
-xQ6OAP9rRoEY6LGAwA8rIYGP9nqZkGQvX8jYgLKgy8LDGLzgHwD9FpLVh5zaq2PN
-wZuijCenTGRJcOzorN0M0qrwWwjOnwM=
-=/bST
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX0TPgwAKCRDj7w1vZxhR
+xd0WAP0VlEEuyAwTMWD+dZDnp9yz/vWvxTFhioJZ2/bd+AXDbgD+LzaGkBwR7pn4
+Dy3kMc74IBgMbiWfwLaDJBa/ViRSUA8=
+=nw65
 -----END PGP SIGNATURE-----
 
---auueqe22v4rtftcj--
+--ezfe6ijrj5w62qid--
