@@ -1,191 +1,124 @@
-Return-Path: <SRS0=V2bQ=CD=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=v4NI=CE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB32C433E1
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 22:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC49AC433E3
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Aug 2020 08:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5F02075E
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Aug 2020 22:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20FB208E4
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Aug 2020 08:52:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5UGRk30"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="E6dlXiEJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbgHYWVY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Aug 2020 18:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgHYWVY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2020 18:21:24 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E934C061574;
-        Tue, 25 Aug 2020 15:21:23 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id m71so8453416pfd.1;
-        Tue, 25 Aug 2020 15:21:23 -0700 (PDT)
+        id S1727020AbgHZIwF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Aug 2020 04:52:05 -0400
+Received: from mail-eopbgr1320127.outbound.protection.outlook.com ([40.107.132.127]:6166
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726817AbgHZIwE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Aug 2020 04:52:04 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a9EPndt4n7Pu8aiQhC/1NuZUu7K9sD0JQekdgrBxcxQVBTHskNNUfO/zLvtEK9eNwpwCFOexZt8WBQEGPe6J9gXFOidu7iumBYky4zVM+/mK90BD3mCyTF8B+puJKEUpqYisAjTv6rFWfNiUsqelAyN73ogoM2ax+tbMwXLpsNZeTPUEqazLl59O7+czIB1oWxclD42nyrGTp6QaIpS13Z3W+IRiYcNlPrWY2XXwskoBbO2cbDtMHxhFSJ7H5SCFPmhhaIoTq8y1uWpAX2k07z3IAeOoGGySK4W/86sxC5ErsmIENwirVUeY8MW05fEFWx6lLK6/T3eYTiU01jYxVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C8fKj9G1Vv9MrTI//vO/GUkrCK7S6U4tQRYHrB4BPg0=;
+ b=G6saWTHyN5t0+2CvcEYdrENSuaXXhgUc29DZB5Dx7CiZeWOOWMW6OFDZSSkUc+/X2qUUgabaAeSidj4VzmGL71xcZGwynEGSCRwoF7zE4uv5mbgEBQGsQDazfykT7ZHShGLG7pV8ZjXnEA8Zci0fvPPxqCcMVRRkuJ/YMVa09jqveGipC9PNph12FA+ERddb8uFaQuUDLaymbKhn4UfzL/yjNwnxjQTkpDiMltHgnIPITM9dkioh31VjEIWHJZ/9XHPHdW3lDq1ueWbZ+ujPffcrrZDsOY3VW0UI53gbf8z30xbJgLhcDWaRpDH7HPsHkmbw0TVkgZwESxttTgRTCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Xo3Lh0ar7wK8VvvtzSvlcOKRsOHINzAQAPvkHRS8eCk=;
-        b=K5UGRk30zCXsG7GyY8ibqJTsvhuFGMNYsMqdZaXvDUMwQedYWITYCEidSXBJOsM6xX
-         G5lm7jYUuJjWCyn68p+/Ji763YxWvw113AC6Wr06+QqcibsW/uuPKKguaG10PDggRgaA
-         VaB5WEjxaIvUd9pV3jAtNE7xWq/qwemnzDOPDUtmOuPjKHbMDsBHty7OUhWg33wZLSAm
-         dZbPw5t5ZyNZBjssFp72nGKKgNUNHTbZOrDCmh8xiFcvLcm3v5WdC9ZizdwE9HdXTRux
-         qfexwp2ykIJg+a0OYiJ8JdNv30nsS//N5XihqqZwzkSMUwvYlLN6GL4EK9shYfzVePQq
-         brfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Xo3Lh0ar7wK8VvvtzSvlcOKRsOHINzAQAPvkHRS8eCk=;
-        b=o8ZPvYq1Al82gKZVkbSyC80vcPvmxlCL+E1i2SoJdMyMkYMyxgc1WNHo8oGxA+cpFY
-         cmW8LoynNndVcOa9pmlcAlk0C5kZZS09HugHvsUMUkBCjpypuZ3SUscXpGmqLFtpe2bU
-         +my4T63djd7ssBVYh5hh7IWMqfP+Q85UxN3+gWk6QGfZW7o7YVdBfaJuUffYFrdialon
-         Agv9+JInRgWlh7HKsbao9A84ASLLhtrO/JO7D3pIHJhwByVAns/XZVUG48aaWRpKkIUh
-         jpFn9zVAc/d+8OFGePB5O6OmzopZngo0tTWCOOXsPFWdo5jS0FhOeDqMZvfSrIpNCILS
-         D4zw==
-X-Gm-Message-State: AOAM532KOUKrmagO3m0ZlgMraf9LKmdgtI+EJdot5ZLqjZmavGpldBlL
-        hZ56Uw9VMeVZOHeVuaeYIz6q9n7lXmo=
-X-Google-Smtp-Source: ABdhPJx/W1tKY8ncOnd42CczsmOXPD+BXGz4pzZDJOXSv79W0b26Rxxdd7HgbovfyrFCE6/1S6CseA==
-X-Received: by 2002:a63:1341:: with SMTP id 1mr880005pgt.144.1598394082624;
-        Tue, 25 Aug 2020 15:21:22 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e3sm258500pfj.78.2020.08.25.15.21.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2020 15:21:21 -0700 (PDT)
-Subject: Re: [PATCH v3 08/19] dt-bindings: watchdog: fsl-imx-wdt: Add i.MX 8M
- compatibles
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C8fKj9G1Vv9MrTI//vO/GUkrCK7S6U4tQRYHrB4BPg0=;
+ b=E6dlXiEJ258Fsgt2VvoErY1z+cjDDB+ODIaRVu5bc6n8sUjF83RLmOqN4bDM+qUIq0o11uqA7ApAeq0ryS0ptEoOvZUBmZBo16iV7CbQcb1/kJsjA/TuUrUBAsTSFMYePQn6w0/aQAl5xYugDlBBtXPZLZ6fEMqHkp8J8sImTv4=
+Received: from TY2PR01MB2924.jpnprd01.prod.outlook.com (2603:1096:404:73::17)
+ by TY2PR01MB5035.jpnprd01.prod.outlook.com (2603:1096:404:111::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.24; Wed, 26 Aug
+ 2020 08:52:00 +0000
+Received: from TY2PR01MB2924.jpnprd01.prod.outlook.com
+ ([fe80::e1a0:8e97:f2b7:c9d9]) by TY2PR01MB2924.jpnprd01.prod.outlook.com
+ ([fe80::e1a0:8e97:f2b7:c9d9%2]) with mapi id 15.20.3326.019; Wed, 26 Aug 2020
+ 08:52:00 +0000
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Han Xu <han.xu@nxp.com>,
-        Frank Li <frank.li@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20200825193536.7332-1-krzk@kernel.org>
- <20200825193536.7332-9-krzk@kernel.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <88bcb8db-1e19-fdf6-6527-6f3755cd5709@roeck-us.net>
-Date:   Tue, 25 Aug 2020 15:21:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200825193536.7332-9-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: pinctrl: rzn1: Convert to json-schema
+Thread-Topic: [PATCH] dt-bindings: pinctrl: rzn1: Convert to json-schema
+Thread-Index: AQHWd60potnxulZi0USUP8M4OLJxHalCfc1wgAXw8wCAAZ7IsA==
+Date:   Wed, 26 Aug 2020 08:52:00 +0000
+Message-ID: <TY2PR01MB29248882CC49ED53F99A5FF7DF540@TY2PR01MB2924.jpnprd01.prod.outlook.com>
+References: <20200821112059.5133-1-geert+renesas@glider.be>
+ <TY2PR01MB2924258A9762FD083630B628DF560@TY2PR01MB2924.jpnprd01.prod.outlook.com>
+ <CAMuHMdU2+=aesP5v3iAWp8+-LZ8dpMi+EOm7n5x74q7j8kFNPg@mail.gmail.com>
+In-Reply-To: <CAMuHMdU2+=aesP5v3iAWp8+-LZ8dpMi+EOm7n5x74q7j8kFNPg@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=none action=none header.from=renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2d0a81f2-32aa-4e80-818d-08d8499d4bd4
+x-ms-traffictypediagnostic: TY2PR01MB5035:
+x-microsoft-antispam-prvs: <TY2PR01MB5035CECADE92550BFEC78CD9DF540@TY2PR01MB5035.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tAs/Q8IllTQ+VYAsfyJ4h7tyZ71Y6n4Ran0+tE+QlFp1DwH1vTIr1jls58qAaibxrLEKgux0a4bRL7+0Sg12t7r/Eeb2YLJQFnZqwbWlm2HhHSyInAa0v8zz+HgmDikzaP4vW5gov8l0wnEb13RWh259MDiu7qV2uHVldEGRtFZAivcvkxhEB2+uKrolFK/bLa7snStE0+BTMDMR1K+cKdXB/HPk/eP+6xniJpBCgDV90WwFkTQTFx9Qcxu8KaufDLuDPvwKVZNqIDMQdZOvXSsvB+4yhXo8S5eBqWzqNPMKYw7XPBnjl7yBmVb0e1y+
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB2924.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(346002)(366004)(396003)(39860400002)(53546011)(55016002)(26005)(33656002)(7696005)(186003)(8936002)(316002)(6506007)(5660300002)(54906003)(4326008)(478600001)(4744005)(66556008)(8676002)(66946007)(6916009)(64756008)(76116006)(66476007)(86362001)(71200400001)(9686003)(52536014)(2906002)(66446008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: aUVQBpEKmktHW+HGy2AAK+WvT5+5X6e/UZDnfFVIhJv9I/SA/HluzusPnmGfBwBvFOjDjHQN9rFKTqKbOt3+s1uedfkSHMDyx1FqBHmBbBLM2wWpVKi23vdSAeMpEKCfJdZTRcqac62I6NlO0+sX/kTVl0CfJMvIPI+GKwyrcoSYQGqA9SHxY/s/pi1b+ezLSEpwamKaAYSuVazY41epJ8QKQ0F6yeGJKkGcml0ltwAcEbw0YtMRrFTu8+26ZPaYjlXT8Yr/AtCneyDJMcRDXcM1drVlppfPACZ90366MNINook88MjmyQ2J7cbp0HFtPba2Jj7os/3WTLrfbpOg0ZH+Lih3k5BBMCbs3Toa4ViU1lkcwcmR3ekwthCwLQTQO1yykKKjpZ3BdvREtQhNEm1a9eOiczBJWR+onnE9DH8l2Jna+wMsHIrwVnDdJfS/IEV779IjW1Ulz5wJqB1rX+9qbAF0bdwhGeG+nbMuTZUFRNpkjuz0uKHYlnvDNN5P1buyqWcyXQS0GMFnbVj21lX5rTwaBPJmL+pGy4fsHeKTY1b6XNAZwVjNIC/ZywnEt6E9YiYYtJ0FGPvhF9iPMJlDcoRLr7Ed8Iy1DRWanuoDwP7vfSfLW+THmVPnuT4Wz6v8ka/HTK46B2oxfiT4Ww==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB2924.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d0a81f2-32aa-4e80-818d-08d8499d4bd4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2020 08:52:00.2497
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mSXG5MCKvGoh0cBikSuyXv9y2xruQIdvlRQprUMbPMih1oIckpd2H3WSes90ASmcz9UQIFGLdHqUZLo7nYf1WtkaxYlRn4WFM+DweHelLrQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB5035
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 8/25/20 12:35 PM, Krzysztof Kozlowski wrote:
-> DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-> to fix dtbs_check warnings like:
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
->     compatible:0: 'fsl,imx8mm-wdt' is not one of ['fsl,imx21-wdt']
->     From schema: Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
->     compatible: ['fsl,imx8mm-wdt', 'fsl,imx21-wdt'] is too long
-> 
->   arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
->     compatible: Additional items are not allowed ('fsl,imx21-wdt' was unexpected)
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->  .../devicetree/bindings/watchdog/fsl-imx-wdt.yaml     | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-> index d96b93b11fad..991b4e33486e 100644
-> --- a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-> @@ -14,8 +14,15 @@ allOf:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - fsl,imx21-wdt
-> +    oneOf:
-> +      - const: fsl,imx21-wdt
-> +      - items:
-> +          - enum:
-> +              - fsl,imx8mm-wdt
-> +              - fsl,imx8mn-wdt
-> +              - fsl,imx8mp-wdt
-> +              - fsl,imx8mq-wdt
-> +          - const: fsl,imx21-wdt
->  
->    reg:
->      maxItems: 1
-> 
-
+SGkgR2VlcnQsDQoNCk9uIFR1ZSwgQXVnIDI1LCAyMDIwIGF0IDA4OjEyIEFNIEdlZXJ0IFV5dHRl
+cmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+IHdyb3RlOg0KPiANCj4gSGkgR2FyZXRo
+LA0KPiANCj4gT24gTW9uLCBBdWcgMjQsIDIwMjAgYXQgNToxMCBQTSBHYXJldGggV2lsbGlhbXMg
+PGdhcmV0aC53aWxsaWFtcy5qeEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gT24gRnJpLCBBdWcg
+MjEsIDIwMjAgYXQgMTI6MTIgUE0gR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGds
+aWRlci5iZT4gd3JvdGU6DQo+ID4gPiBDb252ZXJ0IHRoZSBSZW5lc2FzIFJaL04xIFBpbiBjb250
+cm9sbGVyIERldmljZSBUcmVlIGJpbmRpbmcNCj4gPiA+IGRvY3VtZW50YXRpb24gdG8ganNvbi1z
+Y2hlbWEuDQo+ID4gPg0KPiA+ID4gVXNlICJwaW5jdHJsIiBnZW5lcmljIG5vZGUgbmFtZS4NCj4g
+PiA+IERyb3AgZ2VuZXJpYyBhbmQgY29uc3VtZXIgZXhhbXBsZXMsIGFzIHRoZXkgZG8gbm90IGJl
+bG9uZyBoZXJlLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEdlZXJ0IFV5dHRlcmhvZXZl
+biA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+ID4NCj4gPiBUaGlzIGlzIGEgY2xlYW4gYW5k
+IHN1aXRhYmxlIGNvbnZlcnNpb24gdG8gbWUuDQo+ID4gRm9yIGNvbXBsZXRpb24gSSByYW4gdGhp
+cyBhZ2FpbnN0IG15IGR0cyBmaWxlcyBmb3IgdGhlIHJ6bjEgZm9yDQo+ID4gdGVzdGluZyBwdXJw
+b3NlcyBvbiBuZXh0LTIwMjAwODI0IHdpdGhvdXQgaXNzdWVzLg0KPiA+DQo+ID4gUmV2aWV3ZWQt
+Ynk6IEdhcmV0aCBXaWxsaWFtcyA8Z2FyZXRoLndpbGxpYW1zLmp4QHJlbmVzYXMuY29tPg0KPiA+
+IFRlc3RlZC1ieTogR2FyZXRoIFdpbGxpYW1zIDxnYXJldGgud2lsbGlhbXMuanhAcmVuZXNhcy5j
+b20+DQo+IA0KPiBUaGFuayB5b3UhDQo+IA0KPiBCVFcsIGRvIHlvdSBwbGFuIHRvIHVwc3RyZWFt
+IGFueSBvZiB0aG9zZSBEVFMgZmlsZXM/IEN1cnJlbnRseSwgbm8gdXBzdHJlYW0NCj4gRFRTIGZp
+bGUgZm9yIFJaL04xIGNvbnRhaW5zIHBpbmN0cmwgcHJvcGVydGllcy4NCg0KSSBkbywgYWx0aG91
+Z2ggSSBhaW0gdG8gY29tcGxldGUgcmVtYWluaW5nIGRyaXZlciB3b3JrIGZpcnN0IHNvIHRoYXQg
+SSBjYW4gYmUgY29uZmlkZW50DQp0aGUgRFRTIGlzIGNvcnJlY3QgYW5kIGNvbXBsZXRlLg0KDQpS
+ZWdhcmRzLA0KDQpHYXJldGggDQo=
