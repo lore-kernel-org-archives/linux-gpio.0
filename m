@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01685C433DF
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Aug 2020 19:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D70C433DF
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Aug 2020 19:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDD9C22BEA
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Aug 2020 18:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4DA822BEA
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Aug 2020 19:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598554799;
-	bh=JMGBhCbFmH+9hMDpsQ5Azdm1zxEQ9lgD8y90ydoMsQc=;
+	s=default; t=1598554810;
+	bh=/jWrUvkyehWmpjjCPlltLr1JAG0sr6Qc32pKieuISoo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UBrNEJtwpHVmOgO/5AaEkeA1/AKC05/lY6IOGV4FSjt8oR+oe20CWq0aziRUTfNe/
-	 d8Y50jTtyU9wY+j2hf937b9KmXGm4SnnKwRAI2y0/GU8LmU8O/HfS8c16GDQVc/QdK
-	 BGehHbwBstmDxih4XdPSQFMxEW/2Ps+E3hJb6tH0=
+	b=pVbfRJDJDDDVPLzpgYFKqf7IFv32q4BhdlqysjtJdBSrIsfB8lwQ6UpjinBp62LDD
+	 XTdl+CN/Y3k3IXGHpd/CYI3Qea9wDj1eG3WnYxEjS0r/oeFoDolbl8WO5IjDP9m7RQ
+	 RQawU6MsPJUOsK8EdA8SCqq5e++Ku2B5vBFxnwoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgH0S76 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Aug 2020 14:59:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50462 "EHLO mail.kernel.org"
+        id S1728320AbgH0TAJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Aug 2020 15:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728211AbgH0S7x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 27 Aug 2020 14:59:53 -0400
+        id S1728289AbgH0TAD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 27 Aug 2020 15:00:03 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E4B42087E;
-        Thu, 27 Aug 2020 18:59:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C79802087E;
+        Thu, 27 Aug 2020 18:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598554792;
-        bh=JMGBhCbFmH+9hMDpsQ5Azdm1zxEQ9lgD8y90ydoMsQc=;
+        s=default; t=1598554802;
+        bh=/jWrUvkyehWmpjjCPlltLr1JAG0sr6Qc32pKieuISoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kOk7ctcGE2MBFeLLMWqu0pat1Qj7C19IKf9gJ4EkY61L5goHm2FHin3TtCBdZPaev
-         BMQ3PvDTossgOGYqKdY/cbW/rZqHd+63DcaF5ZwxpB3Jlhiro2ol3ga/DUfgEoCJk8
-         RW3MROPytreat/iGj6aJAbBzdaeu4CPnwN6HPXNs=
+        b=uU1UvUH1cXvsczwBGXa7c2b7fVAWGWudB4/QyJq0LUX8Fo/UbfvO8lXfYnwyXYrCw
+         LXbnh5ijhwFtmrU2B5UYMoV/aqaY42dvVzRNrqPzS8/DC9Y0LMqt75pu2mSGTPt8Q1
+         zhTS10dLDV3St6zkGpdDCqmqQpX9a7eHscujSwNk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -51,9 +51,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         clang-built-linux@googlegroups.com
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 21/27] Input: surface3_spi - Simplify with dev_err_probe()
-Date:   Thu, 27 Aug 2020 20:58:23 +0200
-Message-Id: <20200827185829.30096-22-krzk@kernel.org>
+Subject: [PATCH v3 24/27] gpio: Add devm_fwnode_gpiod_get_optional() helpers
+Date:   Thu, 27 Aug 2020 20:58:26 +0200
+Message-Id: <20200827185829.30096-25-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200827185829.30096-1-krzk@kernel.org>
 References: <20200827185829.30096-1-krzk@kernel.org>
@@ -62,47 +62,175 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Common pattern of handling deferred probe can be simplified with
-dev_err_probe().  Less code and also it prints the error value.
+Add devm_fwnode_gpiod_get_optional() and
+devm_fwnode_gpiod_get_index_optional() helpers, similar to regular
+devm_gpiod optional versions.  Drivers getting GPIOs from a firmware
+node might use it to remove some boilerplate code.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/input/touchscreen/surface3_spi.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/input/touchscreen/surface3_spi.c b/drivers/input/touchscreen/surface3_spi.c
-index ce4828b1415a..25bb77ddf2ef 100644
---- a/drivers/input/touchscreen/surface3_spi.c
-+++ b/drivers/input/touchscreen/surface3_spi.c
-@@ -223,7 +223,6 @@ static void surface3_spi_power(struct surface3_ts_data *data, bool on)
-  */
- static int surface3_spi_get_gpio_config(struct surface3_ts_data *data)
- {
--	int error;
- 	struct device *dev;
- 	struct gpio_desc *gpiod;
- 	int i;
-@@ -233,15 +232,9 @@ static int surface3_spi_get_gpio_config(struct surface3_ts_data *data)
- 	/* Get the reset lines GPIO pin number */
- 	for (i = 0; i < 2; i++) {
- 		gpiod = devm_gpiod_get_index(dev, NULL, i, GPIOD_OUT_LOW);
--		if (IS_ERR(gpiod)) {
--			error = PTR_ERR(gpiod);
--			if (error != -EPROBE_DEFER)
--				dev_err(dev,
--					"Failed to get power GPIO %d: %d\n",
--					i,
--					error);
--			return error;
--		}
-+		if (IS_ERR(gpiod))
-+			return dev_err_probe(dev, PTR_ERR(gpiod),
-+					     "Failed to get power GPIO %d\n", i);
+---
+
+Changes since v2:
+1. Return NULL
+
+Changes since v1:
+1. New patch
+---
+ drivers/gpio/gpiolib-devres.c | 71 +++++++++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h | 30 +++++++++++++++
+ 2 files changed, 101 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index 7dbce4c4ebdf..f8476f6a65cc 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -184,6 +184,37 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
  
- 		data->gpiod_rst[i] = gpiod;
- 	}
++/**
++ * devm_fwnode_gpiod_get_optional - Resource-managed fwnode_gpiod_get_index()
++ *                                  for optional GPIO
++ * @dev:	GPIO consumer
++ * @fwnode:	firmware node containing GPIO reference
++ * @con_id:	function within the GPIO consumer
++ * @flags:	GPIO initialization flags
++ * @label:	label to attach to the requested GPIO
++ *
++ * GPIO descriptors returned from this function are automatically disposed on
++ * driver detach.
++ *
++ * This is equivalent to devm_fwnode_gpiod_get_index(), except that when no
++ * GPIO with the specified index was assigned to the requested function it will
++ * return NULL.  This is convenient for drivers that need to handle optional
++ * GPIOs.
++ *
++ * On successful request the GPIO pin is configured in accordance with
++ * provided @flags.
++ */
++struct gpio_desc *devm_fwnode_gpiod_get_optional(struct device *dev,
++						 struct fwnode_handle *fwnode,
++						 const char *con_id,
++						 enum gpiod_flags flags,
++						 const char *label)
++{
++	return devm_fwnode_gpiod_get_index_optional(dev, fwnode, con_id, 0,
++						    flags, label);
++}
++EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_optional);
++
+ /**
+  * devm_fwnode_gpiod_get_index - get a GPIO descriptor from a given node
+  * @dev:	GPIO consumer
+@@ -226,6 +257,46 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_index);
+ 
++/**
++ * devm_fwnode_gpiod_get_index_optional - Resource-managed fwnode_gpiod_get_index()
++ *                                        for optional GPIO
++ * @dev:	GPIO consumer
++ * @fwnode:	firmware node containing GPIO reference
++ * @con_id:	function within the GPIO consumer
++ * @index:	index of the GPIO to obtain in the consumer
++ * @flags:	GPIO initialization flags
++ * @label:	label to attach to the requested GPIO
++ *
++ * GPIO descriptors returned from this function are automatically disposed on
++ * driver detach.
++ *
++ * This is equivalent to devm_fwnode_gpiod_get_index(), except that when no
++ * GPIO with the specified index was assigned to the requested function it will
++ * return NULL.  This is convenient for drivers that need to handle optional
++ * GPIOs.
++ *
++ * On successful request the GPIO pin is configured in accordance with
++ * provided @flags.
++ */
++struct gpio_desc *devm_fwnode_gpiod_get_index_optional(struct device *dev,
++						       struct fwnode_handle *fwnode,
++						       const char *con_id, int index,
++						       enum gpiod_flags flags,
++						       const char *label)
++{
++	struct gpio_desc *desc;
++
++	desc = devm_fwnode_gpiod_get_index(dev, fwnode, con_id, index, flags,
++					   label);
++	if (IS_ERR(desc)) {
++		if (PTR_ERR(desc) == -ENOENT)
++			return NULL;
++	}
++
++	return desc;
++}
++EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_index_optional);
++
+ /**
+  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
+  * @dev: GPIO consumer
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 901aab89d025..7854d80b1e9a 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -183,11 +183,21 @@ struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
+ 					 const char *con_id, int index,
+ 					 enum gpiod_flags flags,
+ 					 const char *label);
++struct gpio_desc *devm_fwnode_gpiod_get_optional(struct device *dev,
++						 struct fwnode_handle *fwnode,
++						 const char *con_id,
++						 enum gpiod_flags flags,
++						 const char *label);
+ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ 					      struct fwnode_handle *child,
+ 					      const char *con_id, int index,
+ 					      enum gpiod_flags flags,
+ 					      const char *label);
++struct gpio_desc *devm_fwnode_gpiod_get_index_optional(struct device *dev,
++						       struct fwnode_handle *fwnode,
++						       const char *con_id, int index,
++						       enum gpiod_flags flags,
++						       const char *label);
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
+@@ -562,6 +572,16 @@ struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
++static inline
++struct gpio_desc *devm_fwnode_gpiod_get_optional(struct device *dev,
++						 struct fwnode_handle *fwnode,
++						 const char *con_id,
++						 enum gpiod_flags flags,
++						 const char *label)
++{
++	return NULL;
++}
++
+ static inline
+ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ 					      struct fwnode_handle *fwnode,
+@@ -572,6 +592,16 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
++static inline
++struct gpio_desc *devm_fwnode_gpiod_get_index_optional(struct device *dev,
++						       struct fwnode_handle *fwnode,
++						       const char *con_id, int index,
++						       enum gpiod_flags flags,
++						       const char *label)
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_GPIOLIB */
+ 
+ static inline
 -- 
 2.17.1
 
