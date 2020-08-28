@@ -2,185 +2,127 @@ Return-Path: <SRS0=IE7s=CG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB785C433E6
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Aug 2020 16:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015A6C433E6
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Aug 2020 16:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7556D208D5
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Aug 2020 16:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C173F208D5
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Aug 2020 16:19:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="DHQYjFXy"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mXoKTmtB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbgH1QBs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Aug 2020 12:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42052 "EHLO
+        id S1727845AbgH1QT4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Aug 2020 12:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728493AbgH1QBl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2020 12:01:41 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85523C061264
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2020 08:54:31 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id j11so677305plk.9
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2020 08:54:31 -0700 (PDT)
+        with ESMTP id S1726033AbgH1QTy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2020 12:19:54 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8916DC061264
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2020 09:19:53 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id l63so1646230edl.9
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2020 09:19:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=ba1mT5RcSd9oYcdqjGcLJJCNmVxqYF6Q/282pRxPx4Y=;
-        b=DHQYjFXySKjkiVgmKXfZiMqV73XX2uVFHKXhvhX/zCykhnX9Z9+49B5UV+uBvkPLXQ
-         htTaECP4WZ6dQezXY39lVfaD4Wcwe9nL9CO9ZazHYqu40q3sUGA3gnNH0eUupEA3u46o
-         AgkvgTuCnInXoFuV8Mnw/Mxw4rRvo7jPC05lGUJJlcL0GBPbc0GiPtmR90vYfvm1IW0X
-         2HyhfQPp4NfjPAHTbhhwrATbfsqERNBNAIx5d5nZ1JUiNBY3067sWam0a2oVL36zCJ4o
-         g21QkLXQxbNcnTVuUlPE2VXlg75Jy4TJs1xw7QbCWZWAerDS9MDuAGLSmhuh6Frld/RN
-         vSyA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y9miOxm+aIgmI4U/EZeLaBrPMImCENn/aVpH1jwVAMM=;
+        b=mXoKTmtBEQaBLnbOaGgnDqEY21MoTjb4zLDwbfSPeu9T0RfXPnHTskn/ZTaGUKOzOo
+         cXbunuKwGz0pe1Ri4Su4Y/IV8L9Baeh8v70y8Q+HJmXP1ZQvHfPM4Lw/iw23jATefjMR
+         HpQJM6shS/3snq/Q+XjQW0FIv7i3HEtR0unH+YHsDHsQ2s6+0AgEfdPfy9fgnd0S1lQe
+         sj9+VBQxXHQwF4AXPh3pB6Byf6weRnbzqc/O83O/pKBzAFMzmgrPlL8u/Pk0WyJ7a7jv
+         d4noUTHi3Z7iKCDKLP4kF4mNg4XMukhWKLGw7u+T76YijHmnCk0b4upjuhigrDhzIsWm
+         HuvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=ba1mT5RcSd9oYcdqjGcLJJCNmVxqYF6Q/282pRxPx4Y=;
-        b=c2jfLsffudXXBXxmMeAWK0NiSMOTBPepw19tcWzIjqzmLrj6a7o7krdSB3f+Bgx8RA
-         AwLi6UlULIfpHKge0lWUQST5zNEZtSJhKMLXeO8xsPSg5yAiL/Rsx+8x88JZ9A3VXcrC
-         RPF9mQPuz+vBFhhzcNx/QQrHfoDr6azkTa28RzV5nmRWFS5WDTcSyPhoPrwkMq7R/EsZ
-         4BMgRRi41BMfkqUdeI2WY82JJffx+1EMFUliq4uAU6pLr6dwe1joJPeAjpiGEcZhvAzc
-         N5uF0sByY3ZBj/r30u5dJ0ZemJSx+DzGWVpqvUzHVKdMhwOePNAlMGS4QTVWrQISP3cu
-         t2Vw==
-X-Gm-Message-State: AOAM531oF75zon8QTEJNWf0yhezkuH8KuA0ZvDlGyjM/1MNhW9urKEZf
-        Hh15w8u5t2mEaBBxnEVBKe8FBFiOS3rJOw==
-X-Google-Smtp-Source: ABdhPJyYAWkhr5hQdd6Ey9vsBlHOx17ZciZH3FNLAlzXO50E8EE38L0UcEB88DIlk6VHMwi/g8ABzQ==
-X-Received: by 2002:a17:90a:1741:: with SMTP id 1mr1951405pjm.173.1598630070171;
-        Fri, 28 Aug 2020 08:54:30 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id s6sm1609024pju.51.2020.08.28.08.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Aug 2020 08:54:29 -0700 (PDT)
-Message-ID: <5f4928b5.1c69fb81.5e755.2e5c@mx.google.com>
-Date:   Fri, 28 Aug 2020 08:54:29 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y9miOxm+aIgmI4U/EZeLaBrPMImCENn/aVpH1jwVAMM=;
+        b=pJFzpV06+Yo74Z7Bxn72vI4GCuP0cIUtWg3AvBBZW1SRFEYDn2aC8NTJipKfQyvYK4
+         irKS0KuYyvP68UA7Vf0vO1Eu2Wurzawe16X0nuUr3gxjlO98/67JzYoxPZe7g2kZzRD+
+         V1XOyg2WFNEsgEy9xDRHEM4bKQAZtBBIB/tgtNFHwDB/nXWYaydALncS34btVSn51saa
+         bAXbv+WIUAOLDgnLI+7cYc0Sz/yGgIFMDv5vr/7JN81rn6kmUuA6l/2H9xRHRnR8Wc7+
+         LHuukZ10XPypDhLSqmvsCrKcz//F9xZzZmYa7adTV63yddenU7DrCPQZmvIjVWG6fTuQ
+         rfdw==
+X-Gm-Message-State: AOAM53095hFEDITeZuqQilW4ew2urzkmcgkv6wwIT36Ir7YZZoM9pYsa
+        NKC/HU7r7TIQv2+6667ZdxbMjxhPPtRg245LuO1Gdg==
+X-Google-Smtp-Source: ABdhPJx3CC1M5iADxDSXg8vc1XdLze/rbzJvK5cKSC231pYOCXnpX4r3v9HiYpmN/HeAzqJPCVyqZVKgfCUhOi8Y3cQ=
+X-Received: by 2002:a05:6402:342:: with SMTP id r2mr2734843edw.353.1598631592180;
+ Fri, 28 Aug 2020 09:19:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.9-rc2
-X-Kernelci-Branch: fixes
-X-Kernelci-Tree: linusw
-Subject: linusw/fixes build: 6 builds: 0 failed, 6 passed,
- 8 warnings (v5.9-rc2)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+References: <20200828073024.32585-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200828073024.32585-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 28 Aug 2020 18:19:41 +0200
+Message-ID: <CAMpxmJXVU2hsaH_WpLKoUR==MuNObbBJ1zT+HPaJN8iOoQ0JXQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: gpio: renesas,rcar-gpio: Add r8a774e1 support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/fixes build: 6 builds: 0 failed, 6 passed, 8 warnings (v5.9-rc2)
+On Fri, Aug 28, 2020 at 9:30 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> Document Renesas RZ/G2H (R8A774E1) GPIO blocks compatibility within the
+> relevant dt-bindings. R8A774E1 GPIO module is identical to R-Car Gen3
+> family.
+>
+> No driver change is needed due to the fallback compatible value
+> "renesas,rcar-gen3-gpio".
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> Hi All,
+>
+> This patch is part of series [1] (patch 6/9), rest of the patches have
+> been acked/queued.
+>
+> [1] https://lkml.org/lkml/2020/7/13/1275
+>
+> Cheers,
+> Prabhakar
+>
+> v1->v2
+> * Rebased the patch on 5.9-rc1 (YAML conversion)
+> * Updated commit description
+> * Restored acks from Geert and Rob
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> index 3ad229307bd5..5026662e4508 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> @@ -37,6 +37,7 @@ properties:
+>                - renesas,gpio-r8a774a1     # RZ/G2M
+>                - renesas,gpio-r8a774b1     # RZ/G2N
+>                - renesas,gpio-r8a774c0     # RZ/G2E
+> +              - renesas,gpio-r8a774e1     # RZ/G2H
+>                - renesas,gpio-r8a7795      # R-Car H3
+>                - renesas,gpio-r8a7796      # R-Car M3-W
+>                - renesas,gpio-r8a77961     # R-Car M3-W+
+> --
+> 2.17.1
+>
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/fixes/kernel/v=
-5.9-rc2/
+Queued for v5.10, thanks!
 
-Tree: linusw
-Branch: fixes
-Git Describe: v5.9-rc2
-Git Commit: d012a7190fc1fd72ed48911e77ca97ba4521bccd
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 6 unique architectures
-
-Warnings Detected:
-
-arc:
-
-arm64:
-    defconfig (gcc-8): 8 warnings
-
-i386:
-
-mips:
-
-riscv:
-
-x86_64:
-
-
-Warnings summary:
-
-    3    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #size-cells (1) differs from / (2)
-    3    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.=
-dtsi:7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-range=
-s" property but its #address-cells (1) differs from / (2)
-    1    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #size-cells (1) differs from / (2)
-    1    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: War=
-ning (dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but =
-its #address-cells (1) differs from / (2)
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 8 warnings, 0 section mi=
-smatches
-
-Warnings:
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi:=
-7.3-14: Warning (dma_ranges_format): /usb:dma-ranges: empty "dma-ranges" pr=
-operty but its #size-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-address-cells (1) differs from / (2)
-    /scratch/linux/arch/arm64/boot/dts/qcom/ipq6018.dtsi:127.3-14: Warning =
-(dma_ranges_format): /soc:dma-ranges: empty "dma-ranges" property but its #=
-size-cells (1) differs from / (2)
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----
-For more info write to <info@kernelci.org>
+Bartosz
