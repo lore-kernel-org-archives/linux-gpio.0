@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05993C43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165B8C28E83
 	for <linux-gpio@archiver.kernel.org>; Sat, 29 Aug 2020 03:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD03A20848
+	by mail.kernel.org (Postfix) with ESMTP id F093D20809
 	for <linux-gpio@archiver.kernel.org>; Sat, 29 Aug 2020 03:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgH2D3M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1726748AbgH2D3M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 28 Aug 2020 23:29:12 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26064 "EHLO mga18.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:42555 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbgH2D3F (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726845AbgH2D3F (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 28 Aug 2020 23:29:05 -0400
-IronPort-SDR: tw8AC6J5Rkq4gYrSdpTb8R/qc2iJFLUecN62iie0s9Uvdj15qyV4QDyLJI/JKR6fsRDbx2DRQe
- eTUuDgjmimDQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9727"; a="144450735"
+IronPort-SDR: CR/j9oh14F8Qey7QRGSJ6owgtMU6NgCM8OpMl7C1zWrM7TUy3IXeCBrVYR5Zl5lrLn9USEsEel
+ PBXT4fYERGfw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9727"; a="221013963"
 X-IronPort-AV: E=Sophos;i="5.76,366,1592895600"; 
-   d="scan'208";a="144450735"
+   d="scan'208";a="221013963"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2020 20:29:04 -0700
-IronPort-SDR: EiZ4CMaoniI9Fg/Coaa5rJ6yRDOvbv7oQP++McluJZN0bNsst8qYQdUGRICgwlJVLL+Kl2hGRX
- cONptxdL9qzA==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2020 20:29:04 -0700
+IronPort-SDR: so03MvsJq6rO1rdPP23CcnUNG8limhTDqzxHcMWecoRcXCXvF+mw+gmwaYev17+oDV85RYIQNU
+ BBzysHKklG6A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,366,1592895600"; 
-   d="scan'208";a="374253584"
+   d="scan'208";a="281123461"
 Received: from lkp-server02.sh.intel.com (HELO 301dc1beeb51) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 28 Aug 2020 20:29:03 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 28 Aug 2020 20:29:02 -0700
 Received: from kbuild by 301dc1beeb51 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kBrY6-0000Kf-6o; Sat, 29 Aug 2020 03:29:02 +0000
-Date:   Sat, 29 Aug 2020 11:28:40 +0800
+        id 1kBrY6-0000KZ-62; Sat, 29 Aug 2020 03:29:02 +0000
+Date:   Sat, 29 Aug 2020 11:28:28 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:gpio-descriptors-charger] BUILD SUCCESS
- e7ceb6f2027d38d948cf8d1eab3cebb33210a328
-Message-ID: <5f49cb68.TGAvm4A1aSi4oQIH%lkp@intel.com>
+Subject: [gpio:gpio-descriptors-leds] BUILD SUCCESS
+ 7736d2660c134da47420dc624bd591e457b40f40
+Message-ID: <5f49cb5c.JeGnr6HBP32uFmwQ%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,13 +53,13 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-charger
-branch HEAD: e7ceb6f2027d38d948cf8d1eab3cebb33210a328  power: supply: gpio-charger: Convert to GPIO descriptors
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  gpio-descriptors-leds
+branch HEAD: 7736d2660c134da47420dc624bd591e457b40f40  x86/platform/geode: Convert alix LED to GPIO machine descriptor
 
 elapsed time: 726m
 
-configs tested: 120
-configs skipped: 8
+configs tested: 114
+configs skipped: 7
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -91,28 +91,22 @@ arm                        realview_defconfig
 mips                          rb532_defconfig
 ia64                         bigsur_defconfig
 arm                           viper_defconfig
-arm                         hackkit_defconfig
-arm                          iop32x_defconfig
-arm                         vf610m4_defconfig
-sh                              ul2_defconfig
-arm                      jornada720_defconfig
 arm64                            alldefconfig
+powerpc                          g5_defconfig
 arm                          tango4_defconfig
+arm                      jornada720_defconfig
 sh                           se7780_defconfig
-arm                           corgi_defconfig
-sh                          rsk7269_defconfig
-m68k                       m5208evb_defconfig
-sh                             shx3_defconfig
 sh                           se7750_defconfig
 mips                         bigsur_defconfig
 arm                          badge4_defconfig
 arm                        spear3xx_defconfig
-xtensa                generic_kc705_defconfig
-arm                        magician_defconfig
-arm                        multi_v7_defconfig
+powerpc                      tqm8xx_defconfig
+c6x                        evmc6457_defconfig
+xtensa                    xip_kc705_defconfig
+mips                  maltasmvp_eva_defconfig
+mips                         db1xxx_defconfig
 s390                       zfcpdump_defconfig
 arc                     haps_hs_smp_defconfig
-xtensa                    xip_kc705_defconfig
 m68k                       m5275evb_defconfig
 arm                             pxa_defconfig
 sh                          sdk7780_defconfig
@@ -152,10 +146,10 @@ sparc                               defconfig
 i386                                defconfig
 mips                             allyesconfig
 mips                             allmodconfig
-powerpc                             defconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
+powerpc                             defconfig
 i386                 randconfig-a002-20200828
 i386                 randconfig-a005-20200828
 i386                 randconfig-a003-20200828
