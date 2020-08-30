@@ -1,94 +1,118 @@
-Return-Path: <SRS0=qf7B=CH=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=07lE=CI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17540C433E2
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Aug 2020 09:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86217C433E6
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 17:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E194120665
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Aug 2020 09:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598694073;
-	bh=kImBBmuhu/2Fp4wOJCBofByIbokLDzO/4iErCHq10JA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IzH0/rPCzOCrL0U1cg4Cu8n4obwycA+8xDq6TkKSuhDqPyLvdY4m/FR/1c/FRd4q+
-	 +OHUwrNWLVp800Rqhcd1A2cg9/rqJGLUWYNXnSpIBJxmKLV5bDp7CvQxujN7cJ/Tba
-	 aTRbuuet7M6CuSRaG3iyXOxEWO6VvrJS9LKTsfes=
+	by mail.kernel.org (Postfix) with ESMTP id 5D9AA20707
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 17:43:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNTY8VtI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbgH2JlE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Aug 2020 05:41:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbgH2JlB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 29 Aug 2020 05:41:01 -0400
-Received: from localhost.localdomain (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67C5E2068E;
-        Sat, 29 Aug 2020 09:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598694060;
-        bh=kImBBmuhu/2Fp4wOJCBofByIbokLDzO/4iErCHq10JA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Og97O8+86G+Z64ojsr/NDHzye0kFUDvcNaAPHHrLCe68HBYQO2pBRo5vVHgT38dEk
-         3h5+1yGLUEGIyGZMWH8lv8XDq2RTXIJKGvX5w5YQ+4svk5/0KKOZR2Zvq79o1qehMl
-         gLX/QS9udz8jWjADY+O10zvNCjjbF5W2ReJkJNhA=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 6/6] ARM: dts: vf: Fix PCA95xx GPIO expander properties on ZII CFU1
-Date:   Sat, 29 Aug 2020 11:40:24 +0200
-Message-Id: <20200829094024.31842-6-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200829094024.31842-1-krzk@kernel.org>
-References: <20200829094024.31842-1-krzk@kernel.org>
+        id S1726134AbgH3Rny (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Aug 2020 13:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbgH3Rny (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2020 13:43:54 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5430BC061573;
+        Sun, 30 Aug 2020 10:43:54 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id d19so2991471pgl.10;
+        Sun, 30 Aug 2020 10:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gllTnfpjhA71bQa3AHonqvl1Wti0WUACZxPWejafO/Y=;
+        b=aNTY8VtIuFAE7L7IoX8HyazHeu3tNOCdjOiJq/ylr78l47+28zGNqsn0W8SxZnFA0e
+         839PVyt81IkcegqvlRR+A081oDz4VRaVOi/7/sFsxUahal6JYlW3y6Unux8nGnqNVWdi
+         Sl2Wmk7HG16lXOvcsfrmKNHsE2ZCBmrVMqTf/PJimTKt2vF01qD+ILEkYeEGhuwITIop
+         yZgOfE1qTxnOuWE12d4viV5n9dm0zfUUIAFJPKRvUJ1qA/41uJs9ZUrMsmpbAKEaZBKh
+         UmLvrct6KOiiw6xUzVGLp7US83siB9JBgqBI1DDiZesPjpzD55fUQbSZoCxILhtuTSJ+
+         LGDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gllTnfpjhA71bQa3AHonqvl1Wti0WUACZxPWejafO/Y=;
+        b=RPpM5CmEBx6T3tknI0Rw+syfGf/n3byotVptcFeXp04qivB5OMZfYlfRq4mc5DKPbh
+         1lZ6wU/ALhx5Jjsf61lM/sW07nmewu4dey/zurG7THblOTjnhW3vmBGGXdnMH3X6zWPj
+         2fvB8hPFWj7BiDE/Hm/e92YClP21kC0PfPwUWRjUEloKLZLUIrFALyrKc6jTG5QzO8PU
+         JQtbNFELycNETVAXxFa3JHr11xg+VxCyM9X8o7b0z0ywYLbdtia+pY6PmlwvVHDJaGnh
+         yuet9gySPxyLgBzjUSK0dTq3wCuC3XqWJSVSFQn6KYRiCwNVzeuoSa0fmkxepC7GI4rB
+         161g==
+X-Gm-Message-State: AOAM532onjLe0qVUiYVSWNcoiPvY09YAF2wsTuVe97z3prAM15MNors5
+        hCuK0QqUWDr8A64bI9iYVDKF5QmWcEaJrdaFKCk=
+X-Google-Smtp-Source: ABdhPJwAKDhV+KU3T46+qklPeJTKooPMmp8/QhFMmenoUMc4QVp6rWePqScrCIRkRHiwLUCuhxh7vcxdJ7NabsXU5qQ=
+X-Received: by 2002:a62:7c86:: with SMTP id x128mr1133707pfc.268.1598809431997;
+ Sun, 30 Aug 2020 10:43:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200828213226.1734264-1-thomas.preston@codethink.co.uk> <20200828213226.1734264-3-thomas.preston@codethink.co.uk>
+In-Reply-To: <20200828213226.1734264-3-thomas.preston@codethink.co.uk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 30 Aug 2020 20:43:35 +0300
+Message-ID: <CAHp75VenLVCARSJ9oTZRF4uuq9QHy4zrrVpwjEdXxMAHJNvzsQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: mcp23s08: Fix mcp23x17 precious range
+To:     Thomas Preston <thomas.preston@codethink.co.uk>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>,
+        Phil Reid <preid@electromag.com.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The PCA95xx GPIO expander requires GPIO controller properties to operate
-properly.
+On Sat, Aug 29, 2020 at 12:33 AM Thomas Preston
+<thomas.preston@codethink.co.uk> wrote:
+>
+> On page 23 of the datasheet [0] it says "The register remains unchanged
+> until the interrupt is cleared via a read of INTCAP or GPIO." Include
+> INTCAPA and INTCAPB registers in precious range, so that they aren't
+> accidentally cleared when we read via debugfs.
+>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/vf610-zii-cfu1.dts | 1 +
- 1 file changed, 1 insertion(+)
+> [0] https://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf
 
-diff --git a/arch/arm/boot/dts/vf610-zii-cfu1.dts b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-index 64e0e9509226..e76a7ebd5dc9 100644
---- a/arch/arm/boot/dts/vf610-zii-cfu1.dts
-+++ b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-@@ -226,6 +226,7 @@
- 		compatible = "nxp,pca9554";
- 		reg = <0x22>;
- 		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
- 
- 	lm75@48 {
+I would convert it to tag Datasheet: https://...
+
+Maybe Linus can amend this when applying.
+
+> Fixes: 8f38910ba4f6 ("pinctrl: mcp23s08: switch to regmap caching")
+> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
+> ---
+>  drivers/pinctrl/pinctrl-mcp23s08.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+> index 87cde8fb08dd9..7edb067f5e76a 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+> @@ -109,7 +109,7 @@ static const struct regmap_access_table mcp23x17_volatile_table = {
+>  };
+>
+>  static const struct regmap_range mcp23x17_precious_range = {
+> -       .range_min = MCP_GPIO << 1,
+> +       .range_min = MCP_INTCAP << 1,
+>         .range_max = MCP_GPIO << 1,
+>  };
+>
+> --
+> 2.26.2
+>
+
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
