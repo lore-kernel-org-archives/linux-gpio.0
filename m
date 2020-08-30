@@ -2,96 +2,89 @@ Return-Path: <SRS0=07lE=CI=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93042C433E7
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 22:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D1CC433E7
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 23:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF2B2083E
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 22:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5OUNGlD"
+	by mail.kernel.org (Postfix) with ESMTP id 556B020BED
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Aug 2020 23:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbgH3Wnw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 30 Aug 2020 18:43:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgH3Wne (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2020 18:43:34 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B91C061239;
-        Sun, 30 Aug 2020 15:43:33 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id t23so4597634ljc.3;
-        Sun, 30 Aug 2020 15:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n1KgmKzf9ZQjO5d8PcXFoM5eqQdcOF5HadjFNB7yUQw=;
-        b=e5OUNGlDjVPabuTDOWq49DimXDtA3AxZrDVXbQosQ5z7l1BcK29CvGUmxa0m7TFXxa
-         NXNGNlG1QDoAyQvH6mNmCXk38CDlV5Op3Bu30YbU1feIPqu5RjT+hXF9CDc0kXce4zh8
-         aOz+W4zGnx2HzCFRd3avfJXvzbNOJHToiH+TG6ri/izyaKgLYmUuht6cdRZoTBxX+yRR
-         uUN/ViZGUU+ZgaceyOAFbDKQguWTO9n7Rlu54HUUmxA66pKw5+1X+LczunQ6ZfdQrwvF
-         m0b7ecP2pS1ReDeb7p+eiLLX9rbNtuHOwWUBt1gAnzEpvRwhOh40Nba4lP9NUC2ED2ld
-         ZIXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n1KgmKzf9ZQjO5d8PcXFoM5eqQdcOF5HadjFNB7yUQw=;
-        b=NIJxW+wwsuXwJl073c3D+P2emPVsL48QoQIWsjEaT1FIVR+hmc67X5ZLs56Sa1ohDG
-         X00zwn7ISbu9eqY41/yDl0Aw4iKwaq4jHGPkt4yLIC01g3LzZ6J1GJ3bz4bns17wq07n
-         NW/mn26f3TuVuVnv3YIPOYhsHBn6KRH+o1nAxSJE+QrSNx3Vh/F66tULUvqGZV3rMy9l
-         C56u9fRPu7Ts4nx0LvhAGYnwjVCo7v7zyvvHNWg+ejnIVsOfQZljGNU42M+M9zvyp3g/
-         wDTSzksfCFY52HeeXlUOWm1Y2qdF382sHAb/qRIyjIMS51eTJWY3toAk+pwvrsytjNr0
-         ZA0w==
-X-Gm-Message-State: AOAM531vl15X7MvAu2GZ75t3euAh7vXyyVoZqnp6meT6kSihI6ZFPaM+
-        d5LFSlamJ6YBof/S0LnDUt3Csf529HymHA==
-X-Google-Smtp-Source: ABdhPJz/0qGsKjG+lINiuxRXF0yRJvzQCyCDdgrTfwKEoeLf7VD7PfyRp76crHFJI6ta8/JGf2CIqA==
-X-Received: by 2002:a2e:8098:: with SMTP id i24mr4116451ljg.50.1598827408288;
-        Sun, 30 Aug 2020 15:43:28 -0700 (PDT)
-Received: from localhost.localdomain (h-82-196-111-59.NA.cust.bahnhof.se. [82.196.111.59])
-        by smtp.gmail.com with ESMTPSA id m25sm1190072ljg.79.2020.08.30.15.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2020 15:43:27 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: [PATCH 0/3] pinctrl/actions: Constify static variables
-Date:   Mon, 31 Aug 2020 00:43:08 +0200
-Message-Id: <20200830224311.36994-1-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.28.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726350AbgH3XOy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Aug 2020 19:14:54 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:37245 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726178AbgH3XOy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 30 Aug 2020 19:14:54 -0400
+Date:   31 Aug 2020 08:14:52 +0900
+X-IronPort-AV: E=Sophos;i="5.76,373,1592838000"; 
+   d="scan'208";a="55915797"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 31 Aug 2020 08:14:52 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6EC33411632A;
+        Mon, 31 Aug 2020 08:14:52 +0900 (JST)
+Message-ID: <87imcz7moy.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: sh-pfc: collect Renesas related CONFIGs in one place
+In-Reply-To: <CACRpkdZ_ss-GqV0ig2BPpEE+8-F-9qZzpb+-C5h0TpbWCcL6Rg@mail.gmail.com>
+References: <87r1s5hoht.wl-kuninori.morimoto.gx@renesas.com>
+        <87pn7phofb.wl-kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdWqc1Peo06g_1JrEvEExyaY+k33WJNmbhugE7YrppiRmw@mail.gmail.com>
+        <87blj0zzax.wl-kuninori.morimoto.gx@renesas.com>
+        <CACRpkdZ_ss-GqV0ig2BPpEE+8-F-9qZzpb+-C5h0TpbWCcL6Rg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Constify a couple of static variables which are not modified to allow
-the compiler to put them in read-only memory. Patch 1/3 is probably
-the most important one since those structs contain function pointer.
-The patches are independent, and can be applied in any order. 
-Compile-tested only.
 
-Rikard Falkeborn (3):
-  pinctrl: actions: pinctrl-owl: Constify owl_pinctrl_ops and
-    owl_pinmux_ops
-  pinctrl: actions: pinctrl-s700: Constify s700_padinfo[]
-  pinctrl: actions: pinctrl-s900: Constify s900_padinfo[]
+Hi Linus
+Cc Geert
 
- drivers/pinctrl/actions/pinctrl-owl.c  | 4 ++--
- drivers/pinctrl/actions/pinctrl-s700.c | 2 +-
- drivers/pinctrl/actions/pinctrl-s900.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Thank you for your feedback
 
--- 
-2.28.0
+> > > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > >
+> > > > Renesas related pinctrl CONFIGs are located many places,
+> > > > and it is confusable.
+> > > > This patch collects these into same place,
+> > > > and group into "Renesas pinctrl drivers" menu.
+> > > >
+> > > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > >
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > Still wondering about moving drivers/pinctrl/pinctrl-rz{a1,a2,n1}.c
+> > > into drivers/pinctrl/sh-pfc/, too.
+> >
+> > As I mentioned before, I'm waiting Linus's opinion.
+> > But will move these in v3 without waiting him.
+> 
+> Sorry for slowness. I agree with this move, let's collect all the Renesas
+> stuff in one place.
 
+Thanks !
+
+> Renaming it drivers/pinctrl/renesas may be a good idea too, but I'd let
+> Geert decide and execute that, it mainly affects him and his maintenance
+> work, not me.
+
+Geert, my patch moves files, but do nothing to folder names.
+I agree to Linus's opinion, please execute it.
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
