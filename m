@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89075C433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C783C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70463206F0
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12E21206F0
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbgHaIsR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 31 Aug 2020 04:48:17 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:58248 "EHLO
+        id S1726800AbgHaIuQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 31 Aug 2020 04:50:16 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:44674 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgHaIsC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:48:02 -0400
-Received: from localhost (unknown [192.168.167.32])
-        by lucky1.263xmail.com (Postfix) with ESMTP id C99C1A26F2;
-        Mon, 31 Aug 2020 16:47:57 +0800 (CST)
+        with ESMTP id S1726102AbgHaIuQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:50:16 -0400
+Received: from localhost (unknown [192.168.167.209])
+        by lucky1.263xmail.com (Postfix) with ESMTP id A81BAC0F5B;
+        Mon, 31 Aug 2020 16:50:12 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
 X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P11834T140500763920128S1598863675343235_;
-        Mon, 31 Aug 2020 16:47:58 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P26185T140085628864256S1598863812232994_;
+        Mon, 31 Aug 2020 16:50:13 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <285836fc2de071a5ee547ddde3bb3a1b>
+X-UNIQUE-TAG: <38ace29fd866fc80b662033f1f02473c>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -45,9 +45,9 @@ To:     linus.walleij@linaro.org, heiko@sntech.de
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 3/6] pinctrl: rockchip: create irq mapping in gpio_to_irq
-Date:   Mon, 31 Aug 2020 16:47:50 +0800
-Message-Id: <20200831084753.7115-4-jay.xu@rock-chips.com>
+Subject: [PATCH 5/6] pinctrl: rockchip: fix crash caused by invalid gpio bank
+Date:   Mon, 31 Aug 2020 16:50:10 +0800
+Message-Id: <20200831085010.7235-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200831084753.7115-1-jay.xu@rock-chips.com>
 References: <20200831084753.7115-1-jay.xu@rock-chips.com>
@@ -56,89 +56,53 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove totally irq mappings create in probe, the gpio irq mapping will
-be created when do
-    gpio_to_irq ->
-        rockchip_gpio_to_irq ->
-            irq_create_mapping
+Add valid check for gpio bank.
 
-This patch can speed up system boot on, also abandon many unused irq
-mappings' create.
-
+Change-Id: Ia4609c3045b5df7879beab3c15d791ff54a1f49b
 Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 54abda7b7be8..265d64b8c4f5 100644
+index 6080573155f6..5b16b69e311f 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3196,7 +3196,7 @@ static void rockchip_irq_demux(struct irq_desc *desc)
- 
- 		irq = __ffs(pend);
- 		pend &= ~BIT(irq);
--		virq = irq_linear_revmap(bank->domain, irq);
-+		virq = irq_find_mapping(bank->domain, irq);
- 
- 		if (!virq) {
- 			dev_err(bank->drvdata->dev, "unmapped irq %d\n", irq);
-@@ -3375,7 +3375,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
- 	struct irq_chip_generic *gc;
- 	int ret;
--	int i, j;
-+	int i;
- 
- 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
- 		if (!bank->valid) {
-@@ -3402,7 +3402,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 
- 		ret = irq_alloc_domain_generic_chips(bank->domain, 32, 1,
- 					 "rockchip_gpio_irq", handle_level_irq,
--					 clr, 0, IRQ_GC_INIT_MASK_CACHE);
-+					 clr, 0, 0);
- 		if (ret) {
- 			dev_err(&pdev->dev, "could not alloc generic chips for bank %s\n",
- 				bank->name);
-@@ -3411,14 +3411,6 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 			continue;
- 		}
- 
--		/*
--		 * Linux assumes that all interrupts start out disabled/masked.
--		 * Our driver only uses the concept of masked and always keeps
--		 * things enabled, so for us that's all masked and all enabled.
--		 */
--		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
--		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
--
- 		gc = irq_get_domain_generic_chip(bank->domain, 0);
- 		gc->reg_base = bank->reg_base;
- 		gc->private = bank;
-@@ -3435,13 +3427,17 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
- 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
- 
-+		/*
-+		 * Linux assumes that all interrupts start out disabled/masked.
-+		 * Our driver only uses the concept of masked and always keeps
-+		 * things enabled, so for us that's all masked and all enabled.
-+		 */
-+		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
-+		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
-+		gc->mask_cache = 0xffffffff;
-+
- 		irq_set_chained_handler_and_data(bank->irq,
- 						 rockchip_irq_demux, bank);
--
--		/* map the gpio irqs here, when the clock is still running */
--		for (j = 0 ; j < 32 ; j++)
--			irq_create_mapping(bank->domain, j);
--
- 		clk_disable(bank->clk);
+@@ -2526,9 +2526,9 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 			break;
  	}
  
+-	if (ret) {
++	if (ret && cnt) {
+ 		/* revert the already done pin settings */
+-		for (cnt--; cnt >= 0; cnt--)
++		for (cnt--; cnt >= 0 && !data[cnt].func; cnt--)
+ 			rockchip_set_mux(bank, pins[cnt] - bank->pin_base, 0);
+ 
+ 		return ret;
+@@ -2599,9 +2599,13 @@ static int rockchip_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 					      unsigned offset, bool input)
+ {
+ 	struct rockchip_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
++	struct rockchip_pin_bank *bank = &info->ctrl->pin_banks[offset / 32];
+ 	struct gpio_chip *chip;
+ 	int pin;
+ 
++	if (!bank || !bank->valid)
++		return 0;
++
+ 	chip = range->gc;
+ 	pin = offset - chip->base;
+ 	dev_dbg(info->dev, "gpio_direction for pin %u as %s-%d to %s\n",
+@@ -3022,6 +3026,8 @@ static int rockchip_pinctrl_register(struct platform_device *pdev,
+ 
+ 	for (bank = 0; bank < info->ctrl->nr_banks; ++bank) {
+ 		pin_bank = &info->ctrl->pin_banks[bank];
++		if (!pin_bank->valid)
++			continue;
+ 		pin_bank->grange.name = pin_bank->name;
+ 		pin_bank->grange.id = bank;
+ 		pin_bank->grange.pin_base = pin_bank->pin_base;
 -- 
 2.17.1
 
