@@ -2,145 +2,84 @@ Return-Path: <SRS0=d2O3=CJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E1AC433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC18C433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03429206A5
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:25:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFpxKJXx"
+	by mail.kernel.org (Postfix) with ESMTP id 00E4020DD4
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598844311;
+	bh=OTw00Oc3Wju4RQXg/5vC2M1kiJAGqeJnd4hSVyX2Nho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vv7WYJK8Go0dNOx/WNe5VmDLmdnQCrPle1Fr0vSwNJDxXSES2nUDF5XyVQHm0FcV3
+	 r+L9SEwlIRFlOw7cxmlRtMr3XvHpP0dSGV/1f1ZMCT4sBWwWOAU3g+geHpowt95lt9
+	 LELmIEgNJO7uDUw+FOqxfjbL7vWz6t7Ld1nDwpRY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgHaDYq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 30 Aug 2020 23:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727861AbgHaDYp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2020 23:24:45 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0168AC061573;
-        Sun, 30 Aug 2020 20:24:45 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id j11so2362050plk.9;
-        Sun, 30 Aug 2020 20:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HaME3Z5uLAfT5ND31CqQyrNIC7MORGaQXez8ygNaWV4=;
-        b=fFpxKJXxV+7xKRjCzTY6PbcZAwSAX914tKm+/3hUeRDb8l9NGtIt8tyVKrYGCJJygK
-         kStyp0mmA4YJ1Q5CqAnAMHeljr1gxyTnLbIeW8T1O0wgenniJqDoBiVhX4hOxvGNUBQ4
-         d0T7WVuy4dvNEH4ZkHE2fNbctdGRxO9TlVbAyWR9Or5Y23fv86W/uSLp1NLgmVZLVkt2
-         qVpH2h6rZA4KT5iI6dHASILlZaOQeVYg0JoUrgaZKlHe2MYfupxf8r9ajQ5oao93kmHa
-         1ItBd3Odis6uFe6GzL0Xpktjj9KYIKg3F2RsXOVPYwhgmOnmmj0/lXC2BP3D0//uLd6P
-         7Lew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HaME3Z5uLAfT5ND31CqQyrNIC7MORGaQXez8ygNaWV4=;
-        b=ON2wN1L9SSUESSIG+O0eNucA4XbMr5eEZpBSU93hJmX2s7tCKeHvlT+iardfNETA5I
-         nFJmiK0RajuHACAGktyBr5kUTr2AX/I2eCx6i4mo9T0UeNlPXVRVnhOJ0aiDkCPVnKx9
-         5XzhJAU4+gLlEiG9h7wgZYpaUF1MiSVfsBt5Okb+x4yAXGknfkmalde+CuB4GqxdBivF
-         QirTaXog3g1Cns9th4ep3dBzq12L1hoz0xp0eHNQDkontYWijzkR/vPsjOEo9Eq1snfe
-         +JjR7qZCCfr0anjHsSQLAitBHC6i4sCs2Li1VvRLk27nts+jf2Uy1qWaSsUqwKw5BxNR
-         ATPA==
-X-Gm-Message-State: AOAM533uF+RaAPJYQa1Di2m8ERd0h4eZJBLKibI7AA/8JHMpMgmDLZm8
-        F8HFm3Jyay8tgsGypklxn6AVtkw9Ztk=
-X-Google-Smtp-Source: ABdhPJyfajy5gmszwFXi74/g2PDTsuNU+sdcVI1BZbIifxrztt/VVyU4XTGfzc/GUsJ6wnFfRHAmSw==
-X-Received: by 2002:a17:90a:c505:: with SMTP id k5mr8560680pjt.188.1598844284116;
-        Sun, 30 Aug 2020 20:24:44 -0700 (PDT)
-Received: from sol.lan (106-69-184-100.dyn.iinet.net.au. [106.69.184.100])
-        by smtp.gmail.com with ESMTPSA id z17sm6095733pfq.38.2020.08.30.20.24.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2020 20:24:43 -0700 (PDT)
-From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, linus.walleij@linaro.org
-Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v6 20/20] tools: gpio: add debounce support to gpio-event-mon
-Date:   Mon, 31 Aug 2020 11:20:06 +0800
-Message-Id: <20200831032006.1019978-21-warthog618@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200831032006.1019978-1-warthog618@gmail.com>
-References: <20200831032006.1019978-1-warthog618@gmail.com>
+        id S1727822AbgHaDZK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Aug 2020 23:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727043AbgHaDZK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 30 Aug 2020 23:25:10 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E36D4206A5;
+        Mon, 31 Aug 2020 03:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598844309;
+        bh=OTw00Oc3Wju4RQXg/5vC2M1kiJAGqeJnd4hSVyX2Nho=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rVLLTDyxwzW/PJVfK7yIzJrqtfSe/2PHz//izP4j8Y1/zK30FLylp1/r8uA1YD9EQ
+         O/Eo6rpof3wr8IQspo+5OD8HskGGJ+jFmTGDC2D7EL/pU3JUHqIWUqAfFfnhCYU3Y9
+         GIa7il8sA0rs8/VrFkDjwwIbiGp4mlzE94bl2Bvo=
+Date:   Mon, 31 Aug 2020 11:25:01 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Han Xu <han.xu@nxp.com>,
+        Frank Li <frank.li@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 19/19] arm64: dts: imx8mq-zii-ultra: Add hog suffixes
+ to GPIO hogs
+Message-ID: <20200831032501.GI4488@dragon>
+References: <20200825193536.7332-1-krzk@kernel.org>
+ <20200825193536.7332-20-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200825193536.7332-20-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for debouncing monitored lines to gpio-event-mon.
+On Tue, Aug 25, 2020 at 09:35:36PM +0200, Krzysztof Kozlowski wrote:
+> According to device tree specification, device node names should be
+> somewhat generic and reflecting the function of the device so add the
+> "hog" suffixes to all GPIO hog nodes.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- tools/gpio/gpio-event-mon.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
-index e50bb107ea3a..bd5ea3cc6e85 100644
---- a/tools/gpio/gpio-event-mon.c
-+++ b/tools/gpio/gpio-event-mon.c
-@@ -148,11 +148,12 @@ void print_usage(void)
- 		"  -s         Set line as open source\n"
- 		"  -r         Listen for rising edges\n"
- 		"  -f         Listen for falling edges\n"
-+		"  -b <n>     Debounce the line with period n microseconds\n"
- 		" [-c <n>]    Do <n> loops (optional, infinite loop if not stated)\n"
- 		"  -?         This helptext\n"
- 		"\n"
- 		"Example:\n"
--		"gpio-event-mon -n gpiochip0 -o 4 -r -f\n"
-+		"gpio-event-mon -n gpiochip0 -o 4 -r -f -b 10000\n"
- 	);
- }
- 
-@@ -167,11 +168,12 @@ int main(int argc, char **argv)
- 	unsigned int num_lines = 0;
- 	unsigned int loops = 0;
- 	struct gpio_v2_line_config config;
--	int c;
-+	int c, attr, i;
-+	unsigned long debounce_period = 0;
- 
- 	memset(&config, 0, sizeof(config));
- 	config.flags = GPIO_V2_LINE_FLAG_INPUT;
--	while ((c = getopt(argc, argv, "c:n:o:dsrf?")) != -1) {
-+	while ((c = getopt(argc, argv, "c:n:o:b:dsrf?")) != -1) {
- 		switch (c) {
- 		case 'c':
- 			loops = strtoul(optarg, NULL, 10);
-@@ -187,6 +189,9 @@ int main(int argc, char **argv)
- 			lines[num_lines] = strtoul(optarg, NULL, 10);
- 			num_lines++;
- 			break;
-+		case 'b':
-+			debounce_period = strtoul(optarg, NULL, 10);
-+			break;
- 		case 'd':
- 			config.flags |= GPIO_V2_LINE_FLAG_OPEN_DRAIN;
- 			break;
-@@ -205,6 +210,15 @@ int main(int argc, char **argv)
- 		}
- 	}
- 
-+	if (debounce_period) {
-+		attr = config.num_attrs;
-+		config.num_attrs++;
-+		for (i = 0; i < num_lines; i++)
-+			gpiotools_set_bit(&config.attrs[attr].mask, i);
-+		config.attrs[attr].attr.id = GPIO_V2_LINE_ATTR_ID_DEBOUNCE;
-+		config.attrs[attr].attr.debounce_period = debounce_period;
-+	}
-+
- 	if (!device_name || num_lines == 0) {
- 		print_usage();
- 		return -1;
--- 
-2.28.0
-
+Applied, thanks.
