@@ -2,25 +2,25 @@ Return-Path: <SRS0=d2O3=CJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33687C2BBD9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89075C433E6
 	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 145AC206F0
+	by mail.kernel.org (Postfix) with ESMTP id 70463206F0
 	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbgHaIsR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1728216AbgHaIsR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 31 Aug 2020 04:48:17 -0400
-Received: from lucky1.263xmail.com ([211.157.147.133]:47680 "EHLO
+Received: from lucky1.263xmail.com ([211.157.147.135]:58248 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgHaIsD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:48:03 -0400
+        with ESMTP id S1727979AbgHaIsC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:48:02 -0400
 Received: from localhost (unknown [192.168.167.32])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 5B5FCC6605;
+        by lucky1.263xmail.com (Postfix) with ESMTP id C99C1A26F2;
         Mon, 31 Aug 2020 16:47:57 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -29,9 +29,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P11834T140500763920128S1598863675343235_;
-        Mon, 31 Aug 2020 16:47:57 +0800 (CST)
+        Mon, 31 Aug 2020 16:47:58 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <3607ed3ee7b793450741574da9fea818>
+X-UNIQUE-TAG: <285836fc2de071a5ee547ddde3bb3a1b>
 X-RL-SENDER: jay.xu@rock-chips.com
 X-SENDER: xjq@rock-chips.com
 X-LOGIN-NAME: jay.xu@rock-chips.com
@@ -45,9 +45,9 @@ To:     linus.walleij@linaro.org, heiko@sntech.de
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 1/6] pinctrl: rockchip: make driver be tristate module
-Date:   Mon, 31 Aug 2020 16:47:48 +0800
-Message-Id: <20200831084753.7115-2-jay.xu@rock-chips.com>
+Subject: [PATCH 3/6] pinctrl: rockchip: create irq mapping in gpio_to_irq
+Date:   Mon, 31 Aug 2020 16:47:50 +0800
+Message-Id: <20200831084753.7115-4-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200831084753.7115-1-jay.xu@rock-chips.com>
 References: <20200831084753.7115-1-jay.xu@rock-chips.com>
@@ -56,54 +56,89 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Make pinctrl-rockchip driver to be tristate module, support to build as
-a module, this is useful for GKI.
+Remove totally irq mappings create in probe, the gpio irq mapping will
+be created when do
+    gpio_to_irq ->
+        rockchip_gpio_to_irq ->
+            irq_create_mapping
+
+This patch can speed up system boot on, also abandon many unused irq
+mappings' create.
 
 Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 ---
- drivers/pinctrl/Kconfig            | 2 +-
- drivers/pinctrl/pinctrl-rockchip.c | 7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 8828613c4e0e..dd4874e2ac67 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -207,7 +207,7 @@ config PINCTRL_OXNAS
- 	select MFD_SYSCON
- 
- config PINCTRL_ROCKCHIP
--	bool
-+	tristate "Rockchip gpio and pinctrl driver"
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GENERIC_IRQ_CHIP
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index c07324d1f265..24dfc814dee1 100644
+index 54abda7b7be8..265d64b8c4f5 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -16,10 +16,12 @@
-  */
+@@ -3196,7 +3196,7 @@ static void rockchip_irq_demux(struct irq_desc *desc)
  
- #include <linux/init.h>
-+#include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/bitops.h>
- #include <linux/gpio/driver.h>
-+#include <linux/of_device.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/pinctrl/machine.h>
-@@ -4256,3 +4258,8 @@ static int __init rockchip_pinctrl_drv_register(void)
- 	return platform_driver_register(&rockchip_pinctrl_driver);
- }
- postcore_initcall(rockchip_pinctrl_drv_register);
+ 		irq = __ffs(pend);
+ 		pend &= ~BIT(irq);
+-		virq = irq_linear_revmap(bank->domain, irq);
++		virq = irq_find_mapping(bank->domain, irq);
+ 
+ 		if (!virq) {
+ 			dev_err(bank->drvdata->dev, "unmapped irq %d\n", irq);
+@@ -3375,7 +3375,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
+ 	struct irq_chip_generic *gc;
+ 	int ret;
+-	int i, j;
++	int i;
+ 
+ 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
+ 		if (!bank->valid) {
+@@ -3402,7 +3402,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 
+ 		ret = irq_alloc_domain_generic_chips(bank->domain, 32, 1,
+ 					 "rockchip_gpio_irq", handle_level_irq,
+-					 clr, 0, IRQ_GC_INIT_MASK_CACHE);
++					 clr, 0, 0);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "could not alloc generic chips for bank %s\n",
+ 				bank->name);
+@@ -3411,14 +3411,6 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 			continue;
+ 		}
+ 
+-		/*
+-		 * Linux assumes that all interrupts start out disabled/masked.
+-		 * Our driver only uses the concept of masked and always keeps
+-		 * things enabled, so for us that's all masked and all enabled.
+-		 */
+-		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
+-		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
+-
+ 		gc = irq_get_domain_generic_chip(bank->domain, 0);
+ 		gc->reg_base = bank->reg_base;
+ 		gc->private = bank;
+@@ -3435,13 +3427,17 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
+ 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
+ 
++		/*
++		 * Linux assumes that all interrupts start out disabled/masked.
++		 * Our driver only uses the concept of masked and always keeps
++		 * things enabled, so for us that's all masked and all enabled.
++		 */
++		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTMASK);
++		writel_relaxed(0xffffffff, bank->reg_base + GPIO_INTEN);
++		gc->mask_cache = 0xffffffff;
 +
-+MODULE_DESCRIPTION("ROCKCHIP Pin Controller Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:pinctrl-rockchip");
-+MODULE_DEVICE_TABLE(of, rockchip_pinctrl_dt_match);
+ 		irq_set_chained_handler_and_data(bank->irq,
+ 						 rockchip_irq_demux, bank);
+-
+-		/* map the gpio irqs here, when the clock is still running */
+-		for (j = 0 ; j < 32 ; j++)
+-			irq_create_mapping(bank->domain, j);
+-
+ 		clk_disable(bank->clk);
+ 	}
+ 
 -- 
 2.17.1
 
