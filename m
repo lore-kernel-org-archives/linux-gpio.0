@@ -2,199 +2,84 @@ Return-Path: <SRS0=d2O3=CJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FEBC433E6
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4ABC43461
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4C720EDD
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:24:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LrNu/evw"
+	by mail.kernel.org (Postfix) with ESMTP id 41AF32100A
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 03:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598844299;
+	bh=F8SGH7dboaPQz17xUfKd3KTHNfAbnW1y3V3zbE7JbIU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QktzqK6OCzM/s7M1x4TZlM2nwoEcgYOWsYACHA4xCQ2gKsu4ZYeLyGnhnEHiwnk1M
+	 gFLYxLCagAv6CMpajyFtKcJq8SvAx12NhtvHxBD2wpG2mbvOMDq6SdLUii/M7JL1Ho
+	 GcrwCVQtO+IXLFZaWTAN52O65oWars+/YZwdLPZU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgHaDYo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 30 Aug 2020 23:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbgHaDYf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2020 23:24:35 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57FBFC061575;
-        Sun, 30 Aug 2020 20:24:35 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id mt12so2396258pjb.4;
-        Sun, 30 Aug 2020 20:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zeAqt+L6g1vrQKWXIoolqUPOf3l3HNvz8g6zB2yyrdI=;
-        b=LrNu/evwY6dLJT+y0iMe7qRyg2qvSM0/Fx6IMeA8gptKY6ksdJihFIUn8mcM7yFaGo
-         pgVlNVvOnhfc6I5Rdly8NnZSFRQ9cLfHZBZNi7S51PYKN+d88wCbJ9OGMCS+PhqD9N9w
-         ZHefLnkCAyQuMi/3LnhSC+DpqjFmwbYJ5jRf+mROS0AImdmmAw9wWhUvOZ+97FrVDu1H
-         KfDbMcwkpV76+5+Ev5RSP0UCoIsXuhY9hKlsLnKajTIKZBLnHvrvjs4eWC43U9gdeFYh
-         99xzikjSYjGN6D6QD0K2R5GZqfDOZmT+JJGT9tp7+vXhihWujDtO7l/xWhX651PQh52K
-         FcYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zeAqt+L6g1vrQKWXIoolqUPOf3l3HNvz8g6zB2yyrdI=;
-        b=pepUmakyTfCtOo2J49LgsR2ixfVZuWNPd+lotGlILejMY9gPfA8Rv/529PtjH1MbGZ
-         Oj/La9o+36pimQYfSWbKsaxOtvq42NOYUgTyve5cOQL9RfAEpBf3EYZ//bSpf1X/Tckt
-         HUzN6FVsr4wzHyMHCjoiXeSddEzWJwdoSDiTgHOraxE0itvrL+sSVVaK//GdZArZghgu
-         WvPfsSDJPHimY158VAs57uIIFa0MApooirOpARH6+SRNrgymevX36cvpcN6IijRt9+bS
-         3SmkzAOAo0ITGAeeM94Z7mPMT6zfkQNkq2BxGWLg9JcqF0mvkNSPBToTpQu8+Dbjd6Ut
-         6J9w==
-X-Gm-Message-State: AOAM531m+4UfH1fIHpqwHZdx8+CJQgCAXprUutN3AzFHUBBJmZ63Q1Dh
-        XwTe46BjUzst89jKe1JEscPIvNwB5LU=
-X-Google-Smtp-Source: ABdhPJwpUcllG0i0sbhU94hztea11laBqBXYjPVL+lMjGwcNagdAqS7+5Cs7HzG3aiB+JuV7/MybWA==
-X-Received: by 2002:a17:902:6843:: with SMTP id f3mr7343365pln.112.1598844274528;
-        Sun, 30 Aug 2020 20:24:34 -0700 (PDT)
-Received: from sol.lan (106-69-184-100.dyn.iinet.net.au. [106.69.184.100])
-        by smtp.gmail.com with ESMTPSA id z17sm6095733pfq.38.2020.08.30.20.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2020 20:24:33 -0700 (PDT)
-From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, linus.walleij@linaro.org
-Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v6 19/20] tools: gpio: add multi-line monitoring to gpio-event-mon
-Date:   Mon, 31 Aug 2020 11:20:05 +0800
-Message-Id: <20200831032006.1019978-20-warthog618@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200831032006.1019978-1-warthog618@gmail.com>
-References: <20200831032006.1019978-1-warthog618@gmail.com>
+        id S1728045AbgHaDYv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Aug 2020 23:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727929AbgHaDYr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 30 Aug 2020 23:24:47 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E072920E65;
+        Mon, 31 Aug 2020 03:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598844286;
+        bh=F8SGH7dboaPQz17xUfKd3KTHNfAbnW1y3V3zbE7JbIU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gv/l+LgWt4CYKE0uf2j1yLMnDp4c01Jmy98F14D0dFwXTuUCBqRaklh1YL/8h9Krx
+         4EZLCF45EDzHmlytvCraViLBHGfcJLoV6hXH8voWS2ph5uQZZ14zWPOaoh23gPXZ7M
+         dXLytT9F8UB21s71Mmvto6H5U5+M38sXnBHG7Rnw=
+Date:   Mon, 31 Aug 2020 11:24:38 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Han Xu <han.xu@nxp.com>,
+        Frank Li <frank.li@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 18/19] arm64: dts: imx8mq-evk: Add hog suffix to
+ wl-reg-on
+Message-ID: <20200831032438.GH4488@dragon>
+References: <20200825193536.7332-1-krzk@kernel.org>
+ <20200825193536.7332-19-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200825193536.7332-19-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Extend gpio-event-mon to support monitoring multiple lines.
-This would require multiple lineevent requests to implement using uAPI v1,
-but can be performed with a single line request using uAPI v2.
+On Tue, Aug 25, 2020 at 09:35:35PM +0200, Krzysztof Kozlowski wrote:
+> According to device tree specification, device node names should be
+> somewhat generic and reflecting the function of the device so add the
+> "hog" suffix to wl-reg-on GPIO hog.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- tools/gpio/gpio-event-mon.c | 45 ++++++++++++++++++++++++++++---------
- 1 file changed, 34 insertions(+), 11 deletions(-)
-
-diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
-index d6a831200c18..e50bb107ea3a 100644
---- a/tools/gpio/gpio-event-mon.c
-+++ b/tools/gpio/gpio-event-mon.c
-@@ -26,7 +26,8 @@
- #include "gpio-utils.h"
- 
- int monitor_device(const char *device_name,
--		   unsigned int line,
-+		   unsigned int *lines,
-+		   unsigned int num_lines,
- 		   struct gpio_v2_line_config *config,
- 		   unsigned int loops)
- {
-@@ -47,7 +48,7 @@ int monitor_device(const char *device_name,
- 		goto exit_free_name;
- 	}
- 
--	ret = gpiotools_request_line(device_name, &line, 1, config,
-+	ret = gpiotools_request_line(device_name, lines, num_lines, config,
- 				     "gpio-event-mon");
- 	if (ret < 0)
- 		goto exit_device_close;
-@@ -55,8 +56,10 @@ int monitor_device(const char *device_name,
- 		lfd = ret;
- 
- 	/* Read initial states */
--	values.mask = 1;
-+	values.mask = 0;
- 	values.bits = 0;
-+	for (i = 0; i < num_lines; i++)
-+		gpiotools_set_bit(&values.mask, i);
- 	ret = gpiotools_get_values(lfd, &values);
- 	if (ret < 0) {
- 		fprintf(stderr,
-@@ -65,9 +68,23 @@ int monitor_device(const char *device_name,
- 		goto exit_line_close;
- 	}
- 
--	fprintf(stdout, "Monitoring line %d on %s\n", line, device_name);
--	fprintf(stdout, "Initial line value: %d\n",
--		gpiotools_test_bit(values.bits, 0));
-+	if (num_lines == 1) {
-+		fprintf(stdout, "Monitoring line %d on %s\n", lines[0], device_name);
-+		fprintf(stdout, "Initial line value: %d\n",
-+			gpiotools_test_bit(values.bits, 0));
-+	} else {
-+		fprintf(stdout, "Monitoring lines %d", lines[0]);
-+		for (i = 1; i < num_lines - 1; i++)
-+			fprintf(stdout, ", %d", lines[i]);
-+		fprintf(stdout, " and %d on %s\n", lines[i], device_name);
-+		fprintf(stdout, "Initial line values: %d",
-+			gpiotools_test_bit(values.bits, 0));
-+		for (i = 1; i < num_lines - 1; i++)
-+			fprintf(stdout, ", %d",
-+				gpiotools_test_bit(values.bits, i));
-+		fprintf(stdout, " and %d\n",
-+			gpiotools_test_bit(values.bits, i));
-+	}
- 
- 	while (1) {
- 		struct gpio_v2_line_event event;
-@@ -126,7 +143,7 @@ void print_usage(void)
- 	fprintf(stderr, "Usage: gpio-event-mon [options]...\n"
- 		"Listen to events on GPIO lines, 0->1 1->0\n"
- 		"  -n <name>  Listen on GPIOs on a named device (must be stated)\n"
--		"  -o <n>     Offset to monitor\n"
-+		"  -o <n>     Offset of line to monitor (may be repeated)\n"
- 		"  -d         Set line as open drain\n"
- 		"  -s         Set line as open source\n"
- 		"  -r         Listen for rising edges\n"
-@@ -146,7 +163,8 @@ void print_usage(void)
- int main(int argc, char **argv)
- {
- 	const char *device_name = NULL;
--	unsigned int line = -1;
-+	unsigned int lines[GPIO_V2_LINES_MAX];
-+	unsigned int num_lines = 0;
- 	unsigned int loops = 0;
- 	struct gpio_v2_line_config config;
- 	int c;
-@@ -162,7 +180,12 @@ int main(int argc, char **argv)
- 			device_name = optarg;
- 			break;
- 		case 'o':
--			line = strtoul(optarg, NULL, 10);
-+			if (num_lines >= GPIO_V2_LINES_MAX) {
-+				print_usage();
-+				return -1;
-+			}
-+			lines[num_lines] = strtoul(optarg, NULL, 10);
-+			num_lines++;
- 			break;
- 		case 'd':
- 			config.flags |= GPIO_V2_LINE_FLAG_OPEN_DRAIN;
-@@ -182,7 +205,7 @@ int main(int argc, char **argv)
- 		}
- 	}
- 
--	if (!device_name || line == -1) {
-+	if (!device_name || num_lines == 0) {
- 		print_usage();
- 		return -1;
- 	}
-@@ -191,5 +214,5 @@ int main(int argc, char **argv)
- 		       "falling edges\n");
- 		config.flags |= EDGE_FLAGS;
- 	}
--	return monitor_device(device_name, line, &config, loops);
-+	return monitor_device(device_name, lines, num_lines, &config, loops);
- }
--- 
-2.28.0
-
+Applied, thanks.
