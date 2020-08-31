@@ -2,35 +2,35 @@ Return-Path: <SRS0=d2O3=CJ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FB3C433E7
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA4DC433E6
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83771206F0
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E0E8206F0
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Aug 2020 08:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725829AbgHaILW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 31 Aug 2020 04:11:22 -0400
-Received: from mo-csw1516.securemx.jp ([210.130.202.155]:52466 "EHLO
+        id S1728147AbgHaILY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 31 Aug 2020 04:11:24 -0400
+Received: from mo-csw1514.securemx.jp ([210.130.202.153]:45978 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbgHaILU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:11:20 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 07V8AlEW006400; Mon, 31 Aug 2020 17:10:47 +0900
-X-Iguazu-Qid: 34tKGq3o2vjA0gEPlD
-X-Iguazu-QSIG: v=2; s=0; t=1598861447; q=34tKGq3o2vjA0gEPlD; m=wz3Ji6+3jnDYpbjJmm9marffPxNcuoZNtHujLIhghMo=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1513) id 07V8AjRY038434;
-        Mon, 31 Aug 2020 17:10:45 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id 07V8AivR028260;
-        Mon, 31 Aug 2020 17:10:44 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 07V8AiaU004504;
-        Mon, 31 Aug 2020 17:10:44 +0900
+        with ESMTP id S1728043AbgHaILX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2020 04:11:23 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 07V8Ap1q026190; Mon, 31 Aug 2020 17:10:51 +0900
+X-Iguazu-Qid: 34tKGq3o2vjAEkE9Lb
+X-Iguazu-QSIG: v=2; s=0; t=1598861451; q=34tKGq3o2vjAEkE9Lb; m=ra5H8s8Vm7pgm4V8qXo/JCaHmwR0jH4wuIHwMK1mDtc=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1510) id 07V8Antg023548;
+        Mon, 31 Aug 2020 17:10:50 +0900
+Received: from enc03.toshiba.co.jp ([106.186.93.13])
+        by imx2.toshiba.co.jp  with ESMTP id 07V8An45025560;
+        Mon, 31 Aug 2020 17:10:49 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc03.toshiba.co.jp  with ESMTP id 07V8AkoN026358;
+        Mon, 31 Aug 2020 17:10:49 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -42,10 +42,10 @@ Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         linux-gpio@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
         Marc Zyngier <maz@misterjones.org>,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v3 1/8] dt-bindings: pinctrl: Add bindings for Toshiba Visconti TMPV7700 SoC
-Date:   Mon, 31 Aug 2020 17:10:18 +0900
+Subject: [PATCH v3 7/8] MAINTAINERS: Add information for Toshiba Visconti ARM SoCs
+Date:   Mon, 31 Aug 2020 17:10:24 +0900
 X-TSB-HOP: ON
-Message-Id: <20200831081025.2721320-2-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20200831081025.2721320-8-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200831081025.2721320-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20200831081025.2721320-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -56,112 +56,35 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add pinctrl bindings for Toshiba Visconti TMPV7700 SoC series.
+Add information about Toshiba Visconti ARM SoCs to MAINTAINERS.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
- .../pinctrl/toshiba,visconti-pinctrl.yaml     | 92 +++++++++++++++++++
- 1 file changed, 92 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-new file mode 100644
-index 000000000000..d0d1a01140ea
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f0068bceeb61..cbc445ab2cc4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2651,6 +2651,17 @@ M:	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+ M:	Dirk Opfer <dirk@opfer-online.de>
+ S:	Maintained
+ 
++ARM/TOSHIBA VISCONTI ARCHITECTURE
++M:	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Supported
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
++F:	Documentation/devicetree/bindings/arm/toshiba.yaml
++F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
++F:	arch/arm64/boot/dts/toshiba/
++F:	drivers/pinctrl/visconti/
++N:	visconti
 +
-+title: Toshiba Visconti TMPV770x pin mux/config controller
-+
-+maintainers:
-+  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-+
-+description:
-+  Toshiba's Visconti ARM SoC a pin mux/config controller.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - toshiba,tmpv7708-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    description: |
-+      A pinctrl node should contain at least one subnodes representing the
-+      pinctrl groups available on the machine. Each subnode will list the
-+      pins it needs, and how they should be configured, with regard to muxer
-+      configuration, pullups, drive strength.
-+    $ref: "pinmux-node.yaml"
-+
-+    properties:
-+      function:
-+        description:
-+          Function to mux.
-+        $ref: "/schemas/types.yaml#/definitions/string"
-+        enum: [i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, i2c6, i2c7, i2c8,
-+          spi0, spi1, spi2, spi3, spi4, spi5, spi6,
-+          uart0, uart1, uart2, uart3, pwm, pcmif_out, pcmif_in]
-+
-+      groups:
-+        description:
-+          Name of the pin group to use for the functions.
-+        $ref: "/schemas/types.yaml#/definitions/string"
-+        enum: [i2c0_grp, i2c1_grp, i2c2_grp, i2c3_grp, i2c4_grp,
-+          i2c5_grp, i2c6_grp, i2c7_grp, i2c8_grp,
-+          spi0_grp, spi0_cs0_grp, spi0_cs1_grp, spi0_cs2_grp,
-+          spi1_grp, spi2_grp, spi3_grp, spi4_grp, spi5_grp, spi6_grp,
-+          uart0_grp, uart1_grp, uart2_grp, uart3_grp,
-+          pwm0_gpio4_grp, pwm0_gpio8_grp, pwm0_gpio12_grp,
-+          pwm0_gpio16_grp, pwm1_gpio5_grp, pwm1_gpio9_grp,
-+          pwm1_gpio13_grp, pwm1_gpio17_grp, pwm2_gpio6_grp,
-+          pwm2_gpio10_grp, pwm2_gpio14_grp, pwm2_gpio18_grp,
-+          pwm3_gpio7_grp, pwm3_gpio11_grp, pwm3_gpio15_grp,
-+          pwm3_gpio19_grp, pcmif_out_grp, pcmif_in_grp]
-+
-+      drive-strength:
-+        enum: [2, 4, 6, 8, 16, 24, 32]
-+        default: 2
-+        description:
-+          Selects the drive strength for the specified pins, in mA.
-+
-+      bias-pull-up: true
-+
-+      bias-pull-down: true
-+
-+      bias-disable: true
-+
-+additionalProperties: false
-+
-+examples:
-+  # Pinmux controller node
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pmux: pmux@24190000 {
-+            compatible = "toshiba,tmpv7708-pinctrl";
-+            reg = <0 0x24190000 0 0x10000>;
-+
-+            spi0_pins: spi0-pins {
-+                function = "spi0";
-+                groups = "spi0_grp";
-+            };
-+        };
-+    };
+ ARM/UNIPHIER ARCHITECTURE
+ M:	Masahiro Yamada <yamada.masahiro@socionext.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 -- 
 2.27.0
 
