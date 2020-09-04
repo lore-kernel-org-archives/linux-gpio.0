@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BF5C43461
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Sep 2020 15:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E66C433E2
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Sep 2020 15:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 087212074D
-	for <linux-gpio@archiver.kernel.org>; Fri,  4 Sep 2020 15:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C6B120770
+	for <linux-gpio@archiver.kernel.org>; Fri,  4 Sep 2020 15:50:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DHwiLfdY"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OSJLrqQl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgIDPty (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 4 Sep 2020 11:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43954 "EHLO
+        id S1727937AbgIDPuB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 4 Sep 2020 11:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgIDPqw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Sep 2020 11:46:52 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E555C061258
-        for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2020 08:46:44 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id c19so7778072wmd.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2020 08:46:44 -0700 (PDT)
+        with ESMTP id S1726458AbgIDPqq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Sep 2020 11:46:46 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BEBAC06123A
+        for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2020 08:46:39 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id a17so7191312wrn.6
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2020 08:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+YZpX0q+mO37+kQBR4DVC/6zJd6Q2vMMFs8yeO9lM6k=;
-        b=DHwiLfdYkiuvwGGyuQJVAWH5TI6urmfg9xYzHsNJZRaq+W2VOEzGuDZHADH8b43f72
-         IdWm7NgZqeHyUMOex7xd1L+sKPbyTQU6bkDGKC+laJrmoA7AkcOWL7irwhKLtGgT8Sqf
-         F8QMnwZ2j3f3Ev1NBQFKglsSE0ukhsx0DeGQmvPfA7s4XdmrdEBZCJLsDuZdy2py60av
-         7ddrLxRGhrc5nQk/J7X0Rd3701tAIqugtMXJWgIrCfExr2MwqBB6KT7fKNh50zVYZgFr
-         KhutLsEsf7K3xZSOrPpo6OUVFbEEAZGhgmuf6GDrIPY3Qah5PrJ+GtBed+JpjV2iCFmm
-         akIw==
+        bh=DcRR0cvj/PHR5JcTPOP5KmS/Yg2MBZu1qA5qfQNGk0A=;
+        b=OSJLrqQlcETqpO5qPErz470rrP4H38PM0Pt8IMETO0NAQJtD9YhqhPpbnjVgO6z5Pc
+         zFTnWa4ltyNBOIYyvM+4tgoe3kWJWGZqE++V+EWXWa7BQTeJRGUXB+RdjUucwaB8vcA8
+         a87JibEI+hux9ZIBnOWbmMRMtjtepM2P3EDk7RX7CdRquBDpTnwVnZks1Czho5gigPzO
+         ZBW5pug6/6n5xkuc53cIUj/ofUMQo9ZoeuLagXDiIzxELjsil7e+coJ8Ky5yYDlrwcXU
+         cOpD7DsDHXxX3RQEoBjI4dZ0NGVoglP+yauppUuvEEQIuJHNgVPXVtwRoCNu/iQqYXLn
+         CGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+YZpX0q+mO37+kQBR4DVC/6zJd6Q2vMMFs8yeO9lM6k=;
-        b=EQNOgRndyADkoIvtuQcdvtAUy2NqNUR8nLyy2DII1igDzZYusN44pSatdoTJt9EMzA
-         VCN9Di1RNFEKGpOF8E7t/1BRre98GYO+lxFCL+8XR/gngfxfHq6ZNrK2rFDWm3QjB7h5
-         g/Szeh8QQIo2lQ6tCLyVLqk02M0ZEA+2GvNwhCliI734Up0K217mJcERQmN6d2VlwT7t
-         Q5OjssVEXqtu6Yjodo/Ko6w8Eko9YZIx4gVq+WFe4w+7NDM2qvrcX1nM0dqvQahqv3Fm
-         H6FfKRquRsV/KUlVKdsonpeLAt14knsQYtWl7ZtHK+N1HxqBCfcu8mt21LgIt2ulVA8T
-         1FfQ==
-X-Gm-Message-State: AOAM532dF0uIp60aBPXt9uG+/dmoXbyPNsdGgRvwcPyaLoTztKIpLC5t
-        tyuMGBM0hvhNGOV1NwGoIhpxKA==
-X-Google-Smtp-Source: ABdhPJxcZNGnXPvX9i5H6bEC8G5YKnDdSyG1Hc0LLO25M6dxNysSMjIVg6JhStAhJl/uVlArUPCUtg==
-X-Received: by 2002:a1c:f018:: with SMTP id a24mr7818256wmb.7.1599234403325;
-        Fri, 04 Sep 2020 08:46:43 -0700 (PDT)
+        bh=DcRR0cvj/PHR5JcTPOP5KmS/Yg2MBZu1qA5qfQNGk0A=;
+        b=ofb4/tZYkXQBBZUC7w7WaF8Cx6IamwFo8Vw6r0kEEkmCP4iPFNjt/ngipwo5ZJIYlf
+         VE91gdqd9xsgB1zWK0EDPPBoLNRy0Z5UFYxRezdEJunihQSQXSCwz4zixSmi9cLIKQuL
+         FmbeaGXY63RVKBlRik8NdXnk1jOVkJ+2vWkHOqt3jCVboFYjRfgFVom2tGARYOeR0QfO
+         RuTa88GTVRS1J4Xhpliqr+p2Kk2AZajbZ/t3c+6dB/daiwwlPPRjm7pk7rzUmskeMk+W
+         9wnt1122xK4xWMv7Ebb8e9f/xBlaIZWK6Ek3i5Lk5M0vGH61zSShB0+YYAQ7py+CTm3y
+         9UFg==
+X-Gm-Message-State: AOAM531ZV00TGBdGZeXywenQTTLjeFQ946V0OKdEJQ7BI/2uZPFJlBr8
+        4k7a2+krfXWAt4Ym14gE3g3eUA==
+X-Google-Smtp-Source: ABdhPJzydKpw4Z5FsNZ+t0aMz2hV1ayLaJITUh07WUEGRLKoHkz5Fpef/XIauwVmwQp52xf/HGURHw==
+X-Received: by 2002:adf:9d44:: with SMTP id o4mr8314372wre.361.1599234398291;
+        Fri, 04 Sep 2020 08:46:38 -0700 (PDT)
 Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
-        by smtp.gmail.com with ESMTPSA id q4sm11983375wru.65.2020.09.04.08.46.42
+        by smtp.gmail.com with ESMTPSA id q4sm11983375wru.65.2020.09.04.08.46.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2020 08:46:42 -0700 (PDT)
+        Fri, 04 Sep 2020 08:46:37 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -66,9 +66,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 10/23] gpio: mockup: fix resource leak in error path
-Date:   Fri,  4 Sep 2020 17:45:34 +0200
-Message-Id: <20200904154547.3836-11-brgl@bgdev.pl>
+Subject: [PATCH 06/23] gpiolib: switch to simpler IDA interface
+Date:   Fri,  4 Sep 2020 17:45:30 +0200
+Message-Id: <20200904154547.3836-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200904154547.3836-1-brgl@bgdev.pl>
 References: <20200904154547.3836-1-brgl@bgdev.pl>
@@ -81,35 +81,50 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-If the module init function fails after creating the debugs directory,
-it's never removed. Add proper cleanup calls to avoid this resource
-leak.
+We don't need to specify any ranges when allocating IDs so we can switch
+to ida_alloc() and ida_free() instead of the ida_simple_ counterparts.
+
+ida_simple_get(ida, 0, 0, gfp) is equivalent to
+ida_alloc_range(ida, 0, UINT_MAX, gfp) which is equivalent to
+ida_alloc(ida, gfp). Note: IDR will never actually allocate an ID
+larger than INT_MAX.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpiolib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 78c97f7b6893..19c092f814fd 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -550,6 +550,7 @@ static int __init gpio_mockup_init(void)
- 	err = platform_driver_register(&gpio_mockup_driver);
- 	if (err) {
- 		pr_err("error registering platform driver\n");
-+		debugfs_remove_recursive(gpio_mockup_dbg_dir);
- 		return err;
- 	}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 15c99cf560ee..591777bc2285 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -471,7 +471,7 @@ static void gpiodevice_release(struct device *dev)
+ 	struct gpio_device *gdev = dev_get_drvdata(dev);
  
-@@ -580,6 +581,7 @@ static int __init gpio_mockup_init(void)
- 			pr_err("error registering device");
- 			platform_driver_unregister(&gpio_mockup_driver);
- 			gpio_mockup_unregister_pdevs();
-+			debugfs_remove_recursive(gpio_mockup_dbg_dir);
- 			return PTR_ERR(pdev);
- 		}
+ 	list_del(&gdev->list);
+-	ida_simple_remove(&gpio_ida, gdev->id);
++	ida_free(&gpio_ida, gdev->id);
+ 	kfree_const(gdev->label);
+ 	kfree(gdev->descs);
+ 	kfree(gdev);
+@@ -582,7 +582,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 		gc->of_node = gdev->dev.of_node;
+ #endif
  
+-	gdev->id = ida_simple_get(&gpio_ida, 0, 0, GFP_KERNEL);
++	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+ 		ret = gdev->id;
+ 		goto err_free_gdev;
+@@ -753,7 +753,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ err_free_descs:
+ 	kfree(gdev->descs);
+ err_free_ida:
+-	ida_simple_remove(&gpio_ida, gdev->id);
++	ida_free(&gpio_ida, gdev->id);
+ err_free_gdev:
+ 	/* failures here can mean systems won't boot... */
+ 	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
 -- 
 2.26.1
 
