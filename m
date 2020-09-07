@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723C6C43461
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 11:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797A8C433E2
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 11:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33632215A4
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 11:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BFF5207C3
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 11:52:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbgIGLs4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Sep 2020 07:48:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:26050 "EHLO mga12.intel.com"
+        id S1729172AbgIGLwS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Sep 2020 07:52:18 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31253 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729150AbgIGLsr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 7 Sep 2020 07:48:47 -0400
-IronPort-SDR: vLai4c0X6towIrb1+/Iqc+B3EQoxm7tp6BmDhSHWxTPpZC3jFxcxhXvZADHWaE4xJQjBStkF/h
- W5ib7I0KX0bg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9736"; a="137508004"
+        id S1729160AbgIGLwJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 7 Sep 2020 07:52:09 -0400
+IronPort-SDR: hQr39yb3q66Yek1DAlVR9FPRCNPx9kP3gP7DFahOrT8xkjm40+JjVsUngxgYagt0+gZVRFo5SQ
+ dRVLbQhCPbqA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9736"; a="145701516"
 X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
-   d="scan'208";a="137508004"
+   d="scan'208";a="145701516"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2020 04:48:44 -0700
-IronPort-SDR: 0zBgpsTw0cufd6Q64xwCLhA/+X/Ay4w6reVTb3zoIKdjiO+uU7qDrRNNuoQuaQywEl6rxBH1Bc
- RyWZdz+94YJA==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2020 04:52:06 -0700
+IronPort-SDR: uvr2VwyZ4SxhVRvEAjJl/5Qfroyr0fgq08DkGSizqWWalIL1aBVCwym291h/o+Ug99zXiM+Hvb
+ BA0rZVPHxRMg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
-   d="scan'208";a="333141923"
+   d="scan'208";a="333142853"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2020 04:48:41 -0700
+  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2020 04:52:02 -0700
 Received: from andy by smile with local (Exim 4.94)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kFFdW-00EwHp-NR; Mon, 07 Sep 2020 14:48:38 +0300
-Date:   Mon, 7 Sep 2020 14:48:38 +0300
+        id 1kFFgl-00EwLw-NM; Mon, 07 Sep 2020 14:51:59 +0300
+Date:   Mon, 7 Sep 2020 14:51:59 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -49,52 +49,42 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-acpi@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 13/23] gpio: mockup: pass the chip label as device
- property
-Message-ID: <20200907114838.GX1891694@smile.fi.intel.com>
+Subject: Re: [PATCH 16/23] gpio: mockup: refactor the module init function
+Message-ID: <20200907115159.GZ1891694@smile.fi.intel.com>
 References: <20200904154547.3836-1-brgl@bgdev.pl>
- <20200904154547.3836-14-brgl@bgdev.pl>
- <20200904164820.GB1891694@smile.fi.intel.com>
- <CAMRc=Mea4pGbW+fY3mCWfNSSqo9ZwaJxx2C0JmstnQOc8eVrLg@mail.gmail.com>
+ <20200904154547.3836-17-brgl@bgdev.pl>
+ <20200904165029.GD1891694@smile.fi.intel.com>
+ <CAMRc=MfrYJrkX2RfjXkCLtyzkM8MemTuUgEu_n-E+2mngk9mbA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMRc=Mea4pGbW+fY3mCWfNSSqo9ZwaJxx2C0JmstnQOc8eVrLg@mail.gmail.com>
+In-Reply-To: <CAMRc=MfrYJrkX2RfjXkCLtyzkM8MemTuUgEu_n-E+2mngk9mbA@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 01:01:02PM +0200, Bartosz Golaszewski wrote:
-> On Fri, Sep 4, 2020 at 6:48 PM Andy Shevchenko
+On Mon, Sep 07, 2020 at 01:05:54PM +0200, Bartosz Golaszewski wrote:
+> On Fri, Sep 4, 2020 at 6:57 PM Andy Shevchenko
 > <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 04, 2020 at 05:45:37PM +0200, Bartosz Golaszewski wrote:
+> > On Fri, Sep 04, 2020 at 05:45:40PM +0200, Bartosz Golaszewski wrote:
 > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > > >
-> > > While we do check the "chip-name" property in probe(), we never actually
-> > > use it. Let's pass the chip label to the driver using device properties
-> > > as we'll want to allow users to define their own once dynamically
-> > > created chips are supported.
+> > > This is in preparation for dynamically created chips.
 > > >
-> > > The property is renamed to "chip-label" to not cause any confusion with
-> > > the actual chip name which is of the form: "gpiochipX".
-> > >
-> > > If the "chip-label" property is missing, let's do what most devices in
-> > > drivers/gpio/ do and use dev_name().
+> > > Let's split out the code that can be reused when creating chips at
+> > > run-time. Let's also move the code preparing the device properties into
+> > > a separate routine. This has the advantage of simplifying the error
+> > > handling.
 > >
-> > Just wondering if we have a documentation in kernel how this mockup mechanism
-> > works and what kind of properties it uses.
-> >
-> > Side note: moving to software nodes would make some advantages in future such
-> > as visibility properties and their values (not yet implemented, but there is an
-> > idea to move forward).
-> 
-> Seems like we're implicitly using software nodes already:
-> fwnode_create_software_node() is called when adding device properties.
+> > Almost all contents of this patch should go to proposed helper as I mentioned
+> > before. Will make this patch quite small and understandable.
 
-It's not the same APIs, though the former is called from the latter.
-But maybe for now it's okay.
+> Sorry, I'm not sure what you're referring to.
+
+I meant if you move changes done here to the patch where I complained about
+indentation you might have better series. Have you considered that?
 
 -- 
 With Best Regards,
