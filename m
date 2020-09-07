@@ -2,143 +2,97 @@ Return-Path: <SRS0=kyhb=CQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65695C43461
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B17C433E2
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 350222137B
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22AF5208C7
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:54:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="VSQj3Cfq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbgIGRtI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Sep 2020 13:49:08 -0400
-Received: from mga05.intel.com ([192.55.52.43]:42086 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729109AbgIGMj1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 7 Sep 2020 08:39:27 -0400
-IronPort-SDR: WBEeyuFP8hGcnGsYKszVJMrEVm9/hhP4MDtGgH+RcJ3+i9c6cGVDKB5VispU5Masx/ZkLI2FqZ
- iizPQrDHofpg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9736"; a="242811803"
-X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
-   d="scan'208";a="242811803"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2020 05:38:43 -0700
-IronPort-SDR: b9BfZlr40QZ2qISx/JXwCtkBAzS5PgLGV5xflcnOM8vMWXear5QSlnH4ccfPIOpexgx7jr18OP
- bYmVrfDS4+yA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
-   d="scan'208";a="333151425"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2020 05:38:40 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kFGPt-00Ewye-H3; Mon, 07 Sep 2020 15:38:37 +0300
-Date:   Mon, 7 Sep 2020 15:38:37 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        id S1729042AbgIGRyY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Sep 2020 13:54:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728875AbgIGLWc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2020 07:22:32 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9444BC0617A4
+        for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2020 04:06:05 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id d190so13586332iof.3
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2020 04:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=og92g0L7hPgsl8mDF4E0oRjHENzkIz2/kCylVnn3aEQ=;
+        b=VSQj3CfqsFG0w0R6IxVFzdq16ii5bv8V7LWtx8mdfazpSH82uYeoie36r4Ix/aZNjm
+         rmVIDi989E2n1MmojSJDRlZiGBvVEppkRQQqi+m2pKrwISBsxj1Lyea4x+266sVik2qY
+         OA2+Cm2PT2j/75XX1RvwMBLLB+a1zyBDo/aP4SupJprcZ0fs8AlJMMAoFxNbUoXlo2Q/
+         cPLuCtWe3tFYJQWyLmkPdYjafhnQ3Ma9gOcMyXCU1Q+FffNcDNQpPq4dyoC3Qf+Glj82
+         PPSJeJjKB5BAqYlhuj7vUVP+okdpZmjCcraoI8gLNg5Ltv/AR8UzUnwVVaXtjr5r889n
+         9JmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=og92g0L7hPgsl8mDF4E0oRjHENzkIz2/kCylVnn3aEQ=;
+        b=mZ+O1vLz+MQbNU+jsU+Qe6PqzRwgdxfOwZi7vV9/n/XFqgiOOogexbbRplmKBuF8mj
+         XCg0TQoZDbrnca+nmQP7R7Ix8f0X9GYyJkKOmS6BydkbViE04cgC1+xesjwzOMaIm1Ka
+         vRsWl7XDRMUYTcaCQBdJvF2KwrcQJNbn0qznQUUpwVt1qn1kvVuPTyemg3leopSyl/NV
+         BD7MYlNL4Ili8vNXoC1m1yJfZwmwPtJYDw0vPwul6V5mC1d84VuCz2gjoJyuATBmlVDW
+         eY8TGWduvCUic4/+63OtvtArLQRklJUzjAR0J5sQRU21nHdp1Tq0tHNa2Ql5x6JeKF6U
+         ohBg==
+X-Gm-Message-State: AOAM532i7TSxweyboK01QzbtFg/cDnEJdb0BUTJDh0cV9ceTLLpmnQEj
+        794iWtmTjpFOqCeZCK51lprOEJFdAQsj3v/mZbK3tA==
+X-Google-Smtp-Source: ABdhPJyod5VJBi59vRhPy1AeFPICUDWH+c8TTmKc169CEOJtj3iVYBKBHtDG0vSqtP6YjcYurac6iPQb5KedcXxThBY=
+X-Received: by 2002:a5d:8352:: with SMTP id q18mr3579085ior.31.1599476765032;
+ Mon, 07 Sep 2020 04:06:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200904154547.3836-1-brgl@bgdev.pl> <20200904154547.3836-17-brgl@bgdev.pl>
+ <20200904165029.GD1891694@smile.fi.intel.com>
+In-Reply-To: <20200904165029.GD1891694@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 7 Sep 2020 13:05:54 +0200
+Message-ID: <CAMRc=MfrYJrkX2RfjXkCLtyzkM8MemTuUgEu_n-E+2mngk9mbA@mail.gmail.com>
+Subject: Re: [PATCH 16/23] gpio: mockup: refactor the module init function
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         linux-doc <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 23/23] Documentation: gpio: add documentation for
- gpio-mockup
-Message-ID: <20200907123837.GG1891694@smile.fi.intel.com>
-References: <20200904154547.3836-1-brgl@bgdev.pl>
- <20200904154547.3836-24-brgl@bgdev.pl>
- <26ea1683-da8f-30e7-f004-3616e96d56b3@infradead.org>
- <20200907095932.GU1891694@smile.fi.intel.com>
- <CAMpxmJXvhYOVkZY7LLf=v+o8E2xKTh1RYhLrdVsS9nN1XZ5QJQ@mail.gmail.com>
- <20200907115310.GA1891694@smile.fi.intel.com>
- <CAMpxmJUfNkko4Rrb4N5CF_rdwRAWGhVr9DSOHfhYyTxYSH7dsQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJUfNkko4Rrb4N5CF_rdwRAWGhVr9DSOHfhYyTxYSH7dsQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 02:06:15PM +0200, Bartosz Golaszewski wrote:
-> On Mon, Sep 7, 2020 at 1:53 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Sep 07, 2020 at 12:26:34PM +0200, Bartosz Golaszewski wrote:
-> > > On Mon, Sep 7, 2020 at 11:59 AM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, Sep 04, 2020 at 08:15:59PM -0700, Randy Dunlap wrote:
-> > > > > On 9/4/20 8:45 AM, Bartosz Golaszewski wrote:
-
-...
-
-> > > > > > +GPIO Testing Driver
-> > > > > > +===================
-> > > > > > +
-> > > > > > +The GPIO Testing Driver (gpio-mockup) provides a way to create simulated GPIO
-> > > > > > +chips for testing purposes. There are two ways of configuring the chips exposed
-> > > > > > +by the module. The lines can be accessed using the standard GPIO character
-> > > > > > +device interface as well as manipulated using the dedicated debugfs directory
-> > > > > > +structure.
-> > > > >
-> > > > > Could configfs be used for this instead of debugfs?
-> > > > > debugfs is ad hoc.
-> > > >
-> > > > Actually sounds like a good idea.
-> > > >
-> > >
-> > > Well, then we can go on and write an entirely new mockup driver
-> > > (ditching module params and dropping any backwards compatibility)
-> > > because we're already using debugfs for line values.
-> > >
-> > > How would we pass the device properties to configfs created GPIO chips
-> > > anyway? Devices seem to only be created using mkdir. Am I missing
-> > > something?
+On Fri, Sep 4, 2020 at 6:57 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Sep 04, 2020 at 05:45:40PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > >
-> > Same way how USB composite works, no?
+> > This is in preparation for dynamically created chips.
 > >
-> 
-> OK, so create a new chip directory in configfs, configure it using
-> some defined configfs attributes and then finally instantiate it from
-> sysfs?
-> 
-> Makes sense and is probably the right way to go. Now the question is:
-> is it fine to just entirely remove the previous gpio-mockup?
+> > Let's split out the code that can be reused when creating chips at
+> > run-time. Let's also move the code preparing the device properties into
+> > a separate routine. This has the advantage of simplifying the error
+> > handling.
+>
+> Almost all contents of this patch should go to proposed helper as I mentioned
+> before. Will make this patch quite small and understandable.
+>
 
-Since, for example, I never saw device property bindings for that driver I
-assume that it was never considered as an ABI, so feel free to hack it in
-either direction.
+Sorry, I'm not sure what you're referring to.
 
-> Should we
-> keep some backwards compatibility?
-
-I wouldn't probably spend time on this.
-
-> Should we introduce an entirely new
-> module and have a transition period before removing previous
-> gpio-mockup?
-
-Neither transition period.
-
-> Also: this is a testing module so to me debugfs is just fine. Is
-> configfs considered stable ABI like sysfs?
-
-But this one is a good question. I think ConfigFS is stricter than DebugFS,
-up to being an ABI. But never did myself such a thing, so would like to hear
-experienced developers.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
