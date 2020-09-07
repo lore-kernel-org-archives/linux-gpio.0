@@ -2,93 +2,96 @@ Return-Path: <SRS0=kyhb=CQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB58BC2D0A8
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038D7C433E2
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 21:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B29D208C7
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E77215A4
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 21:05:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="nSd/soCN"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="NuWMxZEv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbgIGRzH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Sep 2020 13:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42500 "EHLO
+        id S1727119AbgIGVFJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Sep 2020 17:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728861AbgIGLWK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2020 07:22:10 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E027CC0617A1
-        for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2020 04:05:10 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id b16so13567724ioj.4
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2020 04:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D7L/Q4DJFDyy3wME7bzPuJcv0cvFqGwJhESn1U89F5s=;
-        b=nSd/soCN0apStHfecRk/s8TMfk39mqUYPzh0zB/X6CwR4xUJSFFU0FnKp+tCRk7Dxr
-         dxSOcRUml8zVB79Fm2ThAGwZhIwsZ9OPmOav7mp6gqCv2iIgBSeA1XcFFigkWUwrAK5g
-         9ndJPPydL6JRbTIBSOe3jO9NlRlqGqnPBFwmtIdWaVf0VLsqOiLVD+eqxcWPZTRO07W7
-         is0PyDyIhur30ZJJ3E4ZHzRu488xo7wU4cH2gwBwuSF1nT5thgx8mQqsqsWBwrJymYo4
-         fK3WRuZDjVxGovSSlKSdckuotXq/ExsbHzIplL+6mbf3IlXZbkQt1rlDd+5u09yoRPvf
-         zCdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D7L/Q4DJFDyy3wME7bzPuJcv0cvFqGwJhESn1U89F5s=;
-        b=SgDfwNrnCWh39Mavhl2pjCobLHhYnLkIUiqTfBxp7gr5LU6V2B27YQPL1WE3JJoE8c
-         gGzi25scwvhzOxRU+IKVpsyYWo57MkQrE2eRUTz8umLlA1gc+VbDlqUJjCEZ+ZxuGVLk
-         f+QDAoRz3DllYyDdfbU2mFFDMjoYMzl+7Ep6lBAJ9Ah2PQmrjexIDMDdb29TEL8rxrsg
-         BcvCHeYqIlgiwDwWtJgwBbOS8VQUOJ/COJ+JGXrWOpvcXYcDSmGg1/eWK8S+kakOtZr+
-         nGZgmDSOw0nBvSaYslgpO4gAVS9zPLc9LUhwhdP11p26UQL2UBmBrC68GJMalrMostSY
-         hNAg==
-X-Gm-Message-State: AOAM532yccqUBb6XJ4zx4yQwWyLOTmuUg1m6YmLjFcNSUqs8ge0ZdjCp
-        xd4EX3I+mWD5kCmGg70cLL6dPivNYwUAymVzkHh8sg==
-X-Google-Smtp-Source: ABdhPJz3NFAUNOM8h+eBu94NlN0+qbyZT3uPxFzJlrWhGBVdmuhRiYP3jSvAoS1qQWhXj2axsT/rlnUltkSo/hZcc5c=
-X-Received: by 2002:a02:7817:: with SMTP id p23mr8145520jac.57.1599476710278;
- Mon, 07 Sep 2020 04:05:10 -0700 (PDT)
+        with ESMTP id S1726446AbgIGVFI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2020 17:05:08 -0400
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0A3C061573
+        for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2020 14:05:07 -0700 (PDT)
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 23DA980719;
+        Tue,  8 Sep 2020 09:04:54 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1599512694;
+        bh=2o4BAsLs2duPVFnx5tJT1CeBpaPWP7Bjhar4MZ290gA=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=NuWMxZEvMeKbI7JByXFxGpsz3+IKUnvAhdrcLBzikbaYvCcP+pe+goClIbjqDbTQ+
+         BcvVZN+j3yhASqjlFJrITRMpsrTTpts6bT3WYfL5LRsPmAdVNvoyq0i620L6KRT593
+         17k7Q/VlciTV669N89eA4LUXOPUZhEVFxCMTQjez+gFodz8SOaEoVqYGdMyq9wPtcE
+         4DKT2WAQyOeh0oVyJ7Hm52X2wE2QQwEbhuN5ZDpTf8Hh1BVyP7cCI/rXfg1nXOErNz
+         puC1W2lExiDNd/lJOmOKrD7DBuwfqWQSqjMy2nyh4qI/UpAOl6akjFZHDF9d1StCC1
+         mA3d9mrQWwEJQ==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5f56a0760000>; Tue, 08 Sep 2020 09:04:54 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 8 Sep 2020 09:04:48 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1497.006; Tue, 8 Sep 2020 09:04:48 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] ARM: dts: Remove non-existent i2c1 from 98dx3236
+Thread-Topic: [PATCH 2/3] ARM: dts: Remove non-existent i2c1 from 98dx3236
+Thread-Index: AQHWhMBx9UPh5FBBykunMtOiHpEnW6lciSsAgABZMwA=
+Date:   Mon, 7 Sep 2020 21:04:48 +0000
+Message-ID: <36712d90-6bfe-8965-22b1-6b6dd460116d@alliedtelesis.co.nz>
+References: <20200907024149.20001-1-chris.packham@alliedtelesis.co.nz>
+ <20200907024149.20001-3-chris.packham@alliedtelesis.co.nz>
+ <20200907154532.GY3112546@lunn.ch>
+In-Reply-To: <20200907154532.GY3112546@lunn.ch>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.32.1.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7792CDCDA1D5F04087248E37E719BDB9@atlnz.lc>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200904154547.3836-1-brgl@bgdev.pl> <20200904154547.3836-11-brgl@bgdev.pl>
- <20200904170028.GG1891694@smile.fi.intel.com>
-In-Reply-To: <20200904170028.GG1891694@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 7 Sep 2020 13:04:59 +0200
-Message-ID: <CAMRc=Mc3V_BJ88CrB_q0uTHjvqVf5XEkm6BJZwrVjnVhPjiYaQ@mail.gmail.com>
-Subject: Re: [PATCH 10/23] gpio: mockup: fix resource leak in error path
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 4, 2020 at 7:00 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Sep 04, 2020 at 05:45:34PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > If the module init function fails after creating the debugs directory,
-> > it's never removed. Add proper cleanup calls to avoid this resource
-> > leak.
->
-> Does it fix existing bug?
-
-You mean - should it go into stable? The bug is quite unlikely but
-yeah, probably.
-
-Bart
+DQpPbiA4LzA5LzIwIDM6NDUgYW0sIEFuZHJldyBMdW5uIHdyb3RlOg0KPiBPbiBNb24sIFNlcCAw
+NywgMjAyMCBhdCAwMjo0MTo0OFBNICsxMjAwLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gVGhl
+IHN3aXRjaGVzIHdpdGggaW50ZWdyYXRlZCBDUFVzIGhhdmUgb25seSBnb3QgYSBzaW5nbGUgaTJj
+IGNvbnRyb2xsZXIuDQo+PiBUaGUgaW5jb3JyZWN0bHkgZ2FpbmVkIG9uZSB3aGVuIHRoZXkgd2Vy
+ZSBzcGxpdCBmcm9tIHRoZSBBcm1hZGEtWFAuDQpTb21lb25lIHBvaW50ZWQgb3V0IGEgc21hbGwg
+Z3JhbW1vIGluc3RlYWQgb2YgIlRoZSBpbmNvcnJlY3RseSIgaXQgDQpzaG91bGQgYmUgIlRoZXkg
+aW5jb3JyZWN0bHkiLiBJcyBpdCB3b3J0aCBtZSBzZW5kaW5nIGEgdjIganVzdCB0byBmaXggdGhh
+dD8NCj4+DQo+PiBGaXhlczogNDNlMjhiYTg3NzA4ICgiQVJNOiBkdHM6IFVzZSBhcm1hZGEtMzcw
+LXhwIGFzIGEgYmFzZSBmb3IgYXJtYWRhLXhwLTk4ZHgzMjM2IikNCj4+IFNpZ25lZC1vZmYtYnk6
+IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4NCj4gUmV2
+aWV3ZWQtYnk6IEFuZHJldyBMdW5uIDxhbmRyZXdAbHVubi5jaD4NCj4NCj4gICAgICBBbmRyZXc=
