@@ -2,105 +2,157 @@ Return-Path: <SRS0=kyhb=CQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF64C433E2
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 16:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D22C2BB84
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C636B208C7
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 16:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0A962080A
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 17:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbgIGQQO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729988AbgIGQPh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2020 12:15:37 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EA84C061573
-        for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2020 09:15:35 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kFJno-0001sv-G5; Mon, 07 Sep 2020 18:15:32 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kFJnn-0002et-PM; Mon, 07 Sep 2020 18:15:31 +0200
-Date:   Mon, 7 Sep 2020 18:15:31 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Thorsten Scherer <t.scherer@eckelmann.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        id S1729738AbgIGRT5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Sep 2020 13:19:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:40312 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729565AbgIGNxU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 7 Sep 2020 09:53:20 -0400
+IronPort-SDR: FRYaLof1Stayp3r3/A32d5+SC8+T5VqW7lqR0RbEAO/jzyH5EFlBK9vI/KoWBMSiCe7k3u8MIU
+ 3BNpHFBBnQWQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9736"; a="145714274"
+X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
+   d="scan'208";a="145714274"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2020 06:53:04 -0700
+IronPort-SDR: ZpD+nR3zD5cFp9j3Cc3dwR1QwVccLWIgbyDzO5RuQx1ta5A3XEWYaZZ2XACE5B4yL8bRHhiDEr
+ hX9xYuaV/5pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,401,1592895600"; 
+   d="scan'208";a="333169481"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2020 06:53:01 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kFHZq-00ExvU-05; Mon, 07 Sep 2020 16:52:58 +0300
+Date:   Mon, 7 Sep 2020 16:52:57 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: siox: explicitly support only threaded irqs
-Message-ID: <20200907161531.x7wdxmb5e3qdbtn7@pengutronix.de>
-References: <20200907153135.3307-1-a.fatoum@pengutronix.de>
+        Jonathan Corbet <corbet@lwn.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 23/23] Documentation: gpio: add documentation for
+ gpio-mockup
+Message-ID: <20200907135257.GJ1891694@smile.fi.intel.com>
+References: <20200904154547.3836-1-brgl@bgdev.pl>
+ <20200904154547.3836-24-brgl@bgdev.pl>
+ <26ea1683-da8f-30e7-f004-3616e96d56b3@infradead.org>
+ <20200907095932.GU1891694@smile.fi.intel.com>
+ <CAMpxmJXvhYOVkZY7LLf=v+o8E2xKTh1RYhLrdVsS9nN1XZ5QJQ@mail.gmail.com>
+ <20200907115310.GA1891694@smile.fi.intel.com>
+ <CAMpxmJUfNkko4Rrb4N5CF_rdwRAWGhVr9DSOHfhYyTxYSH7dsQ@mail.gmail.com>
+ <20200907123837.GG1891694@smile.fi.intel.com>
+ <CAMpxmJXNYZb66SPuzR_3CEVwD=PQ6z6Ew3ia7ZL=wSU0QGhjEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cgjxmmqsfjfxvawn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200907153135.3307-1-a.fatoum@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+In-Reply-To: <CAMpxmJXNYZb66SPuzR_3CEVwD=PQ6z6Ew3ia7ZL=wSU0QGhjEA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Mon, Sep 07, 2020 at 02:57:29PM +0200, Bartosz Golaszewski wrote:
+> On Mon, Sep 7, 2020 at 2:38 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Mon, Sep 07, 2020 at 02:06:15PM +0200, Bartosz Golaszewski wrote:
+> > > On Mon, Sep 7, 2020 at 1:53 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Mon, Sep 07, 2020 at 12:26:34PM +0200, Bartosz Golaszewski wrote:
+> > > > > On Mon, Sep 7, 2020 at 11:59 AM Andy Shevchenko
+> > > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > On Fri, Sep 04, 2020 at 08:15:59PM -0700, Randy Dunlap wrote:
+> > > > > > > On 9/4/20 8:45 AM, Bartosz Golaszewski wrote:
+> >
+> > ...
+> >
+> > > > > > > > +GPIO Testing Driver
+> > > > > > > > +===================
+> > > > > > > > +
+> > > > > > > > +The GPIO Testing Driver (gpio-mockup) provides a way to create simulated GPIO
+> > > > > > > > +chips for testing purposes. There are two ways of configuring the chips exposed
+> > > > > > > > +by the module. The lines can be accessed using the standard GPIO character
+> > > > > > > > +device interface as well as manipulated using the dedicated debugfs directory
+> > > > > > > > +structure.
+> > > > > > >
+> > > > > > > Could configfs be used for this instead of debugfs?
+> > > > > > > debugfs is ad hoc.
+> > > > > >
+> > > > > > Actually sounds like a good idea.
+> > > > > >
+> > > > >
+> > > > > Well, then we can go on and write an entirely new mockup driver
+> > > > > (ditching module params and dropping any backwards compatibility)
+> > > > > because we're already using debugfs for line values.
+> > > > >
+> > > > > How would we pass the device properties to configfs created GPIO chips
+> > > > > anyway? Devices seem to only be created using mkdir. Am I missing
+> > > > > something?
+> > > >
+> > > > Same way how USB composite works, no?
+> > > >
+> > >
+> > > OK, so create a new chip directory in configfs, configure it using
+> > > some defined configfs attributes and then finally instantiate it from
+> > > sysfs?
+> > >
+> > > Makes sense and is probably the right way to go. Now the question is:
+> > > is it fine to just entirely remove the previous gpio-mockup?
+> >
+> > Since, for example, I never saw device property bindings for that driver I
+> > assume that it was never considered as an ABI, so feel free to hack it in
+> > either direction.
+> >
+> > > Should we
+> > > keep some backwards compatibility?
+> >
+> > I wouldn't probably spend time on this.
+> >
+> > > Should we introduce an entirely new
+> > > module and have a transition period before removing previous
+> > > gpio-mockup?
+> >
+> > Neither transition period.
+> >
+> 
+> I wouldn't rush this actually. gpio-mockup is used a lot by libgpiod
+> and probably by Kent's Go library. My main goal with this series is to
+> extend it to allow for more advanced testing like simulating spurious
+> irqs to test the software debouncer or custom line name formats to
+> test name lookups.
 
---cgjxmmqsfjfxvawn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When I wrote above I didn't mean this should be done in a hurry. Just during
+one release to make all parties ready for the change.
 
-Hello Ahmad,
+> I need to think about it some more. An entirely new configfs interface
+> would take time too.
 
-On Mon, Sep 07, 2020 at 05:31:35PM +0200, Ahmad Fatoum wrote:
-> The gpio-siox driver uses handle_nested_irq() to implement its
-> interrupt support. This is only capable of handling threaded irq
-> actions. For a hardirq action it triggers a NULL pointer oops.
-> (It calls action->thread_fn which is NULL then.)
->=20
-> Prevent registration of a hardirq action by setting
-> gpio_irq_chip::threaded to true.
+Sure!
 
-cool commit log :-)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> Cc: u.kleine-koenig@pengutronix.de
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Thanks for picking this up.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---cgjxmmqsfjfxvawn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl9WXKAACgkQwfwUeK3K
-7Alg0Qf/VlxWkLp9Bpt+uYNTELqmDL/zHOIn4GQTGgJrM34u8CTDAlLetTFtr9OW
-edbUtd2vWanorXEl3qdPxqi31FmgbQljDmwOu15VQuEsSzb8mNMkSRP2BOuiCRas
-B10LsGriMod8/49H2A5UVhSs/cNVT0JiLgPxQIssWYulH07agqHlSNCeMmgf7GTA
-6JJHYUl/Mld/qnKABxDUIYTTv70U9tXO2KsSkOFs4IF9AZIroQayBiDyDDvxJrPB
-gt0SpzcHMFE7to6edyGIbdxU+ag22FzL/XJnDM2EALjr6c7vAX6n9ui1HpZ7BNsI
-WEA54N3FLA5A1MYwDqwnhKwVVMhGUA==
-=J3Py
------END PGP SIGNATURE-----
-
---cgjxmmqsfjfxvawn--
