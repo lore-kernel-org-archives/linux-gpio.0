@@ -2,105 +2,123 @@ Return-Path: <SRS0=kyhb=CQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A92C433E2
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 02:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE05FC433E2
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 02:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0C12151B
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 02:42:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ETqVzF+D"
+	by mail.kernel.org (Postfix) with ESMTP id 6D2BC20C09
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Sep 2020 02:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbgIGCmD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 6 Sep 2020 22:42:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbgIGCl6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Sep 2020 22:41:58 -0400
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A8DC0613ED
-        for <linux-gpio@vger.kernel.org>; Sun,  6 Sep 2020 19:41:56 -0700 (PDT)
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 55D97891B2;
-        Mon,  7 Sep 2020 14:41:52 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1599446512;
-        bh=i7QhCQy5Vo70pgJu5PEh9wAOSGu//sPREvdLP/pz8+0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ETqVzF+Dp9RVTISD5UedDnNjrTor0DXspYLGoiqD6q1/aUyjj1IWmpy5kAAqJrQi5
-         rw3nuoN87iXPUbMmWUOA0m66PuR//1tr7HXH2uF+YFFjSuRQPermEW84mX5JZp6VYq
-         +Ydp5NF7gEMzbpURVbZ9jg+7gF47Jc6aE5ec3kArpoT92lUfifNnFuP//hOmpAPxuX
-         EQANtCe5lJTVcwMUqXa975Tsbr2o1GzhN0ZQ8GyaGv3DAE1E+pQdoET1gZr1KEUZTc
-         09LKKgxlyl07V0aZv69cKxT7WvevMgE+rCXG39AttVhUydLR96dM5MAW74kzgHJDxO
-         qaxSA7UMWFAww==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5f559df00001>; Mon, 07 Sep 2020 14:41:52 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id E99AA13EEB7;
-        Mon,  7 Sep 2020 14:41:51 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 37E34280060; Mon,  7 Sep 2020 14:41:52 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, robh+dt@kernel.org,
-        linus.walleij@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 3/3] ARM: dts: Add i2c0 pinctrl information for 98dx3236
-Date:   Mon,  7 Sep 2020 14:41:49 +1200
-Message-Id: <20200907024149.20001-4-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200907024149.20001-1-chris.packham@alliedtelesis.co.nz>
-References: <20200907024149.20001-1-chris.packham@alliedtelesis.co.nz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+        id S1726357AbgIGC7j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 6 Sep 2020 22:59:39 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:46000 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbgIGC7i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Sep 2020 22:59:38 -0400
+Received: from localhost (unknown [192.168.167.235])
+        by lucky1.263xmail.com (Postfix) with ESMTP id CFA3CC1C14;
+        Mon,  7 Sep 2020 10:59:36 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P22906T140609293825792S1599447567920103_;
+        Mon, 07 Sep 2020 10:59:37 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <bee88b08989af46347877891b3969531>
+X-RL-SENDER: jay.xu@rock-chips.com
+X-SENDER: xjq@rock-chips.com
+X-LOGIN-NAME: jay.xu@rock-chips.com
+X-FST-TO: linus.walleij@linaro.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+From:   Jianqun Xu <jay.xu@rock-chips.com>
+To:     linus.walleij@linaro.org, heiko@sntech.de
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH 2/5] pinctrl: rockchip: make driver be tristate module
+Date:   Mon,  7 Sep 2020 10:59:24 +0800
+Message-Id: <20200907025927.9713-3-jay.xu@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200907025927.9713-1-jay.xu@rock-chips.com>
+References: <20200831084753.7115-1-jay.xu@rock-chips.com>
+ <20200907025927.9713-1-jay.xu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add pinctrl information for the 98dx3236 (and variants). There is only
-one choice for i2c0 MPP14 and MPP15.
+Make pinctrl-rockchip driver to be tristate module, support to build as
+a module, this is useful for GKI.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 ---
- arch/arm/boot/dts/armada-xp-98dx3236.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pinctrl/Kconfig            |  2 +-
+ drivers/pinctrl/pinctrl-rockchip.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dt=
-s/armada-xp-98dx3236.dtsi
-index aeccedd12574..38a052a0312d 100644
---- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-@@ -264,6 +264,8 @@ refclk: oscillator {
- &i2c0 {
- 	compatible =3D "marvell,mv78230-i2c", "marvell,mv64xxx-i2c";
- 	reg =3D <0x11000 0x100>;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&i2c0_pins>;
- };
-=20
- &mpic {
-@@ -319,6 +321,11 @@ spi0_pins: spi0-pins {
- 			       "mpp2", "mpp3";
- 		marvell,function =3D "spi0";
- 	};
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 4284f39a5c61..743eb2bb8709 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -207,7 +207,7 @@ config PINCTRL_OXNAS
+ 	select MFD_SYSCON
+ 
+ config PINCTRL_ROCKCHIP
+-	bool
++	tristate "Rockchip gpio and pinctrl driver"
+ 	depends on OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 0401c1da79dd..cc7512acfc5f 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -16,10 +16,12 @@
+  */
+ 
+ #include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/bitops.h>
+ #include <linux/gpio/driver.h>
++#include <linux/of_device.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/pinctrl/machine.h>
+@@ -4257,4 +4259,20 @@ static int __init rockchip_pinctrl_drv_register(void)
+ {
+ 	return platform_driver_register(&rockchip_pinctrl_driver);
+ }
 +
-+	i2c0_pins: i2c-pins-0 {
-+		marvell,pins =3D "mpp14", "mpp15";
-+		marvell,function =3D "i2c0";
-+	};
- };
-=20
- &spi0 {
---=20
-2.28.0
++static void __exit rockchip_pinctrl_drv_unregister(void)
++{
++	platform_driver_unregister(&rockchip_pinctrl_driver);
++}
++
++#ifdef CONFIG_PINCTRL_ROCKCHIP_MODULE
++module_init(rockchip_pinctrl_drv_register);
++#else
+ postcore_initcall(rockchip_pinctrl_drv_register);
++#endif
++module_exit(rockchip_pinctrl_drv_unregister);
++
++MODULE_DESCRIPTION("ROCKCHIP Pin Controller Driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:pinctrl-rockchip");
++MODULE_DEVICE_TABLE(of, rockchip_pinctrl_dt_match);
+-- 
+2.17.1
+
+
 
