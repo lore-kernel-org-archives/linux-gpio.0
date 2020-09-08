@@ -7,67 +7,71 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF0C43461
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503FAC433E2
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 20:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 225722166E
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 123C5204FD
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 20:06:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PQ9FpH0s"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0Mh/WjQW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbgIHTkk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:40:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53420 "EHLO
+        id S1730326AbgIHUGH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Sep 2020 16:06:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730941AbgIHPyo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 11:54:44 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48869C0612A9
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 06:08:03 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id a9so17118503wmm.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 06:08:03 -0700 (PDT)
+        with ESMTP id S1730340AbgIHPVk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 11:21:40 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459BDC0612FD
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 05:58:31 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id w5so19005935wrp.8
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 05:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YaYfBY/nWyV15237QqlCB6gaunpe9sapW1LpGGaZFmI=;
-        b=PQ9FpH0sWVEYKXkmkpGFj8lM+SXrPTK7FsqwWAXuNeb0DermnRd5fNv24TZMEQMSi5
-         6rnR7/UFQT86UeHCZlIojA8tN/1UK70ZR4CuAm+RhnbYsM3fmVkkmKg1u2K/5DZBeIiT
-         F7psEX9g30KC4el3BNij5xIoWiLfg4iXkT4JOU8Qu4Gb6/j/dbVe7QckB3toI0QD3NSc
-         BUrLpK24R5GNTIAjreSy7244Y94uNWeuiOiXYtS8462EI+6ptbP6VFqS49GWgBIZCar7
-         SVF2YJpMvvBMn7pMCG3KmPKUk7WKH6sU65i03kq4p+nCS+6jt62w+QJOPnm4BG/lqnnZ
-         X24A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rWwIjxnFTzbkw/BaFxCLOnaCoWy8p8lKDcXzU2XY9Ow=;
+        b=0Mh/WjQW7cqk7vvIT6ANfMSVJkivRyR0vHLEVsdr4dQX1OjZzRdtoApwZqXslIjZiP
+         kSZOOLWhDdsQhdveRqN2HDp+l1m4GDuFBCtEWiCxsbFzs3ur0KxcpCzb6c8q8K1eMfHb
+         WJyVFrutCBoOHu92bew55PlZ7yTm06sJc9i8roPiLYbIczeSsyP/PEr+Os3UB91wFSgs
+         wjmAvSeT25kS/NqvOh0sZOSZWVE/OzMwqKgrcmh6hMvUmzGAnKNCQBUX7BcTkcm5x6pk
+         5zkAr2JrAuvIFfnGvLpiFHfVMmQL0uNF5z5eds0QYZIkSxxH6ubB3r+8FQmICgldecH7
+         HbRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YaYfBY/nWyV15237QqlCB6gaunpe9sapW1LpGGaZFmI=;
-        b=uE0ErBf2lSq/iFYQ890r1fBQktur3DX6JbzDVLjACPzVXgxfFiEi9cGDiE57b3okns
-         SI+U42Vzke9V6wwhbnjHDgI2iN/PYb/HPLmBdzqCLouv+SgLPZTYVjQvbVktUqq7b5+O
-         OBrFM9Mra37QKHyyCNhbNjX/MPv7Fufi+DtiNKBd94Y3VOeUT7S7Bjwv9Dnb54Ymzxtf
-         2DyRdADWcq4Z8xUpipmM0dcbnYtP9hQz25wOU+AKGdmUMnOLhF5Mdjruex3Gm9Cb/rDM
-         tzOm+pdyb08CmcPSrdOx/58jOWhGmFoy616/SLmiWywH5oleM31LWALtLUQZoMO/wMwp
-         4eEw==
-X-Gm-Message-State: AOAM532mFR6z+0rU240l4A6ThlfrqUinUQOX9mOxs5J2MX3BymEY8U8C
-        7yCHTVbaNaI+tQT1a3YxG+Wr6Q==
-X-Google-Smtp-Source: ABdhPJzslhyYw7bWYKOTM5J83rbaOJq0mY3hHSuDFQ686C4hzftuOd+FgwLykWDkYZu4RwLETxv0Sw==
-X-Received: by 2002:a1c:9e0e:: with SMTP id h14mr1690491wme.18.1599570482144;
-        Tue, 08 Sep 2020 06:08:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rWwIjxnFTzbkw/BaFxCLOnaCoWy8p8lKDcXzU2XY9Ow=;
+        b=OZFam6xAtXjaLxvij/pvbMQpF3xwIvtqZony8CXXI1+CBlhGDORmIsUgi7F/O5+LjD
+         A+0mKRTt9EPgaNuAOX0KuFyCJ3Rx2DrflkW2j+NGwiej5Ue63O7c7itFS9ojorm9S4jT
+         GOJYqf12bujtEOh1qPVAxHFiehuuwDhQXmxwfL6iflFLj4wJ5mt42lQEWyD3iEyyR7Mk
+         K16LW9i3RPukLrjEV/meW9ht4NCSKaCrtxOyF+D2SW4PPRy/ydDO8itJY7m0pWvc48Cl
+         NdT9aG6HKW9/ioAwI57a8hB2duJIgPR4gvMGQko8dSkO7EEowUgffSUah68Si1YYU2OT
+         VaMA==
+X-Gm-Message-State: AOAM530WIFJbx+FxZ2vPHFkp8lemwy00WCpTJaVD1ch6H7yq0GhcIgkn
+        WKxm2cA2pdl2HtlkkmkhD7sIxQ==
+X-Google-Smtp-Source: ABdhPJx0tjO6B48c1MN/4xfKk3sKOEne5d+CNPDJ1Yw4DodcBAvPnRi/imY5s2CtNkv8XAEb4aSFng==
+X-Received: by 2002:adf:84c3:: with SMTP id 61mr26170029wrg.131.1599569909956;
+        Tue, 08 Sep 2020 05:58:29 -0700 (PDT)
 Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
-        by smtp.gmail.com with ESMTPSA id b2sm32254400wmh.47.2020.09.08.06.08.00
+        by smtp.gmail.com with ESMTPSA id y207sm34817875wmc.17.2020.09.08.05.58.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 06:08:01 -0700 (PDT)
+        Tue, 08 Sep 2020 05:58:29 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
+        Kent Gibson <warthog618@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] gpio: mockup: fix resource leak in error path
-Date:   Tue,  8 Sep 2020 15:07:49 +0200
-Message-Id: <20200908130749.9948-1-brgl@bgdev.pl>
+        linux-acpi@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 3/3] gpiolib: unexport devprop_gpiochip_set_names()
+Date:   Tue,  8 Sep 2020 14:58:13 +0200
+Message-Id: <20200908125813.8809-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200908125813.8809-1-brgl@bgdev.pl>
+References: <20200908125813.8809-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -77,37 +81,101 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-If the module init function fails after creating the debugs directory,
-it's never removed. Add proper cleanup calls to avoid this resource
-leak.
+Now that devprop_gpiochip_set_names() is only used in a single place
+inside drivers/gpio/gpiolib.c, there's no need anymore for it to be
+exported or to even live in its own source file. Pull this function into
+the core source file for gpiolib.
 
-Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/Makefile       |  1 -
+ drivers/gpio/gpiolib.c      | 47 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h |  2 --
+ 3 files changed, 47 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index bc345185db26..1652897fdf90 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -552,6 +552,7 @@ static int __init gpio_mockup_init(void)
- 	err = platform_driver_register(&gpio_mockup_driver);
- 	if (err) {
- 		gpio_mockup_err("error registering platform driver\n");
-+		debugfs_remove_recursive(gpio_mockup_dbg_dir);
- 		return err;
- 	}
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 4f9abff4f2dc..639275eb4e4d 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -6,7 +6,6 @@ ccflags-$(CONFIG_DEBUG_GPIO)	+= -DDEBUG
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib.o
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib-devres.o
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib-legacy.o
+-obj-$(CONFIG_GPIOLIB)		+= gpiolib-devprop.o
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib-cdev.o
+ obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
+ obj-$(CONFIG_GPIO_SYSFS)	+= gpiolib-sysfs.o
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 0d390f0ec32c..2b2526c5de51 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -358,6 +358,53 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ 	return 0;
+ }
  
-@@ -582,6 +583,7 @@ static int __init gpio_mockup_init(void)
- 			gpio_mockup_err("error registering device");
- 			platform_driver_unregister(&gpio_mockup_driver);
- 			gpio_mockup_unregister_pdevs();
-+			debugfs_remove_recursive(gpio_mockup_dbg_dir);
- 			return PTR_ERR(pdev);
- 		}
++/*
++ * devprop_gpiochip_set_names - Set GPIO line names using device properties
++ * @chip: GPIO chip whose lines should be named, if possible
++ *
++ * Looks for device property "gpio-line-names" and if it exists assigns
++ * GPIO line names for the chip. The memory allocated for the assigned
++ * names belong to the underlying software node and should not be released
++ * by the caller.
++ */
++static int devprop_gpiochip_set_names(struct gpio_chip *chip)
++{
++	struct gpio_device *gdev = chip->gpiodev;
++	struct device *dev = chip->parent;
++	const char **names;
++	int ret, i;
++	int count;
++
++	count = device_property_count_strings(dev, "gpio-line-names");
++	if (count < 0)
++		return 0;
++
++	if (count > gdev->ngpio) {
++		dev_warn(&gdev->dev, "gpio-line-names is length %d but should be at most length %d",
++			 count, gdev->ngpio);
++		count = gdev->ngpio;
++	}
++
++	names = kcalloc(count, sizeof(*names), GFP_KERNEL);
++	if (!names)
++		return -ENOMEM;
++
++	ret = device_property_read_string_array(dev, "gpio-line-names",
++						names, count);
++	if (ret < 0) {
++		dev_warn(&gdev->dev, "failed to read GPIO line names\n");
++		kfree(names);
++		return ret;
++	}
++
++	for (i = 0; i < count; i++)
++		gdev->descs[i].name = names[i];
++
++	kfree(names);
++
++	return 0;
++}
++
+ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *gc)
+ {
+ 	unsigned long *p;
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 56485a040b82..4a7e295c3640 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -756,8 +756,6 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 					    enum gpiod_flags dflags);
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
  
+-int devprop_gpiochip_set_names(struct gpio_chip *gc);
+-
+ #ifdef CONFIG_GPIOLIB
+ 
+ /* lock/unlock as IRQ */
 -- 
 2.26.1
 
