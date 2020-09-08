@@ -2,162 +2,124 @@ Return-Path: <SRS0=2tRf=CR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E263EC43461
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20F0C433E2
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A94E72087D
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BAC82145D
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 19:38:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZnrFESfj"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PW143ymq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbgIHT3f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54602 "EHLO
+        id S1732141AbgIHTiW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Sep 2020 15:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730946AbgIHP7x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 11:59:53 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBCCC061755
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 08:54:45 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id r7so9924818ejs.11
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 08:54:45 -0700 (PDT)
+        with ESMTP id S1730755AbgIHPzo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 11:55:44 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6415FC061247
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 06:12:31 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id x23so7331650wmi.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 06:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=17XSh9T9gNq415bfysrvgCiRW+EHfAHcluquDHGHNnU=;
-        b=ZnrFESfj2n78+Vm/aeBARRjr0Cl6BRKSKMzxUenn2YsqHz8Pl5VtWf2kgaAcBY42tG
-         B6CWuSSZlDpqHRQb6BvAO8Qj0aSubGzT2OhkHzSatWgHZuhO2NLDDWNtkzr4B3imS/ar
-         vl/89rmyhmxmIqD0cMqudwdc04Tupg9qwaODQQgwyE2ZseTX3Oi4XRaKk99z2tCwuCfj
-         xF3ioMRogkeEctXIZNPqqZoa8qg7SATyuUHcJvqPp0NZvi3TzX7TxnBmmb77PTiAyqqS
-         DDuXcYW5+1LtcAKBO7gHRXJ7JKmKD3P/Xjy6nG/2KEc5U2+vRVO9A35znCSC6HNByGzJ
-         3lgw==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hrkUEQnkIGFGoNQEVpiI9JVsWjIbZBqpkD8BbZf2zOQ=;
+        b=PW143ymqvvugN4bi5TTzJs8LeNJbs5u16TQjl6/VN2bg4e6a5jWm/MbcxnMxZVwgwX
+         HavELQkYGfFuXp29hqY2myCHP/ErTH2k4PLhAEnfJabgYzTA7SOtzKTZMNVL/hjOjd5M
+         5ZwRUchgYXdbR83oKIjrTaRd72ZFyyJX20InDm3G3rZ42nPgSdXHXB7OdEx/oLa0pjJF
+         +UdRV++7E2c02jJ5uhDQpQeXb4lJUJ5JwQfyOJOqKu9mqq0jakcFM2xYC9PP+iMfWq9z
+         t7p/gfiCT957lE1TPQUcGKQlhd50/KloYi+X4MidwOQB7OKXefPHVRjEEppTAUyRU/Ik
+         zPBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=17XSh9T9gNq415bfysrvgCiRW+EHfAHcluquDHGHNnU=;
-        b=bJ7MrkMeY5hun6f99IGU6c5hNr2oIhEXGL3IeAdsWzv3WoooFwXy2Y/VocVHY39fEf
-         AP7qoAlKRdHEbDACRn2s99Bjptv30JRiBfY6f+9TDjcZcaCuS6BD3LUyFAYqxv573DNB
-         kTMu1BSMHLuFBdNNwwCarcFZtYc2TFBwBhkaTBiQVbQ/IVNsAdxHaRffvr1KGCNBAwpi
-         20O7NsgCBQf+9TZmVbIHZt8FeSuYZ+2i3v87KwGqVTzYcOPyE1o4eLf7olo1sq5zhfHn
-         AWMjtPNQVFyorbVQRGy+dOhL5XHqK4FKOzu59ir6Nuh76DlhKFBXKFX4BQMp69w2m8u8
-         GhrA==
-X-Gm-Message-State: AOAM533DZuhyW3vddIRRfxuei48NVcJXweraPRVxExUa+15akH32ECGq
-        VTU8duadNdoP41gSNIK7RPwxmeGhcYfBeu5WaRqT1We8dw0=
-X-Google-Smtp-Source: ABdhPJxOnl/Db9+LhMKu/mSd4ErqUeNGdtKZz7PhLmJ8sKtuj9avhfTUo76ZISBf0rvnNW6uboUfYq0v27quH+bjBW0=
-X-Received: by 2002:a17:906:3e90:: with SMTP id a16mr17063280ejj.363.1599580484242;
- Tue, 08 Sep 2020 08:54:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200831032006.1019978-1-warthog618@gmail.com>
- <CAMpxmJUETJgmxzWzHumOVr+vWFQ27P71MtcdSdf_=jvtrSfRPg@mail.gmail.com>
- <20200903083750.GA17445@sol> <20200904125250.GA323947@sol>
- <CAMpxmJWVZ8Bf1gPibvbk=E5XNvQ_i76E430MMhUWwE1ACoPTQg@mail.gmail.com> <9db62b42-9a1e-0264-e88c-e636004cb629@linuxfoundation.org>
-In-Reply-To: <9db62b42-9a1e-0264-e88c-e636004cb629@linuxfoundation.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 8 Sep 2020 17:54:33 +0200
-Message-ID: <CAMpxmJVbujnp+Z0b3utDsGmhUgCbhydorOo-9e-=gVctT55NAg@mail.gmail.com>
-Subject: Re: [PATCH v6 00/20] gpio: cdev: add uAPI v2
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hrkUEQnkIGFGoNQEVpiI9JVsWjIbZBqpkD8BbZf2zOQ=;
+        b=nMePajPcnTzwJkCCqRRH3Nb6Svjx5mDgYKTeBuV27yfJ2hv8Lthy2r8jzqCiPjGXRi
+         IWQP827zIkLN+FI8gQEghMoGojUV9/uVtF+n0MYPb3mxOvWpwww/UqV27TevjHOGmvGn
+         7Iok3Kif9GFsWXCSnDkaDNFrdK9x/w46eh6SmPpm8/lo8sTB5CQ7STpDBNID05vv0O+j
+         6VDX743h2L/A8+tM7+byd8gVfx4vkHFQzhIg8AvSjNo+puStxGFanqwd59Dj2qeERtz+
+         mbW7nvjzR2qaqmBqezUJ2QtBGp+Em96xWmvDlshyOaFmMeF7GDBWcY8FQZdFNzSE6rVY
+         HA4w==
+X-Gm-Message-State: AOAM5339sMqPLbfW/GN+NYztmyRbfvryLd5p3rZF8ztza/g9aXEWDu/b
+        SeF/Xh9aXFuywbIlZVmdfiOWoA==
+X-Google-Smtp-Source: ABdhPJxX6aEKKbfcibSkGUiwzn+QESAx0tzCBJXX709sOGdeRCmDm2UPrnZVVvx7qrBO+uolnZj/LQ==
+X-Received: by 2002:a05:600c:2215:: with SMTP id z21mr4338869wml.176.1599570750028;
+        Tue, 08 Sep 2020 06:12:30 -0700 (PDT)
+Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
+        by smtp.gmail.com with ESMTPSA id m4sm17596893wro.18.2020.09.08.06.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 06:12:29 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] gpiolib: switch to simpler IDA interface
+Date:   Tue,  8 Sep 2020 15:12:25 +0200
+Message-Id: <20200908131225.10870-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.26.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 5:24 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 9/4/20 7:02 AM, Bartosz Golaszewski wrote:
-> > On Fri, Sep 4, 2020 at 2:52 PM Kent Gibson <warthog618@gmail.com> wrote:
-> >>
-> >> On Thu, Sep 03, 2020 at 04:37:50PM +0800, Kent Gibson wrote:
-> >>> On Thu, Sep 03, 2020 at 10:02:04AM +0200, Bartosz Golaszewski wrote:
-> >>>> On Mon, Aug 31, 2020 at 5:21 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >>>>>
-> >> [snip]
-> >>>>
-> >>>> To me it looks good, just a couple nits here and there and some questions.
-> >>>>
-> >>>> I think it's worth deciding whether we want to keep the selftests in
-> >>>> tools/testing/selftests/gpio/ and then maybe consider porting
-> >>>> gpio-mockup-chardev.c to V2 or simply outsource it entirely to
-> >>>> libgpiod.
-> >>>>
-> >>>
-> >>> Ooops - I wasn't even aware they existed - though it had crossed my mind
-> >>> that the kernel should have some selftests somewhere - I use the libgpiod
-> >>> tests, from my libgpiod port, and my own Go based test suite for my testing,
-> >>> as well as some smoke tests with the tools/gpio.
-> >>>
-> >>> The libgpiod tests only cover v1 equivalent functionality, while my Go
-> >>> tests cover the complete uAPI, and both v1 and v2.
-> >>>
-> >>> It would be good for the kernel to at least have some smoke tests to
-> >>> confirm basic functionality, even thorough testing is left to a
-> >>> userspace library.  So the existing tests should be ported to v2, though
-> >>> should also retain the v1 tests if v1 is still compiled in.
-> >>>
-> >>
-> >> I've got a v7 ready to submit that includes a couple of patches for the
-> >> gpio-mockup selftests (their primary purpose appears to be testing the
-> >> mockup module, rather than the GPIO ABI), but I now notice that the
-> >> selftests/gpio section of the tree has a different maintainer:
-> >>
-> >> scripts/get_maintainer.pl 0021-selftests-gpio-port-to-GPIO-uAPI-v2.patch
-> >> Bamvor Jian Zhang <bamv2005@gmail.com> (maintainer:GPIO MOCKUP DRIVER)
-> >> Shuah Khan <shuah@kernel.org> (maintainer:KERNEL SELFTEST FRAMEWORK)
-> >> linux-gpio@vger.kernel.org (open list:GPIO MOCKUP DRIVER)
-> >> linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-> >> linux-kernel@vger.kernel.org (open list)
-> >
-> > Bamvor, Shuah: do you still have interest in maintaining these, or can
-> > we update MAINTAINERS?
-> >
->
-> I maintain kselftests and gpio selftest falls under that. Please send
-> selftest patches to me so I can review them.
->
-> As for the gpio mock driver and test itself, you will have to wait for
-> Bamvor to respond.
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hi Shuah,
+We don't need to specify any ranges when allocating IDs so we can switch
+to ida_alloc() and ida_free() instead of the ida_simple_ counterparts.
 
-I've been de facto maintaining gpio-mockup for a couple years now.
-Bamvor has been quite inactive as far as gpio testing goes. I think
-it's fine if you ack the selftests changes.
+ida_simple_get(ida, 0, 0, gfp) is equivalent to
+ida_alloc_range(ida, 0, UINT_MAX, gfp) which is equivalent to
+ida_alloc(ida, gfp). Note: IDR will never actually allocate an ID
+larger than INT_MAX.
 
-In fact: I don't want selftests to block getting V2 uAPI upstream so
-if that'll look like it's going to take more time then I'm for merging
-V2 without any changes to selftests - in the end we have tests in
-user-space already.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpiolib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Bart
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 80137c1b3cdc..97f76334ec7e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -426,7 +426,7 @@ static void gpiodevice_release(struct device *dev)
+ 	struct gpio_device *gdev = dev_get_drvdata(dev);
+ 
+ 	list_del(&gdev->list);
+-	ida_simple_remove(&gpio_ida, gdev->id);
++	ida_free(&gpio_ida, gdev->id);
+ 	kfree_const(gdev->label);
+ 	kfree(gdev->descs);
+ 	kfree(gdev);
+@@ -537,7 +537,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 		gc->of_node = gdev->dev.of_node;
+ #endif
+ 
+-	gdev->id = ida_simple_get(&gpio_ida, 0, 0, GFP_KERNEL);
++	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+ 		ret = gdev->id;
+ 		goto err_free_gdev;
+@@ -705,7 +705,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ err_free_descs:
+ 	kfree(gdev->descs);
+ err_free_ida:
+-	ida_simple_remove(&gpio_ida, gdev->id);
++	ida_free(&gpio_ida, gdev->id);
+ err_free_gdev:
+ 	/* failures here can mean systems won't boot... */
+ 	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
+-- 
+2.26.1
 
-> >>
-> >> The v7 patch up to that point restores the functions that the selftests
-> >> are using so that they build and run again.
->
-> This test has been problematic because of its dependency on tools/gpio.
->
-> >> So I should hold off on the selftest patches and submit them separately
-> >> after the GPIO changes are in?
-> >>
->
-> Please send me the selftest patches. Also see the comments in
-> selftests/Makefile about excluding the gpio test from default run.
->
-> thanks,
-> -- Shuah
->
->
