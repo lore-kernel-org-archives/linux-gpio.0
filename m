@@ -2,190 +2,236 @@ Return-Path: <SRS0=2tRf=CR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295A7C433E2
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797A8C43461
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC7C821D79
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2F221D43
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbgIHIMt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Sep 2020 04:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729453AbgIHIMo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 04:12:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C41C061573
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 01:12:43 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kFYk3-0007xo-6w; Tue, 08 Sep 2020 10:12:39 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kFYjr-0007B6-Ee; Tue, 08 Sep 2020 10:12:27 +0200
-Date:   Tue, 8 Sep 2020 10:12:27 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v9 06/13] pwm: add support for sl28cpld PWM controller
-Message-ID: <20200908081227.mxumgqipyod6iltr@pengutronix.de>
-References: <20200907213802.26745-1-michael@walle.cc>
- <20200907213802.26745-7-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mw42m5g6wzbjjufm"
-Content-Disposition: inline
-In-Reply-To: <20200907213802.26745-7-michael@walle.cc>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        id S1729627AbgIHIS3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Sep 2020 04:18:29 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:32796 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729432AbgIHIS1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 8 Sep 2020 04:18:27 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B2B51A0226;
+        Tue,  8 Sep 2020 10:18:25 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 513D91A0134;
+        Tue,  8 Sep 2020 10:18:20 +0200 (CEST)
+Received: from 10.192.242.69 (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0E5E74024E;
+        Tue,  8 Sep 2020 10:18:13 +0200 (CEST)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        s.hauer@pengutronix.de, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        arnd@arndb.de
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V4 1/3] pinctrl: imx: Use function callbacks for SCU related functions
+Date:   Tue,  8 Sep 2020 16:11:59 +0800
+Message-Id: <1599552721-24872-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Use function callbacks for SCU related functions in pinctrl-imx.c
+in order to support the scenario of PINCTRL_IMX is built in while
+PINCTRL_IMX_SCU is built as module, all drivers using SCU pinctrl
+driver need to initialize the SCU related function callback, and
+no need to check CONFIG_PINCTRL_IMX_SCU anymore, hence stub functions
+also can be removed.
 
---mw42m5g6wzbjjufm
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No change.
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c     |  8 ++--
+ drivers/pinctrl/freescale/pinctrl-imx.h     | 57 +++++++++++------------------
+ drivers/pinctrl/freescale/pinctrl-imx8dxl.c |  3 ++
+ drivers/pinctrl/freescale/pinctrl-imx8qm.c  |  3 ++
+ drivers/pinctrl/freescale/pinctrl-imx8qxp.c |  3 ++
+ 5 files changed, 35 insertions(+), 39 deletions(-)
 
-Hello,
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 507e4af..b80c450 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -373,7 +373,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
+ 	const struct imx_pinctrl_soc_info *info = ipctl->info;
+ 
+ 	if (info->flags & IMX_USE_SCU)
+-		return imx_pinconf_get_scu(pctldev, pin_id, config);
++		return info->imx_pinconf_get(pctldev, pin_id, config);
+ 	else
+ 		return imx_pinconf_get_mmio(pctldev, pin_id, config);
+ }
+@@ -423,7 +423,7 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
+ 	const struct imx_pinctrl_soc_info *info = ipctl->info;
+ 
+ 	if (info->flags & IMX_USE_SCU)
+-		return imx_pinconf_set_scu(pctldev, pin_id,
++		return info->imx_pinconf_set(pctldev, pin_id,
+ 					   configs, num_configs);
+ 	else
+ 		return imx_pinconf_set_mmio(pctldev, pin_id,
+@@ -440,7 +440,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	int ret;
+ 
+ 	if (info->flags & IMX_USE_SCU) {
+-		ret = imx_pinconf_get_scu(pctldev, pin_id, &config);
++		ret = info->imx_pinconf_get(pctldev, pin_id, &config);
+ 		if (ret) {
+ 			dev_err(ipctl->dev, "failed to get %s pinconf\n",
+ 				pin_get_name(pctldev, pin_id));
+@@ -629,7 +629,7 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+ 	for (i = 0; i < grp->num_pins; i++) {
+ 		pin = &((struct imx_pin *)(grp->data))[i];
+ 		if (info->flags & IMX_USE_SCU)
+-			imx_pinctrl_parse_pin_scu(ipctl, &grp->pins[i],
++			info->imx_pinctrl_parse_pin(ipctl, &grp->pins[i],
+ 						  pin, &list);
+ 		else
+ 			imx_pinctrl_parse_pin_mmio(ipctl, &grp->pins[i],
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 333d32b..fd8c4b6 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -75,6 +75,21 @@ struct imx_cfg_params_decode {
+ 	bool invert;
+ };
+ 
++/**
++ * @dev: a pointer back to containing device
++ * @base: the offset to the controller in virtual memory
++ */
++struct imx_pinctrl {
++	struct device *dev;
++	struct pinctrl_dev *pctl;
++	void __iomem *base;
++	void __iomem *input_sel_base;
++	const struct imx_pinctrl_soc_info *info;
++	struct imx_pin_reg *pin_regs;
++	unsigned int group_index;
++	struct mutex mutex;
++};
++
+ struct imx_pinctrl_soc_info {
+ 	const struct pinctrl_pin_desc *pins;
+ 	unsigned int npins;
+@@ -98,21 +113,13 @@ struct imx_pinctrl_soc_info {
+ 				  struct pinctrl_gpio_range *range,
+ 				  unsigned offset,
+ 				  bool input);
+-};
+-
+-/**
+- * @dev: a pointer back to containing device
+- * @base: the offset to the controller in virtual memory
+- */
+-struct imx_pinctrl {
+-	struct device *dev;
+-	struct pinctrl_dev *pctl;
+-	void __iomem *base;
+-	void __iomem *input_sel_base;
+-	const struct imx_pinctrl_soc_info *info;
+-	struct imx_pin_reg *pin_regs;
+-	unsigned int group_index;
+-	struct mutex mutex;
++	int (*imx_pinconf_get)(struct pinctrl_dev *pctldev, unsigned int pin_id,
++			       unsigned long *config);
++	int (*imx_pinconf_set)(struct pinctrl_dev *pctldev, unsigned int pin_id,
++			       unsigned long *configs, unsigned int num_configs);
++	void (*imx_pinctrl_parse_pin)(struct imx_pinctrl *ipctl,
++				      unsigned int *pin_id, struct imx_pin *pin,
++				      const __be32 **list_p);
+ };
+ 
+ #define IMX_CFG_PARAMS_DECODE(p, m, o) \
+@@ -137,7 +144,6 @@ struct imx_pinctrl {
+ int imx_pinctrl_probe(struct platform_device *pdev,
+ 			const struct imx_pinctrl_soc_info *info);
+ 
+-#ifdef CONFIG_PINCTRL_IMX_SCU
+ #define BM_PAD_CTL_GP_ENABLE		BIT(30)
+ #define BM_PAD_CTL_IFMUX_ENABLE		BIT(31)
+ #define BP_PAD_CTL_IFMUX		27
+@@ -150,23 +156,4 @@ int imx_pinconf_set_scu(struct pinctrl_dev *pctldev, unsigned pin_id,
+ void imx_pinctrl_parse_pin_scu(struct imx_pinctrl *ipctl,
+ 			       unsigned int *pin_id, struct imx_pin *pin,
+ 			       const __be32 **list_p);
+-#else
+-static inline int imx_pinconf_get_scu(struct pinctrl_dev *pctldev,
+-				      unsigned pin_id, unsigned long *config)
+-{
+-	return -EINVAL;
+-}
+-static inline int imx_pinconf_set_scu(struct pinctrl_dev *pctldev,
+-				      unsigned pin_id, unsigned long *configs,
+-				      unsigned num_configs)
+-{
+-	return -EINVAL;
+-}
+-static inline void imx_pinctrl_parse_pin_scu(struct imx_pinctrl *ipctl,
+-					    unsigned int *pin_id,
+-					    struct imx_pin *pin,
+-					    const __be32 **list_p)
+-{
+-}
+-#endif
+ #endif /* __DRIVERS_PINCTRL_IMX_H */
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
+index 12b97da..d3020c0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8dxl.c
+@@ -159,6 +159,9 @@ static struct imx_pinctrl_soc_info imx8dxl_pinctrl_info = {
+ 	.pins = imx8dxl_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx8dxl_pinctrl_pads),
+ 	.flags = IMX_USE_SCU,
++	.imx_pinconf_get = imx_pinconf_get_scu,
++	.imx_pinconf_set = imx_pinconf_set_scu,
++	.imx_pinctrl_parse_pin = imx_pinctrl_parse_pin_scu,
+ };
+ 
+ static const struct of_device_id imx8dxl_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8qm.c b/drivers/pinctrl/freescale/pinctrl-imx8qm.c
+index 095acf4..8f46b940 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8qm.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8qm.c
+@@ -292,6 +292,9 @@ static const struct imx_pinctrl_soc_info imx8qm_pinctrl_info = {
+ 	.pins = imx8qm_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx8qm_pinctrl_pads),
+ 	.flags = IMX_USE_SCU,
++	.imx_pinconf_get = imx_pinconf_get_scu,
++	.imx_pinconf_set = imx_pinconf_set_scu,
++	.imx_pinctrl_parse_pin = imx_pinctrl_parse_pin_scu,
+ };
+ 
+ static const struct of_device_id imx8qm_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx8qxp.c b/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
+index 81ebd4c..6776ad6 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx8qxp.c
+@@ -198,6 +198,9 @@ static struct imx_pinctrl_soc_info imx8qxp_pinctrl_info = {
+ 	.pins = imx8qxp_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx8qxp_pinctrl_pads),
+ 	.flags = IMX_USE_SCU,
++	.imx_pinconf_get = imx_pinconf_get_scu,
++	.imx_pinconf_set = imx_pinconf_set_scu,
++	.imx_pinctrl_parse_pin = imx_pinctrl_parse_pin_scu,
+ };
+ 
+ static const struct of_device_id imx8qxp_pinctrl_of_match[] = {
+-- 
+2.7.4
 
-just a bit of nitpicking left. If Lee is going to apply, I can care for
-a followup patch if need be.
-
-On Mon, Sep 07, 2020 at 11:37:55PM +0200, Michael Walle wrote:
-> [..]
-> +config PWM_SL28CPLD
-> +	tristate "Kontron sl28cpld PWM support"
-> +	depends on MFD_SL28CPLD ||  COMPILE_TEST
-
-s/  / / (@Lee, maybe fixup during application?)
-
-> +	help
-> +	  Generic PWM framework driver for board management controller
-> +	  found on the Kontron sl28 CPLD.
-> [...]
-> +#define SL28CPLD_PWM_CLK			32000 /* 32 kHz */
-> +#define SL28CPLD_PWM_MAX_DUTY_CYCLE(prescaler)	(1 << (7 - (prescaler)))
-> +#define SL28CPLD_PWM_PERIOD(prescaler) \
-> +	(NSEC_PER_SEC / SL28CPLD_PWM_CLK * SL28CPLD_PWM_MAX_DUTY_CYCLE(prescale=
-r))
-> +
-> +/*
-> + * We calculate the duty cycle like this:
-> + *   duty_cycle_ns =3D pwm_cycle_reg * max_period_ns / max_duty_cycle
-> + *
-> + * With
-> + *   max_period_ns =3D 1 << (7 - prescaler) / pwm_clk * NSEC_PER_SEC
-> + *   max_duty_cycle =3D 1 << (7 - prescaler)
-> + * this then simplifies to:
-> + *   duty_cycle_ns =3D pwm_cycle_reg / pwm_clk * NSEC_PER_SEC
-> + *
-> + * NSEC_PER_SEC is a multiple of SL28CPLD_PWM_CLK, therefore we're not l=
-osing
-> + * precision by doing the divison first.
-
-The division you're talking about is NSEC_PER_SEC / pwm_clk which isn't
-obvious in the formula in the line above. Maybe:
-
-	...
-	this then simplifies to:
-
-	  duty_cycle_ns =3D NSEC_PER_SEC / SL28CPLD_PWM_CLK * pwm_cycle_reg
-
-	NSEC_PER_SEC is a multiple of SL28CPLD_PWM_CLK, therefor ...
-
-to make it easier to understand the comment.
-
-> + */
-> +#define SL28CPLD_PWM_TO_DUTY_CYCLE(reg) \
-> +	(NSEC_PER_SEC / SL28CPLD_PWM_CLK * (reg))
-> +#define SL28CPLD_PWM_FROM_DUTY_CYCLE(duty_cycle) \
-> +	(DIV_ROUND_DOWN_ULL((duty_cycle), NSEC_PER_SEC / SL28CPLD_PWM_CLK))
-> [...]
-> +	/*
-> +	 * To avoid glitches when we switch the prescaler, we have to make sure
-> +	 * we have a valid duty cycle for the new mode.
-> +	 *
-> +	 * Take the current prescaler (or the current period length) into
-> +	 * account to decide whether we have to write the duty cycle or the new
-> +	 * prescaler first. If the period length is decreasing we have to
-> +	 * write the duty cycle first.
-> +	 */
-> +	write_duty_cycle_first =3D pwm->state.period > state->period;
-> +
-> +	if (write_duty_cycle_first) {
-> +		ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CYCLE, cycle);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CTRL, ctrl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!write_duty_cycle_first) {
-> +		ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CYCLE, cycle);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-Nice! I didn't spend the necessary brain cycles to confirm this
-algorithm, but it seems you did :-)
-
-> +
-> +	return 0;
-> +}
-> [...]
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---mw42m5g6wzbjjufm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl9XPOgACgkQwfwUeK3K
-7AkWZgf9FfNy+2V7VDKBMqCV2TdrX3JZQCu1jkarn2ieFnlW6nZVplR+63wxFR6p
-D7E4amJzibzIwMgPt79NI+1LtwNNMI4qEbPOG1zdXo4I6ug4EABv32ih3WMkkdb+
-fypHJxYyneVC9nIbRAKHkudi2QfoeikSgtmmAYMw4PG8xc/lqWS3JwNeG4YotvSz
-aGgVJqFA/2KW0YywCw1ZFv3m4SVU32nFccbo9EJOztwgKKYpN2eEqqxa7baO3jVW
-JgVzGkkGr9dmi5YYl4jZNcs+IhaPE2mFED7AopB+Hw4CD2FLzssJUFYfZiXtv3+4
-RuG7iydfC3hp+a3JWDfv66XeBzvaJQ==
-=i6C4
------END PGP SIGNATURE-----
-
---mw42m5g6wzbjjufm--
