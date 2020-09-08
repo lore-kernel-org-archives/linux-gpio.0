@@ -2,133 +2,190 @@ Return-Path: <SRS0=2tRf=CR=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAF6C433E2
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 07:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295A7C433E2
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE23021D20
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 07:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OGPi759h"
+	by mail.kernel.org (Postfix) with ESMTP id DC7C821D79
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 08:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbgIHHyC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Sep 2020 03:54:02 -0400
-Received: from mail-eopbgr10089.outbound.protection.outlook.com ([40.107.1.89]:21225
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729714AbgIHHyB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 8 Sep 2020 03:54:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Oc/Kx252pw82s77dnTMYFN0FEZpMDG0Rifn/oV4NpGTxehAjpsVN/cFDUxCDhkxYhGaBa2N65v7kWaCvyjyTVDkDhjr09HZnVXmbPvqSC0lMst3dyz2cNVSh52+eS7IUtXMwksamuYIlheWW6z29nl9eAQ23x3nhxKRBuYLyhxhsWMDEzl2RGGrDgAfpVTu0VWaA6wo+gMKPVz77qYJQ/aRcfTg/cNgfTVWarfqVk0eHy1xmmd1mSisJNvtnkdnKZRUStX0nMwFFlzK0EH/xqTw5Yu0rLNpR3sKVq1ti3NswSL0gL806WjzzSDdLOs0X8E1jGUfWYXLuyqBEuOSCLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAKSicD1UbleOJolXPD1wa1ndAEYmWcM6oCjb4I73nU=;
- b=bkZiwhA+f01HE+QqOig4unF4LMnzgVPnMITFCXhYJKuST4LfedzCVE/pyYNEg/He1lo9qvbUbZKUHkbvqIXT/gt1rlVdJe0mueZcr4IxtR4ZLHeLvpaj7t4mhbSy2UbWtcmGzx2kSAsm6/erGGJobJbLg90H2KdUltJCkx0SDSrBYt6HN9EeWo+yIOMG/5oBWnjrdfsY49+cs4C7uP4phHQo6A0W06XUtlbIyavTmrGi4EFuct3dZgR1hnDg4s0VQ130OWhlipe8Z6MT3qkiErxwDZ46qhqFb2jYVXPxlDOD4Kr+MyBjGJ/b5yTrwMzHLgzsRChlGqGIszI8iExMbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAKSicD1UbleOJolXPD1wa1ndAEYmWcM6oCjb4I73nU=;
- b=OGPi759hNhC4FyhBVt+soJzZhu/YxcK4k17T4xD3iWpX72b9IFmOEVh6AuddnzwiUxMOaibR18aDsZdfAO5YZG7quVkLogheiaAVspskG4XH0coMHZjdV8hl8nFgyHX2ezSPUUXxPJ5Fiez6h57cyupXitEDW2qEGNEFb7F6Ozc=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (2603:10a6:8:10::18)
- by DB7PR04MB5466.eurprd04.prod.outlook.com (2603:10a6:10:8a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3348.17; Tue, 8 Sep
- 2020 07:53:55 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::9c75:8bb2:aff6:450d]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::9c75:8bb2:aff6:450d%3]) with mapi id 15.20.3348.019; Tue, 8 Sep 2020
- 07:53:55 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        id S1729466AbgIHIMt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Sep 2020 04:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729453AbgIHIMo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 04:12:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C41C061573
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 01:12:43 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kFYk3-0007xo-6w; Tue, 08 Sep 2020 10:12:39 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kFYjr-0007B6-Ee; Tue, 08 Sep 2020 10:12:27 +0200
+Date:   Tue, 8 Sep 2020 10:12:27 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Walle <michael@walle.cc>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 3/3] pinctrl: imx: Support building i.MX pinctrl core
- driver as module
-Thread-Topic: [PATCH V3 3/3] pinctrl: imx: Support building i.MX pinctrl core
- driver as module
-Thread-Index: AQHWhbBDjiUh5DFSJEaP/TwCOvRVnqleWKmAgAAAdkCAAAOnAIAAAarg
-Date:   Tue, 8 Sep 2020 07:53:55 +0000
-Message-ID: <DB3PR0402MB39168981C3DB1BE25C7EA09FF5290@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1599549126-17413-1-git-send-email-Anson.Huang@nxp.com>
- <1599549126-17413-3-git-send-email-Anson.Huang@nxp.com>
- <CAK8P3a1NY07QmD+vzD3+5DsY69XYcwEz3vuwXUcsVG6jxwtTow@mail.gmail.com>
- <DB3PR0402MB3916716E9FC26ADF9161B4A4F5290@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <CAK8P3a2v9i+iT5_TKSjDwVpw_dQrhfRiVNm3YOL7W7YTAEdagg@mail.gmail.com>
-In-Reply-To: <CAK8P3a2v9i+iT5_TKSjDwVpw_dQrhfRiVNm3YOL7W7YTAEdagg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: arndb.de; dkim=none (message not signed)
- header.d=none;arndb.de; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: eb190fa1-3075-4fef-f4d4-08d853cc5637
-x-ms-traffictypediagnostic: DB7PR04MB5466:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB546626B9EC154CABD2568D80F5290@DB7PR04MB5466.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ekI26rna8iDmxQFPlLmbcTkzIL8CpjfneS3930nWKQrIoC8ZmmfEcpJyFelis1rCO0sm0ijKURC1j1Ei+0HnyyUJ1bMW6wygJcF1hY6cYnEOusPeITfPm2DoY0hwKi59DWESCjY9LhdgQYLiPH7p1P2oPgOOW9jxDxxGqphX55dF4aq3THv2twU9rqbRfQ6aK5OOcU5h3UCHxqXZPjVEirnzhWwG8fv1NW/pQlm2RGeRugao6gMlJGA2aIQH6WQWdfMR1DXRAXK6lMg+A6kNQ1DJbQVrPJh1YblFgPG1RyQQ1gKgXRndSB/RkbBfgHlo
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39860400002)(136003)(346002)(376002)(396003)(4326008)(33656002)(86362001)(2906002)(6916009)(55016002)(9686003)(7696005)(66556008)(66476007)(66446008)(64756008)(53546011)(6506007)(7416002)(66946007)(44832011)(54906003)(8936002)(8676002)(186003)(478600001)(76116006)(5660300002)(26005)(316002)(71200400001)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: WJq/MxsDH3U20TWOho8SxxqNrMF68TJIxCfyTsIk0y1RPTfpqtoPrDcEJRe9ius4SN0sA10s0PqygrYYIBWmd7xGYAIQl5si7dFkVXgqWXEPn8MuUE+ecvwvzCtpMT3g6KUcMWV8KEQUAUCmxVa9b9lFgxw+oBa9rpJwVAe7/3EBnZMvhUUjaFQLeeql3JihLAWKCbzJK3HeyfUAQjv0C3KK52U1UHOguthhC4s+EcsSgIW1vRekqoippUdRkF+DbsJARq4ZseN1AJ2IkfKmU6kEzQcmA2DO29FBT3501Y//Bb1ZiSGfeV/AFRW4kA1bIRFSvo37Un5FY3WwX03sIGB7o0G7cJy43Al6hupkF4FeNlpf1l5Ak910wiSIjneTw5sewm5UF5SJk/PClcVmdxH+GELT8DPvwAV06Mrdw8zdcQkr8yOfmSiNbq4/x//0zXF/YRnMomj51gN22elKJQP1bqmyAmKG0g20f7pY0uKN5kPnBZkT7tI/7GdHrEmeNp0HC+mWVT5b0ut+tg5Ry8uVyztltak8PKQdfCpfkliWm+FMXIC2FbR+dpHER0buoSYKCs9vMEeAcy7yupNihAq/beNgzUS2OvPL0PY5cKYfkI3mU2XEGq12+VtVPwzQdr71EOiBuWNLNvXsSkDEGA==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v9 06/13] pwm: add support for sl28cpld PWM controller
+Message-ID: <20200908081227.mxumgqipyod6iltr@pengutronix.de>
+References: <20200907213802.26745-1-michael@walle.cc>
+ <20200907213802.26745-7-michael@walle.cc>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB3PR0402MB3916.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb190fa1-3075-4fef-f4d4-08d853cc5637
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2020 07:53:55.6287
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9YehcViCKLv9sgvPsADTCAYhgj00RLK1iCKpSHL2SMu+vTttF9xjy43KOX8a0hg1vmt5HVCqrCI3Dbxww7Jv7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5466
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mw42m5g6wzbjjufm"
+Content-Disposition: inline
+In-Reply-To: <20200907213802.26745-7-michael@walle.cc>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SGksIEFybmQNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFYzIDMvM10gcGluY3RybDogaW14OiBT
-dXBwb3J0IGJ1aWxkaW5nIGkuTVggcGluY3RybCBjb3JlDQo+IGRyaXZlciBhcyBtb2R1bGUNCj4g
-DQo+IE9uIFR1ZSwgU2VwIDgsIDIwMjAgYXQgOTozNCBBTSBBbnNvbiBIdWFuZyA8YW5zb24uaHVh
-bmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIIFYzIDMvM10g
-cGluY3RybDogaW14OiBTdXBwb3J0IGJ1aWxkaW5nIGkuTVgNCj4gPiA+IHBpbmN0cmwgY29yZSBk
-cml2ZXIgYXMgbW9kdWxlDQo+ID4gPg0KPiA+ID4gT24gVHVlLCBTZXAgOCwgMjAyMCBhdCA5OjIw
-IEFNIEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4g
-Pg0KPiA+ID4gPiAgIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5ICBjb25m
-aWcgUElOQ1RSTF9JTVgNCj4gPiA+ID4gLSAgICAgICBib29sDQo+ID4gPiA+ICsgICAgICAgdHJp
-c3RhdGUgIklNWCBwaW5jdHJsIGNvcmUgZHJpdmVyIg0KPiA+ID4gPiArICAgICAgIGRlcGVuZHMg
-b24gT0YNCj4gPiA+ID4gICAgICAgICBzZWxlY3QgR0VORVJJQ19QSU5DVFJMX0dST1VQUw0KPiA+
-ID4gPiAgICAgICAgIHNlbGVjdCBHRU5FUklDX1BJTk1VWF9GVU5DVElPTlMNCj4gPiA+ID4gICAg
-ICAgICBzZWxlY3QgR0VORVJJQ19QSU5DT05GDQo+ID4gPg0KPiA+ID4gSSBkb24ndCBzZWUgd2h5
-IHlvdSBuZWVkIHRvIG1ha2UgdGhpcyBvcHRpb24gdXNlci12aXNpYmxlIHdoZW4gaXQgaXMNCj4g
-PiA+IGFscmVhZHkgc2VsZWN0ZWQgYnkgdGhlIGRyaXZlcnMgdGhhdCBuZWVkIGl0LiBXb3VsZG4n
-dCBpdCBiZSBlbm91Z2ggdG8NCj4gY2hhbmdlIHRoZSAnYm9vbCcNCj4gPiA+IHRvICd0cmlzdGF0
-ZScgd2l0aG91dCBhZGRpbmcgYSBwcm9tcHQ/DQo+ID4NCj4gPiBNYWtlIHNlbnNlLCBzbyBpdCBp
-cyBzYW1lIGZvciBQSU5DVFJMX0lNWF9TQ1UsIHJpZ2h0Pw0KPiANCj4gWWVzLCBjb3JyZWN0Lg0K
-PiANCj4gSSB3YXNuJ3Qgb24gQ2Mgb24gdGhlIG90aGVyIHR3byBwYXRjaGVzLCBzbyBJIG1pc3Nl
-ZCB0aGF0Lg0KDQpTb3JyeSwgSSBtaXNzZWQgdG8gYWRkIHlvdSB0byB0aGUgbGlzdCBhcyBJIGp1
-c3QgdXNlIHRoZSBsaXN0IGZyb20gZ2V0X21haW50YWluZXIgc2NyaXB0LCB3aWxsDQphZGQgeW91
-IGluIFY0LiBTaW5jZSBtb3N0IG9mIHRoZSBtYWpvciBjb21tZW50cyBhcmUgYWRkcmVzc2VkLCBJ
-IHdpbGwgc2VuZCBWNCBzb29uLg0KDQpUaGFua3MsDQpBbnNvbg0KDQoNCg==
+
+--mw42m5g6wzbjjufm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+just a bit of nitpicking left. If Lee is going to apply, I can care for
+a followup patch if need be.
+
+On Mon, Sep 07, 2020 at 11:37:55PM +0200, Michael Walle wrote:
+> [..]
+> +config PWM_SL28CPLD
+> +	tristate "Kontron sl28cpld PWM support"
+> +	depends on MFD_SL28CPLD ||  COMPILE_TEST
+
+s/  / / (@Lee, maybe fixup during application?)
+
+> +	help
+> +	  Generic PWM framework driver for board management controller
+> +	  found on the Kontron sl28 CPLD.
+> [...]
+> +#define SL28CPLD_PWM_CLK			32000 /* 32 kHz */
+> +#define SL28CPLD_PWM_MAX_DUTY_CYCLE(prescaler)	(1 << (7 - (prescaler)))
+> +#define SL28CPLD_PWM_PERIOD(prescaler) \
+> +	(NSEC_PER_SEC / SL28CPLD_PWM_CLK * SL28CPLD_PWM_MAX_DUTY_CYCLE(prescale=
+r))
+> +
+> +/*
+> + * We calculate the duty cycle like this:
+> + *   duty_cycle_ns =3D pwm_cycle_reg * max_period_ns / max_duty_cycle
+> + *
+> + * With
+> + *   max_period_ns =3D 1 << (7 - prescaler) / pwm_clk * NSEC_PER_SEC
+> + *   max_duty_cycle =3D 1 << (7 - prescaler)
+> + * this then simplifies to:
+> + *   duty_cycle_ns =3D pwm_cycle_reg / pwm_clk * NSEC_PER_SEC
+> + *
+> + * NSEC_PER_SEC is a multiple of SL28CPLD_PWM_CLK, therefore we're not l=
+osing
+> + * precision by doing the divison first.
+
+The division you're talking about is NSEC_PER_SEC / pwm_clk which isn't
+obvious in the formula in the line above. Maybe:
+
+	...
+	this then simplifies to:
+
+	  duty_cycle_ns =3D NSEC_PER_SEC / SL28CPLD_PWM_CLK * pwm_cycle_reg
+
+	NSEC_PER_SEC is a multiple of SL28CPLD_PWM_CLK, therefor ...
+
+to make it easier to understand the comment.
+
+> + */
+> +#define SL28CPLD_PWM_TO_DUTY_CYCLE(reg) \
+> +	(NSEC_PER_SEC / SL28CPLD_PWM_CLK * (reg))
+> +#define SL28CPLD_PWM_FROM_DUTY_CYCLE(duty_cycle) \
+> +	(DIV_ROUND_DOWN_ULL((duty_cycle), NSEC_PER_SEC / SL28CPLD_PWM_CLK))
+> [...]
+> +	/*
+> +	 * To avoid glitches when we switch the prescaler, we have to make sure
+> +	 * we have a valid duty cycle for the new mode.
+> +	 *
+> +	 * Take the current prescaler (or the current period length) into
+> +	 * account to decide whether we have to write the duty cycle or the new
+> +	 * prescaler first. If the period length is decreasing we have to
+> +	 * write the duty cycle first.
+> +	 */
+> +	write_duty_cycle_first =3D pwm->state.period > state->period;
+> +
+> +	if (write_duty_cycle_first) {
+> +		ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CYCLE, cycle);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CTRL, ctrl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!write_duty_cycle_first) {
+> +		ret =3D sl28cpld_pwm_write(priv, SL28CPLD_PWM_CYCLE, cycle);
+> +		if (ret)
+> +			return ret;
+> +	}
+
+Nice! I didn't spend the necessary brain cycles to confirm this
+algorithm, but it seems you did :-)
+
+> +
+> +	return 0;
+> +}
+> [...]
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--mw42m5g6wzbjjufm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl9XPOgACgkQwfwUeK3K
+7AkWZgf9FfNy+2V7VDKBMqCV2TdrX3JZQCu1jkarn2ieFnlW6nZVplR+63wxFR6p
+D7E4amJzibzIwMgPt79NI+1LtwNNMI4qEbPOG1zdXo4I6ug4EABv32ih3WMkkdb+
+fypHJxYyneVC9nIbRAKHkudi2QfoeikSgtmmAYMw4PG8xc/lqWS3JwNeG4YotvSz
+aGgVJqFA/2KW0YywCw1ZFv3m4SVU32nFccbo9EJOztwgKKYpN2eEqqxa7baO3jVW
+JgVzGkkGr9dmi5YYl4jZNcs+IhaPE2mFED7AopB+Hw4CD2FLzssJUFYfZiXtv3+4
+RuG7iydfC3hp+a3JWDfv66XeBzvaJQ==
+=i6C4
+-----END PGP SIGNATURE-----
+
+--mw42m5g6wzbjjufm--
