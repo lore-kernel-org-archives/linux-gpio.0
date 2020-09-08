@@ -6,98 +6,157 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFD5C433E2
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 16:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CADC433E2
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 17:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27F4A20759
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 16:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE9F2087C
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Sep 2020 17:04:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JGVOHbBq"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="npjYldHd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbgIHQmY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Sep 2020 12:42:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
+        id S1731854AbgIHREI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732032AbgIHQmS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 12:42:18 -0400
+        with ESMTP id S1732082AbgIHRDs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2020 13:03:48 -0400
 Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1673FC0619F2
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 07:02:16 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id x2so15485312ilm.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 07:02:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA450C061756
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2020 10:03:41 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id t13so16066685ile.9
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2020 10:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/2SewoQNKfdvZ9130x2jsaU2/okRx8tFDqHXaAJPM5A=;
-        b=JGVOHbBqWPpU0Q8L9woL1d2GbtrYzS0DIxJiG4Qc526y6YGijYry+9DuHLrGk4AkPh
-         HglsW33sBrVqBLvI9Ldp2kiLotwU1516D9ublRTSbn0LX163oAsZQmRc6bBYvnr8MK4w
-         b5lQLeL6I9nDr91a0Rn7qLmZLCyLCwF421imiVyR7bzfJ0uEwHIDk776XryoZ9LdO2l0
-         9lWCcj0feoWEV4gREwpnhXS9Cwa9rCO3LLtNCxlelLRT9AInUx2swiSZBuGA/b4bPucX
-         ttG4115TcL1RGy9WHQ7VfRs5NRWPB5K2DQTRmBAVvfrAVGKtV9f9Tv46q8DKYLBD6foj
-         ilKQ==
+        bh=ZNS3GRvMOTeZUyA2sVYVT7axCdo6ttiBNGmu42dBjv0=;
+        b=npjYldHdaKN5sNer+//ioO2vd9ZSVt9HRwo/GOz64WLrI1EApu0/oVVpSTuxBpaETH
+         zdGBQ1cmVWfRfzBpvEygk0e/Fp1/SJWo0V3MDfwI7uOYbujcbc+EgdlnCvoMMGyWdorN
+         Ch0dMop8qmboQmcQ3HM+FjgNWOndFL2BTCgUoiKdJehhEJdoap2e078A90wr5gAxeCsQ
+         /RrrJPONIApVqG45o9UVb+oIhU+db+SXQ4Ek6X1+ay0n5jrwUq9T80W+l/s3tK6L0DpE
+         H3abAhf3ldad3rCQYdZdGwfEWAvIKImuxO/EYXyb1SfmLSaNac6ePbX1OyihycfpogaN
+         3C+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/2SewoQNKfdvZ9130x2jsaU2/okRx8tFDqHXaAJPM5A=;
-        b=S2TMa4NB/CEq1fqXZaRnOJMwFrKTMdPoCvY948xEMiHbBJD/ijUXbLce0NTeodtQpn
-         wG8bzR9XayEWGjSTgfzasmEIWLpPR8KvNEGLcOuUhnEXLA4GTJIdI1P4VQnGi4mJe3F4
-         0jqUyD36jtudOlqO2OgH9RwkkZN07fGCSkO+1AiRtzsBjm0rfVOPlEUbavwchZSRAbKl
-         4UM44YMPDxXfW9xMFzr455AE6O1iX3FADqGwN2qSKnWIkXWdBCFoTxP8K/czKcDDOxPk
-         Dmnp6IkE4nAY+tGV4M/wI2eVpuf4I4rORixymC+WJSnDxQmp1LonRCuMQtbqmBNjNAkC
-         VISg==
-X-Gm-Message-State: AOAM533blpT5wJhrDUu5PzkJDnnOL8wJ6+XS/CGpNCcUeSbOxZvpImPu
-        ExlfvvGLu+I5tfDCmbpMYzdfwIMCh/br6BF+cCG7JQ==
-X-Google-Smtp-Source: ABdhPJzwsSeBQ9p0c9q0Y8FRcx34We+BdEwhPsmnqyBN9DlgrfGhwepub6Xs5dnl/CskrDY7ZWHiqagdY7hXazz18Nw=
-X-Received: by 2002:a92:189:: with SMTP id 131mr24167998ilb.40.1599573733037;
- Tue, 08 Sep 2020 07:02:13 -0700 (PDT)
+        bh=ZNS3GRvMOTeZUyA2sVYVT7axCdo6ttiBNGmu42dBjv0=;
+        b=JwJPGOoBB1AuJJPj8vwtk6/lfqILra7AvNfUgClJc7LdfgYzGsYRvWz1RgfoN9N42O
+         9nzibXydhip4STt9SiIQZfMCUr27eWFdze3NVaNIqZyC8kAPTZaJFbOZjQAXZRn8yQVN
+         5c1vLAry7JoC3RbrPkDinPpERCkx0HnchtQRyx0ZPqfbM7GLyQcv4BUgZyWgU2nrhrSg
+         NkCL8R2YworySi4HnL8QUmX8gfobWf0zxubJMI5Qeb8cP2cSw/YOhxH0eo0+oTF55Edj
+         JCnZUO+yIXEUA3MnK1UiTbncfAN57zuV3TfKnLfCMXp/eExXZtcTcVJSempzszEU+YIh
+         jCwQ==
+X-Gm-Message-State: AOAM533Sj/9npUGNvHd812nif6MZGdQJ3yzxZovtgM5QvTRvk/C0OHwh
+        IFBG9dTTAbwiYz8KPdDbfX5/NjOwGOzd8kbwzZqntA==
+X-Google-Smtp-Source: ABdhPJwOhRRAeSvUfM7aXnDLV+8iSGJDTYZ7p05b46NMWtlXoPSG1kGZXtFg8PzijNzZ5d2ig2phLPuE10vzV0zX6Ps=
+X-Received: by 2002:a92:1b0b:: with SMTP id b11mr24464248ilb.287.1599584621007;
+ Tue, 08 Sep 2020 10:03:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200908125813.8809-1-brgl@bgdev.pl> <20200908125813.8809-4-brgl@bgdev.pl>
- <20200908134957.GB1891694@smile.fi.intel.com>
-In-Reply-To: <20200908134957.GB1891694@smile.fi.intel.com>
+References: <20200904154547.3836-1-brgl@bgdev.pl> <20200904154547.3836-24-brgl@bgdev.pl>
+ <26ea1683-da8f-30e7-f004-3616e96d56b3@infradead.org> <20200907095932.GU1891694@smile.fi.intel.com>
+ <CAMpxmJXvhYOVkZY7LLf=v+o8E2xKTh1RYhLrdVsS9nN1XZ5QJQ@mail.gmail.com>
+ <20200907115310.GA1891694@smile.fi.intel.com> <CAMpxmJUfNkko4Rrb4N5CF_rdwRAWGhVr9DSOHfhYyTxYSH7dsQ@mail.gmail.com>
+ <20200907122238.GA1849893@kroah.com>
+In-Reply-To: <20200907122238.GA1849893@kroah.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 8 Sep 2020 16:01:59 +0200
-Message-ID: <CAMRc=MdECnhqbRCFAy7hMQrWvF+Vz-rAU1GSD+d85eRSM6L9Lg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] gpiolib: unexport devprop_gpiochip_set_names()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Date:   Tue, 8 Sep 2020 19:03:30 +0200
+Message-ID: <CAMRc=MexhEbnxCN3aN57k4V-mO-vQL=+8z9QFEzOCPkmn16-XQ@mail.gmail.com>
+Subject: Re: [PATCH 23/23] Documentation: gpio: add documentation for gpio-mockup
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 3:52 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Sep 7, 2020 at 2:22 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Tue, Sep 08, 2020 at 02:58:13PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> On Mon, Sep 07, 2020 at 02:06:15PM +0200, Bartosz Golaszewski wrote:
+> > On Mon, Sep 7, 2020 at 1:53 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Mon, Sep 07, 2020 at 12:26:34PM +0200, Bartosz Golaszewski wrote:
+> > > > On Mon, Sep 7, 2020 at 11:59 AM Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > >
+> > > > > On Fri, Sep 04, 2020 at 08:15:59PM -0700, Randy Dunlap wrote:
+> > > > > > On 9/4/20 8:45 AM, Bartosz Golaszewski wrote:
+> > > > >
+> > > > > ...
+> > > > >
+> > > > > > > +GPIO Testing Driver
+> > > > > > > +===================
+> > > > > > > +
+> > > > > > > +The GPIO Testing Driver (gpio-mockup) provides a way to create simulated GPIO
+> > > > > > > +chips for testing purposes. There are two ways of configuring the chips exposed
+> > > > > > > +by the module. The lines can be accessed using the standard GPIO character
+> > > > > > > +device interface as well as manipulated using the dedicated debugfs directory
+> > > > > > > +structure.
+> > > > > >
+> > > > > > Could configfs be used for this instead of debugfs?
+> > > > > > debugfs is ad hoc.
+> > > > >
+> > > > > Actually sounds like a good idea.
+> > > > >
+> > > >
+> > > > Well, then we can go on and write an entirely new mockup driver
+> > > > (ditching module params and dropping any backwards compatibility)
+> > > > because we're already using debugfs for line values.
+> > > >
+> > > > How would we pass the device properties to configfs created GPIO chips
+> > > > anyway? Devices seem to only be created using mkdir. Am I missing
+> > > > something?
+> > >
+> > > Same way how USB composite works, no?
+> > >
 > >
-> > Now that devprop_gpiochip_set_names() is only used in a single place
-> > inside drivers/gpio/gpiolib.c, there's no need anymore for it to be
-> > exported or to even live in its own source file. Pull this function into
-> > the core source file for gpiolib.
+> > OK, so create a new chip directory in configfs, configure it using
+> > some defined configfs attributes and then finally instantiate it from
+> > sysfs?
+> >
+> > Makes sense and is probably the right way to go. Now the question is:
+> > is it fine to just entirely remove the previous gpio-mockup? Should we
+> > keep some backwards compatibility? Should we introduce an entirely new
+> > module and have a transition period before removing previous
+> > gpio-mockup?
+> >
+> > Also: this is a testing module so to me debugfs is just fine. Is
+> > configfs considered stable ABI like sysfs?
 >
-> Did you miss to remove old file?
->
-> >  drivers/gpio/Makefile       |  1 -
-> >  drivers/gpio/gpiolib.c      | 47 +++++++++++++++++++++++++++++++++++++
-> >  include/linux/gpio/driver.h |  2 --
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
+> Yes it is.  Or at least until you fix all existing users so that if you
+> do change it, no one notices it happening :)
 >
 
-Arr yes, rebase failed me. :(
+Got it. One more question: the current debugfs interface we're using
+in gpio-mockup exists to allow to read current values of GPIO lines in
+output mode (check how the user drives dummy lines) and to set their
+simulated pull-up/pull-down resistors (what values the user reads in
+input mode).
 
-Bart
+This works like this: in /sys/kernel/debug/gpio-mockup every dummy
+chip creates its own directory (e.g.
+/sys/kernel/debug/gpio-mockup/gpiochip0) and inside this directory
+there's an attribute per line named after the line's offset (e.g.
+/sys/kernel/debug/gpio-mockup/gpiochip0/4). Writing 0 or 1 to this
+attribute sets the pull resistor. Reading from it yields the current
+value (0 or 1 as well).
+
+This is pretty non-standard so I proposed to put it in debugfs. If we
+were to use configfs - is this where something like this should go? Or
+rather sysfs? Is it even suitable/acceptable for sysfs?
+
+Thanks,
+Bartosz
