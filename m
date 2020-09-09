@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A69C43461
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2640EC2D0E1
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6A020665
+	by mail.kernel.org (Postfix) with ESMTP id ECD1F21D82
 	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729822AbgIIUoh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Sep 2020 16:44:37 -0400
-Received: from mo-csw1116.securemx.jp ([210.130.202.158]:41964 "EHLO
+        id S1729908AbgIIUoj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Sep 2020 16:44:39 -0400
+Received: from mo-csw1116.securemx.jp ([210.130.202.158]:41974 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729507AbgIIUog (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 16:44:36 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 089KhtwU005055; Thu, 10 Sep 2020 05:43:55 +0900
-X-Iguazu-Qid: 2wGqzHwiyy2tZOf41Q
-X-Iguazu-QSIG: v=2; s=0; t=1599684235; q=2wGqzHwiyy2tZOf41Q; m=L/DrGiTIo7eWYyaN2h6711jMgnEFbYFvXPPyYG4RwR0=
+        with ESMTP id S1729779AbgIIUoh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 16:44:37 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 089KhtKd005044; Thu, 10 Sep 2020 05:43:55 +0900
+X-Iguazu-Qid: 2wGrblJYEyQjaA1E1o
+X-Iguazu-QSIG: v=2; s=0; t=1599684234; q=2wGrblJYEyQjaA1E1o; m=2df4E14USrY6CT6WhcGJnNYO5LWW2VWRe+/C0dJLziA=
 Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1111) id 089Khr6R014166;
-        Thu, 10 Sep 2020 05:43:54 +0900
-Received: from enc03.toshiba.co.jp ([106.186.93.13])
-        by imx2.toshiba.co.jp  with ESMTP id 089KhrxZ001405;
-        Thu, 10 Sep 2020 05:43:53 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc03.toshiba.co.jp  with ESMTP id 089Khr1x018546;
+        by relay.securemx.jp (mx-mr1112) id 089KhqTg029690;
         Thu, 10 Sep 2020 05:43:53 +0900
+Received: from enc03.toshiba.co.jp ([106.186.93.13])
+        by imx2.toshiba.co.jp  with ESMTP id 089Khq7x001396;
+        Thu, 10 Sep 2020 05:43:52 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc03.toshiba.co.jp  with ESMTP id 089Khq0G018536;
+        Thu, 10 Sep 2020 05:43:52 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -42,10 +42,10 @@ Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         linux-gpio@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
         Marc Zyngier <maz@misterjones.org>,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v4 8/8] arm64: defconfig: Enable configs for Toshiba Visconti
-Date:   Thu, 10 Sep 2020 05:43:36 +0900
+Subject: [PATCH v4 5/8] arm64: visconti: Add initial support for Toshiba Visconti platform
+Date:   Thu, 10 Sep 2020 05:43:33 +0900
 X-TSB-HOP: ON
-Message-Id: <20200909204336.2558-9-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20200909204336.2558-6-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200909204336.2558-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20200909204336.2558-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -56,26 +56,35 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Enable support for the Toshiba Visconti SoCs.
+Add the initial device tree files for Toshiba Visconti platform.
+For starters, the only SoC supported will be Visconti5 TMPV7708.
+
+https://toshiba.semicon-storage.com/ap-en/semiconductor/product/image-recognition-processors-visconti.html
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Reviewed-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/Kconfig.platforms | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e0f33826819f..8faadd68f859 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -57,6 +57,7 @@ CONFIG_ARCH_THUNDER=y
- CONFIG_ARCH_THUNDER2=y
- CONFIG_ARCH_UNIPHIER=y
- CONFIG_ARCH_VEXPRESS=y
-+CONFIG_ARCH_VISCONTI=y
- CONFIG_ARCH_XGENE=y
- CONFIG_ARCH_ZX=y
- CONFIG_ARCH_ZYNQMP=y
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index cd58f8495c45..dce74d34d18a 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -300,6 +300,13 @@ config ARCH_VEXPRESS
+ 	  This enables support for the ARMv8 software model (Versatile
+ 	  Express).
+ 
++config ARCH_VISCONTI
++	bool "Toshiba Visconti SoC Family"
++	select PINCTRL
++	select PINCTRL_VISCONTI
++	help
++	  This enables support for Toshiba Visconti SoCs Family.
++
+ config ARCH_VULCAN
+ 	def_bool n
+ 
 -- 
 2.27.0
 
