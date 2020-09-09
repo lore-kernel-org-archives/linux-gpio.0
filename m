@@ -2,153 +2,100 @@ Return-Path: <SRS0=OCjJ=CS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344FFC433E2
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 10:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1D6C43461
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 10:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEB7E21D7A
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 10:33:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pAwh6s0Z"
+	by mail.kernel.org (Postfix) with ESMTP id 30AB621D7D
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 10:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbgIIKdH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Sep 2020 06:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgIIK1X (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 06:27:23 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D88C061756;
-        Wed,  9 Sep 2020 03:27:22 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id d9so1775415pfd.3;
-        Wed, 09 Sep 2020 03:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RcaJJxPUWfTCsa1mpxbpca/AYe7cJ1n1R+MIiQxItQI=;
-        b=pAwh6s0ZhX/dx2v+cRVKexmSDgypMBJCX62gSOUF/5JhnI05C+V1ksmcny+VOeg56y
-         YUOQKjFvVpzApRBarjbVtkG6g0VpeSMLwyX9yNxSzUNliX3SsvtH5c5fwVSTd3d/cqg6
-         fXiTkzRhBfFS1LbVtMuVTeG+QvfBDw72aK9y8b1n9V9ythjo3OmCtnl7A4kBiAV5nVSw
-         lWMyJGvfPOu2ISkma69nag+3kNrnz58daVNzFMkFqDbmK2MxjYPHmUYHYdtntgZAHv9r
-         63swhIuBUzq3EOEbT6qguw6Q1MLXEGA6/YyOhxkADqSqzsl1+Fij/rFvSwpyaj71xFlf
-         Q5Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RcaJJxPUWfTCsa1mpxbpca/AYe7cJ1n1R+MIiQxItQI=;
-        b=UmLWULx8jcRCQfZSLByu6yesV90ub1GrCzcigDQ+I09WVZtfvg7CiRpohScR87DTrj
-         zwvKMArooJMPrvaBcG/GaZQPNmZVzc/I//pIDlHHhpATEoh9UjusvuKyFrGx+qSM2VYA
-         FIqgAy1vDvCgopeLOG8vhwl/NP9idB3hwTIQU/hrBq1+L9yjX5yPZzFOedrv0hGlWJ/6
-         iD52DZn23ati47AJiu6uX12vVRMV3yIrh5a/RPbX+KFlrXS2fi4/i2H3n8bWXhjORlf5
-         PPMKsRr6B5HrtNK1Ah3DMWE+AXClQ5I56CDmAT3YtBEncIAvjOWoEuItPujtKCZoxcoR
-         eOhw==
-X-Gm-Message-State: AOAM532StQ0oy/CHoKBM5EQZCDoTa2JTcekNBaGdWMU2Juqokto9TUcr
-        Hn5Sa3a3sfkg42ArSuBSFWoe1Hc/9Xc=
-X-Google-Smtp-Source: ABdhPJzNphsO89O9fpmMQbpmXnh+8CJpBZEbxMrCiNZIsEJsgbZHnhqHP8UWp774hxYM3uHLfeTVQw==
-X-Received: by 2002:a62:be0b:0:b029:137:3e38:c5de with SMTP id l11-20020a62be0b0000b02901373e38c5demr323325pff.0.1599647241353;
-        Wed, 09 Sep 2020 03:27:21 -0700 (PDT)
-Received: from sol.lan (106-69-184-100.dyn.iinet.net.au. [106.69.184.100])
-        by smtp.gmail.com with ESMTPSA id c7sm2338168pfj.100.2020.09.09.03.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2020 03:27:20 -0700 (PDT)
-From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        bgolaszewski@baylibre.com, linus.walleij@linaro.org
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v8 02/20] gpiolib: cdev: replace strncpy with strscpy
-Date:   Wed,  9 Sep 2020 18:26:22 +0800
-Message-Id: <20200909102640.1657622-3-warthog618@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200909102640.1657622-1-warthog618@gmail.com>
-References: <20200909102640.1657622-1-warthog618@gmail.com>
+        id S1726535AbgIIKfI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Sep 2020 06:35:08 -0400
+Received: from mga11.intel.com ([192.55.52.93]:45989 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729129AbgIIKew (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Sep 2020 06:34:52 -0400
+IronPort-SDR: g/o0rrupzx140CJS7pDJtR1/Mh1pjHVrMxzBbBMR4E/jaI6Izbe79+Hi1IxGLiGkEy3uAzHWTw
+ fC+KEjiaRp+A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="155781444"
+X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
+   d="scan'208";a="155781444"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 03:34:45 -0700
+IronPort-SDR: 0tve1CYzhTsytisDy1TclHePtLyVjyq3/rDx/tErL8bdbcltl3BLKazn/LxTYXfTz+kvvbMY13
+ 9vpMtXBxBTpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
+   d="scan'208";a="333775053"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 09 Sep 2020 03:34:43 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kFxR2-00FPx9-BJ; Wed, 09 Sep 2020 13:34:40 +0300
+Date:   Wed, 9 Sep 2020 13:34:40 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 0/3] gpiolib: generalize GPIO line names property
+Message-ID: <20200909103440.GM1891694@smile.fi.intel.com>
+References: <20200909085426.19862-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200909085426.19862-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace usage of strncpy with strscpy to remove -Wstringop-truncation
-warnings.
+On Wed, Sep 09, 2020 at 10:54:23AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> I initially sent this as part of the gpio-mockup overhaul but since
+> these patches are indepentent and the work on gpio-mockup may become
+> more complicated - I'm sending these separately.
+> 
+> The only change is adding additional property helpers to count strings
+> in array.
 
-The structs being populated are zeroed, to prevent stack leakage as
-they are returned to userspace, so strscpy performs the equivalent
-function without the warnings.
+Seems it lost my tag for patch 1/3, but in any case now I'm good with it
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
+> v1 -> v2:
+> - actually remove the previous devprop source file in patch 3
+> - rename the string counting functions to something more explicit
+> 
+> Bartosz Golaszewski (3):
+>   device: property: add helpers to count items in string arrays
+>   gpiolib: generalize devprop_gpiochip_set_names() for device properties
+>   gpiolib: unexport devprop_gpiochip_set_names()
+> 
+>  drivers/gpio/Makefile          |  1 -
+>  drivers/gpio/gpiolib-acpi.c    |  3 --
+>  drivers/gpio/gpiolib-devprop.c | 63 ----------------------------------
+>  drivers/gpio/gpiolib-of.c      |  5 ---
+>  drivers/gpio/gpiolib.c         | 55 ++++++++++++++++++++++++++---
+>  include/linux/gpio/driver.h    |  3 --
+>  include/linux/property.h       | 13 +++++++
+>  7 files changed, 64 insertions(+), 79 deletions(-)
+>  delete mode 100644 drivers/gpio/gpiolib-devprop.c
+> 
+> -- 
+> 2.26.1
+> 
 
-The memset in gpio_desc_to_lineinfo(), in conjunction with the strscpy,
-is necessary as strncpy zero pads the remainder of the destination.
-It also guarantees that the info cannot leak kernel stack to userspace.
-This is useful here, but is even more important for the v2 info, that
-this function is changed to generate in a subsequent patch, as that
-struct contains padding and attribute arrays that also need to be
-initialised.
-
- drivers/gpio/gpiolib-cdev.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index e95e3eab9867..8b012879fe3f 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -752,6 +752,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 	bool ok_for_pinctrl;
- 	unsigned long flags;
- 
-+	memset(info, 0, sizeof(*info));
- 	info->line_offset = gpio_chip_hwgpio(desc);
- 	/*
- 	 * This function takes a mutex so we must check this before taking
-@@ -765,19 +766,11 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
--	if (desc->name) {
--		strncpy(info->name, desc->name, sizeof(info->name));
--		info->name[sizeof(info->name) - 1] = '\0';
--	} else {
--		info->name[0] = '\0';
--	}
-+	if (desc->name)
-+		strscpy(info->name, desc->name, sizeof(info->name));
- 
--	if (desc->label) {
--		strncpy(info->consumer, desc->label, sizeof(info->consumer));
--		info->consumer[sizeof(info->consumer) - 1] = '\0';
--	} else {
--		info->consumer[0] = '\0';
--	}
-+	if (desc->label)
-+		strscpy(info->consumer, desc->label, sizeof(info->consumer));
- 
- 	/*
- 	 * Userspace only need to know that the kernel is using this GPIO so
-@@ -841,12 +834,10 @@ static long gpio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 		memset(&chipinfo, 0, sizeof(chipinfo));
- 
--		strncpy(chipinfo.name, dev_name(&gdev->dev),
-+		strscpy(chipinfo.name, dev_name(&gdev->dev),
- 			sizeof(chipinfo.name));
--		chipinfo.name[sizeof(chipinfo.name)-1] = '\0';
--		strncpy(chipinfo.label, gdev->label,
-+		strscpy(chipinfo.label, gdev->label,
- 			sizeof(chipinfo.label));
--		chipinfo.label[sizeof(chipinfo.label)-1] = '\0';
- 		chipinfo.lines = gdev->ngpio;
- 		if (copy_to_user(ip, &chipinfo, sizeof(chipinfo)))
- 			return -EFAULT;
 -- 
-2.28.0
+With Best Regards,
+Andy Shevchenko
+
 
