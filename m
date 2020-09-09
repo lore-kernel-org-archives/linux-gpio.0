@@ -7,73 +7,73 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE47C43461
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D19C433E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49262215A4
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2A8C21D7E
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="OF8tbqD4";
-	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IMJxS1uo"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="mMBwDrXf";
+	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g9QJGl0e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbgIILq6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Sep 2020 07:46:58 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:59649 "EHLO
+        id S1728971AbgIILu7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Sep 2020 07:50:59 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34581 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729961AbgIILnt (ORCPT
+        by vger.kernel.org with ESMTP id S1729942AbgIILnt (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 07:43:49 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 05B323E1;
-        Wed,  9 Sep 2020 07:43:32 -0400 (EDT)
+        by mailout.west.internal (Postfix) with ESMTP id 7B9A7B1D;
+        Wed,  9 Sep 2020 07:43:26 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 09 Sep 2020 07:43:33 -0400
+  by compute3.internal (MEProxy); Wed, 09 Sep 2020 07:43:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=GCzCURw+lR65K
-        PqnjNXh/NlBPjWyz8UlafaQL4XINLY=; b=OF8tbqD4f0GClrrWGfCPTbIoyDlnw
-        6JGReCQJIe5qcOB78zEm1YOe11ZkqneJdxoJUOqPU54l9TL36i2qw93c3P1KrzQI
-        suEcnjLgSdG83xrR5n+Deo0hQiZzWGIQP8bKLb5DR5Q9a8LLehvm8GKQa3MlGgZr
-        r/uoBVwwaQHMVSfPQ0WYyqggRkaNMfiaWLlqmFrMrAsvQTrnu8WD6E5UhG/vFdeP
-        LJg9x1osgs1K41SvGelZ/25zo3nIok33rZv+ukebR6aPDBvsbIXeRA7hw7kFVeMY
-        Ro7MG2pggPS9QX9FZnhDrL2GSeDtQ3hkIeQCtz/gh44MrKJ7zsZSRT1LQ==
+        :mime-version:content-transfer-encoding; s=fm3; bh=3TprZpZYiej8Q
+        BnZ1/atazNQk9ZaL0CMY1DZDwMLWxE=; b=mMBwDrXf5DtkgEfztV5cAi7Gbs3cE
+        BdnyRQf42pdYbinZmTh9oAosGlA6/1x6Z6fgGN9ZUAFppL4/0WlERBDNcq3ipUKJ
+        HSrsvPCqwQSUzgYT1D5mSRRRslYhUaI70qOHFabFyBrv+KzClQTNwoRcRIpUGtnV
+        ckxMZmUL9tCnQ43FbRLcvofnyzbXrQLs1Bw961kUFOZno88ZUGoGqHxBY37ZzQfn
+        3+SNvXoAj3zSQ4FGaJe8zpKCMLF9EalgvcY+dVSpyy3bf2/bTAzov/AjKffXBIKp
+        7CTFQ7jt4C1Mu60MU78uVVqpyn1y52REf1u61JqvaztxDQgYnQ+jua2RA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=GCzCURw+lR65KPqnjNXh/NlBPjWyz8UlafaQL4XINLY=; b=IMJxS1uo
-        feFxBE8oixjnRqrWd2z+BhKUpx6j3PpQ++Dc0/qvQTKWW9Ss+9vJWOlC/CoeeFZv
-        UnKZLyoTNDTcG45iqu6CGzKBEjaNQzdp8xYV9D0u9hCfX1sjEdkzmOZxY2LuQg8p
-        3uwGGfjOukxYyzUbCP8X4fi0mexGGS0x/0ScRh9KnjDavOEhL4o+w0tG0229Urfz
-        Fp3a5LPNIlDYUdRzyh0gqvdiZl3jk0ZVV0FLCMNUTbxAnTGvtULryCZgU0kh39Nq
-        fWGNi5WMznwZfuGmbboMofxiwjM4Avs8golN3Zb0xKY84gV4XWjJvyWWeKgV4+3N
-        8NPwCUASWTf2jg==
-X-ME-Sender: <xms:5L9YX3WUrAvVj0Rul-AkTbYNemC5tz-A0bKy5rkETV7xJyBhtFcldg>
-    <xme:5L9YX_lvrp88qzPHjgcqNo9ZXfaQaBmXRk_2I1PRKGD3f5lZMJ-Skz9UVzHNDO14v
-    yZZgjLjpi9QBYb3-Q>
+        fm3; bh=3TprZpZYiej8QBnZ1/atazNQk9ZaL0CMY1DZDwMLWxE=; b=g9QJGl0e
+        q7rfVaWTycqmqLuqOc8LRwiIfeQdi0zeObit9gL2e+hOOgBBKJ0fidBmTD1qR/ys
+        3TpeD+r84jisjflcTWF1kDTrrlYQ2PID0ijL87nVlIlrraHGDBVSBYOnnKCMBHyn
+        eYe2VO9obddLQnLdV+iosjMFDRHPOa3MgtKyRA6vymgBI7k6pCIqrvpHKDo2puSz
+        ul3gny53838HSzfo8T6rTTVY/bJN8+edloxznYnI92XLoQRzFgQmIUzgHIfo/izN
+        PD7Jk3SbMU/63HeZLTRlmxy8u4i+SXpQq9SnJ5Gvl0xqdEOnwQ7J62Sb71fn7+uU
+        LeOZ3C9HsEp2vQ==
+X-ME-Sender: <xms:3r9YX6UbZzA1osqut4kmG61598Uo1gJ8XqWjMCWlZ1W0frslsm6FOQ>
+    <xme:3r9YX2kfzxhWzI-w7qFtrHwgokeb0dv7C-JSrE0OpH-11NiEdUcSyPyZDKuF4J7r3
+    Fwzjy2wLqDWdrH7TA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudehhedggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgjfhgggfestdekre
     dtredttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegr
     jhdrihgurdgruheqnecuggftrfgrthhtvghrnhepjefgvdevheetkeevgeegleelgfelte
     etjeffleffvdduudevieffgeetleevhfetnecukfhppedugedrvddruddtledrkeehnecu
-    vehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvg
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvg
     ifsegrjhdrihgurdgruh
-X-ME-Proxy: <xmx:5L9YXza7y9TOj4mQJ9YQTCk_vBfR3f30lESn2ycIUKLVKjwLbL2Z5Q>
-    <xmx:5L9YXyWmnFO0H4RkO8ojQRPZJTP7fe_JKBmI4qI62tyDb7Iu3FoqGg>
-    <xmx:5L9YXxnAV9N2dw-kE1yY7xjxzed9QT33PxxRMnym6QYCSKhp5KDQmA>
-    <xmx:5L9YX0tOqbFbsu8eAlxDyR2jPnYpRGw6othriM9WpTl9CP-tIBVLUw>
+X-ME-Proxy: <xmx:3r9YX-YNlaBTyWRrAkx31f3krTHCqZyjDFyTjboqrgP3uv92s41-eA>
+    <xmx:3r9YXxX73tJZVokSz0AKRluvmMWT-RwitorpOMq5tlpHOssa9217sw>
+    <xmx:3r9YX0mKJQhBc__tuVw2ip_MyiXG_ecWqGoLTNSvaWDAmqIlK1cfFQ>
+    <xmx:3r9YXzuQ3gbBOKLg6inJTNG_5M8ZcvkEowjJcjzvx6LSvTs6ddAE0Q>
 Received: from localhost.localdomain (ppp14-2-109-85.adl-apt-pir-bras32.tpg.internode.on.net [14.2.109.85])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CCCC63065C20;
-        Wed,  9 Sep 2020 07:43:29 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 53ABD3065C1E;
+        Wed,  9 Sep 2020 07:43:23 -0400 (EDT)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     linux-gpio@vger.kernel.org
 Cc:     linus.walleij@linaro.org, joel@jms.id.au,
         johnny_huang@aspeedtech.com, linux-aspeed@lists.ozlabs.org,
         openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] pinctrl: aspeed-g6: Add bias controls for 1.8V GPIO banks
-Date:   Wed,  9 Sep 2020 21:13:12 +0930
-Message-Id: <20200909114312.2863675-4-andrew@aj.id.au>
+Subject: [PATCH 1/3] pinctrl: aspeed: Format pinconf debug consistent with pinmux
+Date:   Wed,  9 Sep 2020 21:13:10 +0930
+Message-Id: <20200909114312.2863675-2-andrew@aj.id.au>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200909114312.2863675-1-andrew@aj.id.au>
 References: <20200909114312.2863675-1-andrew@aj.id.au>
@@ -84,50 +84,32 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-These were skipped in the original patches adding pinconf support for
-the AST2600.
+When displaying which pinconf register and field is being touched, format the
+field mask so that it's consistent with the way the pinmux portion
+formats the mask.
 
-Cc: Johnny Huang <johnny_huang@aspeedtech.com>
 Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 7efe6dbe4398..34803a6c7664 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-@@ -19,6 +19,7 @@
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index 53f3f8aec695..d8972911d505 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -539,9 +539,9 @@ int aspeed_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
+ 		if (rc < 0)
+ 			return rc;
  
- #define SCU400		0x400 /* Multi-function Pin Control #1  */
- #define SCU404		0x404 /* Multi-function Pin Control #2  */
-+#define SCU40C		0x40C /* Multi-function Pin Control #3  */
- #define SCU410		0x410 /* Multi-function Pin Control #4  */
- #define SCU414		0x414 /* Multi-function Pin Control #5  */
- #define SCU418		0x418 /* Multi-function Pin Control #6  */
-@@ -2591,6 +2592,22 @@ static struct aspeed_pin_config aspeed_g6_configs[] = {
- 	/* MAC4 */
- 	{ PIN_CONFIG_POWER_SOURCE,   { F24, B24 }, SCU458, BIT_MASK(5)},
- 	{ PIN_CONFIG_DRIVE_STRENGTH, { F24, B24 }, SCU458, GENMASK(3, 2)},
-+
-+	/* GPIO18E */
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_PULL_DOWN, Y1, Y4, SCU40C, 4),
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_DISABLE,   Y1, Y4, SCU40C, 4),
-+	/* GPIO18D */
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_PULL_DOWN, AB4, AC5, SCU40C, 3),
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_DISABLE,   AB4, AC5, SCU40C, 3),
-+	/* GPIO18C */
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_PULL_DOWN, E4, E1, SCU40C, 2),
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_DISABLE,   E4, E1, SCU40C, 2),
-+	/* GPIO18B */
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_PULL_DOWN, B2, D3, SCU40C, 1),
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_DISABLE,   B2, D3, SCU40C, 1),
-+	/* GPIO18A */
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_PULL_DOWN, C6, A2, SCU40C, 0),
-+	ASPEED_SB_PINCONF(PIN_CONFIG_BIAS_DISABLE,   C6, A2, SCU40C, 0),
- };
+-		pr_debug("%s: Set SCU%02X[%lu]=%d for param %d(=%d) on pin %d\n",
+-				__func__, pconf->reg, __ffs(pconf->mask),
+-				pmap->val, param, arg, offset);
++		pr_debug("%s: Set SCU%02X[0x%08X]=%d for param %d(=%d) on pin %d\n",
++				__func__, pconf->reg, pconf->mask,
++				val, param, arg, offset);
+ 	}
  
- /**
+ 	return 0;
 -- 
 2.25.1
 
