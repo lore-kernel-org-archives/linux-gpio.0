@@ -2,78 +2,81 @@ Return-Path: <SRS0=OCjJ=CS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EC9C433E2
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01781C43461
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56AE621D7E
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A69792145D
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 11:51:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="pjWnANMo";
-	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SRdJuAV/"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="bZ6AbRD7";
+	dkim=temperror (0-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EXv2/wL+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbgIILvI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Sep 2020 07:51:08 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:51983 "EHLO
+        id S1726440AbgIILvH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Sep 2020 07:51:07 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34497 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729941AbgIILns (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 07:43:48 -0400
+        by vger.kernel.org with ESMTP id S1729953AbgIILnt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 07:43:49 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 915B7B12;
-        Wed,  9 Sep 2020 07:43:25 -0400 (EDT)
+        by mailout.west.internal (Postfix) with ESMTP id BE898814;
+        Wed,  9 Sep 2020 07:43:29 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 09 Sep 2020 07:43:26 -0400
+  by compute3.internal (MEProxy); Wed, 09 Sep 2020 07:43:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=IeoBvfYVc4Im06yQD+pxOyrxlm
-        Y/+Hex5uW2NfYlC4o=; b=pjWnANMor34uCQOJohh/rld/EEFZc0UosIinK3d9QS
-        XayGD5TLHvZHMGEgVCf44OvYZC0TMSyya/vL5dXrFv1Nyst1KSNCu4Qu0ea9wbvd
-        rG6wHz+nqWfOpeyxggBUWJT/CAcOpZ213uUIOOCpRtfct47VGvhs1AY2Z8eXUL3J
-        r5Lx1o/1fN+ls+0sTZRXiFWmEwVQedIN3+y7KFV++Z//WRmZZSei3fwxVO8dAQNR
-        cmYi7DTrCRGuno162UDtbtDOj1CU3L/CveGrvNg3+THNeur7HLTFntmJyfL0ULxR
-        XBN8+V97LOiaI12YBzRQn56Ke0I41EueLcmWLZWI4R6A==
+        :to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=LcSEf2owcJHCj
+        Pa16Zg09G2i2DUcxJkRqFzecAp/HtA=; b=bZ6AbRD7u66dko5cTz3cpWVpzed9w
+        q6uumoWgfaNL43r9tYEKf7oL5mQGAE4nuWIW8GqP0Mp44uIdcZD69B0HkU6EqK55
+        kBrzB0YNHNQxFH7QdeeFO0OWBExzesHRDBvinTr63Cw5LZxnJDdI4pgnIOXt7ZiO
+        5O1MYu3oHwigU2rILT+IIErLqZ4ENCxC/QxaYar/OK8FW0qbwv9FMXZ1uVNnPuLl
+        5D0vWT8BhaDxpZl1Xgg5qm0Bq+tjBdtR7nZKb9pPvIp8IoKMsPszAAXSqyF49sf2
+        TiicuHQQSU6ONvU3P4wNu4iDQdOHBqzBOZ2VEzddCPPJPKnTmKa19rNJQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=IeoBvfYVc4Im06yQD
-        +pxOyrxlmY/+Hex5uW2NfYlC4o=; b=SRdJuAV/upsVfD3GHCrgmudbEhZYcNChF
-        CcktFNPbjmmcfjWvkLAeXBQVrVoOz0REyitsgovvhE+larHzYMCV0OAYZCMViYx8
-        JQ4LLQhu+Y41B3GbLfxTp/xdiBbCp+gFtZBdHqmDjXD7XR0DmneNCnvk6NRMmQru
-        +YyE+QE8Jwlq3Z2zX1GpZWcFkiaOSDzoCV94LYNluDEMgIm/5EjgxZaqCef3hDSD
-        InWFWA1rexsiz6eVnRudeJRNorV/KwV2vlI34006FjsqoFU/6SCw/OPCw3Pw+8BH
-        IUJfL6qMAgVUAlNZ1Lv6bo1YH1hNx9fNYT9+wi5r1T1rhM1iNsB4A==
-X-ME-Sender: <xms:2r9YX41CXZFARNB0cvRrJvpRQsP9ME2Kaw5DRo3l1BGDXkZD0GH3CQ>
-    <xme:2r9YXzEgcpaFxrOkgie1iUuNF7Jqe_73bxz4Du9F9_1_wTm2-cUj-tAtjXptpjExc
-    5SVJn4k23xdxlP71g>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=LcSEf2owcJHCjPa16Zg09G2i2DUcxJkRqFzecAp/HtA=; b=EXv2/wL+
+        jTUD01yoC/djmvaabRGRZnLTOm2QlHzPoxahe5va0saui1v08s7D5/emBYyR/fc4
+        iC9B5eZykQMAAdeoTQ/QwGG48nbrzt25DiCFzfdfpN7gOTYYjfDUxPL/IQPuQKML
+        7IDbZ0g/MNQOK9dCFhK9O/2h6CQ62nSF5pSo/dZh8OMC5WVc2T+ROBnSQbO5mViY
+        ZOVWus9SjkXc68/eZ8OjB9cZJQF4punfMvHlCt+dN9DkDmtpVMOqxTKct5vnpB3Q
+        2fvxXy4bsyLIAxAUdsAhE8MTw5ZqIPZD9QRy5Sj50FLFf5i0ErNx4uKGjiHxl9KM
+        uEBHsJTsd3TMIQ==
+X-ME-Sender: <xms:4b9YXz8lSYKNgUBLxa6eCdp9mqTneq5uXQ-eis1nzbAiqAmdOtnZ3Q>
+    <xme:4b9YX_uRpXAX0DdE4ZHDN1wa_BnSXLvMcKklegrEnxnW3H8gFxkE2wLCanr-kjN5x
+    eQ-MWEcSZxi6IcLxA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudehhedggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
-    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
-    ihgurdgruheqnecuggftrfgrthhtvghrnhepkefhieffjeevfeevhedtieeihfefvdejle
-    dvvddthefftedujeethfeuueelfedtnecukfhppedugedrvddruddtledrkeehnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifse
-    grjhdrihgurdgruh
-X-ME-Proxy: <xmx:2r9YXw4TELryIczh5Xaagxs2FH5ivCya275pTlsOHFPLyU4xuk3d3g>
-    <xmx:2r9YXx0dwqN1ZJL3SX5_RyKVPEqIuP8-n0Gi2O7Wi0Ko0dOsRKqc6Q>
-    <xmx:2r9YX7E3zlgNLcuiH9r57icHisrn_g-HNRhsGk822r-GYIboRsHf-g>
-    <xmx:3b9YX8OTvr-a032_Sld4L8_3bSqS6lNQ36xRnW0r2LdBP7Jz435Otg>
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgjfhgggfestdekre
+    dtredttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegr
+    jhdrihgurdgruheqnecuggftrfgrthhtvghrnhepjefgvdevheetkeevgeegleelgfelte
+    etjeffleffvdduudevieffgeetleevhfetnecukfhppedugedrvddruddtledrkeehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvg
+    ifsegrjhdrihgurdgruh
+X-ME-Proxy: <xmx:4b9YXxACa-y3zhQ5FEIbVuI00gMTRVss4w4yUsT5gGreecWvvKxMNg>
+    <xmx:4b9YX_esDdlOKPLkMDKygvQPYjXZFdGNyWONNBT4rG-riWtJNnCc4Q>
+    <xmx:4b9YX4NTMJaAL5dHRCFuG__KT2Ois28Enqf5h2_aLTwCX_BV9GC-Mg>
+    <xmx:4b9YX308xn8AVqfutDB0HjFF7xvr031lQFuwJF3HKufu11Rd0Mh-hQ>
 Received: from localhost.localdomain (ppp14-2-109-85.adl-apt-pir-bras32.tpg.internode.on.net [14.2.109.85])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1C3C63065B97;
-        Wed,  9 Sep 2020 07:43:19 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9B53B3065B97;
+        Wed,  9 Sep 2020 07:43:26 -0400 (EDT)
 From:   Andrew Jeffery <andrew@aj.id.au>
 To:     linux-gpio@vger.kernel.org
 Cc:     linus.walleij@linaro.org, joel@jms.id.au,
         johnny_huang@aspeedtech.com, linux-aspeed@lists.ozlabs.org,
         openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] pinctrl: aspeed: AST2600 pinconf fixes
-Date:   Wed,  9 Sep 2020 21:13:09 +0930
-Message-Id: <20200909114312.2863675-1-andrew@aj.id.au>
+Subject: [PATCH 2/3] pinctrl: aspeed: Use the right pinconf mask
+Date:   Wed,  9 Sep 2020 21:13:11 +0930
+Message-Id: <20200909114312.2863675-3-andrew@aj.id.au>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200909114312.2863675-1-andrew@aj.id.au>
+References: <20200909114312.2863675-1-andrew@aj.id.au>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -81,25 +84,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+The Aspeed pinconf data structures are split into 'conf' and 'map'
+types, where the 'conf' struct defines which register and bitfield to
+manipulate, while the 'map' struct defines what value to write to
+the register and bitfield.
 
-The AST2600 pinctrl driver was missing support for bias control on the 1.8V
-GPIO pins, and in the process of resolving that I discovered a couple of other
-bugs that are fixed in the first two patches of the series.
+Both structs have a mask member, and the wrong mask was being used to
+tell the regmap which bits to update.
 
-Please review!
+A todo is to look at whether we can remove the mask from the 'map'
+struct.
 
-Andrew
+Cc: Johnny Huang <johnny_huang@aspeedtech.com>
+Fixes: 5f52c853847f ("pinctrl: aspeed: Use masks to describe pinconf bitfields")
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andrew Jeffery (3):
-  pinctrl: aspeed: Format pinconf debug consistent with pinmux
-  pinctrl: aspeed: Use the right pinconf mask
-  pinctrl: aspeed-g6: Add bias controls for 1.8V GPIO banks
-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 17 +++++++++++++++++
- drivers/pinctrl/aspeed/pinctrl-aspeed.c    |  8 ++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index d8972911d505..e03ee78b2434 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -534,7 +534,7 @@ int aspeed_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
+ 		val = pmap->val << __ffs(pconf->mask);
+ 
+ 		rc = regmap_update_bits(pdata->scu, pconf->reg,
+-					pmap->mask, val);
++					pconf->mask, val);
+ 
+ 		if (rc < 0)
+ 			return rc;
 -- 
 2.25.1
 
