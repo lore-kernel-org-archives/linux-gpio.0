@@ -2,35 +2,35 @@ Return-Path: <SRS0=OCjJ=CS=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E7C433E2
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998D1C433E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5FE420665
-	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6496E2064B
+	for <linux-gpio@archiver.kernel.org>; Wed,  9 Sep 2020 20:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbgIIUob (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 9 Sep 2020 16:44:31 -0400
-Received: from mo-csw1515.securemx.jp ([210.130.202.154]:32770 "EHLO
+        id S1729789AbgIIUog (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 9 Sep 2020 16:44:36 -0400
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:60942 "EHLO
         mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgIIUo3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 16:44:29 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 089KhueX024236; Thu, 10 Sep 2020 05:43:56 +0900
-X-Iguazu-Qid: 34tKSwRU9GUSe78sGP
-X-Iguazu-QSIG: v=2; s=0; t=1599684235; q=34tKSwRU9GUSe78sGP; m=3FEpwzhL4uSXqw7RhX+esVo+WUoCbHERGzoeazn1l0A=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1513) id 089KhraA033530;
-        Thu, 10 Sep 2020 05:43:53 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id 089Khr7V002629;
-        Thu, 10 Sep 2020 05:43:53 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 089KhqBY011597;
+        with ESMTP id S1726714AbgIIUoc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2020 16:44:32 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 089KhsEF008212; Thu, 10 Sep 2020 05:43:54 +0900
+X-Iguazu-Qid: 2wGr7dZaSTKAoGUPU8
+X-Iguazu-QSIG: v=2; s=0; t=1599684234; q=2wGr7dZaSTKAoGUPU8; m=BoL+rC6Av6ufSuyBCXqZvW+/3t0Z6Bpq2JQAicl2zFA=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1111) id 089KhqX3014158;
         Thu, 10 Sep 2020 05:43:52 +0900
+Received: from enc03.toshiba.co.jp ([106.186.93.13])
+        by imx2.toshiba.co.jp  with ESMTP id 089Khpim001390;
+        Thu, 10 Sep 2020 05:43:51 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc03.toshiba.co.jp  with ESMTP id 089KhpVE018530;
+        Thu, 10 Sep 2020 05:43:51 +0900
 From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -42,10 +42,10 @@ Cc:     punit1.agrawal@toshiba.co.jp, yuji2.ishikawa@toshiba.co.jp,
         linux-gpio@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
         Marc Zyngier <maz@misterjones.org>,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v4 7/8] MAINTAINERS: Add information for Toshiba Visconti ARM SoCs
-Date:   Thu, 10 Sep 2020 05:43:35 +0900
+Subject: [PATCH v4 3/8] dt-bindings: arm: toshiba: add Toshiba Visconti ARM SoCs
+Date:   Thu, 10 Sep 2020 05:43:31 +0900
 X-TSB-HOP: ON
-Message-Id: <20200909204336.2558-8-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20200909204336.2558-4-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200909204336.2558-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20200909204336.2558-1-nobuhiro1.iwamatsu@toshiba.co.jp>
@@ -56,36 +56,41 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add information about Toshiba Visconti ARM SoCs to MAINTAINERS.
+Add device tree bindings for the Toshiba Visconti ARM SoCs.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Reviewed-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../devicetree/bindings/arm/toshiba.yaml      | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/toshiba.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0068bceeb61..cbc445ab2cc4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2651,6 +2651,17 @@ M:	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
- M:	Dirk Opfer <dirk@opfer-online.de>
- S:	Maintained
- 
-+ARM/TOSHIBA VISCONTI ARCHITECTURE
-+M:	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Supported
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
-+F:	Documentation/devicetree/bindings/arm/toshiba.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
-+F:	arch/arm64/boot/dts/toshiba/
-+F:	drivers/pinctrl/visconti/
-+N:	visconti
+diff --git a/Documentation/devicetree/bindings/arm/toshiba.yaml b/Documentation/devicetree/bindings/arm/toshiba.yaml
+new file mode 100644
+index 000000000000..efd3f4859669
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/toshiba.yaml
+@@ -0,0 +1,20 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/toshiba.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- ARM/UNIPHIER ARCHITECTURE
- M:	Masahiro Yamada <yamada.masahiro@socionext.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++title: Toshiba Visconti Platform Device Tree Bindings
++
++maintainers:
++  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: Visconti5 TMPV7708
++        items:
++          - const: toshiba,tmpv7708
++...
 -- 
 2.27.0
 
