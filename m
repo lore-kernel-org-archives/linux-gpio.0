@@ -1,156 +1,151 @@
-Return-Path: <SRS0=Xj1b=CT=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=eRu/=CU=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77901C433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Sep 2020 22:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E26C43461
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Sep 2020 01:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFF820BED
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Sep 2020 22:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C4A0208FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Sep 2020 01:15:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ojaen4RD"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="DHL8lSfl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725830AbgIJWWv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Sep 2020 18:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
+        id S1725294AbgIKBPW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Sep 2020 21:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbgIJWWr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Sep 2020 18:22:47 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B8DC061573;
-        Thu, 10 Sep 2020 15:22:47 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a17so9091810wrn.6;
-        Thu, 10 Sep 2020 15:22:47 -0700 (PDT)
+        with ESMTP id S1725280AbgIKBPQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Sep 2020 21:15:16 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65098C061573;
+        Thu, 10 Sep 2020 18:15:16 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id u21so11520001eja.2;
+        Thu, 10 Sep 2020 18:15:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=jms.id.au; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QJdryBOClKOA56RF0lno73w+2jIzy3qa74iAnOwAYJM=;
-        b=Ojaen4RDlczPCynflQ2X+Woxi0hEuMMYDJ68edSPXfpPvF+u0vKCVW4FCO2vw1K7VV
-         kXvV0Z/jsR6035H1U+auwdtoW07iSD+BUF8c4uQSmHrycBsPxQdUqxWBlWBywXApxT3h
-         k239KmY1XHQo3ddTeDrWbl1rzFIpQDdMIBEzFl1g3IfIE+kHQBJu45Y3chtYK/roJoZJ
-         Q4cQzN22p3gSjfkrxtS5xjfdXLrnEbCcf5Aw7Sez8H47t1Y2z90YYG+HfBUpIhJMrtaS
-         4F1yYEcA5wA5YvZROcJkH/glNVkStXIZlDG4f+SklpgJ6emzPwNoFKU3q2bd2/pEgjC/
-         XZng==
+        bh=DqB7DPHtIqi+Bw4fMVuljm+cc0DjSGuY8RA1DkIWScA=;
+        b=DHL8lSflYdMnee4Le9oK2Cmw2kT1eKSCFxkEhyOVZfuzMIo/md+bD1KtO10sDhEJ7s
+         xkYUKlXqQqmHWSsOqTkXU9VCQa6ufMsGzNaeAa6D+XybzjCJZhojTlf9pYPIgmghItuY
+         Try0QKw8VXdzCAO3PeOi3EogI8kn3HmlTB3Yo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QJdryBOClKOA56RF0lno73w+2jIzy3qa74iAnOwAYJM=;
-        b=bMktxDt4QcdY4YqBBkpVnVbQzOtFE8Z4RYPPJ/thhkR79Ukg+5txYffrs3UdvcaxJP
-         aeGcOcXOmNscnc+vIXRWcwVEJgzHCmm+bQmh6GcaqSGUheFg/LqHMjIXNok32xE9nMte
-         0nbQ01wofOMPo7sP575EY4kYI9seUHNaroNU0/MIenJmdtMlwoiaCj5zN8feG3t55PJ3
-         /vSD0LSanb8xMp/7EYpunoHtjSn6646K+nqMt2jj+tXy5lu3TN+lunylVDPbAWmGg7dp
-         l2N+pDgYRrvkONaklDV4sEodyepb4pON+skmYJJ3xRd2Hy/AsZSkuLUMsJz/8G7jdT4i
-         mAwA==
-X-Gm-Message-State: AOAM532Ra3lesVnKHzTRtGOh+8R9pip0Rq3fPeCpVDAUvlppUQcfJeog
-        dLGPQ/Mv97dxfiRAhicvUWE02GRBTM8O+GkTv3Y=
-X-Google-Smtp-Source: ABdhPJw1y+dDHeLHjy/0iRFHZOUDlGfXVKBifM7P89aTJ9bB6XIMhdV8RFZwEBJY8C362hS+59YnVjan715cn1kHtd0=
-X-Received: by 2002:adf:f984:: with SMTP id f4mr11205365wrr.102.1599776565758;
- Thu, 10 Sep 2020 15:22:45 -0700 (PDT)
+        bh=DqB7DPHtIqi+Bw4fMVuljm+cc0DjSGuY8RA1DkIWScA=;
+        b=D9XjCsFpuiO50dsV29xH5aiQnXaTSw49H40Ei3QLxftAUoVI+is8ekUZP9MA2/aHV8
+         3MRZRWPRdX31nSw52AE0eEBPnc3nDVMnUJJaNiXlxRyK4cGODBKF4+aDvUgvNA6sYq12
+         j2tyCaHvBBY1U1aGw3yBrvqWIxS4/D5S9mbK1v/HvAfIrA0qML4fnmgVKOBV8HAkjm2D
+         9nAkv2nIFniUwAz0vaPDptr7nTWoR6ADmzqqt/9Z8T3nny95TnoiVpLu4yA5HT3nv6zE
+         2L/FH8uN4kvZ+JgSVvMHXc3Knj8JYcqbF9BrESR8HcIGmN7QF1Bkis+Ks3exdoq+Xm2A
+         mDHw==
+X-Gm-Message-State: AOAM531DcCy2xh7oo1Kmy8UmuB7M8fr1lNgD/3PpKkimAempvtgWxWr7
+        JLA/jxA/zCpTyS1F2+it8huZkXbd16XtPFiB19Y=
+X-Google-Smtp-Source: ABdhPJyC/5wFl0aS0uol0uyiBTrxuWRqUjvlvqNkVX3NwIiFYVzywBU8WdIF3SqqzUmJnc3M3EdqulZFtzFPOftVnJE=
+X-Received: by 2002:a17:906:8695:: with SMTP id g21mr11320548ejx.504.1599786914775;
+ Thu, 10 Sep 2020 18:15:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <f32130bf-cfd4-b1bf-538c-dbc9ee2d947a@eaxlabs.cz> <CACRpkdaHNuuS-2zMwWf-2--8FFV_4aQuAjYx8pLu66h4adQcwQ@mail.gmail.com>
-In-Reply-To: <CACRpkdaHNuuS-2zMwWf-2--8FFV_4aQuAjYx8pLu66h4adQcwQ@mail.gmail.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Thu, 10 Sep 2020 15:22:34 -0700
-Message-ID: <CAHQ1cqGF3PsaWc0b0_1Mk8=4f36tO+WKwK0D6tRRxbFYtkTcpQ@mail.gmail.com>
-Subject: Re: pinctrl: sx150x bug
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Martin DEVERA <devik@eaxlabs.cz>, Peter Rosin <peda@axentia.se>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris Healy <cphealy@gmail.com>
+References: <20200715135418.3194860-1-jk@codeconstruct.com.au>
+ <CACPK8XcT02qv+1H=DDv8BRAdUmrBoweZ+Qb3aG34bQ9-UC08Xg@mail.gmail.com> <788526c84deb4763d874be1748fcc5a583f8f79d.camel@codeconstruct.com.au>
+In-Reply-To: <788526c84deb4763d874be1748fcc5a583f8f79d.camel@codeconstruct.com.au>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Fri, 11 Sep 2020 01:15:02 +0000
+Message-ID: <CACPK8XetpRt9gnfA3WbTzXOctqD5Anb0ugub3LaVzyyVnjycmQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio/aspeed-sgpio: enable access to all 80 input &
+ output sgpios
+To:     Jeremy Kerr <jk@codeconstruct.com.au>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 6, 2020 at 2:41 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Fri, 11 Sep 2020 at 01:10, Jeremy Kerr <jk@codeconstruct.com.au> wrote:
 >
-> Hi Martin,
+> Hi Joel,
 >
-> thanks for your report, let's check with Peter, Neil and Andrey who also
-> use this expander if they also see this problem (CC).
+> Thanks for the review!
 >
+> > A Fixes: might be a good idea.
+>
+> OK, given this isn't strictly (just) a fix, should I split that out?
 
-Looks reasonable. I haven't used that HW in a while, so I added Chris
-Healy to this thread, since he might be in a better position to
-comment on this and maybe even provide a Tested-by
+I assume anyone using the sgpio driver in anger would need this patch
+for it to work properly, so a fix tag will help them there. No need to
+break it down any further in my opinion.
 
-> On Wed, Aug 5, 2020 at 11:28 AM Martin DEVERA <devik@eaxlabs.cz> wrote:
+Cheers,
+
+Joel
+
 >
-> > I encountered bug in SX1502 expander driver in 5.7.7. Here is relevant
-> > DTS part:
+> > > -#define MAX_NR_SGPIO                   80
+> > > +#define MAX_NR_HW_SGPIO                        80
+> > > +#define SGPIO_OUTPUT_OFFSET            MAX_NR_HW_SGPIO
 > >
-> > compatible = "semtech,sx1502q";
-> > gpio4_cfg_pins: gpio2-cfg {
-> >                          pins = "gpio5";
-> >                          output-high;
-> >      };
-> >
-> > And part of OOPS:
-> >
-> > [    0.673996] [<c023cfa6>] (gpiochip_get_data) from [<c023b235>]
-> > (sx150x_gpio_direction_output+0xd)
-> > [    0.683259] [<c023b235>] (sx150x_gpio_direction_output) from
-> > [<c023b363>] (sx150x_pinconf_set+0x)
-> > [    0.692796] [<c023b363>] (sx150x_pinconf_set) from [<c0238fef>]
-> > (pinconf_apply_setting+0x39/0x7e)
-> > [    0.701635] [<c0238fef>] (pinconf_apply_setting) from [<c0236c77>]
-> > (pinctrl_commit_state+0xa5/0x)
-> > [    0.710648] [<c0236c77>] (pinctrl_commit_state) from [<c0237e03>]
-> > (pinctrl_enable+0xff/0x1d4)
-> > [    0.719139] [<c0237e03>] (pinctrl_enable) from [<c023b791>]
-> > (sx150x_probe+0x1a3/0x358)
-> > [    0.727027] [<c023b791>] (sx150x_probe) from [<c02c38bf>]
-> > (i2c_device_probe+0x1bb/0x1dc)
-> >
-> > The problem is that sx150x_pinconf_set uses sx150x_gpio_direction_output
-> > but gpio is not
-> > setup yet. Patch below fixes it but I'm not sure whether is it correct:
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-sx150x.c
-> > b/drivers/pinctrl/pinctrl-sx150x.c
-> > index 6e74bd87d959..3f5651edd336 100644
-> > --- a/drivers/pinctrl/pinctrl-sx150x.c
-> > +++ b/drivers/pinctrl/pinctrl-sx150x.c
-> > @@ -1154,12 +1154,6 @@ static int sx150x_probe(struct i2c_client *client,
-> >                  return ret;
-> >          }
-> >
-> > -       ret = pinctrl_enable(pctl->pctldev);
-> > -       if (ret) {
-> > -               dev_err(dev, "Failed to enable pinctrl device\n");
-> > -               return ret;
-> > -       }
-> > -
-> >          /* Register GPIO controller */
-> >          pctl->gpio.base = -1;
-> >          pctl->gpio.ngpio = pctl->data->npins;
-> > @@ -1191,6 +1185,12 @@ static int sx150x_probe(struct i2c_client *client,
-> >          if (ret)
-> >                  return ret;
-> >
-> > +       ret = pinctrl_enable(pctl->pctldev);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to enable pinctrl device\n");
-> > +               return ret;
-> > +       }
-> > +
-> >          ret = gpiochip_add_pin_range(&pctl->gpio, dev_name(dev),
-> >                                       0, 0, pctl->data->npins);
-> >          if (ret)
+> > A short comment explaining what's going on with these defines (as you
+> > did in your commit message) will help future reviewers.
 >
-> I don't see any problem with the patch, can you send a proper patch
-> with git-send-email so we can test it and apply it if it works for the
-> other users? Include the mentioned people on CC.
+> Sounds good, I'll add one.
 >
-> Yours,
-> Linus Walleij
+> >
+> > > +static void aspeed_sgpio_irq_init_valid_mask(struct gpio_chip *gc,
+> > > +               unsigned long *valid_mask, unsigned int ngpios)
+> > > +{
+> > > +       struct aspeed_sgpio *sgpio = gpiochip_get_data(gc);
+> > > +       int n = sgpio->n_sgpio;
+> > > +
+> > > +       WARN_ON(ngpios < MAX_NR_HW_SGPIO * 2);
+> > > +
+> > > +       /* input GPIOs in the lower range */
+> > > +       bitmap_set(valid_mask, 0, n);
+> > > +       bitmap_clear(valid_mask, n, ngpios - n);
+> > > +}
+> > > +
+> > > +static const bool aspeed_sgpio_is_input(unsigned int offset)
+> >
+> > The 0day bot complained about the 'const' here.
+>
+> ack, will remove.
+>
+> > > +{
+> > > +       return offset < SGPIO_OUTPUT_OFFSET;
+> > > +}
+> > >  static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int offset, int val)
+> > >  {
+> > >         struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> > >         unsigned long flags;
+> > > +       int rc;
+> > >
+> > > -       spin_lock_irqsave(&gpio->lock, flags);
+> > > -
+> > > -       gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
+> > > -       sgpio_set_value(gc, offset, val);
+> > > +       /* No special action is required for setting the direction; we'll
+> > > +        * error-out in sgpio_set_value if this isn't an output GPIO */
+> > >
+> > > +       spin_lock_irqsave(&gpio->lock, flags);
+> > > +       rc = sgpio_set_value(gc, offset, val);
+> > >         spin_unlock_irqrestore(&gpio->lock, flags);
+> > >
+> > >         return 0;
+> >
+> > I think this should be 'return rc'
+>
+> Yup. I'll send a v2 with these changes.
+>
+> Cheers,
+>
+>
+> Jeremy
+>
