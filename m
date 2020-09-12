@@ -2,94 +2,103 @@ Return-Path: <SRS0=FrA0=CV=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A235C433E2
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Sep 2020 06:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94120C433E2
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Sep 2020 08:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56FDA20725
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Sep 2020 06:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC4D214D8
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Sep 2020 08:11:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mA5Ix6AZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbgILGFa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 12 Sep 2020 02:05:30 -0400
-Received: from out28-53.mail.aliyun.com ([115.124.28.53]:54901 "EHLO
-        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbgILGFZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Sep 2020 02:05:25 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08609997|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0356243-0.00072368-0.963652;FP=0|0|0|0|0|-1|-1|-1;HT=e01l04362;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.IW5skju_1599890708;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.IW5skju_1599890708)
-          by smtp.aliyun-inc.com(10.147.43.95);
-          Sat, 12 Sep 2020 14:05:22 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linus.walleij@linaro.org, paul@crapouillou.net
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH v3 2/3] pinctrl: Ingenic: Correct the pullup and pulldown parameters of JZ4780
-Date:   Sat, 12 Sep 2020 14:04:24 +0800
-Message-Id: <20200912060425.30423-3-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200912060425.30423-1-zhouyanjie@wanyeetech.com>
-References: <20200912060425.30423-1-zhouyanjie@wanyeetech.com>
+        id S1725809AbgILILY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 12 Sep 2020 04:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgILILX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Sep 2020 04:11:23 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F257AC061573
+        for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2020 01:11:22 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id e4so2008779pln.10
+        for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2020 01:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=04wDqmaZccj9KFUOYymFspinKcticrouVTrfniOEN/o=;
+        b=mA5Ix6AZooTpQQSL77Ropm5LAS7wyjvJT6VYH8IX9uZDgjGjt00XuqkizkV++KHlcW
+         o9WXwuhIzSp0I5zAtSHggrd6wP7Ebe/WANhrvhtR9/vc3mMqOBgTXq27YQcAr6eIHaQq
+         D0k8LO3j87SOqeWLzem49TQ0+6emQ7Eyvsj1kygE7IZYQuzKfpNVFSHcYuDl0328jKc+
+         hm5WjsVeeOP7KKU3yljHf2rjn0dNsdIPFPzNrtShRM4VBfVlPn8AdStbkwgl9GId1MWs
+         WZnf+fAbNIY9fvmeS/m6zLg2ZfkxHSHm9I7yT6HbAnGJdv2h//+CTSCx01mPJfevx8UO
+         7SQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=04wDqmaZccj9KFUOYymFspinKcticrouVTrfniOEN/o=;
+        b=dbYOgNShYVmXkTj5Q4dBwB4nF+P2LSx20jbEP496jVrrIDx6tRy5WYOeawC11HTCBP
+         +6TVyMoTdoPt17INGYNh3l4O8Q+eir1SmrlTw5Ie8T6IcC2N9pS/h5jRFH+UDFPhVm01
+         SRND9TJsYqoNOot/W2m9+qFkXNgmIVKiuJ1WIsDfv4T0EE90a/FA6YHkUyqjwtL5NngP
+         ULwbfX409ZD+MS8sDkoF4LZL/IinGgtKELQ96vqRllUv4R7b0tY3pCIa76+E90Lnz5pT
+         ye45/SoMAW9x8zDeVUG3QtP02MWlYyjUW6XnU0rY+KcvLLqOYlfZSy4SfuiGBWvARC/6
+         opLQ==
+X-Gm-Message-State: AOAM5336NnMNsLGdwdZMScamL3gwUQRApvQGOulRWPyShm6L4AIXMHy+
+        Cn+9YahsEHvQE5MVI+LJqC8Z5OnRORE=
+X-Google-Smtp-Source: ABdhPJxzOQho1fuhJKnN3fmb0XI7nHha1O1k4yxN/tYgIMxTQMv+z9E5UuPkrpT6YeVbBlrKirXLxw==
+X-Received: by 2002:a17:902:ab88:b029:d1:9be2:c683 with SMTP id f8-20020a170902ab88b02900d19be2c683mr5646280plr.24.1599898282021;
+        Sat, 12 Sep 2020 01:11:22 -0700 (PDT)
+Received: from sol.lan (106-69-184-100.dyn.iinet.net.au. [106.69.184.100])
+        by smtp.gmail.com with ESMTPSA id y6sm4002811pjl.9.2020.09.12.01.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Sep 2020 01:11:20 -0700 (PDT)
+From:   Kent Gibson <warthog618@gmail.com>
+To:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com
+Cc:     Kent Gibson <warthog618@gmail.com>
+Subject: [libgpiod][PATCH v2 0/2] fix potential discarding of events by read events
+Date:   Sat, 12 Sep 2020 16:11:03 +0800
+Message-Id: <20200912081105.1615496-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Correct the pullup and pulldown parameters of JZ4780 to make them
-consistent with the parameters on the datasheet.
+This patch set addresses a bug where reading events can quietly discard
+events.  The problem occurs any time a request made is for a number of
+events that differs from the number available at the time - a number
+that userspace is unaware of.
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
+The problem is due to the read multiple always reading up to 16 events
+from the kernel - independent of how many events have been requested.
 
-Notes:
-    v2:
-    New patch.
-    
-    v2->v3:
-    Fix bug about PE15's pull-up parameter.
+The problem applies to reading both single and multiple events, as the
+single event read implementation wraps the multiple.
 
- drivers/pinctrl/pinctrl-ingenic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+The first patch extends test coverage to highlight the problem.
+The second fixes the bug.
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 00f29fd684fa..d5ac8489ba3d 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -1035,6 +1035,14 @@ static const struct ingenic_chip_info jz4770_chip_info = {
- 	.pull_downs = jz4770_pull_downs,
- };
- 
-+static const u32 jz4780_pull_ups[6] = {
-+	0x3fffffff, 0xfff0f3fc, 0x0fffffff, 0xffff4fff, 0xfffffb7c, 0x7fa7f00f,
-+};
-+
-+static const u32 jz4780_pull_downs[6] = {
-+	0x00000000, 0x000f0c03, 0x00000000, 0x0000b000, 0x00000483, 0x00580ff0,
-+};
-+
- static int jz4780_uart2_data_pins[] = { 0x66, 0x67, };
- static int jz4780_uart2_hwflow_pins[] = { 0x65, 0x64, };
- static int jz4780_uart4_data_pins[] = { 0x54, 0x4a, };
-@@ -1301,8 +1309,8 @@ static const struct ingenic_chip_info jz4780_chip_info = {
- 	.num_groups = ARRAY_SIZE(jz4780_groups),
- 	.functions = jz4780_functions,
- 	.num_functions = ARRAY_SIZE(jz4780_functions),
--	.pull_ups = jz4770_pull_ups,
--	.pull_downs = jz4770_pull_downs,
-+	.pull_ups = jz4780_pull_ups,
-+	.pull_downs = jz4780_pull_downs,
- };
- 
- static const u32 x1000_pull_ups[4] = {
+Changes for v2:
+ - restored usleep() when creating multiple events in patch 1.
+
+Kent Gibson (2):
+  tests: event: reading test coverage extended to cover reading a subset
+    of available events
+  core: fix reading subset of available events
+
+ lib/core.c          |   5 +-
+ tests/tests-event.c | 157 ++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 141 insertions(+), 21 deletions(-)
+
+
+base-commit: fc61e740fcbe3c6594295766759888c96c45bd29
 -- 
-2.11.0
+2.28.0
 
