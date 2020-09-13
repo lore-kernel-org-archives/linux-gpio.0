@@ -3,76 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC02C433E2
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Sep 2020 21:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3E2C43461
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Sep 2020 22:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E50D522210
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Sep 2020 21:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2038C2220F
+	for <linux-gpio@archiver.kernel.org>; Sun, 13 Sep 2020 22:50:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20150623.gappssmtp.com header.i=@beagleboard-org.20150623.gappssmtp.com header.b="anMv6v5b"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YsvNQgTe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725939AbgIMVSA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Sep 2020 17:18:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48704 "EHLO
+        id S1725963AbgIMWuO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Sep 2020 18:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbgIMVRu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Sep 2020 17:17:50 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 466DFC061788
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Sep 2020 14:17:49 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id gr14so20438801ejb.1
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Sep 2020 14:17:49 -0700 (PDT)
+        with ESMTP id S1725941AbgIMWuL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Sep 2020 18:50:11 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8858AC061787
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Sep 2020 15:50:10 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id v23so17053456ljd.1
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Sep 2020 15:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OnBB2DvrjzYcd2Xdjt97x0iAp2/ezTLDUs0RIs9ctY4=;
-        b=anMv6v5bdZAYEnkPr+2lsuP8+5lMUf/p8cStq7v1B4plciXq+6TtFHW8QzpKKOhTCq
-         S/ipULt16qgmNsz82+0Ka6apn7BUvnlyhjPklRW3PpewTvP64wBy4a24YGb3PGZcFY0P
-         bH60+5as3PU1yc1jL1JgKNhVxKD9OdRRQQn+Yowgil3qiQ0i1y0dQafzssROTbpYg02P
-         0Leir4WZOwlRGbDPEY4WEXMlXL021iZtufx+pPPX6lNpZ6W/1i1DYEWUej5BGVbjmPUj
-         9rFD4aBhyUZH9M34lHZSVgsEQb0t4UyDvmZ2f9yJj+1RJ1FwdtYmV2CVaT7eIUuvm2H2
-         m28Q==
+        bh=vxlAyo97wxQgbGRZa/IhWDwvPK81lO+ghbIt/dVSdiY=;
+        b=YsvNQgTecwvMyekXICSf9LTdDnDPBDwT/Zi78Ia4qVNCCsosqmkKCXayWDzPNclvmq
+         QHJ+90ElCr3wmZ8W7bMJk9zZB07szFQnsVKegJR/7CnqSfuj9ypP9qNM2J0eAtN9mPgU
+         isyutLdRrrKFTbrrD8NS6nF5/l27bf6t/X68zqBQuUFAEv7gJOOJ2xwf8v5PssFSVpN/
+         XfczdQH+hkYO8a/YRtSBM0kzij+dUe8ykztU6FPq3+sPxJHOR6awr4MG30lOiTi5C/M9
+         +qtsiHVPY1lnEXSDLRReZ7JekAP9ZujukdELPX+R7vtN15IIs5WzDyQ0JpPKOncehm34
+         B/aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OnBB2DvrjzYcd2Xdjt97x0iAp2/ezTLDUs0RIs9ctY4=;
-        b=mna6NvKHOCF9A8HO3t2bURoSGi3c7QNMbMj88SF/TUwSrk7GJ8pNr2uRjGRIbLKF5v
-         fk9vy96zgRTb4XqeMTMN1ADpJAscakuYJBAywdP5/Dj0MgxYLC1bHi+ND4ehRwW3xH60
-         unz4PBqAnCJ1/N8sKIZVjP8+qTPkIZ3f6OLuTi+Gf3IhS81GAw3q7s8eIEkz9De1frZX
-         BQ+qOK6hvfvx8u1w1LPewakKUDrV4goakdpBC2aekADDHyOyDverv69R3AuPLpwGxw1H
-         lEgF9VHh+s4ERpj0xVvJLtOwuQjoKSsmqhQP1fz9lacVGual8RH3Xo2B+mTjrD8juNDC
-         YHDg==
-X-Gm-Message-State: AOAM532gBi8RdiLRJbsdKwTyW37uIcP4Vg9LhElPISwje6fXZwzynVTe
-        ICMpkK23LQdNw0duh1tPIZiCAA==
-X-Google-Smtp-Source: ABdhPJx/fPh48IU+8lLHz64Qb1MQH+b7UmWjSssDB+euFBrzvDr8kAd930lroS4LaVAWxXdwq0JsIg==
-X-Received: by 2002:a17:906:5495:: with SMTP id r21mr11285979ejo.33.1600031868331;
-        Sun, 13 Sep 2020 14:17:48 -0700 (PDT)
-Received: from localhost.localdomain ([2001:16b8:5cf8:e601:5f2:8f03:4748:2bc6])
-        by smtp.gmail.com with ESMTPSA id cw9sm7782989edb.13.2020.09.13.14.17.46
+        bh=vxlAyo97wxQgbGRZa/IhWDwvPK81lO+ghbIt/dVSdiY=;
+        b=G4Ucz68wJhi1IiccbSwpinb62sYN3QLO9dwtpEBDI1HVywCUs6NIToMKMnHb2e0k8R
+         iPq5NqgB0j2pRtpSv2igSsb3uYfW4qgkxMTvruTrKIE6mK7xzv7Y3xotNBQg/vyJHPBA
+         m/J+/uA3fXdEQqYIePfRUFoSlVOVX6OK5iFp69YUdzbbaipdm8Ce3oCc1/BpRISg0XyM
+         2wTv9Iw50TlnvGhG4qAFv7r4zIhTugWSfN4KUcm3CrJD+6eIAxlR4fWKaS1MGdJz23aP
+         z/Z9F8L4+J2lRRfpzl3KTkZ20rniHLmbiNWDwe9FdqFzbB3VEpScFA11Pk4o9W1P8y1y
+         egSA==
+X-Gm-Message-State: AOAM531Q9l5V1wtxJgHxunouXeGXNr/eI6/L8IGVr9mH2OpjJt/7ENOn
+        O/+4VNtm7ugX7wZdkKdDhg+uLw==
+X-Google-Smtp-Source: ABdhPJwWc1T6Zd5iTzCuT7zAKaTPAum8c58ds3N9rXRn6WJqWKA3AY8uuLBbSfEHNYWCjLpP9eAvLA==
+X-Received: by 2002:a2e:965a:: with SMTP id z26mr4276635ljh.88.1600037408497;
+        Sun, 13 Sep 2020 15:50:08 -0700 (PDT)
+Received: from eriador.lan ([188.162.64.187])
+        by smtp.gmail.com with ESMTPSA id z141sm2859241lfc.171.2020.09.13.15.50.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2020 14:17:47 -0700 (PDT)
-From:   Drew Fustini <drew@beagleboard.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        devicetree@vger.kernel.org, bcousson@baylibre.com,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Trent Piepho <tpiepho@gmail.com>
-Cc:     Drew Fustini <drew@beagleboard.org>
-Subject: [PATCH] pinctrl: single: check if #pinctrl-cells exceeds 3
-Date:   Sun, 13 Sep 2020 23:08:25 +0200
-Message-Id: <20200913210825.2022552-1-drew@beagleboard.org>
-X-Mailer: git-send-email 2.25.1
+        Sun, 13 Sep 2020 15:50:07 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom: sm8250: correct sdc2_clk and ngpios
+Date:   Mon, 14 Sep 2020 01:50:05 +0300
+Message-Id: <20200913225005.30218-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-gpio-owner@vger.kernel.org
@@ -80,31 +73,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The property #pinctrl-cells can either be 2 or 3.  There is currently
-only a check to make sure that #pinctrl-cells is 2 or greater.  This
-patch adds a check to make sure it is not greater than 3.
+Correct sdc2_clk pin definition (register offset) and ngpios (SM8250 has
+180 GPIO pins).
 
-Fixes: a13395418888 ("pinctrl: single: parse #pinctrl-cells = 2")
-Reported-by: Trent Piepho <tpiepho@gmail.com>
-Link: https://lore.kernel.org/linux-omap/3139716.CMS8C0sQ7x@zen.local/
-Signed-off-by: Drew Fustini <drew@beagleboard.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: 4e3ec9e407ad5058003309072b37111f7b8c900a
 ---
- drivers/pinctrl/pinctrl-single.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-sm8250.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index efe41abc5d47..5cbf0e55087c 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1014,7 +1014,7 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
- 		if (res)
- 			return res;
- 
--		if (pinctrl_spec.args_count < 2) {
-+		if (pinctrl_spec.args_count < 2 || pinctrl_spec.args_count > 3) {
- 			dev_err(pcs->dev, "invalid args_count for spec: %i\n",
- 				pinctrl_spec.args_count);
- 			break;
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8250.c b/drivers/pinctrl/qcom/pinctrl-sm8250.c
+index a660f1274b66..4f7dae61b089 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8250.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8250.c
+@@ -1308,7 +1308,7 @@ static const struct msm_pingroup sm8250_groups[] = {
+ 	[178] = PINGROUP(178, WEST, _, _, _, _, _, _, _, _, _),
+ 	[179] = PINGROUP(179, WEST, _, _, _, _, _, _, _, _, _),
+ 	[180] = UFS_RESET(ufs_reset, 0xb8000),
+-	[181] = SDC_PINGROUP(sdc2_clk, 0x7000, 14, 6),
++	[181] = SDC_PINGROUP(sdc2_clk, 0xb7000, 14, 6),
+ 	[182] = SDC_PINGROUP(sdc2_cmd, 0xb7000, 11, 3),
+ 	[183] = SDC_PINGROUP(sdc2_data, 0xb7000, 9, 0),
+ };
+@@ -1320,7 +1320,7 @@ static const struct msm_pinctrl_soc_data sm8250_pinctrl = {
+ 	.nfunctions = ARRAY_SIZE(sm8250_functions),
+ 	.groups = sm8250_groups,
+ 	.ngroups = ARRAY_SIZE(sm8250_groups),
+-	.ngpios = 181,
++	.ngpios = 180,
+ 	.tiles = sm8250_tiles,
+ 	.ntiles = ARRAY_SIZE(sm8250_tiles),
+ };
 -- 
-2.25.1
+2.28.0
 
