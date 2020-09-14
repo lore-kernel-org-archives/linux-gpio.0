@@ -2,116 +2,114 @@ Return-Path: <SRS0=IeOR=CX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E62C43461
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 15:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23275C43461
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 15:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5893320732
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 15:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E233F20829
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 15:12:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8WQXXzr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgINPCE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Sep 2020 11:02:04 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49260 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725967AbgINPBg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 14 Sep 2020 11:01:36 -0400
-IronPort-SDR: BcuBzZTJxIjfG3FtDMngD/iEV3pw2bLEQ/CrzuZzQH7HuzuO5Ht5RBuBJZB+cVIT0KQcor4Afx
- 1vq7HBGxrEug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="156483482"
-X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="156483482"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 08:01:30 -0700
-IronPort-SDR: rOSgQ4g1YqSkNXQkuKUS4Rl7OON1iIYZ4e05jgdB18/cP/VZ1is0FVOKJ3p41LbAeZCBZSlgFJ
- CxDd6u+i3z2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,426,1592895600"; 
-   d="scan'208";a="335309231"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 14 Sep 2020 08:01:29 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kHpyv-00Gcpg-TS; Mon, 14 Sep 2020 18:01:25 +0300
-Date:   Mon, 14 Sep 2020 18:01:25 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2] gpiolib: Fix line event handling in syscall
- compatible mode
-Message-ID: <20200914150125.GH3956970@smile.fi.intel.com>
-References: <20200914143743.39871-1-andriy.shevchenko@linux.intel.com>
- <CAK8P3a1Eh=UuGZSEduHvutK8VYyWJcovheoWYXykwRoQuWAqtQ@mail.gmail.com>
+        id S1725988AbgINPMy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Sep 2020 11:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbgINPMr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2020 11:12:47 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9497C06174A
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 08:12:42 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id g29so39114pgl.2
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 08:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ObshwgAbv+WRzMSkofb9FmvMT5/I3e3y2AVlBsuc6Uo=;
+        b=b8WQXXzrqpnymCz3VKUVIwli7Ud+87x6AqoRIMRF6vBOuVoI4lHli134cxq8EqrKEB
+         CAHDxkoi2j+890t3WOkJ2Itj7ySC0o9g6syM1xGTQiZWV375bi0REzH5ZzZ1FJ7F/VAh
+         uS8jy4BYik+HpIa6IcQ4Qa7JkL0bIt405mraWYOd3uZfJJlgrs+ZT7Qx4a/FnZEJ76YV
+         iPUsAzrmSI87xHazzfgERvGhGBB8JUjHklKZyOYE/DbDWcplNdfikg9fcrwYsDXjb/fs
+         W+J/41gqv+cguBh/zbGULWeoY2PBKhgrSYU6wSFX8kCQF+0GuZ6FInjTFziisDwoI5Ws
+         7TUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ObshwgAbv+WRzMSkofb9FmvMT5/I3e3y2AVlBsuc6Uo=;
+        b=dLX9fAKxtw4PyK2IFtiMk19DdIRs8O2qdHX7ah6xFwWOLyRmGoERQnwHVEj/IybS9x
+         JoJQ24o9IIE74uUrbBYsBIx5BcfmRbbT1aeVjk8YJARrV+hhnxriKOH14kJ3NPsetYyZ
+         gMCPs5Ns/k0dIRc7XBpASKznvSgaC/J5pm5uvYSmrR58yTeIvld7Fay8114Dy0kN45xW
+         TX1+1xVouybTj0QHvCecPQhvKbtoNvotPD3aLeGuXsiYTfqWovh1hoS06/V5OyCX9MdU
+         ZyYST5ieeSAi2Ix9IlbbG2A7q8W0/ztQ7pFjDaLNlXe8AOHq898km/9hi/c8P2hDJQ0f
+         yBbg==
+X-Gm-Message-State: AOAM5311RphSS50CgSxmUQeRoqrgUBwUl3UdZWc5va/eItb3Ms/GjX+L
+        Ta+snf37WRodLnRy5oWBGv5sOO14L0y4VIAVK5E=
+X-Google-Smtp-Source: ABdhPJxm+ehWUnRE2ly2INcBJeiEgs3nBFoaqxw9qvCL6CUSOgR62meeviEQEM3pxNsY2ErJcI01ZURYirpYUB2y0UM=
+X-Received: by 2002:a63:ec4c:: with SMTP id r12mr10852490pgj.74.1600096361808;
+ Mon, 14 Sep 2020 08:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1Eh=UuGZSEduHvutK8VYyWJcovheoWYXykwRoQuWAqtQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CAM4ZDbA_F+8O28YFwWgtT8Yoej0EeXCCboW6yfHT5T7ryg87WA@mail.gmail.com>
+In-Reply-To: <CAM4ZDbA_F+8O28YFwWgtT8Yoej0EeXCCboW6yfHT5T7ryg87WA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 14 Sep 2020 18:12:24 +0300
+Message-ID: <CAHp75Vft6zJDNr8FUQq7o9Cri78NQwYS13Y23+UUvhnt-sTjiQ@mail.gmail.com>
+Subject: Re: [libgpiod] gpiomon loses events
+To:     Maxim Devaev <mdevaev@gmail.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 04:55:31PM +0200, Arnd Bergmann wrote:
-> On Mon, Sep 14, 2020 at 4:37 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > The introduced line even handling ABI in the commit
-> >
-> >   61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-> >
-> > missed the fact that 64-bit kernel may serve for 32-bit applications.
-> > In such case the very first check in the lineevent_read() will fail
-> > due to alignment differences.
-> >
-> > To workaround this introduce lineeven_to_user() helper which returns actual
-> > size of the structure and copies its content to user if asked.
-> >
-> > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+On Mon, Sep 14, 2020 at 1:40 PM Maxim Devaev <mdevaev@gmail.com> wrote:
+>
+> Hi. I noticed a strange behavior of gpiomon and gpiomon.py. It seems
+> that in some cases, if the signal arrives at the GPIO pin too quickly,
+> the last event on it may be rising, despite the fact that the actual
+> signal is already set to 0.
 
-Thanks!
+I'm not sure I understood what's wrong here. 'Event' by definition is
+something that has already happened. If pin floats from 0 to 1 to 0
+you will get one rising and one falling event.
 
-> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> > index e6c9b78adfc2..95af4a470f1e 100644
-> > --- a/drivers/gpio/gpiolib-cdev.c
-> > +++ b/drivers/gpio/gpiolib-cdev.c
-> > @@ -423,6 +423,21 @@ static __poll_t lineevent_poll(struct file *file,
-> >         return events;
-> >  }
-> >
-> > +static ssize_t lineevent_get_size(void)
-> > +{
-> > +#ifdef __x86_64__
-> > +       /* i386 has no padding after 'id' */
-> > +       if (in_ia32_syscall()) {
-> 
-> Christoph Hellwig has recently suggested adding a new macro for this
-> that would be always available and just evaluate to false on other
-> architectures.
-> 
-> I'd just merge your version for now and backport to to stable kernels,
-> but change this instance and a couple of others to use the new
-> macro in mainline afterwards.
-> 
-> Incidentally that would also address CONFIG_OABI_COMPAT
-> mode, if anyone cares.
+> a Cursory study of the sources showed that
+> both of these utilities read only one (the first?) event from the
+> line. I changed gpiomon.py rby replacing read_event() to
+> read_event_multiply() and iterating by all events, and it looks like
+> the lost faling events were there.
+>
+> So, I have a few questions.
+>
+> 1) Is this really a bug in gpiomon, or is it intended to be?
+>
+> 2) If I use read_events_multiple(), can it skip some events? I noticed
+> that sometimes I can get several falling and rising in a row.
+> Why is
+> this happening?
 
-Good to know (for both items).
+I can assume that IRQ handler is reentrant and since it has been run
+in the thread we will get it messed up. The timestamp of the event
+(when recorded) should be used for serialization of events. But if my
+assumption is the case, we have to record it in a hard IRQ context.
+
+> Shouldn't they be paired? Can the state transition,
+> i.e. the final falling or rising, be lost?
+>
+> 3) It seems there can only be 16 events in a line. What happens if
+> more events occur in one iteration of the loop, such as 20? The last 4
+> events will be lost, they will be available in the next iteration of
+> event_wait(), or the first 4 events in the current iteration will be
+> discarded?
+
+It's how kfifo works, AFAIU it should rewrite first (older) ones.
 
 -- 
 With Best Regards,
 Andy Shevchenko
-
-
