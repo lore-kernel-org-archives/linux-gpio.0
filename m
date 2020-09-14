@@ -2,69 +2,73 @@ Return-Path: <SRS0=IeOR=CX=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4D7C433E2
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 12:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9BEC433E2
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 13:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0694A206B2
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 12:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D8CC21D80
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Sep 2020 13:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hemvP25I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQ+jUW67"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgINM4n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Sep 2020 08:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49858 "EHLO
+        id S1726531AbgINNEy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Sep 2020 09:04:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbgINMob (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2020 08:44:31 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0CFBC06174A
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 05:44:30 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id w1so17465907edr.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 05:44:30 -0700 (PDT)
+        with ESMTP id S1726372AbgINNEn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2020 09:04:43 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0390C06174A
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 06:04:41 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id s65so10434689pgb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2020 06:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8nA6A+BjrmpzZxfjlH2oNUbSYc7zOty1uM0peUugN0k=;
-        b=hemvP25IijktQjYYVRHes/7E1IXHyuUnqpmpq9MAVJRLK6G9EfpCvLvdXTTXo3ah8z
-         BURQ+Fg/S2svnB4z6uD/8zR1LclGVLm6PWMxKy39McbWa3v4GFwQzVvw0ltOYj9X5dJW
-         mKLrsXkheQziy0dG2hVHpcRa8vfNBMYMedvvwRDRb3FJk1lOGHgqeBivzhl/WyBMRnrp
-         TbLv6rcKz8FXy06ze8Ya6eh0B9LWTvXKTloKzkkvuElLd0bpPbnzYXMHiYWZPlpj64Qd
-         6+xr7YRb5uu3jk+ubid00S+rOSKotItICnUfFYnF68Th/6Cvk70O60D2QHY/4/AkeXWJ
-         7Pxw==
+        bh=mdh90nAsg8FPAwf7YhkmI3ryVDLqZ68ajjR6rhm5qec=;
+        b=hQ+jUW67DwnfezjJV5ljuIyhP8P5600BhEprjCxPC1g9vY8POsllHj3KAzIHBanbmf
+         uG/DVaoho3fGlI9PhQVl3SGLJzHF53qwbd0rL8FewdATNHX9lZ8XcQTyt4HWXzSjtzxo
+         osMKYblHTjZtrfYk02YHnleWNw3qb0Va6rEbDZ+WQuNWvDnlEea1A1eMxcgknXKp+Lbo
+         awA6Y4wsGOmIFs0bwVt/GPj96SI0JxalRrqGqfMGUa3fMXEaOi5IphZ5iUflxtMuQqKS
+         8WD9N4I6OVszwRwO+bsYL1rZwYGMrR8GyJcSbbik0fHQUSAFoadJU6jYVM+XME5Bv0hA
+         Uigw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8nA6A+BjrmpzZxfjlH2oNUbSYc7zOty1uM0peUugN0k=;
-        b=mG1E13za8IJXMtYJlB8ZF3RVJabRwUh/xwmhyaJLWvoxRS5sEc26pRXR5JByrqczSy
-         gU95yjNK4LHrQb4ROr12+QkGViZBtFbqmOBcm9yudyY8SWjQOYQXs2Rum3OsE9aDnTNI
-         CMWPo7mkoVzq37DeSNoUCur2s9bMJ9Vcbo+VBZQrdOdVAClwcWVZcGO5r5nbivYE6A8q
-         QnQz84WVKptXiUB+JqRN5ISCFq7+0Q8ym7J5T0/zt2+hT7yC9GoQ+Ddsteqb7chj4NU7
-         IOzofXNfNXPG5IU2gFlK3VBA93LLn7FBO7pNUr7hd7OrL8EJAJD+/VMsTJUy6+qZNzmQ
-         CXug==
-X-Gm-Message-State: AOAM5302WKc+gnUuI33YDvmo2ld8k4KpRG6sVzpgxdPHhVVwqIR6FkEx
-        7aRF/sZ3uf+boyk3kFRhhRY3OFKgvHTgO/qTH84d6g==
-X-Google-Smtp-Source: ABdhPJzLoLDsz+ht769/msh7O0ftWnxdm6bHyYAEwFHt0kRkwExHWWw0Xd6C7AT7IToCjiAwvYd1qxWjH4LOr/63ldw=
-X-Received: by 2002:a05:6402:b0f:: with SMTP id bm15mr16663399edb.388.1600087469422;
- Mon, 14 Sep 2020 05:44:29 -0700 (PDT)
+        bh=mdh90nAsg8FPAwf7YhkmI3ryVDLqZ68ajjR6rhm5qec=;
+        b=ldUVjj6BG8lZlMkJKidWfZHjVAWgPzVmkgNQLR8CDIv6pnLhTtl87Vivu31Cm7Smud
+         0VmbMDXNUuBFvRG75Lda+eHb5nZ+Yz2Uj+ZBLCx9J/N0XHqqSNqhYARFRNX0cWHwHcGX
+         jl0Vspkq99fNuhjjB9G3PPu70hsjbpg+yxCv2mvk5bFbiWBNLflN7KlCt0ztw4BoB4di
+         Plj+/1Jr36OPlVCmGKMdYekmZrjJbWxp6XjYo5ywtX66HWFHePgD1XyzqIwE53KcFE01
+         CmmM8I7AfyW4QebbxjGIG1uuvBU9BlQkhPo3HuJlBVWDKFkAGMlgcZGn4tSe+d2RMTRC
+         CsaA==
+X-Gm-Message-State: AOAM532I+AidcqONq5IrWR21c6wzXFJdIyLGFKE7kbHlkUksA4kH9Flo
+        O4Q5IL6hA03+huHzrbNmse55/UO2/ncPbSr2Si4=
+X-Google-Smtp-Source: ABdhPJw3H+GPTOiFms1K5UEM7TlBhnVVXZFLrNN4gcHnhjf6qvCOdUahM7ev9j6gBYpfjo1VQRdBFsPNC/alYqBVFDc=
+X-Received: by 2002:a17:902:6bc1:b029:d0:cbe1:e76e with SMTP id
+ m1-20020a1709026bc1b02900d0cbe1e76emr14893020plt.21.1600088681344; Mon, 14
+ Sep 2020 06:04:41 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200910101935.47140-1-andriy.shevchenko@linux.intel.com>
  <20200911030539.GA574097@sol> <20200911083109.GF1891694@smile.fi.intel.com>
  <20200911091249.GA1874731@sol> <20200911095355.GG1891694@smile.fi.intel.com>
- <20200911101714.GA2132928@sol> <20200911142846.GM1891694@smile.fi.intel.com> <20200912022148.GA3880502@sol>
-In-Reply-To: <20200912022148.GA3880502@sol>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 14 Sep 2020 14:44:18 +0200
-Message-ID: <CAMpxmJU9=aFrQP9t+rOn4xvCdB9kHHvWzMkPnMcjG8G7pDzj4g@mail.gmail.com>
+ <20200911101714.GA2132928@sol> <20200911142846.GM1891694@smile.fi.intel.com>
+ <20200912022148.GA3880502@sol> <CAMpxmJU9=aFrQP9t+rOn4xvCdB9kHHvWzMkPnMcjG8G7pDzj4g@mail.gmail.com>
+In-Reply-To: <CAMpxmJU9=aFrQP9t+rOn4xvCdB9kHHvWzMkPnMcjG8G7pDzj4g@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 14 Sep 2020 16:04:23 +0300
+Message-ID: <CAHp75VeFfNmKWNSxQXOVHuksFzxCbxyv=3LmAesSYTSoZ5u1yw@mail.gmail.com>
 Subject: Re: [PATCH v1 1/2] gpiolib: Fix line event handling in syscall
  compatible mode
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio <linux-gpio@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>
@@ -74,70 +78,45 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Sep 12, 2020 at 4:21 AM Kent Gibson <warthog618@gmail.com> wrote:
->
-> On Fri, Sep 11, 2020 at 05:28:46PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 11, 2020 at 06:17:14PM +0800, Kent Gibson wrote:
-> > > On Fri, Sep 11, 2020 at 12:53:55PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Sep 11, 2020 at 05:12:49PM +0800, Kent Gibson wrote:
-> > > > > On Fri, Sep 11, 2020 at 11:31:09AM +0300, Andy Shevchenko wrote:
-> > > > > > On Fri, Sep 11, 2020 at 11:05:39AM +0800, Kent Gibson wrote:
-> > > > > > > On Thu, Sep 10, 2020 at 01:19:34PM +0300, Andy Shevchenko wrote:
-> > > >
->
-> [snip]
+On Mon, Sep 14, 2020 at 4:00 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> On Sat, Sep 12, 2020 at 4:21 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > On Fri, Sep 11, 2020 at 05:28:46PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Sep 11, 2020 at 06:17:14PM +0800, Kent Gibson wrote:
+
+...
+
+> > > I don't like the difference between 2nd and 3rd argument. This what looks to me
+> > > hackish. Variant with explicit compat structure I like more.
 > > >
-> > > typedef u64 __attribute__((aligned(4))) compat_u64;
+> >
+> > Agreed - writing it that way does look pretty nasty.
+> >
+> > But my suggestion is actually this:
+> >
+> > ret = copy_to_user(buf, &ge, event_size);
+> >
+> > I suggested ge_size previously, but event_size might help highlight that
+> > it isn't always sizeof(ge).
+> >
+> > > But if you think it's okay, I will update your way.
 > > >
-> > > which is bitwise identical - only allowed to 32-bit align.
 > >
-> > Yes. That's what I meant under "not the same".
+> > I would defer to Bart or Linus, but I think just calculating the
+> > appropriate size is preferable for this case.
 > >
-> > As far as I understand the alignment makes sense if this type is a part of
-> > the uAPI definition. But here we have it completely local. copy_to_user() takes
-> > a pointer to a memory without any specific alignment implied.
-> >
-> > So, what you proposing is basically something like
-> >
-> > ret = copy_to_user(buf, &ge, compat ?  sizeof(compat) : sizeof(ge));
-> >
-> > Correct?
-> >
+> > Cheers,
+> > Kent.
 >
-> That isn't how I would write the copy_to_user(). The size would be
-> calculated once, using the linevent_user_size() helper, with
-> appropriate documentation as to why this is necessary, and then
-> used throughout lineevent_read().
+> Kent has been producing clean and elegant code so far so I trust him
+> on code quality issues TBH. Personally in this case however I'd go
+> with an explicit compat structure as Andy prefers.
 >
-> The documentation would mainly be on the lineevent_user_size() function
-> itself.
->
-> > I don't like the difference between 2nd and 3rd argument. This what looks to me
-> > hackish. Variant with explicit compat structure I like more.
-> >
->
-> Agreed - writing it that way does look pretty nasty.
->
-> But my suggestion is actually this:
->
-> ret = copy_to_user(buf, &ge, event_size);
->
-> I suggested ge_size previously, but event_size might help highlight that
-> it isn't always sizeof(ge).
->
-> > But if you think it's okay, I will update your way.
-> >
->
-> I would defer to Bart or Linus, but I think just calculating the
-> appropriate size is preferable for this case.
->
-> Cheers,
-> Kent.
+> I don't have a strong opinion on this so I really am fine either way.
 
-Kent has been producing clean and elegant code so far so I trust him
-on code quality issues TBH. Personally in this case however I'd go
-with an explicit compat structure as Andy prefers.
+Since the initial idea was Arnd's and he agreed on Kent's approach, I
+will re-do that way.
 
-I don't have a strong opinion on this so I really am fine either way.
-
-Bartosz
+-- 
+With Best Regards,
+Andy Shevchenko
