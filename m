@@ -2,117 +2,87 @@ Return-Path: <SRS0=1Vb2=CY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8917C43461
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 22:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6CEC43461
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 22:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA27020809
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 22:21:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hYng2VdX"
+	by mail.kernel.org (Postfix) with ESMTP id DAF5720770
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 22:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600209577;
+	bh=XMkMtk/gI2HuHmv1cq2xXt9eQOED93TjXkjDWF8nQGE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=MedXQw6qqhOQPsdpG6oJQIwvAyb/wr04jr/vR/a4LCwDtirs4YbbRK4bZp45R/4mU
+	 GkiR7H2CgjLc/+mUeAGrbglpDsB2hKKA1uWi2QWbgp+kWbKzTtthIeRyOADVRi6mZm
+	 vUnefMvGmkTlZQVEBF+FRIL+y2sHb17wU3v0hTPI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbgIOWVD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbgIOQ3P (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Sep 2020 12:29:15 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B770BC061222
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2020 09:03:18 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id z23so5783601ejr.13
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2020 09:03:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c1lfPyfpR3MIdTzczk3F37y8kFkSG7QNcKC/F+53Umo=;
-        b=hYng2VdXUMalsQlpbxvEaolvVrPXjjO1dg1IBNOJpR5POkg+h+5dS3w6ALmjl43QBv
-         2kG3eFGBMkUjnyQkOgDNuJN6KiCSm2Xz+1UBa8swFgxPuWy5j8g7p8aPFbbzCNJUVgTi
-         XTq9x3K52I7ybf36Z2pMDOaEp0SObYccGT0njIzOFGqscUVXUzET+d+qdoa70XNgeuIq
-         ychiRQy9UO2BSe1I3ZkArwzDgmWXvpkEs/amhQ+IIrqVJ+u+TGU6vHxuH2Ocno64YMWW
-         lWGLtShJwmSH8u00qJQXoTlVRtckLrfdDBCybJTNP4Ck/xv44l9uzkdhrjP9gzNWDaBx
-         aRhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c1lfPyfpR3MIdTzczk3F37y8kFkSG7QNcKC/F+53Umo=;
-        b=PPNX/yOD9m5R2EuwS9ct6DW0DVW1PE68AYtD4GS+fFyjAhrbxkxRrswwuQxEcxbPhL
-         K1Xf6vHLHEFLwQsqSghRERn4yUl6hy8dzkfrCv7WwiYpt0mz5lkYcdbwqmVmVfz53CAN
-         SBdn9X/W/eRavGRNltnda1CfjeH6mbO96lWhBDD6HRMKNmPm+xyb/qP5ms/QRlq2bcff
-         czhHPYwlKaA0f21cDnbXiX6JPNk2+KXaWYtZSyXvtFNivnACYeEZWtIah8lf/tLe5i+r
-         vI5M7LynADjcLygKKTt7zZemOG8OS6JxN345qiSeOmjofIVu/Z6uDOB8to336VSwTuvQ
-         lbFQ==
-X-Gm-Message-State: AOAM533xiVpZPmYoRIpLuePYBF5G+yQkI+/V3B298Gd3LqEIty462Eyl
-        eVcYSrpBq1oiQT7hv6eGNHQT3ymxm9gfF5Ss4fHUOA==
-X-Google-Smtp-Source: ABdhPJxYCowJHvOnUFmc3bdVZqbBgmz4hRM4SON4OjzOoHFhBUb9Zqenf9cirxMo9cDeB/QVoD9ttHN6GESWUQ8YGig=
-X-Received: by 2002:a17:906:6007:: with SMTP id o7mr21824842ejj.550.1600185797421;
- Tue, 15 Sep 2020 09:03:17 -0700 (PDT)
+        id S1727409AbgIOWjf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Sep 2020 18:39:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727478AbgIOQKm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 15 Sep 2020 12:10:42 -0400
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960C221D24;
+        Tue, 15 Sep 2020 15:59:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600185581;
+        bh=XMkMtk/gI2HuHmv1cq2xXt9eQOED93TjXkjDWF8nQGE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DDgFKprJDshmoolsY9k8iSp+epYJOJfxdUBnQKt14knLRveGNCNQhwA0zdxNeHGvU
+         3Js9zOsm/ZNzTc14ckVE+pVN4u/URgxtjIoz4fyLbng+qMH/7KbKfP0JVxlxCoGXzZ
+         4tXVnHJGIYTGx6c5ngIPBg/uRrICpQjgKcJG98YQ=
+Received: by mail-ej1-f49.google.com with SMTP id z22so5818826ejl.7;
+        Tue, 15 Sep 2020 08:59:41 -0700 (PDT)
+X-Gm-Message-State: AOAM532uZmMLtgaUBDheKOuH2yTc4cBBXOjr2IUlyvWKmzA8UQIyCBvJ
+        EfU2TDKZByhCJ+EKPgPXXD/fbSnwHX/beaDcFq0=
+X-Google-Smtp-Source: ABdhPJwAuDpp+EHX45RgbdNu7uzZmhVTI4s30E6927Vq0pQ/LgKg1zmNpv30kRLFOr25UoY3E6mkjiYpSvqoLHmgkVY=
+X-Received: by 2002:a17:906:af53:: with SMTP id ly19mr20213441ejb.503.1600185580123;
+ Tue, 15 Sep 2020 08:59:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200908125813.8809-1-brgl@bgdev.pl> <CADYN=9+3kHG0CexzZiMQoXdF2piN2ZhOTObhY=7VCKrnFVN0Kw@mail.gmail.com>
- <20200915131228.GX3956970@smile.fi.intel.com> <20200915131648.GY3956970@smile.fi.intel.com>
-In-Reply-To: <20200915131648.GY3956970@smile.fi.intel.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 15 Sep 2020 18:03:06 +0200
-Message-ID: <CAMpxmJUOhFjmFFq3sKZSh3QTjgZSGLhRRFt=iSzYAmXzNzupaw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] gpiolib: generalize GPIO line names property
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <1600054147-29997-1-git-send-email-Anson.Huang@nxp.com> <1600054147-29997-4-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1600054147-29997-4-git-send-email-Anson.Huang@nxp.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 15 Sep 2020 17:59:28 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdrFUXabpduVEqwSFv63_ZFJ4D1ecb4YhCe=ESSd438CA@mail.gmail.com>
+Message-ID: <CAJKOXPdrFUXabpduVEqwSFv63_ZFJ4D1ecb4YhCe=ESSd438CA@mail.gmail.com>
+Subject: Re: [PATCH V2 RESEND 4/4] ARM: multi_v7_defconfig: Build in
+ CONFIG_GPIO_MXC by default
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, oleksandr.suvorov@toradex.com,
+        peng.fan@nxp.com, andreas@kemnade.info, hverkuil-cisco@xs4all.nl,
+        olof@lixom.net, geert+renesas@glider.be,
+        prabhakar.mahadev-lad.rj@bp.renesas.com, aisheng.dong@nxp.com,
+        lkundrak@v3.sk, joel@jms.id.au, bjorn.andersson@linaro.org,
+        leoyang.li@nxp.com, vkoul@kernel.org, michael@walle.cc,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Linux-imx@nxp.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 3:16 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, 14 Sep 2020 at 05:36, Anson Huang <Anson.Huang@nxp.com> wrote:
 >
-> On Tue, Sep 15, 2020 at 04:12:28PM +0300, Andy Shevchenko wrote:
-> > On Tue, Sep 15, 2020 at 02:01:56PM +0200, Anders Roxell wrote:
-> > > On Tue, 8 Sep 2020 at 18:40, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > I initially sent this as part of the gpio-mockup overhaul but since
-> > > > these patches are indepentent and the work on gpio-mockup may become
-> > > > more complicated - I'm sending these separately.
-> > > >
-> > > > The only change is adding additional property helpers to count strings
-> > > > in array.
-> > > >
-> > > > Bartosz Golaszewski (3):
-> > > >   device: property: add helpers to count items in string arrays
-> > > >   gpiolib: generalize devprop_gpiochip_set_names() for device properties
-> > > >   gpiolib: unexport devprop_gpiochip_set_names()
-> >
-> > Ha-ha, OF unittest is of_node centric. definitely there is no backed device.
-> >
-> > Bart, it seems we are stuck with fwnode interface.
+> i.MX GPIO is NOT default enabled now, so select CONFIG_GPIO_MXC
+> as built-in manually.
 >
-> Hmm... There is a platform device. So, it means that it fails along these
-> lines:
->   return IS_ENABLED(CONFIG_OF) && dev->of_node ? &dev->of_node->fwnode : dev->fwnode;
-> so, who should set fwnode for of_node?
->
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-It's strange because the device for this unittest is registered
-similarly to how we do it in gpio-mockup where this function works.
-I've not investigated the internals but somewhere someone sets the
-fwnode for these platform devices.
 
-Bartosz
+The same as on arm64 defconfig - please explain in commit msg why it
+should be enabled.
+
+Best regards,
+Krzysztof
