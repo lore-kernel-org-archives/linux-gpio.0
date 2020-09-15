@@ -2,108 +2,116 @@ Return-Path: <SRS0=1Vb2=CY=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B71C433E2
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 12:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE0AC2D0E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 13:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 816AB20756
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 12:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E373B21D7F
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Sep 2020 13:21:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Ao6JMC6M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbgIOM7R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Sep 2020 08:59:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50118 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbgIOM6p (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 15 Sep 2020 08:58:45 -0400
-IronPort-SDR: ZXGw2Xz5kiG+fU24AsC+AXzpDzRhQymPI2rbxlssW227ZTM73tfFAlHxx23DEK+4mCCYX3CUob
- RCRAjdrpcgug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="244081698"
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="244081698"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 05:56:32 -0700
-IronPort-SDR: SsnKrWLzw0kJIxhL+X029pIGfoMOwN3sN/OG7D28F0tSq750PVO2tecqhlq04ndOc7siuRJ82u
- D7vFnrXbGCWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="335637509"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 15 Sep 2020 05:56:30 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kIAVX-00GqGc-Ij; Tue, 15 Sep 2020 15:56:27 +0300
-Date:   Tue, 15 Sep 2020 15:56:27 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] gpiolib: Fix line event handling in syscall
- compatible mode
-Message-ID: <20200915125627.GW3956970@smile.fi.intel.com>
-References: <20200914143743.39871-1-andriy.shevchenko@linux.intel.com>
- <20200914230526.GA4138@sol>
- <20200915092022.GR3956970@smile.fi.intel.com>
- <20200915121815.GA98308@sol>
+        id S1726474AbgIONTu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Sep 2020 09:19:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51160 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbgIONRd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Sep 2020 09:17:33 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA76C061788
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2020 06:16:54 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id y2so2935176ilp.7
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2020 06:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v/HlO2pz67e4hxYirmZqk4ySGJecTpWx3uH4onJVbvU=;
+        b=Ao6JMC6MHz4vIH5oPcx8XvXMXNBpuT6aZgdgvKvyHV/hNMlBoELCsvdTJFmmq14gbE
+         wpEde/KfyVyFa+9WwWJkJYfVu6a0Q3aJcrFAORKIbcdpmNJ2v9vG5QLHqNVDqT2mL71e
+         0YXAHgkC4RSoeJ2fQ0H4LNQ5DhFhFDiAX6dY7pFYVOS7ENh31SSkeYZhK+Y+PZ8GXtni
+         it5g8WftJxlJ6qHd3exqCyuQIyIaqVW0k8SqqAOp7WiqgFAbXPp2vkFA7GJeDXi7QWuN
+         4Y0cLMfUJtcUKC9g6CzlkkBxSrMKYD2mmLINKs5X/rS/b0CeqJhOTjO/+4aMQTc3iy6N
+         nSow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v/HlO2pz67e4hxYirmZqk4ySGJecTpWx3uH4onJVbvU=;
+        b=OXTEdTF1dZoHvcw4DEiGS56/iIEv5GoEt5Mp+QunQ5MrTmX5dP5KwDgzYyvluMCgAt
+         /dyBajhMRO3nL/XAreCTrXb++ZS8HdDoTY4sb/+uuoNbPjZ+M0NGd8mtO1fgTkuccNkg
+         6ogPHTekqPq99KoP9/w43enkQ7wqwnxRsb/dGsnN/lPOtugQxWbD/YKpQChOeoYJ+vXw
+         B1vehsxJFODl6oFtY9I3NT2/XbATGAKahxL/MqQJiqq6yEjU6q1uN9nO6L6RKGi3DTPP
+         HKq6rNu41Wqno2ppq3/ZN2B9mFsvHxO+ecLW3V5qRbweVAwd0N043mM5OLWXh9Gqiooe
+         4M9g==
+X-Gm-Message-State: AOAM531TP8cPWecI68IlA5PUA9byyS8PYhgnMz7l1BJq2HrGHsmVUASF
+        6VdGqtTgmKF0Z/yYSyqbp2cVF8ywK1+nMuOr61+BgA==
+X-Google-Smtp-Source: ABdhPJzSPncGLKmwONqIrR5yKoPLvcW5c4OXIAKLZmbI58H8i0gsT7/X+baLgsqUByC1c10NX7cSCvumNCkKi81cKhE=
+X-Received: by 2002:a92:c8c4:: with SMTP id c4mr16457759ilq.287.1600175813496;
+ Tue, 15 Sep 2020 06:16:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915121815.GA98308@sol>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200908125813.8809-1-brgl@bgdev.pl> <CADYN=9+3kHG0CexzZiMQoXdF2piN2ZhOTObhY=7VCKrnFVN0Kw@mail.gmail.com>
+ <20200915131228.GX3956970@smile.fi.intel.com>
+In-Reply-To: <20200915131228.GX3956970@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 15 Sep 2020 15:16:42 +0200
+Message-ID: <CAMRc=MdGwkEp4sL=oBuk-x4cd7BWga76X0Rvq8PN-P+vjvp=Fg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpiolib: generalize GPIO line names property
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 08:18:15PM +0800, Kent Gibson wrote:
-> On Tue, Sep 15, 2020 at 12:20:22PM +0300, Andy Shevchenko wrote:
-> > On Tue, Sep 15, 2020 at 07:05:26AM +0800, Kent Gibson wrote:
-> > > On Mon, Sep 14, 2020 at 05:37:43PM +0300, Andy Shevchenko wrote:
-> > 
-> > ...
-> > 
-> > > It can return size_t now.
-> > 
-> > > >  	ssize_t bytes_read = 0;
-> > > > +	ssize_t ge_size;
-> > > 
-> > > Similarly here.
-> > 
-> > I deliberately left the ssize_t type to be consistent with the returned type of
-> > the function and bytes_read. If you insist on the type change I will do, though
-> > I personally like my approach.
-> > 
-> 
-> Bart prefers to use unsigned ints where variables are never negative,
-> and lineevent_get_size() never returns negative so should be size_t.
-> And it feels like a sizeof() to me so should return a size_t.
-> 
-> By the same logic bytes_read is never negative so it should be size_t as
-> well.  It seems reasonable to assume that bytes_read will always be less
-> than SSIZE_MAX so any cast to ssize_t for the return would be harmless.
-> Though changing that would probably mean a separate patch?
-> 
-> > Thanks for your review. Before I'm going on it, can you confirm that these are
-> > the only issues with the patch and after addressing them you will be okay with
-> > the patch?
-> 
-> I have suggested renaming ge_size to event_size, but that is just personal
-> preference. You have more than enough documentation describing the issue
-> where it is assigned, so I'm fine with that.
-> 
-> These are just my suggestions. Feel free to ignore them.
+On Tue, Sep 15, 2020 at 3:12 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Sep 15, 2020 at 02:01:56PM +0200, Anders Roxell wrote:
+> > On Tue, 8 Sep 2020 at 18:40, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > >
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > >
+> > > I initially sent this as part of the gpio-mockup overhaul but since
+> > > these patches are indepentent and the work on gpio-mockup may become
+> > > more complicated - I'm sending these separately.
+> > >
+> > > The only change is adding additional property helpers to count strings
+> > > in array.
+> > >
+> > > Bartosz Golaszewski (3):
+> > >   device: property: add helpers to count items in string arrays
+> > >   gpiolib: generalize devprop_gpiochip_set_names() for device properties
+> > >   gpiolib: unexport devprop_gpiochip_set_names()
+>
+> Ha-ha, OF unittest is of_node centric. definitely there is no backed device.
+>
+> Bart, it seems we are stuck with fwnode interface.
+>
 
-Thanks for review!
+Wait what?! This means the implementation is wrong - the whole concept
+of device properties is to be generic and to hide the underlying
+fwnode or OF properties. If anything we should fix
+device/base/property.c to fall back to OF.
 
-I will send v3 soon, but I will leave ssize_t by the reasons I mentioned above.
+What is happening exactly? If all fwnode code compiled out?
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'll try to give it a spin and see what can be done but I don't like
+that device_property_* functions fail if you have OF but not fwnode.
 
-
+Bart
