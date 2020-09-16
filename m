@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DE2C43461
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB0C433E2
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8745921D90
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F4C21D90
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600280475;
-	bh=4AabZbuK+N6lbfohVlt0qp5YZ6D+w3XFtXgytzSRvZg=;
+	s=default; t=1600280483;
+	bh=4dW5n48JqvNP10b6scxas3MFTEWsL4Xf/7dxjZPBmik=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EsLWbsBzObX01kHxAhcICBQJ9GStvbclkSQtiSZTlUVSQoLaKzOVwRHbatLiU/t9d
-	 mwrB9DzJfAWOKz8zmPn7LmfMEk2rn5pcatsGfS78Qrvu2FhxA6oAKr8IvHH12aSnQM
-	 Mb/oUI5GOcidCeS11VGrm8XPwYlugMRYcZ2P3lak=
+	b=uxQCA7zd5t0Bll+x4BoTuBYn+GNkNVzoEq5lJkwnPmwNMJUWyVa5lJM2zzOfcvRdM
+	 5CTFfffHwSTynFE+y/y0skyODlWHPir/x3yvo14wC8rnkFZ3msOov9tn5RgL6PvYp8
+	 bgQuAvlFGlBOzbYqQ6ZWI4zOkPfzR/HQtNpk4mQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbgIPSM1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:12:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52642 "EHLO mail.kernel.org"
+        id S1727838AbgIPSM0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:12:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727817AbgIPSKo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:10:44 -0400
+        id S1727818AbgIPSKp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 16 Sep 2020 14:10:45 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25FC822A83;
-        Wed, 16 Sep 2020 16:23:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56877229EF;
+        Wed, 16 Sep 2020 16:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273412;
-        bh=4AabZbuK+N6lbfohVlt0qp5YZ6D+w3XFtXgytzSRvZg=;
+        s=default; t=1600273437;
+        bh=4dW5n48JqvNP10b6scxas3MFTEWsL4Xf/7dxjZPBmik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ry5eMM1sk6xj8SaN1XwXiOiVGXXo7SiTroZv+tK+y9Y1ZtK4Mx4N1hWFJkgf0Nqnw
-         dWqQKjD4sMsuXz5SoDhAbTVmA4PY95mqyBhOfaDZFQZjLclYs3V1e7nGR42gLsaOsF
-         Z0q/1pmCK4WkeMNVV6RLSXBVA1MBoe5ZofX0Tr5o=
+        b=HxmF52lZgoYDVBhxTb89piXhWW+R9uWck3a+/W6iU4V7ZQZjRq2KrMQVXMKsI257U
+         pm74a+0hTPrqq8NIRC8PypqsXvlsh+zgzOchalpNewTyo+jUdNoEHybEeXi5NJSONr
+         EATgyIQ1pGPmQDEOr7oopIWnf/dmxVP49dkYHs4E=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -68,9 +68,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-unisoc@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-riscv@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/8] dt-bindings: gpio: pl061: add missing properties and include common schema
-Date:   Wed, 16 Sep 2020 18:22:45 +0200
-Message-Id: <20200916162250.16098-4-krzk@kernel.org>
+Subject: [PATCH 6/8] arm64: dts: imx8mq-librem5: correct GPIO hog property
+Date:   Wed, 16 Sep 2020 18:22:48 +0200
+Message-Id: <20200916162250.16098-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916162250.16098-1-krzk@kernel.org>
 References: <20200916162250.16098-1-krzk@kernel.org>
@@ -79,39 +79,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Describe all GPIO controller properties and include the common GPIO
-schema to be sure all common properties are properly validated.
+Correct the name of property for GPIO specifier in GPIO hog.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/gpio/pl061-gpio.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-index 313b17229247..6cbf10d8e120 100644
---- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-@@ -19,6 +19,9 @@ select:
-   required:
-     - compatible
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
+index 56295dd2fa8f..e4dedcb58f76 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
+@@ -251,7 +251,7 @@
  
-+allOf:
-+  - $ref: gpio-common.yaml#
-+
- properties:
-   $nodename:
-     pattern: "^gpio@[0-9a-f]+$"
-@@ -51,7 +54,10 @@ properties:
- 
-   gpio-controller: true
- 
-+  gpio-line-names: true
-+
-   gpio-ranges:
-+    minItems: 1
-     maxItems: 8
- 
- required:
+ 	pmic-5v {
+ 		gpio-hog;
+-		gpio = <&gpio1 1 GPIO_ACTIVE_HIGH>;
++		gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+ 		input;
+ 	};
+ };
 -- 
 2.17.1
 
