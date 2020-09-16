@@ -7,98 +7,107 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3110C35256
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 149AFC433E2
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73AF4221EB
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B78C1208E4
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600280487;
-	bh=Jyj1xhY3bfoHP8MamoDVB6jYumTCPOuxehh3CoJHYe8=;
+	s=default; t=1600280754;
+	bh=Ty18eFbR1LQ96gqxXM+8sE2Q1P8WRnMu4EObDZv2/zk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eu+FG52wqezOp6vPdZ6lD8njyAyxsZnGpKD8gAPahv7+M8hMYP+P5avcEf+rnJ8mL
-	 as0D1sjxeLdvROzWIi4owmBNI+b1eciqlHzEbSB2HMqNU09vGEUSWFZ2fL6OAqb5hq
-	 9ldgwaPy05ivT47UjkaScINQJ8XBpK9p6y1A908A=
+	b=REzWSRHIDPpEm9mw98giRh1I1b45wsLk2YdEzw4ugpkKUX5SQSE6mGn2vBzAyPhil
+	 2Y5UoAwyk8Vv34eyyU1HlXBOVRjT8k3myrUP7pkbmKqio+GWv4/xRTHNh4oFNgpDJo
+	 AdCRv+8Nc7/dB4NwyRXB4ptGFUCUItLIo9fwXH2o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgIPSMY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
+        id S1727843AbgIPSZu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727819AbgIPSKp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:10:45 -0400
+        id S1727789AbgIPSZn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 16 Sep 2020 14:25:43 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B7AE22AAD;
-        Wed, 16 Sep 2020 16:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E571022472;
+        Wed, 16 Sep 2020 15:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273445;
-        bh=Jyj1xhY3bfoHP8MamoDVB6jYumTCPOuxehh3CoJHYe8=;
+        s=default; t=1600271901;
+        bh=Ty18eFbR1LQ96gqxXM+8sE2Q1P8WRnMu4EObDZv2/zk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5tyTJTJejhb/FIGR9kdHGFYDxnRuqn1kL953jieGY7lUS9QvXS/58u7ZzvIzBaY/
-         dZKdf0zyJGDFlj2eRmx3c49c4cU3rxA4bMc97/o6RLhKJb3B5DMCK33+dcVE8UbInQ
-         kgtpJHVuJjWhxUtg4bJlieN4RdKjAzpp0U0xdir8=
+        b=hcD1MRTTKLJUVNVTe1M/7hjIPTwl4PEdGwc3NKI5mW7umBw+PpdChTixDl/LPB3ZO
+         EyF6tdHwuE94pBwX9llb65GacZaR+ZzMafTewQzccZUQ8DMpU1Apm/fxMhxvLlHcxs
+         xWcx3ouuKgd6ZaZ9hM0Af5dMetJnlE/0JTGUazA4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Sungbo Eo <mans0n@gorani.run>, Stefan Agner <stefan@agner.ch>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yash Shah <yash.shah@sifive.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-unisoc@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-riscv@lists.infradead.org
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 7/8] arm64: dts: imx8mq-librem5: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 18:22:49 +0200
-Message-Id: <20200916162250.16098-8-krzk@kernel.org>
+Subject: [PATCH v3 06/15] arm64: dts: ti: align GPIO hog names with dtschema
+Date:   Wed, 16 Sep 2020 17:57:06 +0200
+Message-Id: <20200916155715.21009-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916162250.16098-1-krzk@kernel.org>
-References: <20200916162250.16098-1-krzk@kernel.org>
+In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
+References: <20200916155715.21009-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-dtschema expects GPIO hogs to end with 'hog' prefix.
+The convention for node names is to use hyphens, not underscores.
+dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-index e4dedcb58f76..6cbcee2fb938 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-@@ -249,7 +249,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_pmic_5v>;
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
+index 648267284582..456e7818b521 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
+@@ -407,7 +407,7 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
--	pmic-5v {
-+	pmic-5v-hog {
- 		gpio-hog;
- 		gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
- 		input;
+-		p09 {
++		p09-hog {
+ 			/* P11 - MCASP/TRACE_MUX_S0 */
+ 			gpio-hog;
+ 			gpios = <9 GPIO_ACTIVE_HIGH>;
+@@ -415,7 +415,7 @@
+ 			line-name = "MCASP/TRACE_MUX_S0";
+ 		};
+ 
+-		p10 {
++		p10-hog {
+ 			/* P12 - MCASP/TRACE_MUX_S1 */
+ 			gpio-hog;
+ 			gpios = <10 GPIO_ACTIVE_HIGH>;
 -- 
 2.17.1
 
