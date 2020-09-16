@@ -2,129 +2,110 @@ Return-Path: <SRS0=j2kj=CZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF7DC43461
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F370C2BB84
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 821FC20872
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600288629;
-	bh=euoNrh4CREhCtBrTlTDs/D23cyiar9mHO2VGZrvJGGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q3O98ARIf+I4jJx+Xxgm+hBqm9G8pMApw+2/IWd0ZpDi3cVeSY2TlGYFfCP1DOmhf
-	 q46BeYs/EplJ9dj1tM4snskzy/SEqDEGN3n7YS1Hlutzp4X+DMCxo4rMfOPEt2SAi7
-	 5CJanlQgUuXhDwoRq+9IrzEybOJEHjqwbFns88sM=
+	by mail.kernel.org (Postfix) with ESMTP id 113B7205CB
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRSvvi0Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgIPUgi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbgIPRKa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:10:30 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA7EF22473;
-        Wed, 16 Sep 2020 15:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271933;
-        bh=euoNrh4CREhCtBrTlTDs/D23cyiar9mHO2VGZrvJGGw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r7ZBSAWp7ngag0GivIYwEMRvi2kI5TJyoUxd2xusn24/6ovXSjFvdFXYscQlIvUlL
-         gqpGyfwBEw0kKQGlha2BEP6GReJ4HpHYs1ZIL5ck1dgiJaZmcAsukmLwMClRxnlD9/
-         4owCOsi3+7MgIuO0CrXIPLYDZ/BRpPcnZzBOBK/A=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
+        id S1727012AbgIPUmf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 16:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbgIPUmc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Sep 2020 16:42:32 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB1BC061756;
+        Wed, 16 Sep 2020 13:42:26 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id d19so3829714pld.0;
+        Wed, 16 Sep 2020 13:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=KTEiXWsrNTTNF4brX7sslTaA27Wj3jCvRMzdzjVA1+k=;
+        b=cRSvvi0YE0LJjsNnQLFLiwPLRVlEijDhvdRIBIBr8yhwSaTr23O6/FkV3eUeZHWNH1
+         5dd5sqPqaj0uMn7SPpHv3fgzwI8kR2tF+zHRYDm9JKnO65URipWWSVxohnglZHVlq1Nx
+         /Zb8A3yC5nKh2vBpN1z43jRgUMkDNJKbY6jHt8QZDZdp67hKaPTshyMQomOmgn6xcImw
+         lBZKQzybZDMWY7QifXzwjoQqOi8oZBHeKuXdhKTEt2mD/cm4DVLNcf2UkPYItgsQ5Lwr
+         u0TsOa468276YYmj4N326UMVf4BMH19Cnt+s8qGBOwtzEwGtw34AmhAXkpr9eBNTVEVp
+         lt2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KTEiXWsrNTTNF4brX7sslTaA27Wj3jCvRMzdzjVA1+k=;
+        b=bVLpnDBM64NEByv6wnlj9HQNNl4GZpZxNz9PIykyMs0qxMGW5QzaLNgxiQk/xWMKsD
+         75qGXfq206L/q/fJHJ0r+MeG43ZOG1OHkNzdGx6WsswvsKF5JZQMrXLQmxMRetKC+kxZ
+         FdLmQQWfKeSP/FOHCpwWtvgY/72i9+1GlbLzHTn2TjhO8EN0ZbRQ/aSNwZBf54+i3rW1
+         Y/FSOZf5/+3iU+dAsEzlaAOzp39ly31C3J0o1FZQoSDYsb7W3K79MkH9qRlWjj2Qs6nV
+         7aizB8BMp1yQfEvxIsw7m7BaYx0YLhtzcXOuIyi5JHBfeIcPX4YLJMqfInl+aeFXXWES
+         BJJg==
+X-Gm-Message-State: AOAM531ZtLHkAKa1ppk6IOtkzA0Lmp9JDSiDe0XGw926eFDURGtQSOPx
+        4NE5Lrbjt2Rly+Hn0J8cG88=
+X-Google-Smtp-Source: ABdhPJz3bA82VJkPymAABgFmCsDwVkj3PWIi1CeckDZIOwQIJJc3547a8fhdrIhdpnvHex5U0dmVMQ==
+X-Received: by 2002:a17:902:10f:b029:d1:e5e7:bdd7 with SMTP id 15-20020a170902010fb02900d1e5e7bdd7mr8126307plb.55.1600288945769;
+        Wed, 16 Sep 2020 13:42:25 -0700 (PDT)
+Received: from taoren-ubuntu-R90MNF91.thefacebook.com (c-73-252-146-110.hsd1.ca.comcast.net. [73.252.146.110])
+        by smtp.gmail.com with ESMTPSA id n9sm10071276pgi.2.2020.09.16.13.42.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 13:42:24 -0700 (PDT)
+From:   rentao.bupt@gmail.com
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
         Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 10/15] ARM: dts: am3874: iceboard: fix GPIO expander reset GPIOs
-Date:   Wed, 16 Sep 2020 17:57:10 +0200
-Message-Id: <20200916155715.21009-11-krzk@kernel.org>
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, taoren@fb.com
+Cc:     Tao Ren <rentao.bupt@gmail.com>
+Subject: [PATCH] gpio: aspeed: fix ast2600 bank properties
+Date:   Wed, 16 Sep 2020 13:42:16 -0700
+Message-Id: <20200916204216.9423-1-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
-References: <20200916155715.21009-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Correct the property for reset GPIOs of the GPIO expander.
+From: Tao Ren <rentao.bupt@gmail.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+GPIO_U is mapped to the least significant byte of input/output mask, and
+the byte in "output" mask should be 0 because GPIO_U is input only. All
+the other bits need to be 1 because GPIO_V/W/X support both input and
+output modes.
+
+Similarly, GPIO_Y/Z are mapped to the 2 least significant bytes, and the
+according bits need to be 1 because GPIO_Y/Z support both input and
+output modes.
+
+Fixes: ab4a85534c3e ("gpio: aspeed: Add in ast2600 details to Aspeed driver")
+Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
 ---
- arch/arm/boot/dts/am3874-iceboard.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-aspeed.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am3874-iceboard.dts b/arch/arm/boot/dts/am3874-iceboard.dts
-index 1bb57019d082..9423e9feaa10 100644
---- a/arch/arm/boot/dts/am3874-iceboard.dts
-+++ b/arch/arm/boot/dts/am3874-iceboard.dts
-@@ -195,7 +195,7 @@
- 					"FMCA_PG_C2M", "FMCA_PRSNT_M2C_L", "FMCA_CLK_DIR", "SFP_LOS",
- 					"FMCB_EN_12V0", "FMCB_EN_3V3", "FMCB_EN_VADJ", "FMCB_PG_M2C",
- 					"FMCB_PG_C2M", "FMCB_PRSNT_M2C_L", "FMCB_CLK_DIR", "SFP_ModPrsL";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index 879db23d8454..d07bf2c3f136 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -1114,8 +1114,8 @@ static const struct aspeed_gpio_config ast2500_config =
  
- 			u42: pca9575@21 {
-@@ -208,7 +208,7 @@
- 					"QSFPA_LPMode", "QSFPB_ModPrsL", "QSFPB_IntL", "QSFPB_ResetL",
- 					"SFP_TxFault", "SFP_TxDisable", "SFP_RS0", "SFP_RS1",
- 					"QSFPB_ModSelL", "QSFPB_LPMode", "SEL_SFP", "ARM_MR";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
+ static const struct aspeed_bank_props ast2600_bank_props[] = {
+ 	/*     input	  output   */
+-	{5, 0xffffffff,  0x0000ffff}, /* U/V/W/X */
+-	{6, 0xffff0000,  0x0fff0000}, /* Y/Z */
++	{5, 0xffffffff,  0xffffff00}, /* U/V/W/X */
++	{6, 0x0000ffff,  0x0000ffff}, /* Y/Z */
+ 	{ },
+ };
  
- 			u48: pca9575@22 {
-@@ -227,7 +227,7 @@
- 					"GP_SW5", "GP_SW6", "GP_SW7", "GP_SW8",
- 					"GP_LED8", "GP_LED7", "GP_LED6", "GP_LED5",
- 					"GP_LED4", "GP_LED3", "GP_LED2", "GP_LED1";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			u59: pca9575@23 {
-@@ -240,7 +240,7 @@
- 					"GTX1V8PowerFault", "PHYAPowerFault", "PHYBPowerFault", "ArmPowerFault",
- 					"BP_SLOW_GPIO0", "BP_SLOW_GPIO1", "BP_SLOW_GPIO2", "BP_SLOW_GPIO3",
- 					"BP_SLOW_GPIO4", "BP_SLOW_GPIO5", "__unused_u59_p16", "__unused_u59_p17";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			tmp100@48 { compatible = "ti,tmp100"; reg = <0x48>; };
 -- 
 2.17.1
 
