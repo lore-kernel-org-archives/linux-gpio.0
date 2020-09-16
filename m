@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802C2C35257
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D57C43461
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 382C9221EE
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D81920872
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600288522;
-	bh=OZQQiNgbEb8ZHtloDc4attI+pGJEHjLlrjIjhE2p740=;
+	s=default; t=1600288598;
+	bh=fNcuVWkN1TjhyVwmEX+PcPTSMs1C1wjtAwGI/ZRYd+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Oji3cGTMFyDKa1gwXs7M2kkEVEyyxnRK8r6OjIg9rVe4d+EeLk6CotEboRm/4M3T7
-	 WFHUNV2jO3ZySFJ5m1v0VB46QxAcFvtTFfRzip2fC/d9IcV8+opxXUPxEJm/iFCQqg
-	 so13rqMg5r6K6Tsi8uqGSlnI4yOugJRTVzrC+QvU=
+	b=W0D1WiZ+J+64iLSvHzDNCMTM+cd2RjY1pzwNpiK7QEd77U9UToyAc2E8TTDWbSzqh
+	 r8gPhCe36zdv3UuJzIFZXR7RQ6JS616NFZ6dcCs9yIMGxWKyMwvgz8BlMMgQt2AhHi
+	 WQsqRHOx90mQzV+14/Z3Lc0emkJlqeFDnTwELq1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgIPUfV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:35:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60430 "EHLO mail.kernel.org"
+        id S1726889AbgIPUgJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 16:36:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726843AbgIPRKb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726854AbgIPRKb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 16 Sep 2020 13:10:31 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D44922B30;
-        Wed, 16 Sep 2020 16:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9600A22A84;
+        Wed, 16 Sep 2020 16:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273452;
-        bh=OZQQiNgbEb8ZHtloDc4attI+pGJEHjLlrjIjhE2p740=;
+        s=default; t=1600273422;
+        bh=fNcuVWkN1TjhyVwmEX+PcPTSMs1C1wjtAwGI/ZRYd+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tfKj/be4+r8rwTNc7bmVfsswqTcOXsQiNqhKVO+RtwvaQhrdo5ToeYXNBAAl8nb0I
-         gT1RG4b4JL+rLMux5Wi2aVdF6caBm7WWSoLETztCmT7+CXCFKsmzKw9GibovgMGalE
-         YeauZ8qQHDDpbkR182aQ3e6mfpTRZGPF1yuc0/WA=
+        b=2eFT/IHdk8kMc/sJr3aSUS93e7LsG7FvG1/lyhD03N9x4hHEjJcen2uN41Pr0BUUJ
+         cIoCliYuD46rWdiSiZ/MsWqo9yW/KgSCOUEdnQXn6GrR3/XLHts9Anzhk3/2cZ5gie
+         G8SYT29d6WLaOA2cDY0mZLuXoIdliyUA6me1lePs=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -68,9 +68,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-unisoc@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-riscv@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 8/8] ARM: dts: imx: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 18:22:50 +0200
-Message-Id: <20200916162250.16098-9-krzk@kernel.org>
+Subject: [PATCH 4/8] dt-bindings: gpio: fsl-imx-gpio: add i.MX ARMv6 and ARMv7 compatibles
+Date:   Wed, 16 Sep 2020 18:22:46 +0200
+Message-Id: <20200916162250.16098-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916162250.16098-1-krzk@kernel.org>
 References: <20200916162250.16098-1-krzk@kernel.org>
@@ -79,79 +79,45 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-dtschema for GPIO controllers expects GPIO hogs to end with 'hog'
-prefix.
+Several DTSes with ARMv6 and ARMv7 i.MX SoCs introduce their own
+compatibles so add them to fix dtbs_check warnings like:
+
+  arch/arm/boot/dts/imx35-pdk.dt.yaml: gpio@53fa4000:
+    compatible: ['fsl,imx35-gpio', 'fsl,imx31-gpio'] is not valid under any of the given schemas
+
+  arch/arm/boot/dts/imx51-babbage.dt.yaml: gpio@73f90000:
+    compatible: ['fsl,imx51-gpio', 'fsl,imx35-gpio'] is not valid under any of the given schemas
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/imx51-zii-rdu1.dts        | 2 +-
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi     | 8 ++++----
- arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/gpio/fsl-imx-gpio.yaml       | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-index e559ab0c3645..ec8ca3ac2c1c 100644
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -451,7 +451,7 @@
- 			  "", "", "", "",
- 			  "", "", "", "";
- 
--	unused-sd3-wp-gpio {
-+	unused-sd3-wp-hog {
- 		/*
- 		 * See pinctrl_esdhc1 below for more details on this
- 		 */
-diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index 66b15748e287..c0a76202e16b 100644
---- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -330,28 +330,28 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio3_hog>;
- 
--	usb-emulation {
-+	usb-emulation-hog {
- 		gpio-hog;
- 		gpios = <19 GPIO_ACTIVE_HIGH>;
- 		output-low;
- 		line-name = "usb-emulation";
- 	};
- 
--	usb-mode1 {
-+	usb-mode1-hog {
- 		gpio-hog;
- 		gpios = <20 GPIO_ACTIVE_HIGH>;
- 		output-high;
- 		line-name = "usb-mode1";
- 	};
- 
--	usb-pwr {
-+	usb-pwr-hog {
- 		gpio-hog;
- 		gpios = <22 GPIO_ACTIVE_LOW>;
- 		output-high;
- 		line-name = "usb-pwr-ctrl-en-n";
- 	};
- 
--	usb-mode2 {
-+	usb-mode2-hog {
- 		gpio-hog;
- 		gpios = <23 GPIO_ACTIVE_HIGH>;
- 		output-high;
-diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
-index a0bbec57ddc7..3ec042bfccba 100644
---- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
-+++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
-@@ -110,7 +110,7 @@
- };
- 
- &gpio5 {
--	emmc-usd-mux {
-+	emmc-usd-mux-hog {
- 		gpio-hog;
- 		gpios = <1 GPIO_ACTIVE_LOW>;
- 		output-high;
+diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+index 737756e081fb..ad761e2f380a 100644
+--- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+@@ -21,8 +21,20 @@ properties:
+           - fsl,imx31-gpio
+           - fsl,imx35-gpio
+           - fsl,imx7d-gpio
++      - items:
++          - const: fsl,imx35-gpio
++          - const: fsl,imx31-gpio
+       - items:
+           - enum:
++              - fsl,imx50-gpio
++              - fsl,imx51-gpio
++              - fsl,imx53-gpio
++              - fsl,imx6q-gpio
++              - fsl,imx6sl-gpio
++              - fsl,imx6sll-gpio
++              - fsl,imx6sx-gpio
++              - fsl,imx6ul-gpio
++              - fsl,imx7d-gpio
+               - fsl,imx8mm-gpio
+               - fsl,imx8mn-gpio
+               - fsl,imx8mp-gpio
 -- 
 2.17.1
 
