@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149AFC433E2
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96C8C43461
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B78C1208E4
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7524121D43
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600280754;
-	bh=Ty18eFbR1LQ96gqxXM+8sE2Q1P8WRnMu4EObDZv2/zk=;
+	s=default; t=1600280772;
+	bh=sVRW+Q4w/VIyVW+IR4tgq66N90jKOapREO5ueA+lxUY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=REzWSRHIDPpEm9mw98giRh1I1b45wsLk2YdEzw4ugpkKUX5SQSE6mGn2vBzAyPhil
-	 2Y5UoAwyk8Vv34eyyU1HlXBOVRjT8k3myrUP7pkbmKqio+GWv4/xRTHNh4oFNgpDJo
-	 AdCRv+8Nc7/dB4NwyRXB4ptGFUCUItLIo9fwXH2o=
+	b=1/MdlC3Ci0npb/welF9UuIQTa4h6XRKj+/6xJvgv64FHnwXV0d/9gLDFsJodvftRQ
+	 AnPeWWmRqrHFVclL7+segTeC2YO0F8hjILgGJeplwOVmecNtBPqqLv4cuSw6a1Xlve
+	 9I69ZZ+oOxnjfMT2Xq1lt3eEKh6Ysd9G6x+T8gT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgIPSZu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:25:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56740 "EHLO mail.kernel.org"
+        id S1727977AbgIPS0K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:26:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbgIPSZn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1727723AbgIPSZn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Wed, 16 Sep 2020 14:25:43 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E571022472;
-        Wed, 16 Sep 2020 15:58:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488FE224D1;
+        Wed, 16 Sep 2020 15:59:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271901;
-        bh=Ty18eFbR1LQ96gqxXM+8sE2Q1P8WRnMu4EObDZv2/zk=;
+        s=default; t=1600271972;
+        bh=sVRW+Q4w/VIyVW+IR4tgq66N90jKOapREO5ueA+lxUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hcD1MRTTKLJUVNVTe1M/7hjIPTwl4PEdGwc3NKI5mW7umBw+PpdChTixDl/LPB3ZO
-         EyF6tdHwuE94pBwX9llb65GacZaR+ZzMafTewQzccZUQ8DMpU1Apm/fxMhxvLlHcxs
-         xWcx3ouuKgd6ZaZ9hM0Af5dMetJnlE/0JTGUazA4=
+        b=jlud3ZfnHWw7zTZF2T9cB6BlWS09yQycNhBZqAyoDK+lyMZ+TxuwDSYneGZtg8u6D
+         Ng/l+RwM7zHlz3rDcjw2ByKDzWA1kUVYekTUzwHMFQKZc20hWBRokgls6nVd1+TzNO
+         L0+qiQjbFVgHa5z9jQyCaXAuUWBKgNknv11M93vY=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -67,9 +67,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 06/15] arm64: dts: ti: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 17:57:06 +0200
-Message-Id: <20200916155715.21009-7-krzk@kernel.org>
+Subject: [PATCH v3 15/15] ARM: dts: imx6q: align GPIO hog names with dtschema
+Date:   Wed, 16 Sep 2020 17:57:15 +0200
+Message-Id: <20200916155715.21009-16-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
 References: <20200916155715.21009-1-krzk@kernel.org>
@@ -78,36 +78,145 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The convention for node names is to use hyphens, not underscores.
-dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
+dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.  While
+touching the hogs, fix indentation (spaces -> tabs).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx6q-b450v3.dts  | 14 +++++++-------
+ arch/arm/boot/dts/imx6q-b650v3.dts  | 12 ++++++------
+ arch/arm/boot/dts/imx6q-b850v3.dts  |  4 ++--
+ arch/arm/boot/dts/imx6q-bx50v3.dtsi | 12 ++++++------
+ 4 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-index 648267284582..456e7818b521 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
-@@ -407,7 +407,7 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
+diff --git a/arch/arm/boot/dts/imx6q-b450v3.dts b/arch/arm/boot/dts/imx6q-b450v3.dts
+index fb0980190aa0..604f2420370f 100644
+--- a/arch/arm/boot/dts/imx6q-b450v3.dts
++++ b/arch/arm/boot/dts/imx6q-b450v3.dts
+@@ -84,19 +84,19 @@
+ };
  
--		p09 {
-+		p09-hog {
- 			/* P11 - MCASP/TRACE_MUX_S0 */
- 			gpio-hog;
- 			gpios = <9 GPIO_ACTIVE_HIGH>;
-@@ -415,7 +415,7 @@
- 			line-name = "MCASP/TRACE_MUX_S0";
- 		};
+ &pca9539 {
+-	P04 {
++	P04-hog {
+ 		gpio-hog;
+ 		gpios = <4 0>;
+ 		output-low;
+ 		line-name = "PCA9539-P04";
+ 	};
  
--		p10 {
-+		p10-hog {
- 			/* P12 - MCASP/TRACE_MUX_S1 */
- 			gpio-hog;
- 			gpios = <10 GPIO_ACTIVE_HIGH>;
+-        P07 {
+-                gpio-hog;
+-                gpios = <7 0>;
+-                output-low;
+-                line-name = "PCA9539-P07";
+-        };
++	P07-hog {
++		gpio-hog;
++		gpios = <7 0>;
++		output-low;
++		line-name = "PCA9539-P07";
++	};
+ };
+ 
+ &pci_root {
+diff --git a/arch/arm/boot/dts/imx6q-b650v3.dts b/arch/arm/boot/dts/imx6q-b650v3.dts
+index 8f762d9c5ae9..56d2aeb1900c 100644
+--- a/arch/arm/boot/dts/imx6q-b650v3.dts
++++ b/arch/arm/boot/dts/imx6q-b650v3.dts
+@@ -84,12 +84,12 @@
+ };
+ 
+ &pca9539 {
+-        P07 {
+-                gpio-hog;
+-                gpios = <7 0>;
+-                output-low;
+-                line-name = "PCA9539-P07";
+-        };
++	P07-hog {
++		gpio-hog;
++		gpios = <7 0>;
++		output-low;
++		line-name = "PCA9539-P07";
++	};
+ };
+ 
+ &usbphy1 {
+diff --git a/arch/arm/boot/dts/imx6q-b850v3.dts b/arch/arm/boot/dts/imx6q-b850v3.dts
+index 1ea64ecf4291..3d6b757bf325 100644
+--- a/arch/arm/boot/dts/imx6q-b850v3.dts
++++ b/arch/arm/boot/dts/imx6q-b850v3.dts
+@@ -199,14 +199,14 @@
+ };
+ 
+ &pca9539 {
+-	P10 {
++	P10-hog {
+ 		gpio-hog;
+ 		gpios = <8 0>;
+ 		output-low;
+ 		line-name = "PCA9539-P10";
+ 	};
+ 
+-	P11 {
++	P11-hog {
+ 		gpio-hog;
+ 		gpios = <9 0>;
+ 		output-low;
+diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+index 02812e6cb302..2a98cc657595 100644
+--- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
++++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
+@@ -248,42 +248,42 @@
+ 				interrupt-parent = <&gpio2>;
+ 				interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+ 
+-				P12 {
++				P12-hog {
+ 					gpio-hog;
+ 					gpios = <10 0>;
+ 					output-low;
+ 					line-name = "PCA9539-P12";
+ 				};
+ 
+-				P13 {
++				P13-hog {
+ 					gpio-hog;
+ 					gpios = <11 0>;
+ 					output-low;
+ 					line-name = "PCA9539-P13";
+ 				};
+ 
+-				P14 {
++				P14-hog {
+ 					gpio-hog;
+ 					gpios = <12 0>;
+ 					output-low;
+ 					line-name = "PCA9539-P14";
+ 				};
+ 
+-				P15 {
++				P15-hog {
+ 					gpio-hog;
+ 					gpios = <13 0>;
+ 					output-low;
+ 					line-name = "PCA9539-P15";
+ 				};
+ 
+-				P16 {
++				P16-hog {
+ 					gpio-hog;
+ 					gpios = <14 0>;
+ 					output-low;
+ 					line-name = "PCA9539-P16";
+ 				};
+ 
+-				P17 {
++				P17-hog {
+ 					gpio-hog;
+ 					gpios = <15 0>;
+ 					output-low;
 -- 
 2.17.1
 
