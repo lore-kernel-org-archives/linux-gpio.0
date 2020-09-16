@@ -2,110 +2,106 @@ Return-Path: <SRS0=j2kj=CZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F370C2BB84
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8126CC2BB84
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 113B7205CB
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRSvvi0Y"
+	by mail.kernel.org (Postfix) with ESMTP id 4967E21D24
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 20:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgIPUmf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbgIPUmc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Sep 2020 16:42:32 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB1BC061756;
-        Wed, 16 Sep 2020 13:42:26 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id d19so3829714pld.0;
-        Wed, 16 Sep 2020 13:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KTEiXWsrNTTNF4brX7sslTaA27Wj3jCvRMzdzjVA1+k=;
-        b=cRSvvi0YE0LJjsNnQLFLiwPLRVlEijDhvdRIBIBr8yhwSaTr23O6/FkV3eUeZHWNH1
-         5dd5sqPqaj0uMn7SPpHv3fgzwI8kR2tF+zHRYDm9JKnO65URipWWSVxohnglZHVlq1Nx
-         /Zb8A3yC5nKh2vBpN1z43jRgUMkDNJKbY6jHt8QZDZdp67hKaPTshyMQomOmgn6xcImw
-         lBZKQzybZDMWY7QifXzwjoQqOi8oZBHeKuXdhKTEt2mD/cm4DVLNcf2UkPYItgsQ5Lwr
-         u0TsOa468276YYmj4N326UMVf4BMH19Cnt+s8qGBOwtzEwGtw34AmhAXkpr9eBNTVEVp
-         lt2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KTEiXWsrNTTNF4brX7sslTaA27Wj3jCvRMzdzjVA1+k=;
-        b=bVLpnDBM64NEByv6wnlj9HQNNl4GZpZxNz9PIykyMs0qxMGW5QzaLNgxiQk/xWMKsD
-         75qGXfq206L/q/fJHJ0r+MeG43ZOG1OHkNzdGx6WsswvsKF5JZQMrXLQmxMRetKC+kxZ
-         FdLmQQWfKeSP/FOHCpwWtvgY/72i9+1GlbLzHTn2TjhO8EN0ZbRQ/aSNwZBf54+i3rW1
-         Y/FSOZf5/+3iU+dAsEzlaAOzp39ly31C3J0o1FZQoSDYsb7W3K79MkH9qRlWjj2Qs6nV
-         7aizB8BMp1yQfEvxIsw7m7BaYx0YLhtzcXOuIyi5JHBfeIcPX4YLJMqfInl+aeFXXWES
-         BJJg==
-X-Gm-Message-State: AOAM531ZtLHkAKa1ppk6IOtkzA0Lmp9JDSiDe0XGw926eFDURGtQSOPx
-        4NE5Lrbjt2Rly+Hn0J8cG88=
-X-Google-Smtp-Source: ABdhPJz3bA82VJkPymAABgFmCsDwVkj3PWIi1CeckDZIOwQIJJc3547a8fhdrIhdpnvHex5U0dmVMQ==
-X-Received: by 2002:a17:902:10f:b029:d1:e5e7:bdd7 with SMTP id 15-20020a170902010fb02900d1e5e7bdd7mr8126307plb.55.1600288945769;
-        Wed, 16 Sep 2020 13:42:25 -0700 (PDT)
-Received: from taoren-ubuntu-R90MNF91.thefacebook.com (c-73-252-146-110.hsd1.ca.comcast.net. [73.252.146.110])
-        by smtp.gmail.com with ESMTPSA id n9sm10071276pgi.2.2020.09.16.13.42.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 13:42:24 -0700 (PDT)
-From:   rentao.bupt@gmail.com
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, taoren@fb.com
-Cc:     Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH] gpio: aspeed: fix ast2600 bank properties
-Date:   Wed, 16 Sep 2020 13:42:16 -0700
-Message-Id: <20200916204216.9423-1-rentao.bupt@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726501AbgIPUpn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 16:45:43 -0400
+Received: from mga03.intel.com ([134.134.136.65]:21603 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbgIPRDY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:03:24 -0400
+IronPort-SDR: 0S+lRSoIFN1hNt1uyl4BizDuBXwzBRsTUFIYFjCPa6ZXIJ0Dbka/0/aZ+Bcf6hFu5QN4F5Xbd4
+ sl440QxVMHAw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9745"; a="159522952"
+X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
+   d="scan'208";a="159522952"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 07:29:37 -0700
+IronPort-SDR: JLxWPzmpU6s9li6Ml4Q2lqYdMMIDVcaFdVWu1zenXIZs0Q9diPfrJ+nt76t3ZcgyCOsIBZl8YS
+ vfwsGEKSfZpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
+   d="scan'208";a="336040902"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2020 07:29:33 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1kIYR8-00H6Ky-0Q; Wed, 16 Sep 2020 17:29:30 +0300
+Date:   Wed, 16 Sep 2020 17:29:30 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH next] gpiolib: check for parent device in
+ devprop_gpiochip_set_names()
+Message-ID: <20200916142930.GK3956970@smile.fi.intel.com>
+References: <20200916134327.3435-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916134327.3435-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Tao Ren <rentao.bupt@gmail.com>
+On Wed, Sep 16, 2020 at 03:43:27PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> It's possible for a GPIO chip to not have a parent device (whose
+> properties we inspect for 'gpio-line-names'). In this case we should
+> simply return from devprop_gpiochip_set_names(). Add an appropriate
+> check for this use-case.
 
-GPIO_U is mapped to the least significant byte of input/output mask, and
-the byte in "output" mask should be 0 because GPIO_U is input only. All
-the other bits need to be 1 because GPIO_V/W/X support both input and
-output modes.
+Ah, nice!
+Can we also add a small comment in the code, b/c w/o it I would stumble over
+and eager to remove looks-as-unneeded check?
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Similarly, GPIO_Y/Z are mapped to the 2 least significant bytes, and the
-according bits need to be 1 because GPIO_Y/Z support both input and
-output modes.
+> Fixes: 7cba1a4d5e16 ("gpiolib: generalize devprop_gpiochip_set_names() for device properties")
+> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/gpiolib.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index b7b608ef9..ac2c77edc 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -375,6 +375,9 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
+>  	int ret, i;
+>  	int count;
+>  
+> +	if (!dev)
+> +		return 0;
+> +
+>  	count = device_property_string_array_count(dev, "gpio-line-names");
+>  	if (count < 0)
+>  		return 0;
+> -- 
+> 2.26.1
+> 
 
-Fixes: ab4a85534c3e ("gpio: aspeed: Add in ast2600 details to Aspeed driver")
-Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
----
- drivers/gpio/gpio-aspeed.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 879db23d8454..d07bf2c3f136 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -1114,8 +1114,8 @@ static const struct aspeed_gpio_config ast2500_config =
- 
- static const struct aspeed_bank_props ast2600_bank_props[] = {
- 	/*     input	  output   */
--	{5, 0xffffffff,  0x0000ffff}, /* U/V/W/X */
--	{6, 0xffff0000,  0x0fff0000}, /* Y/Z */
-+	{5, 0xffffffff,  0xffffff00}, /* U/V/W/X */
-+	{6, 0x0000ffff,  0x0000ffff}, /* Y/Z */
- 	{ },
- };
- 
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
