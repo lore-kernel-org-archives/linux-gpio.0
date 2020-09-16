@@ -2,109 +2,227 @@ Return-Path: <SRS0=j2kj=CZ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A522C433E2
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 17:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDEAC433E2
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45508206DC
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 17:48:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="i9BalPT4"
+	by mail.kernel.org (Postfix) with ESMTP id E5A6C21D90
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Sep 2020 18:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600280172;
+	bh=qIjIq4ccrlQzXJFJ28ymdkmjtOcIfObeEiV2Tpqqy+0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=MdppTQKpYr1SIMSNU1yOjPxeoBUaMBtqqWg8wuKlvkbQ57ADBNbkzq/OOoYyy4qKU
+	 vlqHPmaNkJ7JV02AEw4SiDHRGcJltyTpZNIk0drbIn5IhgF2/3pLv1jC7cT4hydviI
+	 HVEqQtitAFtIBvF+fXzTTbCbC2TsLIGlvlsG0Yik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbgIPRsp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:48:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbgIPRsR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Sep 2020 13:48:17 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2625C0086B5
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2020 06:43:46 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id m6so7030676wrn.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2020 06:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KWaDQ7uhIqw2OfY7WhIv98jjbgPy0IbYqKs55rRj5Ms=;
-        b=i9BalPT4mWy0zyrOLfTWbIOF6KnoctQ96zFUjXi1v5Y4OjC11p6V2XZlW9IXv2YUA+
-         RULN16fN1TvTqYSHWiIBKnGFZNdIC317uMj6SJzcbar9WeItWypLMMHI4wGzYAHqPJXW
-         cTtDv9q5DKw+EmrS0E+asIx9o5mZjlcC3+cv1Pe4gKL8MxdWYi8otF3RzIG5HJKWCv1/
-         MYqAR1bKomXraD48pOFvLCvjtF27vYtQVqtIjTKC99MVFheSfOsl8OACeTV0SA4mzXPy
-         ozAk2zBwF7g47bPxnQconu8gXT7DGul3kQS8wMnXHt/ma+QPDwiw/USCwL2/NhAkmiD3
-         5NOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KWaDQ7uhIqw2OfY7WhIv98jjbgPy0IbYqKs55rRj5Ms=;
-        b=kzwMX9VAfvrFaab6U97RBl15vFKFBa9bQ2MhwJ9UIEXoL/RIpx5N+w4pfXFNYw3Gvk
-         ZnIrfyJblUi5kWsg1dwzACdmoTc0T0iTwL30GXJ+PGL42DdqlI/fGXSkOdotsVJTJ9D+
-         Z3ZSAuXNhYsGdsqnkCB/2F6JneJIyF5fDeDw1kAb+J6BkBNFhQ+021oSsLgPb2njySwh
-         927LuSkE3ZTZGzvOYYXUqYH9sHTQHbGU2py/2S0CVEl+07IaBn8PXVfEEJhNVLGE1FZu
-         9uR5ykzFuVkzEm3juIuDORSLWXQlwmNY/8ZSFkETzUKA5aw2fLYgJf8LXQgOceEERT4x
-         6NTQ==
-X-Gm-Message-State: AOAM530gNgywnNvmBG7ZpKl29wVeEOcYJ0hn4eAPs/nWDZ2WNQ06ZG/P
-        JicnfSw5+sp0ZRdSOel6zXUYZA==
-X-Google-Smtp-Source: ABdhPJxz9AZg7VWUTlAzS3yFXuC9HGuABP1fBBplZ8AZKiRrWDbYPIflkTEfUkBKzRBZWPgG0ngpSA==
-X-Received: by 2002:a5d:4842:: with SMTP id n2mr27318888wrs.260.1600263825354;
-        Wed, 16 Sep 2020 06:43:45 -0700 (PDT)
-Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
-        by smtp.gmail.com with ESMTPSA id 2sm5255813wmf.25.2020.09.16.06.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 06:43:44 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
+        id S1727854AbgIPSQA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727832AbgIPSPa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 16 Sep 2020 14:15:30 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD231229CA;
+        Wed, 16 Sep 2020 16:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600273396;
+        bh=qIjIq4ccrlQzXJFJ28ymdkmjtOcIfObeEiV2Tpqqy+0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pHVjvQd7Z6Y8N84FNLBmbrNlr2FYmeSVkffjhxnexZrdHFTD6LzFHeQYcUtMK3elZ
+         aUKIS5f0xGhm7d4RgcK52TtQcF2VPXY1Yl966l1EyotC5oNKRbi4/yJDglf/JXnFDw
+         zr4/0LOUbtXdlcliYkTpssqcAFIuE2FYlWxEA/GY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH next] gpiolib: check for parent device in devprop_gpiochip_set_names()
-Date:   Wed, 16 Sep 2020 15:43:27 +0200
-Message-Id: <20200916134327.3435-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.26.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Sungbo Eo <mans0n@gorani.run>, Stefan Agner <stefan@agner.ch>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yash Shah <yash.shah@sifive.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-unisoc@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/8] dt-bindings: gpio: add common schema for GPIO controllers
+Date:   Wed, 16 Sep 2020 18:22:43 +0200
+Message-Id: <20200916162250.16098-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916162250.16098-1-krzk@kernel.org>
+References: <20200916162250.16098-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Convert parts of gpio.txt bindings into common dtschema file for GPIO
+controllers.  The schema enforces proper naming of GPIO controller nodes
+and GPIO hogs.
 
-It's possible for a GPIO chip to not have a parent device (whose
-properties we inspect for 'gpio-line-names'). In this case we should
-simply return from devprop_gpiochip_set_names(). Add an appropriate
-check for this use-case.
+The schema should be included by specific GPIO controllers bindings.
 
-Fixes: 7cba1a4d5e16 ("gpiolib: generalize devprop_gpiochip_set_names() for device properties")
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../devicetree/bindings/gpio/gpio-common.yaml | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-common.yaml
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b7b608ef9..ac2c77edc 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -375,6 +375,9 @@ static int devprop_gpiochip_set_names(struct gpio_chip *chip)
- 	int ret, i;
- 	int count;
- 
-+	if (!dev)
-+		return 0;
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-common.yaml b/Documentation/devicetree/bindings/gpio/gpio-common.yaml
+new file mode 100644
+index 000000000000..d0974fcac659
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-common.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-common.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	count = device_property_string_array_count(dev, "gpio-line-names");
- 	if (count < 0)
- 		return 0;
++title: Common GPIO controller properties
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Linus Walleij <linus.walleij@linaro.org>
++
++properties:
++  nodename:
++    pattern: "^(gpio-controller|gpio)(@[0-9a-f]+|-[0-9a-f]+)?$"
++
++  '#gpio-cells': true
++  gpio-controller: true
++  gpio-ranges: true
++
++  gpio-line-names:
++    description: |
++      Optionally, a GPIO controller may have a "gpio-line-names" property. This
++      is an array of strings defining the names of the GPIO lines going out of
++      the GPIO controller. This name should be the most meaningful producer
++      name for the system, such as a rail name indicating the usage. Package
++      names such as pin name are discouraged: such lines have opaque names
++      (since they are by definition generic purpose) and such names are usually
++      not very helpful.
++
++      For example "MMC-CD", "Red LED Vdd" and "ethernet reset" are reasonable
++      line names as they describe what the line is used for. "GPIO0" is not a
++      good name to give to a GPIO line.
++
++      Placeholders are discouraged: rather use the "" (blank string) if the use
++      of the GPIO line is undefined in your design. The names are assigned
++      starting from line offset 0 from left to right from the passed array. An
++      incomplete array (where the number of passed named are less than ngpios)
++      will still be used up until the last provided valid line index.
++
++  gpio-reserved-ranges:
++    description:
++      Indicates the start and size of the GPIOs that can't be used.
++
++  ngpios:
++    description: |
++      Optionally, a GPIO controller may have a "ngpios" property. This property
++      indicates the number of in-use slots of available slots for GPIOs. The
++      typical example is something like this: the hardware register is 32 bits
++      wide, but only 18 of the bits have a physical counterpart. The driver is
++      generally written so that all 32 bits can be used, but the IP block is
++      reused in a lot of designs, some using all 32 bits, some using 18 and
++      some using 12. In this case, setting "ngpios = <18>;" informs the driver
++      that only the first 18 GPIOs, at local offset 0 .. 17, are in use.
++
++      If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1,
++      an additional set of tuples is needed to specify which GPIOs are
++      unusable, with the gpio-reserved-ranges binding.
++
++patternProperties:
++  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
++    type: object
++    description:
++      The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
++      providing automatic GPIO request and configuration as part of the
++      gpio-controller's driver probe function.
++      Each GPIO hog definition is represented as a child node of the GPIO controller.
++
++    properties:
++      gpio-hog: true
++      gpios: true
++      input: true
++      output-high: true
++      output-low: true
++      line-name:
++        description:
++          The GPIO label name. If not present the node name is used.
++
++    required:
++      - gpio-hog
++      - gpios
++
++    oneOf:
++      - required:
++          - input
++      - required:
++          - output-high
++      - required:
++          - output-low
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - "#gpio-cells"
++  - gpio-controller
++
++examples:
++  - |
++    gpio-controller@15000000 {
++        compatible = "foo";
++        reg = <0x15000000 0x1000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        ngpios = <18>;
++        gpio-reserved-ranges = <0 4>, <12 2>;
++        gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
++                          "LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
++                          "Row A", "Row B", "Row C", "Row D", "NMI button",
++                          "poweroff", "reset";
++    };
++
++  - |
++    gpio-controller@1400 {
++        compatible = "fsl,qe-pario-bank-a", "fsl,qe-pario-bank";
++        reg = <0x1400 0x18>;
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        line-b-hog {
++            gpio-hog;
++            gpios = <6 0>;
++            input;
++            line-name = "foo-bar-gpio";
++        };
++    };
 -- 
-2.26.1
+2.17.1
 
