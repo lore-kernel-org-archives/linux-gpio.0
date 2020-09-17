@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F10C433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 16:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941ABC43461
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 16:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B61812078D
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 16:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524E42064B
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 16:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600361832;
-	bh=BHBvTl9J5bVNGcjbgF1Wrd0LOUeqr0pjrgInbdXE4tc=;
+	s=default; t=1600361874;
+	bh=3CcSAgmJymqX4erpPOGNuiR94tStAH1tIhGienjiYwc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yhK2CVCM0SIJ/AvC+X9nEsUjW1pq/Yslw8UbDtOTE8jUtk7+WXQcT5adNhlSD0iHB
-	 rsajrTt5rCD1QJt+gLUkUBLFoFDkN9Ien8IcLKMYN3oIO6On5eVMocSiomR+tu71ik
-	 Hye5AqZ7sHTIu3Bff2I/PACFQClGN3nMIs4AWVlo=
+	b=lVl9m8PL1y8eLA5Si6hVh/2cgUk97ggw84LeMEbBzJiNC0ZiqyviEhKtEvQrC9STG
+	 aC6qO9EkZUYmphU/pFjYRhy2iGymOqnhYOr1LE4hF4eS19QcNkPAGc5Oorl+x6MRtd
+	 9HFkCqdiKCHMe9z2BqinMMncpaALj8tyRUtPrNCE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbgIQQ4t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 12:56:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35904 "EHLO mail.kernel.org"
+        id S1728655AbgIQQ5k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 12:57:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728651AbgIQQ41 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:56:27 -0400
+        id S1727667AbgIQQ5M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 12:57:12 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C26952078D;
-        Thu, 17 Sep 2020 16:56:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0292220E;
+        Thu, 17 Sep 2020 16:56:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600361787;
-        bh=BHBvTl9J5bVNGcjbgF1Wrd0LOUeqr0pjrgInbdXE4tc=;
+        s=default; t=1600361815;
+        bh=3CcSAgmJymqX4erpPOGNuiR94tStAH1tIhGienjiYwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GRH/P+hmbkvZV1XUdX3hrXr/M7yIadjWJCzkILNlNjfuSFyrmNOxxyOBSVjiJTn4J
-         gKvBNwbvbYzo0IGdWxTLE2oG9gmZ6oXMt70NrCbSqHARK+31sF7Rx0nhtl11Izm9do
-         rhuxXTc0Y62DIAey7vczzig9Bz3xjl9vz5LWXWP8=
+        b=ehh/IOcVlyp+UzApCJd2uZjTnmaJ85CG1bFw5Xp5VD6lgKUEw8ObK1OdLXYqAxsAI
+         /FQXYjYHs/evznTntqzPiI+ybw3MYVG6jh3P53c2dKcURoHyEflt5A0qgMIexJ4Coz
+         hWB1F8aIxFFehtu2IMK2+HseBdDD+lc6ZKAlu6is=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -101,9 +101,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 10/13] ASoC: dt-bindings: zl38060: include common schema in GPIO controllers
-Date:   Thu, 17 Sep 2020 18:52:58 +0200
-Message-Id: <20200917165301.23100-11-krzk@kernel.org>
+Subject: [PATCH v2 12/13] arm64: dts: imx8mq-librem5: align GPIO hog names with dtschema
+Date:   Thu, 17 Sep 2020 18:53:00 +0200
+Message-Id: <20200917165301.23100-13-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200917165301.23100-1-krzk@kernel.org>
 References: <20200917165301.23100-1-krzk@kernel.org>
@@ -111,33 +111,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Include the common GPIO schema in GPIO controllers to be sure all common
-properties are properly validated.
+dtschema expects GPIO hogs to end with 'hog' suffix.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1:
-1. New patch
----
- Documentation/devicetree/bindings/sound/zl38060.yaml | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/zl38060.yaml b/Documentation/devicetree/bindings/sound/zl38060.yaml
-index 338e2a13c775..0e3d8c854806 100644
---- a/Documentation/devicetree/bindings/sound/zl38060.yaml
-+++ b/Documentation/devicetree/bindings/sound/zl38060.yaml
-@@ -15,6 +15,9 @@ maintainers:
-   - Jaroslav Kysela <perex@perex.cz>
-   - Takashi Iwai <tiwai@suse.com>
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
+index e4dedcb58f76..6cbcee2fb938 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
+@@ -249,7 +249,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pmic_5v>;
  
-+allOf:
-+  - $ref: /schemas/gpio/gpio-common.yaml#
-+
- properties:
-   compatible:
-     const: mscc,zl38060
+-	pmic-5v {
++	pmic-5v-hog {
+ 		gpio-hog;
+ 		gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+ 		input;
 -- 
 2.17.1
 
