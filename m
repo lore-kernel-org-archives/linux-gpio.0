@@ -4,30 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2177C433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 05:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F5AC43461
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 05:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 766D620872
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 05:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D0212078D
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 05:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbgIQFsw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 01:48:52 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44204 "EHLO inva020.nxp.com"
+        id S1726171AbgIQFs7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 01:48:59 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:44198 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbgIQFsw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Sep 2020 01:48:52 -0400
+        id S1726106AbgIQFsx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 01:48:53 -0400
+X-Greylist: delayed 477 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 01:48:52 EDT
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BD6F1A0F09;
-        Thu, 17 Sep 2020 07:40:54 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 24B0F1A0F24;
+        Thu, 17 Sep 2020 07:41:01 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 280351A0F17;
-        Thu, 17 Sep 2020 07:40:43 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7284B1A002A;
+        Thu, 17 Sep 2020 07:40:50 +0200 (CEST)
 Received: from 10.192.242.69 (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 157D8402AE;
-        Thu, 17 Sep 2020 07:40:30 +0200 (CEST)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 28B72402C3;
+        Thu, 17 Sep 2020 07:40:37 +0200 (CEST)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
         kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
@@ -41,77 +42,41 @@ To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 1/4] gpio: mxc: Support module build
-Date:   Thu, 17 Sep 2020 13:33:46 +0800
-Message-Id: <1600320829-1453-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V3 4/4] ARM: multi_v7_defconfig: Build in CONFIG_GPIO_MXC by default
+Date:   Thu, 17 Sep 2020 13:33:49 +0800
+Message-Id: <1600320829-1453-4-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1600320829-1453-1-git-send-email-Anson.Huang@nxp.com>
+References: <1600320829-1453-1-git-send-email-Anson.Huang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Change config to tristate, add module device table, module author,
-description and license to support module build for i.MX GPIO driver.
-
-As this is a SoC GPIO module, it provides common functions for most
-of the peripheral devices, such as GPIO pins control, secondary
-interrupt controller for GPIO pins IRQ etc., without GPIO driver, most
-of the peripheral devices will NOT work properly, so GPIO module is
-similar with clock, pinctrl driver that should be loaded ONCE and
-never unloaded.
-
-Since MXC GPIO driver needs to have init function to register syscore
-ops once, here still use subsys_initcall(), NOT module_platform_driver().
+i.MX SoC GPIO driver provides the basic functions of GPIO pin operations
+and IRQ operations, it is now changed from "def_bool y" to "tristate", so
+it should be explicitly enabled to make sure all consumers work normally.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-no change.
+changes since V2:
+	- improve commit message to explain why CONFIG_GPIO_MXC needs to be enabled.
 ---
- drivers/gpio/Kconfig    | 2 +-
- drivers/gpio/gpio-mxc.c | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 5cfdaf3..c7292a5 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -397,7 +397,7 @@ config GPIO_MVEBU
- 	select REGMAP_MMIO
- 
- config GPIO_MXC
--	def_bool y
-+	tristate "i.MX GPIO support"
- 	depends on ARCH_MXC || COMPILE_TEST
- 	select GPIO_GENERIC
- 	select GENERIC_IRQ_CHIP
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 64278a4..643f4c55 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -15,6 +15,7 @@
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
-+#include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/syscore_ops.h>
-@@ -158,6 +159,7 @@ static const struct of_device_id mxc_gpio_dt_ids[] = {
- 	{ .compatible = "fsl,imx7d-gpio", .data = &mxc_gpio_devtype[IMX35_GPIO], },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, mxc_gpio_dt_ids);
- 
- /*
-  * MX2 has one interrupt *for all* gpio ports. The list is used
-@@ -604,3 +606,7 @@ static int __init gpio_mxc_init(void)
- 	return platform_driver_register(&mxc_gpio_driver);
- }
- subsys_initcall(gpio_mxc_init);
-+
-+MODULE_AUTHOR("Shawn Guo <shawn.guo@linaro.org>");
-+MODULE_DESCRIPTION("i.MX GPIO Driver");
-+MODULE_LICENSE("GPL");
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index bfaa38c..d2744ff 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -465,6 +465,7 @@ CONFIG_GPIO_PALMAS=y
+ CONFIG_GPIO_TPS6586X=y
+ CONFIG_GPIO_TPS65910=y
+ CONFIG_GPIO_TWL4030=y
++CONFIG_GPIO_MXC=y
+ CONFIG_POWER_AVS=y
+ CONFIG_ROCKCHIP_IODOMAIN=y
+ CONFIG_POWER_RESET_AS3722=y
 -- 
 2.7.4
 
