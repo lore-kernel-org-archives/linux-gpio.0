@@ -2,44 +2,42 @@ Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130E4C433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 18:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497B4C43461
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 19:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B51DC21D7B
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 18:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600368220;
-	bh=P6t4EObPuKTAtjmptm4+AFH+z1+4hhhtxhJjS4UyDF0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=U6QsnZc+REsTq4E/jS48F65IhpvBQLRTHCXEimem5/4rznLSnV3MsmIEIi6On+sd1
-	 n0/Y8Is92DioC7FhOmxOi/b4So9x7+1r3bbgiUj8uOIqUZ84rI4sg/9LiGWvUVRc7Q
-	 PW+Mn8+4ZBclNDbGAFVZov79ed1iCbJ2mbMh2XFs=
+	by mail.kernel.org (Postfix) with ESMTP id D19FC20853
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 19:15:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="dyOMV3sQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbgIQSne (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 14:43:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57978 "EHLO mail.kernel.org"
+        id S1726661AbgIQTOm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 15:14:42 -0400
+Received: from crapouillou.net ([89.234.176.41]:36240 "EHLO crapouillou.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728606AbgIQQx3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:53:29 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39C1520708;
-        Thu, 17 Sep 2020 16:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600361605;
-        bh=P6t4EObPuKTAtjmptm4+AFH+z1+4hhhtxhJjS4UyDF0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QWWMJnynLqLOQxMCeIhdb30C/fJHQKsRzanwLdTpwbhaMyXT+tXpbqbOYpkb+Ly2M
-         aBumK6+zCHsWhNp6ZfqN5QXKUzl+nO1TwJgKiLkTRKlRiFxwyqIPdifsq9tCyheivp
-         WIbwLhtE7vcm3MGDi0wpAwkD5yRasj8RADVLwNo8=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1726350AbgIQTNU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 15:13:20 -0400
+X-Greylist: delayed 495 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 15:12:47 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1600369440; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L3OBK4G1Rvv8T0Xnqj3/8Lbig0kqsWBBjd0US1g/rPo=;
+        b=dyOMV3sQSIuXwuaky8QYur2ywbBqBFDkh4I8lC8CviZwJ4xXUpL4z0HKUxmZFgT1wCRV+i
+        lmglasQwXio0xAlmn9AwPeNsR0gejQ1N0ipvwaxZk7O7qZVgtm6UVhMbStHccEmV266mP4
+        NNt/TuV+D6L8z9EtegHwMbZvBfl1a4o=
+Date:   Thu, 17 Sep 2020 21:03:36 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 09/13] dt-bindings: pinctrl: include common schema in
+ GPIO controllers
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
@@ -60,7 +58,7 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        Niklas =?iso-8859-1?q?S=F6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Charles Keepax <ckeepax@opensource.cirrus.com>,
@@ -68,7 +66,7 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Andreas =?iso-8859-1?q?F=E4rber?= <afaerber@suse.de>,
         Maxime Ripard <mripard@kernel.org>,
         Chen-Yu Tsai <wens@csie.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -86,7 +84,6 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
         Amelie Delaunay <amelie.delaunay@st.com>,
         Cristian Ciocaltea <cristian.ciocaltea@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
         Andy Teng <andy.teng@mediatek.com>,
         Sean Wang <sean.wang@mediatek.com>,
         Sricharan R <sricharan@codeaurora.org>,
@@ -100,91 +97,263 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 00/13] gpio: add common dtschema
-Date:   Thu, 17 Sep 2020 18:52:48 +0200
-Message-Id: <20200917165301.23100-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+Message-Id: <0YGTGQ.TCQDDTXFCWNX2@crapouillou.net>
+In-Reply-To: <20200917165301.23100-10-krzk@kernel.org>
+References: <20200917165301.23100-1-krzk@kernel.org>
+        <20200917165301.23100-10-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi,
 
-Changes since v1
-================
-1. Use common schema in bindings outside of gpio/ (new patches).
-2. Minor fixes - see individual patches for changelogs.
 
+Le jeu. 17 sept. 2020 =E0 18:52, Krzysztof Kozlowski <krzk@kernel.org> a=20
+=E9crit :
+> Include the common GPIO schema in GPIO controllers to be sure all=20
+> common
+> properties are properly validated.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Notes
-=====
-This is independent work of pca953x bindings:
-https://lore.kernel.org/lkml/20200916155715.21009-1-krzk@kernel.org/T/#u
+Acked-by: Paul Cercueil <paul@crapouillou.net>
 
-The DTS patches can be also applied independently.
-The bindings patches depend on first one, adding common schema.
+Cheers,
+-Paul
 
-Best regards,
-Krzysztof
+>=20
+> ---
+>=20
+> Changes since v1:
+> 1. New patch
+> ---
+>  .../devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml      | 3=20
+> +++
+>  .../bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml          | 1 +
+>  .../devicetree/bindings/pinctrl/cirrus,lochnagar.yaml          | 3=20
+> +++
+>  Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml   | 3=20
+> +++
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml  | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml      | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml      | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml       | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml      | 3=20
+> +++
+>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml          | 3=20
+> +++
+>  11 files changed, 31 insertions(+)
+>=20
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml
+> index 33391d30c00c..51bfc214bba6 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/actions,s500-pinctrl.yaml
+> @@ -15,6 +15,9 @@ description: |
+>    GPIO function selection & GPIO attributes configuration. Please=20
+> refer to
+>    pinctrl-bindings.txt in this directory for common binding part and=20
+> usage.
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: actions,s500-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.y=
+aml=20
+> b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.y=
+aml
+> index 7556be6e2754..55662f8d1f94 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.y=
+aml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.y=
+aml
+> @@ -143,6 +143,7 @@ allOf:
+>    # boards are defining it at the moment so it would generate a lot=20
+> of
+>    # warnings.
+>=20
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+>    - if:
+>        properties:
+>          compatible:
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
+> index 420d74856032..ed478b0ed4cc 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.yaml
+> @@ -31,6 +31,9 @@ description: |
+>    This binding must be part of the Lochnagar MFD binding:
+>      [4] ../mfd/cirrus,lochnagar.yaml
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      enum:
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> index 44c04d11ae4c..ffa64832b4f9 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.yaml
+> @@ -59,6 +59,9 @@ properties:
+>  patternProperties:
+>    "^gpio@[0-9]$":
+>      type: object
+> +    allOf:
+> +      - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>      properties:
+>        compatible:
+>          enum:
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> index 152c151c27ad..7d0a4cb96f39 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+> @@ -14,6 +14,9 @@ description: |+
+>    required property:
+>    - compatible: "syscon"
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: mediatek,mt6779-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
+> index 5556def6b99b..bc8bc0ac1926 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
+> @@ -12,6 +12,9 @@ maintainers:
+>  description: |
+>    The Mediatek's Pin controller is used to control SoC pins.
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: mediatek,mt8192-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+> index c64c93206817..22a6b80b4c0e 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+> @@ -13,6 +13,9 @@ description: |
+>    This binding describes the Top Level Mode Multiplexer block found=20
+> in the
+>    IPQ6018 platform.
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: qcom,ipq6018-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
+> index 1f0f5757f9e1..9855d859fe61 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
+> @@ -13,6 +13,9 @@ description: |
+>    This binding describes the Top Level Mode Multiplexer block found=20
+> in the
+>    MSM8226 platform.
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: qcom,msm8226-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+> index 8508c57522fd..e5757b6ced40 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+> @@ -13,6 +13,9 @@ description: |
+>    This binding describes the Top Level Mode Multiplexer block found=20
+> in the
+>    SM8250 platform.
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  properties:
+>    compatible:
+>      const: qcom,sm8250-pinctrl
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+> index b7911a994f3a..4d7bf4340262 100644
+> ---=20
+> a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+> +++=20
+> b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+> @@ -10,6 +10,9 @@ maintainers:
+>    - Chris Brandt <chris.brandt@renesas.com>
+>    - Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>  description:
+>    The Renesas SoCs of the RZ/A2 series feature a combined Pin and=20
+> GPIO
+>    controller.
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml=20
+> b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> index 72877544ca78..28b861362ba0 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> @@ -56,6 +56,9 @@ properties:
+>  patternProperties:
+>    '^gpio@[0-9a-f]*$':
+>      type: object
+> +    allOf:
+> +      - $ref: /schemas/gpio/gpio-common.yaml#
+> +
+>      properties:
+>        gpio-controller: true
+>        '#gpio-cells':
+> --
+> 2.17.1
+>=20
 
-Krzysztof Kozlowski (13):
-  dt-bindings: gpio: add common schema for GPIO controllers
-  dt-bindings: gpio: include common schema in GPIO controllers
-  dt-bindings: gpio: pl061: add missing properties and include common
-    schema
-  dt-bindings: gpio: fsl-imx-gpio: add i.MX ARMv6 and ARMv7 compatibles
-  dt-bindings: gpio: fsl-imx-gpio: add gpio-line-names
-  dt-bindings: gpio: gpio-vf610: fix iMX 7ULP compatible matching
-  dt-bindings: media: include common schema in GPIO controllers
-  dt-bindings: mfd: include common schema in GPIO controllers
-  dt-bindings: pinctrl: include common schema in GPIO controllers
-  ASoC: dt-bindings: zl38060: include common schema in GPIO controllers
-  arm64: dts: imx8mq-librem5: correct GPIO hog property
-  arm64: dts: imx8mq-librem5: align GPIO hog names with dtschema
-  ARM: dts: imx: align GPIO hog names with dtschema
-
- .../bindings/gpio/brcm,xgs-iproc-gpio.yaml    |   3 +
- .../bindings/gpio/fsl-imx-gpio.yaml           |  17 ++-
- .../devicetree/bindings/gpio/gpio-common.yaml | 125 ++++++++++++++++++
- .../devicetree/bindings/gpio/gpio-mxs.yaml    |   4 +
- .../bindings/gpio/gpio-pca9570.yaml           |   3 +
- .../devicetree/bindings/gpio/gpio-rda.yaml    |   3 +
- .../devicetree/bindings/gpio/gpio-vf610.yaml  |  11 +-
- .../devicetree/bindings/gpio/mrvl-gpio.yaml   |   1 +
- .../devicetree/bindings/gpio/pl061-gpio.yaml  |   6 +
- .../bindings/gpio/qcom,wcd934x-gpio.yaml      |   3 +
- .../bindings/gpio/renesas,em-gio.yaml         |   3 +
- .../bindings/gpio/renesas,rcar-gpio.yaml      |   3 +
- .../devicetree/bindings/gpio/sifive,gpio.yaml |   3 +
- .../bindings/gpio/snps,dw-apb-gpio.yaml       |   3 +
- .../gpio/socionext,uniphier-gpio.yaml         |   3 +
- .../bindings/gpio/xylon,logicvc-gpio.yaml     |   3 +
- .../bindings/media/i2c/maxim,max9286.yaml     |   3 +
- .../bindings/mfd/cirrus,madera.yaml           |   1 +
- .../devicetree/bindings/mfd/max77650.yaml     |   3 +
- .../bindings/mfd/rohm,bd71828-pmic.yaml       |   3 +
- .../devicetree/bindings/mfd/st,stmfx.yaml     |   2 +
- .../devicetree/bindings/mfd/wlf,arizona.yaml  |   1 +
- .../pinctrl/actions,s500-pinctrl.yaml         |   3 +
- .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml  |   1 +
- .../bindings/pinctrl/cirrus,lochnagar.yaml    |   3 +
- .../bindings/pinctrl/ingenic,pinctrl.yaml     |   3 +
- .../pinctrl/mediatek,mt6779-pinctrl.yaml      |   3 +
- .../bindings/pinctrl/pinctrl-mt8192.yaml      |   3 +
- .../pinctrl/qcom,ipq6018-pinctrl.yaml         |   3 +
- .../pinctrl/qcom,msm8226-pinctrl.yaml         |   3 +
- .../bindings/pinctrl/qcom,sm8250-pinctrl.yaml |   3 +
- .../pinctrl/renesas,rza2-pinctrl.yaml         |   3 +
- .../bindings/pinctrl/st,stm32-pinctrl.yaml    |   3 +
- .../devicetree/bindings/sound/zl38060.yaml    |   3 +
- arch/arm/boot/dts/imx51-zii-rdu1.dts          |   2 +-
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi       |   8 +-
- arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts   |   2 +-
- .../boot/dts/freescale/imx8mq-librem5.dtsi    |   4 +-
- 38 files changed, 245 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-common.yaml
-
--- 
-2.17.1
 
