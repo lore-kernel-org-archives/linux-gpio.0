@@ -2,76 +2,96 @@ Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE9AC433E2
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 10:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13405C43461
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 10:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6E9520838
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 10:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36EA20838
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 10:04:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SrNwQnRx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgIQKCm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:02:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32026 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbgIQKCl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:02:41 -0400
-X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 06:02:41 EDT
-IronPort-SDR: B+xH0zFmjQIIhZFtByEb1uFS4KP+tIhp/hdDsPEYoPils0TxuAu9obgiFv6DkNRPHceuPAEYMA
- xNs0//Q/78QQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="160590741"
-X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
-   d="scan'208";a="160590741"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 02:55:20 -0700
-IronPort-SDR: 6AWgY6k2jSM6QsujXaNtiiUDS/Fn+dL8VWCglFvIAk26Fo4St2OUfqS3ZchJAQuNrr212bTyNP
- sdO6q+0OmcHw==
-X-IronPort-AV: E=Sophos;i="5.76,436,1592895600"; 
-   d="scan'208";a="452231616"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 02:55:16 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 17 Sep 2020 12:55:14 +0300
-Date:   Thu, 17 Sep 2020 12:55:14 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH next v2] gpiolib: check for parent device in
- devprop_gpiochip_set_names()
-Message-ID: <20200917095514.GO2495@lahna.fi.intel.com>
-References: <20200917074857.6716-1-brgl@bgdev.pl>
+        id S1726200AbgIQKE6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbgIQKE5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2020 06:04:57 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBEBC06174A
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 03:04:56 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id z22so2430798ejl.7
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 03:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ycl8YMwqrq2eIfLCJC7q4UYSg1v+hIchcgj1B2KfYYc=;
+        b=SrNwQnRxBIR44nklxI5SKb7VHVm75CyViGMWFvbW/27h1HbqV64ZD9PQJC80ucdKPY
+         ukzfZfyTDVKiibkaac172rdrAE5WMiT5DaAbW3PVCjHEfdrvLJEHzuqF3nD8WfyRsltE
+         4qnYVLh3zW04qX+GPvEBCLdsLD6RtHiMVESAkE2vACK4xjU6h0O3siejrcDluOlPwaxM
+         77sOw4xHom+nOWjk71zErwuXHkEVqJz1NNXpr8m+jCg+JlflEkAH8FzyvXlONku1u1k1
+         tQOLLhIiozuP7SYnKiLKjD4mFR22AWM4U65uzP36PNYOQrltFYb3Jv+db4YMltgYzl9v
+         52mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ycl8YMwqrq2eIfLCJC7q4UYSg1v+hIchcgj1B2KfYYc=;
+        b=sP8JqjABewf84ued3kYHXJHV/XF7D73UTzIpkfj8GyJkQgI8P2ZBbPx/MZbuji9rl6
+         vpnFd8UT/Lhc3FhkLxIK2QMueXvp3y4Two055JdkWIG6X4Yk/yxtdnB5TpMmFLD8RYjn
+         PmKrLY8l1AjXLmdqPnQoCY09oYvbzXyw9dy4g5z/XVUkdsMDT3ETyxvz4m9ihWVMHrxy
+         Hv+GlCuQZG+IOeV7k7EzZ7QhJkMW1iJs/MVY0Yo9xBow5gGJ5vRiCRIdSTqsPDhjVFt7
+         lMnku+mKyB1NtPPo5VzG6udtBPbPTyKDF1kvU2hMly6TCM7wdJucJxI4/YTBBHWupY+5
+         7zqA==
+X-Gm-Message-State: AOAM531jAIVHysi7fvlXuXh1Yv+lfUF+1LSqlxqjs9gfwVywQU6kuUi6
+        IYydq1BtQ5T7Hd9wuAq4mfensDCxCq8nIANKnX+fOQ==
+X-Google-Smtp-Source: ABdhPJzwUJ2HqJh3A34bhXOyjTRGZENU7N9n20JQH/3b4+Zsy3+T9Rf1QiXWZS1pqtgukWxhBt9l0ur50wi7r2Ayd94=
+X-Received: by 2002:a17:907:20d9:: with SMTP id qq25mr28547312ejb.382.1600337095268;
+ Thu, 17 Sep 2020 03:04:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917074857.6716-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200915125816.47148-1-andriy.shevchenko@linux.intel.com> <20200917075920.GA1512423@sol>
+In-Reply-To: <20200917075920.GA1512423@sol>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 17 Sep 2020 12:04:44 +0200
+Message-ID: <CAMpxmJXQ0bJAjgdfTLpd6gUTe5ga=xTj7sXXUyLCS_o2RX87Kw@mail.gmail.com>
+Subject: Re: [PATCH v3] gpiolib: Fix line event handling in syscall compatible mode
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 09:48:57AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> It's possible for a GPIO chip to not have a parent device (whose
-> properties we inspect for 'gpio-line-names'). In this case we should
-> simply return from devprop_gpiochip_set_names(). Add an appropriate
-> check for this use-case.
-> 
-> Fixes: 7cba1a4d5e16 ("gpiolib: generalize devprop_gpiochip_set_names() for device properties")
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
+On Thu, Sep 17, 2020 at 9:59 AM Kent Gibson <warthog618@gmail.com> wrote:
+>
+> On Tue, Sep 15, 2020 at 03:58:16PM +0300, Andy Shevchenko wrote:
+> > The introduced line event handling ABI in the commit
+> >
+> >   61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> >
+> > missed the fact that 64-bit kernel may serve for 32-bit applications.
+> > In such case the very first check in the lineevent_read() will fail
+> > due to alignment differences.
+> >
+> > To workaround this introduce lineevent_get_size() helper which returns actual
+> > size of the structure in user space.
+> >
+> > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Tested-by: Kent Gibson <warthog618@gmail.com>
+>
 
-FWIW,
+Patch applied, thanks everyone for the patch and QA!
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Bartosz
