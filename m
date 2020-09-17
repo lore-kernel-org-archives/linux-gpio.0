@@ -2,169 +2,239 @@ Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FA2C43467
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 20:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B791CC43463
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 22:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAB27206B7
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 20:23:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FnbmoKzn"
+	by mail.kernel.org (Postfix) with ESMTP id 84FE820665
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 22:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgIQUXR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 16:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbgIQUXA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2020 16:23:00 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84EB0C06178B
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 12:25:19 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id j2so3247478wrx.7
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 12:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=fnNtIiw2rIjrsGeETGQ4HVhLgof6IApfDCKNZB0rtx4=;
-        b=FnbmoKzn7ml3hNVC5JMySDeca53lTjtdCXoL4cxAwzsEJrHzyEDKiOIljY35+rHymp
-         jt5GwmgM0shyZllOsgSZwY1CN+167LFzIGjPBmfNcdzVLaAOviH2qCxmpdLIINnBYKdr
-         Nenh/eU1pcNo7H7CYh7JbOgBzXixsAvVANZjgbmMpOdpEOqoSWQOaJdn0OEkqXMoKEDM
-         Q0SNuv4Q5KZUIK5oUfQtO9Gcy3oo5OvaZ3rbJ7eOSHvaN8c1rIBr1TUyzLh0jx/opgMg
-         Syx8dKN4xhP81GhQDlmyDEUOhNv4IH6zDXnd2mrLTjbJp/76i8olBPS0b7cja4sPq5o/
-         fzcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=fnNtIiw2rIjrsGeETGQ4HVhLgof6IApfDCKNZB0rtx4=;
-        b=dAN8xLUtWtEsFEBS5w3l8fk5zll82PjRDm7iq5EQrZdX7nFRqKQ/WwhhkvqhGDrWu1
-         p91iFBp7bIvnMbfXoT5ggaZKf9/ZcpY43WZ1wkIdhsD8CLY2yoHsyDO/RxfXkKCdpuqH
-         tgZzioY+PZA68rxadb7/8TMo1ERmLZiQRvBobW46wteRzkpLL6WmexG9Rgz73ZuZr6mv
-         SLx9GA23FR8dnygvvkUJlpMAkspNph0nj0gH3o42klt3PaQbr0QtP/8GGw5b0TtfVWGP
-         qoUgGMJNkhVpXjIH4oWPCJSYxpDed0RwYlRbFfrioprLKb82GKf5hho5pIr8zgYnlZV9
-         Phuw==
-X-Gm-Message-State: AOAM532/BGguIEt6ZVGxKpxwvT5CHQdkeqK7vK7PznJet/dd6BLmijXm
-        EAr+F1qHPDIa1xQFe/e78DT7rw==
-X-Google-Smtp-Source: ABdhPJwHQNEGKQiK5VaKpdrHxxRlNDliXhK+3vSwtgJ/Fr7no0AtL6d27HAF4oliOiP95GvT8d67qQ==
-X-Received: by 2002:a05:6000:100c:: with SMTP id a12mr36101704wrx.115.1600370717856;
-        Thu, 17 Sep 2020 12:25:17 -0700 (PDT)
-Received: from dell ([91.110.221.204])
-        by smtp.gmail.com with ESMTPSA id i6sm970270wra.1.2020.09.17.12.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 12:25:16 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 20:25:14 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Subject: [GIT PULL] Immutable branch between MFD, HWMON, GPIO, IRQChip, PWM
- and Watchdog due for the v5.10 merge window
-Message-ID: <20200917192514.GF4678@dell>
-References: <20200914214341.14268-1-michael@walle.cc>
+        id S1726002AbgIQWaz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:30:55 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48059 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725858AbgIQWaz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:30:55 -0400
+IronPort-SDR: YggTcaniWqNYCoJMFwPaxldmvh2cUbEwGpPGcLAmHOrbqjSW1IoJZ6zckWUfg/2b/S2o42wdjy
+ 6qxY2s2FBRHA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9747"; a="221362592"
+X-IronPort-AV: E=Sophos;i="5.77,272,1596524400"; 
+   d="scan'208";a="221362592"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 15:30:51 -0700
+IronPort-SDR: 4LrVOxQiX1CHRZVDR2TLAwQp/YD2PoU/iRDvX9N3CZUJgGl8NjKLhP7KAejGJAD3gmkVEHeSgH
+ aHvIGFcxHw0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,272,1596524400"; 
+   d="scan'208";a="339589773"
+Received: from lkp-server01.sh.intel.com (HELO a05db971c861) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 17 Sep 2020 15:30:50 -0700
+Received: from kbuild by a05db971c861 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kJ2QT-0000AV-Cz; Thu, 17 Sep 2020 22:30:49 +0000
+Date:   Fri, 18 Sep 2020 06:30:22 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [pinctrl:fixes] BUILD SUCCESS
+ 63c3212e7a37d68c89a13bdaebce869f4e064e67
+Message-ID: <5f63e37e.SNwcILeRRjxsAkMQ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200914214341.14268-1-michael@walle.cc>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Enjoy!
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  fixes
+branch HEAD: 63c3212e7a37d68c89a13bdaebce869f4e064e67  pinctrl: mvebu: Fix i2c sda definition for 98DX3236
 
-The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
+elapsed time: 725m
 
-  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+configs tested: 167
+configs skipped: 2
 
-are available in the Git repository at:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-hwmon-irqchip-pwm-watchdog-v5.10
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+mips                        omega2p_defconfig
+arm                         lubbock_defconfig
+arm                           spitz_defconfig
+powerpc                        warp_defconfig
+sh                        dreamcast_defconfig
+powerpc                      pcm030_defconfig
+arm                            lart_defconfig
+powerpc                    mvme5100_defconfig
+powerpc                     sbc8548_defconfig
+sparc                       sparc64_defconfig
+arm                   milbeaut_m10v_defconfig
+powerpc                     akebono_defconfig
+arc                 nsimosci_hs_smp_defconfig
+powerpc                     rainier_defconfig
+mips                       capcella_defconfig
+powerpc                     kilauea_defconfig
+s390                          debug_defconfig
+sh                          polaris_defconfig
+powerpc                     asp8347_defconfig
+arm                        mini2440_defconfig
+mips                    maltaup_xpa_defconfig
+arm                        mvebu_v7_defconfig
+powerpc                       eiger_defconfig
+powerpc                     tqm8548_defconfig
+sh                         ecovec24_defconfig
+nds32                            alldefconfig
+powerpc                 linkstation_defconfig
+parisc                generic-64bit_defconfig
+arm                      pxa255-idp_defconfig
+ia64                         bigsur_defconfig
+powerpc                      makalu_defconfig
+powerpc                      ppc6xx_defconfig
+arc                             nps_defconfig
+arm                           h5000_defconfig
+mips                        bcm47xx_defconfig
+arm                        neponset_defconfig
+nios2                         3c120_defconfig
+powerpc                 xes_mpc85xx_defconfig
+sh                               alldefconfig
+sh                               j2_defconfig
+powerpc                      acadia_defconfig
+sh                             shx3_defconfig
+powerpc                    gamecube_defconfig
+xtensa                          iss_defconfig
+mips                      loongson3_defconfig
+powerpc                        cell_defconfig
+mips                         cobalt_defconfig
+um                           x86_64_defconfig
+c6x                        evmc6678_defconfig
+sh                             sh03_defconfig
+mips                      malta_kvm_defconfig
+powerpc                      ep88xc_defconfig
+sparc                            alldefconfig
+ia64                          tiger_defconfig
+arc                           tb10x_defconfig
+sh                          landisk_defconfig
+powerpc                  storcenter_defconfig
+parisc                generic-32bit_defconfig
+arc                            hsdk_defconfig
+arm                       omap2plus_defconfig
+sh                           se7712_defconfig
+powerpc                      katmai_defconfig
+mips                  cavium_octeon_defconfig
+nios2                         10m50_defconfig
+powerpc                        fsp2_defconfig
+mips                       lemote2f_defconfig
+arm                         lpc18xx_defconfig
+s390                             allyesconfig
+mips                           rs90_defconfig
+arm                        vexpress_defconfig
+sh                                  defconfig
+sh                        sh7763rdp_defconfig
+powerpc                mpc7448_hpc2_defconfig
+sh                            migor_defconfig
+parisc                           allyesconfig
+mips                         rt305x_defconfig
+powerpc                   motionpro_defconfig
+powerpc                      obs600_defconfig
+arm                         assabet_defconfig
+powerpc                 mpc85xx_cds_defconfig
+sh                      rts7751r2d1_defconfig
+powerpc                     pq2fads_defconfig
+sh                              ul2_defconfig
+ia64                      gensparse_defconfig
+arc                        vdk_hs38_defconfig
+sh                     sh7710voipgw_defconfig
+arc                                 defconfig
+i386                                defconfig
+sh                          r7780mp_defconfig
+mips                         tb0226_defconfig
+h8300                               defconfig
+mips                           ci20_defconfig
+ia64                             allmodconfig
+openrisc                         alldefconfig
+sh                   sh7724_generic_defconfig
+powerpc                       ppc64_defconfig
+arm                          iop32x_defconfig
+m68k                        m5272c3_defconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a004-20200917
+i386                 randconfig-a006-20200917
+i386                 randconfig-a003-20200917
+i386                 randconfig-a001-20200917
+i386                 randconfig-a002-20200917
+i386                 randconfig-a005-20200917
+x86_64               randconfig-a014-20200917
+x86_64               randconfig-a011-20200917
+x86_64               randconfig-a016-20200917
+x86_64               randconfig-a012-20200917
+x86_64               randconfig-a015-20200917
+x86_64               randconfig-a013-20200917
+i386                 randconfig-a015-20200917
+i386                 randconfig-a014-20200917
+i386                 randconfig-a011-20200917
+i386                 randconfig-a013-20200917
+i386                 randconfig-a016-20200917
+i386                 randconfig-a012-20200917
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
 
-for you to fetch changes up to 3f697027bcb0959d7c24d59550ab1da07c2dd609:
+clang tested configs:
+x86_64               randconfig-a006-20200917
+x86_64               randconfig-a004-20200917
+x86_64               randconfig-a003-20200917
+x86_64               randconfig-a002-20200917
+x86_64               randconfig-a001-20200917
+x86_64               randconfig-a005-20200917
 
-  hwmon: Add support for the sl28cpld hardware monitoring controller (2020-09-17 16:02:42 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, HWMON, GPIO, IRQChip, PWM and Watchdog due for the v5.10 merge window
-
-----------------------------------------------------------------
-Michael Walle (8):
-      mfd: Add simple regmap based I2C driver
-      dt-bindings: mfd: Add bindings for sl28cpld
-      mfd: simple-mfd-i2c: Add sl28cpld support
-      irqchip: Add sl28cpld interrupt controller support
-      watchdog: add support for sl28cpld watchdog
-      pwm: Add support for sl28cpld PWM controller
-      gpio: Add support for the sl28cpld GPIO controller
-      hwmon: Add support for the sl28cpld hardware monitoring controller
-
- .../bindings/gpio/kontron,sl28cpld-gpio.yaml       |  54 +++++
- .../bindings/hwmon/kontron,sl28cpld-hwmon.yaml     |  27 +++
- .../kontron,sl28cpld-intc.yaml                     |  54 +++++
- .../devicetree/bindings/mfd/kontron,sl28cpld.yaml  | 153 ++++++++++++
- .../bindings/pwm/kontron,sl28cpld-pwm.yaml         |  35 +++
- .../bindings/watchdog/kontron,sl28cpld-wdt.yaml    |  35 +++
- Documentation/hwmon/index.rst                      |   1 +
- Documentation/hwmon/sl28cpld.rst                   |  36 +++
- drivers/gpio/Kconfig                               |  12 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-sl28cpld.c                       | 161 ++++++++++++
- drivers/hwmon/Kconfig                              |  10 +
- drivers/hwmon/Makefile                             |   1 +
- drivers/hwmon/sl28cpld-hwmon.c                     | 142 +++++++++++
- drivers/irqchip/Kconfig                            |   8 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-sl28cpld.c                     |  96 ++++++++
- drivers/mfd/Kconfig                                |  22 ++
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/simple-mfd-i2c.c                       |  57 +++++
- drivers/pwm/Kconfig                                |  10 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-sl28cpld.c                         | 270 +++++++++++++++++++++
- drivers/watchdog/Kconfig                           |  11 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/sl28cpld_wdt.c                    | 229 +++++++++++++++++
- 26 files changed, 1429 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kontron,sl28cpld-intc.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/kontron,sl28cpld.yaml
- create mode 100644 Documentation/devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml
- create mode 100644 Documentation/devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml
- create mode 100644 Documentation/hwmon/sl28cpld.rst
- create mode 100644 drivers/gpio/gpio-sl28cpld.c
- create mode 100644 drivers/hwmon/sl28cpld-hwmon.c
- create mode 100644 drivers/irqchip/irq-sl28cpld.c
- create mode 100644 drivers/mfd/simple-mfd-i2c.c
- create mode 100644 drivers/pwm/pwm-sl28cpld.c
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
