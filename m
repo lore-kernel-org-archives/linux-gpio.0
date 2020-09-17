@@ -2,172 +2,285 @@ Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5FEC43461
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBC5C43465
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 20:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E57220725
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="H1xbYvff";
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ZK3aNW21"
+	by mail.kernel.org (Postfix) with ESMTP id 4606B20725
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 20:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgIQT4J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 15:56:09 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:13776 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbgIQOrY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2020 10:47:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1600354043; x=1631890043;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=MCBokrEKiuofgUglm0abnYj4s7LIov56wrrDd9Ep68U=;
-  b=H1xbYvff0asv5OIVr8R7HBLX3HjjaxOFJNsmge/z4okSL3QDwd41G4rQ
-   O6vjjKiaeVBooSYth8zcnLAAm+jvUjJtRm5Zsb9WeXB2MDytHzxML9A0j
-   w1ynNfrazhVeYh7hknZQWnKGoam0X+EhoLAb+pWjUb2i8QhCleDJQOqtK
-   ObVywvSIXaXVP3GTIknNYnQQTUHxWAHp63sCLhNcZULA+TQ6XCGdu0ESS
-   JSo2zeEEvrQsW7NxF7Vdczul6xZePmZjHd/LBNEEHHCjwHLgf8mVlwaUo
-   7pBNTuXC6VMZk6kgzxTLPQfReFftcjHgyzPLtXEjNjRE1pEYWNBtKbQzd
-   w==;
-IronPort-SDR: 2sVwA/xetzqEK21gWTL2u7LIoE7GPrVq3srN2GWo7GjpuFf2GAZif23/Bdfr0Rb0N7gphVx+Dc
- ktgMF8yfgpvdUVjHax/2WzLEufrZtjmpQd5uGGvb6nazCOXRLsc1Elj3zvWOUfPAtPSYjSI6+B
- Z+vGyYQRUdpfIfHGAK9ciGAv9Hzn6+HjyvNPqu9SuHk/RtwuCkIxJOhUR+f1qTOLUGGgySjfJt
- fZ5wnmvC0xlGhChjj74pYU50zi//JqBvduiPhTly2r/UjSngEQxgfgO69Ck/4WdESo4KAkIQTT
- LYs=
-X-IronPort-AV: E=Sophos;i="5.76,437,1592895600"; 
-   d="scan'208";a="92186188"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Sep 2020 07:26:44 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Thu, 17 Sep 2020 07:26:40 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3 via Frontend
- Transport; Thu, 17 Sep 2020 07:26:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dtM2yWPF5XQAhEHdss/g35eI1Q92jir3zrF7N1AAkIKxhBC/NcUIX0HxPFHLvRci7wZxLkXFYbQVf8+L+tmvtyF8DmZ2zJ6j61ch8tIR6fEdq5jlUocwRRmmW8nEK/Z/9HJEtFQdmjTlSujx/ZjCgxqmd/2ydmZ4AXVlZzWeXPffQFpOLJsOhQb3ILn83J53wCoK5BdxwpBslCRKewa1/XihbqXd9Ferz4gBcsVArEUop7Jn3axfiU/iTg3+BlzxqWUwN37o3gxuY+0/8c6H821bXh1Xt8+3HZ/Z7u04/PZMLhH58DhpPiHnqj87H0WPSd7JNm66f58TMBYh8AcNQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ey++znXeJXOGUVggKKmDbkvmgeTGEz/0fHt1omP8SAk=;
- b=FhPEtv0aD8vg7V4NiSA2STsMsvGad/JnqyV9+ZgvKP180539/faSsEfzFy875gcGkTbZCkNseTvtSE/3jsLzJIBgn5+5cQAqgH3Y3iWIaPHvnCx96p42wWfsewd5kBtUYdjbZ21oyH+ZocrbhH3A7s3tW1Ya9uNW+iNsIZsv1qjIdIN98ZmHc6OYy91wQpQebZUm/NNmivaOLMG+3Hh5AtHT9gx5LpYahiPcQ88sBMc4zosPkND56UhITbJEadz9FPcdh2Kb2tcDpoG/VbMhpkk0/uQrjB763Mdz3OjdhgAHpKKMkeInU6EFRNx0DihZz0NIUb9WJXLh7oCVQHHUkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ey++znXeJXOGUVggKKmDbkvmgeTGEz/0fHt1omP8SAk=;
- b=ZK3aNW21Jdse+Wj7uj5F73Rl/S4kxADTymNxuEOOkr0kdwGQTTRIbTeTuygu+CoJ/ThBtqqqz+l5iPa3ayXyACXGN+Evuw+wQLlK8wK50ULDQTB0Zx+qoAVD+9deNp1FMrdZAcdPIMDwYR5liI8rZYnKUTh9LEN+7i0jKQyZz4U=
-Received: from BYAPR11MB3477.namprd11.prod.outlook.com (2603:10b6:a03:7c::28)
- by BYAPR11MB3623.namprd11.prod.outlook.com (2603:10b6:a03:b5::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.11; Thu, 17 Sep
- 2020 14:26:40 +0000
-Received: from BYAPR11MB3477.namprd11.prod.outlook.com
- ([fe80::bc5b:8de8:be0a:17b4]) by BYAPR11MB3477.namprd11.prod.outlook.com
- ([fe80::bc5b:8de8:be0a:17b4%7]) with mapi id 15.20.3391.011; Thu, 17 Sep 2020
- 14:26:40 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <Eugen.Hristev@microchip.com>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <Ludovic.Desroches@microchip.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: at91-pio4: add
- microchip,sama7g5
-Thread-Topic: [PATCH 1/2] dt-bindings: pinctrl: at91-pio4: add
- microchip,sama7g5
-Thread-Index: AQHWjP6PF2QmZDCE3k+XNwg1BXUAJQ==
-Date:   Thu, 17 Sep 2020 14:26:40 +0000
-Message-ID: <02303ed6-3db7-29ff-b86a-af98d81e1e2e@microchip.com>
-References: <20200917131257.273882-1-eugen.hristev@microchip.com>
-In-Reply-To: <20200917131257.273882-1-eugen.hristev@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-authentication-results: microchip.com; dkim=none (message not signed)
- header.d=none;microchip.com; dmarc=none action=none
- header.from=microchip.com;
-x-originating-ip: [213.41.198.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ac662e16-db3e-483c-3f5b-08d85b15b1d1
-x-ms-traffictypediagnostic: BYAPR11MB3623:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR11MB36232D86CAF468EA366DE81DE03E0@BYAPR11MB3623.namprd11.prod.outlook.com>
-x-bypassexternaltag: True
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FuOxIE4m0m+oCk2OQTU+u+0GNZ+ARieRn9etgGUEVcXDjJRFrzUkrpda2ty4RohTe9IQeLPZBB36mGkJeHgMUTKNFU6Qjr+P7eO4nb/UXnsztoTNOJ+Ldq4Q+j4SceDCUMDMfZ2KgBmg/dAMo/4DPrqb3NsMEUGYkCTEOiYe0D6bt0xuav1W1Hn9X0lR5VMkbVXNvuL4VGeEmu9g8zM4++h/WSwoWTvK/+6U5XrZIHHKTCs654gjicvfWqsoCrjJaHWdVIXtrO/fBxlEFN0deoySMb/yTXleQtW/qGqdu79ZWSe7V4vCJqmVVxeaT6ERv3tMbutd+GzK+1Qrh/ncHk2rEDXgBo3w0BkPtWt00kc3ycFNuenzBmM+Us6DQKqnfR6TPGc7d+/Z0GhkrrLKGFuXqQPvWBpqn6Us30FshrUbD+2qnv6s06Jy5KqCzmDVVORYprpvtoVRi3tXaV8qrg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3477.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(376002)(136003)(346002)(39860400002)(2616005)(107886003)(83380400001)(26005)(478600001)(6486002)(110136005)(8936002)(4326008)(316002)(31686004)(86362001)(31696002)(91956017)(6512007)(66476007)(186003)(66446008)(66556008)(66946007)(64756008)(5660300002)(36756003)(76116006)(2906002)(8676002)(53546011)(71200400001)(6506007)(142933001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: cPL5Nbzz2RkIRyiJ5EzOkBCog0R19/bE/Izo436TRdQGJYYAriRBkRzL5e2ytCWStoo82EKBTx7oZRVdbdiK+j0D6oiMpOJCyVtDHEHraWxzv7ZcMJcjyXFEX343o7bnrMZWC6lpomVC46l9YHPqSzmRN7oi/wLERJrorwt49hP0J7jLKMSaGe9+d8nF7ZTF78bedEceO4kn+l7zypNmMafOd/Rg0ii9rqdJfUSpAzQtX13ykI5CYm4TVKROkv8jyRuFn1sWgTpb39CKAt8eLpont1TvfdtFYurHT5sBjSGjedwV2F6dLzNuK9aIZKvoKOSdfQdgWpRWzXI62VNzS6wsmVb4lORyE+391SpXqKI8r6vBpdYmEqlf7aqtEtcIAenHGM+E7zJHnGd/ZvD3sDgPfz2DUgaGmiBtUmfBKm8s8fKlJBxgLe1WsGUtpW2KJ+oEJgCtKBf4DRQscVDMlKX2lXyZwYbNpvIEpfHDATeX707KO3jmkpg5fREVPgE2FEf7QMlH7ZYnGsdNHw6nqYteA2hRHS/qfp0wo1D4k05JsqxZL2+OqchTh6swfrVFlqGb6uw9CHdUCj/qCi9U5euQVcAxSH/TITkU6ta6YhB9YabofdXQ0GGzeKW0186hGoDSX2Oxsi9xoqwP7YjMDg==
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <69BD8614B2F0914EB670043495F100C4@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3477.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac662e16-db3e-483c-3f5b-08d85b15b1d1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2020 14:26:40.7017
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: O+zD5CDIYVtzDrmZxd+HLZF9V5EPtSYwYQe1nrdQeokoKnWuFNBw7BSzK3L/vIPTmb64C8ZceNZgugpYfQtRcja2uR6j9i3W/IqY5zDHwxY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3623
+        id S1726328AbgIQUEe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 16:04:34 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:33823 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726361AbgIQUEd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 16:04:33 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 16:04:33 EDT
+X-IronPort-AV: E=Sophos;i="5.77,271,1596466800"; 
+   d="scan'208";a="57339497"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2020 04:59:29 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6FBFD4005E24;
+        Fri, 18 Sep 2020 04:59:27 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Subject: [PATCH v3] pinctrl: renesas: r8a7790: Add VIN1-B and VIN2-G pins, groups and functions
+Date:   Thu, 17 Sep 2020 20:59:24 +0100
+Message-Id: <20200917195924.20384-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 17/09/2020 at 15:12, Eugen Hristev wrote:
-> Add compatible string for microchip sama7g5 SoC.
->=20
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Add pins, groups and functions for the VIN1-B [data/sync/field/clkenb/clk]
+and VIN2-G8.
 
-Reviewed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+* Included vin1_data4_b, field_b  and clkenb_b
+* Renamed vin2_data8g to vin2_g8
+* Rebased patch on latest changes
 
-> ---
->   .../devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pi=
-nctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinct=
-rl.txt
-> index 04d16fb69eb7..265015bc0603 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.t=
-xt
-> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.t=
-xt
-> @@ -4,7 +4,9 @@ The Atmel PIO4 controller is used to select the function =
-of a pin and to
->   configure it.
->  =20
->   Required properties:
-> -- compatible: "atmel,sama5d2-pinctrl".
-> +- compatible:
-> +	"atmel,sama5d2-pinctrl"
-> +	"microchip,sama7g5-pinctrl"
->   - reg: base address and length of the PIO controller.
->   - interrupts: interrupt outputs from the controller, one for each bank.
->   - interrupt-controller: mark the device node as an interrupt controller=
-.
->=20
+v1->v2:
+* Added complete list of VIN1-B pins
+* Renamed vin2_data8_g to vin2_data8g
+* Sorted vin1_sync_b pins
 
+v1 - https://patchwork.kernel.org/patch/11761191/
+---
+ drivers/pinctrl/renesas/pfc-r8a7790.c | 132 +++++++++++++++++++++++++-
+ 1 file changed, 131 insertions(+), 1 deletion(-)
 
---=20
-Nicolas Ferre
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7790.c b/drivers/pinctrl/renesas/pfc-r8a7790.c
+index 60f973c5dffe..3f48d3d879f7 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7790.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7790.c
+@@ -3866,6 +3866,72 @@ static const unsigned int vin1_data18_mux[] = {
+ 	VI1_R4_MARK, VI1_R5_MARK,
+ 	VI1_R6_MARK, VI1_R7_MARK,
+ };
++static const union vin_data vin1_data_b_pins = {
++	.data24 = {
++		/* B */
++		RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
++		RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
++		RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
++		RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
++		/* G */
++		RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
++		RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 20),
++		RCAR_GP_PIN(1, 22), RCAR_GP_PIN(1, 12),
++		RCAR_GP_PIN(1, 9), RCAR_GP_PIN(1, 7),
++		/* R */
++		RCAR_GP_PIN(0, 27), RCAR_GP_PIN(0, 28),
++		RCAR_GP_PIN(0, 29), RCAR_GP_PIN(1, 4),
++		RCAR_GP_PIN(1, 5), RCAR_GP_PIN(1, 6),
++		RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 8),
++	},
++};
++static const union vin_data vin1_data_b_mux = {
++	.data24 = {
++		/* B */
++		VI1_DATA0_VI1_B0_B_MARK, VI1_DATA1_VI1_B1_B_MARK,
++		VI1_DATA2_VI1_B2_B_MARK, VI1_DATA3_VI1_B3_B_MARK,
++		VI1_DATA4_VI1_B4_B_MARK, VI1_DATA5_VI1_B5_B_MARK,
++		VI1_DATA6_VI1_B6_B_MARK, VI1_DATA7_VI1_B7_B_MARK,
++		/* G */
++		VI1_G0_B_MARK, VI1_G1_B_MARK,
++		VI1_G2_B_MARK, VI1_G3_B_MARK,
++		VI1_G4_B_MARK, VI1_G5_B_MARK,
++		VI1_G6_B_MARK, VI1_G7_B_MARK,
++		/* R */
++		VI1_R0_B_MARK, VI1_R1_B_MARK,
++		VI1_R2_B_MARK, VI1_R3_B_MARK,
++		VI1_R4_B_MARK, VI1_R5_B_MARK,
++		VI1_R6_B_MARK, VI1_R7_B_MARK,
++	},
++};
++static const unsigned int vin1_data18_b_pins[] = {
++	/* B */
++	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
++	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
++	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
++	/* G */
++	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 20),
++	RCAR_GP_PIN(1, 22), RCAR_GP_PIN(1, 12),
++	RCAR_GP_PIN(1, 9), RCAR_GP_PIN(1, 7),
++	/* R */
++	RCAR_GP_PIN(0, 29), RCAR_GP_PIN(1, 4),
++	RCAR_GP_PIN(1, 5), RCAR_GP_PIN(1, 6),
++	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 8),
++};
++static const unsigned int vin1_data18_b_mux[] = {
++	/* B */
++	VI1_DATA2_VI1_B2_B_MARK, VI1_DATA3_VI1_B3_B_MARK,
++	VI1_DATA4_VI1_B4_B_MARK, VI1_DATA5_VI1_B5_B_MARK,
++	VI1_DATA6_VI1_B6_B_MARK, VI1_DATA7_VI1_B7_B_MARK,
++	/* G */
++	VI1_G2_B_MARK, VI1_G3_B_MARK,
++	VI1_G4_B_MARK, VI1_G5_B_MARK,
++	VI1_G6_B_MARK, VI1_G7_B_MARK,
++	/* R */
++	VI1_R2_B_MARK, VI1_R3_B_MARK,
++	VI1_R4_B_MARK, VI1_R5_B_MARK,
++	VI1_R6_B_MARK, VI1_R7_B_MARK,
++};
+ static const unsigned int vin1_sync_pins[] = {
+ 	RCAR_GP_PIN(1, 24), /* HSYNC */
+ 	RCAR_GP_PIN(1, 25), /* VSYNC */
+@@ -3874,24 +3940,50 @@ static const unsigned int vin1_sync_mux[] = {
+ 	VI1_HSYNC_N_MARK,
+ 	VI1_VSYNC_N_MARK,
+ };
++static const unsigned int vin1_sync_b_pins[] = {
++	RCAR_GP_PIN(1, 24), /* HSYNC */
++	RCAR_GP_PIN(1, 25), /* VSYNC */
++};
++static const unsigned int vin1_sync_b_mux[] = {
++	VI1_HSYNC_N_B_MARK,
++	VI1_VSYNC_N_B_MARK,
++};
+ static const unsigned int vin1_field_pins[] = {
+ 	RCAR_GP_PIN(1, 13),
+ };
+ static const unsigned int vin1_field_mux[] = {
+ 	VI1_FIELD_MARK,
+ };
++static const unsigned int vin1_field_b_pins[] = {
++	RCAR_GP_PIN(1, 13),
++};
++static const unsigned int vin1_field_b_mux[] = {
++	VI1_FIELD_B_MARK,
++};
+ static const unsigned int vin1_clkenb_pins[] = {
+ 	RCAR_GP_PIN(1, 26),
+ };
+ static const unsigned int vin1_clkenb_mux[] = {
+ 	VI1_CLKENB_MARK,
+ };
++static const unsigned int vin1_clkenb_b_pins[] = {
++	RCAR_GP_PIN(1, 26),
++};
++static const unsigned int vin1_clkenb_b_mux[] = {
++	VI1_CLKENB_B_MARK,
++};
+ static const unsigned int vin1_clk_pins[] = {
+ 	RCAR_GP_PIN(2, 9),
+ };
+ static const unsigned int vin1_clk_mux[] = {
+ 	VI1_CLK_MARK,
+ };
++static const unsigned int vin1_clk_b_pins[] = {
++	RCAR_GP_PIN(3, 15),
++};
++static const unsigned int vin1_clk_b_mux[] = {
++	VI1_CLK_B_MARK,
++};
+ /* - VIN2 ----------------------------------------------------------------- */
+ static const union vin_data vin2_data_pins = {
+ 	.data24 = {
+@@ -3959,6 +4051,18 @@ static const unsigned int vin2_data18_mux[] = {
+ 	VI2_R4_MARK, VI2_R5_MARK,
+ 	VI2_R6_MARK, VI2_R7_MARK,
+ };
++static const unsigned int vin2_g8_pins[] = {
++	RCAR_GP_PIN(0, 27), RCAR_GP_PIN(0, 28),
++	RCAR_GP_PIN(0, 29), RCAR_GP_PIN(1, 10),
++	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
++};
++static const unsigned int vin2_g8_mux[] = {
++	VI2_G0_MARK, VI2_G1_MARK,
++	VI2_G2_MARK, VI2_G3_MARK,
++	VI2_G4_MARK, VI2_G5_MARK,
++	VI2_G6_MARK, VI2_G7_MARK,
++};
+ static const unsigned int vin2_sync_pins[] = {
+ 	RCAR_GP_PIN(1, 16), /* HSYNC */
+ 	RCAR_GP_PIN(1, 21), /* VSYNC */
+@@ -4026,7 +4130,7 @@ static const unsigned int vin3_clk_mux[] = {
+ };
+ 
+ static const struct {
+-	struct sh_pfc_pin_group common[298];
++	struct sh_pfc_pin_group common[311];
+ 	struct sh_pfc_pin_group automotive[1];
+ } pinmux_groups = {
+ 	.common = {
+@@ -4310,15 +4414,28 @@ static const struct {
+ 		VIN_DATA_PIN_GROUP(vin1_data, 10),
+ 		VIN_DATA_PIN_GROUP(vin1_data, 8),
+ 		VIN_DATA_PIN_GROUP(vin1_data, 4),
++		VIN_DATA_PIN_GROUP(vin1_data, 24, _b),
++		VIN_DATA_PIN_GROUP(vin1_data, 20, _b),
++		SH_PFC_PIN_GROUP(vin1_data18_b),
++		VIN_DATA_PIN_GROUP(vin1_data, 16, _b),
++		VIN_DATA_PIN_GROUP(vin1_data, 12, _b),
++		VIN_DATA_PIN_GROUP(vin1_data, 10, _b),
++		VIN_DATA_PIN_GROUP(vin1_data, 8, _b),
++		VIN_DATA_PIN_GROUP(vin1_data, 4, _b),
+ 		SH_PFC_PIN_GROUP(vin1_sync),
++		SH_PFC_PIN_GROUP(vin1_sync_b),
+ 		SH_PFC_PIN_GROUP(vin1_field),
++		SH_PFC_PIN_GROUP(vin1_field_b),
+ 		SH_PFC_PIN_GROUP(vin1_clkenb),
++		SH_PFC_PIN_GROUP(vin1_clkenb_b),
+ 		SH_PFC_PIN_GROUP(vin1_clk),
++		SH_PFC_PIN_GROUP(vin1_clk_b),
+ 		VIN_DATA_PIN_GROUP(vin2_data, 24),
+ 		SH_PFC_PIN_GROUP(vin2_data18),
+ 		VIN_DATA_PIN_GROUP(vin2_data, 16),
+ 		VIN_DATA_PIN_GROUP(vin2_data, 8),
+ 		VIN_DATA_PIN_GROUP(vin2_data, 4),
++		SH_PFC_PIN_GROUP(vin2_g8),
+ 		SH_PFC_PIN_GROUP(vin2_sync),
+ 		SH_PFC_PIN_GROUP(vin2_field),
+ 		SH_PFC_PIN_GROUP(vin2_clkenb),
+@@ -4784,10 +4901,22 @@ static const char * const vin1_groups[] = {
+ 	"vin1_data10",
+ 	"vin1_data8",
+ 	"vin1_data4",
++	"vin1_data24_b",
++	"vin1_data20_b",
++	"vin1_data18_b",
++	"vin1_data16_b",
++	"vin1_data12_b",
++	"vin1_data10_b",
++	"vin1_data8_b",
++	"vin1_data4_b",
+ 	"vin1_sync",
++	"vin1_sync_b",
+ 	"vin1_field",
++	"vin1_field_b",
+ 	"vin1_clkenb",
++	"vin1_clkenb_b",
+ 	"vin1_clk",
++	"vin1_clk_b",
+ };
+ 
+ static const char * const vin2_groups[] = {
+@@ -4796,6 +4925,7 @@ static const char * const vin2_groups[] = {
+ 	"vin2_data16",
+ 	"vin2_data8",
+ 	"vin2_data4",
++	"vin2_g8",
+ 	"vin2_sync",
+ 	"vin2_field",
+ 	"vin2_clkenb",
+-- 
+2.17.1
+
