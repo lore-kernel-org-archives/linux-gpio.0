@@ -2,252 +2,102 @@ Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCF8C43461
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 11:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12708C43461
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 13:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC267206BE
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 11:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A08FE2083B
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 13:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="fMaoqrKc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="c7WI1Fjp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgIQLlt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:41:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbgIQLlZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2020 07:41:25 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52CEC06174A
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 04:41:22 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id k14so1201493pgi.9
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2020 04:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=U3Dk2z1QIkQ9PcUlRp4++SZHUWHFbT2QTj68t6E19KM=;
-        b=fMaoqrKcdQs/JD4REC9tjS2uDJ/EYXgB0iuThUednRHi//PvBuzxrQGPFom/mqkLUS
-         65o8yf4CyalwZRoAQWG8g33d2+KhK2f3iepsCZgI0H+Xg/1ThXjauLiFQDvskJ8X4zut
-         Sz1KI53AqKQPP+LHuKRxj75wDMl4OEZuSAObM6bOI1fiyZUwCI64VPo5ZRmqsTPkfYsQ
-         dcvMbDQdk015EFv11UTmJJe4zBgfT/KYu4RZKhrluxhfEBNhXF2vZgphKBeCVRTt+Fh4
-         e9nAJVR1BcXpnPcrkEd/AxcPPvLzVOXBHExrTnjRwnNBG5sgenAcbc5NyS/hG+LmnoSH
-         85lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=U3Dk2z1QIkQ9PcUlRp4++SZHUWHFbT2QTj68t6E19KM=;
-        b=m0KYi8IB4cz1DE+3kCjMaw1tu9FlF3iMzOAZRjxCcBnYHqALVM1ppn0102Ri3+QJWs
-         RGZ6rNOyK/vevfsoRjaLTQpwjtlttsDCzKQKlUopoCQMSn9QOB5SWPwMa3iy9RMhhMUg
-         MCBwtCzxRthCPDsRfraldPCdnqQi5+SPD7WkR8W/7wSJ3HBNsJ8oEr2KqMXYb56w6Twn
-         DI7tpopCZkV0WtZEmGJ+b66V9j2YHiy+a2GYxoWfwX8ZOE3kEYNk/COj+OyYvVs/oLLU
-         kp5NOMmyCYAPZsHnmmv3eG6ppRE1eSw+YCNDp8XRXb1yRWpzrM/X4cFndyOOOB9sE+NC
-         AMZQ==
-X-Gm-Message-State: AOAM533uLjsD7N15uegqMUkFFbLpvGKmiAm7WsX3EjRtCIlTjI08JHY+
-        LMsUPsjknQytlZX28ebpTBDwZE6Xd6fufA==
-X-Google-Smtp-Source: ABdhPJzw80pVCfEE0v5ttnnv5O1pmZqn5Bfj2k86Y4ZW8REEIXJLzvJxA7yIJ0F22V0R8ffeZx2B6g==
-X-Received: by 2002:aa7:8d4c:0:b029:13f:e666:8f05 with SMTP id s12-20020aa78d4c0000b029013fe6668f05mr18650716pfe.0.1600342881917;
-        Thu, 17 Sep 2020 04:41:21 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id g7sm20794693pfr.150.2020.09.17.04.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:41:21 -0700 (PDT)
-Message-ID: <5f634b61.1c69fb81.87d8f.3701@mx.google.com>
-Date:   Thu, 17 Sep 2020 04:41:21 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1727017AbgIQNoA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 09:44:00 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:5835 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbgIQNey (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2020 09:34:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1600349694; x=1631885694;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TNfE+J8lkegxF+lyQIW6s0hqN7ALRP/ASxqfWb+N/SQ=;
+  b=c7WI1FjpBtQ6OH9CfsZRFSfINLRW8RQQxM5UUMlZkhLkrKyM6WvYbMVg
+   nJ3C95Bnl7yBX2nOKv5Rj55ECcu1DSRZumtHn/nl+5gZv2Ov+DUosH9mS
+   fbXgsHQN+KafsBVov1oTXlRYQTlVFZHN/lVbRw9bCV4WyY7U8d2Rqd1H8
+   pz4rh6hPY4OWSBxbt2uATjklL6WC5DMfG+6Gdo017lyLuQNomY8Lppuuc
+   nOdBfmGK/78fceXwkAKA73Z/pTEbQcb9INrs/00l2nr4FtlQf2Mzs6k4k
+   rvjTyoWnq9ZjBvbPx5nqfld8geSuAjkJ0QLEXy1kiMIYWwQNyGECHigr8
+   w==;
+IronPort-SDR: X44fELi7RJXe4sq0o7iB/hYhXm08A1nwl/5ivmu59oPewIaEdoQ3qrXvKytzCFM8VT97LywAA+
+ +AZuusOGfOwIJyAnrYbHRWpFgtDRVIjT0P4XUqnhNtMngKP2LBRUeHOiESB3fy1j7IizzgDpjD
+ fKzJsCX7gu5D0ylKQPkYd+v/qeKjLZMtHdKHuqvBmLMff5IJJKLmgk6RD5rVz+qQ1IK3onnMHU
+ iyDFjjTqTrQWDRfpsrQF1qVkHlC7ysO7mNItAJeAFjiw0jpqLbZ6BT6GSjdkmmoMuDg8EmO2vu
+ BpA=
+X-IronPort-AV: E=Sophos;i="5.76,437,1592895600"; 
+   d="scan'208";a="92175720"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Sep 2020 06:13:25 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 17 Sep 2020 06:12:59 -0700
+Received: from ROB-ULT-M18282.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Thu, 17 Sep 2020 06:13:18 -0700
+From:   Eugen Hristev <eugen.hristev@microchip.com>
+To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH 2/2] pinctrl: at91-pio4: add support for sama7g5 SoC
+Date:   Thu, 17 Sep 2020 16:12:57 +0300
+Message-ID: <20200917131257.273882-2-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200917131257.273882-1-eugen.hristev@microchip.com>
+References: <20200917131257.273882-1-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: linusw
-X-Kernelci-Branch: for-next
-X-Kernelci-Kernel: v5.9-rc2-19-ga5d0fe9ff2af
-Subject: linusw/for-next baseline: 123 runs,
- 4 regressions (v5.9-rc2-19-ga5d0fe9ff2af)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next baseline: 123 runs, 4 regressions (v5.9-rc2-19-ga5d0fe9ff2a=
-f)
+Add support for sama7g5 pinctrl block, which has 5 PIO banks.
 
-Regressions Summary
--------------------
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-platform              | arch  | lab           | compiler | defconfig       =
-   | results
-----------------------+-------+---------------+----------+-----------------=
----+--------
-mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig       =
-   | 0/1    =
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 1c852293cb96..9f62152d0a62 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -999,10 +999,17 @@ static const struct atmel_pioctrl_data atmel_sama5d2_pioctrl_data = {
+ 	.nbanks		= 4,
+ };
+ 
++static const struct atmel_pioctrl_data microchip_sama7g5_pioctrl_data = {
++	.nbanks		= 5,
++};
++
+ static const struct of_device_id atmel_pctrl_of_match[] = {
+ 	{
+ 		.compatible = "atmel,sama5d2-pinctrl",
+ 		.data = &atmel_sama5d2_pioctrl_data,
++	}, {
++		.compatible = "microchip,sama7g5-pinctrl",
++		.data = &microchip_sama7g5_pioctrl_data,
+ 	}, {
+ 		/* sentinel */
+ 	}
+-- 
+2.25.1
 
-panda                 | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
-ig | 4/5    =
-
-rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig       =
-   | 0/1    =
-
-sun7i-a20-cubieboard2 | arm   | lab-baylibre  | gcc-8    | multi_v7_defconf=
-ig | 0/1    =
-
-
-  Details:  https://kernelci.org/test/job/linusw/branch/for-next/kernel/v5.=
-9-rc2-19-ga5d0fe9ff2af/plan/baseline/
-
-  Test:     baseline
-  Tree:     linusw
-  Branch:   for-next
-  Describe: v5.9-rc2-19-ga5d0fe9ff2af
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
-io.git/
-  SHA:      a5d0fe9ff2af9feb82d37782be5beb2976a4afdd =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform              | arch  | lab           | compiler | defconfig       =
-   | results
-----------------------+-------+---------------+----------+-----------------=
----+--------
-mt8173-elm-hana       | arm64 | lab-collabora | gcc-8    | defconfig       =
-   | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f6341af2edb0885bfbf9dd7
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.txt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm64/defconfig/gcc-8/lab-collabora/baseline-mt8173-elm-hana.ht=
-ml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f6341af2edb0885bfbf9=
-dd8
-      failing since 19 days (last pass: gpio-v5.8-2-103-g22cc422070d9, firs=
-t fail: v5.8-11991-gfc80c51fd4b2)  =
-
-
-
-platform              | arch  | lab           | compiler | defconfig       =
-   | results
-----------------------+-------+---------------+----------+-----------------=
----+--------
-panda                 | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
-ig | 4/5    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f634154596a3bf80ebf9dd6
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5f634154596a3bf=
-80ebf9ddc
-      failing since 19 days (last pass: gpio-v5.8-2-103-g22cc422070d9, firs=
-t fail: v5.8-11991-gfc80c51fd4b2)
-      60 lines
-
-    2020-09-17 10:58:22.896000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c802
-    2020-09-17 10:58:22.901000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c803
-    2020-09-17 10:58:22.907000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c804
-    2020-09-17 10:58:22.913000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c805
-    2020-09-17 10:58:22.919000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c806
-    2020-09-17 10:58:22.925000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c807
-    2020-09-17 10:58:22.931000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c808
-    2020-09-17 10:58:22.937000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c809
-    2020-09-17 10:58:22.943000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c80a
-    2020-09-17 10:58:22.949000  kern  :alert : BUG: Bad page state in proce=
-ss swapper/0  pfn:9c80b
-    ... (49 line(s) more)
-      =
-
-
-
-platform              | arch  | lab           | compiler | defconfig       =
-   | results
-----------------------+-------+---------------+----------+-----------------=
----+--------
-rk3399-gru-kevin      | arm64 | lab-collabora | gcc-8    | defconfig       =
-   | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f6341a5d3dd57bfc7bf9dc8
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm64/defconfig/gcc-8/lab-collabora/baseline-rk3399-gru-kevin.t=
-xt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm64/defconfig/gcc-8/lab-collabora/baseline-rk3399-gru-kevin.h=
-tml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/arm64/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f6341a5d3dd57bfc7bf9=
-dc9
-      new failure (last pass: v5.9-rc1-10-gfeeaefd378ca)  =
-
-
-
-platform              | arch  | lab           | compiler | defconfig       =
-   | results
-----------------------+-------+---------------+----------+-----------------=
----+--------
-sun7i-a20-cubieboard2 | arm   | lab-baylibre  | gcc-8    | multi_v7_defconf=
-ig | 0/1    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5f63414176f8cb8389bf9df0
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun7i-a20-cu=
-bieboard2.txt
-  HTML log:    https://storage.kernelci.org//linusw/for-next/v5.9-rc2-19-ga=
-5d0fe9ff2af/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun7i-a20-cu=
-bieboard2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05/armel/baseline/rootfs.cpio.gz =
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5f63414176f8cb8389bf9=
-df1
-      new failure (last pass: gpio-v5.8-2-103-g22cc422070d9)  =20
