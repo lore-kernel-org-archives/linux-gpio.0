@@ -1,229 +1,94 @@
-Return-Path: <SRS0=YsKQ=C2=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=RA/I=C3=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70657C43464
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0543CC43463
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Sep 2020 02:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E52B208DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Sep 2020 22:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C632123888
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Sep 2020 02:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600397726;
+	bh=hHbpTSTPz6WKT02bLRF/XYFd6t/ARAuXZH0O+Ip4sXM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UHHjUxe7yJ3Uetmgkt17DtN3gWlcUl9HivOB1TgTOUgUCmBQTZRIHtUTFymk8Iulw
+	 vZ61lrVBijCEmrfNvBfD0+A6x2/fwf1pCsMkrQoxVD5YPZceH3smI06t3Nt//1ng/A
+	 t8ihhxv7x04BZQ9jW+p2fktNlT2NGoY8I6jZ0IZo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbgIQWiF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:38:05 -0400
-Received: from mga05.intel.com ([192.55.52.43]:53246 "EHLO mga05.intel.com"
+        id S1728335AbgIRCzT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Sep 2020 22:55:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgIQWiE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:38:04 -0400
-X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 18:38:04 EDT
-IronPort-SDR: wf1kCoTGWV08qWp2XPwsX5CMHTiFAEjFsTk8wSJ7QrGVdc9nt2ogcUP5h3beNgs43mjqtYscuC
- 9s4pu0EoNEUw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9747"; a="244640172"
-X-IronPort-AV: E=Sophos;i="5.77,272,1596524400"; 
-   d="scan'208";a="244640172"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 15:30:51 -0700
-IronPort-SDR: PCVg+T1il1UHCDQ+ZhMpjqre+jq1R13RrU4p9rjpx9MxHNCjcLi782SrmJwe7sVFi4/M9FKGgM
- x7ZH2I6qUS5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,272,1596524400"; 
-   d="scan'208";a="452504587"
-Received: from lkp-server01.sh.intel.com (HELO a05db971c861) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 17 Sep 2020 15:30:49 -0700
-Received: from kbuild by a05db971c861 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kJ2QS-0000AQ-Ue; Thu, 17 Sep 2020 22:30:48 +0000
-Date:   Fri, 18 Sep 2020 06:30:21 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:for-next] BUILD SUCCESS
- a5d0fe9ff2af9feb82d37782be5beb2976a4afdd
-Message-ID: <5f63e37d.tbsUy/6BjLU4iIfG%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727850AbgIRCHI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:07:08 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 588A023A05;
+        Fri, 18 Sep 2020 02:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600394823;
+        bh=hHbpTSTPz6WKT02bLRF/XYFd6t/ARAuXZH0O+Ip4sXM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PuFjREZpXAoUVdGoSyKUqsLlGmiZ0pE1eG+8v4SOv3YFBXPRFZa0stxMFgR8arkOf
+         pxkVsY97i51RnFFGQHDiGWN98b261vbo/MidG0V4gddRaoJfxrnBD1f0WLNzZQ8yJx
+         4f03Aq3MlKh8GGY1KgP0lnJrzqg4lRzfnueYSoj0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 288/330] gpio: rcar: Fix runtime PM imbalance on error
+Date:   Thu, 17 Sep 2020 22:00:28 -0400
+Message-Id: <20200918020110.2063155-288-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
+References: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  for-next
-branch HEAD: a5d0fe9ff2af9feb82d37782be5beb2976a4afdd  Merge branch 'devel' into for-next
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-elapsed time: 725m
+[ Upstream commit 6f8cd246411575703d9312888b70705c396b53a9 ]
 
-configs tested: 155
-configs skipped: 2
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-mips                        omega2p_defconfig
-arm                         lubbock_defconfig
-arm                           spitz_defconfig
-powerpc                        warp_defconfig
-sh                        dreamcast_defconfig
-powerpc                      pcm030_defconfig
-arm                            lart_defconfig
-powerpc                    mvme5100_defconfig
-powerpc                     sbc8548_defconfig
-sparc                       sparc64_defconfig
-arm                   milbeaut_m10v_defconfig
-s390                          debug_defconfig
-sh                          polaris_defconfig
-powerpc                     asp8347_defconfig
-arm                        mini2440_defconfig
-mips                    maltaup_xpa_defconfig
-arm                        mvebu_v7_defconfig
-powerpc                       eiger_defconfig
-powerpc                     tqm8548_defconfig
-sh                         ecovec24_defconfig
-nds32                            alldefconfig
-powerpc                 linkstation_defconfig
-parisc                generic-64bit_defconfig
-arm                      pxa255-idp_defconfig
-ia64                         bigsur_defconfig
-powerpc                      makalu_defconfig
-powerpc                      ppc6xx_defconfig
-arc                             nps_defconfig
-arm                           h5000_defconfig
-mips                        bcm47xx_defconfig
-arm                        neponset_defconfig
-nios2                         3c120_defconfig
-powerpc                 xes_mpc85xx_defconfig
-sh                               alldefconfig
-sh                               j2_defconfig
-powerpc                      acadia_defconfig
-sh                             shx3_defconfig
-powerpc                    gamecube_defconfig
-xtensa                          iss_defconfig
-mips                      loongson3_defconfig
-powerpc                        cell_defconfig
-mips                         cobalt_defconfig
-um                           x86_64_defconfig
-c6x                        evmc6678_defconfig
-sh                             sh03_defconfig
-mips                      malta_kvm_defconfig
-sh                          landisk_defconfig
-powerpc                  storcenter_defconfig
-parisc                generic-32bit_defconfig
-arm                       omap2plus_defconfig
-sh                           se7712_defconfig
-powerpc                      katmai_defconfig
-mips                  cavium_octeon_defconfig
-nios2                         10m50_defconfig
-arc                 nsimosci_hs_smp_defconfig
-powerpc                        fsp2_defconfig
-mips                       lemote2f_defconfig
-arm                         lpc18xx_defconfig
-s390                             allyesconfig
-mips                           rs90_defconfig
-arm                        vexpress_defconfig
-sh                                  defconfig
-sh                        sh7763rdp_defconfig
-powerpc                mpc7448_hpc2_defconfig
-sh                            migor_defconfig
-parisc                           allyesconfig
-mips                         rt305x_defconfig
-powerpc                   motionpro_defconfig
-powerpc                      obs600_defconfig
-powerpc                     rainier_defconfig
-arm                         assabet_defconfig
-powerpc                 mpc85xx_cds_defconfig
-arc                        vdk_hs38_defconfig
-sh                     sh7710voipgw_defconfig
-arc                                 defconfig
-i386                                defconfig
-sh                          r7780mp_defconfig
-mips                         tb0226_defconfig
-h8300                               defconfig
-mips                           ci20_defconfig
-ia64                             allmodconfig
-openrisc                         alldefconfig
-sh                   sh7724_generic_defconfig
-powerpc                       ppc64_defconfig
-arm                          iop32x_defconfig
-m68k                        m5272c3_defconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a004-20200917
-i386                 randconfig-a006-20200917
-i386                 randconfig-a003-20200917
-i386                 randconfig-a001-20200917
-i386                 randconfig-a002-20200917
-i386                 randconfig-a005-20200917
-x86_64               randconfig-a014-20200917
-x86_64               randconfig-a011-20200917
-x86_64               randconfig-a016-20200917
-x86_64               randconfig-a012-20200917
-x86_64               randconfig-a015-20200917
-x86_64               randconfig-a013-20200917
-i386                 randconfig-a015-20200917
-i386                 randconfig-a014-20200917
-i386                 randconfig-a011-20200917
-i386                 randconfig-a013-20200917
-i386                 randconfig-a016-20200917
-i386                 randconfig-a012-20200917
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a006-20200917
-x86_64               randconfig-a004-20200917
-x86_64               randconfig-a003-20200917
-x86_64               randconfig-a002-20200917
-x86_64               randconfig-a001-20200917
-x86_64               randconfig-a005-20200917
-
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Link: https://lore.kernel.org/r/20200522080839.32612-1-dinghao.liu@zju.edu.cn
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/gpio/gpio-rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 187984d26f47a..f0b6c68e848e3 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -250,8 +250,10 @@ static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
+ 	int error;
+ 
+ 	error = pm_runtime_get_sync(p->dev);
+-	if (error < 0)
++	if (error < 0) {
++		pm_runtime_put(p->dev);
+ 		return error;
++	}
+ 
+ 	error = pinctrl_gpio_request(chip->base + offset);
+ 	if (error)
+-- 
+2.25.1
+
