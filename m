@@ -2,89 +2,106 @@ Return-Path: <SRS0=gyjB=C5=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80441C43463
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Sep 2020 20:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E925C43465
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Sep 2020 22:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 443A320829
-	for <linux-gpio@archiver.kernel.org>; Sun, 20 Sep 2020 20:41:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="B9nmzHHH"
+	by mail.kernel.org (Postfix) with ESMTP id E85162145D
+	for <linux-gpio@archiver.kernel.org>; Sun, 20 Sep 2020 22:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbgITUl2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 20 Sep 2020 16:41:28 -0400
-Received: from mail1.nippynetworks.com ([91.220.24.129]:57620 "EHLO
-        mail1.nippynetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgITUl2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Sep 2020 16:41:28 -0400
-Received: from twocubed.nippynetworks.com (office.nippynetworks.com [46.17.61.232])
-        by mail1.nippynetworks.com (Postfix) with SMTP id 4BvfRD21N7zTgZM;
-        Sun, 20 Sep 2020 21:33:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wildgooses.com;
-        s=dkim; t=1600634012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=dTuEJgYM6LNmm/jFqMkJjsE9372TSsB7bhiTsLa2tvw=;
-        b=B9nmzHHHkUDdpuavrr5ANVP4mNFUVzIvi/pkKL9CTkMPYwaZL6jQiT0ZRdHjSqzmg7vggT
-        RBNHnsmsgzX0dCDU++R9hBzagDuUyyCZAna7GoKT1sxFwOH5uJZKBpNxg5wtQ5Dtr9nheY
-        lgqxQOerctxFtHDGh3I7Qwq9s1AimmY=
-Received: by twocubed.nippynetworks.com (sSMTP sendmail emulation); Sun, 20 Sep 2020 21:33:23 +0100
-From:   Ed Wildgoose <lists@wildgooses.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     fe@dev.tdt.de, Ed Wildgoose <lists@wildgooses.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH] gpio: gpio-amd-fch: Fix typo on define of AMD_FCH_GPIO_REG_GPIO55_DEVSLP0
-Date:   Sun, 20 Sep 2020 21:32:06 +0100
-Message-Id: <20200920203207.25696-1-lists@wildgooses.com>
-X-Mailer: git-send-email 2.26.2
+        id S1726221AbgITWjq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 20 Sep 2020 18:39:46 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:55394 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbgITWjq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 20 Sep 2020 18:39:46 -0400
+X-Greylist: delayed 1529 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Sep 2020 18:39:45 EDT
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1kK7b2-0005lD-9m; Mon, 21 Sep 2020 00:14:12 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linus.walleij@linaro.org, Jianqun Xu <jay.xu@rock-chips.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>
+Subject: Re: [PATCH 2/2] pinctrl: rockchip: make driver be tristate module
+Date:   Mon, 21 Sep 2020 00:14:11 +0200
+Message-ID: <5373086.oXRXx9yCqB@diego>
+In-Reply-To: <20200914003847.10341-1-jay.xu@rock-chips.com>
+References: <20200907025927.9713-3-jay.xu@rock-chips.com> <20200914003847.10341-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Schematics show that the GPIO number is 55 (not 59). Trivial typo.
+Am Montag, 14. September 2020, 02:38:47 CEST schrieb Jianqun Xu:
+> Make pinctrl-rockchip driver to be tristate module, support to build as
+> a module, this is useful for GKI.
+> 
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
 
-Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
----
- drivers/platform/x86/pcengines-apuv2.c          | 2 +-
- include/linux/platform_data/gpio/gpio-amd-fch.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
-index 6aff6cf41..c37349f97 100644
---- a/drivers/platform/x86/pcengines-apuv2.c
-+++ b/drivers/platform/x86/pcengines-apuv2.c
-@@ -32,7 +32,7 @@
- #define APU2_GPIO_REG_LED3		AMD_FCH_GPIO_REG_GPIO59_DEVSLP1
- #define APU2_GPIO_REG_MODESW		AMD_FCH_GPIO_REG_GPIO32_GE1
- #define APU2_GPIO_REG_SIMSWAP		AMD_FCH_GPIO_REG_GPIO33_GE2
--#define APU2_GPIO_REG_MPCIE2		AMD_FCH_GPIO_REG_GPIO59_DEVSLP0
-+#define APU2_GPIO_REG_MPCIE2		AMD_FCH_GPIO_REG_GPIO55_DEVSLP0
- #define APU2_GPIO_REG_MPCIE3		AMD_FCH_GPIO_REG_GPIO51
- 
- /* Order in which the GPIO lines are defined in the register list */
-diff --git a/include/linux/platform_data/gpio/gpio-amd-fch.h b/include/linux/platform_data/gpio/gpio-amd-fch.h
-index 9e46678ed..255d51c9d 100644
---- a/include/linux/platform_data/gpio/gpio-amd-fch.h
-+++ b/include/linux/platform_data/gpio/gpio-amd-fch.h
-@@ -19,7 +19,7 @@
- #define AMD_FCH_GPIO_REG_GPIO49		0x40
- #define AMD_FCH_GPIO_REG_GPIO50		0x41
- #define AMD_FCH_GPIO_REG_GPIO51		0x42
--#define AMD_FCH_GPIO_REG_GPIO59_DEVSLP0	0x43
-+#define AMD_FCH_GPIO_REG_GPIO55_DEVSLP0	0x43
- #define AMD_FCH_GPIO_REG_GPIO57		0x44
- #define AMD_FCH_GPIO_REG_GPIO58		0x45
- #define AMD_FCH_GPIO_REG_GPIO59_DEVSLP1	0x46
--- 
-2.26.2
+> ---
+>  drivers/pinctrl/Kconfig            |  2 +-
+>  drivers/pinctrl/pinctrl-rockchip.c | 13 +++++++++++++
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 4284f39a5c61..743eb2bb8709 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -207,7 +207,7 @@ config PINCTRL_OXNAS
+>  	select MFD_SYSCON
+>  
+>  config PINCTRL_ROCKCHIP
+> -	bool
+> +	tristate "Rockchip gpio and pinctrl driver"
+>  	depends on OF
+>  	select PINMUX
+>  	select GENERIC_PINCONF
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 0401c1da79dd..927d132d6716 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -16,10 +16,12 @@
+>   */
+>  
+>  #include <linux/init.h>
+> +#include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/bitops.h>
+>  #include <linux/gpio/driver.h>
+> +#include <linux/of_device.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/pinctrl/machine.h>
+> @@ -4258,3 +4260,14 @@ static int __init rockchip_pinctrl_drv_register(void)
+>  	return platform_driver_register(&rockchip_pinctrl_driver);
+>  }
+>  postcore_initcall(rockchip_pinctrl_drv_register);
+> +
+> +static void __exit rockchip_pinctrl_drv_unregister(void)
+> +{
+> +	platform_driver_unregister(&rockchip_pinctrl_driver);
+> +}
+> +module_exit(rockchip_pinctrl_drv_unregister);
+> +
+> +MODULE_DESCRIPTION("ROCKCHIP Pin Controller Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:pinctrl-rockchip");
+> +MODULE_DEVICE_TABLE(of, rockchip_pinctrl_dt_match);
+> 
+
+
+
 
