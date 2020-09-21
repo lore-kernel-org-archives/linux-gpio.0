@@ -2,79 +2,61 @@ Return-Path: <SRS0=ZLld=C6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13202C43464
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 06:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31268C43463
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 06:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2A7321789
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 06:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E752073A
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 06:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgIUG1x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Sep 2020 02:27:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51678 "EHLO mail.kernel.org"
+        id S1726365AbgIUGzh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Sep 2020 02:55:37 -0400
+Received: from muru.com ([72.249.23.125]:44936 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbgIUG1x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 21 Sep 2020 02:27:53 -0400
-Received: from sekiro (amontpellier-556-1-154-164.w109-210.abo.wanadoo.fr [109.210.130.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C15B20739;
-        Mon, 21 Sep 2020 06:27:51 +0000 (UTC)
-Date:   Mon, 21 Sep 2020 08:27:48 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: at91-pio4: add
- microchip,sama7g5
-Message-ID: <20200921062748.pf4gru6dndapzbah@sekiro>
-References: <20200917131257.273882-1-eugen.hristev@microchip.com>
+        id S1726211AbgIUGzh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 21 Sep 2020 02:55:37 -0400
+X-Greylist: delayed 563 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 02:55:37 EDT
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 9924580BA;
+        Mon, 21 Sep 2020 06:46:14 +0000 (UTC)
+Date:   Mon, 21 Sep 2020 09:47:07 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Drew Fustini <drew@beagleboard.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Trent Piepho <tpiepho@gmail.com>,
+        Christina Quast <cquast@hanoverdisplays.com>,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: am335x: guardian: switch to AM33XX_PADCONF
+Message-ID: <20200921064707.GN7101@atomide.com>
+References: <20200919195159.3126193-1-drew@beagleboard.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200917131257.273882-1-eugen.hristev@microchip.com>
+In-Reply-To: <20200919195159.3126193-1-drew@beagleboard.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 04:12:56PM +0300, Eugen Hristev wrote:
-> Add compatible string for microchip sama7g5 SoC.
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+* Drew Fustini <drew@beagleboard.org> [200919 19:53]:
+> Change the pin defintions from AM33XX_IOPAD to AM33XX_PADCONF macro so
+> that it correctly handles changes to #pinctrl-cells.
 
-Thanks
+Thanks for fixing this. I wonder if we should now also change the define
+for the old AM33XX_IOPAD macro?
 
-Ludovic
-> ---
->  .../devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-> index 04d16fb69eb7..265015bc0603 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-> @@ -4,7 +4,9 @@ The Atmel PIO4 controller is used to select the function of a pin and to
->  configure it.
->  
->  Required properties:
-> -- compatible: "atmel,sama5d2-pinctrl".
-> +- compatible:
-> +	"atmel,sama5d2-pinctrl"
-> +	"microchip,sama7g5-pinctrl"
->  - reg: base address and length of the PIO controller.
->  - interrupts: interrupt outputs from the controller, one for each bank.
->  - interrupt-controller: mark the device node as an interrupt controller.
-> -- 
-> 2.25.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Or just remove it completely and mention that we've changed nr-pinctrl-cells
+to use 3 now?
+
+Otherwise the unknown number of out-of-tree boards will be hitting this
+too.
+
+Regards,
+
+Tony
