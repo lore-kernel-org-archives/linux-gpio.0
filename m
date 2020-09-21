@@ -7,35 +7,33 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8559C43465
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 13:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E748C43465
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 13:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB132076E
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 13:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042932076E
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 13:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbgIUNL5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Sep 2020 09:11:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13765 "EHLO huawei.com"
+        id S1726899AbgIUNMF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Sep 2020 09:12:05 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59822 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727403AbgIUNKo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 21 Sep 2020 09:10:44 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 207EF6BC6A522D0DAF07;
+        id S1727405AbgIUNKn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 21 Sep 2020 09:10:43 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C6A5231E7104130C6C36;
         Mon, 21 Sep 2020 21:10:40 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 21 Sep 2020 21:10:32 +0800
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.487.0; Mon, 21 Sep 2020 21:10:34 +0800
 From:   Qinglang Miao <miaoqinglang@huawei.com>
-To:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
+To:     Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Qinglang Miao <miaoqinglang@huawei.com>
-Subject: [PATCH -next] pinctrl: mediatek: simplify the return expression of mtk_pinconf_bias_disable_set_rev1()
-Date:   Mon, 21 Sep 2020 21:10:56 +0800
-Message-ID: <20200921131056.92848-1-miaoqinglang@huawei.com>
+Subject: [PATCH -next] pinctrl: spear: simplify the return expression of tvc_connect()
+Date:   Mon, 21 Sep 2020 21:10:58 +0800
+Message-ID: <20200921131058.92941-1-miaoqinglang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -50,30 +48,35 @@ Simplify the return expression.
 
 Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/pinctrl/spear/pinctrl-spear320.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 2f3dfb56c..16bb15226 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -479,14 +479,8 @@ EXPORT_SYMBOL_GPL(mtk_pinconf_bias_get);
- int mtk_pinconf_bias_disable_set_rev1(struct mtk_pinctrl *hw,
- 				      const struct mtk_pin_desc *desc)
+diff --git a/drivers/pinctrl/spear/pinctrl-spear320.c b/drivers/pinctrl/spear/pinctrl-spear320.c
+index 99c10fc3d..e629e3035 100644
+--- a/drivers/pinctrl/spear/pinctrl-spear320.c
++++ b/drivers/pinctrl/spear/pinctrl-spear320.c
+@@ -3418,8 +3418,6 @@ static const struct of_device_id spear320_pinctrl_of_match[] = {
+ 
+ static int spear320_pinctrl_probe(struct platform_device *pdev)
  {
--	int err;
+-	int ret;
 -
--	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PULLEN,
--			       MTK_DISABLE);
--	if (err)
--		return err;
+ 	spear3xx_machdata.groups = spear320_pingroups;
+ 	spear3xx_machdata.ngroups = ARRAY_SIZE(spear320_pingroups);
+ 	spear3xx_machdata.functions = spear320_functions;
+@@ -3433,11 +3431,7 @@ static int spear320_pinctrl_probe(struct platform_device *pdev)
+ 	pmx_init_gpio_pingroup_addr(spear3xx_machdata.gpio_pingroups,
+ 			spear3xx_machdata.ngpio_pingroups, PMX_CONFIG_REG);
+ 
+-	ret = spear_pinctrl_probe(pdev, &spear3xx_machdata);
+-	if (ret)
+-		return ret;
 -
 -	return 0;
-+	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PULLEN,
-+				MTK_DISABLE);
++	return spear_pinctrl_probe(pdev, &spear3xx_machdata);
  }
- EXPORT_SYMBOL_GPL(mtk_pinconf_bias_disable_set_rev1);
  
+ static struct platform_driver spear320_pinctrl_driver = {
 -- 
 2.23.0
 
