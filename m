@@ -2,36 +2,35 @@ Return-Path: <SRS0=ZLld=C6=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=BAYES_50,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_20,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEF7C43465
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 01:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC748C43463
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 01:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB738207EA
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 01:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A38207BB
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Sep 2020 01:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbgIUBAy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 20 Sep 2020 21:00:54 -0400
-Received: from slot0.argoshiq.com ([45.95.169.66]:47307 "EHLO
+        id S1726221AbgIUB4S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 20 Sep 2020 21:56:18 -0400
+Received: from slot0.argoshiq.com ([45.95.169.66]:44601 "EHLO
         slot0.argoshiq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbgIUBAy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Sep 2020 21:00:54 -0400
-X-Greylist: delayed 605 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Sep 2020 21:00:00 EDT
+        with ESMTP id S1726184AbgIUB4S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Sep 2020 21:56:18 -0400
 From:   Sophia <sophia@miwell-hk.com>
-Date:   Sun, 20 Sep 2020 17:49:54 -0700
-Subject: Inquires
-Message-Id: <9OGGE3P1QBU4.39N3SEM2ZFQK1@miwell-hk.com>
+Date:   Sun, 20 Sep 2020 18:55:24 -0700
+Subject: Product Inquires
+Message-Id: <6XAVG572QBU4.GIP0SZTMVTQR@miwell-hk.com>
 To:     linux-gpio@vger.kernel.org
 Sender: Sophia <sophia@miwell-hk.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-sM6zkG/8fv91KtS15zH2MA=="
+Content-Type: multipart/mixed; boundary="=-nkUG+lptggVpGQcD2tPK/A=="
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
---=-sM6zkG/8fv91KtS15zH2MA==
+--=-nkUG+lptggVpGQcD2tPK/A==
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
@@ -52,7 +51,7 @@ M.p.:18002752016
 Tel:0769-22996820
 Email:sophia@miwell-hk.com
 
---=-sM6zkG/8fv91KtS15zH2MA==
+--=-nkUG+lptggVpGQcD2tPK/A==
 Content-Type: application/x-7z-compressed; name=img001.7z
 Content-Disposition: attachment; filename=img001.7z
 Content-Transfer-Encoding: base64
@@ -4348,4 +4347,4 @@ Ztt7vUc+F90vscxapMSobtrmq+7eJgAAAAABBAYAAQnDRIgABwsBAAIhIQEPBAMDAQMBAAzJ
 ACrJACoACAoB7UdnjQAABQERFwBpAG0AZwAwADAAMQAuAGUAeABlAAAAGQQAAAAAFAoBABE9
 CRSoj9YBFQYBACAAAAAAAA==
 
---=-sM6zkG/8fv91KtS15zH2MA==--
+--=-nkUG+lptggVpGQcD2tPK/A==--
