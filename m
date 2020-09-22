@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24EBC4363D
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Sep 2020 13:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64490C4363D
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Sep 2020 13:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85C06207C3
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Sep 2020 13:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD07207C3
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Sep 2020 13:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgIVNak (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Sep 2020 09:30:40 -0400
-Received: from mga03.intel.com ([134.134.136.65]:25099 "EHLO mga03.intel.com"
+        id S1726597AbgIVNap (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Sep 2020 09:30:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:35158 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726489AbgIVNak (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 22 Sep 2020 09:30:40 -0400
-IronPort-SDR: Yzl28gXwL6XQ2RCZ9aCfhCkS2pmTKPqji3ZkZA7HybpQu63gN7GUWqUyXV327bZ39vns7QxK87
- AuxXFg16J3fg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="160674170"
+        id S1726489AbgIVNap (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 22 Sep 2020 09:30:45 -0400
+IronPort-SDR: ZqV0At3S1KF+qAhaZeVbrSgiBtZ913LHb0UJ/1Iao0zB4Nd5TXl/4xqaRF/F4TZlfiN6Sj6c8i
+ INk3S0q/cM9w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9751"; a="148349916"
 X-IronPort-AV: E=Sophos;i="5.77,290,1596524400"; 
-   d="scan'208";a="160674170"
+   d="scan'208";a="148349916"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 06:30:33 -0700
-IronPort-SDR: li+RQELej1Q09KDHaLRGmWwJfUU1LEiBJ51NXToNXolELK5SAmEgVzBamgE9VsAtaycLxKsrpE
- 5id70j1+l70A==
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2020 06:30:34 -0700
+IronPort-SDR: jcFlnEP+ghPrKaCVGuh68gPAM5ibX8gS4Iduk3r4NnrTuFuOtRI4InA8ZKacWU/2OQWUI/5NYN
+ eQboVq4UBYNw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,290,1596524400"; 
-   d="scan'208";a="291297319"
+   d="scan'208";a="412653277"
 Received: from lkp-server01.sh.intel.com (HELO 928d8e596b58) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Sep 2020 06:30:32 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 22 Sep 2020 06:30:32 -0700
 Received: from kbuild by 928d8e596b58 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kKiNL-0000Xi-KC; Tue, 22 Sep 2020 13:30:31 +0000
-Date:   Tue, 22 Sep 2020 21:29:47 +0800
+        id 1kKiNL-0000Xl-Km; Tue, 22 Sep 2020 13:30:31 +0000
+Date:   Tue, 22 Sep 2020 21:29:48 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:devel] BUILD SUCCESS
- 36eccdb58fb55d2bea6a0e62932e4d7e5192d409
-Message-ID: <5f69fc4b.10Tnc26znql6zs8V%lkp@intel.com>
+Subject: [gpio:fixes] BUILD SUCCESS
+ 53c14e237b0128aed9e2f1ab3700c46fdad36ebc
+Message-ID: <5f69fc4c.LLcL9g97uHZH4yYr%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  devel
-branch HEAD: 36eccdb58fb55d2bea6a0e62932e4d7e5192d409  Merge tag 'gpio-updates-for-v5.10-part1' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  fixes
+branch HEAD: 53c14e237b0128aed9e2f1ab3700c46fdad36ebc  Merge tag 'gpio-fixes-for-v5.9-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into fixes
 
 elapsed time: 722m
 
-configs tested: 175
+configs tested: 179
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -67,9 +67,9 @@ More configs may be tested in the coming days.
 gcc tested configs:
 arm                                 defconfig
 arm64                            allyesconfig
-arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
+arm64                               defconfig
 sh                           se7712_defconfig
 arm                        mvebu_v5_defconfig
 arm                        mvebu_v7_defconfig
@@ -145,6 +145,10 @@ powerpc                    klondike_defconfig
 arm                       versatile_defconfig
 arc                              alldefconfig
 mips                      pistachio_defconfig
+sh                        edosk7760_defconfig
+powerpc                       eiger_defconfig
+mips                        vocore2_defconfig
+sh                     magicpanelr2_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
