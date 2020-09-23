@@ -4,93 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DAFC2D0A8
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Sep 2020 21:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C28C2D0A8
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Sep 2020 21:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8979238A1
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Sep 2020 21:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3BC2376E
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Sep 2020 21:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600895294;
-	bh=ENvU8KltDNepuaRVAPhhChy+ntIb/n48ERrgqBTJgzk=;
+	s=default; t=1600895316;
+	bh=/a9BwIc5lK6CZZNYWjQs8m+jVrwBIuWTJxvPcwz3Wb4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OQ3My0AowC1smkqsaFJ+GBoe4wprIq+fqW0ZbCsOVLZe3aKosMvLxBWN5e/Q224OG
-	 tYuofvMLaToCt6T9oPAo3p/rdab+92GW3yd58d7qH71jKfv0+3t4f5gQ3VkGQfZ96v
-	 GdYQNIAoU5UxhFYeIBDNlFXlkNM507yCZ6qAKU+g=
+	b=SQzc7u7QtMyOgZyLKhJYe9cxMke/0A3d+6B5ITyiVo/87StQm5LmVpjAzoaB0vC/n
+	 Cma6C1WOVSJCmLDDTWlgV5kAmVPfF2SFbTZvDTu9qdBsOrFa2VLdCrDyffF4SCOPew
+	 mbqsWngmqwxVayTYiniNJkfr3d/oq5yTS2fxIngg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbgIWVIO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Sep 2020 17:08:14 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33507 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgIWVIN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2020 17:08:13 -0400
-Received: by mail-io1-f65.google.com with SMTP id r25so1083604ioj.0;
-        Wed, 23 Sep 2020 14:08:13 -0700 (PDT)
+        id S1726681AbgIWVIf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Sep 2020 17:08:35 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:32916 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbgIWVIf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2020 17:08:35 -0400
+Received: by mail-il1-f194.google.com with SMTP id y2so1044871ila.0;
+        Wed, 23 Sep 2020 14:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=sQJeQYvWYGwIhufeJuNNKhJrxUdl0QJIybJsORlJntk=;
-        b=jnaOQAWtIis1hxhVofJm2acL6jzTNzGgCpOMeBcvukdVoUzD++ysVEbKU8Lo7dPSLr
-         3W/55Cabisj/rMqf3psr/xfX1Yxq9OR3OJz03HK7CfTua+JL1sc2aZ7Hjx+rO24f1lDd
-         ob6VDBKeqcZtacS5nKwCerS/sthh1MU2zeCTjQVkC0uLSDYRL4BGO1sgWHTq2WxkMklK
-         wphiKG2ZMGPr4u6mqNQd16VWTQqbgzQIwwIojlUD7l9rDhGZFzxCCuRISKJMnJfAF7cv
-         SV5Be0grLw2RA3hgbZP5BJxW9jN85ZIv9r1hIVYQAO3fQ+RO/6JM5njdgjZ+29Cm/3nc
-         UP8A==
-X-Gm-Message-State: AOAM532PIqBmuobmwI+Bm1d3nxzTasc6+LSJ+JTlNth8JGsSf0FmZ4e4
-        hFuNuX7yOnaQfBrXaVR90A==
-X-Google-Smtp-Source: ABdhPJwLhvvK8p71WvE5gl6juqm6D2PKwt6Q8pOoQtI3cVp6zSaC1wByyCGWVa1RRp3euYNcaE3cjw==
-X-Received: by 2002:a6b:720d:: with SMTP id n13mr1112117ioc.210.1600895292808;
-        Wed, 23 Sep 2020 14:08:12 -0700 (PDT)
+        bh=2zO/8HNF5KNw07rfxTT1L4hthK6uxIq7jcot+sHBRf4=;
+        b=QA08uZV3rTx4YoAt5dA8oNfUUBsCon9eHq/aeBTmQ0btLPb3wXDFvsIRzX8IaFXSTc
+         +I64AsvP0nHQraec8gLTXlSGi1VuLtHfI/QMIyMFH4fT5V3OuqsUr7jNnw/5ivQb4wop
+         yOHUvhkUvQJYP4sDqnbeW88hupO9DVZTP78kYOGkozuShjelKEBwQp1c1cvZuAEUWpFc
+         VbgPOxnZbRNsHm7IxUFcBvjfv2B8WAstP/Gk6xvkYAL5pG4FCXMm+9t3iYf4ifp3hr1k
+         g2Uc8PMZXyROP5Wusn0YRYLu1mZlw7m3NjZUNSTR1WdMwuviLrOh28+WksqslTZCbpbP
+         Pp9A==
+X-Gm-Message-State: AOAM53216b2QVxlfiDFJmAT82sDzxkNPF6cZWwGwHwMoJYkleqjcvfAu
+        KXoVd5SCoTQCoE6LvAMRBg==
+X-Google-Smtp-Source: ABdhPJzijCKYWELUQwfg2URaf9zqFF6I/Sr1Hdfu+M53n7Tkg0djvVya9S5j5mdbYLvHdHHlcIyI6g==
+X-Received: by 2002:a92:5f94:: with SMTP id i20mr1503312ill.106.1600895314595;
+        Wed, 23 Sep 2020 14:08:34 -0700 (PDT)
 Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id l9sm402826ilq.29.2020.09.23.14.08.11
+        by smtp.gmail.com with ESMTPSA id p5sm420990ilg.32.2020.09.23.14.08.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2020 14:08:12 -0700 (PDT)
-Received: (nullmailer pid 1312302 invoked by uid 1000);
-        Wed, 23 Sep 2020 21:08:10 -0000
-Date:   Wed, 23 Sep 2020 15:08:10 -0600
+        Wed, 23 Sep 2020 14:08:34 -0700 (PDT)
+Received: (nullmailer pid 1312988 invoked by uid 1000);
+        Wed, 23 Sep 2020 21:08:33 -0000
+Date:   Wed, 23 Sep 2020 15:08:33 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: gpio: pl061: add gpio-line-names
-Message-ID: <20200923210810.GA1312254@bogus>
+        Stefan Agner <stefan@agner.ch>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v3 2/4] dt-bindings: gpio: fsl-imx-gpio: add i.MX ARMv6
+ and ARMv7 compatibles
+Message-ID: <20200923210833.GA1312931@bogus>
 References: <20200920195848.27075-1-krzk@kernel.org>
+ <20200920195848.27075-2-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200920195848.27075-1-krzk@kernel.org>
+In-Reply-To: <20200920195848.27075-2-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 20 Sep 2020 21:58:45 +0200, Krzysztof Kozlowski wrote:
-> Describe common "gpio-line-names" property to fix dtbs_check warnings
-> like:
+On Sun, 20 Sep 2020 21:58:46 +0200, Krzysztof Kozlowski wrote:
+> Several DTSes with ARMv6 and ARMv7 i.MX SoCs introduce their own
+> compatibles so add them to fix dtbs_check warnings like:
 > 
->   arch/arm64/boot/dts/hisilicon/hi3670-hikey970.dt.yaml: gpio@e8a0b000:
->     'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+>   arch/arm/boot/dts/imx35-pdk.dt.yaml: gpio@53fa4000:
+>     compatible: ['fsl,imx35-gpio', 'fsl,imx31-gpio'] is not valid under any of the given schemas
+> 
+>   arch/arm/boot/dts/imx51-babbage.dt.yaml: gpio@73f90000:
+>     compatible: ['fsl,imx51-gpio', 'fsl,imx35-gpio'] is not valid under any of the given schemas
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
 > ---
 > 
 > Changes since v2:
-> 1. Common GPIO goes to dt-schema
+> 1. None, split from previous patchset using common GPIO schema
 > ---
->  Documentation/devicetree/bindings/gpio/pl061-gpio.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/gpio/fsl-imx-gpio.yaml       | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
