@@ -2,135 +2,125 @@ Return-Path: <SRS0=uYQT=DC=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6145BC4363D
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Sep 2020 14:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33B4C4741F
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Sep 2020 15:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5F32074B
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Sep 2020 14:48:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjdEyy0l"
+	by mail.kernel.org (Postfix) with ESMTP id 68B9C21741
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Sep 2020 15:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601048898;
+	bh=LZI3R7X8nN4CcB6MS3uhfC9n4b5Jqujs2f4JEI50j70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J8AcbqsoH3kzGoiIWNhMVSrJR72e9NxX6dq/4nyiY+Ai55gsPaNosbdqTaFe7but3
+	 mHhbzRhO3jy/akveCr9c79IKKjGQNsBGZkUI9yLWq5nkovLEYgZK2akrqKLcZ0JMrt
+	 TIcBz2q3Uv1gc58l3acAWfx+N+IMP8/R5EhB+4HU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgIYOso (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Sep 2020 10:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729097AbgIYOso (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2020 10:48:44 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83306C0613CE;
-        Fri, 25 Sep 2020 07:48:44 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id t7so1964038pjd.3;
-        Fri, 25 Sep 2020 07:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KVqS3zBnRdVRz+9mXTOOAoznlEAtOOoAuXzzPbgOnlM=;
-        b=fjdEyy0lm0lfbMd8quwV5EcORq/59e7GsjxrSeIHl4IpI7gmZHLKr4xHvmJQRxU6js
-         5MwCGBxPkkHeo+4L2LG4d8kP29PmmBQEnVjq8LeHavzI3UEeGGDkvkRnMl99xKOCwuc2
-         +igt7GJkFanZLWu/nER20z3IFcqCIXW/5zBRg4iWKIjfloATCP4+3NPBgKILqvAjlwvX
-         SfmlXREqP5Vx5SFEXJptfG51HKDJqB0zJul52Pc4uRWORF4k+A8TYgzVz9d/Kca/9PcZ
-         dfSWTSDNg9SfWXmth7/xLpv14bIqh6YWY3Dce3ZTbe6uhTsSQNOxtZRN72LBMXOzJIA4
-         JhPw==
+        id S1729374AbgIYPsM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Sep 2020 11:48:12 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42534 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728333AbgIYPsM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2020 11:48:12 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c18so4087588wrm.9;
+        Fri, 25 Sep 2020 08:48:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KVqS3zBnRdVRz+9mXTOOAoznlEAtOOoAuXzzPbgOnlM=;
-        b=X9kk94CKIQDh9JicE57kNR9hnyA/lM+G5Jxr6iVWBrCHLzIb3Srhhtq2bLjJQ+7gj+
-         dBBy9Y7Hr9YzqIPBZ0AGsyAlmlJlb5K1v8Ip3C++HH3R+/yKPSMNPvZ9dy89Wd0XCF83
-         mAoOnqE4O3eui9g4uqO1ORbVGTEEb4APs5H+MuMxuQseIi+lV5yWsCQ1sCU85krSrCoI
-         j/HO6MhdlagRIUowKaFLJQ97HwmzjrciuDNRCNyIQDNxHwvJVhcjxFEqjLsELV0ATaqh
-         Wk3axPzIKiPyZ5JzlAjzOAb5rYbd9hxoW/8KhUkisdyIWehFAiPXtHmWzJN7/T54d6g4
-         fNnw==
-X-Gm-Message-State: AOAM531r9E6i8Qr17uu/bCvO42lj1QG1ITU99LxY+OQrbCegXP9wLF4v
-        EefRbvADREja+1+6KnSF3WoQ17rbsK8HLsA07xIQysMcqFqTww==
-X-Google-Smtp-Source: ABdhPJw/FYjtv9/SHu5oIIcyPHQ0fiPTzLLucdLj+N+59Gh4EwvhWxz43CJuCYGhgUp4wTDpUKXiRJPg2PF/XmktFec=
-X-Received: by 2002:a17:90b:fc4:: with SMTP id gd4mr639852pjb.129.1601045324033;
- Fri, 25 Sep 2020 07:48:44 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7Qh5+ZRjYoXTfTyMdsphNx4+wbs2iln0Dg7bJktrLac=;
+        b=TVeaCTXCpTsuVU0OtUUElmJo/fpDul1xq0BoKSat8xsthvyVRg3tvKSo9BDvXekHGs
+         nVMqvWqW2vDFwcKum10rq+V2w4RGf0Cbu4GkgPDlQ70SCIrY75oW3A8tvEVZ72/uj+BR
+         4EbsAekEwNtwoAc1kWoEQOvx8Y6MK0luteQWvJdUqrb31OnLBXKf4kSf6ewiSu4+Ht9/
+         WRh3LafUlWtpbwAaotcanO4mWtDq5aA5KJbY/3zBTbP98+v8CpwfiTqnpkwdUuH9XqNZ
+         IYgvZ5oXua9CSn4kvt2ZeDcdMZ9AORrztspYXytjv/MZiKPE6Q6dhPOQRLB/HCw3fCTb
+         QYOA==
+X-Gm-Message-State: AOAM530jZ7cH+UMdZuiOzssXlOROiVnnPDzz/OVL+TIcaLz6izOfYlGs
+        F+7Qk5sFmybwRzI9dgKATms=
+X-Google-Smtp-Source: ABdhPJw0NxnpCAb54EdTsCUv1oA2JhAAx01jYuFmqouNOz5V/9GWfo7kcmF2Z8f+IMYVxGIHsAi2tA==
+X-Received: by 2002:adf:f082:: with SMTP id n2mr5158088wro.35.1601048889557;
+        Fri, 25 Sep 2020 08:48:09 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.132])
+        by smtp.googlemail.com with ESMTPSA id k8sm3477035wma.16.2020.09.25.08.48.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Sep 2020 08:48:08 -0700 (PDT)
+Date:   Fri, 25 Sep 2020 17:48:04 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 01/15] dt-bindings: gpio: convert bindings for NXP
+ PCA953x family to dtschema
+Message-ID: <20200925154804.GB16392@kozik-lap>
+References: <20200916155715.21009-1-krzk@kernel.org>
+ <20200916155715.21009-2-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20200922023151.387447-1-warthog618@gmail.com> <20200922023151.387447-10-warthog618@gmail.com>
- <CAHp75VdyOodxqkJCgmrdmcppyjVkDTyHDB-fqjoKS1g-88-umQ@mail.gmail.com>
- <20200924030732.GB11575@sol> <CAHp75Vd7Bmy5FWSputDCAAwSheH6ugszMyCcu1HOgC7BPVEX-w@mail.gmail.com>
- <20200925122651.GA218809@sol>
-In-Reply-To: <20200925122651.GA218809@sol>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 25 Sep 2020 17:48:25 +0300
-Message-ID: <CAHp75Vcw0HBwkdCFWpcGLs5MunGmDJBNrCeqmzz-mGDUWGNpog@mail.gmail.com>
-Subject: Re: [PATCH v9 09/20] gpiolib: cdev: support edge detection for uAPI v2
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200916155715.21009-2-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 25, 2020 at 3:26 PM Kent Gibson <warthog618@gmail.com> wrote:
-> On Fri, Sep 25, 2020 at 12:35:49PM +0300, Andy Shevchenko wrote:
-> > On Thu, Sep 24, 2020 at 6:07 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > On Wed, Sep 23, 2020 at 06:47:28PM +0300, Andy Shevchenko wrote:
-> > > > On Tue, Sep 22, 2020 at 5:35 AM Kent Gibson <warthog618@gmail.com> wrote:
+On Wed, Sep 16, 2020 at 05:57:01PM +0200, Krzysztof Kozlowski wrote:
+> Convert the NXP PCA953x family of GPIO expanders bindings to device tree
+> schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> ---
+> 
+> Changes since v2:
+> 1. Add Rob's review tag
+> 
+> Changes since v1:
+> 1. Use additionalProperties.
+> 2. Add wakeup-source.
+> 3. Add hogs.
+> 4. Extend example with hogs.
+> ---
+>  .../devicetree/bindings/gpio/gpio-pca953x.txt |  90 ----------
+>  .../bindings/gpio/gpio-pca95xx.yaml           | 166 ++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |   4 -
+>  3 files changed, 166 insertions(+), 94 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
 
-...
+Hi Linus,
 
-> > > > > +       if (!line->timestamp_ns) {
-> > > > > +               le.timestamp_ns = ktime_get_ns();
-> > > > > +               if (lr->num_lines != 1)
-> > > > > +                       line->req_seqno = atomic_inc_return(&lr->seqno);
-> > > > > +       } else {
-> > > > > +               le.timestamp_ns = line->timestamp_ns;
-> > > > > > +       }
-> > > >
-> > > > Ditto.
-> > >
-> > > Firstly, drawn from lineevent_irq_thread() which is structured this way.
-> > >
-> > > In this case the comment relates to the condition being true, so
-> > > re-ordering the if/else would be confusing - unless the comment were
-> > > moved into the corresponding body??
-> >
-> > Yes.
-> >
->
-> Does that mean I should re-order and move the comment into the body?
-> That would work for me - the normal case is line->timestamp_ns being
-> set.
+The first two patches (bindings) have Rob's ack/review. Could you pick
+them via GPIO tree?
 
-Yes, that's what I meant.
+Best regards,
+Krzysztof
 
-...
-
-> > > From gpiod_to_irq():
-> > >
-> > >                 /* Zero means NO_IRQ */
-> > >                 if (!retirq)
-> > >                         return -ENXIO;
-> > >
-> > > so it can't even return a 0 :-| - we're just being cautious.
-> >
-> > I would drop = part then.
-> >
->
-> ok, but you'd better not come after me in a subsequent review for not
-> checking the 0 case!
-
-For IRQ?! Maybe if I'll be drunk (quite unlikely).
-
-I really don't like to check IRQ against 0. To me it should be
-transparent to the caller. If IRQ == 0 in certain API or entirely in
-Linux is considered NO_IRQ, then it should be either correctly handled
-(means all following actions on it shouldn't fail, or it shouldn't be
-returned in the first place).
-
--- 
-With Best Regards,
-Andy Shevchenko
