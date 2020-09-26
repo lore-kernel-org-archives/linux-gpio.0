@@ -1,124 +1,91 @@
-Return-Path: <SRS0=TMSF=DD=vger.kernel.org=linux-gpio-owner@kernel.org>
+Return-Path: <SRS0=89YA=DE=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D96C2D0A8
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Sep 2020 20:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED6DC2D0A8
+	for <linux-gpio@archiver.kernel.org>; Sun, 27 Sep 2020 00:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E49D2388E
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Sep 2020 20:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1832B2388E
+	for <linux-gpio@archiver.kernel.org>; Sun, 27 Sep 2020 00:05:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQzNrdvY"
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="omVwFkZi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbgIZUXx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Sep 2020 16:23:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbgIZUXx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Sep 2020 16:23:53 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34547C0613CE;
-        Sat, 26 Sep 2020 13:23:53 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id 77so6669071lfj.0;
-        Sat, 26 Sep 2020 13:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5MPEzNOA663F2rbjDyQib41GdeOlEXoHbEZvlfAz7eM=;
-        b=RQzNrdvY6AYSPQcJGWRfkOM6T2i/eaj9EGcRCa0kEzvG1P50i4qXD9mvIarbsDRRtf
-         SJz2sYkmsOE4Z7294LlKo0QuC+4y71IUr2XBDjYT0rCXRhmZ8IXjr+nsdW8r5kdseA7H
-         d3Cf6HPYZ8El9qA2M/zJp85aKxc6lDQ/lqpH0rsQR7ACnf0au6YhRZoP14Csg8+l3eBn
-         N9AMjc8X4VpP2aa9vS0642DNQZiGpWOUcL7jKkJlAErXP05y2IbVdz2ivUbY9WeINNkk
-         GQMLKkDgwBt5tT3+lWK7hM4M7BE7mVze8e4HSbOWALy1h9iCR2wYeTVo1WhErVhiNho7
-         N/Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5MPEzNOA663F2rbjDyQib41GdeOlEXoHbEZvlfAz7eM=;
-        b=fBGy9/AmboYUbuhpLhQKTkmH3g7NDw3ta+Xux7SBmOgSzOku1JQKijlM5lzwvg/Yuf
-         49XgkjqAuN6V589jLwKZSzZS9vjPo8pthd8zyjYi78sGTCBixANVqItUUXTF2lsV2HJ6
-         AUSYFDuwkBZsCb1jdcON9ae73kMBizLgSSvu51v9huHaEGY5LBT9Iba3hbZgtrnFsNil
-         dZo0Fn5mRnSmkVYqOerPYYOC41l6nV4ruyDU5UvrbvevdJgDS6QfRx+hvCUFh9Rbev5u
-         qC2Cm2E6AfxM98rxVxnel1BPWYNN5zxeMcoPcrO/mdyZ2nN3AfwrzHCeBDE+eCFYsKEa
-         u7OA==
-X-Gm-Message-State: AOAM533IHkXefqPe2Gve+RrLdYCh8fFtm/VJrL6w+mMdHQ47byUGPSNZ
-        wEA5uyuF5ma9KihKFHi9ZHo+XjVWzmU=
-X-Google-Smtp-Source: ABdhPJwvlM+PuoX2Ouzgz9XavCdjxvsRaA1aV0KE5QcQDoUGGnRIhnb+WJZFgPn01LVFSPzbmotHkg==
-X-Received: by 2002:a19:560a:: with SMTP id k10mr1427446lfb.599.1601151831498;
-        Sat, 26 Sep 2020 13:23:51 -0700 (PDT)
-Received: from localhost.localdomain (h-82-196-111-59.NA.cust.bahnhof.se. [82.196.111.59])
-        by smtp.gmail.com with ESMTPSA id s20sm2108883lfs.135.2020.09.26.13.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2020 13:23:50 -0700 (PDT)
-From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: [PATCH] pinctrl: nuvoton: npcm7xx: Constify static ops structs
-Date:   Sat, 26 Sep 2020 22:23:42 +0200
-Message-Id: <20200926202342.31014-1-rikard.falkeborn@gmail.com>
-X-Mailer: git-send-email 2.28.0
+        id S1728806AbgI0AFV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Sep 2020 20:05:21 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:22724 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbgI0AFV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 26 Sep 2020 20:05:21 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4BzQjx5nYBzc8;
+        Sun, 27 Sep 2020 01:59:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1601164757; bh=uMRVWVBG1Z+A3OIeVUCDbEDNzEgxLJlsjWfFkOCe9zw=;
+        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
+        b=omVwFkZi3ZCahiHcVV3f4vO/nTr6+fvrDqyvW3Kr4aMX7ia0sk8/1osuWb/bK8PAw
+         YTW2xKt0SolJvtvurmGcPFSLb1OWNok5zfN/XYP3EsFhxY7uv24r5+1SG8Dj71qo4y
+         WSqvTa7JZRP18uOsSBHC9baTHQ26Zgh89ARSQf0Vv61IFahXdl8JFEckHBSVEYci87
+         tdIBtQGJN9MnFN3Ookc2LtDmCzVVE41Svxgw13YU3PfDMjvWCv+JxUXQI2znzAb/nE
+         fazs2E1j9LJsSMJ+FMJ71m3C+mqucsJnP8fvUTM6YMMyPI//x98U/sxr03l0YvU9O3
+         uLg4HxJDVsvdA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.4 at mail
+Date:   Sun, 27 Sep 2020 01:59:17 +0200
+Message-Id: <3c37cdd9a0f23157e56ada0e2f15aa7370661ef4.1601164493.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1601164493.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1601164493.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 3/5] mfd: tps65911-comparator: use regmap accessors
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+To:     Lee Jones <lee.jones@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-omap@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The only usage of these structs is to assign their address to various
-ops fields in the pinctrl_desc struct, which are const pointers. Make
-them const to allow the compiler to put them in read-only memory.
+Use regmap accessors directly for register manipulation - removing
+one layer of abstraction.
 
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mfd/tps65911-comparator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index a935065cdac4..6de31b5ee358 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -1601,7 +1601,7 @@ static void npcm7xx_dt_free_map(struct pinctrl_dev *pctldev,
- 	kfree(map);
- }
+diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
+index 2334cd61c98d..8f4210075913 100644
+--- a/drivers/mfd/tps65911-comparator.c
++++ b/drivers/mfd/tps65911-comparator.c
+@@ -69,7 +69,7 @@ static int comp_threshold_set(struct tps65910 *tps65910, int id, int voltage)
+ 		return -EINVAL;
  
--static struct pinctrl_ops npcm7xx_pinctrl_ops = {
-+static const struct pinctrl_ops npcm7xx_pinctrl_ops = {
- 	.get_groups_count = npcm7xx_get_groups_count,
- 	.get_group_name = npcm7xx_get_group_name,
- 	.get_group_pins = npcm7xx_get_group_pins,
-@@ -1701,7 +1701,7 @@ static int npcm_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+ 	val = index << 1;
+-	ret = tps65910_reg_write(tps65910, tps_comp.reg, val);
++	ret = regmap_write(tps65910->regmap, tps_comp.reg, val);
  
--static struct pinmux_ops npcm7xx_pinmux_ops = {
-+static const struct pinmux_ops npcm7xx_pinmux_ops = {
- 	.get_functions_count = npcm7xx_get_functions_count,
- 	.get_function_name = npcm7xx_get_function_name,
- 	.get_function_groups = npcm7xx_get_function_groups,
-@@ -1842,7 +1842,7 @@ static int npcm7xx_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	return 0;
+ 	return ret;
  }
+@@ -80,7 +80,7 @@ static int comp_threshold_get(struct tps65910 *tps65910, int id)
+ 	unsigned int val;
+ 	int ret;
  
--static struct pinconf_ops npcm7xx_pinconf_ops = {
-+static const struct pinconf_ops npcm7xx_pinconf_ops = {
- 	.is_generic = true,
- 	.pin_config_get = npcm7xx_config_get,
- 	.pin_config_set = npcm7xx_config_set,
+-	ret = tps65910_reg_read(tps65910, tps_comp.reg, &val);
++	ret = regmap_read(tps65910->regmap, tps_comp.reg, &val);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
-2.28.0
+2.20.1
 
