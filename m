@@ -2,106 +2,159 @@ Return-Path: <SRS0=dRYU=DF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE20C4741F
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 10:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D6EC4727F
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 11:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5169B21531
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 10:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87DB221D95
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 11:46:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ScYcOk2g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qL0R40R1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgI1Kml (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Sep 2020 06:42:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
+        id S1726589AbgI1LqQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Sep 2020 07:46:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbgI1KmE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Sep 2020 06:42:04 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13FA7C0613D3
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2020 03:42:04 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id l15so4078250wmh.1
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2020 03:42:04 -0700 (PDT)
+        with ESMTP id S1726420AbgI1LqP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Sep 2020 07:46:15 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE55C061755;
+        Mon, 28 Sep 2020 04:46:15 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id b124so734348pfg.13;
+        Mon, 28 Sep 2020 04:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zg75WLPDLUTD/dO6gE79rZ4YNo3MHudSB6Cl7I/Dq3Q=;
-        b=ScYcOk2gYrPUF+aDftw5XnbeNkA0ruf2onhIh0ABlCuUjDkJDerZAn7q1QXNQ1RNrW
-         B48J7+lPhjb4yeERjOnSs3arx8Mrld4olbl9cBlF+e7u8ecfH6qBSVCue/4dr6a6ddQE
-         cvWP19IelW8Gwd6omyP5cGFLQ1g7P8VSpQJanly6F+bAbfuto0XFUSVFjX8zffy5XwaQ
-         5ent6yYRAXC+tM/uhwc+/7Ya5fSsB4HcC2s5SOr1hiirYTzh+y6CXBgoZDyAkNLdpoP2
-         N/xUrI8qDX3nd2aJ9j6OWgBuf1753b7p7OJRE6tLuwIKDccOp7tT28qQOSxWdCyP+9qd
-         up9w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zwMUcY3XkwfnX4NVH144ezfRaJEZAmC6LlLKw8bGZ/0=;
+        b=qL0R40R1HA602EvKkHEmXf7m4tvAZFldTIc1GF5GjGaILZ9rOwkQ/I2iO8MnXWgx0I
+         yhiAYRaD040/rpIuPM8UOeQkWh7pzR0jtEP/eTDnMEcbaut/MA1MxVWPuSKP4UEx5f9+
+         dHRx+5nr77YrIx1s4z5YRXPz/8+VDYwNuXI+PQp02/c5vA5KhqkOnvQhJzNE4mBdEGPL
+         wGUm5UMzS7W22UOBoQy2mtU9lsPHwh5u96uR0aYW7HCYRCWqc3W1DzMuYit6q3rJ/SVi
+         Y9jB2M38jp3EkO61YysrX8v1Jy8THQe3KwBVk+qbIxiaNK10kF17IFWeL43+7Xa4Jhrd
+         xOzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zg75WLPDLUTD/dO6gE79rZ4YNo3MHudSB6Cl7I/Dq3Q=;
-        b=rTM1EOra+a6EQsY18F6rInaImWwmuiK19FOU/YXFEb01HOw5WH34dW9gFG5NYbwpsw
-         DWvXzNaveNquiJIC7WeCRf1P3IM2M3SOfc4ttBQpM4DISWa7EDLS5YHuIh+mvACim5Oo
-         gTJh6YZs7nxslR4rReS0ETu28mx3M/KY8PctcX9k1603qi2o5lR8E7n6/b+V59w7JRaC
-         1jG59iW4OlPaagl1JBT+0ZS9JGKTbc8X45AsEUbWmH+X+wlm3LTP0V3UhB38YJN35xjt
-         yfo7fZuKxgD1Y6wfyAfKkWFCYbqixLOnxClJO3TSiYmIzUvTlJB7ALF37E9Yzl4RhSHc
-         eQIg==
-X-Gm-Message-State: AOAM530NJf4v+29Aowdo1Amwpd3xrxPhs2bJhNzqiC5ouglkqz8o2pwx
-        2CFkclFszQ6GvDBn5NfQysGXlQ==
-X-Google-Smtp-Source: ABdhPJxnb9lRsJOBi124nd5PEFi5RPTF9+iWsUyLiJLnsQi4cRUlKeW5N7Q2dB1SEdnBlCLzwXmR5g==
-X-Received: by 2002:a1c:2903:: with SMTP id p3mr986048wmp.170.1601289722823;
-        Mon, 28 Sep 2020 03:42:02 -0700 (PDT)
-Received: from debian-brgl.home (lfbn-nic-1-68-20.w2-15.abo.wanadoo.fr. [2.15.159.20])
-        by smtp.gmail.com with ESMTPSA id f14sm939258wrt.53.2020.09.28.03.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2020 03:42:02 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 3/9] gpio: mockup: drop unneeded includes
-Date:   Mon, 28 Sep 2020 12:41:49 +0200
-Message-Id: <20200928104155.7385-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200928104155.7385-1-brgl@bgdev.pl>
-References: <20200928104155.7385-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zwMUcY3XkwfnX4NVH144ezfRaJEZAmC6LlLKw8bGZ/0=;
+        b=PUekF+CkylkXUZh6MM/kM/1rfIrOT+TCylJZAAKCu2YH+hwuKaCOGzxzbbST++4pgI
+         ffgHJ57FvJviQa3ZcmuqWaEIYur1ChY4qv3bq7IOpfds0fdJcsDUaZoFd5vALbPE3s8e
+         XpPyC6IWPFr6kxZv8VHZcPPZNRKEcUMQ7zedouV/vJtldScDYlZK+5m+sJk82nNUUHcw
+         bVKy9iPYOiepuW207PYYfN2f9Ad67woVy4CtXV8StEIOQXIUUqKlPrfjlPlxHJ1aJJRA
+         9Ms0NJ0FS7LpodZx7bfaImEx8eHRg01+n/NAjGerrew4/pQtYKsiWioWfDwRAWZVKYSM
+         VnkA==
+X-Gm-Message-State: AOAM533hqagputjN49JzGSqPjou3WDO2p0Nl+Y1LoF8q0GYky3oM3rF0
+        hkgUZhn5CHYp1SVOajGHFR9xCBtI78nD0hSzzMI=
+X-Google-Smtp-Source: ABdhPJyUK9sQZdERJKWj0DrjCJzQEXyYhxrOw3onM62jepqc/OVjaSZ54eluYPtAuTIVOkjj9OpKTrmRm2nqMq0iQHk=
+X-Received: by 2002:a63:ec4c:: with SMTP id r12mr841807pgj.74.1601293575223;
+ Mon, 28 Sep 2020 04:46:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200920203207.25696-1-lists@wildgooses.com> <CAHp75Vd2uz-QrEFshUr=e719VBX2zYzvOhVC07BpHfvi0WDgOA@mail.gmail.com>
+ <deb07bad-2d84-723a-7237-2b625a3c4de8@wildgooses.com> <815ff3a6-8941-573d-36c0-36639f47dc04@wildgooses.com>
+In-Reply-To: <815ff3a6-8941-573d-36c0-36639f47dc04@wildgooses.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 28 Sep 2020 14:45:56 +0300
+Message-ID: <CAHp75Ve3APYLKzH9KvmTueEcTP-CZJS9MmLC+ZsHRT9brOxsEQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-amd-fch: Fix typo on define of AMD_FCH_GPIO_REG_GPIO55_DEVSLP0
+To:     Ed W <lists@wildgooses.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Eckert <fe@dev.tdt.de>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Sep 28, 2020 at 1:33 PM Ed W <lists@wildgooses.com> wrote:
+>
+> Hi
+>
+> Could I get a final opinion (or signoff) on this patch please?
+>
+> The significant typo is the reference to "59", when the GPIO is actually 55
+>
+> According to the PCEngines schematic the names of two similar GPIOs are
+>     G59/DEVSLP1
+>     G55/DEVSLP
+>
+> The original developer named the second GPIO with a trailing 0, which doesn't seem unreasonable,
+> hence I just corrected the name to:
+>     AMD_FCH_GPIO_REG_GPIO55_DEVSLP0
+> However another acceptable name could be:
+>     AMD_FCH_GPIO_REG_GPIO55_DEVSLP
+>
+> If I could ask for some guidance and if necessary I will resubmit this patch? Enrico, do you have an
+> opinion?
+>
+> However, perhaps it's already acceptable as is?
 
-This module doesn't need gpio/consumer.h - it's a provider. It also
-doesn't use any symbols from init.h so let's remove both includes.
+It's being accepted, and will be sent later to Linus.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-mockup.c | 2 --
- 1 file changed, 2 deletions(-)
+>
+> Kind regards
+>
+> Ed W
+>
+>
+> On 21/09/2020 09:40, Ed W wrote:
+> > On 21/09/2020 08:55, Andy Shevchenko wrote:
+> >> On Sun, Sep 20, 2020 at 11:33 PM Ed Wildgoose <lists@wildgooses.com> wrote:
+> >>> Schematics show that the GPIO number is 55 (not 59). Trivial typo.
+> >> Does it still DEVSLP0? Perhaps you need to drop that part as well.
+> >>
+> >> ...
+> >
+> >
+> > In the PCEngines schematic it's labelled as "G55/DEVSLP" (no 0)
+> >
+> > (In contrast G59 is labelled "G59/DEVSLP1")
+> >
+> > What is the quorum opinion on name?
+> >
+> > Thanks
+> >
+> > Ed W
+> >
+> >
+> >>
+> >>>   #define APU2_GPIO_REG_LED3             AMD_FCH_GPIO_REG_GPIO59_DEVSLP1
+> >>>   #define APU2_GPIO_REG_MODESW           AMD_FCH_GPIO_REG_GPIO32_GE1
+> >>>   #define APU2_GPIO_REG_SIMSWAP          AMD_FCH_GPIO_REG_GPIO33_GE2
+> >>> -#define APU2_GPIO_REG_MPCIE2           AMD_FCH_GPIO_REG_GPIO59_DEVSLP0
+> >>> +#define APU2_GPIO_REG_MPCIE2           AMD_FCH_GPIO_REG_GPIO55_DEVSLP0
+> >>>   #define APU2_GPIO_REG_MPCIE3           AMD_FCH_GPIO_REG_GPIO51
+> >>>
+> >>>   /* Order in which the GPIO lines are defined in the register list */
+> >>> diff --git a/include/linux/platform_data/gpio/gpio-amd-fch.h
+> >>> b/include/linux/platform_data/gpio/gpio-amd-fch.h
+> >>> index 9e46678ed..255d51c9d 100644
+> >>> --- a/include/linux/platform_data/gpio/gpio-amd-fch.h
+> >>> +++ b/include/linux/platform_data/gpio/gpio-amd-fch.h
+> >>> @@ -19,7 +19,7 @@
+> >>>   #define AMD_FCH_GPIO_REG_GPIO49                0x40
+> >>>   #define AMD_FCH_GPIO_REG_GPIO50                0x41
+> >>>   #define AMD_FCH_GPIO_REG_GPIO51                0x42
+> >>> -#define AMD_FCH_GPIO_REG_GPIO59_DEVSLP0        0x43
+> >>> +#define AMD_FCH_GPIO_REG_GPIO55_DEVSLP0        0x43
+> >>>   #define AMD_FCH_GPIO_REG_GPIO57                0x44
+> >>>   #define AMD_FCH_GPIO_REG_GPIO58                0x45
+> >>>   #define AMD_FCH_GPIO_REG_GPIO59_DEVSLP1        0x46
+> >>
+> >
+>
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 1652897fdf90..c5092773afd8 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -8,9 +8,7 @@
-  */
- 
- #include <linux/debugfs.h>
--#include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
--#include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/irq_sim.h>
+
 -- 
-2.26.1
-
+With Best Regards,
+Andy Shevchenko
