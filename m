@@ -2,80 +2,118 @@ Return-Path: <SRS0=dRYU=DF=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCB7C2D0A8
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 09:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E160C4741F
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 09:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92D6F221E8
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 09:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1800D221EC
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Sep 2020 09:58:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="RU8+Ksrd"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="E6pi/58h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgI1Jpa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Sep 2020 05:45:30 -0400
-Received: from mail1.nippynetworks.com ([91.220.24.129]:57722 "EHLO
-        mail1.nippynetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbgI1Jpa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Sep 2020 05:45:30 -0400
-Received: from twocubed.nippynetworks.com (office.nippynetworks.com [46.17.61.232])
-        by mail1.nippynetworks.com (Postfix) with SMTP id 4C0Hgp2WZjzTgQY;
-        Mon, 28 Sep 2020 10:45:26 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wildgooses.com;
-        s=dkim; t=1601286327;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=McOrVPeJ4f/uCV58GsELC0gGRotV+PIxn5H9snSEBGU=;
-        b=RU8+Ksrd4FO8zypm2cxER+IsYo7fzwBxr7Vn8EyZxBlUgOnnTI+b9xxr/prtNqRFA9zPOp
-        0bh3mQkQg1TFZitD/j/hlaDtUl3LtX7iD6po2sf0WealTftvQx4+Bj+rmG0JAQuPqfcAzv
-        VzaRAzQ/Zg751gTUgavgjLHlm4eFvPM=
-Received: by twocubed.nippynetworks.com (sSMTP sendmail emulation); Mon, 28 Sep 2020 10:45:24 +0100
-From:   Ed Wildgoose <lists@wildgooses.com>
-To:     bgolaszewski@baylibre.com
-Cc:     fe@dev.tdt.de, Ed Wildgoose <lists@wildgooses.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: gpio-amd-fch: Correct logic of GPIO_LINE_DIRECTION
-Date:   Mon, 28 Sep 2020 10:44:52 +0100
-Message-Id: <20200928094452.7005-1-lists@wildgooses.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <CAMpxmJV0jwLAn3Xee_3zDiF_DQF-8uy52qxU1WAbr9xiVb0WLQ@mail.gmail.com>
-References: <CAMpxmJV0jwLAn3Xee_3zDiF_DQF-8uy52qxU1WAbr9xiVb0WLQ@mail.gmail.com>
+        id S1726650AbgI1J63 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Sep 2020 05:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbgI1J63 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Sep 2020 05:58:29 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A79C061755
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2020 02:58:28 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id t12so597019ilh.3
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2020 02:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bynqe8oqfLSmRS8jPy3IQGtOrQle4bDHlhly7glDXtE=;
+        b=E6pi/58he3Bw+tuVCJbgXrJPbzgzvilKEDqpPwZ6gDn4Y3NLB9WHKZVomKAoHyYgyw
+         Pf/fvJFUPbY1TAJTKewr93xn76mzrr0DHIylwkGiejOR6rA2kT/dIa9u8PngfJphK8UO
+         y3uA3ABoePxwD06j8F3cSTq+fNqADptlbwN11t1cQp3lPAzxj3wZoKopB8Glto4cM8f9
+         EvkBygwREatGM2BurfQ7g/KzI/mYn2WQDh0UCxm3aFIb+aenjVZqx0sj5vHYrsUY/z9o
+         SCHhYORqNAzwkDMCk+kzQkkN2h73nJbgRCh9SEG8VwXIPJa254vcVoCtD8hsPaXp7cE4
+         qDPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bynqe8oqfLSmRS8jPy3IQGtOrQle4bDHlhly7glDXtE=;
+        b=HeKxtW3+zSxJs0W0/C8jV1E5EwU4jt0QOLQ7Gfg5o7xZM5gNuY81faMy/9LkW4VNlH
+         k+3r3a7JEB/tjg8koaJ6ePSrNXz/a45LVC0PW5B6tDA2fSlpE8L0p3dV2LZ7EJJQakes
+         au/3abTAOhzRhLnbjCSZOYmiM1h/9un9gmrLbenVdIgsxpP/C+t1BxrY3PuZTK0GA/PA
+         bt0oznb4XkF6wWwNv1GhT0Q2fL8VfeEuTF6zX40NFaPWlEMg7eLycvOGdYjA4Cw5RUvI
+         0ORBKTwBehjjzi1HxZsx+tM/jOZiHNWjAhbF+KTPvXqZRWmzH+NjfmogmvjY6LsBi25I
+         HSug==
+X-Gm-Message-State: AOAM5322WdY7pK2H6Lojm3Hu0nD3herG22pEfMYXhKOJxFvtQNQj/Cu4
+        lFzA/RIGceJ/7GMFUahMAE15LFJ/Qd4K50VEEgV9vg==
+X-Google-Smtp-Source: ABdhPJzsnbR4X2gtOKMUOyny3SQ3EJ35XjKu1q3fJ+jImDN/PZpQkDGibLVlL4P3ysT+VeTtQfzSLC34OxMezTb95us=
+X-Received: by 2002:a05:6e02:f10:: with SMTP id x16mr444999ilj.220.1601287107416;
+ Mon, 28 Sep 2020 02:58:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200924113842.11670-1-brgl@bgdev.pl> <20200924113842.11670-9-brgl@bgdev.pl>
+ <20200925090329.GZ3956970@smile.fi.intel.com> <CAMpxmJWBSwofFy94mHZWB2mdvHGStYp5oLDZp2M+wO57t40HSQ@mail.gmail.com>
+ <20200925123000.GD3956970@smile.fi.intel.com> <CAMRc=McfBLaE=N12z29JjTDJ0ABzC8OW4rPWeeSU82kag+9pgQ@mail.gmail.com>
+ <CAHp75Vd9N+OWCq_M3U3RfTEwx+xCyJHzSpZOXWiXQRRdv3tSDQ@mail.gmail.com>
+In-Reply-To: <CAHp75Vd9N+OWCq_M3U3RfTEwx+xCyJHzSpZOXWiXQRRdv3tSDQ@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 28 Sep 2020 11:58:16 +0200
+Message-ID: <CAMRc=MecMWopShuSSiGTFpwdHKLf7DCsm-vADZ6gokKnnrepNA@mail.gmail.com>
+Subject: Re: [PATCH 8/9] gpio: mockup: use the generic 'gpio-line-names' property
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kent Gibson <warthog618@gmail.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The original commit appears to have the logic reversed in
-amd_fch_gpio_get_direction. Also confirmed by observing the value of
-"direction" in the sys tree.
+On Mon, Sep 28, 2020 at 11:11 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Sep 28, 2020 at 11:45 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > On Fri, Sep 25, 2020 at 6:41 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, Sep 25, 2020 at 01:40:10PM +0200, Bartosz Golaszewski wrote:
+> > > > On Fri, Sep 25, 2020 at 11:03 AM Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > On Thu, Sep 24, 2020 at 01:38:41PM +0200, Bartosz Golaszewski wrote:
+>
+> ...
+>
+> > > > > > +             kfree_strarray(line_names, line_names ? ngpio : 0);
+> > > > >
+> > > > > Perhaps you may check for NULL pointer in the kfree_strarray() and drop ternary
+> > > > > here?
+> > > > >
+> > > >
+> > > > I did in the previous series and you told me to not to. :)
+> > >
+> > > Hmm... What was my argument? What was wrong with me? free() should be NULL-aware.
+> >
+> > Well, it is - your just need to make sure ngpio is 0 too. :)
+>
+> Do you really need that? If you have NULL as a first parameter, the
+> second one can be anything.
+>
+> > I'll revert back to having the NULL check.
+>
 
-Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
-Fixes: e09d168f13f0 ("gpio: AMD G-Series PCH gpio driver")
----
- drivers/gpio/gpio-amd-fch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes that's what I'm saying but under patch 1/9 you previously said:
 
-diff --git a/drivers/gpio/gpio-amd-fch.c b/drivers/gpio/gpio-amd-fch.c
-index 4e44ba4d7..2a21354ed 100644
---- a/drivers/gpio/gpio-amd-fch.c
-+++ b/drivers/gpio/gpio-amd-fch.c
-@@ -92,7 +92,7 @@ static int amd_fch_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
- 	ret = (readl_relaxed(ptr) & AMD_FCH_GPIO_FLAG_DIRECTION);
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 
--	return ret ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
-+	return ret ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
- }
- 
- static void amd_fch_gpio_set(struct gpio_chip *gc,
--- 
-2.26.2
+--
+Shouldn't we expect that caller will supply NULL, 0 and above check is not
+needed?
+--
 
+this is why it works like this in v1.
+
+Bartosz
