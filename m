@@ -2,120 +2,177 @@ Return-Path: <SRS0=mvGR=DG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BF9C4727F
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA6EC4727F
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFB522076A
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ap5w2JEW"
+	by mail.kernel.org (Postfix) with ESMTP id 8012D20C09
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbgI2Mpd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Sep 2020 08:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387539AbgI2Mpb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 08:45:31 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D41C0613D2
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:45:30 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id u8so5370389lff.1
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZHvIyjp/HjptDKFZ4oCKWaRPRXAjZeylbH6QYR0nkL8=;
-        b=Ap5w2JEWZC58HriJWOs4n2ZnDkichjsVyC8xFiq2J8SswFqIFF+himI2Q6etMI5Tor
-         0HAQ0uRCNVT/WCSSr80x6XAjFY/LQ4xwvOUMdklYKWopXOkbo6mG5pWiXGkjhL9AWhoR
-         mkJd9fcd4WbUMOwMirSvxIqe90+JMueOwslLwTY1Cl1HLG6ybajV+IRsIMGc4lXQIPvR
-         oBODo/qW8n02KjwwuwPp7JApZC1TKPk6oOBjT6/EC/0WfPQWnfnEONc9r+KHAJMXhd/6
-         OmuxVY2iKAbQcjHOl6urR/ZSN2Q9c1vixSIZuVdgIvuQVlkxZJPRljV05LRqtXRwdHLf
-         cC0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZHvIyjp/HjptDKFZ4oCKWaRPRXAjZeylbH6QYR0nkL8=;
-        b=p7RZkYoLXb2NAbFO9dKpYCUIV0C+lCELr5xMmkBIq/0tdDOK6dv5QzadJCS/N0ZC5I
-         XTWM4YIA5sRXAGqEWg/KEAZfnMSb1fhvqqfS+hgJ19LioUrsRpyF3x7pQ6/ZMGSZcUM2
-         XwuDeDjX+pS5gNY4orGcIoYCdL9kIBG98XseiWGIHIOjox4j1aC42MBa/3O4iAEpA4bF
-         qkD2kD0wzcapuB+or33aRad+TFCcJ5FilPL4DVqvZfyQItvG7uYWNYxrfrx1i33DLcHx
-         h6fM0wyQe+PAKYnUwlkv95jeB4pJzsaqMwb5nvQtCa1SuxXhdn0R4VkQz/8AWaUNk6Ab
-         ZfuA==
-X-Gm-Message-State: AOAM530o/cEx+LvCau3uEm6zpDOtw9wi5qdDf04F1yUiqLcD558VaK3a
-        rwvIo/ZqDIkLM40WP6t1BPEbMOxOYuvEjcef4P86sg==
-X-Google-Smtp-Source: ABdhPJxwNJVl7N6DgZU+9k9hMFwLmdKNKDwg3mdA4F/dtZ/iDwTOnDvzTa5ao9aFnFxXSFDsSjTTwZJlbUKTXKsnnAc=
-X-Received: by 2002:a05:6512:20c3:: with SMTP id u3mr1062919lfr.572.1601383528944;
- Tue, 29 Sep 2020 05:45:28 -0700 (PDT)
+        id S1728393AbgI2LDU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Sep 2020 07:03:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:40657 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728368AbgI2LDK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 29 Sep 2020 07:03:10 -0400
+IronPort-SDR: /wTvnaxLW11PinrXmlHYY8q6iDWgMhJVtboZjTX+jVhC0jElHJX6DfL3l1+Ff974I3ThPccNMP
+ UjhhdfK+r1UA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="162227649"
+X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
+   d="scan'208";a="162227649"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 04:03:08 -0700
+IronPort-SDR: eTWk5g4gXE17JILJKOmZx6MqWPa06YusWSe18/IMFpmkptHEdAnbF6GwombTCq840M6Ainy1Yk
+ RcdSzhMKq0fQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
+   d="scan'208";a="324632011"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 29 Sep 2020 04:03:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 8103A352; Tue, 29 Sep 2020 14:03:06 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] pinctrl: sunrisepoint: Modify COMMUNITY macros to be consistent
+Date:   Tue, 29 Sep 2020 14:03:06 +0300
+Message-Id: <20200929110306.40852-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200929110306.40852-1-andriy.shevchenko@linux.intel.com>
+References: <20200929110306.40852-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <cover.1593243079.git.syednwaris@gmail.com> <CACRpkdYyCNEUSOtCJMTm7t1z15oK7nH3KcTe5LreJAzZ0KtQuw@mail.gmail.com>
- <20200911225417.GA5286@shinobu>
-In-Reply-To: <20200911225417.GA5286@shinobu>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Sep 2020 14:45:18 +0200
-Message-ID: <CACRpkdah+k-EyhF8bNRkvw4bFDiai9dYo3ph9wsumo_v3U-U0g@mail.gmail.com>
-Subject: Re: [PATCH v9 0/4] Introduce the for_each_set_clump macro
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Syed Nayyar Waris <syednwaris@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Robert Richter <rrichter@marvell.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-arch@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Sep 12, 2020 at 12:54 AM William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On Thu, Jul 16, 2020 at 02:49:35PM +0200, Linus Walleij wrote:
-> > Hi Syed,
-> >
-> > sorry for taking so long. I was on vacation and a bit snowed
-> > under by work.
-> >
-> > On Sat, Jun 27, 2020 at 10:10 AM Syed Nayyar Waris <syednwaris@gmail.com> wrote:
-> >
-> > > Since this patchset primarily affects GPIO drivers, would you like
-> > > to pick it up through your GPIO tree?
-> >
-> > I have applied the patches to an immutable branch and pushed
-> > to kernelorg for testing (autobuilders will play with it I hope).
-> >
-> > If all works fine I will merge this into my devel branch for v5.9.
-> >
-> > It would be desirable if Andrew gave his explicit ACK on it too.
-> >
-> > Yours,
-> > Linus Walleij
->
-> Hi Linus,
->
-> What's the name of the branch with these patches on kernelorg; I'm
-> having trouble finding it?
->
-> Btw, I'm CCing Andrew as well here because I notice him missing from the
-> CC list earlier for this patchset.
+Modify COMMUNITY macros to be consistent with Tiger Lake and others.
+No functional change intended.
 
-IIRC there were complaints from the zeroday build robot so I
-dropped the branch and I am still waiting for a fixed up patch
-series.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 60 +++++++++-----------
+ 1 file changed, 27 insertions(+), 33 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+index 4d7a86a5a37b..14eac924d43d 100644
+--- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
++++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+@@ -22,21 +22,26 @@
+ #define SPT_GPI_IS		0x100
+ #define SPT_GPI_IE		0x120
+ 
+-#define SPT_COMMUNITY(b, s, e)				\
++#define SPT_COMMUNITY(b, s, e, pl, gs, gn, g, n)	\
+ 	{						\
+ 		.barno = (b),				\
+ 		.padown_offset = SPT_PAD_OWN,		\
+-		.padcfglock_offset = SPT_LP_PADCFGLOCK,	\
++		.padcfglock_offset = (pl),		\
+ 		.hostown_offset = SPT_HOSTSW_OWN,	\
+ 		.is_offset = SPT_GPI_IS,		\
+ 		.ie_offset = SPT_GPI_IE,		\
+-		.gpp_size = 24,				\
+-		.gpp_num_padown_regs = 4,		\
++		.gpp_size = (gs),			\
++		.gpp_num_padown_regs = (gn),		\
+ 		.pin_base = (s),			\
+ 		.npins = ((e) - (s) + 1),		\
++		.gpps = (g),				\
++		.ngpps = (n),				\
+ 	}
+ 
+-#define SPTH_GPP(r, s, e, g)				\
++#define SPT_LP_COMMUNITY(b, s, e)			\
++	SPT_COMMUNITY(b, s, e, SPT_LP_PADCFGLOCK, 24, 4, NULL, 0)
++
++#define SPT_H_GPP(r, s, e, g)				\
+ 	{						\
+ 		.reg_num = (r),				\
+ 		.base = (s),				\
+@@ -44,19 +49,8 @@
+ 		.gpio_base = (g),			\
+ 	}
+ 
+-#define SPTH_COMMUNITY(b, s, e, g)			\
+-	{						\
+-		.barno = (b),				\
+-		.padown_offset = SPT_PAD_OWN,		\
+-		.padcfglock_offset = SPT_H_PADCFGLOCK,	\
+-		.hostown_offset = SPT_HOSTSW_OWN,	\
+-		.is_offset = SPT_GPI_IS,		\
+-		.ie_offset = SPT_GPI_IE,		\
+-		.pin_base = (s),			\
+-		.npins = ((e) - (s) + 1),		\
+-		.gpps = (g),				\
+-		.ngpps = ARRAY_SIZE(g),			\
+-	}
++#define SPT_H_COMMUNITY(b, s, e, g)			\
++	SPT_COMMUNITY(b, s, e, SPT_H_PADCFGLOCK, 0, 0, g, ARRAY_SIZE(g))
+ 
+ /* Sunrisepoint-LP */
+ static const struct pinctrl_pin_desc sptlp_pins[] = {
+@@ -292,9 +286,9 @@ static const struct intel_function sptlp_functions[] = {
+ };
+ 
+ static const struct intel_community sptlp_communities[] = {
+-	SPT_COMMUNITY(0, 0, 47),
+-	SPT_COMMUNITY(1, 48, 119),
+-	SPT_COMMUNITY(2, 120, 151),
++	SPT_LP_COMMUNITY(0, 0, 47),
++	SPT_LP_COMMUNITY(1, 48, 119),
++	SPT_LP_COMMUNITY(2, 120, 151),
+ };
+ 
+ static const struct intel_pinctrl_soc_data sptlp_soc_data = {
+@@ -554,27 +548,27 @@ static const struct intel_function spth_functions[] = {
+ };
+ 
+ static const struct intel_padgroup spth_community0_gpps[] = {
+-	SPTH_GPP(0, 0, 23, 0),		/* GPP_A */
+-	SPTH_GPP(1, 24, 47, 24),	/* GPP_B */
++	SPT_H_GPP(0, 0, 23, 0),		/* GPP_A */
++	SPT_H_GPP(1, 24, 47, 24),	/* GPP_B */
+ };
+ 
+ static const struct intel_padgroup spth_community1_gpps[] = {
+-	SPTH_GPP(0, 48, 71, 48),	/* GPP_C */
+-	SPTH_GPP(1, 72, 95, 72),	/* GPP_D */
+-	SPTH_GPP(2, 96, 108, 96),	/* GPP_E */
+-	SPTH_GPP(3, 109, 132, 120),	/* GPP_F */
+-	SPTH_GPP(4, 133, 156, 144),	/* GPP_G */
+-	SPTH_GPP(5, 157, 180, 168),	/* GPP_H */
++	SPT_H_GPP(0, 48, 71, 48),	/* GPP_C */
++	SPT_H_GPP(1, 72, 95, 72),	/* GPP_D */
++	SPT_H_GPP(2, 96, 108, 96),	/* GPP_E */
++	SPT_H_GPP(3, 109, 132, 120),	/* GPP_F */
++	SPT_H_GPP(4, 133, 156, 144),	/* GPP_G */
++	SPT_H_GPP(5, 157, 180, 168),	/* GPP_H */
+ };
+ 
+ static const struct intel_padgroup spth_community3_gpps[] = {
+-	SPTH_GPP(0, 181, 191, 192),	/* GPP_I */
++	SPT_H_GPP(0, 181, 191, 192),	/* GPP_I */
+ };
+ 
+ static const struct intel_community spth_communities[] = {
+-	SPTH_COMMUNITY(0, 0, 47, spth_community0_gpps),
+-	SPTH_COMMUNITY(1, 48, 180, spth_community1_gpps),
+-	SPTH_COMMUNITY(2, 181, 191, spth_community3_gpps),
++	SPT_H_COMMUNITY(0, 0, 47, spth_community0_gpps),
++	SPT_H_COMMUNITY(1, 48, 180, spth_community1_gpps),
++	SPT_H_COMMUNITY(2, 181, 191, spth_community3_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data spth_soc_data = {
+-- 
+2.28.0
+
