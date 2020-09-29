@@ -7,91 +7,102 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48E9C47423
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 11:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD74C4727C
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 11:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94483206A5
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 11:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34B61206A5
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 11:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bn2ioNG8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kPeNIHgF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731275AbgI2Lyi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Sep 2020 07:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39696 "EHLO
+        id S1731499AbgI2Ly5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Sep 2020 07:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730749AbgI2Lps (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 07:45:48 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0100C0613D0
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 04:45:47 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id k25so3730048ljg.9
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 04:45:47 -0700 (PDT)
+        with ESMTP id S1731495AbgI2Ly4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 07:54:56 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53643C0613D0
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 04:54:56 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id y11so5164003lfl.5
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 04:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qpZdtba0dz/55nEB14IRTcskYiW/6pWMryxp9c80244=;
-        b=bn2ioNG8Y3op0LV3est95+r9HuyAYayGq9KICtlsy0PPCjUMxNEjMY6mLsEzZyzShx
-         0yk3ul77CTVdfxJqDB2C5dGPnPiSdxdfDCSkh8ww2zUWoS3LbxxpY7L5Q5FPrEV9YH9P
-         ctQaXFmvzvi3ATvK+h6B3Vht0dDQyajVW0z6sfszgni6mQ0npSrub4Qm0eIvGHhxcQw2
-         PpH8rLYu/kkLWkygcw1A1sKLy4iEAaiQfdW3kiCTshMel6GTYYf5PaqkLInt/xcuJEep
-         Onxx6NL6Q3Ea+2479Epk96vhh2EblJtMAe2ayYCX7ok2LqWvPrr4Kp6ntj1qL4kk6nty
-         /reQ==
+        bh=qBPOXwqR11FIHvfThBaUZC6jwCYvheTGv1CU9grIcyc=;
+        b=kPeNIHgFK720QSLLjMtJfaCzuL9cumPpDAyvNYtba32dQREDDhojxXqJ/8eTRRldhY
+         cB3rBQrFOThsKYbRcstrf4nWG2F8+lFPEeq482iKudrLYl5TMyzaSfad1NnKqvY6hGWF
+         oHpOfQZineWmt5DHzJ+6i4+myqcayZVYdc65kzorjd5tQrq+w7E0YLFGAxAOkBfYkIFr
+         bDvnoZzmuC/WV/Zw/iKSyXy8HWXkQ5v4A+fZxT3Uv7f9179OswZoZ8SWd/dvdKwqb2n/
+         +dIMirAQ0IdgiE+8h9tpFRck0YGlT8pmlzAX+GodXGsKgb4lpX3CmDy59Jm5KChDY5dx
+         PeRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qpZdtba0dz/55nEB14IRTcskYiW/6pWMryxp9c80244=;
-        b=TLWGVxnMQQvhdxmRxCeo64CZaLYQEv+D5CtwNRQc2R+pjtTnhD8x2Sd1ydgsjA7Geb
-         qJ+DaPWjQObexKL0eB2KDRyOAln1wZnRWQlcLyfiZL4ZT07TQZBIPDtD/EjIg/kTCkPO
-         MnDDWO/2DQwNrDh+WQmNwb8PvKp1S8IkrkIJVN2ZZnKAlC5S9Bq5ABHnc1NXYs6sEKzL
-         WdDBw7rwwT9k05pNuvKoU9RTJNFe8N9zQiCvRxUHeNbMzjH4t3S+2TzBF0H/c779C5Up
-         /DlbYdSWU2T1ZWUfkMURrpL61zWUPzAIDh6kkGAvcJL0NOEMatm1calMcVHdWwahHVj+
-         12tw==
-X-Gm-Message-State: AOAM532pj0OYl0EJ/ao7UTUL3gC5NPtujSVg9rzV/95yfOeqXymvfWKk
-        p9L/YPcMeOVVUQMl++DPWyRvMrbSPAC8TwykP1RGYw==
-X-Google-Smtp-Source: ABdhPJwVrIDFHyNdf0I4UGrZT30gdri5pbkWVvCdfi55BBVMAQ95S27AdVvDU3jgAsR5BTdnpwzdvt7bveYbGt/bJdA=
-X-Received: by 2002:a05:651c:107b:: with SMTP id y27mr950638ljm.338.1601379946322;
- Tue, 29 Sep 2020 04:45:46 -0700 (PDT)
+        bh=qBPOXwqR11FIHvfThBaUZC6jwCYvheTGv1CU9grIcyc=;
+        b=sTUw9CskirVylkwb2BU3zUdIkY0RBkbl+LYRuyZeSPbxy5MWKpfPNd5ilq2y0AlbO6
+         4/O8sh0tum4KiM6i/u64DG1jev7eCmQ1oduX8rRuABrjCSwoWpiRZfbYZRsobc7aXMZ4
+         lTmd8HuEaPzJ/9ZJQvLdQIGm0oRk1GvrxLJACHdnjyxZVoRcqd7thezkXm90drf3sdYz
+         9Kl2c9/5ytQC5VvgL9FboCNjZRH3pwuTR9izJQL8rlZOHFLMyaSff6mp4su0sNNbdlai
+         +PIw4kNRchDPK17gwcun0VIEoKNcfEdKN9On3pJLq/3RndRdHGyIGXm7eeZ0s+oe6RiA
+         GaBg==
+X-Gm-Message-State: AOAM532vDV+hnYUGxcDZaDDhlAmPSt3H2orKaon2lc7xT6jLaE9De05x
+        aKt5hvTb27hgHoqT9HxGddkWxbVeye5HYDLHSd4Dbw==
+X-Google-Smtp-Source: ABdhPJxIDyRyq0NdkRAPuDSSQ4EIJ47R+V+1df5ulwgAX0ti7J3CkGDapTCIlcPwsFjl0iHkGeF8Pg0wHVW/xXsPz38=
+X-Received: by 2002:a19:1c8:: with SMTP id 191mr1001845lfb.585.1601380494732;
+ Tue, 29 Sep 2020 04:54:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <1599552721-24872-1-git-send-email-Anson.Huang@nxp.com> <1599552721-24872-3-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1599552721-24872-3-git-send-email-Anson.Huang@nxp.com>
+References: <20200920195848.27075-1-krzk@kernel.org> <20200920195848.27075-4-krzk@kernel.org>
+In-Reply-To: <20200920195848.27075-4-krzk@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Sep 2020 13:45:35 +0200
-Message-ID: <CACRpkdbPP61aB0umannqkj+4cVk4cRHmW_JHWvBQ3=4uTjk0pg@mail.gmail.com>
-Subject: Re: [PATCH V4 3/3] pinctrl: imx: Support building i.MX pinctrl core
- driver as module
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
+Date:   Tue, 29 Sep 2020 13:54:44 +0200
+Message-ID: <CACRpkdZi_k=SeMPHADeErE3pn9ytb0dFTfVEb7mJYedg75dMbw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] dt-bindings: gpio: gpio-vf610: fix iMX 7ULP
+ compatible matching
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
         Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        NXP Linux Team <Linux-imx@nxp.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 10:18 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+On Sun, Sep 20, 2020 at 9:59 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> Change PINCTRL_IMX to tristate to support loadable module build.
+> The i.MX 7ULP DTSes use two compatibles so update the binding to fix
+> dtbs_check warnings like:
 >
-> And i.MX common pinctrl driver should depend on CONFIG_OF to make sure
-> no build error when i.MX common pinctrl driver is enabled for different
-> architectures without CONFIG_OF.
+>   arch/arm/boot/dts/imx7ulp-com.dt.yaml: gpio@40ae0000:
+>     compatible: ['fsl,imx7ulp-gpio', 'fsl,vf610-gpio'] is too long
 >
-> Also add module author, description and license.
+>   arch/arm/boot/dts/imx7ulp-com.dt.yaml: gpio@40ae0000:
+>     compatible: Additional items are not allowed ('fsl,vf610-gpio' was unexpected)
 >
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-All three patches applied, thanks a lot for working this out!
+This patch doesn't apply to my tree linux-gpio "devel":
+
+$ git am --signoff
+./v3_20200920_krzk_dt_bindings_gpio_pl061_add_gpio_line_names.mbx
+Applying: dt-bindings: gpio: gpio-vf610: fix iMX 7ULP compatible matching
+error: Documentation/devicetree/bindings/gpio/gpio-vf610.yaml: does
+not exist in index
+Patch failed at 0001 dt-bindings: gpio: gpio-vf610: fix iMX 7ULP
+compatible matching
 
 Yours,
 Linus Walleij
