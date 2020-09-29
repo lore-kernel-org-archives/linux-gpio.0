@@ -2,152 +2,92 @@ Return-Path: <SRS0=mvGR=DG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13419C4727F
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B11EC4727C
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D334C20C09
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B9F21531
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:48:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="peVIjQza"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbgI2Ms2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Sep 2020 08:48:28 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25725 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbgI2LDJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 29 Sep 2020 07:03:09 -0400
-IronPort-SDR: y4NEzYY97+m81d4S7bCm26dcvm0RemIzzcoUp8N5qP6d94NQfOtmaVaECDlnTZUklGBtZ+gbyo
- jlpCiJ5nOoyA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="180320186"
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="180320186"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 04:03:08 -0700
-IronPort-SDR: n/9ZVEBO0YUddstVqGD+o/TdiKBQB6oF5oRjtprCZJPDwyw7aeC3rtTjm+py6AJ0f66gFc15fm
- B6BFSa6v1L3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="415344018"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Sep 2020 04:03:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 6B224320; Tue, 29 Sep 2020 14:03:06 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v1 1/3] pinctrl: tigerlake: Fix register offsets for TGL-H variant
-Date:   Tue, 29 Sep 2020 14:03:04 +0300
-Message-Id: <20200929110306.40852-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.28.0
+        id S1732991AbgI2Msa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Sep 2020 08:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49340 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbgI2MsT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 08:48:19 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83496C061755
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:48:18 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id c2so3890849ljj.12
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:48:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IMvMGHi3GydeVKLOrfC/vWyiwI8YwAhMbrnZw1cRxOs=;
+        b=peVIjQzaZ/pszoAnmZbBscUTAEFKGErn4WRK47+BgAKJqP6xS2c1xk6K7ZzWovbZf2
+         ti/cmwLcSSkQA1+F5ilOUDu+17EGfvIXoA7hKyUL9TUXK6n4amn0IS6lylrteOul7Mt/
+         byyqhv8G7Xs6tKXwZ5Yp5KyzWFjxCCPz+lqp8amlgOslfWgajcu7CXF1VwQpixq80y8G
+         jqjncbVXsxjra/Q9gEaOY+/Nrqodjlh5n4MVPGhnHLGNES/s5eiuNxjoDWwAeqYMeRiO
+         NWfelKACab2zTbAd8O8AonkYy7rhaiqEdBeXhl5ak+OGX5iVmsvqz8yelSf8ht+hiB1Y
+         Zr9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IMvMGHi3GydeVKLOrfC/vWyiwI8YwAhMbrnZw1cRxOs=;
+        b=Kx1+E94/Ofr8HlYP4hDolkFx5LVKlo1Wqf/Vx9ABkgMUrj9a434K7TzbagdbRGyLUo
+         onEqCUssSU3ZzEKpq1GQdAsOQhNkhQo0SLkhiWEFW6MgGJT2g/lbWTKfh6nCZGgD04jr
+         3HN/kcP7laDdfQ4G3lDUiGsjMinmv75Ps0zQ88DgFG1AqIKIo3p4fvTHHrzvzKK2/FiJ
+         wisUTf1P1HhBpJIQxPml46LPNoynt4oCCKB+97AcRHbyqKQr7JRITNiVQRAAaFB8ZWo/
+         usXPq1S32VphltQO5W9pcM3hcciinHGjJLygsetvHbJK6qQMtoeVnhG89yqKMWrP+9O+
+         BqIg==
+X-Gm-Message-State: AOAM531j7wu9/wyjaGiaogOGDJmmXd+8NpV0Bg4lHI52s+nT90miBmXt
+        7OVE6zScDIpJ8wcjsWyOvNNCMtZKEGfmEKmQ3c/EEA==
+X-Google-Smtp-Source: ABdhPJxnA3qRid3mM60XUEJepbYMl8mDolsQ9KdGO3C9GOZv0vZRhKfRr/vLKQSMNCCxJr+uBzpvSl9ICGCfbY+94Q4=
+X-Received: by 2002:a2e:9b15:: with SMTP id u21mr1193777lji.283.1601383696871;
+ Tue, 29 Sep 2020 05:48:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200913065836.12156-1-zhouyanjie@wanyeetech.com>
+In-Reply-To: <20200913065836.12156-1-zhouyanjie@wanyeetech.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 29 Sep 2020 14:48:06 +0200
+Message-ID: <CACRpkda1B3LcGWc1PhXNgi-6JxapiKY4F_94c6dk4eBLgVGBJg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] pinctrl: Ingenic: Add support for SSI and I2S pins.
+To:     =?UTF-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It appears that almost traditionally the H variants have some deviations
-in the register offsets in comparison to LP ones. This is the case for
-Intel Tiger Lake as well. Fix register offsets for TGL-H variant.
+On Sun, Sep 13, 2020 at 8:59 AM =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie)
+<zhouyanjie@wanyeetech.com> wrote:
 
-Fixes: 653d96455e1e ("pinctrl: tigerlake: Add support for Tiger Lake-H")
-Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-tigerlake.c | 42 ++++++++++++++---------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+> 1.Add SSI pins support for JZ4770 and JZ4780.
+> 2.Correct the pullup and pulldown parameters of JZ4780.
+> 3.Add I2S pins support for JZ4780, X1000, X1500, and X1830.
+>
+> v2->v3:
+> 1.Add Paul Cercueil's Reviewed-by.
+> 2.Fix bug about PE15's pull-up parameter.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-index 8c162dd5f5a1..3e354e02f408 100644
---- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-@@ -15,11 +15,13 @@
- 
- #include "pinctrl-intel.h"
- 
--#define TGL_PAD_OWN	0x020
--#define TGL_PADCFGLOCK	0x080
--#define TGL_HOSTSW_OWN	0x0b0
--#define TGL_GPI_IS	0x100
--#define TGL_GPI_IE	0x120
-+#define TGL_PAD_OWN		0x020
-+#define TGL_LP_PADCFGLOCK	0x080
-+#define TGL_H_PADCFGLOCK	0x090
-+#define TGL_LP_HOSTSW_OWN	0x0b0
-+#define TGL_H_HOSTSW_OWN	0x0c0
-+#define TGL_GPI_IS		0x100
-+#define TGL_GPI_IE		0x120
- 
- #define TGL_GPP(r, s, e, g)				\
- 	{						\
-@@ -29,12 +31,12 @@
- 		.gpio_base = (g),			\
- 	}
- 
--#define TGL_COMMUNITY(b, s, e, g)			\
-+#define TGL_COMMUNITY(b, s, e, pl, ho, g)		\
- 	{						\
- 		.barno = (b),				\
- 		.padown_offset = TGL_PAD_OWN,		\
--		.padcfglock_offset = TGL_PADCFGLOCK,	\
--		.hostown_offset = TGL_HOSTSW_OWN,	\
-+		.padcfglock_offset = (pl),		\
-+		.hostown_offset = (ho),			\
- 		.is_offset = TGL_GPI_IS,		\
- 		.ie_offset = TGL_GPI_IE,		\
- 		.pin_base = (s),			\
-@@ -43,6 +45,12 @@
- 		.ngpps = ARRAY_SIZE(g),			\
- 	}
- 
-+#define TGL_LP_COMMUNITY(b, s, e, g)			\
-+	TGL_COMMUNITY(b, s, e, TGL_LP_PADCFGLOCK, TGL_LP_HOSTSW_OWN, g)
-+
-+#define TGL_H_COMMUNITY(b, s, e, g)			\
-+	TGL_COMMUNITY(b, s, e, TGL_H_PADCFGLOCK, TGL_H_HOSTSW_OWN, g)
-+
- /* Tiger Lake-LP */
- static const struct pinctrl_pin_desc tgllp_pins[] = {
- 	/* GPP_B */
-@@ -367,10 +375,10 @@ static const struct intel_padgroup tgllp_community5_gpps[] = {
- };
- 
- static const struct intel_community tgllp_communities[] = {
--	TGL_COMMUNITY(0, 0, 66, tgllp_community0_gpps),
--	TGL_COMMUNITY(1, 67, 170, tgllp_community1_gpps),
--	TGL_COMMUNITY(2, 171, 259, tgllp_community4_gpps),
--	TGL_COMMUNITY(3, 260, 276, tgllp_community5_gpps),
-+	TGL_LP_COMMUNITY(0, 0, 66, tgllp_community0_gpps),
-+	TGL_LP_COMMUNITY(1, 67, 170, tgllp_community1_gpps),
-+	TGL_LP_COMMUNITY(2, 171, 259, tgllp_community4_gpps),
-+	TGL_LP_COMMUNITY(3, 260, 276, tgllp_community5_gpps),
- };
- 
- static const struct intel_pinctrl_soc_data tgllp_soc_data = {
-@@ -723,11 +731,11 @@ static const struct intel_padgroup tglh_community5_gpps[] = {
- };
- 
- static const struct intel_community tglh_communities[] = {
--	TGL_COMMUNITY(0, 0, 78, tglh_community0_gpps),
--	TGL_COMMUNITY(1, 79, 180, tglh_community1_gpps),
--	TGL_COMMUNITY(2, 181, 217, tglh_community3_gpps),
--	TGL_COMMUNITY(3, 218, 266, tglh_community4_gpps),
--	TGL_COMMUNITY(4, 267, 290, tglh_community5_gpps),
-+	TGL_H_COMMUNITY(0, 0, 78, tglh_community0_gpps),
-+	TGL_H_COMMUNITY(1, 79, 180, tglh_community1_gpps),
-+	TGL_H_COMMUNITY(2, 181, 217, tglh_community3_gpps),
-+	TGL_H_COMMUNITY(3, 218, 266, tglh_community4_gpps),
-+	TGL_H_COMMUNITY(4, 267, 290, tglh_community5_gpps),
- };
- 
- static const struct intel_pinctrl_soc_data tglh_soc_data = {
--- 
-2.28.0
+This v3 patch set applied!
 
+Thank you so much for your hard work!
+
+Yours,
+Linus Walleij
