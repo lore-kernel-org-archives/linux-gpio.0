@@ -2,84 +2,101 @@ Return-Path: <SRS0=mvGR=DG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63247C4727F
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D668EC4727F
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19BB32083B
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B2B320C09
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 12:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PBObQnKC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kgQtrl2m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732440AbgI2M0Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Sep 2020 08:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45916 "EHLO
+        id S1732295AbgI2Mdx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Sep 2020 08:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732485AbgI2M0H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 08:26:07 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15CC1C0613D0
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:26:07 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id z23so14647879ejr.13
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:26:06 -0700 (PDT)
+        with ESMTP id S1729398AbgI2MdF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 08:33:05 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9757C061755
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:33:04 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id o8so14731885ejb.10
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 05:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ilnc9lRErTLGwRUB4HFPyYF6CW3YVVZPYLQOJap/2CY=;
-        b=PBObQnKCeYlQmX+ppCXiidvlj5kZaNyn66HJEGKsSItxAJbS3f4GRWcCAoD/fkRc/s
-         TCyYZiJLpvbCFtAmAQp56BNedoYF5SviUf6TDZOtFmEB5iFyseDoU2k91pwdPNLBwMUM
-         cNWTZk/4coV1MHacUBz4iCe7YdfwSqWJDqB+fYEaWqAga/IvbqUfKXSIujqp4UaN+WjT
-         I0FqzAqAph41GOCzuGS1/iqee7tzcDYPZHtGhUqmRvBBjiiVkyYvkPg+nbetpkpe1IRu
-         Q1ByFC6ny7RLlg8hPDxQYEMMKGUIoh1uuIxaL8s/bBaqUngdWWBwNripByFqy5ha0xSV
-         kJlQ==
+        bh=LwN+tW4YIDNglL1uEsQtV8XVDTZbKrSyxnBbfw4N/uI=;
+        b=kgQtrl2m4TPFmZ5a3GUkvTSaZs36KvSvYRY3cYHJDVc9qZI6MIjLB/y3Kyay1Aec2x
+         eUHp9fRm6M6Gmd3tkK3W5l2Eh2dXmuBJYhsF8NMLXlKtEQdD32hyvz1qGDYB7unvhh5b
+         TuUEQCtGUlMPLvEZ3KxZeGGrtLbkL8eYm/NGrWWdCReozbiUMby9pG4cKxrSFn7TR/DR
+         YpGMx/aZIUKAvvpxbMAW+1bI1EFGemlkYX8kieBUd02WgM8TW7LDoDNnNGURE415GL3p
+         pJGYwtnEJzTSeqGKj8PuwFki7U9aN7ZZj7vtoGhiuyhbquWWi05nMnlDMO5jirmD2Ior
+         s3gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ilnc9lRErTLGwRUB4HFPyYF6CW3YVVZPYLQOJap/2CY=;
-        b=p4d4IwDgIhNFZzfGD3n0nRF1FivwMs6sPv3Q+KYxJ53L4dMCk0nKCOxYQ0jLnfVijq
-         W6tNxyxfyB6+VSkM9ru+1IhzZjmHmRBctgF2P27zsLYacPHs5ofe7a96OXdSkIv4Qjqm
-         658QgNrellbp1N9Lr7AnGxfGEQowacT96co6DlD4qXtonPP+YTs8RLvEvdFeqd3Ewt5x
-         /ytZV7r8RUvRNZI5KtNEVumh1CNe2s0VyEgMRBBDWjDJ2J+ZK45BF/6RfFn83x5ONI+s
-         85GYhvVk51+g3TL/A82hV8AbGjjorKk1aGb2694aYC5vrupMgzycM17xxJqGehcLkOtD
-         GIFg==
-X-Gm-Message-State: AOAM533BuUaoGJGh63QAKS5/WHpmqiTHn2cUnZ47x4ZNzJqVyFBVSlvb
-        7kpiYvnJvU4+mJcnIe2jTSF/plOxeGm2xrJvRgmuJQ==
-X-Google-Smtp-Source: ABdhPJyLuBCaI/z76rq/ffz504IdUDE9QfTuJtstdyt9uN0hf5yxvpSQvQ54/CYy2BsZ9vpzh9BTavQ+/5oaPPvIETw=
-X-Received: by 2002:a17:906:c007:: with SMTP id e7mr894474ejz.55.1601382365730;
- Tue, 29 Sep 2020 05:26:05 -0700 (PDT)
+        bh=LwN+tW4YIDNglL1uEsQtV8XVDTZbKrSyxnBbfw4N/uI=;
+        b=bI8eVpVmxRUNUx4izjVxJ50lM6vii5fWVGz0aqpSXCyQlVSgoMsvZsghoO/sTUPZ9+
+         LrrF5Je0682RkHdX7XRDvH1sEYXxFAX9AI5Kd/441dXsW9a5QX/OnHAC3LcOdtUITnNr
+         E/4S26CQTdr+9VcLxEt3MVpDOUoUbyZAxIcI3jXAFmLZOKy3k21dW7phYY3/lDE46KaB
+         JBWECpO8e+x9Wpt9fV7EUNAMi1MGX9nc3oMUWPe6xY0doKGXNS75iW8SAR5jv+WUw5+P
+         +B4kqTuQOEEdnJop8/giuRuVfdlal8mZtEQZq3KSqFS671pLZhNr/AxyvcrQHh+v15Dt
+         s/cg==
+X-Gm-Message-State: AOAM531SLpZTqxH/IbIx3xcmv+xpOSqupdR7zCEXd24tHdg+oSZjKvra
+        lb4ZBRIf+xgXZYcpKkgrd2VbisEx7sJqBuoeCtjJbQ==
+X-Google-Smtp-Source: ABdhPJz8GtXJOmzDg3LWtI0E6cXdgeLdjPw3GUdl8/im0e9dQ6kzxE7UFs+NkfPDaVs8g67w9qEZV++0mlEBaswlVUY=
+X-Received: by 2002:a17:906:3553:: with SMTP id s19mr3542393eja.178.1601382783388;
+ Tue, 29 Sep 2020 05:33:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200909114312.2863675-1-andrew@aj.id.au>
-In-Reply-To: <20200909114312.2863675-1-andrew@aj.id.au>
+References: <20200915125816.47148-1-andriy.shevchenko@linux.intel.com>
+ <20200917075920.GA1512423@sol> <CAMpxmJXQ0bJAjgdfTLpd6gUTe5ga=xTj7sXXUyLCS_o2RX87Kw@mail.gmail.com>
+In-Reply-To: <CAMpxmJXQ0bJAjgdfTLpd6gUTe5ga=xTj7sXXUyLCS_o2RX87Kw@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Sep 2020 14:25:54 +0200
-Message-ID: <CACRpkdaF7LaU_+4FrKGFYnKwLLe-iYkEzh4u3anv+16m6XUi4A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: aspeed: AST2600 pinconf fixes
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Johnny Huang <johnny_huang@aspeedtech.com>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 29 Sep 2020 14:32:52 +0200
+Message-ID: <CACRpkdbzwRe134t-aNFW6X4qEF_pqhBmo9=8=uEXbC8UqOpqNA@mail.gmail.com>
+Subject: Re: [PATCH v3] gpiolib: Fix line event handling in syscall compatible mode
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 9, 2020 at 1:43 PM Andrew Jeffery <andrew@aj.id.au> wrote:
+On Thu, Sep 17, 2020 at 12:04 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> On Thu, Sep 17, 2020 at 9:59 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > On Tue, Sep 15, 2020 at 03:58:16PM +0300, Andy Shevchenko wrote:
+> > > The introduced line event handling ABI in the commit
+> > >
+> > >   61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> > >
+> > > missed the fact that 64-bit kernel may serve for 32-bit applications.
+> > > In such case the very first check in the lineevent_read() will fail
+> > > due to alignment differences.
+> > >
+> > > To workaround this introduce lineevent_get_size() helper which returns actual
+> > > size of the structure in user space.
+> > >
+> > > Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+> > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Tested-by: Kent Gibson <warthog618@gmail.com>
+>
+> Patch applied, thanks everyone for the patch and QA!
 
-> The AST2600 pinctrl driver was missing support for bias control on the 1.8V
-> GPIO pins, and in the process of resolving that I discovered a couple of other
-> bugs that are fixed in the first two patches of the series.
-
-All 3 patches applied.
+I'm also very happy for this fixup even though I didn't even comment
+a single time, thanks so much folks! This is community at its best.
 
 Yours,
 Linus Walleij
