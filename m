@@ -2,61 +2,61 @@ Return-Path: <SRS0=mvGR=DG=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDAEC4727F
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 10:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C4BC4727F
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 10:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 323CD216C4
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 10:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE7A3208FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Sep 2020 10:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="SUUgbwPm"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Vlwp5g8n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbgI2KKQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Sep 2020 06:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52694 "EHLO
+        id S1727995AbgI2KKV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Sep 2020 06:10:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbgI2KKP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 06:10:15 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B5F3C0613D0
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 03:10:15 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id e16so4728140wrm.2
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 03:10:15 -0700 (PDT)
+        with ESMTP id S1725554AbgI2KKS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2020 06:10:18 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F73C0613D3
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 03:10:17 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id x14so4663953wrl.12
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2020 03:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wX07pSeUuLqA9wjMOYNBhUqlyD5UBvsVzAhl80AZh20=;
-        b=SUUgbwPmv1HPLhX+VtkUbKJMt1hEhieePFb0t+WIuQX7veEzo16PF6UR+jveLb0dLU
-         eVdkuFnstU26B1WMYRHzo8ci+a7NrAIskZLJqs29X1pf2JvVysAHdqH3KFGaeWer+WzB
-         wBBEAZf6QkMgpRpw9d0A06fftXk6ZjTEqp6caDlatXmNIxVGDOylfGoDsf/2V83MmOun
-         bUnzOcmr925AzmdLg+Oad/3dPqM+9ORedFQG3ekJoUcHwXFoF+6+KP9L8QLzR1muYk/9
-         2Kk1Z0xkxyX6UYKVDqZjkaT+d1dE0TG8UhUz94q6MypiAH4ioOLOlp4dWDC7WjOtjQ4I
-         E9Mw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BgQC3n53i35n7GC4c6lOV6W434EKfBGkaRy/2vzORco=;
+        b=Vlwp5g8nq3clh05VTdk4D5/6nGKS3gJzlJ6Qci4WMXVDpaFe8+w3bNqKKyH9PvhJdk
+         r8iaxDY20JE2VFOz6Rbwu5mNGhNb9M70UvPINute+KCs8x8ypMcLpzeATeXYQOq9VzIB
+         lsUTEPPx/2Eq8OjjBMOWCFSjKGWd3rPNiyqMAwPIbR17ZkMobYn7mroG5P5/6kMOanLz
+         +5o1kcZPT5HY55Zr6p4WvjLzaYqZocoapIMFdhc8QYuuwl48MK1Q/+AvCHHImITeUZus
+         +qkHUPLnyA355BMsYiV+BzZxEVNwYpNKSj9Vzgcf6Rqz0E6F+J+PNneZRlBvocb5pEFq
+         cA7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wX07pSeUuLqA9wjMOYNBhUqlyD5UBvsVzAhl80AZh20=;
-        b=lYYheT1Xc9lRkvRAme/hEIffIGk5KrT00iERkgV3vsN8r2QonftsCMLywm5Pf8cTTc
-         zGeGpH85I9UTe3VGDX8qC1y0pEUm3GjBKOW1hEeAoHb5f0WhsCp7wE8h7Z56+eDlW3j3
-         3PJ1e0PtRxG/uXX4SmnV58NBGXnGFFIrHtfbasvKllD0tv3Ss7qb7cTLyJFfLrPJWUiT
-         jS3ZPHQPD+vy6960tefbTRh/HXeu0x1fmSTWJD1xwNfjWMgOapH+8rfQNTrf6Wsb42jC
-         pHq+KAw1g+0vrXz7ZhdfnQfpzTbqcxJ8+2WdjWk5t4b/6ghc0SiF7iiGvswDaqXTCRu9
-         loDw==
-X-Gm-Message-State: AOAM532kW/e5evf4nPjnA7xsAsp+eeglccg2lBnFiWa+P5eOYDhqH/1x
-        D/VQo+EFNBI9iaRuOHB8olRdiA==
-X-Google-Smtp-Source: ABdhPJyu5A7kb1zd9o0XKRkIireLWaGzK0J84c5nNxmjTMndi7inQttwI+MoT+xB9vvauWg1QPJw5g==
-X-Received: by 2002:a5d:44cc:: with SMTP id z12mr3468027wrr.189.1601374214037;
-        Tue, 29 Sep 2020 03:10:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BgQC3n53i35n7GC4c6lOV6W434EKfBGkaRy/2vzORco=;
+        b=M2a9E1dPQtHlgpZsEV5IWjWmHCyQziMutsXOkGB3U0RW9aFIJlLX3gJe7czRdRMABV
+         wYmbqidhdYpoopHrevr1GFAAPREGPMyyyjhYxPeIPtm+H0OUnI+VnStYSNFdDo/morZR
+         kG11jxL+lIhaidkmIBanT9jQOltfRGPr53tUvSDAgpci/M1PYyOjmVSIGLjiemW6jJ5o
+         iyw1w/V/X/OSbYVsM1MjV3aMRoj0b8gvvUqUH5nNwCH/KotzfZ/gqhnQNiJJ5I982rbM
+         ta06q1cUu+6cDkfETPo9yzQWIMmW0bJCwo5ir46qp+RKW+u4akXDycg4yP6rCupFE5EI
+         b2SA==
+X-Gm-Message-State: AOAM532xaZFzQt64tXDgmDOCf+ExDavz8dT4Y3jDSLb2KqNUcWCptXZR
+        k0NZVkpFDuO6oEkIXBwyR9qJOw==
+X-Google-Smtp-Source: ABdhPJyuFk9oLj8oeKx5P1cDeMQ/VsotouQuatcO5DStHJNiJydDu3sx3SxN+GryFbyn4Eb0Q3HxXw==
+X-Received: by 2002:adf:f106:: with SMTP id r6mr3453748wro.106.1601374216544;
+        Tue, 29 Sep 2020 03:10:16 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-68-189.w109-210.abo.wanadoo.fr. [109.210.51.189])
-        by smtp.gmail.com with ESMTPSA id x19sm3380680wmj.48.2020.09.29.03.10.12
+        by smtp.gmail.com with ESMTPSA id x19sm3380680wmj.48.2020.09.29.03.10.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2020 03:10:13 -0700 (PDT)
+        Tue, 29 Sep 2020 03:10:16 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -65,10 +65,12 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 00/10] gpio: mockup: refactoring + documentation
-Date:   Tue, 29 Sep 2020 12:09:54 +0200
-Message-Id: <20200929101004.20288-1-brgl@bgdev.pl>
+Subject: [PATCH v3 02/10] Documentation: gpio: add documentation for gpio-mockup
+Date:   Tue, 29 Sep 2020 12:09:56 +0200
+Message-Id: <20200929101004.20288-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200929101004.20288-1-brgl@bgdev.pl>
+References: <20200929101004.20288-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -77,41 +79,73 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-These patches were part of the bigger overhaul of gpio-mockup but since
-the initial idea was dropped in favor of using configfs + sysfs in the
-future I thought I'd resent just the refactoring of the existing code
-+ documentation patches. I think it's good to apply them since we don't
-really know when the new interface will be ready (configfs needs a new
-functionality - commitable items - to support mockup chip instantiation).
+There's some documentation for gpio-mockup's debugfs interface in the
+driver's source but it's not much. Add proper documentation for this
+testing module.
 
-v1 -> v2:
-- check for NULL pointer in kfree_strarray() to avoid having to always pass
-  a zeroed string count when the array pointer is NULL
-- collect review tags from Andy
-
-v2 -> v3:
-- add a patch increasing the number of supported device properties
-- rename the arguments in kfree_strarray()
-
-Bartosz Golaszewski (10):
-  lib: string_helpers: provide kfree_strarray()
-  Documentation: gpio: add documentation for gpio-mockup
-  gpio: mockup: drop unneeded includes
-  gpio: mockup: use KBUILD_MODNAME
-  gpio: mockup: use pr_fmt()
-  gpio: mockup: remove unneeded return statement
-  gpio: mockup: increase the number of supported device properties
-  gpio: mockup: pass the chip label as device property
-  gpio: mockup: use the generic 'gpio-line-names' property
-  gpio: mockup: refactor the module init function
-
- .../admin-guide/gpio/gpio-mockup.rst          |  50 ++++++
- drivers/gpio/gpio-mockup.c                    | 158 +++++++++---------
- include/linux/string_helpers.h                |   2 +
- lib/string_helpers.c                          |  24 +++
- 4 files changed, 156 insertions(+), 78 deletions(-)
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ .../admin-guide/gpio/gpio-mockup.rst          | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
  create mode 100644 Documentation/admin-guide/gpio/gpio-mockup.rst
 
+diff --git a/Documentation/admin-guide/gpio/gpio-mockup.rst b/Documentation/admin-guide/gpio/gpio-mockup.rst
+new file mode 100644
+index 000000000000..9fa1618b3adc
+--- /dev/null
++++ b/Documentation/admin-guide/gpio/gpio-mockup.rst
+@@ -0,0 +1,50 @@
++.. SPDX-License-Identifier: GPL-2.0-only
++
++GPIO Testing Driver
++===================
++
++The GPIO Testing Driver (gpio-mockup) provides a way to create simulated GPIO
++chips for testing purposes. The lines exposed by these chips can be accessed
++using the standard GPIO character device interface as well as manipulated
++using the dedicated debugfs directory structure.
++
++Creating simulated chips using module params
++--------------------------------------------
++
++When loading the gpio-mockup driver a number of parameters can be passed to the
++module.
++
++    gpio_mockup_ranges
++
++        This parameter takes an argument in the form of an array of integer
++        pairs. Each pair defines the base GPIO number (if any) and the number
++        of lines exposed by the chip. If the base GPIO is -1, the gpiolib
++        will assign it automatically.
++
++        Example: gpio_mockup_ranges=-1,8,-1,16,405,4
++
++        The line above creates three chips. The first one will expose 8 lines,
++        the second 16 and the third 4. The base GPIO for the third chip is set
++        to 405 while for two first chips it will be assigned automatically.
++
++    gpio_named_lines
++
++        This parameter doesn't take any arguments. It lets the driver know that
++        GPIO lines exposed by it should be named.
++
++        The name format is: gpio-mockup-X-Y where X is mockup chip's ID
++        and Y is the line offset.
++
++Manipulating simulated lines
++----------------------------
++
++Each mockup chip creates its own subdirectory in /sys/kernel/debug/gpio-mockup/.
++The directory is named after the chip's label. A symlink is also created, named
++after the chip's name, which points to the label directory.
++
++Inside each subdirectory, there's a separate attribute for each GPIO line. The
++name of the attribute represents the line's offset in the chip.
++
++Reading from a line attribute returns the current value. Writing to it (0 or 1)
++changes the configuration of the simulated pull-up/pull-down resistor
++(1 - pull-up, 0 - pull-down).
 -- 
 2.26.1
 
