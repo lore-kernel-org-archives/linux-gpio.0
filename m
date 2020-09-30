@@ -2,167 +2,83 @@ Return-Path: <SRS0=1XUe=DH=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 464CFC4727F
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Sep 2020 09:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384D8C4727F
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Sep 2020 09:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0366820739
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Sep 2020 09:17:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="FPoi5rl8"
+	by mail.kernel.org (Postfix) with ESMTP id 002FB2075F
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Sep 2020 09:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbgI3JRJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Sep 2020 05:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbgI3JRJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Sep 2020 05:17:09 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEB9C061755
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2020 02:17:09 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id e16so934050wrm.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2020 02:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zt56kUDTtsurMg9pqdUiu46fbE5N5n8RIxY0imAh3m8=;
-        b=FPoi5rl8UDy+jYDRMqTkEEIlNFkPjdAODQCIn0BzdTDsMr/o6SX+uo7XYaO++6CA6A
-         uSaf6GUyUCqA6g27dwWhdcQRSs6FdYUbaOgc9CkZXqMLPj1GOrBV3K0WFBWC6wywTXBT
-         MIdf4b0PFfrYSke7X6YwTtyjnehI5Z6c1zIkaeot88yk6yFKSmK4gjwqSObxE8UQxlCH
-         SenR0IoUgbiSXBpQCQqgOUUvQkE6wx/CzpGAzvfl9/Ddd9/IwJdZv/a42jYMJtew960v
-         lJd4lDIoIsMLt++2q6115wgOfLfW+TvBRyD2SQ/p2oGBICpHCOEJcY6U2H8FDTOx55Fs
-         cIew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zt56kUDTtsurMg9pqdUiu46fbE5N5n8RIxY0imAh3m8=;
-        b=gVzA/akhAjNNW7mHHQ0u/QSTw11aZTpfYmHwDE1KDlu0/j01r0tMiHYRA4vtmelbhn
-         x9AtTl9yO0k7xz9U+y3sK4QMUyElMTzM79O3O6haqFbDfrJr1cXVEPJDRbZaw4j5R+xj
-         3GuBuDrvA2sBFUTMEVxyCaQbHzgfPFdiQLK/WQxI4+RU6Uqg5spqRYUTY+9JWOGdRnvb
-         Wll/s1my5wp63abXGJRGnwl3KBd+c517if5AFKNg925jhJ6rDqEVS+Grr6jvnJow0h5u
-         hndh2U4zIOuKlP4w3M95mU8jvjMwUgjLVRjiLDKx1Bszw+I72Gt3nHMO4EUYz7buQUPi
-         9V1g==
-X-Gm-Message-State: AOAM530h/EYwupSskMKvFq1avk2MCKE3WgfdT1aaSoK23fk8BsV3s49X
-        cnPVulM9OhesydUMj+UzwfYx84AwcH+WeQ==
-X-Google-Smtp-Source: ABdhPJxb9YKwadpLQ8mspJRVobncPLwmGD6XAc6HoKZFGcVaMmQYKQtzM2dMPZYj2gOg7NToXprj4A==
-X-Received: by 2002:adf:edcc:: with SMTP id v12mr1952114wro.240.1601457427734;
-        Wed, 30 Sep 2020 02:17:07 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-68-189.w109-210.abo.wanadoo.fr. [109.210.51.189])
-        by smtp.gmail.com with ESMTPSA id j14sm1798713wrr.66.2020.09.30.02.17.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2020 02:17:07 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [GIT PULL] gpio: updates for v5.10 - part 2
-Date:   Wed, 30 Sep 2020 11:17:03 +0200
-Message-Id: <20200930091703.8778-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.26.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727746AbgI3JVd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Sep 2020 05:21:33 -0400
+Received: from atl4mhfb03.myregisteredsite.com ([209.17.115.119]:58938 "EHLO
+        atl4mhfb03.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729158AbgI3JVd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 30 Sep 2020 05:21:33 -0400
+Received: from jax4mhob17.registeredsite.com (jax4mhob17.registeredsite.com [64.69.218.105])
+        by atl4mhfb03.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id 08U9LSIv029984
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2020 05:21:31 -0400
+Received: from mailpod.hostingplatform.com (atl4qobmail01pod0.registeredsite.com [10.30.71.203])
+        by jax4mhob17.registeredsite.com (8.14.4/8.14.4) with ESMTP id 08U9L874175289
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2020 05:21:08 -0400
+Received: (qmail 32270 invoked by uid 0); 30 Sep 2020 09:20:59 -0000
+X-TCPREMOTEIP: 83.128.90.119
+X-Authenticated-UID: mike@milosoftware.com
+Received: from unknown (HELO phenom.domain?not?set.invalid) (mike@milosoftware.com@83.128.90.119)
+  by 0 with ESMTPA; 30 Sep 2020 09:20:59 -0000
+From:   Mike Looijmans <mike.looijmans@topic.nl>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v2 2/2] gpio: pca953x: Add support for the NXP PCAL9554B/C
+Date:   Wed, 30 Sep 2020 11:20:53 +0200
+Message-Id: <20200930092053.2114-2-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200930092053.2114-1-mike.looijmans@topic.nl>
+References: <20200930092053.2114-1-mike.looijmans@topic.nl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The NXP PCAL9554B is a variant of the PCA953x GPIO expander,
+with 8 GPIOs, latched interrupts and some advanced configuration
+options. The "C" version only differs in I2C address.
 
-Hi Linus,
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+v2: Split devicetree and code into separate patches
 
-Here is the last batch of updates for v5.10 from my side. The biggest part of
-this PR is the new uAPI by Kent Gibson - it's time to finally get them
-upstream!
+ drivers/gpio/gpio-pca953x.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Other than that we have some refactoring of the gpio-mockup module and a code
-shrink for gpio-mpc8xxx.
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index bd2e96c34f82..fb946b01512d 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -90,6 +90,7 @@ static const struct i2c_device_id pca953x_id[] = {
+ 	{ "pcal6416", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
+ 	{ "pcal6524", 24 | PCA953X_TYPE | PCA_LATCH_INT, },
+ 	{ "pcal9535", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
++	{ "pcal9554b", 8  | PCA953X_TYPE | PCA_LATCH_INT, },
+ 	{ "pcal9555a", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
+ 
+ 	{ "max7310", 8  | PCA953X_TYPE, },
+@@ -1237,6 +1238,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "nxp,pcal6416", .data = OF_953X(16, PCA_LATCH_INT), },
+ 	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_LATCH_INT), },
+ 	{ .compatible = "nxp,pcal9535", .data = OF_953X(16, PCA_LATCH_INT), },
++	{ .compatible = "nxp,pcal9554b", .data = OF_953X( 8, PCA_LATCH_INT), },
+ 	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_LATCH_INT), },
+ 
+ 	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
+-- 
+2.17.1
 
-There's one commit here that's in your fixes branch but not in devel - the fix
-of a resource leak in gpio-mockup. This is because the refactoring patches
-depend on it.
-
-Please pull.
-
-The following changes since commit 12d16b397ce0a999d13762c4c0cae2fb82eb60ee:
-
-  gpio: mxc: Support module build (2020-09-29 15:04:31 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v5.10-part2
-
-for you to fetch changes up to cf048e05b68789e9fa35f246f8ecbe95d79f4173:
-
-  tools: gpio: add debounce support to gpio-event-mon (2020-09-30 10:57:30 +0200)
-
-----------------------------------------------------------------
-gpio updates for v5.10 - part 2
-
-- refactor gpio-mockup testing module
-- simplify the code in gpio-mpc8xxx
-- implement v2 of the GPIO user API
-
-----------------------------------------------------------------
-Bartosz Golaszewski (11):
-      gpio: mockup: fix resource leak in error path
-      lib: string_helpers: provide kfree_strarray()
-      Documentation: gpio: add documentation for gpio-mockup
-      gpio: mockup: drop unneeded includes
-      gpio: mockup: use KBUILD_MODNAME
-      gpio: mockup: use pr_fmt()
-      gpio: mockup: remove unneeded return statement
-      gpio: mockup: increase the number of supported device properties
-      gpio: mockup: pass the chip label as device property
-      gpio: mockup: use the generic 'gpio-line-names' property
-      gpio: mockup: refactor the module init function
-
-Kent Gibson (20):
-      gpiolib: cdev: gpio_desc_to_lineinfo() should set info offset
-      gpiolib: cdev: replace strncpy() with strscpy()
-      gpio: uapi: define GPIO_MAX_NAME_SIZE for array sizes
-      gpio: uapi: define uAPI v2
-      gpiolib: make cdev a build option
-      gpiolib: add build option for CDEV v1 ABI
-      gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL
-      gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL
-      gpiolib: cdev: support edge detection for uAPI v2
-      gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL
-      gpiolib: cdev: support GPIO_V2_LINE_SET_VALUES_IOCTL
-      gpiolib: cdev: support setting debounce
-      gpio: uapi: document uAPI v1 as deprecated
-      tools: gpio: port lsgpio to v2 uAPI
-      tools: gpio: port gpio-watch to v2 uAPI
-      tools: gpio: rename nlines to num_lines
-      tools: gpio: port gpio-hammer to v2 uAPI
-      tools: gpio: port gpio-event-mon to v2 uAPI
-      tools: gpio: add multi-line monitoring to gpio-event-mon
-      tools: gpio: add debounce support to gpio-event-mon
-
-Michael Walle (1):
-      gpio: mpc8xxx: simplify ls1028a/ls1088a support
-
- Documentation/admin-guide/gpio/gpio-mockup.rst |   50 +
- drivers/gpio/Kconfig                           |   29 +-
- drivers/gpio/Makefile                          |    2 +-
- drivers/gpio/gpio-mockup.c                     |  160 +--
- drivers/gpio/gpio-mpc8xxx.c                    |   45 +-
- drivers/gpio/gpiolib-cdev.c                    | 1539 +++++++++++++++++++++---
- drivers/gpio/gpiolib-cdev.h                    |   15 +
- drivers/gpio/gpiolib.c                         |    5 +
- drivers/gpio/gpiolib.h                         |    6 +
- include/linux/string_helpers.h                 |    2 +
- include/uapi/linux/gpio.h                      |  334 ++++-
- lib/string_helpers.c                           |   23 +
- tools/gpio/gpio-event-mon.c                    |  146 ++-
- tools/gpio/gpio-hammer.c                       |   56 +-
- tools/gpio/gpio-utils.c                        |  176 ++-
- tools/gpio/gpio-utils.h                        |   48 +-
- tools/gpio/gpio-watch.c                        |   16 +-
- tools/gpio/lsgpio.c                            |   60 +-
- 18 files changed, 2273 insertions(+), 439 deletions(-)
- create mode 100644 Documentation/admin-guide/gpio/gpio-mockup.rst
