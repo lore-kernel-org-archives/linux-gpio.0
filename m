@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8667C4727F
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Oct 2020 22:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A162C4727E
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Oct 2020 22:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B63C206FC
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Oct 2020 22:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D55B820719
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Oct 2020 22:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgJAWDe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Oct 2020 18:03:34 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51795 "EHLO mga12.intel.com"
+        id S1727244AbgJAWch (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Oct 2020 18:32:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:54009 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726731AbgJAWDe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Oct 2020 18:03:34 -0400
-IronPort-SDR: 63FfVvczMIFx7wv7O+d0qAnhOpQu0HNIqiOIOToKZsRjIqozs+HUi9NLe0puADQMlfXA/gA5oK
- iCubjxG3IRsQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="142252059"
+        id S1725924AbgJAWch (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 1 Oct 2020 18:32:37 -0400
+IronPort-SDR: 71Y2zHuaOUr7I/kPRzhzGdbgjT8LQEbBlOVMGCVj5erkaomoozi1rY6Suxf7oGF9s1nyutMOKx
+ KgokESZzWdCg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="150485872"
 X-IronPort-AV: E=Sophos;i="5.77,325,1596524400"; 
-   d="scan'208";a="142252059"
+   d="scan'208";a="150485872"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 15:03:29 -0700
-IronPort-SDR: 1xFfJF1djNkHs+ZoCqIucZ+U6/zO7jRjtafIE/O5JFn6ZLnF0esF/2iX82x41ZExH36x03xFIp
- wCuMFMXq7dQw==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 15:32:36 -0700
+IronPort-SDR: KfziW3ksjHQqp1n4R42gyYLkffNjoDx5qpNrW6f/TgiRK7wVTGbxoizFA3VofWUCLx4m5STD5d
+ h8BwvDNUNVvw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,325,1596524400"; 
-   d="scan'208";a="313251275"
+   d="scan'208";a="514942216"
 Received: from lkp-server02.sh.intel.com (HELO de448af6ea1b) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 01 Oct 2020 15:03:27 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 01 Oct 2020 15:32:35 -0700
 Received: from kbuild by de448af6ea1b with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kO6ff-0000lV-BK; Thu, 01 Oct 2020 22:03:27 +0000
-Date:   Fri, 02 Oct 2020 06:03:16 +0800
+        id 1kO77q-0000m2-MD; Thu, 01 Oct 2020 22:32:34 +0000
+Date:   Fri, 02 Oct 2020 06:31:43 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [gpio:for-next] BUILD SUCCESS
- 72a31192b5a9779b36411841e1d318cdab3d234e
-Message-ID: <5f765224.ZMZ3cO6kM7Cp0Hu1%lkp@intel.com>
+Subject: [pinctrl:fixes] BUILD SUCCESS
+ 39c4dbe4cc363accd676162c24b264f44c581490
+Message-ID: <5f7658cf.9Kei0Mn7MknBzYEf%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git  for-next
-branch HEAD: 72a31192b5a9779b36411841e1d318cdab3d234e  Merge branch 'devel' into for-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git  fixes
+branch HEAD: 39c4dbe4cc363accd676162c24b264f44c581490  pinctrl: mediatek: check mtk_is_virt_gpio input parameter
 
-elapsed time: 725m
+elapsed time: 723m
 
-configs tested: 160
+configs tested: 177
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -79,15 +79,23 @@ sh                             sh03_defconfig
 arm64                            alldefconfig
 powerpc                 mpc832x_mds_defconfig
 m68k                        mvme147_defconfig
-powerpc                 mpc8540_ads_defconfig
-powerpc                 linkstation_defconfig
-c6x                         dsk6455_defconfig
-powerpc64                        alldefconfig
+powerpc                     rainier_defconfig
 arm                          gemini_defconfig
 mips                malta_qemu_32r6_defconfig
 mips                          malta_defconfig
 riscv                             allnoconfig
 arm                              alldefconfig
+mips                         tb0287_defconfig
+arm                       cns3420vb_defconfig
+arm                        realview_defconfig
+csky                                defconfig
+arm                         assabet_defconfig
+mips                       rbtx49xx_defconfig
+m68k                          hp300_defconfig
+arc                      axs103_smp_defconfig
+csky                             alldefconfig
+sh                            shmin_defconfig
+powerpc                        cell_defconfig
 mips                malta_kvm_guest_defconfig
 um                           x86_64_defconfig
 sh                           se7724_defconfig
@@ -102,7 +110,6 @@ sh                           se7619_defconfig
 mips                        bcm63xx_defconfig
 nds32                            alldefconfig
 nios2                         10m50_defconfig
-powerpc                     rainier_defconfig
 xtensa                       common_defconfig
 sh                           sh2007_defconfig
 powerpc                  iss476-smp_defconfig
@@ -119,36 +126,42 @@ powerpc                   motionpro_defconfig
 powerpc                 mpc837x_mds_defconfig
 xtensa                           alldefconfig
 arm                         nhk8815_defconfig
-arm                         bcm2835_defconfig
-powerpc                      mgcoge_defconfig
-powerpc                  storcenter_defconfig
-microblaze                      mmu_defconfig
 s390                       zfcpdump_defconfig
 powerpc                       ppc64_defconfig
+powerpc                      ppc6xx_defconfig
 powerpc                     taishan_defconfig
 arm                           spitz_defconfig
 h8300                               defconfig
-powerpc                      ppc6xx_defconfig
 sh                           se7750_defconfig
 m68k                            q40_defconfig
 arm                        multi_v5_defconfig
 arm                          lpd270_defconfig
 arm                        trizeps4_defconfig
+arm                           efm32_defconfig
+arm                   milbeaut_m10v_defconfig
+h8300                            alldefconfig
+arm                           viper_defconfig
+powerpc                      chrp32_defconfig
+arm                           stm32_defconfig
+x86_64                              defconfig
+mips                      loongson3_defconfig
+powerpc                      makalu_defconfig
+m68k                         apollo_defconfig
+sh                         apsh4a3a_defconfig
+powerpc                  storcenter_defconfig
+sh                             shx3_defconfig
+m68k                          multi_defconfig
 arm                             pxa_defconfig
 mips                           ip28_defconfig
 arm                         hackkit_defconfig
 sh                          rsk7269_defconfig
+powerpc                      mgcoge_defconfig
 sh                     magicpanelr2_defconfig
-m68k                         apollo_defconfig
-arm                              zx_defconfig
-sh                           se7343_defconfig
-arm                            dove_defconfig
-mips                        nlm_xlr_defconfig
 arm                         axm55xx_defconfig
 m68k                        m5307c3_defconfig
 xtensa                  audio_kc705_defconfig
 powerpc                          allmodconfig
-powerpc                      chrp32_defconfig
+microblaze                      mmu_defconfig
 mips                        jmr3927_defconfig
 powerpc                      katmai_defconfig
 powerpc                           allnoconfig
@@ -172,7 +185,6 @@ nds32                             allnoconfig
 c6x                              allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
-csky                                defconfig
 alpha                               defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
@@ -201,6 +213,12 @@ x86_64               randconfig-a012-20200930
 x86_64               randconfig-a016-20200930
 x86_64               randconfig-a014-20200930
 x86_64               randconfig-a011-20200930
+x86_64               randconfig-a012-20201001
+x86_64               randconfig-a015-20201001
+x86_64               randconfig-a014-20201001
+x86_64               randconfig-a013-20201001
+x86_64               randconfig-a011-20201001
+x86_64               randconfig-a016-20201001
 i386                 randconfig-a011-20200930
 i386                 randconfig-a015-20200930
 i386                 randconfig-a012-20200930
@@ -216,7 +234,6 @@ riscv                            allmodconfig
 x86_64                                   rhel
 x86_64                           allyesconfig
 x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
 x86_64                               rhel-8.3
 x86_64                                  kexec
 
