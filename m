@@ -2,137 +2,97 @@ Return-Path: <SRS0=Fr9z=DK=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D5C4727E
-	for <linux-gpio@archiver.kernel.org>; Sat,  3 Oct 2020 07:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ED8C4727D
+	for <linux-gpio@archiver.kernel.org>; Sat,  3 Oct 2020 10:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4547206CD
-	for <linux-gpio@archiver.kernel.org>; Sat,  3 Oct 2020 07:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601711347;
-	bh=rSNbOsR9qrZbk/22kRR7H2mTyhHla1eb6pLRYw92C3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=I8xCPJxgMmaUPDOJ5Qp3MnG2tbccpGO8PoxWCxX2Sn7446xOOy9y81853eyAb5yNB
-	 U3d+tEZeuyYFLF+uAq9CjQjSdKYIb6CTFA9xfaGjGY6ptlvjkAzNw445D0tZGas37z
-	 vi58JE9bFdZ5Jt/d8JToXwybNlMtmBTPne4tpawE=
+	by mail.kernel.org (Postfix) with ESMTP id 68C1D206CA
+	for <linux-gpio@archiver.kernel.org>; Sat,  3 Oct 2020 10:07:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="t0Tw5DJ7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725763AbgJCHtG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 3 Oct 2020 03:49:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbgJCHtG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 3 Oct 2020 03:49:06 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CF12206CA;
-        Sat,  3 Oct 2020 07:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601711345;
-        bh=rSNbOsR9qrZbk/22kRR7H2mTyhHla1eb6pLRYw92C3A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xpfo7j5Ogz+5FMLQE6JEcdCuZJLS220njFOGq0w4q/ezcS8/YUJxV/tVp00x1cRme
-         PeytJ+bYJeETsXVwvFCvNmLXIxzaEU/n9jv+Ho+tcc1DWNdFus5jjW+U0OJ02cZ/dL
-         cV4hpDQF2Gtg0pwq+PecAcI5R7GAWDWmhCugOA3g=
-Date:   Sat, 3 Oct 2020 09:49:01 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Another round of adding missing
- 'additionalProperties'
-Message-ID: <20201003074901.GA109727@kroah.com>
-References: <20201002234143.3570746-1-robh@kernel.org>
+        id S1725730AbgJCKG5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 3 Oct 2020 06:06:57 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:48876 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725681AbgJCKG5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 3 Oct 2020 06:06:57 -0400
+X-UUID: 1a6aa90af3f34b229d4135d70def2dc4-20201003
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=XNRzXuFMSlzxxGZrXmTzf78PDDjCanucLXGX3tXCMVc=;
+        b=t0Tw5DJ7Z3pjppfPTnYfGF9fTrRsw6yRcOwXRJNTnJymGVujSqGUSxSmYbKevSuWdrFAF4i1IiEkenEUxuThmix/hlOreIFW1sKbw3+Qsbuy8DyO49E+N5seS/pVu+WiUcvTHdnmBV+JxaA78Iu2A20Um+mm+ssMqQTa3qVxu80=;
+X-UUID: 1a6aa90af3f34b229d4135d70def2dc4-20201003
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <hanks.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1898778443; Sat, 03 Oct 2020 18:06:50 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Sat, 3 Oct 2020 18:06:42 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Sat, 3 Oct 2020 18:06:42 +0800
+Message-ID: <1601719607.774.1.camel@mtkswgap22>
+Subject: Re: [PATCH v10 3/3] clk: mediatek: add UART0 clock support
+From:   Hanks Chen <hanks.chen@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        <devicetree@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Loda Chou <loda.chou@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Sat, 3 Oct 2020 18:06:47 +0800
+In-Reply-To: <1599546314.24690.3.camel@mtkswgap22>
+References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com>
+         <1596115816-11758-4-git-send-email-hanks.chen@mediatek.com>
+         <1599546314.24690.3.camel@mtkswgap22>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201002234143.3570746-1-robh@kernel.org>
+X-TM-SNTS-SMTP: 6297D8A22D190C79E560529B8B9A1614A3F0EDC1D7AD1F9E0539D6629E5EC1AA2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 06:41:43PM -0500, Rob Herring wrote:
-> Another round of wack-a-mole. The json-schema default is additional
-> unknown properties are allowed, but for DT all properties should be
-> defined.
-> 
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: openipmi-developer@lists.sourceforge.net
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> 
-> I'll take this thru the DT tree.
+SGkgTWljaGFlbCAmIFN0ZXBoZW4sDQoNClBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgeW91ciBj
+b21tZW50cyBhYm91dCB0aGlzIHBhdGNoLg0KVGhhbmtzDQoNClJlZ2FyZHMsDQpIYW5rcw0KDQoN
+Ck9uIFR1ZSwgMjAyMC0wOS0wOCBhdCAxNDoyNSArMDgwMCwgSGFua3MgQ2hlbiB3cm90ZToNCj4g
+SGkgYWxsLA0KPiANCj4gR2VudGxlIHBpbmcgb24gdGhpcyBwYXRjaC4NCj4gDQo+IFRoYW5rcw0K
+PiANCj4gDQo+IEhhbmtzIENoZW4NCj4gDQo+IA0KPiBPbiBUaHUsIDIwMjAtMDctMzAgYXQgMjE6
+MzAgKzA4MDAsIEhhbmtzIENoZW4gd3JvdGU6DQo+ID4gQWRkIE1UNjc3OSBVQVJUMCBjbG9jayBz
+dXBwb3J0Lg0KPiA+IA0KPiA+IEZpeGVzOiA3MTA3NzRlMDQ4NjEgKCJjbGs6IG1lZGlhdGVrOiBB
+ZGQgTVQ2Nzc5IGNsb2NrIHN1cHBvcnQiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlbmRlbGwgTGlu
+IDx3ZW5kZWxsLmxpbkBtZWRpYXRlay5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogSGFua3MgQ2hl
+biA8aGFua3MuY2hlbkBtZWRpYXRlay5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IE1hdHRoaWFzIEJy
+dWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xr
+L21lZGlhdGVrL2Nsay1tdDY3NzkuYyB8IDIgKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5z
+ZXJ0aW9ucygrKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9j
+bGstbXQ2Nzc5LmMgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMNCj4gPiBpbmRl
+eCA5NzY2Y2NjZjU4NDQuLjZlMGQzYTE2NjcyOSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Ns
+ay9tZWRpYXRlay9jbGstbXQ2Nzc5LmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9j
+bGstbXQ2Nzc5LmMNCj4gPiBAQCAtOTE5LDYgKzkxOSw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+bXRrX2dhdGUgaW5mcmFfY2xrc1tdID0gew0KPiA+ICAJCSAgICAicHdtX3NlbCIsIDE5KSwNCj4g
+PiAgCUdBVEVfSU5GUkEwKENMS19JTkZSQV9QV00sICJpbmZyYV9wd20iLA0KPiA+ICAJCSAgICAi
+cHdtX3NlbCIsIDIxKSwNCj4gPiArCUdBVEVfSU5GUkEwKENMS19JTkZSQV9VQVJUMCwgImluZnJh
+X3VhcnQwIiwNCj4gPiArCQkgICAgInVhcnRfc2VsIiwgMjIpLA0KPiA+ICAJR0FURV9JTkZSQTAo
+Q0xLX0lORlJBX1VBUlQxLCAiaW5mcmFfdWFydDEiLA0KPiA+ICAJCSAgICAidWFydF9zZWwiLCAy
+MyksDQo+ID4gIAlHQVRFX0lORlJBMChDTEtfSU5GUkFfVUFSVDIsICJpbmZyYV91YXJ0MiIsDQo+
+IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBM
+aW51eC1tZWRpYXRlayBtYWlsaW5nIGxpc3QNCj4gTGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFk
+ZWFkLm9yZw0KPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
+bnV4LW1lZGlhdGVrDQoNCg==
 
-For USB:
-
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
