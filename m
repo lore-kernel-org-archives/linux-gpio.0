@@ -2,143 +2,93 @@ Return-Path: <SRS0=X46N=DL=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD2CC4363C
-	for <linux-gpio@archiver.kernel.org>; Sun,  4 Oct 2020 18:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C042C46466
+	for <linux-gpio@archiver.kernel.org>; Sun,  4 Oct 2020 19:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03BD3208C7
-	for <linux-gpio@archiver.kernel.org>; Sun,  4 Oct 2020 18:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 007BA2068E
+	for <linux-gpio@archiver.kernel.org>; Sun,  4 Oct 2020 19:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kI5e8G+z"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tyvwm6vJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbgJDSAd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 4 Oct 2020 14:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48138 "EHLO
+        id S1726300AbgJDTru (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 4 Oct 2020 15:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbgJDSAa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2020 14:00:30 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497BAC0613CF;
-        Sun,  4 Oct 2020 11:00:30 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id ly6so7406483ejb.8;
-        Sun, 04 Oct 2020 11:00:30 -0700 (PDT)
+        with ESMTP id S1726289AbgJDTrt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2020 15:47:49 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DAF6C0613D0
+        for <linux-gpio@vger.kernel.org>; Sun,  4 Oct 2020 12:47:49 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id b22so8326926lfs.13
+        for <linux-gpio@vger.kernel.org>; Sun, 04 Oct 2020 12:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gs02NbgCd5FB21Hkn/kwxIv41IHErAydaATdtbYDD4I=;
-        b=kI5e8G+zkO74u2qZcEIVukbWW+zm+CHfk5aHaEWFG3f/Z+chFztp85ihWsDNJWgNFf
-         2rA5PGBfmIBpuZ5sYrRhd8fbMcMklbTYYESP7UrsBVPk4T5Xdm7F+qFf2v5kQ07o8QbU
-         ybCRqtKyuXrS4aq8dYUj71EH/Bx+2lO68jql7BupVeNlCk5I7QRA5bNECRKI/+6zh7kh
-         lBT/FJ753InW1jyfVCdU0U+CvbLjObOt/35d/sbe0D7uZ6cIA0jtNpWI1Nh/pAsDJoJY
-         8takxZ22uOPLDyZuaKJCMuE4d9FGiuk8MPmHgVimfRAH35PBxFA/9mr7nfZkxYijhbuM
-         ViTQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XG1wTZsegfbn4qSMGTJS4ZJXmsnG2K3cv9FPUxyxcl0=;
+        b=tyvwm6vJeWvUG+YylyY192T8KZn8Qr5yrM6GStT9s5de2OxMteL5B7wGjth4sUWlJN
+         yeRtZ8fzQPLTP9l2wh0H4IA+OpTFu+WFAAplzJ8qc9EgqPbrd2PoM0mVI+iXrNmT75AN
+         zcroezNosDv86rT9OyuWus0A0/2KUpofl7Ic65A/DKOQSHF2ZxeFdfHeZIBk6XkKcUxP
+         HcSwGnU3K1N1pOubYNNMe+L1KRExsaA+TjbpHqxVxSIX365Uj2OrENw22Bctly0oE6hB
+         GdG+QQMsq0my+4UDQnJFFUrBuYSUf4kcP9liwUpC/a4Ob7vniiKdILK/bCPKjY49XOww
+         WnkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gs02NbgCd5FB21Hkn/kwxIv41IHErAydaATdtbYDD4I=;
-        b=YMWhM5TlmftIBbj0dmL+vYCSDwNqT6Wbh/8ys4r5t+VW7qcacb383OFq76n8fvEvSu
-         TPjAHuA+Wx74lt2jB3X18UxZRowM9ec9CJBJtPAJ8hFr6Ye0jzA1if7T4s1JkS6/C3oK
-         H86gaewmp8S6OePLrU3zCCAkPF92k7Aa7Ziwr5NAtg1A0lvJ2+Drv6p2jm1RUQffiRux
-         0fZmguDvU83YjdW1Mal8MuTu9yOjNSsf5geOm0eMIdnampyFjA7gYr/MoLVhTkdqoxtY
-         N5OREuwXL4XZ36f0YKK7NQb4wKm6XVe8ZORjmijwPr6VJExHhJd/1V+npaS3ki7UtIIr
-         asWA==
-X-Gm-Message-State: AOAM530dB09NtIFyhPDNEYH3DIkHRnXpUKCASOpU/2aNDob5Y0gw69A+
-        2pqEnIZtKJ4dhV1XaByHdn5h2IyLlo8=
-X-Google-Smtp-Source: ABdhPJwKdgk1s+7oNMdubtN8XaJr0I+GO/BnWkjo6L8Rp2/5lWBdNl2hp/M9jF8irhtubNBRXPqWug==
-X-Received: by 2002:a17:906:ce5a:: with SMTP id se26mr11512137ejb.106.1601834428756;
-        Sun, 04 Oct 2020 11:00:28 -0700 (PDT)
-Received: from localhost.localdomain (p4fc3e21a.dip0.t-ipconnect.de. [79.195.226.26])
-        by smtp.googlemail.com with ESMTPSA id n11sm6065906ejs.38.2020.10.04.11.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2020 11:00:28 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, robh+dt@kernel.org,
-        bgolaszewski@baylibre.com, linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [RFC PATCH 2/3] dt-bindings: gpio: Add binding documentation for Etron EJ168/EJ188/EJ198
-Date:   Sun,  4 Oct 2020 18:29:07 +0200
-Message-Id: <20201004162908.3216898-3-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201004162908.3216898-1-martin.blumenstingl@googlemail.com>
-References: <20201004162908.3216898-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XG1wTZsegfbn4qSMGTJS4ZJXmsnG2K3cv9FPUxyxcl0=;
+        b=XPtvTL5zsdqebGmlU/tULWp1DPVe8yEM9U+X+U6QETNlBY57bPGgilHHfdb5fd78Ck
+         JJwXWY22tZFUKo7bWlgXx8Gs8g/bcR8WD3QrUnjpD8zecZE3ge8NdVEmpC+v+9cLFTlY
+         GibceIGtdJmUWQ5KHcLKlxCRRkl0+Q1tuknEYaApuuYQs5fgnAPW6+zQn5bDGYq9q4ho
+         7iZ1tmM21gi+MA8XNsHvqgO6I1+qLRa4OeDBlf+yUDqUKm0PVJa5aqvGF7gxaptX1vmA
+         tEppDe25R3ZW3DDz3TCYNZ3iofzBfL+jPyu0CLmd7AnoN/YK//1xKeEAgSCk0TnxaulP
+         1P8g==
+X-Gm-Message-State: AOAM530WE4+7Gnkparirif5qFzdVA/Z6PsmNagCS4xQMI30mHzEr/KTT
+        Uq9D3vrANORW0uGGvx9J6HTi2C9+reCD8m/wtyOv5qh3/NjwZA==
+X-Google-Smtp-Source: ABdhPJyyPZraV7h6Tujv7YTcdF+DimoKQoWubCHdJkkJBqSwis5CluCtrWiab98vMgU9wcgCmJaaSrN9A56tCRbI6Eg=
+X-Received: by 2002:ac2:42d8:: with SMTP id n24mr3845234lfl.502.1601840867685;
+ Sun, 04 Oct 2020 12:47:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201003103335.23404-1-krzk@kernel.org>
+In-Reply-To: <20201003103335.23404-1-krzk@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 4 Oct 2020 21:47:36 +0200
+Message-ID: <CACRpkdYASOe+rRu+AcXX7bgb=+JZFT9asQNUJ4U7Mq4DPDAvEQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: vendor-prefixes: favor "gateworks" over "gw"
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Etron EJ168/EJ188/EJ198 are USB xHCI host controllers which embed a GPIO
-controller.
+On Sat, Oct 3, 2020 at 12:33 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- .../devicetree/bindings/gpio/etron,ej1x8.yaml | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/etron,ej1x8.yaml
+> There are two vendor prefixes for Gateworks: "gw" and "gateworks".
+> Favor the longer one (more descriptive) and mark "gw" as deprecated so
+> it will not be used in new bindings.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/gpio/etron,ej1x8.yaml b/Documentation/devicetree/bindings/gpio/etron,ej1x8.yaml
-new file mode 100644
-index 000000000000..fa554045bdb5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/etron,ej1x8.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/etron,ej1x8.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GPIO controller embedded into the EJ168/EJ188/EJ198 xHCI controllers
-+
-+maintainers:
-+  - Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - pci1b6f,7023
-+      - pci1b6f,7052
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#gpio-cells"
-+  - gpio-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+      pcie {
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+
-+        gpio@0,0,0 {
-+          compatible = "pci1b6f,7023";
-+          reg = <0x0 0x0 0x0 0x0 0x1000>;
-+          gpio-controller;
-+          #gpio-cells = <2>;
-+        };
-+      };
-+
-+...
--- 
-2.28.0
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
