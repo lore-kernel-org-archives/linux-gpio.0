@@ -2,168 +2,280 @@ Return-Path: <SRS0=XCvj=DM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC3CC47427
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1B4C4363A
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72D9720776
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1212078D
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:21:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QT2sz2z2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="LnjNzZzb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725896AbgJEIFC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Oct 2020 04:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36242 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbgJEIEy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2020 04:04:54 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3616C0613AC
-        for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2020 01:04:53 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id w5so8406111wrp.8
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2020 01:04:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=IeiNTBeAySgxF765tOCATEDwXLrm3RiAjoTBQHN6wK0=;
-        b=QT2sz2z2T2ObbOF9cBuqPj/xMs2V2JkpGaC1yQPewHnLjCK6KfpJxnFBd52Yg4AGmP
-         VJxRGRPxaRQLhLWf/cJj+4TFWIvc5S6rpMyihLW8guAo+UvNRqZKoELqvBpOePuA/Etp
-         z293SdQf8ZGebrwCEz1gY7IlvwFjzz13UZb9UEwJiawxT5K21aKdmv/U8ZWx8aU8cdsz
-         g1EJ2lezQTBEJzLkUS6vaHwbRc5HEANA2MQBDDgPE/harsOdRDrcIYwSmq3urQxn7+oQ
-         VI6XlJwzca0RWlRBNRLXanZ5iKvZaicHTe2BxzY/5qO5xvvbJ/G2d1fmd5VfFwE503zT
-         3Stw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IeiNTBeAySgxF765tOCATEDwXLrm3RiAjoTBQHN6wK0=;
-        b=d1KLc9qf2XyqD0qbUZ2yy/wuY7mL6EcgzVSHsvNa2SYPX+MO8KO+nvspkS/UuVGt8d
-         ovbhTIZJGlWGQAVu5vX5/axGklGlpfhU1tcGp48YK8d6jxYOTaea5cN3upRKDSPXqlbj
-         hJIu+Qzhl8CGP1ceMaKjxjty6AzKjHwR0NJYf+yv+ouvVdUjpb7T5JsbGHAWIABOQeDl
-         XnIsHVQDsBKl5ywjupEvZ8RoSJrNbs3tcKQcqi0yIodSj+rMkT6wtJJrffrojo/8osJc
-         2XdTxDVzfWSb/vsxfBwgnBZNPMsKKlnWTMdpsPW0Yd3CykCTMBLIGUXj0qhxwA2nzgQs
-         X3Ww==
-X-Gm-Message-State: AOAM531z+emaCzfueCYZCHgFgs9hlJJHmsIkkJ3QMoN9BIPW0UfOCX9l
-        lscdqlpHtUfgDO0qICkcBmW0jg==
-X-Google-Smtp-Source: ABdhPJxB5n46P+iT3QRjzewwc6VgfO5oWkwQMA51B+oAEZSgUCF8P3GFXLcjkKteouHQRqUkrIZvVQ==
-X-Received: by 2002:adf:f10e:: with SMTP id r14mr9419051wro.337.1601885092289;
-        Mon, 05 Oct 2020 01:04:52 -0700 (PDT)
-Received: from dell ([91.110.221.236])
-        by smtp.gmail.com with ESMTPSA id x2sm11899009wrl.13.2020.10.05.01.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 01:04:51 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 09:04:48 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Another round of adding missing
- 'additionalProperties'
-Message-ID: <20201005080448.GT6148@dell>
-References: <20201002234143.3570746-1-robh@kernel.org>
+        id S1725947AbgJEIVI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Oct 2020 04:21:08 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:4668 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbgJEIVI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2020 04:21:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1601886067; x=1633422067;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version;
+  bh=XMuN0bNMo3ru9pfjhL9Lk/8bn2f2+41c5m3S+Lnm8Lk=;
+  b=LnjNzZzbd0LQuIXsQkWWv9pWCoy4FH4gZ1kaZMDz1ng61qmv2SBGUq4y
+   OFsrlBheXHcna7woLXq1vR0RFMy9o/bi2QlHlPLLvPpGzDrHqpV7Trv9D
+   Mt50cKvSzl2TiJHAheqPPIQq7Lv+rYrlgTkBvlpI2U22umDEnHFaVFGXS
+   Xb1r8l7ivNTqhMT1th+zryRRVi6Q3SjyR5CjsMNIu0fyVkqdIISNKeSB/
+   RYFNISNpaOE614ZmMPA18C6zscsqePlK3ksWEjb14R7Lq6dq4xaTnpR7a
+   M6QrqzSSn1ZLuvFW0H9PA5OI1PRZ2184TdnLRWg/3b+dQlkNZGn1W5/mk
+   g==;
+IronPort-SDR: pyKFPTQM1P4WcuEoDRkyK3x4CeHDogceLVDDPsF8i0nEtMl3dOqfpTsF4isW5sYYeLK8zw3yNS
+ /0BSfNmzMavXiNFGD2YfcJw0SaeXEZ9KPQdaL06l5MWKwWZ2nS6m7jiOnL+7IdQ3CjlsqJqJCW
+ RKYLz8YdrJSOwvf+iQ20NvpQrRBLqrO+BAPeiFhln3VVJko9pjZHXw5FqiHN8C25E1JZBe8EWU
+ hUeIue3yf4J4UfOt9huE3RdevCa/ypKXG6xozks9Y9A0QFIzrbJ1Z0Yre1QyABZQi0D3Vhvafd
+ DMk=
+X-IronPort-AV: E=Sophos;i="5.77,338,1596524400"; 
+   d="scan'208";a="28719323"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Oct 2020 01:21:06 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Mon, 5 Oct 2020 01:21:04 -0700
+Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
+ via Frontend Transport; Mon, 5 Oct 2020 01:21:03 -0700
+References: <20200903133528.8595-1-lars.povlsen@microchip.com> <20200903133528.8595-2-lars.povlsen@microchip.com> <CACRpkdZUQG1T_Bx5G275tSjDez0skDKGSc370B57FZ35NA6iEA@mail.gmail.com> <87r1r5wky3.fsf@soft-dev15.microsemi.net> <CACRpkdYxK6Uf1_3Me7hbJZ+rPAUXCj4k7D2e5je7iBNZosEtQw@mail.gmail.com>
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add bindings for pinctrl-mchp-sgpio driver
+In-Reply-To: <CACRpkdYxK6Uf1_3Me7hbJZ+rPAUXCj4k7D2e5je7iBNZosEtQw@mail.gmail.com>
+Date:   Mon, 5 Oct 2020 10:21:02 +0200
+Message-ID: <87lfglxevl.fsf@soft-dev15.microsemi.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201002234143.3570746-1-robh@kernel.org>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 02 Oct 2020, Rob Herring wrote:
 
-> Another round of wack-a-mole. The json-schema default is additional
-> unknown properties are allowed, but for DT all properties should be
-> defined.
-> 
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: openipmi-developer@lists.sourceforge.net
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> 
-> I'll take this thru the DT tree.
+Linus Walleij writes:
 
-[...]
+> Hi Lars,
+>
+> thanks for working on this!
+>
+> On Sun, Sep 13, 2020 at 9:11 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+>
+>> > What I do not understand is why this GPIO controller is placed in the
+>> > bindings of the pin controllers? Do you plan to add pin control
+>> > properties to the bindings in the future?
+>>
+>> I have made provisions for some of the generic pinconf parameters, and
+>> since the controller also has support for some alternate modes like
+>> (syncronized) blink at various rates, I thought I better add it as
+>> pinctrl straight away.
+>
+> OK fair enough let's keep the bindings here.
+>
+> BTW the latter function sounds like some kind of PWM?
 
->  .../bindings/mfd/gateworks-gsc.yaml           |  2 ++
->  .../bindings/mfd/xylon,logicvc.yaml           | 14 +++++++++++--
+Yes, it has PWM functionality as well.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+>
+>> >> +  gpio-controller: true
+>> >> +
+>> >> +  '#gpio-cells':
+>> >> +    description: GPIO consumers must specify four arguments, first the
+>> >> +      port number, then the bit number, then a input/output flag and
+>> >> +      finally the GPIO flags (from include/dt-bindings/gpio/gpio.h).
+>> >> +      The dt-bindings/gpio/mchp-sgpio.h file define manifest constants
+>> >> +      PIN_INPUT and PIN_OUTPUT.
+>> >> +    const: 4
+>> >
+>> > I do not follow this new third input/output flag at all.
+>>
+>> Its actually a sort of bank address, since the individual "pins" are
+>> unidirectional.
+>
+> I'm a bit confused here...
+> The standard advice for any "banked" GPIOs is to represent
+> each "bank" as a separate node (with a corresponding gpio_chip
+> in the Linux kernel). Then you can just use the standard
+> bindings to pick a line from one of these nodes.
+
+Yes, that seems to be a good model.
+
+>
+>> The PIN_INPUT/PIN_OUTPUT is defined in similar fashion in other pinctrl
+>> binding header files... I can drop the define and use, but as it will be
+>> used to address individual pins, I think it adds to readability.
+>
+> Hmmm. What makes these names expecially confusing is the
+> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml defines:
+> input-enable
+> input-disable
+> output-enable
+> output-high
+> output-low
+>
+> In the Linux kernel further there is:
+> include/linux/pinctrl/pinconf-generic.h that defines:
+> PIN_CONFIG_INPUT_ENABLE
+> PIN_CONFIG_OUTPUT_ENABLE
+> PIN_CONFIG_OUTPUT
+>
+> Since you are using the pin control framework this gets really
+> hard to hash out.
+>
+
+Yes, as the pins are fixed-function, the "input-enable", "input-disable"
+and "output-enable" are not really useful.
+
+> I don't really understand why it is needed.
+>
+>> Like this (excerpts from a DT with a switchdev driver using SFP's and
+>> LED's on sgpio):
+>>
+>> /{
+>>         leds {
+>>                 compatible = "gpio-leds";
+>>                 led@0 {
+>>                         label = "eth60:yellow";
+>>                         gpios = <&sgpio1 28 0 PIN_OUTPUT GPIO_ACTIVE_LOW>;
+>>                         default-state = "off";
+>>                 };
+>>                 ...
+>>         };
+>> };
+>
+> If what you intend to achieve is to make the GPIO come up in output mode,
+> you can either just have the driver do that as needed by the consumer.
+> If you absolutely have to do it in the device tree, then implement
+> pin control (pin config) and have it something like this:
+>
+> leds {
+>         compatible = "gpio-leds";
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&my_led_pinctrl>;
+>         led@0 {
+>                 label = "eth60:yellow";
+>                 gpios = <&sgpio1 28 GPIO_ACTIVE_LOW>;
+>                 default-state = "off";
+>         };
+>         ...
+>
+>         my_led_pinctrl: pinctrl-led {
+>                 pins = "gpio95"; // Just an example way of referring to the pin
+>                 bias-disable;
+>                 output-enable;
+>         };
+> };
+
+No, the PIN_OUTPUT is purely for adressing. But as you suggested, I'll
+split the into separate nodes. That will eliminate the "PIN_OUTPUT" and
+the bindings header.
+
+>
+>> >> +  microchip,sgpio-port-ranges:
+>> >> +    description: This is a sequence of tuples, defining intervals of
+>> >> +      enabled ports in the serial input stream. The enabled ports must
+>> >> +      match the hardware configuration in order for signals to be
+>> >> +      properly written/read to/from the controller holding
+>> >> +      registers. Being tuples, then number of arguments must be
+>> >> +      even. The tuples mast be ordered (low, high) and are
+>> >> +      inclusive. Arguments must be between 0 and 31.
+>> >> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> >> +    minItems: 2
+>> >> +    maxItems: 64
+>> >
+>> > And you are *absolutely sure* that you can't just figure this out
+>> > from the compatible string? Or add a few compatible strings for
+>> > the existing variants?
+>>
+>> Yes, this really needs to be configured for each board individually -
+>> and cant be probed. It defines how the bitstream to/from the shift
+>> registers is constructed/demuxed.
+>
+> And you have considered the option of simply letting the driver
+> check which board we are then? The property at the very
+> top of the device tree.
+>
+> if (of_machine_is_compatible("my_board")) {
+>     ....
+> } else if (of_machine_is_compatible("my_other_board")) {
+>     ....
+> }
+
+No, board-specific code is undesireable, as our customers should be able
+to design own boards without driver changes.
+
+>
+> So that you simply use the board compatible string to determine
+> this?
+>
+>> >> +/* mchp-sgpio specific pin type defines */
+>> >> +#undef PIN_OUTPUT
+>> >> +#undef PIN_INPUT
+>> >> +#define PIN_OUTPUT     0
+>> >> +#define PIN_INPUT      1
+>> >
+>> > I'm not a fan of this. It seems like something that should be set in
+>> > response to the gpiochip callbacks .direction_input and
+>> > .direction_output callbacks.
+>> >
+>>
+>> As I tried to explain above, its a part of the pin address - aka bank
+>> selector - whether your are accessing the input or the output side. And
+>> since the directions have totally different - and concurrent - use, they
+>> need to be individually addressed, not "configured".
+>>
+>> In the example presented, sgpio2-p28b0 IN is loss-of-signal, and the
+>> OUT is the sfp tx-disable control.
+>
+> I suspect the proper way to do it is to create one node for
+> the input side and one node for the output side and also create
+> two different gpio chips in the kernel.
+>
+> my-device {
+>        compatible = "my-device";
+>        gpioin: input-gpio {
+>            ....
+>        };
+>        gpioout: output-gpio {
+>            ....
+>        };
+> };
+>
+> Note: I didn't think over the naming in this example.
+>
+> You will need code in your driver to parse the subnodes and
+> populate two gpio_chips.
+
+Yes, I will modify the driver to use separate nodes for each direction.
+
+Thank you for your comments, it is highly appreciated.
+
+---Lars
+
+>
+> Yours,
+> Linus Walleij
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Lars Povlsen,
+Microchip
