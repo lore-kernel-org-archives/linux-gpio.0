@@ -2,166 +2,126 @@ Return-Path: <SRS0=XCvj=DM=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D393C4741F
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C988C4363A
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB76A2075A
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:26:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AXAmvxEc"
+	by mail.kernel.org (Postfix) with ESMTP id 614CC20781
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Oct 2020 08:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbgJEI0s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Oct 2020 04:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39660 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgJEI0i (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2020 04:26:38 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E05C0613AE
-        for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2020 01:26:38 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id u74so1210254vsc.2
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2020 01:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=41Y6sjMmjcMlV2JauZyN/TxOh6umZ/keewCU2mb8LIc=;
-        b=AXAmvxEcZgWulidtPjWzcdr2Qm2OYOtZA0wDa8FmovT91MPeLRIwIVCT8lx9v5UNlG
-         SctQfxm1GmrUHlaNPX+RFUQtBHXdidJ0/CU1C9clQS0l30cTxEkteaWVnvPQuLuFSdee
-         4MV2Fpon9L5TsVQGS1K3gSKttvhofJOiwA9P0bVAeb/tNn5WAcwRk5Be/IAOdU2QkdYn
-         VFrey16k5OCZxA1L7Q1xqspPxsd/+WYGgx9scKUGZYuyhxSBuKF1PhH1KfSOoQx2J5OY
-         401UuKSNx0/BKxG4Vky36hMzFvsFJwDUWIuAQewHgLK5qqZWGGWEkqztdK9+VC+FKpcj
-         S9OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=41Y6sjMmjcMlV2JauZyN/TxOh6umZ/keewCU2mb8LIc=;
-        b=D4eOsGNRcX6MxjDbfSthej/mP2UgwRxSlFmuhDEXDc03u/XhQdSWTWmyYkn8LkJ1dL
-         nya1O95TFM1e2JuPR9iOTUIN4NExh5F3gjpXyAMLCHRvTBbyJiNAcwPgYX7i9NtchXP9
-         9fw8I+L/J7d2t1bRm23JPjmQHr0+qADfuyOYmezXnSZrLpNTaef6/UOpQCY0jOrt214y
-         sl/jdM9Dms2LkP5UYNXtJYtArO3C4owe3otzhdPUi43rDdhwpmHu88gBIsJRd1bFd01z
-         8pX7OGyhp9BbzotX8gYildM9FIecvmeneSpuHkq+xyb7f0EDwyE3ZZ30dTYOD3n8MaV8
-         qnOA==
-X-Gm-Message-State: AOAM533DkThDDzW/UFv++olyZ1Hg9Tfuv6fg9wXfAOa4l9gMsQsGvIIm
-        mrODXYCMFK7z4322SP+PbAy66ckr7MYfe46BJriyPw==
-X-Google-Smtp-Source: ABdhPJxlPMGygHVTcnGIf5MQvmk2y9YM/OMFZ7y/LPtKUwwQZxTgA80YvlEMQPDfoWIYZailBQzIdWarus99WB2IvNI=
-X-Received: by 2002:a67:ec9a:: with SMTP id h26mr6751269vsp.34.1601886397228;
- Mon, 05 Oct 2020 01:26:37 -0700 (PDT)
+        id S1726004AbgJEIty (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Oct 2020 04:49:54 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:46823 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbgJEItt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2020 04:49:49 -0400
+X-Greylist: delayed 1294 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Oct 2020 04:49:47 EDT
+Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
+        by twspam01.aspeedtech.com with ESMTP id 09588YYf047513
+        for <linux-gpio@vger.kernel.org>; Mon, 5 Oct 2020 16:08:34 +0800 (GMT-8)
+        (envelope-from chiawei_wang@aspeedtech.com)
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 09588T6I047498;
+        Mon, 5 Oct 2020 16:08:29 +0800 (GMT-8)
+        (envelope-from chiawei_wang@aspeedtech.com)
+Received: from ChiaWeiWang-PC.aspeed.com (192.168.2.66) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 5 Oct
+ 2020 16:28:10 +0800
+From:   "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
+To:     <lee.jones@linaro.org>, <robh+dt@kernel.org>, <joel@jms.id.au>,
+        <andrew@aj.id.au>, <minyard@acm.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <linus.walleij@linaro.org>,
+        <haiyue.wang@linux.intel.com>, <cyrilbur@gmail.com>,
+        <rlippert@google.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>
+CC:     <ryan_chen@aspeedtech.com>
+Subject: [PATCH v2 2/5] soc: aspeed: Fix LPC register offsets
+Date:   Mon, 5 Oct 2020 16:28:03 +0800
+Message-ID: <20201005082806.28899-3-chiawei_wang@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201005082806.28899-1-chiawei_wang@aspeedtech.com>
+References: <20201005082806.28899-1-chiawei_wang@aspeedtech.com>
 MIME-Version: 1.0
-References: <20201002234143.3570746-1-robh@kernel.org>
-In-Reply-To: <20201002234143.3570746-1-robh@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 5 Oct 2020 10:26:01 +0200
-Message-ID: <CAPDyKFq=ZUiYhm0-K5ZVYS1FH2O5e-+Gt6Dftf=LmL9ABa7CaA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Another round of adding missing 'additionalProperties'
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-spi@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-leds@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mips@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Linux USB List <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [192.168.2.66]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 09588T6I047498
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, 3 Oct 2020 at 01:41, Rob Herring <robh@kernel.org> wrote:
->
-> Another round of wack-a-mole. The json-schema default is additional
-> unknown properties are allowed, but for DT all properties should be
-> defined.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Baolin Wang <baolin.wang7@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: openipmi-developer@lists.sourceforge.net
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->
-> I'll take this thru the DT tree.
->
+The LPC register offsets are fixed to adapt to the LPC DTS change,
+where the LPC partitioning is removed.
 
-[...]
+Signed-off-by: Chia-Wei, Wang <chiawei_wang@aspeedtech.com>
+---
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c  |  6 +++---
+ drivers/soc/aspeed/aspeed-lpc-snoop.c | 11 +++++------
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
->  .../bindings/mmc/mmc-pwrseq-emmc.yaml         |  2 ++
->  .../bindings/mmc/mmc-pwrseq-sd8787.yaml       |  2 ++
->  .../bindings/mmc/mmc-pwrseq-simple.yaml       |  2 ++
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index 01ed21e8bfee..36faa0618ada 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -17,12 +17,12 @@
+ 
+ #define DEVICE_NAME	"aspeed-lpc-ctrl"
+ 
+-#define HICR5 0x0
++#define HICR5 0x80
+ #define HICR5_ENL2H	BIT(8)
+ #define HICR5_ENFWH	BIT(10)
+ 
+-#define HICR7 0x8
+-#define HICR8 0xc
++#define HICR7 0x88
++#define HICR8 0x8c
+ 
+ struct aspeed_lpc_ctrl {
+ 	struct miscdevice	miscdev;
+diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+index f3d8d53ab84d..7ce5c9fcc73c 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
++++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+@@ -28,26 +28,25 @@
+ #define NUM_SNOOP_CHANNELS 2
+ #define SNOOP_FIFO_SIZE 2048
+ 
+-#define HICR5	0x0
++#define HICR5	0x80
+ #define HICR5_EN_SNP0W		BIT(0)
+ #define HICR5_ENINT_SNP0W	BIT(1)
+ #define HICR5_EN_SNP1W		BIT(2)
+ #define HICR5_ENINT_SNP1W	BIT(3)
+-
+-#define HICR6	0x4
++#define HICR6	0x84
+ #define HICR6_STR_SNP0W		BIT(0)
+ #define HICR6_STR_SNP1W		BIT(1)
+-#define SNPWADR	0x10
++#define SNPWADR	0x90
+ #define SNPWADR_CH0_MASK	GENMASK(15, 0)
+ #define SNPWADR_CH0_SHIFT	0
+ #define SNPWADR_CH1_MASK	GENMASK(31, 16)
+ #define SNPWADR_CH1_SHIFT	16
+-#define SNPWDR	0x14
++#define SNPWDR	0x94
+ #define SNPWDR_CH0_MASK		GENMASK(7, 0)
+ #define SNPWDR_CH0_SHIFT	0
+ #define SNPWDR_CH1_MASK		GENMASK(15, 8)
+ #define SNPWDR_CH1_SHIFT	8
+-#define HICRB	0x80
++#define HICRB	0x100
+ #define HICRB_ENSNP0D		BIT(14)
+ #define HICRB_ENSNP1D		BIT(15)
+ 
+-- 
+2.17.1
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
