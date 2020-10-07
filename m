@@ -2,185 +2,269 @@ Return-Path: <SRS0=pKPn=DO=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A5FC41604
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Oct 2020 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E65C47095
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Oct 2020 16:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28FCF215A4
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Oct 2020 15:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8DF2176B
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Oct 2020 16:26:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZ1RN/Yi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdY4HlVq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbgJGPmn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Oct 2020 11:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43076 "EHLO
+        id S1727278AbgJGQ0v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Oct 2020 12:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbgJGPmn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Oct 2020 11:42:43 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CA7C061755;
-        Wed,  7 Oct 2020 08:42:43 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id x22so1519086pfo.12;
-        Wed, 07 Oct 2020 08:42:43 -0700 (PDT)
+        with ESMTP id S1726138AbgJGQ0u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Oct 2020 12:26:50 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47422C0613D2;
+        Wed,  7 Oct 2020 09:26:50 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id w11so3006034lfn.2;
+        Wed, 07 Oct 2020 09:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sGFQepT5dAielyQOcZZKF78Vk6XPpWVnwJvjhh+Nths=;
-        b=EZ1RN/YiciSHmmi6KmaZ4yd1HwEjk6cFBdDoxz0e/cBJLO/gMoW3UBhjRRKtjlOvWH
-         LN/3RTHIZ/SLy1+igAdhORfr/+RJrMZzny+csOHfFB3yU89BuTZYhjiJjQ5OcfpladKU
-         CBiyDDBrUxpLvPzv8uKuI90P2GNM/LnxBFlTU0AxKIgjNPmzljIcQwT98pw6ScHswsxJ
-         RZ9qOgSRgBHv0Ty7rIjlepNHT//TNKlDu+WFe9xWqi46oHACRG01o9SkbsiWEpAK0qzv
-         nAa/48uCBxj0K1XsVuQhhs7p1BLya074XMB2ZAkcFL2kCpOk4oNJlQQC4r3PCB51g5CP
-         qlcQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=J+F0JpZLJDKUddU6smtOvR/xfwugAr1sQCaGzcxcqqQ=;
+        b=kdY4HlVqRt6XN7VaK+xlyt58vS7Dr2sntyeo3T0BeXYe0cKPcalSRoo7uXQmM/Jf3P
+         9kAEYI7BbI8fIrGzs2CwpTtlVWaMVp/maKirqYcBxwuZ9osoNv9pQTuHewNbywx+5sFE
+         t8CQqd0GZKEvq0+W5lpwGP1NRWwglxmE0tkRHcNFKbJ7xDH5LRmdxyBF8OiVh4Fiqvlf
+         PbkIso9S3MnPyWlCB3DFoNsvJi61YfLzvX7vXvWOFnu621eBbJQp5YhJqQSJebOsyRm+
+         xc/1sVr/zz+O1DrcFI2eWguCcAidEOA6uvVx/Bm0yu7dT2w+n1TchO9VGclN15Vuovlg
+         nTHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sGFQepT5dAielyQOcZZKF78Vk6XPpWVnwJvjhh+Nths=;
-        b=aWfTgXiu96pY9HyuYfBd3UJBioI1JcANjqZHn2jcvblN4vjDEBoy489UPJ6q3a0E0s
-         we/HiikNYmIeLVFXQt4Wd3Rbr2+2GY/piZ5hnqWm0Wf+jt5TeXzcQmPrCkgGWyafqlwR
-         AtisYFqfPVzQPwtPhsfkUcUhXHYjnt77id/M3mQWrsAqvVdkk7SIYFnx/N8QP635FZgZ
-         ZaFNBXMvzKsupk6BfVHpX0QGBUwenc79TJ+SU+x15IAZ33j92nIDx56EMmPvGMco2Wwy
-         MD989+7uqACXmN97+Xm/e/dBmIyLizRPjyzko6HoxCEXlBUJTd4u+jaN4yTFtaqSHEqS
-         4DEA==
-X-Gm-Message-State: AOAM530wX7c3lkYiRnsyRRKdbvDMs8TZ0tM6gtOEMmke284avshoEZAG
-        thMZ1uozwROABraovjQv/ACtdvJTLSc3fYqQBOQ=
-X-Google-Smtp-Source: ABdhPJzz1+XMwvpBzj19pLceQVBur+ueQvp6VyjuWDJnETHhvRf5xN483kY8Z+8/5Xt+06Bo2B2EMJPDb7eeL8wDjeg=
-X-Received: by 2002:aa7:81d5:0:b029:142:2501:39fa with SMTP id
- c21-20020aa781d50000b0290142250139famr3518995pfn.73.1602085362812; Wed, 07
- Oct 2020 08:42:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=J+F0JpZLJDKUddU6smtOvR/xfwugAr1sQCaGzcxcqqQ=;
+        b=Wtq12dVnQwQpdYSMZq9mskR5+L1bMxy7WASs3SABP6i5JC5kRaKbi7D7mZT6NMwv4B
+         hqLRmmfettD8Peh3ftevRDC6Tvp+9g+6GF7wbfWDLSOk5mpPiKiFTqi0BwI4+I1I/JNo
+         6dEaYYJenT5sdD29z2PqS7EGZMLym4KdmGf9aDcKiqHKCHhaXM0MxGbfPGVeeMYdl6J/
+         KeguoII5q+SAOQn2eE6xntPtmYQhJNCHEKoQgEojFrz9KvUfYET3nXyqqz2p1t2D1Rf+
+         8KMnOzEjuo2n6fO5ev/l/H8Rk1vmQioFY1F0s6MWVO7OoQNkhVxnM+kTd+9QMTAAciQT
+         FbJw==
+X-Gm-Message-State: AOAM531Zbt29oVVtDMcxWdgiYwgAwgbfSDrt/niLr8GsygQGhfJhCOJD
+        +M0FR4cRqq/jbPYxMV21fTw=
+X-Google-Smtp-Source: ABdhPJwEeoINbAcxQ9yDrsIseRzOedKtmnV+i7y7swcWY4AsuPgo0S9G/K6zEGiwuA1mITmKit4Mjw==
+X-Received: by 2002:a19:f612:: with SMTP id x18mr1383329lfe.204.1602088008595;
+        Wed, 07 Oct 2020 09:26:48 -0700 (PDT)
+Received: from localhost.localdomain (host-5-58-109-138.bitternet.ua. [5.58.109.138])
+        by smtp.gmail.com with ESMTPSA id n4sm400617lfe.246.2020.10.07.09.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Oct 2020 09:26:48 -0700 (PDT)
+From:   Vladimir Lypak <junak.pub@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Vladimir Lypak <junak.pub@gmail.com>
+Subject: [PATCH v2 2/2] dt-bindings: pinctrl: qcom: add msm8953 pinctrl bindings
+Date:   Wed,  7 Oct 2020 19:06:12 +0300
+Message-Id: <20201007160611.942754-2-junak.pub@gmail.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201007160611.942754-1-junak.pub@gmail.com>
+References: <20201007160611.942754-1-junak.pub@gmail.com>
 MIME-Version: 1.0
-References: <20201005140217.1390851-1-maz@kernel.org> <CACRpkdbctO9cWZZhVQHWkA1DN7YRTsLRo4Ub9g2x7q6BBSD=Ug@mail.gmail.com>
- <CAHp75Vdb3y_r_+Mq8K=Jog21wiFH54F18ED8eBwT4rM_zxcCUA@mail.gmail.com>
- <0175d3ce84ea0aa938a3ce9b3731762e@kernel.org> <CAHp75VdQixJStuVj_aMZ9PhkWXk4RoUa13wAMDj4KGwm2t9nFQ@mail.gmail.com>
- <bab5b8d99b57710030955c3924c9fca5@kernel.org> <CAHp75VdZxU67P9RPAmw=hnToR2H-8bfHvzeU4UCwKCpV5xEKNg@mail.gmail.com>
- <15ef48ca189e6535ea1549f7329bc20e@kernel.org>
-In-Reply-To: <15ef48ca189e6535ea1549f7329bc20e@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 7 Oct 2020 18:43:32 +0300
-Message-ID: <CAHp75VevBH6MBHy9MTW-qFDHPeaXzPu3=EyW19JoAsFU-sBViw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: Survive spurious interrupts
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 6:00 PM Marc Zyngier <maz@kernel.org> wrote:
-> On 2020-10-07 15:03, Andy Shevchenko wrote:
-> > On Wed, Oct 7, 2020 at 4:20 PM Marc Zyngier <maz@kernel.org> wrote:
-> >> On 2020-10-07 14:10, Andy Shevchenko wrote:
-> >> > On Wed, Oct 7, 2020 at 3:09 PM Marc Zyngier <maz@kernel.org> wrote:
-> >> >> On 2020-10-07 13:02, Andy Shevchenko wrote:
-> >> >> > On Wed, Oct 7, 2020 at 12:49 PM Linus Walleij
-> >> >> > <linus.walleij@linaro.org> wrote:
-> >> >> >> On Mon, Oct 5, 2020 at 4:02 PM Marc Zyngier <maz@kernel.org> wrote:
-> >> >> >>
-> >> >> >> > The pca953x driver never checks the result of irq_find_mapping(),
-> >> >> >> > which returns 0 when no mapping is found. When a spurious interrupt
-> >> >> >> > is delivered (which can happen under obscure circumstances), the
-> >> >> >> > kernel explodes as it still tries to handle the error code as
-> >> >> >> > a real interrupt.
-> >> >> >> >
-> >> >> >> > Handle this particular case and warn on spurious interrupts.
-> >> >> >> >
-> >> >> >> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> >> >> >
-> >> >> > Wait, doesn't actually [1]  fix the reported issue?
-> >> >>
-> >> >> Not at all.
-> >> >>
-> >> >> > Marc, can you confirm this?
-> >> >> >
-> >> >> > [1]: e43c26e12dd4 ("gpio: pca953x: Fix uninitialized pending variable")
-> >> >>
-> >> >> Different bug, really. If an interrupt is *really* pending, and no
-> >> >> mapping established yet, feeding the result of irq_find_mapping() to
-> >> >> handle_nested_irq() will lead to a panic.
-> >> >
-> >> > I don't understand. We have plenty of drivers doing exactly the way
-> >> > without checking this returned code.
-> >>
-> >> I'm sure we do. Most driver code is buggy as hell, but I don't see
-> >> that
-> >> as a reason to cargo-cult the crap. The API is crystal clear that it
-> >> can
-> >> return 0 for no mapping, and 0 isn't a valid interrupt.
-> >
-> > Yes, and the problem here is that we got this response from IRQ core,
-> > which we shouldn't.
->
-> What do you mean? There is no mapping at all. and all the core code
-> can tell you is exactly that. If you think that using an error code
-> as a valid input to another function is OK, we have a much bigger
-> problem.
+Add device tree bindings documentation for Qualcomm MSM8953
+pinctrl driver.
 
-Of course it's not okay. And that's what puzzles me. We shouldn't get
-bit set in pending if there is no requested IRQ (handler assigned).
-I think there is a bug indeed, but I'm not sure it is in the code you
-are patching. Rather in the code when we are preparing a pending
-bitmap.
-Shouldn't we have unused (unassigned interrupts) being masked in the
-first place?
+Signed-off-by: Vladimir Lypak <junak.pub@gmail.com>
+---
+Changes in V2:
+ - removed "wakeup-parent" property.
+ - changed pincfg property pattern to '-pins$' and added its description.
+ - added "serial-pins" subnode to example.
+---
+ .../pinctrl/qcom,msm8953-pinctrl.yaml         | 167 ++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
 
-I can imagine that we have the chip preconfigured by firmware and when
-->probe() happens the enabled IRQs should be left untouched, but is it
-the case?
-I guess you are using a non-latched version of the GPIO expander (I
-don't have such for a test).
-
-I need to look at this closer...
-Since Linus already applied this we will live with it now, but it
-would be really helpful if you may dump the traces of non-working case
-before this patch to analyze (I would like to see all regmap IO for
-this chip).
-
-> >> > What circumstances makes the mapping be absent?
-> >>
-> >> Other bugs in the system ([1]), spurious interrupts (which can
-> >> *always*
-> >> happen).
-> >>
-> >> > Shouldn't we rather change this:
-> >> >
-> >> >         girq->handler = handle_simple_irq;
-> >> > to this:
-> >> >         girq->handler = handle_bad_irq;
-> >> > ?
-> >>
-> >> I don't understand what you are trying to achieve with that, apart
-> >> from
-> >> maybe breaking the driver. The right way to handle spurious interrupts
-> >> is by telling the core code that the interrupt wasn't handled, and to
-> >> let
-> >> the spurious interrupt code do its magic.
-> >
-> > handle_bad_irq() is exactly for handling spurious IRQs as far as we
-> > believe documentation. So, by default the driver assigns (should
-> > assign) handle_bad_irq() to all IRQs as a default handler. If, by any
-> > chance, we got it, we already have a proper handler in place. The read
-> > handler is assigned whenever the IRQ core is called to register it (by
-> > means of ->irq_set_type() callback). My understanding that GPIO IRQ
-> > drivers are designed (should be designed) in this way.  The approach
-> > will make us sure that we don't have spurious interrupts with assigned
-> > handlers.
->
-> I can't see how setting this to anything else can work, given that
-> handle_nested_irq() knows nothing about this flow (it doesn't use
-> any).
-
-
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+new file mode 100644
+index 000000000000..abe9f4c9b1e3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+@@ -0,0 +1,167 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,msm8953-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. MSM8953 TLMM block
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: |
++  This binding describes the Top Level Mode Multiplexer block found in the
++  MSM8953 platform.
++
++properties:
++  compatible:
++    const: qcom,msm8953-pinctrl
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    description: Specifies the TLMM summary IRQ
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    description:
++      Specifies the PIN numbers and Flags, as defined in defined in
++      include/dt-bindings/interrupt-controller/irq.h
++    const: 2
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    description: Specifying the pin number and flags, as defined in
++      include/dt-bindings/gpio/gpio.h
++    const: 2
++
++  gpio-ranges:
++    maxItems: 1
++
++#PIN CONFIGURATION NODES
++patternProperties:
++  '-pins$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: "/schemas/pinctrl/pincfg-node.yaml"
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-7][0-9])$"
++            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, sdc2_clk,
++                      sdc2_cmd, sdc2_data, qdsd_clk, qdsd_cmd, qdsd_data0,
++                      qdsd_data1, qdsd_data2, qdsd_data3 ]
++        minItems: 1
++        maxItems: 16
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ accel_int, adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1,
++                atest_char, atest_char0, atest_char1, atest_char2, atest_char3,
++                atest_gpsadc_dtest0_native, atest_gpsadc_dtest1_native, atest_tsens,
++                atest_wlan0, atest_wlan1, bimc_dte0, bimc_dte1, blsp1_spi,
++                blsp3_spi, blsp6_spi, blsp7_spi, blsp_i2c1, blsp_i2c2, blsp_i2c3,
++                blsp_i2c4, blsp_i2c5, blsp_i2c6, blsp_i2c7, blsp_i2c8, blsp_spi1,
++                blsp_spi2, blsp_spi3, blsp_spi4, blsp_spi5, blsp_spi6, blsp_spi7,
++                blsp_spi8, blsp_uart2, blsp_uart4, blsp_uart5, blsp_uart6, cam0_ldo,
++                cam1_ldo, cam1_rst, cam1_standby, cam2_rst, cam2_standby, cam3_rst,
++                cam3_standby, cam_irq, cam_mclk, cap_int, cci_async, cci_i2c,
++                cci_timer0, cci_timer1, cci_timer2, cci_timer3, cci_timer4,
++                cdc_pdm0, codec_int1, codec_int2, codec_reset, cri_trng, cri_trng0,
++                cri_trng1, dac_calib0, dac_calib1, dac_calib10, dac_calib11,
++                dac_calib12, dac_calib13, dac_calib14, dac_calib15, dac_calib16,
++                dac_calib17, dac_calib18, dac_calib19, dac_calib2, dac_calib20,
++                dac_calib21, dac_calib22, dac_calib23, dac_calib24, dac_calib25,
++                dac_calib3, dac_calib4, dac_calib5, dac_calib6, dac_calib7,
++                dac_calib8, dac_calib9, dbg_out, ddr_bist, dmic0_clk, dmic0_data,
++                ebi_cdc, ebi_ch0, ext_lpass, flash_strobe, fp_int, gcc_gp1_clk_a,
++                gcc_gp1_clk_b, gcc_gp2_clk_a, gcc_gp2_clk_b, gcc_gp3_clk_a,
++                gcc_gp3_clk_b, gcc_plltest, gcc_tlmm, gpio, gsm0_tx, gsm1_tx,
++                gyro_int, hall_int, hdmi_int, key_focus, key_home, key_snapshot,
++                key_volp, ldo_en, ldo_update, lpass_slimbus, lpass_slimbus0,
++                lpass_slimbus1, m_voc, mag_int, mdp_vsync, mipi_dsi0, modem_tsync,
++                mss_lte, nav_pps, nav_pps_in_a, nav_pps_in_b, nav_tsync,
++                nfc_disable, nfc_dwl, nfc_irq, ois_sync, pa_indicator, pbs0, pbs1,
++                pbs2, pressure_int, pri_mi2s, pri_mi2s_mclk_a, pri_mi2s_mclk_b,
++                pri_mi2s_ws, prng_rosc, pwr_crypto_enabled_a, pwr_crypto_enabled_b,
++                pwr_down, pwr_modem_enabled_a, pwr_modem_enabled_b,
++                pwr_nav_enabled_a, pwr_nav_enabled_b, qdss_cti_trig_in_a0,
++                qdss_cti_trig_in_a1, qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
++                qdss_cti_trig_out_a0, qdss_cti_trig_out_a1, qdss_cti_trig_out_b0,
++                qdss_cti_trig_out_b1, qdss_traceclk_a, qdss_traceclk_b,
++                qdss_tracectl_a, qdss_tracectl_b, qdss_tracedata_a,
++                qdss_tracedata_b, sd_write, sdcard_det, sec_mi2s, sec_mi2s_mclk_a,
++                sec_mi2s_mclk_b, smb_int, ss_switch, ssbi_wtr1, ts_resout,
++                ts_sample, ts_xvdd, tsens_max, uim1_clk, uim1_data, uim1_present,
++                uim1_reset, uim2_clk, uim2_data, uim2_present, uim2_reset,
++                uim_batt, us_emitter, us_euro, wcss_bt, wcss_fm, wcss_wlan,
++                wcss_wlan0, wcss_wlan1, wcss_wlan2, wsa_en, wsa_io, wsa_irq ]
++
++      drive-strength:
++        enum: [2, 4, 6, 8, 10, 12, 14, 16]
++        default: 2
++        description:
++          Selects the drive strength for the specified pins, in mA.
++
++      bias-pull-down: true
++
++      bias-pull-up: true
++
++      bias-disable: true
++
++      output-high: true
++
++      output-low: true
++
++    required:
++      - pins
++      - function
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - gpio-controller
++  - '#gpio-cells'
++  - gpio-ranges
++
++additionalProperties: false
++
++examples:
++  - |
++        #include <dt-bindings/interrupt-controller/arm-gic.h>
++        tlmm: pinctrl@1000000 {
++              compatible = "qcom,msm8953-pinctrl";
++              reg = <0x01000000 0x300000>;
++              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++              interrupt-controller;
++              #interrupt-cells = <2>;
++              gpio-controller;
++              #gpio-cells = <2>;
++              gpio-ranges = <&tlmm 0 0 142>;
++
++              serial_default: serial-pins {
++                    pins = "gpio4", "gpio5";
++                    function = "blsp_uart2";
++                    drive-strength = <2>;
++                    bias-disable;
++              };
++        };
 -- 
-With Best Regards,
-Andy Shevchenko
+2.28.0
+
