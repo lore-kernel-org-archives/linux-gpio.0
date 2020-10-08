@@ -2,35 +2,50 @@ Return-Path: <SRS0=9k7y=DP=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB526C433E7
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Oct 2020 08:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F96CC433E7
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Oct 2020 08:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87D542177B
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Oct 2020 08:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B73B21775
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Oct 2020 08:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbgJHI5e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Oct 2020 04:57:34 -0400
-Received: from ns.lineo.co.jp ([203.141.200.203]:38812 "EHLO mail.lineo.co.jp"
+        id S1729017AbgJHI5v (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Oct 2020 04:57:51 -0400
+Received: from ns.lineo.co.jp ([203.141.200.203]:38818 "EHLO mail.lineo.co.jp"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgJHI5e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1726304AbgJHI5e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Thu, 8 Oct 2020 04:57:34 -0400
-X-Greylist: delayed 611 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Oct 2020 04:57:33 EDT
 Received: from [172.31.78.0] (unknown [203.141.200.204])
-        by mail.lineo.co.jp (Postfix) with ESMTPSA id 992E280535E27;
-        Thu,  8 Oct 2020 17:47:42 +0900 (JST)
+        by mail.lineo.co.jp (Postfix) with ESMTPSA id 9872580214FF9;
+        Thu,  8 Oct 2020 17:47:21 +0900 (JST)
 From:   Naoki Hayama <naoki.hayama@lineo.co.jp>
-Subject: [PATCH 3/6] dt-bindings: pinctrl: sirf: Fix typo abitrary
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: [PATCH 0/6] spelling: Fix typo related to "arbitrary"
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>,
+        Samuel Chessman <chessman@tux.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Naoki Hayama <naoki.hayama@lineo.co.jp>
-Message-ID: <614fe604-ab8e-21cb-0c3a-db6ddeff2a4e@lineo.co.jp>
-Date:   Thu, 8 Oct 2020 17:47:42 +0900
+Message-ID: <4dea2b7e-31b9-a231-7fa2-9ee7ffd37686@lineo.co.jp>
+Date:   Thu, 8 Oct 2020 17:47:21 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
@@ -41,26 +56,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix comment typo.
+I found some typos related to "arbitrary".
+
 s/abitrary/arbitrary/
+s/arbitary/arbitrary/
 
-Signed-off-by: Naoki Hayama <naoki.hayama@lineo.co.jp>
----
- Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series fixes them.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt
-index bf9b07016c87..fbdd1a716a1e 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt
-@@ -60,7 +60,7 @@ For example, pinctrl might have properties like the following:
- Please refer to pinctrl-bindings.txt in this directory for details of the common
- pinctrl bindings used by client devices.
- 
--SiRFatlas7's pinmux nodes act as a container for an abitrary number of subnodes.
-+SiRFatlas7's pinmux nodes act as a container for an arbitrary number of subnodes.
- Each of these subnodes represents some desired configuration for a group of pins.
- 
- Required subnode-properties:
+These typos have been reported in the past in other codes, but
+correction 'abitrary||arbitrary' wasn't added to scripts/spelling.txt.
+Therefore, PATCH #6 adds it to spelling.txt.
+
+
+Naoki Hayama (6):
+  net: tlan: Fix typo abitrary
+  dt-bindings: pinctrl: qcom: Fix typo abitrary
+  dt-bindings: pinctrl: sirf: Fix typo abitrary
+  ALSA: hdspm: Fix typo arbitary
+  drm/etnaviv: Fix typo arbitary
+  scripts/spelling.txt: Add arbitrary correction
+
+ Documentation/devicetree/bindings/pinctrl/pinctrl-atlas7.txt    | 2 +-
+ .../devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt        | 2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c                           | 2 +-
+ drivers/net/ethernet/ti/tlan.c                                  | 2 +-
+ scripts/spelling.txt                                            | 1 +
+ sound/pci/rme9652/hdspm.c                                       | 2 +-
+ 6 files changed, 6 insertions(+), 5 deletions(-)
+
 -- 
 2.17.1
