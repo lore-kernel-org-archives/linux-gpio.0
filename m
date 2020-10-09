@@ -2,82 +2,170 @@ Return-Path: <SRS0=fgCB=DQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B4EC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF8AC433DF
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C75752227E
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4190D2227F
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=upir.cz header.i=@upir.cz header.b="o0SY6iHE"
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="gJopEN5+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbgJIJUB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Oct 2020 05:20:01 -0400
-Received: from 241-168-195-217.cust.centrio.cz ([217.195.168.241]:49150 "EHLO
-        patejl.cela.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731262AbgJIJUB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Oct 2020 05:20:01 -0400
-Received: from localhost (mem-185.47.222.164.jmnet.cz [185.47.222.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by patejl.cela.cz (Postfix) with ESMTPSA id E9376A490;
-        Fri,  9 Oct 2020 11:19:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=upir.cz; s=mail;
-        t=1602235198; bh=UNdGdeqYzeADJGlHvh7iFRqUgqp6qdhK+Uqiv4YTau8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=o0SY6iHEsK8QJ987wn5oaOlCmOOXTR1AAek6zfpmh2MzbJAnoymVuosfJBq6lqFkN
-         8kNnMRbmto7vlPg7P3MrivvXRIsii0/u1qicPZfRB9LRruYHnq9FUJTw6xYOO3O4X1
-         N9FT0nY6hLYkCsS9gnLAZ3oJmERE8Vndp9dloAH8=
-Date:   Fri, 9 Oct 2020 11:19:57 +0200
-From:   Jiri Benc <jbenc@upir.cz>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
+        id S1733078AbgJIJYR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Oct 2020 05:24:17 -0400
+Received: from first.geanix.com ([116.203.34.67]:56156 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731262AbgJIJYQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Oct 2020 05:24:16 -0400
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Oct 2020 05:24:15 EDT
+Received: from [192.168.8.20] (unknown [85.184.138.169])
+        by first.geanix.com (Postfix) with ESMTPSA id 84094F25C16;
+        Fri,  9 Oct 2020 09:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1602234957; bh=P+1tW+LNK0Aleerf9xLn1TMIWjW2HPslR3vBsUjKGgQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=gJopEN5+xGiVZq/h4xMBr9fcSmIbxYaYs9F66npzla8dWtlRo2oDRBDVNariA9Ey4
+         Zv8aI7giGvmoXb6l8sPIYIV9eQYXnSNC70koUfl1vTLueItgOMravszwvRvutasweN
+         Oo9DV4PdereicisO28eVry0N70B1U1widQ7d1YMpllgtktQCldKxdHE4tnSdnpQVIv
+         +YLfpgF4mQIvRijf0MCQCIRSh+55AqK1L893KCLahAc8u6fMmkJpjI/y78JrjgQ0ou
+         nwkLpOyr3SKj4Vb0Kv0BcVhPXMsrXORVNt3vg+CRiQP11d5PU/0ECDfMYkKif98ktV
+         CGy/E5bdGhevA==
+Subject: Re: Re: [PATCH v1 1/9] pinctrl: mcp23s08: Get rid of legacy platform
+ data
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH libgpiod] bindings: python: fix Line.request() crashing
-Message-ID: <20201009111957.7f6cff10@upir.cz>
-In-Reply-To: <CAMRc=McNs+cPmqkcGCAJgfQ_Ozy4Dc4b9GUDc2wthmj2WYaRwg@mail.gmail.com>
-References: <38eff7ebd01efd34df3037ba485d61ff7291fb5e.1602004585.git.jbenc@upir.cz>
-        <CAMRc=McNs+cPmqkcGCAJgfQ_Ozy4Dc4b9GUDc2wthmj2WYaRwg@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0git164 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
+References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdY6_EChELrKGtcvsBvDqEQ9QD1=+PWWZuyBZV_CpLvUyA@mail.gmail.com>
+From:   =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin@geanix.com>
+Message-ID: <c82ef50e-8f5c-39cd-6032-b4797a49e0e1@geanix.com>
+Date:   Fri, 9 Oct 2020 11:15:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.102.2 at patejl
-X-Virus-Status: Clean
+In-Reply-To: <CACRpkdY6_EChELrKGtcvsBvDqEQ9QD1=+PWWZuyBZV_CpLvUyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US-large
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 9 Oct 2020 09:40:29 +0200, Bartosz Golaszewski wrote:
-> Thanks for the fixes. Could you send me a chunk of code that triggers
-> this error so I can make a test-case for it?
+Hi Andy,
 
-It was as simple as this:
+On 16/04/2020 12.35, Linus Walleij wrote:
+> On Tue, Apr 7, 2020 at 7:38 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+>> Platform data is a legacy interface to supply device properties
+>> to the driver. In this case we even don't have in-kernel users
+>> for it. Just remove it for good.
+>>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> All 9 patches applied.
 
-import gpiod
-c = gpiod.Chip('0')
-l = c.get_line(17)
-l.request('my')
+This series caused probing of my PiFace2 to fail:
 
-Latest stable Raspbian (Debian 10.6), Python 3.7.3. It's so basic that
-it's puzzling me that nobody has hit it before me. But my patch is
-right, see https://docs.python.org/3/c-api/structures.html:
+ > [    1.019604] mcp23s08: probe of spi0.0 failed with error -22
 
-------
-METH_VARARGS | METH_KEYWORDS
+I tried to bisect, but some of the commits failed to compile:
 
-Methods with these flags must be of type PyCFunctionWithKeywords. The
-function expects three parameters: self, args, kwargs where kwargs is a
-dictionary of all the keyword arguments or possibly NULL if there are
-no keyword arguments.
-------
+ > drivers/pinctrl/pinctrl-mcp23s08.c:959:39: error: 
+'mcp23s08_spi_of_match' undeclared (first use in this function); did you 
+mean 'mcp23s08_i2c_of_match'?
 
-Yet, commit 02a3d0a2ab5e that attempted to fix this states that the
-kwds dictionary was an empty dict. Maybe a change in Python C API in
-3.7? The Python 3.6 and earlier documentation did not mention the NULL.
-I can't find anything in Python release notes, though.
+ >  959 |  match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), 
+&spi->dev);
 
- Jiri
+
+However, bisecting did narrow it down to a few commits:
+
+ > * 1ac30db20be2 - (refs/bisect/bad) pinctrl: mcp23s08: Make use of 
+device properties (6 months ago) <Andy Shevchenko>
+
+ > * 88af89b52a1b - 
+(refs/bisect/skip-88af89b52a1b7493f1e5ec165856b4c6767cf654) pinctrl: 
+mcp23s08: Propagate error code from device_property_read_u32() (6 months 
+ago) <Andy Shevchenko>
+
+ > * 0874758ecb2b - 
+(refs/bisect/skip-0874758ecb2b3faa200a86dda45dbc29335f883e) pinctrl: 
+mcp23s08: Refactor mcp23s08_spi_regmap_init() (6 months ago) <Andy 
+Shevchenko>
+
+ > * 0521701c8d10 - 
+(refs/bisect/skip-0521701c8d10f832a401cc7ebfa92bb73782d792) pinctrl: 
+mcp23s08: Drop unused parameter in mcp23s08_probe_one() (6 months ago) 
+<Andy Shevchenko>
+
+ > * d3da29b628a8 - 
+(refs/bisect/skip-d3da29b628a86777d25c741c44b8af35f10020a0) pinctrl: 
+mcp23s08: Consolidate SPI and I²C code (6 months ago) <Andy Shevchenko>
+
+ > * 84d02e785d34 - 
+(refs/bisect/good-84d02e785d34be9363a825d696cca1f07fac2634) pinctrl: 
+mcp23s08: Deduplicate IRQ chip filling (6 months ago) <Andy Shevchenko>
+
+
+I'm using the rpi3 device tree (broadcom/bcm2837-rpi-3-b.dtb) overlayed 
+with a configuration for the mcp23s08:
+
+/dts-v1/;
+
+/plugin/;
+
+
+
+/ {
+
+         fragment@0 {
+
+                 target-path = "/soc/spi@7e204000";
+
+
+
+                 __overlay__ {
+
+                         pinctrl-names = "default";
+
+                         pinctrl-0 = <&spi0_gpio7>;
+
+                         #address-cells = <1>;
+
+                         #size-cells = <0>;
+
+                         status = "okay";
+
+
+
+                         gpio@0 {
+
+                                 compatible = "microchip,mcp23s17";
+
+                                 reg = <0>;
+
+                                 gpio-controller;
+
+                                 #gpio-cells = <2>;
+
+                                 microchip,spi-present-mask = <0x01>;
+
+                                 spi-max-frequency = <1000000>;
+
+                         };
+
+                 };
+
+         };
+
+};
+
+I looked around the code a bit, and tried to compare it with v5.7, but 
+didn't see any obvious candidates.
+
+// Martin
