@@ -2,170 +2,107 @@ Return-Path: <SRS0=fgCB=DQ=vger.kernel.org=linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF8AC433DF
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12EDC43457
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4190D2227F
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AEA922284
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Oct 2020 09:38:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="gJopEN5+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EyBXWCuK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733078AbgJIJYR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Oct 2020 05:24:17 -0400
-Received: from first.geanix.com ([116.203.34.67]:56156 "EHLO first.geanix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731262AbgJIJYQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Oct 2020 05:24:16 -0400
-X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Oct 2020 05:24:15 EDT
-Received: from [192.168.8.20] (unknown [85.184.138.169])
-        by first.geanix.com (Postfix) with ESMTPSA id 84094F25C16;
-        Fri,  9 Oct 2020 09:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1602234957; bh=P+1tW+LNK0Aleerf9xLn1TMIWjW2HPslR3vBsUjKGgQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=gJopEN5+xGiVZq/h4xMBr9fcSmIbxYaYs9F66npzla8dWtlRo2oDRBDVNariA9Ey4
-         Zv8aI7giGvmoXb6l8sPIYIV9eQYXnSNC70koUfl1vTLueItgOMravszwvRvutasweN
-         Oo9DV4PdereicisO28eVry0N70B1U1widQ7d1YMpllgtktQCldKxdHE4tnSdnpQVIv
-         +YLfpgF4mQIvRijf0MCQCIRSh+55AqK1L893KCLahAc8u6fMmkJpjI/y78JrjgQ0ou
-         nwkLpOyr3SKj4Vb0Kv0BcVhPXMsrXORVNt3vg+CRiQP11d5PU/0ECDfMYkKif98ktV
-         CGy/E5bdGhevA==
-Subject: Re: Re: [PATCH v1 1/9] pinctrl: mcp23s08: Get rid of legacy platform
- data
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-References: <20200407173849.43628-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdY6_EChELrKGtcvsBvDqEQ9QD1=+PWWZuyBZV_CpLvUyA@mail.gmail.com>
-From:   =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin@geanix.com>
-Message-ID: <c82ef50e-8f5c-39cd-6032-b4797a49e0e1@geanix.com>
-Date:   Fri, 9 Oct 2020 11:15:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1733113AbgJIJiq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Oct 2020 05:38:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733136AbgJIJip (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Oct 2020 05:38:45 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D22C0613D4
+        for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2020 02:38:44 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id u8so10025804lff.1
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2020 02:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wQZ85dJNsIyQtNjnJDTR2ihKmDYZl4o1wc+cD1p5Uys=;
+        b=EyBXWCuKn5Qfulspno0TqkUKWkmtsntf2WZ6aTm0tZypLd4Ah6UVqvyBZrfYrw6GC3
+         WIp1BqHp+4ACn92mT/zB7PHor5fdbk56BcW0Wj5dS6nelhlcD9LhtS9/8wSPEA7TQ0Za
+         23lJuLKWC6liqUXNRsqMQPBbZJ60Fd7YQW+SmmzHV1U93+juESSYcLseBKjKvTAMdMDa
+         owpSj+DJNBIOKN6aCuSWx4yPgN5rn7npeYJ6htvg9+kZTIy9j4gQG4DCOi4q/PLRGx7b
+         9ofFF7x+4XNaJK5r7q+Zi29ZhFqRf36GnKv6VWrvmwUH5oIRRhjFIIqIMTlLahRYR/cO
+         fWbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wQZ85dJNsIyQtNjnJDTR2ihKmDYZl4o1wc+cD1p5Uys=;
+        b=cZ5jtWuPnIvaB5jBUhM/CMBNoJ0yxYpM0ZGSp9kHXU85S69VFskhY0ql6i8c4H6WvJ
+         IhNJZBkTss62RgVlHH7iTFCZtjIz4nqfp++LImS/7OIQG1lu+vcBghAkl4oj0KsGYL9p
+         haOd91VOn4rkjGwzchwPHNIZ3ePVIgsDGVGp8nqz6eK1szgBlfBx3MdyqZAeK9qtkm3e
+         rVhfobKtmL4KOP9pw/YQsoreqToZ8E5v6i3EwUZzN0+ruZoJ8iozFFMBR/gvYxFkjzHi
+         2WkkQp/bkabHPxvaluO4F6/9RXsy5x6rOfJZGNs2gLzFf5pZTu/es6HMaYbdK55jF4Qo
+         YrUQ==
+X-Gm-Message-State: AOAM532HPhXZ3Fin6TruwGHtMdcQyb+ehu7MHdH18rCK0l2hr6CeKyjz
+        4rdQWN/YpILpWfz+JWI9o/qaufig7gKSCTm/bcLy0A==
+X-Google-Smtp-Source: ABdhPJw1Hr+9bP5FQEtUOU0p0RHYUw+Mo6ABI9TPDkRcxw0lXEEjdHuU++zVBajvD6EFYP2r4SQStnlEK25XtpZ3UuI=
+X-Received: by 2002:ac2:42d8:: with SMTP id n24mr3660836lfl.502.1602236323336;
+ Fri, 09 Oct 2020 02:38:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdY6_EChELrKGtcvsBvDqEQ9QD1=+PWWZuyBZV_CpLvUyA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US-large
-Content-Transfer-Encoding: 8bit
+References: <20201006142532.2247515-1-lars.povlsen@microchip.com>
+ <20201006142532.2247515-3-lars.povlsen@microchip.com> <CACRpkda+OSgma3E0XxXUk8a2yrn5Hpu3a47cBN50rOkoSMkiwQ@mail.gmail.com>
+ <87ft6px9wc.fsf@soft-dev15.microsemi.net>
+In-Reply-To: <87ft6px9wc.fsf@soft-dev15.microsemi.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 9 Oct 2020 11:38:32 +0200
+Message-ID: <CACRpkdYqKqqM8D0vrBWbo0=7OFthU2kcK2tjd45dD7DxEkaYWg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3 2/3] pinctrl: pinctrl-mchp-sgpio: Add pinctrl
+ driver for Microsemi Serial GPIO
+To:     Lars Povlsen <lars.povlsen@microchip.com>
+Cc:     Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+Hi Lars,
 
-On 16/04/2020 12.35, Linus Walleij wrote:
-> On Tue, Apr 7, 2020 at 7:38 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
->> Platform data is a legacy interface to supply device properties
->> to the driver. In this case we even don't have in-kernel users
->> for it. Just remove it for good.
->>
->> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> All 9 patches applied.
+I'm overall mostly happy with the latest posting (not the one I respond to here)
 
-This series caused probing of my PiFace2 to fail:
+On Thu, Oct 8, 2020 at 12:57 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+> > On Tue, Oct 6, 2020 at 4:25 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 
- > [    1.019604] mcp23s08: probe of spi0.0 failed with error -22
+> >> +       gc->of_xlate            = microchip_sgpio_of_xlate;
+> >> +       gc->of_gpio_n_cells     = 3;
+> >
+> > So I'm sceptical to this.
+> >
+> > Why can't you just use the pin index in cell 0 directly
+> > and avoid cell 1?
+> >
+>
+> You scepticism has surfaced before :-). The (now) 2 indices relates to
+> how the hardware address signals.
+>
+> Each signal/pin is addressed by port, bit number and direction. We now
+> have the direction encoded in the bank/phandle.
 
-I tried to bisect, but some of the commits failed to compile:
+I'm sorry but I just don't get it, I suppose. To me it is pretty
+straight-forward
+that the cells indicate the pin and then the flags. I do understand you
+need the port at all, since this is implicit from the reg property
+of the DT node. Are these two different things?
 
- > drivers/pinctrl/pinctrl-mcp23s08.c:959:39: error: 
-'mcp23s08_spi_of_match' undeclared (first use in this function); did you 
-mean 'mcp23s08_i2c_of_match'?
-
- >  959 |  match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), 
-&spi->dev);
-
-
-However, bisecting did narrow it down to a few commits:
-
- > * 1ac30db20be2 - (refs/bisect/bad) pinctrl: mcp23s08: Make use of 
-device properties (6 months ago) <Andy Shevchenko>
-
- > * 88af89b52a1b - 
-(refs/bisect/skip-88af89b52a1b7493f1e5ec165856b4c6767cf654) pinctrl: 
-mcp23s08: Propagate error code from device_property_read_u32() (6 months 
-ago) <Andy Shevchenko>
-
- > * 0874758ecb2b - 
-(refs/bisect/skip-0874758ecb2b3faa200a86dda45dbc29335f883e) pinctrl: 
-mcp23s08: Refactor mcp23s08_spi_regmap_init() (6 months ago) <Andy 
-Shevchenko>
-
- > * 0521701c8d10 - 
-(refs/bisect/skip-0521701c8d10f832a401cc7ebfa92bb73782d792) pinctrl: 
-mcp23s08: Drop unused parameter in mcp23s08_probe_one() (6 months ago) 
-<Andy Shevchenko>
-
- > * d3da29b628a8 - 
-(refs/bisect/skip-d3da29b628a86777d25c741c44b8af35f10020a0) pinctrl: 
-mcp23s08: Consolidate SPI and I²C code (6 months ago) <Andy Shevchenko>
-
- > * 84d02e785d34 - 
-(refs/bisect/good-84d02e785d34be9363a825d696cca1f07fac2634) pinctrl: 
-mcp23s08: Deduplicate IRQ chip filling (6 months ago) <Andy Shevchenko>
-
-
-I'm using the rpi3 device tree (broadcom/bcm2837-rpi-3-b.dtb) overlayed 
-with a configuration for the mcp23s08:
-
-/dts-v1/;
-
-/plugin/;
-
-
-
-/ {
-
-         fragment@0 {
-
-                 target-path = "/soc/spi@7e204000";
-
-
-
-                 __overlay__ {
-
-                         pinctrl-names = "default";
-
-                         pinctrl-0 = <&spi0_gpio7>;
-
-                         #address-cells = <1>;
-
-                         #size-cells = <0>;
-
-                         status = "okay";
-
-
-
-                         gpio@0 {
-
-                                 compatible = "microchip,mcp23s17";
-
-                                 reg = <0>;
-
-                                 gpio-controller;
-
-                                 #gpio-cells = <2>;
-
-                                 microchip,spi-present-mask = <0x01>;
-
-                                 spi-max-frequency = <1000000>;
-
-                         };
-
-                 };
-
-         };
-
-};
-
-I looked around the code a bit, and tried to compare it with v5.7, but 
-didn't see any obvious candidates.
-
-// Martin
+Yours,
+Linus Walleij
